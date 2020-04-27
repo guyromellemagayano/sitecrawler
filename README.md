@@ -17,3 +17,17 @@ docker-compose up
 ```
 
 This will start the backend listening on `localhost:8000`.
+
+#### Creating super user
+
+Open shell to running backend conatiner:
+
+```
+docker exec -it web-crawl-app_backend_1 bash
+```
+
+Use django command to create superuser:
+
+```
+./manage.py createsuperuser
+```

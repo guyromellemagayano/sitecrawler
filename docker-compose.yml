@@ -4,7 +4,7 @@ services:
     build:
       context: ./backend
     image: crawl-app-backend
-    command: bash -c "pip install -r requirements.txt && ./manage.py runserver 0.0.0.0:8000"
+    command: ./local.sh
     volumes:
       - ./backend:/app
     ports:
