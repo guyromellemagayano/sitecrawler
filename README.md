@@ -31,3 +31,7 @@ Use django command to create superuser:
 ```
 ./manage.py createsuperuser
 ```
+
+### Authentication
+
+We're using [django-rest-auth](https://django-rest-auth.readthedocs.io/en/latest/introduction.html) for authentication endpoints. See `backend/server/urls.py` for mapping of the endpoint urls.
