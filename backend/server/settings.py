@@ -120,6 +120,11 @@ USE_TZ = True
 
 SITE_ID = 1
 
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
