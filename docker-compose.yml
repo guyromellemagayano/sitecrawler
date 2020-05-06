@@ -4,6 +4,7 @@ services:
     build:
       context: ./backend
     image: crawl-app-backend
+    stdin_open: false
     tty: true
     command: ./local.sh
     volumes:

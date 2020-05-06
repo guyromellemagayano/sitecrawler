@@ -24,6 +24,7 @@ urlpatterns = [
     # needed but not used
     path("confirm-sent/", TemplateView.as_view(), name="account_email_verification_sent"),
     re_path(r"confirm-email/(?P<key>[-:\w]+)/$", TemplateView.as_view(), name="account_confirm_email"),
+    path("account-exist/", TemplateView.as_view(), name="socialaccount_signup",),
     # urls
     path("admin/", admin.site.urls),
     path(

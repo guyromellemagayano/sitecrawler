@@ -35,3 +35,9 @@ Use django command to create superuser:
 ### Authentication
 
 We're using [django-rest-auth](https://django-rest-auth.readthedocs.io/en/latest/introduction.html) for authentication endpoints. See `backend/server/urls.py` for mapping of the endpoint urls.
+
+#### Google login
+
+1. Add google social application in [django admin](http://localhost:8000/admin/socialaccount/socialapp/) with `dev client` oauth client from [Developer Console](https://console.developers.google.com/apis/credentials?project=edl-app-link-spider). Only client id and secret key are needed. You also need to move the site to the right.
+
+2. Login url is `/auth/google/login/`. You cannot login with an email that is already registered in the system.
