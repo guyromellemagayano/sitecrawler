@@ -6,9 +6,9 @@ class Link(models.Model):
     TYPE_EXTERNAL = 2
     TYPE_OTHER = 3
     TYPE_CHOICES = [
-        (TYPE_PAGE, "Page"),
-        (TYPE_EXTERNAL, "External"),
-        (TYPE_OTHER, "Other"),
+        (TYPE_PAGE, "PAGE"),
+        (TYPE_EXTERNAL, "EXTERNAL"),
+        (TYPE_OTHER, "OTHER"),
     ]
 
     STATUS_OK = 1
@@ -16,8 +16,8 @@ class Link(models.Model):
     STATUS_HTTP_ERROR = 3
     STATUS_CHOICES = [
         (STATUS_OK, "OK"),
-        (STATUS_TIMEOUT, "Timeout"),
-        (STATUS_HTTP_ERROR, "HTTP Error"),
+        (STATUS_TIMEOUT, "TIMEOUT"),
+        (STATUS_HTTP_ERROR, "HTTP_ERROR"),
     ]
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
