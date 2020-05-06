@@ -16,9 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
-from rest_framework import routers
-
-router = routers.DefaultRouter()
 
 urlpatterns = [
     # needed but not used
@@ -33,5 +30,5 @@ urlpatterns = [
     ),
     path("api/auth/", include("rest_auth.urls")),
     path("auth/", include("allauth.socialaccount.providers.google.urls")),
-    path("api/", include(router.urls)),
+    path("api/", include("crawl.urls")),
 ]
