@@ -1,0 +1,85 @@
+import NextApp from "next/app";
+import Router from "next/router";
+import { Provider } from "react-redux";
+import withRedux from "next-redux-wrapper";
+import { initStore } from "redux/store";
+import { loadTheme } from "redux/actions";
+import Layout from "../components/layout";
+import ReactGA from "react-ga";
+import { NextSeo } from "next-seo";
+import NProgress from "nprogress";
+import { genericStrings } from "../public/js/strings";
+
+import "../scss/global.scss";
+
+/* eslint-disable react/jsx-props-no-spreading */
+
+ReactGA.initialize(process.env.GA_TRACKING_NUMBER);
+
+NProgress.configure({
+  trickleSpeed: 100,
+  showSpinner: false,
+});
+
+Router.events.on("routeChangeStart", () => {
+  NProgress.start();
+});
+Router.events.on("routeChangeComplete", () => {
+  NProgress.done();
+});
+Router.events.on("routeChangeError", () => {
+  NProgress.done();
+});
+
+export default withRedux(initStore)(
+  class App extends NextApp {
+    static async getInitialProps({ Component, ctx }) {
+      let pageProps = {};
+      if (Component.getInitialProps) {
+        pageProps = await Component.getInitialProps(ctx);
+      }
+
+      const { req } = ctx;
+      const theme = getThemeInfoFromCookies(req);
+      return { pageProps, theme };
+    }
+
+    componentDidMount() {
+      this.logPageView(window.location.pathname + window.location.search);
+      Router.onRouteChangeComplete = (url) => {
+        this.logPageView(url);
+      };
+    }
+
+    logPageView = (url) => {
+      try {
+        ReactGA.set({ page: url });
+        ReactGA.pageview(url);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
+    };
+
+    render() {
+      const {
+        Component, pageProps, store, theme,
+      } = this.props;
+      store.dispatch(loadTheme(theme));
+
+      return [
+        <NextSeo
+          key="seo"
+          openGraph={{
+            site_name: genericStrings.name,
+          }}
+        />,
+        <Provider key="provider" store={store}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </Provider>,
+      ];
+    }
+  },
+);
