@@ -1,85 +1,80 @@
-import NextApp from "next/app";
-import Router from "next/router";
-import { Provider } from "react-redux";
-import withRedux from "next-redux-wrapper";
-import { initStore } from "redux/store";
-import { loadTheme } from "redux/actions";
-import Layout from "../components/layout";
-import ReactGA from "react-ga";
-import { NextSeo } from "next-seo";
-import NProgress from "nprogress";
-import { genericStrings } from "../public/js/strings";
-
-import "../scss/global.scss";
-
 /* eslint-disable react/jsx-props-no-spreading */
 
-ReactGA.initialize(process.env.GA_TRACKING_NUMBER);
+import NextApp from "next/app"
+import Router from "next/router"
+import Layout from "components/layout"
+import ReactGA from "react-ga"
+import { NextSEO } from "next-seo"
+import Progress from "nprogress"
+import config from "public/static/config.json"
+import { register, unregister } from "next-offline/runtime"
 
-NProgress.configure({
-  trickleSpeed: 100,
-  showSpinner: false,
-});
+// import "public/static/styles/_variable.scss"
 
-Router.events.on("routeChangeStart", () => {
-  NProgress.start();
-});
-Router.events.on("routeChangeComplete", () => {
-  NProgress.done();
-});
-Router.events.on("routeChangeError", () => {
-  NProgress.done();
-});
+if (config.enableGoogleAnalytics) {
+  ReactGA.initialize(process.env.GA_TRACKING_NUMBER || "number")
+}
 
-export default withRedux(initStore)(
-  class App extends NextApp {
-    static async getInitialProps({ Component, ctx }) {
-      let pageProps = {};
-      if (Component.getInitialProps) {
-        pageProps = await Component.getInitialProps(ctx);
-      }
+if (config.enablePageLoadingBar) {
+  Progress.configure({
+    trickleSpeed: 100,
+    showSpinner: false,
+  });
 
-      const { req } = ctx;
-      const theme = getThemeInfoFromCookies(req);
-      return { pageProps, theme };
-    }
+  Router.events.on("routeChangeStart", () => {
+    Progress.start()
+  })
 
-    componentDidMount() {
+  Router.events.on("routeChangeComplete", () => {
+    Progress.done()
+  })
+
+  Router.events.on("routeChangeError", () => {
+    Progress.done()
+  })
+}
+
+class App extends NextApp {
+  componentDidMount() {
+    register();
+
+    if (config.enableGoogleAnalytics) {
       this.logPageView(window.location.pathname + window.location.search);
       Router.onRouteChangeComplete = (url) => {
         this.logPageView(url);
       };
     }
+  }
 
-    logPageView = (url) => {
-      try {
-        ReactGA.set({ page: url });
-        ReactGA.pageview(url);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
-    };
+  componentWillUnmount() {
+    unregister();
+  }
 
-    render() {
-      const {
-        Component, pageProps, store, theme,
-      } = this.props;
-      store.dispatch(loadTheme(theme));
-
-      return [
-        <NextSeo
-          key="seo"
-          openGraph={{
-            site_name: genericStrings.name,
-          }}
-        />,
-        <Provider key="provider" store={store}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </Provider>,
-      ];
+  logPageView = () => {
+    try {
+      ReactGA.set({ page: url })
+      ReactGA.pageview(url)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
     }
-  },
-);
+  }
+
+  render() {
+    const { PureComponent, pageProps } = this.props;
+
+    return [
+      <NextSEO
+        key="seo"
+        openGraph={{
+          site_name: strings.name,
+        }}
+      />,
+      <Layout key="layout">
+        <PureComponent {...pageProps} />
+      </Layout>
+    ]
+  }
+}
+
+export default App

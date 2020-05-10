@@ -1,0 +1,9 @@
+{
+  "enableFooter": true,
+  "enableCopyright": true,
+  "enablePageLoadingBar": true,
+  "enableGoogleAnalytics": true,
+  "header": {
+    "sticky": true
+  }
+}
