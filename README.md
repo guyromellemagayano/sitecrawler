@@ -10,13 +10,13 @@ You need to have Docker and docker-compose installed.
 
 ### Running locally
 
-Start the backend server with postgres locally:
+Start the backend and frontend with postgres locally:
 
 ```
 docker-compose up
 ```
 
-This will start the backend listening on `localhost:8000`.
+This will start listening on `localhost:8000`.
 
 #### Creating super user
 

@@ -1,19 +1,50 @@
 version: "3.7"
 services:
+  traefik:
+    image: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:8000"
+    ports:
+      - 8000:8000
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
   backend:
     build:
       context: ./backend
     image: crawl-app-backend
     stdin_open: false
     tty: true
-    command: ./local.sh
+    command: ./docker.dev.sh
     volumes:
       - ./backend:/app
-    ports:
-      - 8000:8000
     links:
       - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)"
+  frontend:
+    build:
+      context: ./frontend
+    image: crawl-app-frontend
+    command: ./docker.dev.sh
+    volumes:
+      - ./frontend:/app
+      - node-data:/app/node_modules
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
   db:
     image: postgres
     environment:
       POSTGRES_PASSWORD: crawldev
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    driver: local
+  node-data:
+    driver: local
