@@ -1,6 +1,9 @@
-import React from "react"
-import Header from "components/header"
-import Footer from "components/footer"
+import React from 'react'
+import styled from 'styled-components'
+import Header from 'components/header'
+import Footer from 'components/footer'
+
+const Main = styled.main``
 
 const Layout = () => {
   const { children } = this.props
@@ -15,4 +18,5 @@ const Layout = () => {
     </>
   )
 }
+
 export default Layout
