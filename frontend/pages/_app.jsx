@@ -1,7 +1,13 @@
-import "../styles.css"
+import React from 'react'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fab } from '@fortawesome/free-brands-svg-icons'
 
-export default function App({ Component, pageProps }) {
-  return (
-    <Component {...pageProps} />
-  )
+import '../styles.css'
+
+library.add(fab)
+
+const App = ({ Component, pageProps }) => {
+  return <Component {...pageProps} />
 }
+
+export default App
