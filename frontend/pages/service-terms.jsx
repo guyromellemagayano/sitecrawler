@@ -8,7 +8,7 @@ const ServiceTerms = () => {
   return (
     <>
       <Head>
-        <title>Login</title>
+        <title>Terms of Service</title>
       </Head>
 
       <ServiceTermsDiv></ServiceTermsDiv>

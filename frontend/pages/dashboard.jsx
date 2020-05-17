@@ -1,10 +1,10 @@
 import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
-import Avatar from '../components/avatar'
-import DashboardMenu from '../components/dashboard-menu'
-import MobileMenuDropdown from '../components/mobile-menu-dropdown'
-import Notifications from '../components/notifications'
+import Avatar from '../src/components/avatar'
+import DashboardMenu from '../src/components/dashboard-menu'
+import MobileMenuDropdown from '../src/components/mobile-menu-dropdown'
+import Notifications from '../src/components/notifications'
 
 const DashboardDiv = styled.section``
 

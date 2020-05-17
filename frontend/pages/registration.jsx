@@ -96,7 +96,7 @@ const Registration = () => {
                     <span className="px-2 bg-white text-gray-500 text-center">
                       By signing up, you agree to the&nbsp;
                       <a
-                        href="/terms"
+                        href="/service-terms"
                         className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
                       >
                         Terms of Service
