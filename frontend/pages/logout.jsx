@@ -2,19 +2,19 @@ import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
 
-const ReportsDiv = styled.section``
+const LogoutDiv = styled.section``
 
-const Reports = () => {
+const Logout = () => {
   return (
     <>
       <Head>
-        <title>Reports</title>
+        <title>Logout</title>
       </Head>
 
-      <ReportsDiv>
-      </ReportsDiv>
+      <LogoutDiv>
+      </LogoutDiv>
     </>
   )
 }
 
-export default Reports
+export default Logout
