@@ -18,7 +18,7 @@ const MenuDropdown = (props) => {
           To: "transform opacity-0 scale-95"
       */}
       <MenuDropdownDiv
-        className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg transition ease-out duration-100 ${props.isDropdownOpen ? 'transform opacity-100 scale-100' : 'transform opacity-0 scale-95'}`}
+        className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg ${props.isDropdownOpen ? 'transition ease-in duration-75 transition ease-out duration-100 transform opacity-100 scale-100' : 'transition ease-out duration-100 transform opacity-0 scale-95'}`}
       >
         <div className="py-1 rounded-md bg-white shadow-xs">
           <Link href="/profile">
