@@ -1,13 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import Header from 'components/header'
-import Footer from 'components/footer'
+import Header from './header'
+import Footer from './footer'
 
 const Main = styled.main``
 
-const Layout = () => {
-  const { children } = this.props
-
+const Layout = ({ children }) => {
   return (
     <>
       <div id="root">
