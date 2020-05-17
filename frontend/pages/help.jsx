@@ -3,16 +3,16 @@ import Head from 'next/head'
 import Link from 'next/link'
 import styled from 'styled-components'
 
-const DashboardDiv = styled.section``
+const HelpDiv = styled.section``
 
-const Dashboard = () => {
+const Help = () => {
   return (
     <>
       <Head>
-        <title>Dashboard</title>
+        <title>Help</title>
       </Head>
 
-      <DashboardDiv>
+      <HelpDiv>
         <div className="h-screen flex overflow-hidden bg-gray-100">
           <div className="md:hidden">
             <div className="fixed inset-0 flex z-40">
@@ -51,7 +51,7 @@ const Dashboard = () => {
                   <nav className="mt-5 px-2">
                     <Link href="/dashboard">
                       <a
-                        className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-white bg-indigo-900 focus:outline-none focus:bg-indigo-700 transition ease-in-out duration-150"
+                        className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-indigo-300 hover:text-white hover:bg-indigo-700 focus:outline-none focus:text-white focus:bg-indigo-700 transition ease-in-out duration-150"
                       >
                         <svg
                           className="mr-4 h-6 w-6 text-indigo-400 group-hover:text-indigo-300 group-focus:text-indigo-300 transition ease-in-out duration-150"
@@ -111,7 +111,7 @@ const Dashboard = () => {
                     </Link>
                     <Link href="/help">
                       <a
-                        className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-indigo-300 hover:text-white hover:bg-indigo-700 focus:outline-none focus:text-white focus:bg-indigo-700 transition ease-in-out duration-150"
+                        className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-white bg-indigo-900 focus:outline-none focus:bg-indigo-700 transition ease-in-out duration-150"
                       >
                         <svg
                           className="mr-4 h-6 w-6 text-indigo-400 group-hover:text-indigo-300 group-focus:text-indigo-300 transition ease-in-out duration-150"
@@ -173,7 +173,7 @@ const Dashboard = () => {
                 <nav className="mt-5 flex-1 px-2 bg-indigo-800">
                   <Link href="/dashboard">
                     <a
-                      className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-white bg-indigo-900 focus:outline-none focus:bg-indigo-700 transition ease-in-out duration-150"
+                      className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-indigo-300 hover:text-white hover:bg-indigo-700 focus:outline-none focus:text-white focus:bg-indigo-700 transition ease-in-out duration-150"
                     >
                       <svg
                         className="mr-4 h-6 w-6 text-indigo-400 group-hover:text-indigo-300 group-focus:text-indigo-300 transition ease-in-out duration-150"
@@ -189,7 +189,7 @@ const Dashboard = () => {
                         />
                       </svg>
                         Dashboard
-                    </a>
+                      </a>
                   </Link>
                   <Link href="/sites">
                     <a
@@ -233,7 +233,7 @@ const Dashboard = () => {
                   </Link>
                   <Link href="/help">
                     <a
-                      className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-indigo-300 hover:text-white hover:bg-indigo-700 focus:outline-none focus:text-white focus:bg-indigo-700 transition ease-in-out duration-150"
+                      className="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-white bg-indigo-900 focus:outline-none focus:bg-indigo-700 transition ease-in-out duration-150"
                     >
                       <svg
                         className="mr-4 h-6 w-6 text-indigo-400 group-hover:text-indigo-300 group-focus:text-indigo-300 transition ease-in-out duration-150"
@@ -304,14 +304,14 @@ const Dashboard = () => {
               tabIndex="0"
             >
               <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">Help</h1>
               </div>
             </main>
           </div>
         </div>
-      </DashboardDiv>
+      </HelpDiv>
     </>
   )
 }
 
-export default Dashboard
+export default Help

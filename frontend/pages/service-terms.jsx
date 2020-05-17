@@ -2,18 +2,18 @@ import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
 
-const PrivacyPolicyDiv = styled.div``
+const ServiceTermsDiv = styled.div``
 
-const PrivacyPolicy = () => {
+const ServiceTerms = () => {
   return (
     <>
       <Head>
         <title>Login</title>
       </Head>
 
-      <PrivacyPolicyDiv></PrivacyPolicyDiv>
+      <ServiceTermsDiv></ServiceTermsDiv>
     </>
   )
 }
 
-export default PrivacyPolicy
+export default ServiceTerms
