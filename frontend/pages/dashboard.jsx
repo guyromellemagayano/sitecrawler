@@ -1,10 +1,9 @@
-import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
-import Avatar from '../src/components/avatar'
-import DashboardMenu from '../src/components/dashboard-menu'
-import MobileMenuDropdown from '../src/components/mobile-menu-dropdown'
-import Notifications from '../src/components/notifications'
+import DashboardAvatar from '../src/components/dashboard/avatar'
+import DashboardMenu from '../src/components/dashboard/menu'
+import DashboardMobileDropdown from '../src/components/dashboard/mobile-dropdown'
+import DashboardNotifications from '../src/components/dashboard/notifications'
 
 const DashboardDiv = styled.section``
 
@@ -40,7 +39,7 @@ const Dashboard = () => {
                           </svg>
                         </button>
 
-                        <Avatar />
+                        <DashboardAvatar />
                       </div>
                     </div>
                     <div className={`-mr-2 flex md:hidden`}>
@@ -60,8 +59,8 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <Notifications />
-              <MobileMenuDropdown />
+              <DashboardNotifications />
+              <DashboardMobileDropdown />
             </nav>
           </div>
         </div>
