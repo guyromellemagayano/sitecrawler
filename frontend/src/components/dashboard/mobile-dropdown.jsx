@@ -1,13 +1,12 @@
-import React from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
 
-const MobileMenuDropdownDiv = styled.div``
+const DashboardMobileDropdownDiv = styled.div``
 
-const MobileMenuDropdown = () => {
+const DashboardMobileDropdown = () => {
   return (
     <>
-      <MobileMenuDropdownDiv 
+      <DashboardMobileDropdownDiv 
         className="hidden border-b border-gray-700 md:hidden"
       >
         {/*  
@@ -51,9 +50,9 @@ const MobileMenuDropdown = () => {
             </Link>
           </div>
         </div>
-      </MobileMenuDropdownDiv>
+      </DashboardMobileDropdownDiv>
     </>
   )
 }
 
-export default MobileMenuDropdown
+export default DashboardMobileDropdown

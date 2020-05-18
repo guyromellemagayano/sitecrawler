@@ -1,10 +1,9 @@
-import React from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
 
-const MenuDropdownDiv = styled.div``
+const DashboardDropdownDiv = styled.div``
 
-const MenuDropdown = (props) => {
+const DashboardDropdown = (props) => {
   return (
     <>
       {/*  
@@ -17,7 +16,7 @@ const MenuDropdown = (props) => {
           From: "transform opacity-100 scale-100"
           To: "transform opacity-0 scale-95"
       */}
-      <MenuDropdownDiv
+      <DashboardDropdownDiv
         className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg ${props.isDropdownOpen ? 'transition ease-in duration-75 transition ease-out duration-100 transform opacity-100 scale-100' : 'transition ease-out duration-100 transform opacity-0 scale-95'}`}
       >
         <div className="py-1 rounded-md bg-white shadow-xs">
@@ -31,9 +30,9 @@ const MenuDropdown = (props) => {
             <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
           </Link>
         </div>
-      </MenuDropdownDiv>
+      </DashboardDropdownDiv>
     </>
   )
 }
 
-export default MenuDropdown
+export default DashboardDropdown
