@@ -22,6 +22,7 @@ services:
       - ./backend:/app
     links:
       - db
+      - crawler
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)"
@@ -36,6 +37,12 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+  crawler:
+    build:
+      context: ./crawler
+    image: crawl-app-crawler
+    volumes:
+      - ./crawler:/app
   db:
     image: postgres
     environment:
