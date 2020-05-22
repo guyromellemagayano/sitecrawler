@@ -16,11 +16,11 @@ const DashboardMenu = () => {
           <Link href="/sites">
             <a className={`ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700`}>Sites</a>
           </Link>
-          <Link href="/reports">
-            <a className={`ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700`}>Reports</a>
+          <Link href="/audit-logs">
+          <a className={`ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700`}>Audit Logs</a>
           </Link>
-          <Link href="/help">
-            <a className={`ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700`}>Help</a>
+          <Link href="/support">
+            <a className={`ml-4 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700`}>Support</a>
           </Link>
         </div>
       </DashboardMenuDiv>

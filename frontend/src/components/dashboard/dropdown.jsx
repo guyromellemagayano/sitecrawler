@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import Cookies from 'js-cookie'
+import { useUser } from '../../lib/hooks'
 import Link from 'next/link'
 import styled from 'styled-components'
 
@@ -26,9 +29,7 @@ const DashboardDropdown = (props) => {
           <Link href="/settings">
             <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
           </Link>
-          <Link href="/logout">
-            <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
-          </Link>
+          <a href="/api/auth/logout/" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
         </div>
       </DashboardDropdownDiv>
     </>

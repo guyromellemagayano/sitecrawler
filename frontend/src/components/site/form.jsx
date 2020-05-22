@@ -2,12 +2,12 @@ import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import styled from "styled-components"
 
-const LoginSignupFormDiv = styled.div``
+const SiteFormDiv = styled.div``
 
-const LoginSignupForm = ({ isLogin, errorMessage, successMessage, onSubmit }) => {
+const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMessage, onSubmit }) => {
   return (
     <>
-      <LoginSignupFormDiv className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
+      <SiteFormDiv className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
         {errorMessage && (
           <div className={`rounded-md bg-red-100 p-4 mb-8`}>
             <div className={`flex`}>
@@ -67,62 +67,62 @@ const LoginSignupForm = ({ isLogin, errorMessage, successMessage, onSubmit }) =>
             onSubmit={onSubmit}
             noValidate
           >
-            <div className={`mt-1`}>
-              <label
-                htmlFor={`username`}
-                className={`block text-sm font-medium leading-5 text-gray-700`}
-              >
-                Username
-              </label>
-              <div className={`mt-1 rounded-md shadow-sm`}>
-                <input
-                  id={`username`}
-                  type={`text`}
-                  name={`username`}
-                  required
-                  className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
-                />
-              </div>
-            </div>
-
-            <div className={`mt-6`}>
-              <label
-                htmlFor={`email`}
-                className={`block text-sm font-medium leading-5 text-gray-700`}
-              >
-                Email address
-              </label>
-              <div className={`mt-1 rounded-md shadow-sm`}>
-                <input
-                  id={`email`}
-                  type={`email`}
-                  name={`email`}
-                  required
-                  className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
-                />
-              </div>
-            </div>
-
-            <div className={`mt-6`}>
-              <label
-                htmlFor={`password`}
-                className={`block text-sm font-medium leading-5 text-gray-700`}
-              >
-                Password
-              </label>
-              <div className={`mt-1 rounded-md shadow-sm`}>
-                <input
-                  id={`password1`}
-                  type={`password`}
-                  name={`password1`}
-                  required
-                  className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
-                />
-              </div>
-            </div>
-
-            {!isLogin && (
+            {isSignUp && (
               <>
+                <div className={`mt-1`}>
+                  <label
+                    htmlFor={`username`}
+                    className={`block text-sm font-medium leading-5 text-gray-700`}
+                  >
+                    Username
+                  </label>
+                  <div className={`mt-1 rounded-md shadow-sm`}>
+                    <input
+                      id={`username`}
+                      type={`text`}
+                      name={`username`}
+                      required
+                      className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                    />
+                  </div>
+                </div>
+
+                <div className={`mt-6`}>
+                  <label
+                    htmlFor={`email`}
+                    className={`block text-sm font-medium leading-5 text-gray-700`}
+                  >
+                    Email address
+                  </label>
+                  <div className={`mt-1 rounded-md shadow-sm`}>
+                    <input
+                      id={`email`}
+                      type={`email`}
+                      name={`email`}
+                      required
+                      className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                    />
+                  </div>
+                </div>
+
+                <div className={`mt-6`}>
+                  <label
+                    htmlFor={`password`}
+                    className={`block text-sm font-medium leading-5 text-gray-700`}
+                  >
+                    Password
+                  </label>
+                  <div className={`mt-1 rounded-md shadow-sm`}>
+                    <input
+                      id={`password1`}
+                      type={`password`}
+                      name={`password1`}
+                      required
+                      className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                    />
+                  </div>
+                </div>
+
                 <div className={`mt-6`}>
                   <label
                     htmlFor={`password`}
@@ -144,28 +144,86 @@ const LoginSignupForm = ({ isLogin, errorMessage, successMessage, onSubmit }) =>
             )}
 
             {isLogin && (
-              <div className={`mt-6 flex items-center justify-between`}>
-                <div className={`flex items-center`}>
-                  <input
-                    id={`remember_me`}
-                    type={`checkbox`}
-                    className={`form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out`}
-                  />
+              <>
+                <div className={`mt-1`}>
                   <label
-                    htmlFor={`remember_me`}
-                    className={`ml-2 block text-sm leading-5 text-gray-900`}
+                    htmlFor={`username`}
+                    className={`block text-sm font-medium leading-5 text-gray-700`}
                   >
-                    Remember me
-                  </label>
+                    Username
+                </label>
+                  <div className={`mt-1 rounded-md shadow-sm`}>
+                    <input
+                      id={`username`}
+                      type={`text`}
+                      name={`username`}
+                      required
+                      className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                    />
+                  </div>
                 </div>
 
-                <div className={`text-sm leading-5`}>
-                  <a
-                    href={`/reset-password`}
-                    className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
+                <div className={`mt-6`}>
+                  <label
+                    htmlFor={`password`}
+                    className={`block text-sm font-medium leading-5 text-gray-700`}
                   >
-                    Forgot your password?
-                  </a>
+                    Password
+                  </label>
+                  <div className={`mt-1 rounded-md shadow-sm`}>
+                    <input
+                      id={`password1`}
+                      type={`password`}
+                      name={`password1`}
+                      required
+                      className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                    />
+                  </div>
+                </div>
+
+                <div className={`mt-6 flex items-center justify-between`}>
+                  <div className={`flex items-center`}>
+                    <input
+                      id={`remember_me`}
+                      type={`checkbox`}
+                      className={`form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out`}
+                    />
+                    <label
+                      htmlFor={`remember_me`}
+                      className={`ml-2 block text-sm leading-5 text-gray-900`}
+                    >
+                      Remember me
+                    </label>
+                  </div>
+
+                  <div className={`text-sm leading-5`}>
+                    <a
+                      href={`/reset-password`}
+                      className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
+                    >
+                      Forgot your password?
+                    </a>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {isResetPassword && (
+              <div className={`${isResetPassword ? "mt-2" : "mt-6"}`}>
+                <label
+                  htmlFor={`email`}
+                  className={`block text-sm font-medium leading-5 text-gray-700`}
+                >
+                  Email address
+              </label>
+                <div className={`mt-1 rounded-md shadow-sm`}>
+                  <input
+                    id={`email`}
+                    type={`email`}
+                    name={`email`}
+                    required
+                    className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                  />
                 </div>
               </div>
             )}
@@ -179,19 +237,26 @@ const LoginSignupForm = ({ isLogin, errorMessage, successMessage, onSubmit }) =>
                   >
                     Sign In
                   </button>
+                ) : isSignUp ? (
+                  <button
+                    type={`submit`}
+                    className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
+                  >
+                    Create Account
+                  </button>
                 ) : (
-                    <button
-                      type={`submit`}
-                      className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
-                    >
-                      Create Account
-                    </button>
-                  )}
+                  <button
+                    type={`submit`}
+                    className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
+                  >
+                    Reset Password
+                  </button>
+                )}
               </span>
             </div>
           </form>
 
-          {!isLogin && (
+          {isSignUp && (
             <div className="mt-6">
               <div className="relative">
                 <div className="relative flex justify-center wrap flex-row text-sm leading-5">
@@ -203,7 +268,7 @@ const LoginSignupForm = ({ isLogin, errorMessage, successMessage, onSubmit }) =>
                     >
                       Terms of Service
                     </a>
-                  &nbsp;and&nbsp;
+                    &nbsp;and&nbsp;
                     <a
                       href="/privacy-policy"
                       className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
@@ -286,7 +351,7 @@ const LoginSignupForm = ({ isLogin, errorMessage, successMessage, onSubmit }) =>
 
         <div className="relative flex justify-center wrap flex-row text-sm leading-5">
           <span className="px-2 py-5 text-gray-500">
-            {isLogin ? (
+            {isLogin || isResetPassword ? (
               <>
                 Don't have an account? &nbsp;
                 <Link href="/registration">
@@ -307,9 +372,9 @@ const LoginSignupForm = ({ isLogin, errorMessage, successMessage, onSubmit }) =>
               )}
           </span>
         </div>
-      </LoginSignupFormDiv>
+      </SiteFormDiv>
     </>
   )
 }
 
-export default LoginSignupForm
+export default SiteForm

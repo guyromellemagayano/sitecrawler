@@ -1,13 +1,14 @@
+import { useState } from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
 
 const DashboardMobileDropdownDiv = styled.div``
 
-const DashboardMobileDropdown = () => {
+const DashboardMobileDropdown = (props) => {
   return (
     <>
-      <DashboardMobileDropdownDiv 
-        className="hidden border-b border-gray-700 md:hidden"
+      <DashboardMobileDropdownDiv
+        className={`${props.isMobileMenuOpen ? "block" : "hidden" } border-b border-gray-700 md:hidden`}
       >
         {/*  
           Mobile menu, toggle classes based on menu state.
@@ -20,9 +21,6 @@ const DashboardMobileDropdown = () => {
           </Link>
           <Link href="/sites">
             <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Sites</a>
-          </Link>
-          <Link href="/reports">
-            <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Reports</a>
           </Link>
           <Link href="/help">
             <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Help</a>
@@ -45,9 +43,7 @@ const DashboardMobileDropdown = () => {
             <Link href="/settings">
               <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Settings</a>
             </Link>
-            <Link href="/logout">
-              <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Sign out</a>              
-            </Link>
+            <a href="/api/auth/logout/" className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" role="menuitem">Sign out</a>
           </div>
         </div>
       </DashboardMobileDropdownDiv>

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const LogoLabelDiv = styled.div``
 
-const LogoLabel = ({ isLogin }) => {
+const LogoLabel = ({ isLogin, isSignUp, isResetPassword }) => {
   return (
     <LogoLabelDiv className={`sm:mx-auto sm:w-full sm:max-w-md`}>
       <img
@@ -11,7 +11,7 @@ const LogoLabel = ({ isLogin }) => {
         alt='Workflow'
       />
       <h2 className={`mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900`}>
-        {isLogin ? 'Sign in to your account' : 'Sign up for a new account'}
+        {isLogin ? 'Sign in to your account' : isSignUp ? 'Sign up for a new account' : 'Reset Password'}
       </h2>
     </LogoLabelDiv>
   )
