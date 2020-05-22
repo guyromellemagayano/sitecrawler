@@ -43,6 +43,8 @@ services:
     image: crawl-app-crawler
     volumes:
       - ./crawler:/app
+    links:
+      - db
   db:
     image: postgres
     environment:

@@ -22,6 +22,6 @@ class SiteViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.Lis
     def verify(self, request, pk=None):
         site = self.get_object()
         if not site.verified:
-            site.verified = verify.url(site.url)
-            site.save()
+            verify.site(site)
+            site.refresh_from_db()
         return Response(self.get_serializer(instance=site).data)

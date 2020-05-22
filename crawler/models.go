@@ -1,6 +1,6 @@
 //nolint
 //lint:file-ignore U1000 ignore unused code, it's generated
-package model
+package main
 
 import (
 	"time"
@@ -64,7 +64,7 @@ var Columns = struct {
 		Site string
 	}
 	CrawlSite struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError string
 
 		User string
 	}
@@ -252,17 +252,18 @@ var Columns = struct {
 		Site: "Site",
 	},
 	CrawlSite: struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError string
 
 		User string
 	}{
-		ID:             "id",
-		CreatedAt:      "created_at",
-		UpdatedAt:      "updated_at",
-		Url:            "url",
-		VerificationID: "verification_id",
-		Verified:       "verified",
-		UserID:         "user_id",
+		ID:              "id",
+		CreatedAt:       "created_at",
+		UpdatedAt:       "updated_at",
+		Url:             "url",
+		VerificationID:  "verification_id",
+		Verified:        "verified",
+		UserID:          "user_id",
+		LastVerifyError: "last_verify_error",
 
 		User: "User",
 	},
@@ -710,13 +711,14 @@ type CrawlScan struct {
 type CrawlSite struct {
 	tableName struct{} `sql:"crawl_site,alias:t" pg:",discard_unknown_columns"`
 
-	ID             int       `sql:"id,pk"`
-	CreatedAt      time.Time `sql:"created_at,notnull"`
-	UpdatedAt      time.Time `sql:"updated_at,notnull"`
-	Url            string    `sql:"url,notnull"`
-	VerificationID string    `sql:"verification_id,notnull"`
-	Verified       bool      `sql:"verified,notnull"`
-	UserID         int       `sql:"user_id,notnull"`
+	ID              int       `sql:"id,pk"`
+	CreatedAt       time.Time `sql:"created_at,notnull"`
+	UpdatedAt       time.Time `sql:"updated_at,notnull"`
+	Url             string    `sql:"url,notnull"`
+	VerificationID  string    `sql:"verification_id,notnull"`
+	Verified        bool      `sql:"verified,notnull"`
+	UserID          int       `sql:"user_id,notnull"`
+	LastVerifyError *string   `sql:"last_verify_error"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }
