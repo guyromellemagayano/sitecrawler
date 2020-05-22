@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import Cookies from 'js-cookie'
-import { useUser } from '../../lib/hooks'
 import Link from 'next/link'
 import styled from 'styled-components'
 

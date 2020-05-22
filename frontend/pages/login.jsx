@@ -1,7 +1,6 @@
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Cookies from 'js-cookie'
 import Router from 'next/router'
-import { useUser } from '../src/lib/hooks'
 import Head from 'next/head'
 import styled from 'styled-components'
 import LogoLabel from '../src/components/site/logo-label'
@@ -10,12 +9,10 @@ import SiteForm from '../src/components/site/form'
 const LoginDiv = styled.div``
 
 const Login = () => {
-  useUser({ redirectTo: '/', redirectIfFound: true })
-
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
-  async function handleSubmit(e) {
+  const handleSubmit = useCallback((e) => {
     event.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -27,7 +24,7 @@ const Login = () => {
     }
 
     try {
-      const res = await fetch('/api/auth/login/', {
+      fetch('/api/auth/login/', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -35,18 +32,20 @@ const Login = () => {
           'X-CSRFToken': Cookies.get('csrftoken'),
         },
         body: JSON.stringify(body),
+      }).then((res) => {
+        if (res.ok) {
+          Router.push('/dashboard')
+        }
       })
-
-      if (Math.floor(res.status/200) === 1) {
-        Router.push('/dashboard')
-      } else {
-        throw new Error(await res.text())
-      }
-    } catch (error) {
+    } catch(error) {
       // console.error('An unexpected error occurred', error)
       setErrorMsg(error.message)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    Router.prefetch('/dashboard')
+  }, [])
 
   return (
     <>
