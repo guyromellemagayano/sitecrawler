@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from crawl.models import Site
 from crawl.serializers import SiteSerializer
+from crawl.services import verify
 
 
 class SiteViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -20,4 +21,7 @@ class SiteViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.Lis
     @action(detail=True, methods=["post"])
     def verify(self, request, pk=None):
         site = self.get_object()
+        if not site.verified:
+            verify.site(site)
+            site.refresh_from_db()
         return Response(self.get_serializer(instance=site).data)

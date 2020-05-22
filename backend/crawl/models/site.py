@@ -10,3 +10,4 @@ class Site(models.Model):
     url = models.CharField(max_length=2048, null=False)
     verification_id = models.CharField(max_length=36, null=False)
     verified = models.BooleanField(null=False, default=False)
+    last_verify_error = models.CharField(max_length=255, null=True)
