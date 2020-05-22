@@ -2,19 +2,19 @@ import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
 
-const HelpDiv = styled.section``
+const SupportDiv = styled.section``
 
-const Help = () => {
+const Support = () => {
   return (
     <>
       <Head>
-        <title>Help</title>
+        <title>Support</title>
       </Head>
 
-      <HelpDiv>
-      </HelpDiv>
+      <SupportDiv>
+      </SupportDiv>
     </>
   )
 }
 
-export default Help
+export default Support

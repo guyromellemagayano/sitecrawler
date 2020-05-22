@@ -62,10 +62,10 @@ const Registration = () => {
 
       <RegistrationDiv className={`min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8`}>
         <LogoLabel
-          isLogin={false}
+          isSignUp
         />
         <SiteForm
-          isLogin={false}
+          isSignUp
           errorMessage={errorMsg}
           successMessage={successMsg}
           onSubmit={handleSubmit}

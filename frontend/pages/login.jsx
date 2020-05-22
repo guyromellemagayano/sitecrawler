@@ -43,7 +43,7 @@ const Login = () => {
         throw new Error(await res.text())
       }
     } catch (error) {
-      console.error('An unexpected error occurred', error)
+      // console.error('An unexpected error occurred', error)
       setErrorMsg(error.message)
     }
   }
