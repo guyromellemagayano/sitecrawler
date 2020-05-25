@@ -34,7 +34,7 @@ const Login = () => {
         body: JSON.stringify(body),
       }).then((res) => {
         if (res.ok) {
-          Router.push('/dashboard')
+          Router.push('/dashboard/')
         }
       })
     } catch(error) {
@@ -44,7 +44,7 @@ const Login = () => {
   }, [])
 
   useEffect(() => {
-    Router.prefetch('/dashboard')
+    Router.prefetch('/dashboard/')
   }, [])
 
   return (

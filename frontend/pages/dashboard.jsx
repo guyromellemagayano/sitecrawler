@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
 import DashboardMobilePrimaryMenu from '../src/components/dashboard/mobile-primary-menu'
@@ -7,8 +6,6 @@ import DashboardPrimaryMenu from '../src/components/dashboard/primary-menu'
 const DashboardDiv = styled.section``
 
 const Dashboard = () => {
-  const [openMenu, setOpenMenu] = useState(false)
-
   return (
     <>
       <Head>
