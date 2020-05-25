@@ -5,7 +5,7 @@
 		"cta": [
 			{
 				"label": "Go to Login Page &rarr;",
-				"url": "/login"
+				"url": "/login/"
 			}
 		]
 	}
