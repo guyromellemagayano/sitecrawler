@@ -1,3 +1,4 @@
+import React from 'react'
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import styled from "styled-components"
@@ -5,8 +6,10 @@ import styled from "styled-components"
 const SiteFormDiv = styled.div``
 
 const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMessage, onSubmit }) => {
+  const Fragment = React.Fragment
+
   return (
-    <>
+    <Fragment>
       <SiteFormDiv className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
         {errorMessage && (
           <div className={`rounded-md bg-red-100 p-4 mb-8`}>
@@ -68,7 +71,7 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
             noValidate
           >
             {isSignUp && (
-              <>
+              <Fragment>
                 <div className={`mt-1`}>
                   <label
                     htmlFor={`username`}
@@ -140,11 +143,11 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
                     />
                   </div>
                 </div>
-              </>
+              </Fragment>
             )}
 
             {isLogin && (
-              <>
+              <Fragment>
                 <div className={`mt-1`}>
                   <label
                     htmlFor={`username`}
@@ -197,15 +200,16 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
                   </div>
 
                   <div className={`text-sm leading-5`}>
-                    <a
-                      href={`/reset-password`}
-                      className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
-                    >
-                      Forgot your password?
-                    </a>
+                    <Link href="/reset-password/">
+                      <a
+                        className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
+                      >
+                        Forgot your password?
+                      </a>
+                    </Link>
                   </div>
                 </div>
-              </>
+              </Fragment>
             )}
 
             {isResetPassword && (
@@ -351,29 +355,30 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
 
         <div className="relative flex justify-center wrap flex-row text-sm leading-5">
           <span className="px-2 py-5 text-gray-500">
-            {isLogin || isResetPassword ? (
-              <>
+            {isLogin ? (
+              <Fragment>
                 Don't have an account? &nbsp;
-                <Link href="/registration">
+                <Link href="/registration/">
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}>
                     Create Account
                   </a>
                 </Link>
-              </>
+              </Fragment>
             ) : (
-                <>
+                <Fragment>
                   Already have an account? &nbsp;
-                  <Link href="/login">
+                  <Link href="/login/">
                     <a className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}>
                       Log In
                     </a>
                   </Link>
-                </>
-              )}
+                </Fragment>
+              )
+            }
           </span>
         </div>
       </SiteFormDiv>
-    </>
+    </Fragment>
   )
 }
 

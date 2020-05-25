@@ -1,10 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
+import DataTableHeadsContent from '../../config/data-table-heads.json'
 
 const DataTableDiv = styled.div``
 
 const DataTable = () => {
+  const Fragment = React.Fragment
+
 	return (
 		<DataTableDiv className={`flex flex-col`}>
 			<div
@@ -16,11 +19,19 @@ const DataTable = () => {
 					<table className={`min-w-full`}>
 						<thead>
 							<tr>
-								<th
-									className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
-								>
-									Site Details
-								</th>
+                {
+                  DataTableHeadsContent.map((val, key) => {
+                    return (
+                      <Fragment key={key}>
+                        <th
+                          className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
+                        >
+                          {val.label}
+                        </th>
+                      </Fragment>
+                    );
+                  })
+                }
 								<th
 									className={`px-6 py-3 border-b border-gray-200 bg-white`}
 								></th>
