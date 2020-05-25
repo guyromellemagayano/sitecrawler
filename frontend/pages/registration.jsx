@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import Cookies from 'js-cookie'
-import { useUser } from '../src/lib/hooks'
 import Head from 'next/head'
 import styled from 'styled-components'
 import LogoLabel from '../src/components/site/logo-label'
@@ -9,8 +8,6 @@ import SiteForm from "../src/components/site/form"
 const RegistrationDiv = styled.div``
 
 const Registration = () => {
-  useUser({ redirectTo: '/', redirectIfFound: true })
-
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
@@ -28,7 +25,7 @@ const Registration = () => {
     }
 
     if (body.password1 !== body.password2) {
-      setErrorMsg(`The passwords don't match`)
+      setErrorMsg("The passwords don't match")
       return
     }
 
@@ -44,7 +41,7 @@ const Registration = () => {
       })
 
       if (Math.floor(res.status/200) === 1) {
-        setSuccessMsg(`Thanks for signing up. Please check your email for confirmation!`)
+        setSuccessMsg("Thanks for signing up. Please check your email for confirmation!")
       } else {
         throw new Error(await res.text())
       }

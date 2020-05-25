@@ -34,7 +34,8 @@ const Login = () => {
         body: JSON.stringify(body),
       }).then((res) => {
         if (res.ok) {
-          Router.push('/dashboard/')
+          setSuccessMsg('Login Success')
+          Router.push('/dashboard')
         }
       })
     } catch(error) {
