@@ -1,0 +1,17 @@
+[
+	{
+		"label": "Site Details"
+	},
+	{
+		"label": "Created On"
+	},
+	{
+		"label": "Last Crawled"
+	},
+	{
+		"label": "Site Status"
+	},
+	{
+		"label": "Issues Found"
+	}
+]
