@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styled from 'styled-components'
-import DashboardMobilePrimaryMenu from '../src/components/dashboard/mobile-primary-menu'
-import DashboardPrimaryMenu from '../src/components/dashboard/primary-menu'
+import MobilePrimaryMenu from '../components/sidebar/mobile-primary-menu'
+import PrimaryMenu from '../components/sidebar/primary-menu'
 
 const DashboardDiv = styled.section``
 
@@ -52,7 +52,7 @@ const Dashboard = () => {
                       alt={`Workflow`}
                     />
                   </div>
-                  <DashboardMobilePrimaryMenu />
+                  <MobilePrimaryMenu />
                 </div>
                 <div
                   className={`flex-shrink-0 flex border-t border-gray-200 p-4`}
@@ -105,7 +105,7 @@ const Dashboard = () => {
                     alt={`Workflow`}
                   />
                 </div>
-                <DashboardPrimaryMenu />
+                <PrimaryMenu />
               </div>
               <div
                 className={`flex-shrink-0 flex border-t border-gray-200 p-4`}

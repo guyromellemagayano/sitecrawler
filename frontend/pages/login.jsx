@@ -3,8 +3,8 @@ import Cookies from 'js-cookie'
 import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
-import LogoLabel from '../src/components/site/logo-label'
-import SiteForm from '../src/components/site/form'
+import LogoLabel from '../components/form/logo-label'
+import SiteForm from '../components/form/form'
 
 const LoginDiv = styled.div``
 
@@ -42,7 +42,7 @@ const Login = () => {
       // console.error('An unexpected error occurred', error)
       setErrorMsg(error.message)
     }
-  }, [])
+}, [])
 
   useEffect(() => {
     Router.prefetch('/dashboard/')

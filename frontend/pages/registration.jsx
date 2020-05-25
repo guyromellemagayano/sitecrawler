@@ -2,8 +2,8 @@ import { useState } from 'react'
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'
-import LogoLabel from '../src/components/site/logo-label'
-import SiteForm from "../src/components/site/form"
+import LogoLabel from '../components/form/logo-label'
+import SiteForm from "../components/form/form"
 
 const RegistrationDiv = styled.div``
 

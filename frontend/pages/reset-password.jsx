@@ -1,16 +1,13 @@
 import { useState } from 'react'
 import Cookies from 'js-cookie'
-import { useUser } from '../src/lib/hooks'
 import Head from 'next/head'
 import styled from 'styled-components'
-import LogoLabel from '../src/components/site/logo-label'
-import SiteForm from "../src/components/site/form"
+import LogoLabel from '../components/site/logo-label'
+import SiteForm from "../components/site/form"
 
 const ResetPasswordDiv = styled.div``
 
 const ResetPassword = () => {
-  useUser({ redirectTo: '/', redirectIfFound: true })
-
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 

@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
 import ReactHtmlParser from 'react-html-parser'
-import AccountExistsContent from '../config/account-exists.json'
+import AccountExistContent from '../config/account-exist.json'
 
 const AccountExistDiv = styled.div``
 
@@ -12,7 +12,7 @@ const AccountExist = () => {
 	return (
 		<AccountExistDiv className={`sm:mx-auto sm:w-full sm:max-w-md`}>
 			{
-				AccountExistsContent.map((val, key) => {
+				AccountExistContent.map((val, key) => {
 					return (
 						<Fragment key={key}>
 							<div className={`min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8`}>
