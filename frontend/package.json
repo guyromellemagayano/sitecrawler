@@ -28,6 +28,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-html-parser": "^2.0.2",
     "react-transition-group": "^4.4.1",
     "styled-components": "^5.1.0",
     "styled-jsx-plugin-postcss": "^2.0.1",
