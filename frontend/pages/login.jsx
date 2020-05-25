@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import Cookies from 'js-cookie'
 import Router from 'next/router'
 import Head from 'next/head'
@@ -9,6 +9,8 @@ import SiteForm from '../components/form/form'
 const LoginDiv = styled.div``
 
 const Login = () => {
+  const Fragment = React.Fragment
+
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
@@ -35,7 +37,7 @@ const Login = () => {
       }).then((res) => {
         if (res.ok) {
           setSuccessMsg('Login Success')
-          Router.push('/dashboard')
+          Router.push('/dashboard/')
         }
       })
     } catch(error) {
@@ -49,7 +51,7 @@ const Login = () => {
   }, [])
 
   return (
-    <>
+    <Fragment>
       <Head>
         <title>Login</title>
       </Head>
@@ -65,7 +67,7 @@ const Login = () => {
           onSubmit={handleSubmit}
         />
       </LoginDiv>
-    </>
+    </Fragment>
   )
 }
 

@@ -1,13 +1,15 @@
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'
-import LogoLabel from '../components/site/logo-label'
-import SiteForm from "../components/site/form"
+import LogoLabel from '../components/form/logo-label'
+import SiteForm from "../components/form/form"
 
 const ResetPasswordDiv = styled.div``
 
 const ResetPassword = () => {
+  const Fragment = React.Fragment
+
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
@@ -44,7 +46,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <>
+    <Fragment>
       <Head>
         <title>Reset Password</title>
       </Head>
@@ -60,7 +62,7 @@ const ResetPassword = () => {
           onSubmit={handleSubmit}
         />
       </ResetPasswordDiv>
-    </>
+    </Fragment>
   )
 }
 export default ResetPassword
