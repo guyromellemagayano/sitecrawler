@@ -57,7 +57,7 @@ const DataTable = () => {
 												Website Name
 											</div>
 											<div className={`text-sm leading-5 text-gray-500`}>
-												Website Owner
+												https://yourdomain.com
 											</div>
 										</div>
 									</div>
@@ -136,7 +136,7 @@ const DataTable = () => {
 												Website Name
 											</div>
 											<div className={`text-sm leading-5 text-gray-500`}>
-												Website Owner
+												https://yourdomain.com
 											</div>
 										</div>
 									</div>
