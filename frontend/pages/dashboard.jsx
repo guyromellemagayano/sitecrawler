@@ -1,16 +1,21 @@
-import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
+import useUser from '../lib/use-user'
+import Layout from '../components/layout'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
 import Sidebar from '../components/sidebar/main-sidebar'
 
 const DashboardDiv = styled.section``
 
 const Dashboard = () => {
-  const Fragment = React.Fragment
+  const { user } = useUser({ redirectTo: '/login' })
+
+  if (!user || user.isLoggedIn === false) {
+    return <Layout>Loading...</Layout>
+  }
 
   return (
-    <Fragment>
+    <Layout>
       <Head>
         <title>Dashboard</title>
       </Head>
@@ -57,7 +62,7 @@ const Dashboard = () => {
           </main>
         </div>
       </DashboardDiv>
-    </Fragment>
+    </Layout>
   );
 }
 
