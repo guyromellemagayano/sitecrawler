@@ -6,5 +6,5 @@ module.exports = {
 
     return config
   },
-  // exportTrailingSlash: true,
+  exportTrailingSlash: true,
 }
