@@ -7,16 +7,15 @@ const fetcher = async(...args) => {
     const data = await response.json()
 
     if (response.ok) {
-      console.log(data)
       return data
     }
 
-    const error = new Error(response.statusText)
+    // const error = new Error(response.statusText)
 
-    error.response = response
-    error.data = data
+    // error.response = response
+    // error.data = data
 
-    throw error
+    // throw error
   } catch (error) {
     if (!error.data) {
       error.data = { message: error.message }
