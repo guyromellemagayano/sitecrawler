@@ -9,11 +9,11 @@ const useUser = ({
   const { data: user, mutate: mutateUser } = useSWR('/api/auth/user/')
 
   useEffect(() => {
-    if (!redirectTo || !user) return
+    if (!redirectTo) return
 
     if (
-      (redirectTo && !redirectIfFound && !user?.isLoggedIn) || 
-      (redirectIfFound && user?.isLoggedIn)
+      (redirectTo && !redirectIfFound && !user) ||
+      (redirectIfFound && user)
     ) {
       Router.push(redirectTo)
     }
