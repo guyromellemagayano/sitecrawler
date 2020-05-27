@@ -66,10 +66,7 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
         )}
 
         <div className={`bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10`}>
-          <form
-            onSubmit={onSubmit}
-            noValidate
-          >
+          <form onSubmit={onSubmit} noValidate>
             {isSignUp && (
               <Fragment>
                 <div className={`mt-1`}>
@@ -154,7 +151,7 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
                     className={`block text-sm font-medium leading-5 text-gray-700`}
                   >
                     Username
-                </label>
+                  </label>
                   <div className={`mt-1 rounded-md shadow-sm`}>
                     <input
                       id={`username`}
@@ -200,7 +197,7 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
                   </div>
 
                   <div className={`text-sm leading-5`}>
-                    <Link href="/reset-password/">
+                    <Link href="/reset-password">
                       <a
                         className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
                       >
@@ -219,7 +216,7 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
                   className={`block text-sm font-medium leading-5 text-gray-700`}
                 >
                   Email address
-              </label>
+                </label>
                 <div className={`mt-1 rounded-md shadow-sm`}>
                   <input
                     id={`email`}
@@ -266,19 +263,17 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
                 <div className="relative flex justify-center wrap flex-row text-sm leading-5">
                   <span className="px-2 bg-white text-gray-500 text-center">
                     By signing up, you agree to the&nbsp;
-                    <a
-                      href="/service-terms"
-                      className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
-                    >
-                      Terms of Service
-                    </a>
+                    <Link href="/service-terms">
+                      <a className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
+                        Terms of Service
+                      </a>
+                    </Link>
                     &nbsp;and&nbsp;
-                    <a
-                      href="/privacy-policy"
-                      className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
-                    >
-                      Privacy Policy
-                    </a>
+                    <Link href="/privacy-policy">
+                      <a className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
+                        Privacy Policy
+                      </a>
+                    </Link>
                   </span>
                 </div>
               </div>
@@ -291,10 +286,12 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
                 <div className={`absolute inset-0 flex items-center`}>
                   <div className={`w-full border-t border-gray-300`}></div>
                 </div>
-                <div className={`relative flex justify-center text-sm leading-5`}>
+                <div
+                  className={`relative flex justify-center text-sm leading-5`}
+                >
                   <span className={`px-2 bg-white text-gray-500`}>
                     Or continue with
-              </span>
+                  </span>
                 </div>
               </div>
 
@@ -317,7 +314,7 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
 
                 <div>
                   <span className={`w-full inline-flex rounded-md shadow-sm`}>
-                    <Link href={`#`}>
+                    <Link href="#">
                       <a
                         type={`button`}
                         className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out`}
@@ -334,7 +331,7 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
 
                 <div>
                   <span className={`w-full inline-flex rounded-md shadow-sm`}>
-                    <Link href={`#`}>
+                    <Link href="#">
                       <a
                         type={`button`}
                         className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out`}
@@ -358,23 +355,26 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
             {isLogin ? (
               <Fragment>
                 Don't have an account? &nbsp;
-                <Link href="/registration/">
-                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}>
+                <Link href="/registration">
+                  <a
+                    className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
+                  >
                     Create Account
                   </a>
                 </Link>
               </Fragment>
             ) : (
-                <Fragment>
-                  Already have an account? &nbsp;
-                  <Link href="/login/">
-                    <a className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}>
-                      Log In
-                    </a>
-                  </Link>
-                </Fragment>
-              )
-            }
+              <Fragment>
+                Already have an account? &nbsp;
+                <Link href="/login">
+                  <a
+                    className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
+                  >
+                    Log In
+                  </a>
+                </Link>
+              </Fragment>
+            )}
           </span>
         </div>
       </SiteFormDiv>
