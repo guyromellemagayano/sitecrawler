@@ -2,6 +2,7 @@ import React from 'react'
 import Link from "next/link"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import styled from "styled-components"
+import PropTypes from 'prop-types'
 
 const SiteFormDiv = styled.div``
 
@@ -65,7 +66,7 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
       )}
 
       <div className={`bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10`}>
-        <form onSubmit={onSubmit} noValidate>
+        <form onSubmit={onSubmit}>
           {isSignUp && (
             <Fragment>
               <div className={`mt-1`}>
@@ -381,3 +382,9 @@ const SiteForm = ({ isLogin, isSignUp, isResetPassword, errorMessage, successMes
 }
 
 export default SiteForm
+
+SiteForm.propTypes = {
+  errorMessage: PropTypes.string,
+  successMessage: PropTypes.string,
+  onSubmit: PropTypes.func,
+}
