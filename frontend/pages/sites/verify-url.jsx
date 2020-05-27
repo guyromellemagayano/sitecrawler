@@ -2,25 +2,31 @@ import React from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import styled from 'styled-components'
+import ReactHtmlParser from 'react-html-parser'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import Sidebar from '../../components/sidebar/main-sidebar'
 
-const SitesCrawlSiteDiv = styled.section`
+const SitesVerifyUrlDiv = styled.section`
+  ol {
+    list-style-type: decimal;
+    margin-left: 1rem;
+  }
+
   .wizard-indicator {
     height: 0.25rem;
   }
 `
 
-const SitesCrawlSite = () => {
+const SitesVerifyUrl = () => {
   const Fragment = React.Fragment
 
   return (
     <Fragment>
       <Head>
-        <title>Information</title>
+        <title>Verify URL</title>
       </Head>
 
-      <SitesCrawlSiteDiv
+      <SitesVerifyUrlDiv
         className={`h-screen flex overflow-hidden bg-gray-100`}
       >
         {/* Mobile Sidebar */}
@@ -83,21 +89,21 @@ const SitesCrawlSite = () => {
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
+                      className={`max-w-2xl mt-4 text-sm leading-2 text-black-600`}
                     >
                       2. Verify the added URL
                     </p>
                   </div>
-                  <div className={`wizard-indicator bg-green-500`}>
+                  <div className={`wizard-indicator bg-gray-100`}>
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
                       3. Fill in site information
                     </p>
                   </div>
-                  <div className={`wizard-indicator bg-green-500`}>
+                  <div className={`wizard-indicator bg-gray-100`}>
                     <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-black-600`}
+                      className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
                       4. Crawl the site
                     </p>
@@ -110,39 +116,86 @@ const SitesCrawlSite = () => {
                       <h4
                         className={`text-lg leading-7 font-medium text-gray-900`}
                       >
-                        Crawl the site
+                        Verify the added URL
                       </h4>
                       <p
-                        className={`mt-1 text-sm leading-5 text-gray-500 max-w-full`}
+                        className={`max-w-full text-sm mb-5 leading-5 text-gray-500`}
                       >
-                        Capitalize on low hanging fruit to identify a ballpark
-                        value added activity to beta test.
+                        At the end of the day, going forward, a new normal that
+                        has evolved from generation X is on the runway heading
+                        towards a streamlined cloud solution.
                       </p>
+                      <p
+                        className={`max-w-full text-md leading-6 text-gray-700 mb-3`}
+                      >
+                        Instructions:
+                      </p>
+                      <ol>
+                        <li className={`text-sm leading-6 text-gray-500`}>
+                          Sign in to your website.
+                        </li>
+                        <li className={`text-sm leading-6 text-gray-500`}>
+                          Copy the meta tag below and add it within your
+                          website's HEAD tag <br />
+                          <div>
+                            <div className={`my-3 flex`}>
+                              <div
+                                className={`rounded-md shadow-sm max-w-sm relative flex-grow focus-within:z-10`}
+                              >
+                                <input
+                                  id="email"
+                                  className={`form-input block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
+                                  placeholder={`John Doe`}
+                                  value={`<meta name="epic-crawl-id" content="3551bc98-069a-4a2b-925a-08dae7f71044">`}
+                                />
+                              </div>
+                              <button
+                                className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-50 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
+                              >
+                                <span>Copy</span>
+                              </button>
+                            </div>
+                          </div>
+                        </li>
+                        <li className={`text-sm leading-6 text-gray-500`}>
+                          Press <strong>Verify Site</strong> button below
+                        </li>
+                      </ol>
                     </div>
                   </div>
 
                   <div className={`mt-5 mx-auto sm:flex sm:justify-between`}>
-                    <button
-                      type={`button`}
-                      className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
-                    >
-                      Start Site Crawl
-                    </button>
                     <div>
+                      <button
+                        type={`button`}
+                        className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                      >
+                        Verify Site
+                      </button>
                       <Link href="/sites/information">
+                        <a
+                          type={`button`}
+                          className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150`}
+                        >
+                          Verify Later
+                        </a>
+                      </Link>
+                    </div>
+                    <div>
+                      <Link href="/sites/start">
                         <a
                           type={`button`}
                           className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-600 hover:bg-gray-500 focus:outline-none focus:shadow-outline-gray focus:border-gray-700 active:bg-gray-700`}
                         >
-                          Go back to Step 3
+                          Go back to Step 1
                         </a>
                       </Link>
-                      <Link href="/sites/overview">
+                      <Link href="/sites/information">
                         <a
                           type={`button`}
                           className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
                         >
-                          Go to Site Dashboard
+                          Proceed to Step 3
                         </a>
                       </Link>
                     </div>
@@ -152,9 +205,9 @@ const SitesCrawlSite = () => {
             </div>
           </main>
         </div>
-      </SitesCrawlSiteDiv>
+      </SitesVerifyUrlDiv>
     </Fragment>
   );
 }
 
-export default SitesCrawlSite
+export default SitesVerifyUrl
