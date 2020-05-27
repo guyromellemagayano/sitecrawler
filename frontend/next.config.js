@@ -1,3 +1,10 @@
 module.exports = {
-  exportTrailingSlash: true,
+  webpack: config => {
+    config.node = {
+      fs: 'empty'
+    }
+
+    return config
+  },
+  // exportTrailingSlash: true,
 }
