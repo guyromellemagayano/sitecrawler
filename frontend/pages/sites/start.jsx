@@ -1,7 +1,7 @@
-import React from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import styled from 'styled-components'
+import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import Sidebar from '../../components/sidebar/main-sidebar'
 
@@ -12,10 +12,8 @@ const SitesStartDiv = styled.section`
 `
 
 const SitesStart = () => {
-  const Fragment = React.Fragment
-
   return (
-    <Fragment>
+    <Layout>
       <Head>
         <title>Start</title>
       </Head>
@@ -154,7 +152,7 @@ const SitesStart = () => {
           </main>
         </div>
       </SitesStartDiv>
-    </Fragment>
+    </Layout>
   );
 }
 

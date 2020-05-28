@@ -10,7 +10,7 @@ const DashboardDiv = styled.section``
 const Dashboard = () => {
   const { user } = useUser({ redirectTo: '/login' })
 
-  if (!user || user.isLoggedIn === false) {
+  if (!user) {
     return <Layout>Loading...</Layout>
   }
 

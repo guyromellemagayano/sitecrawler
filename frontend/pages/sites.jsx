@@ -1,6 +1,8 @@
 import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
+import useUser from '../lib/use-user'
+import Layout from '../components/layout'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
 import Sidebar from '../components/sidebar/main-sidebar'
 import AddSite from '../components/sites/add-site'
@@ -10,10 +12,8 @@ import Pagination from '../components/sites/pagination'
 const SitesDiv = styled.section``
 
 const Sites = () => {
-  const Fragment = React.Fragment
-
   return (
-    <Fragment>
+    <Layout>
       <Head>
         <title>Sites</title>
       </Head>
@@ -73,7 +73,7 @@ const Sites = () => {
           </main>
         </div>
       </SitesDiv>
-    </Fragment>
+    </Layout>
   );
 }
 
