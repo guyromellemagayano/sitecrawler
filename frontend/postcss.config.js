@@ -1,5 +1,5 @@
 // postcss.config.js
-const purgecss = require('@fullhuman/postcss-purgecss')({
+const purgecssconfig = {
 
   // Specify the paths to all of the template files in your project
   content: [
@@ -10,16 +10,16 @@ const purgecss = require('@fullhuman/postcss-purgecss')({
 
   // Include any special characters you're using in this regular expression
   defaultExtractor: content => content.match(/[\w-/.:]+(?<!:)/g) || []
-})
+};
 
 module.exports = {
-  plugins: {
-    'postcss-import': {},
-    tailwindcss: {},
-    autoprefixer: {},
-    'postcss-preset-env': { stage: 2 },
+  plugins: [
+    'postcss-import',
+    'tailwindcss',
+    'autoprefixer',
+    ['postcss-preset-env', { stage: 2 }],
     ...process.env.NODE_ENV == 'production'
-      ? [purgecss]
+      ? [['@fullhuman/postcss-purgecss', purgecssconfig]]
       : []
-  }
+  ]
 }

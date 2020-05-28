@@ -29,6 +29,7 @@ services:
   frontend:
     build:
       context: ./frontend
+      target: dev
     image: crawl-app-frontend
     command: ./docker.dev.sh
     volumes:

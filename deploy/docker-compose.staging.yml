@@ -1,0 +1,54 @@
+version: "3.7"
+services:
+  traefik:
+    image: traefik
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.http.Address=:80"
+      - "--entrypoints.https.Address=:443"
+      - "--certificatesresolvers.myresolver.acme.email=support@epicdesignlabs.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/data/acme.json"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=http"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - certificate-data:/data
+  backend:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    command: ./docker.dev.sh
+    links:
+      - db
+      - crawler
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=(Host(`linkapp.epicsandbox.com`) && (PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)))"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.tls.certresolver=myresolver"
+  frontend:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=(Host(`linkapp.epicsandbox.com`) && PathPrefix(`/`))"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+  crawler:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
+    volumes:
+      - ./crawler:/app
+    links:
+      - db
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: crawldev
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    driver: local
+  certificate-data:
+    driver: local

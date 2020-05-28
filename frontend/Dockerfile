@@ -1,4 +1,4 @@
-FROM node
+FROM node AS dev
 
 RUN mkdir /install
 WORKDIR /install
@@ -12,4 +12,14 @@ WORKDIR /app
 
 COPY . .
 
+RUN ln -s /install/node_modules node_modules
+
 EXPOSE 3000
+
+
+# build prod assets
+FROM dev AS prod
+
+RUN npm run build
+
+CMD npm start
