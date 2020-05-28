@@ -53,3 +53,23 @@ resource "aws_iam_role_policy" "ecr_node_policy" {
 }
 	EOF
 }
+
+resource "aws_iam_role_policy" "s3_node_policy" {
+	name = "s3_node_policy"
+	role = aws_iam_role.node_role.id
+
+	policy = <<EOF
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Action": [
+				"s3:*"
+			],
+			"Effect": "Allow",
+			"Resource": "*"
+		}
+	]
+}
+	EOF
+}

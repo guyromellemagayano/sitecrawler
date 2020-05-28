@@ -20,12 +20,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0"
+SECRET_KEY = os.environ.get("SECRET_KEY", "3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+env = os.environ.get("ENV", "dev")
+if env == "dev":
+    DEBUG = True
+    ALLOWED_HOSTS = []
+elif env == "staging":
+    DEBUG = False
+    ALLOWED_HOSTS = ["linkapp.epicsandbox.com"]
+else:
+    raise Exception(f"Unknown env: {env}")
 
 
 # Application definition
@@ -141,3 +146,4 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static_out")
