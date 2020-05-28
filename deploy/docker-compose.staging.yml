@@ -10,18 +10,20 @@ services:
       - "--certificatesresolvers.myresolver.acme.email=support@epicdesignlabs.com"
       - "--certificatesresolvers.myresolver.acme.storage=/data/acme.json"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=http"
-      # middleware redirect
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      # global redirect to https
-      - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
-      - "traefik.http.routers.redirs.entrypoints=http"
-      - "traefik.http.routers.redirs.middlewares=redirect-to-https"
     ports:
       - 80:80
       - 443:443
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - certificate-data:/data
+    labels:
+      - "traefik.enable=true"
+      # middleware redirect
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # global redirect to https
+      - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.redirs.entrypoints=http"
+      - "traefik.http.routers.redirs.middlewares=redirect-to-https"
   backend:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
     links:
