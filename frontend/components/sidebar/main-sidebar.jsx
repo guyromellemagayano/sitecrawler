@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
 import fetchJson from '../../lib/fetch-json'
@@ -27,7 +28,7 @@ const MainSidebar = () => {
         </div>
         <div className={`flex-shrink-0 flex border-t border-gray-200 p-4`}>
           <Link href="/profile">
-            <a className={`flex-shrink-0 w-11/12 group block`}>
+            <a className={`flex-shrink-0 w-10/12 group block`}>
               <div className={`flex items-center`}>
                 <div>
                   <img
@@ -53,32 +54,34 @@ const MainSidebar = () => {
           </Link>
 
           <button
-            className={`flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600`}
+            className={`block w-2/12 items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600`}
+            onClick={async (e) => {
+              e.preventDefault();
+
+              await mutateUser(
+                fetchJson("/api/auth/logout/", {
+                  method: 'POST',
+                  headers: {
+                    'Accept': "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": Cookies.get("csrftoken"),
+                  },
+                })
+              )
+              router.push("/login");
+            }}
           >
-            <svg className={`h-5 w-5" fill="currentColor" viewBox="0 0 20 20`}>
-              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+            <svg
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
             </svg>
           </button>
-
-          <div
-            className={`origin-bottom-left absolute bottom-14 left-4 mt-2 w-56 rounded-md shadow-lg`}
-          >
-            <div className={`rounded-md bg-white shadow-xs`}>
-              <div className={`py-1`}>
-                <button
-                  type="submit"
-                  className={`block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    await mutateUser(fetchJson('/api/auth/logout/', { method: 'POST' }));
-                    router.push("/login");
-                  }}
-                >
-                  Sign out
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </MainSidebarDiv>
