@@ -1,7 +1,7 @@
-import React from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'
-import useUser from '../lib/use-user'
 import Layout from '../components/layout'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
 import Sidebar from '../components/sidebar/main-sidebar'
@@ -12,6 +12,38 @@ import Pagination from '../components/sites/pagination'
 const SitesDiv = styled.section``
 
 const Sites = () => {
+  const [results, setResults] = useState([])
+  
+  const handleSites = useCallback(async () => {
+    try {
+      await fetch('/api/site/', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        }
+      }).then((res) => {
+        if (Math.floor(res.status/200) === 1) {
+          return res.json()
+        } else {
+          throw new Error(res.statusText())
+        }
+      }).then((data) => {
+        setResults([
+          ...data.results
+        ])
+      })
+    } catch(error) {
+      console.error('An unexpected error occurred', error)
+      // setErrorMsg(error.data.message)
+    }
+  }, [])
+
+  useEffect(() => {
+    handleSites()
+  }, [])
+
   return (
     <Layout>
       <Head>
@@ -62,7 +94,9 @@ const Sites = () => {
               <div className={`pb-4`}>
 
                 {/* Site Data Table */}
-                <DataTable />
+                <DataTable
+                  sites={results}
+                />
                 
               </div>
 

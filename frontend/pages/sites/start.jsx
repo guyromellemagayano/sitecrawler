@@ -1,6 +1,9 @@
-import Link from 'next/link'
+import { useCallback, useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
+import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
+import useUser from '../../hooks/use-user'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import Sidebar from '../../components/sidebar/main-sidebar'
@@ -12,6 +15,62 @@ const SitesStartDiv = styled.section`
 `
 
 const SitesStart = () => {
+  const { user } = useUser({ redirectTo: '/login' })
+
+  if (!user) {
+    return <Layout>Loading...</Layout>
+  }
+
+  const [errorMsg, setErrorMsg] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
+  const [siteUrl, setSiteUrl] = useState('')
+
+  const handleSubmit = useCallback((e) => {
+    e.preventDefault()
+
+    if (errorMsg) setErrorMsg('')
+    if (successMsg) setSuccessMsg('')
+
+    const body = {
+      url: siteUrl
+    }
+
+    try {
+      fetch('/api/site/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        },
+        body: JSON.stringify(body),
+      }).then((res) => {
+        if (Math.floor(res.status/200) === 1) {
+          return res.json()
+        } else {
+          throw new Error(res.statusText())
+        }
+      }).then((data) => {
+        Router.push({
+          pathname: '/sites/verify-url',
+          query: { 
+            sid: data.id,
+            surl: data.url,
+            vid: data.verification_id,
+            v: false,
+          },
+        })
+      })
+    } catch(error) {
+      console.error('An unexpected error occurred', error)
+      setErrorMsg(error.data.message)
+    }
+  })
+
+  useEffect(() => {
+    Router.prefetch('/sites/verify-url')
+  })
+
   return (
     <Layout>
       <Head>
@@ -116,35 +175,93 @@ const SitesStart = () => {
                         towards a streamlined cloud solution.
                       </p>
                     </div>
-                    <div
-                      className={`mt-6`}
-                    >
-                      <label
-                        htmlFor="company_name"
-                        className={`block text-sm font-medium leading-5 text-gray-700`}
-                      >
-                        Site URL
-                      </label>
-                      <div className={`mt-1 max-w-sm rounded-md shadow-sm`}>
-                        <input
-                          id={`site_url`}
-                          className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
-                          placeholder="https://yourdomain.com"
-                          aria-describedby="site-url"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                    <div className={`mt-6`}>
+                      <form onSubmit={handleSubmit}>
+                        <label
+                          htmlFor="company_name"
+                          className={`block text-sm font-medium leading-5 text-gray-700`}
+                        >
+                          Site URL
+                        </label>
+                        <div className={`mt-1 max-w-sm rounded-md shadow-sm`}>
+                          <input
+                            id={`site_url`}
+                            type={`url`}
+                            name={`siteurl`}
+                            required
+                            className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                            placeholder="https://yourdomain.com"
+                            aria-describedby="site-url"
+                            onChange={(e) => setSiteUrl(e.target.value)}
+                          />
+                        </div>
 
-                  <div className={`mt-5 mx-auto sm:flex sm:justify-start`}>
-                    <Link href="/sites/verify-url">
-                      <a
-                        type={`button`}
-                        className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
-                      >
-                        Proceed to Step 2
-                      </a>
-                    </Link>
+                        {errorMsg && (
+                          <div className={`rounded-md bg-red-100 p-4 my-4`}>
+                            <div className={`flex`}>
+                              <div className={`flex-shrink-0`}>
+                                <svg
+                                  className={`h-5 w-5 text-red-400`}
+                                  fill={`currentColor`}
+                                  viewBox={`0 0 20 20`}
+                                >
+                                  <path
+                                    fillRule={`evenodd`}
+                                    d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
+                                    clipRule={`evenodd`}
+                                  />
+                                </svg>
+                              </div>
+                              <div className={`ml-3`}>
+                                <h3
+                                  className={`text-sm leading-5 font-medium text-red-800 break-words`}
+                                >
+                                  {errorMsg}
+                                </h3>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {successMsg && (
+                          <div className={`rounded-md bg-green-100 p-4 my-4`}>
+                            <div className={`flex`}>
+                              <div className={`flex-shrink-0`}>
+                                <svg
+                                  className={`h-5 w-5 text-green-400`}
+                                  fill={`currentColor`}
+                                  viewBox={`0 0 20 20`}
+                                >
+                                  <path
+                                    fillRule={`evenodd`}
+                                    d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
+                                    clipRule={`evenodd`}
+                                  />
+                                </svg>
+                              </div>
+                              <div className={`ml-3`}>
+                                <h3
+                                  className={`text-sm leading-5 font-medium text-green-800 break-words`}
+                                >
+                                  {successMsg}
+                                </h3>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        <div
+                          className={`mt-5 mx-auto sm:flex sm:justify-start`}
+                        >
+                          <button
+                            type={`submit`}
+                            className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                          >
+                            Proceed to Step 2
+                          </button>
+                        </div>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </div>

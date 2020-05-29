@@ -129,14 +129,6 @@ const SitesCrawlSite = () => {
                       Start Site Crawl
                     </button>
                     <div>
-                      <Link href="/sites/information">
-                        <a
-                          type={`button`}
-                          className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-600 hover:bg-gray-500 focus:outline-none focus:shadow-outline-gray focus:border-gray-700 active:bg-gray-700`}
-                        >
-                          Go back to Step 3
-                        </a>
-                      </Link>
                       <Link href="/sites/overview">
                         <a
                           type={`button`}

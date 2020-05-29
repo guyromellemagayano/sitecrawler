@@ -1,10 +1,15 @@
-import React from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
+import Router from 'next/router'
 import Link from 'next/link'
 import Head from 'next/head'
 import styled from 'styled-components'
-import ReactHtmlParser from 'react-html-parser'
+import useUser from '../../hooks/use-user'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
+import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import Sidebar from '../../components/sidebar/main-sidebar'
+import fetch from 'node-fetch'
 
 const SitesVerifyUrlDiv = styled.section`
   ol {
@@ -17,11 +22,69 @@ const SitesVerifyUrlDiv = styled.section`
   }
 `
 
-const SitesVerifyUrl = () => {
-  const Fragment = React.Fragment
+const SitesVerifyUrl = props => {
+  const { user } = useUser({ redirectTo: '/login' })
 
+  if (!user) {
+    return <Layout>Loading...</Layout>
+  }
+
+  const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${props.vid}">`)
+  const [copied, setCopied] = useState(false)
+  const [siteVerifyId, setSiteVerifyId] = useState(props.sid)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
+
+  const handleInputChange = ({ copyValue }) => {
+    setCopyValue({ copyValue, copied })
+  }
+
+  const handleHiddenInputChange = (e) => {
+    setSiteVerifyId({ value: e.currentTarget.site_verify_id.value })
+  }
+
+  const handleInputCopy = () => {
+    setCopied(true)
+  }
+
+  const handleSiteVerification = useCallback(async (e) => {
+    e.preventDefault()
+
+    if (errorMsg) setErrorMsg('')
+    if (successMsg) setSuccessMsg('')
+
+    const body = {
+      sid: e.currentTarget.site_verify_id.value,
+    }
+
+    try {
+      fetch('/api/site/' + body.sid + '/verify/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        },
+        body: JSON.stringify(body),
+      }).then((res) => {
+        if (Math.floor(res.status/200) === 1) {
+          return res.json()
+        }
+      }).then((data) => {
+        setSuccessMsg('Site verification success')
+      })
+    } catch(error) {
+      console.error('An unexpected error occurred', error)
+      setErrorMsg(error.data.message)
+    }
+  })
+
+  useEffect(() => {
+    Router.prefetch('/sites/information')
+  })
+  
   return (
-    <Fragment>
+    <Layout>
       <Head>
         <title>Verify URL</title>
       </Head>
@@ -145,15 +208,23 @@ const SitesVerifyUrl = () => {
                                 <input
                                   id="email"
                                   className={`form-input block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
-                                  placeholder={`John Doe`}
-                                  value={`<meta name="epic-crawl-id" content="3551bc98-069a-4a2b-925a-08dae7f71044">`}
+                                  name={`verify_id_meta_tag`}
+                                  value={copyValue}
+                                  onChange={handleInputChange}
                                 />
                               </div>
-                              <button
-                                className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-50 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
+                              <CopyToClipboard
+                                onCopy={handleInputCopy}
+                                text={copyValue}
                               >
-                                <span>Copy</span>
-                              </button>
+                                <button
+                                  className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-50 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
+                                >
+                                  <span>
+                                    {copied ? "Copied!" : "Copy to clipboard"}
+                                  </span>
+                                </button>
+                              </CopyToClipboard>
                             </div>
                           </div>
                         </li>
@@ -166,30 +237,61 @@ const SitesVerifyUrl = () => {
 
                   <div className={`mt-5 mx-auto sm:flex sm:justify-between`}>
                     <div>
-                      <button
-                        type={`button`}
-                        className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                      <form
+                        onSubmit={handleSiteVerification}
+                        className={`sm:flex sm:items-center`}
                       >
-                        Verify Site
-                      </button>
-                      <Link href="/sites/information">
-                        <a
-                          type={`button`}
-                          className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150`}
+                        <input
+                          type="hidden"
+                          value={siteVerifyId}
+                          name={`site_verify_id`}
+                          onChange={handleHiddenInputChange}
+                        />
+                        <button
+                          type={`submit`}
+                          className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
                         >
-                          Verify Later
-                        </a>
-                      </Link>
+                          Verify Site
+                        </button>
+                        <Link href="/sites/information">
+                          <a
+                            type={`button`}
+                            className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150`}
+                          >
+                            Verify Later
+                          </a>
+                        </Link>
+
+                        {errorMsg && (
+                          <div className={`inline-block p-2`}>
+                            <div className={`flex`}>
+                              <div>
+                                <h3
+                                  className={`text-sm leading-5 font-medium text-red-800 break-words`}
+                                >
+                                  {errorMsg}
+                                </h3>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {successMsg && (
+                          <div className={`inline-block p-2`}>
+                            <div className={`flex`}>
+                              <div>
+                                <h3
+                                  className={`text-sm leading-5 font-medium text-green-800 break-words`}
+                                >
+                                  {successMsg}
+                                </h3>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </form>
                     </div>
                     <div>
-                      <Link href="/sites/start">
-                        <a
-                          type={`button`}
-                          className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-600 hover:bg-gray-500 focus:outline-none focus:shadow-outline-gray focus:border-gray-700 active:bg-gray-700`}
-                        >
-                          Go back to Step 1
-                        </a>
-                      </Link>
                       <Link href="/sites/information">
                         <a
                           type={`button`}
@@ -206,8 +308,17 @@ const SitesVerifyUrl = () => {
           </main>
         </div>
       </SitesVerifyUrlDiv>
-    </Fragment>
+    </Layout>
   );
+}
+
+SitesVerifyUrl.getInitialProps = ({ query }) => {
+  return {
+    sid: query.sid,
+    surl: query.surl,
+    vid: query.vid,
+    v: query.v,
+  }
 }
 
 export default SitesVerifyUrl

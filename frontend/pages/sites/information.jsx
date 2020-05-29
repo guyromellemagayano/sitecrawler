@@ -1,4 +1,4 @@
-import React from 'react'
+import { Fragment } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import styled from 'styled-components'
@@ -12,8 +12,6 @@ const SitesInformationDiv = styled.section`
 `
 
 const SitesInformation = () => {
-  const Fragment = React.Fragment
-
   return (
     <Fragment>
       <Head>
@@ -137,25 +135,17 @@ const SitesInformation = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className={`mt-5 mx-auto sm:flex sm:justify-start`}>
-                    <Link href="/sites/verify-url">
-                      <a
-                        type={`button`}
-                        className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-600 hover:bg-gray-500 focus:outline-none focus:shadow-outline-gray focus:border-gray-700 active:bg-gray-700`}
-                      >
-                        Go back to Step 2
-                      </a>
-                    </Link>
-                    <Link href="/sites/crawl-site">
-                      <a
-                        type={`button`}
-                        className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
-                      >
-                        Proceed to Step 4
-                      </a>
-                    </Link>
+                    <div className={`mt-5 mx-auto sm:flex sm:justify-start`}>
+                      <Link href="/sites/crawl-site">
+                        <a
+                          type={`button`}
+                          className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                        >
+                          Proceed to Step 4
+                        </a>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

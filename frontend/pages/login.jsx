@@ -4,8 +4,8 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import LogoLabel from '../components/form/logo-label'
 import SiteForm from '../components/form/form'
-import fetchJson from '../lib/fetch-json'
-import useUser from '../lib/use-user'
+import fetchJson from '../hooks/fetch-json'
+import useUser from '../hooks/use-user'
 
 const LoginDiv = styled.div``
 
