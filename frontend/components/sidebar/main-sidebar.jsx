@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
 import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
-import fetchJson from '../../lib/fetch-json'
-import useUser from '../../lib/use-user'
+import fetchJson from '../../hooks/fetch-json'
+import useUser from '../../hooks/use-user'
 import { useRouter } from 'next/router'
 import PrimaryMenu from './primary-menu'
 
@@ -67,7 +66,8 @@ const MainSidebar = () => {
                     "X-CSRFToken": Cookies.get("csrftoken"),
                   },
                 })
-              )
+              );
+              
               router.push("/login");
             }}
           >
