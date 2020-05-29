@@ -29,6 +29,8 @@ if env == "dev":
 elif env == "staging":
     DEBUG = False
     ALLOWED_HOSTS = ["linkapp.epicsandbox.com"]
+    SESSION_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 else:
     raise Exception(f"Unknown env: {env}")
 
