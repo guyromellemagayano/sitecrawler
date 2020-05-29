@@ -26,6 +26,9 @@ module.exports = {
       mono: ['Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'],
     },
   },
+  variants: {
+    opacity: ['responsive', 'hover', 'focus', 'disabled'],
+  },
   corePlugins: {},
   plugins: [
     require('@tailwindcss/ui'),
