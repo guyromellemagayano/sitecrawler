@@ -1,17 +1,10 @@
-import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
-import fetchJson from '../../hooks/fetch-json'
-import useUser from '../../hooks/use-user'
-import { useRouter } from 'next/router'
 import PrimaryMenu from './primary-menu'
 
 const MainSidebarDiv = styled.aside``
 
 const MainSidebar = () => {
-  const { mutateUser } = useUser()
-  const router = useRouter()
-
   return (
     <MainSidebarDiv className={`hidden md:flex md:flex-shrink-0`}>
       <div className={`flex flex-col w-64 border-r border-gray-200 bg-white`}>
@@ -51,37 +44,6 @@ const MainSidebar = () => {
               </div>
             </a>
           </Link>
-
-          <button
-            className={`block w-2/12 items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600`}
-            onClick={async (e) => {
-              e.preventDefault();
-
-              await mutateUser(
-                fetchJson("/api/auth/logout/", {
-                  method: 'POST',
-                  headers: {
-                    'Accept': "application/json",
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": Cookies.get("csrftoken"),
-                  },
-                })
-              );
-              
-              router.push("/login");
-            }}
-          >
-            <svg
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-            </svg>
-          </button>
         </div>
       </div>
     </MainSidebarDiv>
