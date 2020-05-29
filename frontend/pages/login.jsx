@@ -1,22 +1,14 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'
+import Layout from '../components/layout'
 import LogoLabel from '../components/form/logo-label'
 import SiteForm from '../components/form/form'
-import fetchJson from '../hooks/fetch-json'
-import useUser from '../hooks/use-user'
 
 const LoginDiv = styled.div``
 
 const Login = () => {
-  const Fragment = React.Fragment
-
-  const { mutateUser } = useUser({
-    redirectTo: '/dashboard',
-    redirectIfFound: true,
-  })
-
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
@@ -32,17 +24,15 @@ const Login = () => {
     }
 
     try {
-      await mutateUser(
-        fetchJson('/api/auth/login/', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': Cookies.get('csrftoken'),
-          },
-          body: JSON.stringify(body),
-        })
-      )
+      await fetch('/api/auth/login/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        },
+        body: JSON.stringify(body),
+      })
     } catch(error) {
       console.error('An unexpected error occurred', error)
       setErrorMsg(error.data.message)
@@ -50,7 +40,7 @@ const Login = () => {
   }
 
   return (
-    <Fragment>
+    <Layout>
       <Head>
         <title>Login</title>
       </Head>
@@ -67,7 +57,7 @@ const Login = () => {
           onSubmit={handleSubmit}
         />
       </LoginDiv>
-    </Fragment>
+    </Layout>
   );
 }
 

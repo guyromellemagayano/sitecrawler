@@ -3,7 +3,6 @@ import Cookies from 'js-cookie'
 import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
-import useUser from '../../hooks/use-user'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import Sidebar from '../../components/sidebar/main-sidebar'
@@ -15,12 +14,6 @@ const SitesStartDiv = styled.section`
 `
 
 const SitesStart = () => {
-  const { user } = useUser({ redirectTo: '/login' })
-
-  if (!user) {
-    return <Layout>Loading...</Layout>
-  }
-
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
   const [siteUrl, setSiteUrl] = useState('')

@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import styled from 'styled-components'
-import useUser from '../hooks/use-user'
 import Layout from '../components/layout'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
 import Sidebar from '../components/sidebar/main-sidebar'
@@ -8,12 +7,6 @@ import Sidebar from '../components/sidebar/main-sidebar'
 const DashboardDiv = styled.section``
 
 const Dashboard = () => {
-  const { user } = useUser({ redirectTo: '/login' })
-
-  if (!user) {
-    return <Layout>Loading...</Layout>
-  }
-
   return (
     <Layout>
       <Head>
@@ -21,12 +14,8 @@ const Dashboard = () => {
       </Head>
 
       <DashboardDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
-        {/* Mobile Sidebar */}
         <MobileSidebar />
-
-        {/* Sidebar */}
         <Sidebar />
-
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button

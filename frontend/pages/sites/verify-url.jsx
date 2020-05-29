@@ -4,7 +4,6 @@ import Router from 'next/router'
 import Link from 'next/link'
 import Head from 'next/head'
 import styled from 'styled-components'
-import useUser from '../../hooks/use-user'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
@@ -23,12 +22,6 @@ const SitesVerifyUrlDiv = styled.section`
 `
 
 const SitesVerifyUrl = props => {
-  const { user } = useUser({ redirectTo: '/login' })
-
-  if (!user) {
-    return <Layout>Loading...</Layout>
-  }
-
   const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${props.vid}">`)
   const [copied, setCopied] = useState(false)
   const [siteVerifyId, setSiteVerifyId] = useState(props.sid)
