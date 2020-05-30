@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import styled from 'styled-components'
+import withSession from '../hooks/session'
+import PropTypes from 'prop-types'
 import Layout from '../components/layout'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
 import Sidebar from '../components/sidebar/main-sidebar'
@@ -52,7 +54,7 @@ const Dashboard = () => {
         </div>
       </DashboardDiv>
     </Layout>
-  );
+  )
 }
 
 export default Dashboard

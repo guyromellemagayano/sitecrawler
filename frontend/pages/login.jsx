@@ -5,20 +5,25 @@ import Link from 'next/link'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import PropTypes from 'prop-types'
+import fetchJson from '../hooks/fetchJson'
+import useUser from '../hooks/useUser'
 import Layout from '../components/layout'
 import LogoLabel from '../components/form/logo-label'
 
 const LoginDiv = styled.div``
 
 const Login = () => {
+  const { mutateUser } = useUser({
+    redirectTo: '/dashboard',
+    redirectIfFound: true,
+  })
+
   const [errorMsg, setErrorMsg] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (errorMsg) setErrorMsg('')
-    if (successMsg) setSuccessMsg('')
 
     const body = {
       username: e.currentTarget.username.value,
@@ -26,21 +31,17 @@ const Login = () => {
     }
 
     try {
-      const res = await fetch('/api/auth/login/', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
-        },
-        body: JSON.stringify(body),
-      })
-
-      if (Math.floor(res.status/200) === 1) {
-        setSuccessMsg("Signing In...")
-      } else {
-        throw new Error(await res.text())
-      }
+      await mutateUser(
+        fetchJson('/api/auth/login/', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken'),
+          },
+          body: JSON.stringify(body),
+        })
+      )
     } catch(error) {
       console.error('An unexpected error occurred', error)
       setErrorMsg(error.data.message)
@@ -80,33 +81,6 @@ const Login = () => {
                     className={`text-sm leading-5 font-medium text-red-800 break-words`}
                   >
                     {errorMsg}
-                  </h3>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {successMsg && (
-            <div className={`rounded-md bg-green-100 p-4 mb-8`}>
-              <div className={`flex`}>
-                <div className={`flex-shrink-0`}>
-                  <svg
-                    className={`h-5 w-5 text-green-400`}
-                    fill={`currentColor`}
-                    viewBox={`0 0 20 20`}
-                  >
-                    <path
-                      fillRule={`evenodd`}
-                      d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
-                      clipRule={`evenodd`}
-                    />
-                  </svg>
-                </div>
-                <div className={`ml-3`}>
-                  <h3
-                    className={`text-sm leading-5 font-medium text-green-800 break-words`}
-                  >
-                    {successMsg}
                   </h3>
                 </div>
               </div>
@@ -274,13 +248,12 @@ const Login = () => {
         </div>
       </LoginDiv>
     </Layout>
-  );
+  )
 }
 
 export default Login
 
 Login.propTypes = {
   errorMsg: PropTypes.string,
-  successMsg: PropTypes.string,
   handleSubmit: PropTypes.func,
 }
