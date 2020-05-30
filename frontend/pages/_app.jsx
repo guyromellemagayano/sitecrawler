@@ -1,3 +1,6 @@
+import React from 'react'
+import { SWRConfig } from 'swr'
+import fetchJson from '../hooks/fetchJson'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 
@@ -7,7 +10,17 @@ library.add(fab)
 
 const App = ({ Component, pageProps }) => {
   return (
-    <Component {...pageProps} />
+    <SWRConfig
+      value={{
+        fetcher: fetchJson,
+        revalidateOnFocus: false,
+        onError: (err) => {
+          console.error(err)
+        },
+      }}
+    >
+      <Component {...pageProps} />
+    </SWRConfig>
   )
 }
 
