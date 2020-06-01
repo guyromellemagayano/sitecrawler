@@ -1,16 +1,19 @@
+import io
+
 import boto3
 from fabric import Connection
+import paramiko
 import requests
+
 
 ec2 = boto3.resource("ec2")
 client = boto3.client("ec2")
+s3 = boto3.resource("s3")
 
 
 def get_connections(name=None):
-    return [
-        Connection(instance, user="ubuntu", connect_kwargs={"key_filename": "deployer.pem"})
-        for instance in get_instances(name)
-    ]
+    pkey = get_ssh_cert()
+    return [Connection(instance, user="ubuntu", connect_kwargs={"pkey": pkey}) for instance in get_instances(name)]
 
 
 ingress = {
@@ -28,12 +31,22 @@ def setCidrIp():
 
 def authorize_ingress():
     setCidrIp()
-    client.authorize_security_group_ingress(**ingress)
+    try:
+        client.authorize_security_group_ingress(**ingress)
+    except Exception as e:
+        if "InvalidPermission.Duplicate" not in str(e):
+            raise
 
 
 def revoke_ingress():
     setCidrIp()
     client.revoke_security_group_ingress(**ingress)
+
+
+def get_ssh_cert():
+    obj = s3.Object("epic-linkapp-secrets", "deployer.pem")
+    body = obj.get()["Body"].read()
+    return paramiko.RSAKey.from_private_key(io.StringIO(body.decode("utf-8")))
 
 
 def get_instances(name=None):

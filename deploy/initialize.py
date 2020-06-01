@@ -21,7 +21,12 @@ def initialize(c):
     c.sudo("apt-get install awscli")
 
 
+common.authorize_ingress()
+
 for connection in common.get_connections():
     print(f"Initialize {connection.host}")
 
     initialize(connection)
+
+
+common.revoke_ingress()
