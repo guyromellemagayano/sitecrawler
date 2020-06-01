@@ -34,7 +34,15 @@ Use django command to create superuser:
 
 ### Deploying to staging
 
-You should be authenticated with aws, then run:
+1. Install the requirements:
+
+```
+pip3 install -r deploy/requirements.txt
+```
+
+2. [Authenticate with aws](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
+
+3. Deploy to staging:
 
 ```
 make staging
