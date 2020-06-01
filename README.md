@@ -13,7 +13,7 @@ You need to have Docker and docker-compose installed.
 Start the backend and frontend with postgres locally:
 
 ```
-docker-compose up
+make dev
 ```
 
 This will start listening on `localhost:8000`.
@@ -30,6 +30,14 @@ Use django command to create superuser:
 
 ```
 ./manage.py createsuperuser
+```
+
+### Deploying to staging
+
+You should be authenticated with aws, then run:
+
+```
+make staging
 ```
 
 ### Authentication

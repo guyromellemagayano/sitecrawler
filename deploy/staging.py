@@ -18,7 +18,12 @@ def deploy(c):
     docker_compose(c, "staging")
 
 
+common.authorize_ingress()
+
 for connection in common.get_connections("Staging"):
     print(f"Deploying to {connection.host}")
 
     deploy(connection)
+
+
+common.revoke_ingress()
