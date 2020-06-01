@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
+import Router from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import styled from 'styled-components'
@@ -20,7 +21,7 @@ const Login = () => {
 
   const [errorMsg, setErrorMsg] = useState('')
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback( async (e) => {
     e.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -43,10 +44,14 @@ const Login = () => {
         })
       )
     } catch(error) {
-      console.error('An unexpected error occurred', error)
-      setErrorMsg(error.data.message)
+      console.error(error)
+      setErrorMsg('An unexpected error occurred. Please try again.')
     }
-  }
+  })
+
+  useEffect(() => {
+    Router.prefetch('/dashboard')
+  })
 
   return (
     <Layout>

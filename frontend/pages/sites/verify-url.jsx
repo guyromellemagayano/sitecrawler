@@ -5,10 +5,11 @@ import Link from 'next/link'
 import Head from 'next/head'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+import fetchJson from '../../hooks/fetchJson'
+import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import Sidebar from '../../components/sidebar/main-sidebar'
-import fetch from 'node-fetch'
 
 const SitesVerifyUrlDiv = styled.section`
   ol {
@@ -40,7 +41,7 @@ const SitesVerifyUrl = props => {
     setCopied(true)
   }
 
-  const handleSiteVerification = useCallback(async (e) => {
+  const handleSiteVerification = useCallback( async (e) => {
     e.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -51,7 +52,7 @@ const SitesVerifyUrl = props => {
     }
 
     try {
-      fetch('/api/site/' + body.sid + '/verify/', {
+      await fetchJson('/api/site/' + body.sid + '/verify/', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -59,23 +60,25 @@ const SitesVerifyUrl = props => {
           'X-CSRFToken': Cookies.get('csrftoken'),
         },
         body: JSON.stringify(body),
-      }).then((res) => {
-        if (Math.floor(res.status/200) === 1) {
-          return res.json()
-        }
-      }).then((data) => {
-        setSuccessMsg('Site verification success')
+      }).then(res => {
+        console.log(res)
       })
     } catch(error) {
-      console.error('An unexpected error occurred', error)
-      setErrorMsg(error.data.message)
+      console.error(error)
+      setErrorMsg('An unexpected error occurred. Please try again.')
     }
   })
 
   useEffect(() => {
     Router.prefetch('/sites/information')
   })
-  
+
+  const { user } = useUser({ redirectTo: '/login' });
+
+  if (user === undefined || !user) {
+    return <Layout>Loading...</Layout>
+  }
+
   return (
     <Layout>
       <Head>

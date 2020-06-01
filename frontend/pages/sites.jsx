@@ -1,9 +1,12 @@
-import { useState, useCallback, useEffect } from 'react'
+import { Fragment } from 'react'
+import Router from "next/router";
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'
-import withSession from '../hooks/session'
+import useSWR from "swr";
 import PropTypes from 'prop-types'
+import DataTableHeadsContent from '../config/data-table-heads.json'
+import useUser from '../hooks/useUser'
 import Layout from '../components/layout'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
 import Sidebar from '../components/sidebar/main-sidebar'
@@ -13,38 +16,27 @@ import Pagination from '../components/sites/pagination'
 
 const SitesDiv = styled.section``
 
-const Sites = () => {
-  const [results, setResults] = useState([])
-  
-  const handleSites = useCallback(async () => {
-    try {
-      await fetch('/api/site/', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
-        }
-      }).then((res) => {
-        if (Math.floor(res.status/200) === 1) {
-          return res.json()
-        } else {
-          throw new Error(res.statusText())
-        }
-      }).then((data) => {
-        setResults([
-          ...data.results
-        ])
-      })
-    } catch(error) {
-      console.error('An unexpected error occurred', error)
-      // setErrorMsg(error.data.message)
-    }
-  }, [])
+const apiParameters = {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'X-CSRFToken': Cookies.get('csrftoken'),
+  },
+}
 
-  useEffect(() => {
-    handleSites()
-  }, [])
+const Sites = () => {
+  const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
+  
+  const { user } = useUser({ redirectTo: '/login' });
+  const { data, error } = useSWR('/api/site/', fetcher);
+
+  if (user === undefined || !user) {
+    return <Layout>Loading...</Layout>
+  }
+
+  if (error) return <div>Failed to load</div>
+  if (!data) return <div>Loading...</div>
 
   return (
     <Layout>
@@ -53,7 +45,6 @@ const Sites = () => {
       </Head>
 
       <SitesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
-
         {/* Mobile Sidebar */}
         <MobileSidebar />
 
@@ -89,28 +80,56 @@ const Sites = () => {
               <h1 className={`text-2xl font-semibold text-gray-900`}>Sites</h1>
             </div>
             <div className={`max-w-7xl mx-auto px-4 sm:px-6 md:px-8`}>
-
               {/* Add Site */}
               <AddSite />
 
               <div className={`pb-4`}>
-
                 {/* Site Data Table */}
-                <DataTable
-                  sites={results}
-                />
-                
+                <div className={`flex flex-col`}>
+                  <div
+                    className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
+                  >
+                    <div
+                      className={`align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-gray-200`}
+                    >
+                      <table className={`min-w-full`}>
+                        <thead>
+                          <tr>
+                            {DataTableHeadsContent.map((site, key) => {
+                              return (
+                                <Fragment key={key}>
+                                  <th
+                                    className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
+                                  >
+                                    {site.label}
+                                  </th>
+                                </Fragment>
+                              );
+                            })}
+                            <th
+                              className={`px-6 py-3 border-b border-gray-200 bg-white`}
+                            ></th>
+                          </tr>
+                        </thead>
+                        {data.results.map((val, key) => (
+                          <DataTable key={key} site={val} />
+                        ))}
+                      </table>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Table Pagination */}
               <Pagination />
-
             </div>
           </main>
         </div>
       </SitesDiv>
     </Layout>
-  )
+  );
 }
 
 export default Sites
+
+Sites.propTypes = {}

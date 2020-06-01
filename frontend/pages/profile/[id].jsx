@@ -1,33 +1,30 @@
-import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
+import useUser from '../../hooks/useUser'
+import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import Sidebar from '../../components/sidebar/main-sidebar'
-import SitesOverview from '../../components/sites/overview'
-import SitesTimestamp from '../../components/sites/timestamp'
-import SitesStats from '../../components/sites/stats'
-import DashboardFooter from '../../components/dashboard/footer'
+import ProfileSettings from '../../components/profile/settings'
 
-const SitesDashboardDiv = styled.section``
+const ProfileDiv = styled.section``
 
-const SitesDashboard = () => {
-  const Fragment = React.Fragment
+const Profile = () => {
+  const { data } = useUser({ redirectTo: '/login' })
+
+  if (!data) {
+    return <Layout>Loading...</Layout>
+  }
 
   return (
-    <Fragment>
+    <Layout>
       <Head>
-        <title>Overview | Epic Design Labs</title>
+        <title>Profile</title>
       </Head>
 
-      <SitesDashboardDiv
-        className={`h-screen flex overflow-hidden bg-gray-100`}
-      >
-        {/* Mobile Sidebar */}
+      <ProfileDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
         <MobileSidebar />
-
-        {/* Sidebar */}
         <Sidebar />
-
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button
@@ -54,30 +51,16 @@ const SitesDashboard = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-7xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>
-                Epic Design Labs
-              </h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>Profile</h1>
             </div>
             <div className={`max-w-7xl mx-auto px-4 sm:px-6 md:px-8`}>
-              {/* Overview */}
-              <div className={`grid grid-cols-2 gap-5 sm:grid-cols-3`}>
-                <SitesOverview />
-                <SitesTimestamp />
-              </div>
-
-              <div className={`pb-4`}>
-                {/* Sections */}
-                <SitesStats />
-              </div>
-
-              {/* Dashboard Footer */}
-              <DashboardFooter />
+              <ProfileSettings />
             </div>
           </main>
         </div>
-      </SitesDashboardDiv>
-    </Fragment>
-  );
+      </ProfileDiv>
+    </Layout>
+  )
 }
 
-export default SitesDashboard
+export default Profile

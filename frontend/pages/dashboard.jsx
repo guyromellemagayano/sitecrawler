@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styled from 'styled-components'
-import withSession from '../hooks/session'
 import PropTypes from 'prop-types'
+import useUser from '../hooks/useUser'
 import Layout from '../components/layout'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
 import Sidebar from '../components/sidebar/main-sidebar'
@@ -9,6 +9,12 @@ import Sidebar from '../components/sidebar/main-sidebar'
 const DashboardDiv = styled.section``
 
 const Dashboard = () => {
+  const { user } = useUser({ redirectTo: '/login' })
+
+  if (user === undefined || !user) {
+    return <Layout>Loading...</Layout>
+  }
+
   return (
     <Layout>
       <Head>

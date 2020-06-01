@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
+import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
+import fetchJson from '../../hooks/fetchJson'
+import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import Sidebar from '../../components/sidebar/main-sidebar'
@@ -18,7 +22,7 @@ const SitesStart = () => {
   const [successMsg, setSuccessMsg] = useState('')
   const [siteUrl, setSiteUrl] = useState('')
 
-  const handleSubmit = useCallback((e) => {
+  const handleSubmit = useCallback( async (e) => {
     e.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -29,7 +33,7 @@ const SitesStart = () => {
     }
 
     try {
-      fetch('/api/site/', {
+      await fetchJson('/api/site/', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -37,32 +41,32 @@ const SitesStart = () => {
           'X-CSRFToken': Cookies.get('csrftoken'),
         },
         body: JSON.stringify(body),
-      }).then((res) => {
-        if (Math.floor(res.status/200) === 1) {
-          return res.json()
-        } else {
-          throw new Error(res.statusText())
-        }
-      }).then((data) => {
+      }).then(res => {
         Router.push({
           pathname: '/sites/verify-url',
           query: { 
-            sid: data.id,
-            surl: data.url,
-            vid: data.verification_id,
+            sid: res.id,
+            surl: res.url,
+            vid: res.verification_id,
             v: false,
           },
         })
       })
     } catch(error) {
-      console.error('An unexpected error occurred', error)
-      setErrorMsg(error.data.message)
+      console.error(error)
+      setErrorMsg('An unexpected error occurred. Please try again.')
     }
   })
 
   useEffect(() => {
     Router.prefetch('/sites/verify-url')
   })
+
+  const { user } = useUser({ redirectTo: '/login' });
+
+  if (user === undefined || !user) {
+    return <Layout>Loading...</Layout>
+  }
 
   return (
     <Layout>
@@ -190,7 +194,7 @@ const SitesStart = () => {
                         </div>
 
                         {errorMsg && (
-                          <div className={`rounded-md bg-red-100 p-4 my-4`}>
+                          <div className={`max-w-sm rounded-md bg-red-100 p-4 my-4`}>
                             <div className={`flex`}>
                               <div className={`flex-shrink-0`}>
                                 <svg
@@ -267,3 +271,9 @@ const SitesStart = () => {
 }
 
 export default SitesStart
+
+SitesStart.propTypes = {
+  errorMsg: PropTypes.string,
+  successMsg: PropTypes.string,
+  handleSubmit: PropTypes.func,
+}
