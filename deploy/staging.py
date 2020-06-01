@@ -3,19 +3,6 @@
 import common
 
 
-def build_image(c, name):
-    image_name = f"400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-{name}"
-    c.local(f"docker build -t {image_name} {name}/")
-    c.local(f"docker push {image_name}")
-
-
-def build(c):
-    c.local("source environment && $(aws ecr get-login --no-include-email)")
-    build_image(c, "backend")
-    build_image(c, "frontend")
-    build_image(c, "crawler")
-
-
 def docker_compose(c, name):
     c.run("$(aws ecr get-login --no-include-email --region us-east-1)")
 
@@ -28,7 +15,6 @@ def docker_compose(c, name):
 
 
 def deploy(c):
-    build(c)
     docker_compose(c, "staging")
 
 
