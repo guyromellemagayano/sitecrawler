@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 const fetcher = async(...args) => {
   try {
     const response = await fetch(...args)
-    const data = await response.json
+    const data = await response.json()
 
     if (response.ok) {
       return data
