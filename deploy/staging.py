@@ -13,6 +13,8 @@ def docker_compose(c, name):
     c.run(f"cd {name} && docker-compose pull")
     c.run(f"cd {name} && docker-compose up -d")
 
+    c.run("docker system prune -f")
+
 
 def deploy(c):
     docker_compose(c, "staging")

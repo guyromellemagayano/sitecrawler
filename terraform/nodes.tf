@@ -10,6 +10,10 @@ resource "aws_instance" "staging" {
 	key_name = aws_key_pair.deployer.key_name
 	iam_instance_profile = aws_iam_instance_profile.node_profile.name
 
+	root_block_device {
+		volume_size = 20
+	}
+
   tags = {
     Name = "Staging"
   }
