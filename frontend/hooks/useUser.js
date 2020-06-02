@@ -3,10 +3,15 @@ import Router from "next/router";
 import useSWR from "swr";
 
 const useUser = ({ redirectTo = false, redirectIfFound = false } = {}) => {
-  const { data: user, mutate: mutateUser } = useSWR("/api/auth/user/");
+  const { data: user, mutate: mutateUser, revalidate } = useSWR("/api/auth/user/", { 
+    refreshInterval: 1000
+  });
 
   useEffect(() => {
-    if (!redirectTo || !user) return;
+    if (!redirectTo || !user) {
+      revalidate();
+      return;
+    } 
 
     if (
       (redirectTo && !redirectIfFound && !user) ||
