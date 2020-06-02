@@ -84,12 +84,12 @@ const SitesDashboard = () => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-7xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <h1 className={`text-2xl font-semibold text-gray-900`}>
                 Epic Design Labs
               </h1>
             </div>
-            <div className={`max-w-7xl mx-auto px-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               {/* Overview */}
               <div className={`grid grid-cols-2 gap-5 sm:grid-cols-3`}>
                 <SitesOverview />

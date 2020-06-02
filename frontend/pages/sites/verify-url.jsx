@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, Fragment } from 'react'
+import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import Router from 'next/router'
-import Link from 'next/link'
 import Head from 'next/head'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-import fetchJson from '../../hooks/fetchJson'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
@@ -23,11 +22,14 @@ const SitesVerifyUrlDiv = styled.section`
 `
 
 const SitesVerifyUrl = props => {
-  const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${props.vid}">`)
+  const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${props.vid}"}>`)
   const [copied, setCopied] = useState(false)
   const [siteVerifyId, setSiteVerifyId] = useState(props.sid)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const [dataQuery, setDataQuery] = useState([])
+  const [disableSiteVerify, setDisableSiteVerify] = useState(false)
+  const [enableNextStep, setEnableNextStep] = useState(false)
 
   const handleInputChange = ({ copyValue }) => {
     setCopyValue({ copyValue, copied })
@@ -41,7 +43,7 @@ const SitesVerifyUrl = props => {
     setCopied(true)
   }
 
-  const handleSiteVerification = useCallback( async (e) => {
+  const handleSiteVerification = useCallback(async (e) => {
     e.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -52,7 +54,7 @@ const SitesVerifyUrl = props => {
     }
 
     try {
-      await fetchJson('/api/site/' + body.sid + '/verify/', {
+      const response = await fetch('/api/site/' + body.sid + '/verify/', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -60,18 +62,55 @@ const SitesVerifyUrl = props => {
           'X-CSRFToken': Cookies.get('csrftoken'),
         },
         body: JSON.stringify(body),
-      }).then(res => {
-        console.log(res)
       })
+      
+      const data = await response.json()
+
+      console.log(data.verified)
+
+      if (response.ok) {
+        if (data.verified) {
+          setDataQuery(data)
+          setSuccessMsg('Site verification success. Proceed to the next step.')
+          setDisableSiteVerify(!disableSiteVerify)
+          setEnableNextStep(!enableNextStep)
+        }
+      } else {
+        const error = new Error(response.statusText)
+  
+        error.response = response
+        error.data = data
+  
+        throw error
+      }
     } catch(error) {
-      console.error(error)
+      if (!error.data) {
+        error.data = { message: error.message }
+      }
+
       setErrorMsg('An unexpected error occurred. Please try again.')
+
+      throw error
     }
   })
 
+  const handleRoutingData = (e) => {
+    e.preventDefault()
+
+    Router.push({
+      pathname: '/sites/information',
+      query: {
+        sid: dataQuery.id,
+        surl: dataQuery.url,
+        vid: dataQuery.verification_id,
+        v: false,
+      },
+    })
+  }
+
   useEffect(() => {
     Router.prefetch('/sites/information')
-  })
+  }, [dataQuery])
 
   const { user } = useUser({ redirectTo: '/login' });
 
@@ -119,7 +158,7 @@ const SitesVerifyUrl = props => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-7xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <div className={`bg-white overflow-hidden shadow rounded-lg`}>
                 <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
                   <div className={`max-w-full pt-4 m-auto`}>
@@ -170,7 +209,7 @@ const SitesVerifyUrl = props => {
                 </div>
 
                 <div className={`px-4 pt-8 pb-12 sm:px-8`}>
-                  <div className={`max-w-6xl py-4 m-auto`}>
+                  <div className={`max-w-full py-4 m-auto`}>
                     <div>
                       <h4
                         className={`text-lg leading-7 font-medium text-gray-900`}
@@ -195,7 +234,7 @@ const SitesVerifyUrl = props => {
                         </li>
                         <li className={`text-sm leading-6 text-gray-500`}>
                           Copy the meta tag below and add it within your
-                          website's HEAD tag <br />
+                          website's <strong>{`<HEAD>`}</strong> tag <br />
                           <div>
                             <div className={`my-3 flex`}>
                               <div
@@ -207,6 +246,7 @@ const SitesVerifyUrl = props => {
                                   name={`verify_id_meta_tag`}
                                   value={copyValue}
                                   onChange={handleInputChange}
+                                  autoComplete={`off`}
                                 />
                               </div>
                               <CopyToClipboard
@@ -243,20 +283,39 @@ const SitesVerifyUrl = props => {
                           name={`site_verify_id`}
                           onChange={handleHiddenInputChange}
                         />
-                        <button
-                          type={`submit`}
-                          className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
-                        >
-                          Verify Site
-                        </button>
-                        <Link href="/sites/information">
-                          <a
-                            type={`button`}
-                            className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150`}
-                          >
-                            Verify Later
-                          </a>
-                        </Link>
+                        {disableSiteVerify ? (
+                          <Fragment>
+                            <button
+                              disabled={`disabled`}
+                              type={`submit`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                            >
+                              Verify Site
+                            </button>
+                            <button
+                              disabled={`disabled`}
+                              type={`button`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white opacity-50 cursor-not-allowed`}
+                            >
+                              Verify Later
+                            </button>
+                          </Fragment>
+                        ) : (
+                          <Fragment>
+                            <button
+                              type={`submit`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                            >
+                              Verify Site
+                            </button>
+                            <button
+                              type={`button`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150`}
+                            >
+                              Verify Later
+                            </button>
+                          </Fragment>
+                        )}
 
                         {errorMsg && (
                           <div className={`inline-block p-2`}>
@@ -287,22 +346,25 @@ const SitesVerifyUrl = props => {
                         )}
                       </form>
                     </div>
-                    <div>
-                      <Link href="/sites/information">
-                        <a
+                    {enableNextStep ? (
+                      <div>
+                        <button
                           type={`button`}
                           className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                          onClick={handleRoutingData}
                         >
                           Proceed to Step 3
-                        </a>
-                      </Link>
-                    </div>
+                        </button>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
             </div>
           </main>
         </div>
+
+        
       </SitesVerifyUrlDiv>
     </Layout>
   );

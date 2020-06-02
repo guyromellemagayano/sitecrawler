@@ -5,7 +5,6 @@ import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import fetchJson from '../../hooks/fetchJson'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
@@ -18,9 +17,12 @@ const SitesStartDiv = styled.section`
 `
 
 const SitesStart = () => {
+  const [disableSiteVerify, setDisableSiteVerify] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
   const [siteUrl, setSiteUrl] = useState('')
+  const [dataQuery, setDataQuery] = useState([])
+  const [enableNextStep, setEnableNextStep] = useState(false)
 
   const handleSubmit = useCallback( async (e) => {
     e.preventDefault()
@@ -29,38 +31,97 @@ const SitesStart = () => {
     if (successMsg) setSuccessMsg('')
 
     const body = {
-      url: siteUrl
+      url: siteUrl,
     }
 
     try {
-      await fetchJson('/api/site/', {
-        method: 'POST',
+      const response = await fetch('/api/site/', {
+        method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
           'X-CSRFToken': Cookies.get('csrftoken'),
         },
-        body: JSON.stringify(body),
-      }).then(res => {
-        Router.push({
-          pathname: '/sites/verify-url',
-          query: { 
-            sid: res.id,
-            surl: res.url,
-            vid: res.verification_id,
-            v: false,
-          },
-        })
       })
+      
+      const data = await response.json()
+
+      if (response.ok) {
+        if (data) {
+          const result = data.results.find(site => site.url === siteUrl);
+
+          if (typeof result != 'undefined') {
+            setErrorMsg('Unfortunately, this site URL already exists. Please try again.')
+            return false
+          } else {
+            try {
+              const siteResponse = await fetch('/api/site/', {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': Cookies.get('csrftoken'),
+                },
+                body: JSON.stringify(body),
+              })
+  
+              const siteData = await siteResponse.json()
+
+              if (siteResponse.ok) {
+                if (siteData) {
+                  setDataQuery(siteData)
+                  setSuccessMsg('Congratulations! This site URL is not yet registered. Proceed to the next step.')
+                  setDisableSiteVerify(!disableSiteVerify)
+                  setEnableNextStep(!enableNextStep)
+                }
+              }
+            } catch(error) {
+              if (!error.data) {
+                error.data = { message: error.message }
+              }
+        
+              setErrorMsg('An unexpected error occurred. Please try again.')
+        
+              throw error
+            }
+          }
+        }
+      } else {
+        const error = new Error(response.statusText)
+  
+        error.response = response
+        error.data = data
+  
+        throw error
+      }
     } catch(error) {
-      console.error(error)
+      if (!error.data) {
+        error.data = { message: error.message }
+      }
+
       setErrorMsg('An unexpected error occurred. Please try again.')
+
+      throw error
     }
   })
 
+  const handleRoutingData = (e) => {
+    e.preventDefault()
+
+    Router.push({
+      pathname: '/sites/verify-url',
+      query: {
+        sid: dataQuery.id,
+        surl: dataQuery.url,
+        vid: dataQuery.verification_id,
+        v: false,
+      },
+    })
+  }
+
   useEffect(() => {
     Router.prefetch('/sites/verify-url')
-  })
+  }, [dataQuery])
 
   const { user } = useUser({ redirectTo: '/login' });
 
@@ -106,7 +167,7 @@ const SitesStart = () => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-7xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <div className={`bg-white overflow-hidden shadow rounded-lg`}>
                 <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
                   <div className={`max-w-full pt-4 m-auto`}>
@@ -172,92 +233,94 @@ const SitesStart = () => {
                         towards a streamlined cloud solution.
                       </p>
                     </div>
-                    <div className={`mt-6`}>
-                      <form onSubmit={handleSubmit}>
-                        <label
-                          htmlFor="company_name"
-                          className={`block text-sm font-medium leading-5 text-gray-700`}
-                        >
-                          Site URL
-                        </label>
-                        <div className={`mt-1 max-w-sm rounded-md shadow-sm`}>
-                          <input
-                            id={`site_url`}
-                            type={`url`}
-                            name={`siteurl`}
-                            required
-                            className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
-                            placeholder="https://yourdomain.com"
-                            aria-describedby="site-url"
-                            onChange={(e) => setSiteUrl(e.target.value)}
-                          />
-                        </div>
-
-                        {errorMsg && (
-                          <div className={`max-w-sm rounded-md bg-red-100 p-4 my-4`}>
-                            <div className={`flex`}>
-                              <div className={`flex-shrink-0`}>
-                                <svg
-                                  className={`h-5 w-5 text-red-400`}
-                                  fill={`currentColor`}
-                                  viewBox={`0 0 20 20`}
-                                >
-                                  <path
-                                    fillRule={`evenodd`}
-                                    d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
-                                    clipRule={`evenodd`}
-                                  />
-                                </svg>
-                              </div>
-                              <div className={`ml-3`}>
-                                <h3
-                                  className={`text-sm leading-5 font-medium text-red-800 break-words`}
-                                >
-                                  {errorMsg}
-                                </h3>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {successMsg && (
-                          <div className={`rounded-md bg-green-100 p-4 my-4`}>
-                            <div className={`flex`}>
-                              <div className={`flex-shrink-0`}>
-                                <svg
-                                  className={`h-5 w-5 text-green-400`}
-                                  fill={`currentColor`}
-                                  viewBox={`0 0 20 20`}
-                                >
-                                  <path
-                                    fillRule={`evenodd`}
-                                    d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
-                                    clipRule={`evenodd`}
-                                  />
-                                </svg>
-                              </div>
-                              <div className={`ml-3`}>
-                                <h3
-                                  className={`text-sm leading-5 font-medium text-green-800 break-words`}
-                                >
-                                  {successMsg}
-                                </h3>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        <div
-                          className={`mt-5 mx-auto sm:flex sm:justify-start`}
-                        >
-                          <button
-                            type={`submit`}
-                            className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                    <div className={`mt-5 mx-auto`}>
+                      <div>
+                        <form onSubmit={handleSubmit}>
+                          <label
+                            htmlFor="company_name"
+                            className={`block text-sm font-medium leading-5 text-gray-700`}
                           >
-                            Proceed to Step 2
-                          </button>
-                        </div>
-                      </form>
+                            Site URL
+                          </label>
+                          <div
+                            className={`mt-1 mb-6 max-w-sm rounded-md shadow-sm`}
+                          >
+                            <input
+                              id={`site_url`}
+                              type={`url`}
+                              name={`siteurl`}
+                              required
+                              className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                              placeholder="https://yourdomain.com"
+                              aria-describedby="site-url"
+                              onChange={(e) => setSiteUrl(e.target.value)}
+                            />
+                          </div>
+
+                          <div className={`sm:flex sm:items-center sm:justify-between`}>
+                            <div>
+                              {disableSiteVerify ? (
+                                <button
+                                  disabled={`disabled`}
+                                  type={`submit`}
+                                  className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                                >
+                                  Add Site URL
+                                </button>
+                              ) : (
+                                <button
+                                  type={`submit`}
+                                  className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                                >
+                                  Add Site URL
+                                </button>
+                              )}
+
+                              {errorMsg && (
+                                <div className={`inline-block p-2`}>
+                                  <div className={`flex`}>
+                                    <div>
+                                      <h3
+                                        className={`text-sm leading-5 font-medium text-red-800 break-words`}
+                                      >
+                                        {errorMsg}
+                                      </h3>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {successMsg && (
+                                <div className={`inline-block p-2`}>
+                                  <div className={`flex`}>
+                                    <div>
+                                      <h3
+                                        className={`text-sm leading-5 font-medium text-green-800 break-words`}
+                                      >
+                                        {successMsg}
+                                      </h3>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {enableNextStep ? (
+                              <div
+                                className={`sm:flex sm:justify-end`}
+                              >
+                                <button
+                                  type={`button`}
+                                  className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                                  onClick={handleRoutingData}
+                                >
+                                  Proceed to Step 2
+                                </button>
+                              </div>
+                            ) : null}
+                          </div>
+                        </form>
+                      </div>
                     </div>
                   </div>
                 </div>

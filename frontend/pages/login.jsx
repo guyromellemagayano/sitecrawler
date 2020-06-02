@@ -4,7 +4,7 @@ import Router from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import styled from 'styled-components'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PropTypes from 'prop-types'
 import fetchJson from '../hooks/fetchJson'
 import useUser from '../hooks/useUser'
@@ -193,7 +193,7 @@ const Login = () => {
                     >
                       <FontAwesomeIcon
                         icon={["fab", "google"]}
-                        className={`h-5 h-5`}
+                        className={`h-4 h-4`}
                       />
                     </a>
                   </span>
@@ -209,7 +209,7 @@ const Login = () => {
                       >
                         <FontAwesomeIcon
                           icon={["fab", "facebook-f"]}
-                          className={`h-5 h-5`}
+                          className={`h-4 h-4`}
                         />
                       </a>
                     </Link>
@@ -226,7 +226,7 @@ const Login = () => {
                       >
                         <FontAwesomeIcon
                           icon={["fab", "linkedin-in"]}
-                          className={`h-5 h-5`}
+                          className={`h-4 h-4`}
                         />
                       </a>
                     </Link>

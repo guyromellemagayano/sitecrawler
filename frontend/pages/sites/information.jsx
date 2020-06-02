@@ -1,6 +1,8 @@
-import Link from 'next/link'
+import { useCallback, useEffect, useState } from 'react'
+import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
@@ -12,14 +14,73 @@ const SitesInformationDiv = styled.section`
   }
 `
 
-const SitesInformation = () => {
+const SitesInformation = props => {
+  const [disableSiteVerify, setDisableSiteVerify] = useState(false)
+  const [successMsg, setSuccessMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+  const [siteName, setSiteName] = useState('')
+  const [dataQuery, setDataQuery] = useState([])
+  const [enableNextStep, setEnableNextStep] = useState(false)
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault()
+
+    if (errorMsg) setErrorMsg('')
+    if (successMsg) setSuccessMsg('')
+
+    const body = {
+      name: siteName,
+    }
+
+    try {
+      // API data fetch start
+      // API data fetch end
+
+      setDataQuery(props)
+      setSuccessMsg('Site name added. Proceed to the next step.')
+      setDisableSiteVerify(!disableSiteVerify)
+      setEnableNextStep(!enableNextStep)
+    } catch(error) {
+      setErrorMsg('An unexpected error occurred. Please try again.')
+
+      throw error
+    }
+  })
+
+  const handleRoutingData = (e) => {
+    e.preventDefault()
+
+    Router.push({
+      pathname: '/sites/crawl-site',
+      query: {
+        sid: dataQuery.id,
+        surl: dataQuery.url,
+        vid: dataQuery.verification_id,
+        v: false,
+        sname: '',
+      },
+    })
+  }
+
+  useEffect(() => {
+    Router.prefetch('/sites/crawl-site')
+  }, [])
+
+  const { user } = useUser({ redirectTo: '/login' });
+
+  if (user === undefined || !user) {
+    return <Layout>Loading...</Layout>
+  }
+
   return (
     <Layout>
       <Head>
         <title>Information</title>
       </Head>
 
-      <SitesInformationDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+      <SitesInformationDiv
+        className={`h-screen flex overflow-hidden bg-gray-100`}
+      >
         {/* Mobile Sidebar */}
         <MobileSidebar />
 
@@ -51,7 +112,7 @@ const SitesInformation = () => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-7xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <div className={`bg-white overflow-hidden shadow rounded-lg`}>
                 <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
                   <div className={`max-w-full pt-4 m-auto`}>
@@ -102,7 +163,7 @@ const SitesInformation = () => {
                 </div>
 
                 <div className={`px-4 pt-8 pb-12 sm:px-8`}>
-                  <div className={`max-w-6xl py-4 m-auto`}>
+                  <div className={`max-w-full py-4 m-auto`}>
                     <div>
                       <h4
                         className={`text-lg leading-7 font-medium text-gray-900`}
@@ -116,10 +177,9 @@ const SitesInformation = () => {
                         value added activity to beta test.
                       </p>
                     </div>
-                    <div
-                      className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
-                    >
-                      <div className={`sm:col-span-3`}>
+
+                    <form onSubmit={handleSubmit}>
+                      <div className={`my-6 max-w-sm`}>
                         <label
                           htmlFor="site_name"
                           className={`block text-sm font-medium leading-5 text-gray-700`}
@@ -129,24 +189,81 @@ const SitesInformation = () => {
                         <div className={`mt-1 rounded-md shadow-sm`}>
                           <input
                             id={`site_name`}
+                            type={`text`}
                             className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
                             placeholder="e.g. My Company Website"
+                            required
                             aria-describedby="site-name"
+                            onChange={(e) => setSiteName(e.target.value)}
                           />
                         </div>
                       </div>
-                    </div>
 
-                    <div className={`mt-5 mx-auto sm:flex sm:justify-start`}>
-                      <Link href="/sites/crawl-site">
-                        <a
-                          type={`button`}
-                          className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
-                        >
-                          Proceed to Step 4
-                        </a>
-                      </Link>
-                    </div>
+                      <div
+                        className={`sm:flex sm:items-center sm:justify-between`}
+                      >
+                        <div>
+                          {disableSiteVerify ? (
+                            <button
+                              disabled={`disabled`}
+                              type={`submit`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                            >
+                              Verify Site Name
+                            </button>
+                          ) : (
+                            <button
+                              type={`submit`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                            >
+                              Verify Site Name
+                            </button>
+                          )}
+
+                          {errorMsg && (
+                            <div className={`inline-block p-2`}>
+                              <div className={`flex`}>
+                                <div>
+                                  <h3
+                                    className={`text-sm leading-5 font-medium text-red-800 break-words`}
+                                  >
+                                    {errorMsg}
+                                  </h3>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {successMsg && (
+                            <div className={`inline-block p-2`}>
+                              <div className={`flex`}>
+                                <div>
+                                  <h3
+                                    className={`text-sm leading-5 font-medium text-green-800 break-words`}
+                                  >
+                                    {successMsg}
+                                  </h3>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {enableNextStep ? (
+                          <div
+                            className={`sm:flex sm:justify-end`}
+                          >
+                            <button
+                              type={`button`}
+                              className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                              onClick={handleRoutingData}
+                            >
+                              Proceed to Step 4
+                            </button>
+                          </div>
+                        ) : null}
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
@@ -158,4 +275,19 @@ const SitesInformation = () => {
   );
 }
 
+SitesInformation.getInitialProps = ({ query }) => {
+  return {
+    sid: query.sid,
+    surl: query.surl,
+    vid: query.vid,
+    v: query.v,
+  }
+}
+
 export default SitesInformation
+
+SitesInformation.propTypes = {
+  errorMsg: PropTypes.string,
+  successMsg: PropTypes.string,
+  handleSubmit: PropTypes.func,
+}
