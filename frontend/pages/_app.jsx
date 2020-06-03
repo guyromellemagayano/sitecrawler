@@ -4,7 +4,7 @@ import fetchJson from '../hooks/fetchJson'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 
-import '../styles.css'
+import '../css/styles.css'
 
 library.add(fab)
 
