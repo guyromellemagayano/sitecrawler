@@ -9,16 +9,21 @@ import (
 	"github.com/go-pg/pg"
 )
 
-func main() {
-	port := "8000"
-	if portEnv, ok := os.LookupEnv("PORT"); ok {
-		port = portEnv
+func env(name, def string) string {
+	if value, ok := os.LookupEnv(name); ok {
+		return value
 	}
+	return def
+}
+
+func main() {
+	port := env("PORT", "8000")
+	dbPass := env("DB_PASS", "crawldev")
 
 	db := pg.Connect(&pg.Options{
 		Addr:     "db:5432",
 		User:     "postgres",
-		Password: "crawldev",
+		Password: dbPass,
 		Database: "postgres",
 	})
 	defer db.Close()
@@ -28,5 +33,8 @@ func main() {
 	verifyService := &VerifyService{SiteDao: siteDao}
 
 	http.Handle("/verify", &VerifyEndpoint{VerifyService: verifyService})
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+
+	listen := fmt.Sprintf(":%s", port)
+	log.Printf("Listening on: %s", listen)
+	log.Fatal(http.ListenAndServe(listen, nil))
 }

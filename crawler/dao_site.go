@@ -8,7 +8,7 @@ type SiteDao struct {
 
 func (s *SiteDao) ByID(id int) (*CrawlSite, error) {
 	site := &CrawlSite{ID: id}
-	if err := s.DB.Model(site).Select(); err != nil {
+	if err := s.DB.Select(site); err != nil {
 		return nil, err
 	}
 	return site, nil

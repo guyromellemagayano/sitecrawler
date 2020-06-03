@@ -26,11 +26,13 @@ env = os.environ.get("ENV", "dev")
 if env == "dev":
     DEBUG = True
     ALLOWED_HOSTS = []
+    CRAWLER_URL = "http://crawler:3000"
 elif env == "staging":
     DEBUG = False
     ALLOWED_HOSTS = ["linkapp.epicsandbox.com"]
     SESSION_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    CRAWLER_URL = "http://crawler:8000"
 else:
     raise Exception(f"Unknown env: {env}")
 
@@ -111,6 +113,13 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
 ]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "loggers": {"django": {"handlers": ["console"], "level": "ERROR"}},
+}
 
 
 # Internationalization
