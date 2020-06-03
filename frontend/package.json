@@ -11,6 +11,9 @@
     "build": "concurrently \"npm run next-build\" \"npm run build-css\"",
     "start": "next start"
   },
+  "browser": {
+    "child_process": false
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-brands-svg-icons": "^5.13.0",
@@ -41,7 +44,8 @@
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.1.0",
     "styled-jsx-plugin-postcss": "^2.0.1",
-    "swr": "^0.2.2"
+    "swr": "^0.2.2",
+    "window": "^4.2.7"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
