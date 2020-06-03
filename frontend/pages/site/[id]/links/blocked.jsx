@@ -1,14 +1,14 @@
 import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import useUser from '../hooks/useUser'
-import Layout from '../components/layout'
-import MobileSidebar from '../components/sidebar/mobile-sidebar'
-import Sidebar from '../components/sidebar/main-sidebar'
+import useUser from '../../../../hooks/useUser'
+import Layout from '../../../../components/layout'
+import MobileSidebar from '../../../../components/sidebar/mobile-sidebar'
+import SiteSidebar from '../../../../components/sidebar/site-sidebar'
 
-const DashboardDiv = styled.section``
+const LinkBlockedDiv = styled.section``
 
-const Dashboard = () => {
+const LinkBlocked = () => {
   const { user } = useUser({ redirectTo: '/login' })
 
   if (user === undefined || !user) {
@@ -18,12 +18,12 @@ const Dashboard = () => {
   return (
     <Layout>
       <Head>
-        <title>Dashboard</title>
+        <title>Blocked Links</title>
       </Head>
 
-      <DashboardDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+      <LinkBlockedDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
         <MobileSidebar />
-        <Sidebar />
+        <SiteSidebar />
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button
@@ -50,7 +50,7 @@ const Dashboard = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>Dashboard</h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>Blocked Links</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               {/* Start Content Here */}
@@ -58,11 +58,11 @@ const Dashboard = () => {
             </div>
           </main>
         </div>
-      </DashboardDiv>
+      </LinkBlockedDiv>
     </Layout>
   )
 }
 
-export default Dashboard
+export default LinkBlocked
 
-Dashboard.propTypes = {}
+LinkBlocked.propTypes = {}
