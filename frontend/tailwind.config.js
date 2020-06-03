@@ -1,9 +1,5 @@
 module.exports = {
-  purge: [
-    "./components/**/*.jsx",
-    "./pages/*.jsx",
-    "./hooks/*.jsx",
-  ],
+  purge: false,
   theme: {
     screens: {
       sm: '640px',
