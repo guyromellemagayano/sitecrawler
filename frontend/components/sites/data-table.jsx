@@ -1,4 +1,3 @@
-import { Fragment } from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
 import Moment from 'react-moment'
@@ -6,6 +5,13 @@ import Moment from 'react-moment'
 const DataTableDiv = styled.tbody``
 
 const DataTable = props => {
+  const calendarStrings = {
+    lastDay : '[Yesterday], dddd',
+    sameDay : '[Today], dddd',
+    lastWeek : '[last] dddd [at] LT',
+    sameElse : 'L'
+  }
+  
   return (
     <DataTableDiv className={`bg-white`}>
       <tr>
@@ -39,7 +45,7 @@ const DataTable = props => {
         </td>
         <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
           <div className={`text-sm leading-5 text-gray-900`}>
-            <Moment local date={props.site.created_at} format="MM/DD/YYYY" />
+            <Moment local calendar={calendarStrings} date={props.site.created_at} />
           </div>
           <div className={`text-sm leading-5 text-gray-500`}>
             <Moment local date={props.site.created_at} format="hh:mm:ss A" />
@@ -47,7 +53,7 @@ const DataTable = props => {
         </td>
         <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
           <div className={`text-sm leading-5 text-gray-900`}>
-            <Moment local date={props.site.updated_at} format="MM/DD/YYYY" />
+            <Moment local calendar={calendarStrings} date={props.site.updated_at} />
           </div>
           <div className={`text-sm leading-5 text-gray-500`}>
             <Moment local date={props.site.updated_at} format="hh:mm:ss A" />
@@ -112,3 +118,5 @@ const DataTable = props => {
 }
 
 export default DataTable
+
+DataTable.propTypes = {}
