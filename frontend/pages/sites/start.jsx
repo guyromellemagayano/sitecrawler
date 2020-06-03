@@ -263,7 +263,7 @@ const SitesStart = () => {
                                 <button
                                   disabled={`disabled`}
                                   type={`submit`}
-                                  className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                                  className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-100 cursor-not-allowed`}
                                 >
                                   Add Site URL
                                 </button>

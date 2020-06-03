@@ -1,5 +1,4 @@
 import { Fragment, Suspense } from 'react'
-import Router from 'next/router';
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'

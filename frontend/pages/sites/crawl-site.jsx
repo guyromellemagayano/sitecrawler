@@ -1,9 +1,13 @@
-import React from 'react'
-import Link from 'next/link'
+import { Fragment, useCallback, useEffect, useState } from 'react'
+import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
+import useUser from '../../hooks/useUser'
+import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import Sidebar from '../../components/sidebar/main-sidebar'
+import Link from 'next/link'
 
 const SitesCrawlSiteDiv = styled.section`
   .wizard-indicator {
@@ -11,11 +15,46 @@ const SitesCrawlSiteDiv = styled.section`
   }
 `
 
-const SitesCrawlSite = () => {
-  const Fragment = React.Fragment
+const SitesCrawlSite = props => {
+  const [disableSiteVerify, setDisableSiteVerify] = useState(false)
+  const [successMsg, setSuccessMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+  const [dataQuery, setDataQuery] = useState([])
+  const [enableNextStep, setEnableNextStep] = useState(false)
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault()
+
+    if (errorMsg) setErrorMsg('')
+    if (successMsg) setSuccessMsg('')
+
+    try {
+      // API data fetch start
+      // API data fetch end
+
+      setDataQuery(props)
+      setSuccessMsg('Site crawling successful. Go check the site overview.')
+      setDisableSiteVerify(!disableSiteVerify)
+      setEnableNextStep(!enableNextStep)
+    } catch (error) {
+      setErrorMsg('An unexpected error occurred. Please try again.')
+
+      throw error
+    }
+  })
+
+  useEffect(() => {
+    Router.prefetch('/site/' + dataQuery.sid)
+  }, [dataQuery])
+
+  const { user } = useUser({ redirectTo: '/login' });
+
+  if (user === undefined || !user) {
+    return <Layout>Loading...</Layout>
+  }
 
   return (
-    <Fragment>
+    <Layout>
       <Head>
         <title>Information</title>
       </Head>
@@ -121,32 +160,95 @@ const SitesCrawlSite = () => {
                     </div>
                   </div>
 
-                  <div className={`mt-5 mx-auto sm:flex sm:justify-between`}>
-                    <button
-                      type={`button`}
-                      className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                  <form onSubmit={handleSubmit}>
+                    <div
+                      className={`mt-5 sm:flex sm:items-center sm:justify-between`}
                     >
-                      Start Site Crawl
-                    </button>
-                    <div>
-                      <Link href="/sites/overview">
-                        <a
-                          type={`button`}
-                          className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
-                        >
-                          Go to Site Dashboard
-                        </a>
-                      </Link>
+                      <div>
+                        {disableSiteVerify ? (
+                          <button
+                            disabled={`disabled`}
+                            type={`submit`}
+                            className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-100 cursor-not-allowed`}
+                          >
+                            Start Crawl
+                          </button>
+                        ) : (
+                          <button
+                            type={`submit`}
+                            className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                          >
+                            Start Crawl
+                          </button>
+                        )}
+
+                        {errorMsg && (
+                          <div className={`inline-block p-2`}>
+                            <div className={`flex`}>
+                              <div>
+                                <h3
+                                  className={`text-sm leading-5 font-medium text-red-800 break-words`}
+                                >
+                                  {errorMsg}
+                                </h3>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {successMsg && (
+                          <div className={`inline-block p-2`}>
+                            <div className={`flex`}>
+                              <div>
+                                <h3
+                                  className={`text-sm leading-5 font-medium text-green-800 break-words`}
+                                >
+                                  {successMsg}
+                                </h3>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {enableNextStep ? (
+                        <div>
+                          <Link href="/site/[id]" as={`/site/${dataQuery.sid}`}>
+                            <a
+                              type={`button`}
+                              className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                            >
+                              Go to Site Overview
+                            </a>
+                          </Link>
+                        </div>
+                      ) : null}
                     </div>
-                  </div>
+                  </form>
                 </div>
               </div>
             </div>
           </main>
         </div>
       </SitesCrawlSiteDiv>
-    </Fragment>
-  );
+    </Layout>
+  )
+}
+
+SitesCrawlSite.getInitialProps = ({ query }) => {
+  return {
+    sid: query.sid,
+    surl: query.surl,
+    vid: query.vid,
+    v: query.v,
+    sname: query.sname,
+  }
 }
 
 export default SitesCrawlSite
+
+SitesCrawlSite.propTypes = {
+  errorMsg: PropTypes.string,
+  successMsg: PropTypes.string,
+  handleSubmit: PropTypes.func,
+}

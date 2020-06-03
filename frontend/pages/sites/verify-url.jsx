@@ -66,8 +66,6 @@ const SitesVerifyUrl = props => {
       
       const data = await response.json()
 
-      console.log(data.verified)
-
       if (response.ok) {
         if (data.verified) {
           setDataQuery(data)
@@ -254,7 +252,7 @@ const SitesVerifyUrl = props => {
                                 text={copyValue}
                               >
                                 <button
-                                  className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-50 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
+                                  className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
                                 >
                                   <span>
                                     {copied ? "Copied!" : "Copy to clipboard"}
@@ -288,14 +286,14 @@ const SitesVerifyUrl = props => {
                             <button
                               disabled={`disabled`}
                               type={`submit`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-100 cursor-not-allowed`}
                             >
                               Verify Site
                             </button>
                             <button
                               disabled={`disabled`}
                               type={`button`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white opacity-50 cursor-not-allowed`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white opacity-100 cursor-not-allowed`}
                             >
                               Verify Later
                             </button>
@@ -310,7 +308,7 @@ const SitesVerifyUrl = props => {
                             </button>
                             <button
                               type={`button`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-100 transition ease-in-out duration-150`}
                             >
                               Verify Later
                             </button>

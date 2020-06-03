@@ -53,10 +53,10 @@ const SitesInformation = props => {
     Router.push({
       pathname: '/sites/crawl-site',
       query: {
-        sid: dataQuery.id,
-        surl: dataQuery.url,
-        vid: dataQuery.verification_id,
-        v: false,
+        sid: dataQuery.sid,
+        surl: dataQuery.surl,
+        vid: dataQuery.vid,
+        v: dataQuery.v,
         sname: '',
       },
     })
@@ -64,7 +64,7 @@ const SitesInformation = props => {
 
   useEffect(() => {
     Router.prefetch('/sites/crawl-site')
-  }, [])
+  }, [dataQuery])
 
   const { user } = useUser({ redirectTo: '/login' });
 
@@ -207,7 +207,7 @@ const SitesInformation = props => {
                             <button
                               disabled={`disabled`}
                               type={`submit`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-100 cursor-not-allowed`}
                             >
                               Verify Site Name
                             </button>
