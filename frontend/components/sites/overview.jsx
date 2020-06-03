@@ -13,8 +13,6 @@ const SitesOverview = props => {
     sameElse : 'L'
   }
 
-  console.log(props)
-
   return (
     <SitesOverviewDiv className={`max-w-full bg-white shadow sm:rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>

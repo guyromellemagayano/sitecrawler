@@ -1,21 +1,11 @@
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import PrimaryMenu from './primary-menu'
 import SiteMenu from './site-menu'
 
 const MainSidebarDiv = styled.aside``
 
-const MainSidebar = () => {
-  const [windowSiteLocation, setWindowSiteLocation] = useState(false)
-
-  useEffect(() => {
-    if (window.location.href.indexOf("/site/") > -1) {
-      setWindowSiteLocation(!windowSiteLocation)
-    }
-  }, [setWindowSiteLocation])
-  
+const MainSidebar = () => {  
   return (
     <MainSidebarDiv className={`hidden md:flex md:flex-shrink-0`}>
       <div className={`flex flex-col w-64 border-r border-gray-200 bg-white`}>
@@ -27,7 +17,7 @@ const MainSidebar = () => {
               alt={`Workflow`}
             />
           </div>
-          {windowSiteLocation ? <SiteMenu /> : <PrimaryMenu />}
+          <SiteMenu />
         </div>
         <div className={`flex-shrink-0 flex border-t border-gray-200 p-4`}>
           <Link href="/profile">
