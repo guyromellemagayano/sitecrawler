@@ -57,10 +57,7 @@ const SitesDashboard = () => {
       <SitesDashboardDiv
         className={`h-screen flex overflow-hidden bg-gray-100`}
       >
-        {/* Mobile Sidebar */}
         <MobileSidebar />
-
-        {/* Sidebar */}
         <MainSidebar />
 
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -94,7 +91,6 @@ const SitesDashboard = () => {
               </h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              {/* Overview */}
               <div>
                 <SitesOverview 
                   url={data.url}
@@ -105,11 +101,9 @@ const SitesDashboard = () => {
               </div>
 
               <div className={`pb-4`}>
-                {/* Sections */}
                 <SitesStats />
               </div>
 
-              {/* Dashboard Footer */}
               <DashboardFooter />
             </div>
           </main>

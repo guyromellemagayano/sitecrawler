@@ -53,6 +53,12 @@ const Login = () => {
     Router.prefetch('/dashboard')
   })
 
+  const { user } = useUser({ redirectTo: '/login' });
+
+  if (user === undefined || !user) {
+    return <Layout>Loading...</Layout>
+  }
+
   return (
     <Layout>
       <Head>
