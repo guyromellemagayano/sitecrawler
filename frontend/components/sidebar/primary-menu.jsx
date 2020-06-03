@@ -1,4 +1,4 @@
-import React from "react"
+import { Fragment } from "react"
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import styled from 'styled-components'
@@ -6,9 +6,7 @@ import DashboardPages from '../../config/dashboard-pages.json'
 
 const PrimaryMenuDiv = styled.nav``
 
-const PrimaryMenu = () => {
-  const Fragment = React.Fragment
-  
+const PrimaryMenu = () => {  
   return (
     <PrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
       {

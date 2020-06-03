@@ -1,4 +1,4 @@
-import React from "react"
+import { Fragment } from "react"
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import styled from 'styled-components'
@@ -7,8 +7,6 @@ import DashboardPages from '../../config/dashboard-pages.json'
 const MobilePrimaryMenuDiv = styled.nav``
 
 const MobilePrimaryMenu = () => {
-  const Fragment = React.Fragment
-
   return (
     <MobilePrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
       {
