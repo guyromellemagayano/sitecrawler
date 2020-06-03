@@ -22,7 +22,7 @@ const SitesVerifyUrlDiv = styled.section`
 `
 
 const SitesVerifyUrl = props => {
-  const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${props.vid}"}>`)
+  const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${props.vid}">`)
   const [copied, setCopied] = useState(false)
   const [siteVerifyId, setSiteVerifyId] = useState(props.sid)
   const [errorMsg, setErrorMsg] = useState('')
