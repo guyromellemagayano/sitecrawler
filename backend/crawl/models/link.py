@@ -14,10 +14,12 @@ class Link(models.Model):
     STATUS_OK = 1
     STATUS_TIMEOUT = 2
     STATUS_HTTP_ERROR = 3
+    STATUS_OTHER_ERROR = 4
     STATUS_CHOICES = [
         (STATUS_OK, "OK"),
         (STATUS_TIMEOUT, "TIMEOUT"),
         (STATUS_HTTP_ERROR, "HTTP_ERROR"),
+        (STATUS_OTHER_ERROR, "OTHER_ERROR"),
     ]
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)

@@ -15,5 +15,8 @@ func (s *SiteDao) ByID(id int) (*CrawlSite, error) {
 }
 
 func (s *SiteDao) Save(site *CrawlSite) error {
+	if site.ID == 0 {
+		return s.DB.Insert(site)
+	}
 	return s.DB.Update(site)
 }

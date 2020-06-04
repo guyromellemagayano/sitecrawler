@@ -6,26 +6,26 @@ import (
 	"net/http"
 )
 
-type VerifyEndpoint struct {
-	VerifyService *VerifyService
+type ScanEndpoint struct {
+	ScanService *ScanService
 }
 
-type VerifyRequest struct {
-	SiteID int `json:"site_id"`
+type ScanRequest struct {
+	ScanID int `json:"scan_id"`
 }
 
-type VerifyResponse struct {
+type ScanResponse struct {
 }
 
-func (v *VerifyEndpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (v *ScanEndpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 	defer r.Body.Close()
 
-	request := VerifyRequest{}
-	response := VerifyResponse{}
+	request := ScanRequest{}
+	response := ScanResponse{}
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&request); err != nil {
@@ -33,12 +33,12 @@ func (v *VerifyEndpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := v.VerifyService.VerifySite(request.SiteID)
-	if err != nil {
-		log.Printf("Could not verify site: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
+	go func() {
+		err := v.ScanService.ScanSite(request.ScanID)
+		if err != nil {
+			log.Printf("Site scan failed: %v", err)
+		}
+	}()
 
 	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)

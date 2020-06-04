@@ -27,14 +27,35 @@ func main() {
 		Database: "postgres",
 	})
 	defer db.Close()
+	if env("LOG_SQL", "false") == "true" {
+		db.AddQueryHook(dbLogger{})
+	}
 
 	siteDao := &SiteDao{DB: db}
+	scanDao := &ScanDao{DB: db}
+	linkDao := &LinkDao{DB: db}
+	linkLinkDao := &LinkLinkDao{DB: db}
 
 	verifyService := &VerifyService{SiteDao: siteDao}
+	scanService := &ScanService{
+		ScanDao:       scanDao,
+		LinkDao:       linkDao,
+		LinkLinkDao:   linkLinkDao,
+		VerifyService: verifyService,
+	}
 
 	http.Handle("/verify", &VerifyEndpoint{VerifyService: verifyService})
+	http.Handle("/scan", &ScanEndpoint{ScanService: scanService})
 
 	listen := fmt.Sprintf(":%s", port)
 	log.Printf("Listening on: %s", listen)
 	log.Fatal(http.ListenAndServe(listen, nil))
+}
+
+type dbLogger struct{}
+
+func (d dbLogger) BeforeQuery(q *pg.QueryEvent) {}
+
+func (d dbLogger) AfterQuery(q *pg.QueryEvent) {
+	log.Println(q.FormattedQuery())
 }
