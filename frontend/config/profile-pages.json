@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Go Back to Dashboard",
+    "url": "/dashboard",
+    "icon": "M10 19l-7-7m0 0l7-7m-7 7h18"
+  },
+  {
+    "title": "User Settings",
+    "url": "/profile",
+    "icon": "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+  },
+  {
+    "title": "Sign Out",
+    "url": "/logout",
+    "icon": "M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+  }
+]
