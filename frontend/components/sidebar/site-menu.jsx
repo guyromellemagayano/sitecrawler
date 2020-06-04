@@ -32,6 +32,14 @@ const SiteMenu = () => {
                     strokeWidth={`2`}
                     d={val.icon}
                   />
+                  {val.icon2 ? (
+                    <path
+                      strokeLinecap={`round`}
+                      strokeLinejoin={`round`}
+                      strokeWidth={`2`}
+                      d={val.icon2}
+                    />
+                  ) : null}
                 </svg>
                 {val.title}
               </a>

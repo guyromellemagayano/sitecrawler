@@ -8,13 +8,11 @@ const SitesOverviewDiv = styled.div``
 const SitesOverview = props => {
   const calendarStrings = {
     lastDay : '[Yesterday], dddd [at]',
-    sameDay : '[Today], dddd [at]',
-    lastWeek : '[last] dddd [at] LT',
-    sameElse : 'L'
+    sameDay : '[Today], dddd [at]'
   }
 
   return (
-    <SitesOverviewDiv className={`max-w-full bg-white shadow sm:rounded-lg`}>
+    <SitesOverviewDiv className={`max-w-6xl bg-white shadow sm:rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
         <h2 className={`text-lg leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
           <a href={`${props.url}`} target={`_blank`} title={`${props.url}`}>
