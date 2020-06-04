@@ -2,7 +2,7 @@ import { Fragment, Suspense } from 'react'
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'
-import useSWR from 'swr';
+import useSWR from 'swr'
 import PropTypes from 'prop-types'
 import DataTableHeadsContent from '../config/data-table-heads.json'
 import useUser from '../hooks/useUser'
@@ -13,8 +13,6 @@ import AddSite from '../components/sites/add-site'
 import DataTable from '../components/sites/data-table'
 import Pagination from '../components/sites/pagination'
 
-const SitesDiv = styled.section``
-
 const apiParameters = {
   method: 'GET',
   headers: {
@@ -24,18 +22,20 @@ const apiParameters = {
   },
 }
 
+const SitesDiv = styled.section``
+
 const Sites = () => {
   const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
   
-  const { user } = useUser({ redirectTo: '/login' });
+  const { user } = useUser({ redirectTo: '/login' })
   const { data, error } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
 
   if (user === undefined || !user) {
     return <Layout>Loading...</Layout>
   }
 
-  if (error) return <div>Failed to load</div>
-  if (!data) return <div>Loading...</div>
+  if (error) return <Layout>Failed to load</Layout>
+  if (!data) return <Layout>Loading...</Layout>
 
   return (
     <Layout>
@@ -45,10 +45,7 @@ const Sites = () => {
 
       <Suspense fallback={<div>loading...</div>}>
         <SitesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
-          {/* Mobile Sidebar */}
           <MobileSidebar />
-
-          {/* Sidebar */}
           <Sidebar />
 
           <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -82,11 +79,9 @@ const Sites = () => {
                 </h1>
               </div>
               <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-                {/* Add Site */}
                 <AddSite />
 
                 <div className={`pb-4`}>
-                  {/* Site Data Table */}
                   <div className={`flex flex-col`}>
                     <div
                       className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
@@ -106,7 +101,7 @@ const Sites = () => {
                                       {site.label}
                                     </th>
                                   </Fragment>
-                                );
+                                )
                               })}
                               <th
                                 className={`px-6 py-3 border-b border-gray-200 bg-white`}
@@ -121,8 +116,6 @@ const Sites = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* Table Pagination */}
                 <Pagination />
               </div>
             </main>
@@ -130,7 +123,7 @@ const Sites = () => {
         </SitesDiv>
       </Suspense>
     </Layout>
-  );
+  )
 }
 
 export default Sites

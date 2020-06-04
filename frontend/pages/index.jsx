@@ -23,7 +23,7 @@ const Home = () => {
           </svg>
         </div>
         <div className={`relative pt-6 pb-16 md:pb-20 lg:pb-24 xl:pb-32`}>
-          <nav className={`relative max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6`}>
+          <nav className={`relative max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6`}>
             <div className={`flex items-center flex-1`}>
               <div className={`flex items-center justify-between w-full md:w-auto`}>
                 <a href={`#`}>
@@ -97,7 +97,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div className={`mt-8 mx-auto max-w-screen-xl px-4 sm:mt-12 sm:px-6 md:mt-20 xl:mt-24`}>
+          <div className={`mt-8 mx-auto max-w-6xl px-4 sm:mt-12 sm:px-6 md:mt-20 xl:mt-24`}>
             <div className={`lg:grid lg:grid-cols-12 lg:gap-8`}>
               <div className={`sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left`}>
                 <div className={`text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base`}>

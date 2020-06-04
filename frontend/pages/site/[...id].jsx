@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
-import SiteSidebar from '../../components/sidebar/site-sidebar'
+import MainSidebar from '../../components/sidebar/main-sidebar'
 import SitesOverview from '../../components/sites/overview'
 import SitesStats from '../../components/sites/stats'
 import DashboardFooter from '../../components/dashboard/footer'
@@ -51,14 +51,14 @@ const SitesDashboard = () => {
   return (
     <Layout>
       <Head>
-        <title>Overview</title>
+        <title>Site Overview</title>
       </Head>
 
       <SitesDashboardDiv
         className={`h-screen flex overflow-hidden bg-gray-100`}
       >
         <MobileSidebar />
-        <SiteSidebar />
+        <MainSidebar />
 
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>

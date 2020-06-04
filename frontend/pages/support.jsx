@@ -1,14 +1,13 @@
-import React from 'react'
+import { Fragment } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
 import Sidebar from '../components/sidebar/main-sidebar'
 
 const SupportDiv = styled.section``
 
 const Support = () => {
-  const Fragment = React.Fragment
-
   return (
     <Fragment>
       <Head>
@@ -62,3 +61,5 @@ const Support = () => {
 }
 
 export default Support
+
+Support.propTypes = {}
