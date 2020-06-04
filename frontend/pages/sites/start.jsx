@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
+import fetch from 'node-fetch'
 import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'

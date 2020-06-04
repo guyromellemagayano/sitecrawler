@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, Fragment } from 'react'
+import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import Router from 'next/router'
 import Head from 'next/head'

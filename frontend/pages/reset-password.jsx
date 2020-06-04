@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import Link from 'next/link'

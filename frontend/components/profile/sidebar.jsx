@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import useSWR from 'swr'
