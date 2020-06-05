@@ -176,7 +176,7 @@ const Login = () => {
                 <div
                   className={`relative flex justify-center text-sm leading-5`}
                 >
-                  <span className={`px-2 bg-white text-gray-100`}>
+                  <span className={`px-2 bg-white text-gray-600`}>
                     Or continue with
                   </span>
                 </div>
@@ -188,7 +188,7 @@ const Login = () => {
                     <a
                       href={`/auth/google/login/`}
                       type={`button`}
-                      className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-100 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out`}
+                      className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out`}
                       aria-label={`Sign in with Google`}
                     >
                       <FontAwesomeIcon
@@ -204,7 +204,7 @@ const Login = () => {
                     <Link href="#">
                       <a
                         type={`button`}
-                        className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-100 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out`}
+                        className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out`}
                         aria-label={`Sign in with Facebook`}
                       >
                         <FontAwesomeIcon
@@ -221,7 +221,7 @@ const Login = () => {
                     <Link href="#">
                       <a
                         type={`button`}
-                        className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-100 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out`}
+                        className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out`}
                         aria-label={`Sign in with LinkedIn`}
                       >
                         <FontAwesomeIcon
@@ -239,7 +239,7 @@ const Login = () => {
           <div
             className={`relative flex justify-center wrap flex-row text-sm leading-5`}
           >
-            <span className={`px-2 py-5 text-gray-100`}>
+            <span className={`px-2 py-5 text-gray-600`}>
               Don't have an account? &nbsp;
               <Link href="/registration">
                 <a
@@ -253,7 +253,7 @@ const Login = () => {
         </div>
       </LoginDiv>
     </Layout>
-  )
+  );
 }
 
 export default Login
