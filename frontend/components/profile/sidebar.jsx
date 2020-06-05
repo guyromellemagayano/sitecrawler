@@ -43,7 +43,7 @@ const ProfileSidebar = () => {
                 {data.username}
               </p>
               <p
-                className={`text-xs leading-4 font-medium text-gray-100 group-hover:text-gray-700 transition ease-in-out duration-150`}
+                className={`text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 transition ease-in-out duration-150`}
               >
                 View profile
               </p>

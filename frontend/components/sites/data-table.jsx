@@ -28,7 +28,7 @@ const DataTable = props => {
               <div className={`text-sm leading-5 font-medium text-gray-900`}>
                 Epic Design Labs
               </div>
-              <div className={`text-sm leading-5 text-gray-100`}>
+              <div className={`text-sm leading-5 text-gray-500`}>
                 <a
                   href={`${props.site.url}`}
                   target={`_blank`}
@@ -45,7 +45,7 @@ const DataTable = props => {
           <div className={`text-sm leading-5 text-gray-900`}>
             <Moment local calendar={calendarStrings} date={props.site.created_at} />
           </div>
-          <div className={`text-sm leading-5 text-gray-100`}>
+          <div className={`text-sm leading-5 text-gray-500`}>
             <Moment local date={props.site.created_at} format="hh:mm:ss A" />
           </div>
         </td>
@@ -53,7 +53,7 @@ const DataTable = props => {
           <div className={`text-sm leading-5 text-gray-900`}>
             <Moment local calendar={calendarStrings} date={props.site.updated_at} />
           </div>
-          <div className={`text-sm leading-5 text-gray-100`}>
+          <div className={`text-sm leading-5 text-gray-500`}>
             <Moment local date={props.site.updated_at} format="hh:mm:ss A" />
           </div>
         </td>
@@ -73,7 +73,7 @@ const DataTable = props => {
           )}
         </td>
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-100`}
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           50
           <svg

@@ -71,7 +71,7 @@ const SitesCrawlSite = props => {
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button
-              className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
+              className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
               aria-label={`Open sidebar`}
             >
               <svg
@@ -103,7 +103,7 @@ const SitesCrawlSite = props => {
                       Add a new site
                     </h4>
                     <p
-                      className={`max-w-6xl mt-2 text-sm leading-5 text-gray-100`}
+                      className={`max-w-6xl mt-2 text-sm leading-5 text-gray-500`}
                     >
                       Organically grow the holistic world view of disruptive
                       innovation via workplace diversity and empowerment.
@@ -152,7 +152,7 @@ const SitesCrawlSite = props => {
                         Crawl the site
                       </h4>
                       <p
-                        className={`mt-1 text-sm leading-5 text-gray-100 max-w-6xl`}
+                        className={`mt-1 text-sm leading-5 text-gray-500 max-w-6xl`}
                       >
                         Capitalize on low hanging fruit to identify a ballpark
                         value added activity to beta test.
@@ -169,7 +169,7 @@ const SitesCrawlSite = props => {
                           <button
                             disabled={`disabled`}
                             type={`submit`}
-                            className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-100 cursor-not-allowed`}
+                            className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
                           >
                             Start Crawl
                           </button>
