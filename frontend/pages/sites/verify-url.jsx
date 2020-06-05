@@ -5,6 +5,7 @@ import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
@@ -378,3 +379,5 @@ SitesVerifyUrl.getInitialProps = ({ query }) => {
 }
 
 export default SitesVerifyUrl
+
+SitesVerifyUrl.propTypes = {}
