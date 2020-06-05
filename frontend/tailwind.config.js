@@ -278,6 +278,7 @@ module.exports = {
     inset: {
       '0': '0',
       auto: 'auto',
+      '1/2': '50%',
     },
     letterSpacing: {
       tighter: '-0.05em',
@@ -659,7 +660,7 @@ module.exports = {
     fontStyle: ['responsive'],
     fontWeight: ['responsive', 'hover', 'focus'],
     height: ['responsive'],
-    inset: ['responsive'],
+    inset: ['responsive', 'hover', 'focus'],
     justifyContent: ['responsive'],
     letterSpacing: ['responsive'],
     lineHeight: ['responsive'],
@@ -712,7 +713,7 @@ module.exports = {
     transformOrigin: ['responsive'],
     scale: ['responsive', 'hover', 'focus'],
     rotate: ['responsive', 'hover', 'focus'],
-    translate: ['responsive', 'hover', 'focus'],
+    translate: ['responsive', 'hover', 'focus', 'disabled'],
     skew: ['responsive', 'hover', 'focus'],
     transitionProperty: ['responsive'],
     transitionTimingFunction: ['responsive'],
