@@ -146,7 +146,7 @@ const ResetPassword = () => {
           </div>
 
           <div className={`relative flex justify-center wrap flex-row text-sm leading-5`}>
-            <span className={`px-2 py-5 text-gray-1000`}>
+            <span className={`px-2 py-5 text-gray-100`}>
               Already have an account? &nbsp;
               <Link href="/login">
                 <a

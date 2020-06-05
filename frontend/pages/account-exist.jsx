@@ -21,7 +21,7 @@ const AccountExist = () => {
 										<h3 className={`text-lg leading-6 font-medium text-red-600`}>
 											{val.title}
 									</h3>
-										<div className={`mt-2 max-w-xl text-sm leading-5 text-gray-1000`}>
+										<div className={`mt-2 max-w-xl text-sm leading-5 text-gray-100`}>
 											<p>{val.description}</p>
 										</div>
 										<div className={`mt-3 text-sm leading-5`}>

@@ -45,7 +45,7 @@ const ProfileSettings = () => {
                   <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                     Profile
                   </h3>
-                  <p className={`mt-1 text-sm leading-5 text-gray-1000`}>
+                  <p className={`mt-1 text-sm leading-5 text-gray-100`}>
                     This information will be displayed publicly so be careful
                     what you share.
                   </p>
@@ -92,7 +92,7 @@ const ProfileSettings = () => {
                       <span className={`ml-5 rounded-md shadow-sm`}>
                         <button
                           type={`button`}
-                          className={`py-2 px-3 border border-gray-300 rounded-md text-sm leading-4 font-medium text-gray-700 hover:text-gray-1000 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-800 transition duration-150 ease-in-out`}
+                          className={`py-2 px-3 border border-gray-300 rounded-md text-sm leading-4 font-medium text-gray-700 hover:text-gray-100 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-800 transition duration-150 ease-in-out`}
                         >
                           Change
                         </button>
@@ -106,7 +106,7 @@ const ProfileSettings = () => {
                   <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                     Personal Information
                   </h3>
-                  <p className={`mt-1 text-sm leading-5 text-gray-1000`}>
+                  <p className={`mt-1 text-sm leading-5 text-gray-100`}>
                     Use a permanent address where you can receive mail.
                   </p>
                 </div>

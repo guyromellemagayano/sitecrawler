@@ -51,7 +51,7 @@ const Sites = () => {
           <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
             <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
               <button
-                className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-1000 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
+                className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                 aria-label={`Open sidebar`}
               >
                 <svg
@@ -96,7 +96,7 @@ const Sites = () => {
                                 return (
                                   <Fragment key={key}>
                                     <th
-                                      className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-1000 uppercase tracking-wider`}
+                                      className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-100 uppercase tracking-wider`}
                                     >
                                       {site.label}
                                     </th>

@@ -19,7 +19,7 @@ const SitesOverview = props => {
             {props.url}
           </a>
         </h2>
-        <div className={`mt-5 mb-3 max-w-xl text-sm leading-5 text-gray-1000`}>
+        <div className={`mt-5 mb-3 max-w-xl text-sm leading-5 text-gray-100`}>
           <div className={`mb-2 flex`}>
             <strong>Site Status:</strong>
             {props.verified ? (
@@ -33,7 +33,7 @@ const SitesOverview = props => {
             )}
           </div>
         </div>
-        <div className={`my-2 max-w-xl text-sm leading-5 text-gray-1000`}>
+        <div className={`my-2 max-w-xl text-sm leading-5 text-gray-100`}>
           <div className={`mb-3 flex`}>
             <strong>Crawl Status:</strong>
             {/* <div className={`ml-2 max-w-xl`}>
@@ -53,7 +53,7 @@ const SitesOverview = props => {
             </div> */}
           </div>
         </div>
-        <div className={`my-2 max-w-xl text-sm leading-5 text-gray-1000`}>
+        <div className={`my-2 max-w-xl text-sm leading-5 text-gray-100`}>
           <p className={`mb-3`}>
             <strong>Created on:</strong> <Moment local calendar={calendarStrings} date={props.createdAt} />&nbsp;
             <Moment local date={props.createdAt} format="hh:mm:ss A" /><br />
@@ -71,7 +71,7 @@ const SitesOverview = props => {
           <Link href="/sites/settings">
             <a
               type={`button`}
-              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-1000 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-100 transition ease-in-out duration-150`}
+              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-100 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-100 transition ease-in-out duration-150`}
             >
               Site Settings
             </a>

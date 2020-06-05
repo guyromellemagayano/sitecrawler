@@ -13,7 +13,7 @@ const SitesStats = () => {
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt
-                  className={`text-sm leading-5 font-medium text-gray-1000 truncate`}
+                  className={`text-sm leading-5 font-medium text-gray-100 truncate`}
                 >
                   Total Links
                 </dt>
@@ -40,7 +40,7 @@ const SitesStats = () => {
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt
-                  className={`text-sm leading-5 font-medium text-gray-1000 truncate`}
+                  className={`text-sm leading-5 font-medium text-gray-100 truncate`}
                 >
                   Links with Issues
                 </dt>
@@ -67,7 +67,7 @@ const SitesStats = () => {
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt
-                  className={`text-sm leading-5 font-medium text-gray-1000 truncate`}
+                  className={`text-sm leading-5 font-medium text-gray-100 truncate`}
                 >
                   New Links
                 </dt>
@@ -112,7 +112,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               404 Not Found
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Errors found</span>
                             </div>
                           </div>
@@ -146,7 +146,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Host Not Found
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Errors found</span>
                             </div>
                           </div>
@@ -180,7 +180,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               SSL Error
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Errors found</span>
                             </div>
                           </div>
@@ -226,7 +226,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Image Types
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -260,7 +260,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               URL Links
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -294,7 +294,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Scripts
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -328,7 +328,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Stylesheets
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -362,7 +362,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               IFrames
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -396,7 +396,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Homepage
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -430,7 +430,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               External Links
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -476,7 +476,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               https://
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -510,7 +510,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               http://
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -544,7 +544,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Other
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -590,7 +590,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Permanent redirect
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -624,7 +624,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Temporary redirect
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -670,7 +670,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Outbound
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -704,7 +704,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Internal
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -750,7 +750,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Dofollow
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>
@@ -784,7 +784,7 @@ const SitesStats = () => {
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Nofollow
                             </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-1000`}>
+                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-100`}>
                               <span className={`truncate`}>10 Items found</span>
                             </div>
                           </div>

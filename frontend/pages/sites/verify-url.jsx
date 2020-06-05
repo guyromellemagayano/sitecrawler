@@ -134,7 +134,7 @@ const SitesVerifyUrl = props => {
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button
-              className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-1000 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
+              className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
               aria-label={`Open sidebar`}
             >
               <svg
@@ -166,7 +166,7 @@ const SitesVerifyUrl = props => {
                       Add a new site
                     </h4>
                     <p
-                      className={`max-w-6xl mt-2 text-sm leading-5 text-gray-1000`}
+                      className={`max-w-6xl mt-2 text-sm leading-5 text-gray-100`}
                     >
                       Organically grow the holistic world view of disruptive
                       innovation via workplace diversity and empowerment.
@@ -215,7 +215,7 @@ const SitesVerifyUrl = props => {
                         Verify the added URL
                       </h4>
                       <p
-                        className={`max-w-6xl text-sm mb-5 leading-5 text-gray-1000`}
+                        className={`max-w-6xl text-sm mb-5 leading-5 text-gray-100`}
                       >
                         At the end of the day, going forward, a new normal that
                         has evolved from generation X is on the runway heading
@@ -227,10 +227,10 @@ const SitesVerifyUrl = props => {
                         Instructions:
                       </p>
                       <ol>
-                        <li className={`text-sm leading-6 text-gray-1000`}>
+                        <li className={`text-sm leading-6 text-gray-100`}>
                           Sign in to your website.
                         </li>
-                        <li className={`text-sm leading-6 text-gray-1000`}>
+                        <li className={`text-sm leading-6 text-gray-100`}>
                           Copy the meta tag below and add it within your
                           website's <strong>{`<HEAD>`}</strong> tag <br />
                           <div>
@@ -252,7 +252,7 @@ const SitesVerifyUrl = props => {
                                 text={copyValue}
                               >
                                 <button
-                                  className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 hover:text-gray-1000 hover:bg-white focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
+                                  className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 hover:text-gray-100 hover:bg-white focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
                                 >
                                   <span>
                                     {copied ? "Copied!" : "Copy to clipboard"}
@@ -262,7 +262,7 @@ const SitesVerifyUrl = props => {
                             </div>
                           </div>
                         </li>
-                        <li className={`text-sm leading-6 text-gray-1000`}>
+                        <li className={`text-sm leading-6 text-gray-100`}>
                           Press <strong>Verify Site</strong> button below
                         </li>
                       </ol>
@@ -308,7 +308,7 @@ const SitesVerifyUrl = props => {
                             </button>
                             <button
                               type={`button`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-1000 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-100 transition ease-in-out duration-150`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-100 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-100 transition ease-in-out duration-150`}
                             >
                               Verify Later
                             </button>
