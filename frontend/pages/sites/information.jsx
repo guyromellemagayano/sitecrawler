@@ -90,7 +90,7 @@ const SitesInformation = props => {
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button
-              className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
+              className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-1000 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
               aria-label={`Open sidebar`}
             >
               <svg
@@ -122,7 +122,7 @@ const SitesInformation = props => {
                       Add a new site
                     </h4>
                     <p
-                      className={`max-w-6xl mt-2 text-sm leading-5 text-gray-500`}
+                      className={`max-w-6xl mt-2 text-sm leading-5 text-gray-1000`}
                     >
                       Organically grow the holistic world view of disruptive
                       innovation via workplace diversity and empowerment.
@@ -171,7 +171,7 @@ const SitesInformation = props => {
                         Fill in site information
                       </h4>
                       <p
-                        className={`mt-1 text-sm leading-5 text-gray-500 max-w-6xl`}
+                        className={`mt-1 text-sm leading-5 text-gray-1000 max-w-6xl`}
                       >
                         Capitalize on low hanging fruit to identify a ballpark
                         value added activity to beta test.

@@ -65,7 +65,7 @@ const MobileSidebar = () => {
                       Tom Cook
                     </p>
                     <p
-                      className={`text-sm leading-5 font-medium text-gray-500 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150`}
+                      className={`text-sm leading-5 font-medium text-gray-1000 group-hover:text-gray-700 group-focus:underline transition ease-in-out duration-150`}
                     >
                       View profile
                     </p>

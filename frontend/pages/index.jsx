@@ -18,7 +18,7 @@ const Home = () => {
                 <rect x={`0`} y={`0`} width={`4`} height={`4`} className={`text-gray-200`} fill={`currentColor`} />
               </pattern>
             </defs>
-            <rect y={`72`} width={`640`} height={`640`} className={`text-gray-50`} fill={`currentColor`} />
+            <rect y={`72`} width={`640`} height={`640`} className={`text-gray-100`} fill={`currentColor`} />
             <rect x={`118`} width={`404`} height={`784`} fill={`url(#9ebea6f4-a1f5-4d96-8c4e-4c2abf658047)`} />
           </svg>
         </div>
@@ -30,7 +30,7 @@ const Home = () => {
                   <img className={`h-8 w-auto sm:h-10`} src={`/img/logos/workflow-logo-on-white.svg`} alt={``} />
                 </a>
                 <div className={`-mr-2 flex items-center md:hidden`}>
-                  <button type={`button`} className={`inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out`}>
+                  <button type={`button`} className={`inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-1000 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-1000 transition duration-150 ease-in-out`}>
                     <svg className={`h-6 w-6`} stroke={`currentColor`} fill={`none`} viewBox={`0 0 24 24`}>
                       <path strokeLinecap={`round`} strokeLinejoin={`round`} strokeWidth={`2`} d={`M4 6h16M4 12h16M4 18h16`} />
                     </svg>
@@ -38,10 +38,10 @@ const Home = () => {
                 </div>
               </div>
               <div className={`hidden md:block md:ml-10`}>
-                <a href="#" className={`font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Product</a>
-                <a href="#" className={`ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Features</a>
-                <a href="#" className={`ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Marketplace</a>
-                <a href="#" className={`ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Company</a>
+                <a href="#" className={`font-medium text-gray-1000 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Product</a>
+                <a href="#" className={`ml-10 font-medium text-gray-1000 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Features</a>
+                <a href="#" className={`ml-10 font-medium text-gray-1000 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Marketplace</a>
+                <a href="#" className={`ml-10 font-medium text-gray-1000 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Company</a>
               </div>
             </div>
             <div className={`hidden md:block text-right`}>
@@ -75,7 +75,7 @@ const Home = () => {
                     <img className={`h-8 w-auto`} src={`/img/logos/workflow-logo-on-white.svg`} alt={``} />
                   </div>
                   <div className={`-mr-2`}>
-                    <button type={`button`} className={`inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out`}>
+                    <button type={`button`} className={`inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-1000 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-1000 transition duration-150 ease-in-out`}>
                       <svg className={`h-6 w-6`} stroke={`currentColor`} fill={`none`} viewBox={`0 0 24 24`}>
                         <path strokeLinecap={`round`} strokeLinejoin={`round`} strokeWidth={`2`} d={`M6 18L18 6M6 6l12 12`} />
                       </svg>
@@ -100,7 +100,7 @@ const Home = () => {
           <div className={`mt-8 mx-auto max-w-6xl px-4 sm:mt-12 sm:px-6 md:mt-20 xl:mt-24`}>
             <div className={`lg:grid lg:grid-cols-12 lg:gap-8`}>
               <div className={`sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left`}>
-                <div className={`text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base`}>
+                <div className={`text-sm font-semibold uppercase tracking-wide text-gray-1000 sm:text-base lg:text-sm xl:text-base`}>
                   Coming soon
                 </div>
                 <h2 className={`mt-1 text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl`}>
@@ -108,7 +108,7 @@ const Home = () => {
                   <br className={`hidden md:inline`} />
                   <span className={`text-indigo-600`}>online business</span>
                 </h2>
-                <p className={`mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl`}>
+                <p className={`mt-3 text-base text-gray-1000 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl`}>
                   Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat fugiat aliqua ad ad non deserunt sunt.
                 </p>
                 <div className={`mt-5 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0`}>
@@ -121,7 +121,7 @@ const Home = () => {
                       Notify me
                     </button>
                   </form>
-                  <p className={`mt-3 text-sm leading-5 text-gray-500`}>
+                  <p className={`mt-3 text-sm leading-5 text-gray-1000`}>
                     We care about the protection of your data. Read our&nbsp;
                     <a href="#" className={`font-medium text-gray-900 underline`}>Privacy Policy</a>.
                   </p>
@@ -134,7 +134,7 @@ const Home = () => {
                       <rect x={`0`} y={`0`} width={`4`} height={`4`} className={`text-gray-200`} fill={`currentColor`} />
                     </pattern>
                   </defs>
-                  <rect y={`72`} width={`640`} height={`640`} className={`text-gray-50`} fill={`currentColor`} />
+                  <rect y={`72`} width={`640`} height={`640`} className={`text-gray-100`} fill={`currentColor`} />
                   <rect x={`118`} width={`404`} height={`784`} fill={`url(#4f4f415c-a0e9-44c2-9601-6ded5a34a13e`} />
                 </svg>
                 <div className={`relative mx-auto w-full rounded-lg shadow-lg lg:max-w-md`}>
