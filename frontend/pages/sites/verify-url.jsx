@@ -111,7 +111,9 @@ const SitesVerifyUrl = props => {
     Router.prefetch('/sites/information')
   }, [dataQuery])
 
-  const { user } = useUser({ redirectTo: '/login' });
+  const { user } = useUser({ 
+    redirectTo: '/login',
+  });
 
   if (user === undefined || !user) {
     return <Layout>Loading...</Layout>

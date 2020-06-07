@@ -50,7 +50,7 @@ const SitesStart = () => {
         if (data) {
           const result = data.results.find(site => site.url === siteUrl);
 
-          if (typeof result != 'undefined') {
+          if (typeof result !== 'undefined') {
             setErrorMsg('Unfortunately, this site URL already exists. Please try again.')
             return false
           } else {
@@ -123,7 +123,9 @@ const SitesStart = () => {
     Router.prefetch('/sites/verify-url')
   }, [dataQuery])
 
-  const { user } = useUser({ redirectTo: '/login' });
+  const { user } = useUser({ 
+    redirectTo: '/login',
+  });
 
   if (user === undefined || !user) {
     return <Layout>Loading...</Layout>

@@ -66,7 +66,9 @@ const SitesInformation = props => {
     Router.prefetch('/sites/crawl-site')
   }, [dataQuery])
 
-  const { user } = useUser({ redirectTo: '/login' });
+  const { user } = useUser({ 
+    redirectTo: '/login',
+  });
 
   if (user === undefined || !user) {
     return <Layout>Loading...</Layout>

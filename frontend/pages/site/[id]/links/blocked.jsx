@@ -9,7 +9,9 @@ import MainSidebar from '../../../../components/sidebar/main-sidebar'
 const LinkBlockedDiv = styled.section``
 
 const LinkBlocked = () => {
-  const { user } = useUser({ redirectTo: '/login' })
+  const { user } = useUser({ 
+    redirectTo: '/login',
+  })
 
   if (user === undefined || !user) {
     return <Layout>Loading...</Layout>

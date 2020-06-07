@@ -1,14 +1,11 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import Layout from '../components/layout'
-import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import useUser from '../hooks/useUser'
 
-const HomeDiv = styled.div``
-
 const Home = () => {
-  const { user } = useUser({ redirectTo: '/login' })
+  const { user } = useUser({ redirectTo: '/dashboard' })
 
   return (
     <Layout>
@@ -17,7 +14,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <HomeDiv className={`relative bg-white overflow-hidden`}>
+      <div className={`relative bg-white overflow-hidden`}>
         <div className={`hidden lg:block lg:absolute lg:inset-0`}>
           <svg className={`absolute top-0 h-full left-1/2 transform translate-x-full translate-y-8" width="640" height="784" fill="none" viewBox="0 0 640 784`}>
             <defs>
@@ -157,9 +154,9 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </HomeDiv>
+      </div>
     </Layout>
-  );
+  )
 }
 
 export default Home

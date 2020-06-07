@@ -9,7 +9,9 @@ import MainSidebar from '../../../components/sidebar/main-sidebar'
 const SiteSettingsDiv = styled.section``
 
 const SiteSettings = () => {
-  const { user } = useUser({ redirectTo: '/login' })
+  const { user } = useUser({ 
+    redirectTo: '/login',
+  })
 
   if (user === undefined || !user) {
     return <Layout>Loading...</Layout>

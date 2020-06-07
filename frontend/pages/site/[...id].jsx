@@ -35,7 +35,10 @@ const fetcher = async (url) => {
 const SitesDashboardDiv = styled.section``
 
 const SitesDashboard = () => {
-  const { user } = useUser({ redirectTo: '/login' });
+  const { user } = useUser({ 
+    redirectTo: '/login',
+  });
+  
   const { query } = useRouter()
   const { data, error } = useSWR(
     () => query.id && `/api/site/${query.id}`,

@@ -2,24 +2,21 @@ import { useEffect } from "react";
 import Router from "next/router";
 import useSWR from "swr";
 
-const useUser = ({ redirectTo = false, redirectIfFound = false } = {}) => {
-  const { data: user, mutate: mutateUser, revalidate } = useSWR("/api/auth/user/", { 
-    refreshInterval: 1000
-  });
+const useUser = ({ redirectTo = false, redirectIfFound = false, redirectToLogin = false} = {}) => {
+  const { data: user, mutate: mutateUser } = useSWR("/api/auth/user/");
 
   useEffect(() => {
-    if (!redirectTo || !user) {
-      revalidate();
-      return;
+    if (!redirectTo && !user && redirectToLogin) {
+      return
     } 
-
+    
     if (
-      (redirectTo && !redirectIfFound && !user) ||
-      (redirectIfFound && user)
+      (redirectTo && !redirectIfFound && !user && redirectToLogin) ||
+      (redirectIfFound && user && redirectToLogin)
     ) {
       Router.push(redirectTo);
     }
-  }, [user, redirectIfFound, redirectTo]);
+  }, [user, redirectIfFound, redirectTo, redirectToLogin]);
 
   return { user, mutateUser };
 };

@@ -17,6 +17,7 @@ const Login = () => {
   const { mutateUser } = useUser({
     redirectTo: '/dashboard',
     redirectIfFound: true,
+    redirectToLogin: false
   })
 
   const [errorMsg, setErrorMsg] = useState('')

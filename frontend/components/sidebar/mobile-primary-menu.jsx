@@ -1,4 +1,4 @@
-import { Fragment } from "react"
+import { Fragment } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import styled from 'styled-components'

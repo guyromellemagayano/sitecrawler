@@ -27,7 +27,10 @@ const SitesDiv = styled.section``
 const Sites = () => {
   const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
   
-  const { user } = useUser({ redirectTo: '/login' })
+  const { user } = useUser({ 
+    redirectTo: '/login'
+  })
+  
   const { data, error } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
 
   if (user === undefined || !user) {
