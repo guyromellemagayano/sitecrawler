@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react'
+import { useState, useEffect } from 'react'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
@@ -21,21 +21,24 @@ const ProfileSettingsPersonal = () => {
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
   const [disableInputFields, setDisableInputFields] = useState(0)
+  const [username, setUsername] = useState('')
+  const [firstname, setFirstname] = useState('')
+  const [lastname, setLastname] = useState('')
 
   const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
 
-  const { data: profile, error: err1 } = useSWR('/api/auth/user/', fetcher, { refreshInterval: 1000 })
+  const { data: profile, error } = useSWR('/api/auth/user/', fetcher, { refreshInterval: 1000 })
 
-  if (err1) return <Layout>Failed to load</Layout>
+  if (error) return <Layout>Failed to load</Layout>
   if (!profile) return <Layout>Loading...</Layout>
 
-  const [username, setUsername] = useState(profile.username)
-  const [firstname, setFirstname] = useState(profile.first_name)
-  const [lastname, setLastname] = useState(profile.last_name)
+  useEffect(() => {
+    setUsername(profile.username)
+    setFirstname(profile.first_name)
+    setLastname(profile.last_name)
+  }, [profile])
 
-  const profileUpdateForm = useRef()
-
-  const handleProfileSubmission = useCallback(async (e) => {
+  const handleProfileSubmission = async (e) => {
     e.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -82,7 +85,7 @@ const ProfileSettingsPersonal = () => {
 
       throw error
     }
-  })
+  }
 
   const handleEditProfile = (e) => {
     e.preventDefault()
@@ -105,7 +108,7 @@ const ProfileSettingsPersonal = () => {
   return (
     <ProfileSettingsPersonalDiv className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
-        <form ref={profileUpdateForm} onSubmit={handleProfileSubmission}>
+        <form onSubmit={handleProfileSubmission}>
           <div>
             <div>
               <div>

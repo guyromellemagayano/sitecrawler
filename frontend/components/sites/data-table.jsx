@@ -7,7 +7,9 @@ const DataTableDiv = styled.tbody``
 const DataTable = props => {
   const calendarStrings = {
     lastDay : '[Yesterday], dddd',
-    sameDay : '[Today], dddd'
+    sameDay : '[Today], dddd',
+    lastWeek : 'MMMM DD, YYYY',
+    sameElse : 'MMMM DD, YYYY'
   }
   
   return (

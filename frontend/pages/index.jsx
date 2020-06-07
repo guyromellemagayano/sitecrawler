@@ -1,8 +1,15 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import Layout from '../components/layout'
+import styled from 'styled-components'
+import PropTypes from 'prop-types'
+import useUser from '../hooks/useUser'
+
+const HomeDiv = styled.div``
 
 const Home = () => {
+  const { user } = useUser({ redirectTo: '/login' })
+
   return (
     <Layout>
       <Head>
@@ -10,7 +17,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className={`relative bg-white overflow-hidden`}>
+      <HomeDiv className={`relative bg-white overflow-hidden`}>
         <div className={`hidden lg:block lg:absolute lg:inset-0`}>
           <svg className={`absolute top-0 h-full left-1/2 transform translate-x-full translate-y-8" width="640" height="784" fill="none" viewBox="0 0 640 784`}>
             <defs>
@@ -18,7 +25,7 @@ const Home = () => {
                 <rect x={`0`} y={`0`} width={`4`} height={`4`} className={`text-gray-200`} fill={`currentColor`} />
               </pattern>
             </defs>
-            <rect y={`72`} width={`640`} height={`640`} className={`text-gray-500`} fill={`currentColor`} />
+            <rect y={`72`} width={`640`} height={`640`} className={`text-gray-100`} fill={`currentColor`} />
             <rect x={`118`} width={`404`} height={`784`} fill={`url(#9ebea6f4-a1f5-4d96-8c4e-4c2abf658047)`} />
           </svg>
         </div>
@@ -30,7 +37,7 @@ const Home = () => {
                   <img className={`h-8 w-auto sm:h-10`} src={`/img/logos/workflow-logo-on-white.svg`} alt={``} />
                 </a>
                 <div className={`-mr-2 flex items-center md:hidden`}>
-                  <button type={`button`} className={`inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-5000 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-5000 transition duration-150 ease-in-out`}>
+                  <button type={`button`} className={`inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out`}>
                     <svg className={`h-6 w-6`} stroke={`currentColor`} fill={`none`} viewBox={`0 0 24 24`}>
                       <path strokeLinecap={`round`} strokeLinejoin={`round`} strokeWidth={`2`} d={`M4 6h16M4 12h16M4 18h16`} />
                     </svg>
@@ -38,35 +45,33 @@ const Home = () => {
                 </div>
               </div>
               <div className={`hidden md:block md:ml-10`}>
-                <a href="#" className={`font-medium text-gray-5000 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Product</a>
-                <a href="#" className={`ml-10 font-medium text-gray-5000 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Features</a>
-                <a href="#" className={`ml-10 font-medium text-gray-5000 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Marketplace</a>
-                <a href="#" className={`ml-10 font-medium text-gray-5000 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Company</a>
+                <a href="#" className={`font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Product</a>
+                <a href="#" className={`ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Features</a>
+                <a href="#" className={`ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Marketplace</a>
+                <a href="#" className={`ml-10 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition duration-150 ease-in-out`}>Company</a>
               </div>
             </div>
             <div className={`hidden md:block text-right`}>
               <span className={`inline-flex rounded-md shadow-md`}>
                 <span className={`inline-flex rounded-md shadow-xs`}>
-                  <Link href="/login">
-                    <a className={`inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out`}>
-                      Log in
-                    </a>
-                  </Link>
+                  {user === undefined || !user ? (
+                    <Link href="/login">
+                      <a className={`inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out`}>
+                        Log in
+                      </a>
+                    </Link>
+                  ): (
+                    <Link href="/dashboard">
+                      <a className={`inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out`}>
+                        Go to Dashboard
+                      </a>
+                    </Link>
+                  )}
                 </span>
               </span>
             </div>
           </nav>
 
-          {/*
-            Mobile menu, show/hide based on menu open state.
-
-            Entering: "duration-150 ease-out"
-              From: "opacity-0 scale-95"
-              To: "opacity-100 scale-100"
-            Leaving: "duration-100 ease-in"
-              From: "opacity-100 scale-100"
-              To: "opacity-0 scale-95"
-          */}
           <div className={`absolute top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden`}>
             <div className={`rounded-lg shadow-md`}>
               <div className={`rounded-lg bg-white shadow-xs overflow-hidden`}>
@@ -75,7 +80,7 @@ const Home = () => {
                     <img className={`h-8 w-auto`} src={`/img/logos/workflow-logo-on-white.svg`} alt={``} />
                   </div>
                   <div className={`-mr-2`}>
-                    <button type={`button`} className={`inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-5000 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-5000 transition duration-150 ease-in-out`}>
+                    <button type={`button`} className={`inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out`}>
                       <svg className={`h-6 w-6`} stroke={`currentColor`} fill={`none`} viewBox={`0 0 24 24`}>
                         <path strokeLinecap={`round`} strokeLinejoin={`round`} strokeWidth={`2`} d={`M6 18L18 6M6 6l12 12`} />
                       </svg>
@@ -100,7 +105,7 @@ const Home = () => {
           <div className={`mt-8 mx-auto max-w-6xl px-4 sm:mt-12 sm:px-6 md:mt-20 xl:mt-24`}>
             <div className={`lg:grid lg:grid-cols-12 lg:gap-8`}>
               <div className={`sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left`}>
-                <div className={`text-sm font-semibold uppercase tracking-wide text-gray-5000 sm:text-base lg:text-sm xl:text-base`}>
+                <div className={`text-sm font-semibold uppercase tracking-wide text-gray-500 sm:text-base lg:text-sm xl:text-base`}>
                   Coming soon
                 </div>
                 <h2 className={`mt-1 text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl`}>
@@ -108,20 +113,20 @@ const Home = () => {
                   <br className={`hidden md:inline`} />
                   <span className={`text-indigo-600`}>online business</span>
                 </h2>
-                <p className={`mt-3 text-base text-gray-5000 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl`}>
+                <p className={`mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl`}>
                   Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat fugiat aliqua ad ad non deserunt sunt.
                 </p>
                 <div className={`mt-5 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0`}>
                   <p className={`text-base font-medium text-gray-900`}>
                     Sign up to get notified when it’s ready.
                   </p>
-                  <form action="#" method={`POST`} className={`mt-3 sm:flex`}>
+                  <form action="#" method={`POST`} className={`mt-5 sm:flex`}>
                     <input aria-label={`Email`} className={`appearance-none block w-full px-3 py-3 border border-gray-300 text-base leading-6 rounded-md placeholder-gray-500 shadow-sm focus:outline-none focus:placeholder-gray-400 focus:shadow-outline focus:border-blue-300 transition duration-150 ease-in-out sm:flex-1`} placeholder={`Enter your email`} />
                     <button type={`submit`} className={`mt-3 w-full px-6 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-gray-800 shadow-sm hover:bg-gray-700 focus:outline-none focus:shadow-outline active:bg-gray-900 transition duration-150 ease-in-out sm:mt-0 sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:items-center sm:w-auto`}>
                       Notify me
                     </button>
                   </form>
-                  <p className={`mt-3 text-sm leading-5 text-gray-5000`}>
+                  <p className={`mt-5 text-sm leading-5 text-gray-500`}>
                     We care about the protection of your data. Read our&nbsp;
                     <a href="#" className={`font-medium text-gray-900 underline`}>Privacy Policy</a>.
                   </p>
@@ -152,7 +157,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </div>
+      </HomeDiv>
     </Layout>
   );
 }

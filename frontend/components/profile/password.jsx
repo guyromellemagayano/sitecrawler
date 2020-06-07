@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react'
+import { useState, useEffect } from 'react'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
@@ -6,43 +6,25 @@ import Layout from '../../components/layout'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
 
-const apiParameters = {
-  method: 'GET',
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-    'X-CSRFToken': Cookies.get('csrftoken'),
-  },
-}
-
 const ProfileSettingsPersonalDiv = styled.div``
 
 const ProfileSettingsPersonal = () => {
-  const [errorPasswordMsg, setErrorPasswordMsg] = useState('')
-  const [successPasswordMsg, setSuccessPasswordMsg] = useState('')
-  const [disablePasswordFields, setDisablePasswordFields] = useState(0)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
+  const [disablePasswordFields, setDisablePasswordFields] = useState(true)
+  const [disableSubmitButton, setDisableSubmitButton] = useState(false)
+  const [password1, setPassword1] = useState('')
+  const [password2, setPassword2] = useState('')
 
-  const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
-
-  const { data: password, error: err2 } = useSWR('/api/auth/password/change/', fetcher, { refreshInterval: 1000 })
-
-  if (err2) return <Layout>Failed to load</Layout>
-  if (!password) return <Layout>Loading...</Layout>
-
-  const [password1, setPassword1] = useState(password.new_password1)
-  const [password2, setPassword2] = useState(password.new_password2)
-
-  const passwordUpdateForm = useRef()
-
-  const handlePasswordSubmission = useCallback(async (e) => {
+  const handlePasswordSubmission = async (e) => {
     e.preventDefault()
 
-    if (errorPasswordMsg) setErrorPasswordMsg('')
-    if (successPasswordMsg) setSuccessPasswordMsg('')
+    if (errorMsg) setErrorMsg('')
+    if (successMsg) setSuccessMsg('')
 
     const body = {
-      new_password1: e.currentTarget.new_password1.value,
-      new_password2: e.currentTarget.new_password2.value,
+      new_password1: e.currentTarget.password1.value,
+      new_password2: e.currentTarget.password2.value,
     }
 
     try {
@@ -64,12 +46,16 @@ const ProfileSettingsPersonal = () => {
           setDisablePasswordFields(!disablePasswordFields)
         }
       } else {
-        const error = new Error(response.statusText)
+        if (Math.floor(response.status/400) === 1) {
+          setErrorMsg(data.new_password2[0])
+        } else {
+          const error = new Error(response.statusText)
   
-        error.response = response
-        error.data = data
-  
-        throw error
+          error.response = response
+          error.data = data
+    
+          throw error
+        }
       }
     } catch(error) {
       if (!error.data) {
@@ -80,7 +66,7 @@ const ProfileSettingsPersonal = () => {
 
       throw error
     }
-  })
+  }
 
   const handleEditPasswordProfile = (e) => {
     e.preventDefault()
@@ -96,10 +82,16 @@ const ProfileSettingsPersonal = () => {
     setPassword2(e.target.value)
   }
 
+  useEffect(() => {
+    if (password1 === password2) {
+      setDisableSubmitButton(!disableSubmitButton)
+    }
+  }, [password1, password2])
+
   return (
     <ProfileSettingsPersonalDiv className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
-        <form ref={passwordUpdateForm} onSubmit={handlePasswordSubmission}>
+        <form onSubmit={handlePasswordSubmission}>
           <div>
             <div>
               <div>
@@ -126,12 +118,13 @@ const ProfileSettingsPersonal = () => {
                       id={`password1`}
                       value={password1}
                       name={`password1`}
-                      disabled={disablePasswordFields == 0 ? true : false}
+                      disabled={disablePasswordFields ? true : false}
                       className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-                        disablePasswordFields == 0 &&
+                        disablePasswordFields &&
                         "opacity-50 bg-gray-300 cursor-not-allowed"
                         }`}
                       onChange={handlePasswordOneInputChange}
+                      onBlur={handlePasswordOneInputChange}
                     />
                   </div>
                 </div>
@@ -149,15 +142,16 @@ const ProfileSettingsPersonal = () => {
                   <div className={`mt-1 flex rounded-md shadow-sm`}>
                     <input
                       type={`password`}
-                      id={`password22`}
+                      id={`password2`}
                       value={password2}
                       name={`password2`}
-                      disabled={disablePasswordFields == 0 ? true : false}
+                      disabled={disablePasswordFields ? true : false}
                       className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-                        disablePasswordFields == 0 &&
+                        disablePasswordFields &&
                         "opacity-50 bg-gray-300 cursor-not-allowed"
                         }`}
                       onChange={handlePasswordTwoInputChange}
+                      onBlur={handlePasswordTwoInputChange}
                     />
                   </div>
                 </div>
@@ -170,39 +164,39 @@ const ProfileSettingsPersonal = () => {
                 <span className={`inline-flex rounded-md shadow-sm`}>
                   <button
                     type={`submit`}
-                    disabled={disablePasswordFields == 1 ? true : false}
+                    disabled={!disablePasswordFields ? true : false}
                     className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
-                      disablePasswordFields == 1 ?
+                      !disablePasswordFields ?
                         "opacity-50 bg-indigo-300 cursor-not-allowed" : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700"
                       }`}
                     onClick={handleEditPasswordProfile}
                   >
-                    Edit Password
+                    Update Password
                   </button>
                 </span>
 
-                {errorPasswordMsg && (
+                {errorMsg && (
                   <div className={`inline-block ml-2 p-2`}>
                     <div className={`flex`}>
                       <div>
                         <h3
                           className={`text-sm leading-5 font-medium text-red-800 break-words`}
                         >
-                          {errorPasswordMsg}
+                          {errorMsg}
                         </h3>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {successPasswordMsg && (
+                {successMsg && (
                   <div className={`inline-block ml-2 p-2`}>
                     <div className={`flex`}>
                       <div>
                         <h3
                           className={`text-sm leading-5 font-medium text-green-800 break-words`}
                         >
-                          {successPasswordMsg}
+                          {successMsg}
                         </h3>
                       </div>
                     </div>
@@ -214,7 +208,7 @@ const ProfileSettingsPersonal = () => {
                   <button
                     type={`submit`}
                     className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
-                      disableInputFields == 0 ?
+                      disableSubmitButton ?
                         "opacity-50 bg-green-300 cursor-not-allowed" : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-outline-green active:bg-green-700"
                       }`}
                   >
