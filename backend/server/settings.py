@@ -27,12 +27,19 @@ if env == "dev":
     DEBUG = True
     ALLOWED_HOSTS = []
     CRAWLER_URL = "http://crawler:3000"
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 elif env == "staging":
     DEBUG = False
     ALLOWED_HOSTS = ["linkapp.epicsandbox.com"]
     SESSION_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     CRAWLER_URL = "http://crawler:8000"
+    EMAIL_HOST = "smtp.mailgun.org"
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = "postmaster@mg.epicsandbox.com"
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
+    DEFAULT_FROM_EMAIL = "linkapp@epicsandbox.com"
 else:
     raise Exception(f"Unknown env: {env}")
 
@@ -140,8 +147,6 @@ SITE_ID = 1
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 LOGIN_REDIRECT_URL = "/dashboard"
-
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
