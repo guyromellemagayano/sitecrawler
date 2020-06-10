@@ -7,7 +7,12 @@ from crawl.serializers import ScanDetailSerializer, ScanSerializer
 
 
 class ScanViewSet(
-    DetailSerializerMixin, NestedViewSetMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+    DetailSerializerMixin,
+    NestedViewSetMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = Scan.objects.all()
     serializer_class = ScanSerializer

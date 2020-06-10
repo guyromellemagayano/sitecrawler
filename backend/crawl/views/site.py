@@ -9,7 +9,13 @@ from crawl.serializers import SiteSerializer
 from crawl.services import scan, verify
 
 
-class SiteViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class SiteViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     serializer_class = SiteSerializer
 
     def get_queryset(self):
