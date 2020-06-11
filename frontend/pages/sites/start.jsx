@@ -254,7 +254,7 @@ const SitesStart = () => {
                               required
                               className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
                               placeholder="https://yourdomain.com"
-                              aria-describedby="site-url"
+                              aria-describedby={`site-url`}
                               onChange={(e) => setSiteUrl(e.target.value)}
                             />
                           </div>

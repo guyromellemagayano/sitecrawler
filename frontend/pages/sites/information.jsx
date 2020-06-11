@@ -195,7 +195,7 @@ const SitesInformation = props => {
                             className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
                             placeholder="e.g. My Company Website"
                             required
-                            aria-describedby="site-name"
+                            aria-describedby={`site-name`}
                             onChange={(e) => setSiteName(e.target.value)}
                           />
                         </div>
