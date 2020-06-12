@@ -10,7 +10,7 @@ import Layout from '../../components/layout'
 const ConfirmEmailDiv = styled.div``
 
 const ConfirmEmail = () => {
-	const [success, setSuccess] = useState('false')
+	const [success, setSuccess] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 	const [successMsg, setSuccessMsg] = useState('')
 	
@@ -25,22 +25,25 @@ const ConfirmEmail = () => {
 		let secondLevelLocation = pathArray[2]
 
 		if (errorMsg) setErrorMsg('')
-    if (successMsg) setSuccessMsg('')
+		if (successMsg) setSuccessMsg('')
+		
+		const body = {
+			key: secondLevelLocation,
+		}
 
 		try {
 			async function sendPostRequest() {
-				const response = await fetch('/api/auth/registration/verify-email/' + secondLevelLocation + '/', {
+				const response = await fetch('/api/auth/registration/verify-email/', {
 					method: 'POST',
 					headers: {
 						'Accept': 'application/json',
 						'Content-Type': 'application/json',
 						'X-CSRFToken': Cookies.get('csrftoken'),
 					},
+					body: JSON.stringify(body),
 				})
 	
 				const data = await response.json()
-
-				console.log(data)
 				
 				if (response.ok && response.status === 200) {
 					if (data) {
@@ -85,7 +88,8 @@ const ConfirmEmail = () => {
                 Email Confirmation {success ? "Success" : "Failed"}
               </h3>
               <div className={`mt-2 max-w-xl text-sm leading-5 text-gray-500`}>
-                {successMsg ? <p>{successMsg}</p> : <p>{errorMsg}</p>}
+                {successMsg && <p>{successMsg}</p>}
+								{errorMsg && <p>{errorMsg}</p>}
               </div>
               {successMsg ? (
                 <div className={`mt-5`}>
