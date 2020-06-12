@@ -12,7 +12,7 @@ const SitesOverview = props => {
   }
 
   return (
-    <SitesOverviewDiv className={`max-w-6xl bg-white shadow sm:rounded-lg`}>
+    <SitesOverviewDiv className={`max-w-lg bg-white shadow sm:rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
         <h2 className={`text-lg leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
           <a href={`${props.url}`} target={`_blank`} title={`${props.url}`}>
@@ -57,7 +57,7 @@ const SitesOverview = props => {
           <p className={`mb-3`}>
             <strong>Created on:</strong> <Moment local calendar={calendarStrings} date={props.createdAt} />&nbsp;
             <Moment local date={props.createdAt} format="hh:mm:ss A" /><br />
-            <strong>Last crawled:</strong> <Moment local calendar={calendarStrings} date={props.updatedAt} />&nbsp;
+            <strong>Updated last:</strong> <Moment local calendar={calendarStrings} date={props.updatedAt} />&nbsp;
             <Moment local date={props.updatedAt} format="hh:mm:ss A" />
           </p>
         </div>
