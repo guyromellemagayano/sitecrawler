@@ -2,7 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
-import Sidebar from '../components/sidebar/main-sidebar'
+import MainSidebar from '../components/sidebar/main-sidebar'
 
 const AuditLogsDiv = styled.section``
 
@@ -20,7 +20,7 @@ const AuditLogs = () => {
         <MobileSidebar />
 
         {/* Sidebar */}
-        <Sidebar />
+        <MainSidebar />
 
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>

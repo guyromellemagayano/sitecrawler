@@ -8,7 +8,7 @@ import DataTableHeadsContent from '../../config/data-table-heads.json'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
-import Sidebar from '../../components/sidebar/main-sidebar'
+import MainSidebar from '../../components/sidebar/main-sidebar'
 import AddSite from '../../components/sites/add-site'
 import DataTable from '../../components/sites/data-table'
 import Pagination from '../../components/sites/pagination'
@@ -49,7 +49,7 @@ const Sites = () => {
       <Suspense fallback={<div>loading...</div>}>
         <SitesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
           <MobileSidebar />
-          <Sidebar />
+          <MainSidebar />
 
           <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
             <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>

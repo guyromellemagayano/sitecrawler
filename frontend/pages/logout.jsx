@@ -2,19 +2,10 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import PropTypes from 'prop-types'
-import useUser from '../hooks/useUser'
 import Layout from '../components/layout'
 
 const Logout = () => {
   const router = useRouter()
-
-  const { user } = useUser({ 
-    redirectTo: '/login',
-  })
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
 
   const handleLogoutUser = async () => {
     const response = await fetch('/api/auth/logout/', {
@@ -29,8 +20,10 @@ const Logout = () => {
     const data = await response.json()
 
     if (response.ok) {
-      if (data) {
-        router.push('/login')
+      if (data) {      
+        window.setTimeout(() => {
+          router.push('/login')
+        }, 1000)
       }
     } else {
       const error = new Error(response.statusText)
@@ -54,3 +47,5 @@ const Logout = () => {
 }
 
 export default Logout
+
+Logout.propTypes = {}
