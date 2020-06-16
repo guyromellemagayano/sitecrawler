@@ -159,7 +159,7 @@ const SitesInformation = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      4. Crawl the site
+                      4. Prepare the site profile
                     </p>
                   </div>
                 </div>

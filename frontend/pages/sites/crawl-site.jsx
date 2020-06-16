@@ -140,7 +140,7 @@ const SitesCrawlSite = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-black-600`}
                     >
-                      4. Crawl the site
+                      4. Prepare the site profile
                     </p>
                   </div>
                 </div>
@@ -151,7 +151,7 @@ const SitesCrawlSite = props => {
                       <h4
                         className={`text-lg leading-7 font-medium text-gray-900`}
                       >
-                        Crawl the site
+                        Prepare the site profile
                       </h4>
                       <p
                         className={`mt-1 text-sm leading-5 text-gray-500 max-w-6xl`}
