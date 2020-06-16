@@ -15,7 +15,7 @@ const LoginDiv = styled.div``
 
 const Login = () => {
   const { mutateUser } = useUser({
-    redirectTo: '/dashboard',
+    redirectTo: '/sites',
     redirectIfFound: true
   })
 
