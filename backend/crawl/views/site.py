@@ -30,6 +30,8 @@ class SiteViewSet(
         site = self.get_object()
         if not site.verified:
             verify.site(site)
-            scan.site(site)
             site.refresh_from_db()
+
+            if site.verified:
+                scan.site(site)
         return Response(self.get_serializer(instance=site).data)
