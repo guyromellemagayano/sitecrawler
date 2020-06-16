@@ -36,7 +36,7 @@ const SitesStats = () => {
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow rounded-lg opacity-50`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt
@@ -55,7 +55,8 @@ const SitesStats = () => {
               <div className={`text-sm leading-5`}>
                 <a
                   href="#"
-                  className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                  disabled={`disabled`}
+                  className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 cursor-not-allowed`}
                 >
                   View all
                 </a>
@@ -63,7 +64,7 @@ const SitesStats = () => {
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow rounded-lg opacity-50`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt
@@ -82,7 +83,8 @@ const SitesStats = () => {
               <div className={`text-sm leading-5`}>
                 <a
                   href="#"
-                  className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                  disabled={`disabled`}
+                  className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 cursor-not-allowed`}
                 >
                   View all
                 </a>
@@ -92,7 +94,7 @@ const SitesStats = () => {
         </div>
 
         <div className={`mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3`}>
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow rounded-lg opacity-50`}>
             <div className={`border-b border-gray-200 px-4 py-5 sm:px-6`}>
               <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                 Issue Types
@@ -103,7 +105,8 @@ const SitesStats = () => {
                 <li>
                   <a
                     href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
+                    disabled={`disabled`}
+                    className={`block transition duration-150 ease-in-out cursor-not-allowed`}
                   >
                     <div className={`flex items-center px-4 py-4 sm:px-6`}>
                       <div className={`min-w-0 flex-1 flex items-center`}>
@@ -134,79 +137,11 @@ const SitesStats = () => {
                     </div>
                   </a>
                 </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              Host Not Found
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Errors found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              SSL Error
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Errors found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
               </ul>
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow rounded-lg opacity-50`}>
             <div className={`border-b border-gray-200 px-4 py-5 sm:px-6`}>
               <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                 Link Types
@@ -217,7 +152,8 @@ const SitesStats = () => {
                 <li>
                   <a
                     href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
+                    disabled={`disabled`}
+                    className={`block transition duration-150 ease-in-out cursor-not-allowed`}
                   >
                     <div className={`flex items-center px-4 py-4 sm:px-6`}>
                       <div className={`min-w-0 flex-1 flex items-center`}>
@@ -248,215 +184,11 @@ const SitesStats = () => {
                     </div>
                   </a>
                 </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              URL Links
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              Scripts
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              Stylesheets
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              IFrames
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              Homepage
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              External Links
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
               </ul>
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow rounded-lg opacity-50`}>
             <div className={`border-b border-gray-200 px-4 py-5 sm:px-6`}>
               <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                 Link Schemes
@@ -467,7 +199,8 @@ const SitesStats = () => {
                 <li>
                   <a
                     href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
+                    disabled={`disabled`}
+                    className={`block transition duration-150 ease-in-out cursor-not-allowed`}
                   >
                     <div className={`flex items-center px-4 py-4 sm:px-6`}>
                       <div className={`min-w-0 flex-1 flex items-center`}>
@@ -498,79 +231,11 @@ const SitesStats = () => {
                     </div>
                   </a>
                 </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              http://
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              Other
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
               </ul>
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow rounded-lg opacity-50`}>
             <div className={`border-b border-gray-200 px-4 py-5 sm:px-6`}>
               <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                 Redirects
@@ -581,7 +246,8 @@ const SitesStats = () => {
                 <li>
                   <a
                     href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
+                    disabled={`disabled`}
+                    className={`block transition duration-150 ease-in-out cursor-not-allowed`}
                   >
                     <div className={`flex items-center px-4 py-4 sm:px-6`}>
                       <div className={`min-w-0 flex-1 flex items-center`}>
@@ -612,45 +278,11 @@ const SitesStats = () => {
                     </div>
                   </a>
                 </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              Temporary redirect
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
               </ul>
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow rounded-lg opacity-50`}>
             <div className={`border-b border-gray-200 px-4 py-5 sm:px-6`}>
               <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                 Link Directions
@@ -661,7 +293,8 @@ const SitesStats = () => {
                 <li>
                   <a
                     href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
+                    disabled={`disabled`}
+                    className={`block transition duration-150 ease-in-out cursor-not-allowed`}
                   >
                     <div className={`flex items-center px-4 py-4 sm:px-6`}>
                       <div className={`min-w-0 flex-1 flex items-center`}>
@@ -692,45 +325,11 @@ const SitesStats = () => {
                     </div>
                   </a>
                 </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              Internal
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
               </ul>
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow rounded-lg opacity-50`}>
             <div className={`border-b border-gray-200 px-4 py-5 sm:px-6`}>
               <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                 Dofollow/Nofollow
@@ -741,7 +340,8 @@ const SitesStats = () => {
                 <li>
                   <a
                     href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
+                    disabled={`disabled`}
+                    className={`block transition duration-150 ease-in-out cursor-not-allowed`}
                   >
                     <div className={`flex items-center px-4 py-4 sm:px-6`}>
                       <div className={`min-w-0 flex-1 flex items-center`}>
@@ -749,40 +349,6 @@ const SitesStats = () => {
                           <div>
                             <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
                               Dofollow
-                            </div>
-                            <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
-                              <span className={`truncate`}>10 Items found</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <svg
-                          className={`h-5 w-5 text-gray-400`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li className={`border-t border-gray-200`}>
-                  <a
-                    href="#"
-                    className={`block hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out`}
-                  >
-                    <div className={`flex items-center px-4 py-4 sm:px-6`}>
-                      <div className={`min-w-0 flex-1 flex items-center`}>
-                        <div className={`min-w-0 flex-1`}>
-                          <div>
-                            <div className={`text-sm leading-5 font-medium text-indigo-600 truncate`}>
-                              Nofollow
                             </div>
                             <div className={`mt-2 flex items-center text-sm leading-5 text-gray-500`}>
                               <span className={`truncate`}>10 Items found</span>
