@@ -10,6 +10,7 @@ import Layout from '../../components/layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
 import MainSidebar from '../../components/sidebar/main-sidebar'
 import SitesOverview from '../../components/sites/overview'
+import SitesCrawlInfo from '../../components/sites/crawl-info'
 import SitesStats from '../../components/sites/stats'
 import DashboardFooter from '../../components/dashboard/footer'
 
@@ -94,16 +95,21 @@ const SitesDashboard = () => {
                 Epic Design Labs
               </h1>
             </div>
-            <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8 grid grid-cols-2 gap-5 sm:grid-cols-2`}>
               <div>
                 <SitesOverview 
                   url={data.url}
                   verified={data.verified}
                   createdAt={data.created_at}
-                  updatedAt={data.updated_at}
                 />
               </div>
-
+              <div>
+                <SitesCrawlInfo 
+                  url={data.url}
+                />
+              </div>
+            </div>
+            <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               <div className={`pb-4`}>
                 <SitesStats />
               </div>
