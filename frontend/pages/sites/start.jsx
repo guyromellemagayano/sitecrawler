@@ -4,6 +4,7 @@ import fetch from 'node-fetch'
 import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
+import Link from 'next/link'
 import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
@@ -105,23 +106,9 @@ const SitesStart = () => {
     }
   })
 
-  const handleRoutingData = (e) => {
-    e.preventDefault()
-
-    Router.push({
-      pathname: '/sites/verify-url',
-      query: {
-        sid: dataQuery.id,
-        surl: dataQuery.url,
-        vid: dataQuery.verification_id,
-        v: false,
-      },
-    })
-  }
-
   useEffect(() => {
     Router.prefetch('/sites/verify-url')
-  }, [dataQuery])
+  }, [])
 
   const { user } = useUser({ 
     redirectTo: '/login'
@@ -311,13 +298,25 @@ const SitesStart = () => {
                               <div
                                 className={`sm:flex sm:justify-end`}
                               >
-                                <button
-                                  type={`button`}
-                                  className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
-                                  onClick={handleRoutingData}
+                                <Link
+                                  href={{
+                                    pathname: '/sites/verify-url',
+                                    query: {
+                                      sid: dataQuery.id,
+                                      surl: dataQuery.url,
+                                      vid: dataQuery.verification_id,
+                                      v: false,
+                                    },
+                                  }}
+                                  replace
                                 >
-                                  Proceed to Step 2
-                                </button>
+                                  <a
+                                    type={`button`}
+                                    className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                                  >
+                                    Proceed to Step 2
+                                  </a>
+                                </Link>
                               </div>
                             ) : null}
                           </div>

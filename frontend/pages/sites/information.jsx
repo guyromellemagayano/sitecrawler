@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, Fragment } from 'react'
+import fetch from 'node-fetch'
+import Cookies from 'js-cookie'
 import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
+import Link from 'next/link'
 import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/layout'
@@ -19,8 +22,8 @@ const SitesInformation = props => {
   const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
   const [siteName, setSiteName] = useState('')
-  const [dataQuery, setDataQuery] = useState([])
   const [enableNextStep, setEnableNextStep] = useState(false)
+  const [dataQuery, setDataQuery] = useState([])
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
@@ -29,17 +32,37 @@ const SitesInformation = props => {
     if (successMsg) setSuccessMsg('')
 
     const body = {
+      id: props.sid,
+      url: props.surl,
       name: siteName,
     }
 
     try {
-      // API data fetch start
-      // API data fetch end
+      const response = await fetch('/api/site/' + body.id + '/', {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        },
+        body: JSON.stringify(body),
+      })
 
-      setDataQuery(props)
-      setSuccessMsg('Site name added. Proceed to the next step.')
-      setDisableSiteVerify(!disableSiteVerify)
-      setEnableNextStep(!enableNextStep)
+      const data = await response.json()
+
+      if (response.ok) {
+        setDataQuery(data)
+        setSuccessMsg('Site name added. Proceed to the next step.')
+        setDisableSiteVerify(!disableSiteVerify)
+        setEnableNextStep(!enableNextStep)
+      } else {
+        const error = new Error(response.statusText)
+  
+        error.response = response
+        error.data = data
+  
+        throw error
+      }
     } catch(error) {
       setErrorMsg('An unexpected error occurred. Please try again.')
 
@@ -47,24 +70,9 @@ const SitesInformation = props => {
     }
   })
 
-  const handleRoutingData = (e) => {
-    e.preventDefault()
-
-    Router.push({
-      pathname: '/sites/crawl-site',
-      query: {
-        sid: dataQuery.sid,
-        surl: dataQuery.surl,
-        vid: dataQuery.vid,
-        v: dataQuery.v,
-        sname: '',
-      },
-    })
-  }
-
   useEffect(() => {
     Router.prefetch('/sites/crawl-site')
-  }, [dataQuery])
+  }, [])
 
   const { user } = useUser({ 
     redirectTo: '/login',
@@ -250,19 +258,33 @@ const SitesInformation = props => {
                             </div>
                           )}
                         </div>
-
                         {enableNextStep ? (
-                          <div
-                            className={`sm:flex sm:justify-end`}
-                          >
-                            <button
-                              type={`button`}
-                              className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
-                              onClick={handleRoutingData}
+                          <Fragment>
+                            <div
+                              className={`sm:flex sm:justify-end`}
                             >
-                              Proceed to Step 4
-                            </button>
-                          </div>
+                              <Link
+                                href={{
+                                  pathname: '/sites/crawl-site',
+                                  query: {
+                                    sid: dataQuery.id,
+                                    sname: dataQuery.name,
+                                    surl: dataQuery.url,
+                                    vid: dataQuery.verification_id,
+                                    v: dataQuery.verified,
+                                  },
+                                }}
+                                replace
+                              >
+                                <a
+                                  type={`button`}
+                                  className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                                >
+                                  Proceed to Step 4
+                                </a>
+                              </Link>
+                            </div>
+                          </Fragment>
                         ) : null}
                       </div>
                     </form>
@@ -274,7 +296,7 @@ const SitesInformation = props => {
         </div>
       </SitesInformationDiv>
     </Layout>
-  );
+  )
 }
 
 SitesInformation.getInitialProps = ({ query }) => {
@@ -288,8 +310,4 @@ SitesInformation.getInitialProps = ({ query }) => {
 
 export default SitesInformation
 
-SitesInformation.propTypes = {
-  errorMsg: PropTypes.string,
-  successMsg: PropTypes.string,
-  handleSubmit: PropTypes.func,
-}
+SitesInformation.propTypes = {}

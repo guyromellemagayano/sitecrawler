@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
+import Link from 'next/link'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
@@ -67,13 +68,11 @@ const SitesVerifyUrl = props => {
       
       const data = await response.json()
 
-      if (response.ok) {
-        if (data.verified) {
-          setDataQuery(data)
-          setSuccessMsg('Site verification success. Proceed to the next step.')
-          setDisableSiteVerify(!disableSiteVerify)
-          setEnableNextStep(!enableNextStep)
-        }
+      if (response.ok && data.verified) {
+        setDataQuery(data)
+        setSuccessMsg('Site verification success. Proceed to the next step.')
+        setDisableSiteVerify(!disableSiteVerify)
+        setEnableNextStep(!enableNextStep)
       } else {
         const error = new Error(response.statusText)
   
@@ -93,23 +92,9 @@ const SitesVerifyUrl = props => {
     }
   })
 
-  const handleRoutingData = (e) => {
-    e.preventDefault()
-
-    Router.push({
-      pathname: '/sites/information',
-      query: {
-        sid: dataQuery.id,
-        surl: dataQuery.url,
-        vid: dataQuery.verification_id,
-        v: false,
-      },
-    })
-  }
-
   useEffect(() => {
     Router.prefetch('/sites/information')
-  }, [dataQuery])
+  }, [])
 
   const { user } = useUser({ 
     redirectTo: '/login',
@@ -293,13 +278,6 @@ const SitesVerifyUrl = props => {
                             >
                               Verify Site
                             </button>
-                            <button
-                              disabled={`disabled`}
-                              type={`button`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white opacity-50 cursor-not-allowed`}
-                            >
-                              Verify Later
-                            </button>
                           </Fragment>
                         ) : (
                           <Fragment>
@@ -308,12 +286,6 @@ const SitesVerifyUrl = props => {
                               className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
                             >
                               Verify Site
-                            </button>
-                            <button
-                              type={`button`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-100 transition ease-in-out duration-150`}
-                            >
-                              Verify Later
                             </button>
                           </Fragment>
                         )}
@@ -348,15 +320,29 @@ const SitesVerifyUrl = props => {
                       </form>
                     </div>
                     {enableNextStep ? (
-                      <div>
-                        <button
-                          type={`button`}
-                          className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
-                          onClick={handleRoutingData}
-                        >
-                          Proceed to Step 3
-                        </button>
-                      </div>
+                      <Fragment>
+                        <div>
+                          <Link
+                            href={{ 
+                              pathname: '/sites/information', 
+                              query: {
+                                sid: dataQuery.id,
+                                surl: dataQuery.url,
+                                vid: dataQuery.verification_id,
+                                v: dataQuery.verified,
+                              },
+                            }}
+                            replace
+                          >
+                            <a
+                              type={`button`}
+                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                            >
+                              Proceed to Step 3
+                            </a>
+                          </Link>
+                        </div>
+                      </Fragment>
                     ) : null}
                   </div>
                 </div>
@@ -364,11 +350,9 @@ const SitesVerifyUrl = props => {
             </div>
           </main>
         </div>
-
-        
       </SitesVerifyUrlDiv>
     </Layout>
-  );
+  )
 }
 
 SitesVerifyUrl.getInitialProps = ({ query }) => {
