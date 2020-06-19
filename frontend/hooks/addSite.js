@@ -6,8 +6,6 @@ const addSite = ({ api, parameters }) => {
 
   const { data: site, error } = useSWR('/api/site/', fetcher);
 
-  console.log(site)
-
   // if (!site) {
   //   return <div>Loading...</div>
   // } else {
