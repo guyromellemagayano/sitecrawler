@@ -7,8 +7,10 @@ const SitesOverviewDiv = styled.div``
 
 const SitesOverview = props => {
   const calendarStrings = {
-    lastDay : '[Yesterday], dddd [at]',
-    sameDay : '[Today], dddd [at]'
+    lastDay : '[Yesterday], dddd',
+    sameDay : '[Today], dddd',
+    lastWeek : 'MMMM DD, YYYY',
+    sameElse : 'MMMM DD, YYYY'
   }
 
   return (
@@ -35,8 +37,7 @@ const SitesOverview = props => {
         </div>
         <div className={`my-2 max-w-xl text-sm leading-5 text-gray-500`}>
           <p>
-            <strong>Created on:</strong> <Moment local calendar={calendarStrings} date={props.createdAt} />&nbsp;
-            <Moment local date={props.createdAt} format="hh:mm:ss A" /><br />
+            <strong>Created on:</strong> <Moment local calendar={calendarStrings} date={props.createdAt} /><br />
           </p>
         </div>
       </div>
