@@ -51,7 +51,7 @@ const Login = () => {
 
   useEffect(() => {
     Router.prefetch('/dashboard')
-  })
+  }, [])
 
   return (
     <Layout>
