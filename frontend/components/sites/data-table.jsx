@@ -28,7 +28,7 @@ const DataTable = props => {
             </div>
             <div className={`ml-4`}>
               <div className={`text-sm leading-5 font-medium text-gray-900`}>
-                Epic Design Labs
+                {props.site.name}
               </div>
               <div className={`text-sm leading-5 text-gray-500`}>
                 <a
