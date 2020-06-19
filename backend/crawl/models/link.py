@@ -1,7 +1,22 @@
 from django.db import models
+from django.db.models import Count, F, Q
+from django.db.models.query import QuerySet
+
+
+class LinkQuerySet(QuerySet):
+    def pages(self):
+        return (
+            self.filter(type=Link.TYPE_PAGE)
+            .annotate(num_links=Count("links"))
+            .annotate(num_ok_links=Count("links", filter=Q(links__status=Link.STATUS_OK)))
+            .annotate(num_non_ok_links=F("num_links") - F("num_ok_links"))
+            .order_by("-num_non_ok_links")
+        )
 
 
 class Link(models.Model):
+    objects = LinkQuerySet.as_manager()
+
     TYPE_PAGE = 1
     TYPE_EXTERNAL = 2
     TYPE_OTHER = 3
