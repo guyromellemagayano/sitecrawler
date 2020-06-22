@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import PrimaryMenu from './primary-menu'
-import SiteMenu from './site-menu'
-import ProfileMenu from './profile-menu'
-import ProfileSidebar from '../profile/sidebar'
+import PrimaryMenu from './PrimaryMenu'
+import SiteMenu from './SiteMenu'
+import ProfileMenu from './ProfileMenu'
+import ProfileSidebar from '../profile/Sidebar'
 
 const MainSidebarDiv = styled.aside``
 

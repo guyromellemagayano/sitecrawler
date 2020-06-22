@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import styled from 'styled-components'
-import MobilePrimaryMenu from '../sidebar/mobile-primary-menu'
+import MobilePrimaryMenu from './MobilePrimaryMenu'
 
 const MobileSidebarDiv = styled.aside``
 

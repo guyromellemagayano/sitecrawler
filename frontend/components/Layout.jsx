@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import Header from './layout/header'
-import Footer from './layout/footer'
+import Header from './layout/Header'
+import Footer from './layout/Footer'
 
 const Main = styled.main``
 

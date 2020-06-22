@@ -3,7 +3,7 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import MobileSidebar from '../components/sidebar/mobile-sidebar'
-import MainSidebar from '../components/sidebar/main-sidebar'
+import MainSidebar from '../components/sidebar/MainSidebar'
 
 const SupportDiv = styled.section``
 

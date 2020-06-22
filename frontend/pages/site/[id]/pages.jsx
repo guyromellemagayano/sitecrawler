@@ -4,45 +4,17 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
-import DataTableHeadsContent from '../../config/data-table-heads.json'
-import useUser from '../../hooks/useUser'
-import Layout from '../../components/Layout'
-import MobileSidebar from '../../components/sidebar/mobile-sidebar'
-import MainSidebar from '../../components/sidebar/main-sidebar'
-import AddSite from '../../components/sites/AddSite'
-import DataTable from '../../components/sites/DataTable'
-import Pagination from '../../components/sites/Pagination'
+import useUser from '../../../hooks/useUser'
+import Layout from '../../../components/Layout'
+import MobileSidebar from '../../../components/sidebar/mobile-sidebar'
+import MainSidebar from '../../../components/sidebar/main-sidebar'
 
-const fetcher = async (url) => {
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
-    },
-  })
+const PagesDiv = styled.section``
 
-  const data = await res.json()
-
-  if (res.status !== 200) {
-    throw new Error(data.message)
-  }
-
-  return data
-}
-
-const SitesDiv = styled.section``
-
-const Sites = () => {  
+const Pages = () => {
   const { user } = useUser({ 
-    redirectTo: '/login'
+    redirectTo: '/login',
   })
-  
-  const { data, error } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
-
-  if (error) return <Layout>Failed to load</Layout>
-  if (!data) return <Layout>Loading...</Layout>
 
   if (user === undefined || !user) {
     return <Layout>Loading...</Layout>
@@ -55,14 +27,14 @@ const Sites = () => {
       </Head>
 
       <Suspense fallback={<div>loading...</div>}>
-        <SitesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+        <PagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
           <MobileSidebar />
           <MainSidebar />
 
           <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
             <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
               <button
-                className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
+                className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outilne-none focus:bg-gray-200 transition ease-in-out duration-150`}
                 aria-label={`Open sidebar`}
               >
                 <svg
@@ -86,11 +58,11 @@ const Sites = () => {
             >
               <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
                 <h1 className={`text-2xl font-semibold text-gray-900`}>
-                  Sites
+                  All Pages
                 </h1>
               </div>
               <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-                <AddSite />
+                {/* <AddSite /> */}
 
                 <div className={`pb-4`}>
                   <div className={`flex flex-col`}>
@@ -119,9 +91,9 @@ const Sites = () => {
                               ></th>
                             </tr>
                           </thead>
-                          {data.results.map((val, key) => (
+                          {/* {data.results.map((val, key) => (
                             <DataTable key={key} site={val} />
-                          ))}
+                          ))} */}
                         </table>
                       </div>
                     </div>
@@ -131,12 +103,12 @@ const Sites = () => {
               </div>
             </main>
           </div>
-        </SitesDiv>
+        </PagesDiv>
       </Suspense>
     </Layout>
   )
 }
 
-export default Sites
+export default Pages
 
-Sites.propTypes = {}
+Pages.propTypes = {}

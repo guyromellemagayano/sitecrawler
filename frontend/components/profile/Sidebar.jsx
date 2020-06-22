@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import useSWR from 'swr'
-import Layout from '../../components/layout'
+import Layout from '../Layout'
 
 const apiParameters = {
   method: 'GET',

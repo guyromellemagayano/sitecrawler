@@ -7,13 +7,13 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
-import Layout from '../../components/layout'
+import Layout from '../../components/Layout'
 import MobileSidebar from '../../components/sidebar/mobile-sidebar'
-import MainSidebar from '../../components/sidebar/main-sidebar'
-import SitesOverview from '../../components/sites/overview'
-import SitesCrawlInfo from '../../components/sites/crawl-info'
-import SitesStats from '../../components/sites/stats'
-import DashboardFooter from '../../components/dashboard/footer'
+import MainSidebar from '../../components/sidebar/MainSidebar'
+import SitesOverview from '../../components/sites/Overview'
+import SitesCrawlInfo from '../../components/sites/CrawlInfo'
+import SitesStats from '../../components/sites/Stats'
+// import DashboardFooter from '../../components/dashboard/footer'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -118,7 +118,7 @@ const SitesDashboard = props => {
                 />
               </div>
 
-              <DashboardFooter />
+              {/* <DashboardFooter /> */}
             </div>
           </main>
         </div>
