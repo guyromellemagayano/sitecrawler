@@ -22,10 +22,11 @@
   },
   "plugins": [
     "react",
-    "better-styled-components"
+    "better-styled-components",
+    "react-hooks"
   ],
   "rules": {
-    "no-underscore-dangle": "on",
+    "no-underscore-dangle": 1,
     "import/prefer-default-export": "on",
     "react/react-in-jsx-scope": "on",
     "react/jsx-filename-extension": "on",
@@ -35,6 +36,8 @@
     "react/state-in-constructor": "on",
     "react/prop-types": "on",
     "better-styled-components/sort-declarations-alphabetically": 2,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "quotes": [
       2,
       "double",
