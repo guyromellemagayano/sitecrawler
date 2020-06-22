@@ -13,32 +13,40 @@ import AddSite from '../../components/sites/add-site'
 import DataTable from '../../components/sites/data-table'
 import Pagination from '../../components/sites/pagination'
 
-const apiParameters = {
-  method: 'GET',
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-    'X-CSRFToken': Cookies.get('csrftoken'),
-  },
+const fetcher = async (url) => {
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-CSRFToken': Cookies.get('csrftoken'),
+    },
+  })
+
+  const data = await res.json()
+
+  if (res.status !== 200) {
+    throw new Error(data.message)
+  }
+
+  return data
 }
 
 const SitesDiv = styled.section``
 
-const Sites = () => {
-  const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
-  
+const Sites = () => {  
   const { user } = useUser({ 
     redirectTo: '/login'
   })
   
   const { data, error } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
 
+  if (error) return <Layout>Failed to load</Layout>
+  if (!data) return <Layout>Loading...</Layout>
+
   if (user === undefined || !user) {
     return <Layout>Loading...</Layout>
   }
-
-  if (error) return <Layout>Failed to load</Layout>
-  if (!data) return <Layout>Loading...</Layout>
 
   return (
     <Layout>

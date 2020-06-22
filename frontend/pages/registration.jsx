@@ -60,11 +60,11 @@ const Registration = () => {
       }
     } catch(error) {
       if (error.response) {
-        console.log(error.response.data)
-        console.log(error.response.status)
-        console.log(error.response.headers)
+        console.error(error.response.data)
+        console.error(error.response.status)
+        console.error(error.response.headers)
       } else if (error.request) {
-        console.log(error.request)
+        console.error(error.request)
       } else {
         let data = JSON.parse(error.message)
 
@@ -85,7 +85,7 @@ const Registration = () => {
         } 
         
         if (!data.username && !data.email && !data.password1 && !data.password2) {
-          console.log(error.message)
+          console.error(error.message)
           setErrorMsg('An unexpected error occurred. Please try again.')
         }
       }

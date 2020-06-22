@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
@@ -35,7 +36,7 @@ const fetcher = async (url) => {
 
 const SitesDashboardDiv = styled.section``
 
-const SitesDashboard = () => {
+const SitesDashboard = props => {
   const { user } = useUser({ 
     redirectTo: '/login',
   });
@@ -92,7 +93,7 @@ const SitesDashboard = () => {
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <h1 className={`text-2xl font-semibold text-gray-900`}>
-                Epic Design Labs
+                {data.name}
               </h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8 grid grid-cols-2 gap-5 sm:grid-cols-2`}>
@@ -106,12 +107,15 @@ const SitesDashboard = () => {
               <div>
                 <SitesCrawlInfo 
                   url={data.url}
+                  finishedAt={data.finished_at}
                 />
               </div>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               <div className={`pb-4`}>
-                <SitesStats />
+                <SitesStats 
+                  stats={data}
+                />
               </div>
 
               <DashboardFooter />

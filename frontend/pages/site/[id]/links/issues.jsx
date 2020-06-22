@@ -20,7 +20,7 @@ const LinkIssues = () => {
   return (
     <Layout>
       <Head>
-        <title>Link Issues</title>
+        <title>Links with Issues</title>
       </Head>
 
       <LinkIssuesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
@@ -52,7 +52,7 @@ const LinkIssues = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>Link Issues</h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>Links with Issues</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               {/* Start Content Here */}

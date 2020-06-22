@@ -142,7 +142,7 @@ const SitesCrawlSite = props => {
                     className={`mt-5 sm:flex sm:items-center sm:justify-between`}
                   >
                     <div>
-                      <Link href={`/site/${dataQuery.sid}`} as={`/site/${dataQuery.sid}`}>
+                      <Link href="/site/[id]" as={`/site/${dataQuery.sid}`}>
                         <a
                           type={`button`}
                           className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
