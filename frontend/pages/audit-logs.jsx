@@ -1,8 +1,8 @@
 import React from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
-import MobileSidebar from '../components/sidebar/mobile-sidebar'
-import MainSidebar from '../components/sidebar/main-sidebar'
+import MobileSidebar from '../components/sidebar/MobileSidebar'
+import MainSidebar from '../components/sidebar/MainSidebar'
 
 const AuditLogsDiv = styled.section``
 

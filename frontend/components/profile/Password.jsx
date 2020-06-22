@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
-import Layout from '../../components/layout'
+import Layout from '../../components/Layout'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
 

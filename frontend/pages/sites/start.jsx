@@ -7,9 +7,9 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
-import Layout from '../../components/layout'
-import MobileSidebar from '../../components/sidebar/mobile-sidebar'
-import MainSidebar from '../../components/sidebar/main-sidebar'
+import Layout from '../../components/Layout'
+import MobileSidebar from '../../components/sidebar/MobileSidebar'
+import MainSidebar from '../../components/sidebar/MainSidebar'
 
 const SitesStartDiv = styled.section`
   .wizard-indicator {

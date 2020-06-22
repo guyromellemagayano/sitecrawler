@@ -1,11 +1,11 @@
 import Head from 'next/head'
 import styled from 'styled-components'
-import Layout from '../../components/layout'
+import Layout from '../../components/Layout'
 import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
-import MobileSidebar from '../../components/sidebar/mobile-sidebar'
-import MainSidebar from '../../components/sidebar/main-sidebar'
-import ProfileSettingsPassword from '../../components/profile/password'
+import MobileSidebar from '../../components/sidebar/MobileSidebar'
+import MainSidebar from '../../components/sidebar/MainSidebar'
+import ProfileSettingsPassword from '../../components/profile/Password'
 
 const ProfilePasswordSettingsDiv = styled.section``
 

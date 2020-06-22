@@ -8,9 +8,9 @@ import Link from 'next/link'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
-import Layout from '../../components/layout'
-import MobileSidebar from '../../components/sidebar/mobile-sidebar'
-import MainSidebar from '../../components/sidebar/main-sidebar'
+import Layout from '../../components/Layout'
+import MobileSidebar from '../../components/sidebar/MobileSidebar'
+import MainSidebar from '../../components/sidebar/MainSidebar'
 
 const SitesVerifyUrlDiv = styled.section`
   ol {

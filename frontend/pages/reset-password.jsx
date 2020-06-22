@@ -5,8 +5,8 @@ import Head from 'next/head'
 import Link from 'next/link'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import Layout from '../components/layout'
-import LogoLabel from '../components/form/logo-label'
+import Layout from '../components/Layout'
+import LogoLabel from '../components/form/LogoLabel'
 
 const ResetPasswordDiv = styled.div``
 

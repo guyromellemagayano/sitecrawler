@@ -1,14 +1,14 @@
 import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import useUser from '../../../hooks/useUser'
-import Layout from '../../../components/Layout'
-import MobileSidebar from '../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../components/sidebar/MainSidebar'
+import useUser from '../../../../hooks/useUser'
+import Layout from '../../../../components/Layout'
+import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
+import MainSidebar from '../../../../components/sidebar/MainSidebar'
 
-const SiteReportsDiv = styled.section``
+const PagesDiv = styled.section``
 
-const SiteReports = () => {
+const Pages = () => {
   const { user } = useUser({ 
     redirectTo: '/login',
   })
@@ -20,10 +20,10 @@ const SiteReports = () => {
   return (
     <Layout>
       <Head>
-        <title>Site Reports</title>
+        <title>Pages</title>
       </Head>
 
-      <SiteReportsDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+      <PagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
         <MobileSidebar />
         <MainSidebar />
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -52,7 +52,7 @@ const SiteReports = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>Site Reports</h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>Pages</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               {/* Start Content Here */}
@@ -60,11 +60,11 @@ const SiteReports = () => {
             </div>
           </main>
         </div>
-      </SiteReportsDiv>
+      </PagesDiv>
     </Layout>
   )
 }
 
-export default SiteReports
+export default Pages
 
-SiteReports.propTypes = {}
+Pages.propTypes = {}

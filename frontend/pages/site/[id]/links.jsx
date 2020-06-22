@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import useUser from '../../../hooks/useUser'
 import Layout from '../../../components/Layout'
-import MobileSidebar from '../../../components/sidebar/mobile-sidebar'
-import MainSidebar from '../../../components/sidebar/main-sidebar'
+import MobileSidebar from '../../../components/sidebar/MobileSidebar'
+import MainSidebar from '../../../components/sidebar/MainSidebar'
 
 const LinksDiv = styled.section``
 

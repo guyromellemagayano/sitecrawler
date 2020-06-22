@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import Layout from '../../components/layout'
-import ProfileSettingsPersonal from './personal'
+import Layout from '../../components/Layout'
+import ProfileSettingsPersonal from './Personal'
 
 const ProfileSettingsDiv = styled.div``
 
