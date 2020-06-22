@@ -72,32 +72,6 @@ const SitesStats = props => {
                 <dt
                   className={`text-sm leading-5 font-medium text-gray-500 truncate`}
                 >
-                  Total Pages
-                </dt>
-                <dd
-                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
-                >
-                  {siteData.num_pages}
-                </dd>
-              </dl>
-            </div>
-            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
-              <div className={`text-sm leading-5`}>
-                <Link href={`${siteData.site_id}` + `/links/pages`}>
-                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
-                    View all
-                  </a>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
-            <div className={`px-4 py-5 sm:p-6`}>
-              <dl>
-                <dt
-                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
-                >
                   Total Links
                 </dt>
                 <dd
@@ -188,6 +162,32 @@ const SitesStats = props => {
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
                 <Link href={`${siteData.site_id}` + `/links/external`}>
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Total Pages
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {siteData.num_pages}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href={`${siteData.site_id}` + `/links/pages`}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>

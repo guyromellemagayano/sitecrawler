@@ -1,17 +1,52 @@
+import { Fragment } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+import fetch from 'node-fetch'
+import useSWR from 'swr'
+import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+import LinksPagesContent from '../../../../config/links-pages.json'
 import useUser from '../../../../hooks/useUser'
 import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
+import FilterLinks from '../../../../components/site/FilterLinks'
 
-const LinkIssuesDiv = styled.section``
+const fetcher = async (url) => {
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-CSRFToken': Cookies.get('csrftoken'),
+    },
+  })
 
-const LinkIssues = () => {
+  const data = await res.json()
+
+  if (res.status !== 200) {
+    throw new Error(data.message)
+  }
+
+  return data
+}
+
+const IssuesDiv = styled.section``
+
+const Issues = () => {
   const { user } = useUser({ 
     redirectTo: '/login',
   })
+
+  const { query } = useRouter()
+  const { data, error } = useSWR(
+    () => query.id && `/api/site/${query.id}`,
+    fetcher
+  )
+
+  if (error) return <div>{error.message}</div>
+  if (!data) return <div>Loading...</div>
 
   if (user === undefined || !user) {
     return <Layout>Loading...</Layout>
@@ -20,12 +55,12 @@ const LinkIssues = () => {
   return (
     <Layout>
       <Head>
-        <title>Links with Issues</title>
+        <title>Issues with Links</title>
       </Head>
 
-      <LinkIssuesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+      <IssuesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
         <MobileSidebar />
-        <MainSidebar />
+        <MainSidebar stats={data} />
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button
@@ -55,16 +90,50 @@ const LinkIssues = () => {
               <h1 className={`text-2xl font-semibold text-gray-900`}>Links with Issues</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              {/* Start Content Here */}
-              {/* End Content Here */}
+              <FilterLinks />
+              <div className={`pb-4`}>
+                  <div className={`flex flex-col`}>
+                    <div
+                      className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
+                    >
+                      <div
+                        className={`align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-gray-200`}
+                      >
+                        <table className={`min-w-full`}>
+                          <thead>
+                            <tr>
+                              {LinksPagesContent.map((site, key) => {
+                                return (
+                                  <Fragment key={key}>
+                                    <th
+                                      className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
+                                    >
+                                      {site.label}
+                                    </th>
+                                  </Fragment>
+                                )
+                              })}
+                              <th
+                                className={`px-6 py-3 border-b border-gray-200 bg-white`}
+                              ></th>
+                            </tr>
+                          </thead>
+                          {/* {data.results.map((val, key) => (
+                            <DataTable key={key} site={val} />
+                          ))} */}
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
           </main>
         </div>
-      </LinkIssuesDiv>
+      </IssuesDiv>
     </Layout>
   )
 }
 
-export default LinkIssues
+export default Issues
 
-LinkIssues.propTypes = {}
+Issues.propTypes = {}
