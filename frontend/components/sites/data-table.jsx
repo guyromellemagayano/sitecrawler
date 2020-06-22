@@ -37,7 +37,7 @@ const DataTable = props => {
                   title={`${props.site.url}`}
                   className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
                 >
-                  {props.site.url}
+                  Visit Link
                 </a>
               </div>
             </div>
