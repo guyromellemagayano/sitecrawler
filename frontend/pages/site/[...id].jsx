@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
@@ -36,7 +35,7 @@ const fetcher = async (url) => {
 
 const SitesDashboardDiv = styled.section``
 
-const SitesDashboard = props => {
+const SitesDashboard = () => {
   const { user } = useUser({ 
     redirectTo: '/login',
   });
@@ -64,7 +63,7 @@ const SitesDashboard = props => {
         className={`h-screen flex overflow-hidden bg-gray-100`}
       >
         <MobileSidebar />
-        <MainSidebar />
+        <MainSidebar stats={data} />
 
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
@@ -96,26 +95,23 @@ const SitesDashboard = props => {
                 {data.name}
               </h1>
             </div>
-            <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8 grid grid-cols-2 gap-5 sm:grid-cols-2`}>
+            <div
+              className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8 grid grid-cols-2 gap-5 sm:grid-cols-2`}
+            >
               <div>
-                <SitesOverview 
+                <SitesOverview
                   url={data.url}
                   verified={data.verified}
                   createdAt={data.created_at}
                 />
               </div>
               <div>
-                <SitesCrawlInfo 
-                  url={data.url}
-                  finishedAt={data.finished_at}
-                />
+                <SitesCrawlInfo url={data.url} finishedAt={data.finished_at} />
               </div>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               <div className={`pb-4`}>
-                <SitesStats 
-                  stats={data}
-                />
+                <SitesStats stats={data} />
               </div>
 
               {/* <DashboardFooter /> */}

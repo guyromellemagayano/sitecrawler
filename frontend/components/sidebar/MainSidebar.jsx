@@ -8,20 +8,20 @@ import ProfileSidebar from '../profile/Sidebar'
 
 const MainSidebarDiv = styled.aside``
 
-const MainSidebar = () => {
+const MainSidebar = props => {
   const [windowSiteLocation, setWindowSiteLocation] = useState(false)
   const [windowProfileLocation, setWindowProfileLocation] = useState(false)
 
   useEffect(() => {
     if (window.location.href.indexOf("/site/") > -1) {
       setWindowSiteLocation(!windowSiteLocation)
-    } 
+    }
 
     if (window.location.href.indexOf("/profile") > -1) {
       setWindowProfileLocation(!windowProfileLocation)
     }
   }, [setWindowSiteLocation, setWindowProfileLocation])
-  
+
   return (
     <MainSidebarDiv className={`hidden md:flex md:flex-shrink-0`}>
       <div className={`flex flex-col w-64 border-r border-gray-200 bg-white`}>
@@ -33,7 +33,7 @@ const MainSidebar = () => {
               alt={`Workflow`}
             />
           </div>
-          {windowSiteLocation ? <SiteMenu /> : windowProfileLocation ? <ProfileMenu /> : <PrimaryMenu />}
+          {windowSiteLocation ? <SiteMenu stats={props.stats} /> : windowProfileLocation ? <ProfileMenu /> : <PrimaryMenu />}
         </div>
         <ProfileSidebar />
       </div>

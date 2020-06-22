@@ -35,7 +35,7 @@ const SitesStats = props => {
   if (statsError) return <div>{statsError.message}</div>
   if (!stats) return <div>Loading...</div>
 
-  const handleSiteResults = async (e) => {
+  const useSiteResults = async (e) => {
     return await Promise.all(e.results.map(async (val, key) => {
       try {
         const res = await fetch(`/api/site/${val.site_id}/scan/${val.id}/`, {
@@ -60,7 +60,7 @@ const SitesStats = props => {
     }))
   }
 
-  handleSiteResults(stats)
+  useSiteResults(stats)
 
   return (
     <SitesStatsDiv>

@@ -91,7 +91,6 @@ const Sites = () => {
               </div>
               <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
                 <AddSite />
-
                 <div className={`pb-4`}>
                   <div className={`flex flex-col`}>
                     <div
