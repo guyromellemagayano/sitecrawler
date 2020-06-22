@@ -6,9 +6,9 @@ import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
 
-const LinkBlockedDiv = styled.section``
+const LinkExternalDiv = styled.section``
 
-const LinkBlocked = () => {
+const LinkExternal = () => {
   const { user } = useUser({ 
     redirectTo: '/login',
   })
@@ -20,10 +20,10 @@ const LinkBlocked = () => {
   return (
     <Layout>
       <Head>
-        <title>Blocked Links</title>
+        <title>Links with Issues</title>
       </Head>
 
-      <LinkBlockedDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+      <LinkExternalDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
         <MobileSidebar />
         <MainSidebar />
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -52,7 +52,7 @@ const LinkBlocked = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>Blocked Links</h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>Links with Issues</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               {/* Start Content Here */}
@@ -60,11 +60,11 @@ const LinkBlocked = () => {
             </div>
           </main>
         </div>
-      </LinkBlockedDiv>
+      </LinkExternalDiv>
     </Layout>
   )
 }
 
-export default LinkBlocked
+export default LinkExternal
 
-LinkBlocked.propTypes = {}
+LinkExternal.propTypes = {}

@@ -6,9 +6,9 @@ import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
 
-const LinkOutboundDiv = styled.section``
+const LinkWorkingDiv = styled.section``
 
-const LinkOutbound = () => {
+const LinkWorking = () => {
   const { user } = useUser({ 
     redirectTo: '/login',
   })
@@ -23,7 +23,7 @@ const LinkOutbound = () => {
         <title>Outbound Links</title>
       </Head>
 
-      <LinkOutboundDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+      <LinkWorkingDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
         <MobileSidebar />
         <MainSidebar />
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -60,11 +60,11 @@ const LinkOutbound = () => {
             </div>
           </main>
         </div>
-      </LinkOutboundDiv>
+      </LinkWorkingDiv>
     </Layout>
   )
 }
 
-export default LinkOutbound
+export default LinkWorking
 
-LinkOutbound.propTypes = {}
+LinkWorking.propTypes = {}

@@ -83,10 +83,8 @@ const SitesStats = props => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href="/#">
-                  <a
-                    className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                  >
+                <Link href={`${siteData.site_id}` + `/links/pages`}>
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
                 </Link>
@@ -111,13 +109,11 @@ const SitesStats = props => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <a
-                  href="#"
-                  disabled={`disabled`}
-                  className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                >
-                  View all
-                </a>
+                <Link href={`${siteData.site_id}` + `/links`}>
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -139,13 +135,11 @@ const SitesStats = props => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <a
-                  href="#"
-                  disabled={`disabled`}
-                  className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                >
-                  View all
-                </a>
+                <Link href={`${siteData.site_id}` + `/links/working`}>
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -167,13 +161,11 @@ const SitesStats = props => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <a
-                  href="#"
-                  disabled={`disabled`}
-                  className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                >
-                  View all
-                </a>
+                <Link href={`${siteData.site_id}` + `/links/working`}>
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -195,13 +187,11 @@ const SitesStats = props => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <a
-                  href="#"
-                  disabled={`disabled`}
-                  className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                >
-                  View all
-                </a>
+                <Link href={`${siteData.site_id}` + `/links/external`}>
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
               </div>
             </div>
           </div>
