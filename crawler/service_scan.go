@@ -220,7 +220,8 @@ func (s *scanner) loadURL(url *url.URL) (*CrawlLink, *goquery.Document) {
 		return crawlLink, nil
 	}
 
-	if resp.Header.Get("Content-Type") == "text/html" {
+	contentType := strings.SplitN(resp.Header.Get("Content-Type"), ";", 2)
+	if contentType[0] == "text/html" {
 		doc, err := goquery.NewDocumentFromReader(limitedBody)
 		if err != nil {
 			handleError(err)
