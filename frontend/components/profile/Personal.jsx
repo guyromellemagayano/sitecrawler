@@ -3,7 +3,6 @@ import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import Layout from '../../components/Layout'
-import useUser from '../../hooks/useUser'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
 
@@ -25,14 +24,6 @@ const ProfileSettingsPersonal = () => {
   const [username, setUsername] = useState('')
   const [firstname, setFirstname] = useState('')
   const [lastname, setLastname] = useState('')
-
-  const { user } = useUser({ 
-    redirectTo: '/login',
-  })
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
 
   const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
 

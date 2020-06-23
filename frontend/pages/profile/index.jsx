@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import useUser from '../../hooks/useUser'
 import Layout from '../../components/Layout'
 import MobileSidebar from '../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../components/sidebar/MainSidebar'
@@ -10,14 +9,6 @@ import ProfileSettings from '../../components/profile/Settings'
 const ProfileDiv = styled.section``
 
 const Profile = () => {
-  const { user } = useUser({ 
-    redirectTo: '/login'
-  })
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
-
   return (
     <Layout>
       <Head>

@@ -6,7 +6,6 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import Link from 'next/link'
 import PropTypes from 'prop-types'
-import useUser from '../../hooks/useUser'
 import Layout from '../../components/Layout'
 import MobileSidebar from '../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../components/sidebar/MainSidebar'
@@ -109,14 +108,6 @@ const SitesStart = () => {
   useEffect(() => {
     Router.prefetch('/sites/verify-url')
   }, [])
-
-  const { user } = useUser({ 
-    redirectTo: '/login'
-  });
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
 
   return (
     <Layout>

@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
 import DataTableHeadsContent from '../../config/data-table-heads.json'
-import useUser from '../../hooks/useUser'
 import Layout from '../../components/Layout'
 import MobileSidebar from '../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../components/sidebar/MainSidebar'
@@ -34,19 +33,11 @@ const fetcher = async (url) => {
 
 const SitesDiv = styled.section``
 
-const Sites = () => {  
-  const { user } = useUser({ 
-    redirectTo: '/login'
-  })
-  
+const Sites = () => {    
   const { data, error } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
 
   if (error) return <Layout>Failed to load</Layout>
   if (!data) return <Layout>Loading...</Layout>
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
 
   return (
     <Layout>

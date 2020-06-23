@@ -35,11 +35,7 @@ const fetcher = async (url) => {
 
 const LinksDiv = styled.section``
 
-const Links = () => {
-  const { user } = useUser({ 
-    redirectTo: '/login',
-  })
-
+const Links = () => {  
   const { query } = useRouter()
   const { data, error } = useSWR(
     () => query.id && `/api/site/${query.id}`,
@@ -48,10 +44,6 @@ const Links = () => {
 
   if (error) return <div>{error.message}</div>
   if (!data) return <div>Loading...</div>
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
 
   return (
     <Layout>

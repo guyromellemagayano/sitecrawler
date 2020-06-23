@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { useState, Fragment } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
@@ -7,7 +7,6 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import LinksPagesContent from '../../../../config/links-pages.json'
-import useUser from '../../../../hooks/useUser'
 import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
@@ -34,10 +33,9 @@ const fetcher = async (url) => {
 
 const PagesDiv = styled.section``
 
-const Pages = () => {
-  const { user } = useUser({ 
-    redirectTo: '/login',
-  })
+const Pages = props => {
+  const [siteScanData, setSiteScanData] = useState([])
+  const [sitePageData, setSitePageData] = useState([])
 
   const { query } = useRouter()
   const { data, error } = useSWR(
@@ -45,12 +43,62 @@ const Pages = () => {
     fetcher
   )
 
+  const useSiteScanResults = async (e) => {
+    try {
+      const res = await fetch(`/api/site/${e.id}/scan/`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        },
+      })
+
+      const data = await res.json()
+
+      if (res.status !== 200) {
+        throw new Error(data.message)
+      }
+
+      data.results.map((val) => {
+        setSiteScanData(val.id)
+        return siteScanData
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const useSitePageResults = async (d, e) => {
+    try {
+      const res = await fetch(`/api/site/${d.id}/scan/${e}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        },
+      })
+
+      const data = await res.json()
+
+      if (res.status !== 200) {
+        throw new Error(data.message)
+      }
+
+      setSitePageData(data.id)
+
+      return sitePageData
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   if (error) return <div>{error.message}</div>
   if (!data) return <div>Loading...</div>
 
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
+  useSiteScanResults(props)
+  // useSitePageResults(props, siteScanData)
 
   return (
     <Layout>
@@ -60,7 +108,7 @@ const Pages = () => {
 
       <PagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
         <MobileSidebar />
-        <MainSidebar stats={data} />
+        <MainSidebar />
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button

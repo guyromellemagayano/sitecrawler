@@ -2,7 +2,6 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import Layout from '../../components/Layout'
 import PropTypes from 'prop-types'
-import useUser from '../../hooks/useUser'
 import MobileSidebar from '../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../components/sidebar/MainSidebar'
 import ProfileSettingsPassword from '../../components/profile/Password'
@@ -10,14 +9,6 @@ import ProfileSettingsPassword from '../../components/profile/Password'
 const ProfilePasswordSettingsDiv = styled.section``
 
 const ProfilePasswordSettings = () => {
-  const { user } = useUser({ 
-    redirectTo: '/login',
-  })
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
-
   return (
     <Layout>
       <Head>

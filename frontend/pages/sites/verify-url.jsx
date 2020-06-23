@@ -7,7 +7,6 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import PropTypes from 'prop-types'
-import useUser from '../../hooks/useUser'
 import Layout from '../../components/Layout'
 import MobileSidebar from '../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../components/sidebar/MainSidebar'
@@ -95,14 +94,6 @@ const SitesVerifyUrl = props => {
   useEffect(() => {
     Router.prefetch('/sites/information')
   }, [])
-
-  const { user } = useUser({ 
-    redirectTo: '/login',
-  });
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
 
   return (
     <Layout>

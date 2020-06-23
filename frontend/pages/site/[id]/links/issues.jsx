@@ -35,10 +35,6 @@ const fetcher = async (url) => {
 const IssuesDiv = styled.section``
 
 const Issues = () => {
-  const { user } = useUser({ 
-    redirectTo: '/login',
-  })
-
   const { query } = useRouter()
   const { data, error } = useSWR(
     () => query.id && `/api/site/${query.id}`,
@@ -47,10 +43,6 @@ const Issues = () => {
 
   if (error) return <div>{error.message}</div>
   if (!data) return <div>Loading...</div>
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
 
   return (
     <Layout>

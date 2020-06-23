@@ -5,7 +5,6 @@ import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import useUser from '../../hooks/useUser'
 import Layout from '../../components/Layout'
 import MobileSidebar from '../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../components/sidebar/MainSidebar'
@@ -36,10 +35,6 @@ const fetcher = async (url) => {
 const SitesDashboardDiv = styled.section``
 
 const SitesDashboard = () => {
-  const { user } = useUser({ 
-    redirectTo: '/login',
-  });
-  
   const { query } = useRouter()
   const { data, error } = useSWR(
     () => query.id && `/api/site/${query.id}`,
@@ -48,10 +43,6 @@ const SitesDashboard = () => {
 
   if (error) return <div>{error.message}</div>
   if (!data) return <div>Loading...</div>
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
 
   return (
     <Layout>

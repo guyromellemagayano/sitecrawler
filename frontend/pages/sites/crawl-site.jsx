@@ -4,7 +4,6 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Link from 'next/link'
-import useUser from '../../hooks/useUser'
 import Layout from '../../components/Layout'
 import MobileSidebar from '../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../components/sidebar/MainSidebar'
@@ -22,14 +21,6 @@ const SitesCrawlSite = props => {
     setDataQuery(props)
     Router.prefetch('/site/' + dataQuery.sid)
   }, [])
-
-  const { user } = useUser({ 
-    redirectTo: '/login',
-  });
-
-  if (user === undefined || !user) {
-    return <Layout>Loading...</Layout>
-  }
 
   return (
     <Layout>
