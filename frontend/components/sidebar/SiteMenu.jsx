@@ -68,6 +68,8 @@ const SiteMenu = props => {
 
   useSiteResults(stats)
 
+  console.log(siteData)
+
   return (
     <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
       {
@@ -117,7 +119,7 @@ const SiteMenu = props => {
                   <span className={`ml-auto inline-block py-0.5 px-3 text-xs leading-4 rounded-full text-gray-600 bg-gray-200 group-hover:bg-gray-200 group-focus:bg-gray-300 transition ease-in-out duration-150`}>
                     {siteData.num_non_ok_links}
                   </span>
-                ) : val.slug === "links-with-issues" && siteData.num_external_links > 0 ? (
+                ) : val.slug === "external-links" && siteData.num_external_links > 0 ? (
                   <span className={`ml-auto inline-block py-0.5 px-3 text-xs leading-4 rounded-full text-gray-600 bg-gray-200 group-hover:bg-gray-200 group-focus:bg-gray-300 transition ease-in-out duration-150`}>
                     {siteData.num_external_links}
                   </span>

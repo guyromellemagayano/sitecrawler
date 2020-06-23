@@ -70,28 +70,6 @@ const DataTable = props => {
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           50
-          <svg
-            fill={`currentColor`}
-            viewBox={`0 0 24 24`}
-            className={`inline-block ml-2 h-5 w-5 text-green-400`}
-          >
-            <path
-              d={`M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z`}
-              clipRule={`evenodd`}
-              fillRule={`evenodd`}
-            ></path>
-          </svg>
-          <svg
-            fill={`currentColor`}
-            viewBox={`0 0 24 24`}
-            className={`inline-block h-5 w-5 text-red-400`}
-          >
-            <path
-              d={`M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z`}
-              clipRule={`evenodd`}
-              fillRule={`evenodd`}
-            ></path>
-          </svg>
         </td>
         <td
           className={`flex-grow px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium`}
