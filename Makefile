@@ -20,6 +20,7 @@ push-prod: ## Upload production images to ecr
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
 
 install-deploy:
+	python -m pip install --upgrade pip
 	pip install -r deploy/requirements.txt
 
 logs: ## Display logs for local environment
