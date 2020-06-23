@@ -12,6 +12,7 @@ import Layout from '../../../components/Layout'
 import MobileSidebar from '../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../components/sidebar/MainSidebar'
 import FilterLinks from '../../../components/site/FilterLinks'
+import LinksTable from '../../../components/site/LinksTable'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -119,7 +120,7 @@ const Links = () => {
                             </tr>
                           </thead>
                           {/* {data.results.map((val, key) => (
-                            <DataTable key={key} site={val} />
+                            <LinksTable key={key} site={val} />
                           ))} */}
                         </table>
                       </div>
