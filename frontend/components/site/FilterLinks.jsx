@@ -1,16 +1,8 @@
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import styled from 'styled-components'
 
 const FilterLinksDiv = styled.div``
 
 const FilterLinks = () => {
-  const [dropdown, setDropdown] = useState(false)
-
-  const setDropdownToggle = (e) => {
-    setDropdown(!dropdown)
-  }
-
   return (
     <FilterLinksDiv className={`py-4`}>
       <div
