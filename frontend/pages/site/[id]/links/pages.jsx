@@ -40,30 +40,34 @@ const Pages = () => {
 
   const { query } = useRouter()
   const { data: scan, error: scanError } = useSWR(
-    () => query.id && `/api/site/${query.id}/scan/`,
+    () => query.id ? `/api/site/${query.id}/scan/` : null,
     fetcher
-  )
+  );
 
-  if (scanError) return <div>{error.message}</div>
-  if (!scan) return <div>Loading...</div>
-
-  let scanObj = []
-  
-  scan.results.map((val) => {
-    scanObj.push(val)
-    return scanObj
-  })
 
   let scanObjId = ''
-  
-  scanObj.map((val) => {
-    scanObjId = val.id
-    return scanObjId
-  })
 
-  const { data: page, error: pageError } = useSWR(`/api/site/${query.id}/scan/${scanObjId}/page/`, fetcher)
+  if (scan) {
 
-  if (pageError) return <div>{error.message}</div>
+      let scanObj = []
+
+      scan.results.map((val) => {
+        scanObj.push(val)
+        return scanObj
+      })
+
+
+      scanObj.map((val) => {
+        scanObjId = val.id
+        return scanObjId
+      })
+  }
+
+
+  const { data: page, error: pageError } = useSWR(() => query.id && scanObjId ? `/api/site/${query.id}/scan/${scanObjId}/page/` : null, fetcher)
+
+  if (pageError) return <div>{pageError.message}</div>
+  if (scanError) return <div>{scanError.message}</div>
   if (!page) return <div>Loading...</div>
 
   // const useSitePageResults = async (e) => {
