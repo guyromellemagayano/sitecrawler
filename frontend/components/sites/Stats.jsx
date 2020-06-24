@@ -66,12 +66,36 @@ const SitesStats = () => {
   if (scanError) return <div>{scanError.message}</div>
   if (!stats) return <div>Loading...</div>
 
-  console.log(stats)
-
   return (
     <SitesStatsDiv>
       <div>
         <div className={`mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3`}>
+          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Total Pages
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_pages}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href={`${stats.site_id}` + `/links/pages`}>
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
           <div className={`bg-white overflow-hidden shadow rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
@@ -89,8 +113,11 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={`${stats.site_id}` + `/links`}>
-                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                <Link href={`${stats.site_id}`}>
+                  <a
+                    disabled={`disabled`} 
+                    className={`font-medium text-indigo-300 transition ease-in-out duration-150 cursor-not-allowed`}
+                  >
                     View all
                   </a>
                 </Link>
@@ -178,32 +205,6 @@ const SitesStats = () => {
                     disabled={`disabled`} 
                     className={`font-medium text-indigo-300 transition ease-in-out duration-150 cursor-not-allowed`}
                   >
-                    View all
-                  </a>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
-            <div className={`px-4 py-5 sm:p-6`}>
-              <dl>
-                <dt
-                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
-                >
-                  Total Pages
-                </dt>
-                <dd
-                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
-                >
-                  {stats.num_pages}
-                </dd>
-              </dl>
-            </div>
-            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
-              <div className={`text-sm leading-5`}>
-                <Link href={`${stats.site_id}` + `/links/pages`}>
-                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
                 </Link>
