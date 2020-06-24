@@ -115,8 +115,11 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={`${stats.site_id}` + `/links/working`}>
-                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                <Link href={`${stats.site_id}`}>
+                  <a
+                    disabled={`disabled`} 
+                    className={`font-medium text-indigo-300 transition ease-in-out duration-150 cursor-not-allowed`}
+                  >
                     View all
                   </a>
                 </Link>
@@ -141,8 +144,11 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={`${stats.site_id}` + `/links/working`}>
-                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                <Link href={`${stats.site_id}`}>
+                  <a
+                    disabled={`disabled`} 
+                    className={`font-medium text-indigo-300 transition ease-in-out duration-150 cursor-not-allowed`}
+                  >
                     View all
                   </a>
                 </Link>
@@ -167,8 +173,11 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={`${stats.site_id}` + `/links/external`}>
-                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                <Link href={`${stats.site_id}`}>
+                  <a
+                    disabled={`disabled`} 
+                    className={`font-medium text-indigo-300 transition ease-in-out duration-150 cursor-not-allowed`}
+                  >
                     View all
                   </a>
                 </Link>
