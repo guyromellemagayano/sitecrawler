@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import useUser from '../../../../hooks/useUser'
 import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'

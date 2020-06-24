@@ -109,7 +109,7 @@ const Sites = () => {
                               ></th>
                             </tr>
                           </thead>
-                          {data.results.map((val, key) => (
+                          {data.results && data.results.map((val, key) => (
                             <DataTable key={key} site={val} />
                           ))}
                         </table>

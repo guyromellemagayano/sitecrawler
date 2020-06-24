@@ -11,6 +11,7 @@ import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
 import FilterLinks from '../../../../components/site/FilterLinks'
+import LinksTable from '../../../../components/site/LinksTable'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -33,7 +34,7 @@ const fetcher = async (url) => {
 
 const PagesDiv = styled.section``
 
-const Pages = props => {
+const Pages = () => {
   const [siteScanData, setSiteScanData] = useState([])
   const [sitePageData, setSitePageData] = useState([])
 
@@ -61,7 +62,7 @@ const Pages = props => {
       }
 
       data.results.map((val) => {
-        setSiteScanData(val.id)
+        setSiteScanData(val)
         return siteScanData
       })
     } catch (error) {
@@ -71,7 +72,7 @@ const Pages = props => {
 
   const useSitePageResults = async (d, e) => {
     try {
-      const res = await fetch(`/api/site/${d.id}/scan/${e}`, {
+      const res = await fetch(`/api/site/${d.id}/scan/${e.id}/page/`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -86,8 +87,7 @@ const Pages = props => {
         throw new Error(data.message)
       }
 
-      setSitePageData(data.id)
-
+      setSitePageData(data)
       return sitePageData
     } catch (error) {
       console.error(error)
@@ -97,8 +97,8 @@ const Pages = props => {
   if (error) return <div>{error.message}</div>
   if (!data) return <div>Loading...</div>
 
-  useSiteScanResults(props)
-  // useSitePageResults(props, siteScanData)
+  useSiteScanResults(data)
+  useSitePageResults(data, siteScanData)
 
   return (
     <Layout>
@@ -138,7 +138,7 @@ const Pages = props => {
               <h1 className={`text-2xl font-semibold text-gray-900`}>Pages</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              <FilterLinks />
+              {/* <FilterLinks /> */}
               <div className={`pb-4`}>
                   <div className={`flex flex-col`}>
                     <div
@@ -166,9 +166,9 @@ const Pages = props => {
                               ></th>
                             </tr>
                           </thead>
-                          {/* {data.results.map((val, key) => (
-                            <DataTable key={key} site={val} />
-                          ))} */}
+                          {sitePageData.results && sitePageData.results.map((val, key) => (
+                            <LinksTable key={key} val={val} />
+                          ))}
                         </table>
                       </div>
                     </div>
