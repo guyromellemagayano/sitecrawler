@@ -1,10 +1,8 @@
-import { useState } from 'react'
 import fetch from 'node-fetch'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
-import PropTypes from 'prop-types'
 import Moment from 'react-moment'
 
 const fetcher = async (url) => {
@@ -29,40 +27,34 @@ const fetcher = async (url) => {
 const DataTableDiv = styled.tbody``
 
 const DataTable = props => {
-  const [siteData, setSiteData] = useState([])
+  const { data: scan, error: scanError } = useSWR(() => (props ? `/api/site/${props.site.id}/scan/` : null), fetcher, { refreshInterval: 1000 })
 
-  const { data: stats, error: statsError } = useSWR(`/api/site/${props.site.id}/scan/`, fetcher, { refreshInterval: 1000 })
+  let scanObjId = ""
 
-  if (statsError) return <div>{statsError.message}</div>
-  if (!stats) return <div>Loading...</div>
+  if (scan) {
+    let scanObj = []
 
-  const useSiteResults = async (e) => {
-    return await Promise.all(e.results.map(async (val, key) => {
-      try {
-        // const res = await fetch(`/api/site/${val.site_id}/scan/${val.id}/`, {
-        //   method: 'GET',
-        //   headers: {
-        //     'Accept': 'application/json',
-        //     'Content-Type': 'application/json',
-        //     'X-CSRFToken': Cookies.get('csrftoken'),
-        //   },
-        // })
-        //
-        // const data = await res.json()
-        //
-        // if (res.status !== 200) {
-        //   throw new Error(data.message)
-        // }
-        //
-        // setSiteData(data)
-        // return siteData
-      } catch(error) {
-        console.error(error)
-      }
-    }))
+    scan.results.map((val) => {
+      scanObj.push(val)
+      return scanObj
+    })
+
+    scanObj.map((val) => {
+      scanObjId = val.id
+      return scanObjId
+    })
   }
 
-  useSiteResults(stats)
+  const { data: scanId, error: scanIdError } = useSWR(() => (props && scanObjId ? `/api/site/${props.site.id}/scan/${scanObjId}/` : null),
+    fetcher, {
+      refreshInterval: 1000,
+    }
+  )
+
+  if (scanIdError) return <div>{scanIdError.message}</div>
+  if (scanError) return <div>{scanError.message}</div>
+  if (!scan) return <div>Loading...</div>
+  if (!scanId) return <div>Loading...</div>
 
   const calendarStrings = {
     lastDay : '[Yesterday], dddd',
@@ -128,12 +120,12 @@ const DataTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          {siteData.num_links}
+          {scanId.num_links}
         </td>
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          {siteData.num_non_ok_links}
+          {scanId.num_non_ok_links}
         </td>
         <td
           className={`flex-grow px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium`}
@@ -152,5 +144,3 @@ const DataTable = props => {
 }
 
 export default DataTable
-
-DataTable.propTypes = {}

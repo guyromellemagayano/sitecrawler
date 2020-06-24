@@ -34,10 +34,10 @@ const fetcher = async (url) => {
 const SitesDiv = styled.section``
 
 const Sites = () => {    
-  const { data, error } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
+  const { data: site, error: siteError } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
 
-  if (error) return <Layout>Failed to load</Layout>
-  if (!data) return <Layout>Loading...</Layout>
+  if (siteError) return <div>{siteError.message}</div>
+  if (!site) return <div>Loading...</div>
 
   return (
     <Layout>
@@ -109,7 +109,7 @@ const Sites = () => {
                               ></th>
                             </tr>
                           </thead>
-                          {data.results && data.results.map((val, key) => (
+                          {site.results && site.results.map((val, key) => (
                             <DataTable key={key} site={val} />
                           ))}
                         </table>
