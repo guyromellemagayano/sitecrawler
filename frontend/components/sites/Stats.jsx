@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import useSWR from 'swr'
@@ -27,41 +27,46 @@ const fetcher = async (url) => {
 
 const SitesStatsDiv = styled.footer``
 
-const SitesStats = props => {
-  const [siteData, setSiteData] = useState([])
+const SitesStats = () => {
+  const { query } = useRouter()
+  const {
+    data: scan,
+    error: scanError,
+  } = useSWR(() => (query.id ? `/api/site/${query.id}/scan/` : null), fetcher, {
+    refreshInterval: 1000,
+  })
 
-  const { data: stats, error: statsError } = useSWR(`/api/site/${props.stats.id}/scan/`, fetcher, { refreshInterval: 1000 })
+  let scanObjId = ""
 
-  if (statsError) return <div>{statsError.message}</div>
-  if (!stats) return <div>Loading...</div>
+  if (scan) {
+    let scanObj = []
 
-  const useSiteResults = async (e) => {
-    return await Promise.all(e.results.map(async (val, key) => {
-      try {
-        // const res = await fetch(`/api/site/${val.site_id}/scan/${val.id}/`, {
-        //   method: 'GET',
-        //   headers: {
-        //     'Accept': 'application/json',
-        //     'Content-Type': 'application/json',
-        //     'X-CSRFToken': Cookies.get('csrftoken'),
-        //   },
-        // })
-        //
-        // const data = await res.json()
-        //
-        // if (res.status !== 200) {
-        //   throw new Error(data.message)
-        // }
-        //
-        // setSiteData(data)
-        // return siteData
-      } catch(error) {
-        console.error(error)
-      }
-    }))
+    scan.results.map((val) => {
+      scanObj.push(val)
+      return scanObj
+    })
+
+    scanObj.map((val) => {
+      scanObjId = val.id
+      return scanObjId
+    })
   }
 
-  useSiteResults(stats)
+  const { data: stats, error: statsError } = useSWR(
+    () =>
+      query.id && scanObjId
+        ? `/api/site/${query.id}/scan/${scanObjId}/`
+        : null,
+    fetcher, {
+      refreshInterval: 1000,
+    }
+  )
+
+  if (statsError) return <div>{statsError.message}</div>
+  if (scanError) return <div>{scanError.message}</div>
+  if (!stats) return <div>Loading...</div>
+
+  console.log(stats)
 
   return (
     <SitesStatsDiv>
@@ -78,13 +83,13 @@ const SitesStats = props => {
                 <dd
                   className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
                 >
-                  {siteData.num_links}
+                  {stats.num_links}
                 </dd>
               </dl>
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={`${siteData.site_id}` + `/links`}>
+                <Link href={`${stats.site_id}` + `/links`}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
@@ -104,13 +109,13 @@ const SitesStats = props => {
                 <dd
                   className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
                 >
-                  {siteData.num_ok_links}
+                  {stats.num_ok_links}
                 </dd>
               </dl>
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={`${siteData.site_id}` + `/links/working`}>
+                <Link href={`${stats.site_id}` + `/links/working`}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
@@ -130,13 +135,13 @@ const SitesStats = props => {
                 <dd
                   className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
                 >
-                  {siteData.num_non_ok_links}
+                  {stats.num_non_ok_links}
                 </dd>
               </dl>
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={`${siteData.site_id}` + `/links/working`}>
+                <Link href={`${stats.site_id}` + `/links/working`}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
@@ -156,13 +161,13 @@ const SitesStats = props => {
                 <dd
                   className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
                 >
-                  {siteData.num_external_links}
+                  {stats.num_external_links}
                 </dd>
               </dl>
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={`${siteData.site_id}` + `/links/external`}>
+                <Link href={`${stats.site_id}` + `/links/external`}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
@@ -182,13 +187,13 @@ const SitesStats = props => {
                 <dd
                   className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
                 >
-                  {siteData.num_pages}
+                  {stats.num_pages}
                 </dd>
               </dl>
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={`${siteData.site_id}` + `/links/pages`}>
+                <Link href={`${stats.site_id}` + `/links/pages`}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
@@ -199,7 +204,7 @@ const SitesStats = props => {
         </div>
       </div>
     </SitesStatsDiv>
-  );
+  )
 }
 
 export default SitesStats

@@ -38,7 +38,9 @@ const Pages = () => {
   const { query } = useRouter()
   const { data: scan, error: scanError } = useSWR(
     () => (query.id ? `/api/site/${query.id}/scan/` : null),
-    fetcher
+    fetcher, {
+      refreshInterval: 1000,
+    }
   )
 
   let scanObjId = ""
@@ -62,7 +64,9 @@ const Pages = () => {
       query.id && scanObjId
         ? `/api/site/${query.id}/scan/${scanObjId}/page/`
         : null,
-    fetcher
+    fetcher, {
+      refreshInterval: 1000,
+    }
   )
 
   if (pageError) return <div>{pageError.message}</div>
