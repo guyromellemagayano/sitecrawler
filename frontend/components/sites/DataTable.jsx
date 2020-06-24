@@ -39,23 +39,23 @@ const DataTable = props => {
   const useSiteResults = async (e) => {
     return await Promise.all(e.results.map(async (val, key) => {
       try {
-        const res = await fetch(`/api/site/${val.site_id}/scan/${val.id}/`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': Cookies.get('csrftoken'),
-          },
-        })
-
-        const data = await res.json()
-
-        if (res.status !== 200) {
-          throw new Error(data.message)
-        }
-
-        setSiteData(data)
-        return siteData
+        // const res = await fetch(`/api/site/${val.site_id}/scan/${val.id}/`, {
+        //   method: 'GET',
+        //   headers: {
+        //     'Accept': 'application/json',
+        //     'Content-Type': 'application/json',
+        //     'X-CSRFToken': Cookies.get('csrftoken'),
+        //   },
+        // })
+        //
+        // const data = await res.json()
+        //
+        // if (res.status !== 200) {
+        //   throw new Error(data.message)
+        // }
+        //
+        // setSiteData(data)
+        // return siteData
       } catch(error) {
         console.error(error)
       }
@@ -70,7 +70,7 @@ const DataTable = props => {
     lastWeek : 'MMMM DD, YYYY',
     sameElse : 'MMMM DD, YYYY'
   }
-  
+
   return (
     <DataTableDiv className={`bg-white`}>
       <tr>

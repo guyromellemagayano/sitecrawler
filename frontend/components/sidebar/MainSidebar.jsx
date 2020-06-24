@@ -52,32 +52,32 @@ const MainSidebar = () => {
   if (windowSiteLocation) {
     if (error) return <div>{error.message}</div>
     if (!stats) return <div>Loading...</div>
-    
+
     const useSiteResults = async (e) => {
       return await Promise.all(e.results.map(async (val, key) => {
         try {
-          const res = await fetch(`/api/site/${val.site_id}/scan/${val.id}/`, {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'X-CSRFToken': Cookies.get('csrftoken'),
-            },
-          })
-  
-          const data = await res.json()
-  
-          if (res.status !== 200) {
-            throw new Error(data.message)
-          }
-  
-          return setSiteData(data)
+          // const res = await fetch(`/api/site/${val.site_id}/scan/${val.id}/`, {
+          //   method: 'GET',
+          //   headers: {
+          //     'Accept': 'application/json',
+          //     'Content-Type': 'application/json',
+          //     'X-CSRFToken': Cookies.get('csrftoken'),
+          //   },
+          // })
+        //
+          // const data = await res.json()
+        //
+          // if (res.status !== 200) {
+          //   throw new Error(data.message)
+          // }
+        //
+          // return setSiteData(data)
         } catch (error) {
           console.error(error)
         }
       }))
     }
-  
+
     useSiteResults(stats)
   }
 
