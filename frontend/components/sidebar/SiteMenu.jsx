@@ -52,39 +52,6 @@ const SiteMenu = () => {
                 ) : null}
               </svg>
               <span className={`truncate`}>{val.title}</span>
-              {/* {val.slug === "all-pages" && props.data.num_pages > 0 ? (
-                <span
-                  className={`ml-auto inline-block py-0.5 px-3 text-xs leading-4 rounded-full text-gray-600 bg-gray-200 group-hover:bg-gray-200 group-focus:bg-gray-300 transition ease-in-out duration-150`}
-                >
-                  {props.data.num_pages}
-                </span>
-              ) : val.slug === "all-links" && props.data.num_links > 0 ? (
-                <span
-                  className={`ml-auto inline-block py-0.5 px-3 text-xs leading-4 rounded-full text-gray-600 bg-gray-200 group-hover:bg-gray-200 group-focus:bg-gray-300 transition ease-in-out duration-150`}
-                >
-                  {props.data.num_links}
-                </span>
-              ) : val.slug === "working-links" && props.data.num_ok_links > 0 ? (
-                <span
-                  className={`ml-auto inline-block py-0.5 px-3 text-xs leading-4 rounded-full text-gray-600 bg-gray-200 group-hover:bg-gray-200 group-focus:bg-gray-300 transition ease-in-out duration-150`}
-                >
-                  {props.data.num_ok_links}
-                </span>
-              ) : val.slug === "links-with-issues" &&
-                props.data.num_non_ok_links > 0 ? (
-                <span
-                  className={`ml-auto inline-block py-0.5 px-3 text-xs leading-4 rounded-full text-gray-600 bg-gray-200 group-hover:bg-gray-200 group-focus:bg-gray-300 transition ease-in-out duration-150`}
-                >
-                  {props.data.num_non_ok_links}
-                </span>
-              ) : val.slug === "external-links" &&
-                props.data.num_external_links > 0 ? (
-                <span
-                  className={`ml-auto inline-block py-0.5 px-3 text-xs leading-4 rounded-full text-gray-600 bg-gray-200 group-hover:bg-gray-200 group-focus:bg-gray-300 transition ease-in-out duration-150`}
-                >
-                  {props.data.num_external_links}
-                </span>
-              ) : null} */}
             </a>
           </Link>
         );
