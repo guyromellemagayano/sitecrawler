@@ -53,7 +53,8 @@ const SitesStats = props => {
           throw new Error(data.message)
         }
 
-        return setSiteData(data)
+        setSiteData(data)
+        return siteData
       } catch(error) {
         console.error(error)
       }

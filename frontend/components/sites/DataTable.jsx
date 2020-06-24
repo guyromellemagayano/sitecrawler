@@ -1,10 +1,69 @@
+import { useState } from 'react'
+import fetch from 'node-fetch'
+import useSWR from 'swr'
+import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
 import Moment from 'react-moment'
+
+const fetcher = async (url) => {
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-CSRFToken': Cookies.get('csrftoken'),
+    },
+  })
+
+  const data = await res.json()
+
+  if (res.status !== 200) {
+    throw new Error(data.message)
+  }
+
+  return data
+}
 
 const DataTableDiv = styled.tbody``
 
 const DataTable = props => {
+  const [siteData, setSiteData] = useState([])
+
+  const { data: stats, error: statsError } = useSWR(`/api/site/${props.site.id}/scan/`, fetcher, { refreshInterval: 1000 })
+
+  if (statsError) return <div>{statsError.message}</div>
+  if (!stats) return <div>Loading...</div>
+
+  const useSiteResults = async (e) => {
+    return await Promise.all(e.results.map(async (val, key) => {
+      try {
+        const res = await fetch(`/api/site/${val.site_id}/scan/${val.id}/`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken'),
+          },
+        })
+
+        const data = await res.json()
+
+        if (res.status !== 200) {
+          throw new Error(data.message)
+        }
+
+        setSiteData(data)
+        return siteData
+      } catch(error) {
+        console.error(error)
+      }
+    }))
+  }
+
+  useSiteResults(stats)
+
   const calendarStrings = {
     lastDay : '[Yesterday], dddd',
     sameDay : '[Today], dddd',
@@ -69,7 +128,12 @@ const DataTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          50
+          {siteData.num_links}
+        </td>
+        <td
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+        >
+          {siteData.num_non_ok_links}
         </td>
         <td
           className={`flex-grow px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium`}
