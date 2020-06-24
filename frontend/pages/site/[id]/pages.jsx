@@ -6,12 +6,12 @@ import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import LinksPagesContent from '../../../../config/links-pages.json'
-import Layout from '../../../../components/Layout'
-import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../../components/sidebar/MainSidebar'
-import FilterLinks from '../../../../components/site/FilterLinks'
-import LinksTable from '../../../../components/site/LinksTable'
+import LinksPagesContent from '../../../config/links-pages.json'
+import Layout from '../../../components/Layout'
+import MobileSidebar from '../../../components/sidebar/MobileSidebar'
+import MainSidebar from '../../../components/sidebar/MainSidebar'
+import FilterLinks from '../../../components/site/FilterLinks'
+import LinksTable from '../../../components/site/LinksTable'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {

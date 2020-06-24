@@ -34,25 +34,81 @@ const fetcher = async (url) => {
 
 const LinksDiv = styled.section``
 
-const Links = () => {  
+const Links = () => {
   const { query } = useRouter()
-  const { data, error } = useSWR(
-    () => query.id && `/api/site/${query.id}`,
-    fetcher
+  const { data: scan, error: scanError } = useSWR(
+    () => (query.id ? `/api/site/${query.id}/scan/` : null),
+    fetcher, {
+      refreshInterval: 1000,
+    }
   )
 
-  if (error) return <div>{error.message}</div>
-  if (!data) return <div>Loading...</div>
+  let scanObjId = ""
+
+  if (scan) {
+    let scanObj = []
+
+    scan.results.map((val) => {
+      scanObj.push(val)
+      return scanObj
+    })
+
+    scanObj.map((val) => {
+      scanObjId = val.id
+      return scanObjId
+    })
+  }
+
+  const { data: page, error: pageError } = useSWR(
+    () =>
+      query.id && scanObjId
+        ? `/api/site/${query.id}/scan/${scanObjId}/page/`
+        : null,
+    fetcher, {
+      refreshInterval: 1000,
+    }
+  )
+
+  let pageObjId = ""
+
+  if (page) {
+    let pageObj = []
+
+    page.results.map((val) => {
+      pageObj.push(val)
+      return pageObj
+    })
+
+    pageObj.map((val) => {
+      pageObjId = val.id
+      return pageObjId
+    })
+  }
+
+  const { data: link, error: linkError } = useSWR(
+    () =>
+      query.id && scanObjId
+        ? `/api/site/${query.id}/scan/${scanObjId}/page/${pageObjId}/link/`
+        : null,
+    fetcher, {
+      refreshInterval: 1000,
+    }
+  )
+
+  if (linkError) return <div>{linkError.message}</div>
+  if (pageError) return <div>{pageError.message}</div>
+  if (scanError) return <div>{scanError.message}</div>
+  if (!link) return <div>Loading...</div>
 
   return (
     <Layout>
       <Head>
-        <title>Links</title>
+        <title>All Links</title>
       </Head>
 
       <LinksDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
         <MobileSidebar />
-        <MainSidebar stats={data} />
+        <MainSidebar />
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button
@@ -79,45 +135,45 @@ const Links = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>Links</h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>All Links</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               <FilterLinks />
               <div className={`pb-4`}>
-                  <div className={`flex flex-col`}>
+                <div className={`flex flex-col`}>
+                  <div
+                    className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
+                  >
                     <div
-                      className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
+                      className={`align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-gray-200`}
                     >
-                      <div
-                        className={`align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-gray-200`}
-                      >
-                        <table className={`min-w-full`}>
-                          <thead>
-                            <tr>
-                              {LinksPagesContent.map((site, key) => {
-                                return (
-                                  <Fragment key={key}>
-                                    <th
-                                      className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
-                                    >
-                                      {site.label}
-                                    </th>
-                                  </Fragment>
-                                )
-                              })}
-                              <th
-                                className={`px-6 py-3 border-b border-gray-200 bg-white`}
-                              ></th>
-                            </tr>
-                          </thead>
-                          {/* {data.results.map((val, key) => (
-                            <LinksTable key={key} site={val} />
-                          ))} */}
-                        </table>
-                      </div>
+                      <table className={`min-w-full`}>
+                        <thead>
+                          <tr>
+                            {LinksPagesContent.map((site, key) => {
+                              return (
+                                <Fragment key={key}>
+                                  <th
+                                    className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
+                                  >
+                                    {site.label}
+                                  </th>
+                                </Fragment>
+                              )
+                            })}
+                            <th
+                              className={`px-6 py-3 border-b border-gray-200 bg-white`}
+                            ></th>
+                          </tr>
+                        </thead>
+                        {page.results && page.results.map((val, key) => (
+                          <LinksTable key={key} val={val} />
+                        ))}
+                      </table>
                     </div>
                   </div>
                 </div>
+              </div>
             </div>
           </main>
         </div>
