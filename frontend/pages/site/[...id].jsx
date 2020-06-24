@@ -11,7 +11,6 @@ import MainSidebar from '../../components/sidebar/MainSidebar'
 import SitesOverview from '../../components/sites/Overview'
 import SitesCrawlInfo from '../../components/sites/CrawlInfo'
 import SitesStats from '../../components/sites/Stats'
-// import DashboardFooter from '../../components/dashboard/footer'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -104,8 +103,6 @@ const SitesDashboard = () => {
               <div className={`pb-4`}>
                 <SitesStats stats={data} />
               </div>
-
-              {/* <DashboardFooter /> */}
             </div>
           </main>
         </div>
