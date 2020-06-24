@@ -10,7 +10,7 @@ import LinksPagesContent from '../../../../config/links-pages.json'
 import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
-import FilterLinks from '../../../../components/site/FilterLinks'
+// import FilterLinks from '../../../../components/site/FilterLinks'
 import LinksTable from '../../../../components/site/LinksTable'
 
 const fetcher = async (url) => {

@@ -62,7 +62,8 @@ const LinksTable = props => {
           </Link> */}
           <Link href="#">
             <a
-              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+              disabled={`disabled`}
+              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 color-gray-300 opacity-50 cursor-not-allowed`}
             >
               View Detail
             </a>
