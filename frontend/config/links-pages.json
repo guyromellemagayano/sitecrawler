@@ -3,9 +3,12 @@
 		"label": "Link URL"
 	},
 	{
-		"label": "Status"
+		"label": "Total Links"
 	},
 	{
-		"label": "Link Location"
+		"label": "Working Links"
+	},
+	{
+		"label": "Link Issues"
 	}
 ]

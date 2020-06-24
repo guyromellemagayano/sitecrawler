@@ -1,17 +1,9 @@
 import Link from 'next/link'
 import styled from 'styled-components'
-import Moment from 'react-moment'
 
 const LinksTableDiv = styled.tbody``
 
-const LinksTable = props => {
-  const calendarStrings = {
-    lastDay : '[Yesterday], dddd',
-    sameDay : '[Today], dddd',
-    lastWeek : 'MMMM DD, YYYY',
-    sameElse : 'MMMM DD, YYYY'
-  }
-  
+const LinksTable = props => {    
   return (
     <LinksTableDiv className={`bg-white`}>
       <tr>
@@ -28,13 +20,13 @@ const LinksTable = props => {
             </div>
             <div className={`ml-4`}>
               <div className={`text-sm leading-5 font-medium text-gray-900`}>
-                {props.site.name}
+                {props.val.url}
               </div>
               <div className={`text-sm leading-5 text-gray-500`}>
                 <a
-                  href={`${props.site.url}`}
+                  href={`${props.val.url}`}
                   target={`_blank`}
-                  title={`${props.site.url}`}
+                  title={`${props.val.url}`}
                   className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
                 >
                   Visit Link
@@ -43,42 +35,36 @@ const LinksTable = props => {
             </div>
           </div>
         </td>
-        <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
-          <div className={`text-sm leading-5 text-gray-900`}>
-            <Moment local calendar={calendarStrings} date={props.site.updated_at} />
-          </div>
-          <div className={`text-sm leading-5 text-gray-500`}>
-            <Moment local date={props.site.updated_at} format="hh:mm:ss A" />
-          </div>
-        </td>
-        <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
-          {props.site.verified ? (
-            <span
-              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800`}
-            >
-              Verified
-            </span>
-          ) : (
-            <span
-              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800`}
-            >
-              Unverified
-            </span>
-          )}
+        <td
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+        >
+          {props.val.num_links}
         </td>
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          50
+          {props.val.num_ok_links}
+        </td>
+        <td
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+        >
+          {props.val.num_non_ok_links}
         </td>
         <td
           className={`flex-grow px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium`}
         >
-          <Link href="/site/[id]" as={`/site/${props.site.id}`}>
+          {/* <Link href="/site/[id]" as={`/site/${props.site.id}`}>
             <a
               className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
             >
               View Stats
+            </a>
+          </Link> */}
+          <Link href="#">
+            <a
+              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+            >
+              View Detail
             </a>
           </Link>
         </td>
