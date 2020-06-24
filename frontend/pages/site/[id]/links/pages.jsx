@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from 'react'
+import { Fragment } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
@@ -35,66 +35,39 @@ const fetcher = async (url) => {
 const PagesDiv = styled.section``
 
 const Pages = () => {
-  // const [siteScanData, setSiteScanData] = useState([])
-  // const [sitePageData, setSitePageData] = useState([])
-
   const { query } = useRouter()
   const { data: scan, error: scanError } = useSWR(
-    () => query.id ? `/api/site/${query.id}/scan/` : null,
+    () => (query.id ? `/api/site/${query.id}/scan/` : null),
     fetcher
-  );
+  )
 
-
-  let scanObjId = ''
+  let scanObjId = ""
 
   if (scan) {
+    let scanObj = []
 
-      let scanObj = []
+    scan.results.map((val) => {
+      scanObj.push(val)
+      return scanObj
+    })
 
-      scan.results.map((val) => {
-        scanObj.push(val)
-        return scanObj
-      })
-
-
-      scanObj.map((val) => {
-        scanObjId = val.id
-        return scanObjId
-      })
+    scanObj.map((val) => {
+      scanObjId = val.id
+      return scanObjId
+    })
   }
 
-
-  const { data: page, error: pageError } = useSWR(() => query.id && scanObjId ? `/api/site/${query.id}/scan/${scanObjId}/page/` : null, fetcher)
+  const { data: page, error: pageError } = useSWR(
+    () =>
+      query.id && scanObjId
+        ? `/api/site/${query.id}/scan/${scanObjId}/page/`
+        : null,
+    fetcher
+  )
 
   if (pageError) return <div>{pageError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
   if (!page) return <div>Loading...</div>
-
-  // const useSitePageResults = async (e) => {
-  //   try {
-  //     const res = await fetch(`/api/site/${e.id}/scan/${e.site_id}/page/`, {
-  //       method: 'GET',
-  //       headers: {
-  //         'Accept': 'application/json',
-  //         'Content-Type': 'application/json',
-  //         'X-CSRFToken': Cookies.get('csrftoken'),
-  //       },
-  //     })
-
-  //     const data = await res.json()
-
-  //     if (res.status !== 200) {
-  //       throw new Error(data.message)
-  //     }
-
-  //     setSitePageData(data)
-  //     return sitePageData
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
-
-  // useSitePageResults(data)
 
   return (
     <Layout>
@@ -136,40 +109,40 @@ const Pages = () => {
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               <FilterLinks />
               <div className={`pb-4`}>
-                  <div className={`flex flex-col`}>
+                <div className={`flex flex-col`}>
+                  <div
+                    className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
+                  >
                     <div
-                      className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
+                      className={`align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-gray-200`}
                     >
-                      <div
-                        className={`align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-gray-200`}
-                      >
-                        <table className={`min-w-full`}>
-                          <thead>
-                            <tr>
-                              {LinksPagesContent.map((site, key) => {
-                                return (
-                                  <Fragment key={key}>
-                                    <th
-                                      className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
-                                    >
-                                      {site.label}
-                                    </th>
-                                  </Fragment>
-                                )
-                              })}
-                              <th
-                                className={`px-6 py-3 border-b border-gray-200 bg-white`}
-                              ></th>
-                            </tr>
-                          </thead>
-                          {/* {sitePageData.results && sitePageData.results.map((val, key) => (
-                            <LinksTable key={key} val={val} />
-                          ))} */}
-                        </table>
-                      </div>
+                      <table className={`min-w-full`}>
+                        <thead>
+                          <tr>
+                            {LinksPagesContent.map((site, key) => {
+                              return (
+                                <Fragment key={key}>
+                                  <th
+                                    className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
+                                  >
+                                    {site.label}
+                                  </th>
+                                </Fragment>
+                              )
+                            })}
+                            <th
+                              className={`px-6 py-3 border-b border-gray-200 bg-white`}
+                            ></th>
+                          </tr>
+                        </thead>
+                        {page.results && page.results.map((val, key) => (
+                          <LinksTable key={key} val={val} />
+                        ))}
+                      </table>
                     </div>
                   </div>
                 </div>
+              </div>
             </div>
           </main>
         </div>
