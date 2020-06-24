@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
@@ -10,7 +10,7 @@ import LinksPagesContent from '../../../../config/links-pages.json'
 import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
-// import FilterLinks from '../../../../components/site/FilterLinks'
+import FilterLinks from '../../../../components/site/FilterLinks'
 import LinksTable from '../../../../components/site/LinksTable'
 
 const fetcher = async (url) => {
@@ -35,70 +35,62 @@ const fetcher = async (url) => {
 const PagesDiv = styled.section``
 
 const Pages = () => {
-  const [siteScanData, setSiteScanData] = useState([])
-  const [sitePageData, setSitePageData] = useState([])
+  // const [siteScanData, setSiteScanData] = useState([])
+  // const [sitePageData, setSitePageData] = useState([])
 
   const { query } = useRouter()
-  const { data, error } = useSWR(
-    () => query.id && `/api/site/${query.id}`,
+  const { data: scan, error: scanError } = useSWR(
+    () => query.id && `/api/site/${query.id}/scan/`,
     fetcher
   )
 
-  const useSiteScanResults = async (e) => {
-    try {
-      const res = await fetch(`/api/site/${e.id}/scan/`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
-        },
-      })
+  if (scanError) return <div>{error.message}</div>
+  if (!scan) return <div>Loading...</div>
 
-      const data = await res.json()
+  let scanObj = []
+  
+  scan.results.map((val) => {
+    scanObj.push(val)
+    return scanObj
+  })
 
-      if (res.status !== 200) {
-        throw new Error(data.message)
-      }
+  let scanObjId = ''
+  
+  scanObj.map((val) => {
+    scanObjId = val.id
+    return scanObjId
+  })
 
-      data.results.map((val) => {
-        setSiteScanData(val)
-        return siteScanData
-      })
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  const { data: page, error: pageError } = useSWR(`/api/site/${query.id}/scan/${scanObjId}/page/`, fetcher)
 
-  const useSitePageResults = async (d, e) => {
-    try {
-      const res = await fetch(`/api/site/${d.id}/scan/${e.id}/page/`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
-        },
-      })
+  if (pageError) return <div>{error.message}</div>
+  if (!page) return <div>Loading...</div>
 
-      const data = await res.json()
+  // const useSitePageResults = async (e) => {
+  //   try {
+  //     const res = await fetch(`/api/site/${e.id}/scan/${e.site_id}/page/`, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Accept': 'application/json',
+  //         'Content-Type': 'application/json',
+  //         'X-CSRFToken': Cookies.get('csrftoken'),
+  //       },
+  //     })
 
-      if (res.status !== 200) {
-        throw new Error(data.message)
-      }
+  //     const data = await res.json()
 
-      setSitePageData(data)
-      return sitePageData
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  //     if (res.status !== 200) {
+  //       throw new Error(data.message)
+  //     }
 
-  if (error) return <div>{error.message}</div>
-  if (!data) return <div>Loading...</div>
+  //     setSitePageData(data)
+  //     return sitePageData
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 
-  useSiteScanResults(data)
-  useSitePageResults(data, siteScanData)
+  // useSitePageResults(data)
 
   return (
     <Layout>
@@ -138,7 +130,7 @@ const Pages = () => {
               <h1 className={`text-2xl font-semibold text-gray-900`}>Pages</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              {/* <FilterLinks /> */}
+              <FilterLinks />
               <div className={`pb-4`}>
                   <div className={`flex flex-col`}>
                     <div
@@ -166,9 +158,9 @@ const Pages = () => {
                               ></th>
                             </tr>
                           </thead>
-                          {sitePageData.results && sitePageData.results.map((val, key) => (
+                          {/* {sitePageData.results && sitePageData.results.map((val, key) => (
                             <LinksTable key={key} val={val} />
-                          ))}
+                          ))} */}
                         </table>
                       </div>
                     </div>

@@ -10,7 +10,8 @@ const SiteMenuDiv = styled.nav`
   }
 `
 
-const SiteMenu = props => {
+// const SiteMenu = props => {
+const SiteMenu = () => {
   return (
     <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
       {SitePages.map((val, key) => {
@@ -51,8 +52,9 @@ const SiteMenu = props => {
                   />
                 ) : null}
               </svg>
-              <span className={`truncate`}>{val.title}</span>
-              {val.slug === "all-pages" && props.data.num_pages > 0 ? (
+              {val.title}
+              {/* <span className={`truncate`}>{val.title}</span> */}
+              {/* {val.slug === "all-pages" && props.data.num_pages > 0 ? (
                 <span
                   className={`ml-auto inline-block py-0.5 px-3 text-xs leading-4 rounded-full text-gray-600 bg-gray-200 group-hover:bg-gray-200 group-focus:bg-gray-300 transition ease-in-out duration-150`}
                 >
@@ -84,7 +86,7 @@ const SiteMenu = props => {
                 >
                   {props.data.num_external_links}
                 </span>
-              ) : null}
+              ) : null} */}
             </a>
           </Link>
         );

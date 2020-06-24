@@ -92,7 +92,8 @@ const MainSidebar = () => {
               alt={`Workflow`}
             />
           </div>
-          {windowSiteLocation && siteData ? <SiteMenu data={siteData} /> : windowProfileLocation ? <ProfileMenu /> : <PrimaryMenu />}
+          {/* {windowSiteLocation && siteData ? <SiteMenu data={siteData} /> : windowProfileLocation ? <ProfileMenu /> : <PrimaryMenu />} */}
+          {windowSiteLocation ? <SiteMenu /> : windowProfileLocation ? <ProfileMenu /> : <PrimaryMenu />}
         </div>
         <ProfileSidebar />
       </div>
