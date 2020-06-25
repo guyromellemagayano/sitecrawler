@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import Layout from '../../../components/Layout'
 import MobileSidebar from '../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../components/sidebar/MainSidebar'
+import SiteSettingsUpdateDelete from '../../../components/site/SiteSettingsUpdateDelete'
 
 const SiteSettingsDiv = styled.section``
 
@@ -46,8 +47,7 @@ const SiteSettings = () => {
               <h1 className={`text-2xl font-semibold text-gray-900`}>Site Settings</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              {/* Start Content Here */}
-              {/* End Content Here */}
+              <SiteSettingsUpdateDelete />
             </div>
           </main>
         </div>
