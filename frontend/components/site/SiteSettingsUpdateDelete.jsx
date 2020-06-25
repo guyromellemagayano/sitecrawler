@@ -6,24 +6,24 @@ import styled from 'styled-components'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
 
-const fetcher = async (url) => {
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
-    },
-  })
+// const fetcher = async (url) => {
+//   const res = await fetch(url, {
+//     method: 'GET',
+//     headers: {
+//       'Accept': 'application/json',
+//       'Content-Type': 'application/json',
+//       'X-CSRFToken': Cookies.get('csrftoken'),
+//     },
+//   })
 
-  const data = await res.json()
+//   const data = await res.json()
 
-  if (res.status !== 200) {
-    throw new Error(data.message)
-  }
+//   if (res.status !== 200) {
+//     throw new Error(data.message)
+//   }
 
-  return data
-}
+//   return data
+// }
 
 const SiteSettingsUpdateDeleteDiv = styled.div``
 
@@ -34,17 +34,17 @@ const SiteSettingsUpdateDelete = () => {
 	const [siteName, setSiteName] = useState('')
   const [siteUrl, setSiteUrl] = useState('')
 
-	let { query } = useRouter()
+	// let { query } = useRouter()
 	
-	const { data: site, error: siteError } = useSWR(() => (query.id ? `/api/site/${query.id}/` : null), fetcher, { refreshInterval: 1000 })
+	// const { data: site, error: siteError } = useSWR(() => (query.id ? `/api/site/${query.id}/` : null), fetcher, { refreshInterval: 1000 })
 
 	// useEffect(() => {
 	// 	setSiteName(site.name)
 	// 	setSiteUrl(site.url)
 	// }, [])
 
-	if (siteError) return <div>{siteError.message}</div>
-	if (!site) return <div>Loading...</div>
+	// if (siteError) return <div>{siteError.message}</div>
+	// if (!site) return <div>Loading...</div>
 	
 	const handleSiteUpdate = async (e) => {
 		e.preventDefault()
