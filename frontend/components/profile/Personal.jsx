@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
-import Layout from '../../components/Layout'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
 
@@ -29,8 +28,8 @@ const ProfileSettingsPersonal = () => {
 
   const { data: profile, error } = useSWR('/api/auth/user/', fetcher, { refreshInterval: 1000 })
 
-  if (error) return <Layout>Failed to load</Layout>
-  if (!profile) return <Layout>Loading...</Layout>
+  if (error) return <div>{error.message}</div>
+  if (!profile) return <div>Loading...</div>
 
   useEffect(() => {
     setUsername(profile.username)
