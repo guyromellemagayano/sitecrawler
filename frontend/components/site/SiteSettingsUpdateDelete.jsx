@@ -38,10 +38,10 @@ const SiteSettingsUpdateDelete = () => {
 	
 	const { data: site, error: siteError } = useSWR(() => (query.id ? `/api/site/${query.id}/` : null), fetcher, { refreshInterval: 1000 })
 
-	useEffect(() => {
-		setSiteName(site.name)
-		setSiteUrl(site.url)
-	}, [])
+	// useEffect(() => {
+	// 	setSiteName(site.name)
+	// 	setSiteUrl(site.url)
+	// }, [])
 
 	if (siteError) return <div>{siteError.message}</div>
 	if (!site) return <div>Loading...</div>
