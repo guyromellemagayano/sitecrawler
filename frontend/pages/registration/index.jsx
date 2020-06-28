@@ -5,8 +5,8 @@ import Head from 'next/head'
 import Link from 'next/link'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import Layout from '../../../components/Layout'
-import LogoLabel from '../../../components/form/LogoLabel'
+import Layout from '../../components/Layout'
+import LogoLabel from '../../components/form/LogoLabel'
 
 const RegistrationDiv = styled.div``
 

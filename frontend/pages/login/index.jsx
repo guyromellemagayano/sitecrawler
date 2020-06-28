@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PropTypes from 'prop-types'
 import fetchJson from '../../hooks/fetchJson'
 import useUser from '../../hooks/useUser'
-import Layout from '../../../components/Layout'
-import LogoLabel from '../../../components/form/LogoLabel'
+import Layout from '../../components/Layout'
+import LogoLabel from '../../components/form/LogoLabel'
 
 const LoginDiv = styled.div``
 
