@@ -4,7 +4,6 @@ import Cookies from 'js-cookie'
 import useSWR from 'swr'
 import Link from 'next/link'
 import styled from 'styled-components'
-import PropTypes from 'prop-types'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -218,5 +217,3 @@ const SitesStats = () => {
 }
 
 export default SitesStats
-
-SitesStats.propTypes = {}
