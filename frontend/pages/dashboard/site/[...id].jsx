@@ -53,7 +53,7 @@ const SitesDashboard = () => {
         className={`h-screen flex overflow-hidden bg-gray-100`}
       >
         <MobileSidebar />
-        <MainSidebar stats={data} />
+        <MainSidebar />
 
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
@@ -92,11 +92,8 @@ const SitesDashboard = () => {
                 <SitesOverview
                   url={data.url}
                   verified={data.verified}
-                  createdAt={data.created_at}
+                  finishedAt={data.finished_at}
                 />
-              </div>
-              <div>
-                <SitesCrawlInfo url={data.url} finishedAt={data.finished_at} />
               </div>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
