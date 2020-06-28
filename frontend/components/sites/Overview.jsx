@@ -35,12 +35,6 @@ const SitesOverview = props => {
             )}
           </div>
         </div>
-        <div className={`my-2 max-w-xl text-sm leading-5 text-gray-500`}>
-          <p>
-            <strong>Created on:</strong> <Moment local calendar={calendarStrings} date={props.createdAt} />&nbsp;
-            <Moment local date={props.createdAt} format="hh:mm:ss A" />
-          </p>
-        </div>
       </div>
     </SitesOverviewDiv>
   );
