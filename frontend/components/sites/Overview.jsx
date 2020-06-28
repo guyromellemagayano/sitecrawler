@@ -1,18 +1,9 @@
 import React from 'react'
-import Link from 'next/link'
 import styled from 'styled-components'
-import Moment from 'react-moment'
 
 const SitesOverviewDiv = styled.div``
 
 const SitesOverview = props => {
-  const calendarStrings = {
-    lastDay : '[Yesterday], dddd [at]',
-    sameDay : '[Today], dddd [at]',
-    lastWeek : 'MMMM DD, YYYY',
-    sameElse : 'MMMM DD, YYYY'
-  }
-
   return (
     <SitesOverviewDiv className={`bg-white shadow sm:rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
