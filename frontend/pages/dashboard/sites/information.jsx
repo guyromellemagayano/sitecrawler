@@ -70,8 +70,8 @@ const SitesInformation = props => {
   })
 
   useEffect(() => {
-    Router.prefetch('/sites/crawl-site')
-  }, [])
+    Router.prefetch('/dashboard/sites/crawl-site')
+  }, [dataQuery])
 
   return (
     <Layout>
@@ -253,7 +253,7 @@ const SitesInformation = props => {
                             >
                               <Link
                                 href={{
-                                  pathname: '/sites/prepare-site-profile',
+                                  pathname: '/dashboard/sites/prepare-site-profile',
                                   query: {
                                     sid: dataQuery.id,
                                     sname: dataQuery.name,

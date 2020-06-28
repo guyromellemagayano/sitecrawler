@@ -53,7 +53,7 @@ const LinksTable = props => {
         <td
           className={`flex-grow px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium`}
         >
-          <Link href="/site/[id]" as={`/site/${props.val.id}`}>
+          <Link href="/dashboard/site/[id]" as={`/dashboard/site/${props.val.id}`}>
             <a
               className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
             >

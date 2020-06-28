@@ -106,8 +106,8 @@ const SitesStart = () => {
   })
 
   useEffect(() => {
-    Router.prefetch('/sites/verify-url')
-  }, [])
+    Router.prefetch('/dashboard/sites/verify-url')
+  }, [dataQuery])
 
   return (
     <Layout>
@@ -288,7 +288,7 @@ const SitesStart = () => {
                               >
                                 <Link
                                   href={{
-                                    pathname: '/sites/verify-url',
+                                    pathname: '/dashboard/sites/verify-url',
                                     query: {
                                       sid: dataQuery.id,
                                       surl: dataQuery.url,

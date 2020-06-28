@@ -9,7 +9,6 @@ import Layout from '../../../components/Layout'
 import MobileSidebar from '../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../components/sidebar/MainSidebar'
 import SitesOverview from '../../../components/sites/Overview'
-import SitesCrawlInfo from '../../../components/sites/CrawlInfo'
 import SitesStats from '../../../components/sites/Stats'
 
 const fetcher = async (url) => {

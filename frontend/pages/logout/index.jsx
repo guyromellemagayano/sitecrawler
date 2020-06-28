@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import PropTypes from 'prop-types'
-import Layout from '../../../components/Layout'
+import Layout from '../../components/Layout'
 
 const Logout = () => {
   const router = useRouter()
@@ -48,4 +48,6 @@ const Logout = () => {
 
 export default Logout
 
-Logout.propTypes = {}
+Logout.propTypes = {
+  handleLogoutUser: PropTypes.func
+}
