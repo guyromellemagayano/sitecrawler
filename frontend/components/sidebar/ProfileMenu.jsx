@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import styled from 'styled-components'
-import ProfilePages from '../../config/profile-pages.json'
+import ProfilePages from '../../public/data/profile-pages.json'
 
 const PrimaryMenuDiv = styled.nav`
   a:first-child {

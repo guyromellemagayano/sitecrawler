@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import styled from 'styled-components'
-import DashboardPages from '../../config/dashboard-pages.json'
+import DashboardPages from '../../public/data/dashboard-pages.json'
 
 const PrimaryMenuDiv = styled.nav``
 

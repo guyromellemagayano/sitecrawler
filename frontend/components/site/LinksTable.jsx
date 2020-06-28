@@ -4,7 +4,6 @@ import styled from 'styled-components'
 const LinksTableDiv = styled.tbody``
 
 const LinksTable = props => {
-  console.log(props.val)
   return (
     <LinksTableDiv className={`bg-white`}>
       <tr>

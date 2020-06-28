@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import useUser from '../hooks/useUser'
 
 const Home = () => {
-  const { user } = useUser({ redirectTo: '/dashboard' })
+  const { user } = useUser({ redirectTo: '/dashboard/sites' })
 
   return (
     <Layout>
@@ -58,9 +58,9 @@ const Home = () => {
                       </a>
                     </Link>
                   ): (
-                    <Link href="/dashboard">
+                    <Link href="/dashboard/sites">
                       <a className={`inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out`}>
-                        Go to Dashboard
+                        Go to Sites
                       </a>
                     </Link>
                   )}

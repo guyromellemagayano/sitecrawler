@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import SitePages from '../../config/site-pages.json'
+import SitePages from '../../public/data/site-pages.json'
 
 const SiteMenuDiv = styled.nav`
   a:first-child {
@@ -18,14 +18,14 @@ const SiteMenu = () => {
           <Link
             key={key}
             href={
-              val.url.indexOf("/sites") > -1
+              val.url.indexOf("/dashboard/sites") > -1
                 ? val.url
-                : "/site/" + useRouter().query.id + val.url
+                : "/dashboard/site/" + useRouter().query.id + val.url
             }
           >
             <a
               className={`${
-                "/site/" + useRouter().query.id + val.url === useRouter().asPath
+                "/dashboard/site/" + useRouter().query.id + val.url === useRouter().asPath
                   ? "group mt-1 flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-900 rounded-md bg-gray-100 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
                   : "mt-1 group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150"
               }`}
