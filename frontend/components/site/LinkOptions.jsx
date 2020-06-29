@@ -2,9 +2,9 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import Transition from '../../hooks/Transition'
 
-const FilterLinksDiv = styled.div``
+const LinkOptionsDiv = styled.div``
 
-const FilterLinks = () => {
+const LinkOptions = () => {
   const [showDropdown, setShowDropdown] = useState(false)
 
   const setDropdownToggle = (e) => {
@@ -12,7 +12,7 @@ const FilterLinks = () => {
   }
 
   return (
-    <FilterLinksDiv className={`py-4`}>
+    <LinkOptionsDiv className={`py-4`}>
       <div
         className={`bg-white px-4 py-5 border-b border-gray-200 sm:px-6 bg-white sm:rounded-lg sm:shadow`}
       >
@@ -75,16 +75,6 @@ const FilterLinks = () => {
                 </div>
 
                 <Transition show={showDropdown}>
-                  {/*
-                    Dropdown panel, show/hide based on dropdown state.
-
-                    Entering: "transition ease-out duration-100"
-                      From: "transform opacity-0 scale-95"
-                      To: "transform opacity-100 scale-100"
-                    Leaving: "transition ease-in duration-75"
-                      From: "transform opacity-100 scale-100"
-                      To: "transform opacity-0 scale-95"
-                  */}
                   <Transition
                     enter="transition ease-out duration-100"
                     enterFrom="transform opacity-0 scale-95"
@@ -124,8 +114,8 @@ const FilterLinks = () => {
           </div>
         </div>
       </div>
-    </FilterLinksDiv>
+    </LinkOptionsDiv>
   )
 }
 
-export default FilterLinks
+export default LinkOptions

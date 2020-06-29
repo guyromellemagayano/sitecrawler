@@ -5,12 +5,14 @@ import fetch from 'node-fetch'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
-import LinksPagesContent from '../../../../public/data/links-pages.json'
-import Layout from '../../../components/Layout'
-import MobileSidebar from '../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../components/sidebar/MainSidebar'
-import FilterLinks from '../../../components/site/FilterLinks'
-import LinksTable from '../../../components/site/LinksTable'
+import LinksUrlContent from '../../../../public/data/links-url.json'
+import Layout from '../../../../components/Layout'
+import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
+import MainSidebar from '../../../../components/sidebar/MainSidebar'
+import LinkOptions from '../../../../components/site/LinkOptions'
+import LinkFilter from '../../../../components/site/LinkFilter'
+import LinkUrlTable from '../../../../components/site/LinkUrlTable'
+import Pagination from '../../../../components/sites/Pagination'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -68,41 +70,14 @@ const Links = () => {
     }
   )
 
-  let pageObjId = ""
-
-  if (page) {
-    let pageObj = []
-
-    page.results.map((val) => {
-      pageObj.push(val)
-      return pageObj
-    })
-
-    pageObj.map((val) => {
-      pageObjId = val.id
-      return pageObjId
-    })
-  }
-
-  const { data: link, error: linkError } = useSWR(
-    () =>
-      query.id && scanObjId
-        ? `/api/site/${query.id}/scan/${scanObjId}/page/${pageObjId}/link/`
-        : null,
-    fetcher, {
-      refreshInterval: 1000,
-    }
-  )
-
-  if (linkError) return <div>{linkError.message}</div>
   if (pageError) return <div>{pageError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
-  if (!link) return <div>Loading...</div>
+  if (!page) return <div>Loading...</div>
 
   return (
     <Layout>
       <Head>
-        <title>All Links</title>
+        <title>Links</title>
       </Head>
 
       <LinksDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
@@ -134,10 +109,11 @@ const Links = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>All Links</h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>Links</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              <FilterLinks />
+              <LinkOptions />
+              <LinkFilter />
               <div className={`pb-4`}>
                 <div className={`flex flex-col`}>
                   <div
@@ -149,7 +125,7 @@ const Links = () => {
                       <table className={`min-w-full`}>
                         <thead>
                           <tr>
-                            {LinksPagesContent.map((site, key) => {
+                            {LinksUrlContent.map((site, key) => {
                               return (
                                 <Fragment key={key}>
                                   <th
@@ -160,19 +136,17 @@ const Links = () => {
                                 </Fragment>
                               )
                             })}
-                            <th
-                              className={`px-6 py-3 border-b border-gray-200 bg-white`}
-                            ></th>
                           </tr>
                         </thead>
                         {page.results && page.results.map((val, key) => (
-                          <LinksTable key={key} val={val} />
+                          <LinkUrlTable key={key} val={val} />
                         ))}
                       </table>
                     </div>
                   </div>
                 </div>
               </div>
+              <Pagination />
             </div>
           </main>
         </div>

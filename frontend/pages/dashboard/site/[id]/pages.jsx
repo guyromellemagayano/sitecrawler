@@ -5,13 +5,13 @@ import fetch from 'node-fetch'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
-import PropTypes from 'prop-types'
 import LinksPagesContent from '../../../../public/data/links-pages.json'
 import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
-import FilterLinks from '../../../../components/site/FilterLinks'
-import LinksTable from '../../../../components/site/LinksTable'
+import LinkOptions from '../../../../components/site/LinkOptions'
+import LinkPagesTable from '../../../../components/site/LinkPagesTable'
+import Pagination from '../../../../components/sites/Pagination'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -111,7 +111,7 @@ const Pages = () => {
               <h1 className={`text-2xl font-semibold text-gray-900`}>Pages</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              <FilterLinks />
+              <LinkOptions />
               <div className={`pb-4`}>
                 <div className={`flex flex-col`}>
                   <div
@@ -137,13 +137,14 @@ const Pages = () => {
                           </tr>
                         </thead>
                         {page.results && page.results.map((val, key) => (
-                          <LinksTable key={key} val={val} />
+                          <LinkPagesTable key={key} val={val} />
                         ))}
                       </table>
                     </div>
                   </div>
                 </div>
               </div>
+              <Pagination />
             </div>
           </main>
         </div>
@@ -153,5 +154,3 @@ const Pages = () => {
 }
 
 export default Pages
-
-Pages.propTypes = {}

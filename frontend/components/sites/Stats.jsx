@@ -86,7 +86,7 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={useRouter().asPath + '/pages'}>
+                <Link href={useRouter().asPath + 'pages'}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
@@ -112,11 +112,8 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={useRouter().asPath}>
-                  <a
-                    disabled={`disabled`} 
-                    className={`font-medium text-indigo-300 transition ease-in-out duration-150 cursor-not-allowed`}
-                  >
+                <Link href={useRouter().asPath + 'links'}>
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
                 </Link>
