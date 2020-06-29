@@ -1,5 +1,8 @@
-import Link from 'next/link'
 import styled from 'styled-components'
+import SiteSuccessIcon from '../icons/SiteSuccessIcon'
+import SiteWarningIcon from '../icons/SiteWarningIcon'
+import SiteDangerIcon from '../icons/SiteDangerIcon'
+import SiteNotApplicableIcon from '../icons/SiteNotApplicableIcon'
 
 const LinksTableDiv = styled.tbody``
 
@@ -38,28 +41,38 @@ const LinksTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          {props.val.num_links}
+          <span
+            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800`}
+          >
+            Good
+          </span>
+          {/* <span
+            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800`}
+          >
+            404
+          </span>
+          <span
+            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800`}
+          >
+            301 Redirect
+          </span> */}
         </td>
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          {props.val.num_ok_links}
+          <SiteSuccessIcon />
         </td>
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          {props.val.num_non_ok_links}
+          <SiteSuccessIcon />
+          {/* <SiteDangerIcon /> */}
+          {/* <SiteNotApplicableIcon /> */}
         </td>
         <td
-          className={`flex-grow px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium`}
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          <Link href="/dashboard/site/[id]" as={`/dashboard/site/${props.val.id}`}>
-            <a
-              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-            >
-              View Detail
-            </a>
-          </Link>
+          10 MB
         </td>
       </tr>
     </LinksTableDiv>

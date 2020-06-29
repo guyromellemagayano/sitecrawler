@@ -1,14 +1,17 @@
 [
 	{
-		"label": "Link URL"
+		"label": "Page URL"
 	},
 	{
-		"label": "Total Links"
+		"label": "Status"
 	},
 	{
-		"label": "Working Links"
+		"label": "On Google"
 	},
 	{
-		"label": "Link Issues"
+		"label": "SSL"
+	},
+	{
+		"label": "Page Load"
 	}
 ]
