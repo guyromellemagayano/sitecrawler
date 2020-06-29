@@ -24,7 +24,7 @@ urlpatterns = [
     path("confirm-sent/", TemplateView.as_view(), name="account_email_verification_sent"),
     re_path(r"confirm-email/(?P<key>[-:\w]+)/$", TemplateView.as_view(), name="account_confirm_email"),
     path("account-exist", TemplateView.as_view(), name="socialaccount_signup"),
-    path("password-reset/<uidb64>/<token>/", TemplateView.as_view(), name="password_reset_confirm"),
+    path("reset-password/form/<uidb64>/<token>/", TemplateView.as_view(), name="password_reset_confirm"),
     # urls
     path("admin/", admin.site.urls),
     path(

@@ -14,7 +14,7 @@ const ResetPassword = () => {
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     event.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -114,7 +114,7 @@ const ResetPassword = () => {
 
           <div className={`bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10`}>
             <form onSubmit={handleSubmit}>
-              <div className={`mt-2`}>
+              <div className={`mt-1`}>
                 <label
                   htmlFor={`email`}
                   className={`block text-sm font-medium leading-5 text-gray-700`}
