@@ -71,7 +71,7 @@ const SiteSettings = () => {
   }
 
   const deleteSiteSettings = async (endpoint) => {    
-    const redirectTo = '/sites'
+    const redirectTo = '/dashboard/sites'
 
     await fetch(endpoint, {
       method: 'DELETE',
