@@ -39,8 +39,6 @@ const SiteSettings = () => {
   }
   
   const updateSiteSettings = async (endpoint, formData) => {
-    console.log(endpoint, formData)
-
     const response = await fetch(endpoint, {
       method: 'PUT',
       headers: {
@@ -50,8 +48,6 @@ const SiteSettings = () => {
       },
       body: JSON.stringify(formData),
     })
-
-    console.log(response)
     
     const data = await response.json()
   
@@ -182,7 +178,7 @@ const SiteSettings = () => {
                               <input
                                 type={`text`}
                                 id={`site_name`}
-                                value={site.name}
+                                // value={site.name}
                                 name={`site_name`}
                                 disabled={
                                   disableInputFields == 0 ? true : false
@@ -209,7 +205,7 @@ const SiteSettings = () => {
                               <input
                                 type={`text`}
                                 id={`site_url`}
-                                value={site.url}
+                                // value={site.url}
                                 name={`site_url`}
                                 disabled={`disabled`}
                                 className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 opacity-50 bg-gray-300 cursor-not-allowed`}
