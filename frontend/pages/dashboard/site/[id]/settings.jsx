@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Router from "next/router";
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
@@ -16,14 +16,23 @@ import fetchJson from '../../../../hooks/fetchJson'
 const SiteSettingsDiv = styled.section``
 
 const SiteSettings = () => {
+  const { query } = useRouter()
+  
   const [errorMsg, setErrorMsg] = useState('')
 	const [successMsg, setSuccessMsg] = useState('')
   const [disableInputFields, setDisableInputFields] = useState(0)
+  const [siteName, setSiteName] = useState('')
+  const [siteUrl, setSiteUrl] = useState('')
   const [showModal, setShowModal] = useState(false)
-
-	const { query } = useRouter()
   
   const { data: site, mutate } = useSWR(() => (query.id ? `/api/site/${query.id}/` : null), () => fetchSiteSettings(`/api/site/${query.id}/`), { refreshInterval: 1000 })
+
+  useEffect(() => {
+		if (site !== '' && site !== undefined) {
+			setSiteName(site.name)
+			setSiteUrl(site.url)
+		}
+  }, [site, siteName, siteUrl])
 
   const fetchSiteSettings = async (endpoint) => {
     const siteSettingsData = await fetchJson(endpoint, {
@@ -102,6 +111,10 @@ const SiteSettings = () => {
     setDisableInputFields(!disableInputFields)
   }
 
+  const handleSiteNameInputChange = (e) => {
+    setSiteName(e.target.value)
+  }
+
 	const handleSiteDeletion = async (e) => {
     e.preventDefault()
     
@@ -178,7 +191,7 @@ const SiteSettings = () => {
                               <input
                                 type={`text`}
                                 id={`site_name`}
-                                // value={site.name}
+                                value={siteName}
                                 name={`site_name`}
                                 disabled={
                                   disableInputFields == 0 ? true : false
@@ -187,6 +200,7 @@ const SiteSettings = () => {
                                   disableInputFields == 0 &&
                                   "opacity-50 bg-gray-300 cursor-not-allowed"
                                 }`}
+                                onChange={handleSiteNameInputChange}
                               />
                             </div>
                           </div>
@@ -205,7 +219,7 @@ const SiteSettings = () => {
                               <input
                                 type={`text`}
                                 id={`site_url`}
-                                // value={site.url}
+                                value={siteUrl}
                                 name={`site_url`}
                                 disabled={`disabled`}
                                 className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 opacity-50 bg-gray-300 cursor-not-allowed`}
