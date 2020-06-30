@@ -20,8 +20,6 @@ const ResetPasswordForm = () => {
 	const [successMsg, setSuccessMsg] = useState('')
 	const [password1, setPassword1] = useState('')
 	const [password2, setPassword2] = useState('')
-	const [errorUsernameMsg, setErrorUidMsg] = useState('')
-  const [errorEmailMsg, setErrorTokenMsg] = useState('')
   const [errorPassword1Msg, setErrorPassword1Msg] = useState('')
 	const [errorPassword2Msg, setErrorPassword2Msg] = useState('')
 	const [disableResetPasswordForm, setDisableResetPasswordForm] = useState(false)
@@ -85,16 +83,8 @@ const ResetPasswordForm = () => {
         if (data.new_password2) {
           setErrorPassword2Msg(data.new_password2[0])
 				} 
-				
-				if (data.uid) {
-          setErrorUidMsg(data.uid[0])
-        } 
         
-        if (data.token) {
-          setErrorTokenMsg(data.token[0])
-        } 
-        
-        if (!data.uid && !data.token && !data.new_password1 && !data.new_password2) {
+        if (!data.new_password1 && !data.new_password2) {
           console.error(error.message)
           setErrorMsg('An unexpected error occurred. Please try again.')
         }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import Head from 'next/head'
@@ -13,6 +13,9 @@ const ResetPasswordDiv = styled.div``
 const ResetPassword = () => {
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const [email, setEmail] = useState('')
+  const [errorEmailMsg, setErrorEmailMsg] = useState('')
+  const [disableResetPasswordForm, setDisableResetPasswordForm] = useState(false)
 
   const handleSubmit = async (e) => {
     event.preventDefault()
@@ -21,7 +24,7 @@ const ResetPassword = () => {
     if (successMsg) setSuccessMsg('')
 
     const body = {
-      email: e.currentTarget.email.value,
+      email: email
     }
 
     try {
@@ -36,13 +39,28 @@ const ResetPassword = () => {
       })
 
       if (Math.floor(res.status / 200) === 1) {
+        setDisableResetPasswordForm(!disableResetPasswordForm)
         setSuccessMsg(`Reset password requested. Please check your email to continue the process.`)
       } else {
         throw new Error(await res.text())
       }
     } catch (error) {
-      console.error('An unexpected error occurred:', error)
-      setErrorMsg(error.message)
+      if (error.response) {
+        console.error(error.response.data)
+        console.error(error.response.status)
+        console.error(error.response.headers)
+      } else if (error.request) {
+        console.error(error.request)
+      } else {
+        let data = JSON.parse(error.message)
+        
+        if (data.email) {
+          setErrorEmailMsg(data.email[0])
+        } else {
+          console.error(error.message)
+          setErrorMsg('An unexpected error occurred. Please try again.')
+        }
+      }
     }
   }
 
@@ -55,7 +73,9 @@ const ResetPassword = () => {
       <ResetPasswordDiv
         className={`min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
       >
-        <LogoLabel isResetPassword />
+        {!disableResetPasswordForm ? (
+          <LogoLabel isResetPassword />
+        ) : null}
 
         <div className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
           {errorMsg && (
@@ -112,51 +132,57 @@ const ResetPassword = () => {
             </div>
           )}
 
-          <div className={`bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10`}>
-            <form onSubmit={handleSubmit}>
-              <div className={`mt-1`}>
-                <label
-                  htmlFor={`email`}
-                  className={`block text-sm font-medium leading-5 text-gray-700`}
-                >
-                  Email address
-                </label>
-                <div className={`mt-1 rounded-md shadow-sm`}>
-                  <input
-                    id={`email`}
-                    type={`email`}
-                    name={`email`}
-                    required
-                    className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
-                  />
-                </div>
-
-                <div className={`mt-6`}>
-                  <span className={`block w-full rounded-md shadow-sm`}>
-                    <button
-                      type={`submit`}
-                      className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
+          {!disableResetPasswordForm ? (
+            <Fragment>
+              <div className={`bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10`}>
+                <form onSubmit={handleSubmit}>
+                  <div className={`mt-1`}>
+                    <label
+                      htmlFor={`email`}
+                      className={`block text-sm font-medium leading-5 text-gray-700`}
                     >
-                      Reset Password
-                    </button>
-                  </span>
-                </div>
-              </div>
-            </form>
-          </div>
+                      Email address
+                    </label>
+                    <div className={`mt-1 rounded-md shadow-sm`}>
+                      <input
+                        id={`email`}
+                        type={`email`}
+                        name={`email`}
+                        className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${errorEmailMsg ? "border-red-300" : "border-gray-300"}`}
+                        aria-describedby={`email`}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                    <span className={`block mt-2 text-sm leading-5 text-red-700`}>{errorEmailMsg}</span>
+                  </div>
 
-          <div className={`relative flex justify-center wrap flex-row text-sm leading-5`}>
-            <span className={`px-2 py-5 text-gray-500`}>
-              Already have an account? &nbsp;
-              <Link href="/login">
-                <a
-                  className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
-                >
-                  Log In
-                </a>
-              </Link>
-            </span>
-          </div>
+                  <div className={`mt-6`}>
+                    <span className={`block w-full rounded-md shadow-sm`}>
+                      <button
+                        type={`submit`}
+                        className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
+                      >
+                        Reset Password
+                      </button>
+                    </span>
+                  </div>
+                </form>
+              </div>
+            </Fragment>
+          ) : (
+            <div className={`relative flex justify-center wrap flex-row text-sm leading-5`}>
+              <span className={`px-2 py-5 text-gray-500`}>
+                Already have an account? &nbsp;
+                <Link href="/login">
+                  <a
+                    className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
+                  >
+                    Log In
+                  </a>
+                </Link>
+              </span>
+            </div>
+          )}
         </div>
       </ResetPasswordDiv>
     </Layout>
