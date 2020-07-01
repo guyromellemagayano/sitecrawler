@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
@@ -33,6 +34,8 @@ const fetcher = async (url) => {
 const SitesDashboardDiv = styled.section``
 
 const SitesDashboard = () => {
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+
   const { query } = useRouter()
   const { data, error } = useSWR(
     () => query.id && `/api/site/${query.id}`,
@@ -51,7 +54,7 @@ const SitesDashboard = () => {
       <SitesDashboardDiv
         className={`h-screen flex overflow-hidden bg-gray-100`}
       >
-        <MobileSidebar />
+        <MobileSidebar show={openMobileSidebar} />
         <MainSidebar />
 
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -59,6 +62,7 @@ const SitesDashboard = () => {
             <button
               className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
               aria-label={`Open sidebar`}
+              onClick={() => setOpenMobileSidebar(!openMobileSidebar)}
             >
               <svg
                 className={`h-6 w-5`}

@@ -1,8 +1,9 @@
-import { Fragment, Suspense } from 'react'
+import { Fragment, Suspense, useState } from 'react'
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'
 import useSWR from 'swr'
+import Transition from '../../../hooks/Transition'
 import DataTableHeadsContent from '../../../public/data/data-table-heads.json'
 import Layout from '../../../components/Layout'
 import MobileSidebar from '../../../components/sidebar/MobileSidebar'
@@ -32,7 +33,9 @@ const fetcher = async (url) => {
 
 const SitesDiv = styled.section``
 
-const Sites = () => {    
+const Sites = () => {
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+
   const { data: site, error: siteError } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
 
   if (siteError) return <div>{siteError.message}</div>
@@ -46,7 +49,7 @@ const Sites = () => {
 
       <Suspense fallback={<div>loading...</div>}>
         <SitesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
-          <MobileSidebar />
+          <MobileSidebar show={openMobileSidebar} />
           <MainSidebar />
 
           <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -54,6 +57,7 @@ const Sites = () => {
               <button
                 className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                 aria-label={`Open sidebar`}
+                onClick={() => setOpenMobileSidebar(!openMobileSidebar)}
               >
                 <svg
                   className={`h-6 w-5`}

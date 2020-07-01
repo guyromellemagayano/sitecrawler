@@ -16,15 +16,15 @@ import fetchJson from '../../../../hooks/fetchJson'
 const SiteSettingsDiv = styled.section``
 
 const SiteSettings = () => {
-  const { query } = useRouter()
-  
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 	const [successMsg, setSuccessMsg] = useState('')
   const [disableInputFields, setDisableInputFields] = useState(0)
   const [siteName, setSiteName] = useState('')
   const [siteUrl, setSiteUrl] = useState('')
   const [showModal, setShowModal] = useState(false)
-  
+
+  const { query } = useRouter()
   const { data: site } = useSWR(() => (query.id ? `/api/site/${query.id}/` : null), () => fetchSiteSettings(`/api/site/${query.id}/`), { refreshInterval: 1000 })
 
   useEffect(() => {
@@ -130,13 +130,15 @@ const SiteSettings = () => {
       </Head>
 
       <SiteSettingsDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
-        <MobileSidebar />
+        <MobileSidebar show={openMobileSidebar} />
         <MainSidebar />
+
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
           <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
             <button
               className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
               aria-label={`Open sidebar`}
+              onClick={() => setOpenMobileSidebar(!openMobileSidebar)}
             >
               <svg
                 className={`h-6 w-5`}
