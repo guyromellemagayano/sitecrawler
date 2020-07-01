@@ -5,15 +5,6 @@ import styled from 'styled-components'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
 
-const apiParameters = {
-  method: 'GET',
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-    'X-CSRFToken': Cookies.get('csrftoken'),
-  },
-}
-
 const ProfileSettingsPersonalDiv = styled.div``
 
 const ProfileSettingsPersonal = () => {
@@ -23,25 +14,64 @@ const ProfileSettingsPersonal = () => {
   const [username, setUsername] = useState('')
   const [firstname, setFirstname] = useState('')
   const [lastname, setLastname] = useState('')
+  const [email, setEmail] = useState('')
 
-  const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
-
-  const { data: profile, error } = useSWR('/api/auth/user/', fetcher, { refreshInterval: 1000 })
-
-  if (error) return <div>{error.message}</div>
-  if (!profile) return <div>Loading...</div>
+  const { data: profile } = useSWR(`/api/auth/user/`, () => fetchProfileSettings(`/api/site/user/`), { refreshInterval: 1000 })
 
   useEffect(() => {
-    setUsername(profile.username)
-    setFirstname(profile.first_name)
-    setLastname(profile.last_name)
+    if (profile !== '' && profile !== undefined) {
+      setUsername(profile.username)
+      setFirstname(profile.first_name)
+      setLastname(profile.last_name)
+      setEmail(profile.email)
+		}
   }, [profile])
 
-  const handleProfileSubmission = async (e) => {
-    e.preventDefault()
+  const fetchProfileSettings = async (endpoint) => {
+    const siteProfileData = await fetchJson(endpoint, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
+      }
+    })
+    
+    return siteProfileData
+  }
 
-    if (errorMsg) setErrorMsg('')
-    if (successMsg) setSuccessMsg('')
+  const updateProfileSettings = async (endpoint, formData) => {
+    const response = await fetch(endpoint, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
+      },
+      body: JSON.stringify(formData),
+    })
+
+    const data = await response.json()
+  
+    if (response.ok && response.status === 200) {
+      if (data) {
+        setSuccessMsg('Profile information update success.')
+        setDisableInputFields(!disableInputFields)
+      }
+    } else {
+      const error = new Error(response.statusText)
+  
+      error.response = response
+      error.data = data
+  
+      setErrorMsg('An unexpected error occurred. Please try again.')
+  
+      throw error
+    }
+  }
+
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault()
 
     const body = {
       username: e.currentTarget.user_name.value,
@@ -49,41 +79,7 @@ const ProfileSettingsPersonal = () => {
       last_name: e.currentTarget.last_name.value,
     }
 
-    try {
-      const response = await fetch('/api/auth/user/', {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
-        },
-        body: JSON.stringify(body),
-      })
-      
-      const data = await response.json()
-
-      if (response.ok && response.status === 200) {
-        if (data) {
-          setSuccessMsg('Profile information update success.')
-          setDisableInputFields(!disableInputFields)
-        }
-      } else {
-        const error = new Error(response.statusText)
-  
-        error.response = response
-        error.data = data
-  
-        throw error
-      }
-    } catch(error) {
-      if (!error.data) {
-        error.data = { message: error.message }
-      }
-
-      setErrorMsg('An unexpected error occurred. Please try again.')
-
-      throw error
-    }
+    await updateProfileSettings(`/api/auth/user/`, body)
   }
 
   const handleEditProfile = (e) => {
@@ -107,7 +103,7 @@ const ProfileSettingsPersonal = () => {
   return (
     <ProfileSettingsPersonalDiv className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
-        <form onSubmit={handleProfileSubmission}>
+        <form onSubmit={handleProfileUpdate}>
           <div>
             <div>
               <div>
@@ -239,7 +235,7 @@ const ProfileSettingsPersonal = () => {
                     <input
                       id={`email`}
                       type={`email`}
-                      value={profile.email}
+                      value={email}
                       disabled={`disabled`}
                       className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 opacity-50 bg-gray-300 cursor-not-allowed`}
                     />

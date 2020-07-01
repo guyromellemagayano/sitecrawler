@@ -25,14 +25,14 @@ const SiteSettings = () => {
   const [siteUrl, setSiteUrl] = useState('')
   const [showModal, setShowModal] = useState(false)
   
-  const { data: site, mutate } = useSWR(() => (query.id ? `/api/site/${query.id}/` : null), () => fetchSiteSettings(`/api/site/${query.id}/`), { refreshInterval: 1000 })
+  const { data: site } = useSWR(() => (query.id ? `/api/site/${query.id}/` : null), () => fetchSiteSettings(`/api/site/${query.id}/`), { refreshInterval: 1000 })
 
   useEffect(() => {
 		if (site !== '' && site !== undefined) {
 			setSiteName(site.name)
 			setSiteUrl(site.url)
 		}
-  }, [site, siteName, siteUrl])
+  }, [site])
 
   const fetchSiteSettings = async (endpoint) => {
     const siteSettingsData = await fetchJson(endpoint, {
@@ -57,15 +57,13 @@ const SiteSettings = () => {
       },
       body: JSON.stringify(formData),
     })
-    
+
     const data = await response.json()
   
     if (response.ok && response.status === 200) {
       if (data) {
         setSuccessMsg('Site information update success.')
         setDisableInputFields(!disableInputFields)
-
-        return await response.json();
       }
     } else {
       const error = new Error(response.statusText)
@@ -98,11 +96,11 @@ const SiteSettings = () => {
 		e.preventDefault()
 	
 		const body = {
-			name: e.currentTarget.site_name.value,
+      name: e.currentTarget.site_name.value,
+      url: e.currentTarget.site_url.value
     }
 
     await updateSiteSettings(`/api/site/${query.id}/`, body)
-    mutate(...site)
 	}
 
 	const handleEditSiteDetails = (e) => {
@@ -113,6 +111,10 @@ const SiteSettings = () => {
 
   const handleSiteNameInputChange = (e) => {
     setSiteName(e.target.value)
+  }
+
+  const handleSiteUrlInputChange = (e) => {
+    setSiteUrl(e.target.value)
   }
 
 	const handleSiteDeletion = async (e) => {
@@ -221,8 +223,14 @@ const SiteSettings = () => {
                                 id={`site_url`}
                                 value={siteUrl}
                                 name={`site_url`}
-                                disabled={`disabled`}
-                                className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 opacity-50 bg-gray-300 cursor-not-allowed`}
+                                disabled={
+                                  disableInputFields == 0 ? true : false
+                                }
+                                className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+                                  disableInputFields == 0 &&
+                                  "opacity-50 bg-gray-300 cursor-not-allowed"
+                                }`}
+                                onChange={handleSiteUrlInputChange}
                               />
                             </div>
                           </div>
