@@ -37,8 +37,8 @@ const SitesOverview = props => {
         </div>
         <div className={`my-2 max-w-xl text-sm leading-5 text-gray-500`}>
           <p>
-            <strong>Updated last:</strong> <Moment local calendar={calendarStrings} date={props.updatedAt} />&nbsp;
-            <Moment local date={props.createdAt} format="hh:mm:ss A" />
+            <strong>Updated last:</strong> <Moment calendar={calendarStrings} date={props.updatedAt} />&nbsp;
+            <Moment date={props.createdAt} format="hh:mm:ss A" />
           </p>
         </div>
         <div className={`mt-4`}>

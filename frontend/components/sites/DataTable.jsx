@@ -104,10 +104,10 @@ const DataTable = props => {
       </td>
       <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
         <div className={`text-sm leading-5 text-gray-900`}>
-          <Moment local calendar={calendarStrings} date={props.site.updated_at} />
+          <Moment calendar={calendarStrings} date={props.site.updated_at} />
         </div>
         <div className={`text-sm leading-5 text-gray-500`}>
-          <Moment local date={props.site.updated_at} format="hh:mm:ss A" />
+          <Moment date={props.site.updated_at} format="hh:mm:ss A" />
         </div>
       </td>
       <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
