@@ -5,7 +5,6 @@ import Link from 'next/link'
 import styled from 'styled-components'
 import Moment from 'react-moment'
 import Layout from '../../components/Layout'
-import { Fragment } from 'react'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -104,10 +103,10 @@ const DataTable = props => {
       </td>
       <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
         <div className={`text-sm leading-5 text-gray-900`}>
-          <Moment calendar={calendarStrings} date={props.site.updated_at} />
+          <Moment calendar={calendarStrings} date={props.site.updated_at} utc />
         </div>
         <div className={`text-sm leading-5 text-gray-500`}>
-          <Moment date={props.site.updated_at} format="hh:mm:ss A" />
+          <Moment date={props.site.updated_at} format="hh:mm:ss A" utc />
         </div>
       </td>
       <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
