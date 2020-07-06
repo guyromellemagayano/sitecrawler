@@ -13,6 +13,9 @@ class LinkQuerySet(QuerySet):
             .order_by("-num_non_ok_links")
         )
 
+    def links(self):
+        return self.annotate(occurences=Count("pages")).order_by("-status")
+
 
 class Link(models.Model):
     objects = LinkQuerySet.as_manager()
