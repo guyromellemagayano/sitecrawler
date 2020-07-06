@@ -22,8 +22,9 @@ const Registration = () => {
   const [errorPassword1Msg, setErrorPassword1Msg] = useState('')
   const [errorPassword2Msg, setErrorPassword2Msg] = useState('')
   const [disableRegistrationForm, setDisableRegistrationForm] = useState(false)
+  const pageTitle = 'Registration'
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     event.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -42,7 +43,7 @@ const Registration = () => {
     }
 
     try {
-      const res = await fetch('/api/auth/registration/', {
+      const response = await fetch('/api/auth/registration/', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -52,11 +53,11 @@ const Registration = () => {
         body: JSON.stringify(body),
       })
 
-      if (Math.floor(res.status/200) === 1) {
+      if (Math.floor(response.status/200) === 1) {
         setDisableRegistrationForm(!disableRegistrationForm)
         setSuccessMsg("Thanks for signing up. Please check your email for confirmation!")
       } else {
-        throw new Error(await res.text())
+        throw new Error(await response.text())
       }
     } catch(error) {
       if (error.response) {
@@ -95,7 +96,7 @@ const Registration = () => {
   return (
     <Layout>
       <Head>
-        <title>Registration</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <RegistrationDiv
