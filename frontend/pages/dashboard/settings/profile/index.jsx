@@ -1,23 +1,25 @@
 import { useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
-import Layout from '../../../components/Layout'
-import MobileSidebar from '../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../components/sidebar/MainSidebar'
-import ProfileSettingsPassword from '../../../components/profile/Password'
+import Layout from '../../../../components/Layout'
+import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
+import MainSidebar from '../../../../components/sidebar/MainSidebar'
+import ProfileSettings from '../../../../components/profile/Settings'
+import ProfileSettingsPassword from '../../../../components/profile/Password'
 
-const ProfilePasswordSettingsDiv = styled.section``
+const ProfileDiv = styled.section``
 
-const ProfilePasswordSettings = () => {
+const Profile = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const pageTitle = 'Profile Settings'
 
   return (
     <Layout>
       <Head>
-        <title>Password Settings</title>
+        <title>{pageTitle}</title>
       </Head>
 
-      <ProfilePasswordSettingsDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+      <ProfileDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
         <MobileSidebar show={openMobileSidebar} />
         <MainSidebar />
 
@@ -48,16 +50,17 @@ const ProfilePasswordSettings = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>Profile</h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>{pageTitle}</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
+              <ProfileSettings />
               <ProfileSettingsPassword />
             </div>
           </main>
         </div>
-      </ProfilePasswordSettingsDiv>
+      </ProfileDiv>
     </Layout>
   )
 }
 
-export default ProfilePasswordSettings
+export default Profile
