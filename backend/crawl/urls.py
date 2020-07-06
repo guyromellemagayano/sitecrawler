@@ -12,6 +12,7 @@ class NestedDefaultRouter(NestedRouterMixin, routers.DefaultRouter):
 router = NestedDefaultRouter()
 site_router = router.register(r"site", SiteViewSet, basename="site")
 scan_router = site_router.register(r"scan", ScanViewSet, basename="scan", parents_query_lookups=["site"])
+scan_router.register(r"link", LinkViewSet, basename="link", parents_query_lookups=["scan__site", "scan"])
 page_router = scan_router.register(r"page", PageViewSet, basename="page", parents_query_lookups=["scan__site", "scan"])
 page_router.register(r"link", LinkViewSet, basename="link", parents_query_lookups=["scan__site", "scan", "pages"])
 
