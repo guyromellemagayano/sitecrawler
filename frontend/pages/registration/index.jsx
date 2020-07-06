@@ -270,7 +270,7 @@ const Registration = () => {
                             Terms of Service
                           </a>
                         </Link>
-                        &nbsp;and&nbsp;
+                       &nbsp;and&nbsp;
                         <Link href="/privacy-policy">
                           <a
                             className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
@@ -288,7 +288,7 @@ const Registration = () => {
                 className={`relative flex justify-center wrap flex-row text-sm leading-5`}
               >
                 <span className={`px-2 py-5 text-gray-500`}>
-                  Already have an account? &nbsp;
+                  Already have an account?&nbsp;
                   <Link href="/login">
                     <a
                       className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}

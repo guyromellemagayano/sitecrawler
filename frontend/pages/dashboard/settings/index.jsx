@@ -61,3 +61,13 @@ const GlobalSettings = () => {
 }
 
 export default GlobalSettings
+
+export function getStaticProps() {
+	return {
+		props: {
+			initialReduxState: {
+				
+			}
+		}
+	}
+}
