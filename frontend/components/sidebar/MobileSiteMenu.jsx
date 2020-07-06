@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import styled from 'styled-components'
-import PropTypes from 'prop-types'
 import SitePages from '../../public/data/site-pages.json'
 
 const SiteMenuDiv = styled.nav`
@@ -61,5 +60,3 @@ const SiteMenu = () => {
 }
 
 export default SiteMenu
-
-SiteMenu.propTypes = {}

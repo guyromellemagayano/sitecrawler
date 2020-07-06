@@ -2,24 +2,24 @@ import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import PrimaryMenu from './PrimaryMenu'
 import SiteMenu from './SiteMenu'
-import ProfileMenu from './ProfileMenu'
+import SettingsMenu from './SettingsMenu'
 import ProfileSidebar from '../profile/Sidebar'
 
 const MainSidebarDiv = styled.aside``
 
 const MainSidebar = () => {
   const [windowSiteLocation, setWindowSiteLocation] = useState(false)
-  const [windowProfileLocation, setWindowProfileLocation] = useState(false)
+  const [windowSettingsLocation, setWindowSettingsLocation] = useState(false)
 
   useEffect(() => {
     if (window.location.href.indexOf("/site/") > -1) {
       setWindowSiteLocation(!windowSiteLocation)
     }
 
-    if (window.location.href.indexOf("/profile") > -1) {
-      setWindowProfileLocation(!windowProfileLocation)
+    if (window.location.href.indexOf("/settings/") > -1) {
+      setWindowSettingsLocation(!windowSettingsLocation)
     }
-  }, [setWindowSiteLocation, setWindowProfileLocation])
+  }, [])
 
   return (
     <MainSidebarDiv className={`hidden md:flex md:flex-shrink-0`}>
@@ -32,7 +32,7 @@ const MainSidebar = () => {
               alt={`Workflow`}
             />
           </div>
-          {windowSiteLocation ? <SiteMenu /> : windowProfileLocation ? <ProfileMenu /> : <PrimaryMenu />}
+          {windowSiteLocation ? <SiteMenu /> : windowSettingsLocation ? <SettingsMenu /> : <PrimaryMenu />}
         </div>
         <ProfileSidebar />
       </div>

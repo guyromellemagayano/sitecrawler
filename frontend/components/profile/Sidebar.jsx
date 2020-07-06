@@ -26,7 +26,7 @@ const ProfileSidebar = () => {
 
   return (
     <ProfileSidebarDiv className={`flex-shrink-0 flex border-t border-gray-200`}>
-      <Link href="/dashboard/profile">
+      <Link href="/dashboard/settings/profile">
         <a className={`p-4 flex-shrink-0 w-full group block hover:text-gray-900 hover:bg-gray-100 transition ease-in-out duration-150`}>
           <div className={`flex items-center`}>
             <div>

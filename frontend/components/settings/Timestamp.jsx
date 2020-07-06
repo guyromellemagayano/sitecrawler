@@ -36,8 +36,8 @@ const TimestampSettings = () => {
 						>
 							<div className={`sm:col-span-6`}>
 
-								<div class="relative flex items-center">
-									<div class="absolute flex items-center h-5">
+								<div className={`relative flex items-center`}>
+									<div className={`absolute flex items-center h-5`}>
 										<span
 											role="checkbox"
 											tabIndex="0"
@@ -80,9 +80,9 @@ const TimestampSettings = () => {
 											</span>
 										</span>
 									</div>
-									<div class="ml-2 pl-12 text-sm leading-5">
-										<label for="candidates" class="font-medium text-gray-700">Enable Local Time</label>
-										<p class="text-gray-500">Set all sites to use local times instead of UTC</p>
+									<div className={`ml-2 pl-12 text-sm leading-5`}>
+										<label htmlFor="candidates" className={`font-medium text-gray-700`}>Enable Local Time</label>
+										<p className={`text-gray-500`}>Set all sites to use local times instead of UTC</p>
 									</div>
 								</div>
 							</div>

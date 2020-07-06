@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import styled from 'styled-components'
-import ProfilePages from '../../public/data/profile-pages.json'
+import SettingsPages from '../../public/data/settings-pages.json'
 
 const PrimaryMenuDiv = styled.nav`
   a:first-child {
@@ -14,7 +14,7 @@ const PrimaryMenu = () => {
   return (
     <PrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
       {
-        ProfilePages.map((val, key) => {
+        SettingsPages.map((val, key) => {
           return (
             <Fragment key={key}>
               <Link href={val.url}>

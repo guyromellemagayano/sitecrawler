@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
 import styled from 'styled-components'
 import MobilePrimaryMenu from './MobilePrimaryMenu'
 import MobileSiteMenu from './MobileSiteMenu'
-import MobileProfileMenu from './MobileProfileMenu'
+import MobileSettingsMenu from './MobileSettingsMenu'
 import ProfileSidebar from '../profile/Sidebar'
 import Transition from '../../hooks/Transition'
 
@@ -12,21 +11,21 @@ const MobileSidebarDiv = styled.aside``
 const MobileSidebar = props => {
 	const [updateProps, setUpdateProps] = useState(props.show)
 	const [windowSiteLocation, setWindowSiteLocation] = useState(false)
-  const [windowProfileLocation, setWindowProfileLocation] = useState(false)
+	const [windowSettingsLocation, setWindowSettingsLocation] = useState(false)
 	
 	const handleUpdateProps = () => {
 		setUpdateProps(props.show)
 	}
 
-	useEffect(() => {
+  useEffect(() => {
     if (window.location.href.indexOf("/site/") > -1) {
       setWindowSiteLocation(!windowSiteLocation)
     }
 
-    if (window.location.href.indexOf("/profile") > -1) {
-      setWindowProfileLocation(!windowProfileLocation)
+    if (window.location.href.indexOf("/settings/") > -1) {
+      setWindowSettingsLocation(!windowSettingsLocation)
     }
-  }, [setWindowSiteLocation, setWindowProfileLocation])
+  }, [])
 
 	return (
 		<MobileSidebarDiv className={`md:hidden`}>
@@ -83,7 +82,7 @@ const MobileSidebar = props => {
 											alt={`Workflow`}
 										/>
 									</div>
-									{windowSiteLocation ? <MobileSiteMenu /> : windowProfileLocation ? <MobileProfileMenu /> : <MobilePrimaryMenu />}
+									{windowSiteLocation ? <MobileSiteMenu /> : windowSettingsLocation ? <MobileSettingsMenu /> : <MobilePrimaryMenu />}
 								</div>
 								<ProfileSidebar />
 							</div>
