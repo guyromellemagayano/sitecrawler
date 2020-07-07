@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import styled from 'styled-components'
 import PrimaryMenu from './PrimaryMenu'
 import SiteMenu from './SiteMenu'
@@ -26,11 +27,15 @@ const MainSidebar = () => {
       <div className={`flex flex-col w-64 border-r border-gray-200 bg-white`}>
         <div className={`h-0 flex-1 flex flex-col pt-5 pb-4 overflow-y-auto`}>
           <div className={`flex items-center flex-shrink-0 px-4`}>
-            <img
-              className={`h-8 w-auto`}
-              src={`/img/logos/workflow-logo-on-white.svg`}
-              alt={`Workflow`}
-            />
+            <Link href="/dashboard/sites/">
+              <a className={`block`}>
+                <img
+                  className={`h-8 w-auto`}
+                  src={`/img/logos/workflow-logo-on-white.svg`}
+                  alt={`Workflow`}
+                />
+              </a>
+            </Link>
           </div>
           {windowSiteLocation ? <SiteMenu /> : windowSettingsLocation ? <SettingsMenu /> : <PrimaryMenu />}
         </div>

@@ -3,6 +3,9 @@
 		"label": "Link URL"
 	},
 	{
+		"label": "URL Type"
+	},
+	{
 		"label": "Status"
 	},
 	{

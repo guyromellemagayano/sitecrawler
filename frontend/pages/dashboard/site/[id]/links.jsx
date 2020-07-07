@@ -40,6 +40,7 @@ const Links = props => {
   const pageTitle = 'Links |'
 
   const { query } = useRouter()
+  const pathname = `/dashboard/site/${query.id}/links`
   const { data: scan, error: scanError } = useSWR(
     () => (query.id ? `/api/site/${query.id}/scan/` : null),
     fetcher, {
@@ -63,16 +64,16 @@ const Links = props => {
     })
   }
 
-  const scanApiEndpoint = props.page !== undefined ? `/api/site/${query.id}/scan/${scanObjId}/page/?page=` + props.page : `/api/site/${query.id}/scan/${scanObjId}/page/`
+  const scanApiEndpoint = props.page !== undefined ? `/api/site/${query.id}/scan/${scanObjId}/link/?page=` + props.page : `/api/site/${query.id}/scan/${scanObjId}/link/`
 
-  const { data: page, error: pageError } = useSWR(
+  const { data: link, error: linkError } = useSWR(
     () => query.id && scanObjId ? scanApiEndpoint : null, fetcher, {
       refreshInterval: 1000,
   })
 
-  if (pageError) return <div>{pageError.message}</div>
+  if (linkError) return <div>{linkError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
-  if (!page) return <div>Loading...</div>
+  if (!link) return <div>Loading...</div>
 
   return (
     <Layout>
@@ -141,7 +142,7 @@ const Links = props => {
                               })}
                             </tr>
                           </thead>
-                          {page.results && page.results.map((val, key) => (
+                          {link.results && link.results.map((val, key) => (
                             <LinkUrlTable key={key} val={val} />
                           ))}
                         </table>
@@ -150,9 +151,9 @@ const Links = props => {
                   </div>
                 </div>
                 <Pagination 
-                  pathName={query.pathname}
+                  pathName={pathname}
                   apiEndpoint={scanApiEndpoint}
-                  page={props.page ? props.page : null}
+                  page={props.page ? props.page : 0}
                 />
               </div>
             </main>
