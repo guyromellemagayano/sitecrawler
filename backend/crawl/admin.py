@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models import Link, Scan, Site
+from .models import Link, Scan, Site, UserProfile
 
 
 class LinkInline(admin.TabularInline):
@@ -89,3 +89,10 @@ class SiteAdmin(admin.ModelAdmin):
     list_display = ("url", "user")
     list_filter = ("user__username",)
     inlines = [ScanInline]
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ("user",)
+    search_fields = ("user__username", "user__email")
+    readonly_fields = ("user",)
