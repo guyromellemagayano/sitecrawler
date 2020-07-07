@@ -1,24 +1,24 @@
-import { Fragment, Suspense, useState } from 'react'
-import Cookies from 'js-cookie'
-import Head from 'next/head'
-import styled from 'styled-components'
-import useSWR from 'swr'
-import Transition from '../../../hooks/Transition'
-import DataTableHeadsContent from '../../../public/data/data-table-heads.json'
-import Layout from '../../../components/Layout'
-import MobileSidebar from '../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../components/sidebar/MainSidebar'
-import AddSite from '../../../components/sites/AddSite'
-import DataTable from '../../../components/sites/DataTable'
-import Pagination from '../../../components/sites/Pagination'
+import { Fragment, Suspense, useState } from "react"
+import { useRouter } from 'next/router'
+import Cookies from "js-cookie"
+import Head from "next/head"
+import styled from "styled-components"
+import useSWR from "swr"
+import DataTableHeadsContent from "../../../public/data/data-table-heads.json"
+import Layout from "../../../components/Layout"
+import MobileSidebar from "../../../components/sidebar/MobileSidebar"
+import MainSidebar from "../../../components/sidebar/MainSidebar"
+import AddSite from "../../../components/sites/AddSite"
+import DataTable from "../../../components/sites/DataTable"
+import Pagination from "../../../components/sites/Pagination"
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get("csrftoken"),
     },
   })
 
@@ -33,11 +33,15 @@ const fetcher = async (url) => {
 
 const SitesDiv = styled.section``
 
-const Sites = () => {
+const Sites = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const pageTitle = 'Sites'
+  const pageTitle = "Sites"
+  const sitesApiEndpoint = props.page !== undefined ? '/api/site/?page=' + props.page : '/api/site/'
+  const router = useRouter()
 
-  const { data: site, error: siteError } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
+  const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher, {
+    refreshInterval: 1000,
+  })
 
   if (siteError) return <div>{siteError.message}</div>
   if (!site) return <div>Loading...</div>
@@ -114,16 +118,21 @@ const Sites = () => {
                             </tr>
                           </thead>
                           <tbody className={`bg-white`}>
-                            {site.results && site.results.map((val, key) => (
-                              <DataTable key={key} site={val} />
-                            ))}
+                            {site.results &&
+                              site.results.map((val, key) => (
+                                <DataTable key={key} site={val} />
+                              ))}
                           </tbody>
                         </table>
                       </div>
                     </div>
                   </div>
                 </div>
-                <Pagination />
+                <Pagination
+                  pathName={router.pathname}
+                  apiEndpoint={sitesApiEndpoint} 
+                  page={props.page ? props.page : null} 
+                />
               </div>
             </main>
           </div>
@@ -131,6 +140,12 @@ const Sites = () => {
       </Suspense>
     </Layout>
   )
+}
+
+Sites.getInitialProps = ({ query }) => {
+  return {
+    page: query.page,
+  }
 }
 
 export default Sites
