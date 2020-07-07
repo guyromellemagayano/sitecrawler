@@ -49,13 +49,13 @@ const Login = () => {
         body: JSON.stringify(body),
       })
 
-      const data = await response.json()
-
       if (Math.floor(response.status/200) === 1) {
         setDisableLoginForm(!disableLoginForm)
         setSuccessMsg("Login Success! Redirecting you to Sites Dashboard")
 
-        setTimeout(() => {
+        setTimeout(async () => {
+          const data = await response.json()
+
           mutateUser(data)
         }, 1500)
       } else {
@@ -69,7 +69,6 @@ const Login = () => {
       } else if (error.request) {
         console.error(error.request)
       } else {
-        console.log(hello)
         let msg = JSON.parse(error.message)
 
         if (msg.username) {
@@ -82,6 +81,7 @@ const Login = () => {
         
         if (!msg.username && !msg.password) {
           console.error(error.message)
+          // setErrorMsg(error.message.toString())
           setErrorMsg('An unexpected error occurred. Please try again.')
         }
       }
