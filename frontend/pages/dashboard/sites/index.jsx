@@ -131,7 +131,7 @@ const Sites = props => {
                 <Pagination
                   pathName={router.pathname}
                   apiEndpoint={sitesApiEndpoint} 
-                  page={props.page ? props.page : null} 
+                  page={props.page ? props.page : 0}
                 />
               </div>
             </main>
