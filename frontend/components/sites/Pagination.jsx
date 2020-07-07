@@ -29,23 +29,23 @@ const Pagination = props => {
   const { query } = useRouter()
   const pageNumbers = []
   const linksPerPage = 1
-  let currentPage = props.page || 1;
+  const currentPage = parseInt(props.page) || 1;
 
   const { data: page, error: pageError } = useSWR(props.apiEndpoint, fetcher)
 
   if (pageError) return <div>{pageError.message}</div>
   if (!page) return <div>Loading...</div>
 
-  for (let i = 1; i <= Math.ceil(page.count / linksPerPage); i++) {
+  const totalPages = Math.ceil(page.count / linksPerPage);
+
+  for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i)
   }
-
-  console.log(query.page, currentPage, page.previous, page.next)
 
   return (
     <PaginationDiv className={`bg-white px-4 pb-4 flex items-center justify-between border-t border-gray-200 sm:px-6 align-middle shadow sm:rounded-lg`}>
       <div className={`w-0 flex-1 flex`}>
-        {props.page !== 0 && page.previous !== null && (
+        {currentPage !== 1 && (
           <Link href={props.pathName + `?page=${parseInt(props.page) - 1}`}>
             <a className={`-mt-px border-transparent pt-4 pr-1 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150`}>
               <svg className={`mr-3 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
@@ -60,7 +60,7 @@ const Pagination = props => {
         {pageNumbers.map((val, key) => {
           return (
             <Link key={key} href={props.pathName + '?page=' + val}>
-              <a className={`${props.page == val || currentPage === 1 ? "-mt-px border-indigo-500 border-t-2 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-indigo-600 focus:outline-none focus:text-indigo-800 focus:border-indigo-700 transition ease-in-out duration-150" : "-mt-px border-transparent border-t-2 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150"}`}>
+              <a className={`${currentPage === val ? "-mt-px border-indigo-500 border-t-2 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-indigo-600 focus:outline-none focus:text-indigo-800 focus:border-indigo-700 transition ease-in-out duration-150" : "-mt-px border-transparent border-t-2 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150"}`}>
                 {val}
               </a>
             </Link>
@@ -68,7 +68,7 @@ const Pagination = props => {
         })}
       </div>
       <div className={`w-0 flex-1 flex justify-end`}>
-        {props.page !== 0 && query.page < Math.ceil(page.count / linksPerPage) && (
+        {currentPage !== totalPages && (
           <Link href={props.pathName + `?page=${parseInt(props.page) + 1}`}>
             <a className={`-mt-px border-transparent pt-4 pl-1 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150`}>
               Next
