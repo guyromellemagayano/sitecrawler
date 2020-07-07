@@ -126,7 +126,7 @@ const SiteSettings = () => {
   return (
     <Layout>
       <Head>
-        <title>Site Settings</title>
+        <title>Site Settings |</title>
       </Head>
 
       <SiteSettingsDiv className={`h-screen flex overflow-hidden bg-gray-100`}>

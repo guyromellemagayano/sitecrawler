@@ -23,6 +23,7 @@ const SitesInformation = props => {
   const [siteName, setSiteName] = useState('')
   const [enableNextStep, setEnableNextStep] = useState(false)
   const [dataQuery, setDataQuery] = useState([])
+  const pageTitle = 'Site Information'
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
@@ -76,7 +77,7 @@ const SitesInformation = props => {
   return (
     <Layout>
       <Head>
-        <title>Information</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <SitesInformationDiv

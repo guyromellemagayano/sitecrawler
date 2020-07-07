@@ -48,7 +48,7 @@ const SitesDashboard = () => {
   return (
     <Layout>
       <Head>
-        <title>Site Overview</title>
+        <title>Overview | {data.name}</title>
       </Head>
 
       <SitesDashboardDiv

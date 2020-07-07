@@ -8,11 +8,12 @@ const ReportsDiv = styled.section``
 
 const Reports = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const pageTitle = 'Reports'
 
   return (
     <Fragment>
       <Head>
-        <title>Reports</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <ReportsDiv className={`h-screen flex overflow-hidden bg-gray-100`}>

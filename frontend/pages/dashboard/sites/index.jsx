@@ -35,6 +35,7 @@ const SitesDiv = styled.section``
 
 const Sites = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const pageTitle = 'Sites'
 
   const { data: site, error: siteError } = useSWR('/api/site/', fetcher, { refreshInterval: 1000 })
 
@@ -44,7 +45,7 @@ const Sites = () => {
   return (
     <Layout>
       <Head>
-        <title>Sites</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <Suspense fallback={<div>loading...</div>}>

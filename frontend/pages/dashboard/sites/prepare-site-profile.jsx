@@ -16,6 +16,7 @@ const PrepareSiteProfileDiv = styled.section`
 
 const PrepareSiteProfile = props => {
   const [dataQuery, setDataQuery] = useState([])
+  const pageTitle = 'Prepare Site Profile'
 
   useEffect(() => {
     setDataQuery(props)
@@ -25,7 +26,7 @@ const PrepareSiteProfile = props => {
   return (
     <Layout>
       <Head>
-        <title>Prepare Site Profile</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <PrepareSiteProfileDiv

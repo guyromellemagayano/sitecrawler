@@ -16,6 +16,7 @@ const ResetPassword = () => {
   const [email, setEmail] = useState('')
   const [errorEmailMsg, setErrorEmailMsg] = useState('')
   const [disableResetPasswordForm, setDisableResetPasswordForm] = useState(false)
+  const pageTitle = 'Reset Password'
 
   const handleSubmit = async (e) => {
     event.preventDefault()
@@ -67,7 +68,7 @@ const ResetPassword = () => {
   return (
     <Layout>
       <Head>
-        <title>Reset Password</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <ResetPasswordDiv

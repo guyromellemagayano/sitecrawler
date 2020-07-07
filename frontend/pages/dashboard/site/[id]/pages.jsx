@@ -78,7 +78,7 @@ const Pages = () => {
   return (
     <Layout>
       <Head>
-        <title>Pages</title>
+        <title>Pages |</title>
       </Head>
 
       <PagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
@@ -112,7 +112,7 @@ const Pages = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>Pages</h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>All Pages</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               <LinkOptions />

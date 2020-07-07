@@ -79,7 +79,7 @@ const Links = () => {
   return (
     <Layout>
       <Head>
-        <title>Links</title>
+        <title>Links |</title>
       </Head>
 
       <LinksDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
@@ -113,7 +113,7 @@ const Links = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>Links</h1>
+              <h1 className={`text-2xl font-semibold text-gray-900`}>All Links</h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               <LinkOptions />

@@ -31,6 +31,7 @@ const SitesVerifyUrl = props => {
   const [dataQuery, setDataQuery] = useState([])
   const [disableSiteVerify, setDisableSiteVerify] = useState(false)
   const [enableNextStep, setEnableNextStep] = useState(false)
+  const pageTitle = 'Verify Site URL'
 
   const handleInputChange = ({ copyValue }) => {
     setCopyValue({ copyValue, copied })
@@ -98,7 +99,7 @@ const SitesVerifyUrl = props => {
   return (
     <Layout>
       <Head>
-        <title>Verify URL</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <SitesVerifyUrlDiv

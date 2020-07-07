@@ -9,11 +9,12 @@ const SupportDiv = styled.section``
 
 const Support = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const pageTitle = 'Help and Support'
 
   return (
     <Fragment>
       <Head>
-        <title>Support</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <SupportDiv className={`h-screen flex overflow-hidden bg-gray-100`}>

@@ -1,18 +1,20 @@
-import React from 'react'
+import { Fragment } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
 
 const ServiceTermsDiv = styled.div``
 
 const ServiceTerms = () => {
+  const pageTitle = 'Terms of Service'
+  
   return (
-    <>
+    <Fragment>
       <Head>
-        <title>Terms of Service</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <ServiceTermsDiv></ServiceTermsDiv>
-    </>
+    </Fragment>
   )
 }
 

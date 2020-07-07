@@ -13,7 +13,6 @@ const ResetPasswordFormDiv = styled.div``
 
 const ResetPasswordForm = () => {
 	const { query } = useRouter()
-
 	const [uid, setUid] = useState('')
 	const [token, setToken] = useState('')
 	const [errorMsg, setErrorMsg] = useState('')
@@ -23,6 +22,7 @@ const ResetPasswordForm = () => {
   const [errorPassword1Msg, setErrorPassword1Msg] = useState('')
 	const [errorPassword2Msg, setErrorPassword2Msg] = useState('')
 	const [disableResetPasswordForm, setDisableResetPasswordForm] = useState(false)
+	const pageTitle = 'Reset Password Form'
 
 	useEffect(() => {
 		if (query.id !== '' && query.id !== undefined) {
@@ -95,7 +95,7 @@ const ResetPasswordForm = () => {
 	return (
 		<Layout>
       <Head>
-        <title>Reset Password Form</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <ResetPasswordFormDiv

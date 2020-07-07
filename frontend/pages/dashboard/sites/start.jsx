@@ -23,6 +23,7 @@ const SitesStart = () => {
   const [siteUrl, setSiteUrl] = useState('')
   const [dataQuery, setDataQuery] = useState([])
   const [enableNextStep, setEnableNextStep] = useState(false)
+  const pageTitle = 'Start Site Registration'
 
   const handleSubmit = useCallback( async (e) => {
     e.preventDefault()
@@ -112,7 +113,7 @@ const SitesStart = () => {
   return (
     <Layout>
       <Head>
-        <title>Start</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <SitesStartDiv className={`h-screen flex overflow-hidden bg-gray-100`}>

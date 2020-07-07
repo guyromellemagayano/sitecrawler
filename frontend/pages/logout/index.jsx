@@ -1,11 +1,13 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import Cookies from 'js-cookie'
 import PropTypes from 'prop-types'
 import Layout from '../../components/Layout'
 
 const Logout = () => {
   const router = useRouter()
+  const pageTitle = 'Log Out'
 
   const handleLogoutUser = async () => {
     const response = await fetch('/api/auth/logout/', {
@@ -41,6 +43,9 @@ const Logout = () => {
 
   return (
     <Layout>
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
       Logging out...
     </Layout>
   )

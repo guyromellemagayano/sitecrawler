@@ -6,7 +6,6 @@ import Link from 'next/link'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PropTypes from 'prop-types'
-import fetchJson from '../../hooks/fetchJson'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/Layout'
 import LogoLabel from '../../components/form/LogoLabel'
@@ -70,17 +69,18 @@ const Login = () => {
       } else if (error.request) {
         console.error(error.request)
       } else {
-        let data = JSON.parse(error.message)
+        console.log(hello)
+        let msg = JSON.parse(error.message)
 
-        if (data.username) {
-          setErrorUsernameMsg(data.username[0])
+        if (msg.username) {
+          setErrorUsernameMsg(msg.username[0])
         } 
         
-        if (data.password) {
-          setErrorPasswordMsg(data.password[0])
+        if (msg.password) {
+          setErrorPasswordMsg(msg.password[0])
         } 
         
-        if (!data.username && !data.password) {
+        if (!msg.username && !msg.password) {
           console.error(error.message)
           setErrorMsg('An unexpected error occurred. Please try again.')
         }

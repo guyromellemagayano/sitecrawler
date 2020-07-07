@@ -13,6 +13,7 @@ const ConfirmEmail = () => {
 	const [success, setSuccess] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 	const [successMsg, setSuccessMsg] = useState('')
+	const pageTitle = 'Confirm Email'
 	
 	const handlePageRefresh = (e) => {
 		e.preventDefault()
@@ -75,7 +76,7 @@ const ConfirmEmail = () => {
   return (
     <Layout>
       <Head>
-        <title>Confirm Email</title>
+        <title>{pageTitle}</title>
       </Head>
 
       <ConfirmEmailDiv
