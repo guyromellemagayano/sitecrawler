@@ -28,7 +28,7 @@ const PaginationDiv = styled.nav``
 const Pagination = props => {
   const { query } = useRouter()
   const pageNumbers = []
-  const linksPerPage = 1
+  const linksPerPage = 20
   const currentPage = parseInt(props.page) || 1;
 
   const { data: page, error: pageError } = useSWR(props.apiEndpoint, fetcher)
