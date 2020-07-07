@@ -158,6 +158,8 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 20,
 }
 
+REST_AUTH_SERIALIZERS = {"USER_DETAILS_SERIALIZER": "crawl.serializers.UserSerializer"}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
