@@ -1,19 +1,84 @@
-import { useState } from "react"
-import styled from "styled-components"
-import PropTypes from "prop-types"
+import { useState, useEffect } from 'react'
+import fetch from 'node-fetch'
+import Cookies from 'js-cookie'
+import useSWR from 'swr'
+import styled from 'styled-components'
+import PropTypes from 'prop-types'
+import fetchJson from '../../hooks/fetchJson'
 
 const TimestampSettingsDiv = styled.div``
 
 const TimestampSettings = () => {
-  const [errorMsg, setErrorMsg] = useState("")
-  const [successMsg, setSuccessMsg] = useState("")
-  const [toggleOn, setToggleOn] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
+	const [toggleOn, setToggleOn] = useState(false)
+	
+	const { data: user } = useSWR(() => ('/api/auth/user/'), () => fetchUserSettings(`/api/auth/user/`), { refreshInterval: 1000 })
 
-  const handleToggleTimestamp = (e) => {
-    e.preventDefault()
+	useEffect(() => {
+		if (user !== '' && user !== undefined) {
+			setToggleOn(user.settings.enableLocalTime)
+		}
+	}, [user])
 
-    setToggleOn(!toggleOn)
+	const fetchUserSettings = async (endpoint) => {
+    const userSettingsData = await fetchJson(endpoint, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
+      }
+    })
+    
+    return userSettingsData
   }
+	
+	const updateTimestampSettings = async (endpoint, state) => {
+		const body = {
+			settings: {
+				enableLocalTime: state
+			},
+		}
+
+		console.log(toggleOn, body.settings.enableLocalTime)
+
+		const response = await fetch(endpoint, {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
+      },
+      body: JSON.stringify(body),
+		})
+
+		const data = await response.json()
+
+		if (response.ok && response.status === 200) {
+      if (data.settings.enableLocalTime) {
+        setSuccessMsg('Local time enabled globally.')
+      } else {
+				setSuccessMsg('Local time disabled globally.')
+			}
+    } else {
+      const error = new Error(response.statusText)
+  
+      error.response = response
+      error.data = data
+  
+      setErrorMsg('An unexpected error occurred. Please try again.')
+  
+      throw error
+    }
+	}
+
+  const handleToggleTimestamp = async (e) => {
+    e.preventDefault()
+		setToggleOn(!toggleOn)
+
+		await updateTimestampSettings(`/api/auth/user/`, toggleOn)
+	}
 
   return (
     <TimestampSettingsDiv
