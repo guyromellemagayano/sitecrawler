@@ -42,7 +42,7 @@ const SitesOverview = props => {
   return (
     <SitesOverviewDiv className={`bg-white shadow sm:rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
-        <h2 className={`text-lg leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+        <h2 className={`text-lg leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-all`}>
           <a href={`${props.url}`} target={`_blank`} title={`${props.url}`}>
             {props.url}
           </a>
