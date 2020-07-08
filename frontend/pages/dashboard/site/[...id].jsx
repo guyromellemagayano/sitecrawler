@@ -90,7 +90,7 @@ const SitesDashboard = () => {
               </h1>
             </div>
             <div
-              className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+              className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}
             >
               <div>
                 <SitesOverview
