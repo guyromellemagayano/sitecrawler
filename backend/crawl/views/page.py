@@ -9,5 +9,9 @@ class PageViewSet(NestedViewSetMixin, mixins.RetrieveModelMixin, mixins.ListMode
     queryset = Link.objects.all()
     serializer_class = PageSerializer
 
+    filterset_fields = {"created_at": ["gt", "gte", "lt", "lte"]}
+    search_fields = ["url"]
+    ordering_fields = ["id", "created_at", "url", "num_links", "num_ok_links", "num_non_ok_links"]
+
     def get_queryset(self):
         return super().get_queryset().filter(scan__site__user=self.request.user).pages()
