@@ -38,6 +38,14 @@ const LinkUrlSlideOverDiv = styled.div``
 const LinkUrlTable = (props) => {
   const [openSlideOver, setOpenSlideOver] = useState(false)
 
+  const userApiEndpoint = '/api/auth/user/'
+  const calendarStrings = {
+    lastDay : '[Yesterday], dddd',
+    sameDay : '[Today], dddd',
+    lastWeek : 'MMMM DD, YYYY',
+    sameElse : 'MMMM DD, YYYY'
+  }
+
   const { query } = useRouter()
   const { data: linkDetail, error: linkDetailError } = useSWR(
     () =>
@@ -50,15 +58,11 @@ const LinkUrlTable = (props) => {
     }
   )
 
-  if (linkDetailError) return <div>{linkDetailError.message}</div>
-  if (!linkDetail) return <div>Loading...</div>
+  const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
 
-  const calendarStrings = {
-    lastDay: "[Yesterday], dddd",
-    sameDay: "[Today], dddd",
-    lastWeek: "MMMM DD, YYYY",
-    sameElse: "MMMM DD, YYYY",
-  }
+  if (linkDetailError) return <div>{linkDetailError.message}</div>
+  if (userError) return <div>{userError.message}</div>
+  if (!linkDetail || !user) return <div>Loading...</div>
 
   return (
     <Fragment>
@@ -130,19 +134,19 @@ const LinkUrlTable = (props) => {
       <Transition show={openSlideOver}>
         <LinkUrlSlideOverDiv className={`fixed inset-0 overflow-hidden`}>
           <div className={`absolute inset-0 overflow-hidden`}>
+            <Transition
+              enter="ease-in-out duration-500"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in-out duration-500"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            </Transition>
             <section
               className={`absolute inset-y-0 right-0 pl-10 max-w-full flex`}
             >
-              {/*
-                Slide-over panel, show/hide based on slide-over state.
-
-                Entering: "transform transition ease-in-out duration-500 sm:duration-700"
-                  From: "translate-x-full"
-                  To: "translate-x-0"
-                Leaving: "transform transition ease-in-out duration-500 sm:duration-700"
-                  From: "translate-x-0"
-                  To: "translate-x-full"
-              */}
               <Transition
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
                 enterFrom="translate-x-full"
@@ -191,16 +195,30 @@ const LinkUrlTable = (props) => {
                       <div>
                         <p className={`text-sm leading-5 text-indigo-300`}>
                           Created at:{" "}
-                          <Moment
-                            calendar={calendarStrings}
-                            date={props.val.created_at}
-                            utc
-                          />
+                          {user.settings.enableLocalTime ? (
+                            <Fragment>
+                              <Moment
+                                calendar={calendarStrings}
+                                date={props.val.created_at}
+                                local
+                              />&nbsp; 
+                              <Moment date={props.val.created_at} format="hh:mm:ss A" local />
+                            </Fragment>
+                          ) : (
+                            <Fragment>
+                              <Moment
+                                calendar={calendarStrings}
+                                date={props.val.created_at}
+                                utc
+                              />&nbsp; 
+                              <Moment date={props.val.created_at} format="hh:mm:ss A" utc />
+                            </Fragment>
+                          )}
                         </p>
                       </div>
                     </header>
                     <div className={`relative flex-1 py-6 px-4 sm:px-6`}>
-                      <div className={`px-4 py-5 sm:px-6`}>
+                      <div>
                         <dl className={`grid col-gap-4 row-gap-8`}>
                           <div>
                             <dt
@@ -317,7 +335,7 @@ const LinkUrlTable = (props) => {
                       </div>
                     </div>
                     <div
-                      className={`flex-shrink-0 px-4 py-4 space-x-4 flex justify-center`}
+                      className={`flex-shrink-0 px-4 py-4 space-x-4 flex justify-end`}
                     >
                       <span className={`inline-flex rounded-md shadow-sm`}>
                         <button
