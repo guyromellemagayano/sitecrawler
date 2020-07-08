@@ -11,15 +11,8 @@ const TimestampSettingsDiv = styled.div``
 const TimestampSettings = () => {
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
-	const [toggleOn, setToggleOn] = useState(false)
-	
-	const { data: user } = useSWR(() => ('/api/auth/user/'), () => fetchUserSettings(`/api/auth/user/`), { refreshInterval: 1000 })
 
-	useEffect(() => {
-		if (user !== '' && user !== undefined) {
-			setToggleOn(user.settings.enableLocalTime)
-		}
-	}, [user])
+	const { data: user, mutate: updateUser } = useSWR(() => ('/api/auth/user/'), () => fetchUserSettings(`/api/auth/user/`))
 
 	const fetchUserSettings = async (endpoint) => {
     const userSettingsData = await fetchJson(endpoint, {
@@ -30,18 +23,12 @@ const TimestampSettings = () => {
         'X-CSRFToken': Cookies.get('csrftoken'),
       }
     })
-    
+
     return userSettingsData
   }
-	
-	const updateTimestampSettings = async (endpoint, state) => {
-		const body = {
-			settings: {
-				enableLocalTime: state
-			},
-		}
 
-		console.log(toggleOn, body.settings.enableLocalTime)
+	const updateTimestampSettings = async (endpoint, state) => {
+        user.settings.enableLocalTime = state;
 
 		const response = await fetch(endpoint, {
       method: 'PATCH',
@@ -50,7 +37,7 @@ const TimestampSettings = () => {
         'Content-Type': 'application/json',
         'X-CSRFToken': Cookies.get('csrftoken'),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(user),
 		})
 
 		const data = await response.json()
@@ -61,24 +48,28 @@ const TimestampSettings = () => {
       } else {
 				setSuccessMsg('Local time disabled globally.')
 			}
+            updateUser(data);
     } else {
       const error = new Error(response.statusText)
-  
+
       error.response = response
       error.data = data
-  
+
       setErrorMsg('An unexpected error occurred. Please try again.')
-  
+
       throw error
     }
 	}
 
   const handleToggleTimestamp = async (e) => {
     e.preventDefault()
-		setToggleOn(!toggleOn)
 
-		await updateTimestampSettings(`/api/auth/user/`, toggleOn)
+		await updateTimestampSettings(`/api/auth/user/`, !user.settings.enableLocalTime)
 	}
+
+    if (!user) {
+        return (<div>Loading</div>);
+    }
 
   return (
     <TimestampSettingsDiv
@@ -106,16 +97,16 @@ const TimestampSettings = () => {
 										<span
 											role="checkbox"
 											tabIndex="0"
-											aria-checked={toggleOn}
-											className={`${toggleOn ? "bg-indigo-600" : "bg-gray-200"} relative inline-flex flex-shrink-0 h-6 w-10 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}
+											aria-checked={user.settings.enableLocalTime}
+											className={`${user.settings.enableLocalTime ? "bg-indigo-600" : "bg-gray-200"} relative inline-flex flex-shrink-0 h-6 w-10 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}
 											onClick={handleToggleTimestamp}
 										>
 											<span
 												aria-hidden="true"
-												className={`${toggleOn ? "translate-x-4" : "translate-x-0"} relative inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}
+												className={`${user.settings.enableLocalTime ? "translate-x-4" : "translate-x-0"} relative inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}
 											>
 												<span
-													className={`${toggleOn ? "opacity-0 ease-out duration-100" : "opacity-100 ease-in duration-200"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
+													className={`${user.settings.enableLocalTime ? "opacity-0 ease-out duration-100" : "opacity-100 ease-in duration-200"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
 												>
 													<svg
 														className={`h-3 w-3 text-gray-400`}
@@ -132,7 +123,7 @@ const TimestampSettings = () => {
 													</svg>
 												</span>
 												<span
-													className={`${toggleOn ? "opacity-100 ease-in duration-200" : "opacity-0 ease-out duration-100"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
+													className={`${user.settings.enableLocalTime ? "opacity-100 ease-in duration-200" : "opacity-0 ease-out duration-100"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
 												>
 													<svg
 														className={`h-3 w-3 text-indigo-600`}

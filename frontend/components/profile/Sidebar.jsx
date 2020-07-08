@@ -19,7 +19,7 @@ const ProfileSidebarDiv = styled.div``
 const ProfileSidebar = () => {
   const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
 
-  const { data, error } = useSWR('/api/auth/user/', fetcher, { refreshInterval: 1000 })
+  const { data, error } = useSWR('/api/auth/user/', fetcher)
 
   if (error) return <Layout>Failed to load</Layout>
   if (!data) return <Layout>Loading...</Layout>
