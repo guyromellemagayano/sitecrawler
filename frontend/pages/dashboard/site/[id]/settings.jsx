@@ -138,7 +138,7 @@ const SiteSettings = () => {
             <button
               className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
               aria-label={`Open sidebar`}
-              onClick={() => setOpenMobileSidebar(!openMobileSidebar)}
+              onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
             >
               <svg
                 className={`h-6 w-5`}

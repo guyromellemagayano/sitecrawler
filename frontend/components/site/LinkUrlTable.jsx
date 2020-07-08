@@ -174,7 +174,7 @@ const LinkUrlTable = (props) => {
                           <button
                             aria-label="Close panel"
                             className={`text-indigo-200 hover:text-white transition ease-in-out duration-150`}
-                            onClick={(e) => setOpenSlideOver(!openSlideOver)}
+                            onClick={(e) => setTimeout(() => setOpenSlideOver(!openSlideOver), 150)}
                           >
                             <svg
                               className={`h-6 w-6`}
@@ -341,7 +341,7 @@ const LinkUrlTable = (props) => {
                         <button
                           type="submit"
                           className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
-                          onClick={(e) => setOpenSlideOver(!openSlideOver)}
+                          onClick={(e) => setTimeout(() => setOpenSlideOver(!openSlideOver), 150)}
                         >
                           Close Window
                         </button>
