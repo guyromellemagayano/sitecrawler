@@ -9,73 +9,73 @@ import fetchJson from '../../hooks/fetchJson'
 const TimestampSettingsDiv = styled.div``
 
 const TimestampSettings = () => {
-  const [errorMsg, setErrorMsg] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
+	const [errorMsg, setErrorMsg] = useState('')
+	const [successMsg, setSuccessMsg] = useState('')
 
 	const { data: user, mutate: updateUser } = useSWR(() => ('/api/auth/user/'), () => fetchUserSettings(`/api/auth/user/`))
 
 	const fetchUserSettings = async (endpoint) => {
-    const userSettingsData = await fetchJson(endpoint, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
-      }
-    })
+		const userSettingsData = await fetchJson(endpoint, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'X-CSRFToken': Cookies.get('csrftoken'),
+			}
+		})
 
-    return userSettingsData
-  }
+		return userSettingsData
+	}
 
 	const updateTimestampSettings = async (endpoint, state) => {
-        user.settings.enableLocalTime = state;
+		user.settings.enableLocalTime = state
 
 		const response = await fetch(endpoint, {
-      method: 'PATCH',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
-      },
-      body: JSON.stringify(user),
+			method: 'PATCH',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'X-CSRFToken': Cookies.get('csrftoken'),
+			},
+			body: JSON.stringify(user),
 		})
 
 		const data = await response.json()
 
 		if (response.ok && response.status === 200) {
-      if (data.settings.enableLocalTime) {
-        setSuccessMsg('Local time enabled globally.')
-      } else {
+			if (data.settings.enableLocalTime) {
+				setSuccessMsg('Local time enabled globally.')
+			} else {
 				setSuccessMsg('Local time disabled globally.')
 			}
-            updateUser(data);
-    } else {
-      const error = new Error(response.statusText)
+			updateUser(data)
+		} else {
+			const error = new Error(response.statusText)
 
-      error.response = response
-      error.data = data
+			error.response = response
+			error.data = data
 
-      setErrorMsg('An unexpected error occurred. Please try again.')
+			setErrorMsg('An unexpected error occurred. Please try again.')
 
-      throw error
-    }
+			throw error
+		}
 	}
 
-  const handleToggleTimestamp = async (e) => {
-    e.preventDefault()
+	const handleToggleTimestamp = async (e) => {
+		e.preventDefault()
 
 		await updateTimestampSettings(`/api/auth/user/`, !user.settings.enableLocalTime)
 	}
 
-    if (!user) {
-        return (<div>Loading</div>);
-    }
+	if (!user) {
+		return (<div>Loading...</div>)
+	}
 
-  return (
-    <TimestampSettingsDiv
-      className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}
-    >
-      <div className={`px-4 py-5 sm:p-6`}>
+	return (
+		<TimestampSettingsDiv
+			className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}
+		>
+			<div className={`px-4 py-5 sm:p-6`}>
 				<div>
 					<div>
 						<div>
@@ -178,9 +178,9 @@ const TimestampSettings = () => {
 						</div>
 					</div>
 				</div>
-      </div>
-    </TimestampSettingsDiv>
-  )
+			</div>
+		</TimestampSettingsDiv>
+	)
 }
 
 export default TimestampSettings
