@@ -35,20 +35,21 @@ const SitesDashboardDiv = styled.section``
 
 const SitesDashboard = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const pageTitle = 'Overview |'
 
   const { query } = useRouter()
-  const { data, error } = useSWR(
+  const { data: site, error: siteError } = useSWR(
     () => query.id && `/api/site/${query.id}`,
     fetcher
   )
 
-  if (error) return <div>{error.message}</div>
-  if (!data) return <div>Loading...</div>
+  if (siteError) return <div>{siteError.message}</div>
+  if (!site) return <div>Loading...</div>
 
   return (
     <Layout>
       <Head>
-        <title>Overview | {data.name}</title>
+        <title>{pageTitle} {site.name}</title>
       </Head>
 
       <SitesDashboardDiv
@@ -85,7 +86,7 @@ const SitesDashboard = () => {
           >
             <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <h1 className={`text-2xl font-semibold text-gray-900`}>
-                {data.name}
+                {site.name}
               </h1>
             </div>
             <div
@@ -93,9 +94,9 @@ const SitesDashboard = () => {
             >
               <div>
                 <SitesOverview
-                  url={data.url}
-                  verified={data.verified}
-                  finishedAt={data.finished_at}
+                  url={site.url}
+                  verified={site.verified}
+                  finishedAt={site.updated_at}
                 />
               </div>
             </div>
