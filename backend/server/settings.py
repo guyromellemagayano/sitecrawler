@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "rest_auth.registration",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "django_filters",
     "crawl",
 ]
 
@@ -155,6 +156,11 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
     "PAGE_SIZE": 20,
 }
 

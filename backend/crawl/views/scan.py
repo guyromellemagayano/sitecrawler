@@ -18,6 +18,13 @@ class ScanViewSet(
     serializer_class = ScanSerializer
     serializer_detail_class = ScanDetailSerializer
 
+    filterset_fields = {
+        "started_at": ["gt", "gte", "lt", "lte"],
+        "finished_at": ["isnull", "gt", "gte", "lt", "lte"],
+    }
+    search_fields = []
+    ordering_fields = ["started_at", "finished_at"]
+
     def get_queryset(self):
         queryset = super().get_queryset().filter(site__user=self.request.user)
         if self._is_request_to_detail_endpoint():
