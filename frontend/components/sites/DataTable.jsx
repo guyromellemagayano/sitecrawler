@@ -4,7 +4,6 @@ import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
 import Moment from 'react-moment'
-import Layout from '../../components/Layout'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -59,10 +58,9 @@ const DataTable = props => {
     { refreshInterval: 1000 }
   )
 
-  if (scanIdError) return <Layout>{scanIdError.message}</Layout>
-  if (scanError) return <Layout>{scanError.message}</Layout>
-  if (!scan) return <Layout>Loading...</Layout>
-  if (!scanId) return <Layout>Loading...</Layout>
+  if (scanIdError) return <div>{scanIdError.message}</div>
+  if (scanError) return <div>{scanError.message}</div>
+  if (!scan || !scanId) return <div>Loading...</div>
 
   const calendarStrings = {
     lastDay : '[Yesterday], dddd',
@@ -96,10 +94,18 @@ const DataTable = props => {
       </td>
       <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
         <div className={`text-sm leading-5 text-gray-900`}>
-          <Moment calendar={calendarStrings} date={props.site.updated_at} utc />
+          {props.user.settings.enableLocalTime ? (
+            <Moment calendar={calendarStrings} date={props.site.updated_at} local />
+          ): (
+            <Moment calendar={calendarStrings} date={props.site.updated_at} utc />
+          )}
         </div>
         <div className={`text-sm leading-5 text-gray-500`}>
-          <Moment date={props.site.updated_at} format="hh:mm:ss A" utc />
+          {props.user.settings.enableLocalTime ? (
+            <Moment date={props.site.updated_at} format="hh:mm:ss A" local />
+          ) : (
+            <Moment date={props.site.updated_at} format="hh:mm:ss A" utc />
+          )}
         </div>
       </td>
       <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>

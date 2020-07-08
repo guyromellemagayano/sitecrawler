@@ -1,17 +1,43 @@
-import React from 'react'
-import Link from 'next/link'
+import { Fragment } from 'react'
+import Cookies from 'js-cookie'
+import useSWR from 'swr'
 import styled from 'styled-components'
 import Moment from 'react-moment'
+
+const fetcher = async (url) => {
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get("csrftoken"),
+    },
+  })
+
+  const data = await res.json()
+
+  if (res.status !== 200) {
+    throw new Error(data.message)
+  }
+
+  return data
+}
 
 const SitesOverviewDiv = styled.div``
 
 const SitesOverview = props => {
+  const userApiEndpoint = '/api/auth/user/'
   const calendarStrings = {
-    lastDay : '[Yesterday], dddd [at]',
-    sameDay : '[Today], dddd [at]',
+    lastDay : '[Yesterday], dddd',
+    sameDay : '[Today], dddd',
     lastWeek : 'MMMM DD, YYYY',
     sameElse : 'MMMM DD, YYYY'
   }
+
+  const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
+
+  if (userError) return <div>{userError.message}</div>
+  if (!user) return <div>Loading...</div>
 
   return (
     <SitesOverviewDiv className={`bg-white shadow sm:rounded-lg`}>
@@ -37,8 +63,17 @@ const SitesOverview = props => {
         </div>
         <div className={`my-2 max-w-xl text-sm leading-5 text-gray-500`}>
           <p>
-            <strong>Updated last:</strong> <Moment calendar={calendarStrings} date={props.updatedAt} utc />&nbsp;
-            <Moment date={props.createdAt} format="hh:mm:ss A" utc />
+            {user.settings.enableLocalTime ? (
+              <Fragment>
+                <strong>Updated last:</strong> <Moment calendar={calendarStrings} date={props.finishedAt} local />&nbsp;
+                <Moment date={props.finishedAt} format="hh:mm:ss A" local />
+              </Fragment>
+            ) : (
+              <Fragment>
+                <strong>Updated last:</strong> <Moment calendar={calendarStrings} date={props.finishedAt} utc />&nbsp;
+                <Moment date={props.finishedAt} format="hh:mm:ss A" utc />
+              </Fragment>
+            )}
           </p>
         </div>
         <div className={`mt-4`}>
