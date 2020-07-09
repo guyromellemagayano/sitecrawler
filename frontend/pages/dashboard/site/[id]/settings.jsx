@@ -115,10 +115,6 @@ const SiteSettings = () => {
     setSiteName(e.target.value)
   }
 
-  const handleSiteUrlInputChange = (e) => {
-    setSiteUrl(e.target.value)
-  }
-
 	const handleSiteDeletion = async (e) => {
     e.preventDefault()
     
@@ -254,14 +250,8 @@ const SiteSettings = () => {
                                 id={`site_url`}
                                 value={siteUrl}
                                 name={`site_url`}
-                                disabled={
-                                  disableInputFields == 0 ? true : false
-                                }
-                                className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-                                  disableInputFields == 0 &&
-                                  "opacity-50 bg-gray-300 cursor-not-allowed"
-                                }`}
-                                onChange={handleSiteUrlInputChange}
+                                disabled={`disabled`}
+                                className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 opacity-50 bg-gray-300 cursor-not-allowed`}
                               />
                             </div>
                           </div>
