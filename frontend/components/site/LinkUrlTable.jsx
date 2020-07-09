@@ -1,13 +1,14 @@
-import { Fragment, useState } from "react"
+import { Fragment, useState, useRef } from "react"
 import { useRouter } from "next/router"
 import useSWR from "swr"
 import Cookies from "js-cookie"
 import styled from "styled-components"
 import Moment from "react-moment"
+import { CopyToClipboard } from "react-copy-to-clipboard"
+import Transition from "../../hooks/Transition"
 import SiteDangerBadge from "../badges/SiteDangerBadge"
 import SiteSuccessBadge from "../badges/SiteSuccessBadge"
 import SiteWarningBadge from "../badges/SiteWarningBadge"
-import Transition from "../../hooks/Transition"
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -30,20 +31,31 @@ const fetcher = async (url) => {
 
 const LinkUrlTableDiv = styled.tbody`
   .truncate {
-    max-width: 20rem
+    max-width: 30rem
   }
 `
-const LinkUrlSlideOverDiv = styled.div``
+const LinkUrlSlideOverDiv = styled.div`
+  .url-links {
+    word-break: break-word
+  }
+`
 
 const LinkUrlTable = (props) => {
   const [openSlideOver, setOpenSlideOver] = useState(false)
+  const [copyValue, setCopyValue] = useState(null)
+  const [copied, setCopied] = useState(false)
 
-  const userApiEndpoint = '/api/auth/user/'
+  const userApiEndpoint = "/api/auth/user/"
   const calendarStrings = {
-    lastDay : '[Yesterday], dddd',
-    sameDay : '[Today], dddd',
-    lastWeek : 'MMMM DD, YYYY',
-    sameElse : 'MMMM DD, YYYY'
+    lastDay: "[Yesterday], dddd",
+    sameDay: "[Today], dddd",
+    lastWeek: "MMMM DD, YYYY",
+    sameElse: "MMMM DD, YYYY",
+  }
+
+  const handleUrlCopy = e => {
+    setCopyValue(e)
+    setCopied(true)
   }
 
   const { query } = useRouter()
@@ -79,20 +91,20 @@ const LinkUrlTable = (props) => {
                   {props.val.url}
                 </div>
                 <div className={`text-sm leading-5 text-gray-500`}>
-                  <a
-                    href={`${props.val.url}`}
-                    target={`_blank`}
-                    title={`${props.val.url}`}
-                    className={`mr-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                  >
-                    Visit Link
-                  </a>
                   <button
-                    className={`outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                    className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
                     onClick={(e) => setOpenSlideOver(!openSlideOver)}
                   >
                     Check Details
                   </button>
+                  <a
+                    href={props.val.url}
+                    target={`_blank`}
+                    title={props.val.url}
+                    className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                  >
+                    Visit Link
+                  </a>
                 </div>
               </div>
             </div>
@@ -142,7 +154,7 @@ const LinkUrlTable = (props) => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+              <div className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
             </Transition>
             <section
               className={`absolute inset-y-0 right-0 pl-10 max-w-full flex`}
@@ -174,7 +186,12 @@ const LinkUrlTable = (props) => {
                           <button
                             aria-label="Close panel"
                             className={`text-indigo-200 hover:text-white transition ease-in-out duration-150`}
-                            onClick={(e) => setTimeout(() => setOpenSlideOver(!openSlideOver), 150)}
+                            onClick={(e) =>
+                              setTimeout(
+                                () => setOpenSlideOver(!openSlideOver),
+                                150
+                              )
+                            }
                           >
                             <svg
                               className={`h-6 w-6`}
@@ -194,15 +211,20 @@ const LinkUrlTable = (props) => {
                       </div>
                       <div>
                         <p className={`text-sm leading-5 text-indigo-300`}>
-                          Created at:{" "}
+                          Created at: <br />
                           {user.settings.enableLocalTime ? (
                             <Fragment>
                               <Moment
                                 calendar={calendarStrings}
                                 date={props.val.created_at}
                                 local
-                              />&nbsp; 
-                              <Moment date={props.val.created_at} format="hh:mm:ss A" local />
+                              />
+                              &nbsp
+                              <Moment
+                                date={props.val.created_at}
+                                format="hh:mm:ss A"
+                                local
+                              />
                             </Fragment>
                           ) : (
                             <Fragment>
@@ -210,8 +232,13 @@ const LinkUrlTable = (props) => {
                                 calendar={calendarStrings}
                                 date={props.val.created_at}
                                 utc
-                              />&nbsp; 
-                              <Moment date={props.val.created_at} format="hh:mm:ss A" utc />
+                              />
+                              &nbsp
+                              <Moment
+                                date={props.val.created_at}
+                                format="hh:mm:ss A"
+                                utc
+                              />
                             </Fragment>
                           )}
                         </p>
@@ -233,7 +260,7 @@ const LinkUrlTable = (props) => {
                                 href={`${props.val.url}`}
                                 target={`_blank`}
                                 title={`${props.val.url}`}
-                                className={`block mr-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                                className={`block mr-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 url-links`}
                               >
                                 {props.val.url}
                               </a>
@@ -313,18 +340,75 @@ const LinkUrlTable = (props) => {
                             <dd
                               className={`mt-1 text-sm leading-5 text-gray-900`}
                             >
-                              <ul>
+                              <ul className={`url-links mt-3`}>
                                 {linkDetail.pages.map((val, key) => {
                                   return (
-                                    <li key={key} className={`my-2`}>
-                                      <a
-                                        href={`${props.val.url}`}
-                                        target={`_blank`}
-                                        title={`${props.val.url}`}
-                                        className={`block mr-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                                    <li
+                                      key={key}
+                                      className={`${
+                                        key === linkDetail.pages.length - 1
+                                          ? ""
+                                          : "border-b border-gray-200"
+                                      } border border-gray-200 rounded-md mb-3 pt-3 block text-sm leading-5`}
+                                    >
+                                      <div
+                                        className={`w-full px-3 pt-1 flex-1 flex items-center`}
                                       >
-                                        {val.url}
-                                      </a>
+                                        <svg
+                                          className={`flex-shrink-0 h-5 w-5 text-gray-400`}
+                                          fill="none"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth="2"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            fillRule="evenodd"
+                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                                            clipRule="evenodd"
+                                          />
+                                        </svg>
+                                        <span
+                                          className={`ml-2 flex-1 w-0 break-words`}
+                                        >
+                                          {val.url}
+                                        </span>
+                                      </div>
+                                      <div
+                                        className={`w-full mt-3 border-t border-gray-200 flex-shrink-0`}
+                                      >
+                                        <div
+                                          className={`grid grid-cols-2 divide-x divide-gray-200`}
+                                        >
+                                          <div
+                                            className={`flex justify-center items-center`}
+                                          >
+                                            <CopyToClipboard
+                                              onCopy={handleUrlCopy}
+                                              text={val.url}
+                                            >
+                                              <button
+                                                className={`w-full outline-none hover:outline-none focus:outline-none block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out`}
+                                              >
+                                                {copied && copyValue === val.url
+                                                  ? "Copied!"
+                                                  : "Copy URL"}
+                                              </button>
+                                            </CopyToClipboard>
+                                          </div>
+                                          <div className={`text-center`}>
+                                            <a
+                                              href={val.url}
+                                              target={`_blank`}
+                                              title={val.url}
+                                              className={`block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out`}
+                                            >
+                                              Visit Link
+                                            </a>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </li>
                                   )
                                 })}
@@ -339,9 +423,13 @@ const LinkUrlTable = (props) => {
                     >
                       <span className={`inline-flex rounded-md shadow-sm`}>
                         <button
-                          type="submit"
                           className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
-                          onClick={(e) => setTimeout(() => setOpenSlideOver(!openSlideOver), 150)}
+                          onClick={(e) =>
+                            setTimeout(
+                              () => setOpenSlideOver(!openSlideOver),
+                              150
+                            )
+                          }
                         >
                           Close Window
                         </button>
