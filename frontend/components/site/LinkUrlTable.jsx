@@ -302,19 +302,6 @@ const LinkUrlTable = (props) => {
                             <dt
                               className={`text-sm leading-5 font-medium text-gray-500`}
                             >
-                              Link Location
-                            </dt>
-                            <dd
-                              className={`mt-2 text-sm leading-5 text-gray-900`}
-                            >
-                              {/* Start Link Location URL here */}
-                              {/* End Link Location URL here */}
-                            </dd>
-                          </div>
-                          <div>
-                            <dt
-                              className={`text-sm leading-5 font-medium text-gray-500`}
-                            >
                               Occurences
                             </dt>
                             <dd
