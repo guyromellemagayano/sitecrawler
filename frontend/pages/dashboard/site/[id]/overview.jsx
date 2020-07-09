@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Link from 'next/link'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
@@ -85,9 +86,20 @@ const SitesDashboard = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>
-                {site.name}
-              </h1>
+              <div>
+                <nav className={`hidden sm:flex items-center text-sm leading-5`}>
+                  <Link href={'/dashboard/site/' + query.id + '/overview'}>
+                    <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
+                  </Link>
+                </nav>
+              </div>
+              <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                <div className={`flex-1 min-w-0`}>
+                  <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                    Overview - {site.name}
+                  </h2>
+                </div>
+              </div>
             </div>
             <div
               className={`max-w-6xl mx-auto px-4 py-4 sm:px-6 md:px-8`}

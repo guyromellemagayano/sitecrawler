@@ -157,7 +157,7 @@ const SiteSettings = () => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <div>
                 <nav className={`sm:hidden`}>
                   <Link href={'/dashboard/site/' + query.id + '/overview'}>
