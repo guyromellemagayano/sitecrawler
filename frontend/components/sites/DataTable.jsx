@@ -77,7 +77,14 @@ const DataTable = props => {
         <div className={`flex items-center`}>
           <div className={`mr-4`}>
             <div className={`text-overflow text-sm leading-5 font-medium text-gray-900`}>
-              {props.site.name}
+              <a
+                href={props.site.url}
+                target={`_blank`}
+                title={props.site.url}
+                className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+              >
+                {props.site.name}
+              </a>
             </div>
             <div className={`text-sm leading-5 text-gray-500`}>
               <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
@@ -87,14 +94,6 @@ const DataTable = props => {
                   View Stats
                 </a>
               </Link>
-              <a
-                href={`${props.site.url}`}
-                target={`_blank`}
-                title={`${props.site.url}`}
-                className={`ml-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-              >
-                Visit Link
-              </a>
             </div>
           </div>
         </div>
