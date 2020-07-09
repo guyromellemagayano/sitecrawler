@@ -86,7 +86,7 @@ const LinkOptions = () => {
                     <div
                       className={`origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-xs-lg`}
                     >
-                      <div className={`rounded-md bg-white shadow-xs-xs`}>
+                      <div className={`rounded-md bg-white shadow-xs`}>
                         <div
                           className={`py-1`}
                           role="menu"

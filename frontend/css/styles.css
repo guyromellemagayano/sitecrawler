@@ -18928,6 +18928,10 @@ video {
   transition-delay: 1000ms;
 }
 
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
 @media (min-width: 640px) {
   .sm\:space-y-0 > :not(template) ~ :not(template) {
     --space-y-reverse: 0;

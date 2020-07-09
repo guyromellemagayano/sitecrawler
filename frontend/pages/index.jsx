@@ -121,8 +121,8 @@ const Home = () => {
               </div>
             </div>
             <div className={`hidden md:block text-right`}>
-              <span className={`inline-flex rounded-md shadow-xs-md`}>
-                <span className={`inline-flex rounded-md shadow-xs-xs`}>
+              <span className={`inline-flex rounded-md shadow-md`}>
+                <span className={`inline-flex rounded-md shadow-xs`}>
                   {user === undefined || !user ? (
                     <Link href="/login">
                       <a
