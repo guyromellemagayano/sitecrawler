@@ -95,7 +95,7 @@ const LinkUrlTable = (props) => {
                     className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
                     onClick={(e) => setOpenSlideOver(!openSlideOver)}
                   >
-                    Check Details
+                    Link Details
                   </button>
                   <a
                     href={props.val.url}
