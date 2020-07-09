@@ -88,7 +88,14 @@ const LinkUrlTable = (props) => {
                 <div
                   className={`text-sm leading-5 font-medium text-gray-900 truncate`}
                 >
-                  {props.val.url}
+                  <a
+                    href={props.val.url}
+                    target={`_blank`}
+                    title={props.val.url}
+                    className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                  >
+                    {props.val.url}
+                  </a>
                 </div>
                 <div className={`text-sm leading-5 text-gray-500`}>
                   <button
@@ -97,14 +104,6 @@ const LinkUrlTable = (props) => {
                   >
                     Link Details
                   </button>
-                  <a
-                    href={props.val.url}
-                    target={`_blank`}
-                    title={props.val.url}
-                    className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                  >
-                    Visit Link
-                  </a>
                 </div>
               </div>
             </div>

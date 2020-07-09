@@ -22,16 +22,13 @@ const LinksTable = props => {
           <div className={`flex items-center`}>
             <div>
               <div className={`text-sm leading-5 font-medium text-gray-900`}>
-                {props.val.url}
-              </div>
-              <div className={`text-sm leading-5 text-gray-500`}>
                 <a
-                  href={`${props.val.url}`}
+                  href={props.val.url}
                   target={`_blank`}
-                  title={`${props.val.url}`}
+                  title={props.val.url}
                   className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
                 >
-                  Visit Link
+                  {props.val.url}
                 </a>
               </div>
             </div>
