@@ -65,6 +65,8 @@ const SitesStats = () => {
   if (scanError) return <div>{scanError.message}</div>
   if (!stats) return <div>Loading...</div>
 
+  console.log(useRouter())
+
   return (
     <SitesStatsDiv>
       <div>
@@ -86,7 +88,7 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={useRouter().asPath + 'pages'}>
+                <Link href={'/dashboard/site/' + query.id + '/pages'}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
@@ -112,95 +114,8 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={useRouter().asPath + 'links'}>
+                <Link href={'/dashboard/site/' + query.id + '/links'}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
-                    View all
-                  </a>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
-            <div className={`px-4 py-5 sm:p-6`}>
-              <dl>
-                <dt
-                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
-                >
-                  Working Links
-                </dt>
-                <dd
-                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
-                >
-                  {stats.num_ok_links}
-                </dd>
-              </dl>
-            </div>
-            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
-              <div className={`text-sm leading-5`}>
-                <Link href={useRouter().asPath}>
-                  <a
-                    disabled={`disabled`} 
-                    className={`font-medium text-indigo-300 transition ease-in-out duration-150 cursor-not-allowed`}
-                  >
-                    View all
-                  </a>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
-            <div className={`px-4 py-5 sm:p-6`}>
-              <dl>
-                <dt
-                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
-                >
-                  Links with Issues
-                </dt>
-                <dd
-                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
-                >
-                  {stats.num_non_ok_links}
-                </dd>
-              </dl>
-            </div>
-            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
-              <div className={`text-sm leading-5`}>
-                <Link href={useRouter().asPath}>
-                  <a
-                    disabled={`disabled`} 
-                    className={`font-medium text-indigo-300 transition ease-in-out duration-150 cursor-not-allowed`}
-                  >
-                    View all
-                  </a>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
-            <div className={`px-4 py-5 sm:p-6`}>
-              <dl>
-                <dt
-                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
-                >
-                  External Links
-                </dt>
-                <dd
-                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
-                >
-                  {stats.num_external_links}
-                </dd>
-              </dl>
-            </div>
-            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
-              <div className={`text-sm leading-5`}>
-                <Link href={useRouter().asPath}>
-                  <a
-                    disabled={`disabled`} 
-                    className={`font-medium text-indigo-300 transition ease-in-out duration-150 cursor-not-allowed`}
-                  >
                     View all
                   </a>
                 </Link>
