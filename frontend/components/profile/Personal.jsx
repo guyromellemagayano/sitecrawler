@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
+import fetchJson from '../../hooks/fetchJson'
 
 const ProfileSettingsPersonalDiv = styled.div``
 
@@ -16,7 +17,7 @@ const ProfileSettingsPersonal = () => {
   const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
 
-  const { data: profile } = useSWR(`/api/auth/user/`, () => fetchProfileSettings(`/api/site/user/`), { refreshInterval: 1000 })
+  const { data: profile } = useSWR(`/api/auth/user/`, () => fetchProfileSettings(`/api/auth/user/`), { refreshInterval: 1000 })
 
   useEffect(() => {
     if (profile !== '' && profile !== undefined) {

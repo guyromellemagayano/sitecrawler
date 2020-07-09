@@ -25,9 +25,19 @@ const ProfileSidebar = () => {
   if (!data) return <Layout>Loading...</Layout>
 
   return (
-    <ProfileSidebarDiv className={`flex-shrink-0 flex border-t border-gray-200`}>
+    <ProfileSidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
+      <span
+        className={`flex justify-between items-center mt-1 group px-3 py-2 text-sm leading-5 font-medium text-green-800`}
+      >
+        Basic Plan
+        <Link href="#">
+          <a className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium leading-4 bg-green-200 text-green-800`}>
+            <small>Upgrade</small>
+          </a>
+        </Link>
+      </span>
       <Link href="/dashboard/settings/profile">
-        <a className={`p-4 flex-shrink-0 w-full group block hover:text-gray-900 hover:bg-gray-100 transition ease-in-out duration-150`}>
+        <a className={`border-t p-4 flex-shrink-0 w-full group block hover:text-gray-900 hover:bg-gray-100 transition ease-in-out duration-150`}>
           <div className={`flex items-center`}>
             <div>
               <img
@@ -49,6 +59,13 @@ const ProfileSidebar = () => {
               </p>
             </div>
           </div>
+        </a>
+      </Link>
+      <Link href="/logout">
+        <a
+          className={`border-t mt-1 group text-center px-2 py-2 text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
+        >
+          Sign Out
         </a>
       </Link>
     </ProfileSidebarDiv>
