@@ -116,9 +116,6 @@ const Sites = props => {
                                   </Fragment>
                                 )
                               })}
-                              <th
-                                className={`px-6 py-3 border-b border-gray-200 bg-white`}
-                              ></th>
                             </tr>
                           </thead>
                           <tbody className={`bg-white`}>

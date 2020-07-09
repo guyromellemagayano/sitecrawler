@@ -80,11 +80,18 @@ const DataTable = props => {
               {props.site.name}
             </div>
             <div className={`text-sm leading-5 text-gray-500`}>
+              <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
+                <a
+                  className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                >
+                  View Stats
+                </a>
+              </Link>
               <a
                 href={`${props.site.url}`}
                 target={`_blank`}
                 title={`${props.site.url}`}
-                className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                className={`ml-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
               >
                 Visit Link
               </a>
@@ -132,17 +139,6 @@ const DataTable = props => {
         className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
       >
         {scanId.num_non_ok_links}
-      </td>
-      <td
-        className={`flex-grow px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium`}
-      >
-        <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
-          <a
-            className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-          >
-            View Stats
-          </a>
-        </Link>
       </td>
     </DataTableDiv>
   )
