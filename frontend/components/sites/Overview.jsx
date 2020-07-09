@@ -63,7 +63,7 @@ const SitesOverview = props => {
         </div>
         <div className={`my-2 max-w-xl text-sm leading-5 text-gray-500`}>
           <p>
-            {user.settings.enableLocalTime ? (
+            {!user.settings.disableLocalTime ? (
               <Fragment>
                 <strong>Updated last:</strong> <Moment calendar={calendarStrings} date={props.finishedAt} local />&nbsp;
                 <Moment date={props.finishedAt} format="hh:mm:ss A" local />

@@ -212,7 +212,7 @@ const LinkUrlTable = (props) => {
                       <div>
                         <p className={`text-sm leading-5 text-indigo-300`}>
                           Created at: <br />
-                          {user.settings.enableLocalTime ? (
+                          {!user.settings.disableLocalTime ? (
                             <Fragment>
                               <Moment
                                 calendar={calendarStrings}
