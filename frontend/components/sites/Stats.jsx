@@ -65,8 +65,6 @@ const SitesStats = () => {
   if (scanError) return <div>{scanError.message}</div>
   if (!stats) return <div>Loading...</div>
 
-  console.log(useRouter())
-
   return (
     <SitesStatsDiv>
       <div>
