@@ -5,6 +5,7 @@ import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import useSWR from 'swr'
 import Head from 'next/head'
+import Link from 'next/link'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Layout from '../../../../components/Layout'
@@ -25,6 +26,7 @@ const SiteSettings = () => {
   const [showModal, setShowModal] = useState(false)
 
   const { query } = useRouter()
+  const pageTitle = 'Site Settings |'
   const { data: site } = useSWR(() => (query.id ? `/api/site/${query.id}/` : null), () => fetchSiteSettings(`/api/site/${query.id}/`), { refreshInterval: 1000 })
 
   useEffect(() => {
@@ -126,7 +128,7 @@ const SiteSettings = () => {
   return (
     <Layout>
       <Head>
-        <title>Site Settings |</title>
+        <title>{pageTitle} {siteName}</title>
       </Head>
 
       <SiteSettingsDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
@@ -159,10 +161,37 @@ const SiteSettings = () => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>
-                Site Settings
-              </h1>
+            <div className={`mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+              <div>
+                <nav className={`sm:hidden`}>
+                  <Link href={'/dashboard/site/' + query.id + '/overview'}>
+                    <a className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>
+                      <svg className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                      Back to Overview
+                    </a>
+                  </Link>
+                </nav>
+                <nav className={`hidden sm:flex items-center text-sm leading-5`}>
+                  <Link href={'/dashboard/site/' + query.id + '/overview'}>
+                    <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{siteName}</a>
+                  </Link>
+                  <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
+                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
+                  </svg>
+                  <Link href={'/dashboard/site/' + query.id + '/settings'}>
+                    <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>Site Settings</a>
+                  </Link>
+                </nav>
+              </div>
+              <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                <div className={`flex-1 min-w-0`}>
+                  <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                    Site Settings - {siteName}
+                  </h2>
+                </div>
+              </div>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
               <div className={`mt-5 max-w-6xl bg-white shadow-xs sm:rounded-lg`}>

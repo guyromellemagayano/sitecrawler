@@ -1,5 +1,6 @@
 import { Suspense,Fragment, useState } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
 import useSWR from 'swr'
@@ -41,11 +42,14 @@ const Links = props => {
 
   const { query } = useRouter()
   const pathname = `/dashboard/site/${query.id}/links`
+  const { data: site, error: siteError } = useSWR(
+    () => (query.id ? `/api/site/${query.id}/` : null),
+    fetcher
+  )
+
   const { data: scan, error: scanError } = useSWR(
     () => (query.id ? `/api/site/${query.id}/scan/` : null),
-    fetcher, {
-      refreshInterval: 1000,
-    }
+    fetcher
   )
 
   let scanObjId = ""
@@ -73,12 +77,14 @@ const Links = props => {
 
   if (linkError) return <div>{linkError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
+  if (siteError) return <div>{siteError.message}</div>
   if (!link) return <div>Loading...</div>
+  if (!site) return <div>Loading...</div>
 
   return (
     <Layout>
       <Head>
-        <title>{pageTitle}</title>
+        <title>{pageTitle} {site.name}</title>
       </Head>
 
       <Suspense fallback={<div>loading...</div>}>
@@ -112,8 +118,37 @@ const Links = props => {
               className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
               tabIndex={`0`}
             >
-              <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-                <h1 className={`text-2xl font-semibold text-gray-900`}>All Links</h1>
+              <div className={`mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+                <div>
+                  <nav className={`sm:hidden`}>
+                    <Link href={'/dashboard/site/' + query.id + '/overview'}>
+                      <a className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>
+                        <svg className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/>
+                        </svg>
+                        Back to Overview
+                      </a>
+                    </Link>
+                  </nav>
+                  <nav className={`hidden sm:flex items-center text-sm leading-5`}>
+                    <Link href={'/dashboard/site/' + query.id + '/overview'}>
+                      <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
+                    </Link>
+                    <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
+                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
+                    </svg>
+                    <Link href={'/dashboard/site/' + query.id + '/links'}>
+                      <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>All Links</a>
+                    </Link>
+                  </nav>
+                </div>
+                <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                  <div className={`flex-1 min-w-0`}>
+                    <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                      All Links - {site.name}
+                    </h2>
+                  </div>
+                </div>
               </div>
               <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
                 <LinkOptions />
