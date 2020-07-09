@@ -423,9 +423,7 @@ const SiteSettings = () => {
                     </h3>
                     <div className={`mt-2`}>
                       <p className={`text-sm leading-5 text-gray-500`}>
-                        Capitalize on low hanging fruit to identify a ballpark value
-                        added activity to beta test. Override the digital divide
-                        with additional clickthroughs from DevOps.
+                        Are you sure you want to delete this website? You will lose all its data and settings.
                       </p>
                     </div>
                   </div>
