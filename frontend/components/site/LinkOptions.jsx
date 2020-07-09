@@ -6,6 +6,7 @@ const LinkOptionsDiv = styled.div``
 
 const LinkOptions = () => {
   const [showDropdown, setShowDropdown] = useState(false)
+  const [disableButton, setDisableButton] = useState(true)
 
   const setDropdownToggle = (e) => {
     setShowDropdown(!showDropdown)
@@ -52,7 +53,8 @@ const LinkOptions = () => {
                   <span className={`rounded-md shadow-xs-sm`}>
                     <button
                       type="button"
-                      className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue active:bg-gray-50 active:text-gray-800 transition ease-in-out duration-150`}
+                      disabled="disabled"
+                      className={`${disableButton ? "opacity-50 cursor-not-allowed" : "hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue active:bg-gray-50 active:text-gray-800"}  inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 transition ease-in-out duration-150`}
                       id="options-menu"
                       aria-haspopup="true"
                       aria-expanded={`${showDropdown ? "true" : "false"}`}
