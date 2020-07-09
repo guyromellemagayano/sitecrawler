@@ -8,14 +8,14 @@ const AddSite = () => {
   return (
     <AddSiteDiv className={`py-4`}>
       <div
-        className={`bg-white px-4 py-5 border-b border-gray-200 sm:px-6 bg-white overflow-hidden sm:rounded-lg sm:shadow`}
+        className={`bg-white px-4 py-5 border-b border-gray-200 sm:px-6 bg-white overflow-hidden sm:rounded-lg sm:shadow-xs`}
       >
         <div
           className={`-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap`}
         >
           <div className={`ml-4 mt-2 w-64`}>
             <div>
-              <div className={`mt-1 relative rounded-md shadow-sm`}>
+              <div className={`mt-1 relative rounded-md shadow-xs-sm`}>
                 <div
                   className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none`}
                 >
@@ -40,10 +40,10 @@ const AddSite = () => {
             </div>
           </div>
           <div className={`ml-4 mt-2 flex-shrink-0`}>
-            <span className={`inline-flex rounded-md shadow-sm`}>
+            <span className={`inline-flex rounded-md shadow-xs-sm`}>
               <Link href="/dashboard/sites/start">
                 <a
-                  className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                  className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                 >
                   Add new site
                 </a>

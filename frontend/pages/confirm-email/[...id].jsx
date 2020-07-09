@@ -83,7 +83,7 @@ const ConfirmEmail = () => {
         className={`min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
       >
         <div className={`sm:mx-auto sm:w-full sm:max-w-md`}>
-          <div className={`bg-white shadow sm:rounded-lg`}>
+          <div className={`bg-white shadow-xs sm:rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                 Email Confirmation {success ? "Success" : "Failed"}
@@ -97,7 +97,7 @@ const ConfirmEmail = () => {
                   <Link href="/login">
                     <a
                       type="button"
-                      className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                      className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                     >
                       Go Back to Login
                     </a>
@@ -107,7 +107,7 @@ const ConfirmEmail = () => {
                 <div className={`mt-5`}>
                   <button
                     type="button"
-										className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:shadow-outline-red focus:border-red-700 active:bg-red-700`}
+										className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:shadow-xs-outline-red focus:border-red-700 active:bg-red-700`}
 										onClick={handlePageRefresh}
                   >
                     Reload Link

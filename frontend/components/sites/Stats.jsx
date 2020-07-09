@@ -69,7 +69,7 @@ const SitesStats = () => {
     <SitesStatsDiv>
       <div>
         <div className={`mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3`}>
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt
@@ -95,7 +95,7 @@ const SitesStats = () => {
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt
@@ -121,7 +121,7 @@ const SitesStats = () => {
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt
@@ -150,7 +150,7 @@ const SitesStats = () => {
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt
@@ -179,7 +179,7 @@ const SitesStats = () => {
             </div>
           </div>
 
-          <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
                 <dt

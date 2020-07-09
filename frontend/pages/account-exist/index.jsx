@@ -26,7 +26,7 @@ const AccountExist = () => {
                 <div
                   className={`min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
                 >
-                  <div className={`bg-white shadow sm:rounded-lg`}>
+                  <div className={`bg-white shadow-xs sm:rounded-lg`}>
                     <div className={`px-4 py-5 sm:p-6`}>
                       <h3
                         className={`text-lg leading-6 font-medium text-red-600`}

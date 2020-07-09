@@ -169,7 +169,7 @@ const LinkUrlTable = (props) => {
               >
                 <div className={`w-screen max-w-md`}>
                   <div
-                    className={`h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl overflow-y-auto`}
+                    className={`h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xs-xl overflow-y-auto`}
                   >
                     <header
                       className={`space-y-1 py-6 px-4 bg-indigo-700 sm:px-6`}
@@ -219,7 +219,7 @@ const LinkUrlTable = (props) => {
                                 date={props.val.created_at}
                                 local
                               />
-                              &nbsp
+                              &nbsp;
                               <Moment
                                 date={props.val.created_at}
                                 format="hh:mm:ss A"
@@ -233,7 +233,7 @@ const LinkUrlTable = (props) => {
                                 date={props.val.created_at}
                                 utc
                               />
-                              &nbsp
+                              &nbsp;
                               <Moment
                                 date={props.val.created_at}
                                 format="hh:mm:ss A"
@@ -421,9 +421,9 @@ const LinkUrlTable = (props) => {
                     <div
                       className={`flex-shrink-0 px-4 py-4 space-x-4 flex justify-end`}
                     >
-                      <span className={`inline-flex rounded-md shadow-sm`}>
+                      <span className={`inline-flex rounded-md shadow-xs-sm`}>
                         <button
-                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
+                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
                           onClick={(e) =>
                             setTimeout(
                               () => setOpenSlideOver(!openSlideOver),

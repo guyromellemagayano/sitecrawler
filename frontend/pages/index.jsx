@@ -121,12 +121,12 @@ const Home = () => {
               </div>
             </div>
             <div className={`hidden md:block text-right`}>
-              <span className={`inline-flex rounded-md shadow-md`}>
-                <span className={`inline-flex rounded-md shadow-xs`}>
+              <span className={`inline-flex rounded-md shadow-xs-md`}>
+                <span className={`inline-flex rounded-md shadow-xs-xs`}>
                   {user === undefined || !user ? (
                     <Link href="/login">
                       <a
-                        className={`inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out`}
+                        className={`inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:shadow-xs-outline transition duration-150 ease-in-out`}
                       >
                         Log in
                       </a>
@@ -134,7 +134,7 @@ const Home = () => {
                   ) : (
                     <Link href="/dashboard/sites">
                       <a
-                        className={`inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out`}
+                        className={`inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:shadow-xs-outline transition duration-150 ease-in-out`}
                       >
                         Go to Sites
                       </a>
@@ -157,9 +157,9 @@ const Home = () => {
             <div
               className={`absolute top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden`}
             >
-              <div className={`rounded-lg shadow-md`}>
+              <div className={`rounded-lg shadow-xs-md`}>
                 <div
-                  className={`rounded-lg bg-white shadow-xs overflow-hidden`}
+                  className={`rounded-lg bg-white shadow-xs-xs overflow-hidden`}
                 >
                   <div
                     className={`px-5 pt-4 flex items-center justify-between`}
@@ -278,12 +278,12 @@ const Home = () => {
                   <form action="#" method={`POST`} className={`mt-5 sm:flex`}>
                     <input
                       aria-label={`Email`}
-                      className={`appearance-none block w-full px-3 py-3 border border-gray-300 text-base leading-6 rounded-md placeholder-gray-500 shadow-sm focus:outline-none focus:placeholder-gray-400 focus:shadow-outline focus:border-blue-300 transition duration-150 ease-in-out sm:flex-1`}
+                      className={`appearance-none block w-full px-3 py-3 border border-gray-300 text-base leading-6 rounded-md placeholder-gray-500 shadow-xs-sm focus:outline-none focus:placeholder-gray-400 focus:shadow-xs-outline focus:border-blue-300 transition duration-150 ease-in-out sm:flex-1`}
                       placeholder={`Enter your email`}
                     />
                     <button
                       type={`submit`}
-                      className={`mt-3 w-full px-6 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-gray-800 shadow-sm hover:bg-gray-700 focus:outline-none focus:shadow-outline active:bg-gray-900 transition duration-150 ease-in-out sm:mt-0 sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:items-center sm:w-auto`}
+                      className={`mt-3 w-full px-6 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-gray-800 shadow-xs-sm hover:bg-gray-700 focus:outline-none focus:shadow-xs-outline active:bg-gray-900 transition duration-150 ease-in-out sm:mt-0 sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:items-center sm:w-auto`}
                     >
                       Notify me
                     </button>
@@ -344,10 +344,10 @@ const Home = () => {
                   />
                 </svg>
                 <div
-                  className={`relative mx-auto w-full rounded-lg shadow-lg lg:max-w-md`}
+                  className={`relative mx-auto w-full rounded-lg shadow-xs-lg lg:max-w-md`}
                 >
                   <button
-                    className={`relative block w-full rounded-lg overflow-hidden focus:outline-none focus:shadow-outline`}
+                    className={`relative block w-full rounded-lg overflow-hidden focus:outline-none focus:shadow-xs-outline`}
                   >
                     <img
                       className={`w-full`}

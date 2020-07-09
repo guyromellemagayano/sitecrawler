@@ -165,7 +165,7 @@ const SiteSettings = () => {
               </h1>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              <div className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}>
+              <div className={`mt-5 max-w-6xl bg-white shadow-xs sm:rounded-lg`}>
                 <div className={`px-4 py-5 sm:p-6`}>
                   <form onSubmit={handleSiteUpdate}>
                     <div>
@@ -191,7 +191,7 @@ const SiteSettings = () => {
                             >
                               New Site Name
                             </label>
-                            <div className={`mt-1 flex rounded-md shadow-sm`}>
+                            <div className={`mt-1 flex rounded-md shadow-xs-sm`}>
                               <input
                                 type={`text`}
                                 id={`site_name`}
@@ -219,7 +219,7 @@ const SiteSettings = () => {
                             >
                               New Site URL Link
                             </label>
-                            <div className={`mt-1 flex rounded-md shadow-sm`}>
+                            <div className={`mt-1 flex rounded-md shadow-xs-sm`}>
                               <input
                                 type={`text`}
                                 id={`site_url`}
@@ -242,14 +242,14 @@ const SiteSettings = () => {
                     <div className={`mt-8 border-t border-gray-200 pt-5`}>
                       <div className={`flex justify-between`}>
                         <div className={`flex justify-start`}>
-                          <span className={`inline-flex rounded-md shadow-sm`}>
+                          <span className={`inline-flex rounded-md shadow-xs-sm`}>
                             <button
                               type={`submit`}
                               disabled={disableInputFields == 1 ? true : false}
                               className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
                                 disableInputFields == 1
                                   ? "opacity-50 bg-indigo-300 cursor-not-allowed"
-                                  : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700"
+                                  : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700"
                               }`}
                               onClick={handleEditSiteDetails}
                             >
@@ -287,14 +287,14 @@ const SiteSettings = () => {
                         </div>
                         <div className={`flex justify-end`}>
                           <span
-                            className={`ml-3 inline-flex rounded-md shadow-sm`}
+                            className={`ml-3 inline-flex rounded-md shadow-xs-sm`}
                           >
                             <button
                               type={`submit`}
                               className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
                                 disableInputFields == 0
                                   ? "opacity-50 bg-green-300 cursor-not-allowed"
-                                  : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-outline-green active:bg-green-700"
+                                  : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"
                               }`}
                             >
                               Save Changes
@@ -307,7 +307,7 @@ const SiteSettings = () => {
                 </div>
               </div>
 
-              <div className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}>
+              <div className={`mt-5 max-w-6xl bg-white shadow-xs sm:rounded-lg`}>
                 <div className={`px-4 py-5 sm:p-6`}>
                   <div>
                     <div>
@@ -328,11 +328,11 @@ const SiteSettings = () => {
                     className={`mt-8 border-t border-gray-200 pt-5 flex justify-between`}
                   >
                     <div className={`flex justify-start`}>
-                      <span className={`inline-flex rounded-md shadow-sm`}>
+                      <span className={`inline-flex rounded-md shadow-xs-sm`}>
                         <button
                           type={`button`}
                           id={`siteDeleteModalButton`}
-                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 transition duration-150 ease-in-out hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red active:bg-red-700`}
+                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 transition duration-150 ease-in-out hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-xs-outline-red active:bg-red-700`}
                           onClick={() => setShowModal(!showModal)}
                         >
                           Delete Site
@@ -373,7 +373,7 @@ const SiteSettings = () => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <div
-                className={`bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full sm:p-6`}
+                className={`bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden shadow-xs-xl transform transition-all sm:max-w-lg sm:w-full sm:p-6`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="modal-headline"
@@ -413,22 +413,22 @@ const SiteSettings = () => {
                 </div>
                 <div className={`mt-5 sm:mt-4 sm:flex sm:flex-row-reverse`}>
                   <span
-                    className={`flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto`}
+                    className={`flex w-full rounded-md shadow-xs-sm sm:ml-3 sm:w-auto`}
                   >
                     <button
                       type="button"
-                      className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-red-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
+                      className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-red-600 text-base leading-6 font-medium text-white shadow-xs-sm hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-xs-outline-red transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
                       onClick={(e) => handleSiteDeletion(e)}
                     >
                       Delete
                     </button>
                   </span>
                   <span
-                    className={`mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto`}
+                    className={`mt-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto`}
                   >
                     <button
                       type="button"
-                      className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
+                      className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
                       onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
                     >
                       Cancel

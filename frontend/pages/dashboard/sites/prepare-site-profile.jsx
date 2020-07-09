@@ -61,7 +61,7 @@ const PrepareSiteProfile = props => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+              <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
                 <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
                   <div className={`max-w-6xl pt-4 m-auto`}>
                     <h4
@@ -134,7 +134,7 @@ const PrepareSiteProfile = props => {
                       <Link href="/dashboard/site/[id]" as={`/dashboard/site/${dataQuery.sid}`}>
                         <a
                           type={`button`}
-                          className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                          className={`mt-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                         >
                           Go to Site Overview
                         </a>

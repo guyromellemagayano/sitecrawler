@@ -101,7 +101,7 @@ const ProfileSettingsPersonal = () => {
   }
 
   return (
-    <ProfileSettingsPersonalDiv className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}>
+    <ProfileSettingsPersonalDiv className={`mt-5 max-w-6xl bg-white shadow-xs sm:rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
         <form onSubmit={handleProfileUpdate}>
           <div>
@@ -124,7 +124,7 @@ const ProfileSettingsPersonal = () => {
                   >
                     Username
                   </label>
-                  <div className={`mt-1 flex rounded-md shadow-sm`}>
+                  <div className={`mt-1 flex rounded-md shadow-xs-sm`}>
                     <input
                       type={`text`}
                       id={`username`}
@@ -161,11 +161,11 @@ const ProfileSettingsPersonal = () => {
                         />
                       </svg>
                     </span>
-                    <span className={`ml-5 rounded-md shadow-sm`}>
+                    <span className={`ml-5 rounded-md shadow-xs-sm`}>
                       <button
                         disabled={`disabled`}
                         type={`button`}
-                        className={`py-2 px-3 border border-gray-300 rounded-md text-sm leading-4 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-800 transition duration-150 ease-in-out bg-gray-300 opacity-50 cursor-not-allowed`}
+                        className={`py-2 px-3 border border-gray-300 rounded-md text-sm leading-4 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue active:bg-gray-100 active:text-gray-800 transition duration-150 ease-in-out bg-gray-300 opacity-50 cursor-not-allowed`}
                       >
                         Change
                       </button>
@@ -185,7 +185,7 @@ const ProfileSettingsPersonal = () => {
                   >
                     First name
                   </label>
-                  <div className={`mt-1 rounded-md shadow-sm`}>
+                  <div className={`mt-1 rounded-md shadow-xs-sm`}>
                     <input
                       type={`text`}
                       id={`first_name`}
@@ -208,7 +208,7 @@ const ProfileSettingsPersonal = () => {
                   >
                     Last name
                   </label>
-                  <div className={`mt-1 rounded-md shadow-sm`}>
+                  <div className={`mt-1 rounded-md shadow-xs-sm`}>
                     <input
                       type={`text`}
                       id={`last_name`}
@@ -231,7 +231,7 @@ const ProfileSettingsPersonal = () => {
                   >
                     Email address
                   </label>
-                  <div className={`mt-1 rounded-md shadow-sm`}>
+                  <div className={`mt-1 rounded-md shadow-xs-sm`}>
                     <input
                       id={`email`}
                       type={`email`}
@@ -247,13 +247,13 @@ const ProfileSettingsPersonal = () => {
           <div className={`mt-8 border-t border-gray-200 pt-5`}>
             <div className={`flex justify-between`}>
               <div className={`flex justify-start`}>
-                <span className={`inline-flex rounded-md shadow-sm`}>
+                <span className={`inline-flex rounded-md shadow-xs-sm`}>
                   <button
                     type={`submit`}
                     disabled={disableInputFields == 1 ? true : false}
                     className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
                       disableInputFields == 1 ?
-                        "opacity-50 bg-indigo-300 cursor-not-allowed" : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700"
+                        "opacity-50 bg-indigo-300 cursor-not-allowed" : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700"
                       }`}
                     onClick={handleEditProfile}
                   >
@@ -290,12 +290,12 @@ const ProfileSettingsPersonal = () => {
                 )}
               </div>
               <div className={`flex justify-end`}>
-                <span className={`ml-3 inline-flex rounded-md shadow-sm`}>
+                <span className={`ml-3 inline-flex rounded-md shadow-xs-sm`}>
                   <button
                     type={`submit`}
                     className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
                       disableInputFields == 0 ?
-                        "opacity-50 bg-green-300 cursor-not-allowed" : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-outline-green active:bg-green-700"
+                        "opacity-50 bg-green-300 cursor-not-allowed" : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"
                       }`}
                   >
                     Save Profile Settings

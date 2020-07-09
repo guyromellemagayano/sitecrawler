@@ -7,7 +7,7 @@ const LinkFilter = () => {
   return (
     <LinkFilterDiv className={`pb-4`}>
       <div
-        className={`bg-white px-4 py-5 border-b border-gray-200 sm:px-6 bg-white sm:rounded-lg sm:shadow`}
+        className={`bg-white px-4 py-5 border-b border-gray-200 sm:px-6 bg-white sm:rounded-lg sm:shadow-xs`}
       >
         <div
           className={`-ml-4 -mt-2 flex items-center flex-start flex-wrap sm:flex-no-wrap`}
