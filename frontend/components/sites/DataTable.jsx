@@ -136,7 +136,7 @@ const DataTable = props => {
       <td
         className={`flex-grow px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium`}
       >
-        <Link href="/dashboard/site/[id]/" as={`/dashboard/site/${props.site.id}/`}>
+        <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
           <a
             className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
           >
