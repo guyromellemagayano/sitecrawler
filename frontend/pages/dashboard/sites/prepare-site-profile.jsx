@@ -20,7 +20,7 @@ const PrepareSiteProfile = props => {
 
   useEffect(() => {
     setDataQuery(props)
-    Router.prefetch('/dashboard/site/' + dataQuery.sid)
+    Router.prefetch('/dashboard/site/' + dataQuery.sid + '/overview')
   }, [dataQuery])
 
   return (
@@ -131,7 +131,7 @@ const PrepareSiteProfile = props => {
                     className={`mt-5 sm:flex sm:items-center sm:justify-between`}
                   >
                     <div>
-                      <Link href="/dashboard/site/[id]" as={`/dashboard/site/${dataQuery.sid}`}>
+                      <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${dataQuery.sid}/overview`}>
                         <a
                           type={`button`}
                           className={`mt-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
