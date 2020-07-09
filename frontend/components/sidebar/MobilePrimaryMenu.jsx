@@ -1,12 +1,42 @@
 import { Fragment } from 'react'
 import { useRouter } from 'next/router'
+import fetch from 'node-fetch'
+import useSWR from 'swr'
+import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
 import DashboardPages from '../../public/data/dashboard-pages.json'
 
+const fetcher = async (url) => {
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-CSRFToken': Cookies.get('csrftoken'),
+    },
+  })
+
+  const data = await res.json()
+
+  if (res.status !== 200) {
+    throw new Error(data.message)
+  }
+
+  return data
+}
+
 const PrimaryMenuDiv = styled.nav``
 
-const PrimaryMenu = () => {  
+const PrimaryMenu = () => {
+  const {
+    data: site,
+    error: siteError,
+  } = useSWR('/api/site/', fetcher)
+
+  if (siteError) return <div>{siteError.message}</div>
+  if (!site) return <div>Loading...</div>
+
   return (
     <PrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
       {
@@ -30,7 +60,12 @@ const PrimaryMenu = () => {
                       d={val.icon}
                     />
                   </svg>
-                  {val.title}
+                  <span>{val.title}</span>
+                  {val.url === "/dashboard/sites" && (
+                    <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                      {site.count}
+                    </span>
+                  )}
                 </a>
               </Link>
             </Fragment>
