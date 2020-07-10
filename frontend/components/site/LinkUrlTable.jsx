@@ -31,8 +31,10 @@ const fetcher = async (url) => {
 }
 
 const LinkUrlTableDiv = styled.tbody`
-  .truncate {
-    max-width: 30rem
+  a,
+  div {
+    max-width: 100%;
+    display: block;
   }
 `
 const LinkUrlSlideOverDiv = styled.div`
@@ -46,7 +48,6 @@ const LinkUrlTable = (props) => {
   const [copyValue, setCopyValue] = useState(null)
   const [copied, setCopied] = useState(false)
 
-  const pages = []
   const userApiEndpoint = "/api/auth/user/"
   const calendarStrings = {
     lastDay: "[Yesterday], dddd",
@@ -88,13 +89,13 @@ const LinkUrlTable = (props) => {
             <div className={`flex items-center`}>
               <div>
                 <div
-                  className={`text-sm leading-5 font-medium text-gray-900 truncate`}
+                  className={`text-sm leading-5 font-medium text-gray-900`}
                 >
                   <a
                     href={props.val.url}
                     target={`_blank`}
                     title={props.val.url}
-                    className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                    className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 truncate`}
                   >
                     {props.val.url}
                   </a>
@@ -135,7 +136,7 @@ const LinkUrlTable = (props) => {
           <td
             className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
           >
-            {linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== '' ? Url(linkDetail.pages[0].url).pathname : <em>_domain</em>} {linkDetail.pages.length !== 0 ? <button className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`} onClick={(e) => setOpenSlideOver(!openSlideOver)}>+{parseInt(linkDetail.pages.length - 1)} others</button> : ''}
+            {linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== '' ? Url(linkDetail.pages[0].url).pathname : <em>_domain</em>} {linkDetail.pages.length !== 0 ? <button className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`} onClick={(e) => setOpenSlideOver(!openSlideOver)}>+{parseInt(linkDetail.pages.length - 1)} {(linkDetail.pages.length - 1) > 1 ? "others" : "other"}</button> : ''}
           </td>
           <td
             className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
@@ -381,7 +382,7 @@ const LinkUrlTable = (props) => {
                                             text={val.url}
                                           >
                                             <button
-                                              className={`w-full block text-center p-2 text-xs leading-5 font-medium text-white bg-gray-600 hover:bg-gray-500 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray active:bg-gray-700 transition ease-in-out duration-150`}
+                                              className={`w-full block text-center p-2 text-xs leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
                                             >
                                               {copied && copyValue === val.url
                                                 ? "Copied!"
