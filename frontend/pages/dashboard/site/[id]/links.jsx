@@ -219,7 +219,7 @@ const Links = props => {
                                               type="dark"
                                               effect="solid"
                                               place="bottom"
-                                              multiline="true"
+                                              multiline={true}
                                             >
                                               <span
                                                 className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
