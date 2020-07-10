@@ -63,7 +63,7 @@ const ProfileSidebar = () => {
       </Link>
       <Link href="/logout">
         <a
-          className={`border-t mt-1 group text-center px-2 py-2 text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
+          className={`border-t mt-1 group text-center p-2 text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
         >
           Sign Out
         </a>
