@@ -1,6 +1,7 @@
-import { Suspense,Fragment, useState } from 'react'
+import { Suspense, Fragment, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import ReactTooltip from 'react-tooltip';
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
 import useSWR from 'swr'
@@ -34,7 +35,28 @@ const fetcher = async (url) => {
   return data
 }
 
-const LinksDiv = styled.section``
+const LinksDiv = styled.section`
+  .url-type-tooltip,
+  .status-tooltip {
+    max-width: 15rem;
+    margin-left: 5px;
+    padding: 1rem 1.5rem;
+  }
+  @media only screen and (max-width: 1400px) {
+    td:first-child {
+      max-width: 15rem;
+    }
+  }
+  @media only screen and (min-width: 1600px) {
+    td {
+      min-width: 10rem;
+
+      &:first-child {
+        max-width: 20rem;
+      }
+    }
+  }
+`
 
 const Links = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
@@ -170,10 +192,53 @@ const Links = props => {
                                     <th
                                       className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
                                     >
-                                      {site.label}
+                                      <div className={`flex items-center`}>
+                                        {site.label}
+                                        {site.label === "URL Type" ||
+                                        site.label === "Status" ? (
+                                          <Fragment>
+                                            <a data-tip data-for={site.slug} className={`flex items-center`}>
+                                              <span
+                                                className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
+                                              >
+                                                <svg
+                                                  fill="currentColor"
+                                                  viewBox="0 0 20 20"
+                                                >
+                                                  <path
+                                                    fillRule="evenodd"
+                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                                                    clipRule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </span>
+                                            </a>
+                                            <ReactTooltip
+                                              id={site.slug}
+                                              className={site.slug + "-tooltip"}
+                                              type="dark"
+                                              effect="solid"
+                                              place="bottom"
+                                              multiline="true"
+                                            >
+                                              <span
+                                                className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
+                                              >
+                                                Leverage agile frameworks to
+                                                provide a robust synopsis for
+                                                high level overviews. Iterative
+                                                approaches to corporate strategy
+                                                foster collaborative thinking to
+                                                further the overall value
+                                                proposition.
+                                              </span>
+                                            </ReactTooltip>
+                                          </Fragment>
+                                        ) : null}
+                                      </div>
                                     </th>
                                   </Fragment>
-                                )
+                                );
                               })}
                             </tr>
                           </thead>
