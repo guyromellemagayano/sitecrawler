@@ -1,15 +1,15 @@
-import { Fragment, useState } from "react"
-import { useRouter } from "next/router"
-import useSWR from "swr"
-import Cookies from "js-cookie"
-import styled from "styled-components"
-import Moment from "react-moment"
-import { CopyToClipboard } from "react-copy-to-clipboard"
+import { Fragment, useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import Cookies from 'js-cookie'
+import styled from 'styled-components'
+import Moment from 'react-moment'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Url from 'url-parse'
-import Transition from "../../hooks/Transition"
-import SiteDangerBadge from "../badges/SiteDangerBadge"
-import SiteSuccessBadge from "../badges/SiteSuccessBadge"
-import SiteWarningBadge from "../badges/SiteWarningBadge"
+import Transition from '../../hooks/Transition'
+import SiteDangerBadge from '../badges/SiteDangerBadge'
+import SiteSuccessBadge from '../badges/SiteSuccessBadge'
+import SiteWarningBadge from '../badges/SiteWarningBadge'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -47,6 +47,23 @@ const LinkUrlTable = (props) => {
   const [openSlideOver, setOpenSlideOver] = useState(false)
   const [copyValue, setCopyValue] = useState(null)
   const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    const handleEscKey = (e) => {
+			if (e.keyCode === 27) {
+        setTimeout(
+          () => setOpenSlideOver(!openSlideOver),
+          150
+        )
+			}
+    };
+
+    window.addEventListener("keydown", handleEscKey);
+
+    return () => {
+      window.removeEventListener("keydown", handleEscKey);
+    };
+  }, []);
 
   const userApiEndpoint = "/api/auth/user/"
   const calendarStrings = {
@@ -334,11 +351,7 @@ const LinkUrlTable = (props) => {
                                   return (
                                     <li
                                       key={key}
-                                      className={`${
-                                        key === linkDetail.pages.length - 1
-                                          ? ""
-                                          : "border-b border-gray-200"
-                                      } border border-gray-200 mb-3 pt-1 block text-sm leading-5`}
+                                      className={`border border-gray-200 mb-3 pt-1 block text-sm leading-5`}
                                     >
                                       <div
                                         className={`w-full px-3 pt-1 flex-1 flex items-center`}
@@ -382,7 +395,7 @@ const LinkUrlTable = (props) => {
                                             text={val.url}
                                           >
                                             <button
-                                              className={`w-full block text-center p-2 text-xs leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
+                                              className={`w-full block text-center p-1 text-xs leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
                                             >
                                               {copied && copyValue === val.url
                                                 ? "Copied!"
