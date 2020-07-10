@@ -8,7 +8,13 @@ import SiteDangerBadge from '../badges/SiteDangerBadge'
 import SiteSuccessBadge from '../badges/SiteSuccessBadge'
 import SiteWarningBadge from '../badges/SiteWarningBadge'
 
-const LinksTableDiv = styled.tbody``
+const LinksTableDiv = styled.tbody`
+  a,
+  div {
+    max-width: 100%;
+    display: block;
+  }
+`
 
 const LinksTable = props => {
   const url = new Url(props.val.url)
