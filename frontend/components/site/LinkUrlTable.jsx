@@ -1,4 +1,4 @@
-import { Fragment, useState, useRef } from "react"
+import { Fragment, useState } from "react"
 import { useRouter } from "next/router"
 import useSWR from "swr"
 import Cookies from "js-cookie"
@@ -129,6 +129,11 @@ const LinkUrlTable = (props) => {
             ) : (
               <SiteDangerBadge text={"OTHER ERROR"} />
             )}
+          </td>
+          <td
+            className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          >
+            /fat-cat/
           </td>
           <td
             className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
@@ -330,7 +335,7 @@ const LinkUrlTable = (props) => {
                                         key === linkDetail.pages.length - 1
                                           ? ""
                                           : "border-b border-gray-200"
-                                      } border border-gray-200 rounded-md mb-3 pt-3 block text-sm leading-5`}
+                                      } border border-gray-200 mb-3 pt-1 block text-sm leading-5`}
                                     >
                                       <div
                                         className={`w-full px-3 pt-1 flex-1 flex items-center`}
@@ -353,41 +358,34 @@ const LinkUrlTable = (props) => {
                                         <span
                                           className={`ml-2 flex-1 w-0 break-words`}
                                         >
-                                          {val.url}
+                                          <a
+                                            href={val.url}
+                                            target={`_blank`}
+                                            title={val.url}
+                                            className={`block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out`}
+                                          >
+                                            {val.url}
+                                          </a>
                                         </span>
                                       </div>
                                       <div
-                                        className={`w-full mt-3 border-t border-gray-200 flex-shrink-0`}
+                                        className={`w-full mt-2 border-t border-gray-200 flex-shrink-0`}
                                       >
                                         <div
-                                          className={`grid grid-cols-2 divide-x divide-gray-200`}
+                                          className={`flex justify-center items-center`}
                                         >
-                                          <div
-                                            className={`flex justify-center items-center`}
+                                          <CopyToClipboard
+                                            onCopy={handleUrlCopy}
+                                            text={val.url}
                                           >
-                                            <CopyToClipboard
-                                              onCopy={handleUrlCopy}
-                                              text={val.url}
+                                            <button
+                                              className={`w-full block text-center p-2 text-xs leading-5 font-medium text-white bg-gray-600 hover:bg-gray-500 focus:outline-none focus:border-gray-700 focus:shadow-outline-gray active:bg-gray-700 transition ease-in-out duration-150`}
                                             >
-                                              <button
-                                                className={`w-full outline-none hover:outline-none focus:outline-none block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out`}
-                                              >
-                                                {copied && copyValue === val.url
-                                                  ? "Copied!"
-                                                  : "Copy URL"}
-                                              </button>
-                                            </CopyToClipboard>
-                                          </div>
-                                          <div className={`text-center`}>
-                                            <a
-                                              href={val.url}
-                                              target={`_blank`}
-                                              title={val.url}
-                                              className={`block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out`}
-                                            >
-                                              Visit Link
-                                            </a>
-                                          </div>
+                                              {copied && copyValue === val.url
+                                                ? "Copied!"
+                                                : "Copy URL"}
+                                            </button>
+                                          </CopyToClipboard>
                                         </div>
                                       </div>
                                     </li>
