@@ -27,7 +27,7 @@ const ProfileSidebar = () => {
   return (
     <ProfileSidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
       <span
-        className={`flex justify-between items-center mt-1 group px-3 py-2 text-sm leading-5 font-medium text-green-800`}
+        className={`flex justify-between items-center my-1 group px-3 py-2 text-sm leading-5 font-medium text-green-800`}
       >
         Basic Plan
         <Link href="#">
@@ -63,9 +63,9 @@ const ProfileSidebar = () => {
       </Link>
       <Link href="/logout">
         <a
-          className={`border-t mt-1 group text-center p-2 text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
+          className={`border-t group text-center p-2 text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
         >
-          Sign Out
+          Log out
         </a>
       </Link>
     </ProfileSidebarDiv>
