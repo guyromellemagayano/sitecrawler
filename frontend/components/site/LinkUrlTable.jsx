@@ -5,6 +5,7 @@ import Cookies from "js-cookie"
 import styled from "styled-components"
 import Moment from "react-moment"
 import { CopyToClipboard } from "react-copy-to-clipboard"
+import Url from 'url-parse'
 import Transition from "../../hooks/Transition"
 import SiteDangerBadge from "../badges/SiteDangerBadge"
 import SiteSuccessBadge from "../badges/SiteSuccessBadge"
@@ -45,6 +46,7 @@ const LinkUrlTable = (props) => {
   const [copyValue, setCopyValue] = useState(null)
   const [copied, setCopied] = useState(false)
 
+  const pages = []
   const userApiEndpoint = "/api/auth/user/"
   const calendarStrings = {
     lastDay: "[Yesterday], dddd",
@@ -133,7 +135,7 @@ const LinkUrlTable = (props) => {
           <td
             className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
           >
-            /fat-cat/
+            {linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== '' ? Url(linkDetail.pages[0].url).pathname : <em>_domain</em>} {linkDetail.pages.length !== 0 ? <button className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`} onClick={(e) => setOpenSlideOver(!openSlideOver)}>+{parseInt(linkDetail.pages.length - 1)} others</button> : ''}
           </td>
           <td
             className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
