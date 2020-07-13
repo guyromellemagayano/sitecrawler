@@ -406,8 +406,6 @@ const DataTable = props => {
                   >
                     <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
                       <a
-                        disabled={`disabled`}
-                        type={`submit`}
                         className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                       >
                         Go to Site Overview
