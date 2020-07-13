@@ -283,6 +283,19 @@ const SiteSettings = () => {
                             </button>
                           </span>
 
+                          <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                            <button
+                              disabled={disableInputFields == 1 ? false : true}
+                              className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
+                                disableInputFields == 1 ?
+                                  "hover:text-gray-500 focus:outline-none" : "opacity-50 cursor-not-allowed"
+                                }`}
+                              onClick={handleEditSiteDetails}
+                            >
+                              Cancel Edit
+                            </button>
+                          </span>
+
                           {errorMsg && (
                             <div className={`inline-block ml-2 p-2`}>
                               <div className={`flex`}>
