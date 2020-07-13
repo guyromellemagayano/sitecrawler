@@ -36,6 +36,13 @@ const LinkUrlTableDiv = styled.tbody`
     max-width: 100%;
     display: block;
   }
+
+  .truncate-link {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 4rem;
+  }
 `
 const LinkUrlSlideOverDiv = styled.div`
   .url-links {
@@ -48,22 +55,22 @@ const LinkUrlTable = (props) => {
   const [copyValue, setCopyValue] = useState(null)
   const [copied, setCopied] = useState(false)
 
-  useEffect(() => {
-    const handleEscKey = (e) => {
-			if (e.keyCode === 27) {
-        setTimeout(
-          () => setOpenSlideOver(!openSlideOver),
-          150
-        )
-			}
-    };
+  // useEffect(() => {
+  //   const handleEscKey = (e) => {
+	// 		if (e.keyCode === 27) {
+  //       setTimeout(
+  //         () => setOpenSlideOver(!openSlideOver),
+  //         150
+  //       )
+	// 		}
+  //   };
 
-    window.addEventListener("keydown", handleEscKey);
+  //   window.addEventListener("keydown", handleEscKey);
 
-    return () => {
-      window.removeEventListener("keydown", handleEscKey);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("keydown", handleEscKey);
+  //   };
+  // }, []);
 
   const userApiEndpoint = "/api/auth/user/"
   const calendarStrings = {
@@ -153,7 +160,7 @@ const LinkUrlTable = (props) => {
           <td
             className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
           >
-            {linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== '' ? Url(linkDetail.pages[0].url).pathname : <em>_domain</em>} {linkDetail.pages.length !== 0 ? <button className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`} onClick={(e) => setOpenSlideOver(!openSlideOver)}>+{parseInt(linkDetail.pages.length - 1)} {(linkDetail.pages.length - 1) > 1 ? "others" : "other"}</button> : ''}
+            {linkDetail.pages.length !== 0 ? <button className={`mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`} onClick={(e) => setOpenSlideOver(!openSlideOver)}><span className={`truncate-link`}>{linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== '' ? Url(linkDetail.pages[0].url).pathname : <em>_domain</em>}</span>&nbsp;{(linkDetail.pages.length - 1) > 0 ? "+" + parseInt(linkDetail.pages.length - 1) : null} {(linkDetail.pages.length - 1) > 1 ? "others" : (linkDetail.pages.length - 1) === 1 ? "other" : null}</button> : ''}
           </td>
           <td
             className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
