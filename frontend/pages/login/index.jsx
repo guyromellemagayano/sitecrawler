@@ -162,7 +162,7 @@ const Login = () => {
 
           {!disableLoginForm && (
             <Fragment>
-              <div className={`bg-white py-8 px-4 shadow-xs sm:rounded-lg sm:px-10`}>
+              <div className={`bg-white py-8 px-4 shadow-xs rounded-lg sm:px-10`}>
                 <form onSubmit={handleSubmit}>
                   <div className={`mt-1`}>
                     <label

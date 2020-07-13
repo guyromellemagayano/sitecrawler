@@ -83,7 +83,7 @@ const ConfirmEmail = () => {
         className={`min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
       >
         <div className={`sm:mx-auto sm:w-full sm:max-w-md`}>
-          <div className={`bg-white shadow-xs sm:rounded-lg`}>
+          <div className={`bg-white shadow-xs rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
                 Email Confirmation {success ? "Success" : "Failed"}

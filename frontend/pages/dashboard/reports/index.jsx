@@ -57,7 +57,7 @@ const Reports = () => {
             </div>
             <div className={`max-w-6xl mx-auto px-4 py-4 sm:px-6 md:px-8`}>
               <div className={`inset-0 flex items-center justify-center text-center rounded-md border-gray-900 border-2 border-dashed opacity-25`}>
-                <div className={`px-4 sm:p-6 md:py-8`}>
+                <div className={`p-6 md:py-8`}>
                   <h1 className={`lg:text-xl font-bold leading-7 text-center text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>Coming Soon...</h1>
                 </div>
               </div>

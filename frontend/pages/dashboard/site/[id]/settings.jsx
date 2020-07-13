@@ -190,7 +190,7 @@ const SiteSettings = () => {
               </div>
             </div>
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              <div className={`mt-5 max-w-6xl bg-white shadow-xs sm:rounded-lg`}>
+              <div className={`mt-5 max-w-6xl bg-white shadow-xs rounded-lg`}>
                 <div className={`px-4 py-5 sm:p-6`}>
                   <form onSubmit={handleSiteUpdate}>
                     <div>
@@ -326,7 +326,7 @@ const SiteSettings = () => {
                 </div>
               </div>
 
-              <div className={`mt-5 max-w-6xl bg-white shadow-xs sm:rounded-lg`}>
+              <div className={`mt-5 max-w-6xl bg-white shadow-xs rounded-lg`}>
                 <div className={`px-4 py-5 sm:p-6`}>
                   <div>
                     <div>

@@ -57,14 +57,14 @@ const Support = () => {
               </div>
             </div>
             <div className={`max-w-6xl mx-auto px-4 py-4 sm:px-6 md:px-8`}>
-              <div className={`bg-white shadow sm:rounded-lg`}>
+              <div className={`bg-white shadow rounded-lg`}>
                 <div className={`px-4 py-5 sm:p-6`}>
                   <div className={`mt-2 max-w-xl text-sm leading-5 text-gray-500`}>
                     <p>
                       For support, you can email us at <address className={`inline-block font-semibold`}>support@epicdesignlabs.com</address>
                     </p>
                   </div>
-                  <div className={`mt-3 text-sm leading-5`}>
+                  <div className={`mt-3 mb-2 text-sm leading-5`}>
                     <a href="mailto:support@epicdesignlabs.com" className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                       Send us an email today &rarr;
                     </a>
