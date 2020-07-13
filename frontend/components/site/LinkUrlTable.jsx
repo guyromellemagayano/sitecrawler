@@ -1,13 +1,15 @@
-import { Fragment, useState } from "react"
-import { useRouter } from "next/router"
-import useSWR from "swr"
-import Cookies from "js-cookie"
-import styled from "styled-components"
-import Moment from "react-moment"
-import SiteDangerBadge from "../badges/SiteDangerBadge"
-import SiteSuccessBadge from "../badges/SiteSuccessBadge"
-import SiteWarningBadge from "../badges/SiteWarningBadge"
-import Transition from "../../hooks/Transition"
+import { Fragment, useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import Cookies from 'js-cookie'
+import styled from 'styled-components'
+import Moment from 'react-moment'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
+import Url from 'url-parse'
+import Transition from '../../hooks/Transition'
+import SiteDangerBadge from '../badges/SiteDangerBadge'
+import SiteSuccessBadge from '../badges/SiteSuccessBadge'
+import SiteWarningBadge from '../badges/SiteWarningBadge'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -29,21 +31,58 @@ const fetcher = async (url) => {
 }
 
 const LinkUrlTableDiv = styled.tbody`
-  .truncate {
-    max-width: 20rem
+  a,
+  div {
+    max-width: 100%;
+    display: block;
+  }
+
+  .truncate-link {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 4rem;
   }
 `
-const LinkUrlSlideOverDiv = styled.div``
+const LinkUrlSlideOverDiv = styled.div`
+  .url-links {
+    word-break: break-word
+  }
+`
 
 const LinkUrlTable = (props) => {
   const [openSlideOver, setOpenSlideOver] = useState(false)
+  const [copyValue, setCopyValue] = useState(null)
+  const [copied, setCopied] = useState(false)
 
-  const userApiEndpoint = '/api/auth/user/'
+  // useEffect(() => {
+  //   const handleEscKey = (e) => {
+	// 		if (e.keyCode === 27) {
+  //       setTimeout(
+  //         () => setOpenSlideOver(!openSlideOver),
+  //         150
+  //       )
+	// 		}
+  //   };
+
+  //   window.addEventListener("keydown", handleEscKey);
+
+  //   return () => {
+  //     window.removeEventListener("keydown", handleEscKey);
+  //   };
+  // }, []);
+
+  const userApiEndpoint = "/api/auth/user/"
   const calendarStrings = {
-    lastDay : '[Yesterday], dddd',
-    sameDay : '[Today], dddd',
-    lastWeek : 'MMMM DD, YYYY',
-    sameElse : 'MMMM DD, YYYY'
+    lastDay: "[Yesterday], dddd",
+    sameDay: "[Today], dddd",
+    lastWeek: "MMMM DD, YYYY",
+    sameElse: "MMMM DD, YYYY",
+  }
+
+  const handleUrlCopy = e => {
+    setCopyValue(e)
+    setCopied(true)
   }
 
   const { query } = useRouter()
@@ -74,24 +113,23 @@ const LinkUrlTable = (props) => {
             <div className={`flex items-center`}>
               <div>
                 <div
-                  className={`text-sm leading-5 font-medium text-gray-900 truncate`}
+                  className={`text-sm leading-5 font-medium text-gray-900`}
                 >
-                  {props.val.url}
+                  <a
+                    href={props.val.url}
+                    target={`_blank`}
+                    title={props.val.url}
+                    className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 truncate`}
+                  >
+                    {props.val.url}
+                  </a>
                 </div>
                 <div className={`text-sm leading-5 text-gray-500`}>
-                  <a
-                    href={`${props.val.url}`}
-                    target={`_blank`}
-                    title={`${props.val.url}`}
-                    className={`mr-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                  >
-                    Visit Link
-                  </a>
                   <button
-                    className={`outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                    className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
                     onClick={(e) => setOpenSlideOver(!openSlideOver)}
                   >
-                    Check Details
+                    Link Details
                   </button>
                 </div>
               </div>
@@ -122,7 +160,7 @@ const LinkUrlTable = (props) => {
           <td
             className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
           >
-            /fat-cat/
+            {linkDetail.pages.length !== 0 ? <button className={`mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`} onClick={(e) => setOpenSlideOver(!openSlideOver)}><span className={`truncate-link`}>{linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== '' ? Url(linkDetail.pages[0].url).pathname : <em>_domain</em>}</span>&nbsp;{(linkDetail.pages.length - 1) > 0 ? "+" + parseInt(linkDetail.pages.length - 1) : null} {(linkDetail.pages.length - 1) > 1 ? "others" : (linkDetail.pages.length - 1) === 1 ? "other" : null}</button> : ''}
           </td>
           <td
             className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
@@ -142,7 +180,7 @@ const LinkUrlTable = (props) => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+              <div className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
             </Transition>
             <section
               className={`absolute inset-y-0 right-0 pl-10 max-w-full flex`}
@@ -157,7 +195,7 @@ const LinkUrlTable = (props) => {
               >
                 <div className={`w-screen max-w-md`}>
                   <div
-                    className={`h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl overflow-y-auto`}
+                    className={`h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xs-xl overflow-y-auto`}
                   >
                     <header
                       className={`space-y-1 py-6 px-4 bg-indigo-700 sm:px-6`}
@@ -174,7 +212,12 @@ const LinkUrlTable = (props) => {
                           <button
                             aria-label="Close panel"
                             className={`text-indigo-200 hover:text-white transition ease-in-out duration-150`}
-                            onClick={(e) => setTimeout(() => setOpenSlideOver(!openSlideOver), 150)}
+                            onClick={(e) =>
+                              setTimeout(
+                                () => setOpenSlideOver(!openSlideOver),
+                                150
+                              )
+                            }
                           >
                             <svg
                               className={`h-6 w-6`}
@@ -194,15 +237,20 @@ const LinkUrlTable = (props) => {
                       </div>
                       <div>
                         <p className={`text-sm leading-5 text-indigo-300`}>
-                          Created at:{" "}
-                          {user.settings.enableLocalTime ? (
+                          Created at: <br />
+                          {!user.settings.disableLocalTime ? (
                             <Fragment>
                               <Moment
                                 calendar={calendarStrings}
                                 date={props.val.created_at}
                                 local
-                              />&nbsp; 
-                              <Moment date={props.val.created_at} format="hh:mm:ss A" local />
+                              />
+                              &nbsp;
+                              <Moment
+                                date={props.val.created_at}
+                                format="hh:mm:ss A"
+                                local
+                              />
                             </Fragment>
                           ) : (
                             <Fragment>
@@ -210,8 +258,13 @@ const LinkUrlTable = (props) => {
                                 calendar={calendarStrings}
                                 date={props.val.created_at}
                                 utc
-                              />&nbsp; 
-                              <Moment date={props.val.created_at} format="hh:mm:ss A" utc />
+                              />
+                              &nbsp;
+                              <Moment
+                                date={props.val.created_at}
+                                format="hh:mm:ss A"
+                                utc
+                              />
                             </Fragment>
                           )}
                         </p>
@@ -233,7 +286,7 @@ const LinkUrlTable = (props) => {
                                 href={`${props.val.url}`}
                                 target={`_blank`}
                                 title={`${props.val.url}`}
-                                className={`block mr-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                                className={`block mr-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 url-links`}
                               >
                                 {props.val.url}
                               </a>
@@ -281,19 +334,6 @@ const LinkUrlTable = (props) => {
                             <dt
                               className={`text-sm leading-5 font-medium text-gray-500`}
                             >
-                              Link Location
-                            </dt>
-                            <dd
-                              className={`mt-2 text-sm leading-5 text-gray-900`}
-                            >
-                              {/* Start Link Location URL here */}
-                              {/* End Link Location URL here */}
-                            </dd>
-                          </div>
-                          <div>
-                            <dt
-                              className={`text-sm leading-5 font-medium text-gray-500`}
-                            >
                               Occurences
                             </dt>
                             <dd
@@ -313,18 +353,64 @@ const LinkUrlTable = (props) => {
                             <dd
                               className={`mt-1 text-sm leading-5 text-gray-900`}
                             >
-                              <ul>
+                              <ul className={`url-links mt-3`}>
                                 {linkDetail.pages.map((val, key) => {
                                   return (
-                                    <li key={key} className={`my-2`}>
-                                      <a
-                                        href={`${props.val.url}`}
-                                        target={`_blank`}
-                                        title={`${props.val.url}`}
-                                        className={`block mr-3 text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                                    <li
+                                      key={key}
+                                      className={`border border-gray-200 mb-3 pt-1 block text-sm leading-5`}
+                                    >
+                                      <div
+                                        className={`w-full px-3 pt-1 flex-1 flex items-center`}
                                       >
-                                        {val.url}
-                                      </a>
+                                        <svg
+                                          className={`flex-shrink-0 h-5 w-5 text-gray-400`}
+                                          fill="none"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth="2"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            fillRule="evenodd"
+                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                                            clipRule="evenodd"
+                                          />
+                                        </svg>
+                                        <span
+                                          className={`ml-2 flex-1 w-0 break-words`}
+                                        >
+                                          <a
+                                            href={val.url}
+                                            target={`_blank`}
+                                            title={val.url}
+                                            className={`block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out`}
+                                          >
+                                            {val.url}
+                                          </a>
+                                        </span>
+                                      </div>
+                                      <div
+                                        className={`w-full mt-2 border-t border-gray-200 flex-shrink-0`}
+                                      >
+                                        <div
+                                          className={`flex justify-center items-center`}
+                                        >
+                                          <CopyToClipboard
+                                            onCopy={handleUrlCopy}
+                                            text={val.url}
+                                          >
+                                            <button
+                                              className={`w-full block text-center p-1 text-xs leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
+                                            >
+                                              {copied && copyValue === val.url
+                                                ? "Copied!"
+                                                : "Copy URL"}
+                                            </button>
+                                          </CopyToClipboard>
+                                        </div>
+                                      </div>
                                     </li>
                                   )
                                 })}
@@ -337,11 +423,15 @@ const LinkUrlTable = (props) => {
                     <div
                       className={`flex-shrink-0 px-4 py-4 space-x-4 flex justify-end`}
                     >
-                      <span className={`inline-flex rounded-md shadow-sm`}>
+                      <span className={`inline-flex rounded-md shadow-xs-sm`}>
                         <button
-                          type="submit"
-                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
-                          onClick={(e) => setTimeout(() => setOpenSlideOver(!openSlideOver), 150)}
+                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
+                          onClick={(e) =>
+                            setTimeout(
+                              () => setOpenSlideOver(!openSlideOver),
+                              150
+                            )
+                          }
                         >
                           Close Window
                         </button>

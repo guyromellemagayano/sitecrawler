@@ -87,7 +87,7 @@ const ProfileSettingsPersonal = () => {
   }, [password1, password2])
 
   return (
-    <ProfileSettingsPersonalDiv className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}>
+    <ProfileSettingsPersonalDiv className={`mt-5 max-w-6xl bg-white shadow-xs rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
         <form onSubmit={handlePasswordSubmission}>
           <div>
@@ -110,7 +110,7 @@ const ProfileSettingsPersonal = () => {
                   >
                     New Password
                   </label>
-                  <div className={`mt-1 flex rounded-md shadow-sm`}>
+                  <div className={`mt-1 flex rounded-md shadow-xs-sm`}>
                     <input
                       type={`password`}
                       id={`password1`}
@@ -137,7 +137,7 @@ const ProfileSettingsPersonal = () => {
                   >
                     Confirm Password
                   </label>
-                  <div className={`mt-1 flex rounded-md shadow-sm`}>
+                  <div className={`mt-1 flex rounded-md shadow-xs-sm`}>
                     <input
                       type={`password`}
                       id={`password2`}
@@ -159,17 +159,30 @@ const ProfileSettingsPersonal = () => {
           <div className={`mt-8 border-t border-gray-200 pt-5`}>
             <div className={`flex justify-between`}>
               <div className={`flex justify-start`}>
-                <span className={`inline-flex rounded-md shadow-sm`}>
+                <span className={`inline-flex rounded-md shadow-xs-sm`}>
                   <button
                     type={`submit`}
                     disabled={!disablePasswordFields ? true : false}
                     className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
                       !disablePasswordFields ?
-                        "opacity-50 bg-indigo-300 cursor-not-allowed" : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700"
+                        "opacity-50 bg-indigo-300 cursor-not-allowed" : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700"
                       }`}
                     onClick={handleEditPasswordProfile}
                   >
                     Update Password
+                  </button>
+                </span>
+
+                <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                  <button
+                    disabled={!disablePasswordFields ? false : true}
+                    className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
+                      !disablePasswordFields ?
+                        "hover:text-gray-500 focus:outline-none" : "opacity-50 cursor-not-allowed"
+                      }`}
+                    onClick={handleEditPasswordProfile}
+                  >
+                    Cancel Edit
                   </button>
                 </span>
 
@@ -202,12 +215,12 @@ const ProfileSettingsPersonal = () => {
                 )}
               </div>
               <div className={`flex justify-end`}>
-                <span className={`ml-3 inline-flex rounded-md shadow-sm`}>
+                <span className={`ml-3 inline-flex rounded-md shadow-xs-sm`}>
                   <button
                     type={`submit`}
                     className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
                       disableSubmitButton ?
-                        "opacity-50 bg-green-300 cursor-not-allowed" : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-outline-green active:bg-green-700"
+                        "opacity-50 bg-green-300 cursor-not-allowed" : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"
                       }`}
                   >
                     Save Password

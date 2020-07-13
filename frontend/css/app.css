@@ -1,3 +1,16 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+a:focus,
+a:active,
+button:focus,
+button:active {
+	-webkit-tap-highlight-color: transparent;
+	outline: none;
+}
+
+input,
+textarea {
+	outline: none;
+}

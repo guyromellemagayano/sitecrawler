@@ -18928,6 +18928,19 @@ video {
   transition-delay: 1000ms;
 }
 
+a:focus,
+a:active,
+button:focus,
+button:active {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+input,
+textarea {
+  outline: none;
+}
+
 @media (min-width: 640px) {
   .sm\:space-y-0 > :not(template) ~ :not(template) {
     --space-y-reverse: 0;

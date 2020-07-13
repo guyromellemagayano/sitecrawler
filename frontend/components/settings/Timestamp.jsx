@@ -28,7 +28,7 @@ const TimestampSettings = () => {
 	}
 
 	const updateTimestampSettings = async (endpoint, state) => {
-		user.settings.enableLocalTime = state
+		user.settings.disableLocalTime = state
 
 		const response = await fetch(endpoint, {
 			method: 'PATCH',
@@ -43,7 +43,7 @@ const TimestampSettings = () => {
 		const data = await response.json()
 
 		if (response.ok && response.status === 200) {
-			if (data.settings.enableLocalTime) {
+			if (data.settings.disableLocalTime) {
 				setSuccessMsg('Local time enabled globally.')
 			} else {
 				setSuccessMsg('Local time disabled globally.')
@@ -64,7 +64,7 @@ const TimestampSettings = () => {
 	const handleToggleTimestamp = async (e) => {
 		e.preventDefault()
 
-		await updateTimestampSettings(`/api/auth/user/`, !user.settings.enableLocalTime)
+		await updateTimestampSettings(`/api/auth/user/`, !user.settings.disableLocalTime)
 	}
 
 	if (!user) {
@@ -73,7 +73,7 @@ const TimestampSettings = () => {
 
 	return (
 		<TimestampSettingsDiv
-			className={`mt-5 max-w-6xl bg-white shadow sm:rounded-lg`}
+			className={`mt-5 max-w-6xl bg-white shadow-xs rounded-lg`}
 		>
 			<div className={`px-4 py-5 sm:p-6`}>
 				<div>
@@ -97,16 +97,16 @@ const TimestampSettings = () => {
 										<span
 											role="checkbox"
 											tabIndex="0"
-											aria-checked={user.settings.enableLocalTime}
-											className={`${user.settings.enableLocalTime ? "bg-indigo-600" : "bg-gray-200"} relative inline-flex flex-shrink-0 h-6 w-10 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}
+											aria-checked={!user.settings.disableLocalTime}
+											className={`${!user.settings.disableLocalTime ? "bg-indigo-600" : "bg-gray-200"} relative inline-flex flex-shrink-0 h-6 w-10 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-xs-outline`}
 											onClick={handleToggleTimestamp}
 										>
 											<span
 												aria-hidden="true"
-												className={`${user.settings.enableLocalTime ? "translate-x-4" : "translate-x-0"} relative inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}
+												className={`${!user.settings.disableLocalTime ? "translate-x-4" : "translate-x-0"} relative inline-block h-5 w-5 rounded-full bg-white shadow-xs transform transition ease-in-out duration-200`}
 											>
 												<span
-													className={`${user.settings.enableLocalTime ? "opacity-0 ease-out duration-100" : "opacity-100 ease-in duration-200"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
+													className={`${!user.settings.disableLocalTime ? "opacity-0 ease-out duration-100" : "opacity-100 ease-in duration-200"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
 												>
 													<svg
 														className={`h-3 w-3 text-gray-400`}
@@ -123,7 +123,7 @@ const TimestampSettings = () => {
 													</svg>
 												</span>
 												<span
-													className={`${user.settings.enableLocalTime ? "opacity-100 ease-in duration-200" : "opacity-0 ease-out duration-100"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
+													className={`${!user.settings.disableLocalTime ? "opacity-100 ease-in duration-200" : "opacity-0 ease-out duration-100"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`}
 												>
 													<svg
 														className={`h-3 w-3 text-indigo-600`}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, Fragment } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import Router from 'next/router'
@@ -45,7 +45,7 @@ const SitesVerifyUrl = props => {
     setCopied(true)
   }
 
-  const handleSiteVerification = useCallback(async (e) => {
+  const handleSiteVerification = async (e) => {
     e.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -90,7 +90,7 @@ const SitesVerifyUrl = props => {
 
       throw error
     }
-  })
+  }
 
   useEffect(() => {
     Router.prefetch('/dashboard/sites/information')
@@ -134,7 +134,7 @@ const SitesVerifyUrl = props => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+              <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
                 <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
                   <div className={`max-w-6xl pt-4 m-auto`}>
                     <h4
@@ -157,12 +157,12 @@ const SitesVerifyUrl = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      1. Register a new URL
+                      1. Add new site URL
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-black-600`}
+                      className={`max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400`}
                     >
                       2. Verify the added URL
                     </p>
@@ -171,14 +171,7 @@ const SitesVerifyUrl = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      3. Fill in site information
-                    </p>
-                  </div>
-                  <div className={`wizard-indicator bg-gray-100`}>
-                    <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
-                    >
-                      4. Prepare the site profile
+                      3. Prepare the site profile
                     </p>
                   </div>
                 </div>
@@ -213,7 +206,7 @@ const SitesVerifyUrl = props => {
                           <div>
                             <div className={`my-3 flex`}>
                               <div
-                                className={`rounded-md shadow-sm max-w-sm relative flex-grow focus-within:z-10`}
+                                className={`rounded-md shadow-xs-sm max-w-sm relative flex-grow focus-within:z-10`}
                               >
                                 <input
                                   id="email"
@@ -229,7 +222,7 @@ const SitesVerifyUrl = props => {
                                 text={copyValue}
                               >
                                 <button
-                                  className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
+                                  className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
                                 >
                                   <span>
                                     {copied ? "Copied!" : "Copy to clipboard"}
@@ -263,7 +256,7 @@ const SitesVerifyUrl = props => {
                             <button
                               disabled={`disabled`}
                               type={`submit`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
                             >
                               Verify Site
                             </button>
@@ -272,7 +265,7 @@ const SitesVerifyUrl = props => {
                           <Fragment>
                             <button
                               type={`submit`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
                             >
                               Verify Site
                             </button>
@@ -313,9 +306,10 @@ const SitesVerifyUrl = props => {
                         <div>
                           <Link
                             href={{ 
-                              pathname: '/dashboard/sites/information', 
+                              pathname: '/dashboard/sites/prepare-site-profile', 
                               query: {
                                 sid: dataQuery.id,
+                                sname: dataQuery.name,
                                 surl: dataQuery.url,
                                 vid: dataQuery.verification_id,
                                 v: dataQuery.verified,
@@ -325,7 +319,7 @@ const SitesVerifyUrl = props => {
                           >
                             <a
                               type={`button`}
-                              className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                             >
                               Proceed to Step 3
                             </a>
@@ -347,6 +341,7 @@ const SitesVerifyUrl = props => {
 SitesVerifyUrl.getInitialProps = ({ query }) => {
   return {
     sid: query.sid,
+    sname: query.sname,
     surl: query.surl,
     vid: query.vid,
     v: query.v,
@@ -355,4 +350,14 @@ SitesVerifyUrl.getInitialProps = ({ query }) => {
 
 export default SitesVerifyUrl
 
-SitesVerifyUrl.propTypes = {}
+SitesVerifyUrl.propTypes = {
+  copyValue: PropTypes.string,
+  copied: PropTypes.bool,
+  siteVerifyId: PropTypes.number,
+  errorMsg: PropTypes.string,
+  successMsg: PropTypes.string,
+  dataQuery: PropTypes.object,
+  disableSiteVerify: PropTypes.bool,
+  enableNextStep: PropTypes.bool,
+  pageTitle: PropTypes.string,
+}

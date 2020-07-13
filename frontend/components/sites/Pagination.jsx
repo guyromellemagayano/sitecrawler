@@ -43,7 +43,7 @@ const Pagination = props => {
   }
 
   return (
-    <PaginationDiv className={`bg-white px-4 pb-4 flex items-center justify-between border-t border-gray-200 sm:px-6 align-middle shadow sm:rounded-lg`}>
+    <PaginationDiv className={`bg-white px-4 pb-4 flex items-center justify-between sm:px-6 align-middle shadow-xs rounded-lg`}>
       <div className={`w-0 flex-1 flex`}>
         {currentPage !== 1 && (
           <Link href={props.pathName + `?page=${parseInt(props.page) - 1}`}>

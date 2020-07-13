@@ -53,14 +53,14 @@ const MobileSidebar = props => {
 							<div
 								className={`relative flex-1 flex flex-col max-w-xs w-full bg-white`}
 							>
-								<div className={`absolute top-0 right-0 mt-2 -mr-12 p-1`}>
+								<div className={`absolute top-0 right-0 mt-4 mr-4 p-1`}>
 									<button
 										className={`btn-close-sidebar flex items-center justify-center h-8 w-8 rounded-full focus:outline-none focus:bg-gray-600`}
 										aria-label={`Close sidebar`}
 										onClick={handleUpdateProps}
 									>
 										<svg
-											className={`h-6 w-5 text-white`}
+											className={`h-6 w-5 text-gray-400`}
 											stroke={`currentColor`}
 											fill={`none`}
 											viewBox={`0 0 24 24`}

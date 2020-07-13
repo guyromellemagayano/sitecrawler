@@ -1,17 +1,22 @@
 [
 	{
-		"label": "Link URL"
+		"label": "Link URL",
+		"slug": "link-url"
 	},
 	{
-		"label": "URL Type"
+		"label": "URL Type",
+		"slug": "url-type"
 	},
 	{
-		"label": "Status"
+		"label": "Status",
+		"slug": "status"
 	},
 	{
-		"label": "Link Location"
+		"label": "Link Location",
+		"slug": "link-location"
 	},
 	{
-		"label": "Occurrences"
+		"label": "Occurrences",
+		"slug": "occurrences"
 	}
 ]

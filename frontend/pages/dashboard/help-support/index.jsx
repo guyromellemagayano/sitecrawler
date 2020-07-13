@@ -48,11 +48,29 @@ const Support = () => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <h1 className={`text-2xl font-semibold text-gray-900`}>Help &amp; Support</h1>
+              <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                <div className={`flex-1 min-w-0`}>
+                  <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                    Help and Support
+                  </h2>
+                </div>
+              </div>
             </div>
-            <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              {/* Start Content Here */}
-              {/* End Content Here */}
+            <div className={`max-w-6xl mx-auto px-4 py-4 sm:px-6 md:px-8`}>
+              <div className={`bg-white shadow rounded-lg`}>
+                <div className={`px-4 py-5 sm:p-6`}>
+                  <div className={`mt-2 max-w-xl text-sm leading-5 text-gray-500`}>
+                    <p>
+                      For support, you can email us at <address className={`inline-block font-semibold`}>support@epicdesignlabs.com</address>
+                    </p>
+                  </div>
+                  <div className={`mt-3 mb-2 text-sm leading-5`}>
+                    <a href="mailto:support@epicdesignlabs.com" className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                      Send us an email today &rarr;
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </main>
         </div>

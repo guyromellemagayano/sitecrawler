@@ -20,7 +20,7 @@ const PrepareSiteProfile = props => {
 
   useEffect(() => {
     setDataQuery(props)
-    Router.prefetch('/dashboard/site/' + dataQuery.sid)
+    Router.prefetch('/dashboard/site/' + dataQuery.sid + '/overview')
   }, [dataQuery])
 
   return (
@@ -61,7 +61,7 @@ const PrepareSiteProfile = props => {
             tabIndex={`0`}
           >
             <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <div className={`bg-white overflow-hidden shadow rounded-lg`}>
+              <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
                 <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
                   <div className={`max-w-6xl pt-4 m-auto`}>
                     <h4
@@ -84,7 +84,7 @@ const PrepareSiteProfile = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      1. Register a new URL
+                      1. Add new site URL
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
@@ -96,16 +96,9 @@ const PrepareSiteProfile = props => {
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
+                      className={`max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400`}
                     >
-                      3. Fill in site information
-                    </p>
-                  </div>
-                  <div className={`wizard-indicator bg-green-500`}>
-                    <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-black-600`}
-                    >
-                      4. Prepare the site profile
+                      3. Prepare the site profile
                     </p>
                   </div>
                 </div>
@@ -131,10 +124,10 @@ const PrepareSiteProfile = props => {
                     className={`mt-5 sm:flex sm:items-center sm:justify-between`}
                   >
                     <div>
-                      <Link href="/dashboard/site/[id]" as={`/dashboard/site/${dataQuery.sid}`}>
+                      <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${dataQuery.sid}/overview`}>
                         <a
                           type={`button`}
-                          className={`mt-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-outline-green focus:border-green-700 active:bg-green-700`}
+                          className={`mt-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                         >
                           Go to Site Overview
                         </a>
@@ -164,7 +157,6 @@ PrepareSiteProfile.getInitialProps = ({ query }) => {
 export default PrepareSiteProfile
 
 PrepareSiteProfile.propTypes = {
-  errorMsg: PropTypes.string,
-  successMsg: PropTypes.string,
-  handleSubmit: PropTypes.func,
+  dataQuery: PropTypes.object,
+  pageTitle: PropTypes.string,
 }

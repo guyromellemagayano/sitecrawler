@@ -40,7 +40,7 @@ const SitesOverview = props => {
   if (!user) return <div>Loading...</div>
 
   return (
-    <SitesOverviewDiv className={`bg-white shadow sm:rounded-lg`}>
+    <SitesOverviewDiv className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
         <h2 className={`text-lg leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-all`}>
           <a href={`${props.url}`} target={`_blank`} title={`${props.url}`}>
@@ -63,7 +63,7 @@ const SitesOverview = props => {
         </div>
         <div className={`my-2 max-w-xl text-sm leading-5 text-gray-500`}>
           <p>
-            {user.settings.enableLocalTime ? (
+            {!user.settings.disableLocalTime ? (
               <Fragment>
                 <strong>Updated last:</strong> <Moment calendar={calendarStrings} date={props.finishedAt} local />&nbsp;
                 <Moment date={props.finishedAt} format="hh:mm:ss A" local />
@@ -80,7 +80,7 @@ const SitesOverview = props => {
           <button
             disabled={`disabled`}
             type={`button`}
-            className={`mt-3 mr-3 rounded-md shadow sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 opacity-50 cursor-not-allowed`}
+            className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 opacity-50 cursor-not-allowed`}
           >
             Run Crawler
           </button>

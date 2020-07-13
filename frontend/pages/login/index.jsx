@@ -162,7 +162,7 @@ const Login = () => {
 
           {!disableLoginForm && (
             <Fragment>
-              <div className={`bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10`}>
+              <div className={`bg-white py-8 px-4 shadow-xs rounded-lg sm:px-10`}>
                 <form onSubmit={handleSubmit}>
                   <div className={`mt-1`}>
                     <label
@@ -171,12 +171,12 @@ const Login = () => {
                     >
                       Username
                     </label>
-                    <div className={`mt-1 rounded-md shadow-sm`}>
+                    <div className={`mt-1 rounded-md shadow-xs-sm`}>
                       <input
                         id={`username`}
                         type={`text`}
                         name={`username`}
-                        className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${errorUsernameMsg ? "border-red-300" : "border-gray-300"}`}
+                        className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${errorUsernameMsg ? "border-red-300" : "border-gray-300"}`}
                         aria-describedby={`username`}
                         onChange={(e) => setUsername(e.target.value)}
                       />
@@ -191,12 +191,12 @@ const Login = () => {
                     >
                       Password
                     </label>
-                    <div className={`mt-1 rounded-md shadow-sm`}>
+                    <div className={`mt-1 rounded-md shadow-xs-sm`}>
                       <input
                         id={`password`}
                         type={`password`}
                         name={`password`}
-                        className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${errorPasswordMsg ? "border-red-300" : "border-gray-300"}`}
+                        className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${errorPasswordMsg ? "border-red-300" : "border-gray-300"}`}
                         aria-describedby={`password`}
                         onChange={(e) => setPassword(e.target.value)}
                       />
@@ -231,10 +231,10 @@ const Login = () => {
                   </div>
 
                   <div className={`mt-6`}>
-                    <span className={`block w-full rounded-md shadow-sm`}>
+                    <span className={`block w-full rounded-md shadow-xs-sm`}>
                       <button
                         type={`submit`}
-                        className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
+                        className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
                       >
                         Sign In
                       </button>
@@ -258,11 +258,11 @@ const Login = () => {
 
                   <div className={`mt-6 grid grid-cols-3 gap-3`}>
                     <div>
-                      <span className={`w-full inline-flex rounded-md shadow-sm`}>
+                      <span className={`w-full inline-flex rounded-md shadow-xs-sm`}>
                         <a
                           href={`/auth/google/login/`}
                           type={`button`}
-                          className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out`}
+                          className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition duration-150 ease-in-out`}
                           aria-label={`Sign in with Google`}
                         >
                           <FontAwesomeIcon
@@ -274,7 +274,7 @@ const Login = () => {
                     </div>
 
                     <div>
-                      <span className={`w-full inline-flex rounded-md shadow-sm`}>
+                      <span className={`w-full inline-flex rounded-md shadow-xs-sm`}>
                         <Link href="#">
                           <a
                             type={`button`}
@@ -292,7 +292,7 @@ const Login = () => {
                     </div>
 
                     <div>
-                      <span className={`w-full inline-flex rounded-md shadow-sm`}>
+                      <span className={`w-full inline-flex rounded-md shadow-xs-sm`}>
                         <Link href="#">
                           <a
                             type={`button`}
