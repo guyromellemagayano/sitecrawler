@@ -43,7 +43,7 @@ const ProfileSettingsPersonal = () => {
 
   const updateProfileSettings = async (endpoint, formData) => {
     const response = await fetch(endpoint, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -53,6 +53,8 @@ const ProfileSettingsPersonal = () => {
     })
 
     const data = await response.json()
+
+    console.log(response)
   
     if (response.ok && response.status === 200) {
       if (data) {
@@ -259,6 +261,15 @@ const ProfileSettingsPersonal = () => {
                     onClick={handleEditProfile}
                   >
                     Edit Profile
+                  </button>
+                </span>
+
+                <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                  <button
+                    className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
+                    onClick={handleEditProfile}
+                  >
+                    Cancel Edit
                   </button>
                 </span>
 
