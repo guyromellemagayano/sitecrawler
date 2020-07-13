@@ -52,6 +52,10 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: crawldev
+    command:
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
     volumes:
       - db-data:/var/lib/postgresql/data
 
