@@ -18928,7 +18928,8 @@ video {
   transition-delay: 1000ms;
 }
 
-a {
+a,
+button {
   -webkit-tap-highlight-color: transparent;
 }
 
