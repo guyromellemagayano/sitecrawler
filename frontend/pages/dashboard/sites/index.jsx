@@ -88,9 +88,13 @@ const Sites = props => {
               tabIndex={`0`}
             >
               <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-                <h1 className={`text-2xl font-semibold text-gray-900`}>
-                  Sites
-                </h1>
+                <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                  <div className={`flex-1 min-w-0`}>
+                    <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                      Sites
+                    </h2>
+                  </div>
+                </div>
               </div>
               <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
                 <AddSite />
@@ -100,7 +104,7 @@ const Sites = props => {
                       className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
                     >
                       <div
-                        className={`align-middle inline-block min-w-full shadow-xs overflow-hidden rounded-lg border-gray-200`}
+                        className={`align-middle inline-block min-w-full shadow-xs overflow-hidden sm:rounded-lg border-gray-200`}
                       >
                         <table className={`min-w-full`}>
                           <thead>
@@ -119,10 +123,10 @@ const Sites = props => {
                             </tr>
                           </thead>
                           <tbody className={`bg-white`}>
-                            {site.results &&
+                            {site.results ?
                               site.results.map((val, key) => (
                                 <DataTable key={key} site={val} user={user} />
-                              ))}
+                              )) : null}
                           </tbody>
                         </table>
                       </div>

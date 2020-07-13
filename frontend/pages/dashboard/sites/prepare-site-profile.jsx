@@ -84,7 +84,7 @@ const PrepareSiteProfile = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      1. Register a new URL
+                      1. Add new site URL
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
@@ -96,16 +96,9 @@ const PrepareSiteProfile = props => {
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
+                      className={`max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400`}
                     >
-                      3. Fill in site information
-                    </p>
-                  </div>
-                  <div className={`wizard-indicator bg-green-500`}>
-                    <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-black-600`}
-                    >
-                      4. Prepare the site profile
+                      3. Prepare the site profile
                     </p>
                   </div>
                 </div>
@@ -134,7 +127,7 @@ const PrepareSiteProfile = props => {
                       <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${dataQuery.sid}/overview`}>
                         <a
                           type={`button`}
-                          className={`mt-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
+                          className={`mt-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                         >
                           Go to Site Overview
                         </a>
@@ -164,7 +157,6 @@ PrepareSiteProfile.getInitialProps = ({ query }) => {
 export default PrepareSiteProfile
 
 PrepareSiteProfile.propTypes = {
-  errorMsg: PropTypes.string,
-  successMsg: PropTypes.string,
-  handleSubmit: PropTypes.func,
+  dataQuery: PropTypes.object,
+  pageTitle: PropTypes.string,
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, Fragment } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import Router from 'next/router'
@@ -45,7 +45,7 @@ const SitesVerifyUrl = props => {
     setCopied(true)
   }
 
-  const handleSiteVerification = useCallback(async (e) => {
+  const handleSiteVerification = async (e) => {
     e.preventDefault()
 
     if (errorMsg) setErrorMsg('')
@@ -90,7 +90,7 @@ const SitesVerifyUrl = props => {
 
       throw error
     }
-  })
+  }
 
   useEffect(() => {
     Router.prefetch('/dashboard/sites/information')
@@ -157,12 +157,12 @@ const SitesVerifyUrl = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      1. Register a new URL
+                      1. Add new site URL
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-black-600`}
+                      className={`max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400`}
                     >
                       2. Verify the added URL
                     </p>
@@ -171,14 +171,7 @@ const SitesVerifyUrl = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      3. Fill in site information
-                    </p>
-                  </div>
-                  <div className={`wizard-indicator bg-gray-100`}>
-                    <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
-                    >
-                      4. Prepare the site profile
+                      3. Prepare the site profile
                     </p>
                   </div>
                 </div>
@@ -313,9 +306,10 @@ const SitesVerifyUrl = props => {
                         <div>
                           <Link
                             href={{ 
-                              pathname: '/dashboard/sites/information', 
+                              pathname: '/dashboard/sites/prepare-site-profile', 
                               query: {
                                 sid: dataQuery.id,
+                                sname: dataQuery.name,
                                 surl: dataQuery.url,
                                 vid: dataQuery.verification_id,
                                 v: dataQuery.verified,
@@ -347,6 +341,7 @@ const SitesVerifyUrl = props => {
 SitesVerifyUrl.getInitialProps = ({ query }) => {
   return {
     sid: query.sid,
+    sname: query.sname,
     surl: query.surl,
     vid: query.vid,
     v: query.v,
@@ -355,4 +350,14 @@ SitesVerifyUrl.getInitialProps = ({ query }) => {
 
 export default SitesVerifyUrl
 
-SitesVerifyUrl.propTypes = {}
+SitesVerifyUrl.propTypes = {
+  copyValue: PropTypes.string,
+  copied: PropTypes.bool,
+  siteVerifyId: PropTypes.number,
+  errorMsg: PropTypes.string,
+  successMsg: PropTypes.string,
+  dataQuery: PropTypes.object,
+  disableSiteVerify: PropTypes.bool,
+  enableNextStep: PropTypes.bool,
+  pageTitle: PropTypes.string,
+}
