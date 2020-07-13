@@ -36,6 +36,10 @@ const SiteSettings = () => {
 		}
   }, [site])
 
+  useEffect(() => {
+    Router.prefetch("/dashboard/sites/")
+  })
+
   const fetchSiteSettings = async (endpoint) => {
     const siteSettingsData = await fetchJson(endpoint, {
       method: 'GET',
@@ -91,7 +95,10 @@ const SiteSettings = () => {
       }
     })
 
-    Router.push(redirectTo)
+    setTimeout(
+      () => Router.push(redirectTo),
+      150
+    )
   }
 
   const handleSiteUpdate = async (e) => {
@@ -417,7 +424,7 @@ const SiteSettings = () => {
                   </div>
                   <div className={`mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left`}>
                     <h3
-                      className={`text-lg leading-6 font-medium text-gray-900" id="modal-headline`}
+                      className={`text-lg leading-6 font-medium text-gray-900`} id="modal-headline"
                     >
                       Delete Site
                     </h3>
