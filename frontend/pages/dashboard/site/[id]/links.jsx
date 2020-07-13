@@ -197,7 +197,7 @@ const Links = props => {
                                         {site.label === "URL Type" ||
                                         site.label === "Status" ? (
                                           <Fragment>
-                                            <a data-tip data-for={site.slug} className={`flex items-center`}>
+                                            <a data-tip data-for={site.slug} data-iscapture='true' className={`flex items-center`}>
                                               <span
                                                 className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
                                               >
