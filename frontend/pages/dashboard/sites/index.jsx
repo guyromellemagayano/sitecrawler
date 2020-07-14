@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
 import useSWR from 'swr'
 import DataTableHeadsContent from '../../../public/data/data-table-heads.json'
 import Layout from '../../../components/Layout'
@@ -196,3 +197,11 @@ Sites.getInitialProps = ({ query }) => {
 }
 
 export default Sites
+
+Sites.propTypes = {
+  openMobileSidebar: PropTypes.bool,
+  pageTitle: PropTypes.string,
+  sitesApiEndpoint: PropTypes.string,
+  userApiEndpoint: PropTypes.string,
+  router: PropTypes.elementType,
+}

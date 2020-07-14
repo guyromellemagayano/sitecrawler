@@ -126,4 +126,8 @@ const SitesDashboard = () => {
 
 export default SitesDashboard
 
-SitesDashboard.propTypes = {}
+SitesDashboard.propTypes = {
+  openMobileSidebar: PropTypes.bool,
+  pageTitle: PropTypes.string,
+  query: PropTypes.elementType,
+}
