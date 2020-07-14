@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
@@ -31,10 +32,25 @@ const fetcher = async (url) => {
 }
 
 const LinkUrlTableDiv = styled.tbody`
-  a,
-  div {
+  td {
+    & > div {
+      max-width: 100%;
+      display: block;
+
+      & > div {
+        max-width: 100%;
+        display: block;
+      }
+    }
+  }
+  .link-item {
     max-width: 100%;
     display: block;
+    
+    a {
+      max-width: 100%;
+      display: block;
+    }
   }
 
   .truncate-link {
@@ -50,7 +66,7 @@ const LinkUrlSlideOverDiv = styled.div`
   }
 `
 
-const LinkUrlTable = (props) => {
+const LinkUrlTable = props => {
   const [openSlideOver, setOpenSlideOver] = useState(false)
   const [copyValue, setCopyValue] = useState(null)
   const [copied, setCopied] = useState(false)
@@ -71,8 +87,8 @@ const LinkUrlTable = (props) => {
   const { query } = useRouter()
   const { data: linkDetail, error: linkDetailError } = useSWR(
     () =>
-      query.id
-        ? `/api/site/${query.id}/scan/${props.val.scan_id}/link/${props.val.id}/`
+      query.siteId
+        ? `/api/site/${query.siteId}/scan/${props.val.scan_id}/link/${props.val.id}/`
         : null,
     fetcher,
     {
@@ -96,7 +112,7 @@ const LinkUrlTable = (props) => {
             <div className={`flex items-center`}>
               <div>
                 <div
-                  className={`text-sm leading-5 font-medium text-gray-900`}
+                  className={`link-item text-sm leading-5 font-medium text-gray-900`}
                 >
                   <a
                     href={props.val.url}
@@ -107,13 +123,16 @@ const LinkUrlTable = (props) => {
                     {props.val.url}
                   </a>
                 </div>
-                <div className={`text-sm leading-5 text-gray-500`}>
+                <div className={`flex justify-start inline-text-sm leading-5 text-gray-500`}>
                   <button
                     className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
                     onClick={(e) => setOpenSlideOver(!openSlideOver)}
                   >
                     Link Details
                   </button>
+                  <Link href="/dashboard/site/[id]/link/[id]/detail" as={`/dashboard/site/${query.siteId}/link/${linkDetail.id}/detail`}>
+                    <a className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>View Details</a>
+                  </Link>
                 </div>
               </div>
             </div>
