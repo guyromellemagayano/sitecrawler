@@ -41,7 +41,7 @@ const LinkUrlTableDiv = styled.tbody`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 4rem;
+    max-width: 7rem;
   }
 `
 const LinkUrlSlideOverDiv = styled.div`
@@ -54,23 +54,6 @@ const LinkUrlTable = (props) => {
   const [openSlideOver, setOpenSlideOver] = useState(false)
   const [copyValue, setCopyValue] = useState(null)
   const [copied, setCopied] = useState(false)
-
-  // useEffect(() => {
-  //   const handleEscKey = (e) => {
-	// 		if (e.keyCode === 27) {
-  //       setTimeout(
-  //         () => setOpenSlideOver(!openSlideOver),
-  //         150
-  //       )
-	// 		}
-  //   };
-
-  //   window.addEventListener("keydown", handleEscKey);
-
-  //   return () => {
-  //     window.removeEventListener("keydown", handleEscKey);
-  //   };
-  // }, []);
 
   const userApiEndpoint = "/api/auth/user/"
   const calendarStrings = {
