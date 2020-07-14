@@ -94,37 +94,29 @@ const DataTable = props => {
       sid: e.currentTarget.site_verify_id.value,
     }
 
-    try {
-      const response = await fetch('/api/site/' + props.site.id + '/verify/', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
-        },
-        body: JSON.stringify(body),
-      })
-      
-      const data = await response.json()
+    const response = await fetch('/api/site/' + props.site.id + '/verify/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
+      },
+      body: JSON.stringify(body),
+    })
+    
+    const data = await response.json()
 
-      if (response.ok && data.verified) {
-        setSuccessMsg('Site verification success. Proceed to the next step.')
-        setDisableSiteVerify(!disableSiteVerify)
-        setEnableNextStep(!enableNextStep)
-      } else {
-        const error = new Error(response.statusText)
-  
-        error.response = response
-        error.data = data
-  
-        throw error
-      }
-    } catch(error) {
-      if (!error.data) {
-        error.data = { message: error.message }
-      }
+    if (response.ok && data.verified) {
+      setSuccessMsg('Site verification success. Proceed to the next step.')
+      setDisableSiteVerify(!disableSiteVerify)
+      setEnableNextStep(!enableNextStep)
+    } else if (response.ok && !data.verified) {
+      setErrorMsg('Site verification failed. Please check if your website has our meta tags set up.')
+    } else {
+      const error = new Error(response.statusText)
 
-      setErrorMsg('An unexpected error occurred. Please try again.')
+      error.response = response
+      error.data = data
 
       throw error
     }
@@ -309,8 +301,8 @@ const DataTable = props => {
                 <div
                   className={`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10`}
                 >
-                  <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  <svg className={`h-6 w-6 text-yellow-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                 </div>
                 <div className={`mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left`}>

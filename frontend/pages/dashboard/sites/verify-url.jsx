@@ -55,46 +55,37 @@ const SitesVerifyUrl = props => {
       sid: e.currentTarget.site_verify_id.value,
     }
 
-    try {
-      const response = await fetch('/api/site/' + body.sid + '/verify/', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
-        },
-        body: JSON.stringify(body),
-      })
-      
-      const data = await response.json()
+    console.log(body)
 
-      if (response.ok && data.verified) {
-        setDataQuery(data)
-        setSuccessMsg('Site verification success. Proceed to the next step.')
-        setDisableSiteVerify(!disableSiteVerify)
-        setEnableNextStep(!enableNextStep)
-      } else {
-        const error = new Error(response.statusText)
-  
-        error.response = response
-        error.data = data
-  
-        throw error
-      }
-    } catch(error) {
-      if (!error.data) {
-        error.data = { message: error.message }
-      }
+    const response = await fetch('/api/site/' + body.sid + '/verify/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
+      },
+      body: JSON.stringify(body),
+    })
 
-      setErrorMsg('An unexpected error occurred. Please try again.')
+    console.log(response)
+    
+    const data = await response.json()
+    
+    if (response.ok && data.verified) {
+      setSuccessMsg('Site verification success. Proceed to the next step.')
+      setDisableSiteVerify(!disableSiteVerify)
+      setEnableNextStep(!enableNextStep)
+    } else if (response.ok && !data.verified) {
+      setErrorMsg('Site verification failed. Please check if your website has our meta tags set up.')
+    } else {
+      const error = new Error(response.statusText)
+
+      error.response = response
+      error.data = data
 
       throw error
     }
   }
-
-  useEffect(() => {
-    Router.prefetch('/dashboard/sites/information')
-  }, [dataQuery])
 
   return (
     <Layout>
@@ -157,14 +148,14 @@ const SitesVerifyUrl = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      1. Add new site URL
+                      1. Fill in site information
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400`}
                     >
-                      2. Verify the added URL
+                      2. Verify site
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-gray-100`}>
@@ -182,7 +173,7 @@ const SitesVerifyUrl = props => {
                       <h4
                         className={`text-lg leading-7 font-medium text-gray-900`}
                       >
-                        Verify the added URL
+                        Verify site
                       </h4>
                       <p
                         className={`max-w-6xl text-sm mb-5 leading-5 text-gray-500`}
@@ -318,7 +309,6 @@ const SitesVerifyUrl = props => {
                             replace
                           >
                             <a
-                              type={`button`}
                               className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                             >
                               Proceed to Step 3
