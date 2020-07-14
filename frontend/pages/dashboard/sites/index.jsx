@@ -115,10 +115,50 @@ const Sites = props => {
                                     <th
                                       className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
                                     >
-                                      {site.label}
+                                      <div className="flex items-center justify-between">
+                                        {site.label}
+                                        {/* <div className="flex flex-row">
+                                          <button
+                                            className={`inline-flex`}
+                                          >
+                                            <span
+                                              className={`w-4 h-4 text-gray-400 inline-block`}
+                                            >
+                                              <svg
+                                                fill="none"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                              >
+                                                <path d="M5 15l7-7 7 7"></path>
+                                              </svg>
+                                            </span>
+                                          </button>
+                                          <button
+                                            className={`inline-flex`}
+                                          >
+                                            <span
+                                              className={`w-4 h-4 text-gray-400 inline-block`}
+                                            >
+                                              <svg
+                                                fill="none"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                              >
+                                                <path d="M19 9l-7 7-7-7"></path>
+                                              </svg>
+                                            </span>
+                                          </button>
+                                        </div> */}
+                                      </div>
                                     </th>
                                   </Fragment>
-                                )
+                                );
                               })}
                             </tr>
                           </thead>
@@ -133,11 +173,13 @@ const Sites = props => {
                     </div>
                   </div>
                 </div>
-                <Pagination
-                  pathName={router.pathname}
-                  apiEndpoint={sitesApiEndpoint} 
-                  page={props.page ? props.page : 0}
-                />
+                {props.page ? (
+                  <Pagination
+                    pathName={router.pathname}
+                    apiEndpoint={sitesApiEndpoint} 
+                    page={props.page ? props.page : 0}
+                  />
+                ) : null}
               </div>
             </main>
           </div>
