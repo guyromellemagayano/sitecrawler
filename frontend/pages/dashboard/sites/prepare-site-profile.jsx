@@ -84,14 +84,14 @@ const PrepareSiteProfile = props => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      1. Add new site URL
+                      1. Fill in site information
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      2. Verify the added URL
+                      2. Verify site
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
