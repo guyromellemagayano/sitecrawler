@@ -86,7 +86,7 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={'/dashboard/site/' + query.siteId + '/pages'}>
+                <Link href={'/dashboard/site/[siteId]/pages'} as={`/dashboard/site/${query.siteId}/pages`}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
@@ -112,7 +112,7 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={'/dashboard/site/' + query.siteId + '/links'}>
+                <Link href="/dashboard/site/[siteId]/links" as={`/dashboard/site/${query.siteId}/links`} >
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
