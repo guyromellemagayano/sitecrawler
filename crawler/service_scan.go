@@ -162,8 +162,6 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 }
 
 func (s *scanner) loadURL(url *url.URL) (*CrawlLink, *goquery.Document) {
-	log.Printf("Loading %v", url)
-
 	crawlLink := &CrawlLink{
 		ScanID:    s.Scan.ID,
 		CreatedAt: time.Now(),
@@ -171,6 +169,13 @@ func (s *scanner) loadURL(url *url.URL) (*CrawlLink, *goquery.Document) {
 		Type:      TYPE_OTHER,
 		Status:    STATUS_OK,
 	}
+
+	if !s.isWebScheme(url) {
+		crawlLink.Type = TYPE_NON_WEB
+		return crawlLink, nil
+	}
+
+	log.Printf("Loading %v", url)
 	start := time.Now()
 	defer func() {
 		crawlLink.ResponseTime = int(time.Since(start).Milliseconds())
@@ -249,4 +254,9 @@ func (s *scanner) normalizeURL(parent *url.URL, child string) (*url.URL, error) 
 		return parent.ResolveReference(u), nil
 	}
 	return u, nil
+}
+
+func (s *scanner) isWebScheme(u *url.URL) bool {
+	scheme := strings.ToLower(u.Scheme)
+	return scheme == "http" || scheme == "https"
 }

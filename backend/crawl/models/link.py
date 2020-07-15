@@ -23,10 +23,12 @@ class Link(models.Model):
     TYPE_PAGE = 1
     TYPE_EXTERNAL = 2
     TYPE_OTHER = 3
+    TYPE_NON_WEB = 4
     TYPE_CHOICES = [
         (TYPE_PAGE, "PAGE"),
         (TYPE_EXTERNAL, "EXTERNAL"),
         (TYPE_OTHER, "OTHER"),
+        (TYPE_NON_WEB, "NON_WEB"),
     ]
 
     STATUS_OK = 1
