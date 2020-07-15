@@ -17,7 +17,7 @@ const ProfileSettingsPersonal = () => {
   const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
 
-  const { data: profile } = useSWR(`/api/auth/user/`, () => fetchProfileSettings(`/api/auth/user/`), { refreshInterval: 1000 })
+  const { data: profile } = useSWR(`/api/auth/user/`, () => fetchProfileSettings(`/api/auth/user/`))
 
   useEffect(() => {
     if (profile !== '' && profile !== undefined) {
