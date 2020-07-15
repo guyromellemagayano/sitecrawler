@@ -108,8 +108,6 @@ const LinkDetail = () => {
 
   const pageTitle = `Links Detail | ${linkLocation.url}`
 
-  console.log(user, linkLocation)
-
 	return (
     <Layout>
       <Head>
