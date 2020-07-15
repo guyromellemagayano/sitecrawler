@@ -68,15 +68,15 @@ const Links = props => {
 
   const pageTitle = 'Links |'
 
-  const { query, asPath } = useRouter()
-  const pathname = `/dashboard/site/${query.id}/links`
+  const { query } = useRouter()
+  const pathname = `/dashboard/site/${query.siteId}/links`
   const { data: site, error: siteError } = useSWR(
-    () => (query.id ? `/api/site/${query.id}/` : null),
+    () => (query.siteId ? `/api/site/${query.siteId}/` : null),
     fetcher
   )
 
   const { data: scan, error: scanError } = useSWR(
-    () => (query.id ? `/api/site/${query.id}/scan/` : null),
+    () => (query.siteId ? `/api/site/${query.siteId}/scan/` : null),
     fetcher
   )
 
@@ -96,7 +96,7 @@ const Links = props => {
     })
   }
 
-  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.id}/scan/${scanObjId}/link/?page=` + props.result.page : `/api/site/${query.id}/scan/${scanObjId}/link/`
+  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` + props.result.page : `/api/site/${query.id}/scan/${scanObjId}/link/`
   let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( props.result.page !== undefined ? '&status=' + props.result.status.join('&status=') : '?status=' + props.result.status.join('&status=') ) : ''
   queryString += props.result.type != undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${props.result.type}` : `?type=${props.result.type}` ) : ''
 
@@ -259,7 +259,7 @@ const Links = props => {
               <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
                 <div>
                   <nav className={`sm:hidden`}>
-                    <Link href={'/dashboard/site/' + query.id + '/overview'}>
+                    <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
                       <a className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>
                         <svg className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/>
@@ -269,13 +269,13 @@ const Links = props => {
                     </Link>
                   </nav>
                   <nav className={`hidden sm:flex items-center text-sm leading-5`}>
-                    <Link href={'/dashboard/site/' + query.id + '/overview'}>
+                    <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
                       <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
                     </Link>
                     <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
                       <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
                     </svg>
-                    <Link href={'/dashboard/site/' + query.id + '/links'}>
+                    <Link href={'/dashboard/site/' + query.siteId + '/links'}>
                       <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>All Links</a>
                     </Link>
                   </nav>
@@ -366,11 +366,16 @@ const Links = props => {
                     </div>
                   </div>
                 </div>
-                <Pagination 
-                  pathName={pagePath}
-                  apiEndpoint={scanApiEndpoint}
-                  page={props.result.page ? props.result.page : 0}
-                />
+                {
+                  props.result.page ? (
+                    <Pagination 
+                      pathName={pagePath}
+                      apiEndpoint={scanApiEndpoint}
+                      page={props.result.page ? props.result.page : 0}
+                    />
+                  ) : null
+                }
+
               </div>
             </main>
           </div>

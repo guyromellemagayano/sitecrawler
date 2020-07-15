@@ -25,9 +25,9 @@ const ResetPasswordForm = () => {
 	const pageTitle = 'Reset Password Form'
 
 	useEffect(() => {
-		if (query.id !== '' && query.id !== undefined) {
-			setUid(query.id[0])
-			setToken(query.id[1])
+		if (query.siteId !== '' && query.siteId !== undefined) {
+			setUid(query.siteId[0])
+			setToken(query.siteId[1])
 		}
 	}, [query, uid, token])
 
