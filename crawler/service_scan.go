@@ -2,11 +2,9 @@ package main
 
 import (
 	"container/list"
-	"context"
 	"io"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -19,7 +17,6 @@ const (
 	depthLimit = 100
 	totalLimit = 10000
 	sizeLimit  = 10 * 1024 * 1024
-	timeout    = 5 * time.Second
 )
 
 type ScanService struct {
@@ -27,6 +24,7 @@ type ScanService struct {
 	LinkDao       *LinkDao
 	LinkLinkDao   *LinkLinkDao
 	VerifyService *VerifyService
+	LoadService   *LoadService
 }
 
 func (s *ScanService) ScanSite(scanID int) error {
@@ -192,14 +190,8 @@ func (s *scanner) loadURL(url *url.URL) (*CrawlLink, *goquery.Document) {
 		}
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	resp, err, cancel := s.ScanService.LoadService.Load(url.String())
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, "GET", url.String(), nil)
-	if err != nil {
-		handleError(err)
-		return crawlLink, nil
-	}
-	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		handleError(err)
 		return crawlLink, nil

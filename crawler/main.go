@@ -36,12 +36,14 @@ func main() {
 	linkDao := &LinkDao{DB: db}
 	linkLinkDao := &LinkLinkDao{DB: db}
 
-	verifyService := &VerifyService{SiteDao: siteDao}
+	loadService := &LoadService{}
+	verifyService := &VerifyService{SiteDao: siteDao, LoadService: loadService}
 	scanService := &ScanService{
 		ScanDao:       scanDao,
 		LinkDao:       linkDao,
 		LinkLinkDao:   linkLinkDao,
 		VerifyService: verifyService,
+		LoadService:   loadService,
 	}
 
 	http.Handle("/verify", &VerifyEndpoint{VerifyService: verifyService})

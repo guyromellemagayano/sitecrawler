@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -13,7 +12,8 @@ import (
 const metaTagName = "epic-crawl-id"
 
 type VerifyService struct {
-	SiteDao *SiteDao
+	SiteDao     *SiteDao
+	LoadService *LoadService
 }
 
 func (v *VerifyService) VerifySite(siteID int) error {
@@ -44,7 +44,8 @@ func (v *VerifyService) VerifySite(siteID int) error {
 }
 
 func (v *VerifyService) VerifyURL(url, verificationID string) error {
-	resp, err := http.Get(url)
+	resp, err, cancel := v.LoadService.Load(url)
+	defer cancel()
 	if err != nil {
 		return err
 	}
