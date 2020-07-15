@@ -22,6 +22,7 @@ const SitesInformation = () => {
   const [errorMsg, setErrorMsg] = useState("")
   const [errorSiteUrlMsg, setErrorSiteUrlMsg] = useState("")
   const [siteName, setSiteName] = useState("")
+  const [urlProtocol, setUrlProtocol] = useState("https://")
   const [siteUrl, setSiteUrl] = useState("")
   const [enableNextStep, setEnableNextStep] = useState(false)
   const [dataQuery, setDataQuery] = useState([])
@@ -35,7 +36,7 @@ const SitesInformation = () => {
 
     const body = {
       name: siteName,
-      url: siteUrl,
+      url: e.currentTarget.urlpath.value,
     }
 
     if (
@@ -47,72 +48,74 @@ const SitesInformation = () => {
       body.url !== null
     ) {
       try {
-        const response = await fetch('/api/site/', {
-          method: 'GET',
+        const response = await fetch("/api/site/", {
+          method: "GET",
           headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': Cookies.get('csrftoken'),
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "X-CSRFToken": Cookies.get("csrftoken"),
           },
         })
-        
+
         const data = await response.json()
-  
+
         if (response.ok) {
           if (data) {
-            const result = data.results.find(site => site.url === siteUrl);
-  
+            const result = data.results.find((site) => site.url === siteUrl)
+
             if (typeof result !== "undefined") {
-              setErrorSiteUrlMsg('Unfortunately, this site URL already exists. Please try again.')
+              setErrorSiteUrlMsg(
+                "Unfortunately, this site URL already exists. Please try again."
+              )
               return false
             } else {
               try {
-                const siteResponse = await fetch('/api/site/', {
-                  method: 'POST',
+                const siteResponse = await fetch("/api/site/", {
+                  method: "POST",
                   headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': Cookies.get('csrftoken'),
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": Cookies.get("csrftoken"),
                   },
                   body: JSON.stringify(body),
                 })
-    
+
                 const siteData = await siteResponse.json()
-  
+
                 if (siteResponse.ok) {
                   if (siteData) {
                     setDataQuery(siteData)
-                    setSuccessMsg('Site URL added. Proceed to the next step.')
+                    setSuccessMsg("Site URL added. Proceed to the next step.")
                     setDisableSiteVerify(!disableSiteVerify)
                     setEnableNextStep(!enableNextStep)
                   }
                 }
-              } catch(error) {
+              } catch (error) {
                 if (!error.data) {
                   error.data = { message: error.message }
                 }
-          
-                setErrorMsg('An unexpected error occurred. Please try again.')
-          
+
+                setErrorMsg("An unexpected error occurred. Please try again.")
+
                 throw error
               }
             }
           }
         } else {
           const error = new Error(response.statusText)
-    
+
           error.response = response
           error.data = data
-    
+
           throw error
         }
-      } catch(error) {
+      } catch (error) {
         if (!error.data) {
           error.data = { message: error.message }
         }
-  
-        setErrorSiteUrlMsg('An unexpected error occurred. Please try again.')
-  
+
+        setErrorSiteUrlMsg("An unexpected error occurred. Please try again.")
+
         throw error
       }
     } else {
@@ -124,7 +127,7 @@ const SitesInformation = () => {
         body.siteurl === undefined ||
         body.siteurl === null
       ) {
-        setErrorMsg('Please fill in the empty field.')
+        setErrorMsg("Please fill in the empty field.")
       }
     }
   }
@@ -252,7 +255,7 @@ const SitesInformation = () => {
                             name={`sitename`}
                             value={siteName}
                             className={`${
-                              errorMsg && !siteName 
+                              errorMsg && !siteName
                                 ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                 : "form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                             }`}
@@ -302,26 +305,40 @@ const SitesInformation = () => {
                         >
                           Site URL
                         </label>
-                        <div
-                          className={`mt-1 relative rounded-md shadow-xs-sm`}
-                        >
+                        <div className={`mt-1 relative rounded-md shadow-xs-sm`}>
+                          <div className={`absolute inset-y-0 left-0 flex items-center`}>
+                            <select
+                              value={urlProtocol}
+                              aria-label="site-url"
+                              className={`form-select h-full py-0 pl-3 pr-8 border-transparent bg-transparent text-gray-500 sm:text-sm sm:leading-5`}
+                              onChange={(e) => setUrlProtocol(e.target.value)}
+                            >
+                              <option value="https://">https://</option>
+                              <option value="http://">http://</option>
+                            </select>
+                          </div>
                           <input
                             id={`siteurl`}
-                            type="url"
+                            type="text"
                             name={`siteurl`}
-                            value={siteUrl}
                             className={`${
-                              errorMsg && !siteUrl 
-                                ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                                : "form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                              errorMsg && !siteUrl
+                                ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red form-input block pl-24 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                                : "form-input block pl-24 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                             }`}
-                            placeholder="e.g. https://yourdomain.com"
+                            placeholder="e.g. yourdomain.com"
                             aria-describedby={`site-url`}
                             aria-describedby={`${
                               errorMsg ? "site-url-error" : "site-url"
                             }`}
                             aria-invalid={`${errorMsg ? true : false}`}
                             onChange={(e) => setSiteUrl(e.target.value)}
+                          />
+                          <input
+                            id={`urlpath`}
+                            type="hidden"
+                            name={`urlpath`}
+                            value={urlProtocol + siteUrl}
                           />
                           {errorMsg && !siteUrl ? (
                             <div
