@@ -12,6 +12,9 @@
 		"label": "Total Links"
 	},
 	{
+		"label": "Total Pages"
+	},
+	{
 		"label": "Link Issues"
 	}
 ]

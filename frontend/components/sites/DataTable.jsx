@@ -111,7 +111,7 @@ const DataTable = props => {
       setDisableSiteVerify(!disableSiteVerify)
       setEnableNextStep(!enableNextStep)
     } else if (response.ok && !data.verified) {
-      setErrorMsg('Site verification failed. Please check if your website has our meta tags set up.')
+      setErrorMsg('Site verification failed. You have not verify the site yet.')
     } else {
       const error = new Error(response.statusText)
 
@@ -168,25 +168,16 @@ const DataTable = props => {
           {props.site.url && props.site.name ? (
             <div className={`mr-4`}>
               <div className={`text-overflow text-sm leading-5 font-medium text-gray-900`}>
-                <a
-                  href={props.site.url}
-                  target={`_blank`}
-                  title={props.site.url}
-                  className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                >
-                  {props.site.name}
-                </a>
+                <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
+                  <a
+                    className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                  >
+                    {props.site.name}
+                  </a>
+                </Link>
               </div>
               <div className={`flex justify-start text-sm leading-5 text-gray-500`}>
-                {props.site.verified ? (
-                  <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
-                    <a
-                      className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                    >
-                      View Stats
-                    </a>
-                  </Link>
-                ) : (
+                {!props.site.verified && (
                   <Fragment>
                     <button
                       type={`button`}
@@ -246,12 +237,51 @@ const DataTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
-          {scanId.num_links}
+          <Link href="/dashboard/site/[id]/links" as={`/dashboard/site/${props.site.id}/links`}>
+            <a
+              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+            >
+              {scanId.num_links}
+            </a>
+          </Link>
         </td>
       ) : (
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
-        >0</td>
+        >
+          <Link href="/dashboard/site/[id]/links" as={`/dashboard/site/${props.site.id}/links`}>
+            <a
+              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+            >
+              {scanId.num_links}
+            </a>
+          </Link>
+        </td>
+      )}
+      {scanId.num_pages ? (
+        <td
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
+        >
+          <Link href="/dashboard/site/[id]/pages" as={`/dashboard/site/${props.site.id}/pages`}>
+            <a
+              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+            >
+              {scanId.num_pages}
+            </a>
+          </Link>
+        </td>
+      ) : (
+        <td
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
+        >
+          <Link href="/dashboard/site/[id]/pages" as={`/dashboard/site/${props.site.id}/pages`}>
+            <a
+              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+            >
+              {scanId.num_pages}
+            </a>
+          </Link>
+        </td>
       )}
       {scanId.num_non_ok_links ? (
         <td
