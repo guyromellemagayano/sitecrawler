@@ -55,8 +55,6 @@ const SitesVerifyUrl = props => {
       sid: e.currentTarget.site_verify_id.value,
     }
 
-    console.log(body)
-
     const response = await fetch('/api/site/' + body.sid + '/verify/', {
       method: 'POST',
       headers: {
@@ -66,8 +64,6 @@ const SitesVerifyUrl = props => {
       },
       body: JSON.stringify(body),
     })
-
-    console.log(response)
     
     const data = await response.json()
     
