@@ -1,7 +1,6 @@
-import { useEffect, useState, Fragment } from 'react'
+import { useState, Fragment } from 'react'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
-import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
 import Link from 'next/link'
@@ -28,7 +27,6 @@ const SitesVerifyUrl = props => {
   const [siteVerifyId, setSiteVerifyId] = useState(props.sid)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
-  const [dataQuery, setDataQuery] = useState([])
   const [disableSiteVerify, setDisableSiteVerify] = useState(false)
   const [enableNextStep, setEnableNextStep] = useState(false)
   const pageTitle = 'Verify Site URL'
@@ -72,7 +70,7 @@ const SitesVerifyUrl = props => {
       setDisableSiteVerify(!disableSiteVerify)
       setEnableNextStep(!enableNextStep)
     } else if (response.ok && !data.verified) {
-      setErrorMsg('Site verification failed. Please check if your website has our meta tags set up.')
+      setErrorMsg('Site verification failed. You have not verify the site yet.')
     } else {
       const error = new Error(response.statusText)
 
@@ -169,7 +167,7 @@ const SitesVerifyUrl = props => {
                       <h4
                         className={`text-lg leading-7 font-medium text-gray-900`}
                       >
-                        Verify site
+                        Verify Site: <a href={props.surl} target="_blank" title={props.surl} className={`text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>{props.sname}</a>
                       </h4>
                       <p
                         className={`max-w-6xl text-sm mb-5 leading-5 text-gray-500`}
@@ -226,8 +224,8 @@ const SitesVerifyUrl = props => {
                     </div>
                   </div>
 
-                  <div className={`mt-5 mx-auto sm:flex sm:justify-between`}>
-                    <div>
+                  <div className={`mt-5 sm:flex sm:justify-between`}>
+                    <div className={`sm:flex sm:justify-start`}>
                       <form
                         onSubmit={handleSiteVerification}
                         className={`sm:flex sm:items-center`}
@@ -238,29 +236,44 @@ const SitesVerifyUrl = props => {
                           name={`site_verify_id`}
                           onChange={handleHiddenInputChange}
                         />
-                        {disableSiteVerify ? (
-                          <Fragment>
+                        <span class="inline-flex rounded-md shadow-xs-sm">
+                          {disableSiteVerify ? (
                             <button
                               disabled={`disabled`}
                               type={`submit`}
-                              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                              className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
                             >
                               Verify Site
                             </button>
-                          </Fragment>
-                        ) : (
-                          <Fragment>
+                          ) : (
                             <button
                               type={`submit`}
-                              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                              className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
                             >
                               Verify Site
                             </button>
-                          </Fragment>
-                        )}
+                          )}
+                        </span>
+                        
+                        <span class="inline-flex rounded-md shadow-xs-sm">
+                          <Link 
+                            href={{
+                              pathname: '/dashboard/sites/information',
+                              query: {
+                                sid: props.sid,
+                              },
+                            }}
+                          >
+                            <a
+                              className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 hover:text-gray-500 focus:outline-none`}
+                            >
+                              Go back
+                            </a>
+                          </Link>
+                        </span>
 
                         {errorMsg && (
-                          <div className={`inline-block p-2`}>
+                          <div className={`inline-block ml-2 p-2`}>
                             <div className={`flex`}>
                               <div>
                                 <h3
@@ -274,7 +287,7 @@ const SitesVerifyUrl = props => {
                         )}
 
                         {successMsg && (
-                          <div className={`inline-block p-2`}>
+                          <div className={`inline-block ml-2 p-2`}>
                             <div className={`flex`}>
                               <div>
                                 <h3
@@ -288,6 +301,7 @@ const SitesVerifyUrl = props => {
                         )}
                       </form>
                     </div>
+
                     {enableNextStep ? (
                       <Fragment>
                         <div>
@@ -295,14 +309,9 @@ const SitesVerifyUrl = props => {
                             href={{ 
                               pathname: '/dashboard/sites/prepare-site-profile', 
                               query: {
-                                sid: dataQuery.id,
-                                sname: dataQuery.name,
-                                surl: dataQuery.url,
-                                vid: dataQuery.verification_id,
-                                v: dataQuery.verified,
+                                sid: props.sid,
                               },
                             }}
-                            replace
                           >
                             <a
                               className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState, Fragment } from 'react'
-import fetch from 'node-fetch'
+import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import Router from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
 import Link from 'next/link'
 import PropTypes from 'prop-types'
+import fetchJson from '../../../hooks/fetchJson'
 import Layout from '../../../components/Layout'
 import MobileSidebar from '../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../components/sidebar/MainSidebar'
@@ -16,7 +17,7 @@ const SitesInformationDiv = styled.section`
   }
 `
 
-const SitesInformation = () => {
+const SitesInformation = props => {
   const [disableSiteVerify, setDisableSiteVerify] = useState(false)
   const [successMsg, setSuccessMsg] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
@@ -70,22 +71,44 @@ const SitesInformation = () => {
               return false
             } else {
               try {
-                const siteResponse = await fetch("/api/site/", {
-                  method: "POST",
-                  headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": Cookies.get("csrftoken"),
-                  },
-                  body: JSON.stringify(body),
-                })
+                let siteResponse = ''
+
+                if (props.sid === undefined) {
+                  siteResponse = await fetch("/api/site/", {
+                    method: "POST",
+                    headers: {
+                      Accept: "application/json",
+                      "Content-Type": "application/json",
+                      "X-CSRFToken": Cookies.get("csrftoken"),
+                    },
+                    body: JSON.stringify(body),
+                  }) 
+                } else {
+                  siteResponse = await fetch("/api/site/", {
+                    method: "PATCH",
+                    headers: {
+                      Accept: "application/json",
+                      "Content-Type": "application/json",
+                      "X-CSRFToken": Cookies.get("csrftoken"),
+                    },
+                    body: JSON.stringify(body),
+                  })
+                }
+
+                console.log(siteResponse)
 
                 const siteData = await siteResponse.json()
 
                 if (siteResponse.ok) {
                   if (siteData) {
                     setDataQuery(siteData)
-                    setSuccessMsg("Site URL added. Proceed to the next step.")
+
+                    if (props.sid === undefined) {
+                      setSuccessMsg("Site URL added. Proceed to the next step.")
+                    } else {
+                      setSuccessMsg("Site URL updated. Go back to the last step.")
+                    }
+
                     setDisableSiteVerify(!disableSiteVerify)
                     setEnableNextStep(!enableNextStep)
                   }
@@ -141,6 +164,28 @@ const SitesInformation = () => {
   useEffect(() => {
     Router.prefetch("/dashboard/sites/verify-url")
   }, [dataQuery])
+
+  const { data: site } = useSWR(`/api/site/${props !== undefined ? props.sid : null}`, () => fetchSiteData(`/api/site/` + props.sid))
+
+  useEffect(() => {
+    if (site !== '' && site !== undefined) {
+      setSiteName(site.name)
+      setSiteUrl(site.url)
+    }
+  }, [site])
+
+  const fetchSiteData = async (endpoint) => {
+    const siteData = await fetchJson(endpoint, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
+      }
+    })
+
+    return siteData
+  }
 
   return (
     <Layout>
@@ -253,7 +298,7 @@ const SitesInformation = () => {
                             id={`sitename`}
                             type="text"
                             name={`sitename`}
-                            value={siteName}
+                            value={siteName ? siteName : ''}
                             className={`${
                               errorMsg && !siteName
                                 ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
@@ -319,8 +364,9 @@ const SitesInformation = () => {
                           </div>
                           <input
                             id={`siteurl`}
-                            type="text"
+                            type={`text`}
                             name={`siteurl`}
+                            value={siteUrl ? siteUrl.replace(/^(https?:|)\/\//, '') : ''}
                             className={`${
                               errorMsg && !siteUrl
                                 ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red form-input block pl-24 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
@@ -377,21 +423,44 @@ const SitesInformation = () => {
                         className={`sm:flex sm:items-center sm:justify-between`}
                       >
                         <div>
-                          {disableSiteVerify ? (
-                            <button
-                              disabled={`disabled`}
-                              type={`submit`}
-                              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
-                            >
-                              Add Site Detail
-                            </button>
+                          {props.sid === undefined ? (
+                            <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                              {disableSiteVerify ? (
+                                <button
+                                  disabled={`disabled`}
+                                  type={`submit`}
+                                  className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                                >
+                                  Add Site Detail
+                                </button>
+                              ) : (
+                                <button
+                                  type={`submit`}
+                                  className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                                >
+                                  Add Site Detail
+                                </button>
+                              )}
+                            </span>
                           ) : (
-                            <button
-                              type={`submit`}
-                              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
-                            >
-                              Add Site Detail
-                            </button>
+                            <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                              {disableSiteVerify ? (
+                                <button
+                                  disabled={`disabled`}
+                                  type={`submit`}
+                                  className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+                                >
+                                  Update Site Detail
+                                </button>
+                              ) : (
+                                <button
+                                  type={`submit`}
+                                  className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                                >
+                                  Update Site Detail
+                                </button>
+                              )}
+                            </span>
                           )}
 
                           {successMsg && (
@@ -436,7 +505,6 @@ const SitesInformation = () => {
                                   v: false,
                                 },
                               }}
-                              replace
                             >
                               <a
                                 type={`button`}
@@ -458,6 +526,12 @@ const SitesInformation = () => {
       </SitesInformationDiv>
     </Layout>
   )
+}
+
+SitesInformation.getInitialProps = ({ query }) => {
+  return {
+    sid: query.sid,
+  }
 }
 
 export default SitesInformation
