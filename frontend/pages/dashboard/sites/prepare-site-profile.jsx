@@ -147,10 +147,6 @@ const PrepareSiteProfile = props => {
 PrepareSiteProfile.getInitialProps = ({ query }) => {
   return {
     sid: query.sid,
-    sname: query.sname,
-    surl: query.surl,
-    vid: query.vid,
-    v: query.v,
   }
 }
 
