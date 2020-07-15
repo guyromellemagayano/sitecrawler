@@ -207,7 +207,7 @@ const SitesInformation = () => {
                     <p
                       className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
                     >
-                      2. Verify the added URL
+                      2. Verify site
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-gray-100`}>

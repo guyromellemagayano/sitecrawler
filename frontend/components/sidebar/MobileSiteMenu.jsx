@@ -36,7 +36,7 @@ const SiteMenu = () => {
   const {
     data: scan,
     error: scanError,
-  } = useSWR(() => (query.id ? `/api/site/${query.id}/scan/` : null), fetcher)
+  } = useSWR(() => (query.siteId ? `/api/site/${query.siteId}/scan/` : null), fetcher)
 
   let scanObjId = ""
 
@@ -56,8 +56,8 @@ const SiteMenu = () => {
 
   const { data: stats, error: statsError } = useSWR(
     () =>
-      query.id && scanObjId
-        ? `/api/site/${query.id}/scan/${scanObjId}/`
+      query.siteId && scanObjId
+        ? `/api/site/${query.siteId}/scan/${scanObjId}/`
         : null,
     fetcher
   )
@@ -75,12 +75,12 @@ const SiteMenu = () => {
             href={
               val.url.indexOf("/dashboard/sites") > -1
                 ? val.url
-                : "/dashboard/site/" + useRouter().query.id + val.url
+                : "/dashboard/site/" + useRouter().query.siteId + val.url
             }
           >
             <a
               className={`${
-                useRouter().asPath.includes("/dashboard/site/" + useRouter().query.id + val.url)  
+                useRouter().asPath.includes("/dashboard/site/" + useRouter().query.siteId + val.url)  
                   ? "group mt-1 flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-900 rounded-md bg-gray-100 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
                   : "mt-1 group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150"
               }`}

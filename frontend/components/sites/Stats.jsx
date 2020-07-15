@@ -31,7 +31,7 @@ const SitesStats = () => {
   const {
     data: scan,
     error: scanError,
-  } = useSWR(() => (query.id ? `/api/site/${query.id}/scan/` : null), fetcher, {
+  } = useSWR(() => (query.siteId ? `/api/site/${query.siteId}/scan/` : null), fetcher, {
     refreshInterval: 1000,
   })
 
@@ -53,8 +53,8 @@ const SitesStats = () => {
 
   const { data: stats, error: statsError } = useSWR(
     () =>
-      query.id && scanObjId
-        ? `/api/site/${query.id}/scan/${scanObjId}/`
+      query.siteId && scanObjId
+        ? `/api/site/${query.siteId}/scan/${scanObjId}/`
         : null,
     fetcher, {
       refreshInterval: 1000,
@@ -86,7 +86,7 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={'/dashboard/site/' + query.id + '/pages'}>
+                <Link href={'/dashboard/site/' + query.siteId + '/pages'}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
@@ -112,7 +112,7 @@ const SitesStats = () => {
             </div>
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
-                <Link href={'/dashboard/site/' + query.id + '/links'}>
+                <Link href={'/dashboard/site/' + query.siteId + '/links'}>
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
