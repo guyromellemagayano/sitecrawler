@@ -96,14 +96,14 @@ const Links = props => {
     })
   }
 
-  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` + props.result.page : `/api/site/${query.id}/scan/${scanObjId}/link/`
+  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/link/`
   let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( props.result.page !== undefined ? '&status=' + props.result.status.join('&status=') : '?status=' + props.result.status.join('&status=') ) : ''
   queryString += props.result.type != undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${props.result.type}` : `?type=${props.result.type}` ) : ''
 
   scanApiEndpoint  += queryString
 
   const { data: link, error: linkError, mutate: updateLinks } = useSWR(
-    () => query.id && scanObjId ? scanApiEndpoint : null
+    () => query.siteId && scanObjId ? scanApiEndpoint : null
     , fetcher, {
       refreshInterval: 50000,
   })
@@ -172,7 +172,7 @@ const Links = props => {
     else
       setPagePath(`${pathAs}?`)
     
-    Router.push('/dashboard/site/[id]/links', pathAs)
+    Router.push('/dashboard/site/[siteId]/links', pathAs)
 
     updateLinks()
   }
@@ -366,15 +366,12 @@ const Links = props => {
                     </div>
                   </div>
                 </div>
-                {
-                  props.result.page ? (
-                    <Pagination 
-                      pathName={pagePath}
-                      apiEndpoint={scanApiEndpoint}
-                      page={props.result.page ? props.result.page : 0}
-                    />
-                  ) : null
-                }
+
+                <Pagination 
+                  pathName={pagePath}
+                  apiEndpoint={scanApiEndpoint}
+                  page={props.result.page ? props.result.page : 0}
+                />
 
               </div>
             </main>
