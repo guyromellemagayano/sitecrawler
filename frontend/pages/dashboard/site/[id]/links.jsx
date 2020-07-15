@@ -1,10 +1,10 @@
-import { Suspense, Fragment, useState } from 'react'
+import { Suspense, Fragment, useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import ReactTooltip from 'react-tooltip';
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import fetch from 'node-fetch'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import LinksUrlContent from '../../../../public/data/links-url.json'
@@ -60,9 +60,15 @@ const LinksDiv = styled.section`
 
 const Links = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const [allFilter, setAllFilter] = useState(false)
+  const [issueFilter, setIssueFilter] = useState(false)
+  const [internalFilter, setInternalFilter] = useState(false)
+  const [externalFilter, setExternalFilter] = useState(false)
+  const [pagePath, setPagePath] = useState('')
+
   const pageTitle = 'Links |'
 
-  const { query } = useRouter()
+  const { query, asPath } = useRouter()
   const pathname = `/dashboard/site/${query.id}/links`
   const { data: site, error: siteError } = useSWR(
     () => (query.id ? `/api/site/${query.id}/` : null),
@@ -90,12 +96,122 @@ const Links = props => {
     })
   }
 
-  const scanApiEndpoint = props.page !== undefined ? `/api/site/${query.id}/scan/${scanObjId}/link/?page=` + props.page : `/api/site/${query.id}/scan/${scanObjId}/link/`
+  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.id}/scan/${scanObjId}/link/?page=` + props.result.page : `/api/site/${query.id}/scan/${scanObjId}/link/`
+  let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( props.result.page !== undefined ? '&status=' + props.result.status.join('&status=') : '?status=' + props.result.status.join('&status=') ) : ''
+  queryString += props.result.type != undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${props.result.type}` : `?type=${props.result.type}` ) : ''
 
-  const { data: link, error: linkError } = useSWR(
-    () => query.id && scanObjId ? scanApiEndpoint : null, fetcher, {
-      refreshInterval: 1000,
+  scanApiEndpoint  += queryString
+
+  const { data: link, error: linkError, mutate: updateLinks } = useSWR(
+    () => query.id && scanObjId ? scanApiEndpoint : null
+    , fetcher, {
+      refreshInterval: 50000,
   })
+
+  const filterChangeHandler = async (e) => {
+    const filterType = e.target.value
+    const filterStatus = e.target.checked
+    let pathAs = pathname
+    
+    if((filterType == 'issues' && filterStatus == true) || (filterType != 'issues' && issueFilter)) {
+      setIssueFilter(true)
+      setAllFilter(false)
+
+      if(scanApiEndpoint.includes("?page"))
+        pathAs += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+      else
+        pathAs += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+    }
+    else {
+      setIssueFilter(false)
+    }
+
+    if((filterType == 'internal' && filterStatus == true) || (filterType != 'external' && filterType != 'internal' && internalFilter)) {
+      setInternalFilter(true)
+      setExternalFilter(false)
+      setAllFilter(false)
+      pathAs = pathAs.replace('&type=EXTERNAL', '')
+      pathAs = pathAs.replace('?type=EXTERNAL', '')
+
+      if(pathAs.includes("?"))
+        pathAs += `&type=PAGE`
+      else
+        pathAs += `?type=PAGE`
+    }
+    else {
+      setInternalFilter(false)
+    }
+
+    if((filterType == 'external' && filterStatus == true) || ( filterType != 'internal' && filterType != 'external' && externalFilter)) {
+      setExternalFilter(true)
+      setInternalFilter(false)
+      setAllFilter(false)
+      pathAs = pathAs.replace('&type=PAGE', '')
+      pathAs = pathAs.replace('?type=PAGE', '')
+
+      if(pathAs.includes("?"))
+        pathAs += `&type=EXTERNAL`
+      else
+        pathAs += `?type=EXTERNAL`
+    }
+    else {
+      setExternalFilter(false)
+    }
+
+    if(filterType == 'all' && filterStatus == true) {
+      setAllFilter(true)
+      setIssueFilter(false)
+      setExternalFilter(false)
+      setInternalFilter(false)
+
+      pathAs = pathname
+    }
+
+    if(pathAs.includes("?"))
+      setPagePath(`${pathAs}&`)
+    else
+      setPagePath(`${pathAs}?`)
+    
+    Router.push('/dashboard/site/[id]/links', pathAs)
+
+    updateLinks()
+  }
+
+  useEffect(() => {
+    setPagePath(`${pathname}?`)
+  }, [])
+
+  useEffect(() => {
+    if(props.result.status !== undefined) {
+      setIssueFilter(true)
+      setAllFilter(false)
+    }
+    else
+      setIssueFilter(false)
+
+    if(props.result.type !== undefined && props.result.type == 'PAGE') {
+      setInternalFilter(true)
+      setExternalFilter(false)
+      setAllFilter(false)
+    }
+    else
+      setInternalFilter(false)
+
+    if(props.result.type !== undefined && props.result.type == 'EXTERNAL') {
+      setExternalFilter(true)
+      setInternalFilter(false)
+      setAllFilter(false)
+    }
+    else
+      setExternalFilter(false)
+
+    if(props.result.type == undefined && props.result.status == undefined) {
+      setIssueFilter(false)
+      setInternalFilter(false)
+      setExternalFilter(false)
+      setAllFilter(true)
+    }
+  }, [filterChangeHandler])
 
   if (linkError) return <div>{linkError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
@@ -174,7 +290,7 @@ const Links = props => {
               </div>
               <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
                 <LinkOptions />
-                <LinkFilter />
+                <LinkFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} internalFilter={internalFilter} externalFilter={externalFilter} />
                 <div className={`pb-4`}>
                   <div className={`flex flex-col`}>
                     <div
@@ -251,9 +367,9 @@ const Links = props => {
                   </div>
                 </div>
                 <Pagination 
-                  pathName={pathname}
+                  pathName={pagePath}
                   apiEndpoint={scanApiEndpoint}
-                  page={props.page ? props.page : 0}
+                  page={props.result.page ? props.result.page : 0}
                 />
               </div>
             </main>
@@ -264,9 +380,11 @@ const Links = props => {
   )
 }
 
-Links.getInitialProps = ({ query }) => {
+export async function getServerSideProps(context) {
   return {
-    page: query.page,
+    props: {
+      result: context.query
+    }
   }
 }
 
