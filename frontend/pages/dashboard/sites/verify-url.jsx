@@ -167,7 +167,7 @@ const SitesVerifyUrl = props => {
                       <h4
                         className={`text-lg leading-7 font-medium text-gray-900`}
                       >
-                        Verify Site: <a href={props.surl} target="_blank" title={props.surl} className={`text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>{props.sname}</a>
+                        Verify Site: <a href={props.surl} target="_blank" title={props.surl} className={`text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>{props.surl}</a>
                       </h4>
                       <p
                         className={`max-w-6xl text-sm mb-5 leading-5 text-gray-500`}
@@ -236,7 +236,7 @@ const SitesVerifyUrl = props => {
                           name={`site_verify_id`}
                           onChange={handleHiddenInputChange}
                         />
-                        <span class="inline-flex rounded-md shadow-xs-sm">
+                        <span className={`inline-flex rounded-md shadow-xs-sm`}>
                           {disableSiteVerify ? (
                             <button
                               disabled={`disabled`}
@@ -255,7 +255,7 @@ const SitesVerifyUrl = props => {
                           )}
                         </span>
                         
-                        <span class="inline-flex rounded-md shadow-xs-sm">
+                        <span className={`inline-flex rounded-md shadow-xs-sm`}>
                           <Link 
                             href={{
                               pathname: '/dashboard/sites/information',
