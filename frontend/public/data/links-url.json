@@ -12,6 +12,10 @@
 		"slug": "status"
 	},
 	{
+		"label": "HTTP Code",
+		"slug": "http-code"
+	},
+	{
 		"label": "Link Location",
 		"slug": "link-location"
 	},
