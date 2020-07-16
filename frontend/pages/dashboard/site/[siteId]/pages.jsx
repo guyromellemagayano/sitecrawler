@@ -159,7 +159,7 @@ const Pages = props => {
                       <div className={`px-4 py-5 sm:p-6`}>
                         <dl>
                           <dt className={`text-sm leading-5 font-medium text-gray-500 truncate`}>
-                            Total Links
+                            Total Page Links
                           </dt>
                           <dd className={`mt-1 flex justify-between items-baseline md:block lg:flex`}>
                             <div className={`flex items-baseline text-2xl leading-8 font-semibold text-indigo-600`}>
@@ -173,7 +173,7 @@ const Pages = props => {
                       <div className={`px-4 py-5 sm:p-6`}>
                         <dl>
                           <dt className={`text-sm leading-5 font-medium text-gray-500 truncate`}>
-                            Links with Good Status
+                            Page Links with Good Status
                           </dt>
                           <dd className={`mt-1 flex justify-between items-baseline md:block lg:flex`}>
                             <div className={`flex items-baseline text-2xl leading-8 font-semibold text-green-600`}>
@@ -187,7 +187,7 @@ const Pages = props => {
                       <div className={`px-4 py-5 sm:p-6`}>
                         <dl>
                           <dt className={`text-sm leading-5 font-medium text-gray-500 truncate`}>
-                            Links with SSL Errors
+                            Page Links with SSL Errors
                           </dt>
                           <dd className={`mt-1 flex justify-between items-baseline md:block lg:flex`}>
                             <div className={`flex items-baseline text-2xl leading-8 font-semibold text-red-600`}>
