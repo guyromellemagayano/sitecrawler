@@ -37,6 +37,7 @@ const PagesDiv = styled.section``
 
 const Pages = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const [sortOrder, setSortOrder] = useState(false)
   const pageTitle = 'Pages |'
 
   const { query } = useRouter()
@@ -215,8 +216,47 @@ const Pages = props => {
                                   <Fragment key={key}>
                                     <th
                                       className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
-                                    >
-                                      {site.label}
+                                    > 
+                                      <div className={`flex items-center justify-between`}>
+                                        <span className="label flex items-center">
+                                          {site.label}
+                                        </span>
+                                        <div className="flex flex-row">
+                                          <button
+                                            className={`inline-flex`}
+                                            onClick={(e) => setSortOrder(!sortOrder)}
+                                          >
+                                            <span
+                                              className={`${sortOrder ? "text-gray-500" : "text-gray-300"} w-4 h-4 inline-block`}
+                                            >
+                                              <svg
+                                                fill="none"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                              >
+                                                <path d="M5 15l7-7 7 7"></path>
+                                              </svg>
+                                            </span>
+                                            <span
+                                              className={`${!sortOrder ? "text-gray-500" : "text-gray-300"} w-4 h-4 inline-block`}
+                                            >
+                                              <svg
+                                                fill="none"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                              >
+                                                <path d="M19 9l-7 7-7-7"></path>
+                                              </svg>
+                                            </span>
+                                          </button>
+                                        </div>
+                                      </div>
                                     </th>
                                   </Fragment>
                                 )

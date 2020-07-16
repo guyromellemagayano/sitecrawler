@@ -65,6 +65,7 @@ const Links = props => {
   const [internalFilter, setInternalFilter] = useState(false)
   const [externalFilter, setExternalFilter] = useState(false)
   const [pagePath, setPagePath] = useState('')
+  const [sortOrder, setSortOrder] = useState(false)
 
   const pageTitle = 'Links |'
 
@@ -308,58 +309,95 @@ const Links = props => {
                                     <th
                                       className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
                                     >
-                                      <div className={`flex items-center`}>
-                                        {site.label}
-                                        {site.slug === "url-type" ||
-                                        site.slug === "status" || site.slug === "http-code" ? (
-                                          <Fragment>
-                                            <a data-tip data-for={site.slug} data-iscapture='true' className={`flex items-center`}>
-                                              <span
-                                                className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
-                                              >
-                                                <svg
-                                                  fill="currentColor"
-                                                  viewBox="0 0 20 20"
+                                      <div className={`flex items-center justify-between`}>
+                                        <span className="label flex items-center">
+                                          {site.label}
+                                          {site.slug === "url-type" ||
+                                          site.slug === "status" || site.slug === "http-code" ? (
+                                            <Fragment>
+                                              <a data-tip data-for={site.slug} data-iscapture='true' className={`flex items-center`}>
+                                                <span
+                                                  className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
                                                 >
-                                                  <path
-                                                    fillRule="evenodd"
-                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-                                                    clipRule="evenodd"
-                                                  ></path>
-                                                </svg>
-                                              </span>
-                                            </a>
-                                            <ReactTooltip
-                                              id={site.slug}
-                                              className={`${site.slug + "-tooltip"} w-48`}
-                                              type="dark"
-                                              effect="solid"
-                                              place="bottom"
-                                              multiline={true}
-                                            >
-                                              <span
-                                                className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
+                                                  <svg
+                                                    fill="currentColor"
+                                                    viewBox="0 0 20 20"
+                                                  >
+                                                    <path
+                                                      fillRule="evenodd"
+                                                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                                                      clipRule="evenodd"
+                                                    ></path>
+                                                  </svg>
+                                                </span>
+                                              </a>
+                                              <ReactTooltip
+                                                id={site.slug}
+                                                className={`${site.slug + "-tooltip"} w-48`}
+                                                type="dark"
+                                                effect="solid"
+                                                place="bottom"
+                                                multiline={true}
                                               >
-                                                {site.slug === 'status' ? (
-                                                  <ul>
-                                                    <li className={`mb-2`}><strong>OK</strong> - linked page loaded fine</li>
-                                                    <li className={`mb-2`}><strong>TIMEOUT</strong> - linked page didn't load within a reasonable timeframe</li>
-                                                    <li className={`mb-2`}><strong>HTTP_ERROR(404)</strong> - Broken Link</li>
-                                                    <li className={`mb-2`}><strong>OTHER_ERROR</strong> - request failed to contact server</li>
-                                                  </ul>
-                                                ) : (
-                                                  <p>Leverage agile frameworks to
-                                                  provide a robust synopsis for
-                                                  high level overviews. Iterative
-                                                  approaches to corporate strategy
-                                                  foster collaborative thinking to
-                                                  further the overall value
-                                                  proposition.</p>
-                                                )}
-                                              </span>
-                                            </ReactTooltip>
-                                          </Fragment>
-                                        ) : null}
+                                                <span
+                                                  className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
+                                                >
+                                                  {site.slug === 'status' ? (
+                                                    <ul>
+                                                      <li className={`mb-2`}><strong>OK</strong> - linked page loaded fine</li>
+                                                      <li className={`mb-2`}><strong>TIMEOUT</strong> - linked page didn't load within a reasonable timeframe</li>
+                                                      <li className={`mb-2`}><strong>HTTP_ERROR(404)</strong> - Broken Link</li>
+                                                      <li className={`mb-2`}><strong>OTHER_ERROR</strong> - request failed to contact server</li>
+                                                    </ul>
+                                                  ) : (
+                                                    <p>Leverage agile frameworks to
+                                                    provide a robust synopsis for
+                                                    high level overviews. Iterative
+                                                    approaches to corporate strategy
+                                                    foster collaborative thinking to
+                                                    further the overall value
+                                                    proposition.</p>
+                                                  )}
+                                                </span>
+                                              </ReactTooltip>
+                                            </Fragment>
+                                          ) : null}
+                                        </span>
+                                        <div className="flex flex-row">
+                                          <button
+                                            className={`inline-flex`}
+                                            onClick={(e) => setSortOrder(!sortOrder)}
+                                          >
+                                            <span
+                                              className={`${sortOrder ? "text-gray-500" : "text-gray-300"} w-4 h-4 inline-block`}
+                                            >
+                                              <svg
+                                                fill="none"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                              >
+                                                <path d="M5 15l7-7 7 7"></path>
+                                              </svg>
+                                            </span>
+                                            <span
+                                              className={`${!sortOrder ? "text-gray-500" : "text-gray-300"} w-4 h-4 inline-block`}
+                                            >
+                                              <svg
+                                                fill="none"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                              >
+                                                <path d="M19 9l-7 7-7-7"></path>
+                                              </svg>
+                                            </span>
+                                          </button>
+                                        </div>
                                       </div>
                                     </th>
                                   </Fragment>
