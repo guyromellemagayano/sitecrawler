@@ -16,3 +16,11 @@ class SiteSerializer(serializers.ModelSerializer):
             validated_data["url"] = instance.url
 
         return super().update(instance, validated_data)
+
+    def validate(self, data):
+        user = self.context["request"].user
+        existing_count = Site.objects.filter(user=user).count()
+        if existing_count >= user.groups.first().groupsettings.max_sites:
+            raise serializers.ValidationError("You have reached your sites limit.")
+
+        return data
