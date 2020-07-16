@@ -136,13 +136,13 @@ const Sites = props => {
                     </div>
                   </div>
                 </div>
-                {props.page ? (
-                  <Pagination
-                    pathName={router.pathname}
-                    apiEndpoint={sitesApiEndpoint} 
-                    page={props.page ? props.page : 0}
-                  />
-                ) : null}
+
+                <Pagination
+                  pathName={router.pathname}
+                  apiEndpoint={sitesApiEndpoint} 
+                  page={props.page ? props.page : 0}
+                />
+
               </div>
             </main>
           </div>

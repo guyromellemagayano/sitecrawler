@@ -271,13 +271,13 @@ const Pages = props => {
                     </div>
                   </div>
                 </div>
-                {props.page ? (
-                  <Pagination 
-                    pathName={pathname}
-                    apiEndpoint={scanApiEndpoint}
-                    page={props.page ? props.page : 0}
-                  />
-                ) : null}
+
+                <Pagination 
+                  pathName={pathname}
+                  apiEndpoint={scanApiEndpoint}
+                  page={props.page ? props.page : 0}
+                />
+                
               </div>
             </main>
           </div>
