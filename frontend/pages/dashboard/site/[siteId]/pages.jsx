@@ -152,6 +152,52 @@ const Pages = props => {
                 </div>
               </div>
               <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
+                <div>
+                  <div class="mt-5 grid grid-cols-1 rounded-lg bg-white overflow-hidden shadow md:grid-cols-3">
+                    <div>
+                      <div class="px-4 py-5 sm:p-6">
+                        <dl>
+                          <dt class="text-sm leading-5 font-medium text-gray-500 truncate">
+                            Total Links
+                          </dt>
+                          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+                            <div class="flex items-baseline text-2xl leading-8 font-semibold text-indigo-600">
+                              {page.count}
+                            </div>
+                          </dd>
+                        </dl>
+                      </div>
+                    </div>
+                    <div class="border-t border-gray-200 md:border-0 md:border-l">
+                      <div class="px-4 py-5 sm:p-6">
+                        <dl>
+                          <dt class="text-sm leading-5 font-medium text-gray-500 truncate">
+                            Links with Good Status
+                          </dt>
+                          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+                            <div class="flex items-baseline text-2xl leading-8 font-semibold text-green-600">
+                              {/* 24.57% */}
+                            </div>
+                          </dd>
+                        </dl>
+                      </div>
+                    </div>
+                    <div class="border-t border-gray-200 md:border-0 md:border-l">
+                      <div class="px-4 py-5 sm:p-6">
+                        <dl>
+                          <dt class="text-sm leading-5 font-medium text-gray-500 truncate">
+                            Links with SSL Errors
+                          </dt>
+                          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+                            <div class="flex items-baseline text-2xl leading-8 font-semibold text-red-600">
+                              {/* 58.16% */}
+                            </div>
+                          </dd>
+                        </dl>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <LinkOptions />
                 <div className={`pb-4`}>
                   <div className={`flex flex-col`}>
