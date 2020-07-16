@@ -121,14 +121,14 @@ const SitesVerifyUrl = props => {
             <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
                 <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
-                  <div className={`max-w-6xl pt-4 m-auto`}>
+                  <div className={`max-w-full pt-4 m-auto`}>
                     <h4
                       className={`text-2xl leading-6 font-medium text-gray-900`}
                     >
                       Add a new site
                     </h4>
                     <p
-                      className={`max-w-6xl mt-2 text-sm leading-5 text-gray-500`}
+                      className={`max-w-full mt-2 text-sm leading-5 text-gray-500`}
                     >
                       Organically grow the holistic world view of disruptive
                       innovation via workplace diversity and empowerment.
@@ -136,7 +136,7 @@ const SitesVerifyUrl = props => {
                   </div>
                 </div>
                 <div
-                  className={`max-w-6xl sm:px-8 sm:pt-6 sm:pb-8 grid gap-16 pt-12 lg:grid-cols-4 lg:col-gap-5 lg:row-gap-12`}
+                  className={`max-w-full sm:px-8 sm:pt-6 sm:pb-8 grid gap-16 pt-12 lg:grid-cols-4 lg:col-gap-5 lg:row-gap-12`}
                 >
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
@@ -162,7 +162,7 @@ const SitesVerifyUrl = props => {
                 </div>
 
                 <div className={`px-4 pt-8 pb-12 sm:px-8`}>
-                  <div className={`max-w-6xl py-4 m-auto`}>
+                  <div className={`max-w-full py-4 m-auto`}>
                     <div>
                       <h4
                         className={`text-lg leading-7 font-medium text-gray-900`}
@@ -170,14 +170,14 @@ const SitesVerifyUrl = props => {
                         Verify Site: <a href={props.surl} target="_blank" title={props.surl} className={`text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>{props.surl}</a>
                       </h4>
                       <p
-                        className={`max-w-6xl text-sm mb-5 leading-5 text-gray-500`}
+                        className={`max-w-full text-sm mb-5 leading-5 text-gray-500`}
                       >
                         At the end of the day, going forward, a new normal that
                         has evolved from generation X is on the runway heading
                         towards a streamlined cloud solution.
                       </p>
                       <p
-                        className={`max-w-6xl text-md leading-6 text-gray-700 mb-3`}
+                        className={`max-w-full text-md leading-6 text-gray-700 mb-3`}
                       >
                         Instructions:
                       </p>
