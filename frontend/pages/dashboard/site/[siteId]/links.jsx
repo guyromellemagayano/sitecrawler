@@ -340,13 +340,22 @@ const Links = props => {
                                               <span
                                                 className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
                                               >
-                                                Leverage agile frameworks to
-                                                provide a robust synopsis for
-                                                high level overviews. Iterative
-                                                approaches to corporate strategy
-                                                foster collaborative thinking to
-                                                further the overall value
-                                                proposition.
+                                                {site.label === 'Status' ? (
+                                                  <ul>
+                                                    <li className={`mb-2`}><strong>OK</strong> - linked page loaded fine</li>
+                                                    <li className={`mb-2`}><strong>TIMEOUT</strong> - linked page didn't load within a reasonable timeframe</li>
+                                                    <li className={`mb-2`}><strong>HTTP_ERROR(404)</strong> - Broken Link</li>
+                                                    <li className={`mb-2`}><strong>OTHER_ERROR</strong> - request failed to contact server</li>
+                                                  </ul>
+                                                ) : (
+                                                  <p>Leverage agile frameworks to
+                                                  provide a robust synopsis for
+                                                  high level overviews. Iterative
+                                                  approaches to corporate strategy
+                                                  foster collaborative thinking to
+                                                  further the overall value
+                                                  proposition.</p>
+                                                )}
                                               </span>
                                             </ReactTooltip>
                                           </Fragment>
