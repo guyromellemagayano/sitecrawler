@@ -118,7 +118,7 @@ const SitesVerifyUrl = props => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
                 <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
                   <div className={`max-w-6xl pt-4 m-auto`}>

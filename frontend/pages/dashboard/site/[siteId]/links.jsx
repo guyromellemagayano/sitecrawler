@@ -256,7 +256,7 @@ const Links = props => {
               className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
               tabIndex={`0`}
             >
-              <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+              <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
                 <div>
                   <nav className={`sm:hidden`}>
                     <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
@@ -288,7 +288,7 @@ const Links = props => {
                   </div>
                 </div>
               </div>
-              <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
+              <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
                 <LinkOptions />
                 <LinkFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} internalFilter={internalFilter} externalFilter={externalFilter} />
                 <div className={`pb-4`}>
@@ -310,8 +310,8 @@ const Links = props => {
                                     >
                                       <div className={`flex items-center`}>
                                         {site.label}
-                                        {site.label === "URL Type" ||
-                                        site.label === "Status" ? (
+                                        {site.slug === "url-type" ||
+                                        site.slug === "status" || site.slug === "http-code" ? (
                                           <Fragment>
                                             <a data-tip data-for={site.slug} data-iscapture='true' className={`flex items-center`}>
                                               <span
@@ -331,7 +331,7 @@ const Links = props => {
                                             </a>
                                             <ReactTooltip
                                               id={site.slug}
-                                              className={site.slug + "-tooltip"}
+                                              className={`${site.slug + "-tooltip"} w-48`}
                                               type="dark"
                                               effect="solid"
                                               place="bottom"
@@ -340,7 +340,7 @@ const Links = props => {
                                               <span
                                                 className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
                                               >
-                                                {site.label === 'Status' ? (
+                                                {site.slug === 'status' ? (
                                                   <ul>
                                                     <li className={`mb-2`}><strong>OK</strong> - linked page loaded fine</li>
                                                     <li className={`mb-2`}><strong>TIMEOUT</strong> - linked page didn't load within a reasonable timeframe</li>

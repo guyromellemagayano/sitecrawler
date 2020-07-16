@@ -85,7 +85,7 @@ const SitesDashboard = () => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <div>
                 <nav className={`hidden sm:flex items-center text-sm leading-5`}>
                   <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
@@ -102,7 +102,7 @@ const SitesDashboard = () => {
               </div>
             </div>
             <div
-              className={`max-w-6xl mx-auto px-4 py-4 sm:px-6 md:px-8`}
+              className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}
             >
               <div>
                 <SitesOverview
@@ -112,7 +112,7 @@ const SitesDashboard = () => {
                 />
               </div>
             </div>
-            <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
               <div className={`pb-4`}>
                 <SitesStats />
               </div>

@@ -88,7 +88,7 @@ const Sites = props => {
               className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
               tabIndex={`0`}
             >
-              <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+              <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
                 <div className={`mt-2 md:flex md:items-center md:justify-between`}>
                   <div className={`flex-1 min-w-0`}>
                     <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
@@ -97,7 +97,7 @@ const Sites = props => {
                   </div>
                 </div>
               </div>
-              <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
+              <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
                 <AddSite />
                 <div className={`pb-4`}>
                   <div className={`flex flex-col`}>

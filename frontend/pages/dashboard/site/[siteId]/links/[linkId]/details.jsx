@@ -144,7 +144,7 @@ const LinkDetail = () => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <div>
                 <nav className={`sm:hidden`}>
                   <Link href={'/dashboard/site/' + query.siteId + '/links'}>
@@ -190,7 +190,7 @@ const LinkDetail = () => {
                 </div>
               </div>
             </div>
-            <div className={`max-w-6xl mx-auto py-6 px-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-full mx-auto py-6 px-4 sm:px-6 md:px-8`}>
               <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:p-0">
                   <dl>

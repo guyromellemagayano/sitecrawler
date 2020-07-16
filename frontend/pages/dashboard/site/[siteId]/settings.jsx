@@ -164,7 +164,7 @@ const SiteSettings = () => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-6xl mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
               <div>
                 <nav className={`sm:hidden`}>
                   <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
@@ -196,8 +196,8 @@ const SiteSettings = () => {
                 </div>
               </div>
             </div>
-            <div className={`max-w-6xl mx-auto px-4 sm:px-6 md:px-8`}>
-              <div className={`mt-5 max-w-6xl bg-white shadow-xs rounded-lg`}>
+            <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
+              <div className={`mt-5 max-w-full bg-white shadow-xs rounded-lg`}>
                 <div className={`px-4 py-5 sm:p-6`}>
                   <form onSubmit={handleSiteUpdate}>
                     <div>
@@ -346,7 +346,7 @@ const SiteSettings = () => {
                 </div>
               </div>
 
-              <div className={`mt-5 max-w-6xl bg-white shadow-xs rounded-lg`}>
+              <div className={`mt-5 max-w-full bg-white shadow-xs rounded-lg`}>
                 <div className={`px-4 py-5 sm:p-6`}>
                   <div>
                     <div>

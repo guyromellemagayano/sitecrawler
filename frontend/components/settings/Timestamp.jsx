@@ -73,7 +73,7 @@ const TimestampSettings = () => {
 
 	return (
 		<TimestampSettingsDiv
-			className={`mt-5 max-w-6xl bg-white shadow-xs rounded-lg`}
+			className={`mt-5 max-w-full bg-white shadow-xs rounded-lg`}
 		>
 			<div className={`px-4 py-5 sm:p-6`}>
 				<div>
