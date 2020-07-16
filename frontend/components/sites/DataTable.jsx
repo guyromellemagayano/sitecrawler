@@ -249,13 +249,7 @@ const DataTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
-          <Link href="/dashboard/site/[id]/links" as={`/dashboard/site/${props.site.id}/links`}>
-            <a
-              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-            >
-              {scanId.num_links}
-            </a>
-          </Link>
+          0
         </td>
       )}
       {scanId.num_pages ? (
@@ -274,13 +268,7 @@ const DataTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
-          <Link href="/dashboard/site/[id]/pages" as={`/dashboard/site/${props.site.id}/pages`}>
-            <a
-              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-            >
-              {scanId.num_pages}
-            </a>
-          </Link>
+          0
         </td>
       )}
       {scanId.num_non_ok_links ? (
