@@ -423,6 +423,7 @@ const SitesInformation = props => {
                           <div className={`absolute inset-y-0 left-0 flex items-center`}>
                             <select
                               disabled={props.sid !== undefined ? true : false}
+                              tabIndex="-1"
                               value={urlProtocol}
                               aria-label="site-url"
                               className={`form-select h-full py-0 pl-3 pr-8 border-transparent bg-transparent text-gray-500 sm:text-sm sm:leading-5`}
