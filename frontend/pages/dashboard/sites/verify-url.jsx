@@ -170,7 +170,7 @@ const SitesVerifyUrl = props => {
                         Verify Site: <a href={props.surl} target="_blank" title={props.surl} className={`text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>{props.surl}</a>
                       </h4>
                       <p
-                        className={`max-w-full text-sm mb-5 leading-5 text-gray-500`}
+                        className={`max-w-full text-sm mb-5 leading-5 text-gray-600`}
                       >
                         At the end of the day, going forward, a new normal that
                         has evolved from generation X is on the runway heading
@@ -182,10 +182,10 @@ const SitesVerifyUrl = props => {
                         Instructions:
                       </p>
                       <ol>
-                        <li className={`text-sm leading-6 text-gray-500`}>
+                        <li className={`text-sm leading-6 text-gray-600`}>
                           Sign in to your website.
                         </li>
-                        <li className={`text-sm leading-6 text-gray-500`}>
+                        <li className={`text-sm leading-6 text-gray-600`}>
                           Copy the meta tag below and add it within your
                           website's <strong>{`<HEAD>`}</strong> tag <br />
                           <div>
@@ -217,7 +217,7 @@ const SitesVerifyUrl = props => {
                             </div>
                           </div>
                         </li>
-                        <li className={`text-sm leading-6 text-gray-500`}>
+                        <li className={`text-sm leading-6 text-gray-600`}>
                           Press <strong>Verify Site</strong> button below
                         </li>
                       </ol>
