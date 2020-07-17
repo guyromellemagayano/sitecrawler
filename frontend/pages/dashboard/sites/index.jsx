@@ -1,7 +1,5 @@
 import { Fragment, Suspense, useState } from 'react'
 import { useRouter } from 'next/router'
-import LogRocket from 'logrocket'
-import setupLogRocketReact from 'logrocket-react'
 import Cookies from 'js-cookie'
 import Head from 'next/head'
 import styled from 'styled-components'
@@ -14,11 +12,6 @@ import MainSidebar from '../../../components/sidebar/MainSidebar'
 import AddSite from '../../../components/sites/AddSite'
 import DataTable from '../../../components/sites/DataTable'
 import Pagination from '../../../components/sites/Pagination'
-
-if (typeof window !== 'undefined') {
-  LogRocket.init('epic-design-labs/link-app');
-  setupLogRocketReact(LogRocket);
-}
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -57,11 +50,6 @@ const Sites = props => {
   if (siteError) return <div>{siteError.message}</div>
   if (userError) return <div>{userError.message}</div>
   if (!site || !user) return <div>Loading...</div>
-
-  LogRocket.identify('epic-design-labs/link-app', {
-    name: user.first_name + ' ' + user.last_name,
-    email: user.email,
-  });
 
   return (
     <Layout>
