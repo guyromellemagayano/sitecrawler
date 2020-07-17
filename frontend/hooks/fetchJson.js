@@ -1,3 +1,5 @@
+import fetch from 'node-fetch'
+
 const fetcher = async(...args) => {
   try {
     const response = await fetch(...args)
