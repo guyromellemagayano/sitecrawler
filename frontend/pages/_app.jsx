@@ -11,7 +11,7 @@ import '../css/styles.css'
 library.add(fab)
 
 if (typeof window !== 'undefined') {
-  LogRocket.init('app/id');
+  LogRocket.init('epic-design-labs/link-app');
   setupLogRocketReact(LogRocket);
 }
 
