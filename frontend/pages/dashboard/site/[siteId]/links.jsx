@@ -69,13 +69,6 @@ const Links = props => {
   const [searchKey, setSearchKey] = useState('')
   const [initialPath, setInitialPath] = useState('')
 
-  const useForceUpdate = () => {
-    const [value, setValue] = useState(0); // integer state
-    return () => setValue(value => ++value); // update the state to force render
-  }
-
-  const forceUpdate = useForceUpdate();
-
   const pageTitle = 'Links |'
 
   const { query, asPath } = useRouter()
@@ -190,9 +183,7 @@ const Links = props => {
 
     if(filterType == 'internal' && filterStatus == true) {
       setInternalFilter(true)
-      setExternalFilter(false, () => {
-        console.log('[state in callback]', allFilter, issueFilter, internalFilter, externalFilter)
-      })
+      setExternalFilter(false)
       setAllFilter(false)
       newPath = newPath.replace('&type=EXTERNAL', '')
       newPath = newPath.replace('?type=EXTERNAL', '')
@@ -228,9 +219,7 @@ const Links = props => {
 
     if(filterType == 'all' && filterStatus == true) {
       setAllFilter(true)
-      setIssueFilter(false, () => {
-        console.log('[state in callback]', allFilter, issueFilter, internalFilter, externalFilter)
-      })
+      setIssueFilter(false)
       setExternalFilter(false)
       setInternalFilter(false)
 
@@ -251,17 +240,44 @@ const Links = props => {
   }
 
   useEffect(() => {
-    console.log('[internalFilter]', internalFilter);
-    forceUpdate()
-  }, [internalFilter, externalFilter, allFilter, issueFilter])
-
-  useEffect(() => {
     setPagePath(`${pathname}?`)
     setInitialPath(pathname)
 
     if(props.result.search !== undefined)
       setSearchKey(props.result.search)
   }, [])
+
+  useEffect(() => {
+    if(props.result.status !== undefined) {
+      setIssueFilter(true)
+      setAllFilter(false)
+    }
+    else
+      setIssueFilter(false)
+
+    if(props.result.type !== undefined && props.result.type == 'PAGE') {
+      setInternalFilter(true)
+      setExternalFilter(false)
+      setAllFilter(false)
+    }
+    else
+      setInternalFilter(false)
+
+    if(props.result.type !== undefined && props.result.type == 'EXTERNAL') {
+      setExternalFilter(true)
+      setInternalFilter(false)
+      setAllFilter(false)
+    }
+    else
+      setExternalFilter(false)
+
+    if(props.result.type == undefined && props.result.status == undefined) {
+      setIssueFilter(false)
+      setInternalFilter(false)
+      setExternalFilter(false)
+      setAllFilter(true)
+    }
+  }, [filterChangeHandler])
 
   if (linkError) return <div>{linkError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
