@@ -37,7 +37,7 @@ const MainSidebar = () => {
               </a>
             </Link>
           </div>
-          {windowSiteLocation ? <SiteMenu /> : windowSettingsLocation ? <SettingsMenu /> : <PrimaryMenu />}
+          {windowSiteLocation ? <SiteMenu /> : (windowSettingsLocation ? <SettingsMenu /> : <PrimaryMenu />)}
         </div>
         <ProfileSidebar />
       </div>
