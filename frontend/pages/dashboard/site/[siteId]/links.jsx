@@ -66,10 +66,12 @@ const Links = props => {
   const [externalFilter, setExternalFilter] = useState(false)
   const [pagePath, setPagePath] = useState('')
   const [sortOrder, setSortOrder] = useState(false)
+  const [searchKey, setSearchKey] = useState('')
+  const [initialPath, setInitialPath] = useState('')
 
   const pageTitle = 'Links |'
 
-  const { query } = useRouter()
+  const { query, asPath } = useRouter()
   const pathname = `/dashboard/site/${query.siteId}/links`
   const { data: site, error: siteError } = useSWR(
     () => (query.siteId ? `/api/site/${query.siteId}/` : null),
@@ -99,7 +101,8 @@ const Links = props => {
 
   let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/link/`
   let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( props.result.page !== undefined ? '&status=' + props.result.status.join('&status=') : '?status=' + props.result.status.join('&status=') ) : ''
-  queryString += props.result.type != undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${props.result.type}` : `?type=${props.result.type}` ) : ''
+  queryString += props.result.type !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${props.result.type}` : `?type=${props.result.type}` ) : ''
+  queryString += props.result.search !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined || props.result.type !== undefined ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
 
   scanApiEndpoint  += queryString
 
@@ -109,53 +112,108 @@ const Links = props => {
       refreshInterval: 50000,
   })
 
+  const removeURLParameter = (url, parameter) => {
+    //prefer to use l.search if you have a location/link object
+    const urlparts = url.split('?');   
+    if (urlparts.length >= 2) {
+
+        const prefix = encodeURIComponent(parameter) + '=';
+        const pars = urlparts[1].split(/[&;]/g);
+
+        //reverse iteration as may be destructive
+        for (var i = pars.length; i-- > 0;) {    
+            //idiom for string.startsWith
+            if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                pars.splice(i, 1);
+            }
+        }
+
+        return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
+    }
+
+    return url;
+  }
+
+  const searchEventHandler = async (e) => {
+    // console.log('[search event]', e.keyCode, e.target.value, removeURLParameter(asPath, 'search'), asPath)
+    
+    if(e.keyCode != 13)
+      return false
+
+    let newPath = removeURLParameter(asPath, 'search')
+    
+    if(e.target.value == '' || e.target.value == ' ') {
+      setSearchKey(e.target.value)
+      Router.push('/dashboard/site/[siteId]/links', newPath)
+      return
+    }
+
+    if(newPath.includes("?"))
+      newPath += `&search=${e.target.value}`
+    else
+      newPath += `?search=${e.target.value}`
+
+    setSearchKey(e.target.value)
+    Router.push('/dashboard/site/[siteId]/links', newPath)
+
+    updateLinks()
+  }
+
   const filterChangeHandler = async (e) => {
     const filterType = e.target.value
     const filterStatus = e.target.checked
-    let pathAs = pathname
+
+    let newPath = asPath
+
+    // console.log('[asPath]', asPath)
     
-    if((filterType == 'issues' && filterStatus == true) || (filterType != 'issues' && issueFilter)) {
+    if(filterType == 'issues' && filterStatus == true) {
       setIssueFilter(true)
       setAllFilter(false)
 
-      if(scanApiEndpoint.includes("?page"))
-        pathAs += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+      if(newPath.includes("?"))
+        newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
       else
-        pathAs += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+        newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
     }
-    else {
+    else if(filterType == 'issues' && filterStatus == false) {
+      newPath = removeURLParameter(newPath, 'status')
       setIssueFilter(false)
     }
 
-    if((filterType == 'internal' && filterStatus == true) || (filterType != 'external' && filterType != 'internal' && internalFilter)) {
+    if(filterType == 'internal' && filterStatus == true) {
       setInternalFilter(true)
       setExternalFilter(false)
       setAllFilter(false)
-      pathAs = pathAs.replace('&type=EXTERNAL', '')
-      pathAs = pathAs.replace('?type=EXTERNAL', '')
+      newPath = newPath.replace('&type=EXTERNAL', '')
+      newPath = newPath.replace('?type=EXTERNAL', '')
 
-      if(pathAs.includes("?"))
-        pathAs += `&type=PAGE`
+      if(newPath.includes("?"))
+        newPath += `&type=PAGE`
       else
-        pathAs += `?type=PAGE`
+        newPath += `?type=PAGE`
     }
-    else {
+    else if(filterType == 'internal' && filterStatus == false) {
+      if(newPath.includes('type=PAGE'))
+        newPath = removeURLParameter(newPath, 'type')
       setInternalFilter(false)
     }
 
-    if((filterType == 'external' && filterStatus == true) || ( filterType != 'internal' && filterType != 'external' && externalFilter)) {
+    if(filterType == 'external' &&  filterStatus == true) {
       setExternalFilter(true)
       setInternalFilter(false)
       setAllFilter(false)
-      pathAs = pathAs.replace('&type=PAGE', '')
-      pathAs = pathAs.replace('?type=PAGE', '')
+      newPath = newPath.replace('&type=PAGE', '')
+      newPath = newPath.replace('?type=PAGE', '')
 
-      if(pathAs.includes("?"))
-        pathAs += `&type=EXTERNAL`
+      if(newPath.includes("?"))
+        newPath += `&type=EXTERNAL`
       else
-        pathAs += `?type=EXTERNAL`
+        newPath += `?type=EXTERNAL`
     }
-    else {
+    else if(filterType == 'external' && filterStatus == false) {
+      if(newPath.includes('type=EXTERNAL'))
+        newPath = removeURLParameter(newPath, 'type')
       setExternalFilter(false)
     }
 
@@ -165,21 +223,28 @@ const Links = props => {
       setExternalFilter(false)
       setInternalFilter(false)
 
-      pathAs = pathname
+      newPath = removeURLParameter(newPath, 'status')
+      newPath = removeURLParameter(newPath, 'type')
     }
 
-    if(pathAs.includes("?"))
-      setPagePath(`${pathAs}&`)
+    if(newPath.includes("?"))
+      setPagePath(`${newPath}&`)
     else
-      setPagePath(`${pathAs}?`)
+      setPagePath(`${newPath}?`)
     
-    Router.push('/dashboard/site/[siteId]/links', pathAs)
+    Router.push('/dashboard/site/[siteId]/links', newPath)
 
     updateLinks()
+
+    return true
   }
 
   useEffect(() => {
     setPagePath(`${pathname}?`)
+    setInitialPath(pathname)
+
+    if(props.result.search !== undefined)
+      setSearchKey(props.result.search)
   }, [])
 
   useEffect(() => {
@@ -290,7 +355,7 @@ const Links = props => {
                 </div>
               </div>
               <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
-                <LinkOptions />
+                <LinkOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
                 <LinkFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} internalFilter={internalFilter} externalFilter={externalFilter} />
                 <div className={`pb-4`}>
                   <div className={`flex flex-col`}>
@@ -430,6 +495,7 @@ const Links = props => {
 }
 
 export async function getServerSideProps(context) {
+  console.log('[Query]', context.query)
   return {
     props: {
       result: context.query

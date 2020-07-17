@@ -4,7 +4,7 @@ import Transition from '../../hooks/Transition'
 
 const LinkOptionsDiv = styled.div``
 
-const LinkOptions = () => {
+const LinkOptions = ({ searchKey, onSearchEvent }) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const [disableButton, setDisableButton] = useState(true)
 
@@ -39,9 +39,12 @@ const LinkOptions = () => {
                   </svg>
                 </div>
                 <input
-                  id={`email`}
+                  id={`search`}
                   className={`form-input block w-full pl-10 sm:text-sm sm:leading-5`}
                   placeholder={`Search sites...`}
+                  onKeyUp={onSearchEvent}
+                  defaultValue={searchKey}
+                  autoFocus
                 />
               </div>
             </div>
