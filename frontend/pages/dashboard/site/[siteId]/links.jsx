@@ -141,6 +141,7 @@ const Links = props => {
       return false
 
     let newPath = removeURLParameter(asPath, 'search')
+    newPath = removeURLParameter(newPath, 'page')
     
     if(e.target.value == '' || e.target.value == ' ') {
       setSearchKey(e.target.value)
@@ -170,6 +171,7 @@ const Links = props => {
     if(filterType == 'issues' && filterStatus == true) {
       setIssueFilter(true)
       setAllFilter(false)
+      newPath = removeURLParameter(newPath, 'page')
 
       if(newPath.includes("?"))
         newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
@@ -187,6 +189,7 @@ const Links = props => {
       setAllFilter(false)
       newPath = newPath.replace('&type=EXTERNAL', '')
       newPath = newPath.replace('?type=EXTERNAL', '')
+      newPath = removeURLParameter(newPath, 'page')
 
       if(newPath.includes("?"))
         newPath += `&type=PAGE`
@@ -205,6 +208,7 @@ const Links = props => {
       setAllFilter(false)
       newPath = newPath.replace('&type=PAGE', '')
       newPath = newPath.replace('?type=PAGE', '')
+      newPath = removeURLParameter(newPath, 'page')
 
       if(newPath.includes("?"))
         newPath += `&type=EXTERNAL`
