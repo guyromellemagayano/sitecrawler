@@ -20,8 +20,6 @@ if (typeof window !== 'undefined') {
   setupLogRocketReact(LogRocket);
 }
 
-LogRocket.identify('epic-design-labs/link-app');
-
 const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
@@ -59,6 +57,11 @@ const Sites = props => {
   if (siteError) return <div>{siteError.message}</div>
   if (userError) return <div>{userError.message}</div>
   if (!site || !user) return <div>Loading...</div>
+
+  LogRocket.identify('epic-design-labs/link-app', {
+    name: user.first_name + ' ' + user.last_name,
+    email: user.email,
+  });
 
   return (
     <Layout>
