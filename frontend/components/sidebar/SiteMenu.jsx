@@ -32,7 +32,7 @@ const SiteMenuDiv = styled.nav`
 `
 
 const SiteMenu = () => {
-  const { query } = useRouter()
+  const { query, asPath } = useRouter()
   const {
     data: scan,
     error: scanError,
@@ -75,12 +75,12 @@ const SiteMenu = () => {
             href={
               val.url.indexOf("/dashboard/sites") > -1
                 ? val.url
-                : "/dashboard/site/" + useRouter().query.siteId + val.url
+                : "/dashboard/site/" + query.siteId + val.url
             }
           >
             <a
               className={`${
-                useRouter().asPath.includes("/dashboard/site/" + useRouter().query.siteId + val.url)  
+                asPath.includes("/dashboard/site/" + query.siteId + val.url)  
                   ? "group mt-1 flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-900 rounded-md bg-gray-100 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
                   : "mt-1 group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150"
               }`}
