@@ -168,13 +168,21 @@ const DataTable = props => {
           {props.site.url && props.site.name ? (
             <div className={`mr-4`}>
               <div className={`text-overflow text-sm leading-5 font-medium text-gray-900`}>
-                <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
-                  <a
-                    className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                {!props.site.verified ? (
+                  <span
+                    className={`text-sm leading-5 font-semibold text-gray-500`}
                   >
                     {props.site.name}
-                  </a>
-                </Link>
+                  </span>
+                ) : (
+                  <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
+                    <a
+                      className={`text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500`}
+                    >
+                      {props.site.name}
+                    </a>
+                  </Link>
+                )}
               </div>
               <div className={`flex justify-start text-sm leading-5 text-gray-500`}>
                 {!props.site.verified && (
@@ -330,7 +338,7 @@ const DataTable = props => {
                     Verify this Site URL
                   </h3>
                   <div className={`mt-2`}>
-                    <p className={`text-sm leading-5 text-gray-500`}>
+                    <p className={`text-sm leading-5 text-gray-600`}>
                       At the end of the day, going forward, a new normal that
                       has evolved from generation X is on the runway heading
                       towards a streamlined cloud solution.
@@ -341,10 +349,10 @@ const DataTable = props => {
                       Instructions:
                     </p>
                     <ol>
-                      <li className={`text-sm leading-6 text-gray-500`}>
+                      <li className={`text-sm leading-6 text-gray-600`}>
                         Sign in to your website.
                       </li>
-                      <li className={`text-sm leading-6 text-gray-500`}>
+                      <li className={`text-sm leading-6 text-gray-600`}>
                         Copy the meta tag below and add it within your
                         website's <strong>{`<HEAD>`}</strong> tag <br />
                         <div>
@@ -376,7 +384,7 @@ const DataTable = props => {
                           </div>
                         </div>
                       </li>
-                      <li className={`text-sm leading-6 text-gray-500`}>
+                      <li className={`text-sm leading-6 text-gray-600`}>
                         Press <strong>Verify Site</strong> button below
                       </li>
                     </ol>

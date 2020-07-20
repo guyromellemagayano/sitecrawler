@@ -4,6 +4,7 @@
   ],
   "plugins": [
     "inline-react-svg",
+    "add-react-displayname",
     [
       "babel-plugin-styled-components",
       {

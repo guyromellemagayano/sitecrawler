@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState, Fragment } from 'react'
+import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
-import Router from 'next/router'
+import Router, { withRouter } from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
 import Link from 'next/link'
@@ -17,7 +17,7 @@ const SitesInformationDiv = styled.section`
   }
 `
 
-const SitesInformation = props => {
+const SitesInformation = (props) => {
   const [disableSiteVerify, setDisableSiteVerify] = useState(false)
   const [successMsg, setSuccessMsg] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
@@ -28,6 +28,7 @@ const SitesInformation = props => {
   const [enableNextStep, setEnableNextStep] = useState(false)
   const [dataQuery, setDataQuery] = useState([])
   const pageTitle = "Add New Site Detail"
+  const { router } = props
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -36,8 +37,8 @@ const SitesInformation = props => {
     if (successMsg) setSuccessMsg("")
 
     const body = {
-      name: siteName,
       url: e.currentTarget.urlpath.value,
+      name: siteName,
     }
 
     if (
@@ -48,83 +49,95 @@ const SitesInformation = props => {
       body.url !== undefined &&
       body.url !== null
     ) {
-      try {
-        const response = await fetch("/api/site/", {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "X-CSRFToken": Cookies.get("csrftoken"),
-          },
-        })
-
-        const data = await response.json()
-
-        if (response.ok) {
-          if (data) {
-            const result = data.results.find((site) => site.url === siteUrl)
-
-            if (typeof result !== "undefined") {
-              setErrorSiteUrlMsg(
-                "Unfortunately, this site URL already exists. Please try again."
-              )
-              return false
-            } else {
-              try {
-                const siteResponse = await fetch("/api/site/", {
-                  method: "POST",
-                  headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": Cookies.get("csrftoken"),
-                  },
-                  body: JSON.stringify(body),
-                }) 
-
-                const siteData = await siteResponse.json()
-
-                if (siteResponse.ok) {
-                  if (siteData) {
-                    setDataQuery(siteData)
-
-                    setSuccessMsg("Site URL added. Proceed to the next step.")
-
-                    setDisableSiteVerify(!disableSiteVerify)
-                    setEnableNextStep(!enableNextStep)
+      if (
+        body.url.includes("//https://") ||
+        body.url.includes("//http://")
+      ) {
+        console.log("hello")
+        setErrorMsg("You should only add hostname inside the input e.g. yourdomain.com")
+      } else {
+        try {
+          const response = await fetch("/api/site/", {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "X-CSRFToken": Cookies.get("csrftoken"),
+            },
+          })
+  
+          if (response.ok) {
+            const data = await response.json()
+  
+            if (data) {
+              const result = data.results.find((site) => site.url === siteUrl)
+  
+              if (typeof result !== "undefined") {
+                setErrorSiteUrlMsg(
+                  "Unfortunately, this site URL already exists. Please try again."
+                )
+                return false
+              } else {
+                try {
+                  const siteResponse = await fetch("/api/site/", {
+                    method: "POST",
+                    headers: {
+                      Accept: "application/json",
+                      "Content-Type": "application/json",
+                      "X-CSRFToken": Cookies.get("csrftoken"),
+                    },
+                    body: JSON.stringify(body),
+                  })
+  
+                  if (siteResponse.ok) {
+                    const siteData = await siteResponse.json()
+  
+                    if (siteData) {
+                      setDataQuery(siteData)
+  
+                      setSuccessMsg("Site URL added. Proceed to the next step.")
+  
+                      setDisableSiteVerify(!disableSiteVerify)
+                      setEnableNextStep(!enableNextStep)
+                    }
                   }
+                } catch (error) {
+                  if (!error.data) {
+                    error.data = { message: error.message }
+                  }
+  
+                  setErrorMsg("An unexpected error occurred. Please try again.")
+  
+                  throw error
                 }
-              } catch (error) {
-                if (!error.data) {
-                  error.data = { message: error.message }
-                }
-
-                setErrorMsg("An unexpected error occurred. Please try again.")
-
-                throw error
               }
             }
+          } else {
+            const error = new Error(response.statusText)
+  
+            error.response = response
+            error.data = data
+  
+            throw error
           }
-        } else {
-          const error = new Error(response.statusText)
-
-          error.response = response
-          error.data = data
-
+        } catch (error) {
+          if (!error.data) {
+            error.data = { message: error.message }
+          }
+  
+          setErrorSiteUrlMsg("An unexpected error occurred. Please try again.")
+  
           throw error
         }
-      } catch (error) {
-        if (!error.data) {
-          error.data = { message: error.message }
-        }
-
-        setErrorSiteUrlMsg("An unexpected error occurred. Please try again.")
-
-        throw error
       }
     } else {
       if (
-        (body.name === "" || body.name === undefined || body.name === null) || 
-        (body.url === "" || body.url === undefined || body.url === null)
+        body.name === "" ||
+        body.name === undefined ||
+        body.name === null ||
+        body.url === "" ||
+        body.url === undefined ||
+        body.url === null
       ) {
         setErrorMsg("Please fill in the empty field.")
       }
@@ -141,11 +154,7 @@ const SitesInformation = props => {
       name: siteName,
     }
 
-    if (
-      body.name !== "" &&
-      body.name !== undefined &&
-      body.name !== null
-    ) {
+    if (body.name !== "" && body.name !== undefined && body.name !== null) {
       try {
         const response = await fetch(`/api/site/${props.sid}/`, {
           method: "GET",
@@ -180,7 +189,9 @@ const SitesInformation = props => {
                   if (props.sid === undefined) {
                     setSuccessMsg("Site URL added. Proceed to the next step.")
                   } else {
-                    setSuccessMsg("Site URL updated. Go back to the last step.")
+                    setSuccessMsg(
+                      "Site URL updated. Go back to the last step."
+                    )
                   }
 
                   setDisableSiteVerify(!disableSiteVerify)
@@ -215,9 +226,7 @@ const SitesInformation = props => {
         throw error
       }
     } else {
-      if (
-        (body.name === "" || body.name === undefined || body.name === null)
-      ) {
+      if (body.name === "" || body.name === undefined || body.name === null) {
         setErrorMsg("Please fill in the empty field.")
       }
     }
@@ -233,10 +242,16 @@ const SitesInformation = props => {
     Router.prefetch("/dashboard/sites/verify-url")
   }, [dataQuery])
 
-  const { data: site } = useSWR(`/api/site/${props !== undefined ? props.sid : null}`, () => fetchSiteData(`/api/site/` + props.sid))
+  const { data: site } = useSWR(
+    `/api/site/${router.query.sid !== undefined ? router.query.sid : null}`,
+    () =>
+      fetchSiteData(
+        `/api/site/${router.query.sid !== undefined ? router.query.sid : null}`
+      )
+  )
 
   useEffect(() => {
-    if (site !== '' && site !== undefined) {
+    if (site !== "" && site !== undefined) {
       setSiteName(site.name)
       setSiteUrl(site.url)
     }
@@ -244,12 +259,12 @@ const SitesInformation = props => {
 
   const fetchSiteData = async (endpoint) => {
     const siteData = await fetchJson(endpoint, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
-      }
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
     })
 
     return siteData
@@ -351,7 +366,11 @@ const SitesInformation = props => {
                       </p>
                     </div>
 
-                    <form onSubmit={props.sid !== undefined ? handleUpdateSubmit : handleSubmit}>
+                    <form
+                      onSubmit={
+                        router.query.sid ? handleUpdateSubmit : handleSubmit
+                      }
+                    >
                       <div className={`my-6 max-w-sm`}>
                         <label
                           htmlFor="sitename"
@@ -367,12 +386,16 @@ const SitesInformation = props => {
                             type="text"
                             disabled={disableSiteVerify ? true : false}
                             name={`sitename`}
-                            value={siteName ? siteName : ''}
+                            value={siteName ? siteName : ""}
                             className={`${
                               errorMsg && !siteName
                                 ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                 : "form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                            } ${disableSiteVerify ? "opacity-50 bg-gray-300 cursor-not-allowed" : ""}`}
+                            } ${
+                              disableSiteVerify
+                                ? "opacity-50 bg-gray-300 cursor-not-allowed"
+                                : ""
+                            }`}
                             placeholder="e.g. My Company Website"
                             aria-describedby={`${
                               errorMsg ? "site-name-error" : "site-name"
@@ -419,10 +442,15 @@ const SitesInformation = props => {
                         >
                           Site URL
                         </label>
-                        <div className={`mt-1 relative rounded-md shadow-xs-sm`}>
-                          <div className={`absolute inset-y-0 left-0 flex items-center`}>
+                        <div
+                          className={`mt-1 relative rounded-md shadow-xs-sm`}
+                        >
+                          <div
+                            className={`absolute inset-y-0 left-0 flex items-center`}
+                          >
                             <select
                               disabled={props.sid !== undefined ? true : false}
+                              tabIndex="-1"
                               value={urlProtocol}
                               aria-label="site-url"
                               className={`form-select h-full py-0 pl-3 pr-8 border-transparent bg-transparent text-gray-500 sm:text-sm sm:leading-5`}
@@ -437,12 +465,20 @@ const SitesInformation = props => {
                             type={`text`}
                             name={`siteurl`}
                             disabled={props.sid !== undefined ? true : false}
-                            value={siteUrl ? siteUrl.replace(/^(https?:|)\/\//, '') : ''}
+                            value={
+                              siteUrl
+                                ? siteUrl.replace(/^(https?:|)\/\//, "")
+                                : ""
+                            }
                             className={`${
                               errorMsg && !siteUrl
                                 ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red form-input block pl-24 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                                 : "form-input block pl-24 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                            } ${props.sid !== undefined ? "opacity-50 bg-gray-300 cursor-not-allowed" : ""}`}
+                            } ${
+                              router.query.sid
+                                ? "opacity-50 bg-gray-300 cursor-not-allowed"
+                                : ""
+                            }`}
                             placeholder="e.g. yourdomain.com"
                             aria-describedby={`site-url`}
                             aria-describedby={`${
@@ -496,7 +532,9 @@ const SitesInformation = props => {
                       >
                         <div>
                           {props.sid === undefined ? (
-                            <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                            <span
+                              className={`inline-flex rounded-md shadow-xs-sm`}
+                            >
                               {disableSiteVerify ? (
                                 <button
                                   disabled={`disabled`}
@@ -515,7 +553,9 @@ const SitesInformation = props => {
                               )}
                             </span>
                           ) : (
-                            <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                            <span
+                              className={`inline-flex rounded-md shadow-xs-sm`}
+                            >
                               {disableSiteVerify ? (
                                 <button
                                   disabled={`disabled`}
@@ -582,7 +622,9 @@ const SitesInformation = props => {
                                 type={`button`}
                                 className={`mt-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                               >
-                                {props.sid !== undefined ? "Go back to Step 2" : "Proceed to Step 2"}
+                                {props.sid !== undefined
+                                  ? "Go back to Step 2"
+                                  : "Proceed to Step 2"}
                               </a>
                             </Link>
                           </div>
@@ -606,7 +648,7 @@ SitesInformation.getInitialProps = ({ query }) => {
   }
 }
 
-export default SitesInformation
+export default withRouter(SitesInformation)
 
 SitesInformation.propTypes = {
   disableSiteVerify: PropTypes.bool,
@@ -619,4 +661,5 @@ SitesInformation.propTypes = {
   dataQuery: PropTypes.object,
   pageTitle: PropTypes.string,
   handleSubmit: PropTypes.func,
+  handleUpdateSubmit: PropTypes.func,
 }
