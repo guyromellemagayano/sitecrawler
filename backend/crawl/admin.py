@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models import Link, Scan, Site, UserProfile
+from .models import Link, Scan, Site, UserProfile, GroupSettings
 
 
 class LinkInline(admin.TabularInline):
@@ -96,3 +96,10 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ("user",)
     search_fields = ("user__username", "user__email")
     readonly_fields = ("user",)
+
+
+@admin.register(GroupSettings)
+class GroupSettingsAdmin(admin.ModelAdmin):
+    list_display = ("group",)
+    search_fields = ("group__name",)
+    readonly_fields = ("group",)
