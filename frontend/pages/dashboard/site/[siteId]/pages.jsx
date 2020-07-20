@@ -1,7 +1,7 @@
-import { Suspense, Fragment, useState } from 'react'
+import { Suspense, Fragment, useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import fetch from 'node-fetch'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
@@ -38,9 +38,11 @@ const PagesDiv = styled.section``
 const Pages = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const [sortOrder, setSortOrder] = useState(false)
+  const [searchKey, setSearchKey] = useState('')
+  const [pagePath, setPagePath] = useState('')
   const pageTitle = 'Pages |'
 
-  const { query } = useRouter()
+  const { query, asPath } = useRouter()
   const pathname = `/dashboard/site/${query.siteId}/pages`
   const { data: site, error: siteError } = useSWR(
     () => (query.siteId ? `/api/site/${query.siteId}/` : null),
@@ -70,12 +72,82 @@ const Pages = props => {
     })
   }
 
-  const scanApiEndpoint = props.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` + props.page : `/api/site/${query.siteId}/scan/${scanObjId}/page/`
-
-  const { data: page, error: pageError } = useSWR(
+  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/page/`
+  let queryString = props.result.search !== undefined ? ( scanApiEndpoint.includes('?') ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
+  scanApiEndpoint += queryString
+  
+  const { data: page, error: pageError, mutate: updatePages } = useSWR(
     () => query.siteId && scanObjId ? scanApiEndpoint : null, fetcher, {
       refreshInterval: 1000,
   })
+
+  const removeURLParameter = (url, parameter) => {
+    //prefer to use l.search if you have a location/link object
+    const urlparts = url.split('?');   
+    if (urlparts.length >= 2) {
+
+        const prefix = encodeURIComponent(parameter) + '=';
+        const pars = urlparts[1].split(/[&;]/g);
+
+        //reverse iteration as may be destructive
+        for (var i = pars.length; i-- > 0;) {    
+            //idiom for string.startsWith
+            if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                pars.splice(i, 1);
+            }
+        }
+
+        return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
+    }
+
+    return url;
+  }
+
+  const searchEventHandler = (e) => {
+    if(e.keyCode != 13)
+      return false
+
+    let newPath = removeURLParameter(asPath, 'search')
+    newPath = removeURLParameter(newPath, 'page')
+    
+    if(e.target.value == '' || e.target.value == ' ') {
+      setSearchKey(e.target.value)
+      if(newPath.includes("?"))
+        setPagePath(`${newPath}&`)
+      else
+        setPagePath(`${newPath}?`)
+        
+      Router.push('/dashboard/site/[siteId]/pages', newPath)
+      return
+    }
+
+    if(newPath.includes("?"))
+      newPath += `&search=${e.target.value}`
+    else
+      newPath += `?search=${e.target.value}`
+
+    setSearchKey(e.target.value)
+    if(newPath.includes("?"))
+      setPagePath(`${newPath}&`)
+    else
+      setPagePath(`${newPath}?`)
+
+    Router.push('/dashboard/site/[siteId]/pages', newPath)
+
+    updatePages()
+  }
+
+  useEffect(() => {
+    console.log('[pathname]', asPath)
+    
+    if(asPath.includes("?"))
+      setPagePath(`${removeURLParameter(asPath, 'page')}&`)
+    else
+      setPagePath(`${removeURLParameter(asPath, 'page')}?`)
+
+    if(props.result.search !== undefined)
+      setSearchKey(props.result.search)
+  }, [])
 
   if (pageError) return <div>{pageError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
@@ -171,7 +243,7 @@ const Pages = props => {
                     </div>
                   </div>
                 </div>
-                <LinkOptions />
+                <LinkOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
                 <div className={`pb-4`}>
                   <div className={`flex flex-col`}>
                     <div
@@ -245,9 +317,10 @@ const Pages = props => {
                 </div>
 
                 <Pagination 
-                  pathName={pathname}
+                  href='/dashboard/site/[siteId]/pages'
+                  pathName={pagePath}
                   apiEndpoint={scanApiEndpoint}
-                  page={props.page ? props.page : 0}
+                  page={props.result.page ? props.result.page : 0}
                 />
                 
               </div>
@@ -259,9 +332,12 @@ const Pages = props => {
   )
 }
 
-Pages.getInitialProps = ({ query }) => {
+export async function getServerSideProps(context) {
+  console.log('[Query]', context.query)
   return {
-    page: query.page,
+    props: {
+      result: context.query
+    }
   }
 }
 

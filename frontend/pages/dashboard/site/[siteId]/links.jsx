@@ -135,8 +135,6 @@ const Links = props => {
   }
 
   const searchEventHandler = async (e) => {
-    // console.log('[search event]', e.keyCode, e.target.value, removeURLParameter(asPath, 'search'), asPath)
-    
     if(e.keyCode != 13)
       return false
 
@@ -145,6 +143,11 @@ const Links = props => {
     
     if(e.target.value == '' || e.target.value == ' ') {
       setSearchKey(e.target.value)
+      if(newPath.includes("?"))
+        setPagePath(`${newPath}&`)
+      else
+        setPagePath(`${newPath}?`)
+
       Router.push('/dashboard/site/[siteId]/links', newPath)
       return
     }
@@ -170,8 +173,6 @@ const Links = props => {
     const filterStatus = e.target.checked
 
     let newPath = asPath
-
-    // console.log('[asPath]', asPath)
     
     if(filterType == 'issues' && filterStatus == true) {
       setIssueFilter(true)
@@ -252,8 +253,6 @@ const Links = props => {
   }
 
   useEffect(() => {
-    console.log('[pathname]', asPath)
-    
     if(asPath.includes("?"))
       setPagePath(`${removeURLParameter(asPath, 'page')}&`)
     else
@@ -507,6 +506,7 @@ const Links = props => {
                 </div>
 
                 <Pagination 
+                  href='/dashboard/site/[siteId]/links'
                   pathName={pagePath}
                   apiEndpoint={scanApiEndpoint}
                   page={props.result.page ? props.result.page : 0}
