@@ -20,7 +20,7 @@ const LinkFilter = ({onFilterChange, allFilter, issueFilter, internalFilter, ext
           <div className={`ml-4 mt-2 mr-2`}>
             <div>
 							<label className={`flex items-center`}>
-								<input type="checkbox" className={`form-checkbox`} onClick={filterHandler} defaultChecked={allFilter} value="all" />
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={allFilter} value="all" />
 								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>All Links</span>
 							</label>
             </div>
@@ -28,7 +28,7 @@ const LinkFilter = ({onFilterChange, allFilter, issueFilter, internalFilter, ext
 					<div className={`ml-4 mt-2 mr-2`}>
             <div>
 							<label className={`flex items-center`}>
-								<input type="checkbox" className={`form-checkbox`} onClick={filterHandler} defaultChecked={issueFilter} value="issues" />
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={issueFilter} value="issues" />
 								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Links with Issues</span>
 							</label>
             </div>
@@ -36,7 +36,7 @@ const LinkFilter = ({onFilterChange, allFilter, issueFilter, internalFilter, ext
 					<div className={`ml-4 mt-2 mr-2`}>
             <div>
 							<label className={`flex items-center`}>
-								<input type="checkbox" className={`form-checkbox`} onClick={filterHandler} defaultChecked={internalFilter} value="internal" />
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={internalFilter} value="internal" />
 								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Internal Links</span>
 							</label>
             </div>
@@ -44,7 +44,7 @@ const LinkFilter = ({onFilterChange, allFilter, issueFilter, internalFilter, ext
 					<div className={`ml-4 mt-2 mr-2`}>
             <div>
 							<label className={`flex items-center`}>
-								<input type="checkbox" className={`form-checkbox`} onClick={filterHandler} defaultChecked={externalFilter} value="external" />
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={externalFilter} value="external" />
 								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>External Links</span>
 							</label>
             </div>

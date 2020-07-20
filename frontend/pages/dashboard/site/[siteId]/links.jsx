@@ -67,7 +67,6 @@ const Links = props => {
   const [pagePath, setPagePath] = useState('')
   const [sortOrder, setSortOrder] = useState(false)
   const [searchKey, setSearchKey] = useState('')
-  const [initialPath, setInitialPath] = useState('')
 
   const pageTitle = 'Links |'
 
@@ -101,7 +100,8 @@ const Links = props => {
 
   let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/link/`
   let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( props.result.page !== undefined ? '&status=' + props.result.status.join('&status=') : '?status=' + props.result.status.join('&status=') ) : ''
-  queryString += props.result.type !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${props.result.type}` : `?type=${props.result.type}` ) : ''
+  const typeString = Array.isArray(props.result.type) ? props.result.type.join('&type=') : props.result.type
+  queryString += props.result.type !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${typeString}` : `?type=${typeString}` ) : ''
   queryString += props.result.search !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined || props.result.type !== undefined ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
 
   scanApiEndpoint  += queryString
@@ -155,6 +155,11 @@ const Links = props => {
       newPath += `?search=${e.target.value}`
 
     setSearchKey(e.target.value)
+    if(newPath.includes("?"))
+      setPagePath(`${newPath}&`)
+    else
+      setPagePath(`${newPath}?`)
+
     Router.push('/dashboard/site/[siteId]/links', newPath)
 
     updateLinks()
@@ -187,8 +192,7 @@ const Links = props => {
       setInternalFilter(true)
       setExternalFilter(false)
       setAllFilter(false)
-      newPath = newPath.replace('&type=EXTERNAL', '')
-      newPath = newPath.replace('?type=EXTERNAL', '')
+      newPath = removeURLParameter(newPath, 'type')
       newPath = removeURLParameter(newPath, 'page')
 
       if(newPath.includes("?"))
@@ -206,14 +210,13 @@ const Links = props => {
       setExternalFilter(true)
       setInternalFilter(false)
       setAllFilter(false)
-      newPath = newPath.replace('&type=PAGE', '')
-      newPath = newPath.replace('?type=PAGE', '')
       newPath = removeURLParameter(newPath, 'page')
+      newPath = removeURLParameter(newPath, 'type')
 
       if(newPath.includes("?"))
-        newPath += `&type=EXTERNAL`
+        newPath += `&type=EXTERNAL&type=OTHER`
       else
-        newPath += `?type=EXTERNAL`
+        newPath += `?type=EXTERNAL&type=OTHER`
     }
     else if(filterType == 'external' && filterStatus == false) {
       if(newPath.includes('type=EXTERNAL'))
@@ -229,8 +232,13 @@ const Links = props => {
 
       newPath = removeURLParameter(newPath, 'status')
       newPath = removeURLParameter(newPath, 'type')
+      newPath = removeURLParameter(newPath, 'page')
+
+      if(!newPath.includes('search'))
+        newPath = newPath.replace('?', '')
     }
 
+    console.log('[pagePath]', newPath)
     if(newPath.includes("?"))
       setPagePath(`${newPath}&`)
     else
@@ -244,8 +252,12 @@ const Links = props => {
   }
 
   useEffect(() => {
-    setPagePath(`${pathname}?`)
-    setInitialPath(pathname)
+    console.log('[pathname]', asPath)
+    
+    if(asPath.includes("?"))
+      setPagePath(`${removeURLParameter(asPath, 'page')}&`)
+    else
+      setPagePath(`${removeURLParameter(asPath, 'page')}?`)
 
     if(props.result.search !== undefined)
       setSearchKey(props.result.search)
@@ -267,13 +279,24 @@ const Links = props => {
     else
       setInternalFilter(false)
 
-    if(props.result.type !== undefined && props.result.type == 'EXTERNAL') {
-      setExternalFilter(true)
-      setInternalFilter(false)
-      setAllFilter(false)
+    if(Array.isArray(props.result.type)) {
+      if(props.result.type !== undefined && props.result.type.join('') == 'EXTERNALOTHER') {
+        setExternalFilter(true)
+        setInternalFilter(false)
+        setAllFilter(false)
+      }
+      else
+        setExternalFilter(false)
     }
-    else
-      setExternalFilter(false)
+    else {
+      if(props.result.type !== undefined && props.result.type == 'EXTERNAL') {
+        setExternalFilter(true)
+        setInternalFilter(false)
+        setAllFilter(false)
+      }
+      else
+        setExternalFilter(false)
+    }
 
     if(props.result.type == undefined && props.result.status == undefined) {
       setIssueFilter(false)
