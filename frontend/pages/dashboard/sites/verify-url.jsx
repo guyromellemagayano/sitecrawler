@@ -9,6 +9,7 @@ import PropTypes from 'prop-types'
 import Layout from '../../../components/Layout'
 import MobileSidebar from '../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../components/sidebar/MainSidebar'
+import HowToSetup from '../../../components/sites/HowToSetup'
 
 const SitesVerifyUrlDiv = styled.section`
   ol {
@@ -29,6 +30,7 @@ const SitesVerifyUrl = props => {
   const [successMsg, setSuccessMsg] = useState('')
   const [disableSiteVerify, setDisableSiteVerify] = useState(false)
   const [enableNextStep, setEnableNextStep] = useState(false)
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const pageTitle = 'Verify Site URL'
 
   const handleInputChange = ({ copyValue }) => {
@@ -90,7 +92,7 @@ const SitesVerifyUrl = props => {
       <SitesVerifyUrlDiv
         className={`h-screen flex overflow-hidden bg-gray-100`}
       >
-        <MobileSidebar />
+        <MobileSidebar show={openMobileSidebar} />
         <MainSidebar />
 
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -98,6 +100,7 @@ const SitesVerifyUrl = props => {
             <button
               className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
               aria-label={`Open sidebar`}
+              onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
             >
               <svg
                 className={`h-6 w-5`}
@@ -118,9 +121,9 @@ const SitesVerifyUrl = props => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
-                <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
+            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8 grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12`}>
+              <div className={`lg:col-span-2 bg-white overflow-hidden shadow-xs rounded-lg`}>
+                <div className={`px-8 pt-4 sm:px-8 sm:pt-8`}>
                   <div className={`max-w-full pt-4 m-auto`}>
                     <h4
                       className={`text-2xl leading-6 font-medium text-gray-900`}
@@ -136,7 +139,7 @@ const SitesVerifyUrl = props => {
                   </div>
                 </div>
                 <div
-                  className={`max-w-full sm:px-8 sm:pt-6 sm:pb-8 grid gap-16 pt-12 lg:grid-cols-4 lg:col-gap-5 lg:row-gap-12`}
+                  className={`max-w-full px-8 pb-8 sm:pt-6 grid gap-16 pt-12 lg:grid-cols-2 lg:col-gap-5 lg:row-gap-12`}
                 >
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
@@ -176,7 +179,7 @@ const SitesVerifyUrl = props => {
                   </div>
                 </div>
 
-                <div className={`px-4 pt-8 pb-12 sm:px-8`}>
+                <div className={`inline-block px-8 pt-8 pb-12 sm:px-8`}>
                   <div className={`max-w-full py-4 m-auto`}>
                     <div>
                       <h4
@@ -314,7 +317,7 @@ const SitesVerifyUrl = props => {
                         </span>
 
                         {errorMsg && (
-                          <div className={`inline-block ml-2 p-2`}>
+                          <div className={`inline-block mt-3 py-2 lg:m-0 lg:ml-2`}>
                             <div className={`flex`}>
                               <div>
                                 <h3
@@ -328,7 +331,7 @@ const SitesVerifyUrl = props => {
                         )}
 
                         {successMsg && (
-                          <div className={`inline-block ml-2 p-2`}>
+                          <div className={`inline-block mt-3 py-2 lg:m-0 lg:ml-2`}>
                             <div className={`flex`}>
                               <div>
                                 <h3
@@ -361,6 +364,10 @@ const SitesVerifyUrl = props => {
                     ) : null}
                   </div>
                 </div>
+              </div>
+            
+              <div className={`lg:col-span-1 bg-white overflow-hidden shadow-xs rounded-lg`}>
+                <HowToSetup />
               </div>
             </div>
           </main>

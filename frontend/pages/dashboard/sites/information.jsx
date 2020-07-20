@@ -5,13 +5,13 @@ import Url from 'url-parse'
 import Router, { withRouter } from 'next/router'
 import Head from 'next/head'
 import styled from 'styled-components'
-import Link from 'next/link'
 import PropTypes from 'prop-types'
 import ReactHtmlParser from 'react-html-parser';
 import fetchJson from '../../../hooks/fetchJson'
 import Layout from '../../../components/Layout'
 import MobileSidebar from '../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../components/sidebar/MainSidebar'
+import HowToSetup from '../../../components/sites/HowToSetup'
 
 const SitesInformationDiv = styled.section`
   .wizard-indicator {
@@ -19,7 +19,7 @@ const SitesInformationDiv = styled.section`
   }
 `
 
-const SitesInformation = (props) => {
+const SitesInformation = props => {
   const [disableSiteVerify, setDisableSiteVerify] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
   const [errorSiteNameMsg, setErrorSiteNameMsg] = useState("")
@@ -28,6 +28,7 @@ const SitesInformation = (props) => {
   const [siteName, setSiteName] = useState("")
   const [urlProtocol, setUrlProtocol] = useState("https://")
   const [siteUrl, setSiteUrl] = useState("")
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const pageTitle = "Add a New Site"
   const { router } = props
 
@@ -283,7 +284,7 @@ const SitesInformation = (props) => {
       <SitesInformationDiv
         className={`h-screen flex overflow-hidden bg-gray-100`}
       >
-        <MobileSidebar />
+        <MobileSidebar show={openMobileSidebar} />
         <MainSidebar />
 
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -291,6 +292,7 @@ const SitesInformation = (props) => {
             <button
               className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
               aria-label={`Open sidebar`}
+              onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
             >
               <svg
                 className={`h-6 w-5`}
@@ -311,9 +313,9 @@ const SitesInformation = (props) => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
-                <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
+            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8 grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12`}>
+              <div className={`lg:col-span-2 bg-white overflow-hidden shadow-xs rounded-lg`}>
+                <div className={`px-4 pt-4 px-8 sm:pt-8`}>
                   <div className={`max-w-full pt-4 m-auto`}>
                     <h4
                       className={`text-2xl leading-6 font-medium text-gray-900`}
@@ -329,7 +331,7 @@ const SitesInformation = (props) => {
                   </div>
                 </div>
                 <div
-                  className={`max-w-full sm:px-8 sm:pt-6 sm:pb-8 grid gap-16 pt-12 lg:grid-cols-4 lg:col-gap-5 lg:row-gap-12`}
+                  className={`max-w-full px-8 pb-8 sm:pt-6 grid gap-16 pt-12 lg:grid-cols-2 lg:col-gap-5 lg:row-gap-12`}
                 >
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
@@ -346,8 +348,7 @@ const SitesInformation = (props) => {
                     </p>
                   </div>
                 </div>
-
-                <div className={`px-4 pt-8 pb-12 sm:px-8`}>
+                <div className={`inline-block pt-8 pb-12 px-8`}>
                   <div className={`max-w-full py-4 m-auto`}>
                     <div>
                       <h4
@@ -593,6 +594,10 @@ const SitesInformation = (props) => {
                     </form>
                   </div>
                 </div>
+              </div>
+
+              <div className={`lg:col-span-1 bg-white overflow-hidden shadow-xs rounded-lg`}>
+                <HowToSetup />
               </div>
             </div>
           </main>
