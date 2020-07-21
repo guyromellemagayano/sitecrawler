@@ -8,6 +8,7 @@ import Url from 'url-parse'
 import SiteDangerBadge from '../badges/SiteDangerBadge'
 import SiteSuccessBadge from '../badges/SiteSuccessBadge'
 import SiteWarningBadge from '../badges/SiteWarningBadge'
+import Skeleton from 'react-loading-skeleton';
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -77,7 +78,17 @@ const LinkUrlTable = props => {
 
   if (linkDetailError) return <div>{linkDetailError.message}</div>
   if (userError) return <div>{userError.message}</div>
-  if (!linkDetail || !user) return <div>Loading...</div>
+  if (!linkDetail || !user) {
+    return (
+      <Fragment>
+        <LinkUrlTableDiv className={`bg-white`}>
+          <tr>
+            {[...Array(6)].map((val, index) => <td className={`py-1`} key={index}><Skeleton /></td>)}
+          </tr>
+        </LinkUrlTableDiv>
+      </Fragment>
+    )
+  }
 
   return (
     <Fragment>
