@@ -2,14 +2,6 @@ resource "aws_security_group" "node_security_group" {
   name        = "node_security_group"
   description = "Allow required traffic"
 
-  ingress {
-    description = "SSH Guy"
-    to_port     = 22
-		from_port   = 22
-    protocol    = "tcp"
-    cidr_blocks = ["180.190.77.48/32"]
-  }
-
 	ingress {
     description = "http"
     to_port     = 80
