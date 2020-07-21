@@ -15,6 +15,7 @@ import LinkOptions from '../../../../components/site/LinkOptions'
 import LinkFilter from '../../../../components/site/LinkFilter'
 import LinkUrlTable from '../../../../components/site/LinkUrlTable'
 import Pagination from '../../../../components/sites/Pagination'
+import LinkSorting from '../../../../components/site/LinkSorting'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -58,6 +59,15 @@ const LinksDiv = styled.section`
   }
 `
 
+const initialOrder = {
+  linkUrl: 'default',
+  urlType: 'default',
+  status: 'default',
+  httpCode: 'default',
+  linkLocation: 'default',
+  occurrences: 'default'
+}
+
 const Links = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const [allFilter, setAllFilter] = useState(false)
@@ -65,7 +75,8 @@ const Links = props => {
   const [internalFilter, setInternalFilter] = useState(false)
   const [externalFilter, setExternalFilter] = useState(false)
   const [pagePath, setPagePath] = useState('')
-  const [sortOrder, setSortOrder] = useState(false)
+  const [sortOrder, setSortOrder] = useState(initialOrder)
+
   const [searchKey, setSearchKey] = useState('')
 
   const pageTitle = 'Links |'
@@ -103,6 +114,8 @@ const Links = props => {
   const typeString = Array.isArray(props.result.type) ? props.result.type.join('&type=') : props.result.type
   queryString += props.result.type !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${typeString}` : `?type=${typeString}` ) : ''
   queryString += props.result.search !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined || props.result.type !== undefined ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
+  
+  queryString += props.result.ordering !== undefined && (scanApiEndpoint + queryString).includes('?') ? `&ordering=${props.result.ordering}` : `?ordering=${props.result.ordering}`
 
   scanApiEndpoint  += queryString
 
@@ -235,11 +248,10 @@ const Links = props => {
       newPath = removeURLParameter(newPath, 'type')
       newPath = removeURLParameter(newPath, 'page')
 
-      if(!newPath.includes('search'))
+      if(!newPath.includes('search') && !newPath.includes('ordering'))
         newPath = newPath.replace('?', '')
     }
 
-    console.log('[pagePath]', newPath)
     if(newPath.includes("?"))
       setPagePath(`${newPath}&`)
     else
@@ -260,6 +272,17 @@ const Links = props => {
 
     if(props.result.search !== undefined)
       setSearchKey(props.result.search)
+
+    if(props.result.ordering !== undefined) {
+      const slug = getSlugFromSortKey(props.result.ordering.replace('-', ''))
+      const orderItem = slugToCamelcase(slug)
+
+      if(props.result.ordering.includes('-'))
+        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'desc' }));
+      else
+        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'asc' }));
+    }
+    
   }, [])
 
   useEffect(() => {
@@ -304,6 +327,71 @@ const Links = props => {
       setAllFilter(true)
     }
   }, [filterChangeHandler])
+
+  const slugToCamelcase = (slug) => {
+    return slug.replace(/(\-\w)/g, function(m){return m[1].toUpperCase();});
+  }
+
+  const getSortKeyFromSlug = (slug) => {
+    let sortKey = ''
+
+    LinksUrlContent.forEach((val, index) => {
+      if(val.slug == slug)
+        sortKey = val.key
+    })
+
+    return sortKey
+  }
+
+  const getSlugFromSortKey = (sortKey) => {
+    let slug = ''
+
+    LinksUrlContent.forEach((val, index) => {
+      if(val.key == sortKey)
+        slug = val.slug
+    })
+
+    return slug
+  }
+
+  const SortHandler = (slug) => {
+    setSortOrder({...initialOrder});
+
+    let newPath = removeURLParameter(asPath, 'ordering')
+    const sortItem = slugToCamelcase(slug)
+    const sortKey = getSortKeyFromSlug(slug)
+
+    if(sortOrder[sortItem] == 'default') {
+      setSortOrder(prevState => ({ ...prevState, [sortItem]: 'asc' }));
+      if(newPath.includes("?"))
+        newPath += `&ordering=${sortKey}`
+      else
+        newPath += `?ordering=${sortKey}`
+    }
+    else if(sortOrder[sortItem] == 'asc') {
+      setSortOrder(prevState => ({ ...prevState, [sortItem]: 'desc' }));
+      if(newPath.includes("?"))
+        newPath += `&ordering=-${sortKey}`
+      else
+        newPath += `?ordering=-${sortKey}`
+    }
+    else {
+      setSortOrder(prevState => ({ ...prevState, [sortItem]: 'asc' }));
+      if(newPath.includes("?"))
+        newPath += `&ordering=${sortKey}`
+      else
+        newPath += `?ordering=${sortKey}`
+    }
+
+    console.log('[pagePath]', newPath)
+    if(newPath.includes("?"))
+      setPagePath(`${newPath}&`)
+    else
+      setPagePath(`${newPath}?`)
+    
+    Router.push('/dashboard/site/[siteId]/links', newPath)
+    updateLinks()
+  }
 
   if (linkError) return <div>{linkError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
@@ -401,41 +489,7 @@ const Links = props => {
                                       className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
                                     >
                                       <div className={`flex items-center justify-start`}>
-                                        <div className="flex flex-row mr-3">
-                                          <button
-                                            className={`inline-flex`}
-                                            onClick={(e) => setSortOrder(!sortOrder)}
-                                          >
-                                            <span
-                                              className={`${sortOrder ? "text-gray-500" : "text-gray-300"} w-4 h-4 inline-block`}
-                                            >
-                                              <svg
-                                                fill="none"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                              >
-                                                <path d="M5 15l7-7 7 7"></path>
-                                              </svg>
-                                            </span>
-                                            <span
-                                              className={`${!sortOrder ? "text-gray-500" : "text-gray-300"} w-4 h-4 inline-block`}
-                                            >
-                                              <svg
-                                                fill="none"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                              >
-                                                <path d="M19 9l-7 7-7-7"></path>
-                                              </svg>
-                                            </span>
-                                          </button>
-                                        </div>
+                                        <LinkSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} />
                                         <span className="label flex items-center">
                                           {site.label}
                                           {site.slug === "url-type" ||
