@@ -47,6 +47,8 @@ services:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
     links:
       - db
+    environment:
+      ENV: staging
   db:
     image: postgres
     volumes:

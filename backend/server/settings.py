@@ -22,12 +22,23 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", "3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0")
 
+AWS_SCAN_QUEUE_NAME = "linkapp-scan"
+AWS_ACCESS_KEY_ID = None
+AWS_SECRET_ACCESS_KEY = None
+AWS_USE_SSL = True
+AWS_ENDPOINT_URL = None
+AWS_REGION = "us-east-1"
+
 env = os.environ.get("ENV", "dev")
 if env == "dev":
     DEBUG = True
     ALLOWED_HOSTS = []
     CRAWLER_URL = "http://crawler:3000"
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    AWS_ACCESS_KEY_ID = "foo"
+    AWS_SECRET_ACCESS_KEY = "var"
+    AWS_ENDPOINT_URL = "http://localstack:4566"
+    AWS_USE_SSL = False
 elif env == "staging":
     DEBUG = False
     ALLOWED_HOSTS = ["linkapp.epicsandbox.com"]

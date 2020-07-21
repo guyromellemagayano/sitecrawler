@@ -20,3 +20,9 @@ func (s *LinkLinkDao) Save(link_link *CrawlLinkLink) error {
 	}
 	return s.DB.Update(link_link)
 }
+
+func (s *LinkLinkDao) DeleteAllForScan(scanID int) error {
+	subquery := s.DB.Model(&CrawlLink{}).Column("id").Where("scan_id = ?", scanID)
+	_, err := s.DB.Model(&CrawlLinkLink{}).Where("from_link_id IN (?)", subquery).Delete()
+	return err
+}

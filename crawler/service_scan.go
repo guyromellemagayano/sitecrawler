@@ -46,6 +46,16 @@ func (s *ScanService) ScanSite(scanID int) error {
 	if !scan.Site.Verified {
 		return nil
 	}
+	if scan.FinishedAt != nil {
+		return nil
+	}
+
+	if err := s.LinkLinkDao.DeleteAllForScan(scanID); err != nil {
+		return err
+	}
+	if err := s.LinkDao.DeleteAllForScan(scanID); err != nil {
+		return err
+	}
 
 	if err := s.Start(scan); err != nil {
 		return err
