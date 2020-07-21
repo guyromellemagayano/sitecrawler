@@ -73,16 +73,14 @@ const Login = () => {
 
         if (msg.username) {
           setErrorUsernameMsg(msg.username[0])
-        } 
+        }
         
         if (msg.password) {
           setErrorPasswordMsg(msg.password[0])
-        } 
+        }
         
-        if (!msg.username && !msg.password) {
-          console.error(error.message)
-          // setErrorMsg(error.message.toString())
-          setErrorMsg('An unexpected error occurred. Please try again.')
+        if (!msg.username && !msg.password && msg.non_field_errors) {
+          setErrorMsg(msg.non_field_errors)
         }
       }
     }
