@@ -115,7 +115,7 @@ const Links = props => {
   queryString += props.result.type !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${typeString}` : `?type=${typeString}` ) : ''
   queryString += props.result.search !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined || props.result.type !== undefined ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
   
-  queryString += props.result.ordering !== undefined && (scanApiEndpoint + queryString).includes('?') ? `&ordering=${props.result.ordering}` : `?ordering=${props.result.ordering}`
+  queryString += props.result.ordering !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&ordering=${props.result.ordering}` : `?ordering=${props.result.ordering}` ) : ''
 
   scanApiEndpoint  += queryString
 
@@ -358,6 +358,7 @@ const Links = props => {
     setSortOrder({...initialOrder});
 
     let newPath = removeURLParameter(asPath, 'ordering')
+    
     const sortItem = slugToCamelcase(slug)
     const sortKey = getSortKeyFromSlug(slug)
 
@@ -382,12 +383,12 @@ const Links = props => {
       else
         newPath += `?ordering=${sortKey}`
     }
-
+    
     console.log('[pagePath]', newPath)
     if(newPath.includes("?"))
-      setPagePath(`${newPath}&`)
+      setPagePath(`${removeURLParameter(newPath, 'page')}&`)
     else
-      setPagePath(`${newPath}?`)
+      setPagePath(`${removeURLParameter(newPath, 'page')}?`)
     
     Router.push('/dashboard/site/[siteId]/links', newPath)
     updateLinks()
