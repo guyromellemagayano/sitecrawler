@@ -20,3 +20,8 @@ func (s *LinkDao) Save(link *CrawlLink) error {
 	}
 	return s.DB.Update(link)
 }
+
+func (s *LinkDao) DeleteAllForScan(scanID int) error {
+	_, err := s.DB.Model(&CrawlLink{}).Where("scan_id = ?", scanID).Delete()
+	return err
+}

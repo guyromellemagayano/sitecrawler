@@ -24,6 +24,7 @@ services:
     links:
       - db
       - crawler
+      - localstack
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)"
@@ -48,6 +49,7 @@ services:
       - ./crawler:/app
     links:
       - db
+      - localstack
   db:
     image: postgres
     environment:
@@ -58,6 +60,8 @@ services:
       - "listen_addresses=*"
     volumes:
       - db-data:/var/lib/postgresql/data
+  localstack:
+    image: localstack/localstack
 
 volumes:
   db-data:

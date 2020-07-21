@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-CMD gin run *.go
+CMD gin -i run *.go
 EXPOSE 3000
 
 

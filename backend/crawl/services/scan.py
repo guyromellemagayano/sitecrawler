@@ -1,4 +1,4 @@
-import requests
+import boto3
 from django.conf import settings
 
 from crawl.models.scan import Scan
@@ -11,7 +11,15 @@ def site(site):
 
     scan = Scan.objects.create(site=site)
 
-    response = requests.post(settings.CRAWLER_URL + "/scan", json={"scan_id": scan.id})
-    response.raise_for_status()
-
-    return response.json()
+    sqs = boto3.client(
+        "sqs",
+        endpoint_url=settings.AWS_ENDPOINT_URL,
+        use_ssl=settings.AWS_USE_SSL,
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_REGION,
+    )
+    queue_url = sqs.get_queue_url(QueueName=settings.AWS_SCAN_QUEUE_NAME)["QueueUrl"]
+    sqs.send_message(
+        QueueUrl=queue_url, MessageBody=str(scan.id),
+    )
