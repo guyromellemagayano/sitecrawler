@@ -11,6 +11,11 @@ func ScanWorker(scanSqsQueue *SQSService, scanService *ScanService) {
 		if err != nil {
 			return err
 		}
+		defer func() {
+			if err := msg.Done(); err != nil {
+				log.Printf("Scan done failed: %v", err)
+			}
+		}()
 
 		id, err := strconv.Atoi(msg.Body())
 		if err != nil {
