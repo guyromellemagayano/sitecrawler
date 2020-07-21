@@ -46,6 +46,10 @@ func main() {
 			Region:           aws.String(endpoints.UsEast1RegionID),
 			Endpoint:         aws.String("http://localstack:4566"),
 		})
+	} else {
+		awsConfigs = append(awsConfigs, &aws.Config{
+			Region: aws.String(endpoints.UsEast1RegionID),
+		})
 	}
 	awsSession, err := session.NewSession(awsConfigs...)
 	if err != nil {
