@@ -29,14 +29,6 @@ const fetcher = async (url) => {
 const PrimaryMenuDiv = styled.nav``
 
 const PrimaryMenu = () => {  
-  const {
-    data: site,
-    error: siteError,
-  } = useSWR('/api/site/', fetcher)
-
-  if (siteError) return <div>{siteError.message}</div>
-  if (!site) return <div>Loading...</div>
-
   return (
     <PrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
       {
@@ -61,11 +53,6 @@ const PrimaryMenu = () => {
                     />
                   </svg>
                   <span>{val.title}</span>
-                  {val.url === "/dashboard/sites" && (
-                    <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
-                      {site.count}
-                    </span>
-                  )}
                 </a>
               </Link>
             </Fragment>

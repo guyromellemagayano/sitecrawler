@@ -9,6 +9,7 @@ import PropTypes from 'prop-types'
 import Layout from '../../../components/Layout'
 import MobileSidebar from '../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../components/sidebar/MainSidebar'
+import HowToSetup from '../../../components/sites/HowToSetup'
 
 const SitesVerifyUrlDiv = styled.section`
   ol {
@@ -29,6 +30,7 @@ const SitesVerifyUrl = props => {
   const [successMsg, setSuccessMsg] = useState('')
   const [disableSiteVerify, setDisableSiteVerify] = useState(false)
   const [enableNextStep, setEnableNextStep] = useState(false)
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const pageTitle = 'Verify Site URL'
 
   const handleInputChange = ({ copyValue }) => {
@@ -90,7 +92,7 @@ const SitesVerifyUrl = props => {
       <SitesVerifyUrlDiv
         className={`h-screen flex overflow-hidden bg-gray-100`}
       >
-        <MobileSidebar />
+        <MobileSidebar show={openMobileSidebar} />
         <MainSidebar />
 
         <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -98,6 +100,7 @@ const SitesVerifyUrl = props => {
             <button
               className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
               aria-label={`Open sidebar`}
+              onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
             >
               <svg
                 className={`h-6 w-5`}
@@ -118,9 +121,9 @@ const SitesVerifyUrl = props => {
             className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
             tabIndex={`0`}
           >
-            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-              <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
-                <div className={`px-4 pt-4 sm:px-8 sm:pt-8`}>
+            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8 grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12`}>
+              <div className={`lg:col-span-2 bg-white overflow-hidden shadow-xs rounded-lg`}>
+                <div className={`px-8 pt-4 sm:px-8 sm:pt-8`}>
                   <div className={`max-w-full pt-4 m-auto`}>
                     <h4
                       className={`text-2xl leading-6 font-medium text-gray-900`}
@@ -136,38 +139,61 @@ const SitesVerifyUrl = props => {
                   </div>
                 </div>
                 <div
-                  className={`max-w-full sm:px-8 sm:pt-6 sm:pb-8 grid gap-16 pt-12 lg:grid-cols-4 lg:col-gap-5 lg:row-gap-12`}
+                  className={`max-w-full px-8 pb-8 sm:pt-6 grid gap-16 pt-12 lg:grid-cols-2 lg:col-gap-5 lg:row-gap-12`}
                 >
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
+                      className={`max-w-2xl mt-4 text-sm leading-2 font-medium text-green-500`}
                     >
-                      1. Fill in site information
+                      <span className={`max-w-xs inline-flex items-center justify-between`}>
+                        <svg className={`w-5`} fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          ></path>
+                        </svg>&nbsp;
+                        Fill in site information
+                      </span>
                     </p>
                   </div>
                   <div className={`wizard-indicator bg-green-500`}>
                     <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400`}
+                      className={`${enableNextStep ? "text-green-500" : "text-black-400"} font-medium  max-w-2xl mt-4 text-sm leading-2`}
                     >
-                      2. Verify site
-                    </p>
-                  </div>
-                  <div className={`wizard-indicator bg-gray-100`}>
-                    <p
-                      className={`max-w-2xl mt-4 text-sm leading-2 text-gray-400`}
-                    >
-                      3. Prepare the site profile
+                      <span className={`max-w-xs inline-flex items-center justify-between`}>
+                        {enableNextStep ? (
+                          <svg className={`w-5`} fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            ></path>
+                          </svg>
+                        ) : (
+                          "2."
+                        )}
+                        &nbsp;Verify Site
+                      </span>
                     </p>
                   </div>
                 </div>
 
-                <div className={`px-4 pt-8 pb-12 sm:px-8`}>
+                <div className={`inline-block px-8 pt-8 pb-12 sm:px-8`}>
                   <div className={`max-w-full py-4 m-auto`}>
                     <div>
                       <h4
                         className={`text-lg leading-7 font-medium text-gray-900`}
                       >
-                        Verify Site: <a href={props.surl} target="_blank" title={props.surl} className={`text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>{props.surl}</a>
+                        Verify Site:{" "}
+                        <a
+                          href={props.surl}
+                          target="_blank"
+                          title={props.surl}
+                          className={`text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                        >
+                          {props.surl}
+                        </a>
                       </h4>
                       <p
                         className={`max-w-full text-sm mb-5 leading-5 text-gray-600`}
@@ -254,11 +280,28 @@ const SitesVerifyUrl = props => {
                             </button>
                           )}
                         </span>
-                        
+
                         <span className={`inline-flex rounded-md shadow-xs-sm`}>
-                          <Link 
+                        {disableSiteVerify ? (
+                          <Link
                             href={{
-                              pathname: '/dashboard/sites/information',
+                              pathname: "/dashboard/sites/information",
+                              query: {
+                                sid: props.sid,
+                              },
+                            }}
+                          >
+                            <a
+                              disabled={`disabled`}
+                              className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm sm:text-sm sm:leading-5 opacity-50 cursor-not-allowed`}
+                            >
+                              Update Site Information
+                            </a>
+                          </Link>
+                        ) : (
+                          <Link
+                            href={{
+                              pathname: "/dashboard/sites/information",
                               query: {
                                 sid: props.sid,
                               },
@@ -267,13 +310,14 @@ const SitesVerifyUrl = props => {
                             <a
                               className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 hover:text-gray-500 focus:outline-none`}
                             >
-                              Go back
+                              Update Site Information
                             </a>
                           </Link>
+                        )}
                         </span>
 
                         {errorMsg && (
-                          <div className={`inline-block ml-2 p-2`}>
+                          <div className={`inline-block mt-3 py-2 lg:m-0 lg:ml-2`}>
                             <div className={`flex`}>
                               <div>
                                 <h3
@@ -287,7 +331,7 @@ const SitesVerifyUrl = props => {
                         )}
 
                         {successMsg && (
-                          <div className={`inline-block ml-2 p-2`}>
+                          <div className={`inline-block mt-3 py-2 lg:m-0 lg:ml-2`}>
                             <div className={`flex`}>
                               <div>
                                 <h3
@@ -306,17 +350,13 @@ const SitesVerifyUrl = props => {
                       <Fragment>
                         <div>
                           <Link
-                            href={{ 
-                              pathname: '/dashboard/sites/prepare-site-profile', 
-                              query: {
-                                sid: props.sid,
-                              },
-                            }}
+                            href="/dashboard/site/[id]/overview"
+                            as={`/dashboard/site/${props.sid}/overview`}
                           >
                             <a
                               className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                             >
-                              Proceed to Step 3
+                              Go to Site Overview
                             </a>
                           </Link>
                         </div>
@@ -325,12 +365,16 @@ const SitesVerifyUrl = props => {
                   </div>
                 </div>
               </div>
+            
+              <div className={`lg:col-span-1 bg-white overflow-hidden shadow-xs rounded-lg`}>
+                <HowToSetup />
+              </div>
             </div>
           </main>
         </div>
       </SitesVerifyUrlDiv>
     </Layout>
-  )
+  );
 }
 
 SitesVerifyUrl.getInitialProps = ({ query }) => {
