@@ -58,6 +58,7 @@ const HowToSetup = () => {
 					{tabItems.map(({ id, video }) => {
 						return tabActive === id ? (
 							<ReactPlayer 
+								key={id}
 								url={video.src}
 								width={'auto'}
 								height={240}
