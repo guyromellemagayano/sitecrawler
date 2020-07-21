@@ -75,7 +75,7 @@ resource "aws_iam_role_policy" "s3_node_policy" {
 }
 
 resource "aws_iam_role_policy" "sqs_node_policy" {
-	name = "s3_node_policy"
+	name = "sqs_node_policy"
 	role = aws_iam_role.node_role.id
 
 	policy = <<EOF
