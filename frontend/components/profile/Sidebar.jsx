@@ -19,22 +19,30 @@ const ProfileSidebarDiv = styled.div``
 const ProfileSidebar = () => {
   const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
 
-  const { data, error } = useSWR('/api/auth/user/', fetcher)
+  const { data: user, error: siteError } = useSWR('/api/auth/user/', fetcher)
 
-  if (error) return <Layout>Failed to load</Layout>
-  if (!data) return <Layout>Loading...</Layout>
+  if (siteError) return <Layout>Failed to load</Layout>
+  if (!user) return <Layout>Loading...</Layout>
 
   return (
     <ProfileSidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
       <span
-        className={`flex justify-between items-center my-1 group px-3 py-2 text-sm leading-5 font-medium text-green-800`}
+        className={`flex justify-between items-center my-1 group px-3 py-2`}
       >
-        Basic Plan
-        <Link href="#">
-          <a className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium leading-4 bg-green-200 text-green-800`}>
-            <small>Upgrade</small>
-          </a>
-        </Link>
+        <span className={`${user.group.name === 'Basic' ? "text-green-800" : user.group.name === 'Pro' ? "text-blue-800" : "text-red-800"} text-sm leading-5 font-medium `}>{user.group.name} Plan</span>
+        {user.group.name === 'Basic' ? (
+          <Link href="#">
+            <a className={`bg-green-200 text-green-800" text-xs leading-4 font-medium  inline-flex items-center px-2 py-1 rounded`}>
+              <small>Upgrade</small>
+            </a>
+          </Link>
+        ) : user.group.name === 'Pro' ? (
+          <Link href="#">
+            <a className={`bg-blue-200 text-blue-800 text-xs leading-4 font-medium  inline-flex items-center px-2 py-1 rounded`}>
+              <small>Upgrade</small>
+            </a>
+          </Link>
+        ) : null}
       </span>
       <Link href="/dashboard/settings/profile">
         <a className={`border-t p-4 flex-shrink-0 w-full group block hover:text-gray-900 hover:bg-gray-100 transition ease-in-out duration-150`}>
@@ -50,7 +58,7 @@ const ProfileSidebar = () => {
               <p
                 className={`text-sm leading-5 font-medium text-gray-700 group-hover:text-gray-900`}
               >
-                {data.username}
+                {user.username}
               </p>
               <p
                 className={`text-xs leading-4 font-medium text-gray-500 group-hover:text-gray-700 transition ease-in-out duration-150`}
