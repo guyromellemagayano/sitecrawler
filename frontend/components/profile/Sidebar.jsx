@@ -30,11 +30,19 @@ const ProfileSidebar = () => {
         className={`flex justify-between items-center my-1 group px-3 py-2`}
       >
         <span className={`${user.group.name === 'Basic' ? "text-green-800" : user.group.name === 'Pro' ? "text-blue-800" : "text-red-800"} text-sm leading-5 font-medium `}>{user.group.name} Plan</span>
-        <Link href="#">
-          <a className={`${user.group.name === 'Basic' ? "bg-green-200 text-green-800" : user.group.name === 'Pro' ? "bg-blue-200 text-blue-800" : "bg-red-200 text-red-800"} text-xs leading-4 font-medium  inline-flex items-center px-2 py-1 rounded`}>
-            <small>Upgrade</small>
-          </a>
-        </Link>
+        {user.group.name === 'Basic' ? (
+          <Link href="#">
+            <a className={`bg-green-200 text-green-800" text-xs leading-4 font-medium  inline-flex items-center px-2 py-1 rounded`}>
+              <small>Upgrade</small>
+            </a>
+          </Link>
+        ) : user.group.name === 'Pro' ? (
+          <Link href="#">
+            <a className={`bg-blue-200 text-blue-800 text-xs leading-4 font-medium  inline-flex items-center px-2 py-1 rounded`}>
+              <small>Upgrade</small>
+            </a>
+          </Link>
+        ) : null}
       </span>
       <Link href="/dashboard/settings/profile">
         <a className={`border-t p-4 flex-shrink-0 w-full group block hover:text-gray-900 hover:bg-gray-100 transition ease-in-out duration-150`}>
