@@ -1,26 +1,32 @@
 [
 	{
 		"label": "Link URL",
-		"slug": "link-url"
+		"slug": "link-url",
+		"key": "url"
 	},
 	{
 		"label": "URL Type",
-		"slug": "url-type"
+		"slug": "url-type",
+		"key": "type"
 	},
 	{
 		"label": "Status",
-		"slug": "status"
+		"slug": "status",
+		"key": "status"
 	},
 	{
 		"label": "HTTP Code",
-		"slug": "http-code"
+		"slug": "http-code",
+		"key": "http_status"
 	},
 	{
 		"label": "Link Location",
-		"slug": "link-location"
+		"slug": "link-location",
+		"key": "link_location"
 	},
 	{
 		"label": "Occurrences",
-		"slug": "occurrences"
+		"slug": "occurrences",
+		"key": "occurences"
 	}
 ]
