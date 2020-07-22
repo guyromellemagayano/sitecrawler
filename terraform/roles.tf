@@ -73,3 +73,23 @@ resource "aws_iam_role_policy" "s3_node_policy" {
 }
 	EOF
 }
+
+resource "aws_iam_role_policy" "sqs_node_policy" {
+	name = "sqs_node_policy"
+	role = aws_iam_role.node_role.id
+
+	policy = <<EOF
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Action": [
+				"sqs:*"
+			],
+			"Effect": "Allow",
+			"Resource": "*"
+		}
+	]
+}
+	EOF
+}
