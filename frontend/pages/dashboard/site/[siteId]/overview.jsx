@@ -7,6 +7,7 @@ import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+import Skeleton from 'react-loading-skeleton'
 import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
@@ -105,11 +106,15 @@ const SitesDashboard = () => {
               className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}
             >
               <div>
-                <SitesOverview
-                  url={site.url}
-                  verified={site.verified}
-                  finishedAt={site.updated_at}
-                />
+                {site ? (
+                  <SitesOverview
+                    url={site.url}
+                    verified={site.verified}
+                    finishedAt={site.updated_at}
+                  />
+                ) : (
+                  <Skeleton width={320} height={198} duration={2} />
+                )}
               </div>
             </div>
             <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
