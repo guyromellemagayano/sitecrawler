@@ -3,6 +3,7 @@ import Cookies from 'js-cookie'
 import useSWR from 'swr'
 import styled from 'styled-components'
 import Moment from 'react-moment'
+import Skeleton from 'react-loading-skeleton'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -37,7 +38,11 @@ const SitesOverview = props => {
   const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
 
   if (userError) return <div>{userError.message}</div>
-  if (!user) return <div>Loading...</div>
+  if (!user) {
+    return (
+      <Skeleton width={320} height={198} duration={2} />
+    )
+  }
 
   return (
     <SitesOverviewDiv className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
