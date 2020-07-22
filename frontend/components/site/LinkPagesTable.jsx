@@ -1,5 +1,7 @@
+import { Fragment } from 'react'
 import styled from 'styled-components'
 import Url from 'url-parse'
+import Skeleton from 'react-loading-skeleton';
 import SiteSuccessIcon from '../icons/SiteSuccessIcon'
 import SiteWarningIcon from '../icons/SiteWarningIcon'
 import SiteDangerIcon from '../icons/SiteDangerIcon'
@@ -18,6 +20,18 @@ const LinksTableDiv = styled.tbody`
 
 const LinksTable = props => {
   const url = new Url(props.val.url)
+
+  if (!props) {
+    return (
+      <Fragment>
+        <LinksTableDiv className={`bg-white`}>
+          <tr>
+            {[...Array(4)].map((val, index) => <td className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`} key={index}><Skeleton duration={2} /></td>)}
+          </tr>
+        </LinksTableDiv>
+      </Fragment>
+    )
+  }
 
   return (
     <LinksTableDiv className={`bg-white`}>

@@ -5,6 +5,7 @@ import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
+import Skeleton from 'react-loading-skeleton';
 import DashboardPages from '../../public/data/dashboard-pages.json'
 
 const fetcher = async (url) => {
@@ -29,6 +30,22 @@ const fetcher = async (url) => {
 const PrimaryMenuDiv = styled.nav``
 
 const PrimaryMenu = () => {  
+  const {
+    data: site,
+    error: siteError,
+  } = useSWR('/api/site/', fetcher)
+
+  if (siteError) return <div>{siteError.message}</div>
+  if (!site) {
+    return (
+      <Fragment>
+        <PrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
+          {[...Array(6)].map((val, index) => <Skeleton key={index} duration={2} />)}
+        </PrimaryMenuDiv>
+      </Fragment>
+    )
+  }
+
   return (
     <PrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
       {
@@ -53,6 +70,11 @@ const PrimaryMenu = () => {
                     />
                   </svg>
                   <span>{val.title}</span>
+                  {val.url === "/dashboard/sites" && (
+                    <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                      {site.count}
+                    </span>
+                  )}
                 </a>
               </Link>
             </Fragment>

@@ -6,6 +6,7 @@ import fetch from 'node-fetch'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
+import Skeleton from 'react-loading-skeleton';
 import LinksPagesContent from '../../../../public/data/links-pages.json'
 import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
@@ -165,7 +166,7 @@ const Pages = props => {
   }
 
   useEffect(() => {
-    console.log('[pathname]', asPath)
+    // console.log('[pathname]', asPath)
     
     if(asPath.includes("?"))
       setPagePath(`${removeURLParameter(asPath, 'page')}&`)
@@ -253,22 +254,26 @@ const Pages = props => {
               </div>
               <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
                 <div>
-                  <div className={`max-w-xs mt-5 rounded-lg bg-white overflow-hidden shadow`}>
-                    <div>
-                      <div className={`px-4 py-5 sm:p-6`}>
-                        <dl>
-                          <dt className={`text-sm leading-5 font-medium text-gray-500 truncate`}>
-                            Total Page Links
-                          </dt>
-                          <dd className={`mt-1 flex justify-between items-baseline md:block lg:flex`}>
-                            <div className={`flex items-baseline text-2xl leading-8 font-semibold text-indigo-600`}>
-                              {page.count}
-                            </div>
-                          </dd>
-                        </dl>
+                  {page ? (
+                    <div className={`max-w-xs mt-5 rounded-lg bg-white overflow-hidden shadow`}>
+                      <div>
+                        <div className={`px-4 py-5 sm:p-6`}>
+                          <dl>
+                            <dt className={`text-sm leading-5 font-medium text-gray-500 truncate`}>
+                              Total Page Links
+                            </dt>
+                            <dd className={`mt-1 flex justify-between items-baseline md:block lg:flex`}>
+                              <div className={`flex items-baseline text-2xl leading-8 font-semibold text-indigo-600`}>
+                                {page.count}
+                              </div>
+                            </dd>
+                          </dl>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <Skeleton width={320} height={104} duration={2} />
+                  )}
                 </div>
                 <LinkOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
                 {/* <PageFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} googleFilter={googleFilter} sslFilter={sslFilter} /> */}

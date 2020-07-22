@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 import useSWR from 'swr'
 import Link from 'next/link'
 import styled from 'styled-components'
+import Skeleton from 'react-loading-skeleton';
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -63,12 +64,23 @@ const SitesStats = () => {
 
   if (statsError) return <div>{statsError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
-  if (!stats) return <div>Loading...</div>
+  if (!stats) {
+    return (
+      <SitesStatsDiv>
+        <div>
+          <div className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-5 sm:gap-24`}>
+            <Skeleton duration={2} width={320} height={160} />
+            <Skeleton duration={2} width={320} height={160} />
+          </div>
+        </div>
+      </SitesStatsDiv>
+    )
+  }
 
   return (
     <SitesStatsDiv>
       <div>
-        <div className={`mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3`}>
+        <div className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-3`}>
           <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>

@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import Moment from 'react-moment'
 import Layout from '../Layout'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+import Skeleton from 'react-loading-skeleton';
 import Transition from '../../hooks/Transition'
 
 const fetcher = async (url) => {
@@ -154,10 +155,16 @@ const DataTable = props => {
   )
 
   if (scanError) return <Layout>{scanError.message}</Layout>
-  if (!scan) return false
-
   if (scanIdError) return <Layout>{scanIdError.message}</Layout>
-  if (!scanId) return false
+  if (!scan || !scanId) {
+    return (
+      <Fragment>
+        <DataTableDiv>
+          {[...Array(6)].map((val, index) => <td className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`} key={index}><Skeleton duration={2} /></td>)}
+        </DataTableDiv>
+      </Fragment>
+    )
+  }
 
   return (
     <DataTableDiv>

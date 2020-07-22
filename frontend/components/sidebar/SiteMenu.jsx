@@ -1,9 +1,11 @@
+import { Fragment } from 'react'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
+import Skeleton from 'react-loading-skeleton';
 import SitePages from '../../public/data/site-pages.json'
 
 const fetcher = async (url) => {
@@ -64,7 +66,15 @@ const SiteMenu = () => {
 
   if (statsError) return <div>{statsError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
-  if (!stats) return <div>Loading...</div>
+  if (!stats) {
+    return (
+      <Fragment>
+        <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
+          {[...Array(6)].map((val, index) => <Skeleton key={index} duration={2} />)}
+        </SiteMenuDiv>
+      </Fragment>
+    )
+  }
 
   return (
     <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
