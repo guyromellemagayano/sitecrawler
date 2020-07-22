@@ -167,7 +167,7 @@ const Login = () => {
                       htmlFor={`username`}
                       className={`block text-sm font-medium leading-5 text-gray-700`}
                     >
-                      Username
+                      Username/Email
                     </label>
                     <div className={`mt-1 rounded-md shadow-xs-sm`}>
                       <input
