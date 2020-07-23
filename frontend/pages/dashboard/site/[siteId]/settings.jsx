@@ -483,4 +483,21 @@ const SiteSettings = () => {
 
 export default SiteSettings
 
-SiteSettings.propTypes = {}
+SiteSettings.propTypes = {
+  openMobileSidebar: PropTypes.bool,
+  errorMsg: PropTypes.string,
+  successMsg: PropTypes.string,
+  disableInputFields: PropTypes.integer,
+  siteName: PropTypes.string,
+  siteUrl: PropTypes.string,
+  showModal: PropTypes.bool,
+  query: PropTypes.func,
+  pageTitle: PropTypes.string,
+  fetchSiteSettings: PropTypes.func,
+  updateSiteSettings: PropTypes.func,
+  deleteSiteSettings: PropTypes.func,
+  handleSiteUpdate: PropTypes.func,
+  handleEditSiteDetails: PropTypes.func,
+  handleSiteNameInputChange: PropTypes.func,
+  handleSiteDeletion: PropTypes.func,
+}
