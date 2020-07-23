@@ -46,7 +46,7 @@ const SitesInformation = props => {
     }
     
     if (
-      body.name !== undefined && (body.url !== "https://undefined" || body.url !== "http://undefined")
+      body.name !== undefined && body.url !== "https://undefined" && body.url !== "http://undefined"
     ) {
       if (
         siteUrl.origin === "https://https:" || 
@@ -494,6 +494,7 @@ const SitesInformation = props => {
                             name={`urlpath`}
                             value={urlProtocol + siteUrl}
                           />
+                          
                           {errorSiteUrlMsg && !siteUrl || dupSiteProtocolExists ? (
                             <div
                               className={`absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none`}

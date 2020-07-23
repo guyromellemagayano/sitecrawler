@@ -1,10 +1,78 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
+import useSWR from 'swr'
+import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
+import fetchJson from '../../hooks/fetchJson'
 
 const AddSiteDiv = styled.div``
 
 const AddSite = () => {
+  const [siteLimitCounter, setSiteLimitCounter] = useState(0)
+  const [maxSiteLimit, setMaxSiteLimit] = useState(0)
+  const basicAccountSiteLimit = 3
+  const proAccountSiteLimit = 15
+  const agencyAccountSiteLimit = 100
+
+  const fetchSiteData = async (endpoint) => {
+    const siteData = await fetchJson(endpoint, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
+    })
+
+    return siteData
+  }
+
+  const fetchUserData = async (endpoint) => {
+    const siteData = await fetchJson(endpoint, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
+    })
+
+    return siteData
+  }
+
+  const { data: sites } = useSWR(
+    `/api/site/`,
+    () =>
+      fetchSiteData(
+        `/api/site/`
+      )
+  )
+
+  const { data: user } = useSWR(
+    `/api/auth/user/`,
+    () =>
+      fetchSiteData(
+        `/api/auth/user/`
+      )
+  )
+
+  useEffect(() => {
+    if (sites !== "" && sites !== undefined) {
+      if (user !== "" && user !== undefined) {
+        setSiteLimitCounter(sites.count)
+
+        if (user.group.max_sites === basicAccountSiteLimit) {
+          setMaxSiteLimit(basicAccountSiteLimit)
+        } else if (user.group.max_sites === proAccountSiteLimit) {
+          setMaxSiteLimit(proAccountSiteLimit)
+        } else {
+          setMaxSiteLimit(agencyAccountSiteLimit)
+        }
+      }
+    }
+  }, [sites, user])
+
   return (
     <AddSiteDiv className={`py-4`}>
       <div
@@ -41,13 +109,26 @@ const AddSite = () => {
           </div>
           <div className={`ml-4 mt-2 flex-shrink-0`}>
             <span className={`inline-flex rounded-md shadow-xs-sm`}>
-              <Link href="/dashboard/sites/information">
-                <a
-                  className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
-                >
-                  Add new site
-                </a>
-              </Link>
+              {siteLimitCounter < maxSiteLimit ? (
+                <Link href="/dashboard/sites/information">
+                  <a
+                    aria-disabled="false"
+                    className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
+                  >
+                    Add new site
+                  </a>
+                </Link>
+              ) : (
+                <Link href="/dashboard/sites/information">
+                  <a
+                    aria-disabled="true"
+                    disabled={`disabled`}
+                    className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 opacity-50 cursor-not-allowed`}
+                  >
+                    Site Limit Reached
+                  </a>
+                </Link>
+              )}
             </span>
           </div>
         </div>
@@ -57,3 +138,7 @@ const AddSite = () => {
 };
 
 export default AddSite
+
+AddSite.propTypes = {
+
+}

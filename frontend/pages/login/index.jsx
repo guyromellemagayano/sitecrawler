@@ -86,10 +86,6 @@ const Login = () => {
     }
   }
 
-  useEffect(() => {
-    Router.prefetch('/dashboard/sites')
-  }, [])
-
   return (
     <Layout>
       <Head>

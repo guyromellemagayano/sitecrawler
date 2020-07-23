@@ -384,7 +384,7 @@ const Links = props => {
         newPath += `?ordering=${sortKey}`
     }
     
-    console.log('[pagePath]', newPath)
+    // console.log('[pagePath]', newPath)
     if(newPath.includes("?"))
       setPagePath(`${removeURLParameter(newPath, 'page')}&`)
     else
