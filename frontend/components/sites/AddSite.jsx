@@ -28,6 +28,19 @@ const AddSite = () => {
     return siteData
   }
 
+  const fetchUserData = async (endpoint) => {
+    const siteData = await fetchJson(endpoint, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
+    })
+
+    return siteData
+  }
+
   const { data: sites } = useSWR(
     `/api/site/`,
     () =>
@@ -36,19 +49,29 @@ const AddSite = () => {
       )
   )
 
-  useEffect(() => {
-    if (sites !== "" && sites !== undefined && sites !== 0) {
-      setSiteLimitCounter(sites.count)
+  const { data: user } = useSWR(
+    `/api/auth/user/`,
+    () =>
+      fetchSiteData(
+        `/api/auth/user/`
+      )
+  )
 
-      if (sites.count > 0 && sites.count <= basicAccountSiteLimit) {
-        setMaxSiteLimit(basicAccountSiteLimit)
-      } else if (sites.count > basicAccountSiteLimit && sites.count <= proAccountSiteLimit) {
-        setMaxSiteLimit(proAccountSiteLimit)
-      } else {
-        setMaxSiteLimit(agencyAccountSiteLimit)
+  useEffect(() => {
+    if (sites !== "" && sites !== undefined) {
+      if (user !== "" && user !== undefined) {
+        setSiteLimitCounter(sites.count)
+
+        if (user.group.max_sites === basicAccountSiteLimit) {
+          setMaxSiteLimit(basicAccountSiteLimit)
+        } else if (user.group.max_sites === proAccountSiteLimit) {
+          setMaxSiteLimit(proAccountSiteLimit)
+        } else {
+          setMaxSiteLimit(agencyAccountSiteLimit)
+        }
       }
     }
-  }, [sites])
+  }, [sites, user])
 
   return (
     <AddSiteDiv className={`py-4`}>
