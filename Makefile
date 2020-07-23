@@ -11,13 +11,15 @@ staging: install-deploy build-prod push-prod ## Deploy to staging environment
 build-prod: ## Build production images
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend backend/
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend frontend/
-	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler crawler/
+	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler --build-arg SERVICE=crawler go/
+	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler --build-arg SERVICE=scheduler go/
 
 push-prod: ## Upload production images to ecr
 	deploy/ecr-login.sh
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
+	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
 
 install-deploy:
 	python -m pip install --upgrade pip
