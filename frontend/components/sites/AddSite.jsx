@@ -102,7 +102,7 @@ const AddSite = () => {
                     disabled={`disabled`}
                     className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 opacity-50 cursor-not-allowed`}
                   >
-                    Max Site Limit Reached
+                    Site Limit Reached
                   </a>
                 </Link>
               )}
