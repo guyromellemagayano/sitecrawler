@@ -136,7 +136,6 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 	}
 
 	link, doc := s.loadURL(url)
-	log.Println(*link)
 	if err := s.ScanService.LinkDao.Save(link); err != nil {
 		return 0, err
 	}
