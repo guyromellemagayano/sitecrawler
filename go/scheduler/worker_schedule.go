@@ -42,6 +42,10 @@ func ScheduleWorker(groupSettingsDao *GroupSettingsDao, siteDao *SiteDao, scanDa
 		}
 		return nil
 	}
+	log.Println("Initial check")
+	if err := loop(); err != nil {
+		log.Println(err)
+	}
 	for range time.NewTicker(checkInterval).C {
 		log.Println("Running loop")
 		if err := loop(); err != nil {
