@@ -342,7 +342,15 @@ const DataTable = props => {
                   <h3
                     className={`text-lg leading-6 font-medium text-gray-800`} id="modal-headline"
                   >
-                    Verify this Site URL
+                    Verify Site:{" "}
+                    <a
+                      href={scanId.url}
+                      target="_blank"
+                      title={scanId.url}
+                      className={`break-all text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                    >
+                      {scanId.url}
+                    </a>
                   </h3>
                   <div className={`mt-2`}>
                     <p className={`text-sm leading-5 text-gray-600`}>
