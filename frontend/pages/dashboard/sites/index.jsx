@@ -14,6 +14,7 @@ import MainSidebar from '../../../components/sidebar/MainSidebar'
 import AddSite from '../../../components/sites/AddSite'
 import DataTable from '../../../components/sites/DataTable'
 import Pagination from '../../../components/sites/Pagination'
+import useUser from '../../../hooks/useUser'
 
 if (typeof window !== 'undefined') {
   LogRocket.init('epic-design-labs/link-app');
@@ -48,11 +49,16 @@ const Sites = props => {
   const userApiEndpoint = '/api/auth/user/'
   const router = useRouter()
 
+  const { user: user, userError: userError } = useUser({
+    redirectTo: '/login',
+    redirectIfFound: false
+  })
+
   const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher, {
     refreshInterval: 1000,
   })
 
-  const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
+  // const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
 
   if (siteError) return <div>{siteError.message}</div>
   if (userError) return <div>{userError.message}</div>
