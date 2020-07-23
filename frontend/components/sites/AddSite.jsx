@@ -11,9 +11,9 @@ const AddSiteDiv = styled.div``
 const AddSite = () => {
   const [siteLimitCounter, setSiteLimitCounter] = useState(0)
   const [maxSiteLimit, setMaxSiteLimit] = useState(0)
-  const basicAccountSiteLimit = 5
-  const proAccountSiteLimit = 10
-  const agencyAccountSiteLimit = 15
+  const basicAccountSiteLimit = 3
+  const proAccountSiteLimit = 15
+  const agencyAccountSiteLimit = 100
 
   const fetchSiteData = async (endpoint) => {
     const siteData = await fetchJson(endpoint, {
@@ -40,9 +40,9 @@ const AddSite = () => {
     if (sites !== "" && sites !== undefined && sites !== 0) {
       setSiteLimitCounter(sites.count)
 
-      if (sites.count > 0 && sites.count <= 5) {
+      if (sites.count > 0 && sites.count <= basicAccountSiteLimit) {
         setMaxSiteLimit(basicAccountSiteLimit)
-      } else if (sites.count > 5 && sites.count <= 10) {
+      } else if (sites.count > basicAccountSiteLimit && sites.count <= proAccountSiteLimit) {
         setMaxSiteLimit(proAccountSiteLimit)
       } else {
         setMaxSiteLimit(agencyAccountSiteLimit)
