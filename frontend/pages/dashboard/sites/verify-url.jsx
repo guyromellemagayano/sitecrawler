@@ -337,7 +337,7 @@ const SitesVerifyUrl = props => {
                           href={props.surl}
                           target="_blank"
                           title={props.surl}
-                          className={`text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                          className={`break-all text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
                         >
                           {props.surl}
                         </a>
