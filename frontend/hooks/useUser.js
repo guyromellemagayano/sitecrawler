@@ -26,11 +26,13 @@ const useUser = ({ redirectTo = false, redirectIfFound = false} = {}) => {
   const { data: user, mutate: mutateUser, error: userError } = useSWR("/api/auth/user/", fetcher);
 
   useEffect(() => {
-    if (userError == 'Error: 403' && !redirectIfFound) Router.push(redirectTo)
+    if (userError == 'Error: 403' && !redirectIfFound) {
+      Router.push(redirectTo)        
+    }
 
     if (user && redirectIfFound) {
       if ("key" in user) {
-        console.log('[user]', user)
+        // console.log('[user]', user)
         Router.push(redirectTo);
       }
     } else {
