@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
-import Layout from '../../../../components/Layout'
-import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../../components/sidebar/MainSidebar'
-import ProfileSettings from '../../../../components/profile/Settings'
-import ProfileSettingsPersonal from '../../../../components/profile/Personal'
-import ProfileSettingsPassword from '../../../../components/profile/Password'
+import Layout from 'components/Layout'
+import MobileSidebar from 'components/sidebar/MobileSidebar'
+import MainSidebar from 'components/sidebar/MainSidebar'
+import ProfileSettings from 'components/profile/Settings'
+import ProfileSettingsPersonal from 'components/profile/Personal'
+import ProfileSettingsPassword from 'components/profile/Password'
 
 const ProfileDiv = styled.section``
 

@@ -70,7 +70,17 @@ const SiteMenu = () => {
     return (
       <Fragment>
         <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
-          {[...Array(6)].map((val, index) => <Skeleton key={index} duration={2} />)}
+          {[...Array(5)].map((val, index) => {
+            return (
+              <a
+                key={index}
+                className={`group ml-1 mt-2 flex justify-start items-center`}
+              >
+                <Skeleton circle={true} duration={2} width={30} height={30} />
+                <span className={`ml-3`}><Skeleton duration={2} width={150} /></span>
+              </a>
+            )
+          })}
         </SiteMenuDiv>
       </Fragment>
     )

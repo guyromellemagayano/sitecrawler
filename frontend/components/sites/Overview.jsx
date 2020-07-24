@@ -40,7 +40,7 @@ const SitesOverview = props => {
   if (userError) return <div>{userError.message}</div>
   if (!user) {
     return (
-      <Skeleton width={320} height={198} duration={2} />
+      <Skeleton width={280} height={198} duration={2} />
     )
   }
 

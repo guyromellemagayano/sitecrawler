@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
+import Skeleton from 'react-loading-skeleton';
 import useSWR from 'swr'
 
 const fetcher = async (url) => {
@@ -29,12 +30,25 @@ const Pagination = props => {
   const pageNumbers = []
   const linksPerPage = 20
   const currentPage = parseInt(props.page) || 1
-  const queryExists = useRouter().asPath.indexOf("?page=") > -1
 
   const { data: page, error: pageError } = useSWR(props.apiEndpoint, fetcher)
 
   if (pageError) return <div>{pageError.message}</div>
-  if (!page) return <div>Loading...</div>
+  if (!page) {
+    return (
+      <PaginationDiv className={`bg-white px-4 py-4 flex items-center justify-between sm:px-6 align-middle shadow-xs rounded-lg`}>
+        <div className={`w-0 flex-1 flex`}>
+          <Skeleton duration={2} width={120} />
+        </div>
+        <div className={`hidden md:flex`}>
+          <Skeleton duration={2} width={280} />
+        </div>
+        <div className={`w-0 flex-1 flex justify-end`}>
+          <Skeleton duration={2} width={120} />
+        </div>
+      </PaginationDiv>
+    )
+  }
 
   const totalPages = Math.ceil(page.count / linksPerPage);
 
@@ -42,7 +56,7 @@ const Pagination = props => {
     pageNumbers.push(i)
   }
 
-  if(totalPages < 2)
+  if (totalPages < 2)
     return null
 
   return (

@@ -7,11 +7,12 @@ import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import Layout from '../../../../components/Layout'
-import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../../components/sidebar/MainSidebar'
-import SitesOverview from '../../../../components/sites/Overview'
-import SitesStats from '../../../../components/sites/Stats'
+import Skeleton from 'react-loading-skeleton'
+import Layout from 'components/Layout'
+import MobileSidebar from 'components/sidebar/MobileSidebar'
+import MainSidebar from 'components/sidebar/MainSidebar'
+import SitesOverview from 'components/sites/Overview'
+import SitesStats from 'components/sites/Stats'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -45,7 +46,54 @@ const SitesDashboard = () => {
   )
 
   if (siteError) return <div>{siteError.message}</div>
-  if (!site) return <div>Loading...</div>
+  if (!site) {
+    return (
+      <Layout>
+        <SitesDashboardDiv
+          className={`h-screen flex overflow-hidden bg-gray-100`}
+        >
+          <MainSidebar />
+
+          <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
+            <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
+              <span
+                className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center`}
+              >
+                <Skeleton duration={2} width={30} height={30} />
+              </span>
+            </div>
+            <main
+              className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
+              tabIndex={`0`}
+            >
+              <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+                <div>
+                  <Skeleton duration={2} width={120} />
+                </div>
+                <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                  <div className={`flex-1 min-w-0`}>
+                    <Skeleton duration={2} width={280} />
+                  </div>
+                </div>
+              </div>
+              <div
+                className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}
+              >
+                <div>
+                  <SitesOverview />
+                </div>
+              </div>
+              <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
+                <div className={`pb-4`}>
+                  <SitesStats />
+                </div>
+              </div>
+            </main>
+          </div>
+        </SitesDashboardDiv>
+      </Layout>
+    )
+  } 
 
   return (
     <Layout>
@@ -102,7 +150,7 @@ const SitesDashboard = () => {
               </div>
             </div>
             <div
-              className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}
+              className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}
             >
               <div>
                 <SitesOverview

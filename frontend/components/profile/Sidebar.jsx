@@ -3,6 +3,7 @@ import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import useSWR from 'swr'
+import Skeleton from 'react-loading-skeleton'
 import Layout from '../Layout'
 
 const apiParameters = {
@@ -22,7 +23,37 @@ const ProfileSidebar = () => {
   const { data: user, error: siteError } = useSWR('/api/auth/user/', fetcher)
 
   if (siteError) return <Layout>Failed to load</Layout>
-  if (!user) return <Layout>Loading...</Layout>
+  if (!user) {
+    return (
+      <ProfileSidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
+        <span
+          className={`flex justify-between items-center my-1 group px-3 py-2`}
+        >
+          <span className={`w-full flex justify-between`}><Skeleton duration={2} width={100} /><Skeleton duration={2} width={50} /></span>
+        </span>
+        <Link href="/dashboard/settings/profile">
+          <a className={`border-t p-4 flex-shrink-0 w-full group block hover:text-gray-900 hover:bg-gray-100 transition ease-in-out duration-150`}>
+            <div className={`flex items-center`}>
+              <div>
+                <Skeleton circle={true} duration={2} width={40} height={40} />
+              </div>
+              <div className={`ml-3`}>
+                <Skeleton duration={2} width={145} />
+                <Skeleton duration={2} width={145} />
+              </div>
+            </div>
+          </a>
+        </Link>
+        <Link href="/logout">
+          <a
+            className={`border-t group text-center p-2 text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150`}
+          >
+            Log out
+          </a>
+        </Link>
+      </ProfileSidebarDiv>
+    )
+  }
 
   return (
     <ProfileSidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
