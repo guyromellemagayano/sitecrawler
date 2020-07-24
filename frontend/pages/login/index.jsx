@@ -34,7 +34,7 @@ const Login = () => {
   useEffect(() => {
     if(Cookies.get("errLogin")) {
       setErrorMsg(Cookies.get("errLogin"))
-      // Cookies.remove("errLogin")
+      Cookies.remove("errLogin")
     }
     
     if(query.redirect !== undefined)
