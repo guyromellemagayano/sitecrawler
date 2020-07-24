@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import useSWR from "swr";
 import Cookies from 'js-cookie'
 
@@ -24,10 +24,14 @@ const fetcher = async (url) => {
 
 const useUser = ({ redirectTo = false, redirectIfFound = false} = {}) => {
   const { data: user, mutate: mutateUser, error: userError } = useSWR("/api/auth/user/", fetcher);
+  const { query, asPath } = useRouter()
 
   useEffect(() => {
     if (userError == 'Error: 403' && !redirectIfFound) {
-      Router.push(redirectTo)        
+      Router.push({ pathname: redirectTo, query: { redirect: asPath }})
+      Cookies.set("errLogin", "You must log in to access the page!", {
+        expires: new Date(new Date().getTime() + 0.05 * 60 * 1000) // expires in 3s
+      })
     }
 
     if (user && redirectIfFound) {
