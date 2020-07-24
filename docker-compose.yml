@@ -42,14 +42,32 @@ services:
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
   crawler:
     build:
-      context: ./crawler
+      context: ./go
       target: dev
+      args:
+        SERVICE: crawler
     image: crawl-app-crawler
     volumes:
-      - ./crawler:/app
+      - ./go:/app
     links:
       - db
       - localstack
+    # environment:
+    #   - LOG_SQL=true
+  scheduler:
+    build:
+      context: ./go
+      target: dev
+      args:
+        SERVICE: scheduler
+    image: crawl-app-scheduler
+    volumes:
+      - ./go:/app
+    links:
+      - db
+      - localstack
+    # environment:
+    #   - LOG_SQL=true
   db:
     image: postgres
     environment:

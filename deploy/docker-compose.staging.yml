@@ -49,6 +49,12 @@ services:
       - db
     environment:
       ENV: staging
+  scheduler:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
+    links:
+      - db
+    environment:
+      ENV: staging
   db:
     image: postgres
     volumes:
