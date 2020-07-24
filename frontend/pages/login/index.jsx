@@ -9,14 +9,12 @@ import PropTypes from 'prop-types'
 import useUser from '../../hooks/useUser'
 import Layout from '../../components/Layout'
 import LogoLabel from '../../components/form/LogoLabel'
+import { useRouter } from 'next/router'
 
 const LoginDiv = styled.div``
 
 const Login = () => {
-  const { mutateUser } = useUser({
-    redirectTo: '/dashboard/sites',
-    redirectIfFound: true
-  })
+  const { query } = useRouter()
 
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
@@ -25,7 +23,23 @@ const Login = () => {
   const [errorUsernameMsg, setErrorUsernameMsg] = useState('')
   const [errorPasswordMsg, setErrorPasswordMsg] = useState('')
   const [disableLoginForm, setDisableLoginForm] = useState(false)
+  const [redirectTo, setRedirectTo] = useState('/dashboard/sites')
   const pageTitle = 'Login'
+
+  const { mutateUser } = useUser({
+    redirectTo: redirectTo,
+    redirectIfFound: true
+  })
+
+  useEffect(() => {
+    if(Cookies.get("errLogin")) {
+      setErrorMsg(Cookies.get("errLogin"))
+      // Cookies.remove("errLogin")
+    }
+    
+    if(query.redirect !== undefined)
+      setRedirectTo(query.redirect)
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
