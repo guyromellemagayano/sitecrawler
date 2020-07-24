@@ -1,5 +1,6 @@
 import boto3
 from django.conf import settings
+from rest_framework.exceptions import Throttled
 
 from crawl.models.scan import Scan
 
@@ -7,7 +8,7 @@ from crawl.models.scan import Scan
 def site(site):
     scans_in_progress = Scan.objects.filter(site=site, finished_at=None).count()
     if scans_in_progress > 0:
-        return
+        raise Throttled(60, "Scan in progress.")
 
     scan = Scan.objects.create(site=site)
 
@@ -23,3 +24,5 @@ def site(site):
     sqs.send_message(
         QueueUrl=queue_url, MessageBody=str(scan.id),
     )
+
+    return scan

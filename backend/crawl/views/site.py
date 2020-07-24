@@ -2,10 +2,11 @@ import uuid
 
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from crawl.models import Site
-from crawl.serializers import SiteSerializer
+from crawl.serializers import SiteSerializer, ScanSerializer
 from crawl.services import scan, verify
 
 
@@ -39,3 +40,13 @@ class SiteViewSet(
             if site.verified:
                 scan.site(site)
         return Response(self.get_serializer(instance=site).data)
+
+    @action(detail=True, methods=["post"])
+    def start_scan(self, request, pk=None):
+        if not request.user.has_perm("crawl.can_start_scan"):
+            raise PermissionDenied("You don't have permission to start a scan.")
+
+        site = self.get_object()
+        if site.verified:
+            scan_obj = scan.site(site)
+        return Response(ScanSerializer(instance=scan_obj).data)
