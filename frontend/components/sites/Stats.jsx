@@ -68,9 +68,9 @@ const SitesStats = () => {
     return (
       <SitesStatsDiv>
         <div>
-          <div className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-5 sm:gap-24`}>
-            <Skeleton duration={2} width={320} height={160} />
-            <Skeleton duration={2} width={320} height={160} />
+          <div className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-6 sm:gap-64`}>
+            <Skeleton duration={2} width={280} height={160} />
+            <Skeleton duration={2} width={280} height={160} />
           </div>
         </div>
       </SitesStatsDiv>
@@ -80,7 +80,7 @@ const SitesStats = () => {
   return (
     <SitesStatsDiv>
       <div>
-        <div className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-3`}>
+        <div className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-4 sm:gap-18`}>
           <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>

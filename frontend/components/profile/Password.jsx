@@ -87,7 +87,7 @@ const ProfileSettingsPersonal = () => {
   }, [password1, password2])
 
   return (
-    <ProfileSettingsPersonalDiv className={`mt-5 max-w-full bg-white shadow-xs rounded-lg`}>
+    <ProfileSettingsPersonalDiv className={`mt-5 max-w-3xl bg-white shadow-xs rounded-lg`}>
       <div className={`px-4 py-5 sm:p-6`}>
         <form onSubmit={handlePasswordSubmission}>
           <div>

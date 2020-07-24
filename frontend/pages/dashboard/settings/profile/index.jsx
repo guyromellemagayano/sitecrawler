@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
-import Layout from '../../../../components/Layout'
-import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../../components/sidebar/MainSidebar'
-import ProfileSettings from '../../../../components/profile/Settings'
-import ProfileSettingsPassword from '../../../../components/profile/Password'
+import Layout from 'components/Layout'
+import MobileSidebar from 'components/sidebar/MobileSidebar'
+import MainSidebar from 'components/sidebar/MainSidebar'
+import ProfileSettings from 'components/profile/Settings'
+import ProfileSettingsPersonal from 'components/profile/Personal'
+import ProfileSettingsPassword from 'components/profile/Password'
 
 const ProfileDiv = styled.section``
 
@@ -53,7 +54,7 @@ const Profile = () => {
               <h1 className={`text-2xl font-semibold text-gray-900`}>{pageTitle}</h1>
             </div>
             <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
-              <ProfileSettings />
+              <ProfileSettingsPersonal />
               <ProfileSettingsPassword />
             </div>
           </main>

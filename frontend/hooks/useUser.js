@@ -36,7 +36,7 @@ const useUser = ({ redirectTo = false, redirectIfFound = false} = {}) => {
 
     if (user && redirectIfFound) {
       if ("key" in user) {
-        console.log('[user]', user)
+        // console.log('[user]', user)
         Router.push(redirectTo);
       }
     } else {

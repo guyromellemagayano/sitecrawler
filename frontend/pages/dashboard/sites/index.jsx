@@ -7,14 +7,14 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import useSWR from 'swr'
-import DataTableHeadsContent from '../../../public/data/data-table-heads.json'
-import Layout from '../../../components/Layout'
-import MobileSidebar from '../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../components/sidebar/MainSidebar'
-import AddSite from '../../../components/sites/AddSite'
-import DataTable from '../../../components/sites/DataTable'
-import Pagination from '../../../components/sites/Pagination'
-import useUser from '../../../hooks/useUser'
+import DataTableHeadsContent from 'public/data/data-table-heads.json'
+import Layout from 'components/Layout'
+import MobileSidebar from 'components/sidebar/MobileSidebar'
+import MainSidebar from 'components/sidebar/MainSidebar'
+import AddSite from 'components/sites/AddSite'
+import DataTable from 'components/sites/DataTable'
+import Pagination from 'components/sites/Pagination'
+import useUser from 'hooks/useUser'
 
 if (typeof window !== 'undefined') {
   LogRocket.init('epic-design-labs/link-app');
@@ -46,7 +46,6 @@ const Sites = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const pageTitle = "Sites"
   const sitesApiEndpoint = props.page !== undefined ? '/api/site/?page=' + props.page : '/api/site/'
-  const userApiEndpoint = '/api/auth/user/'
   const router = useRouter()
 
   const { user: user, userError: userError } = useUser({
@@ -57,8 +56,6 @@ const Sites = props => {
   const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher, {
     refreshInterval: 1000,
   })
-
-  // const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
 
   if (siteError) return <div>{siteError.message}</div>
   if (userError) return <div>{userError.message}</div>
@@ -182,6 +179,5 @@ Sites.propTypes = {
   openMobileSidebar: PropTypes.bool,
   pageTitle: PropTypes.string,
   sitesApiEndpoint: PropTypes.string,
-  userApiEndpoint: PropTypes.string,
   router: PropTypes.elementType,
 }

@@ -56,7 +56,7 @@ const Support = () => {
                 </div>
               </div>
             </div>
-            <div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-3xl px-4 py-4 sm:px-6 md:px-8`}>
               <div className={`bg-white shadow rounded-lg`}>
                 <div className={`px-4 py-5 sm:p-6`}>
                   <div className={`mt-2 max-w-xl text-sm leading-5 text-gray-500`}>
