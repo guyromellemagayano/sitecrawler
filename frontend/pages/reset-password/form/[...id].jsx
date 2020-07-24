@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Layout from '../../../components/Layout'
 import LogoLabel from '../../../components/form/LogoLabel'
+import PasswordStrengthBar from 'react-password-strength-bar';
 
 const ResetPasswordFormDiv = styled.div``
 
@@ -180,6 +181,7 @@ const ResetPasswordForm = () => {
 												aria-describedby={`password1`}
 												onChange={(e) => setPassword1(e.target.value)}
 											/>
+											<PasswordStrengthBar password={password1} />
 										</div>
 										<span className={`block mt-2 text-sm leading-5 text-red-700`}>{errorPassword1Msg}</span>
 									</div>
