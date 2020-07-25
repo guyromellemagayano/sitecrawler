@@ -22,9 +22,9 @@ const App = ({ Component, pageProps }) => {
       value={{
         fetcher: fetchJson,
         revalidateOnFocus: true,
-        onError: (err) => {
-          console.error(err)
-        },
+        // onError: (err) => {
+        //   console.error(err)
+        // },
       }}
     >
       <TopProgressBar />
