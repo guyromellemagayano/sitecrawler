@@ -237,4 +237,11 @@ const ProfileSettingsPersonal = () => {
 
 export default ProfileSettingsPersonal
 
-ProfileSettingsPersonal.propTypes = {}
+ProfileSettingsPersonal.propTypes = {
+  errorMsg: PropTypes.string,
+  successMsg: PropTypes.string,
+  disablePasswordFields: PropTypes.bool,
+  disabledSubmitButton: PropTypes.bool,
+  password1: PropTypes.string,
+  password2: PropTypes.string,
+}

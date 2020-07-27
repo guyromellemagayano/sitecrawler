@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
 import Layout from '../../../../components/Layout'
 import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../../components/sidebar/MainSidebar'
@@ -62,3 +63,8 @@ const GlobalSettings = () => {
 }
 
 export default GlobalSettings
+
+GlobalSettings.propTypes = {
+  openMobileSidebar: PropTypes.string,
+  pageTitle: PropTypes.string,
+}

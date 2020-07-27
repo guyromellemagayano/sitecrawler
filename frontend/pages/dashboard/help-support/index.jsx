@@ -79,4 +79,7 @@ const Support = () => {
 
 export default Support
 
-Support.propTypes = {}
+Support.propTypes = {
+  openMobileSidebar: PropTypes.bool,
+  pageTitle: PropTypes.string,
+}

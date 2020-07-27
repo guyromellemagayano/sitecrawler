@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
 import MobileSidebar from '../../../components/sidebar/MobileSidebar'
 import MainSidebar from '../../../components/sidebar/MainSidebar'
 
@@ -70,3 +71,8 @@ const Reports = () => {
 }
 
 export default Reports
+
+Reports.propTypes = {
+  openMobileSidebar: PropTypes.bool,
+  pageTitle: PropTypes.string,
+}
