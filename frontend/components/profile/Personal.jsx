@@ -330,7 +330,7 @@ export default ProfileSettingsPersonal
 ProfileSettingsPersonal.propTypes = {
   errorMsg: PropTypes.string,
   successMsg: PropTypes.string,
-  disableInputFields: PropTypes.int,
+  disableInputFields: PropTypes.func,
   username: PropTypes.string,
   firstname: PropTypes.string,
   lastname: PropTypes.string,
