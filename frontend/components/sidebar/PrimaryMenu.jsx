@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
 import Skeleton from 'react-loading-skeleton';
-import DashboardPages from '../../public/data/dashboard-pages.json'
+import DashboardPages from 'public/data/dashboard-pages.json'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {

@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import useSWR from 'swr'
 import PropTypes from 'prop-types'
-import fetchJson from '../../hooks/fetchJson'
+import fetchJson from 'hooks/fetchJson'
 
 const ProfileSettingsPersonalDiv = styled.div``
 

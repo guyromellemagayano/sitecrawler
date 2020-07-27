@@ -4,7 +4,7 @@ import MobilePrimaryMenu from './MobilePrimaryMenu'
 import MobileSiteMenu from './MobileSiteMenu'
 import MobileSettingsMenu from './MobileSettingsMenu'
 import ProfileSidebar from '../profile/Sidebar'
-import Transition from '../../hooks/Transition'
+import Transition from 'hooks/Transition'
 
 const MobileSidebarDiv = styled.aside``
 

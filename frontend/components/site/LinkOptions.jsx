@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import styled from 'styled-components'
-import Transition from '../../hooks/Transition'
+import Transition from 'hooks/Transition'
 
 const LinkOptionsDiv = styled.div``
 

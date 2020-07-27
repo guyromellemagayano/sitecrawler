@@ -9,11 +9,11 @@ import Link from 'next/link'
 import styled from 'styled-components'
 import Skeleton from 'react-loading-skeleton'
 import PropTypes from 'prop-types'
-import Layout from '../../../../components/Layout'
-import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../../components/sidebar/MainSidebar'
-import Transition from '../../../../hooks/Transition'
-import fetchJson from '../../../../hooks/fetchJson'
+import Layout from 'components/Layout'
+import MobileSidebar from 'components/sidebar/MobileSidebar'
+import MainSidebar from 'components/sidebar/MainSidebar'
+import Transition from 'hooks/Transition'
+import fetchJson from 'hooks/fetchJson'
 
 const SiteSettingsDiv = styled.section``
 

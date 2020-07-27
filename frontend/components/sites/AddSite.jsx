@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import fetchJson from '../../hooks/fetchJson'
+import fetchJson from 'hooks/fetchJson'
 
 const AddSiteDiv = styled.div``
 

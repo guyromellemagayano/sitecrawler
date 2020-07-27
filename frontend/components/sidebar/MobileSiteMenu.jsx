@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import Link from 'next/link'
 import styled from 'styled-components'
 import Skeleton from 'react-loading-skeleton';
-import SitePages from '../../public/data/site-pages.json'
+import SitePages from 'public/data/site-pages.json'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
