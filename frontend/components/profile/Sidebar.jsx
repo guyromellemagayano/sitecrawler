@@ -62,13 +62,13 @@ const ProfileSidebar = () => {
       >
         <span className={`${user.group.name === 'Basic' ? "text-green-800" : user.group.name === 'Pro' ? "text-blue-800" : "text-red-800"} text-sm leading-5 font-medium `}>{user.group.name} Plan</span>
         {user.group.name === 'Basic' ? (
-          <Link href="#">
+          <Link href="/dashboard/settings/subscription-plan">
             <a className={`bg-green-200 text-green-800" text-xs leading-4 font-medium  inline-flex items-center px-2 py-1 rounded`}>
               <small>Upgrade</small>
             </a>
           </Link>
         ) : user.group.name === 'Pro' ? (
-          <Link href="#">
+          <Link href="/dashboard/settings/subscription-plan">
             <a className={`bg-blue-200 text-blue-800 text-xs leading-4 font-medium  inline-flex items-center px-2 py-1 rounded`}>
               <small>Upgrade</small>
             </a>

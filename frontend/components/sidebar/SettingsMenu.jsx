@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import SettingsPages from '../../public/data/settings-pages.json'
 
 const PrimaryMenuDiv = styled.nav`
-  a:first-child {
+  .back-nav {
     margin-bottom: 1rem;
   }
 `
@@ -17,26 +17,93 @@ const PrimaryMenu = () => {
         SettingsPages.map((val, key) => {
           return (
             <Fragment key={key}>
-              <Link href={val.url}>
-                <a
-                  className={`${useRouter().pathname === val.url ? "group mt-1 flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-900 rounded-md bg-gray-100 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150" : "mt-1 group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150"}`}
-                >
-                  <svg
-                    className={`mr-3 h-6 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
-                    stroke={`currentColor`}
-                    fill={`none`}
-                    viewBox={`0 0 24 24`}
-                  >
-                    <path
-                      strokeLinecap={`round`}
-                      strokeLinejoin={`round`}
-                      strokeWidth={`2`}
-                      d={val.icon}
-                    />
-                  </svg>
-                  {val.title}
-                </a>
-              </Link>
+              {val.slug !== 'navigation' ? (
+                <Fragment>
+                  <h3 className={`${val.slug}-headline mt-8 px-3 text-xs leading-4 font-semibold text-gray-500 uppercase tracking-wider`}>
+                    {val.category}
+                  </h3>
+                  <div className={`my-3`} role="group" aria-labelledby={`${val.slug}-headline`}>
+                    {val.links.map((val2, key) => {
+                      return (
+                        <Link 
+                          key={key} 
+                          href={val2.url}
+                        >
+                          <a
+                            className={`${useRouter().pathname.indexOf(val2.url) == 0 ? "group mt-1 flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-900 rounded-md bg-gray-100 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150" : "mt-1 group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150"}`}
+                          >
+                            <svg
+                              className={`mr-3 h-6 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                              stroke={`currentColor`}
+                              fill={`none`}
+                              viewBox={`0 0 24 24`}
+                            >
+                              <path
+                                strokeLinecap={`round`}
+                                strokeLinejoin={`round`}
+                                strokeWidth={`2`}
+                                d={val2.icon}
+                              />
+                            </svg>
+                            <span>{val2.title}</span>
+                          </a>
+                        </Link>
+                      )})}
+                  </div>
+                </Fragment>
+              ) : (
+                <div className={`mt-1`} role="group" aria-labelledby={`${val.slug}-headline`}>
+                  {val.links.map((val2, key) => {
+                    return (
+                      <Link
+                        key={key}
+                        href={
+                          val2.url.indexOf("/dashboard/sites") > -1
+                            ? val2.url
+                            : "/dashboard/site/" + query.siteId + val2.url
+                        }
+                      >
+                        <a
+                          className={`${useRouter().pathname.indexOf(val2.url) == 0 ? "group mt-1 flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-900 rounded-md bg-gray-100 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150" : "mt-1 group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150"}`}
+                        >
+                          <svg
+                            className={`mr-3 h-6 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                            stroke={`currentColor`}
+                            fill={`none`}
+                            viewBox={`0 0 24 24`}
+                          >
+                            <path
+                              strokeLinecap={`round`}
+                              strokeLinejoin={`round`}
+                              strokeWidth={`2`}
+                              d={val2.icon}
+                            />
+                            {val2.icon2 ? (
+                              <path
+                                strokeLinecap={`round`}
+                                strokeLinejoin={`round`}
+                                strokeWidth={`2`}
+                                d={val2.icon2}
+                              />
+                            ) : null}
+                          </svg>
+                          <span>{val2.title}</span>
+                          {val2.url === "/links" && (
+                            <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                              {stats.num_links}
+                            </span>
+                          )}
+                          {val2.url === "/pages" && (
+                            <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                              {stats.num_pages}
+                            </span>
+                          )}
+                        </a>
+                      </Link> 
+                    )
+                  })}
+                </div>
+              )}
             </Fragment>
           )
         })

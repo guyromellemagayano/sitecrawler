@@ -2,14 +2,14 @@ import { Fragment, useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import MobileSidebar from '../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../components/sidebar/MainSidebar'
+import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
+import MainSidebar from '../../../../components/sidebar/MainSidebar'
 
 const ReportsDiv = styled.section``
 
 const Reports = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const pageTitle = 'Reports'
+  const pageTitle = 'Billing Details'
 
   return (
     <Fragment>
@@ -51,13 +51,13 @@ const Reports = () => {
               <div className={`mt-2 md:flex md:items-center md:justify-between`}>
                 <div className={`flex-1 min-w-0`}>
                   <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
-                    Reports
+                    {pageTitle}
                   </h2>
                 </div>
               </div>
             </div>
             <div className={`max-w-3xl px-4 py-4 sm:px-6 md:px-8`}>
-              <div className={`inset-0 flex items-center justify-center text-center rounded-md border-gray-900 border-2 border-dashed opacity-25`}>
+              <div className={`max-w-full inset-0 flex items-center justify-center text-center rounded-md border-gray-900 border-2 border-dashed opacity-25`}>
                 <div className={`p-6 md:py-8`}>
                   <h1 className={`lg:text-xl font-bold leading-7 text-center text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>Coming Soon...</h1>
                 </div>
