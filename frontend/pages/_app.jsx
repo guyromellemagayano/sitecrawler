@@ -1,10 +1,10 @@
 import dynamic from 'next/dynamic'
 import { SWRConfig } from 'swr'
-import fetchJson from '../hooks/fetchJson'
+import fetchJson from 'hooks/fetchJson'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 
-import '../css/styles.css'
+import 'css/styles.css'
 import "nprogress/nprogress.css";
 
 library.add(fab)

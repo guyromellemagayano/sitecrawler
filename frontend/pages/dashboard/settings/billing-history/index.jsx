@@ -2,8 +2,8 @@ import { Fragment, useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import MobileSidebar from '../../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../../components/sidebar/MainSidebar'
+import MobileSidebar from 'components/sidebar/MobileSidebar'
+import MainSidebar from 'components/sidebar/MainSidebar'
 
 const ReportsDiv = styled.section``
 

@@ -7,11 +7,11 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import ReactHtmlParser from 'react-html-parser';
-import fetchJson from '../../../hooks/fetchJson'
-import Layout from '../../../components/Layout'
-import MobileSidebar from '../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../components/sidebar/MainSidebar'
-import HowToSetup from '../../../components/sites/HowToSetup'
+import fetchJson from 'hooks/fetchJson'
+import Layout from 'components/Layout'
+import MobileSidebar from 'components/sidebar/MobileSidebar'
+import MainSidebar from 'components/sidebar/MainSidebar'
+import HowToSetup from 'components/sites/HowToSetup'
 
 const SitesInformationDiv = styled.section`
   .wizard-indicator {

@@ -8,12 +8,12 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Moment from 'react-moment'
-import Layout from '../../../../../../components/Layout'
-import MobileSidebar from '../../../../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../../../../components/sidebar/MainSidebar'
-import SiteDangerBadge from '../../../../../../components/badges/SiteDangerBadge'
-import SiteSuccessBadge from '../../../../../../components/badges/SiteSuccessBadge'
-import SiteWarningBadge from '../../../../../../components/badges/SiteWarningBadge'
+import Layout from 'components/Layout'
+import MobileSidebar from 'components/sidebar/MobileSidebar'
+import MainSidebar from 'components/sidebar/MainSidebar'
+import SiteDangerBadge from 'components/badges/SiteDangerBadge'
+import SiteSuccessBadge from 'components/badges/SiteSuccessBadge'
+import SiteWarningBadge from 'components/badges/SiteWarningBadge'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {

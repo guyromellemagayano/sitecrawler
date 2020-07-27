@@ -6,9 +6,9 @@ import Link from 'next/link'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PropTypes from 'prop-types'
-import useUser from '../../hooks/useUser'
-import Layout from '../../components/Layout'
-import LogoLabel from '../../components/form/LogoLabel'
+import useUser from 'hooks/useUser'
+import Layout from 'components/Layout'
+import LogoLabel from 'components/form/LogoLabel'
 import { useRouter } from 'next/router'
 
 const LoginDiv = styled.div``

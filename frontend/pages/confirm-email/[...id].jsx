@@ -5,7 +5,7 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Link from 'next/link'
-import Layout from '../../components/Layout'
+import Layout from 'components/Layout'
 
 const ConfirmEmailDiv = styled.div``
 

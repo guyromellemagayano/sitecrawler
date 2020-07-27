@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import Head from "next/head"
 import Link from "next/link"
-import Layout from "../components/Layout"
+import Layout from "components/Layout"
 import PropTypes from "prop-types"
-import useUser from "../hooks/useUser"
-import Transition from "../hooks/Transition"
+import useUser from "hooks/useUser"
+import Transition from "hooks/Transition"
 
 const Home = () => {
   const { user } = useUser({ redirectTo: "/dashboard/sites" })

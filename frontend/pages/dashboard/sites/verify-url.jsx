@@ -6,11 +6,11 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import PropTypes from 'prop-types'
-import Transition from '../../../hooks/Transition'
-import Layout from '../../../components/Layout'
-import MobileSidebar from '../../../components/sidebar/MobileSidebar'
-import MainSidebar from '../../../components/sidebar/MainSidebar'
-import HowToSetup from '../../../components/sites/HowToSetup'
+import Transition from 'hooks/Transition'
+import Layout from 'components/Layout'
+import MobileSidebar from 'components/sidebar/MobileSidebar'
+import MainSidebar from 'components/sidebar/MainSidebar'
+import HowToSetup from 'components/sites/HowToSetup'
 
 const SitesVerifyUrlDiv = styled.section`
   ol {
