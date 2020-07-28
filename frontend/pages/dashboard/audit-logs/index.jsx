@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+import useUser from 'hooks/useUser'
 import MobileSidebar from 'components/sidebar/MobileSidebar'
 import MainSidebar from 'components/sidebar/MainSidebar'
 
@@ -10,6 +11,14 @@ const ReportsDiv = styled.section``
 const Reports = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const pageTitle = 'Audit Logs'
+
+  const { user: user, userError: userError } = useUser({
+    redirectTo: '/login',
+    redirectIfFound: false
+  })
+
+  if (userError) return <div>{userError.message}</div>
+  if (!user) return <div>Loading...</div>
 
   return (
     <Fragment>
