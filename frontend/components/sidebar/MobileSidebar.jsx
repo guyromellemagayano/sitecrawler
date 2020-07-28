@@ -7,6 +7,7 @@ import MobilePrimaryMenu from 'components/sidebar/MobilePrimaryMenu'
 import MobileSiteMenu from 'components/sidebar/MobileSiteMenu'
 import MobileSettingsMenu from 'components/sidebar/MobileSettingsMenu'
 import ProfileSidebar from 'components/profile/Sidebar'
+import AppLogo from 'components/logo/AppLogo'
 
 const MobileSidebarDiv = styled.aside``
 
@@ -85,10 +86,10 @@ const MobileSidebar = props => {
 										</div>
 										<div className={`flex-1 h-0 pt-5 pb-4 overflow-y-auto`}>
 											<div className={`flex-shrink-0 flex items-center px-4`}>
-												<img
+												<AppLogo
 													className={`h-8 w-auto`}
-													src={`/img/logos/workflow-logo-on-white.svg`}
-													alt={`Workflow`}
+													src={`/img/logos/site-logo.svg`}
+													alt={`app-logo`}
 												/>
 											</div>
 											{windowSiteLocation ? <MobileSiteMenu /> : windowSettingsLocation ? <MobileSettingsMenu /> : <MobilePrimaryMenu />}

@@ -7,6 +7,7 @@ import PrimaryMenu from 'components/sidebar/PrimaryMenu'
 import SiteMenu from 'components/sidebar/SiteMenu'
 import SettingsMenu from 'components/sidebar/SettingsMenu'
 import ProfileSidebar from 'components/profile/Sidebar'
+import AppLogo from 'components/logo/AppLogo'
 
 const MainSidebarDiv = styled.aside``
 
@@ -38,10 +39,10 @@ const MainSidebar = () => {
               <div className={`flex items-center flex-shrink-0 px-4`}>
                 <Link href="/dashboard/sites/">
                   <a className={`block`}>
-                    <img
+                    <AppLogo
                       className={`h-8 w-auto`}
-                      src={`/img/logos/workflow-logo-on-white.svg`}
-                      alt={`Workflow`}
+                      src={`/img/logos/site-logo.svg`}
+                      alt={`app-logo`}
                     />
                   </a>
                 </Link>
