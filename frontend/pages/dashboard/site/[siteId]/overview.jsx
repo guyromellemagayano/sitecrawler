@@ -51,6 +51,29 @@ const SitesDashboard = () => {
     fetcher
   )
 
+  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`
+
+  const onCrawlHandler = async () => {
+    const res = await fetch(reCrawlEndpoint, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
+      },
+    })
+  
+    const data = await res.json()
+  
+    if (res.status !== 200) {
+      throw new Error(data.message)
+    }
+
+    console.log('[data]', data)
+  
+    return data
+  }
+
   {userError || siteError && <Layout>{userError.message || siteError.message}</Layout>}
 
   return (
@@ -117,6 +140,7 @@ const SitesDashboard = () => {
                       url={site.url}
                       verified={site.verified}
                       finishedAt={site.updated_at}
+                      onCrawl={onCrawlHandler}
                     />
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment,  useEffect } from 'react'
 import Cookies from 'js-cookie'
 import useSWR from 'swr'
 import styled from 'styled-components'
@@ -36,6 +36,11 @@ const SitesOverview = props => {
   }
 
   const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
+
+  useEffect(() => {
+    if(user && user.permissions !== undefined && user.permissions[0] !== undefined)
+      console.log('[user]', user.permissions[0])
+  }, [user])
 
   if (userError) return <div>{userError.message}</div>
   if (!user) {
@@ -82,13 +87,26 @@ const SitesOverview = props => {
           </p>
         </div>
         <div className={`mt-4`}>
-          <button
-            disabled={`disabled`}
-            type={`button`}
-            className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 opacity-50 cursor-not-allowed`}
-          >
-            Run Crawler
-          </button>
+        {
+          user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' ? (
+            <button
+              type={`button`}
+              onClick={props.onCrawl}
+              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`}
+            >
+              Run Crawler
+            </button>
+          ) : (
+            <button
+              disabled={`disabled`}
+              type={`button`}
+              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 opacity-50 cursor-not-allowed`}
+            >
+              Run Crawler
+            </button>
+          )
+        }
+
         </div>
       </div>
     </SitesOverviewDiv>
