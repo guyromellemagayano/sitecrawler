@@ -15,9 +15,9 @@ const apiParameters = {
   },
 }
 
-const ProfileSidebarDiv = styled.div``
+const SidebarDiv = styled.div``
 
-const ProfileSidebar = () => {
+const Sidebar = () => {
   const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
 
   const { data: user, error: siteError } = useSWR('/api/auth/user/', fetcher)
@@ -27,7 +27,7 @@ const ProfileSidebar = () => {
       {siteError && <Layout>Failed to load.</Layout>}
 
       {!user ? (
-        <ProfileSidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
+        <SidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
           <span
             className={`flex justify-between items-center my-1 group px-3 py-2`}
           >
@@ -53,9 +53,9 @@ const ProfileSidebar = () => {
               Log out
             </a>
           </Link>
-        </ProfileSidebarDiv>
+        </SidebarDiv>
       ) : (
-        <ProfileSidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
+        <SidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
           <span
             className={`flex justify-between items-center my-1 group px-3 py-2`}
           >
@@ -106,10 +106,10 @@ const ProfileSidebar = () => {
               Log out
             </a>
           </Link>
-        </ProfileSidebarDiv>
+        </SidebarDiv>
       )}
     </Fragment>
   )
 }
 
-export default ProfileSidebar
+export default Sidebar

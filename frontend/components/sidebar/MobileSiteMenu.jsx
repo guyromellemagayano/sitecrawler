@@ -28,13 +28,13 @@ const fetcher = async (url) => {
   return data
 }
 
-const SiteMenuDiv = styled.nav`
+const MobileSiteMenuDiv = styled.nav`
   .back-nav {
     margin-bottom: 1rem;
   }
 `
 
-const SiteMenu = () => {
+const MobileSiteMenu = () => {
   const { query, asPath } = useRouter()
   const {
     data: scan,
@@ -70,7 +70,7 @@ const SiteMenu = () => {
       {statsError || scanError && <Layout>{statsError.message || scanError.message}</Layout>}
 
       {!stats ? (
-        <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
+        <MobileSiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
           {[...Array(5)].map((val, index) => {
             return (
               <a
@@ -82,9 +82,9 @@ const SiteMenu = () => {
               </a>
             )
           })}
-        </SiteMenuDiv>
+        </MobileSiteMenuDiv>
       ) : (
-        <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
+        <MobileSiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
           {SitePages.map((val, key) => {
             return (
               <Fragment key={key}>
@@ -202,10 +202,10 @@ const SiteMenu = () => {
               </Fragment>
             )
           })}
-        </SiteMenuDiv>
+        </MobileSiteMenuDiv>
       )}
     </Fragment>
   )
 }
 
-export default SiteMenu
+export default MobileSiteMenu
