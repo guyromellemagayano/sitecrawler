@@ -8,7 +8,7 @@ import Moment from 'react-moment'
 import Layout from '../Layout'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Skeleton from 'react-loading-skeleton';
-import Transition from '../../hooks/Transition'
+import Transition from 'hooks/Transition'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {

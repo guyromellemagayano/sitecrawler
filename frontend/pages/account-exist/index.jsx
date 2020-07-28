@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import styled from 'styled-components'
 import ReactHtmlParser from 'react-html-parser'
-import AccountExistContent from '../../public/data/account-exist.json'
+import AccountExistContent from 'public/data/account-exist.json'
 
 const AccountExistDiv = styled.div``
 

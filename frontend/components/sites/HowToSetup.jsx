@@ -41,7 +41,7 @@ const HowToSetup = () => {
       <div className={`relative max-w-7xl mx-auto`}>
         <div className={`text-center mb-10`}>
           <h3
-            className={`text-2xl leading-9 tracking-tight font-extrabold text-gray-900 sm:text-3xl sm:leading-10`}
+            className={`text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10`}
           >
             How to add site
           </h3>

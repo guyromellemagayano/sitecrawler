@@ -1,0 +1,48 @@
+[
+	{
+		"type": "Basic",
+		"slug": "basic",
+		"featured": false,
+		"monthlyCost": 0,
+		"yearlyCost": 0,
+		"features": [
+			"Broken link checking",
+			"60 minutes uptime check",
+			"Weekly recrawl",
+			"Security checks",
+			"Maximum sites: 3"
+		]
+	},
+	{
+		"type": "Professional",
+		"slug": "professional",
+		"featured": true,
+		"monthlyCost": 25,
+		"yearlyCost": 300,
+		"features": [
+			"Broken link checking",
+			"5 minutes uptime check",
+			"Daily recrawl",
+			"Security checks",
+			"Maximum sites: 15",
+			"On-demand recrawl",
+			"Page load",
+			"Broken images",
+			"Page title check",
+			"Page description check",
+			"First 2 H1s per page",
+			"First 2 H2s per page"
+		]
+	},
+	{
+		"type": "Agency",
+		"slug": "agency",
+		"featured": false,
+		"monthlyCost": 100,
+		"yearlyCost": 1200,
+		"features": [
+			"All features in Professional Plan",
+			"Unlimited sites"
+		]
+	}
+]
