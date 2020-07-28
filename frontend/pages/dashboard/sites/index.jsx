@@ -9,13 +9,13 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import useSWR from 'swr'
 import DataTableHeadsContent from 'public/data/data-table-heads.json'
+import useUser from 'hooks/useUser'
 import Layout from 'components/Layout'
 import MobileSidebar from 'components/sidebar/MobileSidebar'
 import MainSidebar from 'components/sidebar/MainSidebar'
 import AddSite from 'components/sites/AddSite'
 import DataTable from 'components/sites/DataTable'
 import Pagination from 'components/sites/Pagination'
-import useUser from 'hooks/useUser'
 
 if (typeof window !== 'undefined') {
   LogRocket.init('epic-design-labs/link-app');
