@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import Head from 'next/head'
 import styled from 'styled-components'
+import Skeleton from 'react-loading-skeleton'
+import useUser from 'hooks/useUser'
 import Layout from 'components/Layout'
 import MobileSidebar from 'components/sidebar/MobileSidebar'
 import MainSidebar from 'components/sidebar/MainSidebar'
@@ -12,6 +14,50 @@ const ProfileDiv = styled.section``
 const Profile = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const pageTitle = 'Profile Settings'
+
+  const { user: user, userError: userError } = useUser({
+    redirectTo: '/login',
+    redirectIfFound: false
+  })
+
+  if (userError) return <div>{userError.message}</div>
+  if (!user) {
+    return (
+      <ProfileDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+        <MainSidebar />
+
+        <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
+          <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
+            <span
+              className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center`}
+            >
+              <Skeleton duration={2} width={30} height={30} />
+            </span>
+          </div>
+          <main
+            className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
+            tabIndex={`0`}
+          >
+            <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+              <div>
+                <Skeleton duration={2} width={120} />
+              </div>
+              <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                <div className={`flex-1 min-w-0`}>
+                  <Skeleton duration={2} width={280} />
+                </div>
+              </div>
+            </div>
+            <div className={`max-w-3xl px-4 sm:px-6 md:px-8`}>
+              <ProfileSettingsPersonal />
+              <Skeleton duration={2} width={320} height={586} />
+              <ProfileSettingsPassword />
+            </div>
+          </main>
+        </div>
+      </ProfileDiv>
+    )
+  }
 
   return (
     <Layout>
