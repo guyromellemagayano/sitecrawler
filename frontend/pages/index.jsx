@@ -5,6 +5,7 @@ import Layout from "components/Layout"
 import PropTypes from "prop-types"
 import useUser from "hooks/useUser"
 import Transition from "hooks/Transition"
+import AppLogo from 'components/logo/AppLogo'
 
 const Home = () => {
   const { user } = useUser({ redirectTo: "/dashboard/sites" })
@@ -65,10 +66,10 @@ const Home = () => {
                 className={`flex items-center justify-between w-full md:w-auto`}
               >
                 <a href={`#`}>
-                  <img
+                  <AppLogo
                     className={`h-8 w-auto sm:h-10`}
-                    src={`/img/logos/workflow-logo-on-white.svg`}
-                    alt={``}
+                    src={`/img/logos/site-logo.svg`}
+                    alt={`app-logo`}
                   />
                 </a>
                 <div className={`-mr-2 flex items-center md:hidden`}>

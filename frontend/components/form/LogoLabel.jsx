@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import styled from 'styled-components'
+import AppLogo from 'components/logo/AppLogo'
 
 const LogoLabelDiv = styled.div``
 
@@ -8,10 +9,10 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword }) => {
     <LogoLabelDiv className={`sm:mx-auto sm:w-full sm:max-w-md`}>
       <Link href="/">
         <a>
-          <img
-            className={`mx-auto h-12 mb-8 w-auto`}
-            src='/img/logos/workflow-logo-on-white.svg'
-            alt='Workflow'
+          <AppLogo
+            className={`h-10 w-auto mx-auto`}
+            src={`/img/logos/site-logo.svg`}
+            alt={`app-logo`}
           />
         </a>
       </Link>
