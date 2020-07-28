@@ -7,7 +7,7 @@ import useUser from "../hooks/useUser"
 import Transition from "../hooks/Transition"
 
 const Home = () => {
-  const { user } = useUser({ redirectTo: "/dashboard/sites" })
+  const { user } = useUser({ redirectTo: "/dashboard/sites", redirectIfFound: true })
   const [showMobileMenu, setShowMobileMenu] = useState(false)
 
   return (
