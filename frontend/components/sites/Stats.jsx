@@ -6,6 +6,7 @@ import useSWR from 'swr'
 import Link from 'next/link'
 import styled from 'styled-components'
 import Skeleton from 'react-loading-skeleton';
+import Layout from 'components/Layout'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
