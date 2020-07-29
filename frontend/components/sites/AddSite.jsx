@@ -102,7 +102,7 @@ const AddSite = () => {
                 <input
                   id={`email`}
                   className={`form-input block w-full pl-10 sm:text-sm sm:leading-5`}
-                  placeholder={`Search sites...`}
+                  placeholder={`Search Sites...`}
                 />
               </div>
             </div>

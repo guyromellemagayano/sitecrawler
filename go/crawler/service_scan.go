@@ -24,11 +24,16 @@ type ScanService struct {
 	ScanDao       *ScanDao
 	LinkDao       *LinkDao
 	LinkLinkDao   *LinkLinkDao
+	PageDataDao   *PageDataDao
 	VerifyService *VerifyService
 	LoadService   *LoadService
 }
 
 func (s *ScanService) ScanSite(scanID int) error {
+	if err := s.reverify(scanID); err != nil {
+		return err
+	}
+
 	scan, err := s.ScanDao.ByID(scanID)
 	if err != nil {
 		return errors.Wrapf(err, "could not get scan id %v", scanID)
@@ -51,6 +56,9 @@ func (s *ScanService) ScanSite(scanID int) error {
 		return nil
 	}
 
+	if err := s.PageDataDao.DeleteAllForScan(scanID); err != nil {
+		return err
+	}
 	if err := s.LinkLinkDao.DeleteAllForScan(scanID); err != nil {
 		return err
 	}
@@ -63,6 +71,15 @@ func (s *ScanService) ScanSite(scanID int) error {
 	}
 
 	return nil
+}
+
+func (s *ScanService) reverify(scanID int) error {
+	scan, err := s.ScanDao.ByID(scanID)
+	if err != nil {
+		return errors.Wrapf(err, "could not get scan id %v", scanID)
+	}
+
+	return s.VerifyService.VerifySite(scan.SiteID)
 }
 
 func (s *ScanService) Start(scan *common.CrawlScan) error {
@@ -144,6 +161,10 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 		return link.ID, nil
 	}
 
+	if err := s.savePageData(doc, link.ID); err != nil {
+		log.Printf("Could not save page data for link %v: %v", link.ID, err)
+	}
+
 	if depth > depthLimit || len(s.linkIDs) > totalLimit {
 		return link.ID, nil
 	}
@@ -195,7 +216,7 @@ func (s *scanner) loadURL(url *url.URL) (*common.CrawlLink, *goquery.Document) {
 		} else {
 			log.Printf("Other error for link %v: %v", url, err)
 			crawlLink.Status = STATUS_OTHER_ERROR
-			errStr := err.Error()
+			errStr := err.Error()[:255]
 			crawlLink.Error = &errStr
 		}
 	}
@@ -244,6 +265,26 @@ func (s *scanner) loadURL(url *url.URL) (*common.CrawlLink, *goquery.Document) {
 	}
 
 	return crawlLink, nil
+}
+
+func (s *scanner) savePageData(doc *goquery.Document, linkID int) error {
+	title := doc.Find("title").First().Text()
+	description := strings.TrimSpace(doc.Find("meta[name=description]").First().AttrOr("content", ""))
+	h1First := strings.TrimSpace(doc.Find("h1").First().Text())
+	h1Second := strings.TrimSpace(doc.Find("h1").Eq(1).Text())
+	h2First := strings.TrimSpace(doc.Find("h2").First().Text())
+	h2Second := strings.TrimSpace(doc.Find("h2").Eq(1).Text())
+	return s.ScanService.PageDataDao.Save(&common.CrawlPagedatum{
+		LinkID: linkID,
+
+		Title:       title,
+		Description: description,
+		H1First:     h1First,
+		H1Second:    h1Second,
+		H2First:     h2First,
+		H2Second:    h2Second,
+	})
+
 }
 
 func (s *scanner) normalizeURL(parent *url.URL, child string) (*url.URL, error) {

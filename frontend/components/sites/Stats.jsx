@@ -70,8 +70,11 @@ const SitesStats = props => {
       props.crawlableHandler(false)
   }, [stats])
 
-  if (statsError) return <div>{statsError.message}</div>
-  if (scanError) return <div>{scanError.message}</div>
+  {statsError && <Layout>{statsError.message}</Layout>}
+  {scanError && <Layout>{scanError.message}</Layout>}
+
+  console.log(stats)
+
   if (!stats) {
     return (
       <SitesStatsDiv>
@@ -88,7 +91,7 @@ const SitesStats = props => {
   return (
     <SitesStatsDiv>
       <div>
-        <div className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-4 sm:gap-18`}>
+        <div className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-18`}>
           <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
             <div className={`px-4 py-5 sm:p-6`}>
               <dl>
@@ -133,6 +136,188 @@ const SitesStats = props => {
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
                 <Link href="/dashboard/site/[siteId]/links" as={`/dashboard/site/${query.siteId}/links`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Link Issues
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_non_ok_links}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="/dashboard/site/[siteId]/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR" as={`/dashboard/site/${query.siteId}/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Total Pages Without Title
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_pages_without_title}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="#" as={`#`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Total Pages Without Description
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_pages_without_description}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="#" as={`#`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Total Pages Without First H1
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_pages_without_h1_first}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="#" as={`#`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Total Pages Without Second H1
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_pages_without_h1_second}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="#" as={`#`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Total Pages Without First H2
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_pages_without_h2_first}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="#" as={`#`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Total Pages Without Second H2
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_pages_without_h2_second}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="#" as={`#`} >
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
