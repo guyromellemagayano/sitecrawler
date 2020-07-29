@@ -65,8 +65,6 @@ const SitesStats = () => {
   {statsError && <Layout>{statsError.message}</Layout>}
   {scanError && <Layout>{scanError.message}</Layout>}
 
-  console.log(stats)
-
   if (!stats) {
     return (
       <SitesStatsDiv>
