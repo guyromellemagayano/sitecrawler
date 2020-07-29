@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from crawl.models import Link
+from .page_data import PageDataSerializer
 
 
 class PageSerializer(serializers.ModelSerializer):
@@ -12,3 +13,21 @@ class PageSerializer(serializers.ModelSerializer):
         model = Link
         fields = ["id", "created_at", "scan_id", "url", "num_links", "num_ok_links", "num_non_ok_links"]
         read_only_fields = ["id", "created_at", "scan_id", "url", "num_links", "num_ok_links", "num_non_ok_links"]
+
+
+class PageDetailSerializer(PageSerializer):
+    pagedata = PageDataSerializer(read_only=True)
+
+    class Meta:
+        model = Link
+        fields = ["id", "created_at", "scan_id", "url", "num_links", "num_ok_links", "num_non_ok_links", "pagedata"]
+        read_only_fields = [
+            "id",
+            "created_at",
+            "scan_id",
+            "url",
+            "num_links",
+            "num_ok_links",
+            "num_non_ok_links",
+            "pagedata",
+        ]

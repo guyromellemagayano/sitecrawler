@@ -63,6 +63,11 @@ var Columns = struct {
 
 		FromLink, ToLink string
 	}
+	CrawlPagedatum struct {
+		ID, Title, Description, H1First, H1Second, H2First, H2Second, LinkID string
+
+		Link string
+	}
 	CrawlScan struct {
 		ID, StartedAt, FinishedAt, SiteID string
 
@@ -261,6 +266,22 @@ var Columns = struct {
 		FromLink: "FromLink",
 		ToLink:   "ToLink",
 	},
+	CrawlPagedatum: struct {
+		ID, Title, Description, H1First, H1Second, H2First, H2Second, LinkID string
+
+		Link string
+	}{
+		ID:          "id",
+		Title:       "title",
+		Description: "description",
+		H1First:     "h1_first",
+		H1Second:    "h1_second",
+		H2First:     "h2_first",
+		H2Second:    "h2_second",
+		LinkID:      "link_id",
+
+		Link: "Link",
+	},
 	CrawlScan: struct {
 		ID, StartedAt, FinishedAt, SiteID string
 
@@ -438,6 +459,9 @@ var Tables = struct {
 	CrawlLinkLink struct {
 		Name, Alias string
 	}
+	CrawlPagedatum struct {
+		Name, Alias string
+	}
 	CrawlScan struct {
 		Name, Alias string
 	}
@@ -545,6 +569,12 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "crawl_link_links",
+		Alias: "t",
+	},
+	CrawlPagedatum: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_pagedata",
 		Alias: "t",
 	},
 	CrawlScan: struct {
@@ -758,6 +788,21 @@ type CrawlLinkLink struct {
 
 	FromLink *CrawlLink `pg:"fk:from_link_id"`
 	ToLink   *CrawlLink `pg:"fk:to_link_id"`
+}
+
+type CrawlPagedatum struct {
+	tableName struct{} `sql:"crawl_pagedata,alias:t" pg:",discard_unknown_columns"`
+
+	ID          int    `sql:"id,pk"`
+	Title       string `sql:"title,notnull"`
+	Description string `sql:"description,notnull"`
+	H1First     string `sql:"h1_first,notnull"`
+	H1Second    string `sql:"h1_second,notnull"`
+	H2First     string `sql:"h2_first,notnull"`
+	H2Second    string `sql:"h2_second,notnull"`
+	LinkID      int    `sql:"link_id,notnull"`
+
+	Link *CrawlLink `pg:"fk:link_id"`
 }
 
 type CrawlScan struct {

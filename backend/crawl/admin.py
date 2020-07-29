@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models import Link, Scan, Site, UserProfile, GroupSettings
+from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData
 
 
 class LinkInline(admin.TabularInline):
@@ -38,11 +38,15 @@ class LinkInline(admin.TabularInline):
         return obj.to_link.response_time
 
 
+class PageDataInline(admin.StackedInline):
+    model = PageData
+
+
 @admin.register(Link)
 class LinkAdmin(admin.ModelAdmin):
     list_display = ("scan_id", "url", "type", "status")
     exclude = ("links",)
-    inlines = [LinkInline]
+    inlines = [LinkInline, PageDataInline]
 
 
 class PageInline(admin.TabularInline):
