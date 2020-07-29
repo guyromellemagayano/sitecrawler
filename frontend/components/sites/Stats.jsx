@@ -62,8 +62,9 @@ const SitesStats = () => {
     }
   )
 
-  if (statsError) return <div>{statsError.message}</div>
-  if (scanError) return <div>{scanError.message}</div>
+  {statsError && <Layout>{statsError.message}</Layout>}
+  {scanError && <Layout>{scanError.message}</Layout>}
+
   if (!stats) {
     return (
       <SitesStatsDiv>
@@ -125,6 +126,32 @@ const SitesStats = () => {
             <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
               <div className={`text-sm leading-5`}>
                 <Link href="/dashboard/site/[siteId]/links" as={`/dashboard/site/${query.siteId}/links`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Link Issues
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_non_ok_links}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="/dashboard/site/[siteId]/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR" as={`/dashboard/site/${query.siteId}/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`} >
                   <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
                     View all
                   </a>
