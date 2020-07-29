@@ -190,7 +190,7 @@ const LinkDetail = () => {
                 </div>
               </div>
             </div>
-            <div className={`max-w-full mx-auto py-6 px-4 sm:px-6 md:px-8`}>
+            <div className={`max-w-4xl py-6 px-4 sm:px-6 md:px-8`}>
               <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:p-0">
                   <dl>
