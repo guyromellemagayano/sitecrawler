@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
+import PasswordStrengthBar from 'react-password-strength-bar';
 import useUser from 'hooks/useUser'
 
 const ProfileSettingsPasswordDiv = styled.div``
@@ -125,7 +126,7 @@ const ProfileSettingsPassword = () => {
                       >
                         New Password
                       </label>
-                      <div className={`mt-1 flex rounded-md shadow-xs-sm`}>
+                      <div className={`mt-1 flex flex-row flex-wrap rounded-md shadow-xs-sm`}>
                         <input
                           type={`password`}
                           id={`password1`}
@@ -139,6 +140,7 @@ const ProfileSettingsPassword = () => {
                           onChange={handlePasswordOneInputChange}
                           onBlur={handlePasswordOneInputChange}
                         />
+                        <PasswordStrengthBar className={`w-full`} password={password1} />
                       </div>
                     </div>
                   </div>
