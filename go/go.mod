@@ -10,6 +10,7 @@ require (
 	github.com/codegangsta/gin v0.0.0-20171026143024-cafe2ce98974 // indirect
 	github.com/dizzyfool/genna v1.0.0 // indirect
 	github.com/go-pg/pg v8.0.6+incompatible
+	github.com/hashicorp/go-retryablehttp v0.6.6
 	github.com/mattn/go-shellwords v1.0.10 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron v1.2.0
