@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -75,10 +75,15 @@ const SitesDashboard = () => {
       throw new Error(data.message)
     }
 
-    console.log('[data]', data)
+    console.log('[onCrawlHandler]', data)
   
     return data
   }
+
+  useEffect(() => {
+    if(!site.verified)
+      setRecrawlable(false)
+  }, site)
 
   {userError && <Layout>{userError.message}</Layout>}
   {siteError && <Layout>{siteError.message}</Layout>}
