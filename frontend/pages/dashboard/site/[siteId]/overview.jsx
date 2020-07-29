@@ -83,10 +83,11 @@ const SitesDashboard = () => {
   useEffect(() => {
     if(site && !site.verified)
       setRecrawlable(false)
-  }, site)
+  }, [site])
 
   {userError && <Layout>{userError.message}</Layout>}
   {siteError && <Layout>{siteError.message}</Layout>}
+  {scanError && <Layout>{scanError.message}</Layout>}
 
   return (
     <Layout>
