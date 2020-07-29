@@ -51,6 +51,11 @@ const SitesDashboard = () => {
     fetcher
   )
 
+  const { data: scan, error: scanError } = useSWR(
+    () => query.siteId && `/api/site/${query.siteId}/scan/`,
+    fetcher
+  )
+
   const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`
 
   const onCrawlHandler = async () => {
@@ -78,7 +83,7 @@ const SitesDashboard = () => {
 
   return (
     <Layout>
-      {user && site ? (
+      {user && scan && site ? (
         <Fragment>
           <Head>
             <title>{pageTitle} {site.name}</title>
@@ -139,7 +144,7 @@ const SitesDashboard = () => {
                     <SitesOverview
                       url={site.url}
                       verified={site.verified}
-                      finishedAt={site.updated_at}
+                      finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
                       onCrawl={onCrawlHandler}
                     />
                   </div>
