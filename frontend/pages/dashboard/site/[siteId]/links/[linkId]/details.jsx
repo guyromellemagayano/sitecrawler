@@ -191,14 +191,14 @@ const LinkDetail = () => {
               </div>
             </div>
             <div className={`max-w-4xl py-6 px-4 sm:px-6 md:px-8`}>
-              <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <div class="px-4 py-5 sm:p-0">
+              <div className={`bg-white shadow overflow-hidden sm:rounded-lg`}>
+                <div className={`px-4 py-5 sm:p-0`}>
                   <dl>
-                    <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-                      <dt class="text-sm leading-5 font-medium text-gray-500">
+                    <div className={`sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5`}>
+                      <dt className={`text-sm leading-5 font-medium text-gray-500`}>
                         Created at 
                       </dt>
-                      <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                      <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
                         {!user.settings.disableLocalTime ? (
                           <Fragment>
                             <Moment
@@ -230,11 +230,11 @@ const LinkDetail = () => {
                         )}
                       </dd>
                     </div>
-                    <div class="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5">
-                      <dt class="text-sm leading-5 font-medium text-gray-500">
+                    <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                      <dt className={`text-sm leading-5 font-medium text-gray-500`}>
                         Type
                       </dt>
-                      <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                      <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
                         {linkLocation.type === "PAGE"
                           ? "Page"
                           : linkLocation.type === "EXTERNAL"
@@ -242,11 +242,11 @@ const LinkDetail = () => {
                           : "Other"}
                       </dd>
                     </div>
-                    <div class="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5">
-                      <dt class="text-sm leading-5 font-medium text-gray-500">
+                    <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                      <dt className={`text-sm leading-5 font-medium text-gray-500`}>
                         Status
                       </dt>
-                      <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                      <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
                         {linkLocation.status === "OK" ? (
                           <SiteSuccessBadge text={"OK"} />
                         ) : linkLocation.status === "TIMEOUT" ? (
@@ -258,29 +258,29 @@ const LinkDetail = () => {
                         )}
                       </dd>
                     </div>
-                    <div class="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5">
-                      <dt class="text-sm leading-5 font-medium text-gray-500">
+                    <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                      <dt className={`text-sm leading-5 font-medium text-gray-500`}>
                         Response Time
                       </dt>
-                      <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                      <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
                         {linkLocation.response_time} ms
                       </dd>
                     </div>
                     {linkLocation.error !== null && linkLocation.error !== undefined ? (
-                      <div class="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5">
-                        <dt class="text-sm leading-5 font-medium text-gray-500">
+                      <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                        <dt className={`text-sm leading-5 font-medium text-gray-500`}>
                           Error
                         </dt>
-                        <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
                           <SiteDangerBadge text={linkLocation.error} />
                         </dd>
                       </div>
                     ) : null}
-                    <div class="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5">
-                      <dt class="text-sm leading-5 font-medium text-gray-500">
+                    <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                      <dt className={`text-sm leading-5 font-medium text-gray-500`}>
                         Page Links
                       </dt>
-                      <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                      <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
                         <ul className={`border border-gray-200 rounded-md`}>
                           {linkLocation.pages.map((val, key) => {
                             return (
@@ -288,7 +288,7 @@ const LinkDetail = () => {
                                 key={key}
                                 className={`border-b border-gray-200 pl-3 pr-4 py-3 flex items-center justify-between text-sm leading-5`}
                               >
-                                <div class="w-0 flex-1 flex items-center">
+                                <div className={`w-0 flex-1 flex items-center`}>
                                   <svg
                                     className={`flex-shrink-0 h-5 w-5 text-gray-400`}
                                     fill="none"
@@ -304,18 +304,18 @@ const LinkDetail = () => {
                                       clipRule="evenodd"
                                     />
                                   </svg>
-                                  <span class="ml-2 flex-1 w-0 truncate">
+                                  <span className={`ml-2 flex-1 w-0`}>
                                     <a
                                       href={val.url}
                                       target={`_blank`}
                                       title={val.url}
-                                      className={`block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out`}
+                                      className={`break-words block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out`}
                                     >
                                       {val.url}
                                     </a>
                                   </span>
                                 </div>
-                                <div class="ml-4 flex-shrink-0">
+                                <div className={`ml-4 flex-shrink-0`}>
                                   <CopyToClipboard
                                     onCopy={handleUrlCopy}
                                     text={val.url}
