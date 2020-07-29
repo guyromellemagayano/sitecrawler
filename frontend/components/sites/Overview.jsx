@@ -1,4 +1,4 @@
-import { Fragment,  useEffect } from 'react'
+import { Fragment } from 'react'
 import Cookies from 'js-cookie'
 import useSWR from 'swr'
 import styled from 'styled-components'
@@ -36,13 +36,6 @@ const SitesOverview = props => {
   }
 
   const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
-
-  useEffect(() => {
-    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan')
-      props.crawlableHandler(true)
-    else
-      props.crawlableHandler(false)
-  }, [user])
 
   if (userError) return <div>{userError.message}</div>
   if (!user) {
