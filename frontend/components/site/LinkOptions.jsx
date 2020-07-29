@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import Transition from 'hooks/Transition'
 
@@ -8,9 +9,13 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const [disableButton, setDisableButton] = useState(true)
 
+  const { query, asPath } = useRouter()
+
   const setDropdownToggle = (e) => {
     setShowDropdown(!showDropdown)
   }
+
+  console.log(query, asPath)
 
   return (
     <LinkOptionsDiv className={`py-4`}>
@@ -41,7 +46,7 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
                 <input
                   id={`search`}
                   className={`form-input block w-full pl-10 sm:text-sm sm:leading-5`}
-                  placeholder={`Search sites...`}
+                  placeholder={`${asPath.includes('pages') ? "Search Pages..." : asPath.includes('links') ? "Search Links..." : "Search URL..."}`}
                   onKeyUp={onSearchEvent}
                   defaultValue={searchKey}
                   autoFocus
