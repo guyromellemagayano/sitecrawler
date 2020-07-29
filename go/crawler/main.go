@@ -55,6 +55,7 @@ func main() {
 	scanDao := &ScanDao{DB: db}
 	linkDao := &LinkDao{DB: db}
 	linkLinkDao := &LinkLinkDao{DB: db}
+	pageDataDao := &PageDataDao{DB: db}
 
 	scanSqsQueue, err := common.NewSQSService(sqsSvc, "linkapp-scan")
 	if err != nil {
@@ -67,6 +68,7 @@ func main() {
 		ScanDao:       scanDao,
 		LinkDao:       linkDao,
 		LinkLinkDao:   linkLinkDao,
+		PageDataDao:   pageDataDao,
 		VerifyService: verifyService,
 		LoadService:   loadService,
 	}
