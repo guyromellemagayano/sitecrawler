@@ -168,6 +168,58 @@ const SitesStats = () => {
                 <dt
                   className={`text-sm leading-5 font-medium text-gray-500 truncate`}
                 >
+                  Total Pages Without Title
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_pages_without_title}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="#" as={`#`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
+                  Total Pages Without Description
+                </dt>
+                <dd
+                  className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                >
+                  {stats.num_pages_without_description}
+                </dd>
+              </dl>
+            </div>
+            <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
+              <div className={`text-sm leading-5`}>
+                <Link href="#" as={`#`} >
+                  <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
+                    View all
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+            <div className={`px-4 py-5 sm:p-6`}>
+              <dl>
+                <dt
+                  className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                >
                   Total Pages Without First H1
                 </dt>
                 <dd
