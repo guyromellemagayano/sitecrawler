@@ -154,8 +154,9 @@ const DataTable = props => {
     { refreshInterval: 1000 }
   )
 
-  if (scanError) return <Layout>{scanError.message}</Layout>
-  if (scanIdError) return <Layout>{scanIdError.message}</Layout>
+  {scanError && <Layout>{scanError.message}</Layout>}
+  {scanIdError && <Layout>{scanIdError.message}</Layout>}
+
   if (!scan || !scanId) {
     return (
       <Fragment>
