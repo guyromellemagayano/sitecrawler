@@ -21,19 +21,18 @@ func (v *VerifyService) VerifySite(siteID int) error {
 	if err != nil {
 		return errors.Wrapf(err, "could not get site id %v", siteID)
 	}
-	if site.Verified {
-		return nil
-	}
 	log.Printf("Verifying %v", site.Url)
 
 	err = v.VerifyURL(site.Url, site.VerificationID)
 
 	site.UpdatedAt = time.Now()
 	if err != nil {
+		site.Verified = false
 		errStr := err.Error()
 		site.LastVerifyError = &errStr
 	} else {
 		site.Verified = true
+		site.LastVerifyError = nil
 	}
 
 	if err := v.SiteDao.Save(site); err != nil {

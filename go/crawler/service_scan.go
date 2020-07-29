@@ -30,6 +30,10 @@ type ScanService struct {
 }
 
 func (s *ScanService) ScanSite(scanID int) error {
+	if err := s.reverify(scanID); err != nil {
+		return err
+	}
+
 	scan, err := s.ScanDao.ByID(scanID)
 	if err != nil {
 		return errors.Wrapf(err, "could not get scan id %v", scanID)
@@ -67,6 +71,15 @@ func (s *ScanService) ScanSite(scanID int) error {
 	}
 
 	return nil
+}
+
+func (s *ScanService) reverify(scanID int) error {
+	scan, err := s.ScanDao.ByID(scanID)
+	if err != nil {
+		return errors.Wrapf(err, "could not get scan id %v", scanID)
+	}
+
+	return s.VerifyService.VerifySite(scan.SiteID)
 }
 
 func (s *ScanService) Start(scan *common.CrawlScan) error {

@@ -47,6 +47,8 @@ class SiteViewSet(
             raise PermissionDenied("You don't have permission to start a scan.")
 
         site = self.get_object()
-        if site.verified:
-            scan_obj = scan.site(site)
+        if not site.verified:
+            raise PermissionDenied("Site not verified.")
+
+        scan_obj = scan.site(site)
         return Response(ScanSerializer(instance=scan_obj).data)
