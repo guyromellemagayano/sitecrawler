@@ -38,8 +38,10 @@ const SitesOverview = props => {
   const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
 
   useEffect(() => {
-    if(user && user.permissions !== undefined && user.permissions[0] !== undefined)
-      console.log('[user]', user.permissions[0])
+    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan')
+      props.crawlableHandler(true)
+    else
+      props.crawlableHandler(false)
   }, [user])
 
   if (userError) return <div>{userError.message}</div>
@@ -88,7 +90,7 @@ const SitesOverview = props => {
         </div>
         <div className={`mt-4`}>
         {
-          user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' ? (
+          props.crawlable ? (
             <button
               type={`button`}
               onClick={props.onCrawl}

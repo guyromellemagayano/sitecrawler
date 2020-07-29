@@ -38,6 +38,7 @@ const SitesDashboardDiv = styled.section``
 
 const SitesDashboard = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const [recrawlable, setRecrawlable] = useState(false)
   const pageTitle = 'Overview |'
 
   const { user: user, userError: userError } = useUser({
@@ -141,12 +142,14 @@ const SitesDashboard = () => {
                       verified={site.verified}
                       finishedAt={site.updated_at}
                       onCrawl={onCrawlHandler}
+                      crawlable={recrawlable}
+                      crawlableHandler={(val) => setRecrawlable(val)}
                     />
                   </div>
                 </div>
                 <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
                   <div className={`pb-4`}>
-                    <SitesStats />
+                    <SitesStats crawlableHandler={(val) => setRecrawlable(val)} />
                   </div>
                 </div>
               </main>
