@@ -66,12 +66,27 @@ func (v *VerifyService) VerifyURL(url, verificationID string) error {
 }
 
 func (v *VerifyService) Verify(doc *goquery.Document, verificationID string) error {
-	tagContent, exists := doc.Find(fmt.Sprintf("meta[name=%s]", metaTagName)).First().Attr("content")
-	if !exists {
-		return errors.New("meta tag does not exist")
+	verified := false
+	var lastError error
+	doc.Find(fmt.Sprintf("meta[name=%s]", metaTagName)).EachWithBreak(func(_ int, s *goquery.Selection) bool {
+		tagContent, exists := s.Attr("content")
+		if !exists {
+			lastError = errors.Errorf("meta tag does not have content attribute set")
+			return true
+		}
+		if tagContent != verificationID {
+			lastError = errors.Errorf("meta tag not correct \"%s\" != \"%s\"", tagContent, verificationID)
+			return true
+		}
+		lastError = nil
+		verified = true
+		return false
+	})
+	if lastError != nil {
+		return lastError
 	}
-	if tagContent != verificationID {
-		return errors.Errorf("meta tag not correct \"%s\" != \"%s\"", tagContent, verificationID)
+	if !verified {
+		return errors.New("meta tag does not exist")
 	}
 	return nil
 }
