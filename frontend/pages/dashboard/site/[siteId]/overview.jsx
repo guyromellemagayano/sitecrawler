@@ -81,7 +81,7 @@ const SitesDashboard = () => {
   }
 
   useEffect(() => {
-    if(!site.verified)
+    if(site && !site.verified)
       setRecrawlable(false)
   }, site)
 
