@@ -79,7 +79,8 @@ const SitesDashboard = () => {
     return data
   }
 
-  {userError || siteError && <Layout>{userError.message || siteError.message}</Layout>}
+  {userError && <Layout>{userError.message}</Layout>}
+  {siteError && <Layout>{siteError.message}</Layout>}
 
   return (
     <Layout>
