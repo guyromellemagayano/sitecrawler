@@ -58,7 +58,22 @@ var Columns = struct {
 
 		Scan string
 	}
+	CrawlLinkImage struct {
+		ID, FromLinkID, ToLinkID string
+
+		FromLink, ToLink string
+	}
 	CrawlLinkLink struct {
+		ID, FromLinkID, ToLinkID string
+
+		FromLink, ToLink string
+	}
+	CrawlLinkScript struct {
+		ID, FromLinkID, ToLinkID string
+
+		FromLink, ToLink string
+	}
+	CrawlLinkStylesheet struct {
 		ID, FromLinkID, ToLinkID string
 
 		FromLink, ToLink string
@@ -254,7 +269,43 @@ var Columns = struct {
 
 		Scan: "Scan",
 	},
+	CrawlLinkImage: struct {
+		ID, FromLinkID, ToLinkID string
+
+		FromLink, ToLink string
+	}{
+		ID:         "id",
+		FromLinkID: "from_link_id",
+		ToLinkID:   "to_link_id",
+
+		FromLink: "FromLink",
+		ToLink:   "ToLink",
+	},
 	CrawlLinkLink: struct {
+		ID, FromLinkID, ToLinkID string
+
+		FromLink, ToLink string
+	}{
+		ID:         "id",
+		FromLinkID: "from_link_id",
+		ToLinkID:   "to_link_id",
+
+		FromLink: "FromLink",
+		ToLink:   "ToLink",
+	},
+	CrawlLinkScript: struct {
+		ID, FromLinkID, ToLinkID string
+
+		FromLink, ToLink string
+	}{
+		ID:         "id",
+		FromLinkID: "from_link_id",
+		ToLinkID:   "to_link_id",
+
+		FromLink: "FromLink",
+		ToLink:   "ToLink",
+	},
+	CrawlLinkStylesheet: struct {
 		ID, FromLinkID, ToLinkID string
 
 		FromLink, ToLink string
@@ -456,7 +507,16 @@ var Tables = struct {
 	CrawlLink struct {
 		Name, Alias string
 	}
+	CrawlLinkImage struct {
+		Name, Alias string
+	}
 	CrawlLinkLink struct {
+		Name, Alias string
+	}
+	CrawlLinkScript struct {
+		Name, Alias string
+	}
+	CrawlLinkStylesheet struct {
 		Name, Alias string
 	}
 	CrawlPagedatum struct {
@@ -565,10 +625,28 @@ var Tables = struct {
 		Name:  "crawl_link",
 		Alias: "t",
 	},
+	CrawlLinkImage: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_link_images",
+		Alias: "t",
+	},
 	CrawlLinkLink: struct {
 		Name, Alias string
 	}{
 		Name:  "crawl_link_links",
+		Alias: "t",
+	},
+	CrawlLinkScript: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_link_scripts",
+		Alias: "t",
+	},
+	CrawlLinkStylesheet: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_link_stylesheets",
 		Alias: "t",
 	},
 	CrawlPagedatum: struct {
@@ -779,8 +857,41 @@ type CrawlLink struct {
 	Scan *CrawlScan `pg:"fk:scan_id"`
 }
 
+type CrawlLinkImage struct {
+	tableName struct{} `sql:"crawl_link_images,alias:t" pg:",discard_unknown_columns"`
+
+	ID         int `sql:"id,pk"`
+	FromLinkID int `sql:"from_link_id,notnull"`
+	ToLinkID   int `sql:"to_link_id,notnull"`
+
+	FromLink *CrawlLink `pg:"fk:from_link_id"`
+	ToLink   *CrawlLink `pg:"fk:to_link_id"`
+}
+
 type CrawlLinkLink struct {
 	tableName struct{} `sql:"crawl_link_links,alias:t" pg:",discard_unknown_columns"`
+
+	ID         int `sql:"id,pk"`
+	FromLinkID int `sql:"from_link_id,notnull"`
+	ToLinkID   int `sql:"to_link_id,notnull"`
+
+	FromLink *CrawlLink `pg:"fk:from_link_id"`
+	ToLink   *CrawlLink `pg:"fk:to_link_id"`
+}
+
+type CrawlLinkScript struct {
+	tableName struct{} `sql:"crawl_link_scripts,alias:t" pg:",discard_unknown_columns"`
+
+	ID         int `sql:"id,pk"`
+	FromLinkID int `sql:"from_link_id,notnull"`
+	ToLinkID   int `sql:"to_link_id,notnull"`
+
+	FromLink *CrawlLink `pg:"fk:from_link_id"`
+	ToLink   *CrawlLink `pg:"fk:to_link_id"`
+}
+
+type CrawlLinkStylesheet struct {
+	tableName struct{} `sql:"crawl_link_stylesheets,alias:t" pg:",discard_unknown_columns"`
 
 	ID         int `sql:"id,pk"`
 	FromLinkID int `sql:"from_link_id,notnull"`

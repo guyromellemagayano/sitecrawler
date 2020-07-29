@@ -26,6 +26,15 @@ class PageFilter(filters.FilterSet):
     num_links = filters.RangeFilter(label="Number of Links")
     num_ok_links = filters.RangeFilter(label="Number of OK Links")
     num_non_ok_links = filters.RangeFilter(label="Number of non-OK Links")
+    num_images = filters.RangeFilter(label="Number of Images")
+    num_ok_images = filters.RangeFilter(label="Number of OK Images")
+    num_non_ok_images = filters.RangeFilter(label="Number of non-OK Images")
+    num_scripts = filters.RangeFilter(label="Number of Scripts")
+    num_ok_scripts = filters.RangeFilter(label="Number of OK Scripts")
+    num_non_ok_scripts = filters.RangeFilter(label="Number of non-OK Scripts")
+    num_stylesheets = filters.RangeFilter(label="Number of Stylesheets")
+    num_ok_stylesheets = filters.RangeFilter(label="Number of OK Stylesheets")
+    num_non_ok_stylesheets = filters.RangeFilter(label="Number of non-OK Stylesheets")
 
     class Meta:
         model = Link
@@ -51,7 +60,23 @@ class PageViewSet(
 
     filterset_class = PageFilter
     search_fields = ["url"]
-    ordering_fields = ["id", "created_at", "url", "num_links", "num_ok_links", "num_non_ok_links"]
+    ordering_fields = [
+        "id",
+        "created_at",
+        "url",
+        "num_links",
+        "num_ok_links",
+        "num_non_ok_links",
+        "num_images",
+        "num_ok_images",
+        "num_non_ok_images",
+        "num_scripts",
+        "num_ok_scripts",
+        "num_non_ok_scripts",
+        "num_stylesheets",
+        "num_ok_stylesheets",
+        "num_non_ok_stylesheets",
+    ]
 
     def get_queryset(self):
         return super().get_queryset().filter(scan__site__user=self.request.user).pages()
