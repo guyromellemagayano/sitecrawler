@@ -52,6 +52,9 @@ func (s *ScanService) ScanSite(scanID int) error {
 		return nil
 	}
 
+	if err := s.PageDataDao.DeleteAllForScan(scanID); err != nil {
+		return err
+	}
 	if err := s.LinkLinkDao.DeleteAllForScan(scanID); err != nil {
 		return err
 	}
@@ -200,7 +203,7 @@ func (s *scanner) loadURL(url *url.URL) (*common.CrawlLink, *goquery.Document) {
 		} else {
 			log.Printf("Other error for link %v: %v", url, err)
 			crawlLink.Status = STATUS_OTHER_ERROR
-			errStr := err.Error()
+			errStr := err.Error()[:255]
 			crawlLink.Error = &errStr
 		}
 	}
