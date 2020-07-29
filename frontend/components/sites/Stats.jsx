@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
@@ -5,6 +6,7 @@ import useSWR from 'swr'
 import Link from 'next/link'
 import styled from 'styled-components'
 import Skeleton from 'react-loading-skeleton';
+import Layout from 'components/Layout'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -27,7 +29,7 @@ const fetcher = async (url) => {
 
 const SitesStatsDiv = styled.footer``
 
-const SitesStats = () => {
+const SitesStats = props => {
   const { query } = useRouter()
   const {
     data: scan,
@@ -61,6 +63,13 @@ const SitesStats = () => {
       refreshInterval: 1000,
     }
   )
+
+  useEffect(() => {
+    if(stats && stats.finished_at)
+      props.crawlableHandler(true)
+    else if(stats && stats.started_at && stats.finished_at == null)
+      props.crawlableHandler(false)
+  }, [stats])
 
   {statsError && <Layout>{statsError.message}</Layout>}
   {scanError && <Layout>{scanError.message}</Layout>}
