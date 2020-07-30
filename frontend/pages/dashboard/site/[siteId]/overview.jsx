@@ -80,10 +80,19 @@ const SitesDashboard = () => {
     return data
   }
 
-  useEffect(() => {
-    if(site && !site.verified)
+  const crawlableHandler = (finished) => {
+    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified && finished)
+      setRecrawlable(true)
+    else
       setRecrawlable(false)
-  }, [site])
+  }
+
+  useEffect(() => {
+    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified)
+      setRecrawlable(true)
+    else
+      setRecrawlable(false)
+  }, [user, site])
 
   {userError && <Layout>{userError.message}</Layout>}
   {siteError && <Layout>{siteError.message}</Layout>}
@@ -155,13 +164,12 @@ const SitesDashboard = () => {
                       finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
                       onCrawl={onCrawlHandler}
                       crawlable={recrawlable}
-                      crawlableHandler={(val) => setRecrawlable(val)}
                     />
                   </div>
                 </div>
                 <div className={`max-w-5xl px-4 sm:px-6 md:px-8`}>
                   <div className={`pb-4`}>
-                    <SitesStats crawlableHandler={(val) => setRecrawlable(val)} />
+                    <SitesStats crawlableHandler={crawlableHandler} />
                   </div>
                 </div>
               </main>

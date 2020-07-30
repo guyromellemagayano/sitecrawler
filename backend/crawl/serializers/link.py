@@ -49,7 +49,7 @@ class LinkSerializer(serializers.ModelSerializer):
 
 
 class LinkDetailSerializer(LinkSerializer):
-    pages = LinkSummarySerializer(many=True)
+    pages = LinkSummarySerializer(source="get_pages", many=True)
 
     class Meta:
         model = Link

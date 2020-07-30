@@ -12,10 +12,19 @@ class ScanSerializer(serializers.ModelSerializer):
 
 class ScanDetailSerializer(serializers.ModelSerializer):
     num_pages = serializers.IntegerField(read_only=True)
+    num_external_links = serializers.IntegerField(read_only=True)
     num_links = serializers.IntegerField(read_only=True)
     num_ok_links = serializers.IntegerField(read_only=True)
     num_non_ok_links = serializers.IntegerField(read_only=True)
-    num_external_links = serializers.IntegerField(read_only=True)
+    num_images = serializers.IntegerField(read_only=True)
+    num_ok_images = serializers.IntegerField(read_only=True)
+    num_non_ok_images = serializers.IntegerField(read_only=True)
+    num_scripts = serializers.IntegerField(read_only=True)
+    num_ok_scripts = serializers.IntegerField(read_only=True)
+    num_non_ok_scripts = serializers.IntegerField(read_only=True)
+    num_stylesheets = serializers.IntegerField(read_only=True)
+    num_ok_stylesheets = serializers.IntegerField(read_only=True)
+    num_non_ok_stylesheets = serializers.IntegerField(read_only=True)
     num_pages_without_title = serializers.IntegerField(read_only=True)
     num_pages_without_description = serializers.IntegerField(read_only=True)
     num_pages_without_h1_first = serializers.IntegerField(read_only=True)
@@ -31,10 +40,19 @@ class ScanDetailSerializer(serializers.ModelSerializer):
             "finished_at",
             "site_id",
             "num_pages",
+            "num_external_links",
             "num_links",
             "num_ok_links",
             "num_non_ok_links",
-            "num_external_links",
+            "num_images",
+            "num_ok_images",
+            "num_non_ok_images",
+            "num_scripts",
+            "num_ok_scripts",
+            "num_non_ok_scripts",
+            "num_stylesheets",
+            "num_ok_stylesheets",
+            "num_non_ok_stylesheets",
             "num_pages_without_title",
             "num_pages_without_description",
             "num_pages_without_h1_first",

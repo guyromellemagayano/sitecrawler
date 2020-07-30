@@ -20,13 +20,23 @@ const (
 	sizeLimit  = 10 * 1024 * 1024
 )
 
+const (
+	CHILD_LINK = iota
+	CHILD_IMAGE
+	CHILD_STYLESHEET
+	CHILD_SCRIPT
+)
+
 type ScanService struct {
-	ScanDao       *ScanDao
-	LinkDao       *LinkDao
-	LinkLinkDao   *LinkLinkDao
-	PageDataDao   *PageDataDao
-	VerifyService *VerifyService
-	LoadService   *LoadService
+	ScanDao           *ScanDao
+	LinkDao           *LinkDao
+	LinkLinkDao       *LinkLinkDao
+	LinkImageDao      *LinkImageDao
+	LinkScriptDao     *LinkScriptDao
+	LinkStylesheetDao *LinkStylesheetDao
+	PageDataDao       *PageDataDao
+	VerifyService     *VerifyService
+	LoadService       *LoadService
 }
 
 func (s *ScanService) ScanSite(scanID int) error {
@@ -60,6 +70,15 @@ func (s *ScanService) ScanSite(scanID int) error {
 		return err
 	}
 	if err := s.LinkLinkDao.DeleteAllForScan(scanID); err != nil {
+		return err
+	}
+	if err := s.LinkImageDao.DeleteAllForScan(scanID); err != nil {
+		return err
+	}
+	if err := s.LinkScriptDao.DeleteAllForScan(scanID); err != nil {
+		return err
+	}
+	if err := s.LinkStylesheetDao.DeleteAllForScan(scanID); err != nil {
 		return err
 	}
 	if err := s.LinkDao.DeleteAllForScan(scanID); err != nil {
@@ -96,6 +115,7 @@ func (s *ScanService) Start(scan *common.CrawlScan) error {
 type fifoEntry struct {
 	Url          *url.URL
 	Depth        uint
+	ChildType    int
 	ParentLinkId int
 }
 
@@ -131,14 +151,50 @@ func (s *scanner) Start() error {
 		}
 
 		if entry.ParentLinkId != -1 {
-			linkLink := &common.CrawlLinkLink{
-				FromLinkID: entry.ParentLinkId,
-				ToLinkID:   childLinkId,
-			}
+			switch entry.ChildType {
+			case CHILD_LINK:
+				linkLink := &common.CrawlLinkLink{
+					FromLinkID: entry.ParentLinkId,
+					ToLinkID:   childLinkId,
+				}
 
-			if err := s.ScanService.LinkLinkDao.Save(linkLink); err != nil {
-				if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-					return err
+				if err := s.ScanService.LinkLinkDao.Save(linkLink); err != nil {
+					if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+						return err
+					}
+				}
+			case CHILD_IMAGE:
+				linkImage := &common.CrawlLinkImage{
+					FromLinkID: entry.ParentLinkId,
+					ToLinkID:   childLinkId,
+				}
+
+				if err := s.ScanService.LinkImageDao.Save(linkImage); err != nil {
+					if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+						return err
+					}
+				}
+			case CHILD_SCRIPT:
+				linkScript := &common.CrawlLinkScript{
+					FromLinkID: entry.ParentLinkId,
+					ToLinkID:   childLinkId,
+				}
+
+				if err := s.ScanService.LinkScriptDao.Save(linkScript); err != nil {
+					if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+						return err
+					}
+				}
+			case CHILD_STYLESHEET:
+				linkStylesheet := &common.CrawlLinkStylesheet{
+					FromLinkID: entry.ParentLinkId,
+					ToLinkID:   childLinkId,
+				}
+
+				if err := s.ScanService.LinkStylesheetDao.Save(linkStylesheet); err != nil {
+					if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+						return err
+					}
 				}
 			}
 		}
@@ -185,6 +241,67 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 			Url:          childUrl,
 			Depth:        depth + 1,
 			ParentLinkId: link.ID,
+			ChildType:    CHILD_LINK,
+		})
+	})
+
+	doc.Find("img").Each(func(i int, sel *goquery.Selection) {
+		href, ok := sel.Attr("src")
+		if !ok {
+			return
+		}
+
+		childUrl, err := s.normalizeURL(url, href)
+		if err != nil {
+			log.Printf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			return
+		}
+
+		s.fifo.PushBack(fifoEntry{
+			Url:          childUrl,
+			Depth:        depth + 1,
+			ParentLinkId: link.ID,
+			ChildType:    CHILD_IMAGE,
+		})
+	})
+
+	doc.Find("script").Each(func(i int, sel *goquery.Selection) {
+		href, ok := sel.Attr("src")
+		if !ok {
+			return
+		}
+
+		childUrl, err := s.normalizeURL(url, href)
+		if err != nil {
+			log.Printf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			return
+		}
+
+		s.fifo.PushBack(fifoEntry{
+			Url:          childUrl,
+			Depth:        depth + 1,
+			ParentLinkId: link.ID,
+			ChildType:    CHILD_SCRIPT,
+		})
+	})
+
+	doc.Find("link[rel=stylesheet]").Each(func(i int, sel *goquery.Selection) {
+		href, ok := sel.Attr("href")
+		if !ok {
+			return
+		}
+
+		childUrl, err := s.normalizeURL(url, href)
+		if err != nil {
+			log.Printf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			return
+		}
+
+		s.fifo.PushBack(fifoEntry{
+			Url:          childUrl,
+			Depth:        depth + 1,
+			ParentLinkId: link.ID,
+			ChildType:    CHILD_STYLESHEET,
 		})
 	})
 

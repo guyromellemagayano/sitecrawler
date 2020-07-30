@@ -55,6 +55,9 @@ func main() {
 	scanDao := &ScanDao{DB: db}
 	linkDao := &LinkDao{DB: db}
 	linkLinkDao := &LinkLinkDao{DB: db}
+	linkImageDao := &LinkImageDao{DB: db}
+	linkScriptDao := &LinkScriptDao{DB: db}
+	linkStylesheetDao := &LinkStylesheetDao{DB: db}
 	pageDataDao := &PageDataDao{DB: db}
 
 	scanSqsQueue, err := common.NewSQSService(sqsSvc, "linkapp-scan")
@@ -65,12 +68,15 @@ func main() {
 	loadService := &LoadService{}
 	verifyService := &VerifyService{SiteDao: siteDao, LoadService: loadService}
 	scanService := &ScanService{
-		ScanDao:       scanDao,
-		LinkDao:       linkDao,
-		LinkLinkDao:   linkLinkDao,
-		PageDataDao:   pageDataDao,
-		VerifyService: verifyService,
-		LoadService:   loadService,
+		ScanDao:           scanDao,
+		LinkDao:           linkDao,
+		LinkLinkDao:       linkLinkDao,
+		LinkImageDao:      linkImageDao,
+		LinkScriptDao:     linkScriptDao,
+		LinkStylesheetDao: linkStylesheetDao,
+		PageDataDao:       pageDataDao,
+		VerifyService:     verifyService,
+		LoadService:       loadService,
 	}
 
 	http.Handle("/verify", &VerifyEndpoint{VerifyService: verifyService})

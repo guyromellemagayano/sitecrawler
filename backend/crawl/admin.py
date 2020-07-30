@@ -4,13 +4,10 @@ from django.contrib import admin
 from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData
 
 
-class LinkInline(admin.TabularInline):
-    model = Link.links.through
+class PageChildInline(admin.TabularInline):
     fk_name = "from_link"
     exclude = ("to_link",)
     readonly_fields = ("url", "type", "status", "http_status", "error", "response_time")
-    verbose_name = "Link"
-    verbose_name_plural = "Links"
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -38,6 +35,30 @@ class LinkInline(admin.TabularInline):
         return obj.to_link.response_time
 
 
+class LinkInline(PageChildInline):
+    model = Link.links.through
+    verbose_name = "Link"
+    verbose_name_plural = "Links"
+
+
+class ImageInline(PageChildInline):
+    model = Link.images.through
+    verbose_name = "Image"
+    verbose_name_plural = "Images"
+
+
+class ScriptInline(PageChildInline):
+    model = Link.scripts.through
+    verbose_name = "Script"
+    verbose_name_plural = "Scripts"
+
+
+class StylesheetInline(PageChildInline):
+    model = Link.stylesheets.through
+    verbose_name = "Stylesheet"
+    verbose_name_plural = "Stylesheets"
+
+
 class PageDataInline(admin.StackedInline):
     model = PageData
 
@@ -45,8 +66,8 @@ class PageDataInline(admin.StackedInline):
 @admin.register(Link)
 class LinkAdmin(admin.ModelAdmin):
     list_display = ("scan_id", "url", "type", "status")
-    exclude = ("links",)
-    inlines = [LinkInline, PageDataInline]
+    exclude = ("links", "images", "stylesheets", "scripts")
+    inlines = [LinkInline, ImageInline, ScriptInline, StylesheetInline, PageDataInline]
 
 
 class PageInline(admin.TabularInline):
@@ -54,7 +75,7 @@ class PageInline(admin.TabularInline):
     verbose_name = "Page"
     verbose_name_plural = "Pages"
     readonly_fields = ("id", "url", "num_links", "num_non_ok_links")
-    exclude = ("type", "status", "http_status", "error", "links", "response_time")
+    exclude = ("type", "status", "http_status", "error", "links", "images", "stylesheets", "scripts", "response_time")
     show_change_link = True
 
     def get_queryset(self, request):

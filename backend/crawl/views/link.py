@@ -31,7 +31,7 @@ class LinkFilter(filters.FilterSet):
         }
 
 
-class LinkViewSet(
+class PageChildViewSet(
     DetailSerializerMixin, NestedViewSetMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
 ):
     queryset = Link.objects.all()
@@ -53,5 +53,25 @@ class LinkViewSet(
     ]
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(scan__site__user=self.request.user).links()
+        queryset = super().get_queryset().filter(scan__site__user=self.request.user)
         return queryset
+
+
+class LinkViewSet(PageChildViewSet):
+    def get_queryset(self):
+        return super().get_queryset().links()
+
+
+class ImageViewSet(PageChildViewSet):
+    def get_queryset(self):
+        return super().get_queryset().images()
+
+
+class ScriptViewSet(PageChildViewSet):
+    def get_queryset(self):
+        return super().get_queryset().scripts()
+
+
+class StylesheetViewSet(PageChildViewSet):
+    def get_queryset(self):
+        return super().get_queryset().stylesheets()
