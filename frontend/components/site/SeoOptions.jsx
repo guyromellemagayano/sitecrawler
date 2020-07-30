@@ -3,9 +3,9 @@ import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import Transition from 'hooks/Transition'
 
-const LinkOptionsDiv = styled.div``
+const SeoOptionsDiv = styled.div``
 
-const LinkOptions = ({ searchKey, onSearchEvent }) => {
+const SeoOptions = ({ searchKey, onSearchEvent }) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const [disableButton, setDisableButton] = useState(true)
 
@@ -14,9 +14,9 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
   const setDropdownToggle = (e) => {
     setShowDropdown(!showDropdown)
   }
-  
+
   return (
-    <LinkOptionsDiv className={`py-4`}>
+    <SeoOptionsDiv className={`py-4`}>
       <div
         className={`bg-white px-4 py-5 border-b border-gray-200 sm:px-6 bg-white rounded-lg sm:shadow-xs`}
       >
@@ -44,7 +44,7 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
                 <input
                   id={`search`}
                   className={`form-input block w-full pl-10 sm:text-sm sm:leading-5`}
-                  placeholder={`${asPath.includes('pages') ? "Search Pages..." : asPath.includes('links') ? "Search Links..." : "Search URL..."}`}
+                  placeholder={`${asPath.includes('seo') ? "Search Pages..." : asPath.includes('links') ? "Search Links..." : "Search URL..."}`}
                   onKeyUp={onSearchEvent}
                   defaultValue={searchKey}
                   autoFocus
@@ -122,8 +122,8 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
           </div>
         </div>
       </div>
-    </LinkOptionsDiv>
+    </SeoOptionsDiv>
   )
 }
 
-export default LinkOptions
+export default SeoOptions
