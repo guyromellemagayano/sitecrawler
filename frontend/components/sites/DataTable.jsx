@@ -83,7 +83,10 @@ const DataTable = props => {
     e.preventDefault()
     
     await deleteSiteSettings(`/api/site/${props.site.id}/`)
-    setShowDeleteSiteModal(false)
+    
+    setTimeout(() => {
+      setShowDeleteSiteModal(false)
+    }, 500)
   }
 
   const handleSiteVerification = async (e) => {
