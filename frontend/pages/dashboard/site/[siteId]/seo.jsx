@@ -49,10 +49,15 @@ const SeoDiv = styled.section``
 
 const Seo = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  
   const [allFilter, setAllFilter] = useState(false)
-  const [issueFilter, setIssueFilter] = useState(false)
-  const [internalFilter, setInternalFilter] = useState(false)
-  const [externalFilter, setExternalFilter] = useState(false)
+  const [noTitle, setNoTitle] = useState(false)
+  const [noDescription, setNoDescription] = useState(false)
+  const [noH1First, setNoH1First] = useState(false)
+  const [noH1Second, setNoH1Second] = useState(false)
+  const [noH2First, setNoH2First] = useState(false)
+  const [noH2Second, setNoH2Second] = useState(false)
+
   const [pagePath, setPagePath] = useState('')
   const [sortOrder, setSortOrder] = useState(initialOrder)
 
@@ -93,10 +98,12 @@ const Seo = props => {
   }
 
   let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/page/`
-  let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( props.result.page !== undefined ? '&status=' + props.result.status.join('&status=') : '?status=' + props.result.status.join('&status=') ) : ''
-  const typeString = Array.isArray(props.result.type) ? props.result.type.join('&type=') : props.result.type
-  queryString += props.result.type !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined ? `&type=${typeString}` : `?type=${typeString}` ) : ''
-  queryString += props.result.search !== undefined ? ( props.result.page !== undefined || props.result.status !== undefined || props.result.type !== undefined ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
+  let queryString = props.result.has_title !== undefined ? ( scanApiEndpoint.includes('?') ? `&has_title=false` : `?has_title=false` ) : ''
+  queryString += props.result.has_description !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&has_description=false` : `?has_description=false` ) : ''
+  queryString += props.result.has_h1_first !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&has_h1_first=false` : `?has_h1_first=false` ) : ''
+  queryString += props.result.has_h1_second !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&has_h1_second=false` : `?has_h1_second=false` ) : ''
+  queryString += props.result.has_h2_first !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&has_h2_first=false` : `?has_h2_first=false` ) : ''
+  queryString += props.result.has_h2_second !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&has_h2_second=false` : `?has_h2_second=false` ) : ''
   
   queryString += props.result.ordering !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&ordering=${props.result.ordering}` : `?ordering=${props.result.ordering}` ) : ''
 
@@ -169,67 +176,108 @@ const Seo = props => {
     const filterStatus = e.target.checked
 
     let newPath = asPath
-    
-    if(filterType == 'issues' && filterStatus == true) {
-      setIssueFilter(true)
+    newPath = removeURLParameter(newPath, 'page')
+
+    if(filterType == 'noTitle' && filterStatus == true) {
+      setNoTitle(true)
       setAllFilter(false)
-      newPath = removeURLParameter(newPath, 'page')
 
       if(newPath.includes("?"))
-        newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+        newPath += `&has_title=false`
       else
-        newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+        newPath += `?has_title=false`
     }
-    else if(filterType == 'issues' && filterStatus == false) {
-      newPath = removeURLParameter(newPath, 'status')
-      setIssueFilter(false)
+    else if(filterType == 'noTitle' && filterStatus == false) {
+      newPath = removeURLParameter(newPath, 'has_title')
+      setNoTitle(false)
     }
 
-    if(filterType == 'internal' && filterStatus == true) {
-      setInternalFilter(true)
-      setExternalFilter(false)
+    if(filterType == 'noDescription' && filterStatus == true) {
+      setNoDescription(true)
       setAllFilter(false)
-      newPath = removeURLParameter(newPath, 'type')
-      newPath = removeURLParameter(newPath, 'page')
 
       if(newPath.includes("?"))
-        newPath += `&type=PAGE`
+        newPath += `&has_description=false`
       else
-        newPath += `?type=PAGE`
+        newPath += `?has_description=false`
     }
-    else if(filterType == 'internal' && filterStatus == false) {
-      if(newPath.includes('type=PAGE'))
-        newPath = removeURLParameter(newPath, 'type')
-      setInternalFilter(false)
+    else if(filterType == 'noDescription' && filterStatus == false) {
+      newPath = removeURLParameter(newPath, 'has_description')
+      setNoDescription(false)
     }
 
-    if(filterType == 'external' &&  filterStatus == true) {
-      setExternalFilter(true)
-      setInternalFilter(false)
+    if(filterType == 'noH1First' && filterStatus == true) {
+      setNoH1First(true)
       setAllFilter(false)
-      newPath = removeURLParameter(newPath, 'page')
-      newPath = removeURLParameter(newPath, 'type')
 
       if(newPath.includes("?"))
-        newPath += `&type=EXTERNAL&type=OTHER`
+        newPath += `&has_h1_first=false`
       else
-        newPath += `?type=EXTERNAL&type=OTHER`
+        newPath += `?has_h1_first=false`
     }
-    else if(filterType == 'external' && filterStatus == false) {
-      if(newPath.includes('type=EXTERNAL'))
-        newPath = removeURLParameter(newPath, 'type')
-      setExternalFilter(false)
+    else if(filterType == 'noH1First' && filterStatus == false) {
+      newPath = removeURLParameter(newPath, 'has_h1_first')
+      setNoH1First(false)
+    }
+
+    if(filterType == 'noH1Second' && filterStatus == true) {
+      setNoH1Second(true)
+      setAllFilter(false)
+
+      if(newPath.includes("?"))
+        newPath += `&has_h1_second=false`
+      else
+        newPath += `?has_h1_second=false`
+    }
+    else if(filterType == 'noH1Second' && filterStatus == false) {
+      newPath = removeURLParameter(newPath, 'has_h1_second')
+      setNoH1Second(false)
+    }
+
+    if(filterType == 'noH2First' && filterStatus == true) {
+      setNoH2First(true)
+      setAllFilter(false)
+
+      if(newPath.includes("?"))
+        newPath += `&has_h2_first=false`
+      else
+        newPath += `?has_h2_first=false`
+    }
+    else if(filterType == 'noH2First' && filterStatus == false) {
+      newPath = removeURLParameter(newPath, 'has_h2_first')
+      setNoH2First(false)
+    }
+
+    if(filterType == 'noH2Second' && filterStatus == true) {
+      setNoH2Second(true)
+      setAllFilter(false)
+
+      if(newPath.includes("?"))
+        newPath += `&has_h2_second=false`
+      else
+        newPath += `?has_h2_second=false`
+    }
+    else if(filterType == 'noH2Second' && filterStatus == false) {
+      newPath = removeURLParameter(newPath, 'has_h2_second')
+      setNoH2Second(false)
     }
 
     if(filterType == 'all' && filterStatus == true) {
-      setAllFilter(true)
-      setIssueFilter(false)
-      setExternalFilter(false)
-      setInternalFilter(false)
+      setNoTitle(false)
+      setNoDescription(false)
+      setNoH1First(false)
+      setNoH1Second(false)
+      setNoH2First(false)
+      setNoH2Second(false)
 
-      newPath = removeURLParameter(newPath, 'status')
-      newPath = removeURLParameter(newPath, 'type')
-      newPath = removeURLParameter(newPath, 'page')
+      setAllFilter(true)
+
+      newPath = removeURLParameter(newPath, 'has_title')
+      newPath = removeURLParameter(newPath, 'has_description')
+      newPath = removeURLParameter(newPath, 'has_h1_first')
+      newPath = removeURLParameter(newPath, 'has_h1_second')
+      newPath = removeURLParameter(newPath, 'has_h2_first')
+      newPath = removeURLParameter(newPath, 'has_h2_second')
 
       if(!newPath.includes('search') && !newPath.includes('ordering'))
         newPath = newPath.replace('?', '')
@@ -269,46 +317,66 @@ const Seo = props => {
   }, [])
 
   useEffect(() => {
-    if(props.result.status !== undefined) {
-      setIssueFilter(true)
+    if(props.result.has_title !== undefined) {
+      setNoTitle(true)
       setAllFilter(false)
     }
     else
-      setIssueFilter(false)
+      setNoTitle(false)
 
-    if(props.result.type !== undefined && props.result.type == 'PAGE') {
-      setInternalFilter(true)
-      setExternalFilter(false)
+    if(props.result.has_description !== undefined) {
+      setNoDescription(true)
       setAllFilter(false)
     }
     else
-      setInternalFilter(false)
+      setNoDescription(false)
 
-    if(Array.isArray(props.result.type)) {
-      if(props.result.type !== undefined && props.result.type.join('') == 'EXTERNALOTHER') {
-        setExternalFilter(true)
-        setInternalFilter(false)
-        setAllFilter(false)
-      }
-      else
-        setExternalFilter(false)
+    if(props.result.has_h1_first !== undefined) {
+      setNoH1First(true)
+      setAllFilter(false)
     }
-    else {
-      if(props.result.type !== undefined && props.result.type == 'EXTERNAL') {
-        setExternalFilter(true)
-        setInternalFilter(false)
-        setAllFilter(false)
-      }
-      else
-        setExternalFilter(false)
-    }
+    else
+      setNoH1First(false)
 
-    if(props.result.type == undefined && props.result.status == undefined) {
-      setIssueFilter(false)
-      setInternalFilter(false)
-      setExternalFilter(false)
+    if(props.result.has_h1_second !== undefined) {
+      setNoH1Second(true)
+      setAllFilter(false)
+    }
+    else
+      setNoH1Second(false)
+
+    if(props.result.has_h2_first !== undefined) {
+      setNoH2First(true)
+      setAllFilter(false)
+    }
+    else
+      setNoH2First(false)
+
+    if(props.result.has_h2_second !== undefined) {
+      setNoH2Second(true)
+      setAllFilter(false)
+    }
+    else
+      setNoH2Second(false)
+
+    if(
+        props.result.has_title == undefined && 
+        props.result.has_description == undefined &&
+        props.result.has_h1_first == undefined &&
+        props.result.has_h1_second == undefined &&
+        props.result.has_h2_first == undefined &&
+        props.result.has_h2_second == undefined
+      ) {
+      setNoTitle(false)
+      setNoDescription(false)
+      setNoH1First(false)
+      setNoH1Second(false)
+      setNoH2First(false)
+      setNoH2Second(false)
+
       setAllFilter(true)
     }
+    
   }, [filterChangeHandler])
 
   const slugToCamelcase = (slug) => {
@@ -454,7 +522,16 @@ const Seo = props => {
                 </div>
                 <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
                   <SeoOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
-                  {/* <SeoFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} internalFilter={internalFilter} externalFilter={externalFilter} /> */}
+                  <SeoFilter 
+                    onFilterChange={filterChangeHandler} 
+                    allFilter={allFilter} 
+                    noTitle={noTitle} 
+                    noDescription={noDescription} 
+                    noH1First={noH1First} 
+                    noH1Second={noH1Second} 
+                    noH2First={noH2First} 
+                    noH2Second={noH2Second} 
+                  />
                   <div className={`pb-4`}>
                     <div className={`flex flex-col`}>
                       <div

@@ -3,7 +3,16 @@ import styled from 'styled-components'
 
 const SeoFilterDiv = styled.div``
 
-const SeoFilter = ({onFilterChange, allFilter, titleFilter, internalFilter, externalFilter}) => {
+const SeoFilter = ({
+  onFilterChange,
+  allFilter,
+  noTitle,
+  noDescription,
+  noH1First,
+  noH1Second,
+  noH2First,
+  noH2Second
+}) => {
   const filterHandler = (e) => {
     onFilterChange(e)
   }
@@ -21,14 +30,14 @@ const SeoFilter = ({onFilterChange, allFilter, titleFilter, internalFilter, exte
             <div>
 							<label className={`flex items-center`}>
 								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={allFilter} value="all" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>All Links</span>
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>All Pages</span>
 							</label>
             </div>
           </div>
 					<div className={`ml-4 mt-2 mr-2`}>
             <div>
 							<label className={`flex items-center`}>
-								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={titleFilter} value="title" />
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noTitle} value="noTitle" />
 								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without Title</span>
 							</label>
             </div>
@@ -36,16 +45,40 @@ const SeoFilter = ({onFilterChange, allFilter, titleFilter, internalFilter, exte
 					<div className={`ml-4 mt-2 mr-2`}>
             <div>
 							<label className={`flex items-center`}>
-								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={internalFilter} value="internal" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Internal Links</span>
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noDescription} value="noDescription" />
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without Description</span>
 							</label>
             </div>
           </div>
 					<div className={`ml-4 mt-2 mr-2`}>
             <div>
 							<label className={`flex items-center`}>
-								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={externalFilter} value="external" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>External Links</span>
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noH1First} value="noH1First" />
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without First H1</span>
+							</label>
+            </div>
+          </div>
+					<div className={`ml-4 mt-2 mr-2`}>
+            <div>
+							<label className={`flex items-center`}>
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noH1Second} value="noH1Second" />
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without Second H1</span>
+							</label>
+            </div>
+          </div>
+					<div className={`ml-4 mt-2 mr-2`}>
+            <div>
+							<label className={`flex items-center`}>
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noH2First} value="noH2First" />
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without First H2</span>
+							</label>
+            </div>
+          </div>
+					<div className={`ml-4 mt-2 mr-2`}>
+            <div>
+							<label className={`flex items-center`}>
+								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noH2Second} value="noH2Second" />
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without Second H2</span>
 							</label>
             </div>
           </div>
