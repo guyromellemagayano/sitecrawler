@@ -105,6 +105,7 @@ const Seo = props => {
   queryString += props.result.has_h2_first !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&has_h2_first=false` : `?has_h2_first=false` ) : ''
   queryString += props.result.has_h2_second !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&has_h2_second=false` : `?has_h2_second=false` ) : ''
   
+  queryString += props.result.search !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
   queryString += props.result.ordering !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&ordering=${props.result.ordering}` : `?ordering=${props.result.ordering}` ) : ''
 
   scanApiEndpoint += queryString
