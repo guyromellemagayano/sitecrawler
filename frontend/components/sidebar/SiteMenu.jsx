@@ -136,6 +136,26 @@ const SiteMenu = () => {
                                   {stats.num_pages}
                                 </span>
                               )}
+                              {val2.url === "/seo" && (
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                  {stats.num_pages}
+                                </span>
+                              )}
+                              {val2.url === "/images" && (
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                  {stats.num_images}
+                                </span>
+                              )}
+                              {val2.url === "/stylesheets" && (
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                  {stats.num_stylesheets}
+                                </span>
+                              )}
+                              {val2.url === "/scripts" && (
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                  {stats.num_scripts}
+                                </span>
+                              )}
                             </a>
                           </Link>
                         )
