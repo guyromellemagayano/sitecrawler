@@ -38,7 +38,7 @@ const SeoFilter = ({
             <div>
 							<label className={`flex items-center`}>
 								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noTitle} value="noTitle" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without Title</span>
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Without Title</span>
 							</label>
             </div>
           </div>
@@ -46,7 +46,7 @@ const SeoFilter = ({
             <div>
 							<label className={`flex items-center`}>
 								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noDescription} value="noDescription" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without Description</span>
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Without Description</span>
 							</label>
             </div>
           </div>
@@ -54,7 +54,7 @@ const SeoFilter = ({
             <div>
 							<label className={`flex items-center`}>
 								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noH1First} value="noH1First" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without First H1</span>
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Without First H1</span>
 							</label>
             </div>
           </div>
@@ -62,7 +62,7 @@ const SeoFilter = ({
             <div>
 							<label className={`flex items-center`}>
 								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noH1Second} value="noH1Second" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without Second H1</span>
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Without Second H1</span>
 							</label>
             </div>
           </div>
@@ -70,7 +70,7 @@ const SeoFilter = ({
             <div>
 							<label className={`flex items-center`}>
 								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noH2First} value="noH2First" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without First H2</span>
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Without First H2</span>
 							</label>
             </div>
           </div>
@@ -78,7 +78,7 @@ const SeoFilter = ({
             <div>
 							<label className={`flex items-center`}>
 								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={noH2Second} value="noH2Second" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Total Pages Without Second H2</span>
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Without Second H2</span>
 							</label>
             </div>
           </div>
