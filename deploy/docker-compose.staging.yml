@@ -10,6 +10,7 @@ services:
       - "--certificatesresolvers.myresolver.acme.email=support@epicdesignlabs.com"
       - "--certificatesresolvers.myresolver.acme.storage=/data/acme.json"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=http"
+    restart: always
     ports:
       - 80:80
       - 443:443
@@ -26,6 +27,7 @@ services:
       - "traefik.http.routers.redirs.middlewares=redirect-to-https"
   backend:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    restart: always
     links:
       - db
       - crawler
@@ -38,6 +40,7 @@ services:
       ENV: staging
   frontend:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
+    restart: always
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=(Host(`linkapp.epicsandbox.com`) && PathPrefix(`/`))"
@@ -45,18 +48,21 @@ services:
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
   crawler:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
+    restart: always
     links:
       - db
     environment:
       ENV: staging
   scheduler:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
+    restart: always
     links:
       - db
     environment:
       ENV: staging
   db:
     image: postgres
+    restart: always
     volumes:
       - db-data:/var/lib/postgresql/data
 
