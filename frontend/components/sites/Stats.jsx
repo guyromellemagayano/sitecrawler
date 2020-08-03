@@ -141,6 +141,60 @@ const SitesStats = props => {
       "count": stats.num_pages_without_h2_second,
       "href": `/dashboard/site/[siteId]/seo?has_h2_second=false`,
       "as": `/dashboard/site/${query.siteId}/seo?has_h2_second=false`
+    },
+    {
+      "title": "Total Images",
+      "count": stats.num_images,
+      "href": `#`,
+      "as": `#`
+    },
+    {
+      "title": "Total Images Working",
+      "count": stats.num_ok_images,
+      "href": `#`,
+      "as": `#`
+    },
+    {
+      "title": "Total Images Not Working",
+      "count": stats.num_non_ok_images,
+      "href": `#`,
+      "as": `#`
+    },
+    {
+      "title": "Total Stylesheets",
+      "count": stats.num_stylesheets,
+      "href": `#`,
+      "as": `#`
+    },
+    {
+      "title": "Total Stylesheets Working",
+      "count": stats.num_ok_stylesheets,
+      "href": `#`,
+      "as": `#`
+    },
+    {
+      "title": "Total Stylesheets Not Working",
+      "count": stats.num_non_ok_stylesheets,
+      "href": `#`,
+      "as": `#`
+    },
+    {
+      "title": "Total Scripts",
+      "count": stats.num_scripts,
+      "href": `#`,
+      "as": `#`
+    },
+    {
+      "title": "Total Scripts Working",
+      "count": stats.num_ok_scripts,
+      "href": `#`,
+      "as": `#`
+    },
+    {
+      "title": "Total Scripts Not Working",
+      "count": stats.num_non_ok_scripts,
+      "href": `#`,
+      "as": `#`
     }
   ]
 
