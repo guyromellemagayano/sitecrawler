@@ -333,7 +333,10 @@ func (s *scanner) loadURL(url *url.URL) (*common.CrawlLink, *goquery.Document) {
 		} else {
 			log.Printf("Other error for link %v: %v", url, err)
 			crawlLink.Status = STATUS_OTHER_ERROR
-			errStr := err.Error()[:255]
+			errStr := err.Error()
+			if len(errStr) > 255 {
+				errStr = errStr[:255]
+			}
 			crawlLink.Error = &errStr
 		}
 	}
