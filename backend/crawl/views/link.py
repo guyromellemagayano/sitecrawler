@@ -27,6 +27,7 @@ class LinkFilter(filters.FilterSet):
             "created_at": ["gt", "gte", "lt", "lte"],
             "http_status": ["exact", "gt", "gte", "lt", "lte", "in"],
             "response_time": ["gt", "gte", "lt", "lte"],
+            "size": ["gt", "gte", "lt", "lte"],
             "error": ["exact", "icontains"],
         }
 
@@ -49,6 +50,7 @@ class PageChildViewSet(
         "http_status",
         "response_time",
         "error",
+        "size",
         "occurences",
     ]
 

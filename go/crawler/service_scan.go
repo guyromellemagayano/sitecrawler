@@ -347,12 +347,15 @@ func (s *scanner) loadURL(url *url.URL) (*common.CrawlLink, *goquery.Document) {
 		handleError(err)
 		return crawlLink, nil
 	}
-	limitedBody := io.LimitReader(resp.Body, sizeLimit)
+	wrappedBody := &SizeReader{
+		Child: io.LimitReader(resp.Body, sizeLimit),
+	}
 	defer func() {
-		_, err := io.Copy(ioutil.Discard, limitedBody)
+		_, err := io.Copy(ioutil.Discard, wrappedBody)
 		if err != nil {
 			handleError(err)
 		}
+		crawlLink.Size = wrappedBody.Size
 		err = resp.Body.Close()
 		if err != nil {
 			handleError(err)
@@ -370,7 +373,7 @@ func (s *scanner) loadURL(url *url.URL) (*common.CrawlLink, *goquery.Document) {
 
 	contentType := strings.SplitN(resp.Header.Get("Content-Type"), ";", 2)
 	if contentType[0] == "text/html" {
-		doc, err := goquery.NewDocumentFromReader(limitedBody)
+		doc, err := goquery.NewDocumentFromReader(wrappedBody)
 		if err != nil {
 			handleError(err)
 			return crawlLink, nil
@@ -422,4 +425,15 @@ func (s *scanner) normalizeURL(parent *url.URL, child string) (*url.URL, error) 
 func (s *scanner) isWebScheme(u *url.URL) bool {
 	scheme := strings.ToLower(u.Scheme)
 	return scheme == "http" || scheme == "https"
+}
+
+type SizeReader struct {
+	Child io.Reader
+	Size  int
+}
+
+func (r *SizeReader) Read(p []byte) (int, error) {
+	n, err := r.Child.Read(p)
+	r.Size += n
+	return n, err
 }

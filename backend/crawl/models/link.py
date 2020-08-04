@@ -1,9 +1,18 @@
 from django.db import models
-from django.db.models import Count, F, OuterRef
+from django.db.models import Count, Sum, F, OuterRef, Subquery, PositiveIntegerField
 from django.db.models.query import QuerySet
 
 
 from crawl.common import SubQueryCount
+
+
+class SubQuerySizeSum(Subquery):
+    output_field = PositiveIntegerField()
+
+    def __init__(self, queryset, *args, **kwargs):
+        queryset = queryset.annotate(total=Sum("size")).values("total")
+        queryset.query.set_group_by()
+        super().__init__(queryset, *args, **kwargs)
 
 
 class LinkQuerySet(QuerySet):
@@ -26,6 +35,10 @@ class LinkQuerySet(QuerySet):
             .annotate(num_stylesheets=SubQueryCount(stylesheets))
             .annotate(num_ok_stylesheets=SubQueryCount(stylesheets.filter(status=Link.STATUS_OK)))
             .annotate(num_non_ok_stylesheets=F("num_stylesheets") - F("num_ok_stylesheets"))
+            .annotate(size_images=SubQuerySizeSum(images))
+            .annotate(size_scripts=SubQuerySizeSum(scripts))
+            .annotate(size_stylesheets=SubQuerySizeSum(stylesheets))
+            .annotate(size_total=F("size_images") + F("size_scripts") + F("size_stylesheets") + F("size"))
             .order_by("-num_non_ok_links")
         )
 
@@ -81,6 +94,7 @@ class Link(models.Model):
     http_status = models.PositiveSmallIntegerField(null=True, blank=True)
     response_time = models.PositiveIntegerField(null=False)
     error = models.CharField(max_length=255, null=True, blank=True)
+    size = models.PositiveIntegerField(default=0)
 
     links = models.ManyToManyField("self", symmetrical=False, related_name="pages", blank=True)
 

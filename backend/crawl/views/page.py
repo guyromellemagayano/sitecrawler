@@ -35,6 +35,10 @@ class PageFilter(filters.FilterSet):
     num_stylesheets = filters.RangeFilter(label="Number of Stylesheets")
     num_ok_stylesheets = filters.RangeFilter(label="Number of OK Stylesheets")
     num_non_ok_stylesheets = filters.RangeFilter(label="Number of non-OK Stylesheets")
+    size_images = filters.RangeFilter(label="Size of Images")
+    size_scripts = filters.RangeFilter(label="Size of Scripts")
+    size_stylesheets = filters.RangeFilter(label="Size of Stylesheets")
+    size_total = filters.RangeFilter(label="Total Size")
 
     class Meta:
         model = Link
@@ -76,6 +80,10 @@ class PageViewSet(
         "num_stylesheets",
         "num_ok_stylesheets",
         "num_non_ok_stylesheets",
+        "size_images",
+        "size_scripts",
+        "size_stylesheets",
+        "size_total",
     ]
 
     def get_queryset(self):

@@ -54,7 +54,7 @@ var Columns = struct {
 		Group string
 	}
 	CrawlLink struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size string
 
 		Scan string
 	}
@@ -253,7 +253,7 @@ var Columns = struct {
 		Group: "Group",
 	},
 	CrawlLink: struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size string
 
 		Scan string
 	}{
@@ -266,6 +266,7 @@ var Columns = struct {
 		ResponseTime: "response_time",
 		Error:        "error",
 		ScanID:       "scan_id",
+		Size:         "size",
 
 		Scan: "Scan",
 	},
@@ -853,6 +854,7 @@ type CrawlLink struct {
 	ResponseTime int       `sql:"response_time,notnull"`
 	Error        *string   `sql:"error"`
 	ScanID       int       `sql:"scan_id,notnull"`
+	Size         int       `sql:"size,notnull"`
 
 	Scan *CrawlScan `pg:"fk:scan_id"`
 }

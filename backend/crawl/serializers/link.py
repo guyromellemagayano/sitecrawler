@@ -32,6 +32,7 @@ class LinkSerializer(serializers.ModelSerializer):
             "http_status",
             "response_time",
             "error",
+            "size",
             "occurences",
         ]
         read_only_fields = [
@@ -44,6 +45,7 @@ class LinkSerializer(serializers.ModelSerializer):
             "http_status",
             "response_time",
             "error",
+            "size",
             "occurences",
         ]
 
@@ -63,6 +65,7 @@ class LinkDetailSerializer(LinkSerializer):
             "http_status",
             "response_time",
             "error",
+            "size",
             "pages",
         ]
         read_only_fields = [
@@ -75,5 +78,6 @@ class LinkDetailSerializer(LinkSerializer):
             "http_status",
             "response_time",
             "error",
+            "size",
             "pages",
         ]
