@@ -86,7 +86,7 @@ const Pagination = props => {
       </div>
       <div className={`w-0 flex-1 flex justify-end`}>
         {currentPage !== totalPages && (
-          <Link href={props.href} as={props.pathName + `page=${parseInt(props.page) + 1}`}>
+          <Link href={props.href} as={props.pathName + `page=${parseInt(currentPage) + 1}`}>
             <a className={`-mt-px border-transparent pt-4 pl-1 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150`}>
               Next
               <svg className={`ml-3 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
