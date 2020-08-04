@@ -297,7 +297,7 @@ const Seo = props => {
   }
 
   useEffect(() => {
-    if(asPath.includes("?"))
+    if(removeURLParameter(asPath, 'page').includes("?"))
       setPagePath(`${removeURLParameter(asPath, 'page')}&`)
     else
       setPagePath(`${removeURLParameter(asPath, 'page')}?`)

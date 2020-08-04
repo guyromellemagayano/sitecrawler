@@ -101,7 +101,7 @@ const LinkDetail = () => {
   if (scanError) return <div>{scanError.message}</div>
   if (siteError) return <div>{siteError.message}</div>
   if (userError) return <div>{userError.message}</div>
-  if (!linkLocation) return <div>Loading...</div>  
+  if (!linkLocation) return <div>Loading...</div>
   if (!link) return <div>Loading...</div>
   if (!site) return <div>Loading...</div>
   if (!user) return <div>Loading...</div>
