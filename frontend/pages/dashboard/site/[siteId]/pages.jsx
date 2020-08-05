@@ -223,7 +223,7 @@ const Pages = props => {
                 <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
                   <div>
                     <nav className={`sm:hidden`}>
-                      <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
+                      <Link href='/dashboard/site/[siteId]/overview' as={'/dashboard/site/' + query.siteId + '/overview'}>
                         <a className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>
                           <svg className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/>
@@ -233,13 +233,13 @@ const Pages = props => {
                       </Link>
                     </nav>
                     <nav className={`hidden sm:flex items-center text-sm leading-5`}>
-                      <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
+                      <Link href='/dashboard/site/[siteId]/overview' as={'/dashboard/site/' + query.siteId + '/overview'}>
                         <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
                       </Link>
                       <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
                         <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
                       </svg>
-                      <Link href={'/dashboard/site/' + query.siteId + '/pages'}>
+                      <Link href='/dashboard/site/[siteId]/pages' as={'/dashboard/site/' + query.siteId + '/pages'}>
                         <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>All Pages</a>
                       </Link>
                     </nav>

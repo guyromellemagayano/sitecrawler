@@ -157,19 +157,19 @@ const LinkDetail = () => {
                   </Link>
                 </nav>
                 <nav className={`hidden sm:flex items-center text-sm leading-5`}>
-                  <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
+                  <Link href='/dashboard/site/[siteId]/overview' as={'/dashboard/site/' + query.siteId + '/overview'}>
                     <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
                   </Link>
                   <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
                   </svg>
-                  <Link href={'/dashboard/site/' + query.siteId + '/links'}>
+                  <Link href='/dashboard/site/[siteId]/links' as={'/dashboard/site/' + query.siteId + '/links'}>
                     <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>All Links</a>
                   </Link>
                   <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
                   </svg>
-                  <Link href={'/dashboard/site/' + query.siteId + '/link/' + query.linkId + '/detail'}>
+                  <Link href='/dashboard/site/[siteId]/link/[linkId]/detail' as={'/dashboard/site/' + query.siteId + '/link/' + query.linkId + '/detail'}>
                     <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{linkLocation.url}</a>
                   </Link>
                 </nav>

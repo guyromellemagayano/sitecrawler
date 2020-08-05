@@ -124,7 +124,7 @@ const PageSeoTable = props => {
                 </a>
               </div>
               <div className={`flex justify-start inline-text-sm leading-5 text-gray-500`}>
-                <Link href="/dashboard/site/[id]/seo/[id]/details" as={`/dashboard/site/${query.siteId}/seo/${pageDetail.id}/details`}>
+                <Link href="/dashboard/site/[siteId]/seo/[seoId]/details" as={`/dashboard/site/${query.siteId}/seo/${pageDetail.id}/details`}>
                   <a className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>View Details</a>
                 </Link>
               </div>
