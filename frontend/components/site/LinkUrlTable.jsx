@@ -111,7 +111,7 @@ const LinkUrlTable = props => {
                 </a>
               </div>
               <div className={`flex justify-start inline-text-sm leading-5 text-gray-500`}>
-                <Link href="/dashboard/site/[id]/links/[id]/details" as={`/dashboard/site/${query.siteId}/links/${linkDetail.id}/details`}>
+                <Link href="/dashboard/site/[siteId]/links/[linkId]/details" as={`/dashboard/site/${query.siteId}/links/${linkDetail.id}/details`}>
                   <a className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>View Details</a>
                 </Link>
               </div>
@@ -148,7 +148,7 @@ const LinkUrlTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          {linkDetail.pages.length !== 0 ? <Link href="/dashboard/site/[id]/links/[id]/details" as={`/dashboard/site/${query.siteId}/links/${linkDetail.id}/details`}><a className={`mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}><span className={`truncate-link`}>{linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== '' ? Url(linkDetail.pages[0].url).pathname : <em>_domain</em>}</span>&nbsp;{(linkDetail.pages.length - 1) > 0 ? "+" + parseInt(linkDetail.pages.length - 1) : null} {(linkDetail.pages.length - 1) > 1 ? "others" : (linkDetail.pages.length - 1) === 1 ? "other" : null}</a></Link> : ''}
+          {linkDetail.pages.length !== 0 ? <Link href="/dashboard/site/[siteId]/links/[linkId]/details" as={`/dashboard/site/${query.siteId}/links/${linkDetail.id}/details`}><a className={`mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}><span className={`truncate-link`}>{linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== '' ? Url(linkDetail.pages[0].url).pathname : <em>_domain</em>}</span>&nbsp;{(linkDetail.pages.length - 1) > 0 ? "+" + parseInt(linkDetail.pages.length - 1) : null} {(linkDetail.pages.length - 1) > 1 ? "others" : (linkDetail.pages.length - 1) === 1 ? "other" : null}</a></Link> : ''}
         </td>
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}

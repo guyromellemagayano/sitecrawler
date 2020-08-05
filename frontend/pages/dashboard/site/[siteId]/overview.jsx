@@ -141,7 +141,7 @@ const SitesDashboard = () => {
                 <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
                   <div>
                     <nav className={`hidden sm:flex items-center text-sm leading-5`}>
-                      <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
+                      <Link href='/dashboard/site/[siteId]/overview' as={'/dashboard/site/' + query.siteId + '/overview'}>
                         <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
                       </Link>
                     </nav>

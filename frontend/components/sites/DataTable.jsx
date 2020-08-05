@@ -187,7 +187,7 @@ const DataTable = props => {
                     {props.site.name}
                   </span>
                 ) : (
-                  <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
+                  <Link href="/dashboard/site/[siteId]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
                     <a
                       className={`text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500`}
                     >
@@ -257,7 +257,7 @@ const DataTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
-          <Link href="/dashboard/site/[id]/links" as={`/dashboard/site/${props.site.id}/links`}>
+          <Link href="/dashboard/site/[siteId]/links" as={`/dashboard/site/${props.site.id}/links`}>
             <a
               className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
             >
@@ -276,7 +276,7 @@ const DataTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
-          <Link href="/dashboard/site/[id]/pages" as={`/dashboard/site/${props.site.id}/pages`}>
+          <Link href="/dashboard/site/[siteId]/pages" as={`/dashboard/site/${props.site.id}/pages`}>
             <a
               className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
             >
@@ -469,7 +469,7 @@ const DataTable = props => {
                   <span
                     className={`mt-3 sm:ml-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto`}
                   >
-                    <Link href="/dashboard/site/[id]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
+                    <Link href="/dashboard/site/[siteId]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
                       <a
                         className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                       >

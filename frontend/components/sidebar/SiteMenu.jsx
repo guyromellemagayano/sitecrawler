@@ -95,8 +95,11 @@ const SiteMenu = () => {
                     </h3>
                     <div className={`my-3`} role="group" aria-labelledby={`${val.slug}-headline`}>
                       {val.links.map((val2, key) => {
+                        const hrefVal = val2.url.indexOf('/dashboard/sites') > -1 ? val2.url : `/dashboard/site/[siteId]${val2.url}`
+                        const asVal = val2.url.indexOf('/dashboard/sites') > -1 ? val2.url : '/dashboard/site/' + query.siteId + val2.url
+
                         return (
-                          <Link key={key} href={val2.url.indexOf('/dashboard/sites') > -1 ? val2.url : '/dashboard/site/' + query.siteId + val2.url}>
+                          <Link key={key} href={hrefVal} as={asVal}>
                             <a
                               className={`${
                                 asPath.includes("/dashboard/site/" + query.siteId + val2.url)  
@@ -165,14 +168,14 @@ const SiteMenu = () => {
                 ) : (
                   <div className={`mt-1`} role="group" aria-labelledby={`${val.slug}-headline`}>
                     {val.links.map((val2, key) => {
+                      const hrefVal = val2.url.indexOf('/dashboard/sites') > -1 ? val2.url : `/dashboard/site/[siteId]${val2.url}`
+                      const asVal = val2.url.indexOf("/dashboard/sites") > -1 ? val2.url : "/dashboard/site/" + query.siteId + val2.url
+
                       return (
                         <Link
                           key={key}
-                          href={
-                            val2.url.indexOf("/dashboard/sites") > -1
-                              ? val2.url
-                              : "/dashboard/site/" + query.siteId + val2.url
-                          }
+                          href={hrefVal}
+                          as={asVal}
                         >
                           <a
                             className={`${

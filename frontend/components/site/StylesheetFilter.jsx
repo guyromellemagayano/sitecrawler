@@ -21,7 +21,7 @@ const StylesheetFilter = ({ onFilterChange, allFilter, issueFilter, internalFilt
                         <div>
                             <label className={`flex items-center`}>
                                 <input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={allFilter} value="all" />
-                                <span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>All Links</span>
+                                <span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>All Stylesheets</span>
                             </label>
                         </div>
                     </div>
@@ -29,7 +29,7 @@ const StylesheetFilter = ({ onFilterChange, allFilter, issueFilter, internalFilt
                         <div>
                             <label className={`flex items-center`}>
                                 <input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={issueFilter} value="issues" />
-                                <span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Links with Issues</span>
+                                <span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Stylesheets with Issues</span>
                             </label>
                         </div>
                     </div>
@@ -37,7 +37,7 @@ const StylesheetFilter = ({ onFilterChange, allFilter, issueFilter, internalFilt
                         <div>
                             <label className={`flex items-center`}>
                                 <input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={internalFilter} value="internal" />
-                                <span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Internal Links</span>
+                                <span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Internal Stylesheets</span>
                             </label>
                         </div>
                     </div>
@@ -45,7 +45,7 @@ const StylesheetFilter = ({ onFilterChange, allFilter, issueFilter, internalFilt
                         <div>
                             <label className={`flex items-center`}>
                                 <input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={externalFilter} value="external" />
-                                <span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>External Links</span>
+                                <span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>External Stylesheets</span>
                             </label>
                         </div>
                     </div>
