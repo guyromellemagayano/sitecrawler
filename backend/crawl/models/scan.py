@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Count, F, OuterRef
+from django.db.models import F, OuterRef
 from django.db.models.query import QuerySet
 
 from crawl.common import SubQueryCount

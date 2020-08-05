@@ -17,6 +17,10 @@ class PageSerializer(serializers.ModelSerializer):
     num_stylesheets = serializers.IntegerField(read_only=True)
     num_ok_stylesheets = serializers.IntegerField(read_only=True)
     num_non_ok_stylesheets = serializers.IntegerField(read_only=True)
+    size_images = serializers.IntegerField(read_only=True)
+    size_scripts = serializers.IntegerField(read_only=True)
+    size_stylesheets = serializers.IntegerField(read_only=True)
+    size_total = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Link
@@ -25,6 +29,7 @@ class PageSerializer(serializers.ModelSerializer):
             "created_at",
             "scan_id",
             "url",
+            "size",
             "num_links",
             "num_ok_links",
             "num_non_ok_links",
@@ -37,12 +42,17 @@ class PageSerializer(serializers.ModelSerializer):
             "num_stylesheets",
             "num_ok_stylesheets",
             "num_non_ok_stylesheets",
+            "size_images",
+            "size_scripts",
+            "size_stylesheets",
+            "size_total",
         ]
         read_only_fields = [
             "id",
             "created_at",
             "scan_id",
             "url",
+            "size",
             "num_links",
             "num_ok_links",
             "num_non_ok_links",
@@ -55,6 +65,10 @@ class PageSerializer(serializers.ModelSerializer):
             "num_stylesheets",
             "num_ok_stylesheets",
             "num_non_ok_stylesheets",
+            "size_images",
+            "size_scripts",
+            "size_stylesheets",
+            "size_total",
         ]
 
 
