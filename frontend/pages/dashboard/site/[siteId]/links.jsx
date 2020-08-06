@@ -15,7 +15,7 @@ import MobileSidebar from 'components/sidebar/MobileSidebar'
 import MainSidebar from 'components/sidebar/MainSidebar'
 import LinkOptions from 'components/site/LinkOptions'
 import LinkFilter from 'components/site/LinkFilter'
-import LinkUrlTable from 'components/site/LinkUrlTable'
+import LinkUrlTable from 'components/site/LinkTable'
 import Pagination from 'components/sites/Pagination'
 import LinkSorting from 'components/site/LinkSorting'
 
@@ -400,7 +400,10 @@ const Links = props => {
     updateLinks()
   }
   
-  {userError || linkError || scanError || siteError && <Layout>{userError.message || linkError.message || scanError.message || siteError.message}</Layout>}
+  {userError && <Layout>{userError.message}</Layout>}
+  {linkError && <Layout>{linkError.message}</Layout>}
+  {scanError && <Layout>{scanError.message}</Layout>}
+  {siteError && <Layout>{siteError.message}</Layout>}
 
   return (
     <Layout>
