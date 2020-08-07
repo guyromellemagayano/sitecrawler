@@ -1,10 +1,11 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import Link from 'next/link'
 import fetch from 'node-fetch'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import useSWR from 'swr'
 import Skeleton from 'react-loading-skeleton'
+import Layout from 'components/Layout'
 
 const apiParameters = {
   method: 'GET',
@@ -18,15 +19,22 @@ const apiParameters = {
 const SidebarDiv = styled.div``
 
 const Sidebar = () => {
+  const [userLoaded, setUserLoaded] = useState(false)
+
   const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
 
   const { data: user, error: siteError } = useSWR('/api/auth/user/', fetcher)
+
+  useEffect(() => {
+    if(user && user !== undefined)
+      setUserLoaded(true)
+  }, [user])
 
   return (
     <Fragment>
       {siteError && <Layout>Failed to load.</Layout>}
 
-      {!user ? (
+      {!userLoaded ? (
         <SidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
           <span
             className={`flex justify-between items-center my-1 group px-3 py-2`}
