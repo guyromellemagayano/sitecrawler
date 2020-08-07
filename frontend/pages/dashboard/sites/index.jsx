@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import LogRocket from 'logrocket'
 import setupLogRocketReact from 'logrocket-react'
@@ -45,6 +45,7 @@ const SitesDiv = styled.section``
 
 const Sites = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const [userLoaded, setUserLoaded] = useState(false)
   const pageTitle = "Sites"
   const sitesApiEndpoint = props.page !== undefined ? '/api/site/?page=' + props.page : '/api/site/'
   const router = useRouter()
@@ -54,6 +55,12 @@ const Sites = props => {
     redirectIfFound: false
   })
 
+  useEffect(() => {
+    if(user && user !== undefined && user.username) {
+      setUserLoaded(true)
+    }
+  }, [user])
+  
   const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher, {
     refreshInterval: 1000,
   })
@@ -71,7 +78,7 @@ const Sites = props => {
 
   return (
     <Layout>
-      {user && site ? (
+      {userLoaded && site ? (
         <Fragment>
           <Head>
             <title>{pageTitle}</title>
