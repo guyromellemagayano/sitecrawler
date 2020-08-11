@@ -78,7 +78,7 @@ const Sidebar = () => {
             onClick={setDropdownToggle}
           >
             <div className={`flex items-center`}>
-              <div className={`flex flex-column flex-wrap text-left`}>
+              <div className={`flex flex-col flex-wrap text-left`}>
                 <p
                   className={`text-sm leading-5 font-medium text-white group-hover:text-gray-1000`}
                 >
