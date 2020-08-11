@@ -92,7 +92,8 @@ const Images = props => {
   }
 
   let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/image/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/image/`
-  let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( (scanApiEndpoint).includes('?') ? '&status=' + props.result.status.join('&status=') : '?status=' + props.result.status.join('&status=') ) : ''
+  const statusString = Array.isArray(props.result.status) ? props.result.status.join('&status=') : props.result.status
+  let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( (scanApiEndpoint).includes('?') ? '&status=' + statusString : '?status=' + statusString ) : ''
   const typeString = Array.isArray(props.result.type) ? props.result.type.join('&type=') : props.result.type
 	queryString += props.result.type !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&type=${typeString}` : `?type=${typeString}` ) : ''
 	
@@ -224,10 +225,11 @@ const Images = props => {
       setImageNotWorkingFilter(false)
       setAllFilter(false)
       newPath = removeURLParameter(newPath, "page")
+      newPath = removeURLParameter(newPath, "status")
 
       if (newPath.includes("?"))
-        newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
-      else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+        newPath += `&status=OK`
+      else newPath += `?status=OK`
     } else if (filterType == "working" && filterStatus == false) {
       newPath = removeURLParameter(newPath, "status")
       setImageWorkingFilter(false)
@@ -238,6 +240,7 @@ const Images = props => {
       setImageWorkingFilter(false)
       setAllFilter(false)
       newPath = removeURLParameter(newPath, "page")
+      newPath = removeURLParameter(newPath, "status")
 
       if (newPath.includes("?"))
         newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
@@ -253,7 +256,6 @@ const Images = props => {
       setImageNotWorkingFilter(false)
 
       newPath = removeURLParameter(newPath, "status")
-      newPath = removeURLParameter(newPath, "type")
       newPath = removeURLParameter(newPath, "page")
 
       if (!newPath.includes("search") && !newPath.includes("ordering"))
@@ -292,7 +294,24 @@ const Images = props => {
   }, [])
 
   // TODO: useEffect[filterChangeHandler]
-  
+  useEffect(() => {
+    if(props.result.status !== undefined && Array.isArray(props.result.status)) {
+      setImageWorkingFilter(false)
+      setImageNotWorkingFilter(true)
+      setAllFilter(false)
+    }
+    else if(props.result.status !== undefined && !Array.isArray(props.result.status)) {
+      setImageWorkingFilter(true)
+      setImageNotWorkingFilter(false)
+      setAllFilter(false)
+    }
+
+    if(props.result.type == undefined && props.result.status == undefined) {
+      setImageWorkingFilter(false)
+      setImageNotWorkingFilter(false)
+      setAllFilter(true)
+    }
+  }, [filterChangeHandler])
 
   {userError && <Layout>{userError.message}</Layout>}
   {imageError && <Layout>{imageError.message}</Layout>}
