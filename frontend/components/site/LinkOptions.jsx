@@ -44,7 +44,7 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
                 <input
                   id={`search`}
                   className={`form-input block w-full pl-10 sm:text-sm sm:leading-5`}
-                  placeholder={`${asPath.includes('pages') ? "Search Pages..." : asPath.includes('links') ? "Search Links..." : "Search URL..."}`}
+                  placeholder={`${asPath.includes('pages') ? "Search Pages..." : asPath.includes('links') ? "Search Links..." : asPath.includes('images') ? "Search Images..." : "Search URL..."}`}
                   onKeyUp={onSearchEvent}
                   defaultValue={searchKey}
                   autoFocus

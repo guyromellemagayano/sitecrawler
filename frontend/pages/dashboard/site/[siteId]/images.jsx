@@ -8,23 +8,23 @@ import Cookies from 'js-cookie'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import useUser from 'hooks/useUser'
-import ImagesTableContent from 'public/data/images-table.json'
+import ImageTableContent from 'public/data/image-table.json'
 import Layout from 'components/Layout'
 import MobileSidebar from 'components/sidebar/MobileSidebar'
 import MainSidebar from 'components/sidebar/MainSidebar'
-import ImagesOptions from 'components/site/ImagesOptions'
-import ImagesFilter from 'components/site/ImagesFilter'
-import ImagesTable from 'components/site/ImagesTable'
-import ImagesSorting from 'components/site/ImagesSorting'
+import LinkOptions from 'components/site/LinkOptions'
+import ImageFilter from 'components/site/ImageFilter'
+import ImageTable from 'components/site/ImageTable'
+import ImageSorting from 'components/site/ImageSorting'
 import Pagination from 'components/sites/Pagination'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get("csrftoken"),
     },
   })
 
@@ -38,46 +38,44 @@ const fetcher = async (url) => {
 }
 
 const initialOrder = {
-  imageUrl: 'default',
-  createdAt: 'default',
-  status: 'default',
-  httpCode: 'default',
-  occurrences: 'default'
+  imageUrl: "default",
+  createdAt: "default",
+  status: "default",
+  httpCode: "default",
+  occurrences: "default",
 }
 
 const ImagesDiv = styled.section``
 
 const Images = props => {
-	const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+  const [pagePath, setPagePath] = useState("")
+  const [sortOrder, setSortOrder] = useState(initialOrder)
+  const [allFilter, setAllFilter] = useState(false)
+  const [imageWorkingFilter, setImageWorkingFilter] = useState(false)
+  const [imageNotWorkingFilter, setImageNotWorkingFilter] = useState(false)
 
-	const [allFilter, setAllFilter] = useState(false)
-	const [imageWorking, setImageWorking] = useState(false)
-	const [imageNotWorking, setImageNotWorking] = useState(false)
+  const [searchKey, setSearchKey] = useState("")
 
-	const [pagePath, setPagePath] = useState('')
-	const [sortOrder, setSortOrder] = useState(initialOrder)
+  const pageTitle = "Images |"
 
-	const [searchKey, setSearchKey] = useState('')
+  const { user: user, userError: userError } = useUser({
+    redirectTo: "/login",
+    redirectIfFound: false,
+  })
 
-	const pageTitle = 'Images |'
-
-	const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
-    redirectIfFound: false
-	})
-	
-	const { query, asPath } = useRouter()
+  const { query, asPath } = useRouter()
   const { data: site, error: siteError } = useSWR(
     () => (query.siteId ? `/api/site/${query.siteId}/` : null),
     fetcher
-	)
-	
-	const { data: scan, error: scanError } = useSWR(
+  )
+
+  const { data: scan, error: scanError } = useSWR(
     () => (query.siteId ? `/api/site/${query.siteId}/scan/` : null),
     fetcher
-	)
-	
-	let scanObjId = ""
+  )
+
+  let scanObjId = ""
 
   if (scan) {
     let scanObj = []
@@ -92,26 +90,223 @@ const Images = props => {
       return scanObjId
     })
   }
+
+  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/image/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/image/`
+  let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( (scanApiEndpoint).includes('?') ? '&status=' + props.result.status.join('&status=') : '?status=' + props.result.status.join('&status=') ) : ''
+  const typeString = Array.isArray(props.result.type) ? props.result.type.join('&type=') : props.result.type
+	queryString += props.result.type !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&type=${typeString}` : `?type=${typeString}` ) : ''
+	
+	queryString += props.result.search !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
+	queryString += props.result.ordering !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&ordering=${props.result.ordering}` : `?ordering=${props.result.ordering}` ) : ''
   
-  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/image/`
-  
-  const { data: image, error: imageError, mutate: updateImages } = useSWR(
-    () => query.siteId && scanObjId ? scanApiEndpoint : null
-    , fetcher, {
+	scanApiEndpoint += queryString
+
+  const { data: image, error: imageError, mutate: updateLinks } = useSWR(
+    () => (query.siteId && scanObjId ? scanApiEndpoint : null),
+    fetcher,
+    {
       refreshInterval: 50000,
-  })
+    }
+  )
+
+  const removeURLParameter = (url, parameter) => {
+    //prefer to use l.search if you have a location/link object
+    const urlparts = url.split("?")
+    if (urlparts.length >= 2) {
+      const prefix = encodeURIComponent(parameter) + "="
+      const pars = urlparts[1].split(/[&]/g)
+
+      //reverse iteration as may be destructive
+      for (var i = pars.length; i--> 0; ) {
+        //idiom for string.startsWith
+        if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+          pars.splice(i, 1)
+        }
+      }
+
+      return urlparts[0] + (pars.length > 0 ? "?" + pars.join("&") : "")
+    }
+
+    return url
+  }
+
+  const searchEventHandler = async (e) => {
+    if (e.keyCode != 13) return false
+
+    let newPath = removeURLParameter(asPath, "search")
+    newPath = removeURLParameter(newPath, "page")
+
+    if (e.target.value == "" || e.target.value == " ") {
+      setSearchKey(e.target.value)
+      if (newPath.includes("?")) setPagePath(`${newPath}&`)
+      else setPagePath(`${newPath}?`)
+
+      Router.push("/dashboard/site/[siteId]/images", newPath)
+      return
+    }
+
+    if (newPath.includes("?")) newPath += `&search=${e.target.value}`
+    else newPath += `?search=${e.target.value}`
+
+    setSearchKey(e.target.value)
+    if (newPath.includes("?")) setPagePath(`${newPath}&`)
+    else setPagePath(`${newPath}?`)
+
+    Router.push("/dashboard/site/[siteId]/images", newPath)
+    updateLinks()
+  }
+
+  const slugToCamelcase = (slug) => {
+    return slug.replace(/(\-\w)/g, function (m) {
+      return m[1].toUpperCase()
+    })
+  }
+
+  const getSortKeyFromSlug = (slug) => {
+    let sortKey = ""
+
+    ImageTableContent.forEach((val, index) => {
+      if (val.slug == slug) sortKey = val.key
+    })
+
+    return sortKey
+  }
+
+  const getSlugFromSortKey = (sortKey) => {
+    let slug = ""
+
+    ImageTableContent.forEach((val, index) => {
+      if (val.key == sortKey) slug = val.slug
+    })
+
+    return slug
+  }
+
+  const SortHandler = slug => {
+    setSortOrder({ ...initialOrder })
+
+    let newPath = removeURLParameter(asPath, "ordering")
+
+    const sortItem = slugToCamelcase(slug)
+    const sortKey = getSortKeyFromSlug(slug)
+
+    if (sortOrder[sortItem] == "default") {
+      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }))
+      if (newPath.includes("?")) newPath += `&ordering=${sortKey}`
+      else newPath += `?ordering=${sortKey}`
+    } else if (sortOrder[sortItem] == "asc") {
+      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }))
+      if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`
+      else newPath += `?ordering=-${sortKey}`
+    } else {
+      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }))
+      if (newPath.includes("?")) newPath += `&ordering=${sortKey}`
+      else newPath += `?ordering=${sortKey}`
+    }
+
+    if (newPath.includes("?"))
+      setPagePath(`${removeURLParameter(newPath, "page")}&`)
+    else setPagePath(`${removeURLParameter(newPath, "page")}?`)
+
+    Router.push("/dashboard/site/[siteId]/images", newPath)
+    updateLinks()
+  }
+
+  // FIXME: filterChangeHandler()
+  const filterChangeHandler = async (e) => {
+    const filterType = e.target.value
+    const filterStatus = e.target.checked
+
+    let newPath = asPath
+
+    if (filterType == "working" && filterStatus == true) {
+      setImageWorkingFilter(true)
+      setImageNotWorkingFilter(false)
+      setAllFilter(false)
+      newPath = removeURLParameter(newPath, "page")
+
+      if (newPath.includes("?"))
+        newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+      else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+    } else if (filterType == "working" && filterStatus == false) {
+      newPath = removeURLParameter(newPath, "status")
+      setImageWorkingFilter(false)
+    }
+    
+    if (filterType == "notWorking" && filterStatus == true) {
+      setImageNotWorkingFilter(true)
+      setImageWorkingFilter(false)
+      setAllFilter(false)
+      newPath = removeURLParameter(newPath, "page")
+
+      if (newPath.includes("?"))
+        newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+      else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+    } else if (filterType == "notWorking" && filterStatus == false) {
+      newPath = removeURLParameter(newPath, "status")
+      setImageNotWorkingFilter(false)
+    }
+
+    if (filterType == "all" && filterStatus == true) {
+      setAllFilter(true)
+      setImageWorkingFilter(false)
+      setImageNotWorkingFilter(false)
+
+      newPath = removeURLParameter(newPath, "status")
+      newPath = removeURLParameter(newPath, "type")
+      newPath = removeURLParameter(newPath, "page")
+
+      if (!newPath.includes("search") && !newPath.includes("ordering"))
+        newPath = newPath.replace("?", "")
+    }
+
+    if (newPath.includes("?")) setPagePath(`${newPath}&`)
+    else setPagePath(`${newPath}?`)
+
+    Router.push("/dashboard/site/[siteId]/images", newPath)
+
+    updateLinks()
+
+    return true
+  }
+
+  useEffect(() => {
+    if(removeURLParameter(asPath, 'page').includes("?"))
+      setPagePath(`${removeURLParameter(asPath, 'page')}&`)
+    else
+      setPagePath(`${removeURLParameter(asPath, 'page')}?`)
+
+    if(props.result.search !== undefined)
+      setSearchKey(props.result.search)
+
+    if(props.result.ordering !== undefined) {
+      const slug = getSlugFromSortKey(props.result.ordering.replace('-', ''))
+      const orderItem = slugToCamelcase(slug)
+
+      if(props.result.ordering.includes('-'))
+        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'desc' }));
+      else
+        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'asc' }));
+    }
+    
+  }, [])
+
+  // TODO: useEffect[filterChangeHandler]
+  
 
   {userError && <Layout>{userError.message}</Layout>}
   {imageError && <Layout>{imageError.message}</Layout>}
   {scanError && <Layout>{scanError.message}</Layout>}
   {siteError && <Layout>{siteError.message}</Layout>}
 
-	return (
-		<Layout>
-      {user && image && scan ? (
+  return (
+    <Layout>
+      {user && image && site ? (
         <Fragment>
           <Head>
-            <title>{pageTitle} {site.name}</title>
+            <title>
+              {pageTitle} {site.name}
+            </title>
           </Head>
 
           <ImagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
@@ -123,7 +318,12 @@ const Images = props => {
                 <button
                   className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                   aria-label={`Open sidebar`}
-                  onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
+                  onClick={() =>
+                    setTimeout(
+                      () => setOpenMobileSidebar(!openMobileSidebar),
+                      150
+                    )
+                  }
                 >
                   <svg
                     className={`h-6 w-5`}
@@ -144,44 +344,84 @@ const Images = props => {
                 className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
                 tabIndex={`0`}
               >
-                <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+                <div
+                  className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+                >
                   <div>
                     <nav className={`sm:hidden`}>
-                      <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
-                        <a className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>
-                          <svg className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/overview"}
+                      >
+                        <a
+                          className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          <svg
+                            className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                           Back to Overview
                         </a>
                       </Link>
                     </nav>
-                    <nav className={`hidden sm:flex items-center text-sm leading-5`}>
-                      <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
-                        <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
+                    <nav
+                      className={`hidden sm:flex items-center text-sm leading-5`}
+                    >
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/overview"}
+                      >
+                        <a
+                          className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          {site.name}
+                        </a>
                       </Link>
-                      <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
+                      <svg
+                        className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
-                      <Link href={'/dashboard/site/' + query.siteId + '/images'}>
-                        <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>Images</a>
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/images"}
+                      >
+                        <a
+                          className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          Images
+                        </a>
                       </Link>
                     </nav>
                   </div>
-                  <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                  <div
+                    className={`mt-2 md:flex md:items-center md:justify-between`}
+                  >
                     <div className={`flex-1 min-w-0`}>
-                      <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                      <h2
+                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
+                      >
                         Images - {site.name}
                       </h2>
                     </div>
                   </div>
                 </div>
                 <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
-                  {/* <ImagesOptions searchKey={searchKey} onSearchEvent={searchEventHandler} /> */}
-                  {/* <ImagesFilter 
-                    onFilterChange={filterChangeHandler} 
-                    allFilter={allFilter} 
-                  /> */}
+                  <LinkOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
+                  <ImageFilter
+                    onFilterChange={filterChangeHandler}
+                    allFilter={allFilter}
+                    imageWorkingFilter={imageWorkingFilter}
+                    imageNotWorkingFilter={imageNotWorkingFilter}
+                  />
                   <div className={`pb-4`}>
                     <div className={`flex flex-col`}>
                       <div
@@ -193,39 +433,40 @@ const Images = props => {
                           <table className={`min-w-full`}>
                             <thead>
                               <tr>
-                                {ImagesTableContent.map((site, key) => {
+                                {ImageTableContent.map((site, key) => {
                                   return (
                                     <Fragment key={key}>
                                       <th
                                         className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
                                       >
                                         <div className={`flex items-center`}>
-                                          {/* <ImagesSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} /> */}
+                                          <ImageSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} />
                                           <span className="label">
                                             {site.label}
                                           </span>
                                         </div>
                                       </th>
                                     </Fragment>
-                                  );
+                                  )
                                 })}
                               </tr>
                             </thead>
-                            {image.results && image.results.map((val, key) => (
-                              <ImagesTable key={key} val={val} />
-                            ))}
+                            {image.results &&
+                              image.results.map((val, key) => (
+                                <ImageTable key={key} val={val} />
+                              ))}
                           </table>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* <Pagination 
-                    href='/dashboard/site/[siteId]/images'
+                  <Pagination
+                    href="/dashboard/site/[siteId]/images"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
-                  /> */}
+                  />
                 </div>
               </main>
             </div>
@@ -233,14 +474,14 @@ const Images = props => {
         </Fragment>
       ) : null}
     </Layout>
-	)
+  )
 }
 
 export async function getServerSideProps(context) {
   return {
     props: {
-      result: context.query
-    }
+      result: context.query,
+    },
   }
 }
 

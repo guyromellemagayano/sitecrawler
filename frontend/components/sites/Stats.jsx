@@ -145,8 +145,8 @@ const SitesStats = props => {
     {
       "title": "Total Images",
       "count": stats.num_images,
-      "href": `#`,
-      "as": `#`
+      "href": `/dashboard/site/[siteId]/images`,
+      "as": `/dashboard/site/${query.siteId}/images`
     },
     {
       "title": "Total Images Working",
@@ -157,42 +157,6 @@ const SitesStats = props => {
     {
       "title": "Total Images Not Working",
       "count": stats.num_non_ok_images,
-      "href": `#`,
-      "as": `#`
-    },
-    {
-      "title": "Total Stylesheets",
-      "count": stats.num_stylesheets,
-      "href": `#`,
-      "as": `#`
-    },
-    {
-      "title": "Total Stylesheets Working",
-      "count": stats.num_ok_stylesheets,
-      "href": `#`,
-      "as": `#`
-    },
-    {
-      "title": "Total Stylesheets Not Working",
-      "count": stats.num_non_ok_stylesheets,
-      "href": `#`,
-      "as": `#`
-    },
-    {
-      "title": "Total Scripts",
-      "count": stats.num_scripts,
-      "href": `#`,
-      "as": `#`
-    },
-    {
-      "title": "Total Scripts Working",
-      "count": stats.num_ok_scripts,
-      "href": `#`,
-      "as": `#`
-    },
-    {
-      "title": "Total Scripts Not Working",
-      "count": stats.num_non_ok_scripts,
       "href": `#`,
       "as": `#`
     }
