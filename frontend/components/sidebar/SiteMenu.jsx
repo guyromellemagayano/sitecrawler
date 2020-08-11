@@ -84,13 +84,13 @@ const SiteMenu = () => {
           })}
         </SiteMenuDiv>
       ) : (
-        <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
+        <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-gray-1000`}>
           {SitePages.map((val, key) => {
             return (
               <Fragment key={key}>
                 {val.slug !== 'navigation' && val.slug !== 'dashboard' ? (
                   <Fragment>
-                    <h3 className={`${val.slug}-headline mt-8 px-3 text-xs leading-4 font-semibold text-gray-500 uppercase tracking-wider`}>
+                    <h3 className={`${val.slug}-headline mt-8 px-3 text-xs leading-4 font-semibold text-gray-300 uppercase tracking-wider`}>
                       {val.category}
                     </h3>
                     <div className={`my-3`} role="group" aria-labelledby={`${val.slug}-headline`}>
@@ -103,12 +103,12 @@ const SiteMenu = () => {
                             <a
                               className={`${
                                 asPath.includes("/dashboard/site/" + query.siteId + val2.url)  
-                                  ? "group mt-1 flex items-center p-2 text-sm leading-5 font-medium text-gray-900 rounded-md bg-gray-100 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
-                                  : "mt-1 group flex items-center p-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150"
+                                  ? "group mt-1 flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
+                                  : "mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
                               }`}
                             >
                               <svg
-                                className={`mr-3 h-6 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                                className={`mr-3 h-6 w-5 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
                                 stroke={`currentColor`}
                                 fill={`none`}
                                 viewBox={`0 0 24 24`}
@@ -130,32 +130,32 @@ const SiteMenu = () => {
                               </svg>
                               <span>{val2.title}</span>
                               {val2.url === "/links" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
                                   {stats.num_links}
                                 </span>
                               )}
                               {val2.url === "/pages" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
                                   {stats.num_pages}
                                 </span>
                               )}
                               {val2.url === "/seo" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
                                   {stats.num_pages}
                                 </span>
                               )}
                               {val2.url === "/images" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
                                   {stats.num_images}
                                 </span>
                               )}
                               {val2.url === "/stylesheets" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
                                   {stats.num_stylesheets}
                                 </span>
                               )}
                               {val2.url === "/scripts" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
                                   {stats.num_scripts}
                                 </span>
                               )}
@@ -180,12 +180,12 @@ const SiteMenu = () => {
                           <a
                             className={`${
                               asPath.includes("/dashboard/site/" + query.siteId + val2.url)  
-                                ? "group mt-1 flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-900 rounded-md bg-gray-100 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
-                                : "back-nav mt-1 group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition ease-in-out duration-150"
+                                ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
+                                : "back-nav mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
                             }`}
                           >
                             <svg
-                              className={`mr-3 h-6 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                              className={`mr-3 h-6 w-5 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
                               stroke={`currentColor`}
                               fill={`none`}
                               viewBox={`0 0 24 24`}

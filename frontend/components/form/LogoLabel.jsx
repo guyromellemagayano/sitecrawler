@@ -11,7 +11,7 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword }) => {
         <a>
           <AppLogo
             className={`h-10 w-auto mx-auto`}
-            src={`/img/logos/site-logo.svg`}
+            src={`/img/logos/site-logo-dark.svg`}
             alt={`app-logo`}
           />
         </a>

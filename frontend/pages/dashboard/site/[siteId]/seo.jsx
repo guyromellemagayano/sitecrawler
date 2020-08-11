@@ -14,9 +14,9 @@ import MobileSidebar from 'components/sidebar/MobileSidebar'
 import MainSidebar from 'components/sidebar/MainSidebar'
 import SeoOptions from 'components/site/SeoOptions'
 import SeoFilter from 'components/site/SeoFilter'
-import PageSeoTable from 'components/site/PageSeoTable'
-import Pagination from 'components/sites/Pagination'
+import PageSeoTable from 'components/site/SeoTable'
 import SeoSorting from 'components/site/SeoSorting'
+import Pagination from 'components/sites/Pagination'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {

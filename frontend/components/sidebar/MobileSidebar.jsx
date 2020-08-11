@@ -61,7 +61,7 @@ const MobileSidebar = props => {
 									leaveTo="-translate-x-full"
 								>
 									<div
-										className={`relative flex-1 flex flex-col max-w-xs w-full bg-white`}
+										className={`relative flex-1 flex flex-col max-w-xs w-full bg-gray-1000`}
 									>
 										<div className={`absolute top-0 right-0 mt-4 mr-4 p-1`}>
 											<button
@@ -88,7 +88,7 @@ const MobileSidebar = props => {
 											<div className={`flex-shrink-0 flex items-center px-4`}>
 												<AppLogo
 													className={`h-8 w-auto`}
-													src={`/img/logos/site-logo.svg`}
+													src={`/img/logos/site-logo-white.svg`}
 													alt={`app-logo`}
 												/>
 											</div>
