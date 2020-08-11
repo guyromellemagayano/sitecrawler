@@ -151,14 +151,14 @@ const SitesStats = props => {
     {
       "title": "Total Images Working",
       "count": stats.num_ok_images,
-      "href": `#`,
-      "as": `#`
+      "href": `/dashboard/site/[siteId]/images?status=OK`,
+      "as": `/dashboard/site/${query.siteId}/images?status=OK`
     },
     {
       "title": "Total Images Not Working",
       "count": stats.num_non_ok_images,
-      "href": `#`,
-      "as": `#`
+      "href": `/dashboard/site/[siteId]/images?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`,
+      "as": `/dashboard/site/${query.siteId}/images?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
     }
   ]
 
