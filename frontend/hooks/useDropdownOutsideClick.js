@@ -6,8 +6,6 @@ const useDropdownOutsideClick = initialIsVisible => {
 	);
 	const ref = useRef(null);
 
-	console.log(isComponentVisible);
-
 	const handleHideDropdown = (event) => {
 		if (event.key === "Escape") {
 			setIsComponentVisible(false);
