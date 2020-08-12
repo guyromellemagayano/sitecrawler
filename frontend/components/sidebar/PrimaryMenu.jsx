@@ -63,12 +63,12 @@ const PrimaryMenu = () => {
           })}
         </PrimaryMenuDiv>
       ) : (
-        <PrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-gray-1000`}>
+        <PrimaryMenuDiv className={`flex-1 px-4 bg-gray-1000`}>
           {DashboardPages.map((val, key) => {
             return (
               <Fragment key={key}>
                 <h3
-                  className={`${val.slug}-headline mt-8 px-3 text-xs leading-4 font-semibold text-gray-300 uppercase tracking-wider`}
+                  className={`${val.slug}-headline mt-8 text-xs leading-4 font-semibold text-gray-300 uppercase tracking-wider`}
                 >
                   {val.category}
                 </h3>
@@ -83,8 +83,8 @@ const PrimaryMenu = () => {
                         <a
                           className={`${
                             useRouter().pathname.indexOf(val2.url) == 0
-                              ? "group mt-1 flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
-                              : "mt-1 group flex items-center px-5 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
+                              ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
+                              : "mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
                           }`}
                         >
                           <svg

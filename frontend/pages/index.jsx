@@ -163,7 +163,7 @@ const Home = () => {
                   className={`rounded-lg bg-white shadow-xs-xs overflow-hidden`}
                 >
                   <div
-                    className={`px-5 pt-4 flex items-center justify-between`}
+                    className={`px-3 pt-4 flex items-center justify-between`}
                   >
                     <div>
                       <img
@@ -224,7 +224,7 @@ const Home = () => {
                     {user === undefined || !user ? (
                       <Link href="/login">
                         <a
-                          className={`block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-100 hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:bg-gray-100 focus:text-indigo-700 transition duration-150 ease-in-out`}
+                          className={`block w-full px-3 py-3 text-center font-medium text-indigo-600 bg-gray-100 hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:bg-gray-100 focus:text-indigo-700 transition duration-150 ease-in-out`}
                         >
                           Log in
                         </a>
@@ -232,7 +232,7 @@ const Home = () => {
                     ) : (
                       <Link href="/dashboard/sites">
                         <a
-                          className={`block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-100 hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:bg-gray-100 focus:text-indigo-700 transition duration-150 ease-in-out`}
+                          className={`block w-full px-3 py-3 text-center font-medium text-indigo-600 bg-gray-100 hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:bg-gray-100 focus:text-indigo-700 transition duration-150 ease-in-out`}
                         >
                           Go to Sites
                         </a>
