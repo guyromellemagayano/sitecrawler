@@ -5,20 +5,30 @@ dev:          ## Build and run local environment
 	docker-compose build
 	docker-compose up -d
 
-staging: install-deploy build-prod push-prod ## Deploy to staging environment
+staging: install-deploy ## Deploy to staging environment
 	deploy/staging.py
 
-build-prod: ## Build production images
-	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend backend/
-	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend frontend/
-	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler --build-arg SERVICE=crawler go/
-	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler --build-arg SERVICE=scheduler go/
+production: install-deploy ## Deploy to production environment
+	deploy/production.py
 
-push-prod: ## Upload production images to ecr
+build-push-backend: ## Build and push production backend image
 	deploy/ecr-login.sh
+	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend backend/
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+
+build-push-frontend: ## Build and push production frontend image
+	deploy/ecr-login.sh
+	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend frontend/
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
+
+build-push-crawler: ## Build and push production crawler image
+	deploy/ecr-login.sh
+	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler --build-arg SERVICE=crawler go/
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
+
+build-push-scheduler: ## Build and push production scheduler image
+	deploy/ecr-login.sh
+	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler --build-arg SERVICE=scheduler go/
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
 
 install-deploy:
