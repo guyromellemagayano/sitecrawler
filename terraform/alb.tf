@@ -49,7 +49,7 @@ resource "aws_lb_listener" "https" {
 }
 
 resource "aws_acm_certificate" "production" {
-  domain_name       = "sitecrawler.com"
+  domain_name       = "app.sitecrawler.com"
   validation_method = "DNS"
 
   tags = {
@@ -82,6 +82,7 @@ resource "aws_lb_target_group" "frontend" {
   port     = 8000
   protocol = "HTTP"
 	vpc_id = aws_default_vpc.default.id
+	deregistration_delay = 30
 }
 
 resource "aws_lb_target_group" "backend" {
@@ -89,4 +90,5 @@ resource "aws_lb_target_group" "backend" {
   port     = 8001
   protocol = "HTTP"
 	vpc_id = aws_default_vpc.default.id
+	deregistration_delay = 30
 }
