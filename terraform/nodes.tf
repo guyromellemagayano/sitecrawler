@@ -16,9 +16,29 @@ resource "aws_instance" "staging" {
 
   tags = {
     Name = "Staging"
+		Env = "staging"
   }
 }
 
 resource "aws_eip" "staging_up" {
   instance = aws_instance.staging.id
+}
+
+resource "aws_instance" "production" {
+  ami           = "ami-068663a3c619dd892"
+  instance_type = "t3.micro"
+	security_groups = ["${aws_security_group.production.name}"]
+	key_name = aws_key_pair.deployer.key_name
+	iam_instance_profile = aws_iam_instance_profile.node_profile.name
+
+	root_block_device {
+		volume_size = 20
+	}
+
+  tags = {
+    Name = "Production ${count.index + 1}"
+		Env = "production"
+  }
+
+	count = 2
 }
