@@ -19,21 +19,33 @@ const numScanWorkers = 10
 
 func main() {
 	port := common.Env("PORT", "8000")
-	dbPass := common.Env("DB_PASS", "crawldev")
+	env := common.Env("ENV", "dev")
 
-	db := pg.Connect(&pg.Options{
-		Addr:     "db:5432",
-		User:     "postgres",
-		Password: dbPass,
-		Database: "postgres",
-	})
+	dbPass := common.Env("DB_PASS", "crawldev")
+	var pgOptions *pg.Options
+	if env == "production" {
+		pgOptions = &pg.Options{
+			Addr:     "terraform-20200810173347645600000001.ceavi2ewfiqg.us-east-1.rds.amazonaws.com:5432",
+			User:     "production",
+			Password: dbPass,
+			Database: "production",
+		}
+	} else {
+		pgOptions = &pg.Options{
+			Addr:     "db:5432",
+			User:     "postgres",
+			Password: dbPass,
+			Database: "postgres",
+		}
+	}
+	db := pg.Connect(pgOptions)
 	defer db.Close()
 	if common.Env("LOG_SQL", "false") == "true" {
 		db.AddQueryHook(common.DbLogger{})
 	}
 
 	var awsConfigs []*aws.Config
-	if common.Env("ENV", "dev") == "dev" {
+	if env == "dev" {
 		awsConfigs = append(awsConfigs, &aws.Config{
 			Credentials:      credentials.NewStaticCredentials("foo", "var", ""),
 			S3ForcePathStyle: aws.Bool(true),
@@ -60,7 +72,8 @@ func main() {
 	linkStylesheetDao := &LinkStylesheetDao{DB: db}
 	pageDataDao := &PageDataDao{DB: db}
 
-	scanSqsQueue, err := common.NewSQSService(sqsSvc, "linkapp-scan")
+	scanQueueName := fmt.Sprintf("linkapp-%s-scan", env)
+	scanSqsQueue, err := common.NewSQSService(sqsSvc, scanQueueName)
 	if err != nil {
 		log.Fatal(err)
 	}
