@@ -48,7 +48,7 @@ DATABASES = {
 
 if env == "dev":
     DEBUG = True
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ["*"]
     CRAWLER_URL = "http://crawler:3000"
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     AWS_ACCESS_KEY_ID = "foo"
@@ -120,6 +120,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django_filters",
+    "health_check",
+    "health_check.db",
     "crawl",
 ]
 

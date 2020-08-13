@@ -27,6 +27,7 @@ urlpatterns = [
     path("reset-password/form/<uidb64>/<token>/", TemplateView.as_view(), name="password_reset_confirm"),
     # urls
     path("admin/", admin.site.urls),
+    path("healthcheck/", include("health_check.urls")),
     path(
         "api/auth/registration/",
         include(("rest_auth.registration.urls", "rest_auth"), namespace="rest_auth_registration"),
