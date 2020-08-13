@@ -1,5 +1,5 @@
-import { Fragment } from 'react'
-import { useRouter } from 'next/router'
+import { useState, Fragment, useEffect } from 'react'
+import Router, { useRouter } from 'next/router'
 import fetch from 'node-fetch'
 import useSWR from 'swr'
 import Cookies from 'js-cookie'
@@ -8,6 +8,9 @@ import styled from 'styled-components'
 import Skeleton from 'react-loading-skeleton';
 import SitePages from 'public/data/site-pages.json'
 import Layout from 'components/Layout'
+import Transition from 'hooks/Transition'
+import useDropdownOutsideClick from 'hooks/useDropdownOutsideClick'
+import { removeURLParameter } from 'lib/functions'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -35,6 +38,17 @@ const SiteMenuDiv = styled.nav`
 `
 
 const SiteMenu = props => {
+  const [selectedSite, setSelectedSite] = useState(undefined);
+  const {
+    ref, 
+    isComponentVisible,
+    setIsComponentVisible
+  } = useDropdownOutsideClick(false);
+
+  const setDropdownToggle = () => {
+    setIsComponentVisible(!isComponentVisible)
+  }
+  
   const { query, asPath } = useRouter()
   const sitesApiEndpoint = props.page !== undefined ? '/api/site/?page=' + props.page : '/api/site/'
 
@@ -70,6 +84,36 @@ const SiteMenu = props => {
   const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher, {
     refreshInterval: 1000,
   })
+
+  const siteSelectOnLoad = (siteId = query.siteId) => {
+    if(site == undefined)
+      return false
+
+    for(let i=0; i<site.results.length; i++) {
+      if(site.results[i].id == siteId)
+        setSelectedSite(site.results[i])
+    }
+  }
+
+  const dropdownHandler = (siteId, verified) => {
+    if(!verified)
+      return false
+
+    const newPath = removeURLParameter(asPath, 'page')
+    const pageName = newPath.split("?")[0].split("/")[4];
+    const pageParams = newPath.split("?")[1]
+
+    Router.push(`/dashboard/site/[siteId]/${pageName}`, `/dashboard/site/${siteId}/${pageName}${pageParams !== undefined ? '?'+pageParams : ''}`)
+
+    setTimeout(() => {
+      siteSelectOnLoad(siteId)
+      setIsComponentVisible(!isComponentVisible)
+    }, 250)
+  }
+
+  useEffect(() => {
+    siteSelectOnLoad()
+  }, [site])
   
   return (
     <Fragment>
@@ -77,7 +121,7 @@ const SiteMenu = props => {
       {scanError && <Layout>{scanError.message}</Layout>}
       {siteError && <Layout>{siteError.message}</Layout>}
 
-      {!stats || !site ? (
+      {!stats || !site || selectedSite == undefined ? (
         <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
           {[...Array(5)].map((val, index) => {
             return (
@@ -96,14 +140,14 @@ const SiteMenu = props => {
           <div className={`pt-3`}>
             <div className={`text-left py-4`}>
               <div className={`space-y-1`}>
-                <div className={`relative`}>
+                <div ref={ref} className={`relative`}>
                   <span className={`inline-block w-full rounded-md shadow-sm`}>
-                    <button type="button" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label" className={`cursor-default relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5`}>
+                    <button type="button" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label" className={`cursor-default relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5`} onClick={setDropdownToggle}>
                       <div className={`flex items-center space-x-3`}>
                         {/* On: "bg-green-400", Off: "bg-gray-200" */}
-                        <span aria-label="Online" className={`bg-green-400 flex-shrink-0 inline-block h-2 w-2 rounded-full`}></span>
+                        <span aria-label="Online" className={`${selectedSite.verified ? "bg-green-400" : "bg-red-400"} flex-shrink-0 inline-block h-2 w-2 rounded-full`}></span>
                         <span className={`block truncate`}>
-                          Tom Cook
+                          {selectedSite.name}
                         </span>
                       </div>
                       <span className={`absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none`}>
@@ -115,22 +159,41 @@ const SiteMenu = props => {
                   </span>
 
                   {/* Select popover, show/hide based on select state. */}
-                  <div className={`absolute mt-1 w-full rounded-md bg-white shadow-lg`}>
-                    <ul tabIndex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-item-3" className={`h-32 rounded-md py-1 text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}>
-                      {site.results.map((val, key) => {
-                        return (
-                          <li key={key} id="listbox-item-0" role="option" className={`text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9`}>
-                            <div className={`flex items-center space-x-3`}>
-                              <span aria-label="Online" className={`${val.verified ? "bg-green-400" : "bg-red-400"} flex-shrink-0 inline-block h-2 w-2 rounded-full`}></span>
-                              <span className={`font-normal block truncate`}>
-                                {val.name}
-                              </span>
-                            </div>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </div>
+                  <Transition show={isComponentVisible}>
+                    <Transition
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                    <div className={`absolute mt-1 w-full rounded-md bg-white shadow-lg`}>
+                      <ul tabIndex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-item-3" className={`h-32 rounded-md py-1 text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}>
+                        {site.results.map((val, key) => {
+                          return (
+                            <li key={key} onClick={() => dropdownHandler(val.id, val.verified)} id={`listbox-item-${key}`} role="option" className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${val.verified ? "cursor-pointer" : "cursor-not-allowed"} select-none relative py-2 pl-3 pr-9`}>
+                              <div className={`flex items-center space-x-3`}>
+                                <span aria-label="Online" className={`${val.verified ? "bg-green-400" : "bg-red-400"} flex-shrink-0 inline-block h-2 w-2 rounded-full`}></span>
+                                <span className={`font-normal block truncate`}>
+                                  {val.name}
+                                </span>
+                              </div>
+                              {selectedSite.id == val.id ? (
+                                <span className="hover:text-white text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4">
+                                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                </span>
+                              ) : null}
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    </div>
+                    </Transition>
+                  </Transition>
+
                 </div>
               </div>
             </div>
