@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+import requests
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -46,7 +48,7 @@ DATABASES = {
 
 if env == "dev":
     DEBUG = True
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ["*"]
     CRAWLER_URL = "http://crawler:3000"
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     AWS_ACCESS_KEY_ID = "foo"
@@ -91,6 +93,14 @@ else:
     raise Exception(f"Unknown env: {env}")
 
 
+# add ec2 ip to allowed hosts for alb healthchecks
+try:
+    EC2_IP = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4").text
+    ALLOWED_HOSTS.append(EC2_IP)
+except requests.exceptions.RequestException:
+    pass
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -110,6 +120,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django_filters",
+    "health_check",
+    "health_check.db",
     "crawl",
 ]
 

@@ -1,3 +1,4 @@
+import time
 import io
 import os
 
@@ -10,6 +11,7 @@ import requests
 ec2 = boto3.resource("ec2")
 client = boto3.client("ec2")
 s3 = boto3.resource("s3")
+elbv2 = boto3.client("elbv2")
 
 
 def get_connections(**filters):
@@ -56,6 +58,56 @@ def get_instances(**filters):
         filter_items = [{"Name": f"tag:{key}", "Values": [value]} for key, value in filters.items()]
         instances = ec2.instances.filter(Filters=filter_items)
     return [instance.public_dns_name for instance in instances]
+
+
+def add_to_load_balancer(dns):
+    id = node_id_from_dns(dns)
+    target_groups = elbv2.describe_target_groups()["TargetGroups"]
+    for tg in target_groups:
+        group_name = tg["TargetGroupName"]
+        print(f"Adding {dns} to {group_name} load balancer")
+        elbv2.register_targets(TargetGroupArn=tg["TargetGroupArn"], Targets=[{"Id": id}])
+
+    for tg in target_groups:
+        wait_for_target_group_state(tg, id, "healthy")
+
+
+def remove_from_load_balancer(dns):
+    id = node_id_from_dns(dns)
+    target_groups = elbv2.describe_target_groups()["TargetGroups"]
+    for tg in target_groups:
+        group_name = tg["TargetGroupName"]
+        print(f"Removing {dns} from {group_name} load balancer")
+        elbv2.deregister_targets(TargetGroupArn=tg["TargetGroupArn"], Targets=[{"Id": id}])
+
+    for tg in target_groups:
+        wait_for_target_group_state(tg, id, "unused")
+
+
+def wait_for_target_group_state(group, target_id, state):
+    group_name = group["TargetGroupName"]
+    for i in range(60):
+        if get_target_group_state(group["TargetGroupArn"], target_id) == state:
+            return
+        print(f"Waiting for {target_id} to go {state} on {group_name} lb...")
+        time.sleep(1)
+    raise Exception(f"Timeout waiting for {target_id} to go {state}")
+
+
+def get_target_group_state(group_arn, target_id):
+    result = elbv2.describe_target_health(TargetGroupArn=group_arn, Targets=[{"Id": target_id}])[
+        "TargetHealthDescriptions"
+    ]
+    if len(result) == 0:
+        return "unused"
+    return result[0]["TargetHealth"]["State"]
+
+
+def node_id_from_dns(dns):
+    instances = ec2.instances.all()
+    for instance in instances:
+        if instance.public_dns_name == dns:
+            return instance.id
 
 
 def docker_compose(i, c, name):

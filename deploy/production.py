@@ -14,7 +14,11 @@ common.authorize_ingress(groups)
 for i, connection in enumerate(common.get_connections(Env="production")):
     print(f"Deploying to {connection.host}")
 
+    common.remove_from_load_balancer(connection.host)
+
     deploy(i, connection)
+
+    common.add_to_load_balancer(connection.host)
 
 
 common.revoke_ingress(groups)
