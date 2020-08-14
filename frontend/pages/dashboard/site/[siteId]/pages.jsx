@@ -16,6 +16,7 @@ import LinkOptions from 'components/site/LinkOptions'
 import LinkPagesTable from 'components/site/LinkPagesTable'
 import Pagination from 'components/sites/Pagination'
 import PageFilter from 'components/site/PageFilter'
+import { removeURLParameter } from 'helpers/functions'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -91,28 +92,6 @@ const Pages = props => {
     () => query.siteId && scanObjId ? scanApiEndpoint : null, fetcher, {
       refreshInterval: 1000,
   })
-
-  const removeURLParameter = (url, parameter) => {
-    //prefer to use l.search if you have a location/link object
-    const urlparts = url.split('?');   
-    if (urlparts.length >= 2) {
-
-        const prefix = encodeURIComponent(parameter) + '=';
-        const pars = urlparts[1].split(/[&;]/g);
-
-        //reverse iteration as may be destructive
-        for (var i = pars.length; i-- > 0;) {    
-            //idiom for string.startsWith
-            if (pars[i].lastIndexOf(prefix, 0) !== -1) {
-                pars.splice(i, 1);
-            }
-        }
-
-        return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
-    }
-
-    return url;
-  }
 
   const searchEventHandler = (e) => {
     if(e.keyCode != 13)

@@ -18,6 +18,7 @@ import StylesheetTable from 'components/site/StylesheetTable'
 import LinkOptions from 'components/site/LinkOptions'
 import StylesheetSortingDiv from 'components/site/StylesheetSorting'
 import StylesheetFilter from 'components/site/StylesheetFilter'
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'helpers/functions'
 
 const StylesheetsDiv = styled.section`
 	.url-type-tooltip,
@@ -134,28 +135,6 @@ const Stylesheets = props => {
 		refreshInterval: 50000,
 	})
 
-	const removeURLParameter = (url, parameter) => {
-		//prefer to use l.search if you have a location/link object
-		const urlparts = url.split('?');   
-		if (urlparts.length >= 2) {
-
-			const prefix = encodeURIComponent(parameter) + '=';
-			const pars = urlparts[1].split(/[&;]/g);
-
-			//reverse iteration as may be destructive
-			for (var i = pars.length; i-- > 0;) {    
-				//idiom for string.startsWith
-				if (pars[i].lastIndexOf(prefix, 0) !== -1) {
-					pars.splice(i, 1);
-				}
-			}
-
-			return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
-		}
-
-		return url;
-	}
-
 	const searchEventHandler = async (e) => {
 		if(e.keyCode != 13)
 			return false
@@ -190,39 +169,13 @@ const Stylesheets = props => {
 		updateLinks()
 	}
 
-	const slugToCamelcase = (slug) => {
-		return slug.replace(/(\-\w)/g, function(m){return m[1].toUpperCase();});
-	}
-
-	const getSortKeyFromSlug = (slug) => {
-		let sortKey = ''
-
-		StylesheetTableContent.forEach((val, index) => {
-			if(val.slug == slug)
-				sortKey = val.key
-		})
-
-		return sortKey
-	}
-
-	const getSlugFromSortKey = (sortKey) => {
-		let slug = ''
-
-		StylesheetTableContent.forEach((val, index) => {
-			if(val.key == sortKey)
-				slug = val.slug
-		})
-
-		return slug
-	}
-
 	const SortHandler = (slug) => {
 		setSortOrder({...initialOrder});
 
 		let newPath = removeURLParameter(asPath, 'ordering')
 		
 		const sortItem = slugToCamelcase(slug)
-		const sortKey = getSortKeyFromSlug(slug)
+		const sortKey = getSortKeyFromSlug(StylesheetTableContent, slug)
 
 		if(sortOrder[sortItem] == 'default') {
 			setSortOrder(prevState => ({ ...prevState, [sortItem]: 'asc' }));
@@ -348,7 +301,7 @@ const Stylesheets = props => {
 			setSearchKey(props.result.search)
 	  
 		if(props.result.ordering !== undefined) {
-			const slug = getSlugFromSortKey(props.result.ordering.replace('-', ''))
+			const slug = getSlugFromSortKey(StylesheetTableContent, props.result.ordering.replace('-', ''))
 			const orderItem = slugToCamelcase(slug)
 	  
 			if(props.result.ordering.includes('-'))
