@@ -17,7 +17,7 @@ import SeoFilter from 'components/site/SeoFilter'
 import PageSeoTable from 'components/site/SeoTable'
 import SeoSorting from 'components/site/SeoSorting'
 import Pagination from 'components/sites/Pagination'
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'lib/functions'
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'helpers/functions'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {

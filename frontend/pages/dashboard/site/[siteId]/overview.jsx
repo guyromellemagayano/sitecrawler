@@ -14,6 +14,7 @@ import MobileSidebar from 'components/sidebar/MobileSidebar'
 import MainSidebar from 'components/sidebar/MainSidebar'
 import SitesOverview from 'components/sites/Overview'
 import SitesStats from 'components/sites/Stats'
+import SitesSeoStats from 'components/sites/SeoStats'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -139,25 +140,34 @@ const SitesDashboard = () => {
                 tabIndex={`0`}
               >
                 <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-                  <div>
-                    <nav className={`hidden sm:flex items-center text-sm leading-5`}>
-                      <Link href='/dashboard/site/[siteId]/overview' as={'/dashboard/site/' + query.siteId + '/overview'}>
-                        <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
-                      </Link>
-                    </nav>
-                  </div>
-                  <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                  <div className={`md:flex md:items-center md:justify-between`}>
                     <div className={`flex-1 min-w-0`}>
                       <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
-                        Overview - {site.name}
+                        Overview
                       </h2>
                     </div>
                   </div>
+                  <div>
+                    <nav className={`mt-2 hidden sm:flex items-center text-sm leading-5`}>
+                      <Link href='/dashboard/sites'>
+                        <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>Sites</a>
+                      </Link>
+                      <svg className={`flex-shrink-0 mx-1 h-5 w-5 text-gray-500`} viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
+                      </svg>
+                      <Link href='/dashboard/site/[siteId]/overview' as={'/dashboard/site/' + query.siteId + '/overview'}>
+                        <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
+                      </Link>
+                    </nav>
+                  </div>
                 </div>
                 <div
-                  className={`max-w-5xl px-4 py-4 sm:px-6 md:px-8`}
+                  className={`max-w-full px-4 py-4 sm:px-6 md:px-8`}
                 >
-                  <div>
+                  <div className={`pb-4`}>
+                    <SitesStats crawlableHandler={crawlableHandler} />
+                  </div>
+                  <div className={`grid grid-cols-2 gap-8`}>
                     <SitesOverview
                       url={site.url}
                       verified={site.verified}
@@ -165,11 +175,13 @@ const SitesDashboard = () => {
                       onCrawl={onCrawlHandler}
                       crawlable={recrawlable}
                     />
-                  </div>
-                </div>
-                <div className={`max-w-5xl px-4 sm:px-6 md:px-8`}>
-                  <div className={`pb-4`}>
-                    <SitesStats crawlableHandler={crawlableHandler} />
+                    <SitesSeoStats
+                      url={site.url}
+                      verified={site.verified}
+                      finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
+                      onCrawl={onCrawlHandler}
+                      crawlable={recrawlable}
+                    />
                   </div>
                 </div>
               </main>

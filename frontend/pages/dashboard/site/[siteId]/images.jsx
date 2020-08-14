@@ -17,7 +17,7 @@ import ImageFilter from 'components/site/ImageFilter'
 import ImageTable from 'components/site/ImageTable'
 import ImageSorting from 'components/site/ImageSorting'
 import Pagination from 'components/sites/Pagination'
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'lib/functions'
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'helpers/functions'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
