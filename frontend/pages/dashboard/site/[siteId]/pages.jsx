@@ -16,7 +16,7 @@ import LinkOptions from 'components/site/LinkOptions'
 import LinkPagesTable from 'components/site/PagesTable'
 import Pagination from 'components/sites/Pagination'
 import PageFilter from 'components/site/PageFilter'
-import { removeURLParameter } from 'lib/functions'
+import { removeURLParameter } from 'helpers/functions'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {

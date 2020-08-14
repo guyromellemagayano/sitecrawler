@@ -18,7 +18,7 @@ import LinkFilter from 'components/site/LinkFilter'
 import LinkUrlTable from 'components/site/LinkTable'
 import Pagination from 'components/sites/Pagination'
 import LinkSorting from 'components/site/LinkSorting'
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'lib/functions'
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'helpers/functions'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
