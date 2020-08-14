@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+import requests
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,17 +24,31 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", "3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0")
 
-AWS_SCAN_QUEUE_NAME = "linkapp-scan"
+env = os.environ.get("ENV", "dev")
+
+AWS_SCAN_QUEUE_NAME = f"linkapp-{env}-scan"
 AWS_ACCESS_KEY_ID = None
 AWS_SECRET_ACCESS_KEY = None
 AWS_USE_SSL = True
 AWS_ENDPOINT_URL = None
 AWS_REGION = "us-east-1"
 
-env = os.environ.get("ENV", "dev")
+# Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.environ.get("DB_NAME", "postgres"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASS", "crawldev"),
+        "HOST": os.environ.get("DB_HOST", "db"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
+    }
+}
+
 if env == "dev":
     DEBUG = True
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ["*"]
     CRAWLER_URL = "http://crawler:3000"
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     AWS_ACCESS_KEY_ID = "foo"
@@ -51,8 +67,38 @@ elif env == "staging":
     EMAIL_USE_TLS = True
     EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
     DEFAULT_FROM_EMAIL = "linkapp@epicsandbox.com"
+elif env == "production":
+    DEBUG = False
+    ALLOWED_HOSTS = ["app.sitecrawler.com"]
+    SESSION_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    CRAWLER_URL = "http://crawler:8000"
+    EMAIL_HOST = "smtp.mailgun.org"
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = "app@mg.sitecrawler.com"
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
+    DEFAULT_FROM_EMAIL = "noreply@sitecrawler.com"
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": "production",
+            "USER": "production",
+            "PASSWORD": os.environ.get("DB_PASS", "crawldev"),
+            "HOST": "terraform-20200810173347645600000001.ceavi2ewfiqg.us-east-1.rds.amazonaws.com",
+            "PORT": os.environ.get("DB_PORT", "5432"),
+        }
+    }
 else:
     raise Exception(f"Unknown env: {env}")
+
+
+# add ec2 ip to allowed hosts for alb healthchecks
+try:
+    EC2_IP = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4").text
+    ALLOWED_HOSTS.append(EC2_IP)
+except requests.exceptions.RequestException:
+    pass
 
 
 # Application definition
@@ -74,6 +120,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django_filters",
+    "health_check",
+    "health_check.db",
     "crawl",
 ]
 
@@ -106,21 +154,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "server.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get("DB_NAME", "postgres"),
-        "USER": os.environ.get("DB_USER", "postgres"),
-        "PASSWORD": os.environ.get("DB_PASS", "crawldev"),
-        "HOST": os.environ.get("DB_HOST", "db"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
-    }
-}
 
 
 # Password validation

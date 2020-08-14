@@ -9,7 +9,11 @@ import SettingsMenu from 'components/sidebar/SettingsMenu'
 import ProfileSidebar from 'components/profile/Sidebar'
 import AppLogo from 'components/logo/AppLogo'
 
-const MainSidebarDiv = styled.aside``
+const MainSidebarDiv = styled.aside`
+  & > div {
+    width: 18rem;
+  }
+`
 
 const MainSidebar = () => {
   const [windowSiteLocation, setWindowSiteLocation] = useState(false)
@@ -34,14 +38,14 @@ const MainSidebar = () => {
     <Fragment>
       {user ? (
         <MainSidebarDiv className={`hidden md:flex md:flex-shrink-0`}>
-          <div className={`flex flex-col w-64 border-r border-gray-200 bg-white`}>
+          <div className={`flex flex-col border-r border-gray-200 bg-gray-1000`}>
             <div className={`h-0 flex-1 flex flex-col pt-5 pb-4 overflow-y-auto`}>
               <div className={`flex items-center flex-shrink-0 px-4`}>
                 <Link href="/dashboard/sites/">
                   <a className={`block`}>
                     <AppLogo
                       className={`h-8 w-auto`}
-                      src={`/img/logos/site-logo.svg`}
+                      src={`/img/logos/site-logo-white.svg`}
                       alt={`app-logo`}
                     />
                   </a>

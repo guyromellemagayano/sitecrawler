@@ -2,6 +2,8 @@
 
 import common
 
+groups = ["node_security_group", "production_security_group"]
+
 
 def initialize(c):
     # docker
@@ -21,7 +23,7 @@ def initialize(c):
     c.sudo("apt-get install awscli")
 
 
-common.authorize_ingress()
+common.authorize_ingress(groups)
 
 for connection in common.get_connections():
     print(f"Initialize {connection.host}")
@@ -29,4 +31,4 @@ for connection in common.get_connections():
     initialize(connection)
 
 
-common.revoke_ingress()
+common.revoke_ingress(groups)

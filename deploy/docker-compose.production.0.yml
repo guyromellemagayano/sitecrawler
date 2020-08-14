@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  backend:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    restart: always
+    ports:
+      - "8001:8000"
+    links:
+      - crawler
+    environment:
+      ENV: production
+  frontend:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
+    restart: always
+    ports:
+      - "8000:3000"
+  crawler:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
+    restart: always
+    environment:
+      ENV: production
+  scheduler:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
+    restart: always
+    environment:
+      ENV: production

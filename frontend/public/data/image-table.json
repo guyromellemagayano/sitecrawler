@@ -1,0 +1,32 @@
+[
+	{
+		"label": "Image URL",
+		"slug": "image-url",
+		"key": "url"
+	},
+	{
+		"label": "Created At",
+		"slug": "created-at",
+		"key": "created_at"
+	},
+	{
+		"label": "Status",
+		"slug": "status",
+		"key": "status"
+	},
+	{
+		"label": "HTTP Code",
+		"slug": "http-code",
+		"key": "http_status"
+	},
+	{
+		"label": "Image Location",
+		"slug": "image-location",
+		"key": "image_location"
+	},
+	{
+		"label": "Occurrences",
+		"slug": "occurrences",
+		"key": "occurences"
+	}
+]

@@ -68,7 +68,7 @@ const Home = () => {
                 <a href={`#`}>
                   <AppLogo
                     className={`h-8 w-auto sm:h-10`}
-                    src={`/img/logos/site-logo.svg`}
+                    src={`/img/logos/site-logo-dark.svg`}
                     alt={`app-logo`}
                   />
                 </a>

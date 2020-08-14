@@ -2,32 +2,19 @@
 
 import common
 
-
-def docker_compose(c, name):
-    c.run("$(aws ecr get-login --no-include-email --region us-east-1)")
-
-    c.run(f"mkdir -p {name}")
-    c.put(f"deploy/docker-compose.{name}.yml", f"{name}/docker-compose.yml")
-    c.run(f"aws s3 cp s3://epic-linkapp-secrets/secrets.{name}.yml {name}/docker-compose.override.yml")
-
-    c.run(f"cd {name} && docker-compose pull")
-    c.run(f"cd {name} && docker-compose up -d")
-
-    c.run(f"cd {name} && docker-compose run backend ./manage.py migrate")
-
-    c.run("docker system prune -f")
+groups = ["node_security_group"]
 
 
-def deploy(c):
-    docker_compose(c, "staging")
+def deploy(i, c):
+    common.docker_compose(i, c, "staging")
 
 
-common.authorize_ingress()
+common.authorize_ingress(groups)
 
-for connection in common.get_connections("Staging"):
+for i, connection in enumerate(common.get_connections(Env="staging")):
     print(f"Deploying to {connection.host}")
 
-    deploy(connection)
+    deploy(i, connection)
 
 
-common.revoke_ingress()
+common.revoke_ingress(groups)
