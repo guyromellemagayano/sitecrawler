@@ -4,6 +4,9 @@ import useSWR from 'swr'
 import styled from 'styled-components'
 import Moment from 'react-moment'
 import Skeleton from 'react-loading-skeleton'
+import SiteSuccessStatus from 'components/status/SiteSuccessStatus'
+import SiteWarningStatus from 'components/status/SiteWarningStatus'
+import SiteDangerStatus from 'components/status/SiteDangerStatus'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -24,7 +27,9 @@ const fetcher = async (url) => {
   return data
 }
 
-const SitesOverviewDiv = styled.div``
+const SitesOverviewDiv = styled.div`
+  min-height: 25rem;
+`
 
 const SitesOverview = props => {
   const userApiEndpoint = '/api/auth/user/'
@@ -45,66 +50,108 @@ const SitesOverview = props => {
   }
 
   return (
-    <SitesOverviewDiv className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
-      <div className={`px-4 py-5 sm:p-6`}>
-        <h2 className={`text-lg leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-all`}>
-          <a href={`${props.url}`} target={`_blank`} title={`${props.url}`}>
-            {props.url}
-          </a>
-        </h2>
-        <div className={`mt-5 mb-3 max-w-lg text-sm leading-5 text-gray-500`}>
-          <div className={`mb-2 flex`}>
-            <strong>Site Status:</strong>
-            {props.verified ? (
-              <div className={`ml-2 max-w-xl`}>
-                <span className={`px-2 py-0.5 mr-3 inline-flex text-xs leading-4 font-medium rounded bg-green-100 text-green-800`}>Verified</span>
-              </div>
-            ): (
-              <div className={`ml-2 max-w-xl`}>
-                <span className={`px-2 py-0.5 mr-3 inline-flex text-xs leading-4 font-medium rounded bg-red-100 text-red-800`}>Unverified</span>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className={`my-2 max-w-xl text-sm leading-5 text-gray-500`}>
-          <p>
-            {!user.settings.disableLocalTime ? (
-              <Fragment>
-                <strong>Updated last:</strong> <Moment calendar={calendarStrings} date={props.finishedAt} local />&nbsp;
-                <Moment date={props.finishedAt} format="hh:mm:ss A" local />
-              </Fragment>
-            ) : (
-              <Fragment>
-                <strong>Updated last:</strong> <Moment calendar={calendarStrings} date={props.finishedAt} utc />&nbsp;
-                <Moment date={props.finishedAt} format="hh:mm:ss A" utc />
-              </Fragment>
-            )}
-          </p>
-        </div>
-        <div className={`mt-4`}>
+    <Fragment>
+      <style jsx>{`
+        .btn-crawler {
+          top: 0;
+          right: 0;
+          padding: 2.25rem 1.5rem;
+        }
+      `}</style>
+      <div className={`btn-crawler absolute mt-4`}>
         {
           props.crawlable ? (
             <button
               type={`button`}
               onClick={props.onCrawl}
-              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`}
+              className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
             >
-              Run Crawler
+              Recrawl
             </button>
           ) : (
             <button
               disabled={`disabled`}
               type={`button`}
-              className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 opacity-50 cursor-not-allowed`}
+              className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
             >
-              Run Crawler
+              Recrawl
             </button>
           )
         }
-
-        </div>
       </div>
-    </SitesOverviewDiv>
+      <SitesOverviewDiv>
+        <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+          <div className={`px-4 py-5 sm:p-6`}>
+            <h2 className={`text-lg font-bold leading-7 text-gray-900 mb-5`}>Site Status</h2>
+            <dl className={`mb-8 max-w-xl text-sm leading-5`}>
+              {!user.settings.disableLocalTime ? (
+                <Fragment>
+                  <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                    Last Crawled
+                  </dt>
+                  <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
+                    <Moment calendar={calendarStrings} date={props.finishedAt} local />&nbsp;
+                    <Moment date={props.finishedAt} format="hh:mm:ss A" local />
+                  </dd>
+                </Fragment>
+              ) : (
+                <Fragment>
+                  <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                    Last Crawled
+                  </dt>
+                  <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
+                    <Moment calendar={calendarStrings} date={props.finishedAt} utc />&nbsp;
+                    <Moment date={props.finishedAt} format="hh:mm:ss A" utc />
+                  </dd>
+                </Fragment>
+              )}
+            </dl>
+            <dl className={`grid grid-cols-1 col-gap-4 row-gap-8 sm:grid-cols-2`}>
+              <div className={`sm:col-span-1`}>
+                <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                  Site Status
+                </dt>
+                <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
+                  <SiteSuccessStatus 
+                    text={`Verified`}
+                  />
+                </dd>
+              </div>
+              <div className={`sm:col-span-1`}>
+                <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                  SSL Valid
+                </dt>
+                <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
+                  <SiteDangerStatus 
+                    text={`Not Valid`}
+                  />
+                </dd>
+              </div>
+              <div className={`sm:col-span-1`}>
+                <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                  Forced HTTPS
+                </dt>
+                <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
+                  <SiteDangerStatus 
+                    text={`Not Forced HTTPS`}
+                  />
+                </dd>
+              </div>
+              <div className={`sm:col-span-1`}>
+                <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                  Crawl Status
+                </dt>
+                <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
+                  <SiteWarningStatus 
+                    text={`In Progress`}
+                  />
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </SitesOverviewDiv>
+    </Fragment>
   );
 }
 

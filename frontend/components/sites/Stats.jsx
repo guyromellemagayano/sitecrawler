@@ -101,78 +101,95 @@ const SitesStats = props => {
       "as": `/dashboard/site/${query.siteId}/links`
     },
     {
-      "title": "Link Issues",
-      "count": stats.num_non_ok_links,
-      "href": `/dashboard/site/[siteId]/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`,
-      "as": `/dashboard/site/${query.siteId}/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
-    },
-    {
-      "title": "Total Pages Without Title",
-      "count": stats.num_pages_without_title,
-      "href": `/dashboard/site/[siteId]/seo?has_title=false`,
-      "as": `/dashboard/site/${query.siteId}/seo?has_title=false`
-    },
-    {
-      "title": "Total Pages Without Description",
-      "count": stats.num_pages_without_description,
-      "href": `/dashboard/site/[siteId]/seo?has_description=false`,
-      "as": `/dashboard/site/${query.siteId}/seo?has_description=false`
-    },
-    {
-      "title": "Total Pages Without First H1",
-      "count": stats.num_pages_without_h1_first,
-      "href": `/dashboard/site/[siteId]/seo?has_h1_first=false`,
-      "as": `/dashboard/site/${query.siteId}/seo?has_h1_first=false`
-    },
-    {
-      "title": "Total Pages Without Second H1",
-      "count": stats.num_pages_without_h1_second,
-      "href": `/dashboard/site/[siteId]/seo?has_h1_second=false`,
-      "as": `/dashboard/site/${query.siteId}/seo?has_h1_second=false`
-    },
-    {
-      "title": "Total Pages Without First H2",
-      "count": stats.num_pages_without_h2_first,
-      "href": `/dashboard/site/[siteId]/seo?has_h2_first=false`,
-      "as": `/dashboard/site/${query.siteId}/seo?has_h2_first=false`
-    },
-    {
-      "title": "Total Pages Without Second H2",
-      "count": stats.num_pages_without_h2_second,
-      "href": `/dashboard/site/[siteId]/seo?has_h2_second=false`,
-      "as": `/dashboard/site/${query.siteId}/seo?has_h2_second=false`
-    },
-    {
       "title": "Total Images",
       "count": stats.num_images,
       "href": `/dashboard/site/[siteId]/images`,
       "as": `/dashboard/site/${query.siteId}/images`
     },
     {
-      "title": "Total Images Working",
-      "count": stats.num_ok_images,
-      "href": `/dashboard/site/[siteId]/images?status=OK`,
-      "as": `/dashboard/site/${query.siteId}/images?status=OK`
-    },
-    {
-      "title": "Total Images Not Working",
-      "count": stats.num_non_ok_images,
-      "href": `/dashboard/site/[siteId]/images?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`,
-      "as": `/dashboard/site/${query.siteId}/images?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+      "title": "Link Issues",
+      "count": stats.num_non_ok_links,
+      "href": `/dashboard/site/[siteId]/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`,
+      "as": `/dashboard/site/${query.siteId}/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
     }
   ]
 
   return (
     <SitesStatsDiv>
       <div>
-        <div className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-18`}>
+        <div className={`mt-2 mb-4 py-6 grid grid-cols-1 sm:grid-cols-4 bg-white overflow-hidden shadow-xs rounded-lg divide-x divide-gray-300`}>
           {PageTabs.map((val, key) => {
             return (
               <div 
                 key={key}
-                className={`bg-white overflow-hidden shadow-xs rounded-lg`}
+                className={`flex items-center justify-center`}
               >
-                <div className={`px-4 py-5 sm:p-6`}>
+                <div className={`flex items-start justify-center`}>
+                  <dl className={`mr-2`}>
+                    <dt>
+                      {
+                        val.title === 'Total Pages' ? 
+                          <svg
+                            className={`mr-3 h-9 w-8 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                            stroke={`currentColor`}
+                            fill={`none`}
+                            viewBox={`0 0 24 24`}
+                          >
+                            <path
+                              strokeLinecap={`round`}
+                              strokeLinejoin={`round`}
+                              strokeWidth={`2`}
+                              d={`M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z`}
+                            />
+                          </svg>
+                        : 
+                        val.title === 'Total Links' ? 
+                          <svg
+                            className={`mr-3 h-9 w-8 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                            stroke={`currentColor`}
+                            fill={`none`}
+                            viewBox={`0 0 24 24`}
+                          >
+                            <path
+                              strokeLinecap={`round`}
+                              strokeLinejoin={`round`}
+                              strokeWidth={`2`}
+                              d={`M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1`}
+                            />
+                          </svg>
+                        :
+                        val.title === 'Total Images' ?                         
+                          <svg
+                            className={`mr-3 h-9 w-8 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                            stroke={`currentColor`}
+                            fill={`none`}
+                            viewBox={`0 0 24 24`}
+                          >
+                            <path
+                              strokeLinecap={`round`}
+                              strokeLinejoin={`round`}
+                              strokeWidth={`2`}
+                              d={`M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z`}
+                            />
+                          </svg>
+                        :
+                        <svg
+                          className={`mr-3 h-9 w-8 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                          stroke={`currentColor`}
+                          fill={`none`}
+                          viewBox={`0 0 24 24`}
+                        >
+                          <path
+                            strokeLinecap={`round`}
+                            strokeLinejoin={`round`}
+                            strokeWidth={`2`}
+                            d={`M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z`}
+                          />
+                        </svg>
+                        
+                      }
+                    </dt>
+                  </dl>
                   <dl>
                     <dt
                       className={`text-sm leading-5 font-medium text-gray-500 truncate`}
@@ -185,15 +202,6 @@ const SitesStats = props => {
                       {val.count}
                     </dd>
                   </dl>
-                </div>
-                <div className={`bg-gray-100 px-4 py-4 sm:px-6`}>
-                  <div className={`text-sm leading-5`}>
-                    <Link href={val.href} as={val.as} >
-                      <a className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
-                        View all
-                      </a>
-                    </Link>
-                  </div>
                 </div>
               </div>
             )

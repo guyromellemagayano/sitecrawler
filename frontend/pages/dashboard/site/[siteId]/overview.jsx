@@ -15,6 +15,9 @@ import MainSidebar from 'components/sidebar/MainSidebar'
 import SitesOverview from 'components/sites/Overview'
 import SitesStats from 'components/sites/Stats'
 import SitesSeoStats from 'components/sites/SeoStats'
+import SitesPagesStats from 'components/sites/PagesStats'
+import SitesLinksStats from 'components/sites/LinksStats'
+import SitesImagesStats from 'components/sites/ImagesStats'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -177,8 +180,23 @@ const SitesDashboard = () => {
                     />
                     <SitesSeoStats
                       url={site.url}
-                      verified={site.verified}
-                      finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
+                      onCrawl={onCrawlHandler}
+                      crawlable={recrawlable}
+                    />
+                  </div>
+                  <div className={`grid grid-cols-3 gap-8`}>
+                    <SitesPagesStats
+                      url={site.url}
+                      onCrawl={onCrawlHandler}
+                      crawlable={recrawlable}
+                    />
+                    <SitesLinksStats
+                      url={site.url}
+                      onCrawl={onCrawlHandler}
+                      crawlable={recrawlable}
+                    />
+                    <SitesImagesStats
+                      url={site.url}
                       onCrawl={onCrawlHandler}
                       crawlable={recrawlable}
                     />

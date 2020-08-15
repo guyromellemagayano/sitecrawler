@@ -10,7 +10,7 @@ import SitePages from 'public/data/site-pages.json'
 import Layout from 'components/Layout'
 import Transition from 'hooks/Transition'
 import useDropdownOutsideClick from 'hooks/useDropdownOutsideClick'
-import { removeURLParameter } from 'lib/functions'
+import { removeURLParameter } from 'helpers/functions'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
