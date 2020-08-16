@@ -45,6 +45,7 @@
     "react-password-strength-bar": "^0.3.2",
     "react-player": "^2.6.0",
     "react-redux": "^7.2.1",
+    "react-scripts": "^3.4.3",
     "react-tooltip": "^4.2.8",
     "react-transition-group": "^4.4.1",
     "react-vis": "^1.11.7",
