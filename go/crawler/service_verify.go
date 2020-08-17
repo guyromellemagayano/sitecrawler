@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 const metaTagName = "epic-crawl-id"
@@ -16,14 +16,14 @@ type VerifyService struct {
 	LoadService *LoadService
 }
 
-func (v *VerifyService) VerifySite(siteID int) error {
+func (v *VerifyService) VerifySite(log *zap.SugaredLogger, siteID int) error {
 	site, err := v.SiteDao.ByID(siteID)
 	if err != nil {
 		return errors.Wrapf(err, "could not get site id %v", siteID)
 	}
-	log.Printf("Verifying %v", site.Url)
+	log.Infof("Verifying %v", site.Url)
 
-	err = v.VerifyURL(site.Url, site.VerificationID)
+	err = v.VerifyURL(log, site.Url, site.VerificationID)
 
 	site.UpdatedAt = time.Now()
 	if err != nil {
@@ -42,8 +42,8 @@ func (v *VerifyService) VerifySite(siteID int) error {
 	return nil
 }
 
-func (v *VerifyService) VerifyURL(url, verificationID string) error {
-	resp, err, cancel := v.LoadService.Load(url)
+func (v *VerifyService) VerifyURL(log *zap.SugaredLogger, url, verificationID string) error {
+	resp, err, cancel := v.LoadService.Load(log, url)
 	defer cancel()
 	if err != nil {
 		return err

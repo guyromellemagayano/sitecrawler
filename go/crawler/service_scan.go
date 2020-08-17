@@ -4,7 +4,6 @@ import (
 	"container/list"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/url"
 	"strings"
 	"time"
@@ -12,6 +11,7 @@ import (
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 const (
@@ -39,8 +39,8 @@ type ScanService struct {
 	LoadService       *LoadService
 }
 
-func (s *ScanService) ScanSite(scanID int) error {
-	if err := s.reverify(scanID); err != nil {
+func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
+	if err := s.reverify(log, scanID); err != nil {
 		return err
 	}
 
@@ -49,14 +49,14 @@ func (s *ScanService) ScanSite(scanID int) error {
 		return errors.Wrapf(err, "could not get scan id %v", scanID)
 	}
 
-	log.Printf("Starting scan for %v", scan.Site.Url)
+	log.Infof("Starting scan for %v", scan.Site.Url)
 	defer func() {
 		finished := time.Now()
 		scan.FinishedAt = &finished
 		if err := s.ScanDao.Save(scan); err != nil {
-			log.Printf("Failed to set scan finish: %v", err)
+			log.Errorf("Failed to set scan finish: %v", err)
 		}
-		log.Printf("Finished scan for %v", scan.Site.Url)
+		log.Infof("Finished scan for %v", scan.Site.Url)
 	}()
 
 	if !scan.Site.Verified {
@@ -85,23 +85,23 @@ func (s *ScanService) ScanSite(scanID int) error {
 		return err
 	}
 
-	if err := s.Start(scan); err != nil {
+	if err := s.Start(log, scan); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *ScanService) reverify(scanID int) error {
+func (s *ScanService) reverify(log *zap.SugaredLogger, scanID int) error {
 	scan, err := s.ScanDao.ByID(scanID)
 	if err != nil {
 		return errors.Wrapf(err, "could not get scan id %v", scanID)
 	}
 
-	return s.VerifyService.VerifySite(scan.SiteID)
+	return s.VerifyService.VerifySite(log, scan.SiteID)
 }
 
-func (s *ScanService) Start(scan *common.CrawlScan) error {
+func (s *ScanService) Start(log *zap.SugaredLogger, scan *common.CrawlScan) error {
 	scanner := &scanner{
 		ScanService: s,
 		Scan:        scan,
@@ -109,7 +109,7 @@ func (s *ScanService) Start(scan *common.CrawlScan) error {
 		linkIDs: make(map[string]int),
 		fifo:    list.New(),
 	}
-	return scanner.Start()
+	return scanner.Start(log)
 }
 
 type fifoEntry struct {
@@ -127,7 +127,7 @@ type scanner struct {
 	fifo    *list.List
 }
 
-func (s *scanner) Start() error {
+func (s *scanner) Start(log *zap.SugaredLogger) error {
 	u, err := s.normalizeURL(nil, s.Scan.Site.Url)
 	if err != nil {
 		return err
@@ -145,7 +145,7 @@ func (s *scanner) Start() error {
 
 		entry := element.Value.(fifoEntry)
 
-		childLinkId, err := s.scanURL(entry.Url, entry.Depth)
+		childLinkId, err := s.scanURL(log, entry.Url, entry.Depth)
 		if err != nil {
 			return err
 		}
@@ -203,12 +203,12 @@ func (s *scanner) Start() error {
 	return nil
 }
 
-func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
+func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int, error) {
 	if linkID, ok := s.linkIDs[url.String()]; ok {
 		return linkID, nil
 	}
 
-	link, doc := s.loadURL(url)
+	link, doc := s.loadURL(log, url)
 	if err := s.ScanService.LinkDao.Save(link); err != nil {
 		return 0, err
 	}
@@ -218,7 +218,7 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 	}
 
 	if err := s.savePageData(doc, link.ID); err != nil {
-		log.Printf("Could not save page data for link %v: %v", link.ID, err)
+		log.Errorf("Could not save page data for link %v: %v", link.ID, err)
 	}
 
 	if depth > depthLimit || len(s.linkIDs) > totalLimit {
@@ -233,7 +233,7 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 
 		childUrl, err := s.normalizeURL(url, href)
 		if err != nil {
-			log.Printf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			log.Errorf("Could not parse url '%v', on page '%v': %v.", href, url, err)
 			return
 		}
 
@@ -253,7 +253,7 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 
 		childUrl, err := s.normalizeURL(url, href)
 		if err != nil {
-			log.Printf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			log.Errorf("Could not parse url '%v', on page '%v': %v.", href, url, err)
 			return
 		}
 
@@ -273,7 +273,7 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 
 		childUrl, err := s.normalizeURL(url, href)
 		if err != nil {
-			log.Printf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			log.Errorf("Could not parse url '%v', on page '%v': %v.", href, url, err)
 			return
 		}
 
@@ -293,7 +293,7 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 
 		childUrl, err := s.normalizeURL(url, href)
 		if err != nil {
-			log.Printf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			log.Errorf("Could not parse url '%v', on page '%v': %v.", href, url, err)
 			return
 		}
 
@@ -308,7 +308,7 @@ func (s *scanner) scanURL(url *url.URL, depth uint) (int, error) {
 	return link.ID, nil
 }
 
-func (s *scanner) loadURL(url *url.URL) (*common.CrawlLink, *goquery.Document) {
+func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLink, *goquery.Document) {
 	crawlLink := &common.CrawlLink{
 		ScanID:    s.Scan.ID,
 		CreatedAt: time.Now(),
@@ -331,7 +331,7 @@ func (s *scanner) loadURL(url *url.URL) (*common.CrawlLink, *goquery.Document) {
 		if strings.HasSuffix(err.Error(), "context deadline exceeded") {
 			crawlLink.Status = STATUS_TIMEOUT
 		} else {
-			log.Printf("Other error for link %v: %v", url, err)
+			log.Errorf("Other error for link %v: %v", url, err)
 			crawlLink.Status = STATUS_OTHER_ERROR
 			errStr := err.Error()
 			if len(errStr) > 255 {
@@ -341,7 +341,7 @@ func (s *scanner) loadURL(url *url.URL) (*common.CrawlLink, *goquery.Document) {
 		}
 	}
 
-	resp, err, cancel := s.ScanService.LoadService.Load(url.String())
+	resp, err, cancel := s.ScanService.LoadService.Load(log, url.String())
 	defer cancel()
 	if err != nil {
 		handleError(err)

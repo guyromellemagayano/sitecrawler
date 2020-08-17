@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
@@ -14,7 +13,9 @@ func main() {
 	port := common.Env("PORT", "8000")
 	env := common.Env("ENV", "dev")
 
-	db := common.NewDatabase(env)
+	log := common.NewLog(env, "https://db4f18a5b0ef4334a81f275e6d443e0b@o432365.ingest.sentry.io/5394447")
+
+	db := common.NewDatabase(log, env)
 	defer db.Close()
 
 	awsSession, err := common.NewAwsSession(env)
@@ -51,13 +52,13 @@ func main() {
 		LoadService:       loadService,
 	}
 
-	http.Handle("/verify", &VerifyEndpoint{VerifyService: verifyService})
+	http.Handle("/verify", common.WrapEndpoint(log, &VerifyEndpoint{VerifyService: verifyService}))
 
 	for i := 0; i < numScanWorkers; i++ {
-		go ScanWorker(scanSqsQueue, scanService)
+		go ScanWorker(log, scanSqsQueue, scanService)
 	}
 
 	listen := fmt.Sprintf(":%s", port)
-	log.Printf("Listening on: %s", listen)
+	log.Infof("Listening on: %s", listen)
 	log.Fatal(http.ListenAndServe(listen, nil))
 }

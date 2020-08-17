@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 )
@@ -10,7 +9,9 @@ import (
 func main() {
 	env := common.Env("ENV", "dev")
 
-	db := common.NewDatabase(env)
+	log := common.NewLog(env, "https://c61626f98dcd4b43a8352c3b0c35e184@o432365.ingest.sentry.io/5394539")
+
+	db := common.NewDatabase(log, env)
 	defer db.Close()
 
 	awsSession, err := common.NewAwsSession(env)
@@ -33,7 +34,7 @@ func main() {
 		ScanSqsQueue: scanSqsQueue,
 	}
 
-	go ScheduleWorker(groupSettingsDao, siteDao, scanDao, scanService)
+	go ScheduleWorker(log, groupSettingsDao, siteDao, scanDao, scanService)
 
 	select {}
 }

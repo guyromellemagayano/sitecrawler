@@ -1,12 +1,12 @@
 package common
 
 import (
-	"log"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"go.uber.org/zap"
 )
 
 var (
@@ -54,7 +54,7 @@ func NewSQSService(awsSession *session.Session, queue string) (*SQSService, erro
 	}, nil
 }
 
-func (s *SQSService) Read() (*SQSMessage, error) {
+func (s *SQSService) Read(log *zap.SugaredLogger) (*SQSMessage, error) {
 	for {
 		response, err := s.Sqs.ReceiveMessage(&sqs.ReceiveMessageInput{
 			QueueUrl:          s.url,
@@ -73,7 +73,7 @@ func (s *SQSService) Read() (*SQSMessage, error) {
 			msg:  response.Messages[0],
 			done: make(chan bool),
 		}
-		go sqsMsg.startPinger()
+		go sqsMsg.startPinger(log)
 		return sqsMsg, nil
 	}
 }
@@ -105,7 +105,7 @@ func (m *SQSMessage) Done() error {
 	return err
 }
 
-func (m *SQSMessage) startPinger() {
+func (m *SQSMessage) startPinger(log *zap.SugaredLogger) {
 	ticker := time.NewTicker(PingInterval)
 	defer ticker.Stop()
 	for {
@@ -114,7 +114,7 @@ func (m *SQSMessage) startPinger() {
 			return
 		case <-ticker.C:
 			if err := m.ping(); err != nil {
-				log.Printf("Sqs ping failed: %v", err)
+				log.Errorf("Sqs ping failed: %v", err)
 			}
 		}
 	}

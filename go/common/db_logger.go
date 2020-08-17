@@ -1,15 +1,16 @@
 package common
 
 import (
-	"log"
-
 	"github.com/go-pg/pg"
+	"go.uber.org/zap"
 )
 
-type DbLogger struct{}
+type DbLogger struct {
+	Log *zap.SugaredLogger
+}
 
 func (d DbLogger) BeforeQuery(q *pg.QueryEvent) {}
 
 func (d DbLogger) AfterQuery(q *pg.QueryEvent) {
-	log.Println(q.FormattedQuery())
+	d.Log.Info(q.FormattedQuery())
 }

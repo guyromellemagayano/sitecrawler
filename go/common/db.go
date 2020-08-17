@@ -1,8 +1,11 @@
 package common
 
-import "github.com/go-pg/pg"
+import (
+	"github.com/go-pg/pg"
+	"go.uber.org/zap"
+)
 
-func NewDatabase(env string) *pg.DB {
+func NewDatabase(log *zap.SugaredLogger, env string) *pg.DB {
 	dbPass := Env("DB_PASS", "crawldev")
 	var pgOptions *pg.Options
 	if env == "production" {
@@ -22,7 +25,7 @@ func NewDatabase(env string) *pg.DB {
 	}
 	db := pg.Connect(pgOptions)
 	if Env("LOG_SQL", "false") == "true" {
-		db.AddQueryHook(DbLogger{})
+		db.AddQueryHook(DbLogger{log})
 	}
 	return db
 }

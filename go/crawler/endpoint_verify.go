@@ -2,8 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
+
+	"go.uber.org/zap"
 )
 
 type VerifyEndpoint struct {
@@ -17,10 +18,10 @@ type VerifyRequest struct {
 type VerifyResponse struct {
 }
 
-func (v *VerifyEndpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (v *VerifyEndpoint) ServeHTTP(log *zap.SugaredLogger, w http.ResponseWriter, r *http.Request) error {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
+		return nil
 	}
 	defer r.Body.Close()
 
@@ -30,20 +31,19 @@ func (v *VerifyEndpoint) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&request); err != nil {
 		http.Error(w, "Bad request", http.StatusBadRequest)
-		return
+		return nil
 	}
 
-	err := v.VerifyService.VerifySite(request.SiteID)
+	err := v.VerifyService.VerifySite(log.With("site_id", request.SiteID), request.SiteID)
 	if err != nil {
-		log.Printf("Could not verify site: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
+		return err
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(response); err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
+		return err
 	}
+
+	return nil
 }

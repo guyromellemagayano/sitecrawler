@@ -1,21 +1,23 @@
 package main
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
+	"go.uber.org/zap"
 )
 
-func ScanWorker(scanSqsQueue *common.SQSService, scanService *ScanService) {
+func ScanWorker(log *zap.SugaredLogger, scanSqsQueue *common.SQSService, scanService *ScanService) {
 	loop := func() error {
-		msg, err := scanSqsQueue.Read()
+		defer common.PanicLogger(log)
+
+		msg, err := scanSqsQueue.Read(log)
 		if err != nil {
 			return err
 		}
 		defer func() {
 			if err := msg.Done(); err != nil {
-				log.Printf("Scan done failed: %v", err)
+				log.Errorf("Scan done failed: %v", err)
 			}
 		}()
 
@@ -24,7 +26,7 @@ func ScanWorker(scanSqsQueue *common.SQSService, scanService *ScanService) {
 			return err
 		}
 
-		err = scanService.ScanSite(id)
+		err = scanService.ScanSite(log.With("scan_id", id), id)
 		if err != nil {
 			return err
 		}
@@ -33,7 +35,7 @@ func ScanWorker(scanSqsQueue *common.SQSService, scanService *ScanService) {
 	}
 	for {
 		if err := loop(); err != nil {
-			log.Printf("Scan failed: %v", err)
+			log.Errorf("Scan failed: %v", err)
 		}
 	}
 }
