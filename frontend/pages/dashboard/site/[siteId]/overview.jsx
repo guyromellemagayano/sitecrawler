@@ -79,7 +79,7 @@ const SitesDashboard = () => {
       throw new Error(data.message)
     }
 
-    console.log('[onCrawlHandler]', data)
+    // console.log('[onCrawlHandler]', data)
   
     return data
   }

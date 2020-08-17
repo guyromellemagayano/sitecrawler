@@ -96,7 +96,7 @@ const SeoDetail = () => {
   {siteError && <Layout>{siteError.message}</Layout>}
   {userError && <Layout>{userError.message}</Layout>}
 
-  console.log(pageLocation)
+  // console.log(pageLocation)
 
 	return (
     <Layout>
