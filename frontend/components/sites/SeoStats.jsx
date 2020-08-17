@@ -14,13 +14,13 @@ const SitesSeoStats = props => {
 			<div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
 				<div className={`flex justify-between px-4 py-5 mb-5 sm:p-6`}>
 					<div className="flex items-center">
-						<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="search w-5 h-5 text-gray-900 mr-2">
+						<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className={`search w-5 h-5 text-gray-900 mr-2`}>
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
 						</svg>
 						<h2 className={`text-lg font-bold leading-7 text-gray-900`}>SEO</h2>
 					</div>
 					<div>
-						<Link href={``} as={``}>
+						<Link href={`/dashboard/site/[siteId]/seo`} as={`/dashboard/site/${props.url.siteId}/seo`}>
 							<a className={`text-sm leading-5 font-medium text-gray-500 hover:underline`}>
 								Details
 							</a>
