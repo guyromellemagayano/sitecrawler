@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 import requests
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -92,6 +94,14 @@ elif env == "production":
 else:
     raise Exception(f"Unknown env: {env}")
 
+
+if env != "dev":
+    sentry_sdk.init(
+        dsn="https://90c7ff164eee42279efb2d6c7d19b358@o432365.ingest.sentry.io/5394436",
+        integrations=[DjangoIntegration()],
+        environment=env,
+        send_default_pii=True,
+    )
 
 # add ec2 ip to allowed hosts for alb healthchecks
 try:
