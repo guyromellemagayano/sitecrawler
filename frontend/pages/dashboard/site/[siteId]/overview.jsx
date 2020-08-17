@@ -178,11 +178,11 @@ const SitesDashboard = () => {
                       onCrawl={onCrawlHandler}
                       crawlable={recrawlable}
                     />
-                    {/* <SitesSeoStats
+                    <SitesSeoStats
                       url={query}
-                    /> */}
+                    />
                   </div>
-                  {/* <div className={`grid grid-cols-3 gap-8`}>
+                  <div className={`grid grid-cols-3 gap-8`}>
                     <SitesPagesStats
                       url={query}
                     />
@@ -192,7 +192,7 @@ const SitesDashboard = () => {
                     <SitesImagesStats
                       url={query}
                     />
-                  </div> */}
+                  </div>
                 </div>
               </main>
             </div>
