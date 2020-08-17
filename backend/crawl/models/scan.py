@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import F, OuterRef
+from django.db.models import F, OuterRef, Q
 from django.db.models.query import QuerySet
 
 from crawl.common import SubQueryCount
@@ -14,6 +14,10 @@ class ScanQuerySet(QuerySet):
         images = Link.objects.filter(image_pages__scan_id=OuterRef("pk"))
         scripts = Link.objects.filter(script_pages__scan_id=OuterRef("pk"))
         stylesheets = Link.objects.filter(stylesheet_pages__scan_id=OuterRef("pk"))
+        seo_ok_pages = pages.exclude(
+            Q(pagedata__title="") | Q(pagedata__description="") | Q(pagedata__h1_first="") | Q(pagedata__h2_first="")
+        )
+        big_pages = Link.objects.filter(scan_id=OuterRef("pk")).pages().filter(size_total__gt=1024 * 1024)
         return (
             self.annotate(num_pages=SubQueryCount(pages))
             .annotate(num_external_links=SubQueryCount(external_links))
@@ -29,12 +33,14 @@ class ScanQuerySet(QuerySet):
             .annotate(num_stylesheets=SubQueryCount(stylesheets))
             .annotate(num_ok_stylesheets=SubQueryCount(stylesheets.filter(status=Link.STATUS_OK)))
             .annotate(num_non_ok_stylesheets=F("num_stylesheets") - F("num_ok_stylesheets"))
+            .annotate(num_pages_seo_ok=SubQueryCount(seo_ok_pages))
             .annotate(num_pages_without_title=SubQueryCount(pages.filter(pagedata__title="")))
             .annotate(num_pages_without_description=SubQueryCount(pages.filter(pagedata__description="")))
             .annotate(num_pages_without_h1_first=SubQueryCount(pages.filter(pagedata__h1_first="")))
             .annotate(num_pages_without_h1_second=SubQueryCount(pages.filter(pagedata__h1_second="")))
             .annotate(num_pages_without_h2_first=SubQueryCount(pages.filter(pagedata__h2_first="")))
             .annotate(num_pages_without_h2_second=SubQueryCount(pages.filter(pagedata__h2_second="")))
+            .annotate(num_pages_big=SubQueryCount(big_pages))
         )
 
 
