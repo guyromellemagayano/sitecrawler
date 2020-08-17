@@ -179,26 +179,18 @@ const SitesDashboard = () => {
                       crawlable={recrawlable}
                     />
                     <SitesSeoStats
-                      url={site.url}
-                      onCrawl={onCrawlHandler}
-                      crawlable={recrawlable}
+                      url={query}
                     />
                   </div>
                   <div className={`grid grid-cols-3 gap-8`}>
                     <SitesPagesStats
-                      url={site.url}
-                      onCrawl={onCrawlHandler}
-                      crawlable={recrawlable}
+                      url={query}
                     />
                     <SitesLinksStats
-                      url={site.url}
-                      onCrawl={onCrawlHandler}
-                      crawlable={recrawlable}
+                      url={query}
                     />
                     <SitesImagesStats
-                      url={site.url}
-                      onCrawl={onCrawlHandler}
-                      crawlable={recrawlable}
+                      url={query}
                     />
                   </div>
                 </div>
