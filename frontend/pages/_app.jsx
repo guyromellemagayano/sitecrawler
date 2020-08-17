@@ -5,8 +5,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 
 import 'css/styles.css'
-import "nprogress/nprogress.css";
-import 'react-vis/dist/style.css'
+import 'nprogress/nprogress.css';
+// import 'react-vis/dist/style.css'
 
 library.add(fab)
 
@@ -23,9 +23,9 @@ const App = ({ Component, pageProps }) => {
       value={{
         fetcher: fetchJson,
         revalidateOnFocus: true,
-        onError: (err) => {
-          console.error(err)
-        },
+        // onError: (err) => {
+        //   console.error(err)
+        // },
       }}
     >
       <TopProgressBar />
