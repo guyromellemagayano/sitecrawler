@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 )
 
@@ -19,7 +20,8 @@ type SQSService struct {
 	url *string
 }
 
-func NewSQSService(Sqs *sqs.SQS, queue string) (*SQSService, error) {
+func NewSQSService(awsSession *session.Session, queue string) (*SQSService, error) {
+	Sqs := sqs.New(awsSession)
 	result, err := Sqs.GetQueueUrl(&sqs.GetQueueUrlInput{
 		QueueName: &queue,
 	})
