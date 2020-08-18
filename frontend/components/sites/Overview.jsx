@@ -112,9 +112,9 @@ const SitesOverview = props => {
                   Site Status
                 </dt>
                 <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
-                  <SiteSuccessStatus 
-                    text={`Verified`}
-                  />
+                  {
+                    props.verified ? <SiteSuccessStatus text={`Verified`} /> : <SiteDangerStatus text={`Unverified`} />
+                  }
                 </dd>
               </div>
               <div className={`sm:col-span-1`}>
@@ -142,9 +142,9 @@ const SitesOverview = props => {
                   Crawl Status
                 </dt>
                 <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
-                  <SiteWarningStatus 
-                    text={`In Progress`}
-                  />
+                  {
+                    props.crawlFinished ? <SiteSuccessStatus text={`Finished`} /> : <SiteWarningStatus text={`In Progress`} />
+                  }
                 </dd>
               </div>
             </dl>

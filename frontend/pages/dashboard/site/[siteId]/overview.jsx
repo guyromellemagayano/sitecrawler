@@ -43,6 +43,7 @@ const SitesDashboardDiv = styled.section``
 const SitesDashboard = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const [recrawlable, setRecrawlable] = useState(false)
+  const [crawlFinished, setCrawlFinished] = useState(false)
   const pageTitle = 'Overview |'
 
   const { user: user, userError: userError } = useUser({
@@ -85,8 +86,10 @@ const SitesDashboard = () => {
   }
 
   const crawlableHandler = (finished) => {
-    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified && finished)
+    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified && finished) {
       setRecrawlable(true)
+      setCrawlFinished(true)
+    }
     else
       setRecrawlable(false)
   }
@@ -177,6 +180,7 @@ const SitesDashboard = () => {
                       finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
                       onCrawl={onCrawlHandler}
                       crawlable={recrawlable}
+                      crawlFinished={crawlFinished}
                     />
                     <SitesSeoStats
                       url={query}
