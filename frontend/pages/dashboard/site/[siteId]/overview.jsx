@@ -86,10 +86,11 @@ const SitesDashboard = () => {
   }
 
   const crawlableHandler = (finished) => {
-    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified && finished) {
-      setRecrawlable(true)
+    if(finished)
       setCrawlFinished(true)
-    }
+
+    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified && finished)
+      setRecrawlable(true)
     else
       setRecrawlable(false)
   }
