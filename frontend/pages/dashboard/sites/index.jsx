@@ -1,80 +1,70 @@
-import { Fragment, useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import LogRocket from 'logrocket'
-import setupLogRocketReact from 'logrocket-react'
-import Cookies from 'js-cookie'
-import Head from 'next/head'
-import styled from 'styled-components'
-import PropTypes from 'prop-types'
-import Skeleton from 'react-loading-skeleton'
-import useSWR from 'swr'
-import DataTableHeadsContent from 'public/data/data-table-heads.json'
-import useUser from 'hooks/useUser'
-import Layout from 'components/Layout'
-import MobileSidebar from 'components/sidebar/MobileSidebar'
-import MainSidebar from 'components/sidebar/MainSidebar'
-import AddSite from 'components/sites/AddSite'
-import DataTable from 'components/sites/DataTable'
-import Pagination from 'components/sites/Pagination'
-
-if (typeof window !== 'undefined') {
-  LogRocket.init('epic-design-labs/link-app');
-  setupLogRocketReact(LogRocket);
-}
+import { Fragment, useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
+import Head from "next/head";
+import styled from "styled-components";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import useSWR from "swr";
+import DataTableHeadsContent from "public/data/data-table-heads.json";
+import useUser from "hooks/useUser";
+import Layout from "components/Layout";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import MainSidebar from "components/sidebar/MainSidebar";
+import AddSite from "components/sites/AddSite";
+import DataTable from "components/sites/DataTable";
+import Pagination from "components/sites/Pagination";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      "Accept": "application/json",
+      Accept: "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
-  })
+  });
 
-  const data = await res.json()
+  const data = await res.json();
 
   if (res.status !== 200) {
-    throw new Error(data.message)
+    throw new Error(data.message);
   }
 
-  return data
-}
+  return data;
+};
 
-const SitesDiv = styled.section``
+const SitesDiv = styled.section``;
 
-const Sites = props => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const [userLoaded, setUserLoaded] = useState(false)
-  const pageTitle = "Sites"
-  const sitesApiEndpoint = props.page !== undefined ? '/api/site/?page=' + props.page : '/api/site/'
-  const router = useRouter()
+const Sites = (props) => {
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [userLoaded, setUserLoaded] = useState(false);
+  const pageTitle = "Sites";
+  const sitesApiEndpoint =
+    props.page !== undefined ? "/api/site/?page=" + props.page : "/api/site/";
+  const router = useRouter();
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
-    redirectIfFound: false
-  })
+    redirectTo: "/login",
+    redirectIfFound: false,
+  });
 
   useEffect(() => {
-    if(user && user !== undefined && user.username) {
-      setUserLoaded(true)
+    if (user && user !== undefined && user.username) {
+      setUserLoaded(true);
     }
-  }, [user])
-  
+  }, [user]);
+
   const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher, {
     refreshInterval: 1000,
-  })
+  });
 
-  if (user) {
-    LogRocket.identify('epic-design-labs/link-app', {
-      name: user.first_name + ' ' + user.last_name,
-      email: user.email,
-    })
-  } else {
-    return null
+  {
+    userError ||
+      (siteError && (
+        <Layout>{userError?.message || siteError?.message}</Layout>
+      ));
   }
-
-  {userError || siteError && <Layout>{userError.message || siteError.message}</Layout>}
 
   return (
     <Layout>
@@ -93,7 +83,12 @@ const Sites = props => {
                 <button
                   className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                   aria-label={`Open sidebar`}
-                  onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
+                  onClick={() =>
+                    setTimeout(
+                      () => setOpenMobileSidebar(!openMobileSidebar),
+                      150
+                    )
+                  }
                 >
                   <svg
                     className={`h-6 w-5`}
@@ -114,10 +109,16 @@ const Sites = props => {
                 className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
                 tabIndex={`0`}
               >
-                <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-                  <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                <div
+                  className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+                >
+                  <div
+                    className={`mt-2 md:flex md:items-center md:justify-between`}
+                  >
                     <div className={`flex-1 min-w-0`}>
-                      <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                      <h2
+                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
+                      >
                         Sites
                       </h2>
                     </div>
@@ -152,10 +153,15 @@ const Sites = props => {
                               </tr>
                             </thead>
                             <tbody className={`bg-white`}>
-                              {site.results ?
-                                site.results.map((val, key) => (
-                                  <DataTable key={key} site={val} user={user} />
-                                )) : null}
+                              {site.results
+                                ? site.results.map((val, key) => (
+                                    <DataTable
+                                      key={key}
+                                      site={val}
+                                      user={user}
+                                    />
+                                  ))
+                                : null}
                             </tbody>
                           </table>
                         </div>
@@ -165,10 +171,9 @@ const Sites = props => {
 
                   <Pagination
                     pathName={router.pathname}
-                    apiEndpoint={sitesApiEndpoint} 
+                    apiEndpoint={sitesApiEndpoint}
                     page={props.page ? props.page : 0}
                   />
-
                 </div>
               </main>
             </div>
@@ -176,20 +181,20 @@ const Sites = props => {
         </Fragment>
       ) : null}
     </Layout>
-  )
-}
+  );
+};
 
 Sites.getInitialProps = ({ query }) => {
   return {
     page: query.page,
-  }
-}
+  };
+};
 
-export default Sites
+export default Sites;
 
 Sites.propTypes = {
   openMobileSidebar: PropTypes.bool,
   pageTitle: PropTypes.string,
   sitesApiEndpoint: PropTypes.string,
   router: PropTypes.elementType,
-}
+};

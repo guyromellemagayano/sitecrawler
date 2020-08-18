@@ -1,104 +1,103 @@
-import { Fragment, useEffect, useState } from 'react'
-import Cookies from 'js-cookie'
-import Router from 'next/router'
-import Head from 'next/head'
-import Link from 'next/link'
-import styled from 'styled-components'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import PropTypes from 'prop-types'
-import useUser from 'hooks/useUser'
-import Layout from 'components/Layout'
-import LogoLabel from 'components/form/LogoLabel'
-import { useRouter } from 'next/router'
+import { Fragment, useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import Router from "next/router";
+import Head from "next/head";
+import Link from "next/link";
+import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PropTypes from "prop-types";
+import useUser from "hooks/useUser";
+import Layout from "components/Layout";
+import LogoLabel from "components/form/LogoLabel";
+import { useRouter } from "next/router";
 
-const LoginDiv = styled.div``
+const LoginDiv = styled.div``;
 
 const Login = () => {
-  const { query } = useRouter()
+  const { query } = useRouter();
 
-  const [errorMsg, setErrorMsg] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [errorUsernameMsg, setErrorUsernameMsg] = useState('')
-  const [errorPasswordMsg, setErrorPasswordMsg] = useState('')
-  const [disableLoginForm, setDisableLoginForm] = useState(false)
-  const [redirectTo, setRedirectTo] = useState('/dashboard/sites')
-  const pageTitle = 'Login'
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorUsernameMsg, setErrorUsernameMsg] = useState("");
+  const [errorPasswordMsg, setErrorPasswordMsg] = useState("");
+  const [disableLoginForm, setDisableLoginForm] = useState(false);
+  const [redirectTo, setRedirectTo] = useState("/dashboard/sites");
+  const pageTitle = "Login";
 
   const { mutateUser } = useUser({
     redirectTo: redirectTo,
-    redirectIfFound: true
-  })
+    redirectIfFound: true,
+  });
 
   useEffect(() => {
-    if(Cookies.get("errLogin")) {
-      setErrorMsg(Cookies.get("errLogin"))
-      Cookies.remove("errLogin")
+    if (Cookies.get("errLogin")) {
+      setErrorMsg(Cookies.get("errLogin"));
+      Cookies.remove("errLogin");
     }
-    
-    if(query.redirect !== undefined)
-      setRedirectTo(query.redirect)
-  }, [])
+
+    if (query.redirect !== undefined) setRedirectTo(query.redirect);
+  }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (errorMsg) setErrorMsg('')
-    if (successMsg) setSuccessMsg('')
+    if (errorMsg) setErrorMsg("");
+    if (successMsg) setSuccessMsg("");
 
     const body = {
       username: username,
       password: password,
-    }
+    };
 
     try {
-      const response = await fetch('/api/auth/login/', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login/", {
+        method: "POST",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-CSRFToken": Cookies.get("csrftoken"),
         },
         body: JSON.stringify(body),
-      })
+      });
 
-      if (Math.floor(response.status/200) === 1) {
-        setDisableLoginForm(!disableLoginForm)
-        setSuccessMsg("Login Success! Redirecting you to Sites Dashboard")
+      if (Math.floor(response.status / 200) === 1) {
+        setDisableLoginForm(!disableLoginForm);
+        setSuccessMsg("Login Success! Redirecting you to Sites Dashboard");
 
         setTimeout(async () => {
-          const data = await response.json()
+          const data = await response.json();
 
-          mutateUser(data)
-        }, 1500)
+          mutateUser(data);
+        }, 1500);
       } else {
-        throw new Error(await response.text())
+        throw new Error(await response.text());
       }
-    } catch(error) {
+    } catch (error) {
       if (error.response) {
-        console.error(error.response.data)
-        console.error(error.response.status)
-        console.error(error.response.headers)
+        console.error(error.response.data);
+        console.error(error.response.status);
+        console.error(error.response.headers);
       } else if (error.request) {
-        console.error(error.request)
+        console.error(error.request);
       } else {
-        let msg = JSON.parse(error.message)
+        let msg = JSON.parse(error.message);
 
         if (msg.username) {
-          setErrorUsernameMsg(msg.username[0])
+          setErrorUsernameMsg(msg.username[0]);
         }
-        
+
         if (msg.password) {
-          setErrorPasswordMsg(msg.password[0])
+          setErrorPasswordMsg(msg.password[0]);
         }
-        
+
         if (!msg.username && !msg.password && msg.non_field_errors) {
-          setErrorMsg(msg.non_field_errors)
+          setErrorMsg(msg.non_field_errors);
         }
       }
     }
-  }
+  };
 
   return (
     <Layout>
@@ -109,9 +108,7 @@ const Login = () => {
       <LoginDiv
         className={`min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
       >
-        {!disableLoginForm ? (
-          <LogoLabel isLogin />
-        ) : null}
+        {!disableLoginForm ? <LogoLabel isLogin /> : null}
 
         <div className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
           {errorMsg && (
@@ -170,7 +167,9 @@ const Login = () => {
 
           {!disableLoginForm && (
             <Fragment>
-              <div className={`bg-white py-8 px-4 shadow-xs rounded-lg sm:px-10`}>
+              <div
+                className={`bg-white py-8 px-4 shadow-xs rounded-lg sm:px-10`}
+              >
                 <form onSubmit={handleSubmit}>
                   <div className={`mt-1`}>
                     <label
@@ -184,12 +183,20 @@ const Login = () => {
                         id={`username`}
                         type={`text`}
                         name={`username`}
-                        className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${errorUsernameMsg ? "border-red-300" : "border-gray-300"}`}
+                        className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+                          errorUsernameMsg
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
                         aria-describedby={`username`}
                         onChange={(e) => setUsername(e.target.value)}
                       />
                     </div>
-                    <span className={`block mt-2 text-sm leading-5 text-red-700`}>{errorUsernameMsg}</span>
+                    <span
+                      className={`block mt-2 text-sm leading-5 text-red-700`}
+                    >
+                      {errorUsernameMsg}
+                    </span>
                   </div>
 
                   <div className={`mt-6`}>
@@ -204,12 +211,20 @@ const Login = () => {
                         id={`password`}
                         type={`password`}
                         name={`password`}
-                        className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${errorPasswordMsg ? "border-red-300" : "border-gray-300"}`}
+                        className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+                          errorPasswordMsg
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
                         aria-describedby={`password`}
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
-                    <span className={`block mt-2 text-sm leading-5 text-red-700`}>{errorPasswordMsg}</span>
+                    <span
+                      className={`block mt-2 text-sm leading-5 text-red-700`}
+                    >
+                      {errorPasswordMsg}
+                    </span>
                   </div>
 
                   <div className={`mt-6 flex items-center justify-between`}>
@@ -266,7 +281,9 @@ const Login = () => {
 
                   <div className={`mt-6 grid grid-cols-3 gap-3`}>
                     <div>
-                      <span className={`w-full inline-flex rounded-md shadow-xs-sm`}>
+                      <span
+                        className={`w-full inline-flex rounded-md shadow-xs-sm`}
+                      >
                         <a
                           href={`/auth/google/login/`}
                           type={`button`}
@@ -282,7 +299,9 @@ const Login = () => {
                     </div>
 
                     <div>
-                      <span className={`w-full inline-flex rounded-md shadow-xs-sm`}>
+                      <span
+                        className={`w-full inline-flex rounded-md shadow-xs-sm`}
+                      >
                         <Link href="#">
                           <a
                             type={`button`}
@@ -300,7 +319,9 @@ const Login = () => {
                     </div>
 
                     <div>
-                      <span className={`w-full inline-flex rounded-md shadow-xs-sm`}>
+                      <span
+                        className={`w-full inline-flex rounded-md shadow-xs-sm`}
+                      >
                         <Link href="#">
                           <a
                             type={`button`}
@@ -339,13 +360,13 @@ const Login = () => {
         </div>
       </LoginDiv>
     </Layout>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
 
 Login.propTypes = {
   errorMsg: PropTypes.string,
   successMsg: PropTypes.string,
   handleSubmit: PropTypes.func,
-}
+};
