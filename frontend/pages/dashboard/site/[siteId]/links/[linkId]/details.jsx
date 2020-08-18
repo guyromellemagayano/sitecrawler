@@ -103,10 +103,6 @@ const LinkDetail = () => {
   {scanError && <Layout>{scanError.message}</Layout>}
   {siteError && <Layout>{siteError.message}</Layout>}
   {userError && <Layout>{userError.message}</Layout>}
-  {!linkLocation && <Layout>Loading...</Layout>}  
-  {!link && <Layout>Loading...</Layout>}
-  {!site && <Layout>Loading...</Layout>}
-  {!user && <Layout>Loading...</Layout>}
 
 	return (
     <Layout>

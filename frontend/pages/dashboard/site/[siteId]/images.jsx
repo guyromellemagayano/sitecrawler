@@ -167,7 +167,6 @@ const Images = props => {
     updateLinks()
   }
 
-  // FIXME: filterChangeHandler()
   const filterChangeHandler = async (e) => {
     const filterType = e.target.value
     const filterStatus = e.target.checked
@@ -247,7 +246,6 @@ const Images = props => {
     
   }, [])
 
-  // TODO: useEffect[filterChangeHandler]
   useEffect(() => {
     if(props.result.status !== undefined && Array.isArray(props.result.status)) {
       setImageWorkingFilter(false)
