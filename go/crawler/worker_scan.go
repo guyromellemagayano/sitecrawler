@@ -26,16 +26,18 @@ func ScanWorker(log *zap.SugaredLogger, scanSqsQueue *common.SQSService, scanSer
 			return err
 		}
 
-		err = scanService.ScanSite(log.With("scan_id", id), id)
+		log = log.With("scan_id", id)
+		err = scanService.ScanSite(log, id)
 		if err != nil {
-			return err
+			log.Errorf("Scan failed: %v", err)
+			return nil
 		}
 
 		return nil
 	}
 	for {
 		if err := loop(); err != nil {
-			log.Errorf("Scan failed: %v", err)
+			log.Errorf("Scan worker error: %v", err)
 		}
 	}
 }
