@@ -311,7 +311,7 @@ const Pages = props => {
 }
 
 export async function getServerSideProps(context) {
-  console.log('[Query]', context.query)
+  // console.log('[Query]', context.query)
   return {
     props: {
       result: context.query
