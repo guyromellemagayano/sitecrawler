@@ -65,6 +65,7 @@ const SitesDashboard = () => {
   const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`
 
   const onCrawlHandler = async () => {
+    setCrawlFinished(false)
     const res = await fetch(reCrawlEndpoint, {
       method: 'POST',
       headers: {
