@@ -10,6 +10,7 @@ import useUser from "hooks/useUser";
 import Layout from "components/Layout";
 import LogoLabel from "components/form/LogoLabel";
 import { useRouter } from "next/router";
+import SiteHead from 'components/layout/SiteHead'
 
 const LoginDiv = styled.div``;
 
@@ -103,6 +104,7 @@ const Login = () => {
     <Layout>
       <Head>
         <title>{pageTitle}</title>
+        <SiteHead />
       </Head>
 
       <LoginDiv
