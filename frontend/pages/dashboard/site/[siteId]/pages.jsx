@@ -37,7 +37,13 @@ const fetcher = async (url) => {
   return data
 }
 
-const PagesDiv = styled.section``
+const PagesDiv = styled.section`
+  .btn-crawler {
+    top: 0;
+    right: 0;
+    padding: 2.25rem 1.5rem;
+  }
+`
 
 const Pages = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
@@ -49,6 +55,8 @@ const Pages = props => {
   const [issueFilter, setIssueFilter] = useState(false)
   const [googleFilter, setGoogleFilter] = useState(false)
   const [sslFilter, setSslFilter] = useState(false)
+  const [recrawlable, setRecrawlable] = useState(false)
+  const [crawlFinished, setCrawlFinished] = useState(false)
   const pageTitle = 'Pages |'
 
   const { user: user, userError: userError } = useUser({
@@ -160,7 +168,51 @@ const Pages = props => {
       setSearchKey(props.result.search)
   }, [])
 
-  {userError || pageError || scanError || siteError && <Layout>{userError.message || pageError.message || scanError.message || siteError.message}</Layout>}
+  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`
+  
+  const onCrawlHandler = async () => {
+    setCrawlFinished(false)
+    const res = await fetch(reCrawlEndpoint, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
+      },
+    })
+  
+    const data = await res.json()
+  
+    if (res.status !== 200) {
+      throw new Error(data.message)
+    }
+
+    // console.log('[onCrawlHandler]', data)
+  
+    return data
+  }
+
+  const crawlableHandler = (finished) => {
+    if(finished)
+      setCrawlFinished(true)
+
+    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified && finished)
+      setRecrawlable(true)
+    else
+      setRecrawlable(false)
+  }
+
+  useEffect(() => {
+    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified)
+      setRecrawlable(true)
+    else
+      setRecrawlable(false)
+  }, [user, site])
+
+  {userError && <Layout>{userError.message}</Layout>}
+  {pageError && <Layout>{pageError.message}</Layout>}
+  {scanError && <Layout>{scanError.message}</Layout>}
+  {siteError && <Layout>{siteError.message}</Layout>}
 
   return (
     <Layout>
@@ -171,8 +223,8 @@ const Pages = props => {
           </Head>
 
           <PagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
-            <MobileSidebar show={openMobileSidebar} />
-            <MainSidebar />
+            <MobileSidebar show={openMobileSidebar} crawlableHandler={crawlableHandler} />
+            <MainSidebar crawlableHandler={crawlableHandler} />
             
             <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
               <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
@@ -231,6 +283,27 @@ const Pages = props => {
                       </h2>
                     </div>
                   </div>
+                </div>
+                <div className={`btn-crawler absolute mt-4`}>
+                  {
+                    recrawlable ? (
+                      <button
+                        type={`button`}
+                        onClick={onCrawlHandler}
+                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+                      >
+                        Recrawl
+                      </button>
+                    ) : (
+                      <button
+                        disabled={`disabled`}
+                        type={`button`}
+                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
+                      >
+                        Recrawl
+                      </button>
+                    )
+                  }
                 </div>
                 <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
                   <div>
