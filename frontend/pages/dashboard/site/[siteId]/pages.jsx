@@ -257,7 +257,13 @@ const Pages = props => {
                   </div>
                   <LinkOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
                   {/* <PageFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} googleFilter={googleFilter} sslFilter={sslFilter} /> */}
-                  <div className={`pb-4`}>
+                  <Pagination 
+                    href='/dashboard/site/[siteId]/pages'
+                    pathName={pagePath}
+                    apiEndpoint={scanApiEndpoint}
+                    page={props.result.page ? props.result.page : 0}
+                  />
+                  <div className={`py-4`}>
                     <div className={`flex flex-col`}>
                       <div
                         className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
