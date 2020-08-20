@@ -383,6 +383,16 @@ const Links = props => {
     return data
   }
 
+  const crawlableHandler = (finished) => {
+    if(finished)
+      setCrawlFinished(true)
+
+    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified && finished)
+      setRecrawlable(true)
+    else
+      setRecrawlable(false)
+  }
+
   useEffect(() => {
     if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified)
       setRecrawlable(true)
@@ -404,8 +414,8 @@ const Links = props => {
           </Head>
 
           <LinksDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
-            <MobileSidebar show={openMobileSidebar} />
-            <MainSidebar />
+            <MobileSidebar show={openMobileSidebar} crawlableHandler={crawlableHandler} />
+            <MainSidebar crawlableHandler={crawlableHandler} />
 
             <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
               <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>

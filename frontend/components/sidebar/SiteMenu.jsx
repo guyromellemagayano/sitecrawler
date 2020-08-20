@@ -112,6 +112,13 @@ const SiteMenu = props => {
   }
 
   useEffect(() => {
+    if(stats && stats.finished_at)
+      props.crawlableHandler(true)
+    else if(stats && stats.started_at && stats.finished_at == null)
+      props.crawlableHandler(false)
+  }, [stats])
+
+  useEffect(() => {
     siteSelectOnLoad()
   }, [site])
   
