@@ -167,10 +167,10 @@ const Home = () => {
                     className={`px-3 pt-4 flex items-center justify-between`}
                   >
                     <div>
-                      <img
-                        className={`h-8 w-auto`}
-                        src={`/img/logos/workflow-logo-on-white.svg`}
-                        alt={``}
+                      <AppLogo
+                        className={`h-8 w-auto sm:h-10`}
+                        src={`/img/logos/site-logo-dark.svg`}
+                        alt={`app-logo`}
                       />
                     </div>
                     <div className={`-mr-2`}>
