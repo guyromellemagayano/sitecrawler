@@ -5,6 +5,9 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
+import { RadialChart, makeVisFlexible } from 'react-vis';
+
+const FlexRadialChart=makeVisFlexible(RadialChart)
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -47,6 +50,12 @@ const SitesLinksStatsDiv = styled.div`
 				background-color: #BB4338;
 			}
 		}
+	}
+	.stats-graph {
+		height: 220px;
+	}
+	.rv-xy-plot__series--label {
+		fill: #fff;
 	}
 `
 
@@ -129,6 +138,31 @@ const SitesLinksStats = props => {
       "class": `error-3`,
 		},
 	]
+
+	const chartData = [
+		{
+		  angle: stats && stats.num_ok_links,
+		  label: (stats && stats.num_ok_links) !== undefined ? (stats && stats.num_ok_links).toString() : 0,
+		  color: "#19B080",
+		  radius: 1
+		},
+		{
+		  angle: setBrokenLinks('INTERNAL'),
+		  label: setBrokenLinks('INTERNAL') !== undefined ? setBrokenLinks('INTERNAL').toString() : 0,
+		  color: "#EF2917",
+		  radius: 1
+		},
+		{
+		  angle: setBrokenLinks('EXTERNAL'),
+		  label: setBrokenLinks('EXTERNAL') !== undefined ? setBrokenLinks('EXTERNAL').toString() : 0,
+		  color: "#ED5244",
+		  radius: 1.3
+		}
+	]
+
+	const totalErrors = (stats && stats.num_ok_links) +
+						setBrokenLinks('INTERNAL') +
+						setBrokenLinks('EXTERNAL')
 	
 	return (
     <SitesLinksStatsDiv>
@@ -165,7 +199,22 @@ const SitesLinksStats = props => {
         </div>
         <div className={`flex justify-center`}>
 					<div className={`w-full grid gap-4 grid-cols-1 p-5`}>
-						<div className={`stats-graph`}>
+						<div className={`stats-graph flex items-center justify-center`}>
+							<FlexRadialChart
+								animation={true}
+								innerRadius={60}
+								radius={95}
+								showLabels={true}
+								data={chartData}
+								colorType="literal"
+								style={
+								{color: '#fff'}
+								}
+							/>
+							<div className={`absolute p-1 text-center`}>
+								<h3 className={`text-2xl font-semibold`}>{totalErrors}</h3>
+								<p className={`text-sm font-semibold`}>Errors</p>
+							</div>
 						</div>
 						<div className={`stats-details flex items-start justify-between`}>
 							<ul className={`w-full block divide-y divide-gray-400`}>
