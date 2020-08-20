@@ -5,9 +5,8 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
-import { RadialChart, makeVisFlexible } from 'react-vis';
-
-const FlexRadialChart=makeVisFlexible(RadialChart)
+import loadable from '@loadable/component'
+const Chart = loadable(() => import('react-apexcharts'));
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -121,43 +120,23 @@ const SitesSeoStats = props => {
     },
   ]
 
-  const chartData = [
-    {
-      angle: stats && stats.num_pages_seo_ok,
-      label: (stats && stats.num_pages_seo_ok) !== undefined ? (stats && stats.num_pages_seo_ok).toString() : 0,
-      color: "#19B080",
-      radius: 1
+  const chartSeries = [100, 100, 100, 10, 100]
+  const chartOptions = {
+    chart: {
+      type: 'donut',
     },
-    {
-      angle: stats && stats.num_pages_without_title,
-      label: (stats && stats.num_pages_without_title) !== undefined ? (stats && stats.num_pages_without_title).toString() : 0,
-      color: "#EF2917",
-      radius: 1
-    },
-    {
-      angle: stats && stats.num_pages_without_description,
-      label: (stats && stats.num_pages_without_description) !== undefined ? (stats && stats.num_pages_without_description).toString() : 0,
-      color: "#ED5244",
-      radius: 1.3
-    },
-    {
-      angle: stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second),
-      label: (stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second)) !== undefined ? (stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second)).toString() : 0,
-      color: "#BB4338",
-      radius: 1
-    },
-    {
-      angle: stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second),
-      label: (stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second)) !== undefined ? (stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second)).toString() : 0,
-      color: "#2D99FF",
-      radius: 1
-    }
-  ];
-
-  const totalErrors = (stats && stats.num_pages_without_title) + 
-                      (stats && stats.num_pages_without_description) + 
-                      (stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second)) + 
-                      (stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second))
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }]
+  }
 
   { statsError && <Layout>{statsError.message}</Layout> }
   { scanError && <Layout>{scanError.message}</Layout> }
@@ -196,27 +175,11 @@ const SitesSeoStats = props => {
           </div>
         </div>
         <div className={`flex justify-center`}>
-          <div className={`w-full grid gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 p-5`}>
+          <div className={`w-full grid gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 p-5`}>
             <div className={`stats-graph flex items-center justify-center`}>
-              <FlexRadialChart
-                labelsAboveChildren={true}
-                labelsRadiusMultiplier={1}
-                animation={true}
-                innerRadius={60}
-                radius={95}
-                showLabels={true}
-                data={chartData}
-                colorType="literal"
-                style={
-                  {color: '#fff'}
-                }
-              />
-              <div className={`absolute p-1 text-center`}>
-                <h3 className={`text-2xl font-semibold`}>{totalErrors}</h3>
-                <p className={`text-sm font-semibold`}>Errors</p>
-              </div>
+              <Chart options={chartOptions} series={chartSeries} type="donut" />
             </div>
-            <div className={`stats-details flex items-start justify-between`}>
+            {/* <div className={`stats-details flex items-start justify-between`}>
               <ul className={`w-full block divide-y divide-gray-400`}>
                 {data.map((val, key) => {
                   return (
@@ -230,7 +193,7 @@ const SitesSeoStats = props => {
                   )
                 })}
               </ul>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
