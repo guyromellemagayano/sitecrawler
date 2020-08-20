@@ -11,7 +11,7 @@ import AppLogo from 'components/logo/AppLogo'
 
 const MainSidebarDiv = styled.aside``
 
-const MainSidebar = () => {
+const MainSidebar = props => {
   const [windowSiteLocation, setWindowSiteLocation] = useState(false)
   const [windowSettingsLocation, setWindowSettingsLocation] = useState(false)
 
@@ -47,7 +47,7 @@ const MainSidebar = () => {
                   </a>
                 </Link>
               </div>
-              {windowSiteLocation ? <SiteMenu /> : (windowSettingsLocation ? <SettingsMenu /> : <PrimaryMenu />)}
+              {windowSiteLocation ? <SiteMenu crawlableHandler={props.crawlableHandler} /> : (windowSettingsLocation ? <SettingsMenu /> : <PrimaryMenu />)}
             </div>
             <ProfileSidebar />
           </div>
