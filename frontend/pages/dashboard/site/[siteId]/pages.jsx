@@ -45,6 +45,7 @@ const Pages = props => {
   const [searchKey, setSearchKey] = useState('')
   const [pagePath, setPagePath] = useState('')
   const [allFilter, setAllFilter] = useState(false)
+  const [sizeFilter, setSizeFilter] = useState(false)
   const [issueFilter, setIssueFilter] = useState(false)
   const [googleFilter, setGoogleFilter] = useState(false)
   const [sslFilter, setSslFilter] = useState(false)
@@ -127,27 +128,27 @@ const Pages = props => {
     updatePages()
   }
 
-  const filterChangeHandler = (e) => {
-    const filterType = e.target.value
-    const filterStatus = e.target.checked
+  // const filterChangeHandler = (e) => {
+  //   const filterType = e.target.value
+  //   const filterStatus = e.target.checked
 
-    let newPath = asPath
+  //   let newPath = asPath
 
-    if(filterType == 'issues' && filterStatus == true) {
-      setIssueFilter(true)
-      setAllFilter(false)
-      newPath = removeURLParameter(newPath, 'page')
+  //   if(filterType == 'issues' && filterStatus == true) {
+  //     setIssueFilter(true)
+  //     setAllFilter(false)
+  //     newPath = removeURLParameter(newPath, 'page')
 
-      if(newPath.includes("?"))
-        newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
-      else
-        newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
-    }
-    else if(filterType == 'issues' && filterStatus == false) {
-      newPath = removeURLParameter(newPath, 'status')
-      setIssueFilter(false)
-    }
-  }
+  //     if(newPath.includes("?"))
+  //       newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+  //     else
+  //       newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+  //   }
+  //   else if(filterType == 'issues' && filterStatus == false) {
+  //     newPath = removeURLParameter(newPath, 'status')
+  //     setIssueFilter(false)
+  //   }
+  // }
 
   useEffect(() => {    
     if(removeURLParameter(asPath, 'page').includes("?"))
@@ -256,7 +257,13 @@ const Pages = props => {
                   </div>
                   <LinkOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
                   {/* <PageFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} googleFilter={googleFilter} sslFilter={sslFilter} /> */}
-                  <div className={`pb-4`}>
+                  <Pagination 
+                    href='/dashboard/site/[siteId]/pages'
+                    pathName={pagePath}
+                    apiEndpoint={scanApiEndpoint}
+                    page={props.result.page ? props.result.page : 0}
+                  />
+                  <div className={`py-4`}>
                     <div className={`flex flex-col`}>
                       <div
                         className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}

@@ -393,7 +393,13 @@ const Images = props => {
                     imageWorkingFilter={imageWorkingFilter}
                     imageNotWorkingFilter={imageNotWorkingFilter}
                   />
-                  <div className={`pb-4`}>
+                  <Pagination
+                    href="/dashboard/site/[siteId]/images"
+                    pathName={pagePath}
+                    apiEndpoint={scanApiEndpoint}
+                    page={props.result.page ? props.result.page : 0}
+                  />
+                  <div className={`py-4`}>
                     <div className={`flex flex-col`}>
                       <div
                         className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}

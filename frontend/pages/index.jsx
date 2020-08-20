@@ -6,6 +6,7 @@ import PropTypes from "prop-types"
 import useUser from "hooks/useUser"
 import Transition from "hooks/Transition"
 import AppLogo from 'components/logo/AppLogo'
+import SiteHead from 'components/layout/SiteHead'
 
 const Home = () => {
   const { user } = useUser({ redirectTo: "/dashboard/sites", redirectIfFound: true })
@@ -15,7 +16,7 @@ const Home = () => {
     <Layout>
       <Head>
         <title>Home</title>
-        <link rel="icon" href="/favicon.ico" />
+        <SiteHead />
       </Head>
 
       <div className={`relative bg-white overflow-hidden`}>
@@ -166,10 +167,10 @@ const Home = () => {
                     className={`px-3 pt-4 flex items-center justify-between`}
                   >
                     <div>
-                      <img
-                        className={`h-8 w-auto`}
-                        src={`/img/logos/workflow-logo-on-white.svg`}
-                        alt={``}
+                      <AppLogo
+                        className={`h-8 w-auto sm:h-10`}
+                        src={`/img/logos/site-logo-dark.svg`}
+                        alt={`app-logo`}
                       />
                     </div>
                     <div className={`-mr-2`}>

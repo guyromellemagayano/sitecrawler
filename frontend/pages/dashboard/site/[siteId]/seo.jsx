@@ -486,7 +486,13 @@ const Seo = props => {
                     noH2First={noH2First} 
                     noH2Second={noH2Second} 
                   />
-                  <div className={`pb-4`}>
+                  <Pagination 
+                    href='/dashboard/site/[siteId]/seo'
+                    pathName={pagePath}
+                    apiEndpoint={scanApiEndpoint}
+                    page={props.result.page ? props.result.page : 0}
+                  />
+                  <div className={`py-4`}>
                     <div className={`flex flex-col`}>
                       <div
                         className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}

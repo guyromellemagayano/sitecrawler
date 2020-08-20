@@ -431,7 +431,13 @@ const Links = props => {
                 <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
                   <LinkOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
                   <LinkFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} internalFilter={internalFilter} externalFilter={externalFilter} />
-                  <div className={`pb-4`}>
+                  <Pagination 
+                    href='/dashboard/site/[siteId]/links'
+                    pathName={pagePath}
+                    apiEndpoint={scanApiEndpoint}
+                    page={props.result.page ? props.result.page : 0}
+                  />
+                  <div className={`py-4`}>
                     <div className={`flex flex-col`}>
                       <div
                         className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
