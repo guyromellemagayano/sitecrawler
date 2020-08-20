@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import fetch from 'node-fetch'
 import useSWR from 'swr'
@@ -64,6 +64,13 @@ const MobileSiteMenu = () => {
         : null,
     fetcher
   )
+
+  useEffect(() => {
+    if(stats && stats.finished_at)
+      props.crawlableHandler(true)
+    else if(stats && stats.started_at && stats.finished_at == null)
+      props.crawlableHandler(false)
+  }, [stats])
   
   return (
     <Fragment>

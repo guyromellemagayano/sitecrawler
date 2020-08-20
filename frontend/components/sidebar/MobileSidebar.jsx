@@ -92,7 +92,7 @@ const MobileSidebar = props => {
 													alt={`app-logo`}
 												/>
 											</div>
-											{windowSiteLocation ? <MobileSiteMenu /> : windowSettingsLocation ? <MobileSettingsMenu /> : <MobilePrimaryMenu />}
+											{windowSiteLocation ? <MobileSiteMenu crawlableHandler={props.crawlableHandler} /> : windowSettingsLocation ? <MobileSettingsMenu /> : <MobilePrimaryMenu />}
 										</div>
 										<ProfileSidebar />
 									</div>
