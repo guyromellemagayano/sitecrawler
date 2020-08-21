@@ -12,8 +12,8 @@ const ImageSorting = props => {
       >
         {props.slug == "image-url" ? (
           <Sorting direction={props.sortOrder.imageUrl} />
-        ) : props.slug == "created-at" ? (
-          <Sorting direction={props.sortOrder.createdAt} />
+        ) : props.slug == "image-size" ? (
+          <Sorting direction={props.sortOrder.imageSize} />
         ) : props.slug == "status" ? (
           <Sorting direction={props.sortOrder.status} />
         ) : props.slug == "http-code" ? (

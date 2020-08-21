@@ -5,9 +5,9 @@
 		"key": "url"
 	},
 	{
-		"label": "Created At",
-		"slug": "created-at",
-		"key": "created_at"
+		"label": "Image Size",
+		"slug": "image-size",
+		"key": "size"
 	},
 	{
 		"label": "Status",
