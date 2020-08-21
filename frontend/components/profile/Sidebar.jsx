@@ -113,16 +113,16 @@ const Sidebar = () => {
                     <span
                       className={`flex justify-between items-center my-1 group px-4 py-2`}
                     >
-                      <span className={`${user.group.name === 'Basic' ? "text-green-800" : user.group.name === 'Pro' ? "text-blue-800" : "text-red-800"} text-sm leading-5 font-medium `}>{user.group.name} Plan</span>
+                      <span className={`${user.group.name === 'Basic' ? "text-green-800" : (user.group.name === 'Pro' || user.group.name === 'Professional') ? "text-blue-800" : "text-red-800"} text-sm leading-5 font-medium`}>{user.group.name} Plan</span>
                       {user.group.name === 'Basic' ? (
                         <Link href="/dashboard/settings/subscriptions">
-                          <a className={`bg-green-200 text-green-800 hover:text-green-600 hover:bg-green-600" text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded transition ease-in-out duration-150`}>
+                          <a className={`bg-green-200 text-green-800 hover:text-white hover:bg-green-600 text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded transition ease-in-out duration-150`}>
                             <small>Upgrade</small>
                           </a>
                         </Link>
                       ) : user.group.name === 'Pro' || user.group.name === 'Professional' ? (
                         <Link href="/dashboard/settings/subscriptions">
-                          <a className={`bg-blue-200 text-blue-800 hover:text-blue-600 hover:bg-blue-600 text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded transition ease-in-out duration-150`}>
+                          <a className={`bg-blue-200 text-blue-800 hover:text-white hover:bg-blue-600 text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded transition ease-in-out duration-150`}>
                             <small>Upgrade</small>
                           </a>
                         </Link>

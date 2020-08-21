@@ -9,6 +9,11 @@ services:
       - crawler
     environment:
       ENV: production
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1M"
+        max-file: "3"
   frontend:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
     restart: always
@@ -19,6 +24,11 @@ services:
     restart: always
     environment:
       ENV: production
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1M"
+        max-file: "3"
   scheduler:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
     restart: always

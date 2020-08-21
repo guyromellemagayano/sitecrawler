@@ -5,6 +5,7 @@ import useSWR from 'swr'
 import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import Url from 'url-parse'
+import bytes from 'bytes'
 import PropTypes from 'prop-types'
 import Moment from 'react-moment'
 import Skeleton from 'react-loading-skeleton';
@@ -118,20 +119,7 @@ const ImagesTable = props => {
 						<td
 							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
 						>
-							<div className={`text-sm leading-5 text-gray-900`}>
-								{!user.settings.disableLocalTime ? (
-									<Moment calendar={calendarStrings} date={props.val.created_at} local />
-								): (
-									<Moment calendar={calendarStrings} date={props.val.created_at} utc />
-								)}
-							</div>
-							<div className={`text-sm leading-5 text-gray-500`}>
-								{!user.settings.disableLocalTime ? (
-									<Moment date={props.val.created_at} format="hh:mm:ss A" local />
-								) : (
-									<Moment date={props.val.created_at} format="hh:mm:ss A" utc />
-								)}
-							</div>
+							{bytes(props.val.size, {thousandsSeparator: ' ', unitSeparator: ' '})}
 						</td>
 						<td
 							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
