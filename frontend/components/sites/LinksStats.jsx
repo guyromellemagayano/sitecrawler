@@ -5,9 +5,8 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
-import { RadialChart, makeVisFlexible } from 'react-vis';
-
-const FlexRadialChart=makeVisFlexible(RadialChart)
+import loadable from '@loadable/component'
+const Chart = loadable(() => import('react-apexcharts'));
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -51,11 +50,33 @@ const SitesLinksStatsDiv = styled.div`
 			}
 		}
 	}
-	.stats-graph {
-		height: 220px;
+	.apexcharts-legend {
+		display: block;
 	}
-	.rv-xy-plot__series--label {
-		fill: #fff;
+	.apexcharts-legend-series {
+		display: flex;
+		align-items: center;
+		border-bottom: 1px solid #E7EFEF;
+		padding-bottom: 10px;
+	}
+	.apexcharts-legend-series:last-child {
+		border: none;
+	  }
+	.apexcharts-legend-text {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+	.apexcharts-legend-marker {
+		margin-right: 10px;
+	}
+	.legend-val {
+		color: #1D2626;
+		font-weight: 600;
+	}
+	.legent-text {
+		margin-right: 10px;
 	}
 `
 
@@ -121,48 +142,80 @@ const SitesLinksStats = props => {
 		return valLength
 	}
 
-	const data = [
-    {
-      "title": "No Issues",
-      "count": stats && stats.num_ok_links,
-      "class": `error-1`,
-		},
-		{
-      "title": "Broken Internal Links",
-      "count": setBrokenLinks('INTERNAL'),
-      "class": `error-2`,
-		},
-		{
-      "title": "Broken External Links",
-      "count": setBrokenLinks('EXTERNAL'),
-      "class": `error-3`,
-		},
+	const chartSeries = [
+		(stats && stats.num_ok_links) !== undefined ? stats && stats.num_ok_links : 0,
+		setBrokenLinks('INTERNAL'),
+		setBrokenLinks('EXTERNAL')
 	]
-
-	const chartData = [
-		{
-		  angle: stats && stats.num_ok_links,
-		  label: (stats && stats.num_ok_links) !== undefined ? (stats && stats.num_ok_links).toString() : 0,
-		  color: "#19B080",
-		  radius: 1
+	
+	const chartOptions = {
+		chart: {
+			type: 'donut'
 		},
-		{
-		  angle: setBrokenLinks('INTERNAL'),
-		  label: setBrokenLinks('INTERNAL') !== undefined ? setBrokenLinks('INTERNAL').toString() : 0,
-		  color: "#EF2917",
-		  radius: 1
+		labels: ['No Issues', 'Broken Internal Links', 'Broken External Links'],
+		colors: ['#19B080', '#EF2917', '#ED5244'],
+		fill: {
+			colors: ['#19B080', '#EF2917', '#ED5244']
 		},
-		{
-		  angle: setBrokenLinks('EXTERNAL'),
-		  label: setBrokenLinks('EXTERNAL') !== undefined ? setBrokenLinks('EXTERNAL').toString() : 0,
-		  color: "#ED5244",
-		  radius: 1.3
-		}
-	]
+		stroke: {
+			width: 0
+		},
+		dataLabels: {
+			enabled: true,
+			formatter: function (val, opts) {
+				return opts.w.config.series[opts.seriesIndex]
+			}
+		},
+		legend: {
+			show: true,
+			fontSize: '14px',
+			position: 'bottom',
+			horizontalAlign: 'center', 
+			height: 210,
+			itemMargin: {
+				horizontal: 15,
+				vertical: 10
+			},
+			formatter: function(seriesName, opts) {
+				return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
+			}
+		},
+		plotOptions: {
+			pie: {
+			donut: {
+				labels: {
+				show: true,
+				total: {
+					show: true,
+					showAlways: true,
+					label: "Errors",
+					fontSize: "25px",
+					color: "#2A324B",
+					formatter: function (val) {
+						let num_errs = 0
+						for(let i=0; i<val.config.series.length; i++) {
+							if(i != 0) num_errs += val.config.series[i]
+						}
 
-	const totalErrors = (stats && stats.num_ok_links) +
-						setBrokenLinks('INTERNAL') +
-						setBrokenLinks('EXTERNAL')
+						return num_errs
+					}
+				}
+				}
+			}
+			}
+		},
+		responsive: [{
+			breakpoint: 480,
+			options: {
+				chart: {
+					width: 400
+				},
+				legend: {
+					position: 'bottom'
+				}
+			}
+		}]
+	}
 	
 	return (
     <SitesLinksStatsDiv>
@@ -198,41 +251,8 @@ const SitesLinksStats = props => {
           </div>
         </div>
         <div className={`flex justify-center`}>
-					<div className={`w-full grid gap-4 grid-cols-1 p-5`}>
-						<div className={`stats-graph flex items-center justify-center`}>
-							<FlexRadialChart
-								animation={true}
-								innerRadius={60}
-								radius={95}
-								showLabels={true}
-								data={chartData}
-								colorType="literal"
-								style={
-								{color: '#fff'}
-								}
-							/>
-							<div className={`absolute p-1 text-center`}>
-								<h3 className={`text-2xl font-semibold`}>{totalErrors}</h3>
-								<p className={`text-sm font-semibold`}>Errors</p>
-							</div>
-						</div>
-						<div className={`stats-details flex items-start justify-between`}>
-							<ul className={`w-full block divide-y divide-gray-400`}>
-								{data.map((val, key) => {
-									return (
-										<li key={key} className={`flex flex-row flex-wrap justify-between items-center py-3`}>
-											<div className="flex flex-grow items-center">
-												<span className={`status-indicator ${val.class} mr-3`}></span>
-												<span className={`status-label text-sm`}>{val.title}</span>
-											</div>
-											<span className="status-count font-medium">{val.count}</span>
-										</li>
-									)
-								})}
-							</ul>
-						</div>
-					</div>
-				</div>
+			<Chart options={chartOptions} series={chartSeries} type="donut" height="530" />
+		</div>
       </div>
     </SitesLinksStatsDiv>
   )

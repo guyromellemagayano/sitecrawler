@@ -28,6 +28,7 @@ const fetcher = async (url) => {
 }
 
 const SitesOverviewDiv = styled.div`
+  height: 100%;
   min-height: 25rem;
 `
 
@@ -80,7 +81,7 @@ const SitesOverview = props => {
         }
       </div>
       <SitesOverviewDiv>
-        <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+        <div className={`bg-white overflow-hidden shadow-xs rounded-lg h-full`}>
           <div className={`px-4 py-5 sm:p-6`}>
             <h2 className={`text-lg font-bold leading-7 text-gray-900 mb-5`}>Site Status</h2>
             <dl className={`mb-8 max-w-xl text-sm leading-5`}>
