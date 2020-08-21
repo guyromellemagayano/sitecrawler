@@ -175,7 +175,7 @@ const SitesDashboard = () => {
                   <div className={`pb-4`}>
                     <SitesStats crawlableHandler={crawlableHandler} />
                   </div>
-                  <div className={`grid grid-cols-2 gap-8`}>
+                  <div className={`grid grid-cols-2 gap-8 pb-10`}>
                     <SitesOverview
                       url={site.url}
                       verified={site.verified}

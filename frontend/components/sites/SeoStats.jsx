@@ -28,6 +28,7 @@ const fetcher = async (url) => {
 }
 
 const SitesSeoStatsDiv = styled.div`
+  height: 100%;
 	.status-indicator {
 		display: block;
 		flex: 0 0 0.85rem;
@@ -53,8 +54,30 @@ const SitesSeoStatsDiv = styled.div`
 			}
 		}
   }
-  .rv-xy-plot__series--label {
-    fill: #fff;
+  .apexcharts-legend-series {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #E7EFEF;
+    padding-bottom: 9px;
+  }
+  .apexcharts-legend-series:last-child {
+    border: none;
+  }
+  .apexcharts-legend-text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .apexcharts-legend-marker {
+    margin-right: 10px;
+  }
+  .legend-val {
+    color: #1D2626;
+    font-weight: 600;
+  }
+  .legent-text {
+    margin-right: 10px;
   }
 `
 
@@ -92,44 +115,76 @@ const SitesSeoStats = props => {
   }
   )
 
-  const data = [
-    {
-      "title": "No Issues",
-      "count": stats && stats.num_pages_seo_ok,
-      "class": `error-1`,
-    },
-    {
-      "title": "Missing Title (H1, H2)",
-      "count": stats && stats.num_pages_without_title,
-      "class": `error-2`,
-    },
-    {
-      "title": "Missing Description",
-      "count": stats && stats.num_pages_without_description,
-      "class": `error-3`,
-    },
-    {
-      "title": "Missing H1",
-      "count": stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second),
-      "class": `error-4`,
-    },
-    {
-      "title": "Missing H2",
-      "count": stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second),
-      "class": `error-5`,
-    },
+  const chartSeries = [
+    (stats && stats.num_pages_seo_ok) !== undefined ? stats && stats.num_pages_seo_ok : 0,
+    (stats && stats.num_pages_without_title) !== undefined ? stats && stats.num_pages_without_title : 0,
+    (stats && stats.num_pages_without_description) !== undefined ? stats && stats.num_pages_without_description : 0,
+    (stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second)) !== undefined ? stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second) : 0,
+    (stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second)) !== undefined ? stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second) : 0
   ]
 
-  const chartSeries = [100, 100, 100, 10, 100]
   const chartOptions = {
     chart: {
       type: 'donut',
     },
+    labels: ['No Issues', 'Missing Title (H1, H2)', 'Missing Description', 'Missing H1', 'Missing H2'],
+    colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#2D99FF'],
+    fill: {
+      colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#2D99FF']
+    },
+    stroke: {
+      width: 0
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function (val, opts) {
+        return opts.w.config.series[opts.seriesIndex]
+      }
+    },
+    legend: {
+      show: true,
+      fontSize: '14px',
+      position: 'right',
+      floating: false,
+      width: 300,
+      horizontalAlign: 'center', 
+      itemMargin: {
+        horizontal: 5,
+        vertical: 5
+      },
+      formatter: function(seriesName, opts) {
+        return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
+      }
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              showAlways: true,
+              label: "Errors",
+              fontSize: "25px",
+              color: "#2A324B",
+              formatter: function (val) {
+                let num_errs = 0
+                for(let i=0; i<val.config.series.length; i++) {
+                  if(i != 0) num_errs += val.config.series[i]
+                }
+
+                return num_errs
+              }
+            }
+          }
+        }
+      }
+    },
     responsive: [{
-      breakpoint: 480,
+      breakpoint: 1315,
       options: {
         chart: {
-          width: 200
+          width: 400
         },
         legend: {
           position: 'bottom'
@@ -143,7 +198,7 @@ const SitesSeoStats = props => {
 
   return (
     <SitesSeoStatsDiv>
-      <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+      <div className={`bg-white overflow-hidden shadow-xs rounded-lg h-full`}>
         <div className={`flex justify-between py-8 px-5`}>
           <div className={`flex items-center`}>
             <svg
@@ -175,26 +230,7 @@ const SitesSeoStats = props => {
           </div>
         </div>
         <div className={`flex justify-center`}>
-          <div className={`w-full grid gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 p-5`}>
-            <div className={`stats-graph flex items-center justify-center`}>
-              <Chart options={chartOptions} series={chartSeries} type="donut" />
-            </div>
-            {/* <div className={`stats-details flex items-start justify-between`}>
-              <ul className={`w-full block divide-y divide-gray-400`}>
-                {data.map((val, key) => {
-                  return (
-                    <li key={key} className={`flex flex-row flex-wrap justify-between items-center py-3`}>
-                      <div className="flex flex-grow items-center">
-                        <span className={`status-indicator ${val.class} mr-3`}></span>
-                        <span className={`status-label text-sm`}>{val.title}</span>
-                      </div>
-                      <span className="status-count font-medium">{val.count}</span>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div> */}
-          </div>
+          <Chart options={chartOptions} series={chartSeries} type="donut" width="600" height="260" />
         </div>
       </div>
     </SitesSeoStatsDiv>

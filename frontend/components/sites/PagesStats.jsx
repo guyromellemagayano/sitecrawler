@@ -5,9 +5,8 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
-import { RadialChart, makeVisFlexible } from 'react-vis';
-
-const FlexRadialChart=makeVisFlexible(RadialChart)
+import loadable from '@loadable/component'
+const Chart = loadable(() => import('react-apexcharts'));
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -51,11 +50,33 @@ const SitesPagesStatsDiv = styled.div`
 			}
 		}
   }
-  .stats-graph {
-    height: 220px;
+  .apexcharts-legend {
+    display: block;
   }
-  .rv-xy-plot__series--label {
-    fill: #fff;
+  .apexcharts-legend-series {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #E7EFEF;
+    padding-bottom: 10px;
+  }
+  .apexcharts-legend-series:last-child {
+    border: none;
+  }
+  .apexcharts-legend-text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .apexcharts-legend-marker {
+    margin-right: 10px;
+  }
+  .legend-val {
+    color: #1D2626;
+    font-weight: 600;
+  }
+  .legent-text {
+    margin-right: 10px;
   }
 `
 
@@ -92,60 +113,82 @@ const SitesPagesStats = props => {
       refreshInterval: 1000,
     }
 	)
-
-	const data = [
-    {
-      "title": "No Issues",
-      "count": stats && stats.num_pages,
-      "class": `error-1`,
-		},
-		{
-      "title": "Large Page Size",
-      "count": stats && stats.num_pages_big,
-      "class": `error-2`,
-		},
-		{
-      "title": "Broken Security",
-      "count": 0,
-      "class": `error-3`,
-		},
-		{
-      "title": "Not on Google",
-      "count": 0,
-      "class": `error-4`,
-		},
-  ]
   
-  const chartData = [
-    {
-      angle: stats && stats.num_pages,
-      label: (stats && stats.num_pages) !== undefined ? (stats && stats.num_pages).toString() : 0,
-      color: "#19B080",
-      radius: 1
-    },
-    {
-      angle: stats && stats.num_pages_big,
-      label: (stats && stats.num_pages_big) !== undefined ? (stats && stats.num_pages_big).toString() : 0,
-      color: "#EF2917",
-      radius: 1
-    },
-    {
-      angle: 0,
-      label: "0",
-      color: "#ED5244",
-      radius: 1.3
-    },
-    {
-      angle: 0,
-      label: "0",
-      color: "#BB4338",
-      radius: 1
-    }
+  const chartSeries = [
+    (stats && stats.num_pages) !== undefined ? stats && stats.num_pages : 0,
+    (stats && stats.num_pages_big) !== undefined ? stats && stats.num_pages_big : 0,
+    0,
+    0
   ]
 
-  const totalErrors = (stats && stats.num_pages_big) + 
-                      0 +
-                      0
+  const chartOptions = {
+    chart: {
+      type: 'donut',
+    },
+    labels: ['No Issues', 'Large Page Size', 'Broken Security', 'Not on Google'],
+    colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338'],
+    fill: {
+      colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338']
+    },
+    stroke: {
+      width: 0
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function (val, opts) {
+        return opts.w.config.series[opts.seriesIndex]
+      }
+    },
+    legend: {
+      show: true,
+      fontSize: '14px',
+      position: 'bottom',
+      horizontalAlign: 'center',
+      height: 210,
+      itemMargin: {
+        horizontal: 15,
+        vertical: 10
+      },
+      formatter: function(seriesName, opts) {
+        return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
+      }
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              showAlways: true,
+              label: "Errors",
+              fontSize: "25px",
+              color: "#2A324B",
+              formatter: function (val) {
+                let num_errs = 0
+                for(let i=0; i<val.config.series.length; i++) {
+                  if(i != 0) num_errs += val.config.series[i]
+                }
+
+                return num_errs
+              }
+            }
+          }
+        }
+      }
+    },
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 400
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }]
+  }
 
 	{statsError && <Layout>{statsError.message}</Layout>}
   {scanError && <Layout>{scanError.message}</Layout>}
@@ -184,40 +227,7 @@ const SitesPagesStats = props => {
           </div>
         </div>
         <div className={`flex justify-center`}>
-					<div className={`w-full grid gap-4 grid-cols-1 p-5`}>
-						<div className={`stats-graph flex items-center justify-center`}>
-              <FlexRadialChart
-                animation={true}
-                innerRadius={60}
-                radius={95}
-                showLabels={true}
-                data={chartData}
-                colorType="literal"
-                style={
-                  {color: '#fff'}
-                }
-              />
-              <div className={`absolute p-1 text-center`}>
-                <h3 className={`text-2xl font-semibold`}>{totalErrors}</h3>
-                <p className={`text-sm font-semibold`}>Errors</p>
-              </div>
-						</div>
-						<div className={`stats-details flex items-start justify-between`}>
-							<ul className={`w-full block divide-y divide-gray-400`}>
-								{data.map((val, key) => {
-									return (
-										<li key={key} className={`flex flex-row flex-wrap justify-between items-center py-3`}>
-											<div className="flex flex-grow items-center">
-												<span className={`status-indicator ${val.class} mr-3`}></span>
-												<span className={`status-label text-sm`}>{val.title}</span>
-											</div>
-											<span className="status-count font-medium">{val.count}</span>
-										</li>
-									)
-								})}
-							</ul>
-						</div>
-					</div>
+          <Chart options={chartOptions} series={chartSeries} type="donut"height="530" />
 				</div>
       </div>
     </SitesPagesStatsDiv>
