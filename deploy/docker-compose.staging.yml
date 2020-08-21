@@ -38,6 +38,11 @@ services:
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
     environment:
       ENV: staging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1M"
+        max-file: "3"
   frontend:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
     restart: always
@@ -53,6 +58,11 @@ services:
       - db
     environment:
       ENV: staging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1M"
+        max-file: "3"
   scheduler:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
     restart: always
