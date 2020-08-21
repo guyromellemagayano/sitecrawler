@@ -40,7 +40,7 @@ const fetcher = async (url) => {
 
 const initialOrder = {
   imageUrl: "default",
-  createdAt: "default",
+  imageSize: "default",
   status: "default",
   httpCode: "default",
   occurrences: "default",
