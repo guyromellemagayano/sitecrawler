@@ -49,14 +49,14 @@ const SitesInformation = props => {
     
     if (
       body.name !== undefined && body.url !== "https://undefined" && body.url !== "http://undefined"
-    ) {
+    ) {      
       if (
         siteUrl.origin === "https://https:" || 
         siteUrl.origin === "https://http:" ||
         siteUrl.origin === "http://https:" ||
-        siteUrl.origin === "http://http:" 
+        siteUrl.origin === "http://http:"
       ) {
-        setDupSiteProtocolExists(!dupSiteProtocolExists)
+        setDupSiteProtocolExists(true)
         setErrorSiteUrlMsg(ReactHtmlParser("You should only add hostname inside the input <br /><em>e.g. yourdomain.com</em>"))
       } else {
         try {
@@ -496,7 +496,7 @@ const SitesInformation = props => {
                                   errorSiteUrlMsg ? "site-url-error" : "site-url"
                                 }`}
                                 aria-invalid={`${errorSiteUrlMsg ? true : false}`}
-                                onChange={(e) => setSiteUrl(e.target.value)}
+                                onChange={(e) => setSiteUrl((e.target.value).replace(/\/+$/, ''))}
                               />
                               <input
                                 id={`urlpath`}
