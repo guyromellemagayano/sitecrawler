@@ -125,6 +125,7 @@ const Home = () => {
             <div className={`hidden md:block text-right`}>
               <span className={`inline-flex rounded-md shadow-md`}>
                 <span className={`inline-flex rounded-md shadow-xs`}>
+                  <input type="hidden" name="verify to mario" value="hello, mario" />
                   {user === undefined || !user ? (
                     <Link href="/login">
                       <a

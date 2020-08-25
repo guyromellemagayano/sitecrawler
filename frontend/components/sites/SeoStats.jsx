@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
+// const ApexCharts = loadable(() => import('apexcharts'));
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -125,7 +126,13 @@ const SitesSeoStats = props => {
 
   const chartOptions = {
     chart: {
+      id: 'seoStatus',
       type: 'donut',
+      events: {
+        dataPointMouseEnter: function(event, chartContext, config) {
+          console.log('[dataPointMouseEnter]', event, chartContext, config)
+        }
+      }
     },
     labels: ['No Issues', 'Missing Title (H1, H2)', 'Missing Description', 'Missing H1', 'Missing H2'],
     colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#2D99FF'],
