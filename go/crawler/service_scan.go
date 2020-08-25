@@ -35,14 +35,15 @@ type ScanService struct {
 	LinkScriptDao     *LinkScriptDao
 	LinkStylesheetDao *LinkStylesheetDao
 	PageDataDao       *PageDataDao
+	TlsDao            *TlsDao
 	VerifyService     *VerifyService
 	LoadService       *LoadService
 }
 
 func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
-	if err := s.reverify(log, scanID); err != nil {
-		return err
-	}
+	// if err := s.reverify(log, scanID); err != nil {
+	//     return err
+	// }
 
 	scan, err := s.ScanDao.ByID(scanID)
 	if err != nil {
@@ -106,6 +107,8 @@ func (s *ScanService) Start(log *zap.SugaredLogger, scan *common.CrawlScan) erro
 		ScanService: s,
 		Scan:        scan,
 
+		tlsCache: NewTlsCache(s.TlsDao),
+
 		linkIDs: make(map[string]int),
 		fifo:    list.New(),
 	}
@@ -122,6 +125,8 @@ type fifoEntry struct {
 type scanner struct {
 	ScanService *ScanService
 	Scan        *common.CrawlScan
+
+	tlsCache *TlsCache
 
 	linkIDs map[string]int
 	fifo    *list.List
@@ -315,6 +320,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 		Url:       url.String(),
 		Type:      TYPE_OTHER,
 		Status:    STATUS_OK,
+		TlsStatus: TLS_OK,
 	}
 
 	if !s.isWebScheme(url) {
@@ -361,6 +367,14 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 			handleError(err)
 		}
 	}()
+
+	tlsStatus, tlsId, err := s.tlsCache.Extract(resp)
+	if err != nil {
+		log.Error(err)
+	} else {
+		crawlLink.TlsStatus = tlsStatus
+		crawlLink.TlsID = tlsId
+	}
 
 	statusCode := resp.StatusCode
 	crawlLink.HttpStatus = &statusCode

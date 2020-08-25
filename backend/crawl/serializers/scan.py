@@ -33,6 +33,8 @@ class ScanDetailSerializer(serializers.ModelSerializer):
     num_pages_without_h2_first = serializers.IntegerField(read_only=True)
     num_pages_without_h2_second = serializers.IntegerField(read_only=True)
     num_pages_big = serializers.IntegerField(read_only=True)
+    num_pages_tls_ok = serializers.IntegerField(read_only=True)
+    num_pages_tls_non_ok = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Scan
@@ -63,5 +65,7 @@ class ScanDetailSerializer(serializers.ModelSerializer):
             "num_pages_without_h2_first",
             "num_pages_without_h2_second",
             "num_pages_big",
+            "num_pages_tls_ok",
+            "num_pages_tls_non_ok",
         ]
-        read_only_fields = ["id", "started_at", "finished_at", "site_id"]
+        read_only_fields = fields

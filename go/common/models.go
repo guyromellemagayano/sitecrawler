@@ -54,9 +54,9 @@ var Columns = struct {
 		Group string
 	}
 	CrawlLink struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID string
 
-		Scan string
+		Scan, Tls string
 	}
 	CrawlLinkImage struct {
 		ID, FromLinkID, ToLinkID string
@@ -93,6 +93,9 @@ var Columns = struct {
 
 		User string
 	}
+	CrawlTl struct {
+		ID, NotBefore, NotAfter, CommonName, Organization, DnsNames, IssuerOrganization, IssuerCn, CipherSuite, Version, Errors string
+	}
 	CrawlUserprofile struct {
 		ID, Settings, UserID string
 
@@ -114,6 +117,9 @@ var Columns = struct {
 	}
 	DjangoSite struct {
 		ID, Domain, Name string
+	}
+	HealthCheckDbTestmodel struct {
+		ID, Title string
 	}
 	SocialaccountSocialaccount struct {
 		ID, Provider, Uid, LastLogin, DateJoined, ExtraData, UserID string
@@ -253,9 +259,9 @@ var Columns = struct {
 		Group: "Group",
 	},
 	CrawlLink: struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID string
 
-		Scan string
+		Scan, Tls string
 	}{
 		ID:           "id",
 		CreatedAt:    "created_at",
@@ -267,8 +273,11 @@ var Columns = struct {
 		Error:        "error",
 		ScanID:       "scan_id",
 		Size:         "size",
+		TlsStatus:    "tls_status",
+		TlsID:        "tls_id",
 
 		Scan: "Scan",
+		Tls:  "Tls",
 	},
 	CrawlLinkImage: struct {
 		ID, FromLinkID, ToLinkID string
@@ -363,6 +372,21 @@ var Columns = struct {
 
 		User: "User",
 	},
+	CrawlTl: struct {
+		ID, NotBefore, NotAfter, CommonName, Organization, DnsNames, IssuerOrganization, IssuerCn, CipherSuite, Version, Errors string
+	}{
+		ID:                 "id",
+		NotBefore:          "not_before",
+		NotAfter:           "not_after",
+		CommonName:         "common_name",
+		Organization:       "organization",
+		DnsNames:           "dns_names",
+		IssuerOrganization: "issuer_organization",
+		IssuerCn:           "issuer_cn",
+		CipherSuite:        "cipher_suite",
+		Version:            "version",
+		Errors:             "errors",
+	},
 	CrawlUserprofile: struct {
 		ID, Settings, UserID string
 
@@ -419,6 +443,12 @@ var Columns = struct {
 		ID:     "id",
 		Domain: "domain",
 		Name:   "name",
+	},
+	HealthCheckDbTestmodel: struct {
+		ID, Title string
+	}{
+		ID:    "id",
+		Title: "title",
 	},
 	SocialaccountSocialaccount: struct {
 		ID, Provider, Uid, LastLogin, DateJoined, ExtraData, UserID string
@@ -529,6 +559,9 @@ var Tables = struct {
 	CrawlSite struct {
 		Name, Alias string
 	}
+	CrawlTl struct {
+		Name, Alias string
+	}
 	CrawlUserprofile struct {
 		Name, Alias string
 	}
@@ -545,6 +578,9 @@ var Tables = struct {
 		Name, Alias string
 	}
 	DjangoSite struct {
+		Name, Alias string
+	}
+	HealthCheckDbTestmodel struct {
 		Name, Alias string
 	}
 	SocialaccountSocialaccount struct {
@@ -668,6 +704,12 @@ var Tables = struct {
 		Name:  "crawl_site",
 		Alias: "t",
 	},
+	CrawlTl: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_tls",
+		Alias: "t",
+	},
 	CrawlUserprofile: struct {
 		Name, Alias string
 	}{
@@ -702,6 +744,12 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "django_site",
+		Alias: "t",
+	},
+	HealthCheckDbTestmodel: struct {
+		Name, Alias string
+	}{
+		Name:  "health_check_db_testmodel",
 		Alias: "t",
 	},
 	SocialaccountSocialaccount: struct {
@@ -855,8 +903,11 @@ type CrawlLink struct {
 	Error        *string   `sql:"error"`
 	ScanID       int       `sql:"scan_id,notnull"`
 	Size         int       `sql:"size,notnull"`
+	TlsStatus    int       `sql:"tls_status,notnull"`
+	TlsID        *int      `sql:"tls_id"`
 
 	Scan *CrawlScan `pg:"fk:scan_id"`
+	Tls  *CrawlTl   `pg:"fk:tls_id"`
 }
 
 type CrawlLinkImage struct {
@@ -945,6 +996,22 @@ type CrawlSite struct {
 	User *AuthUser `pg:"fk:user_id"`
 }
 
+type CrawlTl struct {
+	tableName struct{} `sql:"crawl_tls,alias:t" pg:",discard_unknown_columns"`
+
+	ID                 int                    `sql:"id,pk"`
+	NotBefore          time.Time              `sql:"not_before,notnull"`
+	NotAfter           time.Time              `sql:"not_after,notnull"`
+	CommonName         string                 `sql:"common_name,notnull"`
+	Organization       string                 `sql:"organization,notnull"`
+	DnsNames           []string               `sql:"dns_names,array,notnull"`
+	IssuerOrganization string                 `sql:"issuer_organization,notnull"`
+	IssuerCn           string                 `sql:"issuer_cn,notnull"`
+	CipherSuite        string                 `sql:"cipher_suite,notnull"`
+	Version            string                 `sql:"version,notnull"`
+	Errors             map[string]interface{} `sql:"errors"`
+}
+
 type CrawlUserprofile struct {
 	tableName struct{} `sql:"crawl_userprofile,alias:t" pg:",discard_unknown_columns"`
 
@@ -1002,6 +1069,13 @@ type DjangoSite struct {
 	ID     int    `sql:"id,pk"`
 	Domain string `sql:"domain,notnull"`
 	Name   string `sql:"name,notnull"`
+}
+
+type HealthCheckDbTestmodel struct {
+	tableName struct{} `sql:"health_check_db_testmodel,alias:t" pg:",discard_unknown_columns"`
+
+	ID    int    `sql:"id,pk"`
+	Title string `sql:"title,notnull"`
 }
 
 type SocialaccountSocialaccount struct {

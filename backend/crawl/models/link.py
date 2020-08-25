@@ -1,9 +1,19 @@
 from django.db import models
-from django.db.models import Count, Sum, F, OuterRef, Subquery, PositiveIntegerField
+from django.db.models import (
+    Count,
+    Sum,
+    F,
+    OuterRef,
+    Subquery,
+    PositiveIntegerField,
+    Case,
+    When,
+    IntegerField,
+)
 from django.db.models.query import QuerySet
 
 
-from crawl.common import SubQueryCount
+from crawl.common import CalculatedField, SubQueryCount
 
 
 class SubQuerySizeSum(Subquery):
@@ -16,6 +26,39 @@ class SubQuerySizeSum(Subquery):
 
 
 class LinkQuerySet(QuerySet):
+    def annotate_size(self):
+        images = Link.objects.filter(image_pages__id=OuterRef("pk"))
+        scripts = Link.objects.filter(script_pages__id=OuterRef("pk"))
+        stylesheets = Link.objects.filter(stylesheet_pages__id=OuterRef("pk"))
+        return (
+            self.annotate(size_images=SubQuerySizeSum(images))
+            .annotate(size_scripts=SubQuerySizeSum(scripts))
+            .annotate(size_stylesheets=SubQuerySizeSum(stylesheets))
+            .annotate(size_total=F("size_images") + F("size_scripts") + F("size_stylesheets") + F("size"))
+        )
+
+    def annotate_tls(self):
+        images = Link.objects.filter(image_pages__id=OuterRef("pk"))
+        scripts = Link.objects.filter(script_pages__id=OuterRef("pk"))
+        stylesheets = Link.objects.filter(stylesheet_pages__id=OuterRef("pk"))
+        return (
+            self.annotate(num_non_tls_images=SubQueryCount(images.exclude(tls_status=Link.TLS_OK)))
+            .annotate(num_non_tls_scripts=SubQueryCount(scripts.exclude(tls_status=Link.TLS_OK)))
+            .annotate(num_non_tls_stylesheets=SubQueryCount(stylesheets.exclude(tls_status=Link.TLS_OK)))
+            .annotate(tls_images=Case(When(num_non_tls_images=0, then=1), default=0, output_field=IntegerField()))
+            .annotate(tls_scripts=Case(When(num_non_tls_scripts=0, then=1), default=0, output_field=IntegerField()))
+            .annotate(
+                tls_stylesheets=Case(When(num_non_tls_stylesheets=0, then=1), default=0, output_field=IntegerField())
+            )
+            .annotate(
+                tls_total=Case(
+                    When(tls_images=1, tls_scripts=1, tls_stylesheets=1, tls_status=Link.TLS_OK, then=1,),
+                    default=0,
+                    output_field=IntegerField(),
+                )
+            )
+        )
+
     def pages(self):
         links = Link.objects.filter(pages__id=OuterRef("pk"))
         images = Link.objects.filter(image_pages__id=OuterRef("pk"))
@@ -23,22 +66,16 @@ class LinkQuerySet(QuerySet):
         stylesheets = Link.objects.filter(stylesheet_pages__id=OuterRef("pk"))
         return (
             self.filter(type=Link.TYPE_PAGE)
+            .annotate_size()
+            .annotate_tls()
             .annotate(num_links=SubQueryCount(links))
-            .annotate(num_ok_links=SubQueryCount(links.filter(status=Link.STATUS_OK)))
-            .annotate(num_non_ok_links=F("num_links") - F("num_ok_links"))
             .annotate(num_images=SubQueryCount(images))
-            .annotate(num_ok_images=SubQueryCount(images.filter(status=Link.STATUS_OK)))
-            .annotate(num_non_ok_images=F("num_images") - F("num_ok_images"))
             .annotate(num_scripts=SubQueryCount(scripts))
-            .annotate(num_ok_scripts=SubQueryCount(scripts.filter(status=Link.STATUS_OK)))
-            .annotate(num_non_ok_scripts=F("num_scripts") - F("num_ok_scripts"))
             .annotate(num_stylesheets=SubQueryCount(stylesheets))
-            .annotate(num_ok_stylesheets=SubQueryCount(stylesheets.filter(status=Link.STATUS_OK)))
-            .annotate(num_non_ok_stylesheets=F("num_stylesheets") - F("num_ok_stylesheets"))
-            .annotate(size_images=SubQuerySizeSum(images))
-            .annotate(size_scripts=SubQuerySizeSum(scripts))
-            .annotate(size_stylesheets=SubQuerySizeSum(stylesheets))
-            .annotate(size_total=F("size_images") + F("size_scripts") + F("size_stylesheets") + F("size"))
+            .annotate(num_non_ok_links=SubQueryCount(links.exclude(status=Link.STATUS_OK)))
+            .annotate(num_non_ok_images=SubQueryCount(images.exclude(status=Link.STATUS_OK)))
+            .annotate(num_non_ok_scripts=SubQueryCount(scripts.exclude(status=Link.STATUS_OK)))
+            .annotate(num_non_ok_stylesheets=SubQueryCount(stylesheets.exclude(status=Link.STATUS_OK)))
             .order_by("-num_non_ok_links")
         )
 
@@ -86,6 +123,15 @@ class Link(models.Model):
         (STATUS_OTHER_ERROR, "OTHER_ERROR"),
     ]
 
+    TLS_NONE = 1
+    TLS_OK = 2
+    TLS_ERROR = 3
+    TLS_STATUS_CHOICES = [
+        (TLS_NONE, "NONE"),
+        (TLS_OK, "OK"),
+        (TLS_ERROR, "ERROR"),
+    ]
+
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     scan = models.ForeignKey("Scan", on_delete=models.CASCADE, null=False)
     type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES, null=False)
@@ -96,11 +142,22 @@ class Link(models.Model):
     error = models.CharField(max_length=255, null=True, blank=True)
     size = models.PositiveIntegerField(default=0)
 
+    tls_status = models.PositiveSmallIntegerField(choices=TLS_STATUS_CHOICES, null=False, default=TLS_NONE)
+    tls = models.ForeignKey("Tls", on_delete=models.CASCADE, null=True)
+
     links = models.ManyToManyField("self", symmetrical=False, related_name="pages", blank=True)
 
     images = models.ManyToManyField("self", symmetrical=False, related_name="image_pages", blank=True)
     stylesheets = models.ManyToManyField("self", symmetrical=False, related_name="stylesheet_pages", blank=True)
     scripts = models.ManyToManyField("self", symmetrical=False, related_name="script_pages", blank=True)
+
+    num_ok_links = CalculatedField("num_links", "-num_non_ok_links")
+    num_ok_images = CalculatedField("num_images", "-num_non_ok_images")
+    num_ok_scripts = CalculatedField("num_scripts", "-num_non_ok_scripts")
+    num_ok_stylesheets = CalculatedField("num_stylesheets", "-num_non_ok_stylesheets")
+    num_tls_images = CalculatedField("num_images", "-num_non_tls_images")
+    num_tls_scripts = CalculatedField("num_scripts", "-num_non_tls_scripts")
+    num_tls_stylesheets = CalculatedField("num_stylesheets", "-num_non_tls_stylesheets")
 
     def get_pages(self):
         return self.pages.all().union(self.image_pages.all(), self.script_pages.all(), self.stylesheet_pages.all())

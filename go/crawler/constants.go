@@ -10,4 +10,8 @@ const (
 	STATUS_TIMEOUT     = 2
 	STATUS_HTTP_ERROR  = 3
 	STATUS_OTHER_ERROR = 4
+
+	TLS_NONE  = 1
+	TLS_OK    = 2
+	TLS_ERROR = 3
 )
