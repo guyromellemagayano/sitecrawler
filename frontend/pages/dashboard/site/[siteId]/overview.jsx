@@ -99,8 +99,6 @@ const SitesDashboard = () => {
   const setFinishedAtValue = (data) => {
     let resultsArray = Object.assign(data.results)
 
-    console.log(resultsArray)
-
     return resultsArray.map(e => { return e.finished_at }).sort().reverse()[0]
   }
 
