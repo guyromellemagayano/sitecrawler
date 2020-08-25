@@ -75,7 +75,7 @@ const SitesLinksStatsDiv = styled.div`
 		color: #1D2626;
 		font-weight: 600;
 	}
-	.legent-text {
+	.legend-text {
 		margin-right: 10px;
 	}
 `
@@ -189,7 +189,7 @@ const SitesLinksStats = props => {
 					show: true,
 					showAlways: true,
 					label: "Errors",
-					fontSize: "25px",
+					fontSize: "15px",
 					color: "#2A324B",
 					formatter: function (val) {
 						let num_errs = 0

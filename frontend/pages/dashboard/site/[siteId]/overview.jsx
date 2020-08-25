@@ -176,6 +176,7 @@ const SitesDashboard = () => {
                     <SitesStats crawlableHandler={crawlableHandler} />
                   </div>
                   <div className={`grid grid-cols-2 gap-8 pb-10`}>
+                    {console.log(scan.results.map(e => { return e.finished_at }).sort().reverse()[0])}
                     <SitesOverview
                       url={site.url}
                       verified={site.verified}

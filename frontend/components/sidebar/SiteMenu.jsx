@@ -129,7 +129,7 @@ const SiteMenu = props => {
       {siteError && <Layout>{siteError.message}</Layout>}
 
       {!stats || !site || selectedSite == undefined ? (
-        <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-white`}>
+        <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-gray-1000`}>
           {[...Array(5)].map((val, index) => {
             return (
               <a

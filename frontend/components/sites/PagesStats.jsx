@@ -162,7 +162,7 @@ const SitesPagesStats = props => {
               show: true,
               showAlways: true,
               label: "Errors",
-              fontSize: "25px",
+              fontSize: "15px",
               color: "#2A324B",
               formatter: function (val) {
                 let num_errs = 0
