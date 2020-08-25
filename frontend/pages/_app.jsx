@@ -6,7 +6,6 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 
 import 'css/styles.css'
 import 'nprogress/nprogress.css';
-// import 'react-vis/dist/style.css'
 
 library.add(fab)
 
