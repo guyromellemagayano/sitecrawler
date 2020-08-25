@@ -72,13 +72,8 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-react": "^7.20.6",
-<<<<<<< HEAD
-    "eslint-plugin-react-hooks": "^4.0.4",
-    "tailwindcss": "^1.7.2"
-=======
     "eslint-plugin-react-hooks": "^4.1.0",
     "tailwindcss": "^1.7.3"
->>>>>>> b7c599a3d3dac04905dc5ffbb1d08e47b3f2eb63
   },
   "license": "MIT"
 }
