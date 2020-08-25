@@ -5,7 +5,7 @@
   "scripts": {
     "build-css": "cross-env NODE_ENV=production tailwindcss build css/app.css -o css/styles.css",
     "dev-css": "cross-env NODE_ENV=development tailwindcss build css/app.css -o css/styles.css",
-    "next-dev": "next dev",
+    "next-dev": "NODE_OPTIONS='--inspect' next dev",
     "dev": "concurrently \"npm run next-dev\" \"npm run dev-css\"",
     "next-build": "next build",
     "build": "concurrently \"npm run next-build\" \"npm run build-css\"",
