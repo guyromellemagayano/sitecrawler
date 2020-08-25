@@ -6,10 +6,10 @@
   },
   "parser": "babel-eslint",
   "extends": [
-    "eslint:recommended",
-    "plugin:react-hooks/recommended",
+    // "eslint:recommended",
+    // "plugin:react-hooks/recommended",
     "plugin:react/recommended",
-    "airbnb"
+    // "airbnb"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -26,7 +26,7 @@
   "plugins": [
     "react",
     "better-styled-components",
-    "react-hooks"
+    // "react-hooks"
   ],
   "rules": {
     "no-underscore-dangle": 1,
@@ -39,8 +39,8 @@
     "react/state-in-constructor": "on",
     "react/prop-types": "on",
     "better-styled-components/sort-declarations-alphabetically": 2,
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
+    // "react-hooks/rules-of-hooks": "error",
+    // "react-hooks/exhaustive-deps": "warn",
     "quotes": [
       2,
       "double",
