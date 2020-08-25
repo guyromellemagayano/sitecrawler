@@ -6,14 +6,12 @@
   },
   "parser": "babel-eslint",
   "extends": [
-    "eslint:recommended",
     "plugin:react-hooks/recommended",
     "plugin:react/recommended",
     "airbnb"
   ],
   "globals": {
     "Atomics": "readonly",
-    "React": "writable",
     "SharedArrayBuffer": "readonly"
   },
   "parserOptions": {
