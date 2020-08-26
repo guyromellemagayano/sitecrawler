@@ -58,7 +58,7 @@ const SitesDashboard = () => {
   )
 
   const { data: scan, error: scanError } = useSWR(
-    () => query.siteId && `/api/site/${query.siteId}/scan/`,
+    () => query.siteId && `/api/site/${query.siteId}/scan/?ordering=-finished_at`,
     fetcher
   )
 
