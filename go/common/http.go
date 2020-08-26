@@ -18,7 +18,7 @@ func WrapEndpoint(logger *zap.SugaredLogger, endpoint Endpoint) http.Handler {
 		err := endpoint.ServeHTTP(log, w, r)
 		if err != nil {
 			log.Errorf("Server error: %v", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	})
 }
