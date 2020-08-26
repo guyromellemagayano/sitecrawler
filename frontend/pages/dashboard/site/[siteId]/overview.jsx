@@ -8,6 +8,7 @@ import Cookies from 'js-cookie'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
+import Moment from 'react-moment'
 import useUser from 'hooks/useUser'
 import Layout from 'components/Layout'
 import MobileSidebar from 'components/sidebar/MobileSidebar'
@@ -45,6 +46,13 @@ const SitesDashboard = () => {
   const [recrawlable, setRecrawlable] = useState(false)
   const [crawlFinished, setCrawlFinished] = useState(false)
   const pageTitle = 'Overview |'
+
+  const calendarStrings = {
+    lastDay : '[Yesterday], dddd',
+    sameDay : '[Today], dddd',
+    lastWeek : 'MMMM DD, YYYY',
+    sameElse : 'MMMM DD, YYYY'
+  }
 
   const { user: user, userError: userError } = useUser({
     redirectTo: '/login',
@@ -94,12 +102,6 @@ const SitesDashboard = () => {
       setRecrawlable(true)
     else
       setRecrawlable(false)
-  }
-
-  const setFinishedAtValue = (data) => {
-    let resultsArray = Object.assign(data.results)
-
-    return resultsArray.map(e => { return e.finished_at }).sort().reverse()[0]
   }
 
   useEffect(() => {
@@ -185,7 +187,7 @@ const SitesDashboard = () => {
                     <SitesOverview
                       url={site.url}
                       verified={site.verified}
-                      finishedAt={setFinishedAtValue(scan)}
+                      finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
                       onCrawl={onCrawlHandler}
                       crawlable={recrawlable}
                       crawlFinished={crawlFinished}
