@@ -103,30 +103,6 @@ const SitesDashboard = () => {
       setRecrawlable(false)
   }, [user, site])
 
-  const getFinishedAtValue = data => {
-    let scanObjId = ""
-    let scanObj = []
-    let finishedAtValue = ""
-
-    data.results.map(val => {
-      scanObj.push(val)
-    }).sort().reverse()
-
-    if (scanObj[0].finished_at !== null) {
-      scanObjId = scanObj[0].id
-    } else {
-      scanObjId = scanObj[1].id
-    }
-
-    scanObj.map(val => {
-      if (val.id === scanObjId) {
-        finishedAtValue = val.finished_at
-      }
-    })
-
-    return finishedAtValue
-  }
-
   {userError && <Layout>{userError.message}</Layout>}
   {siteError && <Layout>{siteError.message}</Layout>}
   {scanError && <Layout>{scanError.message}</Layout>}
@@ -203,7 +179,7 @@ const SitesDashboard = () => {
                     <SitesOverview
                       url={site.url}
                       verified={site.verified}
-                      finishedAt={getFinishedAtValue(scan)}
+                      finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
                       onCrawl={onCrawlHandler}
                       crawlable={recrawlable}
                       crawlFinished={crawlFinished}

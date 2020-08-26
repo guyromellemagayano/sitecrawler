@@ -118,17 +118,12 @@ const DataTable = props => {
     } else if (response.ok && !data.verified) {
       setErrorMsg('Site verification failed. You have not verify the site yet.')
     } else {
-      const error = new Error(response.statusText)
-
-      error.response = response
-      error.data = data
-
-      throw error
+      throw new Error(await response.text());
     }
   }
 
   const { data: scan, error: scanError } = useSWR(
-    () => (props ? `/api/site/${props.site.id}/scan/?ordering=-finished_at` : null),
+    () => (props ? `/api/site/${props.site.id}/scan/` : null),
     fetcher,
     { refreshInterval: 1000 }
   )
@@ -138,18 +133,15 @@ const DataTable = props => {
   if (scan) {
     let scanObj = []
 
-    scan.results.map(val => {
+    scan.results.map((val) => {
       scanObj.push(val)
       return scanObj
-    }).sort().reverse()
+    })
 
-    // console.log(scanObj[0].id)
-
-    if (scanObj[0].finished_at !== null) {
-      scanObjId = scanObj[0].id
-    } else {
-      scanObjId = scanObj[1].id
-    }
+    scanObj.map((val) => {
+      scanObjId = val.id
+      return scanObjId
+    })
   }
 
   const { data: scanId, error: scanIdError } = useSWR(
