@@ -179,7 +179,7 @@ const SitesDashboard = () => {
                     <SitesOverview
                       url={site.url}
                       verified={site.verified}
-                      finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
+                      finishedAt={scan.results[0].finished_at}
                       onCrawl={onCrawlHandler}
                       crawlable={recrawlable}
                       crawlFinished={crawlFinished}
