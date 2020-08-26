@@ -20,6 +20,7 @@ class HumanReadableMultipleChoiceFilter(filters.MultipleChoiceFilter):
 class LinkFilter(filters.FilterSet):
     type = HumanReadableMultipleChoiceFilter(choices=Link.TYPE_CHOICES)
     status = HumanReadableMultipleChoiceFilter(choices=Link.STATUS_CHOICES)
+    tls_status = HumanReadableMultipleChoiceFilter(choices=Link.TLS_STATUS_CHOICES)
 
     class Meta:
         model = Link
@@ -52,6 +53,7 @@ class PageChildViewSet(
         "error",
         "size",
         "occurences",
+        "tls_status",
     ]
 
     def get_queryset(self):
