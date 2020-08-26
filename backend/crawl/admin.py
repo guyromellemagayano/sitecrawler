@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData
+from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData, Tls
 
 
 class PageChildInline(admin.TabularInline):
@@ -74,8 +74,19 @@ class PageInline(admin.TabularInline):
     model = Link
     verbose_name = "Page"
     verbose_name_plural = "Pages"
-    readonly_fields = ("id", "url", "num_links", "num_non_ok_links")
-    exclude = ("type", "status", "http_status", "error", "links", "images", "stylesheets", "scripts", "response_time")
+    readonly_fields = ("id", "url", "num_links", "num_non_ok_links", "tls_status")
+    exclude = (
+        "type",
+        "status",
+        "http_status",
+        "error",
+        "links",
+        "images",
+        "stylesheets",
+        "scripts",
+        "response_time",
+        "tls",
+    )
     show_change_link = True
 
     def get_queryset(self, request):
@@ -128,3 +139,8 @@ class GroupSettingsAdmin(admin.ModelAdmin):
     list_display = ("group",)
     search_fields = ("group__name",)
     readonly_fields = ("group",)
+
+
+@admin.register(Tls)
+class TlsAdmin(admin.ModelAdmin):
+    list_display = ("common_name", "issuer_organization", "version", "errors")

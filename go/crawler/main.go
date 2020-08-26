@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/http"
 
@@ -31,6 +32,7 @@ func main() {
 	linkScriptDao := &LinkScriptDao{DB: db}
 	linkStylesheetDao := &LinkStylesheetDao{DB: db}
 	pageDataDao := &PageDataDao{DB: db}
+	tlsDao := &TlsDao{DB: db}
 
 	scanQueueName := fmt.Sprintf("linkapp-%s-scan", env)
 	scanSqsQueue, err := common.NewSQSService(awsSession, scanQueueName)
@@ -48,6 +50,7 @@ func main() {
 		LinkScriptDao:     linkScriptDao,
 		LinkStylesheetDao: linkStylesheetDao,
 		PageDataDao:       pageDataDao,
+		TlsDao:            tlsDao,
 		VerifyService:     verifyService,
 		LoadService:       loadService,
 	}
@@ -61,4 +64,18 @@ func main() {
 	listen := fmt.Sprintf(":%s", port)
 	log.Infof("Listening on: %s", listen)
 	log.Fatal(http.ListenAndServe(listen, nil))
+}
+
+func findCipherSuite(id uint16) *tls.CipherSuite {
+	for _, c := range tls.CipherSuites() {
+		if c.ID == id {
+			return c
+		}
+	}
+	for _, c := range tls.InsecureCipherSuites() {
+		if c.ID == id {
+			return c
+		}
+	}
+	return nil
 }

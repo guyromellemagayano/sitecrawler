@@ -1,11 +1,8 @@
 from rest_framework import serializers
 
+from crawl.common import ChoiceField
 from crawl.models import Link
-
-
-class ChoiceField(serializers.ChoiceField):
-    def to_representation(self, obj):
-        return self._choices[obj]
+from .tls import TlsSerializer
 
 
 class LinkSummarySerializer(serializers.ModelSerializer):
@@ -18,6 +15,7 @@ class LinkSummarySerializer(serializers.ModelSerializer):
 class LinkSerializer(serializers.ModelSerializer):
     status = ChoiceField(Link.STATUS_CHOICES)
     type = ChoiceField(Link.TYPE_CHOICES)
+    tls_status = ChoiceField(Link.TLS_STATUS_CHOICES)
     occurences = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -34,6 +32,7 @@ class LinkSerializer(serializers.ModelSerializer):
             "error",
             "size",
             "occurences",
+            "tls_status",
         ]
         read_only_fields = [
             "id",
@@ -47,11 +46,13 @@ class LinkSerializer(serializers.ModelSerializer):
             "error",
             "size",
             "occurences",
+            "tls_status",
         ]
 
 
 class LinkDetailSerializer(LinkSerializer):
     pages = LinkSummarySerializer(source="get_pages", many=True)
+    tls = TlsSerializer(read_only=True)
 
     class Meta:
         model = Link
@@ -66,6 +67,8 @@ class LinkDetailSerializer(LinkSerializer):
             "response_time",
             "error",
             "size",
+            "tls_status",
+            "tls",
             "pages",
         ]
         read_only_fields = [
@@ -79,5 +82,7 @@ class LinkDetailSerializer(LinkSerializer):
             "response_time",
             "error",
             "size",
+            "tls_status",
+            "tls",
             "pages",
         ]

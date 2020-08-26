@@ -96,6 +96,12 @@ const SitesDashboard = () => {
       setRecrawlable(false)
   }
 
+  const setFinishedAtValue = (data) => {
+    let resultsArray = Object.assign(data.results)
+
+    return resultsArray.map(e => { return e.finished_at }).sort().reverse()[0]
+  }
+
   useEffect(() => {
     if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified)
       setRecrawlable(true)
@@ -179,7 +185,7 @@ const SitesDashboard = () => {
                     <SitesOverview
                       url={site.url}
                       verified={site.verified}
-                      finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
+                      finishedAt={setFinishedAtValue(scan)}
                       onCrawl={onCrawlHandler}
                       crawlable={recrawlable}
                       crawlFinished={crawlFinished}
