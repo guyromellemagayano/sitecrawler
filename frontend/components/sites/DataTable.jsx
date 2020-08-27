@@ -118,12 +118,7 @@ const DataTable = props => {
     } else if (response.ok && !data.verified) {
       setErrorMsg('Site verification failed. You have not verify the site yet.')
     } else {
-      const error = new Error(response.statusText)
-
-      error.response = response
-      error.data = data
-
-      throw error
+      throw new Error(await response.text());
     }
   }
 

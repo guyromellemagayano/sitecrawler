@@ -59,33 +59,33 @@ const SitesVerifyUrl = props => {
       sid: e.currentTarget.site_verify_id.value,
     }
 
-    const response = await fetch('/api/site/' + body.sid + '/verify/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
-      },
-      body: JSON.stringify(body),
-    })
-    
-    const data = await response.json()
-    
-    if (response.ok && data.verified) {
-      setSuccessMsg('You can now proceed to the site overview.')
-      setTimeout(() => setShowNotificationStatus(true), 1500)
-      setDisableSiteVerify(!disableSiteVerify)
-      setTimeout(() => setEnableNextStep(!enableNextStep), 1500)
-    } else if (response.ok && !data.verified) {
-      setErrorMsg('You have not verify the site yet.')
-      setTimeout(() => setShowNotificationStatus(true), 1500)
-    } else {
-      const error = new Error(response.statusText)
+    try {
+      const response = await fetch('/api/site/' + body.sid + '/verify/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        },
+        body: JSON.stringify(body),
+      })
 
-      error.response = response
-      error.data = data
-
-      throw error
+      const data = await response.json()
+      
+      if (response.ok && data.verified) {
+        setSuccessMsg('You can now proceed to the site overview.')
+        setTimeout(() => setShowNotificationStatus(true), 1500)
+        setDisableSiteVerify(!disableSiteVerify)
+        setTimeout(() => setEnableNextStep(!enableNextStep), 1500)
+      } else if (response.ok && !data.verified) {
+        setErrorMsg('Site verification failed. You have not verify the site yet.')
+        setTimeout(() => setShowNotificationStatus(true), 1500)
+      } else {
+        throw new Error(await response.text());
+      }
+    } catch (error) {
+      setErrorMsg('Internal server error. Please try again.')
+      setTimeout(() => setShowNotificationStatus(true), 1500)
     }
   }
 

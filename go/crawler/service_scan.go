@@ -41,9 +41,9 @@ type ScanService struct {
 }
 
 func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
-	// if err := s.reverify(log, scanID); err != nil {
-	//     return err
-	// }
+	if err := s.reverify(log, scanID); err != nil {
+		return err
+	}
 
 	scan, err := s.ScanDao.ByID(scanID)
 	if err != nil {

@@ -28,19 +28,6 @@ const AddSite = () => {
     return siteData
   }
 
-  const fetchUserData = async (endpoint) => {
-    const siteData = await fetchJson(endpoint, {
-      method: "GET",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "X-CSRFToken": Cookies.get("csrftoken"),
-      },
-    })
-
-    return siteData
-  }
-
   const { data: sites } = useSWR(
     `/api/site/`,
     () =>
@@ -134,8 +121,8 @@ const AddSite = () => {
         </div>
       </div>
     </AddSiteDiv>
-  );
-};
+  )
+}
 
 export default AddSite
 
