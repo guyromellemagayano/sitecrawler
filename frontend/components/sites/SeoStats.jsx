@@ -127,12 +127,7 @@ const SitesSeoStats = props => {
   const chartOptions = {
     chart: {
       id: 'seoStatus',
-      type: 'donut',
-      events: {
-        dataPointMouseEnter: function(event, chartContext, config) {
-          console.log('[dataPointMouseEnter]', event, chartContext, config)
-        }
-      }
+      type: 'donut'
     },
     labels: ['No Issues', 'Missing Title (H1, H2)', 'Missing Description', 'Missing H1', 'Missing H2'],
     colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#2D99FF'],
