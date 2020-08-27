@@ -102,7 +102,7 @@ const Links = props => {
   )
 
   const { data: scan, error: scanError } = useSWR(
-    () => (query.siteId ? `/api/site/${query.siteId}/scan/` : null),
+    () => (query.siteId ? `/api/site/${query.siteId}/scan/?ordering=-finished_at` : null),
     fetcher
   )
 
