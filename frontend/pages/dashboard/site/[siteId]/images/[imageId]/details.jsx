@@ -283,16 +283,14 @@ const ImagesDetail = () => {
                         ) : null}
                       </dl>
                     </div>
-										{imageLocation.size !== null && imageLocation.size !== undefined ? (
-											<div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-												<dt className={`text-sm leading-5 font-medium text-gray-500`}>
-													Image Size
-												</dt>
-												<dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-													{bytes(imageLocation.size, {thousandsSeparator: ' ', unitSeparator: ' '})}
-												</dd>
-											</div>
-										) : null}
+                    <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                      <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                        Image Size
+                      </dt>
+                      <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                        {imageLocation.size !== null && imageLocation.size !== undefined && imageLocation.size !== '' ? bytes(imageLocation.size, {thousandsSeparator: ' ', unitSeparator: ' '}) : <span className="text-gray-500">None</span>}
+                      </dd>
+                    </div>
 										<div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
 											<dt className={`text-sm leading-5 font-medium text-gray-500`}>
 												Page Links
