@@ -94,8 +94,9 @@ const Images = props => {
       return scanObj
     })
 
-    scanObj.map((val) => {
-      scanObjId = val.id
+    scanObj.map((val, index) => {
+      if(index == 0) scanObjId = val.id
+      
       return scanObjId
     })
   }
