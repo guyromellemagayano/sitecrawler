@@ -195,9 +195,9 @@ const ProfileSettingsPersonal = () => {
                             }`}
                           >
                             {errorMsg !== undefined && errorMsg !== ""
-                              ? "Update Failed!"
-                              : successMsg !== undefined && successMsg !== ""
                               ? "Update Success!"
+                              : successMsg !== undefined && successMsg !== ""
+                              ? "Update Failed!"
                               : "Verifying..."}
                           </p>
                           <p className={`mt-1 text-sm leading-5 text-gray-500`}>
