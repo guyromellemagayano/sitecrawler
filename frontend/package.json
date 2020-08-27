@@ -19,6 +19,8 @@
     "@fortawesome/free-brands-svg-icons": "^5.14.0",
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@loadable/component": "^5.13.1",
+    "@stripe/react-stripe-js": "^1.1.2",
+    "@stripe/stripe-js": "^1.9.0",
     "@tailwindcss/ui": "^0.3.1",
     "apexcharts": "^3.20.0",
     "babel-plugin-add-react-displayname": "0.0.5",

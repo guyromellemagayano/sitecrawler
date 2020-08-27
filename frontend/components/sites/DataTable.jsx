@@ -123,7 +123,7 @@ const DataTable = props => {
   }
 
   const { data: scan, error: scanError } = useSWR(
-    () => (props ? `/api/site/${props.site.id}/scan/` : null),
+    () => (props ? `/api/site/${props.site.id}/scan/?ordering=-finished_at` : null),
     fetcher,
     { refreshInterval: 1000 }
   )
@@ -138,8 +138,9 @@ const DataTable = props => {
       return scanObj
     })
 
-    scanObj.map((val) => {
-      scanObjId = val.id
+    scanObj.map((val, index) => {
+      if(index == 0) scanObjId = val.id
+      
       return scanObjId
     })
   }
