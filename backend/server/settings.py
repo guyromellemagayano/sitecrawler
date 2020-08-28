@@ -15,6 +15,7 @@ import os
 import requests
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+import stripe
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -47,6 +48,7 @@ DATABASES = {
         "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
+
 
 if env == "dev":
     DEBUG = True
@@ -110,6 +112,12 @@ try:
 except requests.exceptions.RequestException:
     pass
 
+
+stripe.api_key = os.environ.get(
+    "STRIPE_SECRET_KEY",
+    "sk_test_51HIVFqBQhL0pYs2DCd5btngeCNpFsYM6dhjnN52P6pQTAYL6bPc9NT6DAgdy61ieo9DTrcCTEgGTCqeoCnINImVX005V3rKSoF",
+)
+stripe.api_version = "2020-03-02"
 
 # Application definition
 
