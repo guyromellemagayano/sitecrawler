@@ -84,7 +84,7 @@ const SitesPagesStats = props => {
 	const {
 		data: scan,
 		error: scanError,
-	} = useSWR(() => (props.url.siteId ? `/api/site/${props.url.siteId}/scan/` : null), fetcher, {
+	} = useSWR(() => (props.url.siteId ? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at` : null), fetcher, {
 		refreshInterval: 1000,
 	})
 
