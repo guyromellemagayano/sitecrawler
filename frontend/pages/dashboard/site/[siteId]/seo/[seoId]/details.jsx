@@ -219,96 +219,78 @@ const SeoDetail = () => {
                             )}
                           </dd>
                         </div>
-                        {pageLocation.num_links !== null && pageLocation.num_links !== undefined && pageLocation.num_links !== '' ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                              Total Number of Links
-                            </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-                              {pageLocation.num_links}
-                            </dd>
-                          </div>
-                        ) : null}
-                        {pageLocation.num_ok_links !== null && pageLocation.num_ok_links !== undefined && pageLocation.num_ok_links !== '' && pageLocation.num_ok_links !== 0 ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                              Total Number of Working Links
-                            </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-                              {pageLocation.num_ok_links}
-                            </dd>
-                          </div>
-                        ) : null}
-                        {pageLocation.num_non_ok_links !== null && pageLocation.num_non_ok_links !== undefined && pageLocation.num_non_ok_links !== '' && pageLocation.num_non_ok_links !== 0 ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                              Total Number of Non-Working Links
-                            </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-                              {pageLocation.num_non_ok_links}
-                            </dd>
-                          </div>
-                        ) : null}
-                        {pageLocation.pagedata.title !== null && pageLocation.pagedata.title !== undefined && pageLocation.pagedata.title !== '' ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                              Title
-                            </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-                              {pageLocation.pagedata.title}
-                            </dd>
-                          </div>
-                        ) : null}
-                        {pageLocation.pagedata.description !== null && pageLocation.pagedata.description !== undefined && pageLocation.pagedata.description !== '' ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                              Description
-                            </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-                              {pageLocation.pagedata.description}
-                            </dd>
-                          </div>
-                        ) : null}
-                        {pageLocation.pagedata.h1_first !== null && pageLocation.pagedata.h1_first !== undefined && pageLocation.pagedata.h1_first !== '' ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                              First H1 Text
-                            </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-                              {pageLocation.pagedata.h1_first}
-                            </dd>
-                          </div>
-                        ) : null}
-                        {pageLocation.pagedata.h1_second !== null && pageLocation.pagedata.h1_second !== undefined && pageLocation.pagedata.h1_second !== '' ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                              Second H1 Text
-                            </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-                              {pageLocation.pagedata.h1_second}
-                            </dd>
-                          </div>
-                        ) : null}
-                        {pageLocation.pagedata.h2_first !== null && pageLocation.pagedata.h2_first !== undefined && pageLocation.pagedata.h2_first !== '' ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                              First H2 Text
-                            </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-                              {pageLocation.pagedata.h2_first}
-                            </dd>
-                          </div>
-                        ) : null}
-                        {pageLocation.pagedata.h2_second !== null && pageLocation.pagedata.h2_second !== undefined && pageLocation.pagedata.h2_second !== '' ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                              Second H2 Text
-                            </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
-                              {pageLocation.pagedata.h2_second}
-                            </dd>
-                          </div>
-                        ) : null}
+                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                            Total Number of Links
+                          </dt>
+                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            {pageLocation.num_links !== null && pageLocation.num_links !== undefined && pageLocation.num_links !== '' ? pageLocation.num_links : 0}
+                          </dd>
+                        </div>
+                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                            Total Number of Working Links
+                          </dt>
+                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            {pageLocation.num_ok_links !== null && pageLocation.num_ok_links !== undefined && pageLocation.num_ok_links !== '' && pageLocation.num_ok_links !== 0 ? pageLocation.num_ok_links : 0}
+                          </dd>
+                        </div>
+                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                            Total Number of Non-Working Links
+                          </dt>
+                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            {pageLocation.num_non_ok_links !== null && pageLocation.num_non_ok_links !== undefined && pageLocation.num_non_ok_links !== '' && pageLocation.num_non_ok_links !== 0 ? pageLocation.num_non_ok_links : 0}
+                          </dd>
+                        </div>
+                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                            Title
+                          </dt>
+                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            {pageLocation.pagedata.title !== null && pageLocation.pagedata.title !== undefined && pageLocation.pagedata.title !== '' ? pageLocation.pagedata.title : <span className="text-gray-500">None</span>}
+                          </dd>
+                        </div>
+                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                            Description
+                          </dt>
+                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            {pageLocation.pagedata.description !== null && pageLocation.pagedata.description !== undefined && pageLocation.pagedata.description !== '' ? pageLocation.pagedata.description : <span className="text-gray-500">None</span>}
+                          </dd>
+                        </div>
+                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                            First H1 Text
+                          </dt>
+                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            {pageLocation.pagedata.h1_first !== null && pageLocation.pagedata.h1_first !== undefined && pageLocation.pagedata.h1_first !== '' ? pageLocation.pagedata.h1_first : <span className="text-gray-500">None</span>}
+                          </dd>
+                        </div>
+                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                            Second H1 Text
+                          </dt>
+                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            {pageLocation.pagedata.h1_second !== null && pageLocation.pagedata.h1_second !== undefined && pageLocation.pagedata.h1_second !== '' ? pageLocation.pagedata.h1_second : <span className="text-gray-500">None</span>}
+                          </dd>
+                        </div>
+                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                            First H2 Text
+                          </dt>
+                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            {pageLocation.pagedata.h2_first !== null && pageLocation.pagedata.h2_first !== undefined && pageLocation.pagedata.h2_first !== '' ? pageLocation.pagedata.h2_first : <span className="text-gray-500">None</span>}
+                          </dd>
+                        </div>
+                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
+                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                            Second H2 Text
+                          </dt>
+                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            {pageLocation.pagedata.h2_second !== null && pageLocation.pagedata.h2_second !== undefined && pageLocation.pagedata.h2_second !== '' ? pageLocation.pagedata.h2_second : <span className="text-gray-500">None</span>}
+                          </dd>
+                        </div>
                       </dl>
                     </div>
                   </div>
