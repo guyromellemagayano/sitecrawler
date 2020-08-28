@@ -80,6 +80,9 @@ const SitesSeoStatsDiv = styled.div`
   .legent-text {
     margin-right: 10px;
   }
+  .space {
+    width: 20px;
+  }
 `
 
 const SitesSeoStats = props => {
@@ -233,7 +236,16 @@ const SitesSeoStats = props => {
           </div>
         </div>
         <div className={`flex justify-center`}>
-          <Chart options={chartOptions} series={chartSeries} type="donut" width="600" height="260" />
+          {
+            stats == undefined ? (
+              <>
+              <Skeleton circle={true} duration={2} width={240} height={240} />
+              <span className={`space`}></span>
+              <Skeleton duration={2} width={240} height={240} />
+              </>
+            ) : 
+              <Chart options={chartOptions} series={chartSeries} type="donut" width="600" height="260" />
+          }
         </div>
       </div>
     </SitesSeoStatsDiv>
