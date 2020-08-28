@@ -78,6 +78,9 @@ const SitesPagesStatsDiv = styled.div`
   .legent-text {
     margin-right: 10px;
   }
+  .skeleton-wrapper {
+    margin-bottom: 20px;
+  }
 `
 
 const SitesPagesStats = props => {
@@ -227,8 +230,17 @@ const SitesPagesStats = props => {
             </Link>
           </div>
         </div>
-        <div className={`flex justify-center`}>
-          <Chart options={chartOptions} series={chartSeries} type="donut"height="530" />
+        <div className={`flex justify-center items-center flex-col`}>
+          {
+            stats == undefined ? (
+              <div className={`skeleton-wrapper`}>
+                <Skeleton circle={true} duration={2} width={240} height={240} />
+                <br />
+                <br />
+                <Skeleton duration={2} width={240} height={190} />
+              </div>
+            ) : <Chart options={chartOptions} series={chartSeries} type="donut" height="530" />
+          }
 				</div>
       </div>
     </SitesPagesStatsDiv>
