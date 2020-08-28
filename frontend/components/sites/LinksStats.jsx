@@ -90,18 +90,19 @@ const SitesLinksStats = props => {
 
 	let scanObjId = ""
 
-  if (scan) {
-    let scanObj = []
+  	if (scan) {
+		let scanObj = []
 
-    scan.results.map((val) => {
-      scanObj.push(val)
-      return scanObj
-    })
+		scan.results.map((val) => {
+			scanObj.push(val)
+			return scanObj
+		})
 
-    scanObj.map((val) => {
-      scanObjId = val.id
-      return scanObjId
-    })
+		scanObj.map((val, index) => {
+			if(index == 0) scanObjId = val.id
+			
+			return scanObjId
+		})
 	}
 	
 	const { data: stats, error: statsError } = useSWR(
