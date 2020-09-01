@@ -258,10 +258,21 @@ const Subscriptions = () => {
 																						})}
 																					</ul>
 																					<div className={`mt-8`}>
-																						<div className={`rounded-lg shadow-md`}>
-																							<a href="#" className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:shadow-outline transition ease-in-out duration-150`}>
-																								Coming Soon
-																							</a>
+																						<div className={`rounded-lg ${user.group.id === 1 ? "shadow-none" : "shadow-md"}`}>
+																							{user.group.id === 3 ? (
+																								<button
+																									className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+																								>
+																									Current Plan
+																								</button>
+																							) : (
+																								<button
+																									className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																									onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
+																								>
+																									Select Plan
+																								</button>
+																							)}
 																						</div>
 																					</div>
 																				</div>
