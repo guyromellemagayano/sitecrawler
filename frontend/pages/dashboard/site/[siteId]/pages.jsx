@@ -16,7 +16,8 @@ import LinkOptions from 'components/site/LinkOptions'
 import LinkPagesTable from 'components/site/PagesTable'
 import Pagination from 'components/sites/Pagination'
 import PageFilter from 'components/site/PageFilter'
-import { removeURLParameter } from 'helpers/functions'
+import PageSorting from 'components/site/PageSorting'
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'helpers/functions'
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -37,6 +38,11 @@ const fetcher = async (url) => {
   return data
 }
 
+const initialOrder = {
+  pageUrl: 'default',
+  pageSize: 'default'
+}
+
 const PagesDiv = styled.section`
   .btn-crawler {
     top: 0;
@@ -47,7 +53,7 @@ const PagesDiv = styled.section`
 
 const Pages = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const [sortOrder, setSortOrder] = useState(false)
+  const [sortOrder, setSortOrder] = useState(initialOrder)
   const [searchKey, setSearchKey] = useState('')
   const [pagePath, setPagePath] = useState('')
   const [allFilter, setAllFilter] = useState(false)
@@ -96,6 +102,9 @@ const Pages = props => {
 
   let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/page/`
   let queryString = props.result.search !== undefined ? ( scanApiEndpoint.includes('?') ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
+  
+  queryString += props.result.ordering !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&ordering=${props.result.ordering}` : `?ordering=${props.result.ordering}` ) : ''
+
   scanApiEndpoint += queryString
   
   const { data: page, error: pageError, mutate: updatePages } = useSWR(
@@ -159,6 +168,54 @@ const Pages = props => {
   //   }
   // }
 
+  const SortHandler = (slug, dir) => {
+    setSortOrder({...initialOrder});
+
+    let newPath = removeURLParameter(asPath, 'ordering')
+    
+    const sortItem = slugToCamelcase(slug)
+    const sortKey = getSortKeyFromSlug(LinksPagesContent, slug)
+
+    if(sortOrder[sortItem] == 'default') {
+      setSortOrder(prevState => ({ ...prevState, [sortItem]: dir }));
+      if(dir == 'asc') {
+        if(newPath.includes("?"))
+          newPath += `&ordering=${sortKey}`
+        else
+          newPath += `?ordering=${sortKey}`
+      }
+      else {
+        if(newPath.includes("?"))
+          newPath += `&ordering=-${sortKey}`
+        else
+          newPath += `?ordering=-${sortKey}`
+      }
+    }
+    else if(sortOrder[sortItem] == 'asc') {
+      setSortOrder(prevState => ({ ...prevState, [sortItem]: 'desc' }));
+      if(newPath.includes("?"))
+        newPath += `&ordering=-${sortKey}`
+      else
+        newPath += `?ordering=-${sortKey}`
+    }
+    else {
+      setSortOrder(prevState => ({ ...prevState, [sortItem]: 'asc' }));
+      if(newPath.includes("?"))
+        newPath += `&ordering=${sortKey}`
+      else
+        newPath += `?ordering=${sortKey}`
+    }
+    
+    // console.log('[pagePath]', newPath)
+    if(newPath.includes("?"))
+      setPagePath(`${removeURLParameter(newPath, 'page')}&`)
+    else
+      setPagePath(`${removeURLParameter(newPath, 'page')}?`)
+    
+    Router.push('/dashboard/site/[siteId]/pages', newPath)
+    updatePages()
+  }
+
   useEffect(() => {    
     if(removeURLParameter(asPath, 'page').includes("?"))
       setPagePath(`${removeURLParameter(asPath, 'page')}&`)
@@ -167,6 +224,16 @@ const Pages = props => {
 
     if(props.result.search !== undefined)
       setSearchKey(props.result.search)
+
+    if(props.result.ordering !== undefined) {
+      const slug = getSlugFromSortKey(LinksPagesContent, props.result.ordering.replace('-', ''))
+      const orderItem = slugToCamelcase(slug)
+
+      if(props.result.ordering.includes('-'))
+        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'desc' }));
+      else
+        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'asc' }));
+    }
   }, [])
 
   const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`
@@ -357,6 +424,7 @@ const Pages = props => {
                                         className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
                                       > 
                                         <div className={`flex items-center justify-start`}>
+                                          <PageSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} />
                                           <span className="label flex items-center">
                                             {site.label}
                                           </span>
