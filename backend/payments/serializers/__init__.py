@@ -1,2 +1,3 @@
 from .payment_method import PaymentMethodSerializer
 from .subscription import SubscriptionSerializer
+from .user_subscription import UserSubscriptionSerializer
