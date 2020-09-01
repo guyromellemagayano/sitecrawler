@@ -6,24 +6,21 @@ const LinkSortingDiv = styled.div``
 const LinkSorting = (props) => {
   return (
     <LinkSortingDiv className="flex flex-row mr-3">
-      <button
-        className={`inline-flex`}
-        onClick={(e) => props.onSortHandler(props.slug)}
-      >
+      <div className={`inline-flex`}>
         {props.slug == "link-url" ? (
-          <Sorting direction={props.sortOrder.linkUrl} />
+          <Sorting direction={props.sortOrder.linkUrl} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : props.slug == "url-type" ? (
-          <Sorting direction={props.sortOrder.urlType} />
+          <Sorting direction={props.sortOrder.urlType} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : props.slug == "status" ? (
-          <Sorting direction={props.sortOrder.status} />
+          <Sorting direction={props.sortOrder.status} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : props.slug == "http-code" ? (
-          <Sorting direction={props.sortOrder.httpCode} />
+          <Sorting direction={props.sortOrder.httpCode} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : props.slug == "occurrences" ? (
-          <Sorting direction={props.sortOrder.occurrences} />
+          <Sorting direction={props.sortOrder.occurrences} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : (
           ""
         )}
-      </button>
+      </div>
     </LinkSortingDiv>
   )
 }

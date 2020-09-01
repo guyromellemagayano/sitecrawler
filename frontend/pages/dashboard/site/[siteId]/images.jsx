@@ -146,7 +146,7 @@ const Images = props => {
     updateLinks()
   }
 
-  const SortHandler = slug => {
+  const SortHandler = (slug, dir) => {
     setSortOrder({ ...initialOrder })
 
     let newPath = removeURLParameter(asPath, "ordering")
@@ -154,10 +154,20 @@ const Images = props => {
     const sortItem = slugToCamelcase(slug)
     const sortKey = getSortKeyFromSlug(ImageTableContent, slug)
 
-    if (sortOrder[sortItem] == "default") {
-      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }))
-      if (newPath.includes("?")) newPath += `&ordering=${sortKey}`
-      else newPath += `?ordering=${sortKey}`
+    if(sortOrder[sortItem] == 'default') {
+      setSortOrder(prevState => ({ ...prevState, [sortItem]: dir }));
+      if(dir == 'asc') {
+        if(newPath.includes("?"))
+          newPath += `&ordering=${sortKey}`
+        else
+          newPath += `?ordering=${sortKey}`
+      }
+      else {
+        if(newPath.includes("?"))
+          newPath += `&ordering=-${sortKey}`
+        else
+          newPath += `?ordering=-${sortKey}`
+      }
     } else if (sortOrder[sortItem] == "asc") {
       setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }))
       if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`

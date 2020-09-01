@@ -6,24 +6,21 @@ const SeoSortingDiv = styled.div``
 const SeoSorting = props => {
   return (
     <SeoSortingDiv className="flex flex-row mr-3">
-      <button
-        className={`inline-flex`}
-        onClick={(e) => props.onSortHandler(props.slug)}
-      >
+      <div className={`inline-flex`}>
         {props.slug == "page-url" ? (
-          <Sorting direction={props.sortOrder.pageUrl} />
+          <Sorting direction={props.sortOrder.pageUrl} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : props.slug == "created-at" ? (
-          <Sorting direction={props.sortOrder.createdAt} />
+          <Sorting direction={props.sortOrder.createdAt} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : props.slug == "total-links" ? (
-          <Sorting direction={props.sortOrder.totalLinks} />
+          <Sorting direction={props.sortOrder.totalLinks} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : props.slug == "total-ok-links" ? (
-          <Sorting direction={props.sortOrder.totalOkLinks} />
+          <Sorting direction={props.sortOrder.totalOkLinks} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : props.slug == "total-non-ok-links" ? (
-          <Sorting direction={props.sortOrder.totalNonOkLinks} />
+          <Sorting direction={props.sortOrder.totalNonOkLinks} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : (
           ""
         )}
-      </button>
+      </div>
     </SeoSortingDiv>
   )
 }
