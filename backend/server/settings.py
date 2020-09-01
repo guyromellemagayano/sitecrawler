@@ -49,6 +49,8 @@ DATABASES = {
     }
 }
 
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
+
 
 if env == "dev":
     DEBUG = True
@@ -59,6 +61,7 @@ if env == "dev":
     AWS_SECRET_ACCESS_KEY = "var"
     AWS_ENDPOINT_URL = "http://localstack:4566"
     AWS_USE_SSL = False
+    STRIPE_WEBHOOK_SECRET = None
 elif env == "staging":
     DEBUG = False
     ALLOWED_HOSTS = ["linkapp.epicsandbox.com"]
@@ -118,6 +121,10 @@ stripe.api_key = os.environ.get(
     "sk_test_51HIVFqBQhL0pYs2DCd5btngeCNpFsYM6dhjnN52P6pQTAYL6bPc9NT6DAgdy61ieo9DTrcCTEgGTCqeoCnINImVX005V3rKSoF",
 )
 stripe.api_version = "2020-03-02"
+STRIPE_PUBLISHABLE_KEY = os.environ.get(
+    "STRIPE_PUBLISHABLE_KEY",
+    "pk_test_51HIVFqBQhL0pYs2DVDldVquI8cWSn4zpmkPG5NOC7fR06i2HfvChSGs1geC30H5OAIrYbTEkj9s8Sei3etUr6FhD00iH8BAzac",
+)
 
 # Application definition
 
