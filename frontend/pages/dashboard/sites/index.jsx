@@ -43,7 +43,7 @@ const fetcher = async (url) => {
 
 const SitesDiv = styled.section``
 
-const Sites = (props) => {
+const Sites = props => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
   const [userLoaded, setUserLoaded] = useState(false)
   const pageTitle = "Sites"
