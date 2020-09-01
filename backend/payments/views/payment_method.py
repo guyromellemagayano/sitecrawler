@@ -18,8 +18,6 @@ class PaymentMethodViewSet(viewsets.ViewSet):
 
     def create(self, request):
         customer_id = customer.get_or_create_id(request)
-        if not customer_id:
-            return Response([])
 
         serializer = PaymentMethodSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
