@@ -3,25 +3,28 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
+import Transition from 'hooks/Transition'
 import useUser from 'hooks/useUser'
 import Layout from 'components/Layout'
 import MobileSidebar from 'components/sidebar/MobileSidebar'
 import MainSidebar from 'components/sidebar/MainSidebar'
+import PaymentMethodForm from 'components/form/PaymentMethodForm'
 import SubscriptionPlans from 'public/data/subscription-plans.json'
 
 const SubscriptionsDiv = styled.section``
 
 const Subscriptions = () => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
+	const [showModal, setShowModal] = useState(false)
 	const pageTitle = 'Subscriptions'
 
 	const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
-    redirectIfFound: false
+		redirectTo: '/login',
+		redirectIfFound: false
 	})
-	
-	{userError && <Layout>{userError.message}</Layout>}
-	
+
+	{ userError && <Layout>{userError.message}</Layout> }
+
 	return (
 		<Layout>
 			{user ? (
@@ -122,17 +125,28 @@ const Subscriptions = () => {
 																						})}
 																					</ul>
 																					<div className={`mt-8`}>
-																						<div className={`rounded-lg shadow-md`}>
-																							<a href="#" className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:shadow-outline transition ease-in-out duration-150" aria-describedby="tier-hobby`}>
-																								Current Plan
-																							</a>
+																						<div className={`rounded-lg ${user.group.id === 1 ? "shadow-none" : "shadow-md"}`}>
+																							{user.group.id === 1 ? (
+																								<button
+																									className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+																								>
+																									Current Plan
+																								</button>
+																							) : (
+																								<button
+																									className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																									onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
+																								>
+																									Select Plan
+																								</button>
+																							)}
 																						</div>
 																					</div>
 																				</div>
 																			</div>
 																		</div>
 																	</div>
-																) : val.slug === 'professional' ? (
+																) : val.slug === 'pro' ? (
 																	<div key={key} className={`mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4`}>
 																		<div className={`relative z-10 rounded-lg shadow-xl`}>
 																			<div className={`pointer-events-none absolute inset-0 rounded-lg border-2 border-indigo-600`}></div>
@@ -181,10 +195,22 @@ const Subscriptions = () => {
 																					})}
 																				</ul>
 																				<div className={`mt-10`}>
-																					<div className={`rounded-lg shadow-md`}>
-																						<a href="#" className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`} aria-describedby="tier-growth">
-																							Select Plan
-																						</a>
+																					<div className={`rounded-lg ${user.group.id === 2 ? "shadow-none" : "shadow-md"}`}>
+																						{user.group.id === 2 ? (
+																							<button
+																								className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+																							>
+																								Current Plan
+																							</button>
+																						) : (
+																							<button
+																								type="button"
+																								className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																								onClick={() => setShowModal(!showModal)}
+																							>
+																								Select Plan
+																							</button>
+																						)}
 																					</div>
 																				</div>
 																			</div>
@@ -233,7 +259,7 @@ const Subscriptions = () => {
 																					</ul>
 																					<div className={`mt-8`}>
 																						<div className={`rounded-lg shadow-md`}>
-																							<a href="#" className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:shadow-outline transition ease-in-out duration-150" aria-describedby="tier-scale`}>
+																							<a href="#" className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:shadow-outline transition ease-in-out duration-150`}>
 																								Coming Soon
 																							</a>
 																						</div>
@@ -253,6 +279,62 @@ const Subscriptions = () => {
 								</div>
 							</main>
 						</div>
+
+						<Transition show={showModal}>
+							<div className={`fixed z-10 inset-0 overflow-y-auto`}>
+								<div className={`flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}>
+									<Transition
+										enter="ease-out duration-300"
+										enterFrom="opacity-0"
+										enterTo="opacity-100"
+										leave="ease-in duration-200"
+										leaveFrom="opacity-100"
+										leaveTo="opacity-0"
+									>
+										<div className={`fixed inset-0 transition-opacity`}>
+											<div className={`absolute inset-0 bg-gray-500 opacity-75`}></div>
+										</div>
+									</Transition>
+
+									<span className={`hidden sm:inline-block sm:align-middle sm:h-screen`}></span>&#8203;
+
+									<Transition
+										enter="ease-out duration-300"
+										enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+										enterTo="opacity-100 translate-y-0 sm:scale-100"
+										leave="ease-in duration-200"
+										leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+										leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+									>
+										<div className={`inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-headline`}>
+											<div class="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
+												<button 
+													type="button"
+													className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
+													aria-label="Close"
+													onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
+												>
+													<svg className={`h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+													</svg>
+												</button>
+											</div>
+											<div>
+												<div className={`text-center sm:mt-3`}>
+													<h2 className={`mb-6 text-lg leading-6 font-medium text-gray-900" id="modal-headline`}>
+														Payment Method
+													</h2>
+												</div>
+											</div>
+
+											<div>
+												<PaymentMethodForm />
+											</div>
+										</div>
+									</Transition>
+								</div>
+							</div>
+						</Transition>
 					</SubscriptionsDiv>
 				</Fragment>
 			) : null}
@@ -263,6 +345,6 @@ const Subscriptions = () => {
 export default Subscriptions
 
 Subscriptions.propTypes = {
-  openMobileSidebar: PropTypes.bool,
-  pageTitle: PropTypes.string,
+	openMobileSidebar: PropTypes.bool,
+	pageTitle: PropTypes.string,
 }
