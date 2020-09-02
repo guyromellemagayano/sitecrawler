@@ -20,9 +20,7 @@
 		"key": "http_status"
 	},
 	{
-		"label": "Link Location",
-		"slug": "link-location",
-		"key": "link_location"
+		"label": "Link Location"
 	},
 	{
 		"label": "Occurrences",

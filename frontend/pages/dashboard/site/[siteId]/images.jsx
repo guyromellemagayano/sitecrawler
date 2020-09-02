@@ -500,7 +500,9 @@ const Images = props => {
                                         className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
                                       >
                                         <div className={`flex items-center`}>
-                                          <ImageSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} />
+                                          {site.slug != undefined ? (
+                                            <ImageSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} />
+                                          ) : null}
                                           <span className="label">
                                             {site.label}
                                           </span>

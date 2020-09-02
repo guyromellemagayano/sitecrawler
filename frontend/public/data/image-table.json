@@ -20,9 +20,7 @@
 		"key": "http_status"
 	},
 	{
-		"label": "Image Location",
-		"slug": "image-location",
-		"key": "image_location"
+		"label": "Image Location"
 	},
 	{
 		"label": "Occurrences",
