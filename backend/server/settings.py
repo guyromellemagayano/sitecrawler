@@ -145,6 +145,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django_filters",
+    "django_better_admin_arrayfield",
     "health_check",
     "health_check.db",
     "crawl",

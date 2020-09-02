@@ -12,7 +12,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = ["id", "price", "group"]
+        fields = ["id", "price", "group", "features"]
+        read_only_fields = fields
 
     def get_price(self, subscription):
         if hasattr(subscription, "price_id"):
