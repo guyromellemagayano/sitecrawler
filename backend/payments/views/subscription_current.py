@@ -1,5 +1,5 @@
+from django.conf import settings
 from rest_framework.views import APIView
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework import status
 import stripe
@@ -12,23 +12,28 @@ from ..services import customer
 class SubscriptionCurrentView(APIView):
     def get(self, request):
         if not hasattr(request.user, "user_subscription"):
-            return Response(UserSubscriptionSerializer(None).data)
+            return Response(self._none())
         user_subscription = request.user.user_subscription
         serializer = UserSubscriptionSerializer(user_subscription)
         return Response(serializer.data)
 
+    def _none(self):
+        return UserSubscriptionSerializer(None).data
+
     def delete(self, request):
         if not hasattr(request.user, "user_subscription"):
-            return NotFound
+            return Response(self._none())
 
         stripe.Subscription.delete(request.user.user_subscription.stripe_id)
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(self._none())
 
     def post(self, request, format=None):
         serializer = UserSubscriptionSerializer(data=request.data)
         if serializer.is_valid():
             subscription = Subscription.objects.get(pk=serializer.data["id"])
+            if subscription.group_id == settings.DEFAULT_USER_GROUP:
+                return self.delete(request)
 
             if not hasattr(request.user, "user_subscription"):
                 stripe_subscription = stripe.Subscription.create(
