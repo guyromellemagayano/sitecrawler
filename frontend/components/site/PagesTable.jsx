@@ -19,8 +19,6 @@ const LinksTableDiv = styled.tbody`
 `
 
 const LinksTable = props => {
-  console.log(props)
-
   if (!props) {
     return (
       <Fragment>

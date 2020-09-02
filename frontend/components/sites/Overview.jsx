@@ -65,9 +65,7 @@ const SitesOverview = props => {
       return scanObjId
     })
   }
-
-  console.log(stats)
-
+  
 	const { data: stats, error: statsError } = useSWR(
     () =>
       props.id && scanObjId
