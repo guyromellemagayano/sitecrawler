@@ -1,6 +1,5 @@
 import { Fragment } from 'react'
 import styled from 'styled-components'
-import Url from 'url-parse'
 import bytes from 'bytes'
 import Skeleton from 'react-loading-skeleton';
 import SiteSuccessIcon from '../icons/SiteSuccessIcon'
@@ -20,7 +19,7 @@ const LinksTableDiv = styled.tbody`
 `
 
 const LinksTable = props => {
-  const url = new Url(props.val.url)
+  console.log(props)
 
   if (!props) {
     return (
@@ -73,7 +72,7 @@ const LinksTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
-          {url.protocol === 'https:' ? <SiteSuccessIcon /> : <SiteDangerIcon />}
+          {props.val.tls_status === 'OK' ? <SiteSuccessIcon /> : <SiteDangerIcon />}
         </td>
       </tr>
     </LinksTableDiv>
