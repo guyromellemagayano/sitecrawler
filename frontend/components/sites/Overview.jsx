@@ -1,5 +1,4 @@
 import { Fragment } from 'react'
-import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import useSWR from 'swr'
 import styled from 'styled-components'
@@ -34,7 +33,6 @@ const SitesOverviewDiv = styled.div`
 `
 
 const SitesOverview = props => {
-  const { query } = useRouter()
   const userApiEndpoint = '/api/auth/user/'
   const calendarStrings = {
     lastDay: '[Yesterday], dddd',
@@ -47,7 +45,7 @@ const SitesOverview = props => {
   const {
     data: scan,
     error: scanError,
-  } = useSWR(() => (query.siteId ? `/api/site/${query.siteId}/scan/?ordering=-finished_at` : null), fetcher, {
+  } = useSWR(() => (props.id ? `/api/site/${props.id}/scan/?ordering=-finished_at` : null), fetcher, {
     refreshInterval: 1000,
   })
 
@@ -68,23 +66,23 @@ const SitesOverview = props => {
     })
   }
 
+  console.log(stats)
+
 	const { data: stats, error: statsError } = useSWR(
     () =>
-      query.siteId && scanObjId
-        ? `/api/site/${query.siteId}/scan/${scanObjId}/`
+      props.id && scanObjId
+        ? `/api/site/${props.id}/scan/${scanObjId}/`
         : null
 	)
 
   if (userError) return <div>{userError.message}</div>
   if (scanError) return <div>{scanError.message}</div>
   if (statsError) return <div>{statsError.message}</div>
-  if (!user || !scan) {
+  if (!user || !scan || !stats) {
     return (
       <Skeleton width={280} height={198} duration={2} />
     )
   }
-
-  // console.log(stats)
 
   return (
     <Fragment>
@@ -161,7 +159,7 @@ const SitesOverview = props => {
                   SSL Valid
                 </dt>
                 <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
-                  {stats.num_pages_tls_non_ok == 0 ? (
+                  {stats.num_pages_tls_non_ok == 0 && stats.num_pages_tls_non_ok !== undefined ? (
                     <SiteSuccessStatus
                       text={`Valid`}
                     />

@@ -177,6 +177,7 @@ const SitesDashboard = () => {
                   </div>
                   <div className={`grid grid-cols-2 gap-8 pb-10`}>
                     <SitesOverview
+                      id={site.id}
                       url={site.url}
                       verified={site.verified}
                       finishedAt={scan.results.map(e => { return e.finished_at }).sort().reverse()[0]}
