@@ -84,7 +84,7 @@ const SitesOverview = props => {
     )
   }
 
-  console.log(stats)
+  // console.log(stats)
 
   return (
     <Fragment>

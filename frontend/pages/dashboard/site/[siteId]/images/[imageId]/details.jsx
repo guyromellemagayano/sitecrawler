@@ -92,8 +92,6 @@ const ImagesDetail = () => {
   const { data: image, error: imageError } = useSWR(
     () => query.siteId && scanObjId ? imageApiEndpoint : null, fetcher
 	)
-	
-	console.log(query)
 
   const imageLocationApiEndpoint = `/api/site/${query.siteId}/scan/${scanObjId}/image/${query.imageId}/`
 
@@ -107,7 +105,7 @@ const ImagesDetail = () => {
   {siteError && <Layout>{siteError.message}</Layout>}
   {userError && <Layout>{userError.message}</Layout>}
 
-  console.log(imageLocation)
+  // console.log(imageLocation)
 	
 	return (
 		<Layout>
