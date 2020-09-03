@@ -153,13 +153,13 @@ const PageDetail = () => {
                       <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
                         <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
                       </svg>
-                      <Link href='/dashboard/site/[siteId]/page' as={'/dashboard/site/' + query.siteId + '/page'}>
+                      <Link href='/dashboard/site/[siteId]/pages' as={'/dashboard/site/' + query.siteId + '/pages'}>
                         <a className={`whitespace-no-wrap font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>All Pages</a>
                       </Link>
                       <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
                         <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
                       </svg>
-                      <Link href={'/dashboard/site/[siteId]/link/[pageId]/detail'} as={'/dashboard/site/' + query.siteId + '/link/' + query.pageId + '/detail'}>
+                      <Link href={'/dashboard/site/[siteId]/link/[pageId]/detail'} as={'/dashboard/site/' + query.siteId + '/page/' + query.pageId + '/detail'}>
                         <a className={`truncate font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{pageLocation.url}</a>
                       </Link>
                     </nav>
