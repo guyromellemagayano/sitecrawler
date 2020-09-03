@@ -133,13 +133,13 @@ const Subscriptions = () => {
 																									Current Plan
 																								</button>
 																							) : (
-																								<button
-																									className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
-																									onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
-																								>
-																									Select Plan
-																								</button>
-																							)}
+																									<button
+																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																										onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
+																									>
+																										Select Plan
+																									</button>
+																								)}
 																						</div>
 																					</div>
 																				</div>
@@ -203,14 +203,14 @@ const Subscriptions = () => {
 																								Current Plan
 																							</button>
 																						) : (
-																							<button
-																								type="button"
-																								className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
-																								onClick={() => setShowModal(!showModal)}
-																							>
-																								Select Plan
-																							</button>
-																						)}
+																								<button
+																									type="button"
+																									className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																									onClick={() => setShowModal(!showModal)}
+																								>
+																									Select Plan
+																								</button>
+																							)}
 																					</div>
 																				</div>
 																			</div>
@@ -229,14 +229,14 @@ const Subscriptions = () => {
 																							<span className={`px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900`}>
 																								<span className={`mt-2 mr-2 text-4xl font-medium`}>
 																									$
-																								</span>
+																						</span>
 																								<span className={`font-bold`}>
 																									{val.monthlyCost}
 																								</span>
 																							</span>
 																							<span className={`text-xl leading-7 font-medium text-gray-500`}>
 																								/month
-																							</span>
+																					</span>
 																						</div>
 																					</div>
 																				</div>
@@ -266,13 +266,13 @@ const Subscriptions = () => {
 																									Current Plan
 																								</button>
 																							) : (
-																								<button
-																									className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
-																									onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
-																								>
-																									Select Plan
-																								</button>
-																							)}
+																									<button
+																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																										onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
+																									>
+																										Select Plan
+																									</button>
+																								)}
 																						</div>
 																					</div>
 																				</div>
@@ -319,7 +319,7 @@ const Subscriptions = () => {
 									>
 										<div className={`inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-headline`}>
 											<div class="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-												<button 
+												<button
 													type="button"
 													className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
 													aria-label="Close"
