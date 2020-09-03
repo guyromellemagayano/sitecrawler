@@ -29,7 +29,7 @@ const fetcher = async (url) => {
   return data
 }
 
-const LinkUrlTableDiv = styled.tbody`
+const LinkTableDiv = styled.tbody`
   td {
     & > div {
       max-width: 100%;
@@ -59,9 +59,7 @@ const LinkUrlTableDiv = styled.tbody`
   }
 `
 
-const LinkUrlTable = props => {
-  const userApiEndpoint = "/api/auth/user/"
-
+const LinkTable = props => {
   const { query } = useRouter()
   const { data: linkDetail, error: linkDetailError } = useSWR(
     () =>
@@ -74,24 +72,22 @@ const LinkUrlTable = props => {
     }
   )
 
-  const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
-
   if (linkDetailError) return <div>{linkDetailError.message}</div>
-  if (userError) return <div>{userError.message}</div>
-  if (!linkDetail || !user) {
+
+  if (!linkDetail) {
     return (
       <Fragment>
-        <LinkUrlTableDiv className={`bg-white`}>
+        <LinkTableDiv className={`bg-white`}>
           <tr>
             {[...Array(6)].map((val, index) => <td className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`} key={index}><Skeleton duration={2} /></td>)}
           </tr>
-        </LinkUrlTableDiv>
+        </LinkTableDiv>
       </Fragment>
     )
   }
 
   return (
-    <LinkUrlTableDiv className={`bg-white`}>
+    <LinkTableDiv className={`bg-white`}>
       <tr>
         <td
           className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`}
@@ -156,10 +152,10 @@ const LinkUrlTable = props => {
           {props.val.occurences}
         </td>
       </tr>
-    </LinkUrlTableDiv>
+    </LinkTableDiv>
   )
 }
 
-export default LinkUrlTable
+export default LinkTable
 
-LinkUrlTable.propTypes = {}
+LinkTable.propTypes = {}
