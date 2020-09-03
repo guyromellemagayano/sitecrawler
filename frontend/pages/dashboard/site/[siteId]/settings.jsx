@@ -480,7 +480,7 @@ const SiteSettings = () => {
                               type={`button`}
                               id={`siteDeleteModalButton`}
                               className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 transition duration-150 ease-in-out hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-xs-outline-red active:bg-red-700`}
-                              onClick={() => setShowModal(!showModal)}
+                              onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
                             >
                               Delete Site
                             </button>
@@ -511,6 +511,9 @@ const SiteSettings = () => {
                     <div className={`absolute inset-0 bg-gray-500 opacity-75`}></div>
                   </div>
                 </Transition>
+                
+                <span className={`hidden sm:inline-block sm:align-middle sm:h-screen`}></span>&#8203;
+                
                 <Transition
                   enter="ease-out duration-300"
                   enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"

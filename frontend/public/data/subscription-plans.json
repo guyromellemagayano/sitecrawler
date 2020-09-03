@@ -14,8 +14,8 @@
 		]
 	},
 	{
-		"type": "Professional",
-		"slug": "professional",
+		"type": "Pro",
+		"slug": "pro",
 		"featured": true,
 		"monthlyCost": 25,
 		"yearlyCost": 300,
@@ -41,7 +41,7 @@
 		"monthlyCost": 100,
 		"yearlyCost": 1200,
 		"features": [
-			"All features in Professional Plan",
+			"All features in Pro Plan",
 			"Unlimited sites"
 		]
 	}

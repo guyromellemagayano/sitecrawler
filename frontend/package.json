@@ -58,6 +58,7 @@
     "react-transition-group": "^4.4.1",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
+    "stripe": "^8.91.0",
     "styled-components": "^5.1.1",
     "styled-jsx-plugin-postcss": "^2.0.1",
     "swr": "^0.2.3",

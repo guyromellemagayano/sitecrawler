@@ -532,23 +532,25 @@ const Seo = props => {
                 </div>
                 <div className={`btn-crawler absolute mt-4`}>
                   {
-                    recrawlable ? (
-                      <button
-                        type={`button`}
-                        onClick={onCrawlHandler}
-                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
-                      >
-                        Recrawl
-                      </button>
-                    ) : (
-                      <button
-                        disabled={`disabled`}
-                        type={`button`}
-                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
-                      >
-                        Recrawl
-                      </button>
-                    )
+                    user.group.id !== 1 ? (
+                      recrawlable ? (
+                        <button
+                          type={`button`}
+                          onClick={onCrawlHandler}
+                          className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+                        >
+                          Recrawl
+                        </button>
+                      ) : (
+                        <button
+                          disabled={`disabled`}
+                          type={`button`}
+                          className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
+                        >
+                          Recrawl
+                        </button>
+                      )
+                    ) : null
                   }
                 </div>
                 <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
@@ -587,7 +589,9 @@ const Seo = props => {
                                         className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
                                       >
                                         <div className={`flex items-center`}>
-                                          <SeoSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} />
+                                          {site.slug != undefined ? (
+                                            <SeoSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} />
+                                          ) : null}
                                           <span className="label">
                                             {site.label}
                                           </span>
