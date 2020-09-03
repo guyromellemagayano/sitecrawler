@@ -14,3 +14,10 @@ class Site(models.Model):
     verification_id = models.CharField(max_length=36, null=False)
     verified = models.BooleanField(null=False, default=False)
     last_verify_error = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        permissions = (
+            ("can_see_page_size", "Can see page size"),
+            ("can_see_images", "Can see images"),
+            ("can_see_seo", "Can see seo"),
+        )
