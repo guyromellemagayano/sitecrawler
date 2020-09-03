@@ -33,7 +33,8 @@ const fetcher = async (url) => {
 
 const SiteMenuDiv = styled.nav`
   .back-nav {
-    margin-bottom: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
   }
 `
 
@@ -145,68 +146,6 @@ const SiteMenu = props => {
         </SiteMenuDiv>
       ) : (
         <SiteMenuDiv className={`flex-1 px-4 bg-gray-1000`}>
-          <div className={`pt-3`}>
-            <div className={`text-left py-4`}>
-              <div className={`space-y-1`}>
-                <div ref={ref} className={`relative`}>
-                  <span className={`inline-block w-full rounded-md shadow-sm`}>
-                    <button type="button" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label" className={`cursor-default relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5`} onClick={setDropdownToggle}>
-                      <div className={`flex items-center space-x-3`}>
-                        {/* On: "bg-green-400", Off: "bg-gray-200" */}
-                        <span aria-label="Online" className={`${selectedSite.verified ? "bg-green-400" : "bg-red-400"} flex-shrink-0 inline-block h-2 w-2 rounded-full`}></span>
-                        <span className={`block truncate`}>
-                          {selectedSite.name}
-                        </span>
-                      </div>
-                      <span className={`absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none`}>
-                        <svg className={`h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="none" stroke="currentColor">
-                          <path d="M7 7l3-3 3 3m0 6l-3 3-3-3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </span>
-                    </button>
-                  </span>
-
-                  {/* Select popover, show/hide based on select state. */}
-                  <Transition show={isComponentVisible}>
-                    <Transition
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                    <div className={`absolute mt-1 w-full rounded-md bg-white shadow-lg`}>
-                      <ul tabIndex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-item-3" className={`h-32 rounded-md py-1 text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}>
-                        {site.results.map((val, key) => {
-                          return (
-                            <li key={key} onClick={() => dropdownHandler(val.id, val.verified)} id={`listbox-item-${key}`} role="option" className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${val.verified ? "cursor-pointer" : "cursor-not-allowed"} select-none relative py-2 pl-3 pr-9`}>
-                              <div className={`flex items-center space-x-3`}>
-                                <span aria-label="Online" className={`${val.verified ? "bg-green-400" : "bg-red-400"} flex-shrink-0 inline-block h-2 w-2 rounded-full`}></span>
-                                <span className={`font-normal block truncate`}>
-                                  {val.name}
-                                </span>
-                              </div>
-                              {selectedSite.id == val.id ? (
-                                <span className="hover:text-white text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4">
-                                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                  </svg>
-                                </span>
-                              ) : null}
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    </div>
-                    </Transition>
-                  </Transition>
-
-                </div>
-              </div>
-            </div>
-          </div>
-
           {SitePages.map((val, key) => {
             return (
               <Fragment key={key}>
@@ -294,52 +233,113 @@ const SiteMenu = props => {
                       const asVal = val2.url.indexOf("/dashboard/sites") > -1 ? val2.url : "/dashboard/site/" + query.siteId + val2.url
 
                       return (
-                        <Link
-                          key={key}
-                          href={hrefVal}
-                          as={asVal}
-                        >
-                          <a
-                            className={`${
-                              asPath.includes("/dashboard/site/" + query.siteId + val2.url)  
-                                ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
-                                : "back-nav mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
-                            }`}
+                        <Fragment>
+                          <Link
+                            key={key}
+                            href={hrefVal}
+                            as={asVal}
                           >
-                            <svg
-                              className={`mr-3 h-6 w-5 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
-                              stroke={`currentColor`}
-                              fill={`none`}
-                              viewBox={`0 0 24 24`}
+                            <a
+                              className={`${
+                                asPath.includes("/dashboard/site/" + query.siteId + val2.url)  
+                                  ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
+                                  : "back-nav mt-2 group flex items-center text-sm leading-5 font-medium text-gray-500 rounded-md"
+                              }`}
                             >
-                              <path
-                                strokeLinecap={`round`}
-                                strokeLinejoin={`round`}
-                                strokeWidth={`2`}
-                                d={val2.icon}
-                              />
-                              {val2.icon2 ? (
+                              <svg
+                                className={`mr-3 h-6 w-5 text-gray-500 transition ease-in-out duration-150`}
+                                stroke={`currentColor`}
+                                fill={`none`}
+                                viewBox={`0 0 24 24`}
+                              >
                                 <path
                                   strokeLinecap={`round`}
                                   strokeLinejoin={`round`}
                                   strokeWidth={`2`}
-                                  d={val2.icon2}
+                                  d={val2.icon}
                                 />
-                              ) : null}
-                            </svg>
-                            <span>{val2.title}</span>
-                            {val2.url === "/links" && (
-                              <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
-                                {stats.num_links}
-                              </span>
-                            )}
-                            {val2.url === "/pages" && (
-                              <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
-                                {stats.num_pages}
-                              </span>
-                            )}
-                          </a>
-                        </Link> 
+                                {val2.icon2 ? (
+                                  <path
+                                    strokeLinecap={`round`}
+                                    strokeLinejoin={`round`}
+                                    strokeWidth={`2`}
+                                    d={val2.icon2}
+                                  />
+                                ) : null}
+                              </svg>
+                              <span>{val2.title}</span>
+                              {val2.url === "/links" && (
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                  {stats.num_links}
+                                </span>
+                              )}
+                              {val2.url === "/pages" && (
+                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150`}>
+                                  {stats.num_pages}
+                                </span>
+                              )}
+                            </a>
+                          </Link>
+                          {val.slug !== 'dashboard' ? (
+                            <div className={`text-left py-4`}>
+                              <div className={`space-y-1`}>
+                                <div ref={ref} className={`relative`}>
+                                  <span className={`inline-block w-full rounded-md shadow-sm`}>
+                                    <button type="button" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label" className={`cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left focus:outline-none transition ease-in-out duration-150 sm:text-sm sm:leading-5`} onClick={setDropdownToggle}>
+                                      <div className={`flex items-center space-x-3`}>
+                                        <span aria-label="Online" className={`${selectedSite.verified ? "bg-green-400" : "bg-red-400"} flex-shrink-0 inline-block h-2 w-2 rounded-full`}></span>
+                                        <span className={`block truncate text-gray-600`}>
+                                          {selectedSite.name}
+                                        </span>
+                                      </div>
+                                      <span className={`absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none`}>
+                                        <svg className={`h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                                          <path d="M7 7l3-3 3 3m0 6l-3 3-3-3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                      </span>
+                                    </button>
+                                  </span>
+
+                                  <Transition show={isComponentVisible}>
+                                    <Transition
+                                      enter="transition ease-out duration-100"
+                                      enterFrom="transform opacity-0 scale-95"
+                                      enterTo="transform opacity-100 scale-100"
+                                      leave="transition ease-in duration-75"
+                                      leaveFrom="transform opacity-100 scale-100"
+                                      leaveTo="transform opacity-0 scale-95"
+                                    >
+                                    <div className={`absolute mt-1 w-full rounded-md bg-white shadow-lg`}>
+                                      <ul tabIndex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-item-3" className={`h-32 rounded-md py-1 text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}>
+                                        {site.results.map((val, key) => {
+                                          return (
+                                            <li key={key} onClick={() => dropdownHandler(val.id, val.verified)} id={`listbox-item-${key}`} role="option" className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${val.verified ? "cursor-pointer" : "cursor-not-allowed"} select-none relative py-2 pl-3 pr-9`}>
+                                              <div className={`flex items-center space-x-3`}>
+                                                <span aria-label="Online" className={`${val.verified ? "bg-green-400" : "bg-red-400"} flex-shrink-0 inline-block h-2 w-2 rounded-full`}></span>
+                                                <span className={`font-normal block truncate`}>
+                                                  {val.name}
+                                                </span>
+                                              </div>
+                                              {selectedSite.id == val.id ? (
+                                                <span className="hover:text-white text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4">
+                                                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                  </svg>
+                                                </span>
+                                              ) : null}
+                                            </li>
+                                          )
+                                        })}
+                                      </ul>
+                                    </div>
+                                    </Transition>
+                                  </Transition>
+
+                                </div>
+                              </div>
+                            </div>
+                          ) : null}
+                        </Fragment>
                       )
                     })}
                   </div>

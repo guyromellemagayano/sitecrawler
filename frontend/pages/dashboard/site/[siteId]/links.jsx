@@ -486,7 +486,7 @@ const Links = props => {
                 </div>
                 <div className={`btn-crawler absolute mt-4`}>
                   {
-                    user.group.id !== 1 ? (
+                    user.permissions.includes('can_start_scan') ? (
                       recrawlable ? (
                         <button
                           type={`button`}
