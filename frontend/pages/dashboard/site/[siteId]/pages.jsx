@@ -13,7 +13,7 @@ import Layout from 'components/Layout'
 import MobileSidebar from 'components/sidebar/MobileSidebar'
 import MainSidebar from 'components/sidebar/MainSidebar'
 import LinkOptions from 'components/site/LinkOptions'
-import LinkPagesTable from 'components/site/PagesTable'
+import PageTable from 'components/site/PageTable'
 import Pagination from 'components/sites/Pagination'
 import PageFilter from 'components/site/PageFilter'
 import PageSorting from 'components/site/PageSorting'
@@ -438,7 +438,7 @@ const Pages = props => {
                               </tr>
                             </thead>
                             {page.results && page.results.map((val, key) => (
-                              <LinkPagesTable key={key} val={val} />
+                              <PageTable key={key} val={val} />
                             ))}
                           </table>
                         </div>

@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -15,7 +16,7 @@ class GroupSettings(models.Model):
 @receiver(post_save, sender=User)
 def add_default_user_group(sender, instance, created, **kwargs):
     if created:
-        instance.groups.add(Group.objects.get(pk=1))
+        instance.groups.add(Group.objects.get(pk=settings.DEFAULT_USER_GROUP))
 
 
 @receiver(post_save, sender=Group)
