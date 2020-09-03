@@ -53,6 +53,8 @@ const SiteMenu = props => {
   const { query, asPath } = useRouter()
   const sitesApiEndpoint = props.page !== undefined ? '/api/site/?page=' + props.page : '/api/site/'
 
+  const { data: user, error: userError } = useSWR('/api/auth/user/', fetcher)
+  
   const {
     data: scan,
     error: scanError,
@@ -126,6 +128,7 @@ const SiteMenu = props => {
   
   return (
     <Fragment>
+      {userError && <Layout>{userError.message}</Layout>}
       {statsError && <Layout>{statsError.message}</Layout>}
       {scanError && <Layout>{scanError.message}</Layout>}
       {siteError && <Layout>{siteError.message}</Layout>}
@@ -159,70 +162,139 @@ const SiteMenu = props => {
                         const hrefVal = val2.url.indexOf('/dashboard/sites') > -1 ? val2.url : `/dashboard/site/[siteId]${val2.url}`
                         const asVal = val2.url.indexOf('/dashboard/sites') > -1 ? val2.url : '/dashboard/site/' + query.siteId + val2.url
 
-                        return (
-                          <Link key={key} href={hrefVal} as={asVal}>
-                            <a
-                              className={`${
-                                asPath.includes("/dashboard/site/" + query.siteId + val2.url)  
-                                  ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
-                                  : "mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
-                              }`}
-                            >
-                              <svg
-                                className={`mr-3 h-6 w-5 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
-                                stroke={`currentColor`}
-                                fill={`none`}
-                                viewBox={`0 0 24 24`}
+                        if (user.permissions.includes('can_see_images') && user.permissions.includes('can_see_seo')) {
+                          return (
+                            <Link key={key} href={hrefVal} as={asVal}>
+                              <a
+                                className={`${
+                                  asPath.includes("/dashboard/site/" + query.siteId + val2.url)  
+                                    ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
+                                    : "mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
+                                }`}
                               >
-                                <path
-                                  strokeLinecap={`round`}
-                                  strokeLinejoin={`round`}
-                                  strokeWidth={`2`}
-                                  d={val2.icon}
-                                />
-                                {val2.icon2 ? (
+                                <svg
+                                  className={`mr-3 h-6 w-5 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                                  stroke={`currentColor`}
+                                  fill={`none`}
+                                  viewBox={`0 0 24 24`}
+                                >
                                   <path
                                     strokeLinecap={`round`}
                                     strokeLinejoin={`round`}
                                     strokeWidth={`2`}
-                                    d={val2.icon2}
+                                    d={val2.icon}
                                   />
-                                ) : null}
-                              </svg>
-                              <span>{val2.title}</span>
-                              {val2.url === "/links" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
-                                  {stats.num_links}
-                                </span>
-                              )}
-                              {val2.url === "/pages" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
-                                  {stats.num_pages}
-                                </span>
-                              )}
-                              {val2.url === "/seo" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
-                                  {stats.num_pages}
-                                </span>
-                              )}
-                              {val2.url === "/images" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
-                                  {stats.num_images}
-                                </span>
-                              )}
-                              {val2.url === "/stylesheets" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
-                                  {stats.num_stylesheets}
-                                </span>
-                              )}
-                              {val2.url === "/scripts" && (
-                                <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
-                                  {stats.num_scripts}
-                                </span>
-                              )}
-                            </a>
-                          </Link>
-                        )
+                                  {val2.icon2 ? (
+                                    <path
+                                      strokeLinecap={`round`}
+                                      strokeLinejoin={`round`}
+                                      strokeWidth={`2`}
+                                      d={val2.icon2}
+                                    />
+                                  ) : null}
+                                </svg>
+                                <span>{val2.title}</span>
+                                {val2.url === "/links" && (
+                                  <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                    {stats.num_links}
+                                  </span>
+                                )}
+                                {val2.url === "/pages" && (
+                                  <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                    {stats.num_pages}
+                                  </span>
+                                )}
+                                {val2.url === "/seo" && (
+                                  <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                    {stats.num_pages}
+                                  </span>
+                                )}
+                                {val2.url === "/images" && (
+                                  <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                    {stats.num_images}
+                                  </span>
+                                )}
+                                {val2.url === "/stylesheets" && (
+                                  <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                    {stats.num_stylesheets}
+                                  </span>
+                                )}
+                                {val2.url === "/scripts" && (
+                                  <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                    {stats.num_scripts}
+                                  </span>
+                                )}
+                              </a>
+                            </Link>
+                          )
+                        } else {
+                          if (val2.slug !== 'images' && val2.slug !== 'seo') {
+                            return (
+                              <Link key={key} href={hrefVal} as={asVal}>
+                                <a
+                                  className={`${
+                                    asPath.includes("/dashboard/site/" + query.siteId + val2.url)  
+                                      ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
+                                      : "mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
+                                  }`}
+                                >
+                                  <svg
+                                    className={`mr-3 h-6 w-5 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                                    stroke={`currentColor`}
+                                    fill={`none`}
+                                    viewBox={`0 0 24 24`}
+                                  >
+                                    <path
+                                      strokeLinecap={`round`}
+                                      strokeLinejoin={`round`}
+                                      strokeWidth={`2`}
+                                      d={val2.icon}
+                                    />
+                                    {val2.icon2 ? (
+                                      <path
+                                        strokeLinecap={`round`}
+                                        strokeLinejoin={`round`}
+                                        strokeWidth={`2`}
+                                        d={val2.icon2}
+                                      />
+                                    ) : null}
+                                  </svg>
+                                  <span>{val2.title}</span>
+                                  {val2.url === "/links" && (
+                                    <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                      {stats.num_links}
+                                    </span>
+                                  )}
+                                  {val2.url === "/pages" && (
+                                    <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                      {stats.num_pages}
+                                    </span>
+                                  )}
+                                  {val2.url === "/seo" && (
+                                    <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                      {stats.num_pages}
+                                    </span>
+                                  )}
+                                  {val2.url === "/images" && (
+                                    <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                      {stats.num_images}
+                                    </span>
+                                  )}
+                                  {val2.url === "/stylesheets" && (
+                                    <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                      {stats.num_stylesheets}
+                                    </span>
+                                  )}
+                                  {val2.url === "/scripts" && (
+                                    <span className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}>
+                                      {stats.num_scripts}
+                                    </span>
+                                  )}
+                                </a>
+                              </Link>
+                            )
+                          }
+                        }
                       })}
                     </div>
                   </Fragment>
@@ -233,9 +305,10 @@ const SiteMenu = props => {
                       const asVal = val2.url.indexOf("/dashboard/sites") > -1 ? val2.url : "/dashboard/site/" + query.siteId + val2.url
 
                       return (
-                        <Fragment>
+                        <Fragment
+                          key={key}
+                        >
                           <Link
-                            key={key}
                             href={hrefVal}
                             as={asVal}
                           >
