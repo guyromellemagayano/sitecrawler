@@ -59,7 +59,6 @@ const Images = props => {
   const [pagePath, setPagePath] = useState("")
   const [sortOrder, setSortOrder] = useState(initialOrder)
   const [allFilter, setAllFilter] = useState(false)
-  const [imageWorkingFilter, setImageWorkingFilter] = useState(false)
   const [imageNotWorkingFilter, setImageNotWorkingFilter] = useState(false)
   const [recrawlable, setRecrawlable] = useState(false)
   const [crawlFinished, setCrawlFinished] = useState(false)
@@ -191,25 +190,9 @@ const Images = props => {
     const filterStatus = e.target.checked
 
     let newPath = asPath
-
-    if (filterType == "working" && filterStatus == true) {
-      setImageWorkingFilter(true)
-      setImageNotWorkingFilter(false)
-      setAllFilter(false)
-      newPath = removeURLParameter(newPath, "page")
-      newPath = removeURLParameter(newPath, "status")
-
-      if (newPath.includes("?"))
-        newPath += `&status=OK`
-      else newPath += `?status=OK`
-    } else if (filterType == "working" && filterStatus == false) {
-      newPath = removeURLParameter(newPath, "status")
-      setImageWorkingFilter(false)
-    }
     
     if (filterType == "notWorking" && filterStatus == true) {
       setImageNotWorkingFilter(true)
-      setImageWorkingFilter(false)
       setAllFilter(false)
       newPath = removeURLParameter(newPath, "page")
       newPath = removeURLParameter(newPath, "status")
@@ -224,7 +207,6 @@ const Images = props => {
 
     if (filterType == "all" && filterStatus == true) {
       setAllFilter(true)
-      setImageWorkingFilter(false)
       setImageNotWorkingFilter(false)
 
       newPath = removeURLParameter(newPath, "status")
@@ -267,18 +249,15 @@ const Images = props => {
 
   useEffect(() => {
     if(props.result.status !== undefined && Array.isArray(props.result.status)) {
-      setImageWorkingFilter(false)
       setImageNotWorkingFilter(true)
       setAllFilter(false)
     }
     else if(props.result.status !== undefined && !Array.isArray(props.result.status)) {
-      setImageWorkingFilter(true)
       setImageNotWorkingFilter(false)
       setAllFilter(false)
     }
 
     if(props.result.type == undefined && props.result.status == undefined) {
-      setImageWorkingFilter(false)
       setImageNotWorkingFilter(false)
       setAllFilter(true)
     }
@@ -473,7 +452,6 @@ const Images = props => {
                   <ImageFilter
                     onFilterChange={filterChangeHandler}
                     allFilter={allFilter}
-                    imageWorkingFilter={imageWorkingFilter}
                     imageNotWorkingFilter={imageNotWorkingFilter}
                   />
                   <Pagination
