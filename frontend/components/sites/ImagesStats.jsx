@@ -124,23 +124,26 @@ const SitesImagesStats = props => {
   const chartSeries = [
     (stats && stats.num_ok_images) !== undefined ? stats && stats.num_ok_images : 0,
     (stats && stats.num_non_ok_images) !== undefined ? stats && stats.num_non_ok_images : 0,
-    (stats && stats.num_non_ok_images) !== undefined ? stats && stats.num_non_ok_images : 0,
-    0,
-    0
+    (stats && stats.num_non_ok_images) !== undefined ? stats && stats.num_non_ok_images : 0
   ]
 
   const chartOptions = {
     chart: {
       type: 'donut',
     },
-    labels: ['No Issues', 'Broken Images', 'Broken Image Links', 'Unlinked Images', 'No Alt Text'],
-    colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9'],
+    // labels: ['No Issues', 'Broken Images', 'Broken Image Links', 'Unlinked Images', 'No Alt Text'],
+    // colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9'],
+    // fill: {
+    //   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9']
+    // },
+    labels: ['No Issues', 'Broken Images', 'Broken Image Links'],
+    colors: ['#19B080', '#EF2917', '#ED5244'],
     fill: {
-      colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9']
-	},
+      colors: ['#19B080', '#EF2917', '#ED5244']
+	  },
     stroke: {
-		width: 0
-	},
+		  width: 0
+	  },
     dataLabels: {
       enabled: true,
       formatter: function (val, opts) {
@@ -151,8 +154,8 @@ const SitesImagesStats = props => {
       show: true,
       fontSize: '14px',
       position: 'bottom',
-	  horizontalAlign: 'center',
-	  height: 210,
+      horizontalAlign: 'center',
+      height: 210,
       itemMargin: {
         horizontal: 15,
         vertical: 10
@@ -199,7 +202,7 @@ const SitesImagesStats = props => {
   }
 
 	{statsError && <Layout>{statsError.message}</Layout>}
-  	{scanError && <Layout>{scanError.message}</Layout>}
+  {scanError && <Layout>{scanError.message}</Layout>}
 	
 	return (
     <SitesImagesStatsDiv>
