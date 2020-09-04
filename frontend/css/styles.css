@@ -11960,6 +11960,10 @@ video {
   margin-left: -1px;
 }
 
+.max-h-xs {
+  max-height: 20rem;
+}
+
 .max-h-full {
   max-height: 100%;
 }
@@ -34720,6 +34724,10 @@ textarea {
     margin-left: -1px;
   }
 
+  .sm\:max-h-xs {
+    max-height: 20rem;
+  }
+
   .sm\:max-h-full {
     max-height: 100%;
   }
@@ -57400,6 +57408,10 @@ textarea {
 
   .md\:-ml-px {
     margin-left: -1px;
+  }
+
+  .md\:max-h-xs {
+    max-height: 20rem;
   }
 
   .md\:max-h-full {
@@ -80084,6 +80096,10 @@ textarea {
     margin-left: -1px;
   }
 
+  .lg\:max-h-xs {
+    max-height: 20rem;
+  }
+
   .lg\:max-h-full {
     max-height: 100%;
   }
@@ -102764,6 +102780,10 @@ textarea {
 
   .xl\:-ml-px {
     margin-left: -1px;
+  }
+
+  .xl\:max-h-xs {
+    max-height: 20rem;
   }
 
   .xl\:max-h-full {

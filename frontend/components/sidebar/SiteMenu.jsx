@@ -32,9 +32,11 @@ const fetcher = async (url) => {
 }
 
 const SiteMenuDiv = styled.nav`
-  .back-nav {
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
+  div[aria-labelledby="navigation-headline"] {
+    .back-nav {
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+    }    
   }
 `
 
@@ -383,7 +385,7 @@ const SiteMenu = props => {
                                       leaveTo="transform opacity-0 scale-95"
                                     >
                                     <div className={`absolute mt-1 w-full rounded-md bg-white shadow-lg`}>
-                                      <ul tabIndex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-item-3" className={`h-32 rounded-md py-1 text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}>
+                                      <ul tabIndex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-item-3" className={`max-h-xs py-2 rounded-md text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}>
                                         {site.results.map((val, key) => {
                                           return (
                                             <li key={key} onClick={() => dropdownHandler(val.id, val.verified)} id={`listbox-item-${key}`} role="option" className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${val.verified ? "cursor-pointer" : "cursor-not-allowed"} select-none relative py-2 pl-3 pr-9`}>
