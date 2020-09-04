@@ -118,10 +118,16 @@ const SitesPagesStats = props => {
     }
 	)
   
+  // const chartSeries = [
+  //   (stats && stats.num_pages) !== undefined ? stats && stats.num_pages : 0,
+  //   (stats && stats.num_pages_big) !== undefined ? stats && stats.num_pages_big : 0,
+  //   0,
+  //   0
+  // ]
+
   const chartSeries = [
     (stats && stats.num_pages) !== undefined ? stats && stats.num_pages : 0,
     (stats && stats.num_pages_big) !== undefined ? stats && stats.num_pages_big : 0,
-    0,
     0
   ]
 
@@ -129,10 +135,15 @@ const SitesPagesStats = props => {
     chart: {
       type: 'donut',
     },
-    labels: ['No Issues', 'Large Page Size', 'Broken Security', 'Not on Google'],
-    colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338'],
+    // labels: ['No Issues', 'Large Page Size', 'Broken Security', 'Not on Google'],
+    // colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338'],
+    // fill: {
+    //   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338']
+    // },
+    labels: ['No Issues', 'Large Page Size', 'Broken Security'],
+    colors: ['#19B080', '#EF2917', '#ED5244'],
     fill: {
-      colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338']
+      colors: ['#19B080', '#EF2917', '#ED5244']
     },
     stroke: {
       width: 0
