@@ -69,6 +69,14 @@ const ImagesTableDiv = styled.tbody`
 			display: inline-block;
 		}
 	}
+
+	.btn-detail {
+    display: inline-block;
+    padding: 8px 10px;
+    line-height: 1;
+    font-size: 0.7rem;
+    margin-top: 5px;
+  }
 `
 
 const ImagesTable = props => {
@@ -103,14 +111,14 @@ const ImagesTable = props => {
 											href={props.val.url}
 											target={`_blank`}
 											title={props.val.url}
-											className={`truncate-link text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+											className={`text-sm leading-6 font-semibold text-blue-1000 hover:text-blue-900 transition ease-in-out duration-150 truncate`}
 										>
 											{props.val.url}
 										</a>
 									</div>
 									<div className={`flex justify-start inline-text-sm leading-5 text-gray-500`}>
 										<Link href="/dashboard/site/[id]/images/[id]/details" as={`/dashboard/site/${query.siteId}/images/${props.val.id}/details`}>
-											<a className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>View Details</a>
+											<a className={`btn-detail mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-white bg-indigo-600 rounded hover:bg-indigo-500 hover:border-0 transition ease-in-out duration-150`}>View Details</a>
 										</Link>
 									</div>
 								</div>
