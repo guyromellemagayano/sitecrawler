@@ -28,6 +28,7 @@ const fetcher = async (url) => {
 }
 
 const SitesLinksStatsDiv = styled.div`
+	height: 100%;
 	.status-indicator {
 		display: block;
 		flex: 0 0 0.85rem;
@@ -48,20 +49,20 @@ const SitesLinksStatsDiv = styled.div`
 			&-4 {
 				background-color: #BB4338;
 			}
+			&-5 {
+				background-color: #2D99FF;
+			}
 		}
-	}
-	.apexcharts-legend {
-		display: block;
 	}
 	.apexcharts-legend-series {
 		display: flex;
 		align-items: center;
 		border-bottom: 1px solid #E7EFEF;
-		padding-bottom: 10px;
+		padding-bottom: 9px;
 	}
 	.apexcharts-legend-series:last-child {
 		border: none;
-	  }
+	}
 	.apexcharts-legend-text {
 		display: flex;
 		align-items: center;
@@ -75,11 +76,11 @@ const SitesLinksStatsDiv = styled.div`
 		color: #1D2626;
 		font-weight: 600;
 	}
-	.legend-text {
+	.legent-text {
 		margin-right: 10px;
 	}
-	.skeleton-wrapper {
-		margin-bottom: 20px;
+	.space {
+		width: 20px;
 	}
 `
 
@@ -171,59 +172,60 @@ const SitesLinksStats = props => {
 			}
 		},
 		legend: {
-			show: true,
-			fontSize: '14px',
-			position: 'bottom',
-			horizontalAlign: 'center', 
-			height: 210,
-			itemMargin: {
-				horizontal: 15,
-				vertical: 10
-			},
-			formatter: function(seriesName, opts) {
-				return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
-			}
+      show: true,
+      fontSize: '14px',
+      position: 'right',
+      floating: false,
+      width: 300,
+      horizontalAlign: 'center', 
+      itemMargin: {
+        horizontal: 5,
+        vertical: 5
+      },
+      formatter: function(seriesName, opts) {
+        return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
+      }
 		},
 		plotOptions: {
-			pie: {
-			donut: {
-				labels: {
-				show: true,
-				total: {
-					show: true,
-					showAlways: true,
-					label: "Errors",
-					fontSize: "15px",
-					color: "#2A324B",
-					formatter: function (val) {
-						let num_errs = 0
-						for(let i=0; i<val.config.series.length; i++) {
-							if(i != 0) num_errs += val.config.series[i]
-						}
+      pie: {
+        donut: {
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              showAlways: true,
+              label: "Errors",
+              fontSize: "15px",
+              color: "#2A324B",
+              formatter: function (val) {
+                let num_errs = 0
+                for(let i=0; i<val.config.series.length; i++) {
+                  if(i != 0) num_errs += val.config.series[i]
+                }
 
-						return num_errs
-					}
-				}
-				}
-			}
-			}
-		},
-		responsive: [{
-			breakpoint: 480,
-			options: {
-				chart: {
-					width: 400
-				},
-				legend: {
-					position: 'bottom'
-				}
-			}
-		}]
+                return num_errs
+              }
+            }
+          }
+        }
+      }
+    },
+    responsive: [{
+      breakpoint: 1315,
+      options: {
+        chart: {
+          width: 400
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }]
 	}
 	
 	return (
     <SitesLinksStatsDiv>
-      <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+      <div className={`bg-white overflow-hidden shadow-xs rounded-lg h-full`}>
         <div className={`flex justify-between py-8 px-5`}>
           <div className={`flex items-center`}>
             <svg
@@ -255,17 +257,17 @@ const SitesLinksStats = props => {
           </div>
         </div>
         <div className={`flex justify-center`}>
-			{
-				stats == undefined ? (
-					<div className={`skeleton-wrapper`}>
-						<Skeleton circle={true} duration={2} width={240} height={240} />
-						<br />
-						<br />
-						<Skeleton duration={2} width={240} height={190} />
-					</div>
-				) : <Chart options={chartOptions} series={chartSeries} type="donut" height="530" />
-			}
-		</div>
+          {
+            stats == undefined ? (
+              <>
+              <Skeleton circle={true} duration={2} width={240} height={240} />
+              <span className={`space`}></span>
+              <Skeleton duration={2} width={240} height={240} />
+              </>
+            ) : 
+              <Chart options={chartOptions} series={chartSeries} type="donut" width="600" height="260" />
+          }
+        </div>
       </div>
     </SitesLinksStatsDiv>
   )
