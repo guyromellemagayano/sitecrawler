@@ -185,15 +185,15 @@ const SitesDashboard = () => {
                       crawlable={recrawlable}
                       crawlFinished={crawlFinished}
                     />
-                    <SitesSeoStats
+                    <SitesLinksStats
                       url={query}
                     />
                   </div>
                   <div className={`grid grid-cols-3 gap-8`}>
-                    <SitesPagesStats
+                    <SitesSeoStats
                       url={query}
                     />
-                    <SitesLinksStats
+                    <SitesPagesStats
                       url={query}
                     />
                     <SitesImagesStats
