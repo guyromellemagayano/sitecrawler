@@ -5,7 +5,7 @@ const PageSortingDiv = styled.div``
 
 const PageSorting = props => {
   return (
-    <PageSortingDiv className="flex flex-row mr-3">
+    <PageSortingDiv className="flex flex-row ml-3">
       <div className={`inline-flex`}>
         {props.slug == "page-url" ? (
           <Sorting direction={props.sortOrder.pageUrl} onSortHandler={props.onSortHandler} slug={props.slug} />

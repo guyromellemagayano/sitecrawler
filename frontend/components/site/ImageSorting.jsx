@@ -5,7 +5,7 @@ const ImageSortingDiv = styled.div``
 
 const ImageSorting = props => {
   return (
-    <ImageSortingDiv className="flex flex-row mr-3">
+    <ImageSortingDiv className="flex flex-row ml-3">
       <div className={`inline-flex`}>
         {props.slug == "image-url" ? (
           <Sorting direction={props.sortOrder.imageUrl} onSortHandler={props.onSortHandler} slug={props.slug} />
