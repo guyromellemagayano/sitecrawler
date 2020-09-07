@@ -69,7 +69,7 @@ const PagesTable = props => {
       <Fragment>
         <PagesTableDiv className={`bg-white`}>
           <tr>
-            {[...Array(4)].map((val, index) => <td className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`} key={index}><Skeleton duration={2} /></td>)}
+            {[...Array(4)].map((val, index) => <td className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200`} key={index}><Skeleton duration={2} /></td>)}
           </tr>
         </PagesTableDiv>
       </Fragment>
@@ -80,7 +80,7 @@ const PagesTable = props => {
     <PagesTableDiv className={`bg-white`}>
       <tr>
         <td
-          className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`}
+          className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200`}
         >
           <div className={`flex items-center`}>
             <div>
@@ -103,7 +103,7 @@ const PagesTable = props => {
           </div>
         </td>
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           {bytes(props.val.size_total, {thousandsSeparator: ' ', unitSeparator: ' '})}
         </td>
@@ -113,7 +113,7 @@ const PagesTable = props => {
           <SiteSuccessBadge text={'Good'} />
         </td>
         {/* <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           <SiteSuccessIcon />
         </td> */}

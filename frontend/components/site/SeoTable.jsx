@@ -115,7 +115,7 @@ const PageSeoTable = props => {
     <PageSeoTableDiv className={`bg-white`}>
       <tr>
         <td
-          className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`}
+          className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200`}
         >
           <div className={`flex items-center`}>
             <div>
@@ -140,7 +140,7 @@ const PageSeoTable = props => {
           </div>
         </td>
         <td
-          className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
 					<div className={`text-sm leading-5 text-gray-900`}>
 						{!user.settings.disableLocalTime ? (
@@ -158,17 +158,17 @@ const PageSeoTable = props => {
 					</div>
         </td>
         <td
-          className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           {pageDetail.num_links}
         </td>
         <td
-          className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-green-500`}
+          className={`icon-status pl-16 pr-6 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-green-500`}
         >
           {pageDetail.num_ok_links}
         </td>
         <td
-          className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-red-500`}
+          className={`icon-status pl-16 pr-6 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-red-500`}
         >
 					{pageDetail.num_non_ok_links}
         </td>
