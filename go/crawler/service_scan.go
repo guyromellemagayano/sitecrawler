@@ -191,6 +191,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 	}
 
 	if depth > depthLimit {
+		log.Errorf("Depth limit hit for link %v", link.ID)
 		return link.ID, nil
 	}
 
@@ -285,7 +286,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 	crawlLink := &common.CrawlLink{
 		ScanID:    s.Scan.ID,
 		CreatedAt: time.Now(),
-		Url:       url.String(),
+		Url:       lenLimit(url.String(), 2047),
 		Type:      TYPE_OTHER,
 		Status:    STATUS_OK,
 		TlsStatus: TLS_OK,
@@ -307,10 +308,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 		} else {
 			log.Errorf("Other error for link %v: %v", url, err)
 			crawlLink.Status = STATUS_OTHER_ERROR
-			errStr := err.Error()
-			if len(errStr) > 255 {
-				errStr = errStr[:255]
-			}
+			errStr := lenLimit(err.Error(), 255)
 			crawlLink.Error = &errStr
 		}
 	}
@@ -407,6 +405,8 @@ func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, fe fifoEntry, r re
 		fep.Relations = []relation{r}
 		s.fifo.PushBack(fep)
 		s.inFifo[urlStr] = fep
+	} else {
+		log.Errorf("Total limit hit for: %v", fe.Url)
 	}
 }
 
@@ -496,4 +496,11 @@ func (r *SizeReader) Read(p []byte) (int, error) {
 	n, err := r.Child.Read(p)
 	r.Size += n
 	return n, err
+}
+
+func lenLimit(s string, limit int) string {
+	if len(s) > limit {
+		return s[:limit]
+	}
+	return s
 }
