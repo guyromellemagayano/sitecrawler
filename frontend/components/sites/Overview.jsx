@@ -173,9 +173,9 @@ const SitesOverview = props => {
                   Forced HTTPS
                 </dt>
                 <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
-                  {/* <SiteDangerStatus
-                    text={`Not Forced HTTPS`}
-                  /> */}
+                  <SiteWarningStatus
+                    text={`Coming Soon`}
+                  />
                 </dd>
               </div>
               <div className={`sm:col-span-1`}>
