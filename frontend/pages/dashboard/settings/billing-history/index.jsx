@@ -14,7 +14,7 @@ const BillingHistory = () => {
   const pageTitle = 'Billing History'
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
+    redirectTo: '/',
     redirectIfFound: false
   })
 

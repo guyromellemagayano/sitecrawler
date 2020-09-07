@@ -33,7 +33,7 @@ const PrimaryMenuDiv = styled.nav``
 
 const PrimaryMenu = () => {
   const { user: user, userError: userError } = useUser({
-    redirectTo: "/login",
+    redirectTo: '/',
     redirectIfFound: false,
   })
 

@@ -16,7 +16,7 @@ const GlobalSettings = () => {
   const pageTitle = 'Global Settings'
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
+    redirectTo: '/',
     redirectIfFound: false
   })
 

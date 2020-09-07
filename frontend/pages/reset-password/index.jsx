@@ -175,7 +175,7 @@ const ResetPassword = () => {
               >
                 <span className={`px-2 py-5 text-gray-500`}>
                   Not Sure? Go back to&nbsp;
-                  <Link href="/login">
+                  <Link href='/'>
                     <a
                       className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
                     >
@@ -189,7 +189,7 @@ const ResetPassword = () => {
             <div className={`relative flex justify-center wrap flex-row text-sm leading-5`}>
               <span className={`px-2 py-5 text-gray-500`}>
                 Already have an account?&nbsp;
-                <Link href="/login">
+                <Link href='/'>
                   <a
                     className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
                   >

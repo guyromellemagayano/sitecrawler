@@ -21,7 +21,7 @@ const MobileSidebar = props => {
 	}
 
 	const { user: user } = useUser({
-    redirectTo: '/login',
+    redirectTo: '/',
     redirectIfFound: false
   })
 

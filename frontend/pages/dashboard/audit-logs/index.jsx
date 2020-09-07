@@ -14,7 +14,7 @@ const Reports = () => {
   const pageTitle = 'Audit Logs'
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
+    redirectTo: '/',
     redirectIfFound: false
   })
 

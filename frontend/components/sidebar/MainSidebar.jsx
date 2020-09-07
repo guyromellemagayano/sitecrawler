@@ -16,7 +16,7 @@ const MainSidebar = props => {
   const [windowSettingsLocation, setWindowSettingsLocation] = useState(false)
 
   const { user: user } = useUser({
-    redirectTo: '/login',
+    redirectTo: '/',
     redirectIfFound: false
   })
 

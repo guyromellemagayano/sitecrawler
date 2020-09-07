@@ -91,7 +91,7 @@ const Links = props => {
   const pageTitle = 'Links |'
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
+    redirectTo: '/',
     redirectIfFound: false
   })
 
