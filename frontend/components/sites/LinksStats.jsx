@@ -157,10 +157,10 @@ const SitesLinksStats = props => {
 		chart: {
 			type: 'donut'
 		},
-		labels: ['No Issues', 'Broken Internal Links', 'Broken External Links'],
-		colors: ['#19B080', '#EF2917', '#ED5244'],
+		labels: ['Broken Internal Links', 'Broken External Links', 'No Issues'],
+		colors: ['#EF2917', '#ED5244', '#19B080'],
 		fill: {
-			colors: ['#19B080', '#EF2917', '#ED5244']
+			colors: ['#EF2917', '#ED5244', '#19B080']
 		},
 		stroke: {
 			width: 0

@@ -140,10 +140,10 @@ const SitesPagesStats = props => {
     // fill: {
     //   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338']
     // },
-    labels: ['No Issues', 'Large Page Size', 'Broken Security'],
-    colors: ['#19B080', '#EF2917', '#ED5244'],
+    labels: ['Large Page Size', 'Broken Security', 'No Issues'],
+    colors: ['#EF2917', '#ED5244', '#19B080'],
     fill: {
-      colors: ['#19B080', '#EF2917', '#ED5244']
+      colors: ['#EF2917', '#ED5244', '#19B080']
     },
     stroke: {
       width: 0

@@ -136,10 +136,10 @@ const SitesImagesStats = props => {
     // fill: {
     //   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9']
     // },
-    labels: ['No Issues', 'Broken Images', 'Broken Image Links'],
-    colors: ['#19B080', '#EF2917', '#ED5244'],
+    labels: ['Broken Images', 'Broken Image Links', 'No Issues'],
+    colors: ['#EF2917', '#ED5244', '#19B080'],
     fill: {
-      colors: ['#19B080', '#EF2917', '#ED5244']
+      colors: ['#EF2917', '#ED5244', '#19B080']
 	  },
     stroke: {
 		  width: 0
