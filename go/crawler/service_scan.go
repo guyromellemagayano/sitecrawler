@@ -191,6 +191,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 	}
 
 	if depth > depthLimit {
+		log.Errorf("Depth limit hit for link %v", link.ID)
 		return link.ID, nil
 	}
 
@@ -407,6 +408,8 @@ func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, fe fifoEntry, r re
 		fep.Relations = []relation{r}
 		s.fifo.PushBack(fep)
 		s.inFifo[urlStr] = fep
+	} else {
+		log.Errorf("Total limit hit for: %v", fe.Url)
 	}
 }
 
