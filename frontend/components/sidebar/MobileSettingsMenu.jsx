@@ -14,7 +14,7 @@ const MobileSettingsMenuDiv = styled.nav`
 
 const MobileSettingsMenu = () => {
   const { user: user, userError: userError } = useUser({
-    redirectTo: "/login",
+    redirectTo: '/',
     redirectIfFound: false,
   })
 

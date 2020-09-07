@@ -52,7 +52,7 @@ const Sites = props => {
   const router = useRouter()
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: "/login",
+    redirectTo: '/',
     redirectIfFound: false,
   })
 
