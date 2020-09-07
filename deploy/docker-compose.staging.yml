@@ -80,7 +80,7 @@ services:
     restart: always
     volumes:
       - db-data:/var/lib/postgresql/data
-    mem_limit: 128M
+    mem_limit: 256M
 
 volumes:
   db-data:
