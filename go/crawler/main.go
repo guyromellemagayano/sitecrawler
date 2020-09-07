@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
+	_ "net/http/pprof"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 )
