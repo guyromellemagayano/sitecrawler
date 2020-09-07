@@ -11,6 +11,7 @@ import Layout from "components/Layout";
 import LogoLabel from "components/form/LogoLabel";
 import { useRouter } from "next/router";
 import SiteHead from 'components/layout/SiteHead'
+import AppLogo from 'components/logo/AppLogo'
 
 const LoginDiv = styled.div``;
 
@@ -108,257 +109,313 @@ const Login = () => {
       </Head>
 
       <LoginDiv
-        className={`min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
+        className={`bg-gray-100 h-screen`}
       >
-        {!disableLoginForm ? <LogoLabel isLogin /> : null}
-
-        <div className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
-          {errorMsg && (
-            <div className={`rounded-md bg-red-100 p-4 mb-8`}>
-              <div className={`flex`}>
-                <div className={`flex-shrink-0`}>
-                  <svg
-                    className={`h-5 w-5 text-red-400`}
-                    fill={`currentColor`}
-                    viewBox={`0 0 20 20`}
-                  >
-                    <path
-                      fillRule={`evenodd`}
-                      d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
-                      clipRule={`evenodd`}
-                    />
-                  </svg>
-                </div>
-                <div className={`ml-3`}>
-                  <h3
-                    className={`text-sm leading-5 font-medium text-red-800 break-words`}
-                  >
-                    {errorMsg}
-                  </h3>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {successMsg && (
-            <div className={`rounded-md bg-green-100 p-4 mb-8`}>
-              <div className={`flex`}>
-                <div className={`flex-shrink-0`}>
-                  <svg
-                    className={`h-5 w-5 text-green-400`}
-                    fill={`currentColor`}
-                    viewBox={`0 0 20 20`}
-                  >
-                    <path
-                      fillRule={`evenodd`}
-                      d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
-                      clipRule={`evenodd`}
-                    />
-                  </svg>
-                </div>
-                <div className={`ml-3`}>
-                  <h3
-                    className={`text-sm leading-5 font-medium text-green-800 break-words`}
-                  >
-                    {successMsg}
-                  </h3>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {!disableLoginForm && (
-            <Fragment>
-              <div
-                className={`bg-white py-8 px-4 shadow-xs rounded-lg sm:px-10`}
-              >
-                <form onSubmit={handleSubmit}>
-                  <div className={`mt-1`}>
-                    <label
-                      htmlFor={`username`}
-                      className={`block text-sm font-medium leading-5 text-gray-700`}
-                    >
-                      Username/Email
-                    </label>
-                    <div className={`mt-1 rounded-md shadow-xs-sm`}>
-                      <input
-                        id={`username`}
-                        type={`text`}
-                        name={`username`}
-                        className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-                          errorUsernameMsg
-                            ? "border-red-300"
-                            : "border-gray-300"
-                        }`}
-                        aria-describedby={`username`}
-                        onChange={(e) => setUsername(e.target.value)}
-                      />
-                    </div>
-                    <span
-                      className={`block mt-2 text-sm leading-5 text-red-700`}
-                    >
-                      {errorUsernameMsg}
-                    </span>
-                  </div>
-
-                  <div className={`mt-6`}>
-                    <label
-                      htmlFor={`password`}
-                      className={`block text-sm font-medium leading-5 text-gray-700`}
-                    >
-                      Password
-                    </label>
-                    <div className={`mt-1 rounded-md shadow-xs-sm`}>
-                      <input
-                        id={`password`}
-                        type={`password`}
-                        name={`password`}
-                        className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-                          errorPasswordMsg
-                            ? "border-red-300"
-                            : "border-gray-300"
-                        }`}
-                        aria-describedby={`password`}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </div>
-                    <span
-                      className={`block mt-2 text-sm leading-5 text-red-700`}
-                    >
-                      {errorPasswordMsg}
-                    </span>
-                  </div>
-
-                  <div className={`mt-6 flex items-center justify-between`}>
-                    <div className={`flex items-center`}>
-                      <input
-                        id={`remember_me`}
-                        type={`checkbox`}
-                        className={`form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out`}
-                      />
-                      <label
-                        htmlFor={`remember_me`}
-                        className={`ml-2 block text-sm leading-5 text-gray-900`}
-                      >
-                        Remember me
-                      </label>
-                    </div>
-
-                    <div className={`text-sm leading-5`}>
-                      <Link href="/reset-password">
-                        <a
-                          className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
-                        >
-                          Forgot your password?
-                        </a>
-                      </Link>
-                    </div>
-                  </div>
-
-                  <div className={`mt-6`}>
-                    <span className={`block w-full rounded-md shadow-xs-sm`}>
-                      <button
-                        type={`submit`}
-                        className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
-                      >
-                        Sign In
-                      </button>
-                    </span>
-                  </div>
-                </form>
-
-                <div className={`mt-6`}>
-                  <div className={`relative`}>
-                    <div className={`absolute inset-0 flex items-center`}>
-                      <div className={`w-full border-t border-gray-300`}></div>
-                    </div>
-                    <div
-                      className={`relative flex justify-center text-sm leading-5`}
-                    >
-                      <span className={`px-2 bg-white text-gray-600`}>
-                        Or continue with
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className={`mt-6 grid grid-cols-3 gap-3`}>
+        <div class="relative overflow-auto">
+          <div class="relative pt-6 pb-12 md:pb-6">
+            <main class="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
+              <div class="mx-auto max-w-screen-xl">
+                <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+                  <div class="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
                     <div>
-                      <span
-                        className={`w-full inline-flex rounded-md shadow-xs-sm`}
-                      >
-                        <a
-                          href={`/auth/google/login/`}
-                          type={`button`}
-                          className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition duration-150 ease-in-out`}
-                          aria-label={`Sign in with Google`}
-                        >
-                          <FontAwesomeIcon
-                            icon={["fab", "google"]}
-                            className={`h-4 h-4`}
-                          />
-                        </a>
-                      </span>
+                      <AppLogo
+                        className={`h-12 w-auto mx-auto mb-16 md:mx-auto lg:mx-0`}
+                        src={`/img/logos/site-logo-dark.svg`}
+                        alt={`app-logo`}
+                      />
+                      <h2 class="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-extrabold text-gray-900 sm:mt-5 sm:leading-none sm:text-6xl lg:mt-6 lg:text-5xl xl:text-6xl">
+                        Find website issues before your clients do.
+                        <br class="hidden md:inline" />
+                        <span class="mt-5 block text-indigo-600">Try for free.</span>
+                      </h2>
                     </div>
+                  </div>
+                  <div class="mt-12 sm:mt-16 lg:mt-0 lg:col-span-5">
+                    <div className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
+                      {errorMsg && (
+                        <div className={`rounded-md bg-red-100 p-4 mb-8`}>
+                          <div className={`flex`}>
+                            <div className={`flex-shrink-0`}>
+                              <svg
+                                className={`h-5 w-5 text-red-400`}
+                                fill={`currentColor`}
+                                viewBox={`0 0 20 20`}
+                              >
+                                <path
+                                  fillRule={`evenodd`}
+                                  d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
+                                  clipRule={`evenodd`}
+                                />
+                              </svg>
+                            </div>
+                            <div className={`ml-3`}>
+                              <h3
+                                className={`text-sm leading-5 font-medium text-red-800 break-words`}
+                              >
+                                {errorMsg}
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
-                    <div>
-                      <span
-                        className={`w-full inline-flex rounded-md shadow-xs-sm`}
-                      >
-                        <Link href="#">
-                          <a
-                            type={`button`}
-                            disabled={`disabled`}
-                            className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 transition duration-150 ease-in-out opacity-50 cursor-not-allowed`}
-                            aria-label={`Sign in with Facebook`}
+                      {successMsg && (
+                        <div className={`rounded-md bg-green-100 p-4 mb-8`}>
+                          <div className={`flex`}>
+                            <div className={`flex-shrink-0`}>
+                              <svg
+                                className={`h-5 w-5 text-green-400`}
+                                fill={`currentColor`}
+                                viewBox={`0 0 20 20`}
+                              >
+                                <path
+                                  fillRule={`evenodd`}
+                                  d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
+                                  clipRule={`evenodd`}
+                                />
+                              </svg>
+                            </div>
+                            <div className={`ml-3`}>
+                              <h3
+                                className={`text-sm leading-5 font-medium text-green-800 break-words`}
+                              >
+                                {successMsg}
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {!disableLoginForm && (
+                        <Fragment>
+                          <div
+                            className={`bg-white py-8 px-4 rounded-lg sm:px-10 shadow-xl border border-gray-200`}
                           >
-                            <FontAwesomeIcon
-                              icon={["fab", "facebook-f"]}
-                              className={`h-4 h-4`}
-                            />
-                          </a>
-                        </Link>
-                      </span>
-                    </div>
+                            <form onSubmit={handleSubmit}>
+                              <div className={`mt-1`}>
+                                <label
+                                  htmlFor={`username`}
+                                  className={`block text-sm font-medium leading-5 text-gray-700`}
+                                >
+                                  Username/Email
+                                </label>
+                                <div className={`mt-1 rounded-md shadow-xs-sm`}>
+                                  <input
+                                    id={`username`}
+                                    type={`text`}
+                                    name={`username`}
+                                    className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+                                      errorUsernameMsg
+                                        ? "border-red-300"
+                                        : "border-gray-300"
+                                    }`}
+                                    aria-describedby={`username`}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                  />
+                                </div>
+                                <span
+                                  className={`block mt-2 text-sm leading-5 text-red-700`}
+                                >
+                                  {errorUsernameMsg}
+                                </span>
+                              </div>
 
-                    <div>
-                      <span
-                        className={`w-full inline-flex rounded-md shadow-xs-sm`}
-                      >
-                        <Link href="#">
-                          <a
-                            type={`button`}
-                            disabled={`disabled`}
-                            className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 transition duration-150 ease-in-out opacity-50 cursor-not-allowed`}
-                            aria-label={`Sign in with LinkedIn`}
+                              <div className={`mt-6`}>
+                                <label
+                                  htmlFor={`password`}
+                                  className={`block text-sm font-medium leading-5 text-gray-700`}
+                                >
+                                  Password
+                                </label>
+                                <div className={`mt-1 rounded-md shadow-xs-sm`}>
+                                  <input
+                                    id={`password`}
+                                    type={`password`}
+                                    name={`password`}
+                                    className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+                                      errorPasswordMsg
+                                        ? "border-red-300"
+                                        : "border-gray-300"
+                                    }`}
+                                    aria-describedby={`password`}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                  />
+                                </div>
+                                <span
+                                  className={`block mt-2 text-sm leading-5 text-red-700`}
+                                >
+                                  {errorPasswordMsg}
+                                </span>
+                              </div>
+
+                              <div className={`mt-6 flex items-center justify-between`}>
+                                <div className={`flex items-center`}>
+                                  <input
+                                    id={`remember_me`}
+                                    type={`checkbox`}
+                                    className={`form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out`}
+                                  />
+                                  <label
+                                    htmlFor={`remember_me`}
+                                    className={`ml-2 block text-sm leading-5 text-gray-900`}
+                                  >
+                                    Remember me
+                                  </label>
+                                </div>
+
+                                <div className={`text-sm leading-5`}>
+                                  <Link href="/reset-password">
+                                    <a
+                                      className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
+                                    >
+                                      Forgot your password?
+                                    </a>
+                                  </Link>
+                                </div>
+                              </div>
+
+                              <div className={`mt-6`}>
+                                <span className={`block w-full rounded-md shadow-xs-sm`}>
+                                  <button
+                                    type={`submit`}
+                                    className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
+                                  >
+                                    Sign In
+                                  </button>
+                                </span>
+                              </div>
+                            </form>
+
+                            <div className={`mt-6`}>
+                              <div className={`relative`}>
+                                <div className={`absolute inset-0 flex items-center`}>
+                                  <div className={`w-full border-t border-gray-300`}></div>
+                                </div>
+                                <div
+                                  className={`relative flex justify-center text-sm leading-5`}
+                                >
+                                  <span className={`px-2 bg-white text-gray-600`}>
+                                    Or continue with
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className={`mt-6 grid grid-cols-3 gap-3`}>
+                                <div>
+                                  <span
+                                    className={`w-full inline-flex rounded-md shadow-xs-sm`}
+                                  >
+                                    <a
+                                      href={`/auth/google/login/`}
+                                      type={`button`}
+                                      className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 hover:text-gray-400 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition duration-150 ease-in-out`}
+                                      aria-label={`Sign in with Google`}
+                                    >
+                                      <FontAwesomeIcon
+                                        icon={["fab", "google"]}
+                                        className={`h-4 h-4`}
+                                      />
+                                    </a>
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <span
+                                    className={`w-full inline-flex rounded-md shadow-xs-sm`}
+                                  >
+                                    <Link href="#">
+                                      <a
+                                        type={`button`}
+                                        disabled={`disabled`}
+                                        className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 transition duration-150 ease-in-out opacity-50 cursor-not-allowed`}
+                                        aria-label={`Sign in with Facebook`}
+                                      >
+                                        <FontAwesomeIcon
+                                          icon={["fab", "facebook-f"]}
+                                          className={`h-4 h-4`}
+                                        />
+                                      </a>
+                                    </Link>
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <span
+                                    className={`w-full inline-flex rounded-md shadow-xs-sm`}
+                                  >
+                                    <Link href="#">
+                                      <a
+                                        type={`button`}
+                                        disabled={`disabled`}
+                                        className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md bg-white text-sm leading-5 font-medium text-gray-600 transition duration-150 ease-in-out opacity-50 cursor-not-allowed`}
+                                        aria-label={`Sign in with LinkedIn`}
+                                      >
+                                        <FontAwesomeIcon
+                                          icon={["fab", "linkedin-in"]}
+                                          className={`h-4 h-4`}
+                                        />
+                                      </a>
+                                    </Link>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div
+                            className={`relative flex justify-center wrap flex-row text-sm leading-5`}
                           >
-                            <FontAwesomeIcon
-                              icon={["fab", "linkedin-in"]}
-                              className={`h-4 h-4`}
-                            />
-                          </a>
-                        </Link>
-                      </span>
+                            <span className={`px-2 py-5 text-gray-600`}>
+                              Don't have an account?&nbsp;
+                              <Link href="/registration">
+                                <a
+                                  className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
+                                >
+                                  Create Account
+                                </a>
+                              </Link>
+                            </span>
+                          </div>
+                        </Fragment>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
+            </main>
+          </div>
+        </div>
 
-              <div
-                className={`relative flex justify-center wrap flex-row text-sm leading-5`}
-              >
-                <span className={`px-2 py-5 text-gray-600`}>
-                  Don't have an account?&nbsp;
-                  <Link href="/registration">
-                    <a
-                      className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
-                    >
-                      Create Account
-                    </a>
-                  </Link>
-                </span>
+        <div class="max-w-screen-xl md:flex-col lg:flex-row mx-auto py-12 px-12 md:flex md:items-center md:justify-between">
+          <div class="flex justify-center md:order-1 mt-8 md:mt-6">
+            <nav class="-mx-2 -my-2 flex flex-wrap justify-center">
+              <div class="px-5 py-2">
+                <a href="#" class="text-base leading-6 text-gray-500 hover:text-indigo-500 transition duration-150 ease-in-out">
+                  About
+                </a>
               </div>
-            </Fragment>
-          )}
+              <div class="px-5 py-2">
+                <a href="#" class="text-base leading-6 text-gray-500 hover:text-indigo-500 transition duration-150 ease-in-out">
+                  Privacy Policy
+                </a>
+              </div>
+              <div class="px-5 py-2">
+                <a href="#" class="text-base leading-6 text-gray-500 hover:text-indigo-500 transition duration-150 ease-in-out">
+                  Terms
+                </a>
+              </div>
+              <div class="px-5 py-2">
+                <a href="#" class="text-base leading-6 text-gray-500 hover:text-indigo-500 transition duration-150 ease-in-out">
+                  Support
+                </a>
+              </div>
+            </nav>
+          </div>
+          <div class="mt-8 md:mt-6 md:order-2">
+            <p class="text-center text-base leading-6 text-gray-500 -px-4">
+              &copy; 2020 SiteCrawler, Inc. All rights reserved.
+            </p>
+          </div>
         </div>
       </LoginDiv>
     </Layout>
