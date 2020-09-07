@@ -1,4 +1,4 @@
-version: "3.7"
+version: "2.4"
 services:
   traefik:
     image: traefik
@@ -25,6 +25,7 @@ services:
       - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
       - "traefik.http.routers.redirs.entrypoints=http"
       - "traefik.http.routers.redirs.middlewares=redirect-to-https"
+    mem_limit: 64M
   backend:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
     restart: always
@@ -43,6 +44,7 @@ services:
       options:
         max-size: "1M"
         max-file: "3"
+    mem_limit: 256M
   frontend:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
     restart: always
@@ -51,6 +53,7 @@ services:
       - "traefik.http.routers.frontend.rule=(Host(`linkapp.epicsandbox.com`) && PathPrefix(`/`))"
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+    mem_limit: 64M
   crawler:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
     restart: always
@@ -63,6 +66,7 @@ services:
       options:
         max-size: "1M"
         max-file: "3"
+    mem_limit: 256M
   scheduler:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
     restart: always
@@ -70,11 +74,13 @@ services:
       - db
     environment:
       ENV: staging
+    mem_limit: 64M
   db:
     image: postgres
     restart: always
     volumes:
       - db-data:/var/lib/postgresql/data
+    mem_limit: 128M
 
 volumes:
   db-data:
