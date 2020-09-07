@@ -87,7 +87,7 @@ const LinkTable = props => {
       <Fragment>
         <LinkTableDiv className={`bg-white`}>
           <tr>
-            {[...Array(6)].map((val, index) => <td className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`} key={index}><Skeleton duration={2} /></td>)}
+            {[...Array(6)].map((val, index) => <td className={`flex-none px-6 whitespace-no-wrap border-b border-gray-200`} key={index}><Skeleton duration={2} /></td>)}
           </tr>
         </LinkTableDiv>
       </Fragment>
@@ -98,7 +98,7 @@ const LinkTable = props => {
     <LinkTableDiv className={`bg-white`}>
       <tr>
         <td
-          className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`}
+          className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200`}
         >
           <div className={`flex items-center`}>
             <div>
@@ -123,7 +123,7 @@ const LinkTable = props => {
           </div>
         </td>
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`pl-16 pr-6 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           {props.val.type === "PAGE"
             ? "Internal"
@@ -132,7 +132,7 @@ const LinkTable = props => {
             : "Other"}
         </td>
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`pl-16 pr-6 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           {props.val.status === "OK" ? (
             <SiteSuccessBadge text={"OK"} />
@@ -145,12 +145,12 @@ const LinkTable = props => {
           )}
         </td>
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`px-6 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           {linkDetail.pages.length !== 0 ? <Link href="/dashboard/site/[siteId]/links/[linkId]/details" as={`/dashboard/site/${query.siteId}/links/${linkDetail.id}/details`}><a className={`mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}><span className={`truncate-link`}>{linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== '' ? Url(linkDetail.pages[0].url).pathname : <em>_domain</em>}</span>&nbsp;{(linkDetail.pages.length - 1) > 0 ? "+" + parseInt(linkDetail.pages.length - 1) : null} {(linkDetail.pages.length - 1) > 1 ? "others" : (linkDetail.pages.length - 1) === 1 ? "other" : null}</a></Link> : ''}
         </td>
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`pl-16 pr-6 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           {props.val.occurences}
         </td>
