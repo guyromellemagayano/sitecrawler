@@ -139,15 +139,10 @@ const LinkTable = props => {
           ) : props.val.status === "TIMEOUT" ? (
             <SiteWarningBadge text={"TIMEOUT"} />
           ) : props.val.status === "HTTP_ERROR" ? (
-            <SiteDangerBadge text={"HTTP ERROR"} />
+            <SiteDangerBadge text={`HTTP ERROR (${props.val.http_status})`} />
           ) : (
             <SiteDangerBadge text={"OTHER ERROR"} />
           )}
-        </td>
-        <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
-        >
-          {props.val.http_status}
         </td>
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
