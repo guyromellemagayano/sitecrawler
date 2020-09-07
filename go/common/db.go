@@ -1,6 +1,8 @@
 package common
 
 import (
+	"time"
+
 	"github.com/go-pg/pg"
 	"go.uber.org/zap"
 )
@@ -26,6 +28,14 @@ func NewDatabase(log *zap.SugaredLogger, env string) *pg.DB {
 	db := pg.Connect(pgOptions)
 	if Env("LOG_SQL", "false") == "true" {
 		db.AddQueryHook(DbLogger{log})
+	}
+	for {
+		if _, err := db.Exec("SELECT 1"); err != nil {
+			log.Infof("Waiting for db: %v", err)
+			time.Sleep(time.Second)
+			continue
+		}
+		break
 	}
 	return db
 }
