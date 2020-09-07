@@ -100,7 +100,7 @@ const ImagesTable = props => {
 				<ImagesTableDiv className={`bg-white`}>
 					<tr>
 						<td
-							className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`}
+							className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200`}
 						>
 							<div className={`flex items-center`}>
 								<div>
@@ -125,12 +125,12 @@ const ImagesTable = props => {
 							</div>
 						</td>
 						<td
-							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+							className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
 						>
 							{bytes(props.val.size, {thousandsSeparator: ' ', unitSeparator: ' '})}
 						</td>
 						<td
-							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+							className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
 						>
 							{props.val.status === "OK" ? (
 								<SiteSuccessBadge text={"OK"} />
@@ -148,7 +148,7 @@ const ImagesTable = props => {
 							{props.val.length !== 0 ? <Link href="/dashboard/site/[id]/links/[id]/details" as={`/dashboard/site/${query.siteId}/links/${props.val.id}/details`}><a className={`mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}><span className={`truncate-link`}>{props.val[0] && Url(props.val[0].url).pathname !== '' ? Url(props.val[0].url).pathname : <em>_domain</em>}</span>&nbsp;{(props.val.length - 1) > 0 ? "+" + parseInt(props.val.length - 1) : null} {(props.val.length - 1) > 1 ? "others" : (props.val.length - 1) === 1 ? "other" : null}</a></Link> : ''}
 						</td>
 						<td
-							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+							className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
 						>
 							{props.val.occurences}
 						</td>
