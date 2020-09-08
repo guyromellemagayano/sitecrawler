@@ -1,47 +1,53 @@
-import { Fragment, useState, useEffect } from 'react'
-import Head from 'next/head'
-import Link from 'next/link'
-import Router, { useRouter } from 'next/router'
-import fetch from 'node-fetch'
-import useSWR from 'swr'
-import Cookies from 'js-cookie'
-import styled from 'styled-components'
-import useUser from 'hooks/useUser'
-import Skeleton from 'react-loading-skeleton';
-import LinksPagesContent from 'public/data/links-pages.json'
-import Layout from 'components/Layout'
-import MobileSidebar from 'components/sidebar/MobileSidebar'
-import MainSidebar from 'components/sidebar/MainSidebar'
-import LinkOptions from 'components/site/LinkOptions'
-import PageTable from 'components/site/PageTable'
-import Pagination from 'components/sites/Pagination'
-import PageFilter from 'components/site/PageFilter'
-import PageSorting from 'components/site/PageSorting'
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'helpers/functions'
+import { Fragment, useState, useEffect } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import Router, { useRouter } from "next/router";
+import fetch from "node-fetch";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import styled from "styled-components";
+import useUser from "hooks/useUser";
+import Skeleton from "react-loading-skeleton";
+import LinksPagesContent from "public/data/links-pages.json";
+import Layout from "components/Layout";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import MainSidebar from "components/sidebar/MainSidebar";
+import LinkOptions from "components/site/LinkOptions";
+import PageTable from "components/site/PageTable";
+import Pagination from "components/sites/Pagination";
+import PageFilter from "components/site/PageFilter";
+import PageSorting from "components/site/PageSorting";
+import {
+  removeURLParameter,
+  slugToCamelcase,
+  getSortKeyFromSlug,
+  getSlugFromSortKey,
+} from "helpers/functions";
+import SiteFooter from "components/footer/SiteFooter";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get("csrftoken"),
     },
-  })
+  });
 
-  const data = await res.json()
+  const data = await res.json();
 
   if (res.status !== 200) {
-    throw new Error(data.message)
+    throw new Error(data.message);
   }
 
-  return data
-}
+  return data;
+};
 
 const initialOrder = {
-  pageUrl: 'default',
-  pageSize: 'default'
-}
+  pageUrl: "default",
+  pageSize: "default",
+};
 
 const PagesDiv = styled.section`
   .btn-crawler {
@@ -49,102 +55,116 @@ const PagesDiv = styled.section`
     right: 0;
     padding: 2.25rem 1.5rem;
   }
-`
+`;
 
-const Pages = props => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const [sortOrder, setSortOrder] = useState(initialOrder)
-  const [searchKey, setSearchKey] = useState('')
-  const [pagePath, setPagePath] = useState('')
-  const [allFilter, setAllFilter] = useState(false)
-  const [sizeFilter, setSizeFilter] = useState(false)
-  const [issueFilter, setIssueFilter] = useState(false)
-  const [googleFilter, setGoogleFilter] = useState(false)
-  const [sslFilter, setSslFilter] = useState(false)
-  const [recrawlable, setRecrawlable] = useState(false)
-  const [crawlFinished, setCrawlFinished] = useState(false)
-  const pageTitle = 'Pages |'
+const Pages = (props) => {
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [sortOrder, setSortOrder] = useState(initialOrder);
+  const [searchKey, setSearchKey] = useState("");
+  const [pagePath, setPagePath] = useState("");
+  const [allFilter, setAllFilter] = useState(false);
+  const [sizeFilter, setSizeFilter] = useState(false);
+  const [issueFilter, setIssueFilter] = useState(false);
+  const [googleFilter, setGoogleFilter] = useState(false);
+  const [sslFilter, setSslFilter] = useState(false);
+  const [recrawlable, setRecrawlable] = useState(false);
+  const [crawlFinished, setCrawlFinished] = useState(false);
+  const pageTitle = "Pages |";
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/',
-    redirectIfFound: false
-  })
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
 
-  const { query, asPath } = useRouter()
+  const { query, asPath } = useRouter();
   const { data: site, error: siteError } = useSWR(
     () => (query.siteId ? `/api/site/${query.siteId}/` : null),
     fetcher
-  )
+  );
 
   const { data: scan, error: scanError } = useSWR(
-    () => (query.siteId ? `/api/site/${query.siteId}/scan/?ordering=-finished_at` : null),
-    fetcher, {
+    () =>
+      query.siteId
+        ? `/api/site/${query.siteId}/scan/?ordering=-finished_at`
+        : null,
+    fetcher,
+    {
       refreshInterval: 1000,
     }
-  )
+  );
 
-  let scanObjId = ""
+  let scanObjId = "";
 
   if (scan) {
-    let scanObj = []
+    let scanObj = [];
 
     scan.results.map((val) => {
-      scanObj.push(val)
-      return scanObj
-    })
+      scanObj.push(val);
+      return scanObj;
+    });
 
     scanObj.map((val, index) => {
-      if(index == 0) scanObjId = val.id
-      
-      return scanObjId
-    })
+      if (index == 0) scanObjId = val.id;
+
+      return scanObjId;
+    });
   }
 
-  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/page/`
-  let queryString = props.result.search !== undefined ? ( scanApiEndpoint.includes('?') ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
-  
-  queryString += props.result.ordering !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&ordering=${props.result.ordering}` : `?ordering=${props.result.ordering}` ) : ''
+  let scanApiEndpoint =
+    props.result.page !== undefined
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` +
+        props.result.page
+      : `/api/site/${query.siteId}/scan/${scanObjId}/page/`;
+  let queryString =
+    props.result.search !== undefined
+      ? scanApiEndpoint.includes("?")
+        ? `&search=${props.result.search}`
+        : `?search=${props.result.search}`
+      : "";
 
-  scanApiEndpoint += queryString
-  
+  queryString +=
+    props.result.ordering !== undefined
+      ? (scanApiEndpoint + queryString).includes("?")
+        ? `&ordering=${props.result.ordering}`
+        : `?ordering=${props.result.ordering}`
+      : "";
+
+  scanApiEndpoint += queryString;
+
   const { data: page, error: pageError, mutate: updatePages } = useSWR(
-    () => query.siteId && scanObjId ? scanApiEndpoint : null, fetcher, {
+    () => (query.siteId && scanObjId ? scanApiEndpoint : null),
+    fetcher,
+    {
       refreshInterval: 1000,
-  })
+    }
+  );
 
   const searchEventHandler = (e) => {
-    if(e.keyCode != 13)
-      return false
+    if (e.keyCode != 13) return false;
 
-    let newPath = removeURLParameter(asPath, 'search')
-    newPath = removeURLParameter(newPath, 'page')
-    
-    if(e.target.value == '' || e.target.value == ' ') {
-      setSearchKey(e.target.value)
-      if(newPath.includes("?"))
-        setPagePath(`${newPath}&`)
-      else
-        setPagePath(`${newPath}?`)
+    let newPath = removeURLParameter(asPath, "search");
+    newPath = removeURLParameter(newPath, "page");
 
-      Router.push('/dashboard/site/[siteId]/pages', newPath)
-      return
+    if (e.target.value == "" || e.target.value == " ") {
+      setSearchKey(e.target.value);
+      if (newPath.includes("?")) setPagePath(`${newPath}&`);
+      else setPagePath(`${newPath}?`);
+
+      Router.push("/dashboard/site/[siteId]/pages", newPath);
+      return;
     }
 
-    if(newPath.includes("?"))
-      newPath += `&search=${e.target.value}`
-    else
-      newPath += `?search=${e.target.value}`
+    if (newPath.includes("?")) newPath += `&search=${e.target.value}`;
+    else newPath += `?search=${e.target.value}`;
 
-    setSearchKey(e.target.value)
-    if(newPath.includes("?"))
-      setPagePath(`${newPath}&`)
-    else
-      setPagePath(`${newPath}?`)
+    setSearchKey(e.target.value);
+    if (newPath.includes("?")) setPagePath(`${newPath}&`);
+    else setPagePath(`${newPath}?`);
 
-    Router.push('/dashboard/site/[siteId]/pages', newPath)
+    Router.push("/dashboard/site/[siteId]/pages", newPath);
 
-    updatePages()
-  }
+    updatePages();
+  };
 
   // const filterChangeHandler = (e) => {
   //   const filterType = e.target.value
@@ -169,137 +189,153 @@ const Pages = props => {
   // }
 
   const SortHandler = (slug, dir) => {
-    setSortOrder({...initialOrder});
+    setSortOrder({ ...initialOrder });
 
-    let newPath = removeURLParameter(asPath, 'ordering')
-    
-    const sortItem = slugToCamelcase(slug)
-    const sortKey = getSortKeyFromSlug(LinksPagesContent, slug)
+    let newPath = removeURLParameter(asPath, "ordering");
 
-    if(sortOrder[sortItem] == 'default') {
-      setSortOrder(prevState => ({ ...prevState, [sortItem]: dir }));
-      if(dir == 'asc') {
-        if(newPath.includes("?"))
-          newPath += `&ordering=${sortKey}`
-        else
-          newPath += `?ordering=${sortKey}`
+    const sortItem = slugToCamelcase(slug);
+    const sortKey = getSortKeyFromSlug(LinksPagesContent, slug);
+
+    if (sortOrder[sortItem] == "default") {
+      setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
+      if (dir == "asc") {
+        if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
+        else newPath += `?ordering=${sortKey}`;
+      } else {
+        if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
+        else newPath += `?ordering=-${sortKey}`;
       }
-      else {
-        if(newPath.includes("?"))
-          newPath += `&ordering=-${sortKey}`
-        else
-          newPath += `?ordering=-${sortKey}`
-      }
+    } else if (sortOrder[sortItem] == "asc") {
+      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }));
+      if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
+      else newPath += `?ordering=-${sortKey}`;
+    } else {
+      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }));
+      if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
+      else newPath += `?ordering=${sortKey}`;
     }
-    else if(sortOrder[sortItem] == 'asc') {
-      setSortOrder(prevState => ({ ...prevState, [sortItem]: 'desc' }));
-      if(newPath.includes("?"))
-        newPath += `&ordering=-${sortKey}`
-      else
-        newPath += `?ordering=-${sortKey}`
-    }
-    else {
-      setSortOrder(prevState => ({ ...prevState, [sortItem]: 'asc' }));
-      if(newPath.includes("?"))
-        newPath += `&ordering=${sortKey}`
-      else
-        newPath += `?ordering=${sortKey}`
-    }
-    
+
     // console.log('[pagePath]', newPath)
-    if(newPath.includes("?"))
-      setPagePath(`${removeURLParameter(newPath, 'page')}&`)
-    else
-      setPagePath(`${removeURLParameter(newPath, 'page')}?`)
-    
-    Router.push('/dashboard/site/[siteId]/pages', newPath)
-    updatePages()
-  }
+    if (newPath.includes("?"))
+      setPagePath(`${removeURLParameter(newPath, "page")}&`);
+    else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
-  useEffect(() => {    
-    if(removeURLParameter(asPath, 'page').includes("?"))
-      setPagePath(`${removeURLParameter(asPath, 'page')}&`)
-    else
-      setPagePath(`${removeURLParameter(asPath, 'page')}?`)
+    Router.push("/dashboard/site/[siteId]/pages", newPath);
+    updatePages();
+  };
 
-    if(props.result.search !== undefined)
-      setSearchKey(props.result.search)
+  useEffect(() => {
+    if (removeURLParameter(asPath, "page").includes("?"))
+      setPagePath(`${removeURLParameter(asPath, "page")}&`);
+    else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-    if(props.result.ordering !== undefined) {
-      const slug = getSlugFromSortKey(LinksPagesContent, props.result.ordering.replace('-', ''))
-      const orderItem = slugToCamelcase(slug)
+    if (props.result.search !== undefined) setSearchKey(props.result.search);
 
-      if(props.result.ordering.includes('-'))
-        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'desc' }));
-      else
-        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'asc' }));
+    if (props.result.ordering !== undefined) {
+      const slug = getSlugFromSortKey(
+        LinksPagesContent,
+        props.result.ordering.replace("-", "")
+      );
+      const orderItem = slugToCamelcase(slug);
+
+      if (props.result.ordering.includes("-"))
+        setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+      else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
-  }, [])
+  }, []);
 
-  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`
-  
+  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`;
+
   const onCrawlHandler = async () => {
-    setCrawlFinished(false)
+    setCrawlFinished(false);
     const res = await fetch(reCrawlEndpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
       },
-    })
-  
-    const data = await res.json()
-  
+    });
+
+    const data = await res.json();
+
     if (res.status !== 200) {
-      throw new Error(data.message)
+      throw new Error(data.message);
     }
 
     // console.log('[onCrawlHandler]', data)
-  
-    return data
-  }
+
+    return data;
+  };
 
   const crawlableHandler = (finished) => {
-    if(finished)
-      setCrawlFinished(true)
+    if (finished) setCrawlFinished(true);
 
-    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified && finished)
-      setRecrawlable(true)
-    else
-      setRecrawlable(false)
-  }
+    if (
+      user &&
+      user.permissions !== undefined &&
+      user.permissions[0] == "can_start_scan" &&
+      site &&
+      site.verified &&
+      finished
+    )
+      setRecrawlable(true);
+    else setRecrawlable(false);
+  };
 
   useEffect(() => {
-    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified)
-      setRecrawlable(true)
-    else
-      setRecrawlable(false)
-  }, [user, site])
+    if (
+      user &&
+      user.permissions !== undefined &&
+      user.permissions[0] == "can_start_scan" &&
+      site &&
+      site.verified
+    )
+      setRecrawlable(true);
+    else setRecrawlable(false);
+  }, [user, site]);
 
-  {userError && <Layout>{userError.message}</Layout>}
-  {pageError && <Layout>{pageError.message}</Layout>}
-  {scanError && <Layout>{scanError.message}</Layout>}
-  {siteError && <Layout>{siteError.message}</Layout>}
+  {
+    userError && <Layout>{userError.message}</Layout>;
+  }
+  {
+    pageError && <Layout>{pageError.message}</Layout>;
+  }
+  {
+    scanError && <Layout>{scanError.message}</Layout>;
+  }
+  {
+    siteError && <Layout>{siteError.message}</Layout>;
+  }
 
   return (
     <Layout>
       {user && page && site ? (
         <Fragment>
           <Head>
-            <title>{pageTitle} {site.name}</title>
+            <title>
+              {pageTitle} {site.name}
+            </title>
           </Head>
 
           <PagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
-            <MobileSidebar show={openMobileSidebar} crawlableHandler={crawlableHandler} />
+            <MobileSidebar
+              show={openMobileSidebar}
+              crawlableHandler={crawlableHandler}
+            />
             <MainSidebar crawlableHandler={crawlableHandler} />
-            
+
             <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
               <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
                 <button
                   className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                   aria-label={`Open sidebar`}
-                  onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
+                  onClick={() =>
+                    setTimeout(
+                      () => setOpenMobileSidebar(!openMobileSidebar),
+                      150
+                    )
+                  }
                 >
                   <svg
                     className={`h-6 w-5`}
@@ -320,73 +356,120 @@ const Pages = props => {
                 className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
                 tabIndex={`0`}
               >
-                <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+                <div
+                  className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+                >
                   <div>
                     <nav className={`sm:hidden`}>
-                      <Link href='/dashboard/site/[siteId]/overview' as={'/dashboard/site/' + query.siteId + '/overview'}>
-                        <a className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>
-                          <svg className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      <Link
+                        href="/dashboard/site/[siteId]/overview"
+                        as={"/dashboard/site/" + query.siteId + "/overview"}
+                      >
+                        <a
+                          className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          <svg
+                            className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                           Back to Overview
                         </a>
                       </Link>
                     </nav>
-                    <nav className={`hidden sm:flex items-center text-sm leading-5`}>
-                      <Link href='/dashboard/site/[siteId]/overview' as={'/dashboard/site/' + query.siteId + '/overview'}>
-                        <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
+                    <nav
+                      className={`hidden sm:flex items-center text-sm leading-5`}
+                    >
+                      <Link
+                        href="/dashboard/site/[siteId]/overview"
+                        as={"/dashboard/site/" + query.siteId + "/overview"}
+                      >
+                        <a
+                          className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          {site.name}
+                        </a>
                       </Link>
-                      <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
+                      <svg
+                        className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
-                      <Link href='/dashboard/site/[siteId]/pages' as={'/dashboard/site/' + query.siteId + '/pages'}>
-                        <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>All Pages</a>
+                      <Link
+                        href="/dashboard/site/[siteId]/pages"
+                        as={"/dashboard/site/" + query.siteId + "/pages"}
+                      >
+                        <a
+                          className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          All Pages
+                        </a>
                       </Link>
                     </nav>
                   </div>
-                  <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                  <div
+                    className={`mt-2 md:flex md:items-center md:justify-between`}
+                  >
                     <div className={`flex-1 min-w-0`}>
-                      <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                      <h2
+                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
+                      >
                         All Pages - {site.name}
                       </h2>
                     </div>
                   </div>
                 </div>
                 <div className={`btn-crawler absolute mt-4`}>
-                  {
-                    user.permissions.includes('can_start_scan') ? (
-                      recrawlable ? (
-                        <button
-                          type={`button`}
-                          onClick={onCrawlHandler}
-                          className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
-                        >
-                          Recrawl
-                        </button>
-                      ) : (
-                        <button
-                          disabled={`disabled`}
-                          type={`button`}
-                          className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
-                        >
-                          Recrawl
-                        </button>
-                      )
-                    ) : null
-                  }
+                  {user.permissions.includes("can_start_scan") ? (
+                    recrawlable ? (
+                      <button
+                        type={`button`}
+                        onClick={onCrawlHandler}
+                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+                      >
+                        Recrawl
+                      </button>
+                    ) : (
+                      <button
+                        disabled={`disabled`}
+                        type={`button`}
+                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
+                      >
+                        Recrawl
+                      </button>
+                    )
+                  ) : null}
                 </div>
                 <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
                   <div>
                     {page ? (
-                      <div className={`max-w-xs mt-5 rounded-lg bg-white overflow-hidden shadow`}>
+                      <div
+                        className={`max-w-xs mt-5 rounded-lg bg-white overflow-hidden shadow`}
+                      >
                         <div>
                           <div className={`px-4 py-5 sm:p-6`}>
                             <dl>
-                              <dt className={`text-sm leading-5 font-medium text-gray-500 truncate`}>
+                              <dt
+                                className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                              >
                                 Total Page Links
                               </dt>
-                              <dd className={`mt-1 flex justify-between items-baseline md:block lg:flex`}>
-                                <div className={`flex items-baseline text-2xl leading-8 font-semibold text-indigo-600`}>
+                              <dd
+                                className={`mt-1 flex justify-between items-baseline md:block lg:flex`}
+                              >
+                                <div
+                                  className={`flex items-baseline text-2xl leading-8 font-semibold text-indigo-600`}
+                                >
                                   {page.count}
                                 </div>
                               </dd>
@@ -398,10 +481,13 @@ const Pages = props => {
                       <Skeleton width={280} height={104} duration={2} />
                     )}
                   </div>
-                  <LinkOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
+                  <LinkOptions
+                    searchKey={searchKey}
+                    onSearchEvent={searchEventHandler}
+                  />
                   {/* <PageFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} googleFilter={googleFilter} sslFilter={sslFilter} /> */}
-                  <Pagination 
-                    href='/dashboard/site/[siteId]/pages'
+                  <Pagination
+                    href="/dashboard/site/[siteId]/pages"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
@@ -422,10 +508,17 @@ const Pages = props => {
                                     <Fragment key={key}>
                                       <th
                                         className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
-                                      > 
-                                        <div className={`flex items-center justify-start`}>
+                                      >
+                                        <div
+                                          className={`flex items-center justify-start`}
+                                        >
                                           {site.slug != undefined ? (
-                                            <PageSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} />
+                                            <PageSorting
+                                              sortOrder={sortOrder}
+                                              onSortHandler={SortHandler}
+                                              key={key}
+                                              slug={site.slug}
+                                            />
                                           ) : null}
                                           <span className="label flex items-center">
                                             {site.label}
@@ -433,26 +526,32 @@ const Pages = props => {
                                         </div>
                                       </th>
                                     </Fragment>
-                                  )
+                                  );
                                 })}
                               </tr>
                             </thead>
-                            {page.results && page.results.map((val, key) => (
-                              <PageTable key={key} val={val} />
-                            ))}
+                            {page.results &&
+                              page.results.map((val, key) => (
+                                <PageTable key={key} val={val} />
+                              ))}
                           </table>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <Pagination 
-                    href='/dashboard/site/[siteId]/pages'
+                  <Pagination
+                    href="/dashboard/site/[siteId]/pages"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
                   />
-                  
+                </div>
+
+                <div
+                  className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
+                >
+                  <SiteFooter />
                 </div>
               </main>
             </div>
@@ -460,16 +559,16 @@ const Pages = props => {
         </Fragment>
       ) : null}
     </Layout>
-  )
-}
+  );
+};
 
 export async function getServerSideProps(context) {
   // console.log('[Query]', context.query)
   return {
     props: {
-      result: context.query
-    }
-  }
+      result: context.query,
+    },
+  };
 }
 
-export default Pages
+export default Pages;
