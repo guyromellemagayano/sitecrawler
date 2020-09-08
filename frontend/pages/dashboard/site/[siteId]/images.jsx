@@ -502,7 +502,7 @@ const Images = (props) => {
                     )
                   ) : null}
                 </div>
-                <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
+                <div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
                   <LinkOptions
                     searchKey={searchKey}
                     onSearchEvent={searchEventHandler}

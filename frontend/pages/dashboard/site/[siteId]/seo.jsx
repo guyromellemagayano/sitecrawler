@@ -529,7 +529,7 @@ const Seo = (props) => {
                 tabIndex={`0`}
               >
                 <div
-                  className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+                  className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}
                 >
                   <div>
                     <nav className={`sm:hidden`}>
@@ -622,7 +622,7 @@ const Seo = (props) => {
                     )
                   ) : null}
                 </div>
-                <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
+                <div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
                   <SeoOptions
                     searchKey={searchKey}
                     onSearchEvent={searchEventHandler}
