@@ -291,12 +291,22 @@ const DataTable = props => {
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
         >
-          {scanId.num_non_ok_links}
+          <Link href="/dashboard/site/[siteId]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
+            <a>
+              {scanId.num_non_ok_links}
+            </a>
+          </Link>
         </td>
       ) : (
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
-        >0</td>
+        >
+          <Link href="/dashboard/site/[siteId]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
+            <a>
+              0
+            </a>
+          </Link>
+        </td>
       )}
 
       <Transition show={showVerifySiteModal}>
