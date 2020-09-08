@@ -18,6 +18,7 @@ import ImageTable from 'components/site/ImageTable'
 import ImageSorting from 'components/site/ImageSorting'
 import Pagination from 'components/sites/Pagination'
 import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'helpers/functions'
+import SiteFooter from "components/footer/SiteFooter";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -507,6 +508,12 @@ const Images = props => {
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
                   />
+                </div>
+
+                <div
+                  className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
+                >
+                  <SiteFooter />
                 </div>
               </main>
             </div>
