@@ -1,23 +1,28 @@
-import { Fragment, useState, useEffect } from 'react'
-import Head from 'next/head'
-import Link from 'next/link'
-import Router, { useRouter } from 'next/router'
-import fetch from 'node-fetch'
-import useSWR, { mutate } from 'swr'
-import Cookies from 'js-cookie'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import useUser from 'hooks/useUser'
-import ImageTableContent from 'public/data/image-table.json'
-import Layout from 'components/Layout'
-import MobileSidebar from 'components/sidebar/MobileSidebar'
-import MainSidebar from 'components/sidebar/MainSidebar'
-import LinkOptions from 'components/site/LinkOptions'
-import ImageFilter from 'components/site/ImageFilter'
-import ImageTable from 'components/site/ImageTable'
-import ImageSorting from 'components/site/ImageSorting'
-import Pagination from 'components/sites/Pagination'
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from 'helpers/functions'
+import { Fragment, useState, useEffect } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import Router, { useRouter } from "next/router";
+import fetch from "node-fetch";
+import useSWR, { mutate } from "swr";
+import Cookies from "js-cookie";
+import PropTypes from "prop-types";
+import styled from "styled-components";
+import useUser from "hooks/useUser";
+import ImageTableContent from "public/data/image-table.json";
+import Layout from "components/Layout";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import MainSidebar from "components/sidebar/MainSidebar";
+import LinkOptions from "components/site/LinkOptions";
+import ImageFilter from "components/site/ImageFilter";
+import ImageTable from "components/site/ImageTable";
+import ImageSorting from "components/site/ImageSorting";
+import Pagination from "components/sites/Pagination";
+import {
+  removeURLParameter,
+  slugToCamelcase,
+  getSortKeyFromSlug,
+  getSlugFromSortKey,
+} from "helpers/functions";
 import SiteFooter from "components/footer/SiteFooter";
 
 const fetcher = async (url) => {
@@ -28,16 +33,16 @@ const fetcher = async (url) => {
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
-  })
+  });
 
-  const data = await res.json()
+  const data = await res.json();
 
   if (res.status !== 200) {
-    throw new Error(data.message)
+    throw new Error(data.message);
   }
 
-  return data
-}
+  return data;
+};
 
 const initialOrder = {
   imageUrl: "default",
@@ -45,7 +50,7 @@ const initialOrder = {
   status: "default",
   httpCode: "default",
   occurrences: "default",
-}
+};
 
 const ImagesDiv = styled.section`
   .btn-crawler {
@@ -53,64 +58,95 @@ const ImagesDiv = styled.section`
     right: 0;
     padding: 2.25rem 1.5rem;
   }
-`
+`;
 
-const Images = props => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const [pagePath, setPagePath] = useState("")
-  const [sortOrder, setSortOrder] = useState(initialOrder)
-  const [allFilter, setAllFilter] = useState(false)
-  const [imageNotWorkingFilter, setImageNotWorkingFilter] = useState(false)
-  const [recrawlable, setRecrawlable] = useState(false)
-  const [crawlFinished, setCrawlFinished] = useState(false)
+const Images = (props) => {
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [pagePath, setPagePath] = useState("");
+  const [sortOrder, setSortOrder] = useState(initialOrder);
+  const [allFilter, setAllFilter] = useState(false);
+  const [imageNotWorkingFilter, setImageNotWorkingFilter] = useState(false);
+  const [recrawlable, setRecrawlable] = useState(false);
+  const [crawlFinished, setCrawlFinished] = useState(false);
 
-  const [searchKey, setSearchKey] = useState("")
+  const [searchKey, setSearchKey] = useState("");
 
-  const pageTitle = "Images |"
+  const pageTitle = "Images |";
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/',
+    redirectTo: "/",
     redirectIfFound: false,
-  })
+  });
 
-  const { query, asPath } = useRouter()
+  const { query, asPath } = useRouter();
   const { data: site, error: siteError } = useSWR(
     () => (query.siteId ? `/api/site/${query.siteId}/` : null),
     fetcher
-  )
+  );
 
   const { data: scan, error: scanError } = useSWR(
-    () => (query.siteId ? `/api/site/${query.siteId}/scan/?ordering=-finished_at` : null),
+    () =>
+      query.siteId
+        ? `/api/site/${query.siteId}/scan/?ordering=-finished_at`
+        : null,
     fetcher
-  )
+  );
 
-  let scanObjId = ""
+  let scanObjId = "";
 
   if (scan) {
-    let scanObj = []
+    let scanObj = [];
 
     scan.results.map((val) => {
-      scanObj.push(val)
-      return scanObj
-    })
+      scanObj.push(val);
+      return scanObj;
+    });
 
     scanObj.map((val, index) => {
-      if(index == 0) scanObjId = val.id
-      
-      return scanObjId
-    })
+      if (index == 0) scanObjId = val.id;
+
+      return scanObjId;
+    });
   }
 
-  let scanApiEndpoint = props.result.page !== undefined ? `/api/site/${query.siteId}/scan/${scanObjId}/image/?page=` + props.result.page : `/api/site/${query.siteId}/scan/${scanObjId}/image/`
-  const statusString = Array.isArray(props.result.status) ? props.result.status.join('&status=') : props.result.status
-  let queryString = props.result.status !== undefined && props.result.status.length != 0 ? ( (scanApiEndpoint).includes('?') ? '&status=' + statusString : '?status=' + statusString ) : ''
-  const typeString = Array.isArray(props.result.type) ? props.result.type.join('&type=') : props.result.type
-	queryString += props.result.type !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&type=${typeString}` : `?type=${typeString}` ) : ''
-	
-	queryString += props.result.search !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&search=${props.result.search}` : `?search=${props.result.search}` ) : ''
-	queryString += props.result.ordering !== undefined ? ( (scanApiEndpoint + queryString).includes('?') ? `&ordering=${props.result.ordering}` : `?ordering=${props.result.ordering}` ) : ''
-  
-	scanApiEndpoint += queryString
+  let scanApiEndpoint =
+    props.result.page !== undefined
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/image/?page=` +
+        props.result.page
+      : `/api/site/${query.siteId}/scan/${scanObjId}/image/`;
+  const statusString = Array.isArray(props.result.status)
+    ? props.result.status.join("&status=")
+    : props.result.status;
+  let queryString =
+    props.result.status !== undefined && props.result.status.length != 0
+      ? scanApiEndpoint.includes("?")
+        ? "&status=" + statusString
+        : "?status=" + statusString
+      : "";
+  const typeString = Array.isArray(props.result.type)
+    ? props.result.type.join("&type=")
+    : props.result.type;
+  queryString +=
+    props.result.type !== undefined
+      ? (scanApiEndpoint + queryString).includes("?")
+        ? `&type=${typeString}`
+        : `?type=${typeString}`
+      : "";
+
+  queryString +=
+    props.result.search !== undefined
+      ? (scanApiEndpoint + queryString).includes("?")
+        ? `&search=${props.result.search}`
+        : `?search=${props.result.search}`
+      : "";
+  queryString +=
+    props.result.ordering !== undefined
+      ? (scanApiEndpoint + queryString).includes("?")
+        ? `&ordering=${props.result.ordering}`
+        : `?ordering=${props.result.ordering}`
+      : "";
+
+  scanApiEndpoint += queryString;
 
   const { data: image, error: imageError, mutate: updateLinks } = useSWR(
     () => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -118,197 +154,214 @@ const Images = props => {
     {
       refreshInterval: 50000,
     }
-  )
+  );
 
   const searchEventHandler = async (e) => {
-    if (e.keyCode != 13) return false
+    if (e.keyCode != 13) return false;
 
-    let newPath = removeURLParameter(asPath, "search")
-    newPath = removeURLParameter(newPath, "page")
+    let newPath = removeURLParameter(asPath, "search");
+    newPath = removeURLParameter(newPath, "page");
 
     if (e.target.value == "" || e.target.value == " ") {
-      setSearchKey(e.target.value)
-      if (newPath.includes("?")) setPagePath(`${newPath}&`)
-      else setPagePath(`${newPath}?`)
+      setSearchKey(e.target.value);
+      if (newPath.includes("?")) setPagePath(`${newPath}&`);
+      else setPagePath(`${newPath}?`);
 
-      Router.push("/dashboard/site/[siteId]/images", newPath)
-      return
+      Router.push("/dashboard/site/[siteId]/images", newPath);
+      return;
     }
 
-    if (newPath.includes("?")) newPath += `&search=${e.target.value}`
-    else newPath += `?search=${e.target.value}`
+    if (newPath.includes("?")) newPath += `&search=${e.target.value}`;
+    else newPath += `?search=${e.target.value}`;
 
-    setSearchKey(e.target.value)
-    if (newPath.includes("?")) setPagePath(`${newPath}&`)
-    else setPagePath(`${newPath}?`)
+    setSearchKey(e.target.value);
+    if (newPath.includes("?")) setPagePath(`${newPath}&`);
+    else setPagePath(`${newPath}?`);
 
-    Router.push("/dashboard/site/[siteId]/images", newPath)
-    updateLinks()
-  }
+    Router.push("/dashboard/site/[siteId]/images", newPath);
+    updateLinks();
+  };
 
   const SortHandler = (slug, dir) => {
-    setSortOrder({ ...initialOrder })
+    setSortOrder({ ...initialOrder });
 
-    let newPath = removeURLParameter(asPath, "ordering")
+    let newPath = removeURLParameter(asPath, "ordering");
 
-    const sortItem = slugToCamelcase(slug)
-    const sortKey = getSortKeyFromSlug(ImageTableContent, slug)
+    const sortItem = slugToCamelcase(slug);
+    const sortKey = getSortKeyFromSlug(ImageTableContent, slug);
 
-    if(sortOrder[sortItem] == 'default') {
-      setSortOrder(prevState => ({ ...prevState, [sortItem]: dir }));
-      if(dir == 'asc') {
-        if(newPath.includes("?"))
-          newPath += `&ordering=${sortKey}`
-        else
-          newPath += `?ordering=${sortKey}`
-      }
-      else {
-        if(newPath.includes("?"))
-          newPath += `&ordering=-${sortKey}`
-        else
-          newPath += `?ordering=-${sortKey}`
+    if (sortOrder[sortItem] == "default") {
+      setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
+      if (dir == "asc") {
+        if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
+        else newPath += `?ordering=${sortKey}`;
+      } else {
+        if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
+        else newPath += `?ordering=-${sortKey}`;
       }
     } else if (sortOrder[sortItem] == "asc") {
-      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }))
-      if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`
-      else newPath += `?ordering=-${sortKey}`
+      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }));
+      if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
+      else newPath += `?ordering=-${sortKey}`;
     } else {
-      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }))
-      if (newPath.includes("?")) newPath += `&ordering=${sortKey}`
-      else newPath += `?ordering=${sortKey}`
+      setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }));
+      if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
+      else newPath += `?ordering=${sortKey}`;
     }
 
     if (newPath.includes("?"))
-      setPagePath(`${removeURLParameter(newPath, "page")}&`)
-    else setPagePath(`${removeURLParameter(newPath, "page")}?`)
+      setPagePath(`${removeURLParameter(newPath, "page")}&`);
+    else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
-    Router.push("/dashboard/site/[siteId]/images", newPath)
-    updateLinks()
-  }
+    Router.push("/dashboard/site/[siteId]/images", newPath);
+    updateLinks();
+  };
 
   const filterChangeHandler = async (e) => {
-    const filterType = e.target.value
-    const filterStatus = e.target.checked
+    const filterType = e.target.value;
+    const filterStatus = e.target.checked;
 
-    let newPath = asPath
-    
+    let newPath = asPath;
+
     if (filterType == "notWorking" && filterStatus == true) {
-      setImageNotWorkingFilter(true)
-      setAllFilter(false)
-      newPath = removeURLParameter(newPath, "page")
-      newPath = removeURLParameter(newPath, "status")
+      setImageNotWorkingFilter(true);
+      setAllFilter(false);
+      newPath = removeURLParameter(newPath, "page");
+      newPath = removeURLParameter(newPath, "status");
 
       if (newPath.includes("?"))
-        newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
-      else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+        newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
+      else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
     } else if (filterType == "notWorking" && filterStatus == false) {
-      newPath = removeURLParameter(newPath, "status")
-      setImageNotWorkingFilter(false)
+      newPath = removeURLParameter(newPath, "status");
+      setImageNotWorkingFilter(false);
     }
 
     if (filterType == "all" && filterStatus == true) {
-      setAllFilter(true)
-      setImageNotWorkingFilter(false)
+      setAllFilter(true);
+      setImageNotWorkingFilter(false);
 
-      newPath = removeURLParameter(newPath, "status")
-      newPath = removeURLParameter(newPath, "page")
+      newPath = removeURLParameter(newPath, "status");
+      newPath = removeURLParameter(newPath, "page");
 
       if (!newPath.includes("search") && !newPath.includes("ordering"))
-        newPath = newPath.replace("?", "")
+        newPath = newPath.replace("?", "");
     }
 
-    if (newPath.includes("?")) setPagePath(`${newPath}&`)
-    else setPagePath(`${newPath}?`)
+    if (newPath.includes("?")) setPagePath(`${newPath}&`);
+    else setPagePath(`${newPath}?`);
 
-    Router.push("/dashboard/site/[siteId]/images", newPath)
+    Router.push("/dashboard/site/[siteId]/images", newPath);
 
-    updateLinks()
+    updateLinks();
 
-    return true
-  }
+    return true;
+  };
 
   useEffect(() => {
-    if(removeURLParameter(asPath, 'page').includes("?"))
-      setPagePath(`${removeURLParameter(asPath, 'page')}&`)
-    else
-      setPagePath(`${removeURLParameter(asPath, 'page')}?`)
+    if (removeURLParameter(asPath, "page").includes("?"))
+      setPagePath(`${removeURLParameter(asPath, "page")}&`);
+    else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-    if(props.result.search !== undefined)
-      setSearchKey(props.result.search)
+    if (props.result.search !== undefined) setSearchKey(props.result.search);
 
-    if(props.result.ordering !== undefined) {
-      const slug = getSlugFromSortKey(ImageTableContent, props.result.ordering.replace('-', ''))
-      const orderItem = slugToCamelcase(slug)
+    if (props.result.ordering !== undefined) {
+      const slug = getSlugFromSortKey(
+        ImageTableContent,
+        props.result.ordering.replace("-", "")
+      );
+      const orderItem = slugToCamelcase(slug);
 
-      if(props.result.ordering.includes('-'))
-        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'desc' }));
-      else
-        setSortOrder(prevState => ({ ...prevState, [orderItem]: 'asc' }));
+      if (props.result.ordering.includes("-"))
+        setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+      else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
-    
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if(props.result.status !== undefined && Array.isArray(props.result.status)) {
-      setImageNotWorkingFilter(true)
-      setAllFilter(false)
-    }
-    else if(props.result.status !== undefined && !Array.isArray(props.result.status)) {
-      setImageNotWorkingFilter(false)
-      setAllFilter(false)
+    if (
+      props.result.status !== undefined &&
+      Array.isArray(props.result.status)
+    ) {
+      setImageNotWorkingFilter(true);
+      setAllFilter(false);
+    } else if (
+      props.result.status !== undefined &&
+      !Array.isArray(props.result.status)
+    ) {
+      setImageNotWorkingFilter(false);
+      setAllFilter(false);
     }
 
-    if(props.result.type == undefined && props.result.status == undefined) {
-      setImageNotWorkingFilter(false)
-      setAllFilter(true)
+    if (props.result.type == undefined && props.result.status == undefined) {
+      setImageNotWorkingFilter(false);
+      setAllFilter(true);
     }
-  }, [filterChangeHandler])
+  }, [filterChangeHandler]);
 
-  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`
-  
+  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`;
+
   const onCrawlHandler = async () => {
-    setCrawlFinished(false)
+    setCrawlFinished(false);
     const res = await fetch(reCrawlEndpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
       },
-    })
-  
-    const data = await res.json()
-  
+    });
+
+    const data = await res.json();
+
     if (res.status !== 200) {
-      throw new Error(data.message)
+      throw new Error(data.message);
     }
 
     // console.log('[onCrawlHandler]', data)
-  
-    return data
-  }
+
+    return data;
+  };
 
   const crawlableHandler = (finished) => {
-    if(finished)
-      setCrawlFinished(true)
+    if (finished) setCrawlFinished(true);
 
-    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified && finished)
-      setRecrawlable(true)
-    else
-      setRecrawlable(false)
-  }
+    if (
+      user &&
+      user.permissions !== undefined &&
+      user.permissions[0] == "can_start_scan" &&
+      site &&
+      site.verified &&
+      finished
+    )
+      setRecrawlable(true);
+    else setRecrawlable(false);
+  };
 
   useEffect(() => {
-    if(user && user.permissions !== undefined && user.permissions[0] == 'can_start_scan' && site && site.verified)
-      setRecrawlable(true)
-    else
-      setRecrawlable(false)
-  }, [user, site])
+    if (
+      user &&
+      user.permissions !== undefined &&
+      user.permissions[0] == "can_start_scan" &&
+      site &&
+      site.verified
+    )
+      setRecrawlable(true);
+    else setRecrawlable(false);
+  }, [user, site]);
 
-  {userError && <Layout>{userError.message}</Layout>}
-  {imageError && <Layout>{imageError.message}</Layout>}
-  {scanError && <Layout>{scanError.message}</Layout>}
-  {siteError && <Layout>{siteError.message}</Layout>}
+  {
+    userError && <Layout>{userError.message}</Layout>;
+  }
+  {
+    imageError && <Layout>{imageError.message}</Layout>;
+  }
+  {
+    scanError && <Layout>{scanError.message}</Layout>;
+  }
+  {
+    siteError && <Layout>{siteError.message}</Layout>;
+  }
 
   return (
     <Layout>
@@ -321,7 +374,10 @@ const Images = props => {
           </Head>
 
           <ImagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
-            <MobileSidebar show={openMobileSidebar} crawlableHandler={crawlableHandler} />
+            <MobileSidebar
+              show={openMobileSidebar}
+              crawlableHandler={crawlableHandler}
+            />
             <MainSidebar crawlableHandler={crawlableHandler} />
 
             <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
@@ -426,30 +482,31 @@ const Images = props => {
                   </div>
                 </div>
                 <div className={`btn-crawler absolute mt-4`}>
-                  {
-                    user.permissions.includes('can_start_scan') ? (
-                      recrawlable ? (
-                        <button
-                          type={`button`}
-                          onClick={onCrawlHandler}
-                          className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
-                        >
-                          Recrawl
-                        </button>
-                      ) : (
-                        <button
-                          disabled={`disabled`}
-                          type={`button`}
-                          className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
-                        >
-                          Recrawl
-                        </button>
-                      )
-                    ) : null
-                  }
+                  {user.permissions.includes("can_start_scan") ? (
+                    recrawlable ? (
+                      <button
+                        type={`button`}
+                        onClick={onCrawlHandler}
+                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+                      >
+                        Recrawl
+                      </button>
+                    ) : (
+                      <button
+                        disabled={`disabled`}
+                        type={`button`}
+                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
+                      >
+                        Recrawl
+                      </button>
+                    )
+                  ) : null}
                 </div>
                 <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
-                  <LinkOptions searchKey={searchKey} onSearchEvent={searchEventHandler} />
+                  <LinkOptions
+                    searchKey={searchKey}
+                    onSearchEvent={searchEventHandler}
+                  />
                   <ImageFilter
                     onFilterChange={filterChangeHandler}
                     allFilter={allFilter}
@@ -480,7 +537,12 @@ const Images = props => {
                                       >
                                         <div className={`flex items-center`}>
                                           {site.slug != undefined ? (
-                                            <ImageSorting sortOrder={sortOrder} onSortHandler={SortHandler} key={key} slug={site.slug} />
+                                            <ImageSorting
+                                              sortOrder={sortOrder}
+                                              onSortHandler={SortHandler}
+                                              key={key}
+                                              slug={site.slug}
+                                            />
                                           ) : null}
                                           <span className="label">
                                             {site.label}
@@ -488,7 +550,7 @@ const Images = props => {
                                         </div>
                                       </th>
                                     </Fragment>
-                                  )
+                                  );
                                 })}
                               </tr>
                             </thead>
@@ -521,15 +583,15 @@ const Images = props => {
         </Fragment>
       ) : null}
     </Layout>
-  )
-}
+  );
+};
 
 export async function getServerSideProps(context) {
   return {
     props: {
       result: context.query,
     },
-  }
+  };
 }
 
-export default Images
+export default Images;
