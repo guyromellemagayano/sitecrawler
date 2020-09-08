@@ -1,158 +1,167 @@
-import { Fragment, useState, useEffect } from 'react'
+import { Fragment, useState, useEffect } from "react";
 import Router from "next/router";
-import { useRouter } from 'next/router'
-import fetch from 'node-fetch'
-import Cookies from 'js-cookie'
-import useSWR from 'swr'
-import Head from 'next/head'
-import Link from 'next/link'
-import styled from 'styled-components'
-import useUser from 'hooks/useUser'
-import Skeleton from 'react-loading-skeleton'
-import PropTypes from 'prop-types'
-import Layout from 'components/Layout'
-import MobileSidebar from 'components/sidebar/MobileSidebar'
-import MainSidebar from 'components/sidebar/MainSidebar'
-import Transition from 'hooks/Transition'
-import fetchJson from 'hooks/fetchJson'
+import { useRouter } from "next/router";
+import fetch from "node-fetch";
+import Cookies from "js-cookie";
+import useSWR from "swr";
+import Head from "next/head";
+import Link from "next/link";
+import styled from "styled-components";
+import useUser from "hooks/useUser";
+import Skeleton from "react-loading-skeleton";
+import PropTypes from "prop-types";
+import Layout from "components/Layout";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import MainSidebar from "components/sidebar/MainSidebar";
+import Transition from "hooks/Transition";
+import fetchJson from "hooks/fetchJson";
+import SiteFooter from "components/footer/SiteFooter";
 
-const SiteSettingsDiv = styled.section``
+const SiteSettingsDiv = styled.section``;
 
 const SiteSettings = () => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('')
-	const [successMsg, setSuccessMsg] = useState('')
-  const [disableInputFields, setDisableInputFields] = useState(0)
-  const [siteName, setSiteName] = useState('')
-  const [siteUrl, setSiteUrl] = useState('')
-  const [showModal, setShowModal] = useState(false)
-  const [showNotificationStatus, setShowNotificationStatus] = useState(false)
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [disableInputFields, setDisableInputFields] = useState(0);
+  const [siteName, setSiteName] = useState("");
+  const [siteUrl, setSiteUrl] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [showNotificationStatus, setShowNotificationStatus] = useState(false);
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/',
-    redirectIfFound: false
-  })
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
 
-  const { query } = useRouter()
-  const pageTitle = 'Site Settings |'
-  const { data: site, error: siteError } = useSWR(() => (query.siteId ? `/api/site/${query.siteId}/` : null), () => fetchSiteSettings(`/api/site/${query.siteId}/`), { refreshInterval: 1000 })
+  const { query } = useRouter();
+  const pageTitle = "Site Settings |";
+  const { data: site, error: siteError } = useSWR(
+    () => (query.siteId ? `/api/site/${query.siteId}/` : null),
+    () => fetchSiteSettings(`/api/site/${query.siteId}/`),
+    { refreshInterval: 1000 }
+  );
 
   const fetchSiteSettings = async (endpoint) => {
     const siteSettingsData = await fetchJson(endpoint, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
-      }
-    })
-    
-    return siteSettingsData
-  }
-  
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
+    });
+
+    return siteSettingsData;
+  };
+
   const updateSiteSettings = async (endpoint, formData) => {
     const response = await fetch(endpoint, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
       },
       body: JSON.stringify(formData),
-    })
+    });
 
-    const data = await response.json()
-  
+    const data = await response.json();
+
     if (response.ok && response.status === 200) {
       if (data) {
-        setSuccessMsg('Site information update successfully.')
-        setTimeout(() => setShowNotificationStatus(true), 1500)
-        setDisableInputFields(!disableInputFields)
+        setSuccessMsg("Site information update successfully.");
+        setTimeout(() => setShowNotificationStatus(true), 1500);
+        setDisableInputFields(!disableInputFields);
       } else {
-        setErrorMsg('Site information update failed. Please try again.')
-        setTimeout(() => setShowNotificationStatus(true), 1500)
+        setErrorMsg("Site information update failed. Please try again.");
+        setTimeout(() => setShowNotificationStatus(true), 1500);
       }
     } else {
-      const error = new Error(response.statusText)
-  
-      error.response = response
-      error.data = data
-  
-      setErrorMsg('An unexpected error occurred. Please try again.')
-      setTimeout(() => setShowNotificationStatus(true), 1500)
-  
-      throw error
-    }
-  }
+      const error = new Error(response.statusText);
 
-  const deleteSiteSettings = async (endpoint) => {    
-    const redirectTo = '/dashboard/sites'
+      error.response = response;
+      error.data = data;
+
+      setErrorMsg("An unexpected error occurred. Please try again.");
+      setTimeout(() => setShowNotificationStatus(true), 1500);
+
+      throw error;
+    }
+  };
+
+  const deleteSiteSettings = async (endpoint) => {
+    const redirectTo = "/dashboard/sites";
 
     await fetch(endpoint, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
-      }
-    })
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
+    });
 
-    setTimeout(
-      () => Router.push(redirectTo),
-      150
-    )
-  }
+    setTimeout(() => Router.push(redirectTo), 150);
+  };
 
   const handleSiteUpdate = async (e) => {
-		e.preventDefault()
-	
-		const body = {
+    e.preventDefault();
+
+    const body = {
       name: e.currentTarget.site_name.value,
-      url: e.currentTarget.site_url.value
-    }
+      url: e.currentTarget.site_url.value,
+    };
 
-    await updateSiteSettings(`/api/site/${query.siteId}/`, body)
-	}
+    await updateSiteSettings(`/api/site/${query.siteId}/`, body);
+  };
 
-	const handleEditSiteDetails = (e) => {
-    e.preventDefault()
+  const handleEditSiteDetails = (e) => {
+    e.preventDefault();
 
-    setDisableInputFields(!disableInputFields)
-  }
+    setDisableInputFields(!disableInputFields);
+  };
 
   const handleSiteNameInputChange = (e) => {
-    setSiteName(e.target.value)
-  }
+    setSiteName(e.target.value);
+  };
 
-	const handleSiteDeletion = async (e) => {
-    e.preventDefault()
-    
-    await deleteSiteSettings(`/api/site/${query.siteId}/`)
-  }
+  const handleSiteDeletion = async (e) => {
+    e.preventDefault();
+
+    await deleteSiteSettings(`/api/site/${query.siteId}/`);
+  };
 
   useEffect(() => {
-		if (site !== '' && site !== undefined) {
-			setSiteName(site.name)
-      setSiteUrl(site.url)
+    if (site !== "" && site !== undefined) {
+      setSiteName(site.name);
+      setSiteUrl(site.url);
     }
-  }, [site])
+  }, [site]);
 
   useEffect(() => {
     if (showNotificationStatus === true)
-    setTimeout(() => setShowNotificationStatus(false), 7500)
-  }, [showNotificationStatus])
+      setTimeout(() => setShowNotificationStatus(false), 7500);
+  }, [showNotificationStatus]);
 
-  {userError || siteError && <Layout>{userError.message || siteError.message}</Layout>}
+  {
+    userError ||
+      (siteError && <Layout>{userError.message || siteError.message}</Layout>);
+  }
 
   return (
     <Layout>
       {user && site ? (
         <Fragment>
           <Head>
-            <title>{pageTitle} {siteName}</title>
+            <title>
+              {pageTitle} {siteName}
+            </title>
           </Head>
 
-          <SiteSettingsDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <SiteSettingsDiv
+            className={`h-screen flex overflow-hidden bg-gray-100`}
+          >
             <MobileSidebar show={openMobileSidebar} />
             <MainSidebar />
 
@@ -234,7 +243,9 @@ const SiteSettings = () => {
                                 ? "Update Success!"
                                 : "Verifying..."}
                             </p>
-                            <p className={`mt-1 text-sm leading-5 text-gray-500`}>
+                            <p
+                              className={`mt-1 text-sm leading-5 text-gray-500`}
+                            >
                               {errorMsg !== undefined && errorMsg !== ""
                                 ? errorMsg
                                 : successMsg}
@@ -279,7 +290,12 @@ const SiteSettings = () => {
                 <button
                   className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                   aria-label={`Open sidebar`}
-                  onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
+                  onClick={() =>
+                    setTimeout(
+                      () => setOpenMobileSidebar(!openMobileSidebar),
+                      150
+                    )
+                  }
                 >
                   <svg
                     className={`h-6 w-5`}
@@ -300,40 +316,80 @@ const SiteSettings = () => {
                 className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
                 tabIndex={`0`}
               >
-                <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+                <div
+                  className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+                >
                   <div>
                     <nav className={`sm:hidden`}>
-                      <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
-                        <a className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>
-                          <svg className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/overview"}
+                      >
+                        <a
+                          className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          <svg
+                            className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                           Back to Overview
                         </a>
                       </Link>
                     </nav>
-                    <nav className={`hidden sm:flex items-center text-sm leading-5`}>
-                      <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
-                        <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{siteName}</a>
+                    <nav
+                      className={`hidden sm:flex items-center text-sm leading-5`}
+                    >
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/overview"}
+                      >
+                        <a
+                          className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          {siteName}
+                        </a>
                       </Link>
-                      <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
+                      <svg
+                        className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
-                      <Link href={'/dashboard/site/' + query.siteId + '/settings'}>
-                        <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>Site Settings</a>
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/settings"}
+                      >
+                        <a
+                          className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          Site Settings
+                        </a>
                       </Link>
                     </nav>
                   </div>
-                  <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                  <div
+                    className={`mt-2 md:flex md:items-center md:justify-between`}
+                  >
                     <div className={`flex-1 min-w-0`}>
-                      <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                      <h2
+                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
+                      >
                         Site Settings - {siteName}
                       </h2>
                     </div>
                   </div>
                 </div>
-                <div className={`max-w-3xl px-4 sm:px-6 md:px-8`}>
-                  <div className={`mt-5 max-w-full bg-white shadow-xs rounded-lg`}>
+                <div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
+                  <div
+                    className={`mb-5 max-w-full bg-white shadow-xs rounded-lg`}
+                  >
                     <div className={`px-4 py-5 sm:p-6`}>
                       <form onSubmit={handleSiteUpdate}>
                         <div>
@@ -344,7 +400,9 @@ const SiteSettings = () => {
                               >
                                 Site Information
                               </h3>
-                              <p className={`mt-1 text-sm leading-5 text-gray-500`}>
+                              <p
+                                className={`mt-1 text-sm leading-5 text-gray-500`}
+                              >
                                 User generated content in real-time will have
                                 multiple touchpoints for offshoring.
                               </p>
@@ -359,7 +417,9 @@ const SiteSettings = () => {
                                 >
                                   New Site Name
                                 </label>
-                                <div className={`mt-1 flex rounded-md shadow-xs-sm`}>
+                                <div
+                                  className={`mt-1 flex rounded-md shadow-xs-sm`}
+                                >
                                   <input
                                     type={`text`}
                                     id={`site_name`}
@@ -387,7 +447,9 @@ const SiteSettings = () => {
                                 >
                                   New Site URL Link
                                 </label>
-                                <div className={`mt-1 flex rounded-md shadow-xs-sm`}>
+                                <div
+                                  className={`mt-1 flex rounded-md shadow-xs-sm`}
+                                >
                                   <input
                                     type={`text`}
                                     id={`site_url`}
@@ -404,10 +466,14 @@ const SiteSettings = () => {
                         <div className={`mt-8 border-t border-gray-200 pt-5`}>
                           <div className={`flex justify-between`}>
                             <div className={`flex justify-start`}>
-                              <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                              <span
+                                className={`inline-flex rounded-md shadow-xs-sm`}
+                              >
                                 <button
                                   type={`submit`}
-                                  disabled={disableInputFields == 1 ? true : false}
+                                  disabled={
+                                    disableInputFields == 1 ? true : false
+                                  }
                                   className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
                                     disableInputFields == 1
                                       ? "opacity-50 bg-indigo-300 cursor-not-allowed"
@@ -419,13 +485,18 @@ const SiteSettings = () => {
                                 </button>
                               </span>
 
-                              <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                              <span
+                                className={`inline-flex rounded-md shadow-xs-sm`}
+                              >
                                 <button
-                                  disabled={disableInputFields == 1 ? false : true}
+                                  disabled={
+                                    disableInputFields == 1 ? false : true
+                                  }
                                   className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
-                                    disableInputFields == 1 ?
-                                      "hover:text-gray-500 focus:outline-none" : "opacity-50 cursor-not-allowed"
-                                    }`}
+                                    disableInputFields == 1
+                                      ? "hover:text-gray-500 focus:outline-none"
+                                      : "opacity-50 cursor-not-allowed"
+                                  }`}
                                   onClick={handleEditSiteDetails}
                                 >
                                   Cancel Edit
@@ -454,7 +525,9 @@ const SiteSettings = () => {
                     </div>
                   </div>
 
-                  <div className={`mt-5 max-w-full bg-white shadow-xs rounded-lg`}>
+                  <div
+                    className={`max-w-full bg-white shadow-xs rounded-lg`}
+                  >
                     <div className={`px-4 py-5 sm:p-6`}>
                       <div>
                         <div>
@@ -464,9 +537,11 @@ const SiteSettings = () => {
                             >
                               Delete Site
                             </h3>
-                            <p className={`mt-1 text-sm leading-5 text-gray-500`}>
-                              User generated content in real-time will have multiple
-                              touchpoints for offshoring.
+                            <p
+                              className={`mt-1 text-sm leading-5 text-gray-500`}
+                            >
+                              User generated content in real-time will have
+                              multiple touchpoints for offshoring.
                             </p>
                           </div>
                         </div>
@@ -475,12 +550,16 @@ const SiteSettings = () => {
                         className={`mt-8 border-t border-gray-200 pt-5 flex justify-between`}
                       >
                         <div className={`flex justify-start`}>
-                          <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                          <span
+                            className={`inline-flex rounded-md shadow-xs-sm`}
+                          >
                             <button
                               type={`button`}
                               id={`siteDeleteModalButton`}
                               className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 transition duration-150 ease-in-out hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-xs-outline-red active:bg-red-700`}
-                              onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
+                              onClick={() =>
+                                setTimeout(() => setShowModal(!showModal), 150)
+                              }
                             >
                               Delete Site
                             </button>
@@ -489,6 +568,12 @@ const SiteSettings = () => {
                       </div>
                     </div>
                   </div>
+                </div>
+
+                <div
+                  className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
+                >
+                  <SiteFooter />
                 </div>
               </main>
             </div>
@@ -505,15 +590,16 @@ const SiteSettings = () => {
                   leaveFrom="opacity-100"
                   leaveTo="opacity-100"
                 >
-                  <div
-                    className={`fixed inset-0 transition-opacity`}
-                  >
-                    <div className={`absolute inset-0 bg-gray-500 opacity-75`}></div>
+                  <div className={`fixed inset-0 transition-opacity`}>
+                    <div
+                      className={`absolute inset-0 bg-gray-500 opacity-75`}
+                    ></div>
                   </div>
                 </Transition>
-                
-                <span className={`hidden sm:inline-block sm:align-middle sm:h-screen`}></span>&#8203;
-                
+                <span
+                  className={`hidden sm:inline-block sm:align-middle sm:h-screen`}
+                ></span>
+                &#8203;
                 <Transition
                   enter="ease-out duration-300"
                   enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -546,15 +632,19 @@ const SiteSettings = () => {
                           />
                         </svg>
                       </div>
-                      <div className={`mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left`}>
+                      <div
+                        className={`mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left`}
+                      >
                         <h3
-                          className={`text-lg leading-6 font-medium text-gray-900`} id="modal-headline"
+                          className={`text-lg leading-6 font-medium text-gray-900`}
+                          id="modal-headline"
                         >
                           Delete Site
                         </h3>
                         <div className={`mt-2`}>
                           <p className={`text-sm leading-5 text-gray-500`}>
-                            Are you sure you want to delete this website? You will lose all its data and settings.
+                            Are you sure you want to delete this website? You
+                            will lose all its data and settings.
                           </p>
                         </div>
                       </div>
@@ -577,7 +667,9 @@ const SiteSettings = () => {
                         <button
                           type="button"
                           className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
-                          onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
+                          onClick={() =>
+                            setTimeout(() => setShowModal(!showModal), 150)
+                          }
                         >
                           Cancel
                         </button>
@@ -592,9 +684,9 @@ const SiteSettings = () => {
       ) : null}
     </Layout>
   );
-}
+};
 
-export default SiteSettings
+export default SiteSettings;
 
 SiteSettings.propTypes = {
   openMobileSidebar: PropTypes.bool,
@@ -613,4 +705,4 @@ SiteSettings.propTypes = {
   handleEditSiteDetails: PropTypes.func,
   handleSiteNameInputChange: PropTypes.func,
   handleSiteDeletion: PropTypes.func,
-}
+};

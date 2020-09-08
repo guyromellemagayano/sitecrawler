@@ -12,6 +12,7 @@ import LogoLabel from "components/form/LogoLabel";
 import { useRouter } from "next/router";
 import SiteHead from 'components/layout/SiteHead'
 import AppLogo from 'components/logo/AppLogo'
+import SiteFooter from "components/footer/SiteFooter";
 
 const LoginDiv = styled.div``;
 
@@ -109,7 +110,7 @@ const Login = () => {
       </Head>
 
       <LoginDiv
-        className={`bg-gray-100 h-screen`}
+        className={`bg-gray-100 min-h-screen`}
       >
         <div class="relative overflow-auto">
           <div class="relative pt-6 pb-12 md:pb-6">
@@ -123,7 +124,7 @@ const Login = () => {
                         src={`/img/logos/site-logo-dark.svg`}
                         alt={`app-logo`}
                       />
-                      <h4 class="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-semibold text-gray-900 sm:mt-5 sm:leading-none sm:text-6xl lg:mt-6 lg:text-5xl xl:text-4xl">
+                      <h4 class="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-semibold text-gray-900 sm:mt-5 sm:leading-none text-4xl">
                         Find website issues before your clients do.
                         <br class="hidden md:inline" />
                       </h4>
@@ -386,40 +387,12 @@ const Login = () => {
                     </div>
                   </div>
                 </div>
+
+                <div className="px-4 xl:px-10 xl:mt-32">
+                  <SiteFooter />
+                </div>
               </div>
             </main>
-          </div>
-        </div>
-
-        <div class="max-w-screen-xl md:flex-col lg:flex-row mx-auto py-12 px-12 md:flex md:items-center md:justify-between">
-          <div class="flex justify-center md:order-1 mt-8 md:mt-6">
-            <nav class="-mx-2 -my-2 flex flex-wrap justify-center">
-              <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-indigo-500 transition duration-150 ease-in-out">
-                  About
-                </a>
-              </div>
-              <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-indigo-500 transition duration-150 ease-in-out">
-                  Privacy Policy
-                </a>
-              </div>
-              <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-indigo-500 transition duration-150 ease-in-out">
-                  Terms
-                </a>
-              </div>
-              <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-indigo-500 transition duration-150 ease-in-out">
-                  Support
-                </a>
-              </div>
-            </nav>
-          </div>
-          <div class="mt-8 md:mt-6 md:order-2">
-            <p class="text-center text-base leading-6 text-gray-500 -px-4">
-              &copy; 2020 SiteCrawler, Inc. All rights reserved.
-            </p>
           </div>
         </div>
       </LoginDiv>
