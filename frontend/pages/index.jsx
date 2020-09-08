@@ -123,14 +123,19 @@ const Login = () => {
                         src={`/img/logos/site-logo-dark.svg`}
                         alt={`app-logo`}
                       />
-                      <h2 class="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-extrabold text-gray-900 sm:mt-5 sm:leading-none sm:text-6xl lg:mt-6 lg:text-5xl xl:text-6xl">
+                      <h4 class="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-semibold text-gray-900 sm:mt-5 sm:leading-none sm:text-6xl lg:mt-6 lg:text-5xl xl:text-4xl">
                         Find website issues before your clients do.
                         <br class="hidden md:inline" />
-                        <span class="mt-5 block text-indigo-600">Try for free.</span>
-                      </h2>
+                      </h4>
+                      <span class="inline-flex rounded-md shadow-sm mt-6">
+                        <button type="button" class="inline-flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
+                        Try for free
+                        </button>
+                      </span>
                     </div>
                   </div>
                   <div class="mt-12 sm:mt-16 lg:mt-0 lg:col-span-5">
+                    {!disableLoginForm ? <LogoLabel isLogin /> : null}
                     <div className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
                       {errorMsg && (
                         <div className={`rounded-md bg-red-100 p-4 mb-8`}>
