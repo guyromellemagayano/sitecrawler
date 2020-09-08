@@ -71,12 +71,12 @@ const TimestampSettings = () => {
 	return (
 		<Fragment>
       {!user ? (
-        <TimestampSettingsDiv className={`mt-5 max-w-full`}>
+        <TimestampSettingsDiv className={`max-w-full`}>
           <Skeleton duration={2} width={320} height={213} />
         </TimestampSettingsDiv>
       ) : (
 				<TimestampSettingsDiv
-					className={`mt-5 max-w-full bg-white shadow-xs rounded-lg`}
+					className={`max-w-full bg-white shadow-xs rounded-lg`}
 				>
 					<div className={`px-4 py-5 sm:p-6`}>
 						<div>
