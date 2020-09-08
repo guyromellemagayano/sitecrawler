@@ -427,15 +427,37 @@ const SitesVerifyUrl = props => {
                                   type={`submit`}
                                   className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
                                 >
-                                  Verify Site
+                                  Verify Site Now
                                 </button>
                               ) : (
                                 <button
                                   type={`submit`}
-                                  className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                                  className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition ease-in-out duration-150`}
                                 >
-                                  Verify Site
+                                  Verify Site Now
                                 </button>
+                              )}
+                            </span>
+
+                            <span className="inline-flex rounded-md shadow-xs-sm">
+                              {disableSiteVerify ? (
+                                <button
+                                  disabled={`disabled`}
+                                  type={`submit`}
+                                  className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 opacity-50 cursor-not-allowed`}
+                                >
+                                  Verify Site Later
+                                </button>
+                              ) : (
+                                <Link
+                                  href="/dashboard/sites"
+                                >
+                                  <a
+                                    className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:shadow-xs-outline-yellow focus:border-yellow-700 active:bg-yellow-700 transition ease-in-out duration-150`}
+                                  >
+                                    Verify Site Later
+                                  </a>
+                                </Link>
                               )}
                             </span>
 
