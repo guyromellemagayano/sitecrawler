@@ -68,7 +68,7 @@ const Support = () => {
                     </div>
                   </div>
                 </div>
-                <div className={`max-w-full px-4 py-4 sm:px-6 md:px-8`}>
+                <div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
                   <div className={`max-w-full bg-white shadow rounded-lg`}>
                     <div className={`px-4 py-5 sm:p-6`}>
                       <div className={`mt-2 max-w-xl text-sm leading-5 text-gray-500`}>
@@ -83,7 +83,7 @@ const Support = () => {
                   </div>
                 </div>
 
-                <div className={`absolute bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}>
+                <div className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}>
                   <SiteFooter />
                 </div>
               </main>
