@@ -1,14 +1,14 @@
-import { Fragment } from 'react'
-import { useRouter } from 'next/router'
-import fetch from 'node-fetch'
-import useSWR from 'swr'
-import Cookies from 'js-cookie'
-import Link from 'next/link'
-import styled from 'styled-components'
-import Skeleton from 'react-loading-skeleton'
-import DashboardPages from 'public/data/dashboard-pages.json'
-import useUser from 'hooks/useUser'
-import Layout from 'components/Layout'
+import { Fragment } from "react";
+import { useRouter } from "next/router";
+import fetch from "node-fetch";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import Link from "next/link";
+import styled from "styled-components";
+import Skeleton from "react-loading-skeleton";
+import DashboardPages from "public/data/dashboard-pages.json";
+import useUser from "hooks/useUser";
+import Layout from "components/Layout";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -18,26 +18,26 @@ const fetcher = async (url) => {
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
-  })
+  });
 
-  const data = await res.json()
+  const data = await res.json();
 
   if (res.status !== 200) {
-    throw new Error(data.message)
+    throw new Error(data.message);
   }
 
-  return data
-}
+  return data;
+};
 
-const PrimaryMenuDiv = styled.nav``
+const PrimaryMenuDiv = styled.nav``;
 
 const PrimaryMenu = () => {
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/',
+    redirectTo: "/",
     redirectIfFound: false,
-  })
+  });
 
-  const { data: site, error: siteError } = useSWR("/api/site/", fetcher)
+  const { data: site, error: siteError } = useSWR("/api/site/", fetcher);
 
   return (
     <Fragment>
@@ -59,7 +59,7 @@ const PrimaryMenu = () => {
                   <Skeleton duration={2} width={150} />
                 </span>
               </a>
-            )
+            );
           })}
         </PrimaryMenuDiv>
       ) : (
@@ -67,7 +67,8 @@ const PrimaryMenu = () => {
           {DashboardPages.map((val, key) => {
             return (
               <Fragment key={key}>
-                {user.group.id === 3 || user.group.id !== 3 && val.slug !== 'reports' ? (
+                {user.group.id === 3 ||
+                (user.group.id !== 3 && val.slug !== "reports") ? (
                   <Fragment>
                     <h3
                       className={`${val.slug}-headline mt-8 text-xs leading-4 font-semibold text-gray-300 uppercase tracking-wider`}
@@ -85,12 +86,12 @@ const PrimaryMenu = () => {
                             <a
                               className={`${
                                 useRouter().pathname.indexOf(val2.url) == 0
-                                  ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
-                                  : "mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
+                                  ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100"
+                                  : "mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150"
                               }`}
                             >
                               <svg
-                                className={`mr-3 h-6 w-5 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                                className={`mr-3 h-6 w-5`}
                                 stroke={`currentColor`}
                                 fill={`none`}
                                 viewBox={`0 0 24 24`}
@@ -112,18 +113,18 @@ const PrimaryMenu = () => {
                               )}
                             </a>
                           </Link>
-                        )
+                        );
                       })}
                     </div>
                   </Fragment>
                 ) : null}
               </Fragment>
-            )
+            );
           })}
         </PrimaryMenuDiv>
       )}
     </Fragment>
-  )
-}
+  );
+};
 
-export default PrimaryMenu
+export default PrimaryMenu;
