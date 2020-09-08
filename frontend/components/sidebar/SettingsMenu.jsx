@@ -1,22 +1,22 @@
-import { Fragment } from 'react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
-import styled from 'styled-components'
-import SettingsPages from 'public/data/settings-pages.json'
-import useUser from 'hooks/useUser'
-import Layout from 'components/Layout'
+import { Fragment } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import styled from "styled-components";
+import SettingsPages from "public/data/settings-pages.json";
+import useUser from "hooks/useUser";
+import Layout from "components/Layout";
 
 const SettingsMenuDiv = styled.nav`
   .back-nav {
     margin-bottom: 1rem;
   }
-`
+`;
 
 const SettingsMenu = () => {
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/',
+    redirectTo: "/",
     redirectIfFound: false,
-  })
+  });
 
   return (
     <Fragment>
@@ -35,7 +35,7 @@ const SettingsMenu = () => {
                   <Skeleton duration={2} width={150} />
                 </span>
               </a>
-            )
+            );
           })}
         </SettingsMenuDiv>
       ) : (
@@ -61,12 +61,12 @@ const SettingsMenu = () => {
                             <a
                               className={`${
                                 useRouter().pathname.indexOf(val2.url) == 0
-                                  ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
-                                  : "mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
+                                  ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100"
+                                  : "mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150"
                               }`}
                             >
                               <svg
-                                className={`mr-3 h-6 w-5 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                                className={`mr-3 h-6 w-5`}
                                 stroke={`currentColor`}
                                 fill={`none`}
                                 viewBox={`0 0 24 24`}
@@ -81,7 +81,7 @@ const SettingsMenu = () => {
                               <span>{val2.title}</span>
                             </a>
                           </Link>
-                        )
+                        );
                       })}
                     </div>
                   </Fragment>
@@ -104,12 +104,12 @@ const SettingsMenu = () => {
                           <a
                             className={`${
                               useRouter().pathname.indexOf(val2.url) == 0
-                                ? "group mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md bg-white hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
-                                : "back-nav mt-1 group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-600 hover:bg-white focus:outline-none focus:bg-white transition ease-in-out duration-150"
+                                ? "group mt-2 flex items-center text-sm leading-5 font-medium text-gray-100"
+                                : "back-nav mt-2 group flex items-center text-sm leading-5 font-medium text-gray-500 rounded-md hover:text-gray-100 transition ease-in-out duration-150"
                             }`}
                           >
                             <svg
-                              className={`mr-3 h-6 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                              className={`mr-3 h-6 w-5`}
                               stroke={`currentColor`}
                               fill={`none`}
                               viewBox={`0 0 24 24`}
@@ -146,17 +146,17 @@ const SettingsMenu = () => {
                             )}
                           </a>
                         </Link>
-                      )
+                      );
                     })}
                   </div>
                 )}
               </Fragment>
-            )
+            );
           })}
         </SettingsMenuDiv>
       )}
     </Fragment>
-  )
-}
+  );
+};
 
-export default SettingsMenu
+export default SettingsMenu;
