@@ -117,7 +117,7 @@ const ProfileSettingsPersonal = () => {
   return (
     <Fragment>
       {!profile ? (
-        <ProfileSettingsPersonalDiv className={`mt-5 max-w-full`}>
+        <ProfileSettingsPersonalDiv className={`mb-5 max-w-full`}>
           <Skeleton duration={2} width={320} height={586} />
         </ProfileSettingsPersonalDiv>
       ) : (
@@ -239,7 +239,7 @@ const ProfileSettingsPersonal = () => {
               </Transition>
             </div>
           </Transition>
-          <ProfileSettingsPersonalDiv className={`mt-5 max-w-full bg-white shadow-xs rounded-lg`}>
+          <ProfileSettingsPersonalDiv className={`mb-5 max-w-full bg-white shadow-xs rounded-lg`}>
           <div className={`px-4 py-5 sm:p-6`}>
             <form onSubmit={handleProfileUpdate}>
               <div>
