@@ -234,27 +234,25 @@ const DataTable = props => {
           )}
         </div>
       </td>
-      <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
-        {scanId.num_images ? (
-          <td
-            className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
-          >
-            <Link href="/dashboard/site/[siteId]/images" as={`/dashboard/site/${props.site.id}/images`}>
-              <a
-                className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-              >
-                {scanId.num_images}
-              </a>
-            </Link>
-          </td>
-        ) : (
-          <td
-            className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
-          >
-            0
-          </td>
-        )}
-      </td>
+      {scanId.num_images ? (
+        <td
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
+        >
+          <Link href="/dashboard/site/[siteId]/images" as={`/dashboard/site/${props.site.id}/images`}>
+            <a
+              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+            >
+              {scanId.num_images}
+            </a>
+          </Link>
+        </td>
+      ) : (
+        <td
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
+        >
+          0
+        </td>
+      )}
       {scanId.num_links ? (
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
