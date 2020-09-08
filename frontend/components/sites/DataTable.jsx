@@ -235,18 +235,24 @@ const DataTable = props => {
         </div>
       </td>
       <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
-        {props.site.verified ? (
-          <span
-            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800`}
+        {scanId.num_images ? (
+          <td
+            className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
           >
-            Verified
-          </span>
+            <Link href="/dashboard/site/[siteId]/images" as={`/dashboard/site/${props.site.id}/images`}>
+              <a
+                className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+              >
+                {scanId.num_images}
+              </a>
+            </Link>
+          </td>
         ) : (
-          <span
-            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800`}
+          <td
+            className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
           >
-            Unverified
-          </span>
+            0
+          </td>
         )}
       </td>
       {scanId.num_links ? (
