@@ -1,114 +1,114 @@
-import { Fragment, useState, useEffect } from 'react'
-import fetch from 'node-fetch'
-import Cookies from 'js-cookie'
-import styled from 'styled-components'
-import PropTypes from 'prop-types'
-import Skeleton from 'react-loading-skeleton'
-import Transition from 'hooks/Transition'
-import PasswordStrengthBar from 'react-password-strength-bar';
-import useUser from 'hooks/useUser'
+import { Fragment, useState, useEffect } from "react";
+import fetch from "node-fetch";
+import Cookies from "js-cookie";
+import styled from "styled-components";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import Transition from "hooks/Transition";
+import PasswordStrengthBar from "react-password-strength-bar";
+import useUser from "hooks/useUser";
 
-const ProfileSettingsPasswordDiv = styled.div``
+const ProfileSettingsPasswordDiv = styled.div``;
 
 const ProfileSettingsPassword = () => {
-  const [errorMsg, setErrorMsg] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
-  const [disablePasswordFields, setDisablePasswordFields] = useState(true)
-  const [disableSubmitButton, setDisableSubmitButton] = useState(false)
-  const [showNotificationStatus, setShowNotificationStatus] = useState(false)
-  const [password1, setPassword1] = useState('')
-  const [password2, setPassword2] = useState('')
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [disablePasswordFields, setDisablePasswordFields] = useState(true);
+  const [disableSubmitButton, setDisableSubmitButton] = useState(false);
+  const [showNotificationStatus, setShowNotificationStatus] = useState(false);
+  const [password1, setPassword1] = useState("");
+  const [password2, setPassword2] = useState("");
 
   useEffect(() => {
     if (password1 === password2) {
-      setDisableSubmitButton(!disableSubmitButton)
+      setDisableSubmitButton(!disableSubmitButton);
     }
-  }, [password1, password2])
+  }, [password1, password2]);
 
   const handlePasswordSubmission = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (errorMsg) setErrorMsg('')
-    if (successMsg) setSuccessMsg('')
+    if (errorMsg) setErrorMsg("");
+    if (successMsg) setSuccessMsg("");
 
     const body = {
       new_password1: e.currentTarget.password1.value,
       new_password2: e.currentTarget.password2.value,
-    }
+    };
 
     try {
-      const response = await fetch('/api/auth/password/change/', {
-        method: 'POST',
+      const response = await fetch("/api/auth/password/change/", {
+        method: "POST",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-CSRFToken": Cookies.get("csrftoken"),
         },
         body: JSON.stringify(body),
-      })
-      
-      const data = await response.json()
+      });
+
+      const data = await response.json();
 
       if (response.ok && response.status === 200) {
         if (data) {
-          setSuccessMsg('Password information update successfully.')
-          setTimeout(() => setShowNotificationStatus(true), 1500)
-          setDisablePasswordFields(!disablePasswordFields)
-          setDisableSubmitButton(!disableSubmitButton)
+          setSuccessMsg("Password information update successfully.");
+          setTimeout(() => setShowNotificationStatus(true), 1500);
+          setDisablePasswordFields(!disablePasswordFields);
+          setDisableSubmitButton(!disableSubmitButton);
         } else {
-          setErrorMsg('Password information update failed. Please try again.')
-          setTimeout(() => setShowNotificationStatus(true), 1500)
+          setErrorMsg("Password information update failed. Please try again.");
+          setTimeout(() => setShowNotificationStatus(true), 1500);
         }
       } else {
-        if (Math.floor(response.status/400) === 1) {
-          setErrorMsg(data.new_password2[0])
-          setTimeout(() => setShowNotificationStatus(true), 1500)
+        if (Math.floor(response.status / 400) === 1) {
+          setErrorMsg(data.new_password2[0]);
+          setTimeout(() => setShowNotificationStatus(true), 1500);
         } else {
-          const error = new Error(response.statusText)
-  
-          error.response = response
-          error.data = data
-    
-          throw error
+          const error = new Error(response.statusText);
+
+          error.response = response;
+          error.data = data;
+
+          throw error;
         }
       }
-    } catch(error) {
+    } catch (error) {
       if (!error.data) {
-        error.data = { message: error.message }
+        error.data = { message: error.message };
       }
 
-      setErrorMsg('An unexpected error occurred. Please try again.')
-      setTimeout(() => setShowNotificationStatus(true), 1500)
+      setErrorMsg("An unexpected error occurred. Please try again.");
+      setTimeout(() => setShowNotificationStatus(true), 1500);
 
-      throw error
+      throw error;
     }
-  }
+  };
 
   const handleEditPasswordProfile = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    setDisablePasswordFields(!disablePasswordFields)
-  }
+    setDisablePasswordFields(!disablePasswordFields);
+  };
 
   const handlePasswordOneInputChange = (e) => {
-    setPassword1(e.target.value)
-  }
+    setPassword1(e.target.value);
+  };
 
   const handlePasswordTwoInputChange = (e) => {
-    setPassword2(e.target.value)
-  }
+    setPassword2(e.target.value);
+  };
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/',
-    redirectIfFound: false
-  })
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
 
   useEffect(() => {
     if (showNotificationStatus === true)
-    setTimeout(() => setShowNotificationStatus(false), 7500)
-  }, [showNotificationStatus])
+      setTimeout(() => setShowNotificationStatus(false), 7500);
+  }, [showNotificationStatus]);
 
-  if (userError) return <div>{userError.message}</div>
+  if (userError) return <div>{userError.message}</div>;
 
   return (
     <Fragment>
@@ -235,17 +235,22 @@ const ProfileSettingsPassword = () => {
               </Transition>
             </div>
           </Transition>
-          <ProfileSettingsPasswordDiv className={`max-w-3xl bg-white shadow-xs rounded-lg`}>
+          <ProfileSettingsPasswordDiv
+            className={`max-w-3xl bg-white shadow-xs rounded-lg`}
+          >
             <div className={`px-4 py-5 sm:p-6`}>
               <form onSubmit={handlePasswordSubmission}>
                 <div>
                   <div>
                     <div>
-                      <h3 className={`text-lg leading-6 font-medium text-gray-900`}>
+                      <h3
+                        className={`text-lg leading-6 font-medium text-gray-900`}
+                      >
                         Password Change
                       </h3>
                       <p className={`mt-1 text-sm leading-5 text-gray-500`}>
-                        User generated content in real-time will have multiple touchpoints for offshoring.
+                        User generated content in real-time will have multiple
+                        touchpoints for offshoring.
                       </p>
                     </div>
                     <div
@@ -258,7 +263,9 @@ const ProfileSettingsPassword = () => {
                         >
                           New Password
                         </label>
-                        <div className={`mt-1 flex flex-row flex-wrap rounded-md shadow-xs-sm`}>
+                        <div
+                          className={`mt-1 flex flex-row flex-wrap rounded-md shadow-xs-sm`}
+                        >
                           <input
                             type={`password`}
                             id={`password1`}
@@ -268,11 +275,14 @@ const ProfileSettingsPassword = () => {
                             className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
                               disablePasswordFields &&
                               "opacity-50 bg-gray-300 cursor-not-allowed"
-                              }`}
+                            }`}
                             onChange={handlePasswordOneInputChange}
                             onBlur={handlePasswordOneInputChange}
                           />
-                          <PasswordStrengthBar className={`w-full`} password={password1} />
+                          <PasswordStrengthBar
+                            className={`w-full`}
+                            password={password1}
+                          />
                         </div>
                       </div>
                     </div>
@@ -296,7 +306,7 @@ const ProfileSettingsPassword = () => {
                             className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
                               disablePasswordFields &&
                               "opacity-50 bg-gray-300 cursor-not-allowed"
-                              }`}
+                            }`}
                             onChange={handlePasswordTwoInputChange}
                             onBlur={handlePasswordTwoInputChange}
                           />
@@ -313,9 +323,10 @@ const ProfileSettingsPassword = () => {
                           type={`submit`}
                           disabled={!disablePasswordFields ? true : false}
                           className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
-                            !disablePasswordFields ?
-                              "opacity-50 bg-indigo-300 cursor-not-allowed" : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700"
-                            }`}
+                            !disablePasswordFields
+                              ? "opacity-50 bg-indigo-300 cursor-not-allowed"
+                              : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700"
+                          }`}
                           onClick={handleEditPasswordProfile}
                         >
                           Update Password
@@ -326,9 +337,10 @@ const ProfileSettingsPassword = () => {
                         <button
                           disabled={!disablePasswordFields ? false : true}
                           className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
-                            !disablePasswordFields ?
-                              "hover:text-gray-500 focus:outline-none" : "opacity-50 cursor-not-allowed"
-                            }`}
+                            !disablePasswordFields
+                              ? "hover:text-gray-500 focus:outline-none"
+                              : "opacity-50 cursor-not-allowed"
+                          }`}
                           onClick={handleEditPasswordProfile}
                         >
                           Cancel Edit
@@ -336,13 +348,16 @@ const ProfileSettingsPassword = () => {
                       </span>
                     </div>
                     <div className={`flex justify-end`}>
-                      <span className={`ml-3 inline-flex rounded-md shadow-xs-sm`}>
+                      <span
+                        className={`ml-3 inline-flex rounded-md shadow-xs-sm`}
+                      >
                         <button
                           type={`submit`}
                           className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
-                            disableSubmitButton ?
-                              "opacity-50 bg-green-300 cursor-not-allowed" : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"
-                            }`}
+                            disableSubmitButton
+                              ? "opacity-50 bg-green-300 cursor-not-allowed"
+                              : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"
+                          }`}
                         >
                           Save Password
                         </button>
@@ -356,10 +371,10 @@ const ProfileSettingsPassword = () => {
         </>
       )}
     </Fragment>
-  )
-}
+  );
+};
 
-export default ProfileSettingsPassword
+export default ProfileSettingsPassword;
 
 ProfileSettingsPassword.propTypes = {
   errorMsg: PropTypes.string,
@@ -368,4 +383,4 @@ ProfileSettingsPassword.propTypes = {
   disabledSubmitButton: PropTypes.bool,
   password1: PropTypes.string,
   password2: PropTypes.string,
-}
+};

@@ -19,7 +19,7 @@ const Support = () => {
     redirectIfFound: false
   })
 
-  {userError && <Layout>{userError.message}</Layout>}
+  { userError && <Layout>{userError.message}</Layout> }
 
   return (
     <Layout>
