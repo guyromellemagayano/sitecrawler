@@ -46,6 +46,8 @@ const SitesInformation = props => {
       url: siteUrl.href,
       name: siteName,
     }
+
+    console.log(siteUrl)
     
     if (
       body.name !== undefined && body.url !== "https://undefined" && body.url !== "http://undefined"
@@ -478,7 +480,7 @@ const SitesInformation = props => {
                                 disabled={disableSiteVerify || router.query.sid !== undefined ? true : false}
                                 value={
                                   siteUrl
-                                    ? siteUrl.replace(/^(https?:|)\/\//, "")
+                                    ? siteUrl.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "")
                                     : ""
                                 }
                                 className={`${
@@ -503,7 +505,7 @@ const SitesInformation = props => {
                                 type="hidden"
                                 disabled={disableSiteVerify || router.query.sid !== undefined ? true : false}
                                 name={`urlpath`}
-                                value={urlProtocol + siteUrl}
+                                value={urlProtocol.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "") + siteUrl}
                               />
                               
                               {errorSiteUrlMsg && !siteUrl || dupSiteProtocolExists ? (
