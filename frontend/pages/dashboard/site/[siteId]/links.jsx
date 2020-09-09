@@ -246,8 +246,8 @@ const Links = (props) => {
       newPath = removeURLParameter(newPath, "page");
       newPath = removeURLParameter(newPath, "type");
 
-      if (newPath.includes("?")) newPath += `&type=EXTERNAL&type=OTHER`;
-      else newPath += `?type=EXTERNAL&type=OTHER`;
+      if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
+      else newPath += `?type=EXTERNAL`;
     } else if (filterType == "external" && filterStatus == false) {
       if (newPath.includes("type=EXTERNAL"))
         newPath = removeURLParameter(newPath, "type");
