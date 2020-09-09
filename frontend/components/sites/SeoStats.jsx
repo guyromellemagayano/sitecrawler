@@ -122,8 +122,8 @@ const SitesSeoStats = props => {
   const chartSeries = [
     (stats && stats.num_pages_without_title) !== undefined ? stats && stats.num_pages_without_title : 0,
     (stats && stats.num_pages_without_description) !== undefined ? stats && stats.num_pages_without_description : 0,
-    (stats && (stats.num_pages_without_h1_first)) !== undefined ? stats && (stats.num_pages_without_h1_first) : 0,
-    (stats && (stats.num_pages_without_h2_first)) !== undefined ? stats && (stats.num_pages_without_h2_first) : 0,
+    (stats && stats.num_pages_without_h1_first) !== undefined ? stats && (stats.num_pages_without_h1_first) : 0,
+    (stats && stats.num_pages_without_h2_first) !== undefined ? stats && (stats.num_pages_without_h2_first) : 0,
     (stats && stats.num_pages_seo_ok) !== undefined ? stats && stats.num_pages_seo_ok : 0
   ]
 
@@ -132,7 +132,7 @@ const SitesSeoStats = props => {
       id: 'seoStatus',
       type: 'donut'
     },
-    labels: ['Missing Title (H1, H2)', 'Missing Description', 'Missing H1', 'Missing H2', 'No Issues'],
+    labels: ['Missing Title', 'Missing Description', 'Missing H1', 'Missing H2', 'No Issues'],
     colors: ['#EF2917', '#ED5244', '#BB4338', '#2D99FF', '#19B080'],
     fill: {
       colors: ['#EF2917', '#ED5244', '#BB4338', '#2D99FF', '#19B080']
@@ -157,7 +157,6 @@ const SitesSeoStats = props => {
         vertical: 10
       },
       formatter: function(seriesName, opts) {
-        console.log(opts)
         return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
       }
     },
