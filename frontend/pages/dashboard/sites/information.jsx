@@ -46,8 +46,6 @@ const SitesInformation = props => {
       url: siteUrl.href,
       name: siteName,
     }
-
-    console.log(siteUrl)
     
     if (
       body.name !== undefined && body.url !== "https://undefined" && body.url !== "http://undefined"
