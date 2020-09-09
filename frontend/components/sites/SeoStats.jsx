@@ -133,9 +133,9 @@ const SitesSeoStats = props => {
       type: 'donut'
     },
     labels: ['Missing Title', 'Missing Description', 'Missing H1', 'Missing H2', 'No Issues'],
-    colors: ['#EF2917', '#ED5244', '#BB4338', '#2D99FF', '#19B080'],
+    colors: ['#feb2b2', '#fc8181', '#f56565', '#e53e3e', '#48bb78'],
     fill: {
-      colors: ['#EF2917', '#ED5244', '#BB4338', '#2D99FF', '#19B080']
+      colors: ['#feb2b2', '#fc8181', '#f56565', '#e53e3e', '#48bb78']
     },
     stroke: {
       width: 0
