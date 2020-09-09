@@ -1,5 +1,5 @@
-import { Fragment } from "react";
-import { useRouter } from "next/router";
+import { useState, Fragment, useEffect } from "react";
+import Router, { useRouter } from "next/router";
 import fetch from "node-fetch";
 import useSWR from "swr";
 import Cookies from "js-cookie";
@@ -9,6 +9,9 @@ import Skeleton from "react-loading-skeleton";
 import DashboardPages from "public/data/dashboard-pages.json";
 import useUser from "hooks/useUser";
 import Layout from "components/Layout";
+import Transition from "hooks/Transition";
+import useDropdownOutsideClick from "hooks/useDropdownOutsideClick";
+import { removeURLParameter } from "helpers/functions";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -32,12 +35,53 @@ const fetcher = async (url) => {
 const MobilePrimaryMenuDiv = styled.nav``;
 
 const MobilePrimaryMenu = () => {
+  const [selectedSite, setSelectedSite] = useState(undefined);
+  const {
+    ref,
+    isComponentVisible,
+    setIsComponentVisible,
+  } = useDropdownOutsideClick(false);
+
+  const setDropdownToggle = () => {
+    setIsComponentVisible(!isComponentVisible);
+  };
+
+  const { query, asPath } = useRouter();
+    
   const { user: user, userError: userError } = useUser({
     redirectTo: "/",
     redirectIfFound: false,
   });
 
-  const { data: site, error: siteError } = useSWR("/api/site/", fetcher);
+  const { data: site, error: siteError } = useSWR("/api/site/", fetcher, {
+    refreshInterval: 1000,
+  });
+  
+  const siteSelectOnLoad = (siteId = query.siteId) => {
+    if (site == undefined) return false;
+
+    for (let i = 0; i < site.results.length; i++) {
+      if (site.results[i].id == siteId) setSelectedSite(site.results[i]);
+    }
+  };
+  
+  const dropdownHandler = (siteId, verified) => {
+    if (!verified) return false;
+
+    Router.push(
+      `/dashboard/site/[siteId]/overview`,
+      `/dashboard/site/${siteId}/overview`
+    );
+
+    setTimeout(() => {
+      siteSelectOnLoad(siteId);
+      setIsComponentVisible(!isComponentVisible);
+    }, 250);
+  };
+
+  useEffect(() => {
+    siteSelectOnLoad();
+  }, [site]);
 
   return (
     <Fragment>
@@ -80,7 +124,7 @@ const MobilePrimaryMenu = () => {
                       role="group"
                       aria-labelledby={`${val.slug}-headline`}
                     >
-                      {val.links.map((val2, key) => {
+                      {val.links ? val.links.map((val2, key) => {
                         return (
                           <Link key={key} href={val2.url}>
                             <a
@@ -114,7 +158,115 @@ const MobilePrimaryMenu = () => {
                             </a>
                           </Link>
                         );
-                      })}
+                      }) : (
+                        <div className={`space-y-1`}>
+                          <div ref={ref} className={`relative`}>
+                            <div className={`relative`}>
+                              <span
+                                className={`inline-block w-full rounded-md shadow-sm`}
+                              >
+                                <button
+                                  type="button"
+                                  aria-haspopup="listbox"
+                                  aria-expanded="true"
+                                  aria-labelledby="listbox-label"
+                                  className={`cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left focus:outline-none transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
+                                  onClick={setDropdownToggle}
+                                >
+                                  <div
+                                    className={`flex items-center space-x-3`}
+                                  >
+                                    <span
+                                      className={`block truncate text-gray-600`}
+                                    >
+                                      Select Site
+                                    </span>
+                                  </div>
+                                  <span
+                                    className={`absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none`}
+                                  >
+                                    <svg
+                                      className={`h-5 w-5 text-gray-400`}
+                                      viewBox="0 0 20 20"
+                                      fill="none"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        d="M7 7l3-3 3 3m0 6l-3 3-3-3"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                      />
+                                    </svg>
+                                  </span>
+                                </button>
+                              </span>
+
+                              <Transition show={isComponentVisible}>
+                                <Transition
+                                  enter="transition ease-out duration-100"
+                                  enterFrom="transform opacity-0 scale-95"
+                                  enterTo="transform opacity-100 scale-100"
+                                  leave="transition ease-in duration-75"
+                                  leaveFrom="transform opacity-100 scale-100"
+                                  leaveTo="transform opacity-0 scale-95"
+                                >
+                                  <div
+                                    className={`absolute mt-1 w-full rounded-md bg-white shadow-lg`}
+                                  >
+                                    <ul
+                                      tabIndex="-1"
+                                      role="listbox"
+                                      aria-labelledby="listbox-label"
+                                      aria-activedescendant="listbox-item-3"
+                                      className={`max-h-xs py-2 rounded-md text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}
+                                    >
+                                      {site.results.map((val, key) => {
+                                        return (
+                                          <li
+                                            key={key}
+                                            onClick={() =>
+                                              dropdownHandler(
+                                                val.id,
+                                                val.verified
+                                              )
+                                            }
+                                            id={`listbox-item-${key}`}
+                                            role="option"
+                                            className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
+                                              val.verified
+                                                ? "cursor-pointer"
+                                                : "cursor-not-allowed"
+                                            } select-none relative py-2 pl-3 pr-9`}
+                                          >
+                                            <div
+                                              className={`flex items-center space-x-3`}
+                                            >
+                                              <span
+                                                aria-label="Online"
+                                                className={`${
+                                                  val.verified
+                                                    ? "bg-green-400"
+                                                    : "bg-red-400"
+                                                } flex-shrink-0 inline-block h-2 w-2 rounded-full`}
+                                              ></span>
+                                              <span
+                                                className={`font-normal block truncate`}
+                                              >
+                                                {val.name}
+                                              </span>
+                                            </div>
+                                          </li>
+                                        );
+                                      })}
+                                    </ul>
+                                  </div>
+                                </Transition>
+                              </Transition>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </Fragment>
                 ) : null}
