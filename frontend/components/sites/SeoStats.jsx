@@ -133,9 +133,9 @@ const SitesSeoStats = props => {
       type: 'donut'
     },
     labels: ['Missing Title', 'Missing Description', 'Missing H1', 'Missing H2', 'No Issues'],
-    colors: ['#feb2b2', '#fc8181', '#f56565', '#e53e3e', '#48bb78'],
+    colors: ['#f56565', '#e53e3e', '#c53030', '#9b2c2c', '#48bb78'],
     fill: {
-      colors: ['#feb2b2', '#fc8181', '#f56565', '#e53e3e', '#48bb78']
+      colors: ['#f56565', '#e53e3e', '#c53030', '#9b2c2c', '#48bb78']
     },
     stroke: {
       width: 0
@@ -173,8 +173,8 @@ const SitesSeoStats = props => {
               color: "#2A324B",
               formatter: function (val) {
                 let num_errs = 0
-                for(let i=0; i<val.config.series.length; i++) {
-                  if(i != 0) num_errs += val.config.series[i]
+                for(let i=0; i<val.config.series.slice(0, -1).length; i++) {
+                  num_errs += val.config.series[i]
                 }
 
                 return num_errs
