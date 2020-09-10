@@ -112,30 +112,30 @@ const Login = () => {
       <LoginDiv
         className={`bg-gray-100 min-h-screen`}
       >
-        <div class="relative overflow-auto">
-          <div class="relative pt-6 pb-12 md:pb-6">
-            <main class="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
-              <div class="mx-auto max-w-screen-xl">
-                <div class="lg:grid lg:grid-cols-12 lg:gap-8">
-                  <div class="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
+        <div className={`relative overflow-auto`}>
+          <div className={`relative pt-6 pb-12 md:pb-6`}>
+            <main className={`mt-8 sm:mt-16 md:mt-20 lg:mt-24`}>
+              <div className={`mx-auto max-w-screen-xl`}>
+                <div className={`lg:grid lg:grid-cols-12 lg:gap-8`}>
+                  <div className={`px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center`}>
                     <div>
                       <AppLogo
                         className={`h-12 w-auto mx-auto mb-16 md:mx-auto lg:mx-0`}
                         src={`/img/logos/site-logo-dark.svg`}
                         alt={`app-logo`}
                       />
-                      <h4 class="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-semibold text-gray-900 sm:mt-5 sm:leading-none text-4xl">
+                      <h4 className={`mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-semibold text-gray-900 sm:mt-5 sm:leading-none text-4xl`}>
                         Find website issues before your clients do.
-                        <br class="hidden md:inline" />
+                        <br className={`hidden md:inline`} />
                       </h4>
-                      <span class="inline-flex rounded-md shadow-sm mt-6">
-                        <button type="button" class="inline-flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
+                      <span className={`inline-flex rounded-md shadow-sm mt-6`}>
+                        <button type="button" className={`inline-flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}>
                         Try for free
                         </button>
                       </span>
                     </div>
                   </div>
-                  <div class="mt-12 sm:mt-16 lg:mt-0 lg:col-span-5">
+                  <div className={`mt-12 sm:mt-16 lg:mt-0 lg:col-span-5`}>
                     {!disableLoginForm ? <LogoLabel isLogin /> : null}
                     <div className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
                       {errorMsg && (
@@ -270,7 +270,7 @@ const Login = () => {
                                 </div>
 
                                 <div className={`text-sm leading-5`}>
-                                  <Link href="/reset-password">
+                                  <Link href="/reset-password`}>
                                     <a
                                       className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
                                     >
@@ -329,7 +329,7 @@ const Login = () => {
                                   <span
                                     className={`w-full inline-flex rounded-md shadow-xs-sm`}
                                   >
-                                    <Link href="#">
+                                    <Link href="#`}>
                                       <a
                                         type={`button`}
                                         disabled={`disabled`}
@@ -349,7 +349,7 @@ const Login = () => {
                                   <span
                                     className={`w-full inline-flex rounded-md shadow-xs-sm`}
                                   >
-                                    <Link href="#">
+                                    <Link href="#`}>
                                       <a
                                         type={`button`}
                                         disabled={`disabled`}
@@ -373,7 +373,7 @@ const Login = () => {
                           >
                             <span className={`px-2 py-5 text-gray-600`}>
                               Don't have an account?&nbsp;
-                              <Link href="/registration">
+                              <Link href="/registration`}>
                                 <a
                                   className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
                                 >
@@ -388,7 +388,7 @@ const Login = () => {
                   </div>
                 </div>
 
-                <div className="px-4 xl:px-10 xl:mt-32">
+                <div className="px-4 xl:px-10 xl:mt-32`}>
                   <SiteFooter />
                 </div>
               </div>
