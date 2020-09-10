@@ -210,11 +210,11 @@ const SitesLinksStats = props => {
       pie: {
         donut: {
           labels: {
-            show: true,
+						show: true,
             total: {
               show: true,
               showAlways: true,
-              label: "Errors",
+              label: "Link Errors",
               fontSize: "15px",
               color: "#2A324B",
               formatter: function (val) {

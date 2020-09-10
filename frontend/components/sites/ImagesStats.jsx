@@ -190,7 +190,7 @@ const SitesImagesStats = props => {
             total: {
               show: true,
               showAlways: true,
-              label: "Errors",
+              label: "Image Errors",
               fontSize: "15px",
               color: "#2A324B",
               formatter: function (val) {
