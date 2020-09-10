@@ -8,6 +8,7 @@ import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
 import Router, { useRouter } from "next/router";
+import { seoChartContents } from '../../enum/chartContents';
 // const ApexCharts = loadable(() => import('apexcharts'));
 
 const fetcher = async (url) => {
@@ -120,6 +121,18 @@ const SitesSeoStats = props => {
   }
   )
 
+  const legendClickHandler = (label) => {
+    console.log('[label]', label)
+    let path = `/dashboard/site/${props.url.siteId}/seo`
+
+    seoChartContents.forEach((item, index) => {
+      if(label === item.label && item.filter !== '')
+        path += path.includes('?') ? `&${item.filter}=false` : `?${item.filter}=false`
+    })
+
+    Router.push("/dashboard/site/[siteId]/seo", path);
+  }
+
   const chartSeries = [
     (stats && stats.num_pages_without_title) !== undefined ? stats && stats.num_pages_without_title : 0,
     (stats && stats.num_pages_without_description) !== undefined ? stats && stats.num_pages_without_description : 0,
@@ -134,12 +147,13 @@ const SitesSeoStats = props => {
       type: 'donut',
       events: {
         legendClick: function(chartContext, seriesIndex, config) {
-          console.log('[legendClick]', chartContext, seriesIndex, config)
-          // Router.push("/dashboard/site/11/links");
+          legendClickHandler(config.config.labels[seriesIndex])
         }
       }
     },
-    labels: ['Missing Title', 'Missing Description', 'Missing H1', 'Missing H2', 'No Issues'],
+    labels: seoChartContents.map((item) => {
+      return item.label
+    }),
     colors: ['#f56565', '#e53e3e', '#c53030', '#9b2c2c', '#48bb78'],
     fill: {
       colors: ['#f56565', '#e53e3e', '#c53030', '#9b2c2c', '#48bb78']
