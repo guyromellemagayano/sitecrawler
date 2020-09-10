@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
+import Router from "next/router";
+import { pagesChartContents } from '../../enum/chartContents';
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -125,6 +127,17 @@ const SitesPagesStats = props => {
   //   0
   // ]
 
+  const legendClickHandler = (label) => {
+    let path = `/dashboard/site/${props.url.siteId}/pages`
+
+    pagesChartContents.forEach((item, index) => {
+      if(label === item.label && item.filter !== '')
+        path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
+    })
+
+    Router.push("/dashboard/site/[siteId]/pages", path);
+  }
+
   const chartSeries = [
     (stats && stats.num_pages) !== undefined ? stats && stats.num_pages : 0,
     (stats && stats.num_pages_big) !== undefined ? stats && stats.num_pages_big : 0,
@@ -134,16 +147,21 @@ const SitesPagesStats = props => {
   const chartOptions = {
     chart: {
       type: 'donut',
+      events: {
+        legendClick: function(chartContext, seriesIndex, config) {
+          legendClickHandler(config.config.labels[seriesIndex])
+        }
+      }
     },
     // labels: ['No Issues', 'Large Page Size', 'Broken Security', 'Not on Google'],
     // colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338'],
     // fill: {
     //   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338']
     // },
-    labels: ['Large Page Size', 'Broken Security', 'No Issues'],
-    colors: ['#f56565', '#e53e3e', '#48bb78'],
+    labels: pagesChartContents.map(item => item.label),
+    colors: pagesChartContents.map(item => item.color),
     fill: {
-      colors: ['#f56565', '#e53e3e', '#48bb78']
+      colors: pagesChartContents.map(item => item.color)
     },
     stroke: {
       width: 0

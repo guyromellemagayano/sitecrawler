@@ -7,7 +7,7 @@ const SiteFooter = () => {
   return (
     <>
       <SiteFooterDiv
-				className={`max-w-screen md:flex-col lg:flex-row p-3 md:flex md:items-center md:justify-between`}
+				classNameName={`max-w-screen md:flex-col lg:flex-row p-3 md:flex md:items-center md:justify-between`}
 			>
 				<div className={`flex justify-center md:order-1`}>
 					<nav className={`-mx-2 -my-2 flex flex-wrap justify-center`}>
