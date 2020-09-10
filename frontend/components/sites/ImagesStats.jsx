@@ -137,9 +137,9 @@ const SitesImagesStats = props => {
     //   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9']
     // },
     labels: ['Broken Images', 'Broken Image Links', 'No Issues'],
-    colors: ['#EF2917', '#ED5244', '#19B080'],
+    colors: ['#f56565', '#e53e3e', '#48bb78'],
     fill: {
-      colors: ['#EF2917', '#ED5244', '#19B080']
+      colors: ['#f56565', '#e53e3e', '#48bb78']
 	  },
     stroke: {
 		  width: 0
@@ -177,8 +177,8 @@ const SitesImagesStats = props => {
               color: "#2A324B",
               formatter: function (val) {
                 let num_errs = 0
-                for(let i=0; i<val.config.series.length; i++) {
-                  if(i != 0) num_errs += val.config.series[i]
+                for(let i=0; i<val.config.series.slice(0, -1).length; i++) {
+                  num_errs += val.config.series[i]
                 }
 
                 return num_errs

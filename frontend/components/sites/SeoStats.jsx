@@ -121,11 +121,11 @@ const SitesSeoStats = props => {
   )
 
   const chartSeries = [
-    (stats && stats.num_pages_seo_ok) !== undefined ? stats && stats.num_pages_seo_ok : 0,
     (stats && stats.num_pages_without_title) !== undefined ? stats && stats.num_pages_without_title : 0,
     (stats && stats.num_pages_without_description) !== undefined ? stats && stats.num_pages_without_description : 0,
-    (stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second)) !== undefined ? stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second) : 0,
-    (stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second)) !== undefined ? stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second) : 0
+    (stats && stats.num_pages_without_h1_first) !== undefined ? stats && (stats.num_pages_without_h1_first) : 0,
+    (stats && stats.num_pages_without_h2_first) !== undefined ? stats && (stats.num_pages_without_h2_first) : 0,
+    (stats && stats.num_pages_seo_ok) !== undefined ? stats && stats.num_pages_seo_ok : 0
   ]
 
   const chartOptions = {
@@ -139,10 +139,10 @@ const SitesSeoStats = props => {
         }
       }
     },
-    labels: ['Missing Title (H1, H2)', 'Missing Description', 'Missing H1', 'Missing H2', 'No Issues'],
-    colors: ['#EF2917', '#ED5244', '#BB4338', '#2D99FF', '#19B080'],
+    labels: ['Missing Title', 'Missing Description', 'Missing H1', 'Missing H2', 'No Issues'],
+    colors: ['#f56565', '#e53e3e', '#c53030', '#9b2c2c', '#48bb78'],
     fill: {
-      colors: ['#EF2917', '#ED5244', '#BB4338', '#2D99FF', '#19B080']
+      colors: ['#f56565', '#e53e3e', '#c53030', '#9b2c2c', '#48bb78']
     },
     stroke: {
       width: 0
@@ -180,8 +180,8 @@ const SitesSeoStats = props => {
               color: "#2A324B",
               formatter: function (val) {
                 let num_errs = 0
-                for(let i=0; i<val.config.series.length; i++) {
-                  if(i != 0) num_errs += val.config.series[i]
+                for(let i=0; i<val.config.series.slice(0, -1).length; i++) {
+                  num_errs += val.config.series[i]
                 }
 
                 return num_errs

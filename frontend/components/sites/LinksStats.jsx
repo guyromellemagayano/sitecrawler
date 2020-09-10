@@ -138,8 +138,10 @@ const SitesLinksStats = props => {
 
 		if (links) {
 			links.results.map((val, key) => {
-				if ((val.status === 'HTTP_ERROR' || val.status === 'TIMEOUT' || val.status === 'OTHER_ERROR') && val.type === type) {
-					valLength++
+				if (val.status === 'HTTP_ERROR' || val.status === 'TIMEOUT' || val.status === 'OTHER_ERROR') {
+					if (val.type === type) {
+						valLength++
+					}
 				}
 			})
 		}
@@ -148,9 +150,9 @@ const SitesLinksStats = props => {
 	}
 
 	const chartSeries = [
-		(stats && stats.num_ok_links) !== undefined ? stats && stats.num_ok_links : 0,
-		setBrokenLinks('INTERNAL'),
-		setBrokenLinks('EXTERNAL')
+		setBrokenLinks('PAGE'),
+		setBrokenLinks('EXTERNAL'),
+		(stats && stats.num_ok_links) !== undefined ? stats && stats.num_ok_links : 0
 	]
 	
 	const chartOptions = {
@@ -158,9 +160,9 @@ const SitesLinksStats = props => {
 			type: 'donut'
 		},
 		labels: ['Broken Internal Links', 'Broken External Links', 'No Issues'],
-		colors: ['#EF2917', '#ED5244', '#19B080'],
+		colors: ['#f56565', '#e53e3e', '#48bb78'],
 		fill: {
-			colors: ['#EF2917', '#ED5244', '#19B080']
+			colors: ['#f56565', '#e53e3e', '#48bb78']
 		},
 		stroke: {
 			width: 0
@@ -199,8 +201,8 @@ const SitesLinksStats = props => {
               color: "#2A324B",
               formatter: function (val) {
                 let num_errs = 0
-                for(let i=0; i<val.config.series.length; i++) {
-                  if(i != 0) num_errs += val.config.series[i]
+                for(let i=0; i<val.config.series.slice(0, -1).length; i++) {
+                  num_errs += val.config.series[i]
                 }
 
                 return num_errs
