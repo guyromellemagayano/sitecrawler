@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
+import Router from "next/router";
+import { imagesChartContents } from '../../enum/chartContents';
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -119,7 +121,18 @@ const SitesImagesStats = props => {
     fetcher, {
       refreshInterval: 1000,
     }
-	)
+  )
+  
+  const legendClickHandler = (label) => {
+    let path = `/dashboard/site/${props.url.siteId}/images`
+
+    imagesChartContents.forEach((item, index) => {
+      if(label === item.label && item.filter !== '')
+        path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
+    })
+
+    Router.push("/dashboard/site/[siteId]/images", path);
+  }
   
   const chartSeries = [
     (stats && stats.num_ok_images) !== undefined ? stats && stats.num_ok_images : 0,
@@ -130,16 +143,21 @@ const SitesImagesStats = props => {
   const chartOptions = {
     chart: {
       type: 'donut',
+      events: {
+        legendClick: function(chartContext, seriesIndex, config) {
+          legendClickHandler(config.config.labels[seriesIndex])
+        }
+      }
     },
     // labels: ['No Issues', 'Broken Images', 'Broken Image Links', 'Unlinked Images', 'No Alt Text'],
     // colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9'],
     // fill: {
     //   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9']
     // },
-    labels: ['Broken Images', 'Broken Image Links', 'No Issues'],
-    colors: ['#f56565', '#e53e3e', '#48bb78'],
+    labels: imagesChartContents.map(item => item.label),
+    colors: imagesChartContents.map(item => item.color),
     fill: {
-      colors: ['#f56565', '#e53e3e', '#48bb78']
+      colors: imagesChartContents.map(item => item.color)
 	  },
     stroke: {
 		  width: 0

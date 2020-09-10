@@ -41,7 +41,7 @@ const SitesInformation = props => {
     if (errorSiteNameMsg) setErrorSiteNameMsg("")
     if (errorSiteUrlMsg) setErrorSiteUrlMsg("")
 
-    const siteUrl = new Url(e.currentTarget.urlpath.value)
+    const siteUrl = new Url(urlProtocol + e.currentTarget.urlpath.value)
     const body = {
       url: siteUrl.href,
       name: siteName,
