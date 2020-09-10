@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
+import Router, { useRouter } from "next/router";
 // const ApexCharts = loadable(() => import('apexcharts'));
 
 const fetcher = async (url) => {
@@ -130,7 +131,13 @@ const SitesSeoStats = props => {
   const chartOptions = {
     chart: {
       id: 'seoStatus',
-      type: 'donut'
+      type: 'donut',
+      events: {
+        legendClick: function(chartContext, seriesIndex, config) {
+          console.log('[legendClick]', chartContext, seriesIndex, config)
+          // Router.push("/dashboard/site/11/links");
+        }
+      }
     },
     labels: ['Missing Title (H1, H2)', 'Missing Description', 'Missing H1', 'Missing H2', 'No Issues'],
     colors: ['#EF2917', '#ED5244', '#BB4338', '#2D99FF', '#19B080'],
