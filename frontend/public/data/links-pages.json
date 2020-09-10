@@ -1,15 +1,16 @@
 [
 	{
-		"label": "Page URL"
+		"label": "Page URL",
+		"slug": "page-url",
+		"key": "url"
 	},
 	{
-		"label": "Page Size"
+		"label": "Page Size",
+		"slug": "page-size",
+		"key": "size_total"
 	},
 	{
 		"label": "Status"
-	},
-	{
-		"label": "On Google"
 	},
 	{
 		"label": "SSL"

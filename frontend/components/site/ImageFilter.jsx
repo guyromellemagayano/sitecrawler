@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const ImageFilterDiv = styled.div``
 
-const ImageFilter = ({ onFilterChange, allFilter, imageWorkingFilter, imageNotWorkingFilter }) => {
+const ImageFilter = ({ onFilterChange, allFilter, imageNotWorkingFilter }) => {
 	const filterHandler = (e) => {
 		onFilterChange(e)
 	}
@@ -28,16 +28,8 @@ const ImageFilter = ({ onFilterChange, allFilter, imageWorkingFilter, imageNotWo
 					<div className={`ml-4 mt-2 mr-2`}>
 						<div>
 							<label className={`flex items-center`}>
-								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={imageWorkingFilter} value="working" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Working Images</span>
-							</label>
-						</div>
-					</div>
-					<div className={`ml-4 mt-2 mr-2`}>
-						<div>
-							<label className={`flex items-center`}>
 								<input type="checkbox" className={`form-checkbox`} onChange={filterHandler} checked={imageNotWorkingFilter} value="notWorking" />
-								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Not Working Images</span>
+								<span className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}>Broken Images</span>
 							</label>
 						</div>
 					</div>

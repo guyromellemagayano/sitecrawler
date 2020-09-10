@@ -36,7 +36,7 @@ const Sidebar = () => {
 
   const fetcher = (url) => fetch(url, apiParameters).then(res => res.json())
 
-  const { data: user, error: siteError } = useSWR('/api/auth/user/', fetcher)
+  const { data: user, error: userError } = useSWR('/api/auth/user/', fetcher)
 
   useEffect(() => {
     if(user && user !== undefined)
@@ -45,7 +45,7 @@ const Sidebar = () => {
 
   return (
     <Fragment>
-      {siteError && <Layout>Failed to load.</Layout>}
+      {userError && <Layout>Failed to load.</Layout>}
 
       {!userLoaded ? (
         <SidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>

@@ -62,7 +62,15 @@ const PageSeoTableDiv = styled.tbody`
 			margin-right: auto;
 			display: inline-block;
 		}
-	}
+  }
+  
+  .btn-detail {
+    display: inline-block;
+    padding: 8px 10px;
+    line-height: 1;
+    font-size: 0.7rem;
+    margin-top: 5px;
+  }
 `
 
 const PageSeoTable = props => {
@@ -107,7 +115,7 @@ const PageSeoTable = props => {
     <PageSeoTableDiv className={`bg-white`}>
       <tr>
         <td
-          className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`}
+          className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200`}
         >
           <div className={`flex items-center`}>
             <div>
@@ -118,21 +126,21 @@ const PageSeoTable = props => {
                   href={props.val.url}
                   target={`_blank`}
                   title={props.val.url}
-                  className={`truncate-link text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+                  className={`text-sm leading-6 font-semibold text-blue-1000 hover:text-blue-900 transition ease-in-out duration-150 truncate`}
                 >
                   {props.val.url}
                 </a>
               </div>
               <div className={`flex justify-start inline-text-sm leading-5 text-gray-500`}>
                 <Link href="/dashboard/site/[siteId]/seo/[seoId]/details" as={`/dashboard/site/${query.siteId}/seo/${pageDetail.id}/details`}>
-                  <a className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>View Details</a>
+                  <a className={`btn-detail mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-white bg-indigo-600 rounded hover:bg-indigo-500 hover:border-0 transition ease-in-out duration-150`}>View Details</a>
                 </Link>
               </div>
             </div>
           </div>
         </td>
         <td
-          className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
 					<div className={`text-sm leading-5 text-gray-900`}>
 						{!user.settings.disableLocalTime ? (
@@ -150,17 +158,17 @@ const PageSeoTable = props => {
 					</div>
         </td>
         <td
-          className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+          className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
         >
           {pageDetail.num_links}
         </td>
         <td
-          className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-green-500`}
+          className={`icon-status pl-16 pr-6 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-green-500`}
         >
           {pageDetail.num_ok_links}
         </td>
         <td
-          className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-red-500`}
+          className={`icon-status pl-16 pr-6 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-red-500`}
         >
 					{pageDetail.num_non_ok_links}
         </td>

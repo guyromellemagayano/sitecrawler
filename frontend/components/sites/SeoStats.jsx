@@ -29,41 +29,40 @@ const fetcher = async (url) => {
 }
 
 const SitesSeoStatsDiv = styled.div`
-  height: 100%;
-	.status-indicator {
-		display: block;
-		flex: 0 0 0.85rem;
-		max-width: 0.85rem;
-		height: 0.85rem;
-		border-radius: 50%;
+  .status-indicator {
+    display: block;
+    flex: 0 0 0.85rem;
+    max-width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
 
-		&.error {
-			&-1 {
-				background-color: #19B080;
-			}
-			&-2 {
-				background-color: #EF2917;
-			}
-			&-3 {
-				background-color: #ED5244;
-			}
-			&-4 {
-				background-color: #BB4338;
-			}
-			&-5 {
-				background-color: #2D99FF;
-			}
-		}
+    &.error {
+      &-1 {
+        background-color: #19B080;
+      }
+      &-2 {
+        background-color: #EF2917;
+      }
+      &-3 {
+        background-color: #ED5244;
+      }
+      &-4 {
+        background-color: #BB4338;
+      }
+    }
+  }
+  .apexcharts-legend {
+    display: block;
   }
   .apexcharts-legend-series {
     display: flex;
     align-items: center;
     border-bottom: 1px solid #E7EFEF;
-    padding-bottom: 9px;
+    padding-bottom: 10px;
   }
   .apexcharts-legend-series:last-child {
     border: none;
-  }
+    }
   .apexcharts-legend-text {
     display: flex;
     align-items: center;
@@ -77,11 +76,11 @@ const SitesSeoStatsDiv = styled.div`
     color: #1D2626;
     font-weight: 600;
   }
-  .legent-text {
+  .legend-text {
     margin-right: 10px;
   }
-  .space {
-    width: 20px;
+  .skeleton-wrapper {
+    margin-bottom: 20px;
   }
 `
 
@@ -133,10 +132,10 @@ const SitesSeoStats = props => {
       id: 'seoStatus',
       type: 'donut'
     },
-    labels: ['No Issues', 'Missing Title (H1, H2)', 'Missing Description', 'Missing H1', 'Missing H2'],
-    colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#2D99FF'],
+    labels: ['Missing Title (H1, H2)', 'Missing Description', 'Missing H1', 'Missing H2', 'No Issues'],
+    colors: ['#EF2917', '#ED5244', '#BB4338', '#2D99FF', '#19B080'],
     fill: {
-      colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#2D99FF']
+      colors: ['#EF2917', '#ED5244', '#BB4338', '#2D99FF', '#19B080']
     },
     stroke: {
       width: 0
@@ -150,13 +149,12 @@ const SitesSeoStats = props => {
     legend: {
       show: true,
       fontSize: '14px',
-      position: 'right',
-      floating: false,
-      width: 300,
+      position: 'bottom',
       horizontalAlign: 'center', 
+      height: 210,
       itemMargin: {
-        horizontal: 5,
-        vertical: 5
+        horizontal: 15,
+        vertical: 10
       },
       formatter: function(seriesName, opts) {
         return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
@@ -187,7 +185,7 @@ const SitesSeoStats = props => {
       }
     },
     responsive: [{
-      breakpoint: 1315,
+      breakpoint: 480,
       options: {
         chart: {
           width: 400
@@ -204,7 +202,7 @@ const SitesSeoStats = props => {
 
   return (
     <SitesSeoStatsDiv>
-      <div className={`bg-white overflow-hidden shadow-xs rounded-lg h-full`}>
+      <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
         <div className={`flex justify-between py-8 px-5`}>
           <div className={`flex items-center`}>
             <svg
@@ -238,13 +236,13 @@ const SitesSeoStats = props => {
         <div className={`flex justify-center`}>
           {
             stats == undefined ? (
-              <>
-              <Skeleton circle={true} duration={2} width={240} height={240} />
-              <span className={`space`}></span>
-              <Skeleton duration={2} width={240} height={240} />
-              </>
-            ) : 
-              <Chart options={chartOptions} series={chartSeries} type="donut" width="600" height="260" />
+              <div className={`skeleton-wrapper`}>
+                <Skeleton circle={true} duration={2} width={240} height={240} />
+                <br />
+                <br />
+                <Skeleton duration={2} width={240} height={190} />
+              </div>
+            ) : <Chart options={chartOptions} series={chartSeries} type="donut" height="530" />
           }
         </div>
       </div>

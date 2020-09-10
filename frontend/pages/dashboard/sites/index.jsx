@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import LogRocket from 'logrocket';
-import setupLogRocketReact from 'logrocket-react';
+import LogRocket from "logrocket";
+import setupLogRocketReact from "logrocket-react";
 import Cookies from "js-cookie";
 import Head from "next/head";
 import styled from "styled-components";
@@ -16,9 +16,10 @@ import MainSidebar from "components/sidebar/MainSidebar";
 import AddSite from "components/sites/AddSite";
 import DataTable from "components/sites/DataTable";
 import Pagination from "components/sites/Pagination";
+import SiteFooter from "components/footer/SiteFooter";
 
-if (typeof window !== 'undefined') {
-  LogRocket.init('epic-design-labs/link-app');
+if (typeof window !== "undefined") {
+  LogRocket.init("epic-design-labs/link-app");
   setupLogRocketReact(LogRocket);
 }
 
@@ -52,7 +53,7 @@ const Sites = (props) => {
   const router = useRouter();
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: "/login",
+    redirectTo: "/",
     redirectIfFound: false,
   });
 
@@ -67,12 +68,12 @@ const Sites = (props) => {
   });
 
   if (user) {
-    LogRocket.identify('epic-design-labs/link-app', {
-      name: user.first_name + ' ' + user.last_name,
+    LogRocket.identify("epic-design-labs/link-app", {
+      name: user.first_name + " " + user.last_name,
       email: user.email,
-    })
+    });
   } else {
-    return null
+    return null;
   }
 
   {
@@ -140,7 +141,7 @@ const Sites = (props) => {
                     </div>
                   </div>
                 </div>
-                <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
+                <div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
                   <AddSite />
                   <div className={`pb-4`}>
                     <div className={`flex flex-col`}>
@@ -171,12 +172,12 @@ const Sites = (props) => {
                             <tbody className={`bg-white`}>
                               {site.results
                                 ? site.results.map((val, key) => (
-                                    <DataTable
-                                      key={key}
-                                      site={val}
-                                      user={user}
-                                    />
-                                  ))
+                                  <DataTable
+                                    key={key}
+                                    site={val}
+                                    user={user}
+                                  />
+                                ))
                                 : null}
                             </tbody>
                           </table>
@@ -190,6 +191,10 @@ const Sites = (props) => {
                     apiEndpoint={sitesApiEndpoint}
                     page={props.page ? props.page : 0}
                   />
+                </div>
+
+                <div className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}>
+                  <SiteFooter />
                 </div>
               </main>
             </div>

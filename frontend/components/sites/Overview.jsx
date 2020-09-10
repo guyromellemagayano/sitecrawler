@@ -35,16 +35,48 @@ const SitesOverviewDiv = styled.div`
 const SitesOverview = props => {
   const userApiEndpoint = '/api/auth/user/'
   const calendarStrings = {
-    lastDay : '[Yesterday], dddd',
-    sameDay : '[Today], dddd',
-    lastWeek : 'MMMM DD, YYYY',
-    sameElse : 'MMMM DD, YYYY'
+    lastDay: '[Yesterday], dddd',
+    sameDay: '[Today], dddd',
+    lastWeek: 'MMMM DD, YYYY',
+    sameElse: 'MMMM DD, YYYY'
   }
 
   const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
+  const {
+    data: scan,
+    error: scanError,
+  } = useSWR(() => (props.id ? `/api/site/${props.id}/scan/?ordering=-finished_at` : null), fetcher, {
+    refreshInterval: 1000,
+  })
+
+  let scanObjId = ""
+
+  if (scan) {
+    let scanObj = []
+
+    scan.results.map((val) => {
+      scanObj.push(val)
+      return scanObj
+    })
+
+    scanObj.map((val, index) => {
+      if (index == 0) scanObjId = val.id
+
+      return scanObjId
+    })
+  }
+  
+	const { data: stats, error: statsError } = useSWR(
+    () =>
+      props.id && scanObjId
+        ? `/api/site/${props.id}/scan/${scanObjId}/`
+        : null
+	)
 
   if (userError) return <div>{userError.message}</div>
-  if (!user) {
+  if (scanError) return <div>{scanError.message}</div>
+  if (statsError) return <div>{statsError.message}</div>
+  if (!user || !scan || !stats) {
     return (
       <Skeleton width={280} height={198} duration={2} />
     )
@@ -61,23 +93,25 @@ const SitesOverview = props => {
       `}</style>
       <div className={`btn-crawler absolute mt-4`}>
         {
-          props.crawlable ? (
-            <button
-              type={`button`}
-              onClick={props.onCrawl}
-              className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
-            >
-              Recrawl
-            </button>
-          ) : (
-            <button
-              disabled={`disabled`}
-              type={`button`}
-              className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
-            >
-              Recrawl
-            </button>
-          )
+          user.permissions.includes('can_start_scan') ? (
+            props.crawlable ? (
+              <button
+                type={`button`}
+                onClick={props.onCrawl}
+                className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+              >
+                Recrawl
+              </button>
+            ) : (
+                <button
+                  disabled={`disabled`}
+                  type={`button`}
+                  className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
+                >
+                  Recrawl
+                </button>
+              )
+          ) : null
         }
       </div>
       <SitesOverviewDiv>
@@ -96,16 +130,16 @@ const SitesOverview = props => {
                   </dd>
                 </Fragment>
               ) : (
-                <Fragment>
-                  <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                    Last Crawled
+                  <Fragment>
+                    <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                      Last Crawled
                   </dt>
-                  <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
-                    <Moment calendar={calendarStrings} date={props.finishedAt} utc />&nbsp;
+                    <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
+                      <Moment calendar={calendarStrings} date={props.finishedAt} utc />&nbsp;
                     <Moment date={props.finishedAt} format="hh:mm:ss A" utc />
-                  </dd>
-                </Fragment>
-              )}
+                    </dd>
+                  </Fragment>
+                )}
             </dl>
             <dl className={`grid grid-cols-1 col-gap-4 row-gap-8 sm:grid-cols-2`}>
               <div className={`sm:col-span-1`}>
@@ -123,9 +157,15 @@ const SitesOverview = props => {
                   SSL Valid
                 </dt>
                 <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
-                  <SiteDangerStatus 
-                    text={`Not Valid`}
-                  />
+                  {stats.num_pages_tls_non_ok == 0 && stats.num_pages_tls_non_ok !== undefined ? (
+                    <SiteSuccessStatus
+                      text={`Valid`}
+                    />
+                  ) : (
+                    <SiteDangerStatus
+                      text={`Not Valid`}
+                    />
+                  )}
                 </dd>
               </div>
               <div className={`sm:col-span-1`}>
@@ -133,8 +173,8 @@ const SitesOverview = props => {
                   Forced HTTPS
                 </dt>
                 <dd className={`mt-1 text-sm leading-5 text-gray-900`}>
-                  <SiteDangerStatus 
-                    text={`Not Forced HTTPS`}
+                  <SiteWarningStatus
+                    text={`Coming Soon`}
                   />
                 </dd>
               </div>

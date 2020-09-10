@@ -24,7 +24,7 @@ const Logout = () => {
     if (response.ok) {
       if (data) {      
         window.setTimeout(() => {
-          router.push('/login')
+          router.push('/')
         }, 1000)
       }
     } else {

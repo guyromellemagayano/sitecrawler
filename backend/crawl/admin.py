@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from django.db.models.functions import Now
 
 from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData, Tls
 
@@ -86,6 +86,7 @@ class PageInline(admin.TabularInline):
         "scripts",
         "response_time",
         "tls",
+        "size",
     )
     show_change_link = True
 
@@ -102,11 +103,19 @@ class PageInline(admin.TabularInline):
         return obj.num_non_ok_links
 
 
+def mark_finished(modeladmin, request, queryset):
+    queryset.filter(finished_at__isnull=True).update(finished_at=Now())
+
+
+mark_finished.short_description = "Mark scans as finished"
+
+
 @admin.register(Scan)
 class ScanAdmin(admin.ModelAdmin):
     readonly_fields = ("started_at",)
     list_display = ("site_id", "finished_at")
     inlines = [PageInline]
+    actions = [mark_finished]
 
 
 class ScanInline(admin.TabularInline):

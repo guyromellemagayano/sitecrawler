@@ -5,11 +5,14 @@ import { useRouter } from "next/router";
 import fetch from "node-fetch";
 import useSWR from "swr";
 import Cookies from "js-cookie";
+import bytes from "bytes";
 import styled from "styled-components";
 import Moment from "react-moment";
 import Layout from "components/Layout";
 import MobileSidebar from "components/sidebar/MobileSidebar";
 import MainSidebar from "components/sidebar/MainSidebar";
+import SiteDangerBadge from "components/badges/SiteDangerBadge";
+import SiteSuccessBadge from "components/badges/SiteSuccessBadge";
 import SiteFooter from "components/footer/SiteFooter";
 
 const fetcher = async (url) => {
@@ -31,9 +34,9 @@ const fetcher = async (url) => {
   return data;
 };
 
-const SeoDetailDiv = styled.div``;
+const PageDetailDiv = styled.div``;
 
-const SeoDetail = () => {
+const PageDetail = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 
   const calendarStrings = {
@@ -81,15 +84,17 @@ const SeoDetail = () => {
     fetcher
   );
 
-  const pageLocationApiEndpoint = `/api/site/${query.siteId}/scan/${scanObjId}/page/${query.seoId}/`;
+  const pageLocationApiEndpoint = `/api/site/${query.siteId}/scan/${scanObjId}/page/${query.pageId}/`;
 
   const { data: pageLocation, error: pageLocationError } = useSWR(
     () =>
-      query.siteId && scanObjId && query.seoId ? pageLocationApiEndpoint : null,
+      query.siteId && scanObjId && query.pageId
+        ? pageLocationApiEndpoint
+        : null,
     fetcher
   );
 
-  const pageTitle = `SEO Detail |`;
+  const pageTitle = `Page Detail |`;
 
   {
     pageLocationError && <Layout>{pageLocationError.message}</Layout>;
@@ -107,8 +112,6 @@ const SeoDetail = () => {
     userError && <Layout>{userError.message}</Layout>;
   }
 
-  // console.log(pageLocation)
-
   return (
     <Layout>
       {pageLocation && page && site && user ? (
@@ -119,7 +122,9 @@ const SeoDetail = () => {
             </title>
           </Head>
 
-          <SeoDetailDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <PageDetailDiv
+            className={`h-screen flex overflow-hidden bg-gray-100`}
+          >
             <MobileSidebar show={openMobileSidebar} />
             <MainSidebar />
 
@@ -160,8 +165,8 @@ const SeoDetail = () => {
                   <div>
                     <nav className={`sm:hidden`}>
                       <Link
-                        href="/dashboard/site/[siteId]/seo"
-                        as={"/dashboard/site/" + query.siteId + "/seo"}
+                        href="/dashboard/site/[siteId]/page"
+                        as={"/dashboard/site/" + query.siteId + "/page"}
                       >
                         <a
                           className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
@@ -177,7 +182,7 @@ const SeoDetail = () => {
                               clipRule="evenodd"
                             />
                           </svg>
-                          Back to SEO
+                          Back to Pages
                         </a>
                       </Link>
                     </nav>
@@ -204,13 +209,13 @@ const SeoDetail = () => {
                         />
                       </svg>
                       <Link
-                        href="/dashboard/site/[siteId]/seo"
-                        as={"/dashboard/site/" + query.siteId + "/seo"}
+                        href="/dashboard/site/[siteId]/pages"
+                        as={"/dashboard/site/" + query.siteId + "/pages"}
                       >
                         <a
                           className={`whitespace-no-wrap font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
                         >
-                          All SEO
+                          All Pages
                         </a>
                       </Link>
                       <svg
@@ -223,12 +228,12 @@ const SeoDetail = () => {
                         />
                       </svg>
                       <Link
-                        href={"/dashboard/site/[siteId]/seo/[seoId]/details"}
+                        href={"/dashboard/site/[siteId]/pages/[pageId]/details"}
                         as={
                           "/dashboard/site/" +
                           query.siteId +
-                          "/seo/" +
-                          query.seoId +
+                          "/pages/" +
+                          query.pageId +
                           "/details"
                         }
                       >
@@ -247,7 +252,7 @@ const SeoDetail = () => {
                       <h2
                         className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
                       >
-                        SEO Details for: <br />
+                        Page Details for: <br />
                         <a
                           href={pageLocation.url}
                           target={`_blank`}
@@ -314,15 +319,18 @@ const SeoDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            Total Number of Links
+                            Page Size
                           </dt>
                           <dd
                             className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
                           >
-                            {pageLocation.num_links !== null &&
-                            pageLocation.num_links !== undefined &&
-                            pageLocation.num_links !== ""
-                              ? pageLocation.num_links
+                            {pageLocation.size_total !== null &&
+                            pageLocation.size_total !== undefined &&
+                            pageLocation.size_total !== ""
+                              ? bytes(pageLocation.size_total, {
+                                  thousandsSeparator: " ",
+                                  unitSeparator: " ",
+                                })
                               : 0}
                           </dd>
                         </div>
@@ -332,16 +340,18 @@ const SeoDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            Total Number of Working Links
+                            Total Size of Images
                           </dt>
                           <dd
                             className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
                           >
-                            {pageLocation.num_ok_links !== null &&
-                            pageLocation.num_ok_links !== undefined &&
-                            pageLocation.num_ok_links !== "" &&
-                            pageLocation.num_ok_links !== 0
-                              ? pageLocation.num_ok_links
+                            {pageLocation.size_images !== null &&
+                            pageLocation.size_images !== undefined &&
+                            pageLocation.size_images !== ""
+                              ? bytes(pageLocation.size_images, {
+                                  thousandsSeparator: " ",
+                                  unitSeparator: " ",
+                                })
                               : 0}
                           </dd>
                         </div>
@@ -351,16 +361,18 @@ const SeoDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            Total Number of Non-Working Links
+                            Total Size of Scripts
                           </dt>
                           <dd
                             className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
                           >
-                            {pageLocation.num_non_ok_links !== null &&
-                            pageLocation.num_non_ok_links !== undefined &&
-                            pageLocation.num_non_ok_links !== "" &&
-                            pageLocation.num_non_ok_links !== 0
-                              ? pageLocation.num_non_ok_links
+                            {pageLocation.size_scripts !== null &&
+                            pageLocation.size_scripts !== undefined &&
+                            pageLocation.size_scripts !== ""
+                              ? bytes(pageLocation.size_scripts, {
+                                  thousandsSeparator: " ",
+                                  unitSeparator: " ",
+                                })
                               : 0}
                           </dd>
                         </div>
@@ -370,17 +382,188 @@ const SeoDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            Title
+                            Total Size of Stylesheets
                           </dt>
                           <dd
                             className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
                           >
-                            {pageLocation.pagedata.title !== null &&
-                            pageLocation.pagedata.title !== undefined &&
-                            pageLocation.pagedata.title !== "" ? (
-                              pageLocation.pagedata.title
+                            {pageLocation.size_stylesheets !== null &&
+                            pageLocation.size_stylesheets !== undefined &&
+                            pageLocation.size_stylesheets !== ""
+                              ? bytes(pageLocation.size_stylesheets, {
+                                  thousandsSeparator: " ",
+                                  unitSeparator: " ",
+                                })
+                              : 0}
+                          </dd>
+                        </div>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            Total Number of Working Images
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
+                            {pageLocation.num_ok_images !== null &&
+                            pageLocation.num_ok_images !== undefined &&
+                            pageLocation.num_ok_images !== "" &&
+                            pageLocation.num_ok_images !== 0
+                              ? pageLocation.num_ok_images
+                              : 0}
+                          </dd>
+                        </div>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            Total Number of Non-Working Images
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
+                            {pageLocation.num_non_ok_images !== null &&
+                            pageLocation.num_non_ok_images !== undefined &&
+                            pageLocation.num_non_ok_images !== "" &&
+                            pageLocation.num_non_ok_images !== 0
+                              ? pageLocation.num_non_ok_images
+                              : 0}
+                          </dd>
+                        </div>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            Total Number of Working Scripts
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
+                            {pageLocation.num_ok_scripts !== null &&
+                            pageLocation.num_ok_scripts !== undefined &&
+                            pageLocation.num_ok_scripts !== "" &&
+                            pageLocation.num_ok_scripts !== 0
+                              ? pageLocation.num_ok_scripts
+                              : 0}
+                          </dd>
+                        </div>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            Total Number of Non-Working Scripts
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
+                            {pageLocation.num_non_ok_scripts !== null &&
+                            pageLocation.num_non_ok_scripts !== undefined &&
+                            pageLocation.num_non_ok_scripts !== "" &&
+                            pageLocation.num_non_ok_scripts !== 0
+                              ? pageLocation.num_non_ok_scripts
+                              : 0}
+                          </dd>
+                        </div>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            Total Number of Working Stylesheets
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
+                            {pageLocation.num_ok_stylesheets !== null &&
+                            pageLocation.num_ok_stylesheets !== undefined &&
+                            pageLocation.num_ok_stylesheets !== "" &&
+                            pageLocation.num_ok_stylesheets !== 0
+                              ? pageLocation.num_ok_stylesheets
+                              : 0}
+                          </dd>
+                        </div>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            Total Number of Non-Working Stylesheets
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
+                            {pageLocation.num_non_ok_stylesheets !== null &&
+                            pageLocation.num_non_ok_stylesheets !== undefined &&
+                            pageLocation.num_non_ok_stylesheets !== "" &&
+                            pageLocation.num_non_ok_stylesheets !== 0
+                              ? pageLocation.num_non_ok_stylesheets
+                              : 0}
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`max-w-4xl py-6 px-4 sm:px-6 md:px-8`}>
+                  <div
+                    className={`bg-white shadow overflow-hidden sm:rounded-lg`}
+                  >
+                    <div className={`px-4 py-5 sm:p-0`}>
+                      <dl>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            TLS Status - Page
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
+                            {pageLocation.tls_status !== null &&
+                            pageLocation.tls_status !== undefined &&
+                            pageLocation.tls_status !== "" &&
+                            pageLocation.tls_status !== 0 ? (
+                              <SiteSuccessBadge text={"OK"} />
+                            ) : pageLocation.tls_status === "NONE" ? (
+                              <SiteDangerBadge text={"NONE"} />
                             ) : (
-                              <span className="text-gray-500">None</span>
+                              <SiteDangerBadge text={"ERROR"} />
+                            )}
+                          </dd>
+                        </div>
+
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            TLS Status - Resources
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
+                            {pageLocation.tls_total !== null &&
+                            pageLocation.tls_total !== undefined &&
+                            pageLocation.tls_total !== "" &&
+                            pageLocation.tls_total !== 0 ? (
+                              <SiteSuccessBadge text={"OK"} />
+                            ) : (
+                              <SiteDangerBadge text={"ERROR"} />
                             )}
                           </dd>
                         </div>
@@ -390,18 +573,17 @@ const SeoDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            Description
+                            Total Number of Secured Images
                           </dt>
                           <dd
                             className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
                           >
-                            {pageLocation.pagedata.description !== null &&
-                            pageLocation.pagedata.description !== undefined &&
-                            pageLocation.pagedata.description !== "" ? (
-                              pageLocation.pagedata.description
-                            ) : (
-                              <span className="text-gray-500">None</span>
-                            )}
+                            {pageLocation.num_tls_images !== null &&
+                            pageLocation.num_tls_images !== undefined &&
+                            pageLocation.num_tls_images !== "" &&
+                            pageLocation.num_tls_images !== 0
+                              ? pageLocation.num_tls_images
+                              : 0}
                           </dd>
                         </div>
                         <div
@@ -410,18 +592,17 @@ const SeoDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            First H1 Text
+                            Total Number of Non-Secured Images
                           </dt>
                           <dd
                             className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
                           >
-                            {pageLocation.pagedata.h1_first !== null &&
-                            pageLocation.pagedata.h1_first !== undefined &&
-                            pageLocation.pagedata.h1_first !== "" ? (
-                              pageLocation.pagedata.h1_first
-                            ) : (
-                              <span className="text-gray-500">None</span>
-                            )}
+                            {pageLocation.num_non_tls_images !== null &&
+                            pageLocation.num_non_tls_images !== undefined &&
+                            pageLocation.num_non_tls_images !== "" &&
+                            pageLocation.num_non_tls_images !== 0
+                              ? pageLocation.num_non_tls_images
+                              : 0}
                           </dd>
                         </div>
                         <div
@@ -430,18 +611,17 @@ const SeoDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            Second H1 Text
+                            Total Number of Secured Scripts
                           </dt>
                           <dd
                             className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
                           >
-                            {pageLocation.pagedata.h1_second !== null &&
-                            pageLocation.pagedata.h1_second !== undefined &&
-                            pageLocation.pagedata.h1_second !== "" ? (
-                              pageLocation.pagedata.h1_second
-                            ) : (
-                              <span className="text-gray-500">None</span>
-                            )}
+                            {pageLocation.num_tls_scripts !== null &&
+                            pageLocation.num_tls_scripts !== undefined &&
+                            pageLocation.num_tls_scripts !== "" &&
+                            pageLocation.num_tls_scripts !== 0
+                              ? pageLocation.num_tls_scripts
+                              : 0}
                           </dd>
                         </div>
                         <div
@@ -450,18 +630,17 @@ const SeoDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            First H2 Text
+                            Total Number of Non-Secured Scripts
                           </dt>
                           <dd
                             className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
                           >
-                            {pageLocation.pagedata.h2_first !== null &&
-                            pageLocation.pagedata.h2_first !== undefined &&
-                            pageLocation.pagedata.h2_first !== "" ? (
-                              pageLocation.pagedata.h2_first
-                            ) : (
-                              <span className="text-gray-500">None</span>
-                            )}
+                            {pageLocation.num_non_tls_scripts !== null &&
+                            pageLocation.num_non_tls_scripts !== undefined &&
+                            pageLocation.num_non_tls_scripts !== "" &&
+                            pageLocation.num_non_tls_scripts !== 0
+                              ? pageLocation.num_non_tls_scripts
+                              : 0}
                           </dd>
                         </div>
                         <div
@@ -470,18 +649,37 @@ const SeoDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            Second H2 Text
+                            Total Number of Secured Stylesheets
                           </dt>
                           <dd
                             className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
                           >
-                            {pageLocation.pagedata.h2_second !== null &&
-                            pageLocation.pagedata.h2_second !== undefined &&
-                            pageLocation.pagedata.h2_second !== "" ? (
-                              pageLocation.pagedata.h2_second
-                            ) : (
-                              <span className="text-gray-500">None</span>
-                            )}
+                            {pageLocation.num_tls_stylesheets !== null &&
+                            pageLocation.num_tls_stylesheets !== undefined &&
+                            pageLocation.num_tls_stylesheets !== "" &&
+                            pageLocation.num_tls_stylesheets !== 0
+                              ? pageLocation.num_tls_stylesheets
+                              : 0}
+                          </dd>
+                        </div>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            Total Number of Non-Secured Stylesheets
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
+                            {pageLocation.num_non_tls_stylesheets !== null &&
+                            pageLocation.num_non_tls_stylesheets !==
+                              undefined &&
+                            pageLocation.num_non_tls_stylesheets !== "" &&
+                            pageLocation.num_non_tls_stylesheets !== 0
+                              ? pageLocation.num_non_tls_stylesheets
+                              : 0}
                           </dd>
                         </div>
                       </dl>
@@ -496,11 +694,11 @@ const SeoDetail = () => {
                 </div>
               </main>
             </div>
-          </SeoDetailDiv>
+          </PageDetailDiv>
         </Fragment>
       ) : null}
     </Layout>
   );
 };
 
-export default SeoDetail;
+export default PageDetail;

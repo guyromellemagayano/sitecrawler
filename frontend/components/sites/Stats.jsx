@@ -90,6 +90,12 @@ const SitesStats = props => {
 
   const PageTabs = [
     {
+      "title": "Total Issues",
+      "count": stats.num_non_ok_links,
+      "href": `/dashboard/site/[siteId]/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`,
+      "as": `/dashboard/site/${query.siteId}/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
+    },
+    {
       "title": "Total Pages",
       "count": stats.num_pages,
       "href": `/dashboard/site/[siteId]/pages`,
@@ -106,12 +112,6 @@ const SitesStats = props => {
       "count": stats.num_images,
       "href": `/dashboard/site/[siteId]/images`,
       "as": `/dashboard/site/${query.siteId}/images`
-    },
-    {
-      "title": "Link Issues",
-      "count": stats.num_non_ok_links,
-      "href": `/dashboard/site/[siteId]/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`,
-      "as": `/dashboard/site/${query.siteId}/links?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
     }
   ]
 

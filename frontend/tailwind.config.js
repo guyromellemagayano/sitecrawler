@@ -25,6 +25,7 @@ module.exports = {
         800: '#2d3748',
         900: '#1a202c',
         1000: '#2A324B',
+        1100: '#434C69',
       },
       red: {
         100: '#fff5f5',
@@ -91,6 +92,7 @@ module.exports = {
         700: '#2b6cb0',
         800: '#2c5282',
         900: '#2a4365',
+        1000: '#2a324b',
       },
       indigo: {
         100: '#ebf4ff',
@@ -317,6 +319,7 @@ module.exports = {
       ...negative(theme('spacing')),
     }),
     maxHeight: {
+      xs: '20rem',
       full: '100%',
       screen: '100vh',
     },
@@ -640,7 +643,7 @@ module.exports = {
     borderOpacity: ['responsive', 'hover', 'focus'],
     borderRadius: ['responsive'],
     borderStyle: ['responsive'],
-    borderWidth: ['responsive'],
+    borderWidth: ['responsive', 'hover, focus'],
     boxShadow: ['responsive', 'hover', 'focus'],
     boxSizing: ['responsive'],
     cursor: ['responsive'],
