@@ -36,7 +36,11 @@ const fetcher = async (url) => {
   return data;
 };
 
-const ImagesDetailDiv = styled.section``;
+const ImagesDetailDiv = styled.section`
+  .url-heading {
+    font-size: 1.4rem;
+  }
+`;
 
 const ImagesDetail = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -270,7 +274,7 @@ const ImagesDetail = () => {
                           href={imageLocation.url}
                           target={`_blank`}
                           title={imageLocation.url}
-                          className={`text-2xl font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words whitespace-normal`}
+                          className={`url-heading font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words whitespace-normal`}
                         >
                           {imageLocation.url}
                         </a>
@@ -366,20 +370,6 @@ const ImagesDetail = () => {
                             ) : (
                               <SiteDangerBadge text={"OTHER ERROR"} />
                             )}
-                          </dd>
-                        </div>
-                        <div
-                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
-                        >
-                          <dt
-                            className={`text-sm leading-5 font-medium text-gray-500`}
-                          >
-                            Response Time
-                          </dt>
-                          <dd
-                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
-                          >
-                            {imageLocation.response_time} ms
                           </dd>
                         </div>
                         {imageLocation.error !== null &&

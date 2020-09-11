@@ -34,7 +34,11 @@ const fetcher = async (url) => {
   return data;
 };
 
-const PageDetailDiv = styled.div``;
+const PageDetailDiv = styled.div`
+  .url-heading {
+    font-size: 1.4rem;
+  }
+`;
 
 const PageDetail = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -257,7 +261,7 @@ const PageDetail = () => {
                           href={pageLocation.url}
                           target={`_blank`}
                           title={pageLocation.url}
-                          className={`text-2xl font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words whitespace-normal`}
+                          className={`url-heading font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words whitespace-normal`}
                         >
                           {pageLocation.url}
                         </a>
@@ -435,82 +439,6 @@ const PageDetail = () => {
                               : 0}
                           </dd>
                         </div>
-                        <div
-                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
-                        >
-                          <dt
-                            className={`text-sm leading-5 font-medium text-gray-500`}
-                          >
-                            Total Number of Working Scripts
-                          </dt>
-                          <dd
-                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
-                          >
-                            {pageLocation.num_ok_scripts !== null &&
-                            pageLocation.num_ok_scripts !== undefined &&
-                            pageLocation.num_ok_scripts !== "" &&
-                            pageLocation.num_ok_scripts !== 0
-                              ? pageLocation.num_ok_scripts
-                              : 0}
-                          </dd>
-                        </div>
-                        <div
-                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
-                        >
-                          <dt
-                            className={`text-sm leading-5 font-medium text-gray-500`}
-                          >
-                            Total Number of Non-Working Scripts
-                          </dt>
-                          <dd
-                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
-                          >
-                            {pageLocation.num_non_ok_scripts !== null &&
-                            pageLocation.num_non_ok_scripts !== undefined &&
-                            pageLocation.num_non_ok_scripts !== "" &&
-                            pageLocation.num_non_ok_scripts !== 0
-                              ? pageLocation.num_non_ok_scripts
-                              : 0}
-                          </dd>
-                        </div>
-                        <div
-                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
-                        >
-                          <dt
-                            className={`text-sm leading-5 font-medium text-gray-500`}
-                          >
-                            Total Number of Working Stylesheets
-                          </dt>
-                          <dd
-                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
-                          >
-                            {pageLocation.num_ok_stylesheets !== null &&
-                            pageLocation.num_ok_stylesheets !== undefined &&
-                            pageLocation.num_ok_stylesheets !== "" &&
-                            pageLocation.num_ok_stylesheets !== 0
-                              ? pageLocation.num_ok_stylesheets
-                              : 0}
-                          </dd>
-                        </div>
-                        <div
-                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
-                        >
-                          <dt
-                            className={`text-sm leading-5 font-medium text-gray-500`}
-                          >
-                            Total Number of Non-Working Stylesheets
-                          </dt>
-                          <dd
-                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
-                          >
-                            {pageLocation.num_non_ok_stylesheets !== null &&
-                            pageLocation.num_non_ok_stylesheets !== undefined &&
-                            pageLocation.num_non_ok_stylesheets !== "" &&
-                            pageLocation.num_non_ok_stylesheets !== 0
-                              ? pageLocation.num_non_ok_stylesheets
-                              : 0}
-                          </dd>
-                        </div>
                       </dl>
                     </div>
                   </div>
@@ -573,25 +501,6 @@ const PageDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            Total Number of Secured Images
-                          </dt>
-                          <dd
-                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
-                          >
-                            {pageLocation.num_tls_images !== null &&
-                            pageLocation.num_tls_images !== undefined &&
-                            pageLocation.num_tls_images !== "" &&
-                            pageLocation.num_tls_images !== 0
-                              ? pageLocation.num_tls_images
-                              : 0}
-                          </dd>
-                        </div>
-                        <div
-                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
-                        >
-                          <dt
-                            className={`text-sm leading-5 font-medium text-gray-500`}
-                          >
                             Total Number of Non-Secured Images
                           </dt>
                           <dd
@@ -611,25 +520,6 @@ const PageDetail = () => {
                           <dt
                             className={`text-sm leading-5 font-medium text-gray-500`}
                           >
-                            Total Number of Secured Scripts
-                          </dt>
-                          <dd
-                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
-                          >
-                            {pageLocation.num_tls_scripts !== null &&
-                            pageLocation.num_tls_scripts !== undefined &&
-                            pageLocation.num_tls_scripts !== "" &&
-                            pageLocation.num_tls_scripts !== 0
-                              ? pageLocation.num_tls_scripts
-                              : 0}
-                          </dd>
-                        </div>
-                        <div
-                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
-                        >
-                          <dt
-                            className={`text-sm leading-5 font-medium text-gray-500`}
-                          >
                             Total Number of Non-Secured Scripts
                           </dt>
                           <dd
@@ -640,45 +530,6 @@ const PageDetail = () => {
                             pageLocation.num_non_tls_scripts !== "" &&
                             pageLocation.num_non_tls_scripts !== 0
                               ? pageLocation.num_non_tls_scripts
-                              : 0}
-                          </dd>
-                        </div>
-                        <div
-                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
-                        >
-                          <dt
-                            className={`text-sm leading-5 font-medium text-gray-500`}
-                          >
-                            Total Number of Secured Stylesheets
-                          </dt>
-                          <dd
-                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
-                          >
-                            {pageLocation.num_tls_stylesheets !== null &&
-                            pageLocation.num_tls_stylesheets !== undefined &&
-                            pageLocation.num_tls_stylesheets !== "" &&
-                            pageLocation.num_tls_stylesheets !== 0
-                              ? pageLocation.num_tls_stylesheets
-                              : 0}
-                          </dd>
-                        </div>
-                        <div
-                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
-                        >
-                          <dt
-                            className={`text-sm leading-5 font-medium text-gray-500`}
-                          >
-                            Total Number of Non-Secured Stylesheets
-                          </dt>
-                          <dd
-                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
-                          >
-                            {pageLocation.num_non_tls_stylesheets !== null &&
-                            pageLocation.num_non_tls_stylesheets !==
-                              undefined &&
-                            pageLocation.num_non_tls_stylesheets !== "" &&
-                            pageLocation.num_non_tls_stylesheets !== 0
-                              ? pageLocation.num_non_tls_stylesheets
                               : 0}
                           </dd>
                         </div>
