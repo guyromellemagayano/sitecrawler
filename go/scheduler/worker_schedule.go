@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/pkg/errors"
 	"github.com/robfig/cron"
 	"go.uber.org/zap"
@@ -11,11 +12,11 @@ import (
 
 const checkInterval = time.Hour
 
-func ScheduleWorker(logger *zap.SugaredLogger, groupSettingsDao *GroupSettingsDao, siteDao *SiteDao, scanDao *ScanDao, scanService *ScanService) {
+func ScheduleWorker(logger *zap.SugaredLogger, db *database.Database, scanService *ScanService) {
 	loop := func() error {
 		defer common.PanicLogger(logger)
 
-		groupSettings, err := groupSettingsDao.All()
+		groupSettings, err := db.GroupSettingsDao.All()
 		if err != nil {
 			return errors.Wrap(err, "could not get all groups")
 		}
@@ -24,13 +25,13 @@ func ScheduleWorker(logger *zap.SugaredLogger, groupSettingsDao *GroupSettingsDa
 			if err != nil {
 				return errors.Wrapf(err, "could not parse schedule for group %v", groupSetting.GroupID)
 			}
-			sites, err := siteDao.AllVerifiedForGroup(groupSetting.GroupID)
+			sites, err := db.SiteDao.AllVerifiedForGroup(groupSetting.GroupID)
 			if err != nil {
 				return errors.Wrapf(err, "could not get sites for group %v", groupSetting.GroupID)
 			}
 			for _, site := range sites {
 				log := logger.With("site_id", site.ID)
-				latestScan, err := scanDao.Latest(site.ID)
+				latestScan, err := db.ScanDao.Latest(site.ID)
 				if err != nil {
 					log.Errorf("could not get latest scan for site: %v", err)
 					continue

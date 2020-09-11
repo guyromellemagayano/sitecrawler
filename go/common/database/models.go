@@ -1,6 +1,6 @@
 //nolint
 //lint:file-ignore U1000 ignore unused code, it's generated
-package common
+package database
 
 import (
 	"time"
@@ -84,7 +84,7 @@ var Columns = struct {
 		Link string
 	}
 	CrawlScan struct {
-		ID, StartedAt, FinishedAt, SiteID string
+		ID, StartedAt, FinishedAt, SiteID, EmailSent string
 
 		Site string
 	}
@@ -120,6 +120,21 @@ var Columns = struct {
 	}
 	HealthCheckDbTestmodel struct {
 		ID, Title string
+	}
+	PaymentStripecustomer struct {
+		ID, CustomerID, UserID string
+
+		User string
+	}
+	PaymentSubscription struct {
+		ID, PriceID, GroupID, Features string
+
+		Group string
+	}
+	PaymentUsersubscription struct {
+		ID, SubscriptionID, UserID, StripeID, Status string
+
+		Subscription, User string
 	}
 	SocialaccountSocialaccount struct {
 		ID, Provider, Uid, LastLogin, DateJoined, ExtraData, UserID string
@@ -344,7 +359,7 @@ var Columns = struct {
 		Link: "Link",
 	},
 	CrawlScan: struct {
-		ID, StartedAt, FinishedAt, SiteID string
+		ID, StartedAt, FinishedAt, SiteID, EmailSent string
 
 		Site string
 	}{
@@ -352,6 +367,7 @@ var Columns = struct {
 		StartedAt:  "started_at",
 		FinishedAt: "finished_at",
 		SiteID:     "site_id",
+		EmailSent:  "email_sent",
 
 		Site: "Site",
 	},
@@ -449,6 +465,43 @@ var Columns = struct {
 	}{
 		ID:    "id",
 		Title: "title",
+	},
+	PaymentStripecustomer: struct {
+		ID, CustomerID, UserID string
+
+		User string
+	}{
+		ID:         "id",
+		CustomerID: "customer_id",
+		UserID:     "user_id",
+
+		User: "User",
+	},
+	PaymentSubscription: struct {
+		ID, PriceID, GroupID, Features string
+
+		Group string
+	}{
+		ID:       "id",
+		PriceID:  "price_id",
+		GroupID:  "group_id",
+		Features: "features",
+
+		Group: "Group",
+	},
+	PaymentUsersubscription: struct {
+		ID, SubscriptionID, UserID, StripeID, Status string
+
+		Subscription, User string
+	}{
+		ID:             "id",
+		SubscriptionID: "subscription_id",
+		UserID:         "user_id",
+		StripeID:       "stripe_id",
+		Status:         "status",
+
+		Subscription: "Subscription",
+		User:         "User",
 	},
 	SocialaccountSocialaccount: struct {
 		ID, Provider, Uid, LastLogin, DateJoined, ExtraData, UserID string
@@ -581,6 +634,15 @@ var Tables = struct {
 		Name, Alias string
 	}
 	HealthCheckDbTestmodel struct {
+		Name, Alias string
+	}
+	PaymentStripecustomer struct {
+		Name, Alias string
+	}
+	PaymentSubscription struct {
+		Name, Alias string
+	}
+	PaymentUsersubscription struct {
 		Name, Alias string
 	}
 	SocialaccountSocialaccount struct {
@@ -750,6 +812,24 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "health_check_db_testmodel",
+		Alias: "t",
+	},
+	PaymentStripecustomer: struct {
+		Name, Alias string
+	}{
+		Name:  "payments_stripecustomer",
+		Alias: "t",
+	},
+	PaymentSubscription: struct {
+		Name, Alias string
+	}{
+		Name:  "payments_subscription",
+		Alias: "t",
+	},
+	PaymentUsersubscription: struct {
+		Name, Alias string
+	}{
+		Name:  "payments_usersubscription",
 		Alias: "t",
 	},
 	SocialaccountSocialaccount: struct {
@@ -976,6 +1056,7 @@ type CrawlScan struct {
 	StartedAt  time.Time  `sql:"started_at,notnull"`
 	FinishedAt *time.Time `sql:"finished_at"`
 	SiteID     int        `sql:"site_id,notnull"`
+	EmailSent  bool       `sql:"email_sent,notnull"`
 
 	Site *CrawlSite `pg:"fk:site_id"`
 }
@@ -1076,6 +1157,40 @@ type HealthCheckDbTestmodel struct {
 
 	ID    int    `sql:"id,pk"`
 	Title string `sql:"title,notnull"`
+}
+
+type PaymentStripecustomer struct {
+	tableName struct{} `sql:"payments_stripecustomer,alias:t" pg:",discard_unknown_columns"`
+
+	ID         int    `sql:"id,pk"`
+	CustomerID string `sql:"customer_id,notnull"`
+	UserID     int    `sql:"user_id,notnull"`
+
+	User *AuthUser `pg:"fk:user_id"`
+}
+
+type PaymentSubscription struct {
+	tableName struct{} `sql:"payments_subscription,alias:t" pg:",discard_unknown_columns"`
+
+	ID       int      `sql:"id,pk"`
+	PriceID  string   `sql:"price_id,notnull"`
+	GroupID  int      `sql:"group_id,notnull"`
+	Features []string `sql:"features,array,notnull"`
+
+	Group *AuthGroup `pg:"fk:group_id"`
+}
+
+type PaymentUsersubscription struct {
+	tableName struct{} `sql:"payments_usersubscription,alias:t" pg:",discard_unknown_columns"`
+
+	ID             int    `sql:"id,pk"`
+	SubscriptionID int    `sql:"subscription_id,notnull"`
+	UserID         int    `sql:"user_id,notnull"`
+	StripeID       string `sql:"stripe_id,notnull"`
+	Status         int    `sql:"status,notnull"`
+
+	Subscription *PaymentSubscription `pg:"fk:subscription_id"`
+	User         *AuthUser            `pg:"fk:user_id"`
 }
 
 type SocialaccountSocialaccount struct {
