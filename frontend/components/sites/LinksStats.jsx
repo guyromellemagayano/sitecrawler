@@ -165,7 +165,7 @@ const SitesLinksStats = props => {
 	const chartSeries = [
 		setBrokenLinks('PAGE'),
 		setBrokenLinks('EXTERNAL'),
-		(stats && stats.num_ok_links) !== undefined ? stats && stats.num_ok_links : 0
+		stats && stats.num_ok_links !== undefined ? stats && stats.num_ok_links : 0
 	]
 	
 	const chartOptions = {
