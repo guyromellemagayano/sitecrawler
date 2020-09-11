@@ -21,7 +21,7 @@ export const seoChartContents = [
         color: '#f56565'
     }, {
         label: 'Missing Description',
-        filter: 'has_title=false',
+        filter: 'has_description=false',
         color: '#e53e3e'
     }, {
         label: 'Missing H1',
