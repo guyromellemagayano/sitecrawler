@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
+import { linksChartContents } from '../../enum/chartContents';
+import Router from "next/router";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -149,6 +151,17 @@ const SitesLinksStats = props => {
 		return valLength
 	}
 
+	const legendClickHandler = (label) => {
+		let path = `/dashboard/site/${props.url.siteId}/links`
+
+		linksChartContents.forEach((item, index) => {
+			if(label === item.label && item.filter !== '')
+				path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
+		})
+
+		Router.push("/dashboard/site/[siteId]/links", path);
+	}
+
 	const chartSeries = [
 		setBrokenLinks('PAGE'),
 		setBrokenLinks('EXTERNAL'),
@@ -157,12 +170,17 @@ const SitesLinksStats = props => {
 	
 	const chartOptions = {
 		chart: {
-			type: 'donut'
+			type: 'donut',
+			events: {
+			  legendClick: function(chartContext, seriesIndex, config) {
+				legendClickHandler(config.config.labels[seriesIndex])
+			  }
+			}
 		},
-		labels: ['Broken Internal Links', 'Broken External Links', 'No Issues'],
-		colors: ['#f56565', '#e53e3e', '#48bb78'],
+		labels: linksChartContents.map(item => item.label),
+		colors: linksChartContents.map(item => item.color),
 		fill: {
-			colors: ['#f56565', '#e53e3e', '#48bb78']
+			colors: linksChartContents.map(item => item.color)
 		},
 		stroke: {
 			width: 0

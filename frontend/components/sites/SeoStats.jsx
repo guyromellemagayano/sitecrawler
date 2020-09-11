@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
-import Router, { useRouter } from "next/router";
+import Router from "next/router";
 import { seoChartContents } from '../../enum/chartContents';
 // const ApexCharts = loadable(() => import('apexcharts'));
 
@@ -122,12 +122,11 @@ const SitesSeoStats = props => {
   )
 
   const legendClickHandler = (label) => {
-    console.log('[label]', label)
     let path = `/dashboard/site/${props.url.siteId}/seo`
 
     seoChartContents.forEach((item, index) => {
       if(label === item.label && item.filter !== '')
-        path += path.includes('?') ? `&${item.filter}=false` : `?${item.filter}=false`
+        path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
     })
 
     Router.push("/dashboard/site/[siteId]/seo", path);
@@ -151,12 +150,10 @@ const SitesSeoStats = props => {
         }
       }
     },
-    labels: seoChartContents.map((item) => {
-      return item.label
-    }),
-    colors: ['#f56565', '#e53e3e', '#c53030', '#9b2c2c', '#48bb78'],
+    labels: seoChartContents.map(item => item.label),
+    colors: seoChartContents.map(item => item.color),
     fill: {
-      colors: ['#f56565', '#e53e3e', '#c53030', '#9b2c2c', '#48bb78']
+      colors: seoChartContents.map(item => item.color)
     },
     stroke: {
       width: 0
