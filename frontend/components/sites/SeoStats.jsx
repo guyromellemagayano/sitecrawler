@@ -186,7 +186,7 @@ const SitesSeoStats = props => {
             total: {
               show: true,
               showAlways: true,
-              label: "Errors",
+              label: "SEO Errors",
               fontSize: "15px",
               color: "#2A324B",
               formatter: function (val) {

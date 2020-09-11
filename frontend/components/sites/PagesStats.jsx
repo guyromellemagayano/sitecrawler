@@ -131,6 +131,7 @@ const SitesPagesStats = props => {
     let path = `/dashboard/site/${props.url.siteId}/pages`
 
     pagesChartContents.forEach((item, index) => {
+      console.log(item)
       if(label === item.label && item.filter !== '')
         path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
     })
@@ -194,7 +195,7 @@ const SitesPagesStats = props => {
             total: {
               show: true,
               showAlways: true,
-              label: "Errors",
+              label: "Page Errors",
               fontSize: "15px",
               color: "#2A324B",
               formatter: function (val) {
