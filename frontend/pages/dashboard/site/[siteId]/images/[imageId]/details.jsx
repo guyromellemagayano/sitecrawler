@@ -36,7 +36,11 @@ const fetcher = async (url) => {
   return data;
 };
 
-const ImagesDetailDiv = styled.section``;
+const ImagesDetailDiv = styled.section`
+  .url-heading {
+    font-size: 1.4rem;
+  }
+`;
 
 const ImagesDetail = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -270,7 +274,7 @@ const ImagesDetail = () => {
                           href={imageLocation.url}
                           target={`_blank`}
                           title={imageLocation.url}
-                          className={`text-2xl font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words whitespace-normal`}
+                          className={`url-heading font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words whitespace-normal`}
                         >
                           {imageLocation.url}
                         </a>
