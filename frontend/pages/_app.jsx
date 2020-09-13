@@ -20,7 +20,7 @@ const TopProgressBar = dynamic(
 )
 
 const App = ({ Component, pageProps }) => {
-  const stripePromise = loadStripe('pk_test_X7IuKvLaHFgKe7x4ixhwlKQZ')
+  const stripePromise = loadStripe('pk_test_51HIVFqBQhL0pYs2DVDldVquI8cWSn4zpmkPG5NOC7fR06i2HfvChSGs1geC30H5OAIrYbTEkj9s8Sei3etUr6FhD00iH8BAzac')
 
   return (
     <SWRConfig

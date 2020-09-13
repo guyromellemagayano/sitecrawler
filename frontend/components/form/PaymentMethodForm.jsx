@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
 import { useStripe, useElements, CardNumberElement, CardCvcElement, CardExpiryElement } from '@stripe/react-stripe-js'
+import Cookies from "js-cookie";
+import useSWR, { mutate } from "swr";
 
 const useOptions = () => {
 	const options = useMemo(
@@ -25,6 +27,26 @@ const useOptions = () => {
 	return options
 }
 
+const fetcher = async (url) => {
+	const res = await fetch(url, {
+		method: "GET",
+		headers: {
+		Accept: "application/json",
+		"Content-Type": "application/json",
+		"X-CSRFToken": Cookies.get("csrftoken"),
+		},
+	});
+
+	const data = await res.json();
+
+	if (res.status !== 200) {
+		throw new Error(data.message);
+	}
+
+	return data;
+};
+  
+
 const PaymentMethodFormDiv = styled.section`
 	.input-group {
 		margin-top: 2rem;
@@ -32,7 +54,7 @@ const PaymentMethodFormDiv = styled.section`
 	}
 `
 
-const PaymentMethodForm = () => {
+const PaymentMethodForm = props => {
 	const stripe = useStripe()
 	const elements = useElements()
 	const options = useOptions()
@@ -52,6 +74,37 @@ const PaymentMethodForm = () => {
 		})
 
 		console.log("[PaymentMethod]", payload)
+
+		const body = {
+			id: payload.paymentMethod.id
+		};
+
+		const response = await fetch("/api/stripe/payment-method/", {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"X-CSRFToken": Cookies.get("csrftoken"),
+			},
+			body: JSON.stringify(body),
+		});
+
+		console.log('[subscriptionId]', props.subscriptionId)
+
+		await fetch("/api/stripe/subscription/current/", {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"X-CSRFToken": Cookies.get("csrftoken"),
+			},
+			body: JSON.stringify({id: props.subscriptionId}),
+		});
+
+		setTimeout(() => {
+			props.closeForm()
+			props.onSubscriptionUpdated()
+		}, 200)
 	}
 
 	return (

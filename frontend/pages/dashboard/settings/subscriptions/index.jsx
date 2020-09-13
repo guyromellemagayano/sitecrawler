@@ -11,12 +11,34 @@ import MainSidebar from "components/sidebar/MainSidebar";
 import PaymentMethodForm from "components/form/PaymentMethodForm";
 import SubscriptionPlans from "public/data/subscription-plans.json";
 import SiteFooter from "components/footer/SiteFooter";
+import useSWR, { mutate } from "swr";
+import Cookies from "js-cookie";
 
 const SubscriptionsDiv = styled.section``;
+
+const fetcher = async (url) => {
+	const res = await fetch(url, {
+		method: "GET",
+		headers: {
+		Accept: "application/json",
+		"Content-Type": "application/json",
+		"X-CSRFToken": Cookies.get("csrftoken"),
+		},
+	});
+
+	const data = await res.json();
+
+	if (res.status !== 200) {
+		throw new Error(data.message);
+	}
+
+	return data;
+};
 
 const Subscriptions = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [subscriptionId, setSubscriptionId] = useState(undefined);
   const pageTitle = "Subscriptions";
 
   const { user: user, userError: userError } = useUser({
@@ -24,13 +46,43 @@ const Subscriptions = () => {
     redirectIfFound: false,
   });
 
+	const { data: subscriptions, error: subscriptionsError } = useSWR(
+		() => `/api/stripe/subscription/`,
+		fetcher
+	);
+
+	const { data: subscription, error: subscriptionError, mutate: subscriptionUpdated } = useSWR(
+		() => `/api/stripe/subscription/current/`,
+		fetcher
+	);
+
+  console.log('[subscriptions]', subscriptions, subscription)
+  
+  const selectPlan = async (id, name) => {
+    if(name === "Basic") {
+      await fetch("/api/stripe/subscription/current/", {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-CSRFToken": Cookies.get("csrftoken"),
+        }
+      });
+
+      return false
+    }
+
+    setShowModal(!showModal)
+    setSubscriptionId(id)
+  }
+
   {
     userError && <Layout>{userError.message}</Layout>;
   }
 
   return (
     <Layout>
-      {user ? (
+      {user && subscriptions && subscription ? (
         <Fragment>
           <Head>
             <title>{pageTitle}</title>
@@ -99,8 +151,8 @@ const Subscriptions = () => {
                           className={`max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8`}
                         >
                           <div className={`relative lg:grid lg:grid-cols-7`}>
-                            {SubscriptionPlans.map((val, key) => {
-                              return val.slug === "basic" ? (
+                            {subscriptions.results.map((val, key) => {
+                              return val.group.name === "Basic" ? (
                                 <div
                                   key={key}
                                   className={`mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3`}
@@ -114,7 +166,7 @@ const Subscriptions = () => {
                                           <h3
                                             className={`text-center text-2xl leading-8 font-medium text-gray-900" id="tier-hobby`}
                                           >
-                                            {val.type}
+                                            {val.group.name}
                                           </h3>
                                           <div
                                             className={`mt-4 flex items-center justify-center`}
@@ -128,7 +180,7 @@ const Subscriptions = () => {
                                                 $
                                               </span>
                                               <span className={`font-bold`}>
-                                                {val.monthlyCost}
+                                                {val.price.unit_amount/100}
                                               </span>
                                             </span>
                                             <span
@@ -178,12 +230,12 @@ const Subscriptions = () => {
                                         <div className={`mt-8`}>
                                           <div
                                             className={`rounded-lg ${
-                                              user.group.id === 1
+                                              val.id === subscription.id || subscription.id === null
                                                 ? "shadow-none"
                                                 : "shadow-md"
                                             }`}
                                           >
-                                            {user.group.id === 1 ? (
+                                            {val.id === subscription.id || subscription.id === null ? (
                                               <button
                                                 className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                               >
@@ -195,7 +247,7 @@ const Subscriptions = () => {
                                                 onClick={() =>
                                                   setTimeout(
                                                     () =>
-                                                      setShowModal(!showModal),
+                                                      selectPlan(val.id, val.group.name),
                                                     150
                                                   )
                                                 }
@@ -209,7 +261,7 @@ const Subscriptions = () => {
                                     </div>
                                   </div>
                                 </div>
-                              ) : val.slug === "pro" ? (
+                              ) : val.group.name === "Pro" ? (
                                 <div
                                   key={key}
                                   className={`mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4`}
@@ -240,7 +292,7 @@ const Subscriptions = () => {
                                         <h3
                                           className={`text-center text-3xl leading-9 font-semibold text-gray-900 sm:-mx-6" id="tier-growth`}
                                         >
-                                          {val.type}
+                                          {val.group.name}
                                         </h3>
                                         <div
                                           className={`mt-4 flex items-center justify-center`}
@@ -254,7 +306,7 @@ const Subscriptions = () => {
                                               $
                                             </span>
                                             <span className={`font-bold`}>
-                                              {val.monthlyCost}
+                                              {val.price.unit_amount/100}
                                             </span>
                                           </span>
                                           <span
@@ -302,12 +354,12 @@ const Subscriptions = () => {
                                       <div className={`mt-10`}>
                                         <div
                                           className={`rounded-lg ${
-                                            user.group.id === 2
+                                            val.id === subscription.id
                                               ? "shadow-none"
                                               : "shadow-md"
                                           }`}
                                         >
-                                          {user.group.id === 2 ? (
+                                          {val.id === subscription.id ? (
                                             <button
                                               className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                             >
@@ -318,7 +370,7 @@ const Subscriptions = () => {
                                               type="button"
                                               className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
                                               onClick={() =>
-                                                setShowModal(!showModal)
+                                                selectPlan(val.id, val.group.name)
                                               }
                                             >
                                               Select Plan
@@ -343,7 +395,7 @@ const Subscriptions = () => {
                                           <h3
                                             className={`text-center text-2xl leading-8 font-medium text-gray-900" id="tier-scale`}
                                           >
-                                            {val.type}
+                                            {val.group.name}
                                           </h3>
                                           <div
                                             className={`mt-4 flex items-center justify-center`}
@@ -357,7 +409,7 @@ const Subscriptions = () => {
                                                 $
                                               </span>
                                               <span className={`font-bold`}>
-                                                {val.monthlyCost}
+                                                {val.price.unit_amount/100}
                                               </span>
                                             </span>
                                             <span
@@ -407,12 +459,12 @@ const Subscriptions = () => {
                                         <div className={`mt-8`}>
                                           <div
                                             className={`rounded-lg ${
-                                              user.group.id === 1
+                                              val.id === subscription.id
                                                 ? "shadow-none"
                                                 : "shadow-md"
                                             }`}
                                           >
-                                            {user.group.id === 3 ? (
+                                            {val.id === subscription.id ? (
                                               <button
                                                 className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                               >
@@ -424,7 +476,7 @@ const Subscriptions = () => {
                                                 onClick={() =>
                                                   setTimeout(
                                                     () =>
-                                                      setShowModal(!showModal),
+                                                      selectPlan(val.id, val.group.name),
                                                     150
                                                   )
                                                 }
@@ -522,7 +574,7 @@ const Subscriptions = () => {
                       </div>
 
                       <div>
-                        <PaymentMethodForm />
+                        <PaymentMethodForm subscriptionId={subscriptionId} closeForm={() => setShowModal(false)} onSubscriptionUpdated={subscriptionUpdated} />
                       </div>
                     </div>
                   </Transition>
