@@ -213,9 +213,9 @@ const DataTable = (props) => {
     if (stats) {
       if (
         (stats.num_pages_big !== 0 && stats.num_pages_big !== undefined) ||
-        (stats.num_pages_tls_ok !== 0 && stats.num_pages_tls_ok !== undefined)
+        (stats.num_pages_tls_non_ok !== 0 && stats.num_pages_tls_non_ok !== undefined)
       ) {
-        valLength = stats.num_pages_big + stats.num_pages_tls_ok;
+        valLength = stats.num_pages_big + stats.num_pages_tls_non_ok;
       }
     }
 
@@ -350,26 +350,27 @@ const DataTable = (props) => {
           )}
         </div>
       </td>
-      {stats.num_images ? (
+      {setTotalIssues() > 0 ? (
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
         >
           <Link
-            href="/dashboard/site/[siteId]/images"
-            as={`/dashboard/site/${props.site.id}/images`}
+            href="/dashboard/site/[siteId]/overview"
+            as={`/dashboard/site/${props.site.id}/overview`}
           >
-            <a
-              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-            >
-              {stats.num_images}
-            </a>
+            <a>{setTotalIssues()}</a>
           </Link>
         </td>
       ) : (
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
         >
-          0
+          <Link
+            href="/dashboard/site/[siteId]/overview"
+            as={`/dashboard/site/${props.site.id}/overview`}
+          >
+            <a>0</a>
+          </Link>
         </td>
       )}
       {stats.num_links ? (
@@ -416,27 +417,26 @@ const DataTable = (props) => {
           0
         </td>
       )}
-      {setTotalIssues() ? (
+      {stats.num_images ? (
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
           <Link
-            href="/dashboard/site/[siteId]/overview"
-            as={`/dashboard/site/${props.site.id}/overview`}
+            href="/dashboard/site/[siteId]/images"
+            as={`/dashboard/site/${props.site.id}/images`}
           >
-            <a>{setTotalIssues()}</a>
+            <a
+              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+            >
+              {stats.num_images}
+            </a>
           </Link>
         </td>
       ) : (
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
-          <Link
-            href="/dashboard/site/[siteId]/overview"
-            as={`/dashboard/site/${props.site.id}/overview`}
-          >
-            <a>0</a>
-          </Link>
+          0
         </td>
       )}
 

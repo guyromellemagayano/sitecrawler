@@ -133,11 +133,11 @@ const SitesSeoStats = props => {
   }
 
   const chartSeries = [
-    (stats && stats.num_pages_without_title) !== undefined ? stats && stats.num_pages_without_title : 0,
-    (stats && stats.num_pages_without_description) !== undefined ? stats && stats.num_pages_without_description : 0,
-    (stats && stats.num_pages_without_h1_first) !== undefined ? stats && (stats.num_pages_without_h1_first) : 0,
-    (stats && stats.num_pages_without_h2_first) !== undefined ? stats && (stats.num_pages_without_h2_first) : 0,
-    (stats && stats.num_pages_seo_ok) !== undefined ? stats && stats.num_pages_seo_ok : 0
+    stats && stats.num_pages_without_title !== undefined ? stats && stats.num_pages_without_title : 0,
+    stats && stats.num_pages_without_description !== undefined ? stats && stats.num_pages_without_description : 0,
+    stats && stats.num_pages_without_h1_first !== undefined ? stats && stats.num_pages_without_h1_first : 0,
+    stats && stats.num_pages_without_h2_first !== undefined ? stats && stats.num_pages_without_h2_first : 0,
+    stats && stats.num_pages_seo_ok !== undefined ? stats && stats.num_pages_seo_ok : 0
   ]
 
   const chartOptions = {

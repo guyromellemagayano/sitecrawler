@@ -35,7 +35,11 @@ const fetcher = async (url) => {
   return data;
 };
 
-const LinkDetailDiv = styled.div``;
+const LinkDetailDiv = styled.div`
+  .url-heading {
+    font-size: 1.4rem;
+  }
+`;
 
 const LinkDetail = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -258,7 +262,7 @@ const LinkDetail = () => {
                           href={linkLocation.url}
                           target={`_blank`}
                           title={linkLocation.url}
-                          className={`text-2xl font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words block w-full`}
+                          className={`url-heading font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words block w-full`}
                         >
                           {linkLocation.url}
                         </a>

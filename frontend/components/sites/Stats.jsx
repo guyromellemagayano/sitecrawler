@@ -124,9 +124,9 @@ const SitesStats = (props) => {
     if (stats) {
       if (
         (stats.num_pages_big !== 0 && stats.num_pages_big !== undefined) ||
-        (stats.num_pages_tls_ok !== 0 && stats.num_pages_tls_ok !== undefined)
+        (stats.num_pages_tls_non_ok !== 0 && stats.num_pages_tls_non_ok !== undefined)
       ) {
-        valLength = stats.num_pages_big + stats.num_pages_tls_ok;
+        valLength = stats.num_pages_big + stats.num_pages_tls_non_ok;
       }
     }
 

@@ -140,9 +140,12 @@ const SitesPagesStats = props => {
   }
 
   const chartSeries = [
-    (stats && stats.num_pages) !== undefined ? stats && stats.num_pages : 0,
-    (stats && stats.num_pages_big) !== undefined ? stats && stats.num_pages_big : 0,
-    0
+    stats && stats.num_pages_big !== undefined ? stats && stats.num_pages_big : 0,
+    stats && stats.num_pages_tls_non_ok !== undefined ? stats && stats.num_pages_tls_non_ok : 0,
+    stats && 
+      (stats.num_pages_big !== undefined && stats.num_pages_big === 0) && 
+      (stats.num_pages_tls_non_ok !== undefined && stats.num_pages_tls_non_ok === 0) ? 
+        stats && stats.num_pages : 0
   ]
 
   const chartOptions = {

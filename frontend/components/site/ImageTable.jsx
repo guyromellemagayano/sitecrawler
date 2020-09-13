@@ -111,7 +111,7 @@ const ImagesTable = props => {
 											href={props.val.url}
 											target={`_blank`}
 											title={props.val.url}
-											className={`text-sm leading-6 font-semibold text-blue-1000 hover:text-blue-900 transition ease-in-out duration-150 truncate`}
+											className={`text-sm leading-6 font-semibold text-blue-1000 hover:text-blue-900 transition ease-in-out duration-150 truncate-link`}
 										>
 											{props.val.url}
 										</a>
