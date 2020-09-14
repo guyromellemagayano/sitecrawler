@@ -26,6 +26,7 @@ urlpatterns = [
     path("account-exist", TemplateView.as_view(), name="socialaccount_signup"),
     path("reset-password/form/<uidb64>/<token>/", TemplateView.as_view(), name="password_reset_confirm"),
     # urls
+    path("admin/", include("loginas.urls")),
     path("admin/", admin.site.urls),
     path("healthcheck/", include("health_check.urls")),
     path(
