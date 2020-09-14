@@ -237,7 +237,6 @@ const DataTable = (props) => {
     let valLength = 0;
 
     if (stats && (images === undefined || images)) {
-      console.log(stats ? stats.num_non_ok_images : 0)
       if (
         (stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined) ||
         (images.count !== 0 && images.count !== undefined)

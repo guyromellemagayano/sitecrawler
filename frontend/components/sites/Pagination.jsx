@@ -37,7 +37,7 @@ const Pagination = props => {
   const handlePageClick = (page) => {
     if(page.selected === props.page) return false
 
-    console.log('[page click]', page, props.pathName, props.page)
+    // console.log('[page click]', page, props.pathName, props.page)
     Router.push(props.href, `${props.pathName}page=${page.selected + 1}`)
   }
 

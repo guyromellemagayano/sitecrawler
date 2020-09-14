@@ -131,7 +131,7 @@ const SitesPagesStats = props => {
     let path = `/dashboard/site/${props.url.siteId}/pages`
 
     pagesChartContents.forEach((item, index) => {
-      console.log(item)
+      // console.log(item)
       if(label === item.label && item.filter !== '')
         path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
     })
