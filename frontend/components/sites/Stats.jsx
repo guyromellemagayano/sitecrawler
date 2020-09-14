@@ -155,7 +155,7 @@ const SitesStats = (props) => {
       }
     }
 
-    if (images) {
+    if (images !== undefined) {
       if (
         images.count !== 0 && images.count !== undefined
       ) {
