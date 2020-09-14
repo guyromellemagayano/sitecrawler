@@ -56,7 +56,7 @@ const Subscriptions = () => {
 		fetcher
 	);
 
-  console.log('[subscriptions]', subscriptions, subscription)
+  // console.log('[subscriptions]', subscriptions, subscription)
   
   const selectPlan = async (id, name) => {
     if(name === "Basic") {
