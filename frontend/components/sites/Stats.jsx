@@ -178,7 +178,7 @@ const SitesStats = (props) => {
     tlsErrorImagesError && <Layout>{tlsErrorImagesError.message}</Layout>;
   }
 
-  if (!stats && !scan && !links && !tlsErrorImages) {
+  if (!stats && !scan && !links) {
     return (
       <SitesStatsDiv>
         <div>

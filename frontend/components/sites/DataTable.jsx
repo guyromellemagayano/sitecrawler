@@ -269,7 +269,7 @@ const DataTable = (props) => {
     tlsErrorImagesError && <Layout>{tlsErrorImagesError.message}</Layout>;
   }
 
-  if (!scan || !stats || !tlsErrorImages) {
+  if (!scan || !stats) {
     return (
       <Fragment>
         <DataTableDiv>
