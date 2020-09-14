@@ -106,15 +106,9 @@ const SiteMenu = props => {
   const dropdownHandler = (siteId, verified) => {
     if (!verified) return false;
 
-    const newPath = removeURLParameter(asPath, "page");
-    const pageName = newPath.split("?")[0].split("/")[4];
-    const pageParams = newPath.split("?")[1];
-
     Router.push(
-      `/dashboard/site/[siteId]/${pageName}`,
-      `/dashboard/site/${siteId}/${pageName}${
-        pageParams !== undefined ? "?" + pageParams : ""
-      }`
+      `/dashboard/site/[siteId]/overview`,
+      `/dashboard/site/${siteId}/overview`
     );
 
     setTimeout(() => {
