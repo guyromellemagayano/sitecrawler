@@ -147,7 +147,7 @@ const SitesStats = (props) => {
   const setImageErrors = () => {
     let valLength = 0;
 
-    if (stats) {
+    if (stats && tlsErrorImages) {
       if (
         (stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined) ||
         (tlsErrorImages.count !== 0 && tlsErrorImages.count !== undefined)
