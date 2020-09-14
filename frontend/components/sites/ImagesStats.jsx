@@ -135,9 +135,9 @@ const SitesImagesStats = props => {
   }
   
   const chartSeries = [
-    stats && stats.num_ok_images !== undefined ? stats && stats.num_ok_images : 0,
     stats && stats.num_non_ok_images !== undefined ? stats && stats.num_non_ok_images : 0,
-    stats && stats.num_non_ok_images !== undefined ? stats && stats.num_non_ok_images : 0
+    stats && stats.num_non_ok_images !== undefined ? stats && stats.num_non_ok_images : 0,
+    stats && stats.num_ok_images !== undefined ? stats && stats.num_ok_images : 0
   ]
 
   const chartOptions = {

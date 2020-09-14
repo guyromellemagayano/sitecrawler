@@ -255,7 +255,7 @@ const DataTable = (props) => {
     linksError && <Layout>{linksError.message}</Layout>;
   }
 
-  if (!scan || !stats || !links) {
+  if (!scan || !stats) {
     return (
       <Fragment>
         <DataTableDiv>
