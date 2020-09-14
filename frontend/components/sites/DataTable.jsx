@@ -173,7 +173,7 @@ const DataTable = (props) => {
   const { data: images, error: imagesError } = useSWR(
     () =>
       props.url.siteId && scanObjId
-        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=ERROR`
+        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
         : null,
     fetcher,
     {
@@ -244,7 +244,7 @@ const DataTable = (props) => {
       }
     }
 
-    if (images) {
+    if (images !== undefined) {
       if (
         images.count !== 0 && images.count !== undefined
       ) {
