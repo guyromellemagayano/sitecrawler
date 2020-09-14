@@ -83,8 +83,8 @@ const SitesStats = (props) => {
 
   const { data: images, error: imagesError } = useSWR(
     () =>
-      props.url.siteId && scanObjId
-        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
+      query.siteId && scanObjId
+        ? `/api/site/${query.siteId}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
         : null,
     fetcher,
     {
@@ -157,8 +157,6 @@ const SitesStats = (props) => {
 
     if (images && images.count !== undefined) {
       valLength = valLength + (images.count ? images.count : 0);
-    } else {
-      valLength = valLength + 10;
     }
 
     return valLength;
