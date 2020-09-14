@@ -71,14 +71,14 @@ const Pagination = props => {
     <PaginationDiv className={`bg-white px-4 pb-4 flex items-center justify-center sm:px-6 align-middle shadow-xs rounded-lg`}>
         <ReactPaginate
           disableInitialCallback={false}
-          previousLabel={'previous'}
-          nextLabel={'next'}
+          previousLabel={'Previous'}
+          nextLabel={'Next'}
           breakLabel={'...'}
           initialPage={currentPage - 1}
           breakClassName={'break-me -mt-px border-transparent border-t-2 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150'}
           pageCount={totalPages}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
+          marginPagesDisplayed={3}
+          pageRangeDisplayed={10}
           onPageChange={handlePageClick}
           containerClassName={'pagination md:flex'}
           pageClassName={`-mt-px border-transparent border-t-2 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150`}
