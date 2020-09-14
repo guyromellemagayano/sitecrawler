@@ -23,9 +23,13 @@ const SitesVerifyUrlDiv = styled.section`
   .wizard-indicator {
     height: 0.25rem;
   }
+
+  .instructions-textarea {
+    margin-top: 0.5rem !important;
+  }
 `;
 
-const SitesVerifyUrl = (props) => {
+const SitesVerifyUrl = props => {
   const [copyValue, setCopyValue] = useState(
     `<meta name="epic-crawl-id" content="${props.vid}" />`
   );
@@ -38,6 +42,10 @@ const SitesVerifyUrl = (props) => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
   const [showNotificationStatus, setShowNotificationStatus] = useState(false);
   const pageTitle = "Verify Site URL";
+  let htmlText = "1. Sign in to the administrator account of the following website: " + props.surl + "\n\n";
+  htmlText += "2. Copy the following meta tag and add it within your website's <head> tag: " + "\n" + copyValue + "\n\n";
+  htmlText += "3. Save the changes you made in that file." + "\n\n";
+  htmlText += "4. Inform your client that you already made the update to the website.";
 
   const handleInputChange = ({ copyValue }) => {
     setCopyValue({ copyValue, copied });
@@ -91,10 +99,6 @@ const SitesVerifyUrl = (props) => {
       setErrorMsg("Internal server error. Please try again.");
       setTimeout(() => setShowNotificationStatus(true), 1500);
     }
-  };
-
-  const handleEmailSubmit = (e) => {
-    e.preventDefault();
   };
 
   useEffect(() => {
@@ -371,7 +375,7 @@ const SitesVerifyUrl = (props) => {
                           <p
                             className={`max-w-full text-md leading-6 text-gray-700 mb-3`}
                           >
-                            Instructions:
+                            <strong>Instructions:</strong>
                           </p>
                           <ol className="mb-5">
                             <li className={`text-sm leading-6 text-gray-600`}>
@@ -529,7 +533,7 @@ const SitesVerifyUrl = (props) => {
                       </div>
 
                       <div
-                        className={`bg-orange-300 mt-5 sm:rounded-lg inline-block`}
+                        className={`w-full bg-orange-300 mt-5 sm:rounded-lg inline-block`}
                       >
                         <div className={`px-4 py-5 sm:p-6`}>
                           <h3
@@ -538,49 +542,44 @@ const SitesVerifyUrl = (props) => {
                             Not sure how to do it?
                           </h3>
                           <div
-                            className={`mt-2 max-w-xl text-sm leading-5 text-gray-800`}
+                            className={`mt-2 max-w-full text-sm leading-5 text-gray-800`}
                           >
                             <p className={`italic`}>
                               If for some reason, you can't follow the steps
-                              above, you can fill up your web developer's email
-                              below and click the{" "}
-                              <strong>Send Instructions</strong> button. We will
-                              send the above instructions directly to your web
-                              developer so he/she can add the meta tag within
-                              your website.
+                              above, do the following:
                             </p>
-                          </div>
-                          <div className={`mt-5`}>
-                            <form
-                              onSubmit={handleEmailSubmit}
-                              className={`sm:flex sm:items-center`}
-                            >
-                              <div className={`max-w-xs w-full`}>
-                                <label for="email" className={`sr-only`}>
-                                  Email
-                                </label>
-                                <div
-                                  className={`relative rounded-md shadow-sm`}
-                                >
-                                  <input
-                                    type="email"
-                                    id="email"
-                                    className={`form-input block w-full sm:text-sm sm:leading-5`}
-                                    placeholder="you@example.com"
-                                  />
-                                </div>
-                              </div>
-                              <span
-                                className={`mt-3 inline-flex rounded-md shadow-sm sm:mt-0 sm:ml-3 sm:w-auto`}
+                            <ol className={`my-3`}>
+                              <li
+                                className={`text-sm leading-6 text-gray-800`}
                               >
-                                <button
-                                  type="submit"
-                                  className={`w-full inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150 sm:w-auto sm:text-sm sm:leading-5`}
+                                Click the <strong>Copy to Clipboard</strong> button<br/>
+                                <textarea
+                                  name={`verify_site_instructions`}
+                                  id={`instructions`}
+                                  className={`instructions-textarea h-56 resize-none block w-full p-3 pb-0 mb-3`}
+                                  value={htmlText}
+                                ></textarea>
+                                <CopyToClipboard
+                                  onCopy={handleInputCopy}
+                                  text={htmlText}
                                 >
-                                  Send Instructions
-                                </button>
-                              </span>
-                            </form>
+                                  <button
+                                    className={`mb-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-800 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
+                                  >
+                                    <span>
+                                      {copied
+                                        ? "Copied!"
+                                        : "Copy to Clipboard"}
+                                    </span>
+                                  </button>
+                                </CopyToClipboard>
+                              </li>
+                              <li
+                                className={`text-sm leading-6 text-gray-800`}
+                              >
+                                Paste the contents into an email and send it to your web developer's email address.
+                              </li>
+                            </ol>
                           </div>
                         </div>
                       </div>
