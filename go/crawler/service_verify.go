@@ -43,12 +43,11 @@ func (v *VerifyService) VerifySite(log *zap.SugaredLogger, siteID int) error {
 }
 
 func (v *VerifyService) VerifyURL(log *zap.SugaredLogger, url, verificationID string) error {
-	resp, err, cancel := v.LoadService.Load(log, url)
-	defer cancel()
+	resp, err := v.LoadService.Load(log, url)
+	defer resp.Close()
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 	if resp.StatusCode/100 != 2 {
 		return errors.Errorf("failed to load: %v %v", resp.StatusCode, resp.Status)
 	}
