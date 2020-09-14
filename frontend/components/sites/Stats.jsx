@@ -162,7 +162,7 @@ const SitesStats = (props) => {
         valLength = valLength + (images.count ? images.count : 0);
       }
     } else {
-      valLength = valLength + 0;
+      valLength = valLength + 10;
     }
 
     return valLength;
