@@ -147,14 +147,23 @@ const SitesStats = (props) => {
   const setImageErrors = () => {
     let valLength = 0;
 
-    if (stats && images !== undefined) {
+    if (stats) {
       if (
-        stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined && 
-        images.count !== 0 && images.count !== undefined
+        stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined
       ) {
-        valLength = (stats ? stats.num_non_ok_images : 0) + (images ? images.count : 0);
+        valLength = stats ? stats.num_non_ok_images : 0;
       }
     }
+
+    if (images !== undefined) {
+      if (
+        images.count !== 0 && images.count !== undefined
+      ) {
+        valLength = valLength + (images.count ? images.count : 0);
+      }
+    }
+
+    console.log(valLength, images.count ? images.count : 0)
 
     return valLength;
   };
