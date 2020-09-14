@@ -155,15 +155,15 @@ const SitesStats = (props) => {
       }
     }
 
-    if (images !== undefined) {
+    if (images) {
       if (
         images.count !== 0 && images.count !== undefined
       ) {
         valLength = valLength + (images.count ? images.count : 0);
       }
+    } else {
+      valLength = valLength + 0;
     }
-
-    console.log(valLength, images.count ? images.count : 0)
 
     return valLength;
   };

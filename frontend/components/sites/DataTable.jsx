@@ -244,12 +244,14 @@ const DataTable = (props) => {
       }
     }
 
-    if (images !== undefined) {
+    if (images) {
       if (
         images.count !== 0 && images.count !== undefined
       ) {
         valLength = valLength + (images.count ? images.count : 0);
       }
+    } else {
+      valLength = valLength + 0;
     }
 
     return valLength;
