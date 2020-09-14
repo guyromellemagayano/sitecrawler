@@ -129,10 +129,10 @@ const SitesImagesStats = (props) => {
     }
   );
 
-  const { data: tlsErrorImages, error: tlsErrorImagesError } = useSWR(
+  const { data: images, error: imagesError } = useSWR(
     () =>
       props.url.siteId && scanObjId
-        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=ERROR`
+        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
         : null,
     fetcher,
     {
@@ -155,8 +155,8 @@ const SitesImagesStats = (props) => {
     stats && stats.num_non_ok_images !== undefined
       ? stats && stats.num_non_ok_images
       : 0,
-    tlsErrorImages && tlsErrorImages.count !== undefined 
-      ? tlsErrorImages && tlsErrorImages.count
+    images && images.count !== undefined 
+      ? images && images.count
       : 0,
     stats && stats.num_ok_images !== undefined
       ? stats && stats.num_ok_images
@@ -261,7 +261,7 @@ const SitesImagesStats = (props) => {
     scanError && <Layout>{scanError.message}</Layout>;
   }
   {
-    tlsErrorImagesError && <Layout>{tlsErrorImagesError.message}</Layout>;
+    imagesError && <Layout>{imagesError.message}</Layout>;
   }
 
   return (

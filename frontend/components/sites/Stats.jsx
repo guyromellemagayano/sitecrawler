@@ -81,10 +81,10 @@ const SitesStats = (props) => {
     }
   );
 
-  const { data: tlsErrorImages, error: tlsErrorImagesError } = useSWR(
+  const { data: images, error: imagesError } = useSWR(
     () =>
       props.url.siteId && scanObjId
-        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=ERROR`
+        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
         : null,
     fetcher,
     {
@@ -147,12 +147,12 @@ const SitesStats = (props) => {
   const setImageErrors = () => {
     let valLength = 0;
 
-    if (stats && tlsErrorImages) {
+    if (stats && (images === undefined || images)) {
       if (
         (stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined) ||
-        (tlsErrorImages.count !== 0 && tlsErrorImages.count !== undefined)
+        (images.count !== 0 && images.count !== undefined)
       ) {
-        valLength = (stats ? stats.num_non_ok_images : 0) + (tlsErrorImages ? tlsErrorImages.count : 0);
+        valLength = (stats ? stats.num_non_ok_images : 0) + (images ? images.count : 0);
       }
     }
 
@@ -175,7 +175,7 @@ const SitesStats = (props) => {
     linksError && <Layout>{linksError.message}</Layout>;
   }
   {
-    tlsErrorImagesError && <Layout>{tlsErrorImagesError.message}</Layout>;
+    imagesError && <Layout>{imagesError.message}</Layout>;
   }
 
   if (!stats && !scan && !links) {
