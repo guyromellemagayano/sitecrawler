@@ -170,6 +170,17 @@ const DataTable = (props) => {
     }
   );
 
+  const { data: tlsErrorImages, error: tlsErrorImagesError } = useSWR(
+    () =>
+      props.url.siteId && scanObjId
+        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=ERROR`
+        : null,
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
+  );
+
   const setLinkErrors = type => {
     let valLength = 0;
 
@@ -200,7 +211,7 @@ const DataTable = (props) => {
         (stats.num_pages_without_h1_first !== 0 && stats.num_pages_without_h1_first !== undefined) ||
         (stats.num_pages_without_h2_first !== 0 && stats.num_pages_without_h2_first !== undefined)
       ) {
-        valLength = stats.num_pages_without_title + stats.num_pages_without_description + stats.num_pages_without_h1_first + stats.num_pages_without_h2_first;
+        valLength = (stats ? stats.num_pages_without_title : 0) + (stats ? stats.num_pages_without_description : 0) + (stats ? stats.num_pages_without_h1_first : 0) + (stats ? stats.num_pages_without_h2_first : 0);
       }
     }
 
@@ -215,7 +226,7 @@ const DataTable = (props) => {
         (stats.num_pages_big !== 0 && stats.num_pages_big !== undefined) ||
         (stats.num_pages_tls_non_ok !== 0 && stats.num_pages_tls_non_ok !== undefined)
       ) {
-        valLength = stats.num_pages_big + stats.num_pages_tls_non_ok;
+        valLength = (stats ? stats.num_pages_big : 0) + (stats ? stats.num_pages_tls_non_ok : 0);
       }
     }
 
@@ -227,10 +238,10 @@ const DataTable = (props) => {
 
     if (stats) {
       if (
-        (stats.num_ok_images !== 0 && stats.num_ok_images !== undefined) ||
-        (stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined)
+        (stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined) ||
+        (tlsErrorImages.count !== 0 && tlsErrorImages.count !== undefined)
       ) {
-        valLength = stats.num_ok_images + stats.num_non_ok_images;
+        valLength = (stats ? stats.num_non_ok_images : 0) + (tlsErrorImages ? tlsErrorImages.count : 0);
       }
     }
 
@@ -246,13 +257,16 @@ const DataTable = (props) => {
   };
 
   {
-    scanError && <Layout>{scanError.message}</Layout>;
-  }
-  {
     statsError && <Layout>{statsError.message}</Layout>;
   }
   {
+    scanError && <Layout>{scanError.message}</Layout>;
+  }
+  {
     linksError && <Layout>{linksError.message}</Layout>;
+  }
+  {
+    tlsErrorImagesError && <Layout>{tlsErrorImagesError.message}</Layout>;
   }
 
   if (!scan || !stats) {
