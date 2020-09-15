@@ -14,6 +14,10 @@ WORKDIR /app/$SERVICE
 CMD gin -i run *.go
 EXPOSE 3000
 
+FROM dev AS test
+
+WORKDIR /app/
+CMD go test ./...
 
 FROM dev AS build
 
