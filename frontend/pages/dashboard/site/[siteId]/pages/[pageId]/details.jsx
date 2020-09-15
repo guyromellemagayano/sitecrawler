@@ -488,7 +488,8 @@ const PageDetail = () => {
                             {pageLocation.tls_total !== null &&
                             pageLocation.tls_total !== undefined &&
                             pageLocation.tls_total !== "" &&
-                            pageLocation.tls_total !== 0 ? (
+                            pageLocation.tls_total !== 0 &&
+                            pageLocation.tls_total == true ? (
                               <SiteSuccessBadge text={"OK"} />
                             ) : (
                               <SiteDangerBadge text={"ERROR"} />

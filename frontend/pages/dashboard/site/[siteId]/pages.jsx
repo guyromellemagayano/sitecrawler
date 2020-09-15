@@ -47,6 +47,7 @@ const fetcher = async (url) => {
 const initialOrder = {
   pageUrl: "default",
   pageSize: "default",
+  pageSsl: "default",
 };
 
 const PagesDiv = styled.section`
@@ -165,28 +166,6 @@ const Pages = (props) => {
 
     updatePages();
   };
-
-  // const filterChangeHandler = (e) => {
-  //   const filterType = e.target.value
-  //   const filterStatus = e.target.checked
-
-  //   let newPath = asPath
-
-  //   if(filterType == 'issues' && filterStatus == true) {
-  //     setIssueFilter(true)
-  //     setAllFilter(false)
-  //     newPath = removeURLParameter(newPath, 'page')
-
-  //     if(newPath.includes("?"))
-  //       newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
-  //     else
-  //       newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`
-  //   }
-  //   else if(filterType == 'issues' && filterStatus == false) {
-  //     newPath = removeURLParameter(newPath, 'status')
-  //     setIssueFilter(false)
-  //   }
-  // }
 
   const SortHandler = (slug, dir) => {
     setSortOrder({ ...initialOrder });
@@ -485,7 +464,13 @@ const Pages = (props) => {
                     searchKey={searchKey}
                     onSearchEvent={searchEventHandler}
                   />
-                  {/* <PageFilter onFilterChange={filterChangeHandler} allFilter={allFilter} issueFilter={issueFilter} googleFilter={googleFilter} sslFilter={sslFilter} /> */}
+                  {/* <PageFilter
+                    onFilterChange={filterChangeHandler}
+                    allFilter={allFilter}
+                    noIssueFilter={noIssueFilter}
+                    largePageSizeFilter={largePageSizeFilter}
+                    brokenSecurityFilter={brokenSecurityFilter}
+                  /> */}
                   <Pagination
                     href="/dashboard/site/[siteId]/pages"
                     pathName={pagePath}

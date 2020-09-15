@@ -11,6 +11,8 @@ const PageSorting = props => {
           <Sorting direction={props.sortOrder.pageUrl} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : props.slug == "page-size" ? (
           <Sorting direction={props.sortOrder.pageSize} onSortHandler={props.onSortHandler} slug={props.slug} />
+        ) : props.slug == "page-ssl" ? (
+          <Sorting direction={props.sortOrder.pageSsl} onSortHandler={props.onSortHandler} slug={props.slug} />
         ) : null}
       </div>
     </PageSortingDiv>
