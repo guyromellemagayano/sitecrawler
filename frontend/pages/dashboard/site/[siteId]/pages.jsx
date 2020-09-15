@@ -45,9 +45,8 @@ const fetcher = async (url) => {
 };
 
 const initialOrder = {
-  pageUrl: "default",
-  pageSize: "default",
-  pageSsl: "default",
+  pageLargePages: "default",
+  pageBrokenSecurity: "default",
 };
 
 const PagesDiv = styled.section`
@@ -64,10 +63,8 @@ const Pages = (props) => {
   const [searchKey, setSearchKey] = useState("");
   const [pagePath, setPagePath] = useState("");
   const [allFilter, setAllFilter] = useState(false);
-  const [sizeFilter, setSizeFilter] = useState(false);
-  const [issueFilter, setIssueFilter] = useState(false);
-  const [googleFilter, setGoogleFilter] = useState(false);
-  const [sslFilter, setSslFilter] = useState(false);
+  const [largePageSizeFilter, setLargePageSizeFilter] = useState(false);
+  const [brokenSecurityFilter, setBrokenSecurityFilter] = useState(false);
   const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
   const pageTitle = "Pages |";
@@ -116,13 +113,24 @@ const Pages = (props) => {
       ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` +
         props.result.page
       : `/api/site/${query.siteId}/scan/${scanObjId}/page/`;
-  let queryString =
+  let queryString = 
+    props.result.ordering !== undefined
+      ? scanApiEndpoint.includes("?")
+        ? `&ordering=-size_total`
+        : `?ordering=-size_total`
+      : "";
+  queryString += 
+    props.result.tls_total !== undefined
+      ? scanApiEndpoint.includes("?")
+        ? `&tls_total=false`
+        : `?tls_total=false`
+      : "";
+  queryString +=
     props.result.search !== undefined
       ? scanApiEndpoint.includes("?")
         ? `&search=${props.result.search}`
         : `?search=${props.result.search}`
       : "";
-
   queryString +=
     props.result.ordering !== undefined
       ? (scanApiEndpoint + queryString).includes("?")
@@ -131,6 +139,8 @@ const Pages = (props) => {
       : "";
 
   scanApiEndpoint += queryString;
+
+  console.log(scanApiEndpoint)
 
   const { data: page, error: pageError, mutate: updatePages } = useSWR(
     () => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -167,6 +177,100 @@ const Pages = (props) => {
     updatePages();
   };
 
+  const filterChangeHandler = async (e) => {
+    const filterType = e.target.value;
+    const filterStatus = e.target.checked;
+
+    let newPath = asPath;
+    newPath = removeURLParameter(newPath, "page");
+
+    if (filterType == "pageLargePages" && filterStatus == true) {
+      setLargePageSizeFilter(true);
+      setAllFilter(false);
+
+      if (newPath.includes("?")) newPath += `&ordering=-size_total`;
+      else newPath += `?ordering=-size_total`;
+    } else if (filterType == "pageLargePages" && filterStatus == false) {
+      newPath = removeURLParameter(newPath, "ordering");
+      setLargePageSizeFilter(false);
+    }
+
+    if (filterType == "pageBrokenSecurity" && filterStatus == true) {
+      setBrokenSecurityFilter(true);
+      setAllFilter(false);
+
+      if (newPath.includes("?")) newPath += `&tls_total=false`;
+      else newPath += `?tls_total=false`;
+    } else if (filterType == "pageBrokenSecurity" && filterStatus == false) {
+      newPath = removeURLParameter(newPath, "tls_total");
+      setBrokenSecurityFilter(false);
+    }
+
+    if (filterType == "all" && filterStatus == true) {
+      setLargePageSizeFilter(false);
+      setBrokenSecurityFilter(false);
+
+      setAllFilter(true);
+
+      newPath = removeURLParameter(newPath, "ordering");
+      newPath = removeURLParameter(newPath, "tls_total");
+
+      if (!newPath.includes("search") && !newPath.includes("ordering"))
+        newPath = newPath.replace("?", "");
+    }
+
+    if (newPath.includes("?")) setPagePath(`${newPath}&`);
+    else setPagePath(`${newPath}?`);
+
+    Router.push("/dashboard/site/[siteId]/pages", newPath);
+
+    updatePages();
+
+    return true;
+  };
+
+  useEffect(() => {
+    if (removeURLParameter(asPath, "page").includes("?"))
+      setPagePath(`${removeURLParameter(asPath, "page")}&`);
+    else setPagePath(`${removeURLParameter(asPath, "page")}?`);
+
+    if (props.result.search !== undefined) setSearchKey(props.result.search);
+
+    if (props.result.ordering !== undefined) {
+      const slug = getSlugFromSortKey(
+        LinksPagesContent,
+        props.result.ordering.replace("-", "")
+      );
+      const orderItem = slugToCamelcase(slug);
+
+      if (props.result.ordering.includes("-"))
+        setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+      else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (props.result.ordering !== undefined) {
+      setLargePageSizeFilter(true);
+      setAllFilter(false);
+    } else setLargePageSizeFilter(false);
+
+    if (props.result.tls_total !== undefined) {
+      setBrokenSecurityFilter(true);
+      setAllFilter(false);
+    } else setBrokenSecurityFilter(false);
+
+    if (
+      props.result.ordering == undefined &&
+      props.result.tls_total == undefined
+    ) {
+      setLargePageSizeFilter(false);
+      setBrokenSecurityFilter(false);
+
+      setAllFilter(true);
+    }
+  }, [filterChangeHandler]);
+
   const SortHandler = (slug, dir) => {
     setSortOrder({ ...initialOrder });
 
@@ -202,26 +306,6 @@ const Pages = (props) => {
     Router.push("/dashboard/site/[siteId]/pages", newPath);
     updatePages();
   };
-
-  useEffect(() => {
-    if (removeURLParameter(asPath, "page").includes("?"))
-      setPagePath(`${removeURLParameter(asPath, "page")}&`);
-    else setPagePath(`${removeURLParameter(asPath, "page")}?`);
-
-    if (props.result.search !== undefined) setSearchKey(props.result.search);
-
-    if (props.result.ordering !== undefined) {
-      const slug = getSlugFromSortKey(
-        LinksPagesContent,
-        props.result.ordering.replace("-", "")
-      );
-      const orderItem = slugToCamelcase(slug);
-
-      if (props.result.ordering.includes("-"))
-        setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
-      else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
-    }
-  }, []);
 
   const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`;
 
@@ -464,13 +548,12 @@ const Pages = (props) => {
                     searchKey={searchKey}
                     onSearchEvent={searchEventHandler}
                   />
-                  {/* <PageFilter
+                  <PageFilter
                     onFilterChange={filterChangeHandler}
                     allFilter={allFilter}
-                    noIssueFilter={noIssueFilter}
                     largePageSizeFilter={largePageSizeFilter}
                     brokenSecurityFilter={brokenSecurityFilter}
-                  /> */}
+                  />
                   <Pagination
                     href="/dashboard/site/[siteId]/pages"
                     pathName={pagePath}
