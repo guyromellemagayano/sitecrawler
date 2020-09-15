@@ -17,7 +17,6 @@ import (
 const (
 	depthLimit = 100
 	totalLimit = 10000
-	sizeLimit  = 10 * 1024 * 1024
 )
 
 const (
@@ -154,7 +153,6 @@ func (s *scanner) Start(log *zap.SugaredLogger) error {
 	}, relation{ChildType: CHILD_NONE})
 
 	for s.fifo.Len() > 0 {
-		log.Infof("Length of queue: %v", s.fifo.Len())
 		entry := s.popFifo()
 
 		childLinkId, err := s.scanURL(log, entry.Url, entry.Depth)
@@ -313,28 +311,25 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 		}
 	}
 
-	resp, err, cancel := s.ScanService.LoadService.Load(log, url.String())
-	defer cancel()
+	resp, err := s.ScanService.LoadService.Load(log, url.String())
+	defer resp.Close()
 	if err != nil {
 		handleError(err)
 		return crawlLink, nil
 	}
-	wrappedBody := &SizeReader{
-		Child: io.LimitReader(resp.Body, sizeLimit),
-	}
 	defer func() {
-		_, err := io.Copy(ioutil.Discard, wrappedBody)
+		_, err := io.Copy(ioutil.Discard, resp.Body)
 		if err != nil {
 			handleError(err)
 		}
-		crawlLink.Size = wrappedBody.Size
-		err = resp.Body.Close()
+		crawlLink.Size = resp.CompressedSize
+		err = resp.Close()
 		if err != nil {
 			handleError(err)
 		}
 	}()
 
-	tlsStatus, tlsId, err := s.tlsCache.Extract(resp)
+	tlsStatus, tlsId, err := s.tlsCache.Extract(resp.TLS, resp.Request)
 	if err != nil {
 		log.Error(err)
 	} else {
@@ -353,7 +348,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 
 	contentType := strings.SplitN(resp.Header.Get("Content-Type"), ";", 2)
 	if contentType[0] == "text/html" {
-		doc, err := goquery.NewDocumentFromReader(wrappedBody)
+		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
 			handleError(err)
 			return crawlLink, nil
@@ -476,6 +471,7 @@ func (s *scanner) normalizeURL(parent *url.URL, child string) (*url.URL, error) 
 		return nil, err
 	}
 	u.Fragment = ""
+	u.RawQuery = ""
 	if parent != nil {
 		return parent.ResolveReference(u), nil
 	}
@@ -485,17 +481,6 @@ func (s *scanner) normalizeURL(parent *url.URL, child string) (*url.URL, error) 
 func (s *scanner) isWebScheme(u *url.URL) bool {
 	scheme := strings.ToLower(u.Scheme)
 	return scheme == "http" || scheme == "https"
-}
-
-type SizeReader struct {
-	Child io.Reader
-	Size  int
-}
-
-func (r *SizeReader) Read(p []byte) (int, error) {
-	n, err := r.Child.Read(p)
-	r.Size += n
-	return n, err
 }
 
 func lenLimit(s string, limit int) string {

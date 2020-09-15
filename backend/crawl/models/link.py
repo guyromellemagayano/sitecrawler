@@ -10,6 +10,7 @@ from django.db.models import (
     When,
     IntegerField,
 )
+from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 
 
@@ -20,7 +21,7 @@ class SubQuerySizeSum(Subquery):
     output_field = PositiveIntegerField()
 
     def __init__(self, queryset, *args, **kwargs):
-        queryset = queryset.annotate(total=Sum("size")).values("total")
+        queryset = queryset.annotate(total=Coalesce(Sum("size"), 0)).values("total")
         queryset.query.set_group_by()
         super().__init__(queryset, *args, **kwargs)
 

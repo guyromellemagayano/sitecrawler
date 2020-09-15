@@ -31,6 +31,16 @@ const (
 	<body>
 	</body>
 </html>`
+	pageWithMultipleIDs = `
+<html>
+	<head>
+		<meta name="epic-crawl-id" content="first">
+		<meta name="epic-crawl-id" content="correct">
+		<meta name="epic-crawl-id" content="third">
+	</head>
+	<body>
+	</body>
+</html>`
 )
 
 func TestWithoutMeta(t *testing.T) {
@@ -62,6 +72,19 @@ func TestWithWrongID(t *testing.T) {
 func TestWithCorrectID(t *testing.T) {
 	service := &VerifyService{}
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(pageWithCorrectID))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.Verify(doc, "correct")
+	if err != nil {
+		t.Errorf("Verify() = %v, want nil", err)
+	}
+}
+
+func TestWithMultipleIDs(t *testing.T) {
+	service := &VerifyService{}
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(pageWithMultipleIDs))
 	if err != nil {
 		t.Fatal(err)
 	}
