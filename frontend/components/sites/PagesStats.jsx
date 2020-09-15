@@ -148,6 +148,8 @@ const SitesPagesStats = props => {
         stats && stats.num_pages : 0
   ]
 
+  console.log(stats)
+
   const chartOptions = {
     chart: {
       type: 'donut',
