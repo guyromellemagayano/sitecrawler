@@ -471,6 +471,7 @@ func (s *scanner) normalizeURL(parent *url.URL, child string) (*url.URL, error) 
 		return nil, err
 	}
 	u.Fragment = ""
+	u.RawQuery = ""
 	if parent != nil {
 		return parent.ResolveReference(u), nil
 	}
