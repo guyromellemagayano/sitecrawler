@@ -144,7 +144,7 @@ const Pages = (props) => {
     () => (query.siteId && scanObjId ? scanApiEndpoint : null),
     fetcher,
     {
-      refreshInterval: 1000,
+      refreshInterval: 50000,
     }
   );
 
