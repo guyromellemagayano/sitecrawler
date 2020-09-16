@@ -1,56 +1,56 @@
-import Link from 'next/link'
-import fetch from 'node-fetch'
-import useSWR from 'swr'
-import Cookies from 'js-cookie'
-import styled from 'styled-components'
-import PropTypes from 'prop-types'
-import Skeleton from 'react-loading-skeleton'
-import loadable from '@loadable/component'
-const Chart = loadable(() => import('react-apexcharts'));
+import Link from "next/link";
+import fetch from "node-fetch";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import styled from "styled-components";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import loadable from "@loadable/component";
+const Chart = loadable(() => import("react-apexcharts"));
 import Router from "next/router";
-import { pagesChartContents } from '../../enum/chartContents';
+import { pagesChartContents } from "../../enum/chartContents";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get("csrftoken"),
     },
-  })
+  });
 
-  const data = await res.json()
+  const data = await res.json();
 
   if (res.status !== 200) {
-    throw new Error(data.message)
+    throw new Error(data.message);
   }
 
-  return data
-}
+  return data;
+};
 
 const SitesPagesStatsDiv = styled.div`
-	.status-indicator {
-		display: block;
-		flex: 0 0 0.85rem;
-		max-width: 0.85rem;
-		height: 0.85rem;
-		border-radius: 50%;
+  .status-indicator {
+    display: block;
+    flex: 0 0 0.85rem;
+    max-width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
 
-		&.error {
-			&-1 {
-				background-color: #19B080;
-			}
-			&-2 {
-				background-color: #EF2917;
-			}
-			&-3 {
-				background-color: #ED5244;
-			}
-			&-4 {
-				background-color: #BB4338;
-			}
-		}
+    &.error {
+      &-1 {
+        background-color: #19b080;
+      }
+      &-2 {
+        background-color: #ef2917;
+      }
+      &-3 {
+        background-color: #ed5244;
+      }
+      &-4 {
+        background-color: #bb4338;
+      }
+    }
   }
   .apexcharts-legend {
     display: block;
@@ -58,7 +58,7 @@ const SitesPagesStatsDiv = styled.div`
   .apexcharts-legend-series {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #E7EFEF;
+    border-bottom: 1px solid #e7efef;
     padding-bottom: 10px;
   }
   .apexcharts-legend-series:last-child {
@@ -74,7 +74,7 @@ const SitesPagesStatsDiv = styled.div`
     margin-right: 10px;
   }
   .legend-val {
-    color: #1D2626;
+    color: #1d2626;
     font-weight: 600;
   }
   .legent-text {
@@ -83,55 +83,59 @@ const SitesPagesStatsDiv = styled.div`
   .skeleton-wrapper {
     margin-bottom: 20px;
   }
-`
+`;
 
-const SitesPagesStats = props => {
-	const {
-		data: scan,
-		error: scanError,
-	} = useSWR(() => (props.url.siteId ? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at` : null), fetcher, {
-		refreshInterval: 1000,
-	})
+const SitesPagesStats = (props) => {
+  const { data: scan, error: scanError } = useSWR(
+    () =>
+      props.url.siteId
+        ? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at`
+        : null,
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
+  );
 
-	let scanObjId = ""
+  let scanObjId = "";
 
   if (scan) {
-    let scanObj = []
+    let scanObj = [];
 
     scan.results.map((val) => {
-      scanObj.push(val)
-      return scanObj
-    })
+      scanObj.push(val);
+      return scanObj;
+    });
 
     scanObj.map((val, index) => {
-      if(index == 0) scanObjId = val.id
-      
-      return scanObjId
-    })
-	}
-	
-	const { data: stats, error: statsError } = useSWR(
+      if (index == 0) scanObjId = val.id;
+
+      return scanObjId;
+    });
+  }
+
+  const { data: stats, error: statsError } = useSWR(
     () =>
       props.url.siteId && scanObjId
         ? `/api/site/${props.url.siteId}/scan/${scanObjId}/`
         : null,
-    fetcher, {
+    fetcher,
+    {
       refreshInterval: 1000,
     }
-  )
-  
+  );
+
   const { data: noPageIssues, error: noPageIssuesError } = useSWR(
     () =>
       props.url.siteId && scanObjId
         ? `/api/site/${props.url.siteId}/scan/${scanObjId}/page/?size_total_max=1048576&tls_total=true`
         : null,
-    fetcher, {
+    fetcher,
+    {
       refreshInterval: 1000,
     }
-  )
+  );
 
-  console.log(noPageIssues)
-  
   // const chartSeries = [
   //   (stats && stats.num_pages) !== undefined ? stats && stats.num_pages : 0,
   //   (stats && stats.num_pages_big) !== undefined ? stats && stats.num_pages_big : 0,
@@ -140,64 +144,76 @@ const SitesPagesStats = props => {
   // ]
 
   const legendClickHandler = (label) => {
-    let path = `/dashboard/site/${props.url.siteId}/pages`
+    let path = `/dashboard/site/${props.url.siteId}/pages`;
 
     pagesChartContents.forEach((item, index) => {
       // console.log(item)
-      if(label === item.label && item.filter !== '')
-        path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
-    })
+      if (label === item.label && item.filter !== "")
+        path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
+    });
 
     Router.push("/dashboard/site/[siteId]/pages", path);
-  }
+  };
 
   const chartSeries = [
-    stats && stats.num_pages_big !== undefined ? stats && stats.num_pages_big : 0,
-    stats && stats.num_pages_tls_non_ok !== undefined ? stats && stats.num_pages_tls_non_ok : 0,
-    noPageIssues && noPageIssues.count !== undefined ? noPageIssues && noPageIssues.count : 0
-  ]
+    stats && stats.num_pages_big !== undefined
+      ? stats && stats.num_pages_big
+      : 0,
+    stats && stats.num_pages_tls_non_ok !== undefined
+      ? stats && stats.num_pages_tls_non_ok
+      : 0,
+    noPageIssues && noPageIssues.count !== undefined
+      ? noPageIssues && noPageIssues.count
+      : 0,
+  ];
 
   const chartOptions = {
     chart: {
-      type: 'donut',
+      type: "donut",
       events: {
-        legendClick: function(chartContext, seriesIndex, config) {
-          legendClickHandler(config.config.labels[seriesIndex])
-        }
-      }
+        legendClick: function (chartContext, seriesIndex, config) {
+          legendClickHandler(config.config.labels[seriesIndex]);
+        },
+      },
     },
     // labels: ['No Issues', 'Large Page Size', 'Broken Security', 'Not on Google'],
     // colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338'],
     // fill: {
     //   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338']
     // },
-    labels: pagesChartContents.map(item => item.label),
-    colors: pagesChartContents.map(item => item.color),
+    labels: pagesChartContents.map((item) => item.label),
+    colors: pagesChartContents.map((item) => item.color),
     fill: {
-      colors: pagesChartContents.map(item => item.color)
+      colors: pagesChartContents.map((item) => item.color),
     },
     stroke: {
-      width: 0
+      width: 0,
     },
     dataLabels: {
       enabled: true,
       formatter: function (val, opts) {
-        return opts.w.config.series[opts.seriesIndex]
-      }
+        return opts.w.config.series[opts.seriesIndex];
+      },
     },
     legend: {
       show: true,
-      fontSize: '14px',
-      position: 'bottom',
-      horizontalAlign: 'center',
+      fontSize: "14px",
+      position: "bottom",
+      horizontalAlign: "center",
       height: 210,
       itemMargin: {
         horizontal: 15,
-        vertical: 10
+        vertical: 10,
       },
-      formatter: function(seriesName, opts) {
-        return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
-      }
+      formatter: function (seriesName, opts) {
+        return [
+          `<span class='legend-text'>${seriesName}</span>`,
+          "   ",
+          `<span class='legend-val'>${
+            opts.w.globals.series[opts.seriesIndex]
+          }</span>`,
+        ];
+      },
     },
     plotOptions: {
       pie: {
@@ -211,36 +227,48 @@ const SitesPagesStats = props => {
               fontSize: "15px",
               color: "#2A324B",
               formatter: function (val) {
-                let num_errs = 0
-                for(let i=0; i<val.config.series.slice(0, -1).length; i++) {
-                  num_errs += val.config.series[i]
+                let num_errs = 0;
+                for (
+                  let i = 0;
+                  i < val.config.series.slice(0, -1).length;
+                  i++
+                ) {
+                  num_errs += val.config.series[i];
                 }
 
-                return num_errs
-              }
-            }
-          }
-        }
-      }
-    },
-    responsive: [{
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 400
+                return num_errs;
+              },
+            },
+          },
         },
-        legend: {
-          position: 'bottom'
-        }
-      }
-    }]
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 400,
+          },
+          legend: {
+            position: "bottom",
+          },
+        },
+      },
+    ],
+  };
+
+  {
+    statsError && <Layout>{statsError.message}</Layout>;
+  }
+  {
+    scanError && <Layout>{scanError.message}</Layout>;
+  }
+  {
+    noPageIssuesError && <Layout>{noPageIssuesError.message}</Layout>;
   }
 
-	{statsError && <Layout>{statsError.message}</Layout>}
-  {scanError && <Layout>{scanError.message}</Layout>}
-  {noPageIssuesError && <Layout>{noPageIssuesError.message}</Layout>}
-	
-	return (
+  return (
     <SitesPagesStatsDiv>
       <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
         <div className={`flex justify-between py-8 px-5`}>
@@ -258,7 +286,9 @@ const SitesPagesStats = props => {
                 d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
               ></path>
             </svg>
-            <h2 className={`text-lg font-bold leading-7 text-gray-900`}>Pages</h2>
+            <h2 className={`text-lg font-bold leading-7 text-gray-900`}>
+              Pages
+            </h2>
           </div>
           <div>
             <Link
@@ -274,20 +304,25 @@ const SitesPagesStats = props => {
           </div>
         </div>
         <div className={`flex justify-center items-center flex-col`}>
-          {
-            stats == undefined ? (
-              <div className={`skeleton-wrapper`}>
-                <Skeleton circle={true} duration={2} width={240} height={240} />
-                <br />
-                <br />
-                <Skeleton duration={2} width={240} height={190} />
-              </div>
-            ) : <Chart options={chartOptions} series={chartSeries} type="donut" height="530" />
-          }
-				</div>
+          {stats == undefined ? (
+            <div className={`skeleton-wrapper`}>
+              <Skeleton circle={true} duration={2} width={240} height={240} />
+              <br />
+              <br />
+              <Skeleton duration={2} width={240} height={190} />
+            </div>
+          ) : (
+            <Chart
+              options={chartOptions}
+              series={chartSeries}
+              type="donut"
+              height="530"
+            />
+          )}
+        </div>
       </div>
     </SitesPagesStatsDiv>
-  )
-}
+  );
+};
 
-export default SitesPagesStats
+export default SitesPagesStats;
