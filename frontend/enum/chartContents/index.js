@@ -61,7 +61,7 @@ export const imagesChartContents = [
     color: '#f56565'
   }, {
     label: 'Broken Security',
-    filter: '',
+    filter: 'tls_status=ERROR&tls_status=NONE',
     color: '#e53e3e'
   }, {
     label: 'No Issues',

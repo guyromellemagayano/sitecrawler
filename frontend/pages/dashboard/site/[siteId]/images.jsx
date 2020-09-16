@@ -66,6 +66,9 @@ const Images = (props) => {
   const [sortOrder, setSortOrder] = useState(initialOrder);
   const [allFilter, setAllFilter] = useState(false);
   const [imageNotWorkingFilter, setImageNotWorkingFilter] = useState(false);
+  const [imageBrokenSecurityFilter, setImageBrokenSecurityFilter] = useState(
+    false
+  );
   const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
 
@@ -134,6 +137,12 @@ const Images = (props) => {
       : "";
 
   queryString +=
+    props.result.tls_status !== undefined
+      ? (scanApiEndpoint + queryString).includes("?")
+        ? `&tls_status=ERROR&tls_status=NONE`
+        : `?tls_status=ERROR&tls_status=NONE`
+      : "";
+  queryString +=
     props.result.search !== undefined
       ? (scanApiEndpoint + queryString).includes("?")
         ? `&search=${props.result.search}`
@@ -148,7 +157,7 @@ const Images = (props) => {
 
   scanApiEndpoint += queryString;
 
-  const { data: image, error: imageError, mutate: updateLinks } = useSWR(
+  const { data: image, error: imageError, mutate: updateImages } = useSWR(
     () => (query.siteId && scanObjId ? scanApiEndpoint : null),
     fetcher,
     {
@@ -222,12 +231,11 @@ const Images = (props) => {
     const filterStatus = e.target.checked;
 
     let newPath = asPath;
+    newPath = removeURLParameter(newPath, "page");
 
     if (filterType == "notWorking" && filterStatus == true) {
       setImageNotWorkingFilter(true);
       setAllFilter(false);
-      newPath = removeURLParameter(newPath, "page");
-      newPath = removeURLParameter(newPath, "status");
 
       if (newPath.includes("?"))
         newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
@@ -237,14 +245,27 @@ const Images = (props) => {
       setImageNotWorkingFilter(false);
     }
 
+    if (filterType == "brokenSecurity" && filterStatus == true) {
+      setImageBrokenSecurityFilter(true);
+      setAllFilter(false);
+
+      if (newPath.includes("?")) newPath += `&tls_status=ERROR&tls_status=NONE`;
+      else newPath += `?tls_status=ERROR&tls_status=NONE`;
+    } else if (filterType == "brokenSecurity" && filterStatus == false) {
+      newPath = removeURLParameter(newPath, "tls_status");
+      setImageBrokenSecurityFilter(false);
+    }
+
     if (filterType == "all" && filterStatus == true) {
-      setAllFilter(true);
       setImageNotWorkingFilter(false);
+      setImageBrokenSecurityFilter(false);
+
+      setAllFilter(true);
 
       newPath = removeURLParameter(newPath, "status");
-      newPath = removeURLParameter(newPath, "page");
+      newPath = removeURLParameter(newPath, "tls_status");
 
-      if (!newPath.includes("search") && !newPath.includes("ordering"))
+      if (!newPath.includes("search") && !newPath.includes("status"))
         newPath = newPath.replace("?", "");
     }
 
@@ -253,7 +274,7 @@ const Images = (props) => {
 
     Router.push("/dashboard/site/[siteId]/images", newPath);
 
-    updateLinks();
+    updateImages();
 
     return true;
   };
@@ -285,16 +306,20 @@ const Images = (props) => {
     ) {
       setImageNotWorkingFilter(true);
       setAllFilter(false);
-    } else if (
-      props.result.status !== undefined &&
-      !Array.isArray(props.result.status)
+    } else setImageNotWorkingFilter(false);
+
+    if (props.result.tls_status !== undefined) {
+      setImageBrokenSecurityFilter(true);
+      setAllFilter(false);
+    } else setImageBrokenSecurityFilter(false);
+
+    if (
+      props.result.status == undefined &&
+      props.result.tls_status == undefined
     ) {
       setImageNotWorkingFilter(false);
-      setAllFilter(false);
-    }
+      setImageBrokenSecurityFilter(false);
 
-    if (props.result.type == undefined && props.result.status == undefined) {
-      setImageNotWorkingFilter(false);
       setAllFilter(true);
     }
   }, [filterChangeHandler]);
@@ -511,6 +536,7 @@ const Images = (props) => {
                     onFilterChange={filterChangeHandler}
                     allFilter={allFilter}
                     imageNotWorkingFilter={imageNotWorkingFilter}
+                    imageBrokenSecurityFilter={imageBrokenSecurityFilter}
                   />
                   <Pagination
                     href="/dashboard/site/[siteId]/images"
