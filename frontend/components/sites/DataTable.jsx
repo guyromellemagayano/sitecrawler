@@ -1,33 +1,33 @@
-import { useState, Fragment } from 'react'
-import fetch from 'node-fetch'
-import Cookies from 'js-cookie'
-import useSWR from 'swr'
-import Link from 'next/link'
-import styled from 'styled-components'
-import Moment from 'react-moment'
-import Layout from '../Layout'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
-import Skeleton from 'react-loading-skeleton';
-import Transition from 'hooks/Transition'
+import { useState, Fragment } from "react";
+import fetch from "node-fetch";
+import Cookies from "js-cookie";
+import useSWR from "swr";
+import Link from "next/link";
+import styled from "styled-components";
+import Moment from "react-moment";
+import Layout from "../Layout";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import Skeleton from "react-loading-skeleton";
+import Transition from "hooks/Transition";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get("csrftoken"),
     },
-  })
+  });
 
-  const data = await res.json()
+  const data = await res.json();
 
   if (res.status !== 200) {
-    throw new Error(data.message)
+    throw new Error(data.message);
   }
 
-  return data
-}
+  return data;
+};
 
 const DataTableDiv = styled.tr`
   div {
@@ -37,134 +37,256 @@ const DataTableDiv = styled.tr`
       margin-left: 1rem;
     }
   }
-`
+`;
 
-const DataTable = props => {
-  const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${props.site.verification_id}" />`)
-  const [copied, setCopied] = useState(false)
-  const [siteVerifyId, setSiteVerifyId] = useState(props.site.id)
-  const [errorMsg, setErrorMsg] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
-  const [disableSiteVerify, setDisableSiteVerify] = useState(false)
-  const [enableNextStep, setEnableNextStep] = useState(false)
-  const [showVerifySiteModal, setShowVerifySiteModal] = useState(false)
-  const [showDeleteSiteModal, setShowDeleteSiteModal] = useState(false)
+const DataTable = (props) => {
+  const [copyValue, setCopyValue] = useState(
+    `<meta name="epic-crawl-id" content="${props.site.verification_id}" />`
+  );
+  const [copied, setCopied] = useState(false);
+  const [siteVerifyId, setSiteVerifyId] = useState(props.site.id);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [disableSiteVerify, setDisableSiteVerify] = useState(false);
+  const [enableNextStep, setEnableNextStep] = useState(false);
+  const [showVerifySiteModal, setShowVerifySiteModal] = useState(false);
+  const [showDeleteSiteModal, setShowDeleteSiteModal] = useState(false);
   const calendarStrings = {
-    lastDay : '[Yesterday], dddd',
-    sameDay : '[Today], dddd',
-    lastWeek : 'MMMM DD, YYYY',
-    sameElse : 'MMMM DD, YYYY'
-  }
+    lastDay: "[Yesterday], dddd",
+    sameDay: "[Today], dddd",
+    lastWeek: "MMMM DD, YYYY",
+    sameElse: "MMMM DD, YYYY",
+  };
 
   const handleInputChange = ({ copyValue }) => {
-    setCopyValue({ copyValue, copied })
-  }
+    setCopyValue({ copyValue, copied });
+  };
 
   const handleHiddenInputChange = (e) => {
-    setSiteVerifyId({ value: e.currentTarget.site_verify_id.value })
-  }
+    setSiteVerifyId({ value: e.currentTarget.site_verify_id.value });
+  };
 
   const handleInputCopy = () => {
-    setCopied(true)
-  }
+    setCopied(true);
+  };
 
-  const deleteSiteSettings = async (endpoint) => {    
+  const deleteSiteSettings = async (endpoint) => {
     await fetch(endpoint, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
-      }
-    })
-  }
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
+    });
+  };
 
   const handleSiteDeletion = async (e) => {
-    e.preventDefault()
-    
-    await deleteSiteSettings(`/api/site/${props.site.id}/`)
-    
+    e.preventDefault();
+
+    await deleteSiteSettings(`/api/site/${props.site.id}/`);
+
     setTimeout(() => {
-      setShowDeleteSiteModal(false)
-    }, 500)
-  }
+      setShowDeleteSiteModal(false);
+    }, 500);
+  };
 
   const handleSiteVerification = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (errorMsg) setErrorMsg('')
-    if (successMsg) setSuccessMsg('')
+    if (errorMsg) setErrorMsg("");
+    if (successMsg) setSuccessMsg("");
 
     const body = {
       sid: e.currentTarget.site_verify_id.value,
-    }
+    };
 
-    const response = await fetch('/api/site/' + props.site.id + '/verify/', {
-      method: 'POST',
+    const response = await fetch("/api/site/" + props.site.id + "/verify/", {
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
       },
       body: JSON.stringify(body),
-    })
-    
-    const data = await response.json()
+    });
+
+    const data = await response.json();
 
     if (response.ok && data.verified) {
-      setSuccessMsg('Site verification success. Proceed to the next step.')
-      setDisableSiteVerify(!disableSiteVerify)
-      setEnableNextStep(!enableNextStep)
+      setSuccessMsg("Site verification success. Proceed to the next step.");
+      setDisableSiteVerify(!disableSiteVerify);
+      setEnableNextStep(!enableNextStep);
     } else if (response.ok && !data.verified) {
-      setErrorMsg('Site verification failed. You have not verify the site yet.')
+      setErrorMsg(
+        "Site verification failed. You have not verify the site yet."
+      );
     } else {
       throw new Error(await response.text());
     }
-  }
+  };
 
   const { data: scan, error: scanError } = useSWR(
-    () => (props ? `/api/site/${props.site.id}/scan/?ordering=-finished_at` : null),
+    () =>
+      props ? `/api/site/${props.site.id}/scan/?ordering=-finished_at` : null,
     fetcher,
     { refreshInterval: 1000 }
-  )
+  );
 
-  let scanObjId = ""
+  let scanObjId = "";
 
   if (scan) {
-    let scanObj = []
+    let scanObj = [];
 
     scan.results.map((val) => {
-      scanObj.push(val)
-      return scanObj
-    })
+      scanObj.push(val);
+      return scanObj;
+    });
 
     scanObj.map((val, index) => {
-      if(index == 0) scanObjId = val.id
-      
-      return scanObjId
-    })
+      if (index == 0) scanObjId = val.id;
+
+      return scanObjId;
+    });
   }
 
-  const { data: scanId, error: scanIdError } = useSWR(
+  const { data: stats, error: statsError } = useSWR(
     () =>
       props && scanObjId
         ? `/api/site/${props.site.id}/scan/${scanObjId}/`
         : `/api/site/${props.site.id}/`,
     fetcher,
     { refreshInterval: 1000 }
-  )
+  );
 
-  {scanError && <Layout>{scanError.message}</Layout>}
-  {scanIdError && <Layout>{scanIdError.message}</Layout>}
+  const { data: links, error: linksError } = useSWR(
+    () =>
+      props && scanObjId
+        ? `/api/site/${props.site.id}/scan/${scanObjId}/link/`
+        : null,
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
+  );
 
-  if (!scan || !scanId) {
+  const { data: images, error: imagesError } = useSWR(
+    () =>
+      props && scanObjId
+        ? `/api/site/${props.site.id}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
+        : null,
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
+  );
+
+  const setLinkErrors = type => {
+    let valLength = 0;
+
+    if (links) {
+      links.results.map((val, key) => {
+        if (
+          val.status === "HTTP_ERROR" ||
+          val.status === "TIMEOUT" ||
+          val.status === "OTHER_ERROR"
+        ) {
+          if (val.type === type) {
+            valLength++;
+          }
+        }
+      });
+    }
+
+    return valLength;
+  };
+
+  const setSeoErrors = () => {
+    let valLength = 0;
+
+    if (stats) {
+      if (
+        (stats.num_pages_without_title !== 0 && stats.num_pages_without_title !== undefined) ||
+        (stats.num_pages_without_description !== 0 && stats.num_pages_without_description !== undefined) ||
+        (stats.num_pages_without_h1_first !== 0 && stats.num_pages_without_h1_first !== undefined) ||
+        (stats.num_pages_without_h2_first !== 0 && stats.num_pages_without_h2_first !== undefined)
+      ) {
+        valLength = (stats ? stats.num_pages_without_title : 0) + (stats ? stats.num_pages_without_description : 0) + (stats ? stats.num_pages_without_h1_first : 0) + (stats ? stats.num_pages_without_h2_first : 0);
+      }
+    }
+
+    return valLength;
+  };
+
+  const setPageErrors = () => {
+    let valLength = 0;
+
+    if (stats) {
+      if (
+        (stats.num_pages_big !== 0 && stats.num_pages_big !== undefined) ||
+        (stats.num_pages_tls_non_ok !== 0 && stats.num_pages_tls_non_ok !== undefined)
+      ) {
+        valLength = (stats ? stats.num_pages_big : 0) + (stats ? stats.num_pages_tls_non_ok : 0);
+      }
+    }
+
+    return valLength;
+  };
+
+  const setImageErrors = () => {
+    let valLength = 0;
+
+    if (stats) {
+      if (
+        stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined
+      ) {
+        valLength = stats ? stats.num_non_ok_images : 0;
+      }
+    }
+
+    if (images && images.count !== undefined) {
+      valLength = valLength + (images.count ? images.count : 0);
+    }
+
+    return valLength;
+  };
+
+  const setTotalIssues = () => {
+    let valLength = 0;
+
+    valLength = setLinkErrors('PAGE') + setLinkErrors('EXTERNAL') + setSeoErrors() + setPageErrors() + setImageErrors();
+
+    return valLength;
+  };
+
+  {
+    statsError && <Layout>{statsError.message}</Layout>;
+  }
+  {
+    scanError && <Layout>{scanError.message}</Layout>;
+  }
+  {
+    linksError && <Layout>{linksError.message}</Layout>;
+  }
+  {
+    imagesError && <Layout>{imagesError.message}</Layout>;
+  }
+
+  if (!scan || !stats) {
     return (
       <Fragment>
         <DataTableDiv>
-          {[...Array(6)].map((val, index) => <td className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`} key={index}><Skeleton duration={2} /></td>)}
+          {[...Array(6)].map((val, index) => (
+            <td
+              className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`}
+              key={index}
+            >
+              <Skeleton duration={2} />
+            </td>
+          ))}
         </DataTableDiv>
       </Fragment>
-    )
+    );
   }
 
   return (
@@ -175,7 +297,9 @@ const DataTable = props => {
         <div className={`flex items-center`}>
           {props.site.url && props.site.name ? (
             <div className={`mr-4`}>
-              <div className={`text-overflow text-sm leading-5 font-medium text-gray-900`}>
+              <div
+                className={`text-overflow text-sm leading-5 font-medium text-gray-900`}
+              >
                 {!props.site.verified ? (
                   <span
                     className={`text-sm leading-5 font-semibold text-gray-500`}
@@ -183,7 +307,10 @@ const DataTable = props => {
                     {props.site.name}
                   </span>
                 ) : (
-                  <Link href="/dashboard/site/[siteId]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
+                  <Link
+                    href="/dashboard/site/[siteId]/overview"
+                    as={`/dashboard/site/${props.site.id}/overview`}
+                  >
                     <a
                       className={`text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500`}
                     >
@@ -192,14 +319,18 @@ const DataTable = props => {
                   </Link>
                 )}
               </div>
-              <div className={`flex justify-start text-sm leading-5 text-gray-500`}>
+              <div
+                className={`flex justify-start text-sm leading-5 text-gray-500`}
+              >
                 {!props.site.verified && (
                   <Fragment>
                     <button
                       type={`button`}
                       id={`siteVerifySiteModalButton`}
                       className={`flex items-center justify-start text-sm leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150`}
-                      onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
+                      onClick={() =>
+                        setShowVerifySiteModal(!showVerifySiteModal)
+                      }
                     >
                       Verify Site
                     </button>
@@ -207,7 +338,9 @@ const DataTable = props => {
                       type={`button`}
                       id={`siteVerifySiteModalButton`}
                       className={`ml-3 flex items-center justify-start text-sm leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150`}
-                      onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
+                      onClick={(e) =>
+                        setShowDeleteSiteModal(!showDeleteSiteModal)
+                      }
                     >
                       Delete Site
                     </button>
@@ -221,43 +354,54 @@ const DataTable = props => {
       <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
         <div className={`text-sm leading-5 text-gray-900`}>
           {!props.user.settings.disableLocalTime ? (
-            <Moment calendar={calendarStrings} date={scanId.finished_at} local />
-          ): (
-            <Moment calendar={calendarStrings} date={scanId.finished_at} utc />
+            <Moment calendar={calendarStrings} date={stats.finished_at} local />
+          ) : (
+            <Moment calendar={calendarStrings} date={stats.finished_at} utc />
           )}
         </div>
         <div className={`text-sm leading-5 text-gray-500`}>
           {!props.user.settings.disableLocalTime ? (
-            <Moment date={scanId.finished_at} format="hh:mm:ss A" local />
+            <Moment date={stats.finished_at} format="hh:mm:ss A" local />
           ) : (
-            <Moment date={scanId.finished_at} format="hh:mm:ss A" utc />
+            <Moment date={stats.finished_at} format="hh:mm:ss A" utc />
           )}
         </div>
       </td>
-      <td className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200`}>
-        {props.site.verified ? (
-          <span
-            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800`}
+      {setTotalIssues() > 0 ? (
+        <td
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
+        >
+          <Link
+            href="/dashboard/site/[siteId]/overview"
+            as={`/dashboard/site/${props.site.id}/overview`}
           >
-            Verified
-          </span>
-        ) : (
-          <span
-            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800`}
+            <a>{setTotalIssues()}</a>
+          </Link>
+        </td>
+      ) : (
+        <td
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
+        >
+          <Link
+            href="/dashboard/site/[siteId]/overview"
+            as={`/dashboard/site/${props.site.id}/overview`}
           >
-            Unverified
-          </span>
-        )}
-      </td>
-      {scanId.num_links ? (
+            <a>0</a>
+          </Link>
+        </td>
+      )}
+      {stats.num_links ? (
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
-          <Link href="/dashboard/site/[siteId]/links" as={`/dashboard/site/${props.site.id}/links`}>
+          <Link
+            href="/dashboard/site/[siteId]/links"
+            as={`/dashboard/site/${props.site.id}/links`}
+          >
             <a
               className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
             >
-              {scanId.num_links}
+              {stats.num_links}
             </a>
           </Link>
         </td>
@@ -268,15 +412,18 @@ const DataTable = props => {
           0
         </td>
       )}
-      {scanId.num_pages ? (
+      {stats.num_pages ? (
         <td
           className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
-          <Link href="/dashboard/site/[siteId]/pages" as={`/dashboard/site/${props.site.id}/pages`}>
+          <Link
+            href="/dashboard/site/[siteId]/pages"
+            as={`/dashboard/site/${props.site.id}/pages`}
+          >
             <a
               className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
             >
-              {scanId.num_pages}
+              {stats.num_pages}
             </a>
           </Link>
         </td>
@@ -287,16 +434,27 @@ const DataTable = props => {
           0
         </td>
       )}
-      {scanId.num_non_ok_links ? (
+      {stats.num_images ? (
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
         >
-          {scanId.num_non_ok_links}
+          <Link
+            href="/dashboard/site/[siteId]/images"
+            as={`/dashboard/site/${props.site.id}/images`}
+          >
+            <a
+              className={`text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+            >
+              {stats.num_images}
+            </a>
+          </Link>
         </td>
       ) : (
         <td
-          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-red-500`}
-        >0</td>
+          className={`px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-semibold text-gray-500`}
+        >
+          0
+        </td>
       )}
 
       <Transition show={showVerifySiteModal}>
@@ -311,9 +469,7 @@ const DataTable = props => {
             leaveFrom="opacity-100"
             leaveTo="opacity-100"
           >
-            <div
-              className={`fixed inset-0 transition-opacity`}
-            >
+            <div className={`fixed inset-0 transition-opacity`}>
               <div className={`absolute inset-0 bg-gray-500 opacity-75`}></div>
             </div>
           </Transition>
@@ -335,22 +491,35 @@ const DataTable = props => {
                 <div
                   className={`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10`}
                 >
-                  <svg className={`h-6 w-6 text-yellow-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  <svg
+                    className={`h-6 w-6 text-yellow-600`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
-                <div className={`mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left`}>
+                <div
+                  className={`mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left`}
+                >
                   <h3
-                    className={`text-lg leading-6 font-medium text-gray-800`} id="modal-headline"
+                    className={`text-lg leading-6 font-medium text-gray-800`}
+                    id="modal-headline"
                   >
                     Verify Site:{" "}
                     <a
-                      href={scanId.url}
+                      href={stats.url}
                       target="_blank"
-                      title={scanId.url}
+                      title={stats.url}
                       className={`break-all text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
                     >
-                      {scanId.url}
+                      {stats.url}
                     </a>
                   </h3>
                   <div className={`mt-2`}>
@@ -369,8 +538,8 @@ const DataTable = props => {
                         Sign in to your website.
                       </li>
                       <li className={`text-sm leading-6 text-gray-600`}>
-                        Copy the meta tag below and add it within your
-                        website's <strong>{`<HEAD>`}</strong> tag <br />
+                        Copy the meta tag below and add it within your website's{" "}
+                        <strong>{`<HEAD>`}</strong> tag <br />
                         <div>
                           <div className={`my-3 flex`}>
                             <div
@@ -392,9 +561,7 @@ const DataTable = props => {
                               <button
                                 className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
                               >
-                                <span>
-                                  {copied ? "Copied!" : "Copy"}
-                                </span>
+                                <span>{copied ? "Copied!" : "Copy"}</span>
                               </button>
                             </CopyToClipboard>
                           </div>
@@ -408,7 +575,9 @@ const DataTable = props => {
 
                   {errorMsg && (
                     <div className={`block p-2 mt-3`}>
-                      <div className={`flex sm:ml-2 justify-center sm:justify-start`}>
+                      <div
+                        className={`flex sm:ml-2 justify-center sm:justify-start`}
+                      >
                         <div>
                           <h3
                             className={`text-sm leading-5 font-medium text-red-800 break-words`}
@@ -422,7 +591,9 @@ const DataTable = props => {
 
                   {successMsg && (
                     <div className={`block p-2 mt-3`}>
-                      <div className={`flex sm:ml-2 justify-center sm:justify-start`}>
+                      <div
+                        className={`flex sm:ml-2 justify-center sm:justify-start`}
+                      >
                         <div>
                           <h3
                             className={`text-sm leading-5 font-medium text-green-800 break-words`}
@@ -435,8 +606,10 @@ const DataTable = props => {
                   )}
                 </div>
               </div>
-              
-              <div className={`w-full my-3 sm:mt-4 sm:inline-flex sm:flex-row-reverse`}>
+
+              <div
+                className={`w-full my-3 sm:mt-4 sm:inline-flex sm:flex-row-reverse`}
+              >
                 {!disableSiteVerify ? (
                   <span
                     className={`mt-3 sm:ml-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto`}
@@ -451,21 +624,24 @@ const DataTable = props => {
                         name={`site_verify_id`}
                         onChange={handleHiddenInputChange}
                       />
-                        <button
-                          type={`submit`}
-                          className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
-                        >
-                          Verify Site
-                        </button>
+                      <button
+                        type={`submit`}
+                        className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                      >
+                        Verify Site
+                      </button>
                     </form>
                   </span>
                 ) : null}
-                
+
                 {enableNextStep ? (
                   <span
                     className={`mt-3 sm:ml-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto`}
                   >
-                    <Link href="/dashboard/site/[siteId]/overview" as={`/dashboard/site/${props.site.id}/overview`}>
+                    <Link
+                      href="/dashboard/site/[siteId]/overview"
+                      as={`/dashboard/site/${props.site.id}/overview`}
+                    >
                       <a
                         className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
                       >
@@ -481,7 +657,12 @@ const DataTable = props => {
                   <button
                     type="button"
                     className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
-                    onClick={() => setTimeout(() => setShowVerifySiteModal(!showVerifySiteModal), 150)}
+                    onClick={() =>
+                      setTimeout(
+                        () => setShowVerifySiteModal(!showVerifySiteModal),
+                        150
+                      )
+                    }
                   >
                     Close
                   </button>
@@ -504,9 +685,7 @@ const DataTable = props => {
             leaveFrom="opacity-100"
             leaveTo="opacity-100"
           >
-            <div
-              className={`fixed inset-0 transition-opacity`}
-            >
+            <div className={`fixed inset-0 transition-opacity`}>
               <div className={`absolute inset-0 bg-gray-500 opacity-75`}></div>
             </div>
           </Transition>
@@ -542,15 +721,19 @@ const DataTable = props => {
                     />
                   </svg>
                 </div>
-                <div className={`mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left`}>
+                <div
+                  className={`mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left`}
+                >
                   <h3
-                    className={`text-lg leading-6 font-medium text-gray-900`} id="modal-headline"
+                    className={`text-lg leading-6 font-medium text-gray-900`}
+                    id="modal-headline"
                   >
                     Delete Site
                   </h3>
                   <div className={`mt-2`}>
                     <p className={`text-sm leading-5 text-gray-500`}>
-                      Are you sure you want to delete this website? You will lose all its data and settings.
+                      Are you sure you want to delete this website? You will
+                      lose all its data and settings.
                     </p>
                   </div>
                 </div>
@@ -573,7 +756,12 @@ const DataTable = props => {
                   <button
                     type="button"
                     className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
-                    onClick={() => setTimeout(() => setShowDeleteSiteModal(!showDeleteSiteModal), 150)}
+                    onClick={() =>
+                      setTimeout(
+                        () => setShowDeleteSiteModal(!showDeleteSiteModal),
+                        150
+                      )
+                    }
                   >
                     Cancel
                   </button>
@@ -584,7 +772,7 @@ const DataTable = props => {
         </div>
       </Transition>
     </DataTableDiv>
-  )
-}
+  );
+};
 
-export default DataTable
+export default DataTable;

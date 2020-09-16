@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
+import { linksChartContents } from '../../enum/chartContents';
+import Router from "next/router";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -28,6 +30,7 @@ const fetcher = async (url) => {
 }
 
 const SitesLinksStatsDiv = styled.div`
+	height: 100%;
 	.status-indicator {
 		display: block;
 		flex: 0 0 0.85rem;
@@ -48,20 +51,20 @@ const SitesLinksStatsDiv = styled.div`
 			&-4 {
 				background-color: #BB4338;
 			}
+			&-5 {
+				background-color: #2D99FF;
+			}
 		}
-	}
-	.apexcharts-legend {
-		display: block;
 	}
 	.apexcharts-legend-series {
 		display: flex;
 		align-items: center;
 		border-bottom: 1px solid #E7EFEF;
-		padding-bottom: 10px;
+		padding-bottom: 9px;
 	}
 	.apexcharts-legend-series:last-child {
 		border: none;
-	  }
+	}
 	.apexcharts-legend-text {
 		display: flex;
 		align-items: center;
@@ -75,11 +78,11 @@ const SitesLinksStatsDiv = styled.div`
 		color: #1D2626;
 		font-weight: 600;
 	}
-	.legend-text {
+	.legent-text {
 		margin-right: 10px;
 	}
-	.skeleton-wrapper {
-		margin-bottom: 20px;
+	.space {
+		width: 20px;
 	}
 `
 
@@ -137,8 +140,10 @@ const SitesLinksStats = props => {
 
 		if (links) {
 			links.results.map((val, key) => {
-				if ((val.status === 'HTTP_ERROR' || val.status === 'TIMEOUT' || val.status === 'OTHER_ERROR') && val.type === type) {
-					valLength++
+				if (val.status === 'HTTP_ERROR' || val.status === 'TIMEOUT' || val.status === 'OTHER_ERROR') {
+					if (val.type === type) {
+						valLength++
+					}
 				}
 			})
 		}
@@ -146,20 +151,36 @@ const SitesLinksStats = props => {
 		return valLength
 	}
 
+	const legendClickHandler = (label) => {
+		let path = `/dashboard/site/${props.url.siteId}/links`
+
+		linksChartContents.forEach((item, index) => {
+			if(label === item.label && item.filter !== '')
+				path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
+		})
+
+		Router.push("/dashboard/site/[siteId]/links", path);
+	}
+
 	const chartSeries = [
-		(stats && stats.num_ok_links) !== undefined ? stats && stats.num_ok_links : 0,
-		setBrokenLinks('INTERNAL'),
-		setBrokenLinks('EXTERNAL')
+		setBrokenLinks('PAGE'),
+		setBrokenLinks('EXTERNAL'),
+		stats && stats.num_ok_links !== undefined ? stats && stats.num_ok_links : 0
 	]
 	
 	const chartOptions = {
 		chart: {
-			type: 'donut'
+			type: 'donut',
+			events: {
+			  legendClick: function(chartContext, seriesIndex, config) {
+				legendClickHandler(config.config.labels[seriesIndex])
+			  }
+			}
 		},
-		labels: ['No Issues', 'Broken Internal Links', 'Broken External Links'],
-		colors: ['#19B080', '#EF2917', '#ED5244'],
+		labels: linksChartContents.map(item => item.label),
+		colors: linksChartContents.map(item => item.color),
 		fill: {
-			colors: ['#19B080', '#EF2917', '#ED5244']
+			colors: linksChartContents.map(item => item.color)
 		},
 		stroke: {
 			width: 0
@@ -171,59 +192,60 @@ const SitesLinksStats = props => {
 			}
 		},
 		legend: {
-			show: true,
-			fontSize: '14px',
-			position: 'bottom',
-			horizontalAlign: 'center', 
-			height: 210,
-			itemMargin: {
-				horizontal: 15,
-				vertical: 10
-			},
-			formatter: function(seriesName, opts) {
-				return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
-			}
+      show: true,
+      fontSize: '14px',
+      position: 'right',
+      floating: false,
+      width: 300,
+      horizontalAlign: 'center', 
+      itemMargin: {
+        horizontal: 5,
+        vertical: 5
+      },
+      formatter: function(seriesName, opts) {
+        return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
+      }
 		},
 		plotOptions: {
-			pie: {
-			donut: {
-				labels: {
-				show: true,
-				total: {
-					show: true,
-					showAlways: true,
-					label: "Errors",
-					fontSize: "15px",
-					color: "#2A324B",
-					formatter: function (val) {
-						let num_errs = 0
-						for(let i=0; i<val.config.series.length; i++) {
-							if(i != 0) num_errs += val.config.series[i]
-						}
+      pie: {
+        donut: {
+          labels: {
+						show: true,
+            total: {
+              show: true,
+              showAlways: true,
+              label: "Link Errors",
+              fontSize: "15px",
+              color: "#2A324B",
+              formatter: function (val) {
+                let num_errs = 0
+                for(let i=0; i<val.config.series.slice(0, -1).length; i++) {
+                  num_errs += val.config.series[i]
+                }
 
-						return num_errs
-					}
-				}
-				}
-			}
-			}
-		},
-		responsive: [{
-			breakpoint: 480,
-			options: {
-				chart: {
-					width: 400
-				},
-				legend: {
-					position: 'bottom'
-				}
-			}
-		}]
+                return num_errs
+              }
+            }
+          }
+        }
+      }
+    },
+    responsive: [{
+      breakpoint: 1315,
+      options: {
+        chart: {
+          width: 400
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }]
 	}
 	
 	return (
     <SitesLinksStatsDiv>
-      <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+      <div className={`bg-white overflow-hidden shadow-xs rounded-lg h-full`}>
         <div className={`flex justify-between py-8 px-5`}>
           <div className={`flex items-center`}>
             <svg
@@ -255,17 +277,17 @@ const SitesLinksStats = props => {
           </div>
         </div>
         <div className={`flex justify-center`}>
-			{
-				stats == undefined ? (
-					<div className={`skeleton-wrapper`}>
-						<Skeleton circle={true} duration={2} width={240} height={240} />
-						<br />
-						<br />
-						<Skeleton duration={2} width={240} height={190} />
-					</div>
-				) : <Chart options={chartOptions} series={chartSeries} type="donut" height="530" />
-			}
-		</div>
+          {
+            stats == undefined ? (
+              <>
+              <Skeleton circle={true} duration={2} width={240} height={240} />
+              <span className={`space`}></span>
+              <Skeleton duration={2} width={240} height={240} />
+              </>
+            ) : 
+              <Chart options={chartOptions} series={chartSeries} type="donut" width="600" height="260" />
+          }
+        </div>
       </div>
     </SitesLinksStatsDiv>
   )

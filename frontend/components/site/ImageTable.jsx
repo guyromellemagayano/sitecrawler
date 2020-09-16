@@ -69,6 +69,14 @@ const ImagesTableDiv = styled.tbody`
 			display: inline-block;
 		}
 	}
+
+	.btn-detail {
+    display: inline-block;
+    padding: 8px 10px;
+    line-height: 1;
+    font-size: 0.7rem;
+    margin-top: 5px;
+  }
 `
 
 const ImagesTable = props => {
@@ -92,7 +100,7 @@ const ImagesTable = props => {
 				<ImagesTableDiv className={`bg-white`}>
 					<tr>
 						<td
-							className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-200`}
+							className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200`}
 						>
 							<div className={`flex items-center`}>
 								<div>
@@ -103,41 +111,36 @@ const ImagesTable = props => {
 											href={props.val.url}
 											target={`_blank`}
 											title={props.val.url}
-											className={`truncate-link text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+											className={`text-sm leading-6 font-semibold text-blue-1000 hover:text-blue-900 transition ease-in-out duration-150 truncate-link`}
 										>
 											{props.val.url}
 										</a>
 									</div>
 									<div className={`flex justify-start inline-text-sm leading-5 text-gray-500`}>
 										<Link href="/dashboard/site/[id]/images/[id]/details" as={`/dashboard/site/${query.siteId}/images/${props.val.id}/details`}>
-											<a className={`mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>View Details</a>
+											<a className={`btn-detail mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-white bg-indigo-600 rounded hover:bg-indigo-500 hover:border-0 transition ease-in-out duration-150`}>View Details</a>
 										</Link>
 									</div>
 								</div>
 							</div>
 						</td>
 						<td
-							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+							className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
 						>
 							{bytes(props.val.size, {thousandsSeparator: ' ', unitSeparator: ' '})}
 						</td>
 						<td
-							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+							className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
 						>
 							{props.val.status === "OK" ? (
 								<SiteSuccessBadge text={"OK"} />
 							) : props.val.status === "TIMEOUT" ? (
 								<SiteWarningBadge text={"TIMEOUT"} />
 							) : props.val.status === "HTTP_ERROR" ? (
-								<SiteDangerBadge text={"HTTP ERROR"} />
+								<SiteDangerBadge text={`HTTP ERROR (${props.val.http_status})`} />
 							) : (
 								<SiteDangerBadge text={"OTHER ERROR"} />
 							)}
-						</td>
-						<td
-							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
-						>
-							{props.val.http_status}
 						</td>
 						<td
 							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-red-500`}
@@ -145,7 +148,7 @@ const ImagesTable = props => {
 							{props.val.length !== 0 ? <Link href="/dashboard/site/[id]/links/[id]/details" as={`/dashboard/site/${query.siteId}/links/${props.val.id}/details`}><a className={`mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}><span className={`truncate-link`}>{props.val[0] && Url(props.val[0].url).pathname !== '' ? Url(props.val[0].url).pathname : <em>_domain</em>}</span>&nbsp;{(props.val.length - 1) > 0 ? "+" + parseInt(props.val.length - 1) : null} {(props.val.length - 1) > 1 ? "others" : (props.val.length - 1) === 1 ? "other" : null}</a></Link> : ''}
 						</td>
 						<td
-							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
+							className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500`}
 						>
 							{props.val.occurences}
 						</td>

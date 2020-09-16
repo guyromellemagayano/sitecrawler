@@ -1,127 +1,156 @@
-import { Fragment, useState } from 'react'
-import Link from 'next/link'
-import Head from 'next/head'
-import { useRouter } from 'next/router'
-import fetch from 'node-fetch'
-import useSWR from 'swr'
-import Cookies from 'js-cookie'
-import styled from 'styled-components'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
-import Moment from 'react-moment'
-import Layout from 'components/Layout'
-import MobileSidebar from 'components/sidebar/MobileSidebar'
-import MainSidebar from 'components/sidebar/MainSidebar'
-import SiteDangerBadge from 'components/badges/SiteDangerBadge'
-import SiteSuccessBadge from 'components/badges/SiteSuccessBadge'
-import SiteWarningBadge from 'components/badges/SiteWarningBadge'
+import { Fragment, useState } from "react";
+import Link from "next/link";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import fetch from "node-fetch";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import styled from "styled-components";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import Moment from "react-moment";
+import Layout from "components/Layout";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import MainSidebar from "components/sidebar/MainSidebar";
+import SiteDangerBadge from "components/badges/SiteDangerBadge";
+import SiteSuccessBadge from "components/badges/SiteSuccessBadge";
+import SiteWarningBadge from "components/badges/SiteWarningBadge";
+import SiteFooter from "components/footer/SiteFooter";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get("csrftoken"),
     },
-  })
+  });
 
-  const data = await res.json()
+  const data = await res.json();
 
   if (res.status !== 200) {
-    throw new Error(data.message)
+    throw new Error(data.message);
   }
 
-  return data
-}
+  return data;
+};
 
-const LinkDetailDiv = styled.div``
+const LinkDetailDiv = styled.div`
+  .url-heading {
+    font-size: 1.4rem;
+  }
+`;
 
 const LinkDetail = () => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const [copyValue, setCopyValue] = useState(null)
-  const [copied, setCopied] = useState(false)
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [copyValue, setCopyValue] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const calendarStrings = {
     lastDay: "[Yesterday], dddd",
     sameDay: "[Today], dddd",
     lastWeek: "MMMM DD, YYYY",
     sameElse: "MMMM DD, YYYY",
-  }
+  };
 
-  const pageTitle = `Links Detail |`
+  const pageTitle = `Links Detail |`;
 
-  const handleUrlCopy = e => {
-    setCopyValue(e)
-    setCopied(true)
-  }
+  const handleUrlCopy = (e) => {
+    setCopyValue(e);
+    setCopied(true);
+  };
 
-  const { query } = useRouter()
-  const userApiEndpoint = `/api/auth/user/`
+  const { query } = useRouter();
+  const userApiEndpoint = `/api/auth/user/`;
 
-  const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher)
+  const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher);
 
   const { data: site, error: siteError } = useSWR(
     () => (query.siteId ? `/api/site/${query.siteId}/` : null),
     fetcher
-  )
+  );
 
   const { data: scan, error: scanError } = useSWR(
     () => (query.siteId ? `/api/site/${query.siteId}/scan/` : null),
     fetcher
-  )
+  );
 
-  let scanObjId = ""
+  let scanObjId = "";
 
   if (scan) {
-    let scanObj = []
+    let scanObj = [];
 
     scan.results.map((val) => {
-      scanObj.push(val)
-      return scanObj
-    })
+      scanObj.push(val);
+      return scanObj;
+    });
 
     scanObj.map((val) => {
-      scanObjId = val.id
-      return scanObjId
-    })
+      scanObjId = val.id;
+      return scanObjId;
+    });
   }
 
-  const scanApiEndpoint = `/api/site/${query.siteId}/scan/${scanObjId}/link/`
+  const scanApiEndpoint = `/api/site/${query.siteId}/scan/${scanObjId}/link/`;
 
   const { data: link, error: linkError } = useSWR(
-    () => query.siteId && scanObjId ? scanApiEndpoint : null, fetcher
-  )
+    () => (query.siteId && scanObjId ? scanApiEndpoint : null),
+    fetcher
+  );
 
-  const linkLocationApiEndpoint = `/api/site/${query.siteId}/scan/${scanObjId}/link/${query.linkId}/`
+  const linkLocationApiEndpoint = `/api/site/${query.siteId}/scan/${scanObjId}/link/${query.linkId}/`;
 
   const { data: linkLocation, error: linkLocationError } = useSWR(
-    () => query.siteId && scanObjId && query.linkId ? linkLocationApiEndpoint : null, fetcher
-  )
+    () =>
+      query.siteId && scanObjId && query.linkId
+        ? linkLocationApiEndpoint
+        : null,
+    fetcher
+  );
 
-  {linkLocationError && <Layout>{linkLocationError.message}</Layout>}
-  {linkError && <Layout>{linkError.message}</Layout>}
-  {scanError && <Layout>{scanError.message}</Layout>}
-  {siteError && <Layout>{siteError.message}</Layout>}
-  {userError && <Layout>{userError.message}</Layout>}
+  {
+    linkLocationError && <Layout>{linkLocationError.message}</Layout>;
+  }
+  {
+    linkError && <Layout>{linkError.message}</Layout>;
+  }
+  {
+    scanError && <Layout>{scanError.message}</Layout>;
+  }
+  {
+    siteError && <Layout>{siteError.message}</Layout>;
+  }
+  {
+    userError && <Layout>{userError.message}</Layout>;
+  }
 
-	return (
+  return (
     <Layout>
-      {link && site && user ? (
+      {link && site && user && linkLocation ? (
         <Fragment>
           <Head>
-            <title>{pageTitle} {linkLocation.url}</title>
+            <title>
+              {pageTitle} {linkLocation.url}
+            </title>
           </Head>
 
-          <LinkDetailDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <LinkDetailDiv
+            className={`h-screen flex overflow-hidden bg-gray-100`}
+          >
             <MobileSidebar show={openMobileSidebar} />
             <MainSidebar />
-            
+
             <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
               <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
                 <button
                   className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                   aria-label={`Open sidebar`}
-                  onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
+                  onClick={() =>
+                    setTimeout(
+                      () => setOpenMobileSidebar(!openMobileSidebar),
+                      150
+                    )
+                  }
                 >
                   <svg
                     className={`h-6 w-5`}
@@ -142,45 +171,98 @@ const LinkDetail = () => {
                 className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
                 tabIndex={`0`}
               >
-                <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
+                <div
+                  className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+                >
                   <div>
                     <nav className={`sm:hidden`}>
-                      <Link href={'/dashboard/site/' + query.siteId + '/links'}>
-                        <a className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>
-                          <svg className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      <Link href={"/dashboard/site/" + query.siteId + "/links"}>
+                        <a
+                          className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          <svg
+                            className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                           Back to Links
                         </a>
                       </Link>
                     </nav>
-                    <nav className={`hidden sm:flex items-center text-sm leading-5`}>
-                      <Link href={'/dashboard/site/' + query.siteId + '/overview'}>
-                        <a className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{site.name}</a>
+                    <nav
+                      className={`hidden sm:flex items-center text-sm leading-5`}
+                    >
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/overview"}
+                      >
+                        <a
+                          className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          {site.name}
+                        </a>
                       </Link>
-                      <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
+                      <svg
+                        className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
-                      <Link href={'/dashboard/site/' + query.siteId + '/links'}>
-                        <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>All Links</a>
+                      <Link href={"/dashboard/site/" + query.siteId + "/links"}>
+                        <a
+                          className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          All Links
+                        </a>
                       </Link>
-                      <svg className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}>
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/>
+                      <svg
+                        className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
-                      <Link href={'/dashboard/site/' + query.siteId + '/link/' + query.linkId + '/detail'}>
-                        <a className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}>{linkLocation.url}</a>
+                      <Link
+                        href={"/dashboard/site/[siteId]/links/[linkId]/details"}
+                        as={
+                          "/dashboard/site/" +
+                          query.siteId +
+                          "/links/" +
+                          query.linkId +
+                          "/details"
+                        }
+                      >
+                        <a
+                          className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          {linkLocation.url}
+                        </a>
                       </Link>
                     </nav>
                   </div>
-                  <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                  <div
+                    className={`mt-2 md:flex md:items-center md:justify-between`}
+                  >
                     <div className={`flex-1 min-w-0`}>
-                      <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
-                        Link Details for: <br/>
+                      <h2
+                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
+                      >
+                        Link Details for: <br />
                         <a
                           href={linkLocation.url}
                           target={`_blank`}
                           title={linkLocation.url}
-                          className={`text-2xl font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words block w-full`}
+                          className={`url-heading font-bold leading-7 sm:text-3xl sm:leading-9 block mr-3 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150 break-words block w-full`}
                         >
                           {linkLocation.url}
                         </a>
@@ -189,14 +271,22 @@ const LinkDetail = () => {
                   </div>
                 </div>
                 <div className={`max-w-4xl py-6 px-4 sm:px-6 md:px-8`}>
-                  <div className={`bg-white shadow overflow-hidden sm:rounded-lg`}>
+                  <div
+                    className={`bg-white shadow overflow-hidden sm:rounded-lg`}
+                  >
                     <div className={`px-4 py-5 sm:p-0`}>
                       <dl>
-                        <div className={`sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5`}>
-                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
-                            Created at 
+                        <div
+                          className={`sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
+                            Created at
                           </dt>
-                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
                             {!user.settings.disableLocalTime ? (
                               <Fragment>
                                 <Moment
@@ -228,11 +318,17 @@ const LinkDetail = () => {
                             )}
                           </dd>
                         </div>
-                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
                             Type
                           </dt>
-                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
                             {linkLocation.type === "PAGE"
                               ? "Page"
                               : linkLocation.type === "EXTERNAL"
@@ -240,11 +336,17 @@ const LinkDetail = () => {
                               : "Other"}
                           </dd>
                         </div>
-                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
                             Status
                           </dt>
-                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
                             {linkLocation.status === "OK" ? (
                               <SiteSuccessBadge text={"OK"} />
                             ) : linkLocation.status === "TIMEOUT" ? (
@@ -256,29 +358,48 @@ const LinkDetail = () => {
                             )}
                           </dd>
                         </div>
-                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
                             Response Time
                           </dt>
-                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
                             {linkLocation.response_time} ms
                           </dd>
                         </div>
-                        {linkLocation.error !== null && linkLocation.error !== undefined ? (
-                          <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                            <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                        {linkLocation.error !== null &&
+                        linkLocation.error !== undefined ? (
+                          <div
+                            className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                          >
+                            <dt
+                              className={`text-sm leading-5 font-medium text-gray-500`}
+                            >
                               Error
                             </dt>
-                            <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                            <dd
+                              className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                            >
                               <SiteDangerBadge text={linkLocation.error} />
                             </dd>
                           </div>
                         ) : null}
-                        <div className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}>
-                          <dt className={`text-sm leading-5 font-medium text-gray-500`}>
+                        <div
+                          className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+                        >
+                          <dt
+                            className={`text-sm leading-5 font-medium text-gray-500`}
+                          >
                             Page Links
                           </dt>
-                          <dd className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}>
+                          <dd
+                            className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
+                          >
                             <ul className={`border border-gray-200 rounded-md`}>
                               {linkLocation.pages.map((val, key) => {
                                 return (
@@ -286,7 +407,9 @@ const LinkDetail = () => {
                                     key={key}
                                     className={`border-b border-gray-200 pl-3 pr-4 py-3 flex items-center justify-between text-sm leading-5`}
                                   >
-                                    <div className={`w-0 flex-1 flex items-center`}>
+                                    <div
+                                      className={`w-0 flex-1 flex items-center`}
+                                    >
                                       <svg
                                         className={`flex-shrink-0 h-5 w-5 text-gray-400`}
                                         fill="none"
@@ -328,7 +451,7 @@ const LinkDetail = () => {
                                       </CopyToClipboard>
                                     </div>
                                   </li>
-                                )
+                                );
                               })}
                             </ul>
                           </dd>
@@ -337,13 +460,19 @@ const LinkDetail = () => {
                     </div>
                   </div>
                 </div>
+
+                <div
+                  className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
+                >
+                  <SiteFooter />
+                </div>
               </main>
             </div>
           </LinkDetailDiv>
         </Fragment>
       ) : null}
     </Layout>
-	)
-}
+  );
+};
 
-export default LinkDetail
+export default LinkDetail;

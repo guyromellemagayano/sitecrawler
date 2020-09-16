@@ -6,7 +6,7 @@
 		"label": "Last Crawled"
 	},
 	{
-		"label": "Site Status"
+		"label": "Total Issues"
 	},
 	{
 		"label": "Total Links"
@@ -15,6 +15,6 @@
 		"label": "Total Pages"
 	},
 	{
-		"label": "Link Issues"
+		"label": "Total Images"
 	}
 ]

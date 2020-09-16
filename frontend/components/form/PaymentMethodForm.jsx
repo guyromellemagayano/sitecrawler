@@ -1,29 +1,51 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
 import { useStripe, useElements, CardNumberElement, CardCvcElement, CardExpiryElement } from '@stripe/react-stripe-js'
+import Cookies from "js-cookie";
+import useSWR, { mutate } from "swr";
 
 const useOptions = () => {
 	const options = useMemo(
-    () => ({
-      style: {
-        base: {
+		() => ({
+			style: {
+				base: {
 					fontFamily: "Inter var, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
-          "::placeholder": {
-            color: "#aab7c4"
+					"::placeholder": {
+						color: "#aab7c4"
 					},
-          color: "#424770",
+					color: "#424770",
 					letterSpacing: "0.025em",
 					lineHeight: "1.25rem",
-        },
-        invalid: {
-          color: "#9e2146"
-        }
-      }
-    }),
-  );
+				},
+				invalid: {
+					color: "#9e2146"
+				}
+			}
+		}),
+	);
 
 	return options
 }
+
+const fetcher = async (url) => {
+	const res = await fetch(url, {
+		method: "GET",
+		headers: {
+		Accept: "application/json",
+		"Content-Type": "application/json",
+		"X-CSRFToken": Cookies.get("csrftoken"),
+		},
+	});
+
+	const data = await res.json();
+
+	if (res.status !== 200) {
+		throw new Error(data.message);
+	}
+
+	return data;
+};
+  
 
 const PaymentMethodFormDiv = styled.section`
 	.input-group {
@@ -32,28 +54,59 @@ const PaymentMethodFormDiv = styled.section`
 	}
 `
 
-const PaymentMethodForm = () => {
+const PaymentMethodForm = props => {
 	const stripe = useStripe()
-  const elements = useElements()
-  const options = useOptions()
+	const elements = useElements()
+	const options = useOptions()
 
 	const handleSubmit = async event => {
-    event.preventDefault()
+		event.preventDefault()
 
-    if (!stripe || !elements) {
-      // Stripe.js has not loaded yet. Make sure to disable
-      // form submission until Stripe.js has loaded.
-      return
-    }
+		if (!stripe || !elements) {
+			// Stripe.js has not loaded yet. Make sure to disable
+			// form submission until Stripe.js has loaded.
+			return
+		}
 
-    const payload = await stripe.createPaymentMethod({
-      type: "card",
-      card: elements.getElement(CardNumberElement)
+		const payload = await stripe.createPaymentMethod({
+			type: "card",
+			card: elements.getElement(CardNumberElement)
 		})
-		
-    console.log("[PaymentMethod]", payload)
+
+		console.log("[PaymentMethod]", payload)
+
+		const body = {
+			id: payload.paymentMethod.id
+		};
+
+		const response = await fetch("/api/stripe/payment-method/", {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"X-CSRFToken": Cookies.get("csrftoken"),
+			},
+			body: JSON.stringify(body),
+		});
+
+		console.log('[subscriptionId]', props.subscriptionId)
+
+		await fetch("/api/stripe/subscription/current/", {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"X-CSRFToken": Cookies.get("csrftoken"),
+			},
+			body: JSON.stringify({id: props.subscriptionId}),
+		});
+
+		setTimeout(() => {
+			props.closeForm()
+			props.onSubscriptionUpdated()
+		}, 200)
 	}
-	
+
 	return (
 		<PaymentMethodFormDiv>
 			<form onSubmit={handleSubmit}>
@@ -89,7 +142,7 @@ const PaymentMethodForm = () => {
 				</div>
 				<div className={`mt-5 sm:mt-6`}>
 					<span className={`flex w-full rounded-md shadow-sm sm:col-start-2`}>
-						<button 
+						<button
 							type="submit"
 							className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
 							disabled={!stripe}

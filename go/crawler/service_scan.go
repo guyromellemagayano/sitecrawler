@@ -17,7 +17,6 @@ import (
 const (
 	depthLimit = 100
 	totalLimit = 10000
-	sizeLimit  = 10 * 1024 * 1024
 )
 
 const (
@@ -25,6 +24,8 @@ const (
 	CHILD_IMAGE
 	CHILD_STYLESHEET
 	CHILD_SCRIPT
+
+	CHILD_NONE = 127
 )
 
 type ScanService struct {
@@ -110,16 +111,22 @@ func (s *ScanService) Start(log *zap.SugaredLogger, scan *common.CrawlScan) erro
 		tlsCache: NewTlsCache(s.TlsDao),
 
 		linkIDs: make(map[string]int),
-		fifo:    list.New(),
+
+		fifo:   list.New(),
+		inFifo: make(map[string]*fifoEntry),
 	}
 	return scanner.Start(log)
 }
 
+type relation struct {
+	ParentId  int
+	ChildType uint8
+}
+
 type fifoEntry struct {
-	Url          *url.URL
-	Depth        uint
-	ChildType    int
-	ParentLinkId int
+	Url       *url.URL
+	Depth     uint
+	Relations []relation
 }
 
 type scanner struct {
@@ -129,7 +136,9 @@ type scanner struct {
 	tlsCache *TlsCache
 
 	linkIDs map[string]int
-	fifo    *list.List
+
+	fifo   *list.List
+	inFifo map[string]*fifoEntry
 }
 
 func (s *scanner) Start(log *zap.SugaredLogger) error {
@@ -138,69 +147,22 @@ func (s *scanner) Start(log *zap.SugaredLogger) error {
 		return err
 	}
 
-	s.fifo.PushBack(fifoEntry{
-		Url:          u,
-		Depth:        0,
-		ParentLinkId: -1,
-	})
+	s.addLinkWithRelation(log, fifoEntry{
+		Url:   u,
+		Depth: 0,
+	}, relation{ChildType: CHILD_NONE})
 
 	for s.fifo.Len() > 0 {
-		element := s.fifo.Front()
-		s.fifo.Remove(element)
-
-		entry := element.Value.(fifoEntry)
+		entry := s.popFifo()
 
 		childLinkId, err := s.scanURL(log, entry.Url, entry.Depth)
 		if err != nil {
 			return err
 		}
 
-		if entry.ParentLinkId != -1 {
-			switch entry.ChildType {
-			case CHILD_LINK:
-				linkLink := &common.CrawlLinkLink{
-					FromLinkID: entry.ParentLinkId,
-					ToLinkID:   childLinkId,
-				}
-
-				if err := s.ScanService.LinkLinkDao.Save(linkLink); err != nil {
-					if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-						return err
-					}
-				}
-			case CHILD_IMAGE:
-				linkImage := &common.CrawlLinkImage{
-					FromLinkID: entry.ParentLinkId,
-					ToLinkID:   childLinkId,
-				}
-
-				if err := s.ScanService.LinkImageDao.Save(linkImage); err != nil {
-					if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-						return err
-					}
-				}
-			case CHILD_SCRIPT:
-				linkScript := &common.CrawlLinkScript{
-					FromLinkID: entry.ParentLinkId,
-					ToLinkID:   childLinkId,
-				}
-
-				if err := s.ScanService.LinkScriptDao.Save(linkScript); err != nil {
-					if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-						return err
-					}
-				}
-			case CHILD_STYLESHEET:
-				linkStylesheet := &common.CrawlLinkStylesheet{
-					FromLinkID: entry.ParentLinkId,
-					ToLinkID:   childLinkId,
-				}
-
-				if err := s.ScanService.LinkStylesheetDao.Save(linkStylesheet); err != nil {
-					if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-						return err
-					}
-				}
+		for _, r := range entry.Relations {
+			if err := s.saveRelation(r, childLinkId); err != nil {
+				return err
 			}
 		}
 	}
@@ -226,7 +188,8 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 		log.Errorf("Could not save page data for link %v: %v", link.ID, err)
 	}
 
-	if depth > depthLimit || len(s.linkIDs) > totalLimit {
+	if depth > depthLimit {
+		log.Errorf("Depth limit hit for link %v", link.ID)
 		return link.ID, nil
 	}
 
@@ -242,11 +205,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 			return
 		}
 
-		s.fifo.PushBack(fifoEntry{
-			Url:          childUrl,
-			Depth:        depth + 1,
-			ParentLinkId: link.ID,
-			ChildType:    CHILD_LINK,
+		s.addLinkWithRelation(log, fifoEntry{
+			Url:   childUrl,
+			Depth: depth + 1,
+		}, relation{
+			ParentId:  link.ID,
+			ChildType: CHILD_LINK,
 		})
 	})
 
@@ -262,11 +226,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 			return
 		}
 
-		s.fifo.PushBack(fifoEntry{
-			Url:          childUrl,
-			Depth:        depth + 1,
-			ParentLinkId: link.ID,
-			ChildType:    CHILD_IMAGE,
+		s.addLinkWithRelation(log, fifoEntry{
+			Url:   childUrl,
+			Depth: depth + 1,
+		}, relation{
+			ParentId:  link.ID,
+			ChildType: CHILD_IMAGE,
 		})
 	})
 
@@ -282,11 +247,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 			return
 		}
 
-		s.fifo.PushBack(fifoEntry{
-			Url:          childUrl,
-			Depth:        depth + 1,
-			ParentLinkId: link.ID,
-			ChildType:    CHILD_SCRIPT,
+		s.addLinkWithRelation(log, fifoEntry{
+			Url:   childUrl,
+			Depth: depth + 1,
+		}, relation{
+			ParentId:  link.ID,
+			ChildType: CHILD_SCRIPT,
 		})
 	})
 
@@ -302,11 +268,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 			return
 		}
 
-		s.fifo.PushBack(fifoEntry{
-			Url:          childUrl,
-			Depth:        depth + 1,
-			ParentLinkId: link.ID,
-			ChildType:    CHILD_STYLESHEET,
+		s.addLinkWithRelation(log, fifoEntry{
+			Url:   childUrl,
+			Depth: depth + 1,
+		}, relation{
+			ParentId:  link.ID,
+			ChildType: CHILD_STYLESHEET,
 		})
 	})
 
@@ -317,7 +284,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 	crawlLink := &common.CrawlLink{
 		ScanID:    s.Scan.ID,
 		CreatedAt: time.Now(),
-		Url:       url.String(),
+		Url:       lenLimit(url.String(), 2047),
 		Type:      TYPE_OTHER,
 		Status:    STATUS_OK,
 		TlsStatus: TLS_OK,
@@ -339,36 +306,30 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 		} else {
 			log.Errorf("Other error for link %v: %v", url, err)
 			crawlLink.Status = STATUS_OTHER_ERROR
-			errStr := err.Error()
-			if len(errStr) > 255 {
-				errStr = errStr[:255]
-			}
+			errStr := lenLimit(err.Error(), 255)
 			crawlLink.Error = &errStr
 		}
 	}
 
-	resp, err, cancel := s.ScanService.LoadService.Load(log, url.String())
-	defer cancel()
+	resp, err := s.ScanService.LoadService.Load(log, url.String())
+	defer resp.Close()
 	if err != nil {
 		handleError(err)
 		return crawlLink, nil
 	}
-	wrappedBody := &SizeReader{
-		Child: io.LimitReader(resp.Body, sizeLimit),
-	}
 	defer func() {
-		_, err := io.Copy(ioutil.Discard, wrappedBody)
+		_, err := io.Copy(ioutil.Discard, resp.Body)
 		if err != nil {
 			handleError(err)
 		}
-		crawlLink.Size = wrappedBody.Size
-		err = resp.Body.Close()
+		crawlLink.Size = resp.CompressedSize
+		err = resp.Close()
 		if err != nil {
 			handleError(err)
 		}
 	}()
 
-	tlsStatus, tlsId, err := s.tlsCache.Extract(resp)
+	tlsStatus, tlsId, err := s.tlsCache.Extract(resp.TLS, resp.Request)
 	if err != nil {
 		log.Error(err)
 	} else {
@@ -387,7 +348,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 
 	contentType := strings.SplitN(resp.Header.Get("Content-Type"), ";", 2)
 	if contentType[0] == "text/html" {
-		doc, err := goquery.NewDocumentFromReader(wrappedBody)
+		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
 			handleError(err)
 			return crawlLink, nil
@@ -424,12 +385,93 @@ func (s *scanner) savePageData(doc *goquery.Document, linkID int) error {
 
 }
 
+func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, fe fifoEntry, r relation) {
+	urlStr := fe.Url.String()
+	if childId, ok := s.linkIDs[urlStr]; ok {
+		if err := s.saveRelation(r, childId); err != nil {
+			log.Errorf("Could not save relation: %v", err)
+		}
+	} else if oldFe, ok := s.inFifo[urlStr]; ok {
+		if r.ChildType != CHILD_NONE {
+			oldFe.Relations = append(oldFe.Relations, r)
+		}
+	} else if len(s.linkIDs)+len(s.inFifo) <= totalLimit {
+		fep := &fe
+		fep.Relations = []relation{r}
+		s.fifo.PushBack(fep)
+		s.inFifo[urlStr] = fep
+	} else {
+		log.Errorf("Total limit hit for: %v", fe.Url)
+	}
+}
+
+func (s *scanner) popFifo() *fifoEntry {
+	element := s.fifo.Front()
+	entry := element.Value.(*fifoEntry)
+
+	s.fifo.Remove(element)
+	delete(s.inFifo, entry.Url.String())
+
+	return entry
+}
+
+func (s *scanner) saveRelation(r relation, childLinkId int) error {
+	switch r.ChildType {
+	case CHILD_LINK:
+		linkLink := &common.CrawlLinkLink{
+			FromLinkID: r.ParentId,
+			ToLinkID:   childLinkId,
+		}
+
+		if err := s.ScanService.LinkLinkDao.Save(linkLink); err != nil {
+			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				return err
+			}
+		}
+	case CHILD_IMAGE:
+		linkImage := &common.CrawlLinkImage{
+			FromLinkID: r.ParentId,
+			ToLinkID:   childLinkId,
+		}
+
+		if err := s.ScanService.LinkImageDao.Save(linkImage); err != nil {
+			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				return err
+			}
+		}
+	case CHILD_SCRIPT:
+		linkScript := &common.CrawlLinkScript{
+			FromLinkID: r.ParentId,
+			ToLinkID:   childLinkId,
+		}
+
+		if err := s.ScanService.LinkScriptDao.Save(linkScript); err != nil {
+			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				return err
+			}
+		}
+	case CHILD_STYLESHEET:
+		linkStylesheet := &common.CrawlLinkStylesheet{
+			FromLinkID: r.ParentId,
+			ToLinkID:   childLinkId,
+		}
+
+		if err := s.ScanService.LinkStylesheetDao.Save(linkStylesheet); err != nil {
+			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func (s *scanner) normalizeURL(parent *url.URL, child string) (*url.URL, error) {
 	u, err := url.Parse(child)
 	if err != nil {
 		return nil, err
 	}
 	u.Fragment = ""
+	u.RawQuery = ""
 	if parent != nil {
 		return parent.ResolveReference(u), nil
 	}
@@ -441,13 +483,9 @@ func (s *scanner) isWebScheme(u *url.URL) bool {
 	return scheme == "http" || scheme == "https"
 }
 
-type SizeReader struct {
-	Child io.Reader
-	Size  int
-}
-
-func (r *SizeReader) Read(p []byte) (int, error) {
-	n, err := r.Child.Read(p)
-	r.Size += n
-	return n, err
+func lenLimit(s string, limit int) string {
+	if len(s) > limit {
+		return s[:limit]
+	}
+	return s
 }

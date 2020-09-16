@@ -1,25 +1,26 @@
-import { Fragment, useState, useEffect } from "react"
-import { useRouter } from "next/router"
-import LogRocket from 'logrocket'
-import setupLogRocketReact from 'logrocket-react'
-import Cookies from "js-cookie"
-import Head from "next/head"
-import styled from "styled-components"
-import PropTypes from "prop-types"
-import Skeleton from "react-loading-skeleton"
-import useSWR from "swr"
-import DataTableHeadsContent from "public/data/data-table-heads.json"
-import useUser from "hooks/useUser"
-import Layout from "components/Layout"
-import MobileSidebar from "components/sidebar/MobileSidebar"
-import MainSidebar from "components/sidebar/MainSidebar"
-import AddSite from "components/sites/AddSite"
-import DataTable from "components/sites/DataTable"
-import Pagination from "components/sites/Pagination"
+import { Fragment, useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import LogRocket from "logrocket";
+import setupLogRocketReact from "logrocket-react";
+import Cookies from "js-cookie";
+import Head from "next/head";
+import styled from "styled-components";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import useSWR from "swr";
+import DataTableHeadsContent from "public/data/data-table-heads.json";
+import useUser from "hooks/useUser";
+import Layout from "components/Layout";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import MainSidebar from "components/sidebar/MainSidebar";
+import AddSite from "components/sites/AddSite";
+import DataTable from "components/sites/DataTable";
+import Pagination from "components/sites/Pagination";
+import SiteFooter from "components/footer/SiteFooter";
 
-if (typeof window !== 'undefined') {
-  LogRocket.init('epic-design-labs/link-app')
-  setupLogRocketReact(LogRocket)
+if (typeof window !== "undefined") {
+  LogRocket.init("epic-design-labs/link-app");
+  setupLogRocketReact(LogRocket);
 }
 
 const fetcher = async (url) => {
@@ -30,56 +31,56 @@ const fetcher = async (url) => {
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
-  })
+  });
 
-  const data = await res.json()
+  const data = await res.json();
 
   if (res.status !== 200) {
-    throw new Error(data.message)
+    throw new Error(data.message);
   }
 
-  return data
-}
+  return data;
+};
 
-const SitesDiv = styled.section``
+const SitesDiv = styled.section``;
 
-const Sites = props => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const [userLoaded, setUserLoaded] = useState(false)
-  const pageTitle = "Sites"
+const Sites = (props) => {
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [userLoaded, setUserLoaded] = useState(false);
+  const pageTitle = "Sites";
   const sitesApiEndpoint =
-    props.page !== undefined ? "/api/site/?page=" + props.page : "/api/site/"
-  const router = useRouter()
+    props.page !== undefined ? "/api/site/?page=" + props.page : "/api/site/";
+  const router = useRouter();
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: "/login",
+    redirectTo: "/",
     redirectIfFound: false,
-  })
+  });
 
   useEffect(() => {
     if (user && user !== undefined && user.username) {
-      setUserLoaded(true)
+      setUserLoaded(true);
     }
-  }, [user])
+  }, [user]);
 
   const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher, {
     refreshInterval: 1000,
-  })
+  });
 
   if (user) {
-    LogRocket.identify('epic-design-labs/link-app', {
-      name: user.first_name + ' ' + user.last_name,
+    LogRocket.identify("epic-design-labs/link-app", {
+      name: user.first_name + " " + user.last_name,
       email: user.email,
-    })
+    });
   } else {
-    return null
+    return null;
   }
 
   {
     userError ||
       (siteError && (
         <Layout>{userError?.message || siteError?.message}</Layout>
-      ))
+      ));
   }
 
   return (
@@ -140,7 +141,7 @@ const Sites = props => {
                     </div>
                   </div>
                 </div>
-                <div className={`max-w-full mx-auto px-4 sm:px-6 md:px-8`}>
+                <div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
                   <AddSite />
                   <div className={`pb-4`}>
                     <div className={`flex flex-col`}>
@@ -164,19 +165,19 @@ const Sites = props => {
                                         </div>
                                       </th>
                                     </Fragment>
-                                  )
+                                  );
                                 })}
                               </tr>
                             </thead>
                             <tbody className={`bg-white`}>
                               {site.results
                                 ? site.results.map((val, key) => (
-                                    <DataTable
-                                      key={key}
-                                      site={val}
-                                      user={user}
-                                    />
-                                  ))
+                                  <DataTable
+                                    key={key}
+                                    site={val}
+                                    user={user}
+                                  />
+                                ))
                                 : null}
                             </tbody>
                           </table>
@@ -191,26 +192,30 @@ const Sites = props => {
                     page={props.page ? props.page : 0}
                   />
                 </div>
+
+                <div className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}>
+                  <SiteFooter />
+                </div>
               </main>
             </div>
           </SitesDiv>
         </Fragment>
       ) : null}
     </Layout>
-  )
-}
+  );
+};
 
 Sites.getInitialProps = ({ query }) => {
   return {
     page: query.page,
-  }
-}
+  };
+};
 
-export default Sites
+export default Sites;
 
 Sites.propTypes = {
   openMobileSidebar: PropTypes.bool,
   pageTitle: PropTypes.string,
   sitesApiEndpoint: PropTypes.string,
   router: PropTypes.elementType,
-}
+};

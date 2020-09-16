@@ -13,9 +13,8 @@
 		"label": "Status"
 	},
 	{
-		"label": "On Google"
-	},
-	{
-		"label": "SSL"
+		"label": "SSL",
+		"slug": "page-ssl",
+		"key": "tls_total"
 	}
 ]

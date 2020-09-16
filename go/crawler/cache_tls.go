@@ -38,19 +38,19 @@ type tlsKey struct {
 }
 
 // Extract returns tls_status, tls_id and error
-func (t *TlsCache) Extract(resp *http.Response) (int, *int, error) {
-	if resp.TLS == nil || len(resp.TLS.PeerCertificates) == 0 {
+func (t *TlsCache) Extract(TLS *tls.ConnectionState, request *http.Request) (int, *int, error) {
+	if TLS == nil || len(TLS.PeerCertificates) == 0 {
 		return TLS_NONE, nil, nil
 	}
 
-	certificate := resp.TLS.PeerCertificates[0]
-	cs := findCipherSuite(resp.TLS.CipherSuite)
+	certificate := TLS.PeerCertificates[0]
+	cs := findCipherSuite(TLS.CipherSuite)
 	if cs == nil {
-		return 0, nil, errors.Errorf("invalid cipher suite: %d", resp.TLS.CipherSuite)
+		return 0, nil, errors.Errorf("invalid cipher suite: %d", TLS.CipherSuite)
 	}
 	version := "SSL 3.0"
-	if resp.TLS.Version >= tls.VersionTLS10 {
-		version = fmt.Sprintf("TLS 1.%d", resp.TLS.Version-tls.VersionTLS10)
+	if TLS.Version >= tls.VersionTLS10 {
+		version = fmt.Sprintf("TLS 1.%d", TLS.Version-tls.VersionTLS10)
 	}
 
 	key := tlsKey{}
@@ -89,14 +89,14 @@ func (t *TlsCache) Extract(resp *http.Response) (int, *int, error) {
 		errors["not_after"] = "Certificate expired."
 	}
 
-	if err := certificate.VerifyHostname(resp.Request.URL.Hostname()); err != nil {
+	if err := certificate.VerifyHostname(request.URL.Hostname()); err != nil {
 		errors["dns_names"] = err.Error()
 	}
 
 	verifyOptions := x509.VerifyOptions{
 		Intermediates: x509.NewCertPool(),
 	}
-	for _, cert := range resp.TLS.PeerCertificates[1:] {
+	for _, cert := range TLS.PeerCertificates[1:] {
 		verifyOptions.Intermediates.AddCert(cert)
 	}
 	if _, err := certificate.Verify(verifyOptions); err != nil {
@@ -107,7 +107,7 @@ func (t *TlsCache) Extract(resp *http.Response) (int, *int, error) {
 		errors["cipher_suite"] = "Insecure cipher suite."
 	}
 
-	if resp.TLS.Version < tls.VersionTLS12 {
+	if TLS.Version < tls.VersionTLS12 {
 		errors["version"] = "Old tls version."
 	}
 

@@ -1,26 +1,29 @@
-import { useState, Fragment } from 'react'
-import Head from 'next/head'
-import styled from 'styled-components'
-import PropTypes from 'prop-types'
-import useUser from 'hooks/useUser'
-import Layout from 'components/Layout'
-import MobileSidebar from 'components/sidebar/MobileSidebar'
-import MainSidebar from 'components/sidebar/MainSidebar'
-import ProfileSettingsPersonal from 'components/profile/Personal'
-import ProfileSettingsPassword from 'components/profile/Password'
+import { useState, Fragment } from "react";
+import Head from "next/head";
+import styled from "styled-components";
+import PropTypes from "prop-types";
+import useUser from "hooks/useUser";
+import Layout from "components/Layout";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import MainSidebar from "components/sidebar/MainSidebar";
+import ProfileSettingsPersonal from "components/profile/Personal";
+import ProfileSettingsPassword from "components/profile/Password";
+import SiteFooter from "components/footer/SiteFooter";
 
-const ProfileDiv = styled.section``
+const ProfileDiv = styled.section``;
 
 const Profile = () => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const pageTitle = 'Profile Settings'
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const pageTitle = "Profile Settings";
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
-    redirectIfFound: false
-  })
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
 
-  {userError && <Layout>{userError.message}</Layout>}
+  {
+    userError && <Layout>{userError.message}</Layout>;
+  }
 
   return (
     <Layout>
@@ -39,7 +42,12 @@ const Profile = () => {
                 <button
                   className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                   aria-label={`Open sidebar`}
-                  onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
+                  onClick={() =>
+                    setTimeout(
+                      () => setOpenMobileSidebar(!openMobileSidebar),
+                      150
+                    )
+                  }
                 >
                   <svg
                     className={`h-6 w-5`}
@@ -60,12 +68,20 @@ const Profile = () => {
                 className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
                 tabIndex={`0`}
               >
-                <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-                  <h1 className={`text-2xl font-semibold text-gray-900`}>{pageTitle}</h1>
+                <div
+                  className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+                >
+                  <h1 className={`text-2xl font-semibold text-gray-900`}>
+                    {pageTitle}
+                  </h1>
                 </div>
-                <div className={`max-w-3xl px-4 sm:px-6 md:px-8`}>
+                <div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
                   <ProfileSettingsPersonal />
                   <ProfileSettingsPassword />
+                </div>
+
+                <div className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}>
+                  <SiteFooter />
                 </div>
               </main>
             </div>
@@ -73,12 +89,12 @@ const Profile = () => {
         </Fragment>
       ) : null}
     </Layout>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;
 
 Profile.propTypes = {
   openMobileSidebar: PropTypes.bool,
   pageTitle: PropTypes.string,
-}
+};

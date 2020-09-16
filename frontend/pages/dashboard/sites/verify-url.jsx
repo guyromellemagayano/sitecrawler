@@ -1,18 +1,18 @@
-import { useState, useEffect, Fragment } from 'react'
-import fetch from 'node-fetch'
-import Cookies from 'js-cookie'
-import Head from 'next/head'
-import styled from 'styled-components'
-import Link from 'next/link'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
-import PropTypes from 'prop-types'
-import Skeleton from 'react-loading-skeleton'
-import Transition from 'hooks/Transition'
-import useUser from 'hooks/useUser'
-import Layout from 'components/Layout'
-import MobileSidebar from 'components/sidebar/MobileSidebar'
-import MainSidebar from 'components/sidebar/MainSidebar'
-import HowToSetup from 'components/sites/HowToSetup'
+import { useState, useEffect, Fragment } from "react";
+import fetch from "node-fetch";
+import Cookies from "js-cookie";
+import Head from "next/head";
+import styled from "styled-components";
+import Link from "next/link";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import Transition from "hooks/Transition";
+import useUser from "hooks/useUser";
+import Layout from "components/Layout";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import MainSidebar from "components/sidebar/MainSidebar";
+import HowToSetup from "components/sites/HowToSetup";
 
 const SitesVerifyUrlDiv = styled.section`
   ol {
@@ -23,84 +23,98 @@ const SitesVerifyUrlDiv = styled.section`
   .wizard-indicator {
     height: 0.25rem;
   }
-`
+
+  .instructions-textarea {
+    margin-top: 0.5rem !important;
+  }
+`;
 
 const SitesVerifyUrl = props => {
-  const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${props.vid}" />`)
-  const [copied, setCopied] = useState(false)
-  const [siteVerifyId, setSiteVerifyId] = useState(props.sid)
-  const [errorMsg, setErrorMsg] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
-  const [disableSiteVerify, setDisableSiteVerify] = useState(false)
-  const [enableNextStep, setEnableNextStep] = useState(false)
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const [showNotificationStatus, setShowNotificationStatus] = useState(false)
-  const pageTitle = 'Verify Site URL'
+  const [copyValue, setCopyValue] = useState(
+    `<meta name="epic-crawl-id" content="${props.vid}" />`
+  );
+  const [copied, setCopied] = useState(false);
+  const [siteVerifyId, setSiteVerifyId] = useState(props.sid);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [disableSiteVerify, setDisableSiteVerify] = useState(false);
+  const [enableNextStep, setEnableNextStep] = useState(false);
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [showNotificationStatus, setShowNotificationStatus] = useState(false);
+  const pageTitle = "Verify Site URL";
+  let htmlText = "1. Sign in to the administrator account of the following website: " + props.surl + "\n\n";
+  htmlText += "2. Copy the following meta tag and add it within your website's <head> tag: " + "\n" + copyValue + "\n\n";
+  htmlText += "3. Save the changes you made in that file." + "\n\n";
+  htmlText += "4. Inform your client that you already made the update to the website.";
 
   const handleInputChange = ({ copyValue }) => {
-    setCopyValue({ copyValue, copied })
-  }
+    setCopyValue({ copyValue, copied });
+  };
 
   const handleHiddenInputChange = (e) => {
-    setSiteVerifyId({ value: e.currentTarget.site_verify_id.value })
-  }
+    setSiteVerifyId({ value: e.currentTarget.site_verify_id.value });
+  };
 
   const handleInputCopy = () => {
-    setCopied(true)
-  }
+    setCopied(true);
+  };
 
   const handleSiteVerification = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (errorMsg) setErrorMsg('')
-    if (successMsg) setSuccessMsg('')
+    if (errorMsg) setErrorMsg("");
+    if (successMsg) setSuccessMsg("");
 
     const body = {
       sid: e.currentTarget.site_verify_id.value,
-    }
+    };
 
     try {
-      const response = await fetch('/api/site/' + body.sid + '/verify/', {
-        method: 'POST',
+      const response = await fetch("/api/site/" + body.sid + "/verify/", {
+        method: "POST",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-CSRFToken": Cookies.get("csrftoken"),
         },
         body: JSON.stringify(body),
-      })
+      });
 
-      const data = await response.json()
-      
+      const data = await response.json();
+
       if (response.ok && data.verified) {
-        setSuccessMsg('You can now proceed to the site overview.')
-        setTimeout(() => setShowNotificationStatus(true), 1500)
-        setDisableSiteVerify(!disableSiteVerify)
-        setTimeout(() => setEnableNextStep(!enableNextStep), 1500)
+        setSuccessMsg("You can now proceed to the site overview.");
+        setTimeout(() => setShowNotificationStatus(true), 1500);
+        setDisableSiteVerify(!disableSiteVerify);
+        setTimeout(() => setEnableNextStep(!enableNextStep), 1500);
       } else if (response.ok && !data.verified) {
-        setErrorMsg('Site verification failed. You have not verify the site yet.')
-        setTimeout(() => setShowNotificationStatus(true), 1500)
+        setErrorMsg(
+          "Site verification failed. You have not verify the site yet."
+        );
+        setTimeout(() => setShowNotificationStatus(true), 1500);
       } else {
         throw new Error(await response.text());
       }
     } catch (error) {
-      setErrorMsg('Internal server error. Please try again.')
-      setTimeout(() => setShowNotificationStatus(true), 1500)
+      setErrorMsg("Internal server error. Please try again.");
+      setTimeout(() => setShowNotificationStatus(true), 1500);
     }
-  }
+  };
 
   useEffect(() => {
     if (showNotificationStatus === true)
-    setTimeout(() => setShowNotificationStatus(false), 7500)
-  }, [showNotificationStatus])
+      setTimeout(() => setShowNotificationStatus(false), 7500);
+  }, [showNotificationStatus]);
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
-    redirectIfFound: false
-  })
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
 
-  {userError && <Layout>{userError.message}</Layout>}
-  
+  {
+    userError && <Layout>{userError.message}</Layout>;
+  }
+
   return (
     <Layout>
       {user ? (
@@ -193,7 +207,9 @@ const SitesVerifyUrl = props => {
                                 ? "Site Verification Success!"
                                 : "Verifying..."}
                             </p>
-                            <p className={`mt-1 text-sm leading-5 text-gray-500`}>
+                            <p
+                              className={`mt-1 text-sm leading-5 text-gray-500`}
+                            >
                               {errorMsg !== undefined && errorMsg !== ""
                                 ? errorMsg
                                 : successMsg}
@@ -239,7 +255,10 @@ const SitesVerifyUrl = props => {
                   className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                   aria-label={`Open sidebar`}
                   onClick={() =>
-                    setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)
+                    setTimeout(
+                      () => setOpenMobileSidebar(!openMobileSidebar),
+                      150
+                    )
                   }
                 >
                   <svg
@@ -341,7 +360,7 @@ const SitesVerifyUrl = props => {
                       <div className={`max-w-full py-4 m-auto`}>
                         <div>
                           <h4
-                            className={`text-lg leading-7 font-medium text-gray-900`}
+                            className={`text-lg leading-7 font-medium text-gray-900 mb-5`}
                           >
                             Verify Site:{" "}
                             <a
@@ -354,18 +373,11 @@ const SitesVerifyUrl = props => {
                             </a>
                           </h4>
                           <p
-                            className={`max-w-full text-sm mb-5 leading-5 text-gray-600`}
-                          >
-                            At the end of the day, going forward, a new normal that
-                            has evolved from generation X is on the runway heading
-                            towards a streamlined cloud solution.
-                          </p>
-                          <p
                             className={`max-w-full text-md leading-6 text-gray-700 mb-3`}
                           >
-                            Instructions:
+                            <strong>Instructions:</strong>
                           </p>
-                          <ol>
+                          <ol className="mb-5">
                             <li className={`text-sm leading-6 text-gray-600`}>
                               Sign in to your website.
                             </li>
@@ -394,7 +406,9 @@ const SitesVerifyUrl = props => {
                                       className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
                                     >
                                       <span>
-                                        {copied ? "Copied!" : "Copy to clipboard"}
+                                        {copied
+                                          ? "Copied!"
+                                          : "Copy to clipboard"}
                                       </span>
                                     </button>
                                   </CopyToClipboard>
@@ -408,7 +422,7 @@ const SitesVerifyUrl = props => {
                         </div>
                       </div>
 
-                      <div className={`mt-5 sm:flex sm:justify-between`}>
+                      <div className={`mb-5 sm:flex sm:justify-between`}>
                         <div className={`sm:flex sm:justify-start`}>
                           <form
                             onSubmit={handleSiteVerification}
@@ -420,26 +434,50 @@ const SitesVerifyUrl = props => {
                               name={`site_verify_id`}
                               onChange={handleHiddenInputChange}
                             />
-                            <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                            <span
+                              className={`inline-flex rounded-md shadow-xs-sm`}
+                            >
                               {disableSiteVerify ? (
                                 <button
                                   disabled={`disabled`}
                                   type={`submit`}
                                   className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
                                 >
-                                  Verify Site
+                                  Verify Site Now
                                 </button>
                               ) : (
                                 <button
                                   type={`submit`}
-                                  className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+                                  className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition ease-in-out duration-150`}
                                 >
-                                  Verify Site
+                                  Verify Site Now
                                 </button>
                               )}
                             </span>
 
-                            <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                            <span className="inline-flex rounded-md shadow-xs-sm">
+                              {disableSiteVerify ? (
+                                <button
+                                  disabled={`disabled`}
+                                  type={`submit`}
+                                  className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 opacity-50 cursor-not-allowed`}
+                                >
+                                  Verify Site Later
+                                </button>
+                              ) : (
+                                <Link href="/dashboard/sites">
+                                  <a
+                                    className={`w-full mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:shadow-xs-outline-yellow focus:border-yellow-700 active:bg-yellow-700 transition ease-in-out duration-150`}
+                                  >
+                                    Verify Site Later
+                                  </a>
+                                </Link>
+                              )}
+                            </span>
+
+                            <span
+                              className={`inline-flex rounded-md shadow-xs-sm`}
+                            >
                               {disableSiteVerify ? (
                                 <Link
                                   href={{
@@ -493,6 +531,58 @@ const SitesVerifyUrl = props => {
                           </Fragment>
                         ) : null}
                       </div>
+
+                      <div
+                        className={`w-full bg-orange-300 mt-5 sm:rounded-lg inline-block`}
+                      >
+                        <div className={`px-4 py-5 sm:p-6`}>
+                          <h3
+                            className={`text-lg leading-6 font-medium text-gray-900`}
+                          >
+                            Not sure how to do it?
+                          </h3>
+                          <div
+                            className={`mt-2 max-w-full text-sm leading-5 text-gray-800`}
+                          >
+                            <p className={`italic`}>
+                              If for some reason, you can't follow the steps
+                              above, do the following:
+                            </p>
+                            <ol className={`my-3`}>
+                              <li
+                                className={`text-sm leading-6 text-gray-800`}
+                              >
+                                Click the <strong>Copy to Clipboard</strong> button<br/>
+                                <textarea
+                                  name={`verify_site_instructions`}
+                                  id={`instructions`}
+                                  className={`instructions-textarea h-56 resize-none block w-full p-3 pb-0 mb-3`}
+                                  value={htmlText}
+                                ></textarea>
+                                <CopyToClipboard
+                                  onCopy={handleInputCopy}
+                                  text={htmlText}
+                                >
+                                  <button
+                                    className={`mb-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-800 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
+                                  >
+                                    <span>
+                                      {copied
+                                        ? "Copied!"
+                                        : "Copy to Clipboard"}
+                                    </span>
+                                  </button>
+                                </CopyToClipboard>
+                              </li>
+                              <li
+                                className={`text-sm leading-6 text-gray-800`}
+                              >
+                                Paste the contents into an email and send it to your web developer's email address.
+                              </li>
+                            </ol>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -509,7 +599,7 @@ const SitesVerifyUrl = props => {
       ) : null}
     </Layout>
   );
-}
+};
 
 SitesVerifyUrl.getInitialProps = ({ query }) => {
   return {
@@ -518,10 +608,10 @@ SitesVerifyUrl.getInitialProps = ({ query }) => {
     surl: query.surl,
     vid: query.vid,
     v: query.v,
-  }
-}
+  };
+};
 
-export default SitesVerifyUrl
+export default SitesVerifyUrl;
 
 SitesVerifyUrl.propTypes = {
   copyValue: PropTypes.string,
@@ -533,4 +623,4 @@ SitesVerifyUrl.propTypes = {
   disableSiteVerify: PropTypes.bool,
   enableNextStep: PropTypes.bool,
   pageTitle: PropTypes.string,
-}
+};

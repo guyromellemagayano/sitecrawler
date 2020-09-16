@@ -21,15 +21,15 @@ build-push-frontend: ## Build and push production frontend image
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend frontend/
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
 
-build-push-crawler: ## Build and push production crawler image
+build-push-go: ## Build and push production go images
 	deploy/ecr-login.sh
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler --build-arg SERVICE=crawler go/
-	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
-
-build-push-scheduler: ## Build and push production scheduler image
-	deploy/ecr-login.sh
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler --build-arg SERVICE=scheduler go/
+	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
+
+test-go:
+	cd go && docker-compose -f docker-compose.test.yml up --build
 
 install-deploy:
 	python -m pip install --upgrade pip

@@ -41,7 +41,7 @@ const SitesInformation = props => {
     if (errorSiteNameMsg) setErrorSiteNameMsg("")
     if (errorSiteUrlMsg) setErrorSiteUrlMsg("")
 
-    const siteUrl = new Url(e.currentTarget.urlpath.value)
+    const siteUrl = new Url(urlProtocol + e.currentTarget.urlpath.value)
     const body = {
       url: siteUrl.href,
       name: siteName,
@@ -278,7 +278,7 @@ const SitesInformation = props => {
   }
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/login',
+    redirectTo: '/',
     redirectIfFound: false
   })
 
@@ -478,7 +478,7 @@ const SitesInformation = props => {
                                 disabled={disableSiteVerify || router.query.sid !== undefined ? true : false}
                                 value={
                                   siteUrl
-                                    ? siteUrl.replace(/^(https?:|)\/\//, "")
+                                    ? siteUrl.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "")
                                     : ""
                                 }
                                 className={`${
@@ -503,7 +503,7 @@ const SitesInformation = props => {
                                 type="hidden"
                                 disabled={disableSiteVerify || router.query.sid !== undefined ? true : false}
                                 name={`urlpath`}
-                                value={urlProtocol + siteUrl}
+                                value={urlProtocol.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "") + siteUrl}
                               />
                               
                               {errorSiteUrlMsg && !siteUrl || dupSiteProtocolExists ? (

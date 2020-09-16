@@ -149,6 +149,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "django_filters",
     "django_better_admin_arrayfield",
+    "loginas",
     "health_check",
     "health_check.db",
     "crawl",
@@ -247,6 +248,8 @@ REST_FRAMEWORK = {
 }
 
 REST_AUTH_SERIALIZERS = {"USER_DETAILS_SERIALIZER": "crawl.serializers.UserSerializer"}
+
+CAN_LOGIN_AS = lambda request, target_user: request.user.is_staff
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

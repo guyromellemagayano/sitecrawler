@@ -15,11 +15,6 @@
 		"key": "status"
 	},
 	{
-		"label": "HTTP Code",
-		"slug": "http-code",
-		"key": "http_status"
-	},
-	{
 		"label": "Link Location"
 	},
 	{

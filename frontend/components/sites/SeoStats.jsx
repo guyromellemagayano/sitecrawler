@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
+import Router from "next/router";
+import { seoChartContents } from '../../enum/chartContents';
 // const ApexCharts = loadable(() => import('apexcharts'));
 
 const fetcher = async (url) => {
@@ -29,41 +31,40 @@ const fetcher = async (url) => {
 }
 
 const SitesSeoStatsDiv = styled.div`
-  height: 100%;
-	.status-indicator {
-		display: block;
-		flex: 0 0 0.85rem;
-		max-width: 0.85rem;
-		height: 0.85rem;
-		border-radius: 50%;
+  .status-indicator {
+    display: block;
+    flex: 0 0 0.85rem;
+    max-width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
 
-		&.error {
-			&-1 {
-				background-color: #19B080;
-			}
-			&-2 {
-				background-color: #EF2917;
-			}
-			&-3 {
-				background-color: #ED5244;
-			}
-			&-4 {
-				background-color: #BB4338;
-			}
-			&-5 {
-				background-color: #2D99FF;
-			}
-		}
+    &.error {
+      &-1 {
+        background-color: #19B080;
+      }
+      &-2 {
+        background-color: #EF2917;
+      }
+      &-3 {
+        background-color: #ED5244;
+      }
+      &-4 {
+        background-color: #BB4338;
+      }
+    }
+  }
+  .apexcharts-legend {
+    display: block;
   }
   .apexcharts-legend-series {
     display: flex;
     align-items: center;
     border-bottom: 1px solid #E7EFEF;
-    padding-bottom: 9px;
+    padding-bottom: 10px;
   }
   .apexcharts-legend-series:last-child {
     border: none;
-  }
+    }
   .apexcharts-legend-text {
     display: flex;
     align-items: center;
@@ -77,11 +78,11 @@ const SitesSeoStatsDiv = styled.div`
     color: #1D2626;
     font-weight: 600;
   }
-  .legent-text {
+  .legend-text {
     margin-right: 10px;
   }
-  .space {
-    width: 20px;
+  .skeleton-wrapper {
+    margin-bottom: 20px;
   }
 `
 
@@ -120,23 +121,39 @@ const SitesSeoStats = props => {
   }
   )
 
+  const legendClickHandler = (label) => {
+    let path = `/dashboard/site/${props.url.siteId}/seo`
+
+    seoChartContents.forEach((item, index) => {
+      if(label === item.label && item.filter !== '')
+        path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
+    })
+
+    Router.push("/dashboard/site/[siteId]/seo", path);
+  }
+
   const chartSeries = [
-    (stats && stats.num_pages_seo_ok) !== undefined ? stats && stats.num_pages_seo_ok : 0,
-    (stats && stats.num_pages_without_title) !== undefined ? stats && stats.num_pages_without_title : 0,
-    (stats && stats.num_pages_without_description) !== undefined ? stats && stats.num_pages_without_description : 0,
-    (stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second)) !== undefined ? stats && (stats.num_pages_without_h1_first + stats.num_pages_without_h1_second) : 0,
-    (stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second)) !== undefined ? stats && (stats.num_pages_without_h2_first + stats.num_pages_without_h2_second) : 0
+    stats && stats.num_pages_without_title !== undefined ? stats && stats.num_pages_without_title : 0,
+    stats && stats.num_pages_without_description !== undefined ? stats && stats.num_pages_without_description : 0,
+    stats && stats.num_pages_without_h1_first !== undefined ? stats && stats.num_pages_without_h1_first : 0,
+    stats && stats.num_pages_without_h2_first !== undefined ? stats && stats.num_pages_without_h2_first : 0,
+    stats && stats.num_pages_seo_ok !== undefined ? stats && stats.num_pages_seo_ok : 0
   ]
 
   const chartOptions = {
     chart: {
       id: 'seoStatus',
-      type: 'donut'
+      type: 'donut',
+      events: {
+        legendClick: function(chartContext, seriesIndex, config) {
+          legendClickHandler(config.config.labels[seriesIndex])
+        }
+      }
     },
-    labels: ['No Issues', 'Missing Title (H1, H2)', 'Missing Description', 'Missing H1', 'Missing H2'],
-    colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#2D99FF'],
+    labels: seoChartContents.map(item => item.label),
+    colors: seoChartContents.map(item => item.color),
     fill: {
-      colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#2D99FF']
+      colors: seoChartContents.map(item => item.color)
     },
     stroke: {
       width: 0
@@ -150,13 +167,12 @@ const SitesSeoStats = props => {
     legend: {
       show: true,
       fontSize: '14px',
-      position: 'right',
-      floating: false,
-      width: 300,
+      position: 'bottom',
       horizontalAlign: 'center', 
+      height: 210,
       itemMargin: {
-        horizontal: 5,
-        vertical: 5
+        horizontal: 15,
+        vertical: 10
       },
       formatter: function(seriesName, opts) {
         return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
@@ -170,13 +186,13 @@ const SitesSeoStats = props => {
             total: {
               show: true,
               showAlways: true,
-              label: "Errors",
+              label: "SEO Errors",
               fontSize: "15px",
               color: "#2A324B",
               formatter: function (val) {
                 let num_errs = 0
-                for(let i=0; i<val.config.series.length; i++) {
-                  if(i != 0) num_errs += val.config.series[i]
+                for(let i=0; i<val.config.series.slice(0, -1).length; i++) {
+                  num_errs += val.config.series[i]
                 }
 
                 return num_errs
@@ -187,7 +203,7 @@ const SitesSeoStats = props => {
       }
     },
     responsive: [{
-      breakpoint: 1315,
+      breakpoint: 480,
       options: {
         chart: {
           width: 400
@@ -204,7 +220,7 @@ const SitesSeoStats = props => {
 
   return (
     <SitesSeoStatsDiv>
-      <div className={`bg-white overflow-hidden shadow-xs rounded-lg h-full`}>
+      <div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
         <div className={`flex justify-between py-8 px-5`}>
           <div className={`flex items-center`}>
             <svg
@@ -238,13 +254,13 @@ const SitesSeoStats = props => {
         <div className={`flex justify-center`}>
           {
             stats == undefined ? (
-              <>
-              <Skeleton circle={true} duration={2} width={240} height={240} />
-              <span className={`space`}></span>
-              <Skeleton duration={2} width={240} height={240} />
-              </>
-            ) : 
-              <Chart options={chartOptions} series={chartSeries} type="donut" width="600" height="260" />
+              <div className={`skeleton-wrapper`}>
+                <Skeleton circle={true} duration={2} width={240} height={240} />
+                <br />
+                <br />
+                <Skeleton duration={2} width={240} height={190} />
+              </div>
+            ) : <Chart options={chartOptions} series={chartSeries} type="donut" height="530" />
           }
         </div>
       </div>
