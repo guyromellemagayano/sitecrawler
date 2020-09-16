@@ -118,7 +118,19 @@ const SitesPagesStats = props => {
     fetcher, {
       refreshInterval: 1000,
     }
-	)
+  )
+  
+  const { data: noPageIssues, error: noPageIssuesError } = useSWR(
+    () =>
+      props.url.siteId && scanObjId
+        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/page/?size_total_max=1048576&tls_total=true`
+        : null,
+    fetcher, {
+      refreshInterval: 1000,
+    }
+  )
+
+  console.log(noPageIssues)
   
   // const chartSeries = [
   //   (stats && stats.num_pages) !== undefined ? stats && stats.num_pages : 0,
@@ -142,13 +154,8 @@ const SitesPagesStats = props => {
   const chartSeries = [
     stats && stats.num_pages_big !== undefined ? stats && stats.num_pages_big : 0,
     stats && stats.num_pages_tls_non_ok !== undefined ? stats && stats.num_pages_tls_non_ok : 0,
-    stats && 
-      (stats.num_pages_big !== undefined && stats.num_pages_big === 0) && 
-      (stats.num_pages_tls_non_ok !== undefined && stats.num_pages_tls_non_ok === 0) ? 
-        stats && stats.num_pages : 0
+    noPageIssues && noPageIssues.count !== undefined ? noPageIssues && noPageIssues.count : 0
   ]
-
-  console.log(stats)
 
   const chartOptions = {
     chart: {
@@ -231,6 +238,7 @@ const SitesPagesStats = props => {
 
 	{statsError && <Layout>{statsError.message}</Layout>}
   {scanError && <Layout>{scanError.message}</Layout>}
+  {noPageIssuesError && <Layout>{noPageIssuesError.message}</Layout>}
 	
 	return (
     <SitesPagesStatsDiv>

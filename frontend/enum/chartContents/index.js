@@ -41,7 +41,7 @@ export const seoChartContents = [
 export const pagesChartContents = [
   {
     label: 'Large Page Size',
-    filter: 'ordering=-size_total',
+    filter: 'size_total_min=1048576',
     color: '#f56565'
   }, {
     label: 'Broken Security',
