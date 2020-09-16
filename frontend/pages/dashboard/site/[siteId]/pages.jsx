@@ -114,20 +114,20 @@ const Pages = (props) => {
         props.result.page
       : `/api/site/${query.siteId}/scan/${scanObjId}/page/`;
   let queryString = 
-    props.result.ordering !== undefined
+    props.result.size_total_min !== undefined
       ? scanApiEndpoint.includes("?")
-        ? `&ordering=-size_total`
-        : `?ordering=-size_total`
+        ? `&size_total_min=1048576`
+        : `?size_total_min=1048576`
       : "";
   queryString += 
     props.result.tls_total !== undefined
-      ? scanApiEndpoint.includes("?")
+      ? (scanApiEndpoint + queryString).includes("?")
         ? `&tls_total=false`
         : `?tls_total=false`
       : "";
   queryString +=
     props.result.search !== undefined
-      ? scanApiEndpoint.includes("?")
+      ? (scanApiEndpoint + queryString).includes("?")
         ? `&search=${props.result.search}`
         : `?search=${props.result.search}`
       : "";
@@ -140,13 +140,11 @@ const Pages = (props) => {
 
   scanApiEndpoint += queryString;
 
-  console.log(scanApiEndpoint)
-
   const { data: page, error: pageError, mutate: updatePages } = useSWR(
     () => (query.siteId && scanObjId ? scanApiEndpoint : null),
     fetcher,
     {
-      refreshInterval: 1000,
+      refreshInterval: 50000,
     }
   );
 
@@ -188,10 +186,10 @@ const Pages = (props) => {
       setLargePageSizeFilter(true);
       setAllFilter(false);
 
-      if (newPath.includes("?")) newPath += `&ordering=-size_total`;
-      else newPath += `?ordering=-size_total`;
+      if (newPath.includes("?")) newPath += `&size_total_min=1048576`;
+      else newPath += `?size_total_min=1048576`;
     } else if (filterType == "pageLargePages" && filterStatus == false) {
-      newPath = removeURLParameter(newPath, "ordering");
+      newPath = removeURLParameter(newPath, "size_total_min");
       setLargePageSizeFilter(false);
     }
 
@@ -212,10 +210,10 @@ const Pages = (props) => {
 
       setAllFilter(true);
 
-      newPath = removeURLParameter(newPath, "ordering");
+      newPath = removeURLParameter(newPath, "size_total_min");
       newPath = removeURLParameter(newPath, "tls_total");
 
-      if (!newPath.includes("search") && !newPath.includes("ordering"))
+      if (!newPath.includes("search") && !newPath.includes("size_total_min"))
         newPath = newPath.replace("?", "");
     }
 
@@ -250,7 +248,7 @@ const Pages = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props.result.ordering !== undefined) {
+    if (props.result.size_total_min !== undefined) {
       setLargePageSizeFilter(true);
       setAllFilter(false);
     } else setLargePageSizeFilter(false);
@@ -261,7 +259,7 @@ const Pages = (props) => {
     } else setBrokenSecurityFilter(false);
 
     if (
-      props.result.ordering == undefined &&
+      props.result.size_total_min == undefined &&
       props.result.tls_total == undefined
     ) {
       setLargePageSizeFilter(false);
