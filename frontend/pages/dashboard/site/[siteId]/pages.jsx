@@ -121,13 +121,13 @@ const Pages = (props) => {
       : "";
   queryString += 
     props.result.tls_total !== undefined
-      ? scanApiEndpoint.includes("?")
+      ? (scanApiEndpoint + queryString).includes("?")
         ? `&tls_total=false`
         : `?tls_total=false`
       : "";
   queryString +=
     props.result.search !== undefined
-      ? scanApiEndpoint.includes("?")
+      ? (scanApiEndpoint + queryString).includes("?")
         ? `&search=${props.result.search}`
         : `?search=${props.result.search}`
       : "";
