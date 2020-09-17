@@ -379,7 +379,7 @@ const Pages = (props) => {
             </title>
           </Head>
 
-          <PagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <PagesDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
             <MobileSidebar
               show={openMobileSidebar}
               crawlableHandler={crawlableHandler}

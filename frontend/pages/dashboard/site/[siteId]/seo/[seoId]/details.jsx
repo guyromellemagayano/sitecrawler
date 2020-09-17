@@ -123,7 +123,7 @@ const SeoDetail = () => {
             </title>
           </Head>
 
-          <SeoDetailDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <SeoDetailDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
             <MobileSidebar show={openMobileSidebar} />
             <MainSidebar />
 
