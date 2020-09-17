@@ -170,8 +170,6 @@ const Links = (props) => {
 
   scanApiEndpoint += queryString;
 
-  console.log(scanApiEndpoint)
-
   const { data: link, error: linkError, mutate: updateLinks } = useSWR(
     () => (query.siteId && scanObjId ? scanApiEndpoint : null),
     fetcher,
