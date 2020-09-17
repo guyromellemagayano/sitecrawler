@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
-import { linksChartContents } from '../../enum/chartContents';
+import { linksChartContents } from 'enum/chartContents';
 import Router from "next/router";
 
 const fetcher = async (url) => {
