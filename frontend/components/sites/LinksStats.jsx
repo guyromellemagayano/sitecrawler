@@ -135,21 +135,21 @@ const SitesLinksStats = props => {
 	{scanError && <Layout>{scanError.message}</Layout>}
 	{linksError && <Layout>{linksError.message}</Layout>}
 
-	const setBrokenLinks = type => {
-		let valLength = 0
+	// const setBrokenLinks = type => {
+	// 	let valLength = 0
 
-		if (links) {
-			links.results.map((val, key) => {
-				if (val.status === 'HTTP_ERROR' || val.status === 'TIMEOUT' || val.status === 'OTHER_ERROR') {
-					if (val.type === type) {
-						valLength++
-					}
-				}
-			})
-		}
+	// 	if (links) {
+	// 		links.results.map((val, key) => {
+	// 			if (val.status === 'HTTP_ERROR' || val.status === 'TIMEOUT' || val.status === 'OTHER_ERROR') {
+	// 				if (val.type === type) {
+	// 					valLength++
+	// 				}
+	// 			}
+	// 		})
+	// 	}
 
-		return valLength
-	}
+	// 	return valLength
+	// }
 
 	const legendClickHandler = (label) => {
 		let path = `/dashboard/site/${props.url.siteId}/links`
@@ -163,8 +163,9 @@ const SitesLinksStats = props => {
 	}
 
 	const chartSeries = [
-		setBrokenLinks('PAGE'),
-		setBrokenLinks('EXTERNAL'),
+		// setBrokenLinks('PAGE'),
+		// setBrokenLinks('EXTERNAL'),
+		stats && stats.num_non_ok_links !== undefined ? stats && stats.num_non_ok_links : 0,
 		stats && stats.num_ok_links !== undefined ? stats && stats.num_ok_links : 0
 	]
 	

@@ -1,12 +1,21 @@
 export const linksChartContents = [
+  // {
+  //   label: 'Broken Internal Links',
+  //   filter: 'status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR&type=PAGE',
+  //   color: '#f56565'
+  // }, {
+  //   label: 'Broken External Links',
+  //   filter: 'status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR&type=EXTERNAL',
+  //   color: '#e53e3e'
+  // }, {
+  //   label: 'No Issues',
+  //   filter: '',
+  //   color: '#48bb78'
+  // }
   {
-    label: 'Broken Internal Links',
-    filter: 'status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR&type=PAGE',
+    label: 'Broken Links',
+    filter: 'status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR',
     color: '#f56565'
-  }, {
-    label: 'Broken External Links',
-    filter: 'status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR&type=EXTERNAL',
-    color: '#e53e3e'
   }, {
     label: 'No Issues',
     filter: '',
