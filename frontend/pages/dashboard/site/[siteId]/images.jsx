@@ -398,7 +398,7 @@ const Images = (props) => {
             </title>
           </Head>
 
-          <ImagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <ImagesDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
             <MobileSidebar
               show={openMobileSidebar}
               crawlableHandler={crawlableHandler}
@@ -501,7 +501,7 @@ const Images = (props) => {
                       <h2
                         className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
                       >
-                        Images - {site.name}
+                        All Images - {site.name}
                       </h2>
                     </div>
                   </div>

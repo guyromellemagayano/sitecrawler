@@ -89,7 +89,7 @@ const Subscriptions = () => {
           </Head>
 
           <SubscriptionsDiv
-            className={`h-screen flex overflow-hidden bg-gray-100`}
+            className={`h-screen flex overflow-hidden bg-gray-1200`}
           >
             <MobileSidebar show={openMobileSidebar} />
             <MainSidebar />
