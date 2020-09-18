@@ -69,6 +69,12 @@ const Subscriptions = () => {
         }
       });
 
+      setTimeout(() => {
+        console.log('[subscriptionUpdated]')
+        subscriptionUpdated()
+      }, 1000)
+
+
       return false
     }
 

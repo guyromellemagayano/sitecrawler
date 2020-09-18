@@ -77,11 +77,19 @@ def remove_from_load_balancer(dns):
     target_groups = elbv2.describe_target_groups()["TargetGroups"]
     for tg in target_groups:
         group_name = tg["TargetGroupName"]
+        verify_at_least_2_healthy(tg["TargetGroupArn"])
         print(f"Removing {dns} from {group_name} load balancer")
         elbv2.deregister_targets(TargetGroupArn=tg["TargetGroupArn"], Targets=[{"Id": id}])
 
     for tg in target_groups:
         wait_for_target_group_state(tg, id, "unused")
+
+
+def verify_at_least_2_healthy(group_arn):
+    result = elbv2.describe_target_health(TargetGroupArn=group_arn)["TargetHealthDescriptions"]
+    healthy = [x for x in result if x["TargetHealth"]["State"] == "healthy"]
+    if len(healthy) < 2:
+        raise Exception("Not enough healthy nodes for deployment. Needs manual intervention!")
 
 
 def wait_for_target_group_state(group, target_id, state):
