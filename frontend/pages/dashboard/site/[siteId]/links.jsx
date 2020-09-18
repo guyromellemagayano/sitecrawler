@@ -90,6 +90,7 @@ const Links = (props) => {
   const [externalFilter, setExternalFilter] = useState(false);
   const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
+  const [linksPerPage, setLinksPerPage] = useState(20);
   const [pagePath, setPagePath] = useState("");
   const [sortOrder, setSortOrder] = useState(initialOrder);
   const [searchKey, setSearchKey] = useState("");
@@ -137,6 +138,10 @@ const Links = (props) => {
       ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` +
         props.result.page
       : `/api/site/${query.siteId}/scan/${scanObjId}/link/`;
+  scanApiEndpoint += 
+    props.result.page !== undefined
+      ? `&per_page=${linksPerPage}`
+      : `?per_page=${linksPerPage}`;
   let queryString =
     props.result.status !== undefined && props.result.status.length != 0
       ? props.result.page !== undefined
@@ -228,6 +233,7 @@ const Links = (props) => {
       setInternalFilter(true);
       setExternalFilter(false);
       setAllFilter(false);
+
       newPath = removeURLParameter(newPath, "type");
       newPath = removeURLParameter(newPath, "page");
 
@@ -236,6 +242,7 @@ const Links = (props) => {
     } else if (filterType == "internal" && filterStatus == false) {
       if (newPath.includes("type=PAGE"))
         newPath = removeURLParameter(newPath, "type");
+
       setInternalFilter(false);
     }
 
@@ -243,6 +250,7 @@ const Links = (props) => {
       setExternalFilter(true);
       setInternalFilter(false);
       setAllFilter(false);
+
       newPath = removeURLParameter(newPath, "page");
       newPath = removeURLParameter(newPath, "type");
 
@@ -251,6 +259,7 @@ const Links = (props) => {
     } else if (filterType == "external" && filterStatus == false) {
       if (newPath.includes("type=EXTERNAL"))
         newPath = removeURLParameter(newPath, "type");
+
       setExternalFilter(false);
     }
 
@@ -276,6 +285,32 @@ const Links = (props) => {
     updateLinks();
 
     return true;
+  };
+
+  const onItemsPerPageChange = (count) => {
+    const countValue = parseInt(count.target.value);
+
+    let newPath = asPath;
+
+    if (countValue) {
+      newPath = removeURLParameter(newPath, "per_page");
+      
+      if (newPath.includes("?")) newPath += `&per_page=${countValue}`;
+      else newPath += `?per_page=${countValue}`;
+
+      setLinksPerPage(countValue);
+
+      if (newPath.includes("?")) setPagePath(`${newPath}&`);
+      else setPagePath(`${newPath}?`);
+
+      console.log(newPath);
+
+      // Router.push("/dashboard/site/[siteId]/links/", newPath);
+
+      // updateLinks();
+
+      return true;
+    }
   };
 
   useEffect(() => {
@@ -593,6 +628,8 @@ const Links = (props) => {
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                   <div className={`py-4`}>
                     <div className={`flex flex-col`}>
@@ -732,6 +769,8 @@ const Links = (props) => {
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                 </div>
 
