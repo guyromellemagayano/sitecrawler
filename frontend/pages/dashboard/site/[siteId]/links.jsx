@@ -138,16 +138,18 @@ const Links = (props) => {
       ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` +
         props.result.page
       : `/api/site/${query.siteId}/scan/${scanObjId}/link/`;
-  scanApiEndpoint += 
-    props.result.page !== undefined
-      ? `&per_page=${linksPerPage}`
-      : `?per_page=${linksPerPage}`;
   let queryString =
     props.result.status !== undefined && props.result.status.length != 0
       ? props.result.page !== undefined
         ? "&status=" + props.result.status.join("&status=")
         : "?status=" + props.result.status.join("&status=")
       : "";
+  // queryString +=
+  //   props.result.per_page !== undefined && props.result.per_page.length != 0 
+  //     ? props.result.page !== undefined
+  //       ? `&per_page=${linksPerPage}`
+  //       : `?per_page=${linksPerPage}`
+  //     : "";
   const typeString = Array.isArray(props.result.type)
     ? props.result.type.join("&type=")
     : props.result.type;
@@ -194,7 +196,7 @@ const Links = (props) => {
       if (newPath.includes("?")) setPagePath(`${newPath}&`);
       else setPagePath(`${newPath}?`);
 
-      Router.push("/dashboard/site/[siteId]/links", newPath);
+      Router.push("/dashboard/site/[siteId]/links/", newPath);
       return;
     }
 
@@ -205,7 +207,7 @@ const Links = (props) => {
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
     else setPagePath(`${newPath}?`);
 
-    Router.push("/dashboard/site/[siteId]/links", newPath);
+    Router.push("/dashboard/site/[siteId]/links/", newPath);
 
     updateLinks();
   };
@@ -215,6 +217,7 @@ const Links = (props) => {
     const filterStatus = e.target.checked;
 
     let newPath = asPath;
+    newPath = removeURLParameter(newPath, "per_page");
 
     if (filterType == "issues" && filterStatus == true) {
       setIssueFilter(true);
@@ -280,7 +283,9 @@ const Links = (props) => {
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
     else setPagePath(`${newPath}?`);
 
-    Router.push("/dashboard/site/[siteId]/links", newPath);
+    console.log(newPath);
+
+    Router.push("/dashboard/site/[siteId]/links/", newPath);
 
     updateLinks();
 
@@ -293,8 +298,9 @@ const Links = (props) => {
     let newPath = asPath;
 
     if (countValue) {
-      newPath = removeURLParameter(newPath, "per_page");
-      
+      if (newPath.includes("per_page")) {
+        newPath = removeURLParameter(newPath, "per_page");
+      }
       if (newPath.includes("?")) newPath += `&per_page=${countValue}`;
       else newPath += `?per_page=${countValue}`;
 
@@ -302,12 +308,11 @@ const Links = (props) => {
 
       if (newPath.includes("?")) setPagePath(`${newPath}&`);
       else setPagePath(`${newPath}?`);
+      
 
-      console.log(newPath);
+      Router.push("/dashboard/site/[siteId]/links/", newPath);
 
-      // Router.push("/dashboard/site/[siteId]/links/", newPath);
-
-      // updateLinks();
+      updateLinks();
 
       return true;
     }
@@ -402,7 +407,7 @@ const Links = (props) => {
       setPagePath(`${removeURLParameter(newPath, "page")}&`);
     else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
-    Router.push("/dashboard/site/[siteId]/links", newPath);
+    Router.push("/dashboard/site/[siteId]/links/", newPath);
     updateLinks();
   };
 
@@ -567,7 +572,7 @@ const Links = (props) => {
                         />
                       </svg>
                       <Link
-                        href="/dashboard/site/[siteId]/links"
+                        href="/dashboard/site/[siteId]/links/"
                         as={"/dashboard/site/" + query.siteId + "/links"}
                       >
                         <a
@@ -624,7 +629,7 @@ const Links = (props) => {
                     externalFilter={externalFilter}
                   />
                   <Pagination
-                    href="/dashboard/site/[siteId]/links"
+                    href="/dashboard/site/[siteId]/links/"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
@@ -765,7 +770,7 @@ const Links = (props) => {
                   </div>
 
                   <Pagination
-                    href="/dashboard/site/[siteId]/links"
+                    href="/dashboard/site/[siteId]/links/"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
