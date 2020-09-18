@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import time
 
 import common
 
@@ -17,6 +18,8 @@ for i, connection in enumerate(common.get_connections(Env="production")):
     common.remove_from_load_balancer(connection.host)
 
     deploy(i, connection)
+
+    time.sleep(10)
 
     common.add_to_load_balancer(connection.host)
 
