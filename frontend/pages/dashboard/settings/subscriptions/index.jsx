@@ -60,7 +60,7 @@ const Subscriptions = () => {
   
   const selectPlan = async (id, name) => {
     if(name === "Basic") {
-      const response = await fetch("/api/stripe/subscription/current/", {
+      await fetch("/api/stripe/subscription/current/", {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -72,7 +72,7 @@ const Subscriptions = () => {
       setTimeout(() => {
         console.log('[subscriptionUpdated]')
         subscriptionUpdated()
-      }, 500)
+      }, 1000)
 
 
       return false
