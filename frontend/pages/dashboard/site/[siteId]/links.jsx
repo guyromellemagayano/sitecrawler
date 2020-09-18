@@ -90,6 +90,7 @@ const Links = (props) => {
   const [externalFilter, setExternalFilter] = useState(false);
   const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
+  const [linksPerPage, setLinksPerPage] = useState(20);
   const [pagePath, setPagePath] = useState("");
   const [sortOrder, setSortOrder] = useState(initialOrder);
   const [searchKey, setSearchKey] = useState("");
@@ -143,6 +144,12 @@ const Links = (props) => {
         ? "&status=" + props.result.status.join("&status=")
         : "?status=" + props.result.status.join("&status=")
       : "";
+  // queryString +=
+  //   props.result.per_page !== undefined && props.result.per_page.length != 0 
+  //     ? props.result.page !== undefined
+  //       ? `&per_page=${linksPerPage}`
+  //       : `?per_page=${linksPerPage}`
+  //     : "";
   const typeString = Array.isArray(props.result.type)
     ? props.result.type.join("&type=")
     : props.result.type;
@@ -189,7 +196,7 @@ const Links = (props) => {
       if (newPath.includes("?")) setPagePath(`${newPath}&`);
       else setPagePath(`${newPath}?`);
 
-      Router.push("/dashboard/site/[siteId]/links", newPath);
+      Router.push("/dashboard/site/[siteId]/links/", newPath);
       return;
     }
 
@@ -200,7 +207,7 @@ const Links = (props) => {
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
     else setPagePath(`${newPath}?`);
 
-    Router.push("/dashboard/site/[siteId]/links", newPath);
+    Router.push("/dashboard/site/[siteId]/links/", newPath);
 
     updateLinks();
   };
@@ -210,6 +217,7 @@ const Links = (props) => {
     const filterStatus = e.target.checked;
 
     let newPath = asPath;
+    newPath = removeURLParameter(newPath, "per_page");
 
     if (filterType == "issues" && filterStatus == true) {
       setIssueFilter(true);
@@ -228,6 +236,7 @@ const Links = (props) => {
       setInternalFilter(true);
       setExternalFilter(false);
       setAllFilter(false);
+
       newPath = removeURLParameter(newPath, "type");
       newPath = removeURLParameter(newPath, "page");
 
@@ -236,6 +245,7 @@ const Links = (props) => {
     } else if (filterType == "internal" && filterStatus == false) {
       if (newPath.includes("type=PAGE"))
         newPath = removeURLParameter(newPath, "type");
+
       setInternalFilter(false);
     }
 
@@ -243,6 +253,7 @@ const Links = (props) => {
       setExternalFilter(true);
       setInternalFilter(false);
       setAllFilter(false);
+
       newPath = removeURLParameter(newPath, "page");
       newPath = removeURLParameter(newPath, "type");
 
@@ -251,6 +262,7 @@ const Links = (props) => {
     } else if (filterType == "external" && filterStatus == false) {
       if (newPath.includes("type=EXTERNAL"))
         newPath = removeURLParameter(newPath, "type");
+
       setExternalFilter(false);
     }
 
@@ -271,11 +283,39 @@ const Links = (props) => {
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
     else setPagePath(`${newPath}?`);
 
-    Router.push("/dashboard/site/[siteId]/links", newPath);
+    console.log(newPath);
+
+    Router.push("/dashboard/site/[siteId]/links/", newPath);
 
     updateLinks();
 
     return true;
+  };
+
+  const onItemsPerPageChange = (count) => {
+    const countValue = parseInt(count.target.value);
+
+    let newPath = asPath;
+
+    if (countValue) {
+      if (newPath.includes("per_page")) {
+        newPath = removeURLParameter(newPath, "per_page");
+      }
+      if (newPath.includes("?")) newPath += `&per_page=${countValue}`;
+      else newPath += `?per_page=${countValue}`;
+
+      setLinksPerPage(countValue);
+
+      if (newPath.includes("?")) setPagePath(`${newPath}&`);
+      else setPagePath(`${newPath}?`);
+      
+
+      Router.push("/dashboard/site/[siteId]/links/", newPath);
+
+      updateLinks();
+
+      return true;
+    }
   };
 
   useEffect(() => {
@@ -367,7 +407,7 @@ const Links = (props) => {
       setPagePath(`${removeURLParameter(newPath, "page")}&`);
     else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
-    Router.push("/dashboard/site/[siteId]/links", newPath);
+    Router.push("/dashboard/site/[siteId]/links/", newPath);
     updateLinks();
   };
 
@@ -532,7 +572,7 @@ const Links = (props) => {
                         />
                       </svg>
                       <Link
-                        href="/dashboard/site/[siteId]/links"
+                        href="/dashboard/site/[siteId]/links/"
                         as={"/dashboard/site/" + query.siteId + "/links"}
                       >
                         <a
@@ -589,10 +629,12 @@ const Links = (props) => {
                     externalFilter={externalFilter}
                   />
                   <Pagination
-                    href="/dashboard/site/[siteId]/links"
+                    href="/dashboard/site/[siteId]/links/"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                   <div className={`py-4`}>
                     <div className={`flex flex-col`}>
@@ -728,10 +770,12 @@ const Links = (props) => {
                   </div>
 
                   <Pagination
-                    href="/dashboard/site/[siteId]/links"
+                    href="/dashboard/site/[siteId]/links/"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                 </div>
 
