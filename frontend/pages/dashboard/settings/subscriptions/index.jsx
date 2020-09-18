@@ -60,7 +60,7 @@ const Subscriptions = () => {
   
   const selectPlan = async (id, name) => {
     if(name === "Basic") {
-      await fetch("/api/stripe/subscription/current/", {
+      const response = await fetch("/api/stripe/subscription/current/", {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -68,6 +68,12 @@ const Subscriptions = () => {
           "X-CSRFToken": Cookies.get("csrftoken"),
         }
       });
+
+      setTimeout(() => {
+        console.log('[subscriptionUpdated]')
+        subscriptionUpdated()
+      }, 500)
+
 
       return false
     }
