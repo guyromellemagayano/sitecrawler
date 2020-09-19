@@ -296,6 +296,7 @@ const Links = (props) => {
     const countValue = parseInt(count.target.value);
 
     let newPath = asPath;
+    newPath = removeURLParameter(newPath, "page");
 
     if (countValue) {
       if (newPath.includes("per_page")) {
@@ -336,6 +337,8 @@ const Links = (props) => {
         setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
+
+    if (props.result.per_page !== undefined) setLinksPerPage(props.result.per_page);
   }, []);
 
   useEffect(() => {

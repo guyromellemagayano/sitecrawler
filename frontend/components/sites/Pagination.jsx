@@ -6,6 +6,7 @@ import styled from "styled-components";
 import Skeleton from "react-loading-skeleton";
 import useSWR from "swr";
 import ReactPaginate from "react-paginate";
+import { removeURLParameter } from "helpers/functions";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -39,7 +40,8 @@ const Pagination = (props) => {
     if (page.selected === props.page) return false;
 
     // console.log('[page click]', page, props.pathName, props.page)
-    Router.push(props.href, `${props.pathName}page=${page.selected + 1}`);
+    const newPath = removeURLParameter(props.pathName, 'page');
+    Router.push(props.href, `${newPath}page=${page.selected + 1}`);
   };
 
   if (pageError) return <div>{pageError.message}</div>;
@@ -67,7 +69,7 @@ const Pagination = (props) => {
     pageNumbers.push(i);
   }
 
-  if (totalPages < 2) return null;
+  if (totalPages < 1) return null;
 
   return (
     <PaginationDiv
@@ -89,7 +91,7 @@ const Pagination = (props) => {
       </div>
       
       <ReactPaginate
-        disableInitialCallback={false}
+        disableInitialCallback={true}
         previousLabel={"Previous"}
         nextLabel={"Next"}
         breakLabel={"..."}
