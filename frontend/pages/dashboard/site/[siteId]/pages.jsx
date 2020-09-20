@@ -67,6 +67,7 @@ const Pages = (props) => {
   const [brokenSecurityFilter, setBrokenSecurityFilter] = useState(false);
   const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
+  const [linksPerPage, setLinksPerPage] = useState(20);
   const pageTitle = "Pages |";
 
   const { user: user, userError: userError } = useUser({
@@ -227,6 +228,33 @@ const Pages = (props) => {
     return true;
   };
 
+  const onItemsPerPageChange = (count) => {
+    const countValue = parseInt(count.target.value);
+
+    let newPath = asPath;
+    newPath = removeURLParameter(newPath, "page");
+
+    if (countValue) {
+      if (newPath.includes("per_page")) {
+        newPath = removeURLParameter(newPath, "per_page");
+      }
+      if (newPath.includes("?")) newPath += `&per_page=${countValue}`;
+      else newPath += `?per_page=${countValue}`;
+
+      setLinksPerPage(countValue);
+
+      if (newPath.includes("?")) setPagePath(`${newPath}&`);
+      else setPagePath(`${newPath}?`);
+      
+
+      Router.push("/dashboard/site/[siteId]/pages/", newPath);
+
+      updatePages();
+
+      return true;
+    }
+  };
+
   useEffect(() => {
     if (removeURLParameter(asPath, "page").includes("?"))
       setPagePath(`${removeURLParameter(asPath, "page")}&`);
@@ -245,6 +273,8 @@ const Pages = (props) => {
         setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
+
+    if (props.result.per_page !== undefined) setLinksPerPage(props.result.per_page);
   }, []);
 
   useEffect(() => {
@@ -557,6 +587,8 @@ const Pages = (props) => {
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                   <div className={`py-4`}>
                     <div className={`flex flex-col`}>
@@ -611,6 +643,8 @@ const Pages = (props) => {
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                 </div>
 

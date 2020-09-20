@@ -338,9 +338,7 @@ const Links = (props) => {
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
 
-    if (props.result.per_page !== undefined) {
-      setLinksPerPage(props.result.per_page);
-    }
+    if (props.result.per_page !== undefined) setLinksPerPage(props.result.per_page);
   }, []);
 
   useEffect(() => {

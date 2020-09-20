@@ -69,7 +69,7 @@ const Pagination = (props) => {
     pageNumbers.push(i);
   }
 
-  if (totalPages < 2) return null;
+  if (totalPages < 1) return null;
 
   return (
     <PaginationDiv
