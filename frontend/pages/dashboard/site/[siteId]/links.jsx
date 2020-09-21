@@ -16,7 +16,7 @@ import MainSidebar from "components/sidebar/MainSidebar";
 import LinkOptions from "components/site/LinkOptions";
 import LinkFilter from "components/site/LinkFilter";
 import LinkUrlTable from "components/site/LinkTable";
-import Pagination from "components/sites/Pagination";
+import MyPagination from "components/sites/Pagination";
 import LinkSorting from "components/site/LinkSorting";
 import {
   removeURLParameter,
@@ -144,12 +144,12 @@ const Links = (props) => {
         ? "&status=" + props.result.status.join("&status=")
         : "?status=" + props.result.status.join("&status=")
       : "";
-  // queryString +=
-  //   props.result.per_page !== undefined && props.result.per_page.length != 0 
-  //     ? props.result.page !== undefined
-  //       ? `&per_page=${linksPerPage}`
-  //       : `?per_page=${linksPerPage}`
-  //     : "";
+  queryString +=
+    props.result.per_page !== undefined && props.result.per_page.length != 0 
+      ? props.result.page !== undefined
+        ? `&per_page=${linksPerPage}`
+        : `?per_page=${linksPerPage}`
+      : "";
   const typeString = Array.isArray(props.result.type)
     ? props.result.type.join("&type=")
     : props.result.type;
@@ -631,7 +631,7 @@ const Links = (props) => {
                     internalFilter={internalFilter}
                     externalFilter={externalFilter}
                   />
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/links/"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
@@ -772,7 +772,7 @@ const Links = (props) => {
                     </div>
                   </div>
 
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/links/"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}

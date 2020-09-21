@@ -16,7 +16,7 @@ import SeoOptions from "components/site/SeoOptions";
 import SeoFilter from "components/site/SeoFilter";
 import PageSeoTable from "components/site/SeoTable";
 import SeoSorting from "components/site/SeoSorting";
-import Pagination from "components/sites/Pagination";
+import MyPagination from "components/sites/Pagination";
 import {
   removeURLParameter,
   slugToCamelcase,
@@ -125,6 +125,12 @@ const Seo = (props) => {
       ? scanApiEndpoint.includes("?")
         ? `&has_title=false`
         : `?has_title=false`
+      : "";
+  queryString +=
+    props.result.per_page !== undefined && props.result.per_page.length != 0 
+      ? props.result.page !== undefined
+        ? `&per_page=${linksPerPage}`
+        : `?per_page=${linksPerPage}`
       : "";
   queryString +=
     props.result.has_description !== undefined
@@ -667,7 +673,7 @@ const Seo = (props) => {
                     noH2First={noH2First}
                     noH2Second={noH2Second}
                   />
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/seo"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
@@ -721,7 +727,7 @@ const Seo = (props) => {
                     </div>
                   </div>
 
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/seo"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}

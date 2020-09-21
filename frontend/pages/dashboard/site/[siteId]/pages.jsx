@@ -14,7 +14,7 @@ import MobileSidebar from "components/sidebar/MobileSidebar";
 import MainSidebar from "components/sidebar/MainSidebar";
 import LinkOptions from "components/site/LinkOptions";
 import PageTable from "components/site/PageTable";
-import Pagination from "components/sites/Pagination";
+import MyPagination from "components/sites/Pagination";
 import PageFilter from "components/site/PageFilter";
 import PageSorting from "components/site/PageSorting";
 import {
@@ -119,6 +119,12 @@ const Pages = (props) => {
       ? scanApiEndpoint.includes("?")
         ? `&size_total_min=1048576`
         : `?size_total_min=1048576`
+      : "";
+  queryString +=
+    props.result.per_page !== undefined && props.result.per_page.length != 0 
+      ? props.result.page !== undefined
+        ? `&per_page=${linksPerPage}`
+        : `?per_page=${linksPerPage}`
       : "";
   queryString += 
     props.result.tls_total !== undefined
@@ -582,7 +588,7 @@ const Pages = (props) => {
                     largePageSizeFilter={largePageSizeFilter}
                     brokenSecurityFilter={brokenSecurityFilter}
                   />
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/pages"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
@@ -638,7 +644,7 @@ const Pages = (props) => {
                     </div>
                   </div>
 
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/pages"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
