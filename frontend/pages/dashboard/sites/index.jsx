@@ -185,12 +185,6 @@ const Sites = (props) => {
                       </div>
                     </div>
                   </div>
-
-                  <Pagination
-                    pathName={router.pathname}
-                    apiEndpoint={sitesApiEndpoint}
-                    page={props.page ? props.page : 0}
-                  />
                 </div>
 
                 <div className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}>
