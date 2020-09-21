@@ -341,7 +341,7 @@ const Links = (props) => {
     if (props.result.per_page !== undefined) setLinksPerPage(props.result.per_page);
 
 
-    console.log('[ENDPOINT]', process.env.ENDPOINT)
+    console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
   }, []);
 
   useEffect(() => {
