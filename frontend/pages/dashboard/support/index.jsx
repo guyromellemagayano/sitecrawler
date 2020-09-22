@@ -17,7 +17,7 @@ const mg_username = 'api';
 const mg_key = '189362ef999e7949abb6ec335bf7d59f-a2b91229-4ae562a8';
 const mg_pub_key = 'pubkey-65b1cb75c680c7ceb503a1c25d2ed0e0';
 const mg_domain = 'mg.sitecrawler.com';
-const mg_to = 'support@epicdesignlabs.com';
+const mg_to = 'support@sitecrawler.com';
 const mg_subject = 'New Support Ticket | Site Crawler';
 
 const mailgunConfig = {
