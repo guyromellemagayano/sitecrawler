@@ -14,7 +14,7 @@ import MobileSidebar from "components/sidebar/MobileSidebar";
 import MainSidebar from "components/sidebar/MainSidebar";
 import LinkOptions from "components/site/LinkOptions";
 import PageTable from "components/site/PageTable";
-import MyPagination from "components/sites/Pagination";
+import Pagination from "components/sites/Pagination";
 import PageFilter from "components/site/PageFilter";
 import PageSorting from "components/site/PageSorting";
 import {
@@ -111,20 +111,14 @@ const Pages = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/page/`;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
   let queryString = 
     props.result.size_total_min !== undefined
       ? scanApiEndpoint.includes("?")
         ? `&size_total_min=1048576`
         : `?size_total_min=1048576`
-      : "";
-  queryString +=
-    props.result.per_page !== undefined && props.result.per_page.length != 0 
-      ? props.result.page !== undefined
-        ? `&per_page=${linksPerPage}`
-        : `?per_page=${linksPerPage}`
       : "";
   queryString += 
     props.result.tls_total !== undefined
@@ -252,7 +246,6 @@ const Pages = (props) => {
       if (newPath.includes("?")) setPagePath(`${newPath}&`);
       else setPagePath(`${newPath}?`);
       
-
       Router.push("/dashboard/site/[siteId]/pages/", newPath);
 
       updatePages();
@@ -588,7 +581,7 @@ const Pages = (props) => {
                     largePageSizeFilter={largePageSizeFilter}
                     brokenSecurityFilter={brokenSecurityFilter}
                   />
-                  <MyPagination
+                  <Pagination
                     href="/dashboard/site/[siteId]/pages"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
@@ -644,7 +637,7 @@ const Pages = (props) => {
                     </div>
                   </div>
 
-                  <MyPagination
+                  <Pagination
                     href="/dashboard/site/[siteId]/pages"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
