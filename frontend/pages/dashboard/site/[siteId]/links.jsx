@@ -135,30 +135,24 @@ const Links = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage + `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/link/`;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
   let queryString =
     props.result.status !== undefined && props.result.status.length != 0
-      ? props.result.page !== undefined
+      ? scanApiEndpoint.includes("?")
         ? "&status=" + props.result.status.join("&status=")
         : "?status=" + props.result.status.join("&status=")
-      : "";
-  queryString +=
-    props.result.per_page !== undefined && props.result.per_page.length != 0 
-      ? props.result.page !== undefined
-        ? `&per_page=${linksPerPage}`
-        : `?per_page=${linksPerPage}`
-      : "";
+      : ""
   const typeString = Array.isArray(props.result.type)
     ? props.result.type.join("&type=")
     : props.result.type;
   queryString +=
     props.result.type !== undefined
-      ? props.result.page !== undefined || props.result.status !== undefined
+      ? scanApiEndpoint.includes("?")
         ? `&type=${typeString}`
         : `?type=${typeString}`
-      : "";
+      : ""
   queryString +=
     props.result.search !== undefined
       ? props.result.page !== undefined ||
@@ -176,6 +170,8 @@ const Links = (props) => {
       : "";
 
   scanApiEndpoint += queryString;
+
+  // console.log(scanApiEndpoint);
 
   const { data: link, error: linkError, mutate: updateLinks } = useSWR(
     () => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -276,14 +272,14 @@ const Links = (props) => {
       newPath = removeURLParameter(newPath, "type");
       newPath = removeURLParameter(newPath, "page");
 
-      if (!newPath.includes("search") && !newPath.includes("ordering"))
-        newPath = newPath.replace("?", "");
+      // if (!newPath.includes("search") && !newPath.includes("ordering"))
+      //   newPath = newPath.replace("?", "");
     }
 
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
     else setPagePath(`${newPath}?`);
 
-    console.log(newPath);
+    // console.log(newPath);
 
     Router.push("/dashboard/site/[siteId]/links/", newPath);
 
@@ -341,7 +337,7 @@ const Links = (props) => {
     if (props.result.per_page !== undefined) setLinksPerPage(props.result.per_page);
 
 
-    console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
+    // console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
   }, []);
 
   useEffect(() => {

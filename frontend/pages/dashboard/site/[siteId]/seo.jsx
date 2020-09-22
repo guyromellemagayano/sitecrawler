@@ -117,20 +117,14 @@ const Seo = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/page/`;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
   let queryString =
     props.result.has_title !== undefined
       ? scanApiEndpoint.includes("?")
         ? `&has_title=false`
         : `?has_title=false`
-      : "";
-  queryString +=
-    props.result.per_page !== undefined && props.result.per_page.length != 0 
-      ? props.result.page !== undefined
-        ? `&per_page=${linksPerPage}`
-        : `?per_page=${linksPerPage}`
       : "";
   queryString +=
     props.result.has_description !== undefined
@@ -162,7 +156,6 @@ const Seo = (props) => {
         ? `&has_h2_second=false`
         : `?has_h2_second=false`
       : "";
-
   queryString +=
     props.result.search !== undefined
       ? (scanApiEndpoint + queryString).includes("?")
@@ -303,8 +296,8 @@ const Seo = (props) => {
       newPath = removeURLParameter(newPath, "has_h2_first");
       newPath = removeURLParameter(newPath, "has_h2_second");
 
-      if (!newPath.includes("search") && !newPath.includes("ordering"))
-        newPath = newPath.replace("?", "");
+      // if (!newPath.includes("search") && !newPath.includes("ordering"))
+      //   newPath = newPath.replace("?", "");
     }
 
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
