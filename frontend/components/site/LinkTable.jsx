@@ -199,11 +199,11 @@ const LinkTable = (props) => {
                   >
                     {props.val.http_status === "400" ? (
                       <p>
-                        <strong>400 Bad Request</strong> - The server could not understand the request due to invalid syntax.
+                        <strong>[code] [message]</strong> - [solution]
                       </p>
                     ) : (
                       <p>
-                        <strong>401 Unauthorized</strong> - Although the HTTP<br/> standard specifies "unauthorized",<br/> semantically this response means<br/> "unauthenticated". That is, the client<br/> must authenticate itself to get the<br/> requested response.
+                        <strong>[code] [message]</strong> - [solution]
                       </p>
                     )}
                   </span>
