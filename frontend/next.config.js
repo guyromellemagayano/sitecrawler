@@ -5,6 +5,7 @@ module.exports = {
     autoPrerender: false,
   },
   env: {
-    ENDPOINT: process.env.API_ENDPOINT
+    ENDPOINT: process.env.API_ENDPOINT,
+    STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
   }
 }
