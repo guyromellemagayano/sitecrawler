@@ -291,11 +291,20 @@ const SitesStats = (props) => {
                       >
                         {val.title}
                       </dt>
-                      <dd
-                        className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
-                      >
-                        {val.count}
-                      </dd>
+                      
+                        {val.title === "Total Issues" && val.count > 0 ? (
+                          <dd
+                            className={`mt-1 text-3xl leading-9 font-semibold text-red-700`}
+                          >
+                            {val.count}
+                          </dd>
+                        ) : (
+                          <dd
+                            className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                          >
+                            {val.count}
+                          </dd>
+                        )}
                     </dl>
                   </div>
                 </div>
