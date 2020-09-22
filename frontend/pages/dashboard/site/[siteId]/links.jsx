@@ -49,7 +49,7 @@ const LinksDiv = styled.section`
   .url-type-tooltip,
   .status-tooltip {
     max-width: 15rem;
-    margin-left: 5px;
+    margin-left: 5px !important;
     padding: 1rem 1.5rem;
   }
   @media only screen and (max-width: 1400px) {
@@ -135,15 +135,18 @@ const Links = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage + `&page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
+        linksPerPage +
+        `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
+        linksPerPage;
   let queryString =
     props.result.status !== undefined && props.result.status.length != 0
       ? scanApiEndpoint.includes("?")
         ? "&status=" + props.result.status.join("&status=")
         : "?status=" + props.result.status.join("&status=")
-      : ""
+      : "";
   const typeString = Array.isArray(props.result.type)
     ? props.result.type.join("&type=")
     : props.result.type;
@@ -152,7 +155,7 @@ const Links = (props) => {
       ? scanApiEndpoint.includes("?")
         ? `&type=${typeString}`
         : `?type=${typeString}`
-      : ""
+      : "";
   queryString +=
     props.result.search !== undefined
       ? props.result.page !== undefined ||
@@ -305,7 +308,6 @@ const Links = (props) => {
 
       if (newPath.includes("?")) setPagePath(`${newPath}&`);
       else setPagePath(`${newPath}?`);
-      
 
       Router.push("/dashboard/site/[siteId]/links/", newPath);
 
@@ -334,8 +336,8 @@ const Links = (props) => {
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
 
-    if (props.result.per_page !== undefined) setLinksPerPage(props.result.per_page);
-
+    if (props.result.per_page !== undefined)
+      setLinksPerPage(props.result.per_page);
 
     // console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
   }, []);
@@ -675,6 +677,9 @@ const Links = (props) => {
                                                 <a
                                                   data-tip
                                                   data-for={site.slug}
+                                                  data-background-color={
+                                                    "#4A5568"
+                                                  }
                                                   data-iscapture="true"
                                                   className={`flex items-center`}
                                                 >
@@ -697,7 +702,7 @@ const Links = (props) => {
                                                   id={site.slug}
                                                   className={`${
                                                     site.slug + "-tooltip"
-                                                  } w-48`}
+                                                  } w-36`}
                                                   type="dark"
                                                   effect="solid"
                                                   place="bottom"
@@ -723,9 +728,9 @@ const Links = (props) => {
                                                         </li>
                                                         <li className={`mb-2`}>
                                                           <strong>
-                                                            HTTP_ERROR(404)
+                                                            HTTP_ERROR
                                                           </strong>{" "}
-                                                          - Broken Link
+                                                          - broken Link
                                                         </li>
                                                         <li className={`mb-2`}>
                                                           <strong>
@@ -741,12 +746,6 @@ const Links = (props) => {
                                                         frameworks to provide a
                                                         robust synopsis for high
                                                         level overviews.
-                                                        Iterative approaches to
-                                                        corporate strategy
-                                                        foster collaborative
-                                                        thinking to further the
-                                                        overall value
-                                                        proposition.
                                                       </p>
                                                     )}
                                                   </span>
