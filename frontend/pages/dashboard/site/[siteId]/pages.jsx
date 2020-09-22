@@ -214,8 +214,8 @@ const Pages = (props) => {
       newPath = removeURLParameter(newPath, "size_total_min");
       newPath = removeURLParameter(newPath, "tls_total");
 
-      if (!newPath.includes("search") && !newPath.includes("size_total_min"))
-        newPath = newPath.replace("?", "");
+      // if (!newPath.includes("search") && !newPath.includes("size_total_min"))
+      //   newPath = newPath.replace("?", "");
     }
 
     if (newPath.includes("?")) setPagePath(`${newPath}&`);

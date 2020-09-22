@@ -272,8 +272,8 @@ const Links = (props) => {
       newPath = removeURLParameter(newPath, "type");
       newPath = removeURLParameter(newPath, "page");
 
-      if (!newPath.includes("search") && !newPath.includes("ordering"))
-        newPath = newPath.replace("?", "");
+      // if (!newPath.includes("search") && !newPath.includes("ordering"))
+      //   newPath = newPath.replace("?", "");
     }
 
     if (newPath.includes("?")) setPagePath(`${newPath}&`);

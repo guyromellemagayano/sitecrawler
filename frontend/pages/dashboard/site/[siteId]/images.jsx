@@ -115,9 +115,9 @@ const Images = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/image/?page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage + `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/image/`;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
   const statusString = Array.isArray(props.result.status)
     ? props.result.status.join("&status=")
     : props.result.status;
@@ -142,12 +142,6 @@ const Images = (props) => {
       ? (scanApiEndpoint + queryString).includes("?")
         ? `&tls_status=ERROR&tls_status=NONE`
         : `?tls_status=ERROR&tls_status=NONE`
-      : "";
-  queryString +=
-    props.result.per_page !== undefined && props.result.per_page.length != 0 
-      ? props.result.page !== undefined
-        ? `&per_page=${linksPerPage}`
-        : `?per_page=${linksPerPage}`
       : "";
   queryString +=
     props.result.search !== undefined
@@ -272,8 +266,8 @@ const Images = (props) => {
       newPath = removeURLParameter(newPath, "status");
       newPath = removeURLParameter(newPath, "tls_status");
 
-      if (!newPath.includes("search") && !newPath.includes("status"))
-        newPath = newPath.replace("?", "");
+      // if (!newPath.includes("search") && !newPath.includes("status"))
+      //   newPath = newPath.replace("?", "");
     }
 
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
