@@ -1,11 +1,10 @@
-import { useState } from "react";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import styled from "styled-components";
 import Skeleton from "react-loading-skeleton";
 import useSWR from "swr";
-import ReactPaginate from "react-paginate";
+import Pagination from 'rc-pagination';
 import { removeURLParameter } from "helpers/functions";
 
 const fetcher = async (url) => {
@@ -27,22 +26,79 @@ const fetcher = async (url) => {
   return data;
 };
 
-const PaginationDiv = styled.nav``;
+const PaginationLocale = {
+  items_per_page: 'Rows per Page',
+  jump_to: 'Goto',
+  jump_to_confirm: 'Goto',
+  page: 'Page',
 
-const Pagination = (props) => {
+  // Pagination.jsx
+  prev_page: 'Previous',
+  next_page: 'Next',
+  prev_5: 'Prev 5',
+  next_5: 'Next 5',
+  prev_3: 'Prev 3',
+  next_3: 'Next 3',
+}
+
+const PaginationDiv = styled.nav`
+.rc-pagination li {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  --text-opacity: 1;
+  color: #a0aec0;
+  color: rgba(160, 174, 192, var(--text-opacity));
+  outline: none;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  margin-top: -1rem;
+  padding-top: 1rem;
+  font-weight: 500;
+}
+.rc-pagination li:hover {
+  color: rgba(74, 85, 104, var(--text-opacity));
+}
+.rc-pagination-item {
+  width: 40px;
+  height: 40px;
+}
+.rc-pagination-item-active {
+  border-top: 2px solid #667eea;
+  color: #667eea !important;
+}
+.rc-pagination-item a {
+  outline: none;
+}
+.rc-pagination-jump-next button:before, .rc-pagination-jump-prev button:before {
+  content: '...';
+  display: block;
+}
+.rc-pagination-prev {
+  margin-right: 0.75rem;
+}
+.rc-pagination-prev button:before {
+  content: 'Previous',
+  display: block;
+}
+.rc-pagination-next {
+  margin-left: 0.75rem;
+}
+`;
+
+const MyPagination = (props) => {
   const pageNumbers = [];
   const values = [20, 25, 50, 100];
   const currentPage = parseInt(props.page) || 1;
 
   const { data: page, error: pageError } = useSWR(props.apiEndpoint, fetcher);
 
-  const handlePageClick = (page) => {
-    if (page.selected === props.page) return false;
-
-    // console.log('[page click]', page, props.pathName, props.page)
+  const handlePageChange = (pageNum) => {
+    console.log('[pageNum]', pageNum);
     const newPath = removeURLParameter(props.pathName, 'page');
-    Router.push(props.href, `${newPath}page=${page.selected + 1}`);
-  };
+    Router.push(props.href, `${newPath}page=${pageNum}`);
+  }
 
   if (pageError) return <div>{pageError.message}</div>;
   if (!page) {
@@ -89,31 +145,23 @@ const Pagination = (props) => {
           </select>
         </div>
       </div>
-      
-      <ReactPaginate
-        disableInitialCallback={true}
-        previousLabel={"Previous"}
-        nextLabel={"Next"}
-        breakLabel={"..."}
-        initialPage={currentPage - 1}
-        breakClassName={
-          "break-me -mt-4 border-transparent border-t-2 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150"
-        }
-        pageCount={totalPages}
-        marginPagesDisplayed={3}
-        pageRangeDisplayed={10}
-        onPageChange={handlePageClick}
-        containerClassName={"pagination md:flex"}
-        pageClassName={`-mt-4 border-transparent border-t-2 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150`}
-        subContainerClassName={"pages pagination "}
-        activeClassName={
-          "active -mt-4 border-indigo-500 border-t-2 pt-4 px-4 inline-flex items-center text-sm leading-5 font-medium text-indigo-600 focus:outline-none focus:text-indigo-800 focus:border-indigo-700 transition ease-in-out duration-150"
-        }
-        previousClassName={`mr-3 -mt-4 border-transparent pt-4 pr-1 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150`}
-        nextClassName={`ml-3 -mt-4 border-transparent pt-4 pl-1 inline-flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-400 transition ease-in-out duration-150`}
+
+      <Pagination
+        showPrevNextJumpers={true}
+        defaultPageSize={20}
+        pageSize={props.linksPerPage}
+        defaultCurrent={currentPage}
+        current={currentPage}
+        total={totalPages*props.linksPerPage}
+        className={`md:flex`}
+        onChange={handlePageChange}
+        locale={PaginationLocale}
+        prevIcon={`Previous`}
+        nextIcon={`Next`}
       />
+
     </PaginationDiv>
   );
 };
 
-export default Pagination;
+export default MyPagination;

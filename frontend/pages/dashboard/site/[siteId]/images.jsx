@@ -16,7 +16,7 @@ import LinkOptions from "components/site/LinkOptions";
 import ImageFilter from "components/site/ImageFilter";
 import ImageTable from "components/site/ImageTable";
 import ImageSorting from "components/site/ImageSorting";
-import Pagination from "components/sites/Pagination";
+import MyPagination from "components/sites/Pagination";
 import {
   removeURLParameter,
   slugToCamelcase,
@@ -142,6 +142,12 @@ const Images = (props) => {
       ? (scanApiEndpoint + queryString).includes("?")
         ? `&tls_status=ERROR&tls_status=NONE`
         : `?tls_status=ERROR&tls_status=NONE`
+      : "";
+  queryString +=
+    props.result.per_page !== undefined && props.result.per_page.length != 0 
+      ? props.result.page !== undefined
+        ? `&per_page=${linksPerPage}`
+        : `?per_page=${linksPerPage}`
       : "";
   queryString +=
     props.result.search !== undefined
@@ -568,7 +574,7 @@ const Images = (props) => {
                     imageNotWorkingFilter={imageNotWorkingFilter}
                     imageBrokenSecurityFilter={imageBrokenSecurityFilter}
                   />
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/images"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
@@ -622,7 +628,7 @@ const Images = (props) => {
                     </div>
                   </div>
 
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/images"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
