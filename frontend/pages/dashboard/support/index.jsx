@@ -1,4 +1,6 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
+import fetch from "node-fetch";
+import Cookies from "js-cookie";
 import Head from "next/head";
 import styled from "styled-components";
 import "core-js";
@@ -15,6 +17,8 @@ const SupportDiv = styled.section``;
 
 const Support = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const pageTitle = "Support";
 
   const { user: user, userError: userError } = useUser({
@@ -88,32 +92,63 @@ const Support = () => {
                   <div className={`max-w-full bg-white shadow rounded-lg`}>
                     <Formik
                       initialValues={{ 
-                        SupportFirstName: user.first_name ? user.first_name : '',
-                        SupportLastName: user.last_name ? user.last_name : '',
-                        SupportUserName: user.username ? user.username : '',
-                        SupportEmailAddress: user.email ? user.email : '',
-                        SupportMessage: '',
+                        message: '',
                       }}
                       validate={values => {
                         const errors = {};
 
-                        if (!values.SupportMessage) {
-                          errors.SupportMessage = 'Required Field';
+                        if (!values.message) {
+                          errors.message = 'Required Field';
                         }
 
                         return errors;
                       }}
                       validationSchema={Yup.object({
-                        SupportMessage: Yup.string()
+                        message: Yup.string()
                       })}
-                      onSubmit={(values, { setSubmitting, resetForm }) => {
+                      onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        const body = {
+                          message: values.message
+                        };
+
+                        const supportMailResponse = await fetch("/api/support/contact/", {
+                          method: "POST",
+                          headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": Cookies.get("csrftoken"),
+                          },
+                          body: JSON.stringify(body),
+                        });
+
+                        const data = await supportMailResponse.json();
+
                         setTimeout(() => {
                           setSubmitting(false);
                           resetForm({ values: ''});
 
-                          /**
-                           * TODO: Backend for Mailgun
-                           */
+                          if (supportMailResponse.ok && supportMailResponse.status === 200) {
+                            if (data) {
+                              setSuccessMsg(
+                                "Support message sent successfully."
+                              );
+                            } else {
+                              setErrorMsg(
+                                "Support message sent failed. Please try again."
+                              );
+                            }
+                          } else {
+                            const error = new Error(supportMailResponse.statusText);
+
+                            error.response = supportMailResponse;
+                            error.data = data;
+
+                            setErrorMsg(
+                              "An unexpected error occurred. Please try again."
+                            );
+
+                            throw error;
+                          }
                         }, 400);
                       }}
                     >
@@ -158,14 +193,14 @@ const Support = () => {
                                   className={`max-w-lg flex rounded-md shadow-sm`}
                                 >
                                   <textarea
-                                    id={`supportmessage`}
+                                    id={`message`}
                                     rows={5}
                                     className={`form-textarea block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
-                                    name={`SupportMessage`}
+                                    name={`message`}
                                     placeholder={`Tell us your thoughts about the app.`}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    value={values.SupportMessage}
+                                    value={values.message}
                                   />
                                 </div>
                                 {successMsg ? (
@@ -178,7 +213,7 @@ const Support = () => {
                                   </span>
                                 )}
                                 <span className={`block mt-2 text-sm leading-5 font-medium text-red-800 break-words`}>
-                                  {errors.SupportMessage && touched.SupportMessage && errors.SupportMessage}
+                                  {errors.message && touched.message && errors.message}
                                 </span>
                               </div>
                             </div>
