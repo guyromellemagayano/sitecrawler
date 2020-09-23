@@ -511,11 +511,23 @@ const Pages = (props) => {
                     className={`mt-2 md:flex md:items-center md:justify-between`}
                   >
                     <div className={`flex-1 min-w-0`}>
-                      <h2
-                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
-                      >
-                        All Pages - {site.name}
-                      </h2>
+                      <div class="flex items-center">
+                        <div>
+                          <div class="flex items-center">
+                            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate">
+                              {site.name}
+                            </h2>
+                            <dl class="ml-5 flex flex-col sm:ml-5 sm:flex-row sm:flex-wrap">
+                              <dd class="flex items-center text-md leading-5 text-gray-500 font-medium sm:mr-6">
+                                <svg class="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fill-rule="evenodd" d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" clip-rule="evenodd" />
+                                </svg>
+                                {page.count} pages
+                              </dd>
+                            </dl>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -541,36 +553,6 @@ const Pages = (props) => {
                   ) : null}
                 </div>
                 <div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
-                  <div>
-                    {page ? (
-                      <div
-                        className={`max-w-xs mt-5 rounded-lg bg-white overflow-hidden shadow`}
-                      >
-                        <div>
-                          <div className={`px-4 py-5 sm:p-6`}>
-                            <dl>
-                              <dt
-                                className={`text-sm leading-5 font-medium text-gray-500 truncate`}
-                              >
-                                Total Page Links
-                              </dt>
-                              <dd
-                                className={`mt-1 flex justify-between items-baseline md:block lg:flex`}
-                              >
-                                <div
-                                  className={`flex items-baseline text-2xl leading-8 font-semibold text-indigo-600`}
-                                >
-                                  {page.count}
-                                </div>
-                              </dd>
-                            </dl>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <Skeleton width={280} height={104} duration={2} />
-                    )}
-                  </div>
                   <LinkOptions
                     searchKey={searchKey}
                     onSearchEvent={searchEventHandler}
