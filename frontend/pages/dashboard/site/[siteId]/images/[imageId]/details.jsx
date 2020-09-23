@@ -21,7 +21,7 @@ const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -138,7 +138,7 @@ const ImagesDetail = () => {
           </Head>
 
           <ImagesDetailDiv
-            className={`h-screen flex overflow-hidden bg-gray-100`}
+            className={`h-screen flex overflow-hidden bg-gray-1200`}
           >
             <MobileSidebar show={openMobileSidebar} />
             <MainSidebar />

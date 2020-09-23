@@ -29,7 +29,7 @@ const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -67,6 +67,7 @@ const Pages = (props) => {
   const [brokenSecurityFilter, setBrokenSecurityFilter] = useState(false);
   const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
+  const [linksPerPage, setLinksPerPage] = useState(20);
   const pageTitle = "Pages |";
 
   const { user: user, userError: userError } = useUser({
@@ -110,9 +111,9 @@ const Pages = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/page/`;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
   let queryString = 
     props.result.size_total_min !== undefined
       ? scanApiEndpoint.includes("?")
@@ -213,8 +214,8 @@ const Pages = (props) => {
       newPath = removeURLParameter(newPath, "size_total_min");
       newPath = removeURLParameter(newPath, "tls_total");
 
-      if (!newPath.includes("search") && !newPath.includes("size_total_min"))
-        newPath = newPath.replace("?", "");
+      // if (!newPath.includes("search") && !newPath.includes("size_total_min"))
+      //   newPath = newPath.replace("?", "");
     }
 
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
@@ -225,6 +226,32 @@ const Pages = (props) => {
     updatePages();
 
     return true;
+  };
+
+  const onItemsPerPageChange = (count) => {
+    const countValue = parseInt(count.target.value);
+
+    let newPath = asPath;
+    newPath = removeURLParameter(newPath, "page");
+
+    if (countValue) {
+      if (newPath.includes("per_page")) {
+        newPath = removeURLParameter(newPath, "per_page");
+      }
+      if (newPath.includes("?")) newPath += `&per_page=${countValue}`;
+      else newPath += `?per_page=${countValue}`;
+
+      setLinksPerPage(countValue);
+
+      if (newPath.includes("?")) setPagePath(`${newPath}&`);
+      else setPagePath(`${newPath}?`);
+      
+      Router.push("/dashboard/site/[siteId]/pages/", newPath);
+
+      updatePages();
+
+      return true;
+    }
   };
 
   useEffect(() => {
@@ -245,6 +272,8 @@ const Pages = (props) => {
         setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
+
+    if (props.result.per_page !== undefined) setLinksPerPage(props.result.per_page);
   }, []);
 
   useEffect(() => {
@@ -312,7 +341,7 @@ const Pages = (props) => {
     const res = await fetch(reCrawlEndpoint, {
       method: "POST",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },
@@ -379,7 +408,7 @@ const Pages = (props) => {
             </title>
           </Head>
 
-          <PagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <PagesDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
             <MobileSidebar
               show={openMobileSidebar}
               crawlableHandler={crawlableHandler}
@@ -482,11 +511,23 @@ const Pages = (props) => {
                     className={`mt-2 md:flex md:items-center md:justify-between`}
                   >
                     <div className={`flex-1 min-w-0`}>
-                      <h2
-                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
-                      >
-                        All Pages - {site.name}
-                      </h2>
+                      <div className={`flex items-center`}>
+                        <div>
+                          <div className={`flex items-center`}>
+                            <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}>
+                              {site.name}
+                            </h2>
+                            <dl className={`ml-5 flex flex-col sm:ml-5 sm:flex-row sm:flex-wrap`}>
+                              <dd className={`flex items-center text-md leading-5 text-gray-500 font-medium sm:mr-6`}>
+                                <svg className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" clipRule="evenodd" />
+                                </svg>
+                                {page.count > 0 ? page.count + " pages found" : "No pages found"}
+                              </dd>
+                            </dl>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -512,36 +553,6 @@ const Pages = (props) => {
                   ) : null}
                 </div>
                 <div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
-                  <div>
-                    {page ? (
-                      <div
-                        className={`max-w-xs mt-5 rounded-lg bg-white overflow-hidden shadow`}
-                      >
-                        <div>
-                          <div className={`px-4 py-5 sm:p-6`}>
-                            <dl>
-                              <dt
-                                className={`text-sm leading-5 font-medium text-gray-500 truncate`}
-                              >
-                                Total Page Links
-                              </dt>
-                              <dd
-                                className={`mt-1 flex justify-between items-baseline md:block lg:flex`}
-                              >
-                                <div
-                                  className={`flex items-baseline text-2xl leading-8 font-semibold text-indigo-600`}
-                                >
-                                  {page.count}
-                                </div>
-                              </dd>
-                            </dl>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <Skeleton width={280} height={104} duration={2} />
-                    )}
-                  </div>
                   <LinkOptions
                     searchKey={searchKey}
                     onSearchEvent={searchEventHandler}
@@ -557,6 +568,8 @@ const Pages = (props) => {
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                   <div className={`py-4`}>
                     <div className={`flex flex-col`}>
@@ -611,6 +624,8 @@ const Pages = (props) => {
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                 </div>
 

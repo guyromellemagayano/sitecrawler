@@ -16,7 +16,7 @@ import SeoOptions from "components/site/SeoOptions";
 import SeoFilter from "components/site/SeoFilter";
 import PageSeoTable from "components/site/SeoTable";
 import SeoSorting from "components/site/SeoSorting";
-import Pagination from "components/sites/Pagination";
+import MyPagination from "components/sites/Pagination";
 import {
   removeURLParameter,
   slugToCamelcase,
@@ -29,7 +29,7 @@ const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -75,6 +75,7 @@ const Seo = (props) => {
   const [pagePath, setPagePath] = useState("");
   const [sortOrder, setSortOrder] = useState(initialOrder);
   const [searchKey, setSearchKey] = useState("");
+  const [linksPerPage, setLinksPerPage] = useState(20);
 
   const pageTitle = "SEO |";
 
@@ -116,9 +117,12 @@ const Seo = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` +
+        linksPerPage +
+        `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/page/`;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` +
+        linksPerPage;
   let queryString =
     props.result.has_title !== undefined
       ? scanApiEndpoint.includes("?")
@@ -155,7 +159,6 @@ const Seo = (props) => {
         ? `&has_h2_second=false`
         : `?has_h2_second=false`
       : "";
-
   queryString +=
     props.result.search !== undefined
       ? (scanApiEndpoint + queryString).includes("?")
@@ -296,8 +299,8 @@ const Seo = (props) => {
       newPath = removeURLParameter(newPath, "has_h2_first");
       newPath = removeURLParameter(newPath, "has_h2_second");
 
-      if (!newPath.includes("search") && !newPath.includes("ordering"))
-        newPath = newPath.replace("?", "");
+      // if (!newPath.includes("search") && !newPath.includes("ordering"))
+      //   newPath = newPath.replace("?", "");
     }
 
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
@@ -308,6 +311,32 @@ const Seo = (props) => {
     updatePages();
 
     return true;
+  };
+
+  const onItemsPerPageChange = (count) => {
+    const countValue = parseInt(count.target.value);
+
+    let newPath = asPath;
+    newPath = removeURLParameter(newPath, "page");
+
+    if (countValue) {
+      if (newPath.includes("per_page")) {
+        newPath = removeURLParameter(newPath, "per_page");
+      }
+      if (newPath.includes("?")) newPath += `&per_page=${countValue}`;
+      else newPath += `?per_page=${countValue}`;
+
+      setLinksPerPage(countValue);
+
+      if (newPath.includes("?")) setPagePath(`${newPath}&`);
+      else setPagePath(`${newPath}?`);
+
+      Router.push("/dashboard/site/[siteId]/seo/", newPath);
+
+      updatePages();
+
+      return true;
+    }
   };
 
   useEffect(() => {
@@ -328,6 +357,9 @@ const Seo = (props) => {
         setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
+
+    if (props.result.per_page !== undefined)
+      setLinksPerPage(props.result.per_page);
   }, []);
 
   useEffect(() => {
@@ -423,7 +455,7 @@ const Seo = (props) => {
     const res = await fetch(reCrawlEndpoint, {
       method: "POST",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },
@@ -490,7 +522,7 @@ const Seo = (props) => {
             </title>
           </Head>
 
-          <SeoDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <SeoDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
             <MobileSidebar
               show={openMobileSidebar}
               crawlableHandler={crawlableHandler}
@@ -528,9 +560,7 @@ const Seo = (props) => {
                 className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
                 tabIndex={`0`}
               >
-                <div
-                  className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}
-                >
+                <div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
                   <div>
                     <nav className={`sm:hidden`}>
                       <Link
@@ -593,11 +623,33 @@ const Seo = (props) => {
                     className={`mt-2 md:flex md:items-center md:justify-between`}
                   >
                     <div className={`flex-1 min-w-0`}>
-                      <h2
-                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
-                      >
-                        SEO - {site.name}
-                      </h2>
+                      <div class="flex items-center">
+                        <div>
+                          <div class="flex items-center">
+                            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate">
+                              {site.name}
+                            </h2>
+                            <dl class="ml-5 flex flex-col sm:ml-5 sm:flex-row sm:flex-wrap">
+                              <dd class="flex items-center text-md leading-5 text-gray-500 font-medium sm:mr-6">
+                                <svg
+                                  class="flex-shrink-0 mr-2 h-5 w-5 text-gray-400"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                                {page.count > 0
+                                  ? page.count + " pages found"
+                                  : "No pages found"}
+                              </dd>
+                            </dl>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -637,11 +689,13 @@ const Seo = (props) => {
                     noH2First={noH2First}
                     noH2Second={noH2Second}
                   />
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/seo"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                   <div className={`py-4`}>
                     <div className={`flex flex-col`}>
@@ -689,11 +743,13 @@ const Seo = (props) => {
                     </div>
                   </div>
 
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/seo"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                 </div>
 

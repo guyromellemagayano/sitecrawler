@@ -16,4 +16,4 @@ RUN pip install -r requirements.prod.txt
 
 RUN ./manage.py collectstatic --noinput
 
-CMD gunicorn server.wsgi:application --bind 0.0.0.0:8000 --workers=2 --threads=2 --access-logfile "-"
+CMD gunicorn server.wsgi:application --bind 0.0.0.0:8000 --workers=2 --threads=2 --access-logfile "-" --keep-alive 65

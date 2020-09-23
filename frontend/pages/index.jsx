@@ -58,7 +58,7 @@ const Login = () => {
       const response = await fetch("/api/auth/login/", {
         method: "POST",
         headers: {
-          Accept: "application/json",
+          "Accept": "application/json",
           "Content-Type": "application/json",
           "X-CSRFToken": Cookies.get("csrftoken"),
         },
@@ -124,7 +124,7 @@ const Login = () => {
                         src={`/img/logos/site-logo-dark.svg`}
                         alt={`app-logo`}
                       />
-                      <h4 className={`mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-semibold text-gray-900 sm:mt-5 sm:leading-none text-4xl`}>
+                      <h4 className={`mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none text-4xl`}>
                         Find website issues before your clients do.
                         <br className={`hidden md:inline`} />
                       </h4>

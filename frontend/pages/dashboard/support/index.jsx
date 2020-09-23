@@ -1,26 +1,35 @@
-import { Fragment, useState } from 'react'
-import Head from 'next/head'
-import styled from 'styled-components'
-import PropTypes from 'prop-types'
-import useUser from 'hooks/useUser'
-import Layout from 'components/Layout'
-import MobileSidebar from 'components/sidebar/MobileSidebar'
-import MainSidebar from 'components/sidebar/MainSidebar'
+import { Fragment, useState, useEffect } from "react";
+import fetch from "node-fetch";
+import Cookies from "js-cookie";
+import Head from "next/head";
+import styled from "styled-components";
+import "core-js";
+import { Formik } from "formik";
+import * as Yup from 'yup';
+import PropTypes from "prop-types";
+import useUser from "hooks/useUser";
+import Layout from "components/Layout";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import MainSidebar from "components/sidebar/MainSidebar";
 import SiteFooter from "components/footer/SiteFooter";
 
-const SupportDiv = styled.section``
+const SupportDiv = styled.section``;
 
 const Support = () => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false)
-  const pageTitle = 'Support'
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const pageTitle = "Support";
 
   const { user: user, userError: userError } = useUser({
-    redirectTo: '/',
-    redirectIfFound: false
-  })
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
 
-  { userError && <Layout>{userError.message}</Layout> }
-
+  {
+    userError && <Layout>{userError.message}</Layout>;
+  }
+  
   return (
     <Layout>
       {user ? (
@@ -29,7 +38,7 @@ const Support = () => {
             <title>{pageTitle}</title>
           </Head>
 
-          <SupportDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <SupportDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
             <MobileSidebar show={openMobileSidebar} />
             <MainSidebar />
 
@@ -38,7 +47,12 @@ const Support = () => {
                 <button
                   className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
                   aria-label={`Open sidebar`}
-                  onClick={() => setTimeout(() => setOpenMobileSidebar(!openMobileSidebar), 150)}
+                  onClick={() =>
+                    setTimeout(
+                      () => setOpenMobileSidebar(!openMobileSidebar),
+                      150
+                    )
+                  }
                 >
                   <svg
                     className={`h-6 w-5`}
@@ -59,10 +73,16 @@ const Support = () => {
                 className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
                 tabIndex={`0`}
               >
-                <div className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}>
-                  <div className={`mt-2 md:flex md:items-center md:justify-between`}>
+                <div
+                  className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+                >
+                  <div
+                    className={`mt-2 md:flex md:items-center md:justify-between`}
+                  >
                     <div className={`flex-1 min-w-0`}>
-                      <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}>
+                      <h2
+                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
+                      >
                         {pageTitle}
                       </h2>
                     </div>
@@ -70,20 +90,158 @@ const Support = () => {
                 </div>
                 <div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
                   <div className={`max-w-full bg-white shadow rounded-lg`}>
-                    <div className={`px-4 py-5 sm:p-6`}>
-                      <div className={`mt-2 max-w-xl text-sm leading-5 text-gray-500`}>
-                        <p className={`inline-block`}>For support, you can email us at </p> <address className={`inline-block font-semibold`}>support@epicdesignlabs.com</address>
-                      </div>
-                      <div className={`mt-3 mb-2 text-sm leading-5`}>
-                        <a href="mailto:support@epicdesignlabs.com" className={`font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}>
-                          Send us an email today &rarr;
-                        </a>
-                      </div>
-                    </div>
+                    <Formik
+                      initialValues={{ 
+                        message: '',
+                      }}
+                      validate={values => {
+                        const errors = {};
+
+                        if (!values.message) {
+                          errors.message = 'Required Field';
+                        }
+
+                        return errors;
+                      }}
+                      validationSchema={Yup.object({
+                        message: Yup.string()
+                      })}
+                      onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        const body = {
+                          message: values.message
+                        };
+
+                        const supportMailResponse = await fetch("/api/support/contact/", {
+                          method: "POST",
+                          headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": Cookies.get("csrftoken"),
+                          },
+                          body: JSON.stringify(body),
+                        });
+
+                        const data = await supportMailResponse.json();
+
+                        setTimeout(() => {
+                          setSubmitting(false);
+                          resetForm({ values: ''});
+
+                          if (supportMailResponse.ok && supportMailResponse.status === 200) {
+                            if (data) {
+                              setSuccessMsg(
+                                "Support message sent successfully."
+                              );
+                            } else {
+                              setErrorMsg(
+                                "Support message sent failed. Please try again."
+                              );
+                            }
+                          } else {
+                            const error = new Error(supportMailResponse.statusText);
+
+                            error.response = supportMailResponse;
+                            error.data = data;
+
+                            setErrorMsg(
+                              "An unexpected error occurred. Please try again."
+                            );
+
+                            throw error;
+                          }
+                        }, 400);
+                      }}
+                    >
+                      {({
+                        values,
+                        errors,
+                        touched,
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        isSubmitting
+                      }) => (
+                        <form
+                          className={`px-4 py-5 bg-white sm:p-6`}
+                          onSubmit={handleSubmit}
+                        >
+                          <div>
+                            <h3
+                              className={`text-lg leading-6 font-medium text-gray-900`}
+                            >
+                              App Support Form
+                            </h3>
+                            <p
+                              className={`mt-1 max-w-2xl text-sm leading-5 text-gray-500`}
+                            >
+                              This information will be sent to our app
+                              administrator.
+                            </p>
+                          </div>
+                          <div className={`mt-6 sm:mt-5`}>
+                            <div
+                              className={`mt-6 sm:mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5`}
+                            >
+                              <label
+                                htmlFor="about"
+                                className={`block text-sm font-medium leading-5 text-gray-700 sm:mt-px sm:pt-2`}
+                              >
+                                Message
+                              </label>
+                              <div className={`mt-1 sm:mt-0 sm:col-span-2`}>
+                                <div
+                                  className={`max-w-lg flex rounded-md shadow-sm`}
+                                >
+                                  <textarea
+                                    id={`message`}
+                                    rows={5}
+                                    className={`form-textarea block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                                    name={`message`}
+                                    placeholder={`Tell us your thoughts about the app.`}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.message}
+                                  />
+                                </div>
+                                {successMsg ? (
+                                  <span className={`block mt-2 text-sm leading-5 font-medium text-green-800 break-words`}>
+                                    {successMsg}
+                                  </span>
+                                ) : (
+                                  <span className={`block mt-2 text-sm leading-5 font-medium text-red-800 break-words`}>
+                                    {errorMsg}
+                                  </span>
+                                )}
+                                <span className={`block mt-2 text-sm leading-5 font-medium text-red-800 break-words`}>
+                                  {errors.message && touched.message && errors.message}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className={`mt-8 border-t border-gray-200 pt-5`}>
+                            <div className={`flex justify-end`}>
+                              <span
+                                className={`ml-3 inline-flex rounded-md shadow-sm`}
+                              >
+                                <button
+                                  type="submit"
+                                  className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out`}
+                                  disabled={isSubmitting}
+                                >
+                                  Submit Form
+                                </button>
+                              </span>
+                            </div>
+                          </div>
+                        </form>
+                      )}
+                    </Formik>
                   </div>
                 </div>
 
-                <div className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}>
+                <div
+                  className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
+                >
                   <SiteFooter />
                 </div>
               </main>
@@ -93,11 +251,11 @@ const Support = () => {
       ) : null}
     </Layout>
   );
-}
+};
 
-export default Support
+export default Support;
 
 Support.propTypes = {
   openMobileSidebar: PropTypes.bool,
   pageTitle: PropTypes.string,
-}
+};

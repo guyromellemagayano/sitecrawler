@@ -8,13 +8,13 @@ import Skeleton from "react-loading-skeleton";
 import loadable from "@loadable/component";
 const Chart = loadable(() => import("react-apexcharts"));
 import Router from "next/router";
-import { pagesChartContents } from "../../enum/chartContents";
+import { pagesChartContents } from "enum/chartContents";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },

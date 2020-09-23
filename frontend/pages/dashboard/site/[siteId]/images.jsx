@@ -16,7 +16,7 @@ import LinkOptions from "components/site/LinkOptions";
 import ImageFilter from "components/site/ImageFilter";
 import ImageTable from "components/site/ImageTable";
 import ImageSorting from "components/site/ImageSorting";
-import Pagination from "components/sites/Pagination";
+import MyPagination from "components/sites/Pagination";
 import {
   removeURLParameter,
   slugToCamelcase,
@@ -29,7 +29,7 @@ const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -71,6 +71,7 @@ const Images = (props) => {
   );
   const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
+  const [linksPerPage, setLinksPerPage] = useState(20);
 
   const [searchKey, setSearchKey] = useState("");
 
@@ -114,9 +115,9 @@ const Images = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/image/?page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage + `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/image/`;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
   const statusString = Array.isArray(props.result.status)
     ? props.result.status.join("&status=")
     : props.result.status;
@@ -265,8 +266,8 @@ const Images = (props) => {
       newPath = removeURLParameter(newPath, "status");
       newPath = removeURLParameter(newPath, "tls_status");
 
-      if (!newPath.includes("search") && !newPath.includes("status"))
-        newPath = newPath.replace("?", "");
+      // if (!newPath.includes("search") && !newPath.includes("status"))
+      //   newPath = newPath.replace("?", "");
     }
 
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
@@ -277,6 +278,33 @@ const Images = (props) => {
     updateImages();
 
     return true;
+  };
+
+  const onItemsPerPageChange = (count) => {
+    const countValue = parseInt(count.target.value);
+
+    let newPath = asPath;
+    newPath = removeURLParameter(newPath, "page");
+
+    if (countValue) {
+      if (newPath.includes("per_page")) {
+        newPath = removeURLParameter(newPath, "per_page");
+      }
+      if (newPath.includes("?")) newPath += `&per_page=${countValue}`;
+      else newPath += `?per_page=${countValue}`;
+
+      setLinksPerPage(countValue);
+
+      if (newPath.includes("?")) setPagePath(`${newPath}&`);
+      else setPagePath(`${newPath}?`);
+      
+
+      Router.push("/dashboard/site/[siteId]/images/", newPath);
+
+      updateImages();
+
+      return true;
+    }
   };
 
   useEffect(() => {
@@ -297,6 +325,8 @@ const Images = (props) => {
         setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
+
+    if (props.result.per_page !== undefined) setLinksPerPage(props.result.per_page);
   }, []);
 
   useEffect(() => {
@@ -331,7 +361,7 @@ const Images = (props) => {
     const res = await fetch(reCrawlEndpoint, {
       method: "POST",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },
@@ -398,7 +428,7 @@ const Images = (props) => {
             </title>
           </Head>
 
-          <ImagesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <ImagesDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
             <MobileSidebar
               show={openMobileSidebar}
               crawlableHandler={crawlableHandler}
@@ -498,11 +528,23 @@ const Images = (props) => {
                     className={`mt-2 md:flex md:items-center md:justify-between`}
                   >
                     <div className={`flex-1 min-w-0`}>
-                      <h2
-                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
-                      >
-                        Images - {site.name}
-                      </h2>
+                      <div className={`flex items-center`}>
+                        <div>
+                          <div className={`flex items-center`}>
+                            <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}>
+                              {site.name}
+                            </h2>
+                            <dl className={`ml-5 flex flex-col sm:ml-5 sm:flex-row sm:flex-wrap`}>
+                              <dd className={`flex items-center text-md leading-5 text-gray-500 font-medium sm:mr-6`}>
+                                <svg className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                                </svg>
+                                {image.count > 0 ? image.count + " images found" : "No images found"}
+                              </dd>
+                            </dl>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -538,11 +580,13 @@ const Images = (props) => {
                     imageNotWorkingFilter={imageNotWorkingFilter}
                     imageBrokenSecurityFilter={imageBrokenSecurityFilter}
                   />
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/images"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                   <div className={`py-4`}>
                     <div className={`flex flex-col`}>
@@ -590,11 +634,13 @@ const Images = (props) => {
                     </div>
                   </div>
 
-                  <Pagination
+                  <MyPagination
                     href="/dashboard/site/[siteId]/images"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                 </div>
 

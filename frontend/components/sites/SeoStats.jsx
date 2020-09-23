@@ -8,7 +8,7 @@ import Skeleton from 'react-loading-skeleton'
 import loadable from '@loadable/component'
 const Chart = loadable(() => import('react-apexcharts'));
 import Router from "next/router";
-import { seoChartContents } from '../../enum/chartContents';
+import { seoChartContents } from 'enum/chartContents';
 // const ApexCharts = loadable(() => import('apexcharts'));
 
 const fetcher = async (url) => {

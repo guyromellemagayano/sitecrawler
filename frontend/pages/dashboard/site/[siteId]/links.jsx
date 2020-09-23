@@ -16,7 +16,7 @@ import MainSidebar from "components/sidebar/MainSidebar";
 import LinkOptions from "components/site/LinkOptions";
 import LinkFilter from "components/site/LinkFilter";
 import LinkUrlTable from "components/site/LinkTable";
-import Pagination from "components/sites/Pagination";
+import MyPagination from "components/sites/Pagination";
 import LinkSorting from "components/site/LinkSorting";
 import {
   removeURLParameter,
@@ -30,7 +30,7 @@ const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -49,7 +49,7 @@ const LinksDiv = styled.section`
   .url-type-tooltip,
   .status-tooltip {
     max-width: 15rem;
-    margin-left: 5px;
+    margin-left: 5px !important;
     padding: 1rem 1.5rem;
   }
   @media only screen and (max-width: 1400px) {
@@ -90,6 +90,7 @@ const Links = (props) => {
   const [externalFilter, setExternalFilter] = useState(false);
   const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
+  const [linksPerPage, setLinksPerPage] = useState(20);
   const [pagePath, setPagePath] = useState("");
   const [sortOrder, setSortOrder] = useState(initialOrder);
   const [searchKey, setSearchKey] = useState("");
@@ -134,12 +135,15 @@ const Links = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
+        linksPerPage +
+        `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/link/`;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
+        linksPerPage;
   let queryString =
     props.result.status !== undefined && props.result.status.length != 0
-      ? props.result.page !== undefined
+      ? scanApiEndpoint.includes("?")
         ? "&status=" + props.result.status.join("&status=")
         : "?status=" + props.result.status.join("&status=")
       : "";
@@ -148,7 +152,7 @@ const Links = (props) => {
     : props.result.type;
   queryString +=
     props.result.type !== undefined
-      ? props.result.page !== undefined || props.result.status !== undefined
+      ? scanApiEndpoint.includes("?")
         ? `&type=${typeString}`
         : `?type=${typeString}`
       : "";
@@ -170,7 +174,7 @@ const Links = (props) => {
 
   scanApiEndpoint += queryString;
 
-  console.log(scanApiEndpoint)
+  // console.log(scanApiEndpoint);
 
   const { data: link, error: linkError, mutate: updateLinks } = useSWR(
     () => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -191,7 +195,7 @@ const Links = (props) => {
       if (newPath.includes("?")) setPagePath(`${newPath}&`);
       else setPagePath(`${newPath}?`);
 
-      Router.push("/dashboard/site/[siteId]/links", newPath);
+      Router.push("/dashboard/site/[siteId]/links/", newPath);
       return;
     }
 
@@ -202,7 +206,7 @@ const Links = (props) => {
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
     else setPagePath(`${newPath}?`);
 
-    Router.push("/dashboard/site/[siteId]/links", newPath);
+    Router.push("/dashboard/site/[siteId]/links/", newPath);
 
     updateLinks();
   };
@@ -212,6 +216,7 @@ const Links = (props) => {
     const filterStatus = e.target.checked;
 
     let newPath = asPath;
+    newPath = removeURLParameter(newPath, "per_page");
 
     if (filterType == "issues" && filterStatus == true) {
       setIssueFilter(true);
@@ -230,6 +235,7 @@ const Links = (props) => {
       setInternalFilter(true);
       setExternalFilter(false);
       setAllFilter(false);
+
       newPath = removeURLParameter(newPath, "type");
       newPath = removeURLParameter(newPath, "page");
 
@@ -238,6 +244,7 @@ const Links = (props) => {
     } else if (filterType == "internal" && filterStatus == false) {
       if (newPath.includes("type=PAGE"))
         newPath = removeURLParameter(newPath, "type");
+
       setInternalFilter(false);
     }
 
@@ -245,6 +252,7 @@ const Links = (props) => {
       setExternalFilter(true);
       setInternalFilter(false);
       setAllFilter(false);
+
       newPath = removeURLParameter(newPath, "page");
       newPath = removeURLParameter(newPath, "type");
 
@@ -253,6 +261,7 @@ const Links = (props) => {
     } else if (filterType == "external" && filterStatus == false) {
       if (newPath.includes("type=EXTERNAL"))
         newPath = removeURLParameter(newPath, "type");
+
       setExternalFilter(false);
     }
 
@@ -266,18 +275,46 @@ const Links = (props) => {
       newPath = removeURLParameter(newPath, "type");
       newPath = removeURLParameter(newPath, "page");
 
-      if (!newPath.includes("search") && !newPath.includes("ordering"))
-        newPath = newPath.replace("?", "");
+      // if (!newPath.includes("search") && !newPath.includes("ordering"))
+      //   newPath = newPath.replace("?", "");
     }
 
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
     else setPagePath(`${newPath}?`);
 
-    Router.push("/dashboard/site/[siteId]/links", newPath);
+    // console.log(newPath);
+
+    Router.push("/dashboard/site/[siteId]/links/", newPath);
 
     updateLinks();
 
     return true;
+  };
+
+  const onItemsPerPageChange = (count) => {
+    const countValue = parseInt(count.target.value);
+
+    let newPath = asPath;
+    newPath = removeURLParameter(newPath, "page");
+
+    if (countValue) {
+      if (newPath.includes("per_page")) {
+        newPath = removeURLParameter(newPath, "per_page");
+      }
+      if (newPath.includes("?")) newPath += `&per_page=${countValue}`;
+      else newPath += `?per_page=${countValue}`;
+
+      setLinksPerPage(countValue);
+
+      if (newPath.includes("?")) setPagePath(`${newPath}&`);
+      else setPagePath(`${newPath}?`);
+
+      Router.push("/dashboard/site/[siteId]/links/", newPath);
+
+      updateLinks();
+
+      return true;
+    }
   };
 
   useEffect(() => {
@@ -298,6 +335,11 @@ const Links = (props) => {
         setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
+
+    if (props.result.per_page !== undefined)
+      setLinksPerPage(props.result.per_page);
+
+    // console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
   }, []);
 
   useEffect(() => {
@@ -369,7 +411,7 @@ const Links = (props) => {
       setPagePath(`${removeURLParameter(newPath, "page")}&`);
     else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
-    Router.push("/dashboard/site/[siteId]/links", newPath);
+    Router.push("/dashboard/site/[siteId]/links/", newPath);
     updateLinks();
   };
 
@@ -380,7 +422,7 @@ const Links = (props) => {
     const res = await fetch(reCrawlEndpoint, {
       method: "POST",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },
@@ -447,7 +489,7 @@ const Links = (props) => {
             </title>
           </Head>
 
-          <LinksDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <LinksDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
             <MobileSidebar
               show={openMobileSidebar}
               crawlableHandler={crawlableHandler}
@@ -534,7 +576,7 @@ const Links = (props) => {
                         />
                       </svg>
                       <Link
-                        href="/dashboard/site/[siteId]/links"
+                        href="/dashboard/site/[siteId]/links/"
                         as={"/dashboard/site/" + query.siteId + "/links"}
                       >
                         <a
@@ -549,11 +591,23 @@ const Links = (props) => {
                     className={`mt-2 md:flex md:items-center md:justify-between`}
                   >
                     <div className={`flex-1 min-w-0`}>
-                      <h2
-                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
-                      >
-                        All Links - {site.name}
-                      </h2>
+                      <div className={`flex items-center`}>
+                        <div>
+                          <div className={`flex items-center`}>
+                            <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}>
+                              {site.name}
+                            </h2>
+                            <dl className={`ml-5 flex flex-col sm:ml-5 sm:flex-row sm:flex-wrap`}>
+                              <dd className={`flex items-center text-md leading-5 text-gray-500 font-medium sm:mr-6`}>
+                                <svg className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+                                </svg>
+                                {link.count > 0 ? link.count + " links found" : "No links found"}
+                              </dd>
+                            </dl>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -590,11 +644,13 @@ const Links = (props) => {
                     internalFilter={internalFilter}
                     externalFilter={externalFilter}
                   />
-                  <Pagination
-                    href="/dashboard/site/[siteId]/links"
+                  <MyPagination
+                    href="/dashboard/site/[siteId]/links/"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                   <div className={`py-4`}>
                     <div className={`flex flex-col`}>
@@ -633,6 +689,9 @@ const Links = (props) => {
                                                 <a
                                                   data-tip
                                                   data-for={site.slug}
+                                                  data-background-color={
+                                                    "#4A5568"
+                                                  }
                                                   data-iscapture="true"
                                                   className={`flex items-center`}
                                                 >
@@ -655,7 +714,7 @@ const Links = (props) => {
                                                   id={site.slug}
                                                   className={`${
                                                     site.slug + "-tooltip"
-                                                  } w-48`}
+                                                  } w-36`}
                                                   type="dark"
                                                   effect="solid"
                                                   place="bottom"
@@ -681,9 +740,9 @@ const Links = (props) => {
                                                         </li>
                                                         <li className={`mb-2`}>
                                                           <strong>
-                                                            HTTP_ERROR(404)
+                                                            HTTP_ERROR
                                                           </strong>{" "}
-                                                          - Broken Link
+                                                          - broken Link
                                                         </li>
                                                         <li className={`mb-2`}>
                                                           <strong>
@@ -699,12 +758,6 @@ const Links = (props) => {
                                                         frameworks to provide a
                                                         robust synopsis for high
                                                         level overviews.
-                                                        Iterative approaches to
-                                                        corporate strategy
-                                                        foster collaborative
-                                                        thinking to further the
-                                                        overall value
-                                                        proposition.
                                                       </p>
                                                     )}
                                                   </span>
@@ -729,11 +782,13 @@ const Links = (props) => {
                     </div>
                   </div>
 
-                  <Pagination
-                    href="/dashboard/site/[siteId]/links"
+                  <MyPagination
+                    href="/dashboard/site/[siteId]/links/"
                     pathName={pagePath}
                     apiEndpoint={scanApiEndpoint}
                     page={props.result.page ? props.result.page : 0}
+                    linksPerPage={linksPerPage}
+                    onItemsPerPageChange={onItemsPerPageChange}
                   />
                 </div>
 

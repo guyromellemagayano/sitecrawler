@@ -27,7 +27,7 @@ const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -91,7 +91,7 @@ const Sites = (props) => {
             <title>{pageTitle}</title>
           </Head>
 
-          <SitesDiv className={`h-screen flex overflow-hidden bg-gray-100`}>
+          <SitesDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
             <MobileSidebar show={openMobileSidebar} />
             <MainSidebar />
 
@@ -185,12 +185,6 @@ const Sites = (props) => {
                       </div>
                     </div>
                   </div>
-
-                  <Pagination
-                    pathName={router.pathname}
-                    apiEndpoint={sitesApiEndpoint}
-                    page={props.page ? props.page : 0}
-                  />
                 </div>
 
                 <div className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}>
