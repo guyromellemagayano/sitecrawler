@@ -31,7 +31,7 @@ const fetcher = async (url) => {
 	const res = await fetch(url, {
 		method: "GET",
 		headers: {
-		Accept: "application/json",
+		"Accept": "application/json",
 		"Content-Type": "application/json",
 		"X-CSRFToken": Cookies.get("csrftoken"),
 		},
@@ -82,7 +82,7 @@ const PaymentMethodForm = props => {
 		const response = await fetch("/api/stripe/payment-method/", {
 			method: "POST",
 			headers: {
-				Accept: "application/json",
+				"Accept": "application/json",
 				"Content-Type": "application/json",
 				"X-CSRFToken": Cookies.get("csrftoken"),
 			},
@@ -94,7 +94,7 @@ const PaymentMethodForm = props => {
 		await fetch("/api/stripe/subscription/current/", {
 			method: "POST",
 			headers: {
-				Accept: "application/json",
+				"Accept": "application/json",
 				"Content-Type": "application/json",
 				"X-CSRFToken": Cookies.get("csrftoken"),
 			},

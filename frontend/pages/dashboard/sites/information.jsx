@@ -69,7 +69,7 @@ const SitesInformation = (props) => {
           const response = await fetch("/api/site/", {
             method: "GET",
             headers: {
-              Accept: "application/json",
+              "Accept": "application/json",
               "Content-Type": "application/json",
               "X-CSRFToken": Cookies.get("csrftoken"),
             },
@@ -93,7 +93,7 @@ const SitesInformation = (props) => {
                   const siteResponse = await fetch("/api/site/", {
                     method: "POST",
                     headers: {
-                      Accept: "application/json",
+                      "Accept": "application/json",
                       "Content-Type": "application/json",
                       "X-CSRFToken": Cookies.get("csrftoken"),
                     },
@@ -169,7 +169,7 @@ const SitesInformation = (props) => {
         const response = await fetch(`/api/site/${router.query.sid}/`, {
           method: "GET",
           headers: {
-            Accept: "application/json",
+            "Accept": "application/json",
             "Content-Type": "application/json",
             "X-CSRFToken": Cookies.get("csrftoken"),
           },
@@ -185,7 +185,7 @@ const SitesInformation = (props) => {
                 {
                   method: "PATCH",
                   headers: {
-                    Accept: "application/json",
+                    "Accept": "application/json",
                     "Content-Type": "application/json",
                     "X-CSRFToken": Cookies.get("csrftoken"),
                   },
@@ -249,7 +249,7 @@ const SitesInformation = (props) => {
     const siteData = await fetchJson(endpoint, {
       method: "GET",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },

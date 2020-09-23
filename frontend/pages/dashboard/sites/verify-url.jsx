@@ -82,7 +82,7 @@ const SitesVerifyUrl = props => {
       const response = await fetch("/api/site/" + body.sid + "/verify/", {
         method: "POST",
         headers: {
-          Accept: "application/json",
+          "Accept": "application/json",
           "Content-Type": "application/json",
           "X-CSRFToken": Cookies.get("csrftoken"),
         },
