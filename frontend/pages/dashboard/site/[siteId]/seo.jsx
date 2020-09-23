@@ -29,7 +29,7 @@ const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -117,9 +117,12 @@ const Seo = (props) => {
 
   let scanApiEndpoint =
     props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` +
+      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` +
+        linksPerPage +
+        `&page=` +
         props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+      : `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` +
+        linksPerPage;
   let queryString =
     props.result.has_title !== undefined
       ? scanApiEndpoint.includes("?")
@@ -327,7 +330,6 @@ const Seo = (props) => {
 
       if (newPath.includes("?")) setPagePath(`${newPath}&`);
       else setPagePath(`${newPath}?`);
-      
 
       Router.push("/dashboard/site/[siteId]/seo/", newPath);
 
@@ -356,7 +358,8 @@ const Seo = (props) => {
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
 
-    if (props.result.per_page !== undefined) setLinksPerPage(props.result.per_page);
+    if (props.result.per_page !== undefined)
+      setLinksPerPage(props.result.per_page);
   }, []);
 
   useEffect(() => {
@@ -452,7 +455,7 @@ const Seo = (props) => {
     const res = await fetch(reCrawlEndpoint, {
       method: "POST",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },
@@ -557,9 +560,7 @@ const Seo = (props) => {
                 className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
                 tabIndex={`0`}
               >
-                <div
-                  className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}
-                >
+                <div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
                   <div>
                     <nav className={`sm:hidden`}>
                       <Link
@@ -622,11 +623,33 @@ const Seo = (props) => {
                     className={`mt-2 md:flex md:items-center md:justify-between`}
                   >
                     <div className={`flex-1 min-w-0`}>
-                      <h2
-                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
-                      >
-                        SEO - {site.name}
-                      </h2>
+                      <div class="flex items-center">
+                        <div>
+                          <div class="flex items-center">
+                            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate">
+                              {site.name}
+                            </h2>
+                            <dl class="ml-5 flex flex-col sm:ml-5 sm:flex-row sm:flex-wrap">
+                              <dd class="flex items-center text-md leading-5 text-gray-500 font-medium sm:mr-6">
+                                <svg
+                                  class="flex-shrink-0 mr-2 h-5 w-5 text-gray-400"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                                {page.count > 0
+                                  ? page.count + " pages found"
+                                  : "No pages found"}
+                              </dd>
+                            </dl>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

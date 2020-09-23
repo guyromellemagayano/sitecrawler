@@ -34,6 +34,7 @@ const SitesVerifyUrl = props => {
     `<meta name="epic-crawl-id" content="${props.vid}" />`
   );
   const [copied, setCopied] = useState(false);
+  const [htmlCopied, setHtmlCopied] = useState(false);
   const [siteVerifyId, setSiteVerifyId] = useState(props.sid);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -51,6 +52,10 @@ const SitesVerifyUrl = props => {
     setCopyValue({ copyValue, copied });
   };
 
+  const handleTextareaChange = ({ copyValue }) => {
+    setCopyValue({ copyValue, htmlCopied });
+  };
+
   const handleHiddenInputChange = (e) => {
     setSiteVerifyId({ value: e.currentTarget.site_verify_id.value });
   };
@@ -58,6 +63,10 @@ const SitesVerifyUrl = props => {
   const handleInputCopy = () => {
     setCopied(true);
   };
+
+  const handleTextAreaCopy = () => {
+    setHtmlCopied(true);
+  }
 
   const handleSiteVerification = async (e) => {
     e.preventDefault();
@@ -73,7 +82,7 @@ const SitesVerifyUrl = props => {
       const response = await fetch("/api/site/" + body.sid + "/verify/", {
         method: "POST",
         headers: {
-          Accept: "application/json",
+          "Accept": "application/json",
           "Content-Type": "application/json",
           "X-CSRFToken": Cookies.get("csrftoken"),
         },
@@ -558,16 +567,17 @@ const SitesVerifyUrl = props => {
                                   id={`instructions`}
                                   className={`instructions-textarea h-56 resize-none block w-full p-3 pb-0 mb-3`}
                                   value={htmlText}
+                                  onChange={handleTextareaChange}
                                 ></textarea>
                                 <CopyToClipboard
-                                  onCopy={handleInputCopy}
+                                  onCopy={handleTextAreaCopy}
                                   text={htmlText}
                                 >
                                   <button
                                     className={`mb-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-800 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`}
                                   >
                                     <span>
-                                      {copied
+                                      {htmlCopied
                                         ? "Copied!"
                                         : "Copy to Clipboard"}
                                     </span>

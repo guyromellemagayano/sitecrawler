@@ -37,7 +37,7 @@ const MainSidebar = props => {
           <div className={`flex flex-col border-r border-gray-200 bg-gray-1000 w-64`}>
             <div className={`h-0 flex-1 flex flex-col pt-5 pb-4 overflow-y-auto`}>
               <div className={`flex items-center flex-shrink-0 flex-column px-5`}>
-                <Link href="/dashboard/sites/">
+                <Link href="/dashboard/sites">
                   <a className={`block w-full`}>
                     <AppLogo
                       className={`h-8 w-auto`}

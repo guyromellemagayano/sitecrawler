@@ -46,7 +46,7 @@ const SiteSettings = () => {
     const siteSettingsData = await fetchJson(endpoint, {
       method: "GET",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },
@@ -59,7 +59,7 @@ const SiteSettings = () => {
     const response = await fetch(endpoint, {
       method: "PUT",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },
@@ -96,7 +96,7 @@ const SiteSettings = () => {
     await fetch(endpoint, {
       method: "DELETE",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },

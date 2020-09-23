@@ -1,4 +1,6 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
+import fetch from "node-fetch";
+import Cookies from "js-cookie";
 import Head from "next/head";
 import styled from "styled-components";
 import "core-js";
@@ -10,23 +12,6 @@ import Layout from "components/Layout";
 import MobileSidebar from "components/sidebar/MobileSidebar";
 import MainSidebar from "components/sidebar/MainSidebar";
 import SiteFooter from "components/footer/SiteFooter";
-import mailgun from 'mailgun.js';
-
-// MailGun config
-const mg_username = 'api';
-const mg_key = '189362ef999e7949abb6ec335bf7d59f-a2b91229-4ae562a8';
-const mg_pub_key = 'pubkey-65b1cb75c680c7ceb503a1c25d2ed0e0';
-const mg_domain = 'mg.sitecrawler.com';
-const mg_to = 'support@sitecrawler.com';
-const mg_subject = 'New Support Ticket | Site Crawler';
-
-const mailgunConfig = {
-  username: mg_username,
-  key: mg_key,
-  public_key: mg_pub_key
-};
-
-var mg = mailgun.client(mailgunConfig);
 
 const SupportDiv = styled.section``;
 
@@ -107,36 +92,63 @@ const Support = () => {
                   <div className={`max-w-full bg-white shadow rounded-lg`}>
                     <Formik
                       initialValues={{ 
-                        SupportFirstName: user.first_name ? user.first_name : '',
-                        SupportLastName: user.last_name ? user.last_name : '',
-                        SupportUserName: user.username ? user.username : '',
-                        SupportEmailAddress: user.email ? user.email : '',
-                        SupportMessage: '',
+                        message: '',
                       }}
                       validate={values => {
                         const errors = {};
 
-                        if (!values.SupportMessage) {
-                          errors.SupportMessage = 'Required Field';
+                        if (!values.message) {
+                          errors.message = 'Required Field';
                         }
 
                         return errors;
                       }}
                       validationSchema={Yup.object({
-                        SupportMessage: Yup.string()
+                        message: Yup.string()
                       })}
-                      onSubmit={(values, { setSubmitting, resetForm }) => {
+                      onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        const body = {
+                          message: values.message
+                        };
+
+                        const supportMailResponse = await fetch("/api/support/contact/", {
+                          method: "POST",
+                          headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": Cookies.get("csrftoken"),
+                          },
+                          body: JSON.stringify(body),
+                        });
+
+                        const data = await supportMailResponse.json();
+
                         setTimeout(() => {
                           setSubmitting(false);
                           resetForm({ values: ''});
-                          mg.messages.create(mg_domain, {
-                            from: values.SupportFirstName + " " + values.SupportLastName + " " + `<${values.SupportEmailAddress}>`,
-                            to: [mg_to],
-                            subject: mg_subject,
-                            text: values.SupportMessage,
-                          })
-                          .then(msg => setSuccessMsg(msg.message))
-                          .catch(err => setErrorMsg(err.message));
+
+                          if (supportMailResponse.ok && supportMailResponse.status === 200) {
+                            if (data) {
+                              setSuccessMsg(
+                                "Support message sent successfully."
+                              );
+                            } else {
+                              setErrorMsg(
+                                "Support message sent failed. Please try again."
+                              );
+                            }
+                          } else {
+                            const error = new Error(supportMailResponse.statusText);
+
+                            error.response = supportMailResponse;
+                            error.data = data;
+
+                            setErrorMsg(
+                              "An unexpected error occurred. Please try again."
+                            );
+
+                            throw error;
+                          }
                         }, 400);
                       }}
                     >
@@ -181,14 +193,14 @@ const Support = () => {
                                   className={`max-w-lg flex rounded-md shadow-sm`}
                                 >
                                   <textarea
-                                    id={`supportmessage`}
+                                    id={`message`}
                                     rows={5}
                                     className={`form-textarea block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
-                                    name={`SupportMessage`}
+                                    name={`message`}
                                     placeholder={`Tell us your thoughts about the app.`}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    value={values.SupportMessage}
+                                    value={values.message}
                                   />
                                 </div>
                                 {successMsg ? (
@@ -201,7 +213,7 @@ const Support = () => {
                                   </span>
                                 )}
                                 <span className={`block mt-2 text-sm leading-5 font-medium text-red-800 break-words`}>
-                                  {errors.SupportMessage && touched.SupportMessage && errors.SupportMessage}
+                                  {errors.message && touched.message && errors.message}
                                 </span>
                               </div>
                             </div>
