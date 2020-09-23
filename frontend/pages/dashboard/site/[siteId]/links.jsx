@@ -591,16 +591,16 @@ const Links = (props) => {
                     className={`mt-2 md:flex md:items-center md:justify-between`}
                   >
                     <div className={`flex-1 min-w-0`}>
-                      <div class="flex items-center">
+                      <div className={`flex items-center`}>
                         <div>
-                          <div class="flex items-center">
-                            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate">
+                          <div className={`flex items-center`}>
+                            <h2 className={`text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}>
                               {site.name}
                             </h2>
-                            <dl class="ml-5 flex flex-col sm:ml-5 sm:flex-row sm:flex-wrap">
-                              <dd class="flex items-center text-md leading-5 text-gray-500 font-medium sm:mr-6">
-                                <svg class="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd" />
+                            <dl className={`ml-5 flex flex-col sm:ml-5 sm:flex-row sm:flex-wrap`}>
+                              <dd className={`flex items-center text-md leading-5 text-gray-500 font-medium sm:mr-6`}>
+                                <svg className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
                                 </svg>
                                 {link.count > 0 ? link.count + " links found" : "No links found"}
                               </dd>
