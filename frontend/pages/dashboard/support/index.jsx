@@ -10,30 +10,11 @@ import Layout from "components/Layout";
 import MobileSidebar from "components/sidebar/MobileSidebar";
 import MainSidebar from "components/sidebar/MainSidebar";
 import SiteFooter from "components/footer/SiteFooter";
-import mailgun from 'mailgun.js';
-
-// MailGun config
-const mg_username = 'api';
-const mg_key = '189362ef999e7949abb6ec335bf7d59f-a2b91229-4ae562a8';
-const mg_pub_key = 'pubkey-65b1cb75c680c7ceb503a1c25d2ed0e0';
-const mg_domain = 'mg.sitecrawler.com';
-const mg_to = 'support@sitecrawler.com';
-const mg_subject = 'New Support Ticket | Site Crawler';
-
-const mailgunConfig = {
-  username: mg_username,
-  key: mg_key,
-  public_key: mg_pub_key
-};
-
-var mg = mailgun.client(mailgunConfig);
 
 const SupportDiv = styled.section``;
 
 const Support = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
   const pageTitle = "Support";
 
   const { user: user, userError: userError } = useUser({
@@ -129,14 +110,10 @@ const Support = () => {
                         setTimeout(() => {
                           setSubmitting(false);
                           resetForm({ values: ''});
-                          mg.messages.create(mg_domain, {
-                            from: values.SupportFirstName + " " + values.SupportLastName + " " + `<${values.SupportEmailAddress}>`,
-                            to: [mg_to],
-                            subject: mg_subject,
-                            text: values.SupportMessage,
-                          })
-                          .then(msg => setSuccessMsg(msg.message))
-                          .catch(err => setErrorMsg(err.message));
+
+                          /**
+                           * TODO: Backend for Mailgun
+                           */
                         }, 400);
                       }}
                     >
