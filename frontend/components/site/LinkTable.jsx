@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import useSWR from "swr";
@@ -165,8 +165,8 @@ const LinkTable = (props) => {
               <span className={`flex items-center justify-start`}>
                 <SiteDangerBadge text={`${props.val.http_status} HTTP ERROR`} />
                 <a
-                  data-tip
-                  data-for={props.val.status}
+                  data-tip={``}
+                  data-for={props.val.url}
                   data-background-color={"#E53E3E"}
                   data-iscapture="true"
                   className={`flex`}
@@ -186,7 +186,7 @@ const LinkTable = (props) => {
                   </span>
                 </a>
                 <ReactTooltip
-                  id={props.val.status}
+                  id={props.val.url}
                   className={`${props.val.status + "-tooltip"} w-36`}
                   type={`dark`}
                   effect={`solid`}
@@ -197,15 +197,9 @@ const LinkTable = (props) => {
                   <span
                     className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
                   >
-                    {props.val.http_status === "400" ? (
-                      <p>
-                        <strong>[code] [message]</strong> - [solution]
-                      </p>
-                    ) : (
-                      <p>
-                        <strong>[code] [message]</strong> - [solution]
-                      </p>
-                    )}
+                    <p>
+                      <strong>{props.val.error}</strong>
+                    </p>
                   </span>
                 </ReactTooltip>
               </span>
