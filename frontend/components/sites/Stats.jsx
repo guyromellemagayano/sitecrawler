@@ -211,7 +211,7 @@ const SitesStats = (props) => {
       {
         title: "Total Issues",
         count:
-          stats.num_non_ok_links +
+          stats && stats.num_non_ok_links +
           setSeoErrors() +
           setPageErrors() +
           setImageErrors()
