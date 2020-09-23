@@ -154,6 +154,7 @@ INSTALLED_APPS = [
     "health_check.db",
     "crawl",
     "payments",
+    "support",
 ]
 
 MIDDLEWARE = [
