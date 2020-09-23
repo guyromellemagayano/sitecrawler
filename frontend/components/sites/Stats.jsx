@@ -92,37 +92,45 @@ const SitesStats = (props) => {
     }
   );
 
-  const setLinkErrors = type => {
-    let valLength = 0;
+  // const setLinkErrors = (type) => {
+  //   let valLength = 0;
 
-    if (links) {
-      links.results.map((val, key) => {
-        if (
-          val.status === "HTTP_ERROR" ||
-          val.status === "TIMEOUT" ||
-          val.status === "OTHER_ERROR"
-        ) {
-          if (val.type === type) {
-            valLength++;
-          }
-        }
-      });
-    }
+  //   if (links) {
+  //     links.results.map((val, key) => {
+  //       if (
+  //         val.status === "HTTP_ERROR" ||
+  //         val.status === "TIMEOUT" ||
+  //         val.status === "OTHER_ERROR"
+  //       ) {
+  //         if (val.type === type) {
+  //           valLength++;
+  //         }
+  //       }
+  //     });
+  //   }
 
-    return valLength;
-  };
+  //   return valLength;
+  // };
 
   const setSeoErrors = () => {
     let valLength = 0;
 
     if (stats) {
       if (
-        (stats.num_pages_without_title !== 0 && stats.num_pages_without_title !== undefined) ||
-        (stats.num_pages_without_description !== 0 && stats.num_pages_without_description !== undefined) ||
-        (stats.num_pages_without_h1_first !== 0 && stats.num_pages_without_h1_first !== undefined) ||
-        (stats.num_pages_without_h2_first !== 0 && stats.num_pages_without_h2_first !== undefined)
+        (stats.num_pages_without_title !== 0 &&
+          stats.num_pages_without_title !== undefined) ||
+        (stats.num_pages_without_description !== 0 &&
+          stats.num_pages_without_description !== undefined) ||
+        (stats.num_pages_without_h1_first !== 0 &&
+          stats.num_pages_without_h1_first !== undefined) ||
+        (stats.num_pages_without_h2_first !== 0 &&
+          stats.num_pages_without_h2_first !== undefined)
       ) {
-        valLength = (stats ? stats.num_pages_without_title : 0) + (stats ? stats.num_pages_without_description : 0) + (stats ? stats.num_pages_without_h1_first : 0) + (stats ? stats.num_pages_without_h2_first : 0);
+        valLength =
+          (stats ? stats.num_pages_without_title : 0) +
+          (stats ? stats.num_pages_without_description : 0) +
+          (stats ? stats.num_pages_without_h1_first : 0) +
+          (stats ? stats.num_pages_without_h2_first : 0);
       }
     }
 
@@ -135,9 +143,12 @@ const SitesStats = (props) => {
     if (stats) {
       if (
         (stats.num_pages_big !== 0 && stats.num_pages_big !== undefined) ||
-        (stats.num_pages_tls_non_ok !== 0 && stats.num_pages_tls_non_ok !== undefined)
+        (stats.num_pages_tls_non_ok !== 0 &&
+          stats.num_pages_tls_non_ok !== undefined)
       ) {
-        valLength = (stats ? stats.num_pages_big : 0) + (stats ? stats.num_pages_tls_non_ok : 0);
+        valLength =
+          (stats ? stats.num_pages_big : 0) +
+          (stats ? stats.num_pages_tls_non_ok : 0);
       }
     }
 
@@ -149,7 +160,8 @@ const SitesStats = (props) => {
 
     if (stats) {
       if (
-        stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined
+        stats.num_non_ok_images !== 0 &&
+        stats.num_non_ok_images !== undefined
       ) {
         valLength = stats ? stats.num_non_ok_images : 0;
       }
@@ -186,7 +198,7 @@ const SitesStats = (props) => {
       <SitesStatsDiv>
         <div>
           <div
-            className={`mt-2 grid grid-cols-1 gap-5 sm:grid-cols-6 sm:gap-64`}
+            className={`mt-2 mb-4 py-6 grid grid-cols-1 gap-5 sm:grid-cols-6 sm:gap-64`}
           >
             <Skeleton duration={2} width={280} height={160} />
             <Skeleton duration={2} width={280} height={160} />
@@ -198,22 +210,26 @@ const SitesStats = (props) => {
     const PageTabs = [
       {
         title: "Total Issues",
-        count: setLinkErrors('PAGE') + setLinkErrors('EXTERNAL') + setSeoErrors() + setPageErrors() + setImageErrors()
+        count:
+          stats.num_non_ok_links +
+          setSeoErrors() +
+          setPageErrors() +
+          setImageErrors()
       },
       {
         title: "Total Pages",
-        count: stats && stats.num_pages
+        count: stats && stats.num_pages,
       },
       {
         title: "Total Links",
-        count: stats && stats.num_links
+        count: stats && stats.num_links,
       },
       {
         title: "Total Images",
-        count: stats && stats.num_images
+        count: stats && stats.num_images,
       },
     ];
-    
+
     return (
       <SitesStatsDiv>
         <div>
@@ -291,20 +307,20 @@ const SitesStats = (props) => {
                       >
                         {val.title}
                       </dt>
-                      
-                        {val.title === "Total Issues" && val.count > 0 ? (
-                          <dd
-                            className={`mt-1 text-3xl leading-9 font-semibold text-red-700`}
-                          >
-                            {val.count}
-                          </dd>
-                        ) : (
-                          <dd
-                            className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
-                          >
-                            {val.count}
-                          </dd>
-                        )}
+
+                      {val.title === "Total Issues" && val.count > 0 ? (
+                        <dd
+                          className={`mt-1 text-3xl leading-9 font-semibold text-red-700`}
+                        >
+                          {val.count}
+                        </dd>
+                      ) : (
+                        <dd
+                          className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
+                        >
+                          {val.count}
+                        </dd>
+                      )}
                     </dl>
                   </div>
                 </div>

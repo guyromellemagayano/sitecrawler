@@ -1,217 +1,240 @@
-import Link from 'next/link'
-import fetch from 'node-fetch'
-import useSWR from 'swr'
-import Cookies from 'js-cookie'
-import styled from 'styled-components'
-import PropTypes from 'prop-types'
-import Skeleton from 'react-loading-skeleton'
-import loadable from '@loadable/component'
-const Chart = loadable(() => import('react-apexcharts'));
-import { linksChartContents } from 'enum/chartContents';
+import Link from "next/link";
+import fetch from "node-fetch";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import styled from "styled-components";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import loadable from "@loadable/component";
+const Chart = loadable(() => import("react-apexcharts"));
+import { linksChartContents } from "enum/chartContents";
 import Router from "next/router";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get("csrftoken"),
     },
-  })
+  });
 
-  const data = await res.json()
+  const data = await res.json();
 
   if (res.status !== 200) {
-    throw new Error(data.message)
+    throw new Error(data.message);
   }
 
-  return data
-}
+  return data;
+};
 
 const SitesLinksStatsDiv = styled.div`
-	height: 100%;
-	.status-indicator {
-		display: block;
-		flex: 0 0 0.85rem;
-		max-width: 0.85rem;
-		height: 0.85rem;
-		border-radius: 50%;
+  height: 100%;
+  .status-indicator {
+    display: block;
+    flex: 0 0 0.85rem;
+    max-width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
 
-		&.error {
-			&-1 {
-				background-color: #19B080;
-			}
-			&-2 {
-				background-color: #EF2917;
-			}
-			&-3 {
-				background-color: #ED5244;
-			}
-			&-4 {
-				background-color: #BB4338;
-			}
-			&-5 {
-				background-color: #2D99FF;
-			}
-		}
-	}
-	.apexcharts-legend-series {
-		display: flex;
-		align-items: center;
-		border-bottom: 1px solid #E7EFEF;
-		padding-bottom: 9px;
-	}
-	.apexcharts-legend-series:last-child {
-		border: none;
-	}
-	.apexcharts-legend-text {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-	}
-	.apexcharts-legend-marker {
-		margin-right: 10px;
-	}
-	.legend-val {
-		color: #1D2626;
-		font-weight: 600;
-	}
-	.legent-text {
-		margin-right: 10px;
-	}
-	.space {
-		width: 20px;
-	}
-`
+    &.error {
+      &-1 {
+        background-color: #19b080;
+      }
+      &-2 {
+        background-color: #ef2917;
+      }
+      &-3 {
+        background-color: #ed5244;
+      }
+      &-4 {
+        background-color: #bb4338;
+      }
+      &-5 {
+        background-color: #2d99ff;
+      }
+    }
+  }
+  .apexcharts-legend-series {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e7efef;
+    padding-bottom: 9px;
+  }
+  .apexcharts-legend-series:last-child {
+    border: none;
+  }
+  .apexcharts-legend-text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .apexcharts-legend-marker {
+    margin-right: 10px;
+  }
+  .legend-val {
+    color: #1d2626;
+    font-weight: 600;
+  }
+  .legent-text {
+    margin-right: 10px;
+  }
+  .space {
+    width: 20px;
+  }
+  .skeleton-wrapper {
+    margin-bottom: 20px;
+  }
+`;
 
-const SitesLinksStats = props => {
-	const {
-		data: scan,
-		error: scanError,
-	} = useSWR(() => (props.url.siteId ? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at` : null), fetcher, {
-		refreshInterval: 1000,
-	})
+const SitesLinksStats = (props) => {
+  const { data: scan, error: scanError } = useSWR(
+    () =>
+      props.url.siteId
+        ? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at`
+        : null,
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
+  );
 
-	let scanObjId = ""
+  let scanObjId = "";
 
-  	if (scan) {
-		let scanObj = []
+  if (scan) {
+    let scanObj = [];
 
-		scan.results.map((val) => {
-			scanObj.push(val)
-			return scanObj
-		})
+    scan.results.map((val) => {
+      scanObj.push(val);
+      return scanObj;
+    });
 
-		scanObj.map((val, index) => {
-			if(index == 0) scanObjId = val.id
-			
-			return scanObjId
-		})
-	}
-	
-	const { data: stats, error: statsError } = useSWR(
+    scanObj.map((val, index) => {
+      if (index == 0) scanObjId = val.id;
+
+      return scanObjId;
+    });
+  }
+
+  const { data: stats, error: statsError } = useSWR(
     () =>
       props.url.siteId && scanObjId
         ? `/api/site/${props.url.siteId}/scan/${scanObjId}/`
         : null,
-    fetcher, {
+    fetcher,
+    {
       refreshInterval: 1000,
     }
-	)
+  );
 
-	const { data: links, error: linksError } = useSWR(
-		() => 
-			props.url.siteId && scanObjId
-				? `/api/site/${props.url.siteId}/scan/${scanObjId}/link/`
-				: null,
-		fetcher, {
-			refreshInterval: 1000
-		}
-	)
+  const { data: links, error: linksError } = useSWR(
+    () =>
+      props.url.siteId && scanObjId
+        ? `/api/site/${props.url.siteId}/scan/${scanObjId}/link/`
+        : null,
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
+  );
 
-	{statsError && <Layout>{statsError.message}</Layout>}
-	{scanError && <Layout>{scanError.message}</Layout>}
-	{linksError && <Layout>{linksError.message}</Layout>}
+  {
+    statsError && <Layout>{statsError.message}</Layout>;
+  }
+  {
+    scanError && <Layout>{scanError.message}</Layout>;
+  }
+  {
+    linksError && <Layout>{linksError.message}</Layout>;
+  }
 
-	// const setBrokenLinks = type => {
-	// 	let valLength = 0
+  // const setBrokenLinks = type => {
+  // 	let valLength = 0
 
-	// 	if (links) {
-	// 		links.results.map((val, key) => {
-	// 			if (val.status === 'HTTP_ERROR' || val.status === 'TIMEOUT' || val.status === 'OTHER_ERROR') {
-	// 				if (val.type === type) {
-	// 					valLength++
-	// 				}
-	// 			}
-	// 		})
-	// 	}
+  // 	if (links) {
+  // 		links.results.map((val, key) => {
+  // 			if (val.status === 'HTTP_ERROR' || val.status === 'TIMEOUT' || val.status === 'OTHER_ERROR') {
+  // 				if (val.type === type) {
+  // 					valLength++
+  // 				}
+  // 			}
+  // 		})
+  // 	}
 
-	// 	return valLength
-	// }
+  // 	return valLength
+  // }
 
-	const legendClickHandler = (label) => {
-		let path = `/dashboard/site/${props.url.siteId}/links`
+  const legendClickHandler = (label) => {
+    let path = `/dashboard/site/${props.url.siteId}/links`;
 
-		linksChartContents.forEach((item, index) => {
-			if(label === item.label && item.filter !== '')
-				path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`
-		})
+    linksChartContents.forEach((item, index) => {
+      if (label === item.label && item.filter !== "")
+        path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
+    });
 
-		Router.push("/dashboard/site/[siteId]/links", path);
-	}
+    Router.push("/dashboard/site/[siteId]/links", path);
+  };
 
-	const chartSeries = [
-		// setBrokenLinks('PAGE'),
-		// setBrokenLinks('EXTERNAL'),
-		stats && stats.num_non_ok_links !== undefined ? stats && stats.num_non_ok_links : 0,
-		stats && stats.num_ok_links !== undefined ? stats && stats.num_ok_links : 0
-	]
-	
-	const chartOptions = {
-		chart: {
-			type: 'donut',
-			events: {
-			  legendClick: function(chartContext, seriesIndex, config) {
-				legendClickHandler(config.config.labels[seriesIndex])
-			  }
-			}
-		},
-		labels: linksChartContents.map(item => item.label),
-		colors: linksChartContents.map(item => item.color),
-		fill: {
-			colors: linksChartContents.map(item => item.color)
-		},
-		stroke: {
-			width: 0
-		},
-		dataLabels: {
-			enabled: true,
-			formatter: function (val, opts) {
-				return opts.w.config.series[opts.seriesIndex]
-			}
-		},
-		legend: {
+  const chartSeries = [
+    // setBrokenLinks('PAGE'),
+    // setBrokenLinks('EXTERNAL'),
+    stats && stats.num_non_ok_links !== undefined
+      ? stats && stats.num_non_ok_links
+      : 0,
+    stats && stats.num_ok_links !== undefined ? stats && stats.num_ok_links : 0,
+  ];
+
+  const chartOptions = {
+    chart: {
+      type: "donut",
+      events: {
+        legendClick: function (chartContext, seriesIndex, config) {
+          legendClickHandler(config.config.labels[seriesIndex]);
+        },
+      },
+    },
+    labels: linksChartContents.map((item) => item.label),
+    colors: linksChartContents.map((item) => item.color),
+    fill: {
+      colors: linksChartContents.map((item) => item.color),
+    },
+    stroke: {
+      width: 0,
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function (val, opts) {
+        return opts.w.config.series[opts.seriesIndex];
+      },
+    },
+    legend: {
       show: true,
-      fontSize: '14px',
-      position: 'right',
+      fontSize: "14px",
+      position: "right",
       floating: false,
       width: 300,
-      horizontalAlign: 'center', 
+      horizontalAlign: "center",
       itemMargin: {
         horizontal: 5,
-        vertical: 5
+        vertical: 5,
       },
-      formatter: function(seriesName, opts) {
-        return [`<span class='legend-text'>${seriesName}</span>`, "   ", `<span class='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`]
-      }
-		},
-		plotOptions: {
+      formatter: function (seriesName, opts) {
+        return [
+          `<span class='legend-text'>${seriesName}</span>`,
+          "   ",
+          `<span class='legend-val'>${
+            opts.w.globals.series[opts.seriesIndex]
+          }</span>`,
+        ];
+      },
+    },
+    plotOptions: {
       pie: {
         donut: {
           labels: {
-						show: true,
+            show: true,
             total: {
               show: true,
               showAlways: true,
@@ -219,32 +242,38 @@ const SitesLinksStats = props => {
               fontSize: "15px",
               color: "#2A324B",
               formatter: function (val) {
-                let num_errs = 0
-                for(let i=0; i<val.config.series.slice(0, -1).length; i++) {
-                  num_errs += val.config.series[i]
+                let num_errs = 0;
+                for (
+                  let i = 0;
+                  i < val.config.series.slice(0, -1).length;
+                  i++
+                ) {
+                  num_errs += val.config.series[i];
                 }
 
-                return num_errs
-              }
-            }
-          }
-        }
-      }
-    },
-    responsive: [{
-      breakpoint: 1315,
-      options: {
-        chart: {
-          width: 400
+                return num_errs;
+              },
+            },
+          },
         },
-        legend: {
-          position: 'bottom'
-        }
-      }
-    }]
-	}
-	
-	return (
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 1315,
+        options: {
+          chart: {
+            width: 400,
+          },
+          legend: {
+            position: "bottom",
+          },
+        },
+      },
+    ],
+  };
+
+  return (
     <SitesLinksStatsDiv>
       <div className={`bg-white overflow-hidden shadow-xs rounded-lg h-full`}>
         <div className={`flex justify-between py-8 px-5`}>
@@ -262,7 +291,9 @@ const SitesLinksStats = props => {
                 d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
               ></path>
             </svg>
-            <h2 className={`text-lg font-bold leading-7 text-gray-900`}>Links</h2>
+            <h2 className={`text-lg font-bold leading-7 text-gray-900`}>
+              Links
+            </h2>
           </div>
           <div>
             <Link
@@ -278,20 +309,25 @@ const SitesLinksStats = props => {
           </div>
         </div>
         <div className={`flex justify-center`}>
-          {
-            stats == undefined ? (
-              <>
+          {stats == undefined ? (
+            <div className={`skeleton-wrapper`}>
               <Skeleton circle={true} duration={2} width={240} height={240} />
-              <span className={`space`}></span>
+							<span className={`space`}></span>
               <Skeleton duration={2} width={240} height={240} />
-              </>
-            ) : 
-              <Chart options={chartOptions} series={chartSeries} type="donut" width="600" height="260" />
-          }
+            </div>
+          ) : (
+            <Chart
+              options={chartOptions}
+              series={chartSeries}
+              type="donut"
+              width="600"
+              height="260"
+            />
+          )}
         </div>
       </div>
     </SitesLinksStatsDiv>
-  )
-}
+  );
+};
 
-export default SitesLinksStats
+export default SitesLinksStats;
