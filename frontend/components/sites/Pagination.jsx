@@ -91,6 +91,8 @@ const MyPagination = (props) => {
   const pageNumbers = [];
   const values = [20, 25, 50, 100];
   const currentPage = parseInt(props.page) || 1;
+  const linkNumbers = [];
+  const offset = (currentPage - 1) * props.linksPerPage;
 
   const { data: page, error: pageError } = useSWR(props.apiEndpoint, fetcher);
 
@@ -127,18 +129,11 @@ const MyPagination = (props) => {
 
   if (totalPages < 1) return null;
 
-  const handleResultsPerPage = (pageCount, linksPerPage, currentPage) => {
-    const linkNumbers = [];
-    const offset = (currentPage - 1) * linksPerPage;
+  for (let i = 1; i <= page.count; i++) {
+    linkNumbers.push(i);
+  }
 
-    for (let i = 1; i <= pageCount; i++) {
-      linkNumbers.push(i);
-    }
-
-    let paginatedItems = linkNumbers.slice(offset).slice(0, linksPerPage);
-
-    return paginatedItems;
-  };
+  const paginatedItems = linkNumbers.slice(offset).slice(0, props.linksPerPage);
 
   return (
     <PaginationDiv
@@ -150,9 +145,9 @@ const MyPagination = (props) => {
         <div>
           <p className={`text-sm leading-5 text-gray-700`}>
             Showing
-              <span className={`sm:px-1 font-medium`}>{handleResultsPerPage(page.count, props.linksPerPage, currentPage)[0]}</span>
+              <span className={`sm:px-1 font-medium`}>{paginatedItems[0]}</span>
             to
-              <span className={`sm:px-1 font-medium`}>{handleResultsPerPage(page.count, props.linksPerPage, currentPage)[handleResultsPerPage(page.count, props.linksPerPage, currentPage).length-1]}</span>
+              <span className={`sm:px-1 font-medium`}>{paginatedItems[paginatedItems.length-1]}</span>
             of
             <span className={`sm:px-1 font-medium`}>{page.count}</span>
             results
