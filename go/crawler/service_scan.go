@@ -15,8 +15,9 @@ import (
 )
 
 const (
-	depthLimit = 100
-	totalLimit = 10000
+	depthLimit = 1000
+	pageLimit  = 10000
+	totalLimit = 1000000
 )
 
 const (
@@ -139,6 +140,8 @@ type scanner struct {
 
 	fifo   *list.List
 	inFifo map[string]*fifoEntry
+
+	pageCount int
 }
 
 func (s *scanner) Start(log *zap.SugaredLogger) error {
@@ -183,13 +186,23 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 	if doc == nil {
 		return link.ID, nil
 	}
+	// If we have doc, than it's a page and we descend the scan
+	s.pageCount++
 
 	if err := s.savePageData(doc, link.ID); err != nil {
 		log.Errorf("Could not save page data for link %v: %v", link.ID, err)
 	}
 
 	if depth > depthLimit {
-		log.Errorf("Depth limit hit for link %v", link.ID)
+		log.Errorw("Depth limit hit",
+			"link_id", link.ID,
+		)
+		return link.ID, nil
+	}
+	if s.pageCount > pageLimit {
+		log.Errorw("Page limit hit",
+			"link_id", link.ID,
+		)
 		return link.ID, nil
 	}
 
@@ -201,7 +214,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 
 		childUrl, err := s.normalizeURL(url, href)
 		if err != nil {
-			log.Errorf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			log.Errorw(
+				"Could not parse url",
+				"href", href,
+				"base_url", url,
+				"error", err,
+			)
 			return
 		}
 
@@ -222,7 +240,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 
 		childUrl, err := s.normalizeURL(url, href)
 		if err != nil {
-			log.Errorf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			log.Errorw(
+				"Could not parse url",
+				"href", href,
+				"base_url", url,
+				"error", err,
+			)
 			return
 		}
 
@@ -243,7 +266,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 
 		childUrl, err := s.normalizeURL(url, href)
 		if err != nil {
-			log.Errorf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			log.Errorw(
+				"Could not parse url",
+				"href", href,
+				"base_url", url,
+				"error", err,
+			)
 			return
 		}
 
@@ -264,7 +292,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 
 		childUrl, err := s.normalizeURL(url, href)
 		if err != nil {
-			log.Errorf("Could not parse url '%v', on page '%v': %v.", href, url, err)
+			log.Errorw(
+				"Could not parse url",
+				"href", href,
+				"base_url", url,
+				"error", err,
+			)
 			return
 		}
 
@@ -304,7 +337,10 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 		if strings.HasSuffix(err.Error(), "context deadline exceeded") {
 			crawlLink.Status = STATUS_TIMEOUT
 		} else {
-			log.Errorf("Other error for link %v: %v", url, err)
+			log.Errorw("Other error for link",
+				"url", url,
+				"error", err,
+			)
 			crawlLink.Status = STATUS_OTHER_ERROR
 			errStr := lenLimit(err.Error(), 255)
 			crawlLink.Error = &errStr
@@ -401,7 +437,9 @@ func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, fe fifoEntry, r re
 		s.fifo.PushBack(fep)
 		s.inFifo[urlStr] = fep
 	} else {
-		log.Errorf("Total limit hit for: %v", fe.Url)
+		log.Errorw("Total limit hit",
+			"url", fe.Url,
+		)
 	}
 }
 
