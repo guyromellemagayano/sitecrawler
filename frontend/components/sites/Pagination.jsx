@@ -95,7 +95,7 @@ const MyPagination = (props) => {
   const { data: page, error: pageError } = useSWR(props.apiEndpoint, fetcher);
 
   const handlePageChange = (pageNum) => {
-    console.log('[pageNum]', pageNum);
+    // console.log('[pageNum]', pageNum);
     const newPath = removeURLParameter(props.pathName, 'page');
     Router.push(props.href, `${newPath}page=${pageNum}`);
   }
@@ -127,22 +127,36 @@ const MyPagination = (props) => {
 
   if (totalPages < 1) return null;
 
+  const handleResultsPerPage = (pageCount, linksPerPage, currentPage) => {
+    const linkNumbers = [];
+    const offset = (currentPage - 1) * linksPerPage;
+
+    for (let i = 1; i <= pageCount; i++) {
+      linkNumbers.push(i);
+    }
+
+    let paginatedItems = linkNumbers.slice(offset).slice(0, linksPerPage);
+
+    return paginatedItems;
+  };
+
   return (
     <PaginationDiv
       className={`bg-white px-4 py-2 flex items-center justify-between sm:px-6 align-middle shadow-xs rounded-lg`}
     >
-      <div 
+      <div
         className={`flex items-center`}
       >
-        <h1 className={`-mt-px pr-4 inline-flex items-center text-sm leading-5 font-normal text-gray-500`}>Rows per page</h1>
         <div>
-          <select onChange={props.onItemsPerPageChange} value={props.linksPerPage} className={`form-select block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5`}>
-            {values.map((val, key) => {
-              return (
-                <option key={key} value={val}>{val === 20 ? '--' : val}</option>
-              )
-            })}
-          </select>
+          <p className={`text-sm leading-5 text-gray-700`}>
+            Showing
+              <span className={`sm:px-1 font-medium`}>{handleResultsPerPage(page.count, props.linksPerPage, currentPage)[0]}</span>
+            to
+              <span className={`sm:px-1 font-medium`}>{handleResultsPerPage(page.count, props.linksPerPage, currentPage)[handleResultsPerPage(page.count, props.linksPerPage, currentPage).length-1]}</span>
+            of
+            <span className={`sm:px-1 font-medium`}>{page.count}</span>
+            results
+          </p>
         </div>
       </div>
 
@@ -160,6 +174,20 @@ const MyPagination = (props) => {
         nextIcon={`Next`}
       />
 
+      <div 
+        className={`flex items-center`}
+      >
+        <h1 className={`-mt-px pr-4 inline-flex items-center text-sm leading-5 font-normal text-gray-500`}>Rows per page</h1>
+        <div>
+          <select onChange={props.onItemsPerPageChange} value={props.linksPerPage} className={`form-select block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5`}>
+            {values.map((val, key) => {
+              return (
+                <option key={key} value={val}>{val === 20 ? '--' : val}</option>
+              )
+            })}
+          </select>
+        </div>
+      </div>
     </PaginationDiv>
   );
 };
