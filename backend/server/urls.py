@@ -35,6 +35,7 @@ urlpatterns = [
     ),
     path("api/auth/", include("rest_auth.urls")),
     path("auth/", include("allauth.socialaccount.providers.google.urls")),
+    path("api/support/", include("support.urls")),
     path("api/stripe/", include("payments.urls")),
     path("api/", include("crawl.urls")),
     re_path(r"^static/(?P<path>.+)", serve, {"document_root": settings.STATIC_ROOT}),
