@@ -1,6 +1,7 @@
 package common
 
 import (
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -62,6 +63,10 @@ func (s *SQSService) Read(log *zap.SugaredLogger) (*SQSMessage, error) {
 			WaitTimeSeconds:   &WaitTimeSeconds,
 		})
 		if err != nil {
+			if strings.Contains(err.Error(), "connection reset by peer") {
+				time.Sleep(time.Second)
+				continue
+			}
 			return nil, err
 		}
 		if len(response.Messages) != 1 {
@@ -96,13 +101,21 @@ func (m *SQSMessage) Body() string {
 	return *m.msg.Body
 }
 
-func (m *SQSMessage) Done() error {
+// Done stops acknowledging messsage
+func (m *SQSMessage) Done() {
 	m.done <- true
+}
+
+// Success deletes the message on success
+func (m *SQSMessage) Success() error {
 	_, err := m.svc.Sqs.DeleteMessage(&sqs.DeleteMessageInput{
 		QueueUrl:      m.svc.url,
 		ReceiptHandle: m.msg.ReceiptHandle,
 	})
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m *SQSMessage) startPinger(log *zap.SugaredLogger) {

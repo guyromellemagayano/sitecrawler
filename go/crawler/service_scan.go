@@ -53,14 +53,6 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 	}
 
 	log.Infof("Starting scan for %v", scan.Site.Url)
-	defer func() {
-		finished := time.Now()
-		scan.FinishedAt = &finished
-		if err := s.ScanDao.Save(scan); err != nil {
-			log.Errorf("Failed to set scan finish: %v", err)
-		}
-		log.Infof("Finished scan for %v", scan.Site.Url)
-	}()
 
 	if !scan.Site.Verified {
 		return nil
@@ -91,6 +83,15 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 	if err := s.Start(log, scan); err != nil {
 		return err
 	}
+
+	// Start will only error on recoverable errors, so we will retry on those (with sqs)
+	// If we got here without errors, set the status done
+	finished := time.Now()
+	scan.FinishedAt = &finished
+	if err := s.ScanDao.Save(scan); err != nil {
+		log.Errorf("Failed to set scan finish: %v", err)
+	}
+	log.Infof("Finished scan for %v", scan.Site.Url)
 
 	return nil
 }
