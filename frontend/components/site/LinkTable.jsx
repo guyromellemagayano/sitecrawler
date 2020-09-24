@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import useSWR from "swr";
@@ -168,8 +168,9 @@ const LinkTable = (props) => {
                   data-tip={``}
                   data-for={props.val.url}
                   data-background-color={"#E53E3E"}
-                  data-iscapture="true"
-                  className={`flex`}
+                  data-iscapture={true}
+                  data-scroll-hide={false}
+                  className={`flex cursor-pointer`}
                 >
                   <span className={`ml-2 inline-block w-4 h-4 overflow-hidden`}>
                     <svg
