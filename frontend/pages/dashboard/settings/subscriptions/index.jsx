@@ -143,7 +143,7 @@ const Subscriptions = () => {
                         <p
                           className={`mt-3 max-w-4xl mx-auto text-md leading-7 text-gray-600 sm:mt-5 sm:text-xl sm:leading-8`}
                         >
-                          7 days free trials. You can change or cancel anytime
+                          You can change or cancel anytime
                         </p>
                       </div>
                     </div>
