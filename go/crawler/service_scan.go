@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
-	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -106,7 +105,7 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 	return nil
 }
 
-func (s *ScanService) reverify(log *zap.SugaredLogger, scan *database.CrawlScan) error {
+func (s *ScanService) reverify(log *zap.SugaredLogger, scan *common.CrawlScan) error {
 	return s.VerifyService.VerifySite(log, scan.SiteID)
 }
 
@@ -342,11 +341,16 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 	handleError := func(err error) {
 		if strings.HasSuffix(err.Error(), "context deadline exceeded") {
 			crawlLink.Status = STATUS_TIMEOUT
+		} else if strings.HasSuffix(err.Error(), "stopped after 10 redirects") {
+			crawlLink.Status = STATUS_TOO_MANY_REDIRECTS
 		} else {
-			log.Errorw("Other error for link",
-				"url", url,
-				"error", err,
-			)
+			if !strings.HasSuffix(err.Error(), "unexpected EOF") &&
+				!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated") {
+				log.Errorw("Other error for link",
+					"url", url,
+					"error", err,
+				)
+			}
 			crawlLink.Status = STATUS_OTHER_ERROR
 			errStr := lenLimit(err.Error(), 255)
 			crawlLink.Error = &errStr

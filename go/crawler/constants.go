@@ -6,10 +6,11 @@ const (
 	TYPE_OTHER    = 3
 	TYPE_NON_WEB  = 4
 
-	STATUS_OK          = 1
-	STATUS_TIMEOUT     = 2
-	STATUS_HTTP_ERROR  = 3
-	STATUS_OTHER_ERROR = 4
+	STATUS_OK                 = 1
+	STATUS_TIMEOUT            = 2
+	STATUS_HTTP_ERROR         = 3
+	STATUS_OTHER_ERROR        = 4
+	STATUS_TOO_MANY_REDIRECTS = 5
 
 	TLS_NONE  = 1
 	TLS_OK    = 2
