@@ -63,11 +63,6 @@ const ImagesTableDiv = styled.tbody`
 
   .icon-status {
     text-align: left;
-    span {
-      margin-left: auto;
-      margin-right: auto;
-      display: inline-block;
-    }
   }
 
   .btn-detail {
