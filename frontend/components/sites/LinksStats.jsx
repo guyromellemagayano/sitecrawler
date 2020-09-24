@@ -258,19 +258,19 @@ const SitesLinksStats = (props) => {
         },
       },
     },
-    responsive: [
-      {
-        breakpoint: 1315,
-        options: {
-          chart: {
-            width: 400,
-          },
-          legend: {
-            position: "bottom",
-          },
-        },
-      },
-    ],
+    // responsive: [
+    //   {
+    //     breakpoint: 1315,
+    //     options: {
+    //       chart: {
+    //         width: 400,
+    //       },
+    //       legend: {
+    //         position: "bottom",
+    //       },
+    //     },
+    //   },
+    // ],
   };
 
   return (
@@ -309,7 +309,7 @@ const SitesLinksStats = (props) => {
           </div>
         </div>
         <div className={`flex justify-center`}>
-          {stats == undefined ? (
+          {stats == undefined && scan == undefined && links == undefined ? (
             <div className={`skeleton-wrapper`}>
               <Skeleton circle={true} duration={2} width={240} height={240} />
 							<span className={`space`}></span>
