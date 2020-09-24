@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -43,13 +44,22 @@ type ScanService struct {
 }
 
 func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
-	if err := s.reverify(log, scanID); err != nil {
-		return err
+	exists, err := s.ScanDao.Exists(scanID)
+	if err != nil {
+		return errors.Wrapf(err, "could not check if scan id %v exists", scanID)
+	}
+	// We have site delete, so it might happen that everything explodes during scan
+	if !exists {
+		return nil
 	}
 
 	scan, err := s.ScanDao.ByID(scanID)
 	if err != nil {
 		return errors.Wrapf(err, "could not get scan id %v", scanID)
+	}
+
+	if err := s.reverify(log, scan); err != nil {
+		return err
 	}
 
 	log.Infof("Starting scan for %v", scan.Site.Url)
@@ -96,12 +106,7 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 	return nil
 }
 
-func (s *ScanService) reverify(log *zap.SugaredLogger, scanID int) error {
-	scan, err := s.ScanDao.ByID(scanID)
-	if err != nil {
-		return errors.Wrapf(err, "could not get scan id %v", scanID)
-	}
-
+func (s *ScanService) reverify(log *zap.SugaredLogger, scan *database.CrawlScan) error {
 	return s.VerifyService.VerifySite(log, scan.SiteID)
 }
 

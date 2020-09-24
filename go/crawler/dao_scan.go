@@ -17,6 +17,15 @@ func (s *ScanDao) ByID(id int) (*common.CrawlScan, error) {
 	return scan, nil
 }
 
+func (s *ScanDao) Exists(id int) (bool, error) {
+	scan := &common.CrawlScan{ID: id}
+	exists, err := s.DB.Model(scan).WherePK().Relation("Site").Exists()
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
+}
+
 func (s *ScanDao) Save(scan *common.CrawlScan) error {
 	if scan.ID == 0 {
 		return s.DB.Insert(scan)
