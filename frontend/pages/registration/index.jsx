@@ -191,7 +191,7 @@ const Registration = () => {
                       htmlFor={`email`}
                       className={`block text-sm font-medium leading-5 text-gray-700`}
                     >
-                      Email address
+                      Email Address
                     </label>
                     <div className={`mt-1 rounded-md shadow-xs-sm`}>
                       <input

@@ -295,7 +295,7 @@ const ProfileSettingsPersonal = () => {
                           htmlFor={`first_name`}
                           className={`block text-sm font-medium leading-5 text-gray-700`}
                         >
-                          First name
+                          First Name
                         </label>
                         <div className={`mt-1 rounded-md shadow-xs-sm`}>
                           <input
@@ -318,7 +318,7 @@ const ProfileSettingsPersonal = () => {
                           htmlFor={`last_name`}
                           className={`block text-sm font-medium leading-5 text-gray-700`}
                         >
-                          Last name
+                          Last Name
                         </label>
                         <div className={`mt-1 rounded-md shadow-xs-sm`}>
                           <input
@@ -341,7 +341,7 @@ const ProfileSettingsPersonal = () => {
                           htmlFor={`email`}
                           className={`block text-sm font-medium leading-5 text-gray-700`}
                         >
-                          Email address
+                          Email Address
                         </label>
                         <div className={`mt-1 rounded-md shadow-xs-sm`}>
                           <input
