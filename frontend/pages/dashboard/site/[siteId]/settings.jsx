@@ -145,8 +145,10 @@ const SiteSettings = () => {
   }, [showNotificationStatus]);
 
   {
-    userError ||
-      (siteError && <Layout>{userError.message || siteError.message}</Layout>);
+    userError && <Layout>{userError.message}</Layout>;
+	}
+	{
+    siteError && <Layout>{siteError.message}</Layout>;
   }
 
   return (
@@ -379,7 +381,7 @@ const SiteSettings = () => {
                   >
                     <div className={`flex-1 min-w-0`}>
                       <h2
-                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
+                        className={`text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}
                       >
                         Site Settings - {siteName}
                       </h2>
