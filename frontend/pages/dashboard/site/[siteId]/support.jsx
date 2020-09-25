@@ -1,7 +1,10 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import fetch from "node-fetch";
 import Cookies from "js-cookie";
+import useSWR from "swr";
 import Head from "next/head";
+import Link from "next/link";
 import styled from "styled-components";
 import "core-js";
 import { Formik } from "formik";
@@ -9,6 +12,7 @@ import * as Yup from 'yup';
 import PropTypes from "prop-types";
 import useUser from "hooks/useUser";
 import Layout from "components/Layout";
+import fetchJson from "hooks/fetchJson";
 import MobileSidebar from "components/sidebar/MobileSidebar";
 import MainSidebar from "components/sidebar/MainSidebar";
 import SiteFooter from "components/footer/SiteFooter";
@@ -18,24 +22,54 @@ const SupportDiv = styled.section``;
 const Support = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
-  const pageTitle = "Support";
+	const [errorMsg, setErrorMsg] = useState('');
+	const [siteName, setSiteName] = useState("");
 
   const { user: user, userError: userError } = useUser({
     redirectTo: "/",
     redirectIfFound: false,
-  });
+	});
+	
+	const { query } = useRouter();
+	const pageTitle = "Support |";
+	const { data: site, error: siteError } = useSWR(
+    () => (query.siteId ? `/api/site/${query.siteId}/` : null),
+    () => fetchSiteSettings(`/api/site/${query.siteId}/`),
+    { refreshInterval: 1000 }
+	);
 
+	const fetchSiteSettings = async (endpoint) => {
+    const siteSettingsData = await fetchJson(endpoint, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
+    });
+
+    return siteSettingsData;
+  };
+
+	useEffect(() => {
+    if (site !== "" && site !== undefined) {
+      setSiteName(site.name);
+    }
+	}, [site]);
+	
   {
     userError && <Layout>{userError.message}</Layout>;
+	}
+	{
+    siteError && <Layout>{siteError.message}</Layout>;
   }
   
   return (
     <Layout>
-      {user ? (
+      {user && site ? (
         <Fragment>
           <Head>
-            <title>{pageTitle}</title>
+            <title>{pageTitle} {siteName}</title>
           </Head>
 
           <SupportDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
@@ -76,14 +110,69 @@ const Support = () => {
                 <div
                   className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
                 >
+                  <div>
+                    <nav className={`sm:hidden`}>
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/support"}
+                      >
+                        <a
+                          className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          <svg
+                            className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Back to Support
+                        </a>
+                      </Link>
+                    </nav>
+                    <nav
+                      className={`hidden sm:flex items-center text-sm leading-5`}
+                    >
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/support"}
+                      >
+                        <a
+                          className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          {siteName}
+                        </a>
+                      </Link>
+                      <svg
+                        className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <Link
+                        href={"/dashboard/site/" + query.siteId + "/support"}
+                      >
+                        <a
+                          className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
+                        >
+                          Support
+                        </a>
+                      </Link>
+                    </nav>
+                  </div>
                   <div
                     className={`mt-2 md:flex md:items-center md:justify-between`}
                   >
                     <div className={`flex-1 min-w-0`}>
                       <h2
-                        className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
+                        className={`text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}
                       >
-                        {pageTitle}
+                        Support
                       </h2>
                     </div>
                   </div>
