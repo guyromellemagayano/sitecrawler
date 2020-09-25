@@ -46,7 +46,7 @@ const Logout = () => {
       <Head>
         <title>{pageTitle}</title>
       </Head>
-      Logging out...
+      <p className={`text-2xl font-bold leading-7 text-gray-900 sm:text-1xl sm:leading-9 sm:truncate`}>Logging out...</p>
     </Layout>
   )
 }
