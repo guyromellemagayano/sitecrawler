@@ -45,9 +45,9 @@ const TimestampSettings = () => {
 
 		if (response.ok && response.status === 200) {
 			if (data.settings.disableLocalTime) {
-				setSuccessMsg('Local time enabled globally.')
-			} else {
 				setSuccessMsg('Local time disabled globally.')
+			} else {
+				setSuccessMsg('Local time enabled globally.')
 			}
 			updateUser(data)
 		} else {
