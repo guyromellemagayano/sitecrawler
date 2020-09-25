@@ -86,8 +86,7 @@ const TimestampSettings = () => {
 										Site Settings
 									</h3>
 									<p className={`mt-1 text-sm leading-5 text-gray-500`}>
-										User generated content in real-time will have multiple
-										touchpoints for offshoring.
+									These settings apply globally. For site-specific settings, click into a site and then click into "Site Settings" in the menu bar.
 									</p>
 								</div>
 								<div
