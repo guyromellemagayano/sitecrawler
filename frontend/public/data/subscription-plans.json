@@ -17,8 +17,8 @@
 		"type": "Pro",
 		"slug": "pro",
 		"featured": true,
-		"monthlyCost": 25,
-		"yearlyCost": 300,
+		"monthlyCost": 30,
+		"yearlyCost": 360,
 		"features": [
 			"Broken link checking",
 			"Uptime check (every 5 minutes)",
@@ -38,8 +38,8 @@
 		"type": "Agency",
 		"slug": "agency",
 		"featured": false,
-		"monthlyCost": 100,
-		"yearlyCost": 1200,
+		"monthlyCost": 120,
+		"yearlyCost": 1440,
 		"features": [
 			"All features in Pro Plan",
 			"Maximum sites: 100"
