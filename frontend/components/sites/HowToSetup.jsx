@@ -7,21 +7,14 @@ const tabItems = [
 		"id": 1,
 		"title": "WordPress",
 		"video": {
-			"src": "https://www.youtube.com/watch?v=vI25nMmklwE&t=128s"
+			"src": "https://youtu.be/FKTOwvjJmlY"
 		}
 	},
 	{
 		"id": 2,
-		"title": "Shopify",
-		"video": {
-			"src": "https://www.youtube.com/watch?v=KOwKOT79uiA"
-		}
-	},
-	{
-		"id": 3,
 		"title": "BigCommerce",
 		"video": {
-			"src": "https://www.youtube.com/watch?v=8CTxbQ6cdUw"
+			"src": "https://youtu.be/Pgoj-AwHOiM"
 		}
 	}
 ]
@@ -48,8 +41,7 @@ const HowToSetup = () => {
           <p
             className={`mt-3 max-w-2xl mx-auto text-md leading-6 text-gray-500 sm:mt-4`}
           >
-            Capitalize on low hanging fruit to identify a ballpark value added
-            activity to beta test.
+            Watch this video to see how to install the meta tag onto your site.
           </p>
         </div>
         <div

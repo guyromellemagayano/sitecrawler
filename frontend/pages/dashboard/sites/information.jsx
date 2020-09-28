@@ -386,8 +386,7 @@ const SitesInformation = (props) => {
                           <p
                             className={`mt-1 text-sm leading-5 text-gray-500 max-w-full`}
                           >
-                            Capitalize on low hanging fruit to identify a
-                            ballpark value added activity to beta test.
+                            Add the name and url of your site to start the process.
                           </p>
                         </div>
 
