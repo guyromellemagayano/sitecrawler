@@ -1,6 +1,3 @@
 {
     "python.linting.enabled": true,
-    "projectManager.git.baseFolders": [
-        "/mnt/c/Users/aspir/web-projects/"
-    ]
 }
