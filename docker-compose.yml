@@ -69,7 +69,7 @@ services:
     # environment:
     #   - LOG_SQL=true
   db:
-    image: postgres
+    image: postgres:12
     environment:
       POSTGRES_PASSWORD: crawldev
     command:
