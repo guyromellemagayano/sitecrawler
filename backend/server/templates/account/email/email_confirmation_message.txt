@@ -1,0 +1,10 @@
+{% comment %}Make sure to edit both txt and html version{% endcomment %}
+{% load account %}{% user_display user as user_display %}{% load i18n %}{% autoescape off %}{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Hello from {{ site_name }}!
+
+Please confirm your account by clicking the following the link:
+{{ activate_url }}
+{% endblocktrans %}
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thank you,
+{{ site_name }} Team
+{% endblocktrans %}
+{% endautoescape %}

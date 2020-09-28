@@ -62,6 +62,7 @@ if env == "dev":
     AWS_ENDPOINT_URL = "http://localstack:4566"
     AWS_USE_SSL = False
     STRIPE_WEBHOOK_SECRET = None
+    EMAIL_SUBJECT_PREFIX = "SiteCrawlerDev - "
 elif env == "staging":
     DEBUG = False
     ALLOWED_HOSTS = ["linkapp.epicsandbox.com"]
@@ -74,6 +75,7 @@ elif env == "staging":
     EMAIL_USE_TLS = True
     EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
     DEFAULT_FROM_EMAIL = "linkapp@epicsandbox.com"
+    EMAIL_SUBJECT_PREFIX = "SiteCrawlerSandbox - "
 elif env == "production":
     DEBUG = False
     ALLOWED_HOSTS = ["app.sitecrawler.com"]
@@ -96,6 +98,7 @@ elif env == "production":
             "PORT": os.environ.get("DB_PORT", "5432"),
         }
     }
+    EMAIL_SUBJECT_PREFIX = "SiteCrawler - "
 else:
     raise Exception(f"Unknown env: {env}")
 
@@ -172,7 +175,7 @@ ROOT_URLCONF = "server.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR + "/server/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -224,6 +227,7 @@ SITE_ID = 1
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX
 LOGIN_REDIRECT_URL = "/dashboard/sites"
 
 AUTHENTICATION_BACKENDS = (
