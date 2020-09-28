@@ -252,6 +252,9 @@ REST_FRAMEWORK = {
 }
 
 REST_AUTH_SERIALIZERS = {"USER_DETAILS_SERIALIZER": "crawl.serializers.UserSerializer"}
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "server.serializers.NameRegistrationSerializer",
+}
 
 CAN_LOGIN_AS = lambda request, target_user: request.user.is_staff
 
