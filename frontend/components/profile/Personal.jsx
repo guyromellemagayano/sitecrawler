@@ -357,13 +357,13 @@ const ProfileSettingsPersonal = () => {
                   </div>
                 </div>
                 <div className={`mt-8 border-t border-gray-200 pt-5`}>
-                  <div className={`flex justify-between`}>
-                    <div className={`flex justify-start`}>
+                  <div className={`flex justify-between xs:flex-col`}>
+                    <div className={`flex justify-start xs:flex-col`}>
                       <span className={`inline-flex rounded-md shadow-xs-sm`}>
                         <button
                           type={`submit`}
                           disabled={disableInputFields == 1 ? true : false}
-                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
+                          className={`inline-flex xs:w-full justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
                             disableInputFields == 1
                               ? "opacity-50 bg-indigo-300 cursor-not-allowed"
                               : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700"
@@ -377,7 +377,7 @@ const ProfileSettingsPersonal = () => {
                       <span className={`inline-flex rounded-md shadow-xs-sm`}>
                         <button
                           disabled={disableInputFields == 1 ? false : true}
-                          className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
+                          className={`inline-flex xs:w-full justify-center w-full rounded-md border border-gray-300 xs:mt-3 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
                             disableInputFields == 1
                               ? "hover:text-gray-500 focus:outline-none"
                               : "opacity-50 cursor-not-allowed"
@@ -390,11 +390,11 @@ const ProfileSettingsPersonal = () => {
                     </div>
                     <div className={`flex justify-end`}>
                       <span
-                        className={`ml-3 inline-flex rounded-md shadow-xs-sm`}
+                        className={`xs:w-full ml-3 xs:ml-0 xs:mt-3 inline-flex rounded-md shadow-xs-sm`}
                       >
                         <button
                           type={`submit`}
-                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
+                          className={`inline-flex xs:w-full justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
                             disableInputFields == 0
                               ? "opacity-50 bg-green-300 cursor-not-allowed"
                               : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"

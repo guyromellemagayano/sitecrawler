@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from 'react'
 import styled from 'styled-components'
+import Link from 'next/link';
 import PropTypes from 'prop-types'
 import useUser from 'hooks/useUser'
 import Transition from 'hooks/Transition'
@@ -86,11 +87,15 @@ const MobileSidebar = props => {
 										</div>
 										<div className={`flex-1 h-0 pt-5 pb-4 overflow-y-auto`}>
 											<div className={`flex-shrink-0 flex items-center px-4`}>
-												<AppLogo
-													className={`h-8 w-auto`}
-													src={`/img/logos/site-logo-white.svg`}
-													alt={`app-logo`}
-												/>
+												<Link href="/dashboard/sites">
+													<a className={`block w-full`}>
+														<AppLogo
+															className={`h-8 w-auto`}
+															src={`/img/logos/site-logo-white.svg`}
+															alt={`app-logo`}
+														/>
+													</a>
+												</Link>
 											</div>
 											{windowSiteLocation ? <MobileSiteMenu crawlableHandler={props.crawlableHandler} /> : windowSettingsLocation ? <MobileSettingsMenu /> : <MobilePrimaryMenu />}
 										</div>
