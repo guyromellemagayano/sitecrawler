@@ -7,7 +7,7 @@
 		"yearlyCost": 0,
 		"features": [
 			"Broken link checking",
-			"Uptime check every 60 minutes",
+			"Uptime check (every 60 minutes)",
 			"Weekly recrawl",
 			"Security checks",
 			"Maximum sites: 3"
@@ -21,7 +21,7 @@
 		"yearlyCost": 300,
 		"features": [
 			"Broken link checking",
-			"Uptime check every 5 minutes",
+			"Uptime check (every 5 minutes)",
 			"Daily recrawl",
 			"Security checks",
 			"Maximum sites: 15",
@@ -42,7 +42,7 @@
 		"yearlyCost": 1200,
 		"features": [
 			"All features in Pro Plan",
-			"Maximum sites: 15"
+			"Maximum sites: 100"
 		]
 	}
 ]
