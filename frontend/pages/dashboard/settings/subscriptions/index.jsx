@@ -9,7 +9,6 @@ import Layout from "components/Layout";
 import MobileSidebar from "components/sidebar/MobileSidebar";
 import MainSidebar from "components/sidebar/MainSidebar";
 import PaymentMethodForm from "components/form/PaymentMethodForm";
-import SubscriptionPlans from "public/data/subscription-plans.json";
 import SiteFooter from "components/footer/SiteFooter";
 import useSWR, { mutate } from "swr";
 import Cookies from "js-cookie";
