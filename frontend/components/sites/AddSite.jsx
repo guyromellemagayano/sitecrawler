@@ -68,7 +68,7 @@ const AddSite = () => {
         <div
           className={`-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap`}
         >
-          <div className={`ml-4 mt-2 w-64`}>
+          <div className={`ml-4 mt-2 w-full lg:w64`}>
             <div>
               <div className={`mt-1 relative rounded-md shadow-xs-sm`}>
                 <div
