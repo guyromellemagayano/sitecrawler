@@ -2,6 +2,7 @@ module.exports = {
   purge: false,
   theme: {
     screens: {
+      xs: '320px',
       sm: '640px',
       md: '768px',
       lg: '1024px',
@@ -702,7 +703,7 @@ module.exports = {
     verticalAlign: ['responsive'],
     visibility: ['responsive'],
     whitespace: ['responsive'],
-    width: ['responsive'],
+    width: ['responsive', 'hover', 'focus'],
     wordBreak: ['responsive'],
     zIndex: ['responsive'],
     gap: ['responsive'],
