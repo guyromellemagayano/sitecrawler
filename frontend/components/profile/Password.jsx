@@ -316,13 +316,13 @@ const ProfileSettingsPassword = () => {
                     </div>
                   </div>
                   <div className={`mt-8 border-t border-gray-200 pt-5`}>
-                    <div className={`flex justify-between xs:flex-col`}>
-                      <div className={`flex justify-start xs:flex-col`}>
-                        <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                    <div className={`flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row`}>
+                      <div className={`flex justify-start xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1 sm:w-2/3 md:flex-col sm:w-full lg:order-1 lg:w-auto lg:flex lg:flex-row`}>
+                        <span className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none`}>
                           <button
                             type={`submit`}
                             disabled={!disablePasswordFields ? true : false}
-                            className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out inline-flex xs:w-full ${
+                            className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 bg-white text-sm leading-5 font-medium text-white bg-indigo-600 transition duration-150 ease-in-out ${
                               !disablePasswordFields
                                 ? "opacity-50 bg-indigo-300 cursor-not-allowed"
                                 : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700"
@@ -333,10 +333,10 @@ const ProfileSettingsPassword = () => {
                         </button>
                         </span>
 
-                        <span className={`inline-flex rounded-md shadow-xs-sm`}>
+                        <span className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none`}>
                           <button
                             disabled={!disablePasswordFields ? false : true}
-                            className={`inline-flex justify-center w-full rounded-md border border-gray-300 xs:mt-3 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
+                            className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 bg-white text-sm sm:text-sm leading-5 sm:leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 ${
                               !disablePasswordFields
                                 ? "hover:text-gray-500 focus:outline-none"
                                 : "opacity-50 cursor-not-allowed"
@@ -347,9 +347,9 @@ const ProfileSettingsPassword = () => {
                         </button>
                         </span>
                       </div>
-                      <div className={`flex justify-end`}>
+                      <div className={`flex justify-end xs:order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-2 lg:w-auto`}>
                         <span
-                          className={`xs:w-full ml-3 xs:mt-3 inline-flex rounded-md shadow-xs-sm`}
+                          className={`xs:w-full ml-3 xs:ml-0 xs:mt-3 inline-flex rounded-md shadow-xs-sm`}
                         >
                           <button
                             type={`submit`}
