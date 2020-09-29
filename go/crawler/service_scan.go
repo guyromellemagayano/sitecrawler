@@ -358,7 +358,8 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 			crawlLink.Status = STATUS_TOO_MANY_REDIRECTS
 		} else {
 			if !strings.HasSuffix(err.Error(), "unexpected EOF") &&
-				!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated") {
+				!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated") &&
+				!strings.HasSuffix(err.Error(), "connection reset by peer") {
 				log.Errorw("Other error for link",
 					"url", url,
 					"error", err,
@@ -536,6 +537,12 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 
 // normalizeUrl resolves urls by parent reference and removes query params and anchors
 func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
+	// Remove leading and trailing whitespace
+	child = strings.TrimSpace(child)
+	// Remove new lines from the middle of url
+	// (spaces break urls, but new lines don't in chrome)
+	child = strings.ReplaceAll(child, "\n", "")
+
 	u, err := url.Parse(child)
 	if err != nil {
 		return nil, err
