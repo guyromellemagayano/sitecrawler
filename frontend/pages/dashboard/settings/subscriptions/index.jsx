@@ -16,26 +16,27 @@ import Cookies from "js-cookie";
 const SubscriptionsDiv = styled.section``;
 
 const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: "GET",
-		headers: {
-		"Accept": "application/json",
-		"Content-Type": "application/json",
-		"X-CSRFToken": Cookies.get("csrftoken"),
-		},
-	});
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get("csrftoken"),
+    },
+  });
 
-	const data = await res.json();
+  const data = await res.json();
 
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
+  if (res.status !== 200) {
+    throw new Error(data.message);
+  }
 
-	return data;
+  return data;
 };
 
 const Subscriptions = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [togglePaymentPeriod, setTogglePaymentPeriod] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState(undefined);
   const pageTitle = "Subscriptions";
@@ -45,44 +46,50 @@ const Subscriptions = () => {
     redirectIfFound: false,
   });
 
-	const { data: subscriptions, error: subscriptionsError } = useSWR(
-		() => `/api/stripe/subscription/`,
-		fetcher
-	);
+  const { data: subscriptions, error: subscriptionsError } = useSWR(
+    () => `/api/stripe/subscription/`,
+    fetcher
+  );
 
-	const { data: subscription, error: subscriptionError, mutate: subscriptionUpdated } = useSWR(
-		() => `/api/stripe/subscription/current/`,
-		fetcher
-	);
+  const {
+    data: subscription,
+    error: subscriptionError,
+    mutate: subscriptionUpdated,
+  } = useSWR(() => `/api/stripe/subscription/current/`, fetcher);
 
   // console.log('[subscriptions]', subscriptions, subscription)
-  
+
   const selectPlan = async (id, name) => {
-    if(name === "Basic") {
+    if (name === "Basic") {
       await fetch("/api/stripe/subscription/current/", {
         method: "DELETE",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
           "X-CSRFToken": Cookies.get("csrftoken"),
-        }
+        },
       });
 
       setTimeout(() => {
-        console.log('[subscriptionUpdated]')
-        subscriptionUpdated()
-      }, 1000)
+        console.log("[subscriptionUpdated]");
+        subscriptionUpdated();
+      }, 1000);
 
-
-      return false
+      return false;
     }
 
-    setShowModal(!showModal)
-    setSubscriptionId(id)
-  }
+    setShowModal(!showModal);
+    setSubscriptionId(id);
+  };
 
   {
     userError && <Layout>{userError.message}</Layout>;
+  }
+  {
+    subscriptionsError && <Layout>{subscriptionsError.message}</Layout>;
+  }
+  {
+    subscriptionError && <Layout>{subscriptionError.message}</Layout>;
   }
 
   return (
@@ -132,8 +139,8 @@ const Subscriptions = () => {
               >
                 <div className={`max-w-full px-4 py-4 sm:px-6 md:px-8`}>
                   <div>
-                    <div className={`pt-12 px-4 sm:px-6 lg:px-8 lg:pt-20`}>
-                      <div className={`text-center`}>
+                    <div className={`flex items-center flex-col flex-wrap pt-12 px-4 sm:px-6 lg:px-8 lg:pt-20`}>
+                      <div className={`text-center mb-10`}>
                         <p
                           className={`text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10`}
                         >
@@ -144,6 +151,23 @@ const Subscriptions = () => {
                         >
                           You can change or cancel anytime
                         </p>
+                      </div>
+
+                      <div className={`flex items-center justify-center`}>
+                        <p className={`text-md leading-7 font-medium text-gray-500 mx-4`}>Bill Monthly</p>
+                        <span
+                          role="checkbox"
+                          tabindex="0"
+                          onClick={() => setTogglePaymentPeriod(!togglePaymentPeriod)}
+                          aria-checked={togglePaymentPeriod}
+                          className={`${togglePaymentPeriod ? "bg-indigo-600" : "bg-gray-200"} relative inline-flex mx-auto items-center flex-shrink-0 h-6 w-12 mx-auto border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            className={`${togglePaymentPeriod ? "translate-x-6" : "translate-x-0"} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}
+                          />
+                        </span>
+                        <p className={`text-md leading-7 font-medium text-gray-500 mx-4`}>Bill Semiannually</p>
                       </div>
                     </div>
 
@@ -185,7 +209,7 @@ const Subscriptions = () => {
                                                 $
                                               </span>
                                               <span className={`font-bold`}>
-                                                {val.price.unit_amount/100}
+                                                {val.price.unit_amount / 100}
                                               </span>
                                             </span>
                                             <span
@@ -235,12 +259,14 @@ const Subscriptions = () => {
                                         <div className={`mt-8`}>
                                           <div
                                             className={`rounded-lg ${
-                                              val.id === subscription.id || subscription.id === null
+                                              val.id === subscription.id ||
+                                              subscription.id === null
                                                 ? "shadow-none"
                                                 : "shadow-md"
                                             }`}
                                           >
-                                            {val.id === subscription.id || subscription.id === null ? (
+                                            {val.id === subscription.id ||
+                                            subscription.id === null ? (
                                               <button
                                                 className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                               >
@@ -252,7 +278,10 @@ const Subscriptions = () => {
                                                 onClick={() =>
                                                   setTimeout(
                                                     () =>
-                                                      selectPlan(val.id, val.group.name),
+                                                      selectPlan(
+                                                        val.id,
+                                                        val.group.name
+                                                      ),
                                                     150
                                                   )
                                                 }
@@ -311,7 +340,7 @@ const Subscriptions = () => {
                                               $
                                             </span>
                                             <span className={`font-bold`}>
-                                              {val.price.unit_amount/100}
+                                              {val.price.unit_amount / 100}
                                             </span>
                                           </span>
                                           <span
@@ -375,7 +404,10 @@ const Subscriptions = () => {
                                               type="button"
                                               className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
                                               onClick={() =>
-                                                selectPlan(val.id, val.group.name)
+                                                selectPlan(
+                                                  val.id,
+                                                  val.group.name
+                                                )
                                               }
                                             >
                                               Select Plan
@@ -414,7 +446,7 @@ const Subscriptions = () => {
                                                 $
                                               </span>
                                               <span className={`font-bold`}>
-                                                {val.price.unit_amount/100}
+                                                {val.price.unit_amount / 100}
                                               </span>
                                             </span>
                                             <span
@@ -481,7 +513,10 @@ const Subscriptions = () => {
                                                 onClick={() =>
                                                   setTimeout(
                                                     () =>
-                                                      selectPlan(val.id, val.group.name),
+                                                      selectPlan(
+                                                        val.id,
+                                                        val.group.name
+                                                      ),
                                                     150
                                                   )
                                                 }
@@ -504,7 +539,9 @@ const Subscriptions = () => {
                   </div>
                 </div>
 
-								<div className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}>
+                <div
+                  className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
+                >
                   <SiteFooter />
                 </div>
               </main>
@@ -544,7 +581,9 @@ const Subscriptions = () => {
                     <div
                       className={`inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-headline`}
                     >
-                      <div className={`hidden sm:block absolute top-0 right-0 pt-4 pr-4`}>
+                      <div
+                        className={`hidden sm:block absolute top-0 right-0 pt-4 pr-4`}
+                      >
                         <button
                           type="button"
                           className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
@@ -579,7 +618,11 @@ const Subscriptions = () => {
                       </div>
 
                       <div>
-                        <PaymentMethodForm subscriptionId={subscriptionId} closeForm={() => setShowModal(false)} onSubscriptionUpdated={subscriptionUpdated} />
+                        <PaymentMethodForm
+                          subscriptionId={subscriptionId}
+                          closeForm={() => setShowModal(false)}
+                          onSubscriptionUpdated={subscriptionUpdated}
+                        />
                       </div>
                     </div>
                   </Transition.Child>
