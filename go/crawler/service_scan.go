@@ -536,6 +536,12 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 
 // normalizeUrl resolves urls by parent reference and removes query params and anchors
 func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
+	// Remove leading and trailing whitespace
+	child = strings.TrimSpace(child)
+	// Remove new lines from the middle of url
+	// (spaces break urls, but new lines don't in chrome)
+	child = strings.ReplaceAll(child, "\n", "")
+
 	u, err := url.Parse(child)
 	if err != nil {
 		return nil, err
