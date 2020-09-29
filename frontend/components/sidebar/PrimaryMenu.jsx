@@ -111,8 +111,8 @@ const PrimaryMenu = () => {
           {DashboardPages.map((val, key) => {
             return (
               <Fragment key={key}>
-                {(user.group.name === "Agency" || user.group.name === "Agency2") || 
-                (user.group.name !== "Agency" && user.group.name !== "Agency2" && val.slug !== "reports") ? (
+                {user.group.name === "Agency" || 
+                (user.group.name !== "Agency" && val.slug !== "reports") ? (
                   <Fragment>
                     <h3
                       className={`${val.slug}-headline mt-8 text-xs leading-4 font-semibold text-gray-300 uppercase tracking-wider`}

@@ -146,15 +146,12 @@ const Sidebar = () => {
                       className={`${
                         user.group.name === "Basic"
                           ? "text-green-800"
-                          : user.group.name === "Pro" ||
-                            user.group.name === "Pro2"
+                          : user.group.name === "Pro"
                           ? "text-blue-800"
                           : "text-red-800"
                       } text-sm leading-5 font-medium`}
                     >
-                      {user.group.name === "Pro2" ? "Pro"
-                      : user.group.name === "Agency2" ? "Agency"
-                      : user.group.name} Plan
+                      {user.group.name} Plan
                     </span>
                     {user.group.name === "Basic" ? (
                       <Link href="/dashboard/settings/subscriptions">
@@ -164,8 +161,7 @@ const Sidebar = () => {
                           <small>Upgrade</small>
                         </a>
                       </Link>
-                    ) : user.group.name === "Pro" ||
-                      user.group.name === "Pro2" ? (
+                    ) : user.group.name === "Pro" ? (
                       <Link href="/dashboard/settings/subscriptions">
                         <a
                           className={`bg-blue-200 text-blue-800 hover:text-white hover:bg-blue-600 text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded transition ease-in-out duration-150`}

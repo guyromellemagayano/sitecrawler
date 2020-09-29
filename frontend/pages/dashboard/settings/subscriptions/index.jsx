@@ -312,7 +312,7 @@ const Subscriptions = () => {
                                               {val.id === subscription.id ||
                                               subscription.id === null ? (
                                                 <button
-                                                  className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                                  className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                 >
                                                   Current Plan
                                                 </button>
@@ -349,7 +349,7 @@ const Subscriptions = () => {
                                       6
                                   )
                                   .map((val, key) => {
-                                    return val.group.name === "Pro2" ? (
+                                    return val.group.name === "Pro" ? (
                                       <div
                                         key={key}
                                         className={`mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4`}
@@ -454,7 +454,7 @@ const Subscriptions = () => {
                                               >
                                                 {val.id === subscription.id ? (
                                                   <button
-                                                    className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                                    className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                   >
                                                     Current Plan
                                                   </button>
@@ -477,7 +477,7 @@ const Subscriptions = () => {
                                           </div>
                                         </div>
                                       </div>
-                                    ) : val.group.name === "Agency2" ? (
+                                    ) : val.group.name === "Agency" ? (
                                       <div
                                         key={key}
                                         className={`mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3`}
@@ -574,7 +574,7 @@ const Subscriptions = () => {
                                                   {val.id ===
                                                   subscription.id ? (
                                                     <button
-                                                      className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                                      className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                     >
                                                       Current Plan
                                                     </button>
@@ -713,7 +713,7 @@ const Subscriptions = () => {
                                               >
                                                 {val.id === subscription.id ? (
                                                   <button
-                                                    className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                                    className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                   >
                                                     Current Plan
                                                   </button>
@@ -831,7 +831,7 @@ const Subscriptions = () => {
                                                   {val.id ===
                                                   subscription.id ? (
                                                     <button
-                                                      className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                                      className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                     >
                                                       Current Plan
                                                     </button>
