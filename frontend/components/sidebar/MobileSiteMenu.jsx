@@ -8,7 +8,7 @@ import styled from "styled-components";
 import Skeleton from "react-loading-skeleton";
 import SitePages from "public/data/site-pages.json";
 import Layout from "components/Layout";
-import Transition from "hooks/Transition";
+import { Transition } from "@tailwindui/react";
 import useDropdownOutsideClick from "hooks/useDropdownOutsideClick";
 import { removeURLParameter } from "helpers/functions";
 
@@ -471,81 +471,80 @@ const MobileSiteMenu = props => {
                                     </button>
                                   </span>
 
-                                  <Transition show={isComponentVisible}>
-                                    <Transition
-                                      enter="transition ease-out duration-100"
-                                      enterFrom="transform opacity-0 scale-95"
-                                      enterTo="transform opacity-100 scale-100"
-                                      leave="transition ease-in duration-75"
-                                      leaveFrom="transform opacity-100 scale-100"
-                                      leaveTo="transform opacity-0 scale-95"
+                                  <Transition
+                                    show={isComponentVisible}
+                                    enter="transition ease-out duration-100"
+                                    enterFrom="transform opacity-0 scale-95"
+                                    enterTo="transform opacity-100 scale-100"
+                                    leave="transition ease-in duration-75"
+                                    leaveFrom="transform opacity-100 scale-100"
+                                    leaveTo="transform opacity-0 scale-95"
+                                  >
+                                    <div
+                                      className={`absolute mt-1 w-full rounded-md bg-white shadow-lg`}
                                     >
-                                      <div
-                                        className={`absolute mt-1 w-full rounded-md bg-white shadow-lg`}
+                                      <ul
+                                        tabIndex="-1"
+                                        role="listbox"
+                                        aria-labelledby="listbox-label"
+                                        aria-activedescendant="listbox-item-3"
+                                        className={`max-h-xs py-2 rounded-md text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}
                                       >
-                                        <ul
-                                          tabIndex="-1"
-                                          role="listbox"
-                                          aria-labelledby="listbox-label"
-                                          aria-activedescendant="listbox-item-3"
-                                          className={`max-h-xs py-2 rounded-md text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}
-                                        >
-                                          {site.results.map((val, key) => {
-                                            return (
-                                              <li
-                                                key={key}
-                                                onClick={() =>
-                                                  dropdownHandler(
-                                                    val.id,
-                                                    val.verified
-                                                  )
-                                                }
-                                                id={`listbox-item-${key}`}
-                                                role="option"
-                                                className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
+                                        {site.results.map((val, key) => {
+                                          return (
+                                            <li
+                                              key={key}
+                                              onClick={() =>
+                                                dropdownHandler(
+                                                  val.id,
                                                   val.verified
-                                                    ? "cursor-pointer"
-                                                    : "cursor-not-allowed"
-                                                } select-none relative py-2 pl-3 pr-9`}
+                                                )
+                                              }
+                                              id={`listbox-item-${key}`}
+                                              role="option"
+                                              className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
+                                                val.verified
+                                                  ? "cursor-pointer"
+                                                  : "cursor-not-allowed"
+                                              } select-none relative py-2 pl-3 pr-9`}
+                                            >
+                                              <div
+                                                className={`flex items-center space-x-3`}
                                               >
-                                                <div
-                                                  className={`flex items-center space-x-3`}
+                                                <span
+                                                  aria-label="Online"
+                                                  className={`${
+                                                    val.verified
+                                                      ? "bg-green-400"
+                                                      : "bg-red-400"
+                                                  } flex-shrink-0 inline-block h-2 w-2 rounded-full`}
+                                                ></span>
+                                                <span
+                                                  className={`font-normal block truncate`}
                                                 >
-                                                  <span
-                                                    aria-label="Online"
-                                                    className={`${
-                                                      val.verified
-                                                        ? "bg-green-400"
-                                                        : "bg-red-400"
-                                                    } flex-shrink-0 inline-block h-2 w-2 rounded-full`}
-                                                  ></span>
-                                                  <span
-                                                    className={`font-normal block truncate`}
+                                                  {val.name}
+                                                </span>
+                                              </div>
+                                              {selectedSite.id == val.id ? (
+                                                <span className="hover:text-white text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4">
+                                                  <svg
+                                                    className="h-5 w-5"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
                                                   >
-                                                    {val.name}
-                                                  </span>
-                                                </div>
-                                                {selectedSite.id == val.id ? (
-                                                  <span className="hover:text-white text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4">
-                                                    <svg
-                                                      className="h-5 w-5"
-                                                      viewBox="0 0 20 20"
-                                                      fill="currentColor"
-                                                    >
-                                                      <path
-                                                        fillRule="evenodd"
-                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                        clipRule="evenodd"
-                                                      />
-                                                    </svg>
-                                                  </span>
-                                                ) : null}
-                                              </li>
-                                            );
-                                          })}
-                                        </ul>
-                                      </div>
-                                    </Transition>
+                                                    <path
+                                                      fillRule="evenodd"
+                                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                      clipRule="evenodd"
+                                                    />
+                                                  </svg>
+                                                </span>
+                                              ) : null}
+                                            </li>
+                                          );
+                                        })}
+                                      </ul>
+                                    </div>
                                   </Transition>
                                 </div>
                               </div>

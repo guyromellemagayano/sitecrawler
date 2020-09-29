@@ -13,7 +13,7 @@ import PropTypes from "prop-types";
 import Layout from "components/Layout";
 import MobileSidebar from "components/sidebar/MobileSidebar";
 import MainSidebar from "components/sidebar/MainSidebar";
-import Transition from "hooks/Transition";
+import { Transition } from "@tailwindui/react";
 import fetchJson from "hooks/fetchJson";
 import SiteFooter from "components/footer/SiteFooter";
 
@@ -171,16 +171,17 @@ const SiteSettings = () => {
               <div
                 className={`fixed z-50 inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end`}
               >
-                <Transition
+                <Transition.Child
                   enter="transform ease-out duration-300 transition"
                   enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
                   enterTo="translate-y-0 opacity-100 sm:translate-x-0"
                   leave="transition ease-in duration-100"
                   leaveFrom="opacity-100"
                   leaveTo="opacity-0"
+                  className="max-w-sm w-full"
                 >
                   <div
-                    className={`max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto`}
+                    className={`bg-white shadow-lg rounded-lg pointer-events-auto`}
                   >
                     <div className={`rounded-lg shadow-xs overflow-hidden`}>
                       <div className={`p-4`}>
@@ -283,7 +284,7 @@ const SiteSettings = () => {
                       </div>
                     </div>
                   </div>
-                </Transition>
+                </Transition.Child>
               </div>
             </Transition>
 
@@ -584,7 +585,7 @@ const SiteSettings = () => {
               <div
                 className={`fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center`}
               >
-                <Transition
+                <Transition.Child
                   enter="ease-out duration-300"
                   enterFrom="opacity-0"
                   enterTo="opacity-100"
@@ -597,12 +598,12 @@ const SiteSettings = () => {
                       className={`absolute inset-0 bg-gray-500 opacity-75`}
                     ></div>
                   </div>
-                </Transition>
+                </Transition.Child>
                 <span
                   className={`hidden sm:inline-block sm:align-middle sm:h-screen`}
                 ></span>
                 &#8203;
-                <Transition
+                <Transition.Child
                   enter="ease-out duration-300"
                   enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                   enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -678,7 +679,7 @@ const SiteSettings = () => {
                       </span>
                     </div>
                   </div>
-                </Transition>
+                </Transition.Child>
               </div>
             </Transition>
           </SiteSettingsDiv>
