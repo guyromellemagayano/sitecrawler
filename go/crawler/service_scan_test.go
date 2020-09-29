@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/url"
 	"testing"
 )
 
@@ -19,7 +18,7 @@ func TestNormalizeURLWithoutBase(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.Input, func(t *testing.T) {
-			result, err := sut.normalizeURL(nil, tc.Input)
+			result, err := sut.normalizeURL("", tc.Input)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -44,14 +43,9 @@ func TestNormalizeURLWithBase(t *testing.T) {
 		{"http://other.com/d/d", "http://other.com/d/d"},
 	}
 
-	url, err := url.Parse("https://something.com/a/")
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	for _, tc := range testCases {
 		t.Run(tc.Input, func(t *testing.T) {
-			result, err := sut.normalizeURL(url, tc.Input)
+			result, err := sut.normalizeURL("https://something.com/a/", tc.Input)
 			if err != nil {
 				t.Fatal(err)
 			}

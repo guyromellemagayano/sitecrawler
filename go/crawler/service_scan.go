@@ -150,7 +150,7 @@ type scanner struct {
 }
 
 func (s *scanner) Start(log *zap.SugaredLogger) error {
-	u, err := s.normalizeURL(nil, s.Scan.Site.Url)
+	u, err := s.normalizeURL("", s.Scan.Site.Url)
 	if err != nil {
 		return err
 	}
@@ -178,26 +178,38 @@ func (s *scanner) Start(log *zap.SugaredLogger) error {
 	return nil
 }
 
-func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int, error) {
-	if linkID, ok := s.linkIDs[url.String()]; ok {
+func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint) (int, error) {
+	if linkID, ok := s.linkIDs[sourceUrl.String()]; ok {
 		return linkID, nil
 	}
 
-	link, doc := s.loadURL(log, url)
+	link, doc := s.loadURL(log, sourceUrl)
+	// Recheck "destination url after redirects" if it's in cache
+	if linkID, ok := s.linkIDs[link.Url]; ok {
+		return linkID, nil
+	}
+
+	// save new link
 	if err := s.ScanService.LinkDao.Save(link); err != nil {
 		return 0, err
 	}
-	s.linkIDs[url.String()] = link.ID
+
+	// cache both source and destination id
+	s.linkIDs[sourceUrl.String()] = link.ID
+	s.linkIDs[link.Url] = link.ID
+
+	// If we have doc, than it's a page and we descend the scan, otherwise return
 	if doc == nil {
 		return link.ID, nil
 	}
-	// If we have doc, than it's a page and we descend the scan
-	s.pageCount++
 
+	// save page stuff
+	s.pageCount++
 	if err := s.savePageData(doc, link.ID); err != nil {
 		log.Errorf("Could not save page data for link %v: %v", link.ID, err)
 	}
 
+	// check crawl limits
 	if depth > depthLimit {
 		log.Errorw("Depth limit hit",
 			"link_id", link.ID,
@@ -211,18 +223,19 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 		return link.ID, nil
 	}
 
+	// get links, images, scripts, ... for further crawling
 	doc.Find("a").Each(func(i int, sel *goquery.Selection) {
 		href, ok := sel.Attr("href")
 		if !ok {
 			return
 		}
 
-		childUrl, err := s.normalizeURL(url, href)
+		childUrl, err := s.normalizeURL(link.Url, href)
 		if err != nil {
 			log.Errorw(
 				"Could not parse url",
 				"href", href,
-				"base_url", url,
+				"base_url", link.Url,
 				"error", err,
 			)
 			return
@@ -243,12 +256,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 			return
 		}
 
-		childUrl, err := s.normalizeURL(url, href)
+		childUrl, err := s.normalizeURL(link.Url, href)
 		if err != nil {
 			log.Errorw(
 				"Could not parse url",
 				"href", href,
-				"base_url", url,
+				"base_url", link.Url,
 				"error", err,
 			)
 			return
@@ -269,12 +282,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 			return
 		}
 
-		childUrl, err := s.normalizeURL(url, href)
+		childUrl, err := s.normalizeURL(link.Url, href)
 		if err != nil {
 			log.Errorw(
 				"Could not parse url",
 				"href", href,
-				"base_url", url,
+				"base_url", link.Url,
 				"error", err,
 			)
 			return
@@ -295,12 +308,12 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, url *url.URL, depth uint) (int
 			return
 		}
 
-		childUrl, err := s.normalizeURL(url, href)
+		childUrl, err := s.normalizeURL(link.Url, href)
 		if err != nil {
 			log.Errorw(
 				"Could not parse url",
 				"href", href,
-				"base_url", url,
+				"base_url", link.Url,
 				"error", err,
 			)
 			return
@@ -375,6 +388,9 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 		}
 	}()
 
+	// Override url with actual destination url after redirects
+	crawlLink.Url = lenLimit(resp.Request.URL.String(), 2047)
+
 	tlsStatus, tlsId, err := s.tlsCache.Extract(resp.TLS, resp.Request)
 	if err != nil {
 		log.Error(err)
@@ -431,16 +447,21 @@ func (s *scanner) savePageData(doc *goquery.Document, linkID int) error {
 
 }
 
+// adds link to fifo for scanning, save relation to parent objects
 func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, fe fifoEntry, r relation) {
 	urlStr := fe.Url.String()
+
+	// bypass fifo if url has been scanned already
 	if childId, ok := s.linkIDs[urlStr]; ok {
 		if err := s.saveRelation(r, childId); err != nil {
 			log.Errorf("Could not save relation: %v", err)
 		}
+		// if url is already in fifo just add r to it's relations
 	} else if oldFe, ok := s.inFifo[urlStr]; ok {
 		if r.ChildType != CHILD_NONE {
 			oldFe.Relations = append(oldFe.Relations, r)
 		}
+		// add to fifo if not hiting total limit
 	} else if len(s.linkIDs)+len(s.inFifo) <= totalLimit {
 		fep := &fe
 		fep.Relations = []relation{r}
@@ -513,15 +534,20 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 	return nil
 }
 
-func (s *scanner) normalizeURL(parent *url.URL, child string) (*url.URL, error) {
+// normalizeUrl resolves urls by parent reference and removes query params and anchors
+func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
 	u, err := url.Parse(child)
 	if err != nil {
 		return nil, err
 	}
 	u.Fragment = ""
 	u.RawQuery = ""
-	if parent != nil {
-		return parent.ResolveReference(u), nil
+	if parent != "" {
+		parentUrl, err := url.Parse(parent)
+		if err != nil {
+			return nil, err
+		}
+		return parentUrl.ResolveReference(u), nil
 	}
 	return u, nil
 }
