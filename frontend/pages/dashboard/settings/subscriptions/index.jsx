@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import Head from "next/head";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -82,6 +82,28 @@ const Subscriptions = () => {
     setSubscriptionId(id);
   };
 
+  const handleCurrentPaymentPeriod = (sub, subs) => {
+    let intervalCount = '';
+
+    subs &&
+      sub &&
+      subs.results
+        .filter((result) => result.id === sub.id)
+        .map((val, key) => {
+          intervalCount = val.price.recurring.interval_count;
+        });
+    
+    return intervalCount;
+  };
+
+  useEffect(() => {
+    if (handleCurrentPaymentPeriod(subscription, subscriptions) > 1) {
+      setTogglePaymentPeriod(true);
+    } else {
+      setTogglePaymentPeriod(false);
+    }
+  }, [subscription, subscriptions]);
+
   {
     userError && <Layout>{userError.message}</Layout>;
   }
@@ -139,7 +161,9 @@ const Subscriptions = () => {
               >
                 <div className={`max-w-full px-4 py-4 sm:px-6 md:px-8`}>
                   <div>
-                    <div className={`flex items-center flex-col flex-wrap pt-12 px-4 sm:px-6 lg:px-8 lg:pt-20`}>
+                    <div
+                      className={`flex items-center flex-col flex-wrap pt-12 px-4 sm:px-6 lg:px-8 lg:pt-20`}
+                    >
                       <div className={`text-center mb-10`}>
                         <p
                           className={`text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10`}
@@ -154,20 +178,38 @@ const Subscriptions = () => {
                       </div>
 
                       <div className={`flex items-center justify-center`}>
-                        <p className={`text-md leading-7 font-medium text-gray-500 mx-4`}>Bill Monthly</p>
+                        <p
+                          className={`text-md leading-7 font-medium text-gray-500 mx-4`}
+                        >
+                          Bill Monthly
+                        </p>
                         <span
                           role="checkbox"
-                          tabindex="0"
-                          onClick={() => setTogglePaymentPeriod(!togglePaymentPeriod)}
+                          tabIndex="0"
+                          onClick={() =>
+                            setTogglePaymentPeriod(!togglePaymentPeriod)
+                          }
                           aria-checked={togglePaymentPeriod}
-                          className={`${togglePaymentPeriod ? "bg-indigo-600" : "bg-gray-200"} relative inline-flex mx-auto items-center flex-shrink-0 h-6 w-12 mx-auto border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}
+                          className={`${
+                            togglePaymentPeriod
+                              ? "bg-indigo-600"
+                              : "bg-gray-200"
+                          } relative inline-flex mx-auto items-center flex-shrink-0 h-6 w-12 mx-auto border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}
                         >
                           <span
                             aria-hidden="true"
-                            className={`${togglePaymentPeriod ? "translate-x-6" : "translate-x-0"} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}
+                            className={`${
+                              togglePaymentPeriod
+                                ? "translate-x-6"
+                                : "translate-x-0"
+                            } inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}
                           />
                         </span>
-                        <p className={`text-md leading-7 font-medium text-gray-500 mx-4`}>Bill Semiannually</p>
+                        <p
+                          className={`text-md leading-7 font-medium text-gray-500 mx-4`}
+                        >
+                          Bill Semiannually
+                        </p>
                       </div>
                     </div>
 
@@ -180,358 +222,644 @@ const Subscriptions = () => {
                           className={`max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8`}
                         >
                           <div className={`relative lg:grid lg:grid-cols-7`}>
-                            {subscriptions.results.map((val, key) => {
-                              return val.group.name === "Basic" ? (
-                                <div
-                                  key={key}
-                                  className={`mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3`}
-                                >
+                            {subscriptions.results
+                              .filter((result) => result.group.name === "Basic")
+                              .map((val, key) => {
+                                return (
                                   <div
-                                    className={`h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-l-lg`}
+                                    key={key}
+                                    className={`mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3`}
                                   >
-                                    <div className={`flex-1 flex flex-col`}>
-                                      <div className={`bg-white px-6 py-10`}>
-                                        <div>
-                                          <h3
-                                            className={`text-center text-2xl leading-8 font-medium text-gray-900" id="tier-hobby`}
-                                          >
-                                            {val.group.name}
-                                          </h3>
-                                          <div
-                                            className={`mt-4 flex items-center justify-center`}
-                                          >
-                                            <span
-                                              className={`px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900`}
+                                    <div
+                                      className={`h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-l-lg`}
+                                    >
+                                      <div className={`flex-1 flex flex-col`}>
+                                        <div className={`bg-white px-6 py-10`}>
+                                          <div>
+                                            <h3
+                                              className={`text-center text-2xl leading-8 font-medium text-gray-900" id="tier-hobby`}
+                                            >
+                                              {val.group.name}
+                                            </h3>
+                                            <div
+                                              className={`mt-4 flex items-center justify-center`}
                                             >
                                               <span
-                                                className={`mt-2 mr-2 text-4xl font-medium`}
+                                                className={`px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900`}
                                               >
-                                                $
+                                                <span
+                                                  className={`mt-2 mr-2 text-4xl font-medium`}
+                                                >
+                                                  $
+                                                </span>
+                                                <span className={`font-bold`}>
+                                                  {val.price.unit_amount / 100}
+                                                </span>
                                               </span>
-                                              <span className={`font-bold`}>
-                                                {val.price.unit_amount / 100}
+                                              <span
+                                                className={`text-xl leading-7 font-medium text-gray-500`}
+                                              >
+                                                /month
                                               </span>
-                                            </span>
-                                            <span
-                                              className={`text-xl leading-7 font-medium text-gray-500`}
-                                            >
-                                              /month
-                                            </span>
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
-                                      <div
-                                        className={`flex-1 flex flex-col justify-between border-t-2 border-gray-100 p-6 bg-gray-50 sm:p-10 lg:p-6 xl:p-10`}
-                                      >
-                                        <ul>
-                                          {val.features.map((val2, key) => {
-                                            return (
-                                              <li
-                                                key={key}
-                                                className={`flex items-start my-3`}
-                                              >
-                                                <div
-                                                  className={`flex-shrink-0`}
+                                        <div
+                                          className={`flex-1 flex flex-col justify-between border-t-2 border-gray-100 p-6 bg-gray-50 sm:p-10 lg:p-6 xl:p-10`}
+                                        >
+                                          <ul>
+                                            {val.features.map((val2, key) => {
+                                              return (
+                                                <li
+                                                  key={key}
+                                                  className={`flex items-start my-3`}
                                                 >
-                                                  <svg
-                                                    className={`h-6 w-6 text-green-500`}
-                                                    stroke="currentColor"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
+                                                  <div
+                                                    className={`flex-shrink-0`}
                                                   >
-                                                    <path
-                                                      strokeLinecap="round"
-                                                      strokeLinejoin="round"
-                                                      strokeWidth="2"
-                                                      d="M5 13l4 4L19 7"
-                                                    />
-                                                  </svg>
-                                                </div>
-                                                <p
-                                                  className={`ml-3 text-base leading-6 font-medium text-gray-500`}
+                                                    <svg
+                                                      className={`h-6 w-6 text-green-500`}
+                                                      stroke="currentColor"
+                                                      fill="none"
+                                                      viewBox="0 0 24 24"
+                                                    >
+                                                      <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M5 13l4 4L19 7"
+                                                      />
+                                                    </svg>
+                                                  </div>
+                                                  <p
+                                                    className={`ml-3 text-base leading-6 font-medium text-gray-500`}
+                                                  >
+                                                    {val2}
+                                                  </p>
+                                                </li>
+                                              );
+                                            })}
+                                          </ul>
+                                          <div className={`mt-8`}>
+                                            <div
+                                              className={`rounded-lg ${
+                                                val.id === subscription.id ||
+                                                subscription.id === null
+                                                  ? "shadow-none"
+                                                  : "shadow-md"
+                                              }`}
+                                            >
+                                              {val.id === subscription.id ||
+                                              subscription.id === null ? (
+                                                <button
+                                                  className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                 >
-                                                  {val2}
-                                                </p>
-                                              </li>
-                                            );
-                                          })}
-                                        </ul>
-                                        <div className={`mt-8`}>
-                                          <div
-                                            className={`rounded-lg ${
-                                              val.id === subscription.id ||
-                                              subscription.id === null
-                                                ? "shadow-none"
-                                                : "shadow-md"
-                                            }`}
-                                          >
-                                            {val.id === subscription.id ||
-                                            subscription.id === null ? (
-                                              <button
-                                                className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
-                                              >
-                                                Current Plan
-                                              </button>
-                                            ) : (
-                                              <button
-                                                className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
-                                                onClick={() =>
-                                                  setTimeout(
-                                                    () =>
-                                                      selectPlan(
-                                                        val.id,
-                                                        val.group.name
-                                                      ),
-                                                    150
-                                                  )
-                                                }
-                                              >
-                                                Select Plan
-                                              </button>
-                                            )}
+                                                  Current Plan
+                                                </button>
+                                              ) : (
+                                                <button
+                                                  className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+                                                  onClick={() =>
+                                                    setTimeout(
+                                                      () =>
+                                                        selectPlan(
+                                                          val.id,
+                                                          val.group.name
+                                                        ),
+                                                      150
+                                                    )
+                                                  }
+                                                >
+                                                  Select Plan
+                                                </button>
+                                              )}
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                              ) : val.group.name === "Pro" ? (
-                                <div
-                                  key={key}
-                                  className={`mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4`}
-                                >
-                                  <div
-                                    className={`relative z-10 rounded-lg shadow-xl`}
-                                  >
-                                    <div
-                                      className={`pointer-events-none absolute inset-0 rounded-lg border-2 border-indigo-600`}
-                                    ></div>
-                                    <div
-                                      className={`absolute inset-x-0 top-0 transform translate-y-px`}
-                                    >
+                                );
+                              })}
+                            {togglePaymentPeriod
+                              ? subscriptions.results
+                                  .filter(
+                                    (result) =>
+                                      result.price.recurring.interval_count ===
+                                      6
+                                  )
+                                  .map((val, key) => {
+                                    return val.group.name === "Pro2" ? (
                                       <div
-                                        className={`flex justify-center transform -translate-y-1/2`}
+                                        key={key}
+                                        className={`mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4`}
                                       >
-                                        <span
-                                          className={`inline-flex rounded-full bg-indigo-600 px-4 py-1 text-sm leading-5 font-semibold tracking-wider uppercase text-white`}
-                                        >
-                                          Most popular
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className={`bg-white rounded-t-lg px-6 pt-12 pb-10`}
-                                    >
-                                      <div>
-                                        <h3
-                                          className={`text-center text-3xl leading-9 font-semibold text-gray-900 sm:-mx-6" id="tier-growth`}
-                                        >
-                                          {val.group.name}
-                                        </h3>
                                         <div
-                                          className={`mt-4 flex items-center justify-center`}
+                                          className={`relative z-10 rounded-lg shadow-xl`}
                                         >
-                                          <span
-                                            className={`px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900 sm:text-6xl`}
+                                          <div
+                                            className={`pointer-events-none absolute inset-0 rounded-lg border-2 border-indigo-600`}
+                                          ></div>
+                                          <div
+                                            className={`absolute inset-x-0 top-0 transform translate-y-px`}
                                           >
-                                            <span
-                                              className={`mt-2 mr-2 text-4xl font-medium`}
+                                            <div
+                                              className={`flex justify-center transform -translate-y-1/2`}
                                             >
-                                              $
-                                            </span>
-                                            <span className={`font-bold`}>
-                                              {val.price.unit_amount / 100}
-                                            </span>
-                                          </span>
-                                          <span
-                                            className={`text-2xl leading-8 font-medium text-gray-500`}
+                                              <span
+                                                className={`inline-flex rounded-full bg-indigo-600 px-4 py-1 text-sm leading-5 font-semibold tracking-wider uppercase text-white`}
+                                              >
+                                                Most popular
+                                              </span>
+                                            </div>
+                                          </div>
+                                          <div
+                                            className={`bg-white rounded-t-lg px-6 pt-12 pb-10`}
                                           >
-                                            /month
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className={`border-t-2 border-gray-100 rounded-b-lg pt-10 pb-8 px-6 bg-gray-50 sm:px-10 sm:py-10`}
-                                    >
-                                      <ul>
-                                        {val.features.map((val2, key) => {
-                                          return (
-                                            <li
-                                              key={key}
-                                              className={`flex items-start my-3`}
-                                            >
-                                              <div className={`flex-shrink-0`}>
-                                                <svg
-                                                  className={`h-6 w-6 text-green-500`}
-                                                  stroke="currentColor"
-                                                  fill="none"
-                                                  viewBox="0 0 24 24"
+                                            <div>
+                                              <h3
+                                                className={`text-center text-3xl leading-9 font-semibold text-gray-900 sm:-mx-6" id="tier-growth`}
+                                              >
+                                                {val.group.name === "Pro2"
+                                                  ? "Pro"
+                                                  : val.group.name}
+                                              </h3>
+                                              <div
+                                                className={`mt-4 flex items-center justify-center`}
+                                              >
+                                                <span
+                                                  className={`px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900 sm:text-6xl`}
                                                 >
-                                                  <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M5 13l4 4L19 7"
-                                                  />
-                                                </svg>
+                                                  <span
+                                                    className={`mt-2 mr-2 text-4xl font-medium`}
+                                                  >
+                                                    $
+                                                  </span>
+                                                  <span className={`font-bold`}>
+                                                    {val.price.unit_amount /
+                                                      100}
+                                                  </span>
+                                                </span>
+                                                <span
+                                                  className={`text-2xl leading-8 font-medium text-gray-500`}
+                                                >
+                                                  /month
+                                                </span>
                                               </div>
-                                              <p
-                                                className={`ml-3 text-base leading-6 font-medium text-gray-500`}
-                                              >
-                                                {val2}
-                                              </p>
-                                            </li>
-                                          );
-                                        })}
-                                      </ul>
-                                      <div className={`mt-10`}>
-                                        <div
-                                          className={`rounded-lg ${
-                                            val.id === subscription.id
-                                              ? "shadow-none"
-                                              : "shadow-md"
-                                          }`}
-                                        >
-                                          {val.id === subscription.id ? (
-                                            <button
-                                              className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
-                                            >
-                                              Current Plan
-                                            </button>
-                                          ) : (
-                                            <button
-                                              type="button"
-                                              className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
-                                              onClick={() =>
-                                                selectPlan(
-                                                  val.id,
-                                                  val.group.name
-                                                )
-                                              }
-                                            >
-                                              Select Plan
-                                            </button>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              ) : (
-                                <div
-                                  key={key}
-                                  className={`mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3`}
-                                >
-                                  <div
-                                    className={`h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-r-lg`}
-                                  >
-                                    <div className={`flex-1 flex flex-col`}>
-                                      <div className={`bg-white px-6 py-10`}>
-                                        <div>
-                                          <h3
-                                            className={`text-center text-2xl leading-8 font-medium text-gray-900" id="tier-scale`}
-                                          >
-                                            {val.group.name}
-                                          </h3>
-                                          <div
-                                            className={`mt-4 flex items-center justify-center`}
-                                          >
-                                            <span
-                                              className={`px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900`}
-                                            >
-                                              <span
-                                                className={`mt-2 mr-2 text-4xl font-medium`}
-                                              >
-                                                $
-                                              </span>
-                                              <span className={`font-bold`}>
-                                                {val.price.unit_amount / 100}
-                                              </span>
-                                            </span>
-                                            <span
-                                              className={`text-xl leading-7 font-medium text-gray-500`}
-                                            >
-                                              /month
-                                            </span>
+                                            </div>
                                           </div>
-                                        </div>
-                                      </div>
-                                      <div
-                                        className={`flex-1 flex flex-col justify-between border-t-2 border-gray-100 p-6 bg-gray-50 sm:p-10 lg:p-6 xl:p-10`}
-                                      >
-                                        <ul>
-                                          {val.features.map((val2, key) => {
-                                            return (
-                                              <li
-                                                key={key}
-                                                className={`flex items-start my-3`}
-                                              >
-                                                <div
-                                                  className={`flex-shrink-0`}
-                                                >
-                                                  <svg
-                                                    className={`h-6 w-6 text-green-500`}
-                                                    stroke="currentColor"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                  >
-                                                    <path
-                                                      strokeLinecap="round"
-                                                      strokeLinejoin="round"
-                                                      strokeWidth="2"
-                                                      d="M5 13l4 4L19 7"
-                                                    />
-                                                  </svg>
-                                                </div>
-                                                <p
-                                                  className={`ml-3 text-base leading-6 font-medium text-gray-500`}
-                                                >
-                                                  {val2}
-                                                </p>
-                                              </li>
-                                            );
-                                          })}
-                                        </ul>
-                                        <div className={`mt-8`}>
                                           <div
-                                            className={`rounded-lg ${
-                                              val.id === subscription.id
-                                                ? "shadow-none"
-                                                : "shadow-md"
-                                            }`}
+                                            className={`border-t-2 border-gray-100 rounded-b-lg pt-10 pb-8 px-6 bg-gray-50 sm:px-10 sm:py-10`}
                                           >
-                                            {val.id === subscription.id ? (
-                                              <button
-                                                className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                            <ul>
+                                              {val.features.map((val2, key) => {
+                                                return (
+                                                  <li
+                                                    key={key}
+                                                    className={`flex items-start my-3`}
+                                                  >
+                                                    <div
+                                                      className={`flex-shrink-0`}
+                                                    >
+                                                      <svg
+                                                        className={`h-6 w-6 text-green-500`}
+                                                        stroke="currentColor"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                      >
+                                                        <path
+                                                          strokeLinecap="round"
+                                                          strokeLinejoin="round"
+                                                          strokeWidth="2"
+                                                          d="M5 13l4 4L19 7"
+                                                        />
+                                                      </svg>
+                                                    </div>
+                                                    <p
+                                                      className={`ml-3 text-base leading-6 font-medium text-gray-500`}
+                                                    >
+                                                      {val2}
+                                                    </p>
+                                                  </li>
+                                                );
+                                              })}
+                                            </ul>
+                                            <div className={`mt-10`}>
+                                              <div
+                                                className={`rounded-lg ${
+                                                  val.id === subscription.id
+                                                    ? "shadow-none"
+                                                    : "shadow-md"
+                                                }`}
                                               >
-                                                Current Plan
-                                              </button>
-                                            ) : (
-                                              <button
-                                                className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
-                                                onClick={() =>
-                                                  setTimeout(
-                                                    () =>
+                                                {val.id === subscription.id ? (
+                                                  <button
+                                                    className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                                  >
+                                                    Current Plan
+                                                  </button>
+                                                ) : (
+                                                  <button
+                                                    type="button"
+                                                    className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+                                                    onClick={() =>
                                                       selectPlan(
                                                         val.id,
                                                         val.group.name
-                                                      ),
-                                                    150
-                                                  )
-                                                }
-                                              >
-                                                Select Plan
-                                              </button>
-                                            )}
+                                                      )
+                                                    }
+                                                  >
+                                                    Select Plan
+                                                  </button>
+                                                )}
+                                              </div>
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            })}
+                                    ) : val.group.name === "Agency2" ? (
+                                      <div
+                                        key={key}
+                                        className={`mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3`}
+                                      >
+                                        <div
+                                          className={`h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-r-lg`}
+                                        >
+                                          <div
+                                            className={`flex-1 flex flex-col`}
+                                          >
+                                            <div
+                                              className={`bg-white px-6 py-10`}
+                                            >
+                                              <div>
+                                                <h3
+                                                  className={`text-center text-2xl leading-8 font-medium text-gray-900" id="tier-scale`}
+                                                >
+                                                  {val.group.name === "Agency2"
+                                                    ? "Agency"
+                                                    : val.group.name}
+                                                </h3>
+                                                <div
+                                                  className={`mt-4 flex items-center justify-center`}
+                                                >
+                                                  <span
+                                                    className={`px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900`}
+                                                  >
+                                                    <span
+                                                      className={`mt-2 mr-2 text-4xl font-medium`}
+                                                    >
+                                                      $
+                                                    </span>
+                                                    <span
+                                                      className={`font-bold`}
+                                                    >
+                                                      {val.price.unit_amount /
+                                                        100}
+                                                    </span>
+                                                  </span>
+                                                  <span
+                                                    className={`text-xl leading-7 font-medium text-gray-500`}
+                                                  >
+                                                    /month
+                                                  </span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div
+                                              className={`flex-1 flex flex-col justify-between border-t-2 border-gray-100 p-6 bg-gray-50 sm:p-10 lg:p-6 xl:p-10`}
+                                            >
+                                              <ul>
+                                                {val.features.map(
+                                                  (val2, key) => {
+                                                    return (
+                                                      <li
+                                                        key={key}
+                                                        className={`flex items-start my-3`}
+                                                      >
+                                                        <div
+                                                          className={`flex-shrink-0`}
+                                                        >
+                                                          <svg
+                                                            className={`h-6 w-6 text-green-500`}
+                                                            stroke="currentColor"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                          >
+                                                            <path
+                                                              strokeLinecap="round"
+                                                              strokeLinejoin="round"
+                                                              strokeWidth="2"
+                                                              d="M5 13l4 4L19 7"
+                                                            />
+                                                          </svg>
+                                                        </div>
+                                                        <p
+                                                          className={`ml-3 text-base leading-6 font-medium text-gray-500`}
+                                                        >
+                                                          {val2}
+                                                        </p>
+                                                      </li>
+                                                    );
+                                                  }
+                                                )}
+                                              </ul>
+                                              <div className={`mt-8`}>
+                                                <div
+                                                  className={`rounded-lg ${
+                                                    val.id === subscription.id
+                                                      ? "shadow-none"
+                                                      : "shadow-md"
+                                                  }`}
+                                                >
+                                                  {val.id ===
+                                                  subscription.id ? (
+                                                    <button
+                                                      className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                                    >
+                                                      Current Plan
+                                                    </button>
+                                                  ) : (
+                                                    <button
+                                                      className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+                                                      onClick={() =>
+                                                        setTimeout(
+                                                          () =>
+                                                            selectPlan(
+                                                              val.id,
+                                                              val.group.name
+                                                            ),
+                                                          150
+                                                        )
+                                                      }
+                                                    >
+                                                      Select Plan
+                                                    </button>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ) : null;
+                                  })
+                              : subscriptions.results
+                                  .filter(
+                                    (result) =>
+                                      result.price.recurring.interval_count ===
+                                      1
+                                  )
+                                  .map((val, key) => {
+                                    return val.group.name === "Pro" ? (
+                                      <div
+                                        key={key}
+                                        className={`mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4`}
+                                      >
+                                        <div
+                                          className={`relative z-10 rounded-lg shadow-xl`}
+                                        >
+                                          <div
+                                            className={`pointer-events-none absolute inset-0 rounded-lg border-2 border-indigo-600`}
+                                          ></div>
+                                          <div
+                                            className={`absolute inset-x-0 top-0 transform translate-y-px`}
+                                          >
+                                            <div
+                                              className={`flex justify-center transform -translate-y-1/2`}
+                                            >
+                                              <span
+                                                className={`inline-flex rounded-full bg-indigo-600 px-4 py-1 text-sm leading-5 font-semibold tracking-wider uppercase text-white`}
+                                              >
+                                                Most popular
+                                              </span>
+                                            </div>
+                                          </div>
+                                          <div
+                                            className={`bg-white rounded-t-lg px-6 pt-12 pb-10`}
+                                          >
+                                            <div>
+                                              <h3
+                                                className={`text-center text-3xl leading-9 font-semibold text-gray-900 sm:-mx-6" id="tier-growth`}
+                                              >
+                                                {val.group.name}
+                                              </h3>
+                                              <div
+                                                className={`mt-4 flex items-center justify-center`}
+                                              >
+                                                <span
+                                                  className={`px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900 sm:text-6xl`}
+                                                >
+                                                  <span
+                                                    className={`mt-2 mr-2 text-4xl font-medium`}
+                                                  >
+                                                    $
+                                                  </span>
+                                                  <span className={`font-bold`}>
+                                                    {val.price.unit_amount /
+                                                      100}
+                                                  </span>
+                                                </span>
+                                                <span
+                                                  className={`text-2xl leading-8 font-medium text-gray-500`}
+                                                >
+                                                  /month
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div
+                                            className={`border-t-2 border-gray-100 rounded-b-lg pt-10 pb-8 px-6 bg-gray-50 sm:px-10 sm:py-10`}
+                                          >
+                                            <ul>
+                                              {val.features.map((val2, key) => {
+                                                return (
+                                                  <li
+                                                    key={key}
+                                                    className={`flex items-start my-3`}
+                                                  >
+                                                    <div
+                                                      className={`flex-shrink-0`}
+                                                    >
+                                                      <svg
+                                                        className={`h-6 w-6 text-green-500`}
+                                                        stroke="currentColor"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                      >
+                                                        <path
+                                                          strokeLinecap="round"
+                                                          strokeLinejoin="round"
+                                                          strokeWidth="2"
+                                                          d="M5 13l4 4L19 7"
+                                                        />
+                                                      </svg>
+                                                    </div>
+                                                    <p
+                                                      className={`ml-3 text-base leading-6 font-medium text-gray-500`}
+                                                    >
+                                                      {val2}
+                                                    </p>
+                                                  </li>
+                                                );
+                                              })}
+                                            </ul>
+                                            <div className={`mt-10`}>
+                                              <div
+                                                className={`rounded-lg ${
+                                                  val.id === subscription.id
+                                                    ? "shadow-none"
+                                                    : "shadow-md"
+                                                }`}
+                                              >
+                                                {val.id === subscription.id ? (
+                                                  <button
+                                                    className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                                  >
+                                                    Current Plan
+                                                  </button>
+                                                ) : (
+                                                  <button
+                                                    type="button"
+                                                    className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+                                                    onClick={() =>
+                                                      selectPlan(
+                                                        val.id,
+                                                        val.group.name
+                                                      )
+                                                    }
+                                                  >
+                                                    Select Plan
+                                                  </button>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ) : val.group.name === "Agency" ? (
+                                      <div
+                                        key={key}
+                                        className={`mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3`}
+                                      >
+                                        <div
+                                          className={`h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-r-lg`}
+                                        >
+                                          <div
+                                            className={`flex-1 flex flex-col`}
+                                          >
+                                            <div
+                                              className={`bg-white px-6 py-10`}
+                                            >
+                                              <div>
+                                                <h3
+                                                  className={`text-center text-2xl leading-8 font-medium text-gray-900" id="tier-scale`}
+                                                >
+                                                  {val.group.name}
+                                                </h3>
+                                                <div
+                                                  className={`mt-4 flex items-center justify-center`}
+                                                >
+                                                  <span
+                                                    className={`px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900`}
+                                                  >
+                                                    <span
+                                                      className={`mt-2 mr-2 text-4xl font-medium`}
+                                                    >
+                                                      $
+                                                    </span>
+                                                    <span
+                                                      className={`font-bold`}
+                                                    >
+                                                      {val.price.unit_amount /
+                                                        100}
+                                                    </span>
+                                                  </span>
+                                                  <span
+                                                    className={`text-xl leading-7 font-medium text-gray-500`}
+                                                  >
+                                                    /month
+                                                  </span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div
+                                              className={`flex-1 flex flex-col justify-between border-t-2 border-gray-100 p-6 bg-gray-50 sm:p-10 lg:p-6 xl:p-10`}
+                                            >
+                                              <ul>
+                                                {val.features.map(
+                                                  (val2, key) => {
+                                                    return (
+                                                      <li
+                                                        key={key}
+                                                        className={`flex items-start my-3`}
+                                                      >
+                                                        <div
+                                                          className={`flex-shrink-0`}
+                                                        >
+                                                          <svg
+                                                            className={`h-6 w-6 text-green-500`}
+                                                            stroke="currentColor"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                          >
+                                                            <path
+                                                              strokeLinecap="round"
+                                                              strokeLinejoin="round"
+                                                              strokeWidth="2"
+                                                              d="M5 13l4 4L19 7"
+                                                            />
+                                                          </svg>
+                                                        </div>
+                                                        <p
+                                                          className={`ml-3 text-base leading-6 font-medium text-gray-500`}
+                                                        >
+                                                          {val2}
+                                                        </p>
+                                                      </li>
+                                                    );
+                                                  }
+                                                )}
+                                              </ul>
+                                              <div className={`mt-8`}>
+                                                <div
+                                                  className={`rounded-lg ${
+                                                    val.id === subscription.id
+                                                      ? "shadow-none"
+                                                      : "shadow-md"
+                                                  }`}
+                                                >
+                                                  {val.id ===
+                                                  subscription.id ? (
+                                                    <button
+                                                      className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-3 text-base leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
+                                                    >
+                                                      Current Plan
+                                                    </button>
+                                                  ) : (
+                                                    <button
+                                                      className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+                                                      onClick={() =>
+                                                        setTimeout(
+                                                          () =>
+                                                            selectPlan(
+                                                              val.id,
+                                                              val.group.name
+                                                            ),
+                                                          150
+                                                        )
+                                                      }
+                                                    >
+                                                      Select Plan
+                                                    </button>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ) : null;
+                                  })}
                           </div>
                         </div>
                       </div>
@@ -577,53 +905,53 @@ const Subscriptions = () => {
                     leave="ease-in duration-200"
                     leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    className="inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-headline"
                   >
                     <div
-                      className={`inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-headline`}
+                      className={`hidden sm:block absolute top-0 right-0 pt-4 pr-4`}
                     >
-                      <div
-                        className={`hidden sm:block absolute top-0 right-0 pt-4 pr-4`}
+                      <button
+                        type="button"
+                        className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
+                        aria-label="Close"
+                        onClick={() =>
+                          setTimeout(() => setShowModal(!showModal), 150)
+                        }
                       >
-                        <button
-                          type="button"
-                          className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
-                          aria-label="Close"
-                          onClick={() =>
-                            setTimeout(() => setShowModal(!showModal), 150)
-                          }
+                        <svg
+                          className={`h-6 w-6`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
                         >
-                          <svg
-                            className={`h-6 w-6`}
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div>
+                      <div className={`text-center sm:mt-3`}>
+                        <h2
+                          className={`mb-6 text-lg leading-6 font-medium text-gray-900" id="modal-headline`}
+                        >
+                          Payment Method
+                        </h2>
                       </div>
-                      <div>
-                        <div className={`text-center sm:mt-3`}>
-                          <h2
-                            className={`mb-6 text-lg leading-6 font-medium text-gray-900" id="modal-headline`}
-                          >
-                            Payment Method
-                          </h2>
-                        </div>
-                      </div>
+                    </div>
 
-                      <div>
-                        <PaymentMethodForm
-                          subscriptionId={subscriptionId}
-                          closeForm={() => setShowModal(false)}
-                          onSubscriptionUpdated={subscriptionUpdated}
-                        />
-                      </div>
+                    <div>
+                      <PaymentMethodForm
+                        subscriptionId={subscriptionId}
+                        closeForm={() => setShowModal(false)}
+                        onSubscriptionUpdated={subscriptionUpdated}
+                      />
                     </div>
                   </Transition.Child>
                 </div>
