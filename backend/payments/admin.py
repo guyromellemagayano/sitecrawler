@@ -6,7 +6,10 @@ from .models import StripeCustomer, Subscription, UserSubscription
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin, DynamicArrayMixin):
-    list_display = ("group",)
+    list_display = (
+        "name",
+        "group",
+    )
 
 
 @admin.register(UserSubscription)
