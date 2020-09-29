@@ -8,7 +8,7 @@ import Moment from "react-moment";
 import Layout from "../Layout";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Skeleton from "react-loading-skeleton";
-import Transition from "hooks/Transition";
+import { Transition } from "@tailwindui/react";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -461,7 +461,7 @@ const DataTable = (props) => {
         <div
           className={`fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center`}
         >
-          <Transition
+          <Transition.Child
             enter="ease-out duration-300"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -472,8 +472,8 @@ const DataTable = (props) => {
             <div className={`fixed inset-0 transition-opacity`}>
               <div className={`absolute inset-0 bg-gray-500 opacity-75`}></div>
             </div>
-          </Transition>
-          <Transition
+          </Transition.Child>
+          <Transition.Child
             enter="ease-out duration-300"
             enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -669,7 +669,7 @@ const DataTable = (props) => {
                 </span>
               </div>
             </div>
-          </Transition>
+          </Transition.Child>
         </div>
       </Transition>
 
@@ -677,7 +677,7 @@ const DataTable = (props) => {
         <div
           className={`fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center`}
         >
-          <Transition
+          <Transition.Child
             enter="ease-out duration-300"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -688,8 +688,8 @@ const DataTable = (props) => {
             <div className={`fixed inset-0 transition-opacity`}>
               <div className={`absolute inset-0 bg-gray-500 opacity-75`}></div>
             </div>
-          </Transition>
-          <Transition
+          </Transition.Child>
+          <Transition.Child
             enter="ease-out duration-300"
             enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -768,7 +768,7 @@ const DataTable = (props) => {
                 </span>
               </div>
             </div>
-          </Transition>
+          </Transition.Child>
         </div>
       </Transition>
     </DataTableDiv>

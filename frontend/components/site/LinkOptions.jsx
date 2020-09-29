@@ -1,38 +1,40 @@
-import { useState } from 'react'
-import { useRouter } from 'next/router'
-import styled from 'styled-components'
-import useSWR from "swr"
-import Cookies from "js-cookie"
-import fetchJson from 'hooks/fetchJson'
-import Transition from 'hooks/Transition'
+import { useState } from "react";
+import { useRouter } from "next/router";
+import styled from "styled-components";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import fetchJson from "hooks/fetchJson";
+import { Transition } from "@tailwindui/react";
 
-const LinkOptionsDiv = styled.div``
+const LinkOptionsDiv = styled.div``;
 
 const LinkOptions = ({ searchKey, onSearchEvent }) => {
-  const [showDropdown, setShowDropdown] = useState(false)
-  const [disableButton, setDisableButton] = useState(true)
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [disableButton, setDisableButton] = useState(true);
 
-  const { data: profile } = useSWR(`/api/auth/user/`, () => fetchProfileSettings(`/api/auth/user/`))
+  const { data: profile } = useSWR(`/api/auth/user/`, () =>
+    fetchProfileSettings(`/api/auth/user/`)
+  );
 
-  const { query, asPath } = useRouter()
+  const { query, asPath } = useRouter();
 
   const setDropdownToggle = (e) => {
-    setShowDropdown(!showDropdown)
-  }
+    setShowDropdown(!showDropdown);
+  };
 
   const fetchProfileSettings = async (endpoint) => {
     const siteProfileData = await fetchJson(endpoint, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
-      }
-    })
-    
-    return siteProfileData
-  }
-  
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken"),
+      },
+    });
+
+    return siteProfileData;
+  };
+
   return (
     <LinkOptionsDiv className={`py-4`}>
       <div
@@ -62,7 +64,15 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
                 <input
                   id={`search`}
                   className={`form-input block w-full pl-10 sm:text-sm sm:leading-5`}
-                  placeholder={`${asPath.includes('pages') ? "Search Pages..." : asPath.includes('links') ? "Search Links..." : asPath.includes('images') ? "Search Images..." : "Search URL..."}`}
+                  placeholder={`${
+                    asPath.includes("pages")
+                      ? "Search Pages..."
+                      : asPath.includes("links")
+                      ? "Search Links..."
+                      : asPath.includes("images")
+                      ? "Search Images..."
+                      : "Search URL..."
+                  }`}
                   onKeyUp={onSearchEvent}
                   defaultValue={searchKey}
                   autoFocus
@@ -79,7 +89,11 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
                       <button
                         type="button"
                         disabled="disabled"
-                        className={`${disableButton ? "opacity-50 cursor-not-allowed" : "hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue active:bg-gray-50 active:text-gray-800"}  inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 transition ease-in-out duration-150`}
+                        className={`${
+                          disableButton
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue active:bg-gray-50 active:text-gray-800"
+                        }  inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 transition ease-in-out duration-150`}
                         id="options-menu"
                         aria-haspopup="true"
                         aria-expanded={`${showDropdown ? "true" : "false"}`}
@@ -101,40 +115,39 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
                     </span>
                   </div>
 
-                  <Transition show={showDropdown}>
-                    <Transition
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
+                  <Transition
+                    show={showDropdown}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <div
+                      className={`origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-xs-lg`}
                     >
-                      <div
-                        className={`origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-xs-lg`}
-                      >
-                        <div className={`rounded-md bg-white shadow-xs`}>
-                          <div
-                            className={`py-1`}
-                            role="menu"
-                            aria-orientation="vertical"
-                            aria-labelledby="options-menu"
+                      <div className={`rounded-md bg-white shadow-xs`}>
+                        <div
+                          className={`py-1`}
+                          role="menu"
+                          aria-orientation="vertical"
+                          aria-labelledby="options-menu"
+                        >
+                          <button
+                            className={`block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem`}
                           >
-                            <button
-                              className={`block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem`}
-                            >
-                              CSV
-                            </button>
-                            <button
-                              className={`block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-                              role="menuitem"
-                            >
-                              PDF
-                            </button>
-                          </div>
+                            CSV
+                          </button>
+                          <button
+                            className={`block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
+                            role="menuitem"
+                          >
+                            PDF
+                          </button>
                         </div>
                       </div>
-                    </Transition>
+                    </div>
                   </Transition>
                 </div>
               </span>
@@ -143,7 +156,7 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
         </div>
       </div>
     </LinkOptionsDiv>
-  )
-}
+  );
+};
 
-export default LinkOptions
+export default LinkOptions;

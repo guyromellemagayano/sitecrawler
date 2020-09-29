@@ -3,7 +3,7 @@ import Head from "next/head";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import Transition from "hooks/Transition";
+import { Transition } from "@tailwindui/react";
 import useUser from "hooks/useUser";
 import Layout from "components/Layout";
 import MobileSidebar from "components/sidebar/MobileSidebar";
@@ -515,7 +515,7 @@ const Subscriptions = () => {
                 <div
                   className={`flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}
                 >
-                  <Transition
+                  <Transition.Child
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
@@ -528,12 +528,12 @@ const Subscriptions = () => {
                         className={`absolute inset-0 bg-gray-500 opacity-75`}
                       ></div>
                     </div>
-                  </Transition>
+                  </Transition.Child>
                   <span
                     className={`hidden sm:inline-block sm:align-middle sm:h-screen`}
                   ></span>
                   &#8203;
-                  <Transition
+                  <Transition.Child
                     enter="ease-out duration-300"
                     enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -582,7 +582,7 @@ const Subscriptions = () => {
                         <PaymentMethodForm subscriptionId={subscriptionId} closeForm={() => setShowModal(false)} onSubscriptionUpdated={subscriptionUpdated} />
                       </div>
                     </div>
-                  </Transition>
+                  </Transition.Child>
                 </div>
               </div>
             </Transition>
