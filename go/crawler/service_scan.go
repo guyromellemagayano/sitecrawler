@@ -358,8 +358,8 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 			crawlLink.Status = STATUS_TOO_MANY_REDIRECTS
 		} else {
 			if !strings.HasSuffix(err.Error(), "unexpected EOF") &&
-				!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated")
-				!strings.HasSuffix(err.Error(), "connection reset by peer") {{
+				!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated") &&
+				!strings.HasSuffix(err.Error(), "connection reset by peer") {
 				log.Errorw("Other error for link",
 					"url", url,
 					"error", err,

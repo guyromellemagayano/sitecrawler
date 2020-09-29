@@ -14,6 +14,9 @@ func TestNormalizeURLWithoutBase(t *testing.T) {
 		{"https://something.com/a/b/c#a1", "https://something.com/a/b/c"},
 		{"https://something.com/a/b/c?action=add&b=c", "https://something.com/a/b/c"},
 		{"https://something.com/a/b/c?action=add&b=c#a2", "https://something.com/a/b/c"},
+		{"  https://something.com/a/b/c   ", "https://something.com/a/b/c"},
+		{"https://somethi\nng.com/a/b/c", "https://something.com/a/b/c"},
+		{"https://something.com/a /b/c", "https://something.com/a%20/b/c"},
 	}
 
 	for _, tc := range testCases {
@@ -41,6 +44,9 @@ func TestNormalizeURLWithBase(t *testing.T) {
 		{"/a/b/c?action=add&b=c#a2", "https://something.com/a/b/c"},
 		{"c", "https://something.com/a/c"},
 		{"http://other.com/d/d", "http://other.com/d/d"},
+		{"  /a/b/c   ", "https://something.com/a/b/c"},
+		{"/a\n/b/c", "https://something.com/a/b/c"},
+		{"/a /b/c", "https://something.com/a%20/b/c"},
 	}
 
 	for _, tc := range testCases {
