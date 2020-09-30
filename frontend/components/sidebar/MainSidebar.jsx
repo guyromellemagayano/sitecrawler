@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import AppLogo from "components/logo/AppLogo";
 import Link from "next/link";
 import PrimaryMenu from "components/sidebar/PrimaryMenu";
@@ -31,7 +31,7 @@ const MainSidebar = (props) => {
   }, []);
 
   return (
-    <Fragment>
+    <>
       {user ? (
         <MainSidebarDiv className={`hidden md:flex md:flex-shrink-0`}>
           <div
@@ -65,7 +65,7 @@ const MainSidebar = (props) => {
           </div>
         </MainSidebarDiv>
       ) : null}
-    </Fragment>
+    </>
   );
 };
 
@@ -74,4 +74,18 @@ export default MainSidebar;
 MainSidebar.proptypes = {
   windowSettingsLocation: PropTypes.bool,
   windowSiteLocation: PropTypes.bool,
+  user: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.string,
+    PropTypes.shape({ current: PropTypes.any })
+  ]),
+  props: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.string,
+    PropTypes.shape({ current: PropTypes.any })
+  ]),
 };
