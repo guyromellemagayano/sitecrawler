@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Transition } from "@tailwindui/react";
 import Cookies from "js-cookie";
 import fetch from "node-fetch";
@@ -46,7 +46,7 @@ const Sidebar = () => {
   }, [user]);
 
   return (
-    <Fragment>
+    <>
       {userError && <Layout>Failed to load.</Layout>}
 
       {!userLoaded ? (
@@ -232,7 +232,7 @@ const Sidebar = () => {
           </Transition>
         </SidebarDiv>
       )}
-    </Fragment>
+    </>
   );
 };
 
