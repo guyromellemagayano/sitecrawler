@@ -13,7 +13,7 @@ import useSWR from "swr";
 const apiParameters = {
   method: "GET",
   headers: {
-    "Accept": "application/json",
+    Accept: "application/json",
     "Content-Type": "application/json",
     "X-CSRFToken": Cookies.get("csrftoken"),
   },
@@ -40,7 +40,7 @@ const Sidebar = () => {
   const { data: user, error: userError } = useSWR("/api/auth/user/", fetcher, {
     refreshInterval: 2500,
   });
-
+  
   useEffect(() => {
     if (user && user !== undefined) setUserLoaded(true);
   }, [user]);
@@ -238,16 +238,25 @@ const Sidebar = () => {
 
 export default Sidebar;
 
-Sidebar.PropTypes = {
+Sidebar.propTypes = {
+  apiParameters: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.func])
+  ),
   showDropdown: PropTypes.bool,
   userLoaded: PropTypes.bool,
   ref: PropTypes.oneOfType([
-    PropTypes.func, 
-    PropTypes.shape({ current: PropTypes.any })
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.any }),
   ]),
   isComponentVisible: PropTypes.bool,
   setDropdownToggle: PropTypes.func,
   fetcher: PropTypes.func,
-  user: PropTypes.object,
-  userError: PropTypes.object
-}
+  user: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.string,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+  userError: PropTypes.object,
+};
