@@ -256,7 +256,7 @@ Sidebar.propTypes = {
     PropTypes.object,
     PropTypes.array,
     PropTypes.string,
-    PropTypes.shape({ current: PropTypes.any }),
+    PropTypes.shape({ current: PropTypes.any })
   ]),
   userError: PropTypes.object,
 };
