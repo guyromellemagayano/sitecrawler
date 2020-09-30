@@ -72,6 +72,6 @@ const MainSidebar = (props) => {
 export default MainSidebar;
 
 MainSidebar.proptypes = {
-  windowSiteLocation: PropTypes.bool,
   windowSettingsLocation: PropTypes.bool,
+  windowSiteLocation: PropTypes.bool,
 };
