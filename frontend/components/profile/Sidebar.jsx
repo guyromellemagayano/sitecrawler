@@ -1,13 +1,14 @@
 import { Fragment, useEffect, useState } from "react";
-import Link from "next/link";
-import fetch from "node-fetch";
-import Cookies from "js-cookie";
-import styled from "styled-components";
-import useSWR from "swr";
-import Skeleton from "react-loading-skeleton";
 import { Transition } from "@tailwindui/react";
+import Cookies from "js-cookie";
+import fetch from "node-fetch";
 import Layout from "components/Layout";
+import Link from "next/link";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import styled from "styled-components";
 import useDropdownOutsideClick from "hooks/useDropdownOutsideClick";
+import useSWR from "swr";
 
 const apiParameters = {
   method: "GET",
@@ -236,3 +237,17 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
+Sidebar.PropTypes = {
+  showDropdown: PropTypes.bool,
+  userLoaded: PropTypes.bool,
+  ref: PropTypes.oneOfType([
+    PropTypes.func, 
+    PropTypes.shape({ current: PropTypes.any })
+  ]),
+  isComponentVisible: PropTypes.bool,
+  setDropdownToggle: PropTypes.func,
+  fetcher: PropTypes.func,
+  user: PropTypes.object,
+  userError: PropTypes.object
+}
