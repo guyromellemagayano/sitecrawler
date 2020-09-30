@@ -40,7 +40,7 @@ const ProfileSettingsPassword = () => {
       const response = await fetch("/api/auth/password/change/", {
         method: "POST",
         headers: {
-          Accept: "application/json",
+          "Accept": "application/json",
           "Content-Type": "application/json",
           "X-CSRFToken": Cookies.get("csrftoken"),
         },
