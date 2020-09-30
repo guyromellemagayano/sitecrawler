@@ -19,7 +19,7 @@ const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -64,14 +64,14 @@ const Subscriptions = () => {
       await fetch("/api/stripe/subscription/current/", {
         method: "DELETE",
         headers: {
-          Accept: "application/json",
+          "Accept": "application/json",
           "Content-Type": "application/json",
           "X-CSRFToken": Cookies.get("csrftoken"),
         },
       });
 
       setTimeout(() => {
-        console.log("[subscriptionUpdated]");
+        // console.log("[subscriptionUpdated]");
         subscriptionUpdated();
       }, 1000);
 
