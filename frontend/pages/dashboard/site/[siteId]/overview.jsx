@@ -223,7 +223,7 @@ const SitesDashboard = () => {
                   <div className={`pb-4`}>
                     <SitesStats crawlableHandler={crawlableHandler} />
                   </div>
-                  <div className={`grid grid-cols-2 gap-8 pb-10`}>
+                  <div className={`grid grid-cols-2 xs:grid-cols-1 xl:grid-cols-2 gap-8 pb-10`}>
                     <SitesOverview
                       id={site.id}
                       url={site.url}
@@ -242,7 +242,7 @@ const SitesDashboard = () => {
                     />
                     <SitesLinksStats url={query} />
                   </div>
-                  <div className={`grid grid-cols-3 gap-8`}>
+                  <div className={`grid xs:grid-cols-1 xl:grid-cols-3 gap-8`}>
                     <SitesSeoStats url={query} />
                     <SitesPagesStats url={query} />
                     <SitesImagesStats url={query} />

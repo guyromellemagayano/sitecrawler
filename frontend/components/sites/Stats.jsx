@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import fetch from "node-fetch";
 import Cookies from "js-cookie";
-import useSWR from "swr";
-import Link from "next/link";
-import styled from "styled-components";
-import Skeleton from "react-loading-skeleton";
+import fetch from "node-fetch";
 import Layout from "components/Layout";
+import Link from "next/link";
+import Skeleton from "react-loading-skeleton";
+import styled from "styled-components";
+import useSWR from "swr";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -211,10 +211,11 @@ const SitesStats = (props) => {
       {
         title: "Total Issues",
         count:
-          stats && stats.num_non_ok_links +
-          setSeoErrors() +
-          setPageErrors() +
-          setImageErrors()
+          stats &&
+          stats.num_non_ok_links +
+            setSeoErrors() +
+            setPageErrors() +
+            setImageErrors(),
       },
       {
         title: "Total Pages",
@@ -234,17 +235,17 @@ const SitesStats = (props) => {
       <SitesStatsDiv>
         <div>
           <div
-            className={`mt-2 mb-4 py-6 grid grid-cols-1 sm:grid-cols-4 bg-white overflow-hidden shadow-xs rounded-lg divide-x divide-gray-300`}
+            className={`mt-2 mb-4 py-6 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 bg-white overflow-hidden shadow-xs rounded-lg lg:divide-x lg:divide-gray-300`}
           >
             {PageTabs.map((val, key) => {
               return (
-                <div key={key} className={`flex items-center justify-center`}>
+                <div key={key} className={`flex items-center justify-center xs:py-5 xs:pr-3 lg:p-0`}>
                   <div className={`flex items-start justify-center`}>
-                    <dl className={`mr-2`}>
+                    <dl className={`mr-2 xs:mr-1`}>
                       <dt>
                         {val.title === "Total Pages" ? (
                           <svg
-                            className={`mr-3 h-9 w-8 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                            className={`mr-3 xs:mr-1 h-9 xs:h-7 w-8 xs:h-6 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
                             stroke={`currentColor`}
                             fill={`none`}
                             viewBox={`0 0 24 24`}
@@ -258,7 +259,7 @@ const SitesStats = (props) => {
                           </svg>
                         ) : val.title === "Total Links" ? (
                           <svg
-                            className={`mr-3 h-9 w-8 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                            className={`mr-3 xs:mr-1 h-9 xs:h-7 w-8 xs:h-6 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
                             stroke={`currentColor`}
                             fill={`none`}
                             viewBox={`0 0 24 24`}
@@ -272,7 +273,7 @@ const SitesStats = (props) => {
                           </svg>
                         ) : val.title === "Total Images" ? (
                           <svg
-                            className={`mr-3 h-9 w-8 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                            className={`mr-3 xs:mr-1 h-9 xs:h-7 w-8 xs:h-6 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
                             stroke={`currentColor`}
                             fill={`none`}
                             viewBox={`0 0 24 24`}
@@ -286,7 +287,7 @@ const SitesStats = (props) => {
                           </svg>
                         ) : (
                           <svg
-                            className={`mr-3 h-9 w-8 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
+                            className={`mr-3 xs:mr-1 h-9 xs:h-7 w-8 xs:h-6 text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 transition ease-in-out duration-150`}
                             stroke={`currentColor`}
                             fill={`none`}
                             viewBox={`0 0 24 24`}
@@ -303,7 +304,7 @@ const SitesStats = (props) => {
                     </dl>
                     <dl>
                       <dt
-                        className={`text-sm leading-5 font-medium text-gray-500 truncate`}
+                        className={`text-sm xs:text-xs lg:text-sm leading-5 font-medium text-gray-500 truncate`}
                       >
                         {val.title}
                       </dt>

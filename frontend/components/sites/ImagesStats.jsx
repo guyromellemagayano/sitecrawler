@@ -1,15 +1,16 @@
-import Link from "next/link";
-import fetch from "node-fetch";
-import useSWR from "swr";
-import Cookies from "js-cookie";
-import styled from "styled-components";
-import PropTypes from "prop-types";
-import Layout from "components/Layout";
-import Skeleton from "react-loading-skeleton";
-import loadable from "@loadable/component";
 const Chart = loadable(() => import("react-apexcharts"));
-import Router from "next/router";
 import { imagesChartContents } from "enum/chartContents";
+import { useMediaQuery } from "react-responsive";
+import Cookies from "js-cookie";
+import fetch from "node-fetch";
+import Layout from "components/Layout";
+import Link from "next/link";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import Router from "next/router";
+import Skeleton from "react-loading-skeleton";
+import styled from "styled-components";
+import useSWR from "swr";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
@@ -52,12 +53,20 @@ const SitesImagesStatsDiv = styled.div`
         background-color: #bb4338;
       }
       &-5 {
-        background-color: #d8e7e9;
+        background-color: #2d99ff;
       }
     }
   }
   .apexcharts-legend {
     display: block;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    @media only screen and (min-width: 1281px) {
+      max-width: 45%;
+    }
+    @media only screen and (min-width: 1400px) {
+      max-width: 85%;
+    }
   }
   .apexcharts-legend-series {
     display: flex;
@@ -81,7 +90,7 @@ const SitesImagesStatsDiv = styled.div`
     color: #1d2626;
     font-weight: 600;
   }
-  .legent-text {
+  .legend-text {
     margin-right: 10px;
   }
   .skeleton-wrapper {
@@ -90,6 +99,8 @@ const SitesImagesStatsDiv = styled.div`
 `;
 
 const SitesImagesStats = (props) => {
+  const isMobileOrDesktop = useMediaQuery({ query: "(min-device-width: 1300px)" });
+
   const { data: scan, error: scanError } = useSWR(
     () =>
       props.url.siteId
@@ -241,13 +252,20 @@ const SitesImagesStats = (props) => {
     },
     responsive: [
       {
-        breakpoint: 480,
+        breakpoint: 1281,
         options: {
           chart: {
-            width: 400,
+            width: 525,
+            height: "auto",
           },
           legend: {
             position: "bottom",
+            width: 315,
+            height: "auto",
+            itemMargin: {
+              horizontal: 25,
+              vertical: 10,
+            },
           },
         },
       },
@@ -312,7 +330,8 @@ const SitesImagesStats = (props) => {
               options={chartOptions}
               series={chartSeries}
               type="donut"
-              height="530"
+              width={`${isMobileOrDesktop ? "400" : "600"}`}
+              height={`${isMobileOrDesktop ? "530" : "530"}`}
             />
           )}
         </div>
@@ -322,3 +341,5 @@ const SitesImagesStats = (props) => {
 };
 
 export default SitesImagesStats;
+
+SitesImagesStats.propTypes = {};

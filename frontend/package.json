@@ -58,6 +58,7 @@
     "react-player": "^2.6.1",
     "react-redux": "^7.2.1",
     "react-resize-detector": "^5.0.7",
+    "react-responsive": "^8.1.0",
     "react-scripts": "^3.4.3",
     "react-tooltip": "^4.2.8",
     "react-transition-group": "^4.4.1",
@@ -82,6 +83,8 @@
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.1.0",
+    "node-sass": "^4.14.1",
+    "styled-jsx-plugin-sass": "^1.0.0",
     "tailwindcss": "^1.7.3"
   },
   "license": "MIT"
