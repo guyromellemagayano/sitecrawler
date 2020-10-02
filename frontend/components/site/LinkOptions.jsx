@@ -26,7 +26,7 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
     const siteProfileData = await fetchJson(endpoint, {
       method: "GET",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken"),
       },

@@ -1,13 +1,14 @@
-import { Fragment, useEffect, useState } from "react";
-import Link from "next/link";
-import fetch from "node-fetch";
-import Cookies from "js-cookie";
-import styled from "styled-components";
-import useSWR from "swr";
-import Skeleton from "react-loading-skeleton";
+import { useEffect, useState } from "react";
 import { Transition } from "@tailwindui/react";
+import Cookies from "js-cookie";
+import fetch from "node-fetch";
 import Layout from "components/Layout";
+import Link from "next/link";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import styled from "styled-components";
 import useDropdownOutsideClick from "hooks/useDropdownOutsideClick";
+import useSWR from "swr";
 
 const apiParameters = {
   method: "GET",
@@ -39,13 +40,13 @@ const Sidebar = () => {
   const { data: user, error: userError } = useSWR("/api/auth/user/", fetcher, {
     refreshInterval: 2500,
   });
-
+  
   useEffect(() => {
     if (user && user !== undefined) setUserLoaded(true);
   }, [user]);
 
   return (
-    <Fragment>
+    <>
       {userError && <Layout>Failed to load.</Layout>}
 
       {!userLoaded ? (
@@ -231,8 +232,31 @@ const Sidebar = () => {
           </Transition>
         </SidebarDiv>
       )}
-    </Fragment>
+    </>
   );
 };
 
 export default Sidebar;
+
+Sidebar.propTypes = {
+  apiParameters: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.func])
+  ),
+  showDropdown: PropTypes.bool,
+  userLoaded: PropTypes.bool,
+  ref: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+  isComponentVisible: PropTypes.bool,
+  setDropdownToggle: PropTypes.func,
+  fetcher: PropTypes.func,
+  user: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.string,
+    PropTypes.shape({ current: PropTypes.any })
+  ]),
+  userError: PropTypes.object,
+};

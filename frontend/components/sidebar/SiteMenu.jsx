@@ -1,22 +1,22 @@
-import { useState, Fragment, useEffect } from "react";
-import Router, { useRouter } from "next/router";
-import fetch from "node-fetch";
-import useSWR from "swr";
-import Cookies from "js-cookie";
-import Link from "next/link";
-import styled from "styled-components";
-import Skeleton from "react-loading-skeleton";
-import SitePages from "public/data/site-pages.json";
-import Layout from "components/Layout";
 import { Transition } from "@tailwindui/react";
+import { useState, Fragment, useEffect } from "react";
+import Cookies from "js-cookie";
+import fetch from "node-fetch";
+import Layout from "components/Layout";
+import Link from "next/link";
+import PropTypes from "prop-types";
+import Router, { useRouter } from "next/router";
+import SitePages from "public/data/site-pages.json";
+import Skeleton from "react-loading-skeleton";
+import styled from "styled-components";
 import useDropdownOutsideClick from "hooks/useDropdownOutsideClick";
-import { removeURLParameter } from "helpers/functions";
+import useSWR from "swr";
 
 const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      "Accept": "application/json",
+      Accept: "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -40,7 +40,7 @@ const SiteMenuDiv = styled.nav`
   }
 `;
 
-const SiteMenu = props => {
+const SiteMenu = (props) => {
   const [selectedSite, setSelectedSite] = useState(undefined);
   const {
     ref,
@@ -135,7 +135,7 @@ const SiteMenu = props => {
       {scanError && <Layout>{scanError.message}</Layout>}
       {siteError && <Layout>{siteError.message}</Layout>}
 
-      {!stats || !site || selectedSite == undefined ? (
+      {!user || !scan || !stats || !site || selectedSite == undefined ? (
         <SiteMenuDiv className={`mt-5 flex-1 px-2 bg-gray-1000`}>
           {[...Array(5)].map((val, index) => {
             return (
@@ -565,3 +565,57 @@ SiteMenu.getInitialProps = ({ query }) => {
 };
 
 export default SiteMenu;
+
+SiteMenu.propTypes = {
+  fetcher: PropTypes.func,
+  props: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.string,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+  selectedSite: PropTypes.bool,
+  ref: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+  isComponentVisible: PropTypes.bool,
+  setDropdownToggle: PropTypes.func,
+  query: PropTypes.func,
+  asPath: PropTypes.func,
+  sitesApiEndpoint: PropTypes.node,
+  user: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.string,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+  scan: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.string,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+  scanObjId: PropTypes.number,
+  scanObj: PropTypes.array,
+  stats: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.string,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+  site: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.string,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+  siteSelectOnLoad: PropTypes.func,
+  dropdownHandler: PropTypes.func,
+  SitePages: PropTypes.object,
+};

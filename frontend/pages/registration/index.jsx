@@ -53,7 +53,7 @@ const Registration = () => {
       const response = await fetch("/api/auth/registration/", {
         method: "POST",
         headers: {
-          Accept: "application/json",
+          "Accept": "application/json",
           "Content-Type": "application/json",
           "X-CSRFToken": Cookies.get("csrftoken"),
         },
