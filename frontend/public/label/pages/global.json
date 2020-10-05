@@ -1,0 +1,12 @@
+[
+	{
+		"label": "Site Settings",
+		"slug": "site-settings",
+		"description": "These settings apply globally. For site-specific settings, click into a site and then click into \"Site Settings\" in the menu bar."
+	},
+	{
+		"label": "Enable Local Time",
+		"slug": "timestamp-description",
+		"description": "Set all sites to use local times instead of UTC"
+	}
+]
