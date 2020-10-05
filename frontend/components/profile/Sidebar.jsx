@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
 import { Transition } from "@tailwindui/react";
+import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import fetch from "node-fetch";
 import Layout from "components/Layout";
 import Link from "next/link";
+import SidebarLabel from "public/label/components/profile/Sidebar.json";
+import SidebarPages from "public/data/sidebar-pages.json";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
@@ -40,7 +42,7 @@ const Sidebar = () => {
   const { data: user, error: userError } = useSWR("/api/auth/user/", fetcher, {
     refreshInterval: 2500,
   });
-  
+
   useEffect(() => {
     if (user && user !== undefined) setUserLoaded(true);
   }, [user]);
@@ -152,14 +154,14 @@ const Sidebar = () => {
                           : "text-red-800"
                       } text-sm leading-5 font-medium`}
                     >
-                      {user.group.name} Plan
+                      {user.group.name} {SidebarLabel[0].label}
                     </span>
                     {user.group.name === "Basic" ? (
                       <Link href="/dashboard/settings/subscriptions">
                         <a
                           className={`bg-green-200 text-green-800 hover:text-white hover:bg-green-600 text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded transition ease-in-out duration-150`}
                         >
-                          <small>Upgrade</small>
+                          <small>{SidebarLabel[1].label}</small>
                         </a>
                       </Link>
                     ) : user.group.name === "Pro" ? (
@@ -167,7 +169,7 @@ const Sidebar = () => {
                         <a
                           className={`bg-blue-200 text-blue-800 hover:text-white hover:bg-blue-600 text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded transition ease-in-out duration-150`}
                         >
-                          <small>Upgrade</small>
+                          <small>{SidebarLabel[1].label}</small>
                         </a>
                       </Link>
                     ) : null}
@@ -175,57 +177,37 @@ const Sidebar = () => {
                 </div>
                 <div className={`border-t border-gray-100`}></div>
                 <div className={`py-1`}>
-                  <Link href="/dashboard/settings/profile">
-                    <a
-                      className={`block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-                      role="menuitem"
-                    >
-                      View Profile
-                    </a>
-                  </Link>
-                  <Link href="/dashboard/settings/subscriptions">
-                    <a
-                      className={`block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-                      role="menuitem"
-                    >
-                      Subscription Plans
-                    </a>
-                  </Link>
-                  <Link href="/dashboard/settings/payment-details">
-                    <a
-                      className={`block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-                      role="menuitem"
-                    >
-                      Payment Details
-                    </a>
-                  </Link>
-                  <Link href="/dashboard/settings/billing-history">
-                    <a
-                      className={`block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-                      role="menuitem"
-                    >
-                      Billing History
-                    </a>
-                  </Link>
-                  <Link href="/dashboard/settings/global">
-                    <a
-                      className={`block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-                      role="menuitem"
-                    >
-                      App Settings
-                    </a>
-                  </Link>
+                  {SidebarPages.filter((page) => page.slug !== "logout").map(
+                    (val, key) => {
+                      return (
+                        <Link key={key} href={`${val.url}`}>
+                          <a
+                            className={`block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
+                            role="menuitem"
+                          >
+                            {val.label}
+                          </a>
+                        </Link>
+                      );
+                    }
+                  )}
                 </div>
                 <div className={`border-t border-gray-100`}></div>
                 <div className={`py-1`}>
-                  <Link href="/logout">
-                    <a
-                      className={`block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-                      role="menuitem"
-                    >
-                      Logout
-                    </a>
-                  </Link>
+                  {SidebarPages.filter((page) => page.slug === "logout").map(
+                    (val, key) => {
+                      return (
+                        <Link key={key} href={`${val.url}`}>
+                          <a
+                            className={`block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
+                            role="menuitem"
+                          >
+                            {val.label}
+                          </a>
+                        </Link>
+                      );
+                    }
+                  )}
                 </div>
               </div>
             </div>
@@ -256,7 +238,7 @@ Sidebar.propTypes = {
     PropTypes.object,
     PropTypes.array,
     PropTypes.string,
-    PropTypes.shape({ current: PropTypes.any })
+    PropTypes.shape({ current: PropTypes.any }),
   ]),
   userError: PropTypes.object,
 };
