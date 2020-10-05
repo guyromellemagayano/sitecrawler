@@ -3,7 +3,7 @@ import { useState, useEffect, Fragment } from "react";
 import Cookies from "js-cookie";
 import fetch from "node-fetch";
 import fetchJson from "hooks/fetchJson";
-import PersonalLabel from "public/label/components/Personal.json";
+import PersonalLabel from "public/label/components/profile/Personal.json";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";

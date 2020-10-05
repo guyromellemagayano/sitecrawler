@@ -3,7 +3,7 @@ import { Transition } from "@tailwindui/react";
 import Cookies from "js-cookie";
 import fetch from "node-fetch";
 import PasswordStrengthBar from "react-password-strength-bar";
-import PasswordLabel from "public/label/components/Password.json";
+import PasswordLabel from "public/label/components/profile/Password.json";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
