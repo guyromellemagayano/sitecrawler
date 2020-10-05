@@ -1,12 +1,13 @@
+import { Transition } from "@tailwindui/react";
 import { useState, useEffect, Fragment } from "react";
-import fetch from "node-fetch";
 import Cookies from "js-cookie";
-import styled from "styled-components";
-import useSWR from "swr";
+import fetch from "node-fetch";
+import fetchJson from "hooks/fetchJson";
+import PersonalLabel from "public/label/components/Personal.json";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import { Transition } from "@tailwindui/react";
-import fetchJson from "hooks/fetchJson";
+import styled from "styled-components";
+import useSWR from "swr";
 
 const ProfileSettingsPersonalDiv = styled.div``;
 
@@ -253,11 +254,10 @@ const ProfileSettingsPersonal = () => {
                       <h3
                         className={`text-lg leading-6 font-medium text-gray-900`}
                       >
-                        Personal Information
+                        {PersonalLabel[0].label}
                       </h3>
                       <p className={`mt-1 text-sm leading-5 text-gray-500`}>
-                        User generated content in real-time will have multiple
-                        touchpoints for offshoring.
+                        {PersonalLabel[0].description}
                       </p>
                     </div>
                     <div
