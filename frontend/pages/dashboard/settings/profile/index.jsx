@@ -14,7 +14,7 @@ const ProfileDiv = styled.section``;
 
 const Profile = () => {
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-  const pageTitle = "Profile Settings";
+  const pageTitle = "Account Details";
 
   const { user: user, userError: userError } = useUser({
     redirectTo: "/",
