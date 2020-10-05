@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import useSWR from 'swr';
+import AddSiteLabel from 'public/label/components/sites/AddSite.json';
 import Cookies from 'js-cookie';
-import Link from 'next/link';
-import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import fetchJson from 'hooks/fetchJson';
+import Link from 'next/link';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import useSWR from 'swr';
 
 const AddSiteDiv = styled.div``;
 
@@ -94,7 +95,7 @@ const AddSite = () => {
 										aria-disabled='false'
 										className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700`}
 									>
-										Add new site
+										{AddSiteLabel[0].label}
 									</a>
 								</Link>
 							) : (
@@ -104,7 +105,7 @@ const AddSite = () => {
 										disabled={`disabled`}
 										className={`relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 opacity-50 cursor-not-allowed`}
 									>
-										Site Limit Reached
+										{AddSiteLabel[1].label}
 									</a>
 								</Link>
 							)}

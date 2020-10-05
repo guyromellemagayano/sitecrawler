@@ -1,0 +1,10 @@
+[
+	{
+		"label": "Add New Site",
+		"slug": "add-new-site"
+	},
+	{
+		"label": "Site Limit Reached",
+		"slug": "site-limite-reached"
+	}
+]
