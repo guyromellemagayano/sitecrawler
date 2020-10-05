@@ -1,17 +1,18 @@
-import { useState, useEffect, Fragment } from "react";
-import Head from "next/head";
-import styled from "styled-components";
-import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
 import { Transition } from "@tailwindui/react";
-import useUser from "hooks/useUser";
-import Layout from "components/Layout";
-import MobileSidebar from "components/sidebar/MobileSidebar";
-import MainSidebar from "components/sidebar/MainSidebar";
-import PaymentMethodForm from "components/form/PaymentMethodForm";
-import SiteFooter from "components/footer/SiteFooter";
-import useSWR, { mutate } from "swr";
+import { useState, useEffect, Fragment } from "react";
 import Cookies from "js-cookie";
+import Head from "next/head";
+import Layout from "components/Layout";
+import MainSidebar from "components/sidebar/MainSidebar";
+import MobileSidebar from "components/sidebar/MobileSidebar";
+import PaymentMethodForm from "components/form/PaymentMethodForm";
+import PropTypes from "prop-types";
+import SiteFooter from "components/footer/SiteFooter";
+import Skeleton from "react-loading-skeleton";
+import styled from "styled-components";
+import SubscriptionLabels from "public/label/pages/subscriptions.json";
+import useSWR, { mutate } from "swr";
+import useUser from "hooks/useUser";
 
 const SubscriptionsDiv = styled.section``;
 
@@ -19,7 +20,7 @@ const fetcher = async (url) => {
   const res = await fetch(url, {
     method: "GET",
     headers: {
-      "Accept": "application/json",
+      Accept: "application/json",
       "Content-Type": "application/json",
       "X-CSRFToken": Cookies.get("csrftoken"),
     },
@@ -64,7 +65,7 @@ const Subscriptions = () => {
       await fetch("/api/stripe/subscription/current/", {
         method: "DELETE",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
           "X-CSRFToken": Cookies.get("csrftoken"),
         },
@@ -83,7 +84,7 @@ const Subscriptions = () => {
   };
 
   const handleCurrentPaymentPeriod = (sub, subs) => {
-    let intervalCount = '';
+    let intervalCount = "";
 
     subs &&
       sub &&
@@ -92,7 +93,7 @@ const Subscriptions = () => {
         .map((val, key) => {
           intervalCount = val.price.recurring.interval_count;
         });
-    
+
     return intervalCount;
   };
 
@@ -168,12 +169,12 @@ const Subscriptions = () => {
                         <p
                           className={`text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10`}
                         >
-                          Choose the plan that works for you
+                          {SubscriptionLabels[0].label}
                         </p>
                         <p
                           className={`mt-3 max-w-4xl mx-auto text-md leading-7 text-gray-600 sm:mt-5 sm:text-xl sm:leading-8`}
                         >
-                          You can change or cancel anytime
+                          {SubscriptionLabels[0].description}
                         </p>
                       </div>
 
@@ -181,7 +182,7 @@ const Subscriptions = () => {
                         <p
                           className={`text-md leading-7 font-medium text-gray-500 mx-4`}
                         >
-                          Bill Monthly
+                          {SubscriptionLabels[1].label}
                         </p>
                         <span
                           role="checkbox"
@@ -208,7 +209,7 @@ const Subscriptions = () => {
                         <p
                           className={`text-md leading-7 font-medium text-gray-500 mx-4`}
                         >
-                          Bill Semiannually
+                          {SubscriptionLabels[2].label}
                         </p>
                       </div>
                     </div>
@@ -314,7 +315,7 @@ const Subscriptions = () => {
                                                 <button
                                                   className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                 >
-                                                  Current Plan
+                                                  {SubscriptionLabels[4].label}
                                                 </button>
                                               ) : (
                                                 <button
@@ -330,7 +331,7 @@ const Subscriptions = () => {
                                                     )
                                                   }
                                                 >
-                                                  Select Plan
+                                                  {SubscriptionLabels[3].label}
                                                 </button>
                                               )}
                                             </div>
@@ -456,7 +457,7 @@ const Subscriptions = () => {
                                                   <button
                                                     className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                   >
-                                                    Current Plan
+                                                    {SubscriptionLabels[4].label}
                                                   </button>
                                                 ) : (
                                                   <button
@@ -469,7 +470,7 @@ const Subscriptions = () => {
                                                       )
                                                     }
                                                   >
-                                                    Select Plan
+                                                    {SubscriptionLabels[3].label}
                                                   </button>
                                                 )}
                                               </div>
@@ -576,7 +577,7 @@ const Subscriptions = () => {
                                                     <button
                                                       className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                     >
-                                                      Current Plan
+                                                      {SubscriptionLabels[4].label}
                                                     </button>
                                                   ) : (
                                                     <button
@@ -592,7 +593,7 @@ const Subscriptions = () => {
                                                         )
                                                       }
                                                     >
-                                                      Select Plan
+                                                      {SubscriptionLabels[3].label}
                                                     </button>
                                                   )}
                                                 </div>
@@ -715,7 +716,7 @@ const Subscriptions = () => {
                                                   <button
                                                     className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                   >
-                                                    Current Plan
+                                                    {SubscriptionLabels[4].label}
                                                   </button>
                                                 ) : (
                                                   <button
@@ -728,7 +729,7 @@ const Subscriptions = () => {
                                                       )
                                                     }
                                                   >
-                                                    Select Plan
+                                                    {SubscriptionLabels[3].label}
                                                   </button>
                                                 )}
                                               </div>
@@ -833,7 +834,7 @@ const Subscriptions = () => {
                                                     <button
                                                       className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
                                                     >
-                                                      Current Plan
+                                                      {SubscriptionLabels[4].label}
                                                     </button>
                                                   ) : (
                                                     <button
@@ -849,7 +850,7 @@ const Subscriptions = () => {
                                                         )
                                                       }
                                                     >
-                                                      Select Plan
+                                                      {SubscriptionLabels[3].label}
                                                     </button>
                                                   )}
                                                 </div>
