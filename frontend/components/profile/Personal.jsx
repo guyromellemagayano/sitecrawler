@@ -254,6 +254,7 @@ const ProfileSettingsPersonal = () => {
                       <h3
                         className={`text-lg leading-6 font-medium text-gray-900`}
                       >
+                        {console.log(PersonalLabel)}
                         {PersonalLabel[0].label}
                       </h3>
                       <p className={`mt-1 text-sm leading-5 text-gray-500`}>
@@ -296,7 +297,7 @@ const ProfileSettingsPersonal = () => {
                           htmlFor={`first_name`}
                           className={`block text-sm font-medium leading-5 text-gray-700`}
                         >
-                          First Name
+                          {PersonalLabel[1].label}
                         </label>
                         <div className={`mt-1 rounded-md shadow-xs-sm`}>
                           <input
@@ -319,7 +320,7 @@ const ProfileSettingsPersonal = () => {
                           htmlFor={`last_name`}
                           className={`block text-sm font-medium leading-5 text-gray-700`}
                         >
-                          Last Name
+                          {PersonalLabel[2].label}
                         </label>
                         <div className={`mt-1 rounded-md shadow-xs-sm`}>
                           <input
@@ -342,7 +343,7 @@ const ProfileSettingsPersonal = () => {
                           htmlFor={`email`}
                           className={`block text-sm font-medium leading-5 text-gray-700`}
                         >
-                          Email Address
+                          {PersonalLabel[3].label}
                         </label>
                         <div className={`mt-1 rounded-md shadow-xs-sm`}>
                           <input
@@ -371,7 +372,7 @@ const ProfileSettingsPersonal = () => {
                           }`}
                           onClick={handleEditProfile}
                         >
-                          Edit Profile
+                          {PersonalLabel[4].label}
                         </button>
                       </span>
 
@@ -385,7 +386,7 @@ const ProfileSettingsPersonal = () => {
                           }`}
                           onClick={handleEditProfile}
                         >
-                          Cancel Edit
+                          {PersonalLabel[5].label}
                         </button>
                       </span>
                     </div>
@@ -401,7 +402,7 @@ const ProfileSettingsPersonal = () => {
                               : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"
                           }`}
                         >
-                          Save Profile Settings
+                          {PersonalLabel[6].label}
                         </button>
                       </span>
                     </div>
