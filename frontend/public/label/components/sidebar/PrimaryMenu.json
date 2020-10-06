@@ -1,0 +1,10 @@
+[
+	{
+		"label": "Select Site",
+		"slug": "select-site"
+	},
+	{
+		"label": "Add New Site",
+		"slug": "add-new-site"
+	}
+]

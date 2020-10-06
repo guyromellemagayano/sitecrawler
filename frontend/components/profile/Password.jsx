@@ -1,11 +1,12 @@
 import { Fragment, useState, useEffect } from "react";
-import fetch from "node-fetch";
+import { Transition } from "@tailwindui/react";
 import Cookies from "js-cookie";
-import styled from "styled-components";
+import fetch from "node-fetch";
+import PasswordStrengthBar from "react-password-strength-bar";
+import PasswordLabel from "public/label/components/profile/Password.json";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import { Transition } from "@tailwindui/react";
-import PasswordStrengthBar from "react-password-strength-bar";
+import styled from "styled-components";
 import useUser from "hooks/useUser";
 
 const ProfileSettingsPasswordDiv = styled.div``;
@@ -247,11 +248,10 @@ const ProfileSettingsPassword = () => {
                       <h3
                         className={`text-lg leading-6 font-medium text-gray-900`}
                       >
-                        Password Change
+                        {PasswordLabel[0].label}
                       </h3>
                       <p className={`mt-1 text-sm leading-5 text-gray-500`}>
-                        User generated content in real-time will have multiple
-                        touchpoints for offshoring.
+                        {PasswordLabel[0].description}
                       </p>
                     </div>
                     <div
@@ -262,7 +262,7 @@ const ProfileSettingsPassword = () => {
                           htmlFor={`password`}
                           className={`block text-sm font-medium leading-5 text-gray-700`}
                         >
-                          New Password
+                          {PasswordLabel[1].label}
                         </label>
                         <div
                           className={`mt-1 flex flex-row flex-wrap rounded-md shadow-xs-sm`}
@@ -295,7 +295,7 @@ const ProfileSettingsPassword = () => {
                           htmlFor={`password1`}
                           className={`block text-sm font-medium leading-5 text-gray-700`}
                         >
-                          Confirm Password
+                          {PasswordLabel[2].label}
                         </label>
                         <div className={`mt-1 flex rounded-md shadow-xs-sm`}>
                           <input
@@ -336,7 +336,7 @@ const ProfileSettingsPassword = () => {
                           }`}
                           onClick={handleEditPasswordProfile}
                         >
-                          Update Password
+                          {PasswordLabel[3].label}
                         </button>
                       </span>
 
@@ -352,7 +352,7 @@ const ProfileSettingsPassword = () => {
                           }`}
                           onClick={handleEditPasswordProfile}
                         >
-                          Cancel Edit
+                          {PasswordLabel[4].label}
                         </button>
                       </span>
                     </div>
@@ -370,7 +370,7 @@ const ProfileSettingsPassword = () => {
                               : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"
                           }`}
                         >
-                          Save Password
+                          {PasswordLabel[5].label}
                         </button>
                       </span>
                     </div>

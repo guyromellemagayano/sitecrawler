@@ -1,0 +1,15 @@
+[
+	{
+		"label": "Plan",
+		"slug": "plan"
+	},
+	{
+		"label": "Upgrade",
+		"slug": "upgrade"
+	},
+	{
+		"label": "Logout",
+		"slug": "logout",
+		"url": "/logout"
+	}
+]

@@ -1,0 +1,23 @@
+[
+	{
+		"label": "Choose the plan that works for you",
+		"slug": "heading",
+		"description": "You can change or cancel anytime"
+	},
+	{
+		"label": "Bill Monthly",
+		"slug": "bill-monthly"
+	},
+	{
+		"label": "Bill Semiannually",
+		"slug": "bill-semiannually"
+	},
+	{
+		"label": "Select Plan",
+		"slug": "select-plan"
+	},
+	{
+		"label": "Current Plan",
+		"slug": "current-plan"
+	}
+]
