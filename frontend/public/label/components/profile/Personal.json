@@ -1,31 +1,24 @@
 [
 	{
 		"label": "Personal Information",
-		"slug": "personal-information",
 		"description": "User generated content in real-time will have multiple touchpoints for offshoring."
 	},
 	{
-		"label": "First Name",
-		"slug": "first-name"
+		"label": "First Name"
 	},
 	{
-		"label": "Last Name",
-		"slug": "last-name"
+		"label": "Last Name"
 	},
 	{
-		"label": "Email Address",
-		"slug": "email-address"
+		"label": "Email Address"
 	},
 	{
-		"label": "Update Profile",
-		"slug": "update-profile"
+		"label": "Update Profile"
 	},
 	{
-		"label": "Cancel Profile Update",
-		"slug": "cancel-profile-update"
+		"label": "Cancel Profile Update"
 	},
 	{
-		"label": "Save Profile",
-		"slug": "save-profile"
+		"label": "Save Profile"
 	}
 ]
