@@ -114,7 +114,8 @@ func (s *ScanService) Start(log *zap.SugaredLogger, scan *common.CrawlScan) erro
 		ScanService: s,
 		Scan:        scan,
 
-		tlsCache: NewTlsCache(s.TlsDao),
+		tlsCache:  NewTlsCache(s.TlsDao),
+		rateLimit: NewRateLimit(),
 
 		linkIDs: make(map[string]int),
 
@@ -139,7 +140,8 @@ type scanner struct {
 	ScanService *ScanService
 	Scan        *common.CrawlScan
 
-	tlsCache *TlsCache
+	tlsCache  *TlsCache
+	rateLimit *RateLimit
 
 	linkIDs map[string]int
 
@@ -346,6 +348,8 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 		return crawlLink, nil
 	}
 
+	s.rateLimit.Limit(url)
+
 	start := time.Now()
 	defer func() {
 		crawlLink.ResponseTime = int(time.Since(start).Milliseconds())
@@ -391,6 +395,8 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLi
 
 	// Override url with actual destination url after redirects
 	crawlLink.Url = lenLimit(resp.Request.URL.String(), 2047)
+
+	s.rateLimit.Update(url, resp)
 
 	tlsStatus, tlsId, err := s.tlsCache.Extract(resp.TLS, resp.Request)
 	if err != nil {
