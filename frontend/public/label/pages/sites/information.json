@@ -1,34 +1,27 @@
 [
 	{
 		"label": "Add a new site",
-		"slug": "add-new-site",
 		"description": "Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment."
 	},
 	{
-		"label": "1. Fill in site information",
-		"slug": "site-addition-step-1"
+		"label": "1. Fill in site information"
 	},
 	{
-		"label": "2. Verify site",
-		"slug": "site-addition-step-2"
+		"label": "2. Verify site"
 	},
 	{
 		"label": "Fill in site information",
-		"slug": "site-addition-step-1-details",
 		"description": "Add the name and url of your site to start the process."
 	},
 	{
 		"label": "Site Name",
-		"slug": "site-name",
 		"placeholder": "e.g. My Company Name"
 	},
 	{
 		"label": "Site URL",
-		"slug": "site-url",
 		"placeholder": "e.g. yourdomain.com"
 	},
 	{
-		"label": "Proceed to Step 2",
-		"slug": "proceed-step-2"
+		"label": "Proceed to Step 2"
 	}
 ]
