@@ -6,6 +6,12 @@
 		"label": "All Pages"
 	},
 	{
+		"label": "pages found"
+	},
+	{
+		"label": "No pages found"
+	},
+	{
 		"label": "Recrawl"
 	}
 ]
