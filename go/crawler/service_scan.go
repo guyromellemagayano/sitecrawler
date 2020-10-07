@@ -30,9 +30,10 @@ const (
 )
 
 type ScanService struct {
-	Database      *database.Database
-	VerifyService *VerifyService
-	LoadService   *LoadService
+	Database       *database.Database
+	VerifyService  *VerifyService
+	LoadService    *LoadService
+	BackendService *BackendService
 }
 
 func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
@@ -91,9 +92,16 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 	finished := time.Now()
 	scan.FinishedAt = &finished
 	if err := s.Database.ScanDao.Save(scan); err != nil {
-		log.Errorf("Failed to set scan finish: %v", err)
+		return err
 	}
 	log.Infof("Finished scan for %v", scan.Site.Url)
+
+	if err := s.BackendService.SendFinishedEmail(scan); err != nil {
+		log.Errorw("Could not send crawl finished email",
+			"scan_id", scan.ID,
+			"error", err,
+		)
+	}
 
 	return nil
 }

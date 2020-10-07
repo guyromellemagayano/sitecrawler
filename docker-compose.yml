@@ -21,10 +21,6 @@ services:
     command: ./docker.dev.sh
     volumes:
       - ./backend:/app
-    links:
-      - db
-      - crawler
-      - localstack
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)"
@@ -49,9 +45,6 @@ services:
     image: crawl-app-crawler
     volumes:
       - ./go:/app
-    links:
-      - db
-      - localstack
     # environment:
     #   - LOG_SQL=true
   scheduler:
@@ -63,9 +56,6 @@ services:
     image: crawl-app-scheduler
     volumes:
       - ./go:/app
-    links:
-      - db
-      - localstack
     # environment:
     #   - LOG_SQL=true
   db:

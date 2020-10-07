@@ -32,12 +32,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+	backendService := &BackendService{Token: common.Env("BACKEND_TOKEN", "")}
 	loadService := &LoadService{}
 	verifyService := &VerifyService{Database: db, LoadService: loadService}
 	scanService := &ScanService{
-		Database:      db,
-		VerifyService: verifyService,
-		LoadService:   loadService,
+		Database:       db,
+		VerifyService:  verifyService,
+		LoadService:    loadService,
+		BackendService: backendService,
 	}
 
 	http.Handle("/verify", common.WrapEndpoint(log, &VerifyEndpoint{VerifyService: verifyService}))
