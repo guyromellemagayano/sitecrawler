@@ -1,0 +1,36 @@
+[
+	{
+		"label": "Back to Overview"
+	},
+	{
+		"label": "All Links"
+	},
+	{
+		"label": "links found"
+	},
+	{
+		"label": "No links found"
+	},
+	{
+		"label": "Recrawl"
+	},
+	{
+		"label": "OK",
+		"description": "linked page loaded fine"
+	},
+	{
+		"label": "TIMEOUT",
+		"description": "linked page didn't load within a reasonable timeframe"
+	},
+	{
+		"label": "HTTP_ERROR",
+		"description": "broken Link"
+	},
+	{
+		"label": "OTHER_ERROR",
+		"description": "request failed to contact server"
+	},
+	{
+		"label": "Leverage agile frameworks to provide a robust synopsis for high level overviews."
+	}
+]
