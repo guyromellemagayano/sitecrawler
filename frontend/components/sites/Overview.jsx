@@ -141,7 +141,7 @@ const SitesOverview = (props) => {
 									onClick={props.onCrawl}
 									className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 xs:px-0 xs:mr-0 xs:mt-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
 								>
-									Recrawl
+									{OverviewLabel[0].label}
 								</button>
 							) : (
 								<button
@@ -149,7 +149,7 @@ const SitesOverview = (props) => {
 									type={`button`}
 									className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 xs:px-0 xs:mr-0 xs:mt-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
 								>
-									Recrawl
+									{OverviewLabel[0].label}
 								</button>
 							)
 						) : null}
@@ -162,7 +162,7 @@ const SitesOverview = (props) => {
 								<h2
 									className={`text-lg font-bold leading-7 text-gray-900 mb-5`}
 								>
-									Site Status
+									{OverviewLabel[1].label}
 								</h2>
 								<dl className={`mb-8 max-w-xl text-sm leading-5`}>
 									{!user.settings.disableLocalTime ? (
@@ -170,7 +170,7 @@ const SitesOverview = (props) => {
 											<dt
 												className={`text-sm leading-5 font-medium text-gray-500`}
 											>
-												Last Crawled
+												{OverviewLabel[2].label}
 											</dt>
 											<dd className={`mt-1 text-sm leading-5 text-gray-900`}>
 												<Moment
@@ -191,7 +191,7 @@ const SitesOverview = (props) => {
 											<dt
 												className={`text-sm leading-5 font-medium text-gray-500`}
 											>
-												Last Crawled
+												{OverviewLabel[2].label}
 											</dt>
 											<dd className={`mt-1 text-sm leading-5 text-gray-900`}>
 												<Moment
@@ -216,7 +216,7 @@ const SitesOverview = (props) => {
 										<dt
 											className={`text-sm leading-5 font-medium text-gray-500`}
 										>
-											Site Status
+											{OverviewLabel[1].label}
 										</dt>
 										<dd className={`mt-1 text-sm leading-5 text-gray-900`}>
 											{props.verified ? (
@@ -230,7 +230,7 @@ const SitesOverview = (props) => {
 										<dt
 											className={`text-sm leading-5 font-medium text-gray-500`}
 										>
-											SSL Valid
+											{OverviewLabel[3].label}
 										</dt>
 										<dd className={`mt-1 text-sm leading-5 text-gray-900`}>
 											{stats &&
@@ -311,7 +311,7 @@ const SitesOverview = (props) => {
 										<dt
 											className={`text-sm leading-5 font-medium text-gray-500`}
 										>
-											Forced HTTPS
+											{OverviewLabel[4].label}
 										</dt>
 										<dd className={`mt-1 text-sm leading-5 text-gray-900`}>
 											<SiteWarningStatus text={`Coming Soon`} />
@@ -321,7 +321,7 @@ const SitesOverview = (props) => {
 										<dt
 											className={`text-sm leading-5 font-medium text-gray-500`}
 										>
-											Crawl Status
+											{OverviewLabel[5].label}
 										</dt>
 										<dd className={`mt-1 text-sm leading-5 text-gray-900`}>
 											{props.crawlFinished ? (

@@ -1,0 +1,20 @@
+[
+	{
+		"label": "Recrawl"
+	},
+	{
+		"label": "Site Status"
+	},
+	{
+		"label": "Last Crawled"
+	},
+	{
+		"label": "SSL Valid"
+	},
+	{
+		"label": "Forced HTTPS"
+	},
+	{
+		"label": "Crawl Status"
+	}
+]
