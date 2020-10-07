@@ -65,7 +65,7 @@ if env == "dev":
     EMAIL_SUBJECT_PREFIX = "SiteCrawlerDev - "
 elif env == "staging":
     DEBUG = False
-    ALLOWED_HOSTS = ["linkapp.epicsandbox.com"]
+    ALLOWED_HOSTS = ["linkapp.epicsandbox.com", "backend"]
     SESSION_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     CRAWLER_URL = "http://crawler:8000"
@@ -78,7 +78,7 @@ elif env == "staging":
     EMAIL_SUBJECT_PREFIX = "SiteCrawlerSandbox - "
 elif env == "production":
     DEBUG = False
-    ALLOWED_HOSTS = ["app.sitecrawler.com"]
+    ALLOWED_HOSTS = ["app.sitecrawler.com", "backend"]
     SESSION_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     CRAWLER_URL = "http://crawler:8000"
