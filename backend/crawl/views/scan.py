@@ -26,7 +26,9 @@ class ScanViewSet(
     ordering_fields = ["started_at", "finished_at"]
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(site__user=self.request.user)
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(site__user=self.request.user)
         if self._is_request_to_detail_endpoint():
             queryset = queryset.details()
         return queryset

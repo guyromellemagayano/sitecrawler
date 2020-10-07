@@ -25,6 +25,8 @@ class SiteViewSet(
     ordering_fields = ["name", "url", "verified", "id", "created_at", "updated_at", "user_id", "verification_id"]
 
     def get_queryset(self):
+        if self.detail and self.request.user.is_superuser:
+            return Site.objects.all()
         return Site.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):

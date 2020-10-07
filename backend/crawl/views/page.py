@@ -93,4 +93,7 @@ class PageViewSet(
     ]
 
     def get_queryset(self):
-        return super().get_queryset().filter(scan__site__user=self.request.user).pages()
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(scan__site__user=self.request.user)
+        return queryset.pages()
