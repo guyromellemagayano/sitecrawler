@@ -1,0 +1,13 @@
+Hello {{user.first_name}},
+
+We just completed a crawl of {{scan.site.url}} and we found:
+- {{scan.num_non_ok_links}} link issues.
+- {{scan.num_pages_big|add:scan.num_pages_tls_non_ok}} page issues.
+- {{scan.num_non_ok_images}} image issues.
+- {{scan.num_pages_without_title|add:scan.num_pages_without_description|add:scan.num_pages_without_h1_first|add:scan.num_pages_without_h2_first}} seo issues.
+
+Visit your site dashboard to learn more:
+https://{{site.domain}}/dashboard/site/{{scan.site.id}}/overview
+
+Thanks,
+{{site.name}}
