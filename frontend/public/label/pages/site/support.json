@@ -12,6 +12,12 @@
 		"label": "Support message sent successfully."
 	},
 	{
+		"label": "Support message sent failed. Please try again."
+	},
+	{
+		"label": "An unexpected error occurred. Please try again."
+	},
+	{
 		"label": "App Support Form"
 	},
 	{

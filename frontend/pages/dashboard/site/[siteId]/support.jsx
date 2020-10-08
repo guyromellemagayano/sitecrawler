@@ -232,9 +232,7 @@ const Support = () => {
 														if (data) {
 															setSuccessMsg(SupportLabel[3].label);
 														} else {
-															setErrorMsg(
-																'Support message sent failed. Please try again.'
-															);
+															setErrorMsg(SupportLabel[4].label);
 														}
 													} else {
 														const error = new Error(
@@ -244,9 +242,7 @@ const Support = () => {
 														error.response = supportMailResponse;
 														error.data = data;
 
-														setErrorMsg(
-															'An unexpected error occurred. Please try again.'
-														);
+														setErrorMsg(SupportLabel[5].label);
 
 														throw error;
 													}
@@ -270,12 +266,12 @@ const Support = () => {
 														<h3
 															className={`text-lg leading-6 font-medium text-gray-900`}
 														>
-															{SupportLabel[4].label}
+															{SupportLabel[6].label}
 														</h3>
 														<p
 															className={`mt-1 max-w-2xl text-sm leading-5 text-gray-500`}
 														>
-															{SupportLabel[5].label}
+															{SupportLabel[7].label}
 														</p>
 													</div>
 													<div className={`mt-6 sm:mt-5`}>
@@ -286,7 +282,7 @@ const Support = () => {
 																htmlFor='about'
 																className={`block text-sm font-medium leading-5 text-gray-700 sm:mt-px sm:pt-2`}
 															>
-																{SupportLabel[6].label}
+																{SupportLabel[8].label}
 															</label>
 															<div className={`mt-1 sm:mt-0 sm:col-span-2`}>
 																<div
@@ -297,7 +293,7 @@ const Support = () => {
 																		rows={5}
 																		className={`form-textarea block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
 																		name={`message`}
-																		placeholder={SupportLabel[7].label}
+																		placeholder={SupportLabel[9].label}
 																		onChange={handleChange}
 																		onBlur={handleBlur}
 																		value={values.message}
@@ -336,7 +332,7 @@ const Support = () => {
 																	className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out`}
 																	disabled={isSubmitting}
 																>
-																	{SupportLabel[8].label}
+																	{SupportLabel[10].label}
 																</button>
 															</span>
 														</div>
