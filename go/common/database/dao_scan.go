@@ -1,0 +1,42 @@
+package database
+
+import (
+	"github.com/go-pg/pg"
+)
+
+type ScanDao struct {
+	DB *pg.DB
+}
+
+func (s *ScanDao) ByID(id int) (*CrawlScan, error) {
+	scan := &CrawlScan{ID: id}
+	if err := s.DB.Model(scan).WherePK().Relation("Site").Select(); err != nil {
+		return nil, err
+	}
+	return scan, nil
+}
+
+func (s *ScanDao) Save(scan *CrawlScan) error {
+	if scan.ID == 0 {
+		return s.DB.Insert(scan)
+	}
+	return s.DB.Update(scan)
+}
+
+func (s *ScanDao) Latest(siteID int) (*CrawlScan, error) {
+	scan := &CrawlScan{}
+	err := s.DB.Model(scan).Where("site_id = ?", siteID).Order("started_at DESC").Limit(1).Select()
+	if err != nil {
+		return nil, err
+	}
+	return scan, nil
+}
+
+func (s *ScanDao) Exists(id int) (bool, error) {
+	scan := &CrawlScan{ID: id}
+	exists, err := s.DB.Model(scan).WherePK().Relation("Site").Exists()
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
+}

@@ -8,20 +8,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/pkg/errors"
 )
 
 type TlsCache struct {
-	TlsDao *TlsDao
+	Database *database.Database
 
-	cache map[tlsKey]*common.CrawlTl
+	cache map[tlsKey]*database.CrawlTl
 }
 
-func NewTlsCache(tlsDao *TlsDao) *TlsCache {
+func NewTlsCache(db *database.Database) *TlsCache {
 	return &TlsCache{
-		TlsDao: tlsDao,
-		cache:  make(map[tlsKey]*common.CrawlTl),
+		Database: db,
+		cache:    make(map[tlsKey]*database.CrawlTl),
 	}
 }
 
@@ -68,7 +68,7 @@ func (t *TlsCache) Extract(TLS *tls.ConnectionState, request *http.Request) (int
 		return t.status(tl), &tl.ID, nil
 	}
 
-	tl := &common.CrawlTl{
+	tl := &database.CrawlTl{
 		NotBefore:          certificate.NotBefore,
 		NotAfter:           certificate.NotAfter,
 		CommonName:         key.CommonName,
@@ -115,7 +115,7 @@ func (t *TlsCache) Extract(TLS *tls.ConnectionState, request *http.Request) (int
 		tl.Errors = errors
 	}
 
-	if err := t.TlsDao.Save(tl); err != nil {
+	if err := t.Database.TlsDao.Save(tl); err != nil {
 		return 0, nil, err
 	}
 	t.cache[key] = tl
@@ -123,7 +123,7 @@ func (t *TlsCache) Extract(TLS *tls.ConnectionState, request *http.Request) (int
 	return t.status(tl), &tl.ID, nil
 }
 
-func (t *TlsCache) status(tl *common.CrawlTl) int {
+func (t *TlsCache) status(tl *database.CrawlTl) int {
 	if len(tl.Errors) > 0 {
 		return TLS_ERROR
 	}

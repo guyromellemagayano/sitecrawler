@@ -47,6 +47,8 @@ class Scan(models.Model):
     started_at = models.DateTimeField(auto_now_add=True, null=False)
     finished_at = models.DateTimeField(null=True, blank=True)
 
+    email_sent = models.BooleanField(default=False)
+
     num_pages_tls_ok = CalculatedField("num_pages", "-num_pages_tls_non_ok")
     num_ok_links = CalculatedField("num_links", "-num_non_ok_links")
     num_ok_images = CalculatedField("num_images", "-num_non_ok_images")

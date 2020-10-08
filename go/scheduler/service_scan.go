@@ -5,19 +5,20 @@ import (
 	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 )
 
 type ScanService struct {
-	ScanDao      *ScanDao
+	Database     *database.Database
 	ScanSqsQueue *common.SQSService
 }
 
 func (s *ScanService) Start(siteId int) error {
-	scan := &common.CrawlScan{
+	scan := &database.CrawlScan{
 		SiteID:    siteId,
 		StartedAt: time.Now(),
 	}
-	if err := s.ScanDao.Save(scan); err != nil {
+	if err := s.Database.ScanDao.Save(scan); err != nil {
 		return err
 	}
 

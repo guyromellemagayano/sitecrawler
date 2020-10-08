@@ -120,7 +120,7 @@ class ScanAdmin(admin.ModelAdmin):
 
 class ScanInline(admin.TabularInline):
     model = Scan
-    readonly_fields = ("id", "started_at", "finished_at")
+    readonly_fields = ("id", "started_at", "finished_at", "email_sent")
     show_change_link = True
     max_num = 10
     ordering = ("-finished_at",)

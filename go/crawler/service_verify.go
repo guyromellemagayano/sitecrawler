@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -12,12 +13,12 @@ import (
 const metaTagName = "epic-crawl-id"
 
 type VerifyService struct {
-	SiteDao     *SiteDao
+	Database    *database.Database
 	LoadService *LoadService
 }
 
 func (v *VerifyService) VerifySite(log *zap.SugaredLogger, siteID int) error {
-	site, err := v.SiteDao.ByID(siteID)
+	site, err := v.Database.SiteDao.ByID(siteID)
 	if err != nil {
 		return errors.Wrapf(err, "could not get site id %v", siteID)
 	}
@@ -35,7 +36,7 @@ func (v *VerifyService) VerifySite(log *zap.SugaredLogger, siteID int) error {
 		site.LastVerifyError = nil
 	}
 
-	if err := v.SiteDao.Save(site); err != nil {
+	if err := v.Database.SiteDao.Save(site); err != nil {
 		return errors.Wrap(err, "could not save site")
 	}
 

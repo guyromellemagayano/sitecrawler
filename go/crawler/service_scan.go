@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -30,20 +30,14 @@ const (
 )
 
 type ScanService struct {
-	ScanDao           *ScanDao
-	LinkDao           *LinkDao
-	LinkLinkDao       *LinkLinkDao
-	LinkImageDao      *LinkImageDao
-	LinkScriptDao     *LinkScriptDao
-	LinkStylesheetDao *LinkStylesheetDao
-	PageDataDao       *PageDataDao
-	TlsDao            *TlsDao
-	VerifyService     *VerifyService
-	LoadService       *LoadService
+	Database       *database.Database
+	VerifyService  *VerifyService
+	LoadService    *LoadService
+	BackendService *BackendService
 }
 
 func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
-	exists, err := s.ScanDao.Exists(scanID)
+	exists, err := s.Database.ScanDao.Exists(scanID)
 	if err != nil {
 		return errors.Wrapf(err, "could not check if scan id %v exists", scanID)
 	}
@@ -52,7 +46,7 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 		return nil
 	}
 
-	scan, err := s.ScanDao.ByID(scanID)
+	scan, err := s.Database.ScanDao.ByID(scanID)
 	if err != nil {
 		return errors.Wrapf(err, "could not get scan id %v", scanID)
 	}
@@ -70,22 +64,22 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 		return nil
 	}
 
-	if err := s.PageDataDao.DeleteAllForScan(scanID); err != nil {
+	if err := s.Database.PageDataDao.DeleteAllForScan(scanID); err != nil {
 		return err
 	}
-	if err := s.LinkLinkDao.DeleteAllForScan(scanID); err != nil {
+	if err := s.Database.LinkLinkDao.DeleteAllForScan(scanID); err != nil {
 		return err
 	}
-	if err := s.LinkImageDao.DeleteAllForScan(scanID); err != nil {
+	if err := s.Database.LinkImageDao.DeleteAllForScan(scanID); err != nil {
 		return err
 	}
-	if err := s.LinkScriptDao.DeleteAllForScan(scanID); err != nil {
+	if err := s.Database.LinkScriptDao.DeleteAllForScan(scanID); err != nil {
 		return err
 	}
-	if err := s.LinkStylesheetDao.DeleteAllForScan(scanID); err != nil {
+	if err := s.Database.LinkStylesheetDao.DeleteAllForScan(scanID); err != nil {
 		return err
 	}
-	if err := s.LinkDao.DeleteAllForScan(scanID); err != nil {
+	if err := s.Database.LinkDao.DeleteAllForScan(scanID); err != nil {
 		return err
 	}
 
@@ -97,24 +91,31 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 	// If we got here without errors, set the status done
 	finished := time.Now()
 	scan.FinishedAt = &finished
-	if err := s.ScanDao.Save(scan); err != nil {
-		log.Errorf("Failed to set scan finish: %v", err)
+	if err := s.Database.ScanDao.Save(scan); err != nil {
+		return err
 	}
 	log.Infof("Finished scan for %v", scan.Site.Url)
+
+	if err := s.BackendService.SendFinishedEmail(scan); err != nil {
+		log.Errorw("Could not send crawl finished email",
+			"scan_id", scan.ID,
+			"error", err,
+		)
+	}
 
 	return nil
 }
 
-func (s *ScanService) reverify(log *zap.SugaredLogger, scan *common.CrawlScan) error {
+func (s *ScanService) reverify(log *zap.SugaredLogger, scan *database.CrawlScan) error {
 	return s.VerifyService.VerifySite(log, scan.SiteID)
 }
 
-func (s *ScanService) Start(log *zap.SugaredLogger, scan *common.CrawlScan) error {
+func (s *ScanService) Start(log *zap.SugaredLogger, scan *database.CrawlScan) error {
 	scanner := &scanner{
 		ScanService: s,
 		Scan:        scan,
 
-		tlsCache:  NewTlsCache(s.TlsDao),
+		tlsCache:  NewTlsCache(s.Database),
 		rateLimit: NewRateLimit(),
 
 		linkIDs: make(map[string]int),
@@ -138,7 +139,7 @@ type fifoEntry struct {
 
 type scanner struct {
 	ScanService *ScanService
-	Scan        *common.CrawlScan
+	Scan        *database.CrawlScan
 
 	tlsCache  *TlsCache
 	rateLimit *RateLimit
@@ -192,7 +193,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint
 	}
 
 	// save new link
-	if err := s.ScanService.LinkDao.Save(link); err != nil {
+	if err := s.ScanService.Database.LinkDao.Save(link); err != nil {
 		return 0, err
 	}
 
@@ -333,8 +334,8 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint
 	return link.ID, nil
 }
 
-func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*common.CrawlLink, *goquery.Document) {
-	crawlLink := &common.CrawlLink{
+func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*database.CrawlLink, *goquery.Document) {
+	crawlLink := &database.CrawlLink{
 		ScanID:    s.Scan.ID,
 		CreatedAt: time.Now(),
 		Url:       lenLimit(url.String(), 2047),
@@ -441,7 +442,7 @@ func (s *scanner) savePageData(doc *goquery.Document, linkID int) error {
 	h1Second := strings.TrimSpace(doc.Find("h1").Eq(1).Text())
 	h2First := strings.TrimSpace(doc.Find("h2").First().Text())
 	h2Second := strings.TrimSpace(doc.Find("h2").Eq(1).Text())
-	return s.ScanService.PageDataDao.Save(&common.CrawlPagedatum{
+	return s.ScanService.Database.PageDataDao.Save(&database.CrawlPagedatum{
 		LinkID: linkID,
 
 		Title:       title,
@@ -494,45 +495,45 @@ func (s *scanner) popFifo() *fifoEntry {
 func (s *scanner) saveRelation(r relation, childLinkId int) error {
 	switch r.ChildType {
 	case CHILD_LINK:
-		linkLink := &common.CrawlLinkLink{
+		linkLink := &database.CrawlLinkLink{
 			FromLinkID: r.ParentId,
 			ToLinkID:   childLinkId,
 		}
 
-		if err := s.ScanService.LinkLinkDao.Save(linkLink); err != nil {
+		if err := s.ScanService.Database.LinkLinkDao.Save(linkLink); err != nil {
 			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 				return err
 			}
 		}
 	case CHILD_IMAGE:
-		linkImage := &common.CrawlLinkImage{
+		linkImage := &database.CrawlLinkImage{
 			FromLinkID: r.ParentId,
 			ToLinkID:   childLinkId,
 		}
 
-		if err := s.ScanService.LinkImageDao.Save(linkImage); err != nil {
+		if err := s.ScanService.Database.LinkImageDao.Save(linkImage); err != nil {
 			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 				return err
 			}
 		}
 	case CHILD_SCRIPT:
-		linkScript := &common.CrawlLinkScript{
+		linkScript := &database.CrawlLinkScript{
 			FromLinkID: r.ParentId,
 			ToLinkID:   childLinkId,
 		}
 
-		if err := s.ScanService.LinkScriptDao.Save(linkScript); err != nil {
+		if err := s.ScanService.Database.LinkScriptDao.Save(linkScript); err != nil {
 			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 				return err
 			}
 		}
 	case CHILD_STYLESHEET:
-		linkStylesheet := &common.CrawlLinkStylesheet{
+		linkStylesheet := &database.CrawlLinkStylesheet{
 			FromLinkID: r.ParentId,
 			ToLinkID:   childLinkId,
 		}
 
-		if err := s.ScanService.LinkStylesheetDao.Save(linkStylesheet); err != nil {
+		if err := s.ScanService.Database.LinkStylesheetDao.Save(linkStylesheet); err != nil {
 			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 				return err
 			}

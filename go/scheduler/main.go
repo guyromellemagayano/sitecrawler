@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 )
 
 func main() {
@@ -11,7 +12,7 @@ func main() {
 
 	log := common.NewLog(env, "https://c61626f98dcd4b43a8352c3b0c35e184@o432365.ingest.sentry.io/5394539")
 
-	db := common.NewDatabase(log, env)
+	db := database.NewDatabase(log, env)
 	defer db.Close()
 
 	awsSession, err := common.NewAwsSession(env)
@@ -25,16 +26,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	siteDao := &SiteDao{DB: db}
-	scanDao := &ScanDao{DB: db}
-	groupSettingsDao := &GroupSettingsDao{DB: db}
-
 	scanService := &ScanService{
-		ScanDao:      scanDao,
+		Database:     db,
 		ScanSqsQueue: scanSqsQueue,
 	}
 
-	go ScheduleWorker(log, groupSettingsDao, siteDao, scanDao, scanService)
+	go ScheduleWorker(log, db, scanService)
 
 	select {}
 }
