@@ -25,6 +25,7 @@ class SubscriptionCurrentView(APIView):
             return Response(self._none())
 
         stripe.Subscription.delete(request.user.user_subscription.stripe_id)
+        request.user.user_subscription.delete()
 
         return Response(self._none())
 
