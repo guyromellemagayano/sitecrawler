@@ -7,6 +7,8 @@ from fabric import Connection
 import paramiko
 import requests
 
+secrets_bucket = "epic-linkapp-secrets"
+
 
 ec2 = boto3.resource("ec2")
 client = boto3.client("ec2")
@@ -19,7 +21,7 @@ def get_connections(**filters):
     return [Connection(instance, user="ubuntu", connect_kwargs={"pkey": pkey}) for instance in get_instances(**filters)]
 
 
-def getIngressConfig(group="node_security_group"):
+def getIngressConfig(group):
     return {
         "CidrIp": requests.get("https://api.ipify.org").text + "/32",
         "FromPort": 22,
@@ -46,7 +48,7 @@ def revoke_ingress(groups):
 
 
 def get_ssh_cert():
-    obj = s3.Object("epic-linkapp-secrets", "deployer.pem")
+    obj = s3.Object(secrets_bucket, "deployer.pem")
     body = obj.get()["Body"].read()
     return paramiko.RSAKey.from_private_key(io.StringIO(body.decode("utf-8")))
 
@@ -129,7 +131,7 @@ def docker_compose(i, c, name):
     else:
         c.put(f"deploy/docker-compose.{name}.yml", f"{name}/docker-compose.yml")
 
-    c.run(f"aws s3 cp s3://epic-linkapp-secrets/secrets.{name}.yml {name}/docker-compose.override.yml")
+    c.run(f"aws s3 cp s3://{secrets_bucket}/secrets.{name}.yml {name}/docker-compose.override.yml")
 
     c.run(f"cd {name} && docker-compose pull")
     c.run(f"cd {name} && docker-compose up -d")
