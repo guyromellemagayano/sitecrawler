@@ -1,0 +1,14 @@
+[
+	{
+		"label": "Card Number"
+	},
+	{
+		"label": "Expiration Date"
+	},
+	{
+		"label": "CVC"
+	},
+	{
+		"label": "Set Card Information"
+	}
+]

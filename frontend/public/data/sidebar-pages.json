@@ -1,31 +1,21 @@
 [
-  {
-    "label": "View Profile",
+	{
+		"label": "View Profile",
 		"slug": "view-profile",
 		"url": "/dashboard/settings/profile"
 	},
 	{
-    "label": "Subscription Plans",
+		"label": "Subscription Plans",
 		"slug": "subscription-plans",
 		"url": "/dashboard/settings/subscriptions"
 	},
 	{
-    "label": "Payment Details",
-		"slug": "payment-details",
-		"url": "/dashboard/settings/payment-details"
-	},
-	{
-    "label": "Billing History",
-		"slug": "billing-history",
-		"url": "/dashboard/settings/billing-history"
-	},
-	{
-    "label": "App Settings",
+		"label": "App Settings",
 		"slug": "app-settings",
 		"url": "/dashboard/settings/global"
 	},
 	{
-    "label": "Logout",
+		"label": "Logout",
 		"slug": "logout",
 		"url": "/logout"
 	}
