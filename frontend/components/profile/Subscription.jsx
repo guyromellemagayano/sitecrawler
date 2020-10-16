@@ -346,7 +346,10 @@ const ProfileSettingsSubscription = () => {
 											className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
 											aria-label='Close'
 											onClick={() =>
-												setTimeout(() => setShowModal(!showModal), 150)
+												setTimeout(() => {
+													setShowModal(!showModal);
+													setDisableInputFields(0);
+												}, 150)
 											}
 										>
 											<svg
