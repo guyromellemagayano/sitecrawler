@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-import styled from 'styled-components';
 import {
 	useStripe,
 	useElements,
@@ -7,8 +5,12 @@ import {
 	CardCvcElement,
 	CardExpiryElement
 } from '@stripe/react-stripe-js';
+import { useMemo, useState } from 'react';
 import Cookies from 'js-cookie';
-import useSWR, { mutate } from 'swr';
+import PaymentMethodFormLabel from 'public/label/components/form/PaymentMethodForm.json';
+import router from 'next/router';
+import styled from 'styled-components';
+import { setTimeout } from 'core-js';
 
 const useOptions = () => {
 	const options = useMemo(() => ({
@@ -62,9 +64,10 @@ const PaymentMethodForm = (props) => {
 	const stripe = useStripe();
 	const elements = useElements();
 	const options = useOptions();
+	const [loading, setLoading] = useState(false);
 
-	const handleSubmit = async (event) => {
-		event.preventDefault();
+	const handleSubmit = async (e) => {
+		e.preventDefault();
 
 		if (!stripe || !elements) {
 			// Stripe.js has not loaded yet. Make sure to disable
@@ -72,11 +75,12 @@ const PaymentMethodForm = (props) => {
 			return;
 		}
 
+		setLoading(true);
+
 		const payload = await stripe.createPaymentMethod({
 			type: 'card',
 			card: elements.getElement(CardNumberElement)
 		});
-
 		// console.log('[PaymentMethod]', payload);
 
 		await fetch('/api/stripe/payment-method/', {
@@ -101,10 +105,16 @@ const PaymentMethodForm = (props) => {
 			body: JSON.stringify({ id: props.subscriptionId })
 		});
 
-		setTimeout(() => {
-			props.closeForm();
-			props.onSubscriptionUpdated();
-		}, 200);
+		props.onSubscriptionUpdated().then((info) => {
+			if (info.status === 'PAID') {
+				props.closeForm();
+				props.disableInputFields();
+
+				setTimeout(() => {
+					router.push('/dashboard/settings/profile');
+				}, 1000);
+			}
+		});
 	};
 
 	return (
@@ -115,7 +125,7 @@ const PaymentMethodForm = (props) => {
 						htmlFor='card-number'
 						className={`block text-sm font-medium leading-5 text-gray-700`}
 					>
-						Card Number
+						{PaymentMethodFormLabel[0].label}
 					</label>
 					<CardNumberElement
 						options={options}
@@ -130,7 +140,7 @@ const PaymentMethodForm = (props) => {
 						htmlFor='expiration-date'
 						className={`block text-sm font-medium leading-5 text-gray-700`}
 					>
-						Expiration Date
+						{PaymentMethodFormLabel[1].label}
 					</label>
 					<CardExpiryElement
 						options={options}
@@ -145,7 +155,7 @@ const PaymentMethodForm = (props) => {
 						htmlFor='cvc'
 						className={`block text-sm font-medium leading-5 text-gray-700`}
 					>
-						CVC
+						{PaymentMethodFormLabel[2].label}
 					</label>
 					<CardCvcElement
 						options={options}
@@ -159,10 +169,14 @@ const PaymentMethodForm = (props) => {
 					<span className={`flex w-full rounded-md shadow-sm sm:col-start-2`}>
 						<button
 							type='submit'
-							className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
-							disabled={!stripe}
+							className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
+								loading
+									? 'opacity-50 bg-indigo-300 cursor-not-allowed'
+									: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo'
+							}`}
+							disabled={loading ? true : false}
 						>
-							Set Payment Method
+							{loading ? 'Saving Changes...' : PaymentMethodFormLabel[3].label}
 						</button>
 					</span>
 				</div>

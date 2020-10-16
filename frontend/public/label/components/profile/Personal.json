@@ -4,6 +4,9 @@
 		"description": "User generated content in real-time will have multiple touchpoints for offshoring."
 	},
 	{
+		"label": "Username"
+	},
+	{
 		"label": "First Name"
 	},
 	{
@@ -13,12 +16,12 @@
 		"label": "Email Address"
 	},
 	{
-		"label": "Update Profile"
+		"label": "Update"
 	},
 	{
-		"label": "Cancel Profile Update"
+		"label": "Cancel"
 	},
 	{
-		"label": "Save Profile"
+		"label": "Save"
 	}
 ]
