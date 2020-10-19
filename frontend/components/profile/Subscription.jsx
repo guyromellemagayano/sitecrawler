@@ -1,11 +1,8 @@
 import { Transition } from '@tailwindui/react';
 import { useState, useEffect, Fragment } from 'react';
 import Cookies from 'js-cookie';
-import fetchJson from 'hooks/fetchJson';
-import Link from 'next/link';
 import PaymentMethodForm from 'components/form/PaymentMethodForm';
 import PropTypes from 'prop-types';
-import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import SubscriptionLabel from 'public/label/pages/subscriptions.json';
 import useSWR from 'swr';
@@ -33,29 +30,13 @@ const fetcher = async (url) => {
 };
 
 const ProfileSettingsSubscription = () => {
-	const [errorMsg, setErrorMsg] = useState('');
-	const [successMsg, setSuccessMsg] = useState('');
-	const [disableInputFields, setDisableInputFields] = useState(0);
 	const [paymentMethod, setPaymentMethod] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [subscriptionId, setSubscriptionId] = useState(undefined);
+	const [errorMsg, setErrorMsg] = useState('');
+	const [successMsg, setSuccessMsg] = useState('');
+	const [disableInputFields, setDisableInputFields] = useState(0);
 	const [showNotificationStatus, setShowNotificationStatus] = useState(false);
-
-	const { data: subscriptions, error: subscriptionsError } = useSWR(
-		() => `/api/stripe/subscription/`,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
-	);
-
-	const {
-		data: subscription,
-		error: subscriptionError,
-		mutate: subscriptionUpdated
-	} = useSWR(() => `/api/stripe/subscription/current/`, fetcher, {
-		refreshInterval: 1000
-	});
 
 	const { data: paymentMethods, error: paymentMethodsError } = useSWR(
 		() => `/api/stripe/payment-method/`,
@@ -74,10 +55,6 @@ const ProfileSettingsSubscription = () => {
 
 	useEffect(() => {
 		if (
-			subscription !== '' &&
-			subscription !== undefined &&
-			subscriptions !== '' &&
-			subscriptions !== undefined &&
 			paymentMethods !== '' &&
 			paymentMethods !== undefined &&
 			currentPaymentMethod !== '' &&
@@ -88,67 +65,13 @@ const ProfileSettingsSubscription = () => {
 				.map((val) => {
 					setPaymentMethod(val);
 				});
-			setSubscriptionId(subscription.id);
 		}
-	}, [paymentMethods, currentPaymentMethod, subscription, subscriptions]);
-
-	const updateCardInformation = async (endpoint, formData) => {
-		const response = await fetch(endpoint, {
-			method: 'PATCH',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			},
-			body: JSON.stringify(formData)
-		});
-
-		const data = await response.json();
-
-		if (response.ok && response.status === 200) {
-			if (data) {
-				setSuccessMsg('Card information update successfully.');
-				setTimeout(() => setShowNotificationStatus(true), 1500);
-				setDisableInputFields(!disableInputFields);
-			} else {
-				setErrorMsg('Card information update failed. Please try again.');
-				setTimeout(() => setShowNotificationStatus(true), 1500);
-			}
-		} else {
-			const error = new Error(response.statusText);
-
-			error.response = response;
-			error.data = data;
-
-			setErrorMsg('An unexpected error occurred. Please try again.');
-			setTimeout(() => setShowNotificationStatus(true), 1500);
-
-			throw error;
-		}
-	};
-
-	const handlePaymentMethodUpdate = async (e) => {
-		e.preventDefault();
-
-		// TODO: body variable objects
-		const body = {};
-
-		// TODO: updateCardInformation(API_ENDPOINT_HERE, body)
-		await updateCardInformation(``, body);
-	};
+	}, [paymentMethods, currentPaymentMethod]);
 
 	const handleEditPaymentMethod = (e) => {
 		e.preventDefault();
 
 		setDisableInputFields(!disableInputFields);
-	};
-
-	const handlePaymentMethodInputChange = (e) => {
-		setPaymentMethod(e.target.value);
-	};
-
-	const handlePaymentPeriodInputChange = (e) => {
-		setPaymentPeriod(e.target.value);
 	};
 
 	const handlePaymentMethodModal = (e) => {
@@ -162,12 +85,6 @@ const ProfileSettingsSubscription = () => {
 			setTimeout(() => setShowNotificationStatus(false), 7500);
 	}, [showNotificationStatus]);
 
-	{
-		subscriptionsError && <Layout>{subscriptionsError.message}</Layout>;
-	}
-	{
-		subscriptionError && <Layout>{subscriptionError.message}</Layout>;
-	}
 	{
 		currentPaymentMethodError && (
 			<Layout>{currentPaymentMethodError.message}</Layout>
@@ -376,7 +293,16 @@ const ProfileSettingsSubscription = () => {
 									subscriptionId={subscriptionId}
 									closeForm={() => setShowModal(false)}
 									disableInputFields={() => setDisableInputFields(0)}
-									onSubscriptionUpdated={subscriptionUpdated}
+									errorMsg={() =>
+										setErrorMsg(
+											'Card information update failed. Please try again.'
+										)
+									}
+									successMsg={() =>
+										setSuccessMsg('Card information update successfully.')
+									}
+									showNotificationStatus={() => setShowNotificationStatus(true)}
+									// onSubscriptionUpdated={subscriptionUpdated}
 								/>
 							</div>
 						</Transition.Child>
@@ -387,99 +313,96 @@ const ProfileSettingsSubscription = () => {
 				className={`my-5 max-w-full bg-white shadow-xs rounded-lg`}
 			>
 				<div className={`px-4 py-5 sm:p-6`}>
-					<form onSubmit={handlePaymentMethodUpdate}>
+					<div>
 						<div>
 							<div>
-								<div>
-									<h3 className={`text-lg leading-6 font-medium text-gray-900`}>
-										{SubscriptionLabel[5].label}
-									</h3>
-									<p className={`mt-1 text-sm leading-5 text-gray-500`}>
-										{SubscriptionLabel[5].description}
-									</p>
-								</div>
-								<div
-									className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
-								>
-									<div className={`sm:col-span-6`}>
-										<label
-											htmlFor={`paymentMethod`}
-											className={`block text-sm font-medium leading-5 text-gray-700`}
-										>
-											{SubscriptionLabel[6].label}
-										</label>
-										<div className={`mt-1 flex rounded-md shadow-xs-sm`}>
-											<input
-												type={`text`}
-												id={`paymentMethod`}
-												value={
-													paymentMethod
-														? paymentMethod.card.brand.charAt(0).toUpperCase() +
-														  paymentMethod.card.brand.slice(1) +
-														  ' - ' +
-														  ' ' +
-														  '****' +
-														  ' ' +
-														  paymentMethod.card.last4
-														: ''
-												}
-												name={`paymentMethod`}
-												disabled={disableInputFields == 0 ? true : false}
-												className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-													disableInputFields == 0 &&
-													'opacity-50 bg-gray-300 cursor-not-allowed'
-												}`}
-												onChange={handlePaymentMethodInputChange}
-												onClick={handlePaymentMethodModal}
-											/>
-										</div>
+								<h3 className={`text-lg leading-6 font-medium text-gray-900`}>
+									{SubscriptionLabel[5].label}
+								</h3>
+								<p className={`mt-1 text-sm leading-5 text-gray-500`}>
+									{SubscriptionLabel[5].description}
+								</p>
+							</div>
+							<div
+								className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
+							>
+								<div className={`sm:col-span-6`}>
+									<label
+										htmlFor={`paymentMethod`}
+										className={`block text-sm font-medium leading-5 text-gray-700`}
+									>
+										{SubscriptionLabel[6].label}
+									</label>
+									<div className={`mt-1 flex rounded-md shadow-xs-sm`}>
+										<input
+											type={`text`}
+											id={`paymentMethod`}
+											value={
+												paymentMethod
+													? paymentMethod.card.brand.charAt(0).toUpperCase() +
+													  paymentMethod.card.brand.slice(1) +
+													  ' - ' +
+													  ' ' +
+													  '****' +
+													  ' ' +
+													  paymentMethod.card.last4
+													: ''
+											}
+											name={`paymentMethod`}
+											disabled={disableInputFields == 0 ? true : false}
+											className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+												disableInputFields == 0 &&
+												'opacity-50 bg-gray-300 cursor-not-allowed'
+											}`}
+											onClick={handlePaymentMethodModal}
+										/>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div className={`mt-8 border-t border-gray-200 pt-5`}>
+					</div>
+					<div className={`mt-8 border-t border-gray-200 pt-5`}>
+						<div
+							className={`flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row`}
+						>
 							<div
-								className={`flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row`}
+								className={`flex justify-start xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1 sm:w-2/3 md:flex-col sm:w-full lg:order-1 lg:w-auto lg:flex lg:flex-row`}
 							>
-								<div
-									className={`flex justify-start xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1 sm:w-2/3 md:flex-col sm:w-full lg:order-1 lg:w-auto lg:flex lg:flex-row`}
+								<span
+									className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none`}
 								>
-									<span
-										className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none`}
+									<button
+										type={`submit`}
+										disabled={disableInputFields == 1 ? true : false}
+										className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 bg-white text-sm leading-5 font-medium text-white bg-indigo-600 transition duration-150 ease-in-out ${
+											disableInputFields == 1
+												? 'opacity-50 bg-indigo-300 cursor-not-allowed'
+												: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700'
+										}`}
+										onClick={handleEditPaymentMethod}
 									>
-										<button
-											type={`submit`}
-											disabled={disableInputFields == 1 ? true : false}
-											className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 bg-white text-sm leading-5 font-medium text-white bg-indigo-600 transition duration-150 ease-in-out ${
-												disableInputFields == 1
-													? 'opacity-50 bg-indigo-300 cursor-not-allowed'
-													: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700'
-											}`}
-											onClick={handleEditPaymentMethod}
-										>
-											{SubscriptionLabel[9].label}
-										</button>
-									</span>
+										{SubscriptionLabel[9].label}
+									</button>
+								</span>
 
-									<span
-										className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none`}
+								<span
+									className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none`}
+								>
+									<button
+										disabled={disableInputFields == 1 ? false : true}
+										className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 bg-white text-sm sm:text-sm leading-5 sm:leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 ${
+											disableInputFields == 1
+												? 'hover:text-gray-500 focus:outline-none'
+												: 'opacity-50 cursor-not-allowed'
+										}`}
+										onClick={handleEditPaymentMethod}
 									>
-										<button
-											disabled={disableInputFields == 1 ? false : true}
-											className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 bg-white text-sm sm:text-sm leading-5 sm:leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 ${
-												disableInputFields == 1
-													? 'hover:text-gray-500 focus:outline-none'
-													: 'opacity-50 cursor-not-allowed'
-											}`}
-											onClick={handleEditPaymentMethod}
-										>
-											{SubscriptionLabel[10].label}
-										</button>
-									</span>
-								</div>
+										{SubscriptionLabel[10].label}
+									</button>
+								</span>
 							</div>
 						</div>
-					</form>
+					</div>
 				</div>
 			</ProfileSettingsSubscriptionDiv>
 		</Fragment>

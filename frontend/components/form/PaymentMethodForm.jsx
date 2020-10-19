@@ -5,12 +5,13 @@ import {
 	CardCvcElement,
 	CardExpiryElement
 } from '@stripe/react-stripe-js';
-import { useMemo, useState } from 'react';
+import { setTimeout } from 'core-js';
+import { Transition } from '@tailwindui/react';
+import { useMemo, useState, useEffect, Fragment } from 'react';
 import Cookies from 'js-cookie';
 import PaymentMethodFormLabel from 'public/label/components/form/PaymentMethodForm.json';
 import router from 'next/router';
 import styled from 'styled-components';
-import { setTimeout } from 'core-js';
 
 const useOptions = () => {
 	const options = useMemo(() => ({
@@ -34,25 +35,6 @@ const useOptions = () => {
 	return options;
 };
 
-const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
-	});
-
-	const data = await res.json();
-
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
-
-	return data;
-};
-
 const PaymentMethodFormDiv = styled.section`
 	.input-group {
 		margin-top: 2rem;
@@ -65,6 +47,56 @@ const PaymentMethodForm = (props) => {
 	const elements = useElements();
 	const options = useOptions();
 	const [loading, setLoading] = useState(false);
+
+	const updatePaymentMethod = async (endpoint, payload) => {
+		const response = await fetch(endpoint, {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'X-CSRFToken': Cookies.get('csrftoken')
+			},
+			body: JSON.stringify({ id: payload.paymentMethod.id })
+		});
+
+		// await fetch('/api/stripe/subscription/current/', {
+		// 	method: 'POST',
+		// 	headers: {
+		// 		'Accept': 'application/json',
+		// 		'Content-Type': 'application/json',
+		// 		'X-CSRFToken': Cookies.get('csrftoken')
+		// 	},
+		// 	body: JSON.stringify({ id: props.subscriptionId })
+		// });
+
+		const data = await response.json();
+
+		if (response.ok && response.status === 200) {
+			if (data) {
+				props.closeForm();
+				props.disableInputFields();
+				props.successMsg();
+				props.showNotificationStatus();
+
+				setTimeout(() => {
+					router.push('/dashboard/settings/profile');
+				}, 1500);
+			} else {
+				props.errorMsg();
+				props.showNotificationStatus();
+			}
+		} else {
+			const error = new Error(response.statusText);
+
+			error.response = response;
+			error.data = data;
+
+			setErrorMsg('An unexpected error occurred. Please try again.');
+			setTimeout(() => setShowNotificationStatus(), 1500);
+
+			throw error;
+		}
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -81,40 +113,10 @@ const PaymentMethodForm = (props) => {
 			type: 'card',
 			card: elements.getElement(CardNumberElement)
 		});
+
 		// console.log('[PaymentMethod]', payload);
 
-		await fetch('/api/stripe/payment-method/', {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			},
-			body: JSON.stringify({ id: payload.paymentMethod.id })
-		});
-
-		// console.log('[subscriptionId]', props.subscriptionId)
-
-		await fetch('/api/stripe/subscription/current/', {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			},
-			body: JSON.stringify({ id: props.subscriptionId })
-		});
-
-		props.onSubscriptionUpdated().then((info) => {
-			if (info.status === 'PAID') {
-				props.closeForm();
-				props.disableInputFields();
-
-				setTimeout(() => {
-					router.push('/dashboard/settings/profile');
-				}, 1000);
-			}
-		});
+		updatePaymentMethod('/api/stripe/payment-method/', payload);
 	};
 
 	return (
