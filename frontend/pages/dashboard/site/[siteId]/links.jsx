@@ -490,7 +490,7 @@ const Links = (props) => {
 						</title>
 					</Head>
 
-					<LinksDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
+					<LinksDiv className={`h-screen flex overflow-hidden bg-gray-300`}>
 						<MobileSidebar
 							show={openMobileSidebar}
 							crawlableHandler={crawlableHandler}
