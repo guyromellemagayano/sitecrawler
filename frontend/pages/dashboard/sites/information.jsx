@@ -301,7 +301,7 @@ const SitesInformation = (props) => {
 					</Head>
 
 					<SitesInformationDiv
-						className={`h-screen flex overflow-hidden bg-gray-1200`}
+						className={`h-screen flex overflow-hidden bg-gray-300`}
 					>
 						<MobileSidebar show={openMobileSidebar} />
 						<MainSidebar />

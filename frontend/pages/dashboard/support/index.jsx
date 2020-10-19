@@ -39,7 +39,7 @@ const Support = () => {
 						<title>{pageTitle}</title>
 					</Head>
 
-					<SupportDiv className={`h-screen flex overflow-hidden bg-gray-1200`}>
+					<SupportDiv className={`h-screen flex overflow-hidden bg-gray-300`}>
 						<MobileSidebar show={openMobileSidebar} />
 						<MainSidebar />
 
