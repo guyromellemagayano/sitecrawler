@@ -28,3 +28,27 @@ func (s *LinkStylesheetDao) DeleteAllForScan(scanID int) error {
 	_, err := s.DB.Model(&CrawlLinkStylesheet{}).Where("from_link_id IN (?)", subquery).Delete()
 	return err
 }
+
+func (s *LinkStylesheetDao) AllForLinkForEach(linkID int, f func(*CrawlLinkStylesheet) error) error {
+	pageSize := 10
+	results := make([]*CrawlLinkStylesheet, 0, pageSize)
+	for page := 0; true; page++ {
+		err := s.DB.Model(&results).Where("from_link_id = ?", linkID).Order("id ASC").Limit(pageSize).Offset(page * pageSize).Select(&results)
+		if err != nil {
+			return err
+		}
+
+		for _, el := range results {
+			if err := f(el); err != nil {
+				return err
+			}
+		}
+
+		if len(results) < pageSize {
+			break
+		}
+
+		results = results[:0]
+	}
+	return nil
+}

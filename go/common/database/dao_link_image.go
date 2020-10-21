@@ -28,3 +28,27 @@ func (s *LinkImageDao) DeleteAllForScan(scanID int) error {
 	_, err := s.DB.Model(&CrawlLinkImage{}).Where("from_link_id IN (?)", subquery).Delete()
 	return err
 }
+
+func (s *LinkImageDao) AllForLinkForEach(linkID int, f func(*CrawlLinkImage) error) error {
+	pageSize := 10
+	results := make([]*CrawlLinkImage, 0, pageSize)
+	for page := 0; true; page++ {
+		err := s.DB.Model(&results).Where("from_link_id = ?", linkID).Order("id ASC").Limit(pageSize).Offset(page * pageSize).Select(&results)
+		if err != nil {
+			return err
+		}
+
+		for _, el := range results {
+			if err := f(el); err != nil {
+				return err
+			}
+		}
+
+		if len(results) < pageSize {
+			break
+		}
+
+		results = results[:0]
+	}
+	return nil
+}

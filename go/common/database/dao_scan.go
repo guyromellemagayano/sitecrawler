@@ -40,3 +40,27 @@ func (s *ScanDao) Exists(id int) (bool, error) {
 	}
 	return exists, nil
 }
+
+func (s *ScanDao) AllForSiteForEach(siteID int, f func(*CrawlScan) error) error {
+	pageSize := 10
+	results := make([]*CrawlScan, 0, pageSize)
+	for page := 0; true; page++ {
+		err := s.DB.Model(&results).Where("site_id = ?", siteID).Order("id ASC").Limit(pageSize).Offset(page * pageSize).Select(&results)
+		if err != nil {
+			return err
+		}
+
+		for _, el := range results {
+			if err := f(el); err != nil {
+				return err
+			}
+		}
+
+		if len(results) < pageSize {
+			break
+		}
+
+		results = results[:0]
+	}
+	return nil
+}

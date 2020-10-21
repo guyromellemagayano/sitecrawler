@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/pkg/errors"
 )
@@ -40,7 +41,7 @@ type tlsKey struct {
 // Extract returns tls_status, tls_id and error
 func (t *TlsCache) Extract(TLS *tls.ConnectionState, request *http.Request) (int, *int, error) {
 	if TLS == nil || len(TLS.PeerCertificates) == 0 {
-		return TLS_NONE, nil, nil
+		return common.TLS_NONE, nil, nil
 	}
 
 	certificate := TLS.PeerCertificates[0]
@@ -125,7 +126,7 @@ func (t *TlsCache) Extract(TLS *tls.ConnectionState, request *http.Request) (int
 
 func (t *TlsCache) status(tl *database.CrawlTl) int {
 	if len(tl.Errors) > 0 {
-		return TLS_ERROR
+		return common.TLS_ERROR
 	}
-	return TLS_OK
+	return common.TLS_OK
 }

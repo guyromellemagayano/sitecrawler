@@ -53,7 +53,13 @@ class LinkQuerySet(QuerySet):
             )
             .annotate(
                 tls_total=Case(
-                    When(tls_images=1, tls_scripts=1, tls_stylesheets=1, tls_status=Link.TLS_OK, then=1,),
+                    When(
+                        tls_images=1,
+                        tls_scripts=1,
+                        tls_stylesheets=1,
+                        tls_status=Link.TLS_OK,
+                        then=1,
+                    ),
                     default=0,
                     output_field=IntegerField(),
                 )
@@ -161,6 +167,20 @@ class Link(models.Model):
     num_tls_images = CalculatedField("num_images", "-num_non_tls_images")
     num_tls_scripts = CalculatedField("num_scripts", "-num_non_tls_scripts")
     num_tls_stylesheets = CalculatedField("num_stylesheets", "-num_non_tls_stylesheets")
+
+    cached_num_tls_images = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_non_tls_images = models.PositiveIntegerField(null=True, blank=True)
+    cached_tls_images = models.BooleanField(null=True, blank=True)
+
+    cached_num_tls_stylesheets = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_non_tls_stylesheets = models.PositiveIntegerField(null=True, blank=True)
+    cached_tls_stylesheets = models.BooleanField(null=True, blank=True)
+
+    cached_num_tls_scripts = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_non_tls_scripts = models.PositiveIntegerField(null=True, blank=True)
+    cached_tls_scripts = models.BooleanField(null=True, blank=True)
+
+    cached_tls_total = models.BooleanField(null=True, blank=True)
 
     def get_pages(self):
         return self.pages.all().union(self.image_pages.all(), self.script_pages.all(), self.stylesheet_pages.all())

@@ -36,3 +36,27 @@ func (s *SiteDao) AllVerifiedForGroup(groupID int) ([]CrawlSite, error) {
 	}
 	return sites, nil
 }
+
+func (s *SiteDao) AllForEach(f func(*CrawlSite) error) error {
+	pageSize := 10
+	results := make([]*CrawlSite, 0, pageSize)
+	for page := 0; true; page++ {
+		err := s.DB.Model(&results).Order("id ASC").Limit(pageSize).Offset(page * pageSize).Select(&results)
+		if err != nil {
+			return err
+		}
+
+		for _, el := range results {
+			if err := f(el); err != nil {
+				return err
+			}
+		}
+
+		if len(results) < pageSize {
+			break
+		}
+
+		results = results[:0]
+	}
+	return nil
+}

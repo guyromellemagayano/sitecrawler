@@ -54,7 +54,7 @@ var Columns = struct {
 		Group string
 	}
 	CrawlLink struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal string
 
 		Scan, Tls string
 	}
@@ -127,7 +127,7 @@ var Columns = struct {
 		User string
 	}
 	PaymentSubscription struct {
-		ID, PriceID, GroupID, Features string
+		ID, PriceID, GroupID, Features, Name string
 
 		Group string
 	}
@@ -274,22 +274,32 @@ var Columns = struct {
 		Group: "Group",
 	},
 	CrawlLink: struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal string
 
 		Scan, Tls string
 	}{
-		ID:           "id",
-		CreatedAt:    "created_at",
-		Type:         "type",
-		Url:          "url",
-		Status:       "status",
-		HttpStatus:   "http_status",
-		ResponseTime: "response_time",
-		Error:        "error",
-		ScanID:       "scan_id",
-		Size:         "size",
-		TlsStatus:    "tls_status",
-		TlsID:        "tls_id",
+		ID:                         "id",
+		CreatedAt:                  "created_at",
+		Type:                       "type",
+		Url:                        "url",
+		Status:                     "status",
+		HttpStatus:                 "http_status",
+		ResponseTime:               "response_time",
+		Error:                      "error",
+		ScanID:                     "scan_id",
+		Size:                       "size",
+		TlsStatus:                  "tls_status",
+		TlsID:                      "tls_id",
+		CachedNumNonTlsImages:      "cached_num_non_tls_images",
+		CachedNumNonTlsScripts:     "cached_num_non_tls_scripts",
+		CachedNumNonTlsStylesheets: "cached_num_non_tls_stylesheets",
+		CachedNumTlsImages:         "cached_num_tls_images",
+		CachedNumTlsScripts:        "cached_num_tls_scripts",
+		CachedNumTlsStylesheets:    "cached_num_tls_stylesheets",
+		CachedTlsImages:            "cached_tls_images",
+		CachedTlsScripts:           "cached_tls_scripts",
+		CachedTlsStylesheets:       "cached_tls_stylesheets",
+		CachedTlsTotal:             "cached_tls_total",
 
 		Scan: "Scan",
 		Tls:  "Tls",
@@ -478,7 +488,7 @@ var Columns = struct {
 		User: "User",
 	},
 	PaymentSubscription: struct {
-		ID, PriceID, GroupID, Features string
+		ID, PriceID, GroupID, Features, Name string
 
 		Group string
 	}{
@@ -486,6 +496,7 @@ var Columns = struct {
 		PriceID:  "price_id",
 		GroupID:  "group_id",
 		Features: "features",
+		Name:     "name",
 
 		Group: "Group",
 	},
@@ -973,18 +984,28 @@ type CrawlGroupsetting struct {
 type CrawlLink struct {
 	tableName struct{} `sql:"crawl_link,alias:t" pg:",discard_unknown_columns"`
 
-	ID           int       `sql:"id,pk"`
-	CreatedAt    time.Time `sql:"created_at,notnull"`
-	Type         int       `sql:"type,notnull"`
-	Url          string    `sql:"url,notnull"`
-	Status       int       `sql:"status,notnull"`
-	HttpStatus   *int      `sql:"http_status"`
-	ResponseTime int       `sql:"response_time,notnull"`
-	Error        *string   `sql:"error"`
-	ScanID       int       `sql:"scan_id,notnull"`
-	Size         int       `sql:"size,notnull"`
-	TlsStatus    int       `sql:"tls_status,notnull"`
-	TlsID        *int      `sql:"tls_id"`
+	ID                         int       `sql:"id,pk"`
+	CreatedAt                  time.Time `sql:"created_at,notnull"`
+	Type                       int       `sql:"type,notnull"`
+	Url                        string    `sql:"url,notnull"`
+	Status                     int       `sql:"status,notnull"`
+	HttpStatus                 *int      `sql:"http_status"`
+	ResponseTime               int       `sql:"response_time,notnull"`
+	Error                      *string   `sql:"error"`
+	ScanID                     int       `sql:"scan_id,notnull"`
+	Size                       int       `sql:"size,notnull"`
+	TlsStatus                  int       `sql:"tls_status,notnull"`
+	TlsID                      *int      `sql:"tls_id"`
+	CachedNumNonTlsImages      *int      `sql:"cached_num_non_tls_images"`
+	CachedNumNonTlsScripts     *int      `sql:"cached_num_non_tls_scripts"`
+	CachedNumNonTlsStylesheets *int      `sql:"cached_num_non_tls_stylesheets"`
+	CachedNumTlsImages         *int      `sql:"cached_num_tls_images"`
+	CachedNumTlsScripts        *int      `sql:"cached_num_tls_scripts"`
+	CachedNumTlsStylesheets    *int      `sql:"cached_num_tls_stylesheets"`
+	CachedTlsImages            *bool     `sql:"cached_tls_images"`
+	CachedTlsScripts           *bool     `sql:"cached_tls_scripts"`
+	CachedTlsStylesheets       *bool     `sql:"cached_tls_stylesheets"`
+	CachedTlsTotal             *bool     `sql:"cached_tls_total"`
 
 	Scan *CrawlScan `pg:"fk:scan_id"`
 	Tls  *CrawlTl   `pg:"fk:tls_id"`
@@ -1176,6 +1197,7 @@ type PaymentSubscription struct {
 	PriceID  string   `sql:"price_id,notnull"`
 	GroupID  int      `sql:"group_id,notnull"`
 	Features []string `sql:"features,array,notnull"`
+	Name     string   `sql:"name,notnull"`
 
 	Group *AuthGroup `pg:"fk:group_id"`
 }

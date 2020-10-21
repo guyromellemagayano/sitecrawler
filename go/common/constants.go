@@ -1,4 +1,4 @@
-package main
+package common
 
 const (
 	TYPE_PAGE     = 1

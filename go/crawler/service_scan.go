@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
@@ -30,10 +31,11 @@ const (
 )
 
 type ScanService struct {
-	Database       *database.Database
-	VerifyService  *VerifyService
-	LoadService    *LoadService
-	BackendService *BackendService
+	Database           *database.Database
+	VerifyService      *VerifyService
+	LoadService        *LoadService
+	BackendService     *BackendService
+	PostprocessService *PostprocessService
 }
 
 func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
@@ -196,6 +198,9 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint
 	if err := s.ScanService.Database.LinkDao.Save(link); err != nil {
 		return 0, err
 	}
+	if err := s.ScanService.PostprocessService.OnLink(link); err != nil {
+		return link.ID, err
+	}
 
 	// cache both source and destination id
 	s.linkIDs[sourceUrl.String()] = link.ID
@@ -339,13 +344,13 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*database.Crawl
 		ScanID:    s.Scan.ID,
 		CreatedAt: time.Now(),
 		Url:       lenLimit(url.String(), 2047),
-		Type:      TYPE_OTHER,
-		Status:    STATUS_OK,
-		TlsStatus: TLS_OK,
+		Type:      common.TYPE_OTHER,
+		Status:    common.STATUS_OK,
+		TlsStatus: common.TLS_OK,
 	}
 
 	if !s.isWebScheme(url) {
-		crawlLink.Type = TYPE_NON_WEB
+		crawlLink.Type = common.TYPE_NON_WEB
 		return crawlLink, nil
 	}
 
@@ -358,9 +363,9 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*database.Crawl
 
 	handleError := func(err error) {
 		if strings.HasSuffix(err.Error(), "context deadline exceeded") {
-			crawlLink.Status = STATUS_TIMEOUT
+			crawlLink.Status = common.STATUS_TIMEOUT
 		} else if strings.HasSuffix(err.Error(), "stopped after 10 redirects") {
-			crawlLink.Status = STATUS_TOO_MANY_REDIRECTS
+			crawlLink.Status = common.STATUS_TOO_MANY_REDIRECTS
 		} else {
 			if !strings.HasSuffix(err.Error(), "unexpected EOF") &&
 				!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated") &&
@@ -370,7 +375,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*database.Crawl
 					"error", err,
 				)
 			}
-			crawlLink.Status = STATUS_OTHER_ERROR
+			crawlLink.Status = common.STATUS_OTHER_ERROR
 			errStr := lenLimit(err.Error(), 255)
 			crawlLink.Error = &errStr
 		}
@@ -410,7 +415,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*database.Crawl
 	statusCode := resp.StatusCode
 	crawlLink.HttpStatus = &statusCode
 	if statusCode/100 != 2 {
-		crawlLink.Status = STATUS_HTTP_ERROR
+		crawlLink.Status = common.STATUS_HTTP_ERROR
 		statusStr := resp.Status
 		crawlLink.Error = &statusStr
 		return crawlLink, nil
@@ -425,11 +430,11 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*database.Crawl
 		}
 
 		if s.ScanService.VerifyService.Verify(doc, s.Scan.Site.VerificationID) == nil {
-			crawlLink.Type = TYPE_PAGE
+			crawlLink.Type = common.TYPE_PAGE
 			return crawlLink, doc
 		}
 
-		crawlLink.Type = TYPE_EXTERNAL
+		crawlLink.Type = common.TYPE_EXTERNAL
 	}
 
 	return crawlLink, nil
@@ -505,6 +510,9 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 				return err
 			}
 		}
+		if err := s.ScanService.PostprocessService.OnLinkLink(linkLink); err != nil {
+			return err
+		}
 	case CHILD_IMAGE:
 		linkImage := &database.CrawlLinkImage{
 			FromLinkID: r.ParentId,
@@ -515,6 +523,9 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 				return err
 			}
+		}
+		if err := s.ScanService.PostprocessService.OnLinkImage(linkImage); err != nil {
+			return err
 		}
 	case CHILD_SCRIPT:
 		linkScript := &database.CrawlLinkScript{
@@ -527,6 +538,9 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 				return err
 			}
 		}
+		if err := s.ScanService.PostprocessService.OnLinkScript(linkScript); err != nil {
+			return err
+		}
 	case CHILD_STYLESHEET:
 		linkStylesheet := &database.CrawlLinkStylesheet{
 			FromLinkID: r.ParentId,
@@ -537,6 +551,9 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 				return err
 			}
+		}
+		if err := s.ScanService.PostprocessService.OnLinkStylesheet(linkStylesheet); err != nil {
+			return err
 		}
 	}
 	return nil

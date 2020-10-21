@@ -87,6 +87,16 @@ class PageInline(admin.TabularInline):
         "response_time",
         "tls",
         "size",
+        "cached_num_tls_images",
+        "cached_num_tls_scripts",
+        "cached_num_tls_stylesheets",
+        "cached_num_non_tls_images",
+        "cached_num_non_tls_scripts",
+        "cached_num_non_tls_stylesheets",
+        "cached_tls_images",
+        "cached_tls_scripts",
+        "cached_tls_stylesheets",
+        "cached_tls_total",
     )
     show_change_link = True
 
