@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	lastScanToProcess = 114
+	lastScanToProcess = 117
+	ignoreScan        = -1 // in progress on prod
 	firstSiteToProces = 0
 )
 
@@ -24,7 +25,7 @@ func main() {
 	db := common.ConfigureDatabase(log, env)
 	defer db.Close()
 
-	postprocessor := &common.TlsPostprocessor{Database: db}
+	postprocessor := &common.SizePostprocessor{Database: db}
 
 	err := db.SiteDao.AllForEach(func(site *database.CrawlSite) error {
 		if site.ID < firstSiteToProces {
@@ -32,6 +33,9 @@ func main() {
 		}
 		return db.ScanDao.AllForSiteForEach(site.ID, func(scan *database.CrawlScan) error {
 			if scan.ID > lastScanToProcess {
+				return nil
+			}
+			if scan.ID == ignoreScan {
 				return nil
 			}
 			log.Infof("Processing site: %v, scan: %v", site.ID, scan.ID)
@@ -82,7 +86,7 @@ func main() {
 			}
 			log.Infof("Verifying site: %v, scan: %v", site.ID, scan.ID)
 			err = db.LinkDao.AllForScanForEach(scan.ID, func(l *database.CrawlLink) error {
-				return VerifyTLS(site, scan, l)
+				return VerifySize(site, scan, l)
 			})
 			if err != nil {
 				return err
@@ -96,50 +100,82 @@ func main() {
 	}
 }
 
-func VerifyTLS(site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
+// func VerifyTLS(site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
+//     if link.Type != common.TYPE_PAGE {
+//         if link.CachedNumNonTlsImages != nil ||
+//             link.CachedNumNonTlsScripts != nil ||
+//             link.CachedNumNonTlsStylesheets != nil ||
+//             link.CachedNumTlsImages != nil ||
+//             link.CachedNumTlsScripts != nil ||
+//             link.CachedNumTlsStylesheets != nil ||
+//             link.CachedTlsImages != nil ||
+//             link.CachedTlsScripts != nil ||
+//             link.CachedTlsStylesheets != nil ||
+//             link.CachedTlsTotal != nil {
+//             return fmt.Errorf("invalid non page: %v, %v, %v", site.ID, scan.ID, link.ID)
+//         }
+//         return nil
+//     }
+//
+//     data := struct {
+//         NumTlsImages         int  `json:"num_tls_images"`
+//         NumTlsScripts        int  `json:"num_tls_scripts"`
+//         NumTlsStylesheets    int  `json:"num_tls_stylesheets"`
+//         NumNonTlsImages      int  `json:"num_non_tls_images"`
+//         NumNonTlsScripts     int  `json:"num_non_tls_scripts"`
+//         NumNonTlsStylesheets int  `json:"num_non_tls_stylesheets"`
+//         TlsImages            bool `json:"tls_images"`
+//         TlsScripts           bool `json:"tls_scripts"`
+//         TlsStylesheets       bool `json:"tls_stylesheets"`
+//         TlsTotal             bool `json:"tls_total"`
+//     }{}
+//     path := fmt.Sprintf("site/%v/scan/%v/page/%v/", site.ID, scan.ID, link.ID)
+//     if err := backendRequest(path, &data); err != nil {
+//         return err
+//     }
+//
+//     if *link.CachedNumNonTlsImages != data.NumNonTlsImages ||
+//         *link.CachedNumNonTlsScripts != data.NumNonTlsScripts ||
+//         *link.CachedNumNonTlsStylesheets != data.NumNonTlsStylesheets ||
+//         *link.CachedNumTlsImages != data.NumTlsImages ||
+//         *link.CachedNumTlsScripts != data.NumTlsScripts ||
+//         *link.CachedNumTlsStylesheets != data.NumTlsStylesheets ||
+//         *link.CachedTlsImages != data.TlsImages ||
+//         *link.CachedTlsScripts != data.TlsScripts ||
+//         *link.CachedTlsStylesheets != data.TlsStylesheets ||
+//         *link.CachedTlsTotal != data.TlsTotal {
+//         return fmt.Errorf("invalid page: %v, %v, %v", site.ID, scan.ID, link.ID)
+//     }
+//
+//     return nil
+// }
+
+func VerifySize(site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
 	if link.Type != common.TYPE_PAGE {
-		if link.CachedNumNonTlsImages != nil ||
-			link.CachedNumNonTlsScripts != nil ||
-			link.CachedNumNonTlsStylesheets != nil ||
-			link.CachedNumTlsImages != nil ||
-			link.CachedNumTlsScripts != nil ||
-			link.CachedNumTlsStylesheets != nil ||
-			link.CachedTlsImages != nil ||
-			link.CachedTlsScripts != nil ||
-			link.CachedTlsStylesheets != nil ||
-			link.CachedTlsTotal != nil {
+		if link.CachedSizeImages != nil ||
+			link.CachedSizeScripts != nil ||
+			link.CachedSizeStylesheets != nil ||
+			link.CachedSizeTotal != nil {
 			return fmt.Errorf("invalid non page: %v, %v, %v", site.ID, scan.ID, link.ID)
 		}
 		return nil
 	}
 
 	data := struct {
-		NumTlsImages         int  `json:"num_tls_images"`
-		NumTlsScripts        int  `json:"num_tls_scripts"`
-		NumTlsStylesheets    int  `json:"num_tls_stylesheets"`
-		NumNonTlsImages      int  `json:"num_non_tls_images"`
-		NumNonTlsScripts     int  `json:"num_non_tls_scripts"`
-		NumNonTlsStylesheets int  `json:"num_non_tls_stylesheets"`
-		TlsImages            bool `json:"tls_images"`
-		TlsScripts           bool `json:"tls_scripts"`
-		TlsStylesheets       bool `json:"tls_stylesheets"`
-		TlsTotal             bool `json:"tls_total"`
+		SizeImages      int `json:"size_images"`
+		SizeScripts     int `json:"size_scripts"`
+		SizeStylesheets int `json:"size_stylesheets"`
+		SizeTotal       int `json:"size_total"`
 	}{}
 	path := fmt.Sprintf("site/%v/scan/%v/page/%v/", site.ID, scan.ID, link.ID)
 	if err := backendRequest(path, &data); err != nil {
 		return err
 	}
 
-	if *link.CachedNumNonTlsImages != data.NumNonTlsImages ||
-		*link.CachedNumNonTlsScripts != data.NumNonTlsScripts ||
-		*link.CachedNumNonTlsStylesheets != data.NumNonTlsStylesheets ||
-		*link.CachedNumTlsImages != data.NumTlsImages ||
-		*link.CachedNumTlsScripts != data.NumTlsScripts ||
-		*link.CachedNumTlsStylesheets != data.NumTlsStylesheets ||
-		*link.CachedTlsImages != data.TlsImages ||
-		*link.CachedTlsScripts != data.TlsScripts ||
-		*link.CachedTlsStylesheets != data.TlsStylesheets ||
-		*link.CachedTlsTotal != data.TlsTotal {
+	if *link.CachedSizeImages != data.SizeImages ||
+		*link.CachedSizeScripts != data.SizeScripts ||
+		*link.CachedSizeStylesheets != data.SizeStylesheets ||
+		*link.CachedSizeTotal != data.SizeTotal {
 		return fmt.Errorf("invalid page: %v, %v, %v", site.ID, scan.ID, link.ID)
 	}
 
@@ -159,7 +195,7 @@ func backendRequest(path string, result interface{}) error {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("Non 200 response: %v", resp.Status)
+		return fmt.Errorf("non-200 for %v: %v", url, resp.Status)
 	}
 
 	decoder := json.NewDecoder(resp.Body)
