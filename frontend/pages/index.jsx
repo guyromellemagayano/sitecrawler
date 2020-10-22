@@ -106,7 +106,7 @@ const Login = () => {
 		<Layout>
 			<Head>
 				<title>{pageTitle}</title>
-				<SiteHead />
+				{/* <SiteHead /> */}
 			</Head>
 
 			<LoginDiv className={`bg-gray-100 min-h-screen`}>
