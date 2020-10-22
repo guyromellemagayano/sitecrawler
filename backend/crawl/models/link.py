@@ -6,9 +6,6 @@ from django.db.models import (
     OuterRef,
     Subquery,
     PositiveIntegerField,
-    Case,
-    When,
-    IntegerField,
 )
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
@@ -39,31 +36,17 @@ class LinkQuerySet(QuerySet):
         )
 
     def annotate_tls(self):
-        images = Link.objects.filter(image_pages__id=OuterRef("pk"))
-        scripts = Link.objects.filter(script_pages__id=OuterRef("pk"))
-        stylesheets = Link.objects.filter(stylesheet_pages__id=OuterRef("pk"))
         return (
-            self.annotate(num_non_tls_images=SubQueryCount(images.exclude(tls_status=Link.TLS_OK)))
-            .annotate(num_non_tls_scripts=SubQueryCount(scripts.exclude(tls_status=Link.TLS_OK)))
-            .annotate(num_non_tls_stylesheets=SubQueryCount(stylesheets.exclude(tls_status=Link.TLS_OK)))
-            .annotate(tls_images=Case(When(num_non_tls_images=0, then=1), default=0, output_field=IntegerField()))
-            .annotate(tls_scripts=Case(When(num_non_tls_scripts=0, then=1), default=0, output_field=IntegerField()))
-            .annotate(
-                tls_stylesheets=Case(When(num_non_tls_stylesheets=0, then=1), default=0, output_field=IntegerField())
-            )
-            .annotate(
-                tls_total=Case(
-                    When(
-                        tls_images=1,
-                        tls_scripts=1,
-                        tls_stylesheets=1,
-                        tls_status=Link.TLS_OK,
-                        then=1,
-                    ),
-                    default=0,
-                    output_field=IntegerField(),
-                )
-            )
+            self.annotate(num_non_tls_images=F("cached_num_non_tls_images"))
+            .annotate(num_non_tls_scripts=F("cached_num_non_tls_scripts"))
+            .annotate(num_non_tls_stylesheets=F("cached_num_non_tls_stylesheets"))
+            .annotate(num_tls_images=F("cached_num_tls_images"))
+            .annotate(num_tls_scripts=F("cached_num_tls_scripts"))
+            .annotate(num_tls_stylesheets=F("cached_num_tls_stylesheets"))
+            .annotate(tls_images=F("cached_tls_images"))
+            .annotate(tls_scripts=F("cached_tls_scripts"))
+            .annotate(tls_stylesheets=F("cached_tls_stylesheets"))
+            .annotate(tls_total=F("cached_tls_total"))
         )
 
     def pages(self):
@@ -164,9 +147,6 @@ class Link(models.Model):
     num_ok_images = CalculatedField("num_images", "-num_non_ok_images")
     num_ok_scripts = CalculatedField("num_scripts", "-num_non_ok_scripts")
     num_ok_stylesheets = CalculatedField("num_stylesheets", "-num_non_ok_stylesheets")
-    num_tls_images = CalculatedField("num_images", "-num_non_tls_images")
-    num_tls_scripts = CalculatedField("num_scripts", "-num_non_tls_scripts")
-    num_tls_stylesheets = CalculatedField("num_stylesheets", "-num_non_tls_stylesheets")
 
     cached_num_tls_images = models.PositiveIntegerField(null=True, blank=True)
     cached_num_non_tls_images = models.PositiveIntegerField(null=True, blank=True)
