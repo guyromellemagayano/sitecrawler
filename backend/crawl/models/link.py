@@ -25,14 +25,11 @@ class SubQuerySizeSum(Subquery):
 
 class LinkQuerySet(QuerySet):
     def annotate_size(self):
-        images = Link.objects.filter(image_pages__id=OuterRef("pk"))
-        scripts = Link.objects.filter(script_pages__id=OuterRef("pk"))
-        stylesheets = Link.objects.filter(stylesheet_pages__id=OuterRef("pk"))
         return (
-            self.annotate(size_images=SubQuerySizeSum(images))
-            .annotate(size_scripts=SubQuerySizeSum(scripts))
-            .annotate(size_stylesheets=SubQuerySizeSum(stylesheets))
-            .annotate(size_total=F("size_images") + F("size_scripts") + F("size_stylesheets") + F("size"))
+            self.annotate(size_images=F("cached_size_images"))
+            .annotate(size_scripts=F("cached_size_scripts"))
+            .annotate(size_stylesheets=F("cached_size_stylesheets"))
+            .annotate(size_total=F("cached_size_total"))
         )
 
     def annotate_tls(self):
