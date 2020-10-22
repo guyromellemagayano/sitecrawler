@@ -1,18 +1,13 @@
-FROM node AS dev
+FROM node:14 AS dev
 
-RUN mkdir /install
-WORKDIR /install
-
-COPY package*.json ./
-RUN yarn
-
-ENV NODE_PATH=/install/node_modules
-
+RUN mkdir /app
 WORKDIR /app
 
-COPY . .
+COPY package*.json ./
+COPY yarn.lock ./
+RUN yarn install --frozen-lockfile
 
-RUN ln -s /install/node_modules node_modules
+COPY . .
 
 EXPOSE 3000
 
