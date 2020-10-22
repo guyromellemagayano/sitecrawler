@@ -33,6 +33,7 @@ services:
     volumes:
       - ./frontend:/app
       - node-data:/app/node_modules
+      - next-data:/app/.next
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
@@ -75,4 +76,6 @@ volumes:
   db-data:
     driver: local
   node-data:
+    driver: local
+  next-data:
     driver: local

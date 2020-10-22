@@ -2,6 +2,6 @@
 
 set -e
 
-npm install
+yarn
 
-npm run dev
+yarn run dev

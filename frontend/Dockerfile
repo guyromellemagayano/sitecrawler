@@ -1,18 +1,13 @@
-FROM node AS dev
+FROM node:14 AS dev
 
-RUN mkdir /install
-WORKDIR /install
-
-COPY package*.json ./
-RUN npm install
-
-ENV NODE_PATH=/install/node_modules
-
+RUN mkdir /app
 WORKDIR /app
 
-COPY . .
+COPY package*.json ./
+COPY yarn.lock ./
+RUN yarn install --frozen-lockfile
 
-RUN ln -s /install/node_modules node_modules
+COPY . .
 
 EXPOSE 3000
 
@@ -20,6 +15,6 @@ EXPOSE 3000
 # build prod assets
 FROM dev AS prod
 
-RUN npm run build
+RUN yarn run build
 
-CMD npm start
+CMD yarn start

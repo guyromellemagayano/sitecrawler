@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 import { SWRConfig } from 'swr';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -12,12 +12,12 @@ import 'nprogress/nprogress.css';
 
 library.add(fab);
 
-const TopProgressBar = dynamic(
-	() => {
-		return import('components/utils/TopProgressBar');
-	},
-	{ ssr: false }
-);
+// const TopProgressBar = dynamic(
+// 	() => {
+// 		return import('components/utils/TopProgressBar');
+// 	},
+// 	{ ssr: false }
+// );
 
 const App = ({ Component, pageProps }) => {
 	const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY);
