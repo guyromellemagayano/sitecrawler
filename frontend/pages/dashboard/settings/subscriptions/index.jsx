@@ -5,10 +5,8 @@ import Head from 'next/head';
 import Layout from 'components/Layout';
 import MainSidebar from 'components/sidebar/MainSidebar';
 import MobileSidebar from 'components/sidebar/MobileSidebar';
-import PaymentMethodForm from 'components/form/PaymentMethodForm';
 import PropTypes from 'prop-types';
 import SiteFooter from 'components/footer/SiteFooter';
-import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import SubscriptionLabels from 'public/label/pages/subscriptions.json';
 import useSWR, { mutate } from 'swr';
@@ -37,6 +35,7 @@ const fetcher = async (url) => {
 
 const Subscriptions = () => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+	const [paymentMethod, setPaymentMethod] = useState(undefined);
 	const [togglePaymentPeriod, setTogglePaymentPeriod] = useState(false);
 	const pageTitle = 'Subscriptions';
 
@@ -44,6 +43,14 @@ const Subscriptions = () => {
 		redirectTo: '/',
 		redirectIfFound: false
 	});
+
+	const { data: paymentMethods, error: paymentMethodsError } = useSWR(
+		() => `/api/stripe/payment-method/default`,
+		fetcher,
+		{
+			refreshInterval: 1000
+		}
+	);
 
 	const { data: subscriptions, error: subscriptionsError } = useSWR(
 		() => `/api/stripe/subscription/`,
@@ -93,7 +100,9 @@ const Subscriptions = () => {
 
 		setTimeout(() => {
 			// console.log("[subscriptionUpdated]");
-			subscriptionUpdated();
+			subscriptionUpdated().then((info) => {
+				console.log(info);
+			});
 		}, 1000);
 	};
 
@@ -112,12 +121,17 @@ const Subscriptions = () => {
 	};
 
 	useEffect(() => {
+		if (paymentMethods && paymentMethods.id === null) {
+			setPaymentMethod(false);
+		} else {
+			setPaymentMethod(true);
+		}
 		if (handleCurrentPaymentPeriod(subscription, subscriptions) > 1) {
 			setTogglePaymentPeriod(true);
 		} else {
 			setTogglePaymentPeriod(false);
 		}
-	}, [subscription, subscriptions]);
+	}, [paymentMethods, subscription, subscriptions]);
 
 	{
 		userError && <Layout>{userError.message}</Layout>;
@@ -127,6 +141,9 @@ const Subscriptions = () => {
 	}
 	{
 		subscriptionError && <Layout>{subscriptionError.message}</Layout>;
+	}
+	{
+		paymentMethodsError && <Layout>{paymentMethodsError.message}</Layout>;
 	}
 
 	return (
@@ -479,7 +496,16 @@ const Subscriptions = () => {
 																								) : (
 																									<button
 																										type='button'
-																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
+																											!paymentMethod
+																												? 'opacity-50 cursor-not-allowed'
+																												: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
+																										}`}
+																										disabled={
+																											!paymentMethod
+																												? 'disabled'
+																												: ''
+																										}
 																										onClick={() =>
 																											selectPlan(
 																												val.id,
@@ -604,7 +630,16 @@ const Subscriptions = () => {
 																										</button>
 																									) : (
 																										<button
-																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
+																												!paymentMethod
+																													? 'opacity-50 cursor-not-allowed'
+																													: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
+																											}`}
+																											disabled={
+																												!paymentMethod
+																													? 'disabled'
+																													: ''
+																											}
 																											onClick={() =>
 																												setTimeout(
 																													() =>
@@ -750,7 +785,16 @@ const Subscriptions = () => {
 																								) : (
 																									<button
 																										type='button'
-																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
+																											!paymentMethod
+																												? 'opacity-50 cursor-not-allowed'
+																												: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
+																										}`}
+																										disabled={
+																											!paymentMethod
+																												? 'disabled'
+																												: ''
+																										}
 																										onClick={() =>
 																											selectPlan(
 																												val.id,
@@ -873,7 +917,16 @@ const Subscriptions = () => {
 																										</button>
 																									) : (
 																										<button
-																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
+																												!paymentMethod
+																													? 'opacity-50 cursor-not-allowed'
+																													: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
+																											}`}
+																											disabled={
+																												!paymentMethod
+																													? 'disabled'
+																													: ''
+																											}
 																											onClick={() =>
 																												setTimeout(
 																													() =>
