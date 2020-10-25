@@ -361,7 +361,7 @@ const ProfileSettingsSubscription = () => {
 							</div>
 						</div>
 					</div>
-					<div className={`mt-8 border-t border-gray-200 pt-5`}>
+					<div className={`mt-8 border-t border-gray-300 pt-5`}>
 						<div
 							className={`flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row`}
 						>

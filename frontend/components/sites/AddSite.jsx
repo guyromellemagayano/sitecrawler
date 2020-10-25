@@ -56,7 +56,7 @@ const AddSite = () => {
 	return (
 		<AddSiteDiv className={`py-4`}>
 			<div
-				className={`bg-white px-4 py-5 border-b border-gray-200 sm:px-6 bg-white overflow-hidden rounded-lg sm:shadow-xs`}
+				className={`bg-white px-4 py-5 border-b border-gray-300 sm:px-6 bg-white overflow-hidden rounded-lg sm:shadow-xs`}
 			>
 				<div
 					className={`-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap`}

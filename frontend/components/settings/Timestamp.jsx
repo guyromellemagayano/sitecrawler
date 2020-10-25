@@ -176,7 +176,7 @@ const TimestampSettings = () => {
 								</div>
 							</div>
 						</div>
-						<div className={`mt-8 border-t border-gray-200 pt-5`}>
+						<div className={`mt-8 border-t border-gray-300 pt-5`}>
 							<div className={`flex justify-between`}>
 								<div className={`flex justify-start`}>
 									{errorMsg && (

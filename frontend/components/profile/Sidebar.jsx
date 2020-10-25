@@ -52,7 +52,7 @@ const Sidebar = () => {
 			{userError && <Layout>Failed to load.</Layout>}
 
 			{!userLoaded ? (
-				<SidebarDiv className={`flex-shrink-0 flex flex-col border-gray-200`}>
+				<SidebarDiv className={`flex-shrink-0 flex flex-col border-gray-300`}>
 					<span
 						className={`flex justify-between items-center my-1 group px-3 py-2`}
 					>
@@ -175,7 +175,7 @@ const Sidebar = () => {
 										) : null}
 									</span>
 								</div>
-								<div className={`border-t border-gray-100`}></div>
+								<div className={`border-t border-gray-300`}></div>
 								<div className={`py-1`}>
 									{SidebarPages.filter((page) => page.slug !== 'logout').map(
 										(val, key) => {
@@ -192,7 +192,7 @@ const Sidebar = () => {
 										}
 									)}
 								</div>
-								<div className={`border-t border-gray-100`}></div>
+								<div className={`border-t border-gray-300`}></div>
 								<div className={`py-1`}>
 									{SidebarPages.filter((page) => page.slug === 'logout').map(
 										(val, key) => {
