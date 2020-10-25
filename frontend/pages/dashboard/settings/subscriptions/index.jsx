@@ -3,12 +3,11 @@ import { useState, useEffect, Fragment } from 'react';
 import Cookies from 'js-cookie';
 import Head from 'next/head';
 import Layout from 'components/Layout';
+import Link from 'next/link';
 import MainSidebar from 'components/sidebar/MainSidebar';
 import MobileSidebar from 'components/sidebar/MobileSidebar';
-import PaymentMethodForm from 'components/form/PaymentMethodForm';
 import PropTypes from 'prop-types';
 import SiteFooter from 'components/footer/SiteFooter';
-import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import SubscriptionLabels from 'public/label/pages/subscriptions.json';
 import useSWR, { mutate } from 'swr';
@@ -37,6 +36,7 @@ const fetcher = async (url) => {
 
 const Subscriptions = () => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+	const [paymentMethod, setPaymentMethod] = useState(undefined);
 	const [togglePaymentPeriod, setTogglePaymentPeriod] = useState(false);
 	const pageTitle = 'Subscriptions';
 
@@ -44,6 +44,14 @@ const Subscriptions = () => {
 		redirectTo: '/',
 		redirectIfFound: false
 	});
+
+	const { data: paymentMethods, error: paymentMethodsError } = useSWR(
+		() => `/api/stripe/payment-method/default`,
+		fetcher,
+		{
+			refreshInterval: 1000
+		}
+	);
 
 	const { data: subscriptions, error: subscriptionsError } = useSWR(
 		() => `/api/stripe/subscription/`,
@@ -93,7 +101,9 @@ const Subscriptions = () => {
 
 		setTimeout(() => {
 			// console.log("[subscriptionUpdated]");
-			subscriptionUpdated();
+			subscriptionUpdated().then((info) => {
+				console.log(info);
+			});
 		}, 1000);
 	};
 
@@ -112,12 +122,17 @@ const Subscriptions = () => {
 	};
 
 	useEffect(() => {
+		if (paymentMethods && paymentMethods.id === null) {
+			setPaymentMethod(false);
+		} else {
+			setPaymentMethod(true);
+		}
 		if (handleCurrentPaymentPeriod(subscription, subscriptions) > 1) {
 			setTogglePaymentPeriod(true);
 		} else {
 			setTogglePaymentPeriod(false);
 		}
-	}, [subscription, subscriptions]);
+	}, [paymentMethods, subscription, subscriptions]);
 
 	{
 		userError && <Layout>{userError.message}</Layout>;
@@ -127,6 +142,9 @@ const Subscriptions = () => {
 	}
 	{
 		subscriptionError && <Layout>{subscriptionError.message}</Layout>;
+	}
+	{
+		paymentMethodsError && <Layout>{paymentMethodsError.message}</Layout>;
 	}
 
 	return (
@@ -176,6 +194,49 @@ const Subscriptions = () => {
 							>
 								<div className={`max-w-full px-4 py-4 sm:px-6 md:px-8`}>
 									<div>
+										{!paymentMethod && (
+											<div
+												className={`flex w-full items-center justify-center`}
+											>
+												<div className={`w-auto rounded-md bg-red-200 p-4`}>
+													<div className={`flex`}>
+														<div className={`flex-shrink-0`}>
+															<svg
+																className={`h-5 w-5 text-red-400`}
+																xmlns='http://www.w3.org/2000/svg'
+																viewBox='0 0 20 20'
+																fill='currentColor'
+															>
+																<path
+																	fillRule='evenodd'
+																	d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+																	clipRule='evenodd'
+																/>
+															</svg>
+														</div>
+														<div
+															className={`ml-3 flex-1 md:flex md:justify-between`}
+														>
+															<p className={`text-sm leading-5 text-red-700`}>
+																{SubscriptionLabels[11].label}
+															</p>
+															<p
+																className={`mt-3 text-sm leading-5 md:mt-0 md:ml-12`}
+															>
+																<Link href='/dashboard/settings/profile'>
+																	<a
+																		className={`whitespace-no-wrap font-medium text-red-700 hover:text-red-600 transition ease-in-out duration-150`}
+																	>
+																		{SubscriptionLabels[12].label} &rarr;
+																	</a>
+																</Link>
+															</p>
+														</div>
+													</div>
+												</div>
+											</div>
+										)}
+
 										<div
 											className={`flex items-center flex-col flex-wrap pt-12 px-4 sm:px-6 lg:px-8 lg:pt-20`}
 										>
@@ -224,6 +285,12 @@ const Subscriptions = () => {
 													className={`text-md leading-7 font-medium text-gray-500 mx-4`}
 												>
 													{SubscriptionLabels[2].label}
+												</p>
+											</div>
+
+											<div className={`mt-10 mb-2`}>
+												<p className={`text-center text-red-400`}>
+													* credit/debit card required.
 												</p>
 											</div>
 										</div>
@@ -398,6 +465,11 @@ const Subscriptions = () => {
 																								{val.group.name === 'Pro2'
 																									? 'Pro'
 																									: val.group.name}
+																								<span
+																									className={`text-red-400`}
+																								>
+																									*
+																								</span>
 																							</h3>
 																							<div
 																								className={`mt-4 flex items-center justify-center`}
@@ -479,7 +551,16 @@ const Subscriptions = () => {
 																								) : (
 																									<button
 																										type='button'
-																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
+																											!paymentMethod
+																												? 'opacity-50 cursor-not-allowed'
+																												: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
+																										}`}
+																										disabled={
+																											!paymentMethod
+																												? 'disabled'
+																												: ''
+																										}
 																										onClick={() =>
 																											selectPlan(
 																												val.id,
@@ -519,6 +600,11 @@ const Subscriptions = () => {
 																									{val.group.name === 'Agency2'
 																										? 'Agency'
 																										: val.group.name}
+																									<span
+																										className={`text-red-400`}
+																									>
+																										*
+																									</span>
 																								</h3>
 																								<div
 																									className={`mt-4 flex items-center justify-center`}
@@ -604,7 +690,16 @@ const Subscriptions = () => {
 																										</button>
 																									) : (
 																										<button
-																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
+																												!paymentMethod
+																													? 'opacity-50 cursor-not-allowed'
+																													: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
+																											}`}
+																											disabled={
+																												!paymentMethod
+																													? 'disabled'
+																													: ''
+																											}
 																											onClick={() =>
 																												setTimeout(
 																													() =>
@@ -669,6 +764,11 @@ const Subscriptions = () => {
 																								className={`text-center text-3xl leading-9 font-semibold text-gray-900 sm:-mx-6" id="tier-growth`}
 																							>
 																								{val.group.name}
+																								<span
+																									className={`text-red-400`}
+																								>
+																									*
+																								</span>
 																							</h3>
 																							<div
 																								className={`mt-4 flex items-center justify-center`}
@@ -750,7 +850,16 @@ const Subscriptions = () => {
 																								) : (
 																									<button
 																										type='button'
-																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-xl leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
+																											!paymentMethod
+																												? 'opacity-50 cursor-not-allowed'
+																												: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
+																										}`}
+																										disabled={
+																											!paymentMethod
+																												? 'disabled'
+																												: ''
+																										}
 																										onClick={() =>
 																											selectPlan(
 																												val.id,
@@ -788,6 +897,11 @@ const Subscriptions = () => {
 																									className={`text-center text-2xl leading-8 font-medium text-gray-900" id="tier-scale`}
 																								>
 																									{val.group.name}
+																									<span
+																										className={`text-red-400`}
+																									>
+																										*
+																									</span>
 																								</h3>
 																								<div
 																									className={`mt-4 flex items-center justify-center`}
@@ -873,7 +987,16 @@ const Subscriptions = () => {
 																										</button>
 																									) : (
 																										<button
-																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
+																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
+																												!paymentMethod
+																													? 'opacity-50 cursor-not-allowed'
+																													: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
+																											}`}
+																											disabled={
+																												!paymentMethod
+																													? 'disabled'
+																													: ''
+																											}
 																											onClick={() =>
 																												setTimeout(
 																													() =>

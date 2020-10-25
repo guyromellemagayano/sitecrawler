@@ -59,19 +59,10 @@ const PaymentMethodForm = (props) => {
 			body: JSON.stringify({ id: payload.paymentMethod.id })
 		});
 
-		// await fetch('/api/stripe/subscription/current/', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Accept': 'application/json',
-		// 		'Content-Type': 'application/json',
-		// 		'X-CSRFToken': Cookies.get('csrftoken')
-		// 	},
-		// 	body: JSON.stringify({ id: props.subscriptionId })
-		// });
-
 		const data = await response.json();
 
 		if (response.ok && response.status === 200) {
+			console.log(data);
 			if (data) {
 				props.closeForm();
 				props.disableInputFields();
