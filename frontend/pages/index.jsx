@@ -1,18 +1,18 @@
-import { Fragment, useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
-import Router from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
-import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import PropTypes from 'prop-types';
-import useUser from 'hooks/useUser';
-import Layout from 'components/Layout';
-import LogoLabel from 'components/form/LogoLabel';
+import { Fragment, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import SiteHead from 'components/layout/SiteHead';
 import AppLogo from 'components/logo/AppLogo';
+import Cookies from 'js-cookie';
+import Head from 'next/head';
+import Layout from 'components/Layout';
+import Link from 'next/link';
+import LoginLabel from 'public/label/pages/login.json';
+import LogoLabel from 'components/form/LogoLabel';
+import PropTypes from 'prop-types';
+import ReactHtmlParser from 'react-html-parser';
 import SiteFooter from 'components/footer/SiteFooter';
+import styled from 'styled-components';
+import useUser from 'hooks/useUser';
 
 const LoginDiv = styled.div``;
 
@@ -106,10 +106,9 @@ const Login = () => {
 		<Layout>
 			<Head>
 				<title>{pageTitle}</title>
-				{/* <SiteHead /> */}
 			</Head>
 
-			<LoginDiv className={`bg-gray-100 min-h-screen`}>
+			<LoginDiv className={`bg-gray-300 min-h-screen`}>
 				<div className={`relative overflow-auto`}>
 					<div className={`relative pt-6 pb-12 md:pb-6`}>
 						<main className={`mt-8 sm:mt-16 md:mt-20 lg:mt-24`}>
@@ -127,17 +126,20 @@ const Login = () => {
 											<h4
 												className={`mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none text-4xl`}
 											>
-												Find website issues before your clients do.
+												{LoginLabel[0].label}{' '}
+												<span className={`text-red-600`}>
+													{LoginLabel[1].label}
+												</span>
 												<br className={`hidden md:inline`} />
 											</h4>
-											<span className={`inline-flex rounded-md shadow-sm mt-6`}>
+											{/* <span className={`inline-flex rounded-md shadow-sm mt-6`}>
 												<button
 													type='button'
 													className={`inline-flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
 												>
-													Try for free
+													{LoginLabel[1].label}
 												</button>
-											</span>
+											</span> */}
 										</div>
 									</div>
 									<div className={`mt-12 sm:mt-16 lg:mt-0 lg:col-span-5`}>
@@ -200,7 +202,7 @@ const Login = () => {
 											{!disableLoginForm && (
 												<Fragment>
 													<div
-														className={`bg-white py-8 px-4 rounded-lg sm:px-10 shadow-xl border border-gray-200`}
+														className={`bg-white py-8 px-4 rounded-lg sm:px-10 shadow-xl border border-gray-300`}
 													>
 														<form onSubmit={handleSubmit}>
 															<div className={`mt-1`}>
@@ -208,7 +210,7 @@ const Login = () => {
 																	htmlFor={`username`}
 																	className={`block text-sm font-medium leading-5 text-gray-700`}
 																>
-																	Username/Email
+																	{LoginLabel[2].label}
 																</label>
 																<div className={`mt-1 rounded-md shadow-xs-sm`}>
 																	<input
@@ -238,7 +240,7 @@ const Login = () => {
 																	htmlFor={`password`}
 																	className={`block text-sm font-medium leading-5 text-gray-700`}
 																>
-																	Password
+																	{LoginLabel[3].label}
 																</label>
 																<div className={`mt-1 rounded-md shadow-xs-sm`}>
 																	<input
@@ -276,7 +278,7 @@ const Login = () => {
 																		htmlFor={`remember_me`}
 																		className={`ml-2 block text-sm leading-5 text-gray-900`}
 																	>
-																		Remember me
+																		{LoginLabel[4].label}
 																	</label>
 																</div>
 
@@ -285,7 +287,7 @@ const Login = () => {
 																		<a
 																			className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
 																		>
-																			Forgot your password?
+																			{LoginLabel[5].label}
 																		</a>
 																	</Link>
 																</div>
@@ -299,7 +301,7 @@ const Login = () => {
 																		type={`submit`}
 																		className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
 																	>
-																		Sign In
+																		{LoginLabel[6].label}
 																	</button>
 																</span>
 															</div>
@@ -320,7 +322,7 @@ const Login = () => {
 																	<span
 																		className={`px-2 bg-white text-gray-600`}
 																	>
-																		Or continue with
+																		{LoginLabel[7].label}
 																	</span>
 																</div>
 															</div>
@@ -391,12 +393,12 @@ const Login = () => {
 														className={`relative flex justify-center wrap flex-row text-sm leading-5`}
 													>
 														<span className={`px-2 py-5 text-gray-600`}>
-															Don't have an account?&nbsp;
+															{ReactHtmlParser(LoginLabel[8].label)}
 															<Link href='/registration'>
 																<a
 																	className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
 																>
-																	Create Account
+																	{LoginLabel[9].label}
 																</a>
 															</Link>
 														</span>
@@ -422,7 +424,16 @@ const Login = () => {
 export default Login;
 
 Login.propTypes = {
+	query: PropTypes.func,
 	errorMsg: PropTypes.string,
 	successMsg: PropTypes.string,
+	username: PropTypes.string,
+	password: PropTypes.string,
+	errorUsernameMsg: PropTypes.string,
+	errorPasswordMsg: PropTypes.string,
+	disableLoginForm: PropTypes.bool,
+	redirectTo: PropTypes.func,
+	pageTitle: PropTypes.string,
+	mutateUser: PropTypes.func,
 	handleSubmit: PropTypes.func
 };
