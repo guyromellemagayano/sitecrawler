@@ -62,7 +62,6 @@ const PaymentMethodForm = (props) => {
 		const data = await response.json();
 
 		if (response.ok && response.status === 200) {
-			console.log(data);
 			if (data) {
 				props.closeForm();
 				props.disableInputFields();
