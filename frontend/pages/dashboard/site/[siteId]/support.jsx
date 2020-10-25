@@ -276,7 +276,7 @@ const Support = () => {
 													</div>
 													<div className={`mt-6 sm:mt-5`}>
 														<div
-															className={`mt-6 sm:mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5`}
+															className={`mt-6 sm:mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-300 sm:pt-5`}
 														>
 															<label
 																htmlFor='about'
@@ -322,7 +322,7 @@ const Support = () => {
 															</div>
 														</div>
 													</div>
-													<div className={`mt-8 border-t border-gray-200 pt-5`}>
+													<div className={`mt-8 border-t border-gray-300 pt-5`}>
 														<div className={`flex justify-end`}>
 															<span
 																className={`ml-3 inline-flex rounded-md shadow-sm`}

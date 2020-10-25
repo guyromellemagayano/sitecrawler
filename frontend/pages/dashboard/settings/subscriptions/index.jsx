@@ -280,7 +280,7 @@ const Subscriptions = () => {
 																					</div>
 																				</div>
 																				<div
-																					className={`flex-1 flex flex-col justify-between border-t-2 border-gray-100 p-6 bg-white sm:p-10 lg:p-6 xl:p-10`}
+																					className={`flex-1 flex flex-col justify-between border-t-2 border-gray-300 p-6 bg-white sm:p-10 lg:p-6 xl:p-10`}
 																				>
 																					<ul>
 																						{val.features.map((val2, key) => {
@@ -424,7 +424,7 @@ const Subscriptions = () => {
 																						</div>
 																					</div>
 																					<div
-																						className={`border-t-2 border-gray-100 rounded-b-lg pt-10 pb-8 px-6 bg-white sm:px-10 sm:py-10`}
+																						className={`border-t-2 border-gray-300 rounded-b-lg pt-10 pb-8 px-6 bg-white sm:px-10 sm:py-10`}
 																					>
 																						<ul>
 																							{val.features.map((val2, key) => {
@@ -547,7 +547,7 @@ const Subscriptions = () => {
 																							</div>
 																						</div>
 																						<div
-																							className={`flex-1 flex flex-col justify-between border-t-2 border-gray-100 p-6 bg-white sm:p-10 lg:p-6 xl:p-10`}
+																							className={`flex-1 flex flex-col justify-between border-t-2 border-gray-300 p-6 bg-white sm:p-10 lg:p-6 xl:p-10`}
 																						>
 																							<ul>
 																								{val.features.map(
@@ -695,7 +695,7 @@ const Subscriptions = () => {
 																						</div>
 																					</div>
 																					<div
-																						className={`border-t-2 border-gray-100 rounded-b-lg pt-10 pb-8 px-6 bg-white sm:px-10 sm:py-10`}
+																						className={`border-t-2 border-gray-300 rounded-b-lg pt-10 pb-8 px-6 bg-white sm:px-10 sm:py-10`}
 																					>
 																						<ul>
 																							{val.features.map((val2, key) => {
@@ -816,7 +816,7 @@ const Subscriptions = () => {
 																							</div>
 																						</div>
 																						<div
-																							className={`flex-1 flex flex-col justify-between border-t-2 border-gray-100 p-6 bg-white sm:p-10 lg:p-6 xl:p-10`}
+																							className={`flex-1 flex flex-col justify-between border-t-2 border-gray-300 p-6 bg-white sm:p-10 lg:p-6 xl:p-10`}
 																						>
 																							<ul>
 																								{val.features.map(

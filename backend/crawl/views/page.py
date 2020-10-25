@@ -27,12 +27,15 @@ class PageFilter(filters.FilterSet):
     num_non_ok_links = filters.RangeFilter(label="Number of non-OK Links")
     num_images = filters.RangeFilter(label="Number of Images")
     num_non_ok_images = filters.RangeFilter(label="Number of non-OK Images")
+    num_tls_images = filters.RangeFilter(label="Number of TLS Images")
     num_non_tls_images = filters.RangeFilter(label="Number of non-TLS Images")
     num_scripts = filters.RangeFilter(label="Number of Scripts")
     num_non_ok_scripts = filters.RangeFilter(label="Number of non-OK Scripts")
+    num_tls_scripts = filters.RangeFilter(label="Number of TLS Scripts")
     num_non_tls_scripts = filters.RangeFilter(label="Number of non-TLS Scripts")
     num_stylesheets = filters.RangeFilter(label="Number of Stylesheets")
     num_non_ok_stylesheets = filters.RangeFilter(label="Number of non-OK Stylesheets")
+    num_tls_stylesheets = filters.RangeFilter(label="Number of TLS Stylesheets")
     num_non_tls_stylesheets = filters.RangeFilter(label="Number of non-TLS Stylesheets")
     size_images = filters.RangeFilter(label="Size of Images")
     size_scripts = filters.RangeFilter(label="Size of Scripts")
@@ -75,12 +78,15 @@ class PageViewSet(
         "num_non_ok_links",
         "num_images",
         "num_non_ok_images",
+        "num_tls_images",
         "num_non_tls_images",
         "num_scripts",
         "num_non_ok_scripts",
+        "num_tls_scripts",
         "num_non_tls_scripts",
         "num_stylesheets",
         "num_non_ok_stylesheets",
+        "num_tls_stylesheets",
         "num_non_tls_stylesheets",
         "size_images",
         "size_scripts",

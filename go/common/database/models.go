@@ -54,7 +54,7 @@ var Columns = struct {
 		Group string
 	}
 	CrawlLink struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal string
 
 		Scan, Tls string
 	}
@@ -274,7 +274,7 @@ var Columns = struct {
 		Group: "Group",
 	},
 	CrawlLink: struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal string
 
 		Scan, Tls string
 	}{
@@ -300,6 +300,10 @@ var Columns = struct {
 		CachedTlsScripts:           "cached_tls_scripts",
 		CachedTlsStylesheets:       "cached_tls_stylesheets",
 		CachedTlsTotal:             "cached_tls_total",
+		CachedSizeImages:           "cached_size_images",
+		CachedSizeScripts:          "cached_size_scripts",
+		CachedSizeStylesheets:      "cached_size_stylesheets",
+		CachedSizeTotal:            "cached_size_total",
 
 		Scan: "Scan",
 		Tls:  "Tls",
@@ -1006,6 +1010,10 @@ type CrawlLink struct {
 	CachedTlsScripts           *bool     `sql:"cached_tls_scripts"`
 	CachedTlsStylesheets       *bool     `sql:"cached_tls_stylesheets"`
 	CachedTlsTotal             *bool     `sql:"cached_tls_total"`
+	CachedSizeImages           *int      `sql:"cached_size_images"`
+	CachedSizeScripts          *int      `sql:"cached_size_scripts"`
+	CachedSizeStylesheets      *int      `sql:"cached_size_stylesheets"`
+	CachedSizeTotal            *int      `sql:"cached_size_total"`
 
 	Scan *CrawlScan `pg:"fk:scan_id"`
 	Tls  *CrawlTl   `pg:"fk:tls_id"`

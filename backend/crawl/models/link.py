@@ -25,14 +25,11 @@ class SubQuerySizeSum(Subquery):
 
 class LinkQuerySet(QuerySet):
     def annotate_size(self):
-        images = Link.objects.filter(image_pages__id=OuterRef("pk"))
-        scripts = Link.objects.filter(script_pages__id=OuterRef("pk"))
-        stylesheets = Link.objects.filter(stylesheet_pages__id=OuterRef("pk"))
         return (
-            self.annotate(size_images=SubQuerySizeSum(images))
-            .annotate(size_scripts=SubQuerySizeSum(scripts))
-            .annotate(size_stylesheets=SubQuerySizeSum(stylesheets))
-            .annotate(size_total=F("size_images") + F("size_scripts") + F("size_stylesheets") + F("size"))
+            self.annotate(size_images=F("cached_size_images"))
+            .annotate(size_scripts=F("cached_size_scripts"))
+            .annotate(size_stylesheets=F("cached_size_stylesheets"))
+            .annotate(size_total=F("cached_size_total"))
         )
 
     def annotate_tls(self):
@@ -161,6 +158,11 @@ class Link(models.Model):
     cached_tls_scripts = models.BooleanField(null=True, blank=True)
 
     cached_tls_total = models.BooleanField(null=True, blank=True)
+
+    cached_size_images = models.PositiveIntegerField(null=True, blank=True)
+    cached_size_scripts = models.PositiveIntegerField(null=True, blank=True)
+    cached_size_stylesheets = models.PositiveIntegerField(null=True, blank=True)
+    cached_size_total = models.PositiveIntegerField(null=True, blank=True)
 
     def get_pages(self):
         return self.pages.all().union(self.image_pages.all(), self.script_pages.all(), self.stylesheet_pages.all())
