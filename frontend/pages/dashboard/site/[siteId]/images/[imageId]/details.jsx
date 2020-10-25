@@ -331,7 +331,7 @@ const ImagesDetail = () => {
 													</dd>
 												</div>
 												<div
-													className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+													className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-300 sm:px-6 sm:py-5`}
 												>
 													<dt
 														className={`text-sm leading-5 font-medium text-gray-500`}
@@ -351,7 +351,7 @@ const ImagesDetail = () => {
 													</dd>
 												</div>
 												<div
-													className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+													className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-300 sm:px-6 sm:py-5`}
 												>
 													<dt
 														className={`text-sm leading-5 font-medium text-gray-500`}
@@ -375,7 +375,7 @@ const ImagesDetail = () => {
 												{imageLocation.error !== null &&
 												imageLocation.error !== undefined ? (
 													<div
-														className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+														className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-300 sm:px-6 sm:py-5`}
 													>
 														<dt
 															className={`text-sm leading-5 font-medium text-gray-500`}
@@ -392,7 +392,7 @@ const ImagesDetail = () => {
 											</dl>
 										</div>
 										<div
-											className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+											className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-300 sm:px-6 sm:py-5`}
 										>
 											<dt
 												className={`text-sm leading-5 font-medium text-gray-500`}
@@ -415,7 +415,7 @@ const ImagesDetail = () => {
 											</dd>
 										</div>
 										<div
-											className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-200 sm:px-6 sm:py-5`}
+											className={`mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:border-t sm:border-gray-300 sm:px-6 sm:py-5`}
 										>
 											<dt
 												className={`text-sm leading-5 font-medium text-gray-500`}
@@ -425,12 +425,12 @@ const ImagesDetail = () => {
 											<dd
 												className={`mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2`}
 											>
-												<ul className={`border border-gray-200 rounded-md`}>
+												<ul className={`border border-gray-300 rounded-md`}>
 													{imageLocation.pages.map((val, key) => {
 														return (
 															<li
 																key={key}
-																className={`border-b border-gray-200 pl-3 pr-4 py-3 flex items-center justify-between text-sm leading-5`}
+																className={`border-b border-gray-300 pl-3 pr-4 py-3 flex items-center justify-between text-sm leading-5`}
 															>
 																<div className={`w-0 flex-1 flex items-center`}>
 																	<svg

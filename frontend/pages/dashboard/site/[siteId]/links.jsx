@@ -675,7 +675,7 @@ const Links = (props) => {
 												className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
 											>
 												<div
-													className={`align-middle inline-block min-w-full shadow-xs overflow-hidden rounded-lg border-gray-200`}
+													className={`align-middle inline-block min-w-full shadow-xs overflow-hidden rounded-lg border-gray-300`}
 												>
 													<table className={`min-w-full`}>
 														<thead>
@@ -684,7 +684,7 @@ const Links = (props) => {
 																	return (
 																		<Fragment key={key}>
 																			<th
-																				className={`px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
+																				className={`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
 																			>
 																				<div
 																					className={`flex items-center justify-start`}

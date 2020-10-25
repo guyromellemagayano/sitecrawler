@@ -287,7 +287,7 @@ const ProfileSettingsPersonal = () => {
 											</div>
 										</div>
 									</div>
-									<div className={`mt-8 border-t border-gray-200`}>
+									<div className={`mt-8 border-t border-gray-300`}>
 										<div
 											className={`grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
 										>
@@ -357,7 +357,7 @@ const ProfileSettingsPersonal = () => {
 										</div>
 									</div>
 								</div>
-								<div className={`mt-8 border-t border-gray-200 pt-5`}>
+								<div className={`mt-8 border-t border-gray-300 pt-5`}>
 									<div
 										className={`flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row`}
 									>
