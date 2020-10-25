@@ -33,5 +33,11 @@
 	},
 	{
 		"label": "Cancel"
+	},
+	{
+		"label": "You haven't added a credit card/debit card yet."
+	},
+	{
+		"label": "Go to Payment Method"
 	}
 ]
