@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 // import dynamic from 'next/dynamic';
-import { SWRConfig } from 'swr';
+import useSWR, { SWRConfig } from 'swr';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-import fetchJson from 'hooks/fetchJson';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
+import Cookies from 'js-cookie';
+import fetch from 'node-fetch';
+import fetchJson from 'hooks/fetchJson';
 
 import 'css/styles.css';
 import 'nprogress/nprogress.css';
@@ -19,8 +21,42 @@ library.add(fab);
 // 	{ ssr: false }
 // );
 
+const fetcher = async (url) => {
+	const res = await fetch(url, {
+		method: 'GET',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json',
+			'X-CSRFToken': Cookies.get('csrftoken')
+		}
+	});
+
+	const data = await res.json();
+
+	if (res.status !== 200) {
+		throw new Error(data.message);
+	}
+
+	return data;
+};
+
 const App = ({ Component, pageProps }) => {
-	const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY);
+	const [stripeKey, getStripeKey] = useState(undefined);
+
+	const { data: stripeConfig, error: stripeConfigError } = useSWR(
+		() => `/api/stripe/config/`,
+		fetcher
+	);
+
+	{
+		stripeConfigError && <Layout>{stripeConfigError.message}</Layout>;
+	}
+
+	useEffect(() => {
+		if (stripeConfig && stripeConfig !== undefined) {
+			getStripeKey(stripeConfig);
+		}
+	}, [stripeConfig]);
 
 	useEffect(() => {
 		'use strict';
@@ -54,10 +90,6 @@ const App = ({ Component, pageProps }) => {
 		})(window, document, window.Beacon || function () {});
 
 		window.Beacon('init', '94d0425a-cb40-4582-909a-2175532bbfa9');
-	}, []);
-
-	useEffect(() => {
-		'use strict';
 
 		// Usetiful
 		(function (w, d, s) {
@@ -79,7 +111,7 @@ const App = ({ Component, pageProps }) => {
 			}}
 		>
 			{/* <TopProgressBar /> */}
-			<Elements stripe={stripePromise}>
+			<Elements stripe={loadStripe(stripeKey?.publishable_key)}>
 				<Component {...pageProps} />
 			</Elements>
 		</SWRConfig>
