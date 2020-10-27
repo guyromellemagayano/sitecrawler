@@ -10,10 +10,10 @@ class ScanQuerySet(QuerySet):
     def details(self):
         pages = Link.objects.filter(type=Link.TYPE_PAGE, scan_id=OuterRef("pk"))
         external_links = Link.objects.filter(type=Link.TYPE_EXTERNAL, scan_id=OuterRef("pk"))
-        links = Link.objects.filter(pages__scan_id=OuterRef("pk"))
-        images = Link.objects.filter(image_pages__scan_id=OuterRef("pk"))
-        scripts = Link.objects.filter(script_pages__scan_id=OuterRef("pk"))
-        stylesheets = Link.objects.filter(stylesheet_pages__scan_id=OuterRef("pk"))
+        links = Link.objects.filter(scan_id=OuterRef("pk"), pages__isnull=False)
+        images = Link.objects.filter(scan_id=OuterRef("pk"), image_pages__isnull=False)
+        scripts = Link.objects.filter(scan_id=OuterRef("pk"), script_pages__isnull=False)
+        stylesheets = Link.objects.filter(scan_id=OuterRef("pk"), stylesheet_pages__isnull=False)
         seo_ok_pages = pages.exclude(
             Q(pagedata__title="") | Q(pagedata__description="") | Q(pagedata__h1_first="") | Q(pagedata__h2_first="")
         )
