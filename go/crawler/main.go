@@ -35,6 +35,7 @@ func main() {
 		Postprocessors: []Postprocessor{
 			&common.TlsPostprocessor{Database: db},
 			&common.SizePostprocessor{Database: db},
+			&common.IsTypePostprocessor{Database: db},
 		},
 	}
 	backendService := &BackendService{Token: common.Env("BACKEND_TOKEN", "")}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
@@ -11,8 +12,8 @@ import (
 )
 
 const (
-	lastScanToProcess = 117
-	ignoreScan        = -1 // in progress on prod
+	lastScanToProcess = 121
+	ignoreScan        = 0 // in progress on prod
 	firstSiteToProces = 0
 )
 
@@ -25,7 +26,7 @@ func main() {
 	db := common.ConfigureDatabase(log, env)
 	defer db.Close()
 
-	postprocessor := &common.SizePostprocessor{Database: db}
+	postprocessor := &common.IsTypePostprocessor{Database: db}
 
 	err := db.SiteDao.AllForEach(func(site *database.CrawlSite) error {
 		if site.ID < firstSiteToProces {
@@ -86,7 +87,7 @@ func main() {
 			}
 			log.Infof("Verifying site: %v, scan: %v", site.ID, scan.ID)
 			err = db.LinkDao.AllForScanForEach(scan.ID, func(l *database.CrawlLink) error {
-				return VerifySize(site, scan, l)
+				return VerifyIsType(site, scan, l)
 			})
 			if err != nil {
 				return err
@@ -150,33 +151,78 @@ func main() {
 //     return nil
 // }
 
-func VerifySize(site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
-	if link.Type != common.TYPE_PAGE {
-		if link.CachedSizeImages != nil ||
-			link.CachedSizeScripts != nil ||
-			link.CachedSizeStylesheets != nil ||
-			link.CachedSizeTotal != nil {
-			return fmt.Errorf("invalid non page: %v, %v, %v", site.ID, scan.ID, link.ID)
+// func VerifySize(site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
+//     if link.Type != common.TYPE_PAGE {
+//         if link.CachedSizeImages != nil ||
+//             link.CachedSizeScripts != nil ||
+//             link.CachedSizeStylesheets != nil ||
+//             link.CachedSizeTotal != nil {
+//             return fmt.Errorf("invalid non page: %v, %v, %v", site.ID, scan.ID, link.ID)
+//         }
+//         return nil
+//     }
+//
+//     data := struct {
+//         SizeImages      int `json:"size_images"`
+//         SizeScripts     int `json:"size_scripts"`
+//         SizeStylesheets int `json:"size_stylesheets"`
+//         SizeTotal       int `json:"size_total"`
+//     }{}
+//     path := fmt.Sprintf("site/%v/scan/%v/page/%v/", site.ID, scan.ID, link.ID)
+//     if err := backendRequest(path, &data); err != nil {
+//         return err
+//     }
+//
+//     if *link.CachedSizeImages != data.SizeImages ||
+//         *link.CachedSizeScripts != data.SizeScripts ||
+//         *link.CachedSizeStylesheets != data.SizeStylesheets ||
+//         *link.CachedSizeTotal != data.SizeTotal {
+//         return fmt.Errorf("invalid page: %v, %v, %v", site.ID, scan.ID, link.ID)
+//     }
+//
+//     return nil
+// }
+
+func VerifyIsType(site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
+	var isLink, isImage, isScript, isStylesheet bool
+	isLinkPath := fmt.Sprintf("site/%v/scan/%v/link/%v/", site.ID, scan.ID, link.ID)
+	if err := backendRequest(isLinkPath, nil); err != nil {
+		if !strings.HasSuffix(err.Error(), "404 Not Found") {
+			return err
 		}
-		return nil
+	} else {
+		isLink = true
+	}
+	isImagePath := fmt.Sprintf("site/%v/scan/%v/image/%v/", site.ID, scan.ID, link.ID)
+	if err := backendRequest(isImagePath, nil); err != nil {
+		if !strings.HasSuffix(err.Error(), "404 Not Found") {
+			return err
+		}
+	} else {
+		isImage = true
+	}
+	isScriptPath := fmt.Sprintf("site/%v/scan/%v/script/%v/", site.ID, scan.ID, link.ID)
+	if err := backendRequest(isScriptPath, nil); err != nil {
+		if !strings.HasSuffix(err.Error(), "404 Not Found") {
+			return err
+		}
+	} else {
+		isScript = true
+	}
+	isStylesheetPath := fmt.Sprintf("site/%v/scan/%v/stylesheet/%v/", site.ID, scan.ID, link.ID)
+	if err := backendRequest(isStylesheetPath, nil); err != nil {
+		if !strings.HasSuffix(err.Error(), "404 Not Found") {
+			return err
+		}
+	} else {
+		isStylesheet = true
 	}
 
-	data := struct {
-		SizeImages      int `json:"size_images"`
-		SizeScripts     int `json:"size_scripts"`
-		SizeStylesheets int `json:"size_stylesheets"`
-		SizeTotal       int `json:"size_total"`
-	}{}
-	path := fmt.Sprintf("site/%v/scan/%v/page/%v/", site.ID, scan.ID, link.ID)
-	if err := backendRequest(path, &data); err != nil {
-		return err
-	}
-
-	if *link.CachedSizeImages != data.SizeImages ||
-		*link.CachedSizeScripts != data.SizeScripts ||
-		*link.CachedSizeStylesheets != data.SizeStylesheets ||
-		*link.CachedSizeTotal != data.SizeTotal {
-		return fmt.Errorf("invalid page: %v, %v, %v", site.ID, scan.ID, link.ID)
+	if link.CachedIsLink != isLink ||
+		link.CachedIsImage != isImage ||
+		link.CachedIsScript != isScript ||
+		link.CachedIsStylesheet != isStylesheet {
+		return fmt.Errorf("invalid: %v, %v, %v", site.ID, scan.ID, link.ID)
 	}
 
 	return nil
@@ -198,9 +244,11 @@ func backendRequest(path string, result interface{}) error {
 		return fmt.Errorf("non-200 for %v: %v", url, resp.Status)
 	}
 
-	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(result); err != nil {
-		return err
+	if result != nil {
+		decoder := json.NewDecoder(resp.Body)
+		if err := decoder.Decode(result); err != nil {
+			return err
+		}
 	}
 
 	return nil
