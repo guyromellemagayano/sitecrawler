@@ -67,22 +67,16 @@ class LinkQuerySet(QuerySet):
         )
 
     def links(self):
-        return self.filter(pages__id__isnull=False).annotate(occurences=Count("pages")).order_by("-status")
+        return self.filter(cached_is_link=True).annotate(occurences=Count("pages")).order_by("-status")
 
     def images(self):
-        return self.filter(image_pages__id__isnull=False).annotate(occurences=Count("image_pages")).order_by("-status")
+        return self.filter(cached_is_image=True).annotate(occurences=Count("image_pages")).order_by("-status")
 
     def scripts(self):
-        return (
-            self.filter(script_pages__id__isnull=False).annotate(occurences=Count("script_pages")).order_by("-status")
-        )
+        return self.filter(cached_is_script=True).annotate(occurences=Count("script_pages")).order_by("-status")
 
     def stylesheets(self):
-        return (
-            self.filter(stylesheet_pages__id__isnull=False)
-            .annotate(occurences=Count("stylesheet_pages"))
-            .order_by("-status")
-        )
+        return self.filter(cached_is_stylesheet=True).annotate(occurences=Count("stylesheet_pages")).order_by("-status")
 
 
 class Link(models.Model):
