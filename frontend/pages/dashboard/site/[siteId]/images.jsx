@@ -164,10 +164,7 @@ const Images = (props) => {
 
 	const { data: image, error: imageError, mutate: updateImages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
-		fetcher,
-		{
-			refreshInterval: 50000
-		}
+		fetcher
 	);
 
 	const searchEventHandler = async (e) => {

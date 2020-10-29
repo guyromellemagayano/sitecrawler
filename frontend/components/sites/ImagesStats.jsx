@@ -109,10 +109,7 @@ const SitesImagesStats = (props) => {
 			props.url.siteId
 				? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	let scanObjId = '';
@@ -137,10 +134,7 @@ const SitesImagesStats = (props) => {
 			props.url.siteId && scanObjId
 				? `/api/site/${props.url.siteId}/scan/${scanObjId}/`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	const { data: images, error: imagesError } = useSWR(
@@ -148,10 +142,7 @@ const SitesImagesStats = (props) => {
 			props.url.siteId && scanObjId
 				? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	const legendClickHandler = (label) => {

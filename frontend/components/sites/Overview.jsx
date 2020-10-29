@@ -52,10 +52,7 @@ const SitesOverview = (props) => {
 	const { data: scan, error: scanError } = useSWR(
 		() =>
 			props.id ? `/api/site/${props.id}/scan/?ordering=-finished_at` : null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	let scanObjId = '';

@@ -56,10 +56,7 @@ const PagesTable = (props) => {
 			query.siteId
 				? `/api/site/${query.siteId}/scan/${props.val.scan_id}/page/${props.val.id}/`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 50000
-		}
+		fetcher
 	);
 
 	if (pageDetailError) return <div>{pageDetailError.message}</div>;

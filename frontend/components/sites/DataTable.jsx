@@ -129,8 +129,7 @@ const DataTable = (props) => {
 	const { data: scan, error: scanError } = useSWR(
 		() =>
 			props ? `/api/site/${props.site.id}/scan/?ordering=-finished_at` : null,
-		fetcher,
-		{ refreshInterval: 1000 }
+		fetcher
 	);
 
 	let scanObjId = '';
@@ -155,8 +154,7 @@ const DataTable = (props) => {
 			props && scanObjId
 				? `/api/site/${props.site.id}/scan/${scanObjId}/`
 				: `/api/site/${props.site.id}/`,
-		fetcher,
-		{ refreshInterval: 1000 }
+		fetcher
 	);
 
 	const { data: links, error: linksError } = useSWR(
@@ -164,10 +162,7 @@ const DataTable = (props) => {
 			props && scanObjId
 				? `/api/site/${props.site.id}/scan/${scanObjId}/link/`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	const { data: images, error: imagesError } = useSWR(
@@ -175,10 +170,7 @@ const DataTable = (props) => {
 			props && scanObjId
 				? `/api/site/${props.site.id}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	const setLinkErrors = (type) => {

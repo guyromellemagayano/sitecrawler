@@ -54,9 +54,7 @@ const MobilePrimaryMenu = () => {
 		redirectIfFound: false
 	});
 
-	const { data: site, error: siteError } = useSWR('/api/site/', fetcher, {
-		refreshInterval: 1000
-	});
+	const { data: site, error: siteError } = useSWR('/api/site/', fetcher);
 
 	const siteSelectOnLoad = (siteId = query.siteId) => {
 		if (site == undefined) return false;

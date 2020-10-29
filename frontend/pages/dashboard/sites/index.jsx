@@ -63,9 +63,7 @@ const Sites = (props) => {
 		}
 	}, [user]);
 
-	const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher, {
-		refreshInterval: 1000
-	});
+	const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher);
 
 	if (user) {
 		LogRocket.identify('epic-design-labs/link-app', {

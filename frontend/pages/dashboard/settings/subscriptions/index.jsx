@@ -47,10 +47,7 @@ const Subscriptions = () => {
 
 	const { data: paymentMethods, error: paymentMethodsError } = useSWR(
 		() => `/api/stripe/payment-method/default`,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	const { data: subscriptions, error: subscriptionsError } = useSWR(

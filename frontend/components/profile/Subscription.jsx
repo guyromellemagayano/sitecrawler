@@ -40,18 +40,13 @@ const ProfileSettingsSubscription = () => {
 
 	const { data: paymentMethods, error: paymentMethodsError } = useSWR(
 		() => `/api/stripe/payment-method/`,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	const {
 		data: currentPaymentMethod,
 		error: currentPaymentMethodError
-	} = useSWR(() => `/api/stripe/payment-method/default/`, fetcher, {
-		refreshInterval: 1000
-	});
+	} = useSWR(() => `/api/stripe/payment-method/default/`, fetcher);
 
 	useEffect(() => {
 		if (
