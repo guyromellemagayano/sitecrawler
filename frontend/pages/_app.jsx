@@ -49,7 +49,7 @@ const App = ({ Component, pageProps }) => {
 	);
 
 	{
-		stripeConfigError && <Layout>{stripeConfigError.message}</Layout>;
+		stripeConfigError && stripeConfigError.message;
 	}
 
 	useEffect(() => {

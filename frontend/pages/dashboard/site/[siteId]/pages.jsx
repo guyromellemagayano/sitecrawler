@@ -87,10 +87,7 @@ const Pages = (props) => {
 			query.siteId
 				? `/api/site/${query.siteId}/scan/?ordering=-finished_at`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	let scanObjId = '';
@@ -147,10 +144,7 @@ const Pages = (props) => {
 
 	const { data: page, error: pageError, mutate: updatePages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
-		fetcher,
-		{
-			refreshInterval: 50000
-		}
+		fetcher
 	);
 
 	const searchEventHandler = (e) => {

@@ -177,10 +177,7 @@ const Seo = (props) => {
 
 	const { data: page, error: pageError, mutate: updatePages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
-		fetcher,
-		{
-			refreshInterval: 50000
-		}
+		fetcher
 	);
 
 	const searchEventHandler = async (e) => {

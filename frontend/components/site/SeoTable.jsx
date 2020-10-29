@@ -88,10 +88,7 @@ const PageSeoTable = (props) => {
 			query.siteId
 				? `/api/site/${query.siteId}/scan/${props.val.scan_id}/page/${props.val.id}/`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 50000
-		}
+		fetcher
 	);
 
 	const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher);

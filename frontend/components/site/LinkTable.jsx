@@ -80,10 +80,7 @@ const LinkTable = (props) => {
 			query.siteId
 				? `/api/site/${query.siteId}/scan/${props.val.scan_id}/link/${props.val.id}/`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 50000
-		}
+		fetcher
 	);
 
 	if (linkDetailError) return <div>{linkDetailError.message}</div>;

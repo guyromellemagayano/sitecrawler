@@ -108,10 +108,7 @@ const SitesPagesStats = (props) => {
 			props.url.siteId
 				? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	let scanObjId = '';
@@ -136,10 +133,7 @@ const SitesPagesStats = (props) => {
 			props.url.siteId && scanObjId
 				? `/api/site/${props.url.siteId}/scan/${scanObjId}/`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	const { data: noPageIssues, error: noPageIssuesError } = useSWR(
@@ -147,10 +141,7 @@ const SitesPagesStats = (props) => {
 			props.url.siteId && scanObjId
 				? `/api/site/${props.url.siteId}/scan/${scanObjId}/page/?size_total_max=1048576&tls_total=true`
 				: null,
-		fetcher,
-		{
-			refreshInterval: 1000
-		}
+		fetcher
 	);
 
 	// const chartSeries = [

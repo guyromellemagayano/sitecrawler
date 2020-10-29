@@ -39,8 +39,7 @@ const SiteSettings = () => {
 	const pageTitle = 'Site Settings |';
 	const { data: site, error: siteError } = useSWR(
 		() => (query.siteId ? `/api/site/${query.siteId}/` : null),
-		() => fetchSiteSettings(`/api/site/${query.siteId}/`),
-		{ refreshInterval: 1000 }
+		() => fetchSiteSettings(`/api/site/${query.siteId}/`)
 	);
 
 	const fetchSiteSettings = async (endpoint) => {
