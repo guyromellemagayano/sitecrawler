@@ -280,9 +280,9 @@ const Links = (props) => {
 		if (newPath.includes('?')) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		// console.log(newPath);
+		console.log(newPath);
 
-		Router.push('/dashboard/site/[siteId]/links/', newPath);
+		Router.push(newPath);
 
 		updateLinks();
 
