@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-// import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic';
 import useSWR, { SWRConfig } from 'swr';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -14,12 +14,12 @@ import 'nprogress/nprogress.css';
 
 library.add(fab);
 
-// const TopProgressBar = dynamic(
-// 	() => {
-// 		return import('components/utils/TopProgressBar');
-// 	},
-// 	{ ssr: false }
-// );
+const TopProgressBar = dynamic(
+	() => {
+		return import('components/utils/TopProgressBar');
+	},
+	{ ssr: false }
+);
 
 const fetcher = async (url) => {
 	const res = await fetch(url, {
@@ -48,15 +48,15 @@ const App = ({ Component, pageProps }) => {
 		fetcher
 	);
 
-	{
-		stripeConfigError && stripeConfigError.message;
-	}
-
 	useEffect(() => {
 		if (stripeConfig && stripeConfig !== undefined) {
 			getStripeKey(stripeConfig);
 		}
 	}, [stripeConfig]);
+
+	{
+		stripeConfigError && stripeConfigError.message;
+	}
 
 	useEffect(() => {
 		'use strict';
@@ -90,17 +90,6 @@ const App = ({ Component, pageProps }) => {
 		})(window, document, window.Beacon || function () {});
 
 		window.Beacon('init', '94d0425a-cb40-4582-909a-2175532bbfa9');
-
-		// Usetiful
-		(function (w, d, s) {
-			var a = d.getElementsByTagName('head')[0];
-			var r = d.createElement('script');
-			r.async = 1;
-			r.src = s;
-			r.setAttribute('id', 'usetifulScript');
-			r.dataset.token = '4b8863eaef435adc652a9d86eb33cbf9';
-			a.appendChild(r);
-		})(window, document, 'https://www.usetiful.com/dist/usetiful.js');
 	}, []);
 
 	return (
@@ -110,10 +99,14 @@ const App = ({ Component, pageProps }) => {
 				revalidateOnFocus: true
 			}}
 		>
-			{/* <TopProgressBar /> */}
-			<Elements stripe={loadStripe(stripeKey?.publishable_key)}>
+			<TopProgressBar />
+			{stripeKey && stripeKey.publishable_key ? (
+				<Elements stripe={loadStripe(stripeKey.publishable_key)}>
+					<Component {...pageProps} />
+				</Elements>
+			) : (
 				<Component {...pageProps} />
-			</Elements>
+			)}
 		</SWRConfig>
 	);
 };
