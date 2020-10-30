@@ -98,7 +98,7 @@ const MyPagination = (props) => {
 	const handlePageChange = (pageNum) => {
 		// console.log('[pageNum]', pageNum);
 		const newPath = removeURLParameter(props.pathName, 'page');
-		Router.push(props.href, `${newPath}page=${pageNum}`);
+		Router.push(`${newPath}page=${pageNum}`);
 	};
 
 	if (pageError) return <div>{pageError.message}</div>;
