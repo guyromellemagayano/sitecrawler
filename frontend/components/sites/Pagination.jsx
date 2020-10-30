@@ -1,5 +1,4 @@
-import Link from 'next/link';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import Cookies from 'js-cookie';
 import styled from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
@@ -99,7 +98,10 @@ const MyPagination = (props) => {
 	const handlePageChange = (pageNum) => {
 		// console.log('[pageNum]', pageNum);
 		const newPath = removeURLParameter(props.pathName, 'page');
-		Router.push(props.href, `${newPath}page=${pageNum}`);
+		Router.push(
+			props.href + `${newPath}page=${pageNum}`,
+			`${newPath}page=${pageNum}`
+		);
 	};
 
 	if (pageError) return <div>{pageError.message}</div>;
