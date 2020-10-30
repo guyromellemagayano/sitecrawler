@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import useSWR, { SWRConfig } from 'swr';
 import { loadStripe } from '@stripe/stripe-js';
@@ -93,21 +93,21 @@ const App = ({ Component, pageProps }) => {
 	}, []);
 
 	return (
-		<>
-			{stripeKey && (
+		<SWRConfig
+			value={{
+				fetcher: fetchJson,
+				revalidateOnFocus: true
+			}}
+		>
+			<TopProgressBar />
+			{stripeKey && stripeKey.publishable_key ? (
 				<Elements stripe={loadStripe(stripeKey.publishable_key)}>
-					<SWRConfig
-						value={{
-							fetcher: fetchJson,
-							revalidateOnFocus: true
-						}}
-					>
-						<TopProgressBar />
-						<Component {...pageProps} />
-					</SWRConfig>
+					<Component {...pageProps} />
 				</Elements>
+			) : (
+				<Component {...pageProps} />
 			)}
-		</>
+		</SWRConfig>
 	);
 };
 
