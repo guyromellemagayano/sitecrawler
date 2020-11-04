@@ -7,29 +7,28 @@ import (
 )
 
 type IsTypePostprocessor struct {
-	Database *database.Database
 }
 
-func (p *IsTypePostprocessor) OnLink(l *database.CrawlLink) error {
+func (p *IsTypePostprocessor) OnLink(db *database.Database, l *database.CrawlLink) error {
 	return nil
 }
 
-func (p *IsTypePostprocessor) OnLinkLink(l *database.CrawlLinkLink) error {
-	return p.handleChild(l.ToLinkID, "link")
+func (p *IsTypePostprocessor) OnLinkLink(db *database.Database, l *database.CrawlLinkLink) error {
+	return p.handleChild(db, l.ToLinkID, "link")
 }
 
-func (p *IsTypePostprocessor) OnLinkImage(l *database.CrawlLinkImage) error {
-	return p.handleChild(l.ToLinkID, "image")
+func (p *IsTypePostprocessor) OnLinkImage(db *database.Database, l *database.CrawlLinkImage) error {
+	return p.handleChild(db, l.ToLinkID, "image")
 }
 
-func (p *IsTypePostprocessor) OnLinkScript(l *database.CrawlLinkScript) error {
-	return p.handleChild(l.ToLinkID, "script")
+func (p *IsTypePostprocessor) OnLinkScript(db *database.Database, l *database.CrawlLinkScript) error {
+	return p.handleChild(db, l.ToLinkID, "script")
 }
 
-func (p *IsTypePostprocessor) OnLinkStylesheet(l *database.CrawlLinkStylesheet) error {
-	return p.handleChild(l.ToLinkID, "stylesheet")
+func (p *IsTypePostprocessor) OnLinkStylesheet(db *database.Database, l *database.CrawlLinkStylesheet) error {
+	return p.handleChild(db, l.ToLinkID, "stylesheet")
 }
 
-func (p *IsTypePostprocessor) handleChild(toID int, name string) error {
-	return p.Database.LinkDao.Update(toID, fmt.Sprintf("cached_is_%s = true", name))
+func (p *IsTypePostprocessor) handleChild(db *database.Database, toID int, name string) error {
+	return db.LinkDao.Update(toID, fmt.Sprintf("cached_is_%s = true", name))
 }

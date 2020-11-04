@@ -12,6 +12,8 @@ require (
 	github.com/dizzyfool/genna v1.0.0 // indirect
 	github.com/getsentry/sentry-go v0.7.0
 	github.com/go-pg/pg v8.0.6+incompatible
+	github.com/go-pg/pg/v10 v10.6.0
+	github.com/go-pg/pg/v9 v9.0.1
 	github.com/hashicorp/go-retryablehttp v0.6.6
 	github.com/mattn/go-shellwords v1.0.10 // indirect
 	github.com/pkg/errors v0.9.1

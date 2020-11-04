@@ -14,15 +14,12 @@ import (
 )
 
 type TlsCache struct {
-	Database *database.Database
-
 	cache map[tlsKey]*database.CrawlTl
 }
 
-func NewTlsCache(db *database.Database) *TlsCache {
+func NewTlsCache() *TlsCache {
 	return &TlsCache{
-		Database: db,
-		cache:    make(map[tlsKey]*database.CrawlTl),
+		cache: make(map[tlsKey]*database.CrawlTl),
 	}
 }
 
@@ -39,7 +36,7 @@ type tlsKey struct {
 }
 
 // Extract returns tls_status, tls_id and error
-func (t *TlsCache) Extract(TLS *tls.ConnectionState, request *http.Request) (int, *int, error) {
+func (t *TlsCache) Extract(db *database.Database, TLS *tls.ConnectionState, request *http.Request) (int, *int, error) {
 	if TLS == nil || len(TLS.PeerCertificates) == 0 {
 		return common.TLS_NONE, nil, nil
 	}
@@ -116,7 +113,7 @@ func (t *TlsCache) Extract(TLS *tls.ConnectionState, request *http.Request) (int
 		tl.Errors = errors
 	}
 
-	if err := t.Database.TlsDao.Save(tl); err != nil {
+	if err := db.Insert(tl); err != nil {
 		return 0, nil, err
 	}
 	t.cache[key] = tl

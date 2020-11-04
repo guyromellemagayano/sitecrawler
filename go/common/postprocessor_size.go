@@ -7,14 +7,13 @@ import (
 )
 
 type SizePostprocessor struct {
-	Database *database.Database
 }
 
-func (p *SizePostprocessor) OnLink(l *database.CrawlLink) error {
+func (p *SizePostprocessor) OnLink(db *database.Database, l *database.CrawlLink) error {
 	if l.Type != TYPE_PAGE {
 		return nil
 	}
-	return p.Database.LinkDao.Update(l.ID,
+	return db.LinkDao.Update(l.ID,
 		"cached_size_images = 0",
 		"cached_size_scripts = 0",
 		"cached_size_stylesheets = 0",
@@ -22,29 +21,30 @@ func (p *SizePostprocessor) OnLink(l *database.CrawlLink) error {
 	)
 }
 
-func (p *SizePostprocessor) OnLinkLink(l *database.CrawlLinkLink) error {
+func (p *SizePostprocessor) OnLinkLink(db *database.Database, l *database.CrawlLinkLink) error {
 	return nil
 }
 
-func (p *SizePostprocessor) OnLinkImage(l *database.CrawlLinkImage) error {
-	return p.handleChild(l.FromLinkID, l.ToLinkID, "images")
+func (p *SizePostprocessor) OnLinkImage(db *database.Database, l *database.CrawlLinkImage) error {
+	return p.handleChild(db, l.FromLinkID, l.ToLinkID, "images")
 }
 
-func (p *SizePostprocessor) OnLinkScript(l *database.CrawlLinkScript) error {
-	return p.handleChild(l.FromLinkID, l.ToLinkID, "scripts")
+func (p *SizePostprocessor) OnLinkScript(db *database.Database, l *database.CrawlLinkScript) error {
+	return p.handleChild(db, l.FromLinkID, l.ToLinkID, "scripts")
 }
 
-func (p *SizePostprocessor) OnLinkStylesheet(l *database.CrawlLinkStylesheet) error {
-	return p.handleChild(l.FromLinkID, l.ToLinkID, "stylesheets")
+func (p *SizePostprocessor) OnLinkStylesheet(db *database.Database, l *database.CrawlLinkStylesheet) error {
+	return p.handleChild(db, l.FromLinkID, l.ToLinkID, "stylesheets")
 }
 
-func (p *SizePostprocessor) handleChild(fromID, toID int, name string) error {
-	toLink, err := p.Database.LinkDao.ByID(toID)
+func (p *SizePostprocessor) handleChild(db *database.Database, fromID, toID int, name string) error {
+	toLink := &database.CrawlLink{ID: toID}
+	err := db.ByID(toLink)
 	if err != nil {
 		return err
 	}
 
-	err = p.Database.LinkDao.Update(fromID,
+	err = db.LinkDao.Update(fromID,
 		fmt.Sprintf("cached_size_%s = cached_size_%s + %v", name, name, toLink.Size),
 		fmt.Sprintf("cached_size_total = cached_size_total + %v", toLink.Size),
 	)

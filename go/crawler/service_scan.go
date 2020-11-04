@@ -48,7 +48,8 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 		return nil
 	}
 
-	scan, err := s.Database.ScanDao.ByID(scanID)
+	scan := &database.CrawlScan{ID: scanID}
+	err = s.Database.ByID(scan, database.WithRelation("Site"))
 	if err != nil {
 		return errors.Wrapf(err, "could not get scan id %v", scanID)
 	}
@@ -66,25 +67,6 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 		return nil
 	}
 
-	if err := s.Database.PageDataDao.DeleteAllForScan(scanID); err != nil {
-		return err
-	}
-	if err := s.Database.LinkLinkDao.DeleteAllForScan(scanID); err != nil {
-		return err
-	}
-	if err := s.Database.LinkImageDao.DeleteAllForScan(scanID); err != nil {
-		return err
-	}
-	if err := s.Database.LinkScriptDao.DeleteAllForScan(scanID); err != nil {
-		return err
-	}
-	if err := s.Database.LinkStylesheetDao.DeleteAllForScan(scanID); err != nil {
-		return err
-	}
-	if err := s.Database.LinkDao.DeleteAllForScan(scanID); err != nil {
-		return err
-	}
-
 	if err := s.Start(log, scan); err != nil {
 		return err
 	}
@@ -93,7 +75,7 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 	// If we got here without errors, set the status done
 	finished := time.Now()
 	scan.FinishedAt = &finished
-	if err := s.Database.ScanDao.Save(scan); err != nil {
+	if err := s.Database.Update(scan); err != nil {
 		return err
 	}
 	log.Infof("Finished scan for %v", scan.Site.Url)
@@ -117,7 +99,7 @@ func (s *ScanService) Start(log *zap.SugaredLogger, scan *database.CrawlScan) er
 		ScanService: s,
 		Scan:        scan,
 
-		tlsCache:  NewTlsCache(s.Database),
+		tlsCache:  NewTlsCache(),
 		rateLimit: NewRateLimit(),
 
 		linkIDs: make(map[string]int),
@@ -160,7 +142,7 @@ func (s *scanner) Start(log *zap.SugaredLogger) error {
 		return err
 	}
 
-	s.addLinkWithRelation(log, fifoEntry{
+	s.addLinkWithRelation(log, s.ScanService.Database, fifoEntry{
 		Url:   u,
 		Depth: 0,
 	}, relation{ChildType: CHILD_NONE})
@@ -168,37 +150,44 @@ func (s *scanner) Start(log *zap.SugaredLogger) error {
 	for s.fifo.Len() > 0 {
 		entry := s.popFifo()
 
-		childLinkId, err := s.scanURL(log, entry.Url, entry.Depth)
-		if err != nil {
-			return err
-		}
-
-		for _, r := range entry.Relations {
-			if err := s.saveRelation(r, childLinkId); err != nil {
+		err := s.ScanService.Database.RunInTransaction(func(db *database.Database) error {
+			childLinkId, err := s.scanURL(log, db, entry.Url, entry.Depth)
+			if err != nil {
 				return err
 			}
+
+			for _, r := range entry.Relations {
+				if err := s.saveRelation(db, r, childLinkId); err != nil {
+					return err
+				}
+			}
+
+			return nil
+		})
+		if err != nil {
+			return err
 		}
 	}
 
 	return nil
 }
 
-func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint) (int, error) {
+func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceUrl *url.URL, depth uint) (int, error) {
 	if linkID, ok := s.linkIDs[sourceUrl.String()]; ok {
 		return linkID, nil
 	}
 
-	link, doc := s.loadURL(log, sourceUrl)
+	link, doc := s.loadURL(log, db, sourceUrl)
 	// Recheck "destination url after redirects" if it's in cache
 	if linkID, ok := s.linkIDs[link.Url]; ok {
 		return linkID, nil
 	}
 
 	// save new link
-	if err := s.ScanService.Database.LinkDao.Save(link); err != nil {
+	if err := db.Insert(link); err != nil {
 		return 0, err
 	}
-	if err := s.ScanService.PostprocessService.OnLink(link); err != nil {
+	if err := s.ScanService.PostprocessService.OnLink(db, link); err != nil {
 		return link.ID, err
 	}
 
@@ -213,7 +202,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint
 
 	// save page stuff
 	s.pageCount++
-	if err := s.savePageData(doc, link.ID); err != nil {
+	if err := s.savePageData(db, doc, link.ID); err != nil {
 		log.Errorf("Could not save page data for link %v: %v", link.ID, err)
 	}
 
@@ -249,7 +238,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint
 			return
 		}
 
-		s.addLinkWithRelation(log, fifoEntry{
+		s.addLinkWithRelation(log, db, fifoEntry{
 			Url:   childUrl,
 			Depth: depth + 1,
 		}, relation{
@@ -275,7 +264,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint
 			return
 		}
 
-		s.addLinkWithRelation(log, fifoEntry{
+		s.addLinkWithRelation(log, db, fifoEntry{
 			Url:   childUrl,
 			Depth: depth + 1,
 		}, relation{
@@ -301,7 +290,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint
 			return
 		}
 
-		s.addLinkWithRelation(log, fifoEntry{
+		s.addLinkWithRelation(log, db, fifoEntry{
 			Url:   childUrl,
 			Depth: depth + 1,
 		}, relation{
@@ -327,7 +316,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint
 			return
 		}
 
-		s.addLinkWithRelation(log, fifoEntry{
+		s.addLinkWithRelation(log, db, fifoEntry{
 			Url:   childUrl,
 			Depth: depth + 1,
 		}, relation{
@@ -339,7 +328,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, sourceUrl *url.URL, depth uint
 	return link.ID, nil
 }
 
-func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*database.CrawlLink, *goquery.Document) {
+func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, url *url.URL) (*database.CrawlLink, *goquery.Document) {
 	crawlLink := &database.CrawlLink{
 		ScanID:    s.Scan.ID,
 		CreatedAt: time.Now(),
@@ -404,7 +393,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*database.Crawl
 
 	s.rateLimit.Update(url, resp)
 
-	tlsStatus, tlsId, err := s.tlsCache.Extract(resp.TLS, resp.Request)
+	tlsStatus, tlsId, err := s.tlsCache.Extract(db, resp.TLS, resp.Request)
 	if err != nil {
 		log.Error(err)
 	} else {
@@ -440,14 +429,14 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, url *url.URL) (*database.Crawl
 	return crawlLink, nil
 }
 
-func (s *scanner) savePageData(doc *goquery.Document, linkID int) error {
+func (s *scanner) savePageData(db *database.Database, doc *goquery.Document, linkID int) error {
 	title := doc.Find("title").First().Text()
 	description := strings.TrimSpace(doc.Find("meta[name=description]").First().AttrOr("content", ""))
 	h1First := strings.TrimSpace(doc.Find("h1").First().Text())
 	h1Second := strings.TrimSpace(doc.Find("h1").Eq(1).Text())
 	h2First := strings.TrimSpace(doc.Find("h2").First().Text())
 	h2Second := strings.TrimSpace(doc.Find("h2").Eq(1).Text())
-	return s.ScanService.Database.PageDataDao.Save(&database.CrawlPagedatum{
+	return db.Insert(&database.CrawlPagedatum{
 		LinkID: linkID,
 
 		Title:       title,
@@ -461,12 +450,12 @@ func (s *scanner) savePageData(doc *goquery.Document, linkID int) error {
 }
 
 // adds link to fifo for scanning, save relation to parent objects
-func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, fe fifoEntry, r relation) {
+func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, db *database.Database, fe fifoEntry, r relation) {
 	urlStr := fe.Url.String()
 
 	// bypass fifo if url has been scanned already
 	if childId, ok := s.linkIDs[urlStr]; ok {
-		if err := s.saveRelation(r, childId); err != nil {
+		if err := s.saveRelation(db, r, childId); err != nil {
 			log.Errorf("Could not save relation: %v", err)
 		}
 		// if url is already in fifo just add r to it's relations
@@ -497,7 +486,7 @@ func (s *scanner) popFifo() *fifoEntry {
 	return entry
 }
 
-func (s *scanner) saveRelation(r relation, childLinkId int) error {
+func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId int) error {
 	switch r.ChildType {
 	case CHILD_LINK:
 		linkLink := &database.CrawlLinkLink{
@@ -505,12 +494,10 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 			ToLinkID:   childLinkId,
 		}
 
-		if err := s.ScanService.Database.LinkLinkDao.Save(linkLink); err != nil {
-			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-				return err
-			}
+		if err := db.Insert(linkLink, database.IgnoreDuplicates); err != nil {
+			return err
 		}
-		if err := s.ScanService.PostprocessService.OnLinkLink(linkLink); err != nil {
+		if err := s.ScanService.PostprocessService.OnLinkLink(db, linkLink); err != nil {
 			return err
 		}
 	case CHILD_IMAGE:
@@ -519,12 +506,10 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 			ToLinkID:   childLinkId,
 		}
 
-		if err := s.ScanService.Database.LinkImageDao.Save(linkImage); err != nil {
-			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-				return err
-			}
+		if err := db.Insert(linkImage, database.IgnoreDuplicates); err != nil {
+			return err
 		}
-		if err := s.ScanService.PostprocessService.OnLinkImage(linkImage); err != nil {
+		if err := s.ScanService.PostprocessService.OnLinkImage(db, linkImage); err != nil {
 			return err
 		}
 	case CHILD_SCRIPT:
@@ -533,12 +518,10 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 			ToLinkID:   childLinkId,
 		}
 
-		if err := s.ScanService.Database.LinkScriptDao.Save(linkScript); err != nil {
-			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-				return err
-			}
+		if err := db.Insert(linkScript, database.IgnoreDuplicates); err != nil {
+			return err
 		}
-		if err := s.ScanService.PostprocessService.OnLinkScript(linkScript); err != nil {
+		if err := s.ScanService.PostprocessService.OnLinkScript(db, linkScript); err != nil {
 			return err
 		}
 	case CHILD_STYLESHEET:
@@ -547,12 +530,10 @@ func (s *scanner) saveRelation(r relation, childLinkId int) error {
 			ToLinkID:   childLinkId,
 		}
 
-		if err := s.ScanService.Database.LinkStylesheetDao.Save(linkStylesheet); err != nil {
-			if !strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-				return err
-			}
+		if err := db.Insert(linkStylesheet, database.IgnoreDuplicates); err != nil {
+			return err
 		}
-		if err := s.ScanService.PostprocessService.OnLinkStylesheet(linkStylesheet); err != nil {
+		if err := s.ScanService.PostprocessService.OnLinkStylesheet(db, linkStylesheet); err != nil {
 			return err
 		}
 	}

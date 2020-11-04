@@ -16,7 +16,8 @@ func ScheduleWorker(logger *zap.SugaredLogger, db *database.Database, scanServic
 	loop := func() error {
 		defer common.PanicLogger(logger)
 
-		groupSettings, err := db.GroupSettingsDao.All()
+		var groupSettings []database.CrawlGroupsetting
+		err := db.All(&groupSettings)
 		if err != nil {
 			return errors.Wrap(err, "could not get all groups")
 		}
@@ -25,13 +26,23 @@ func ScheduleWorker(logger *zap.SugaredLogger, db *database.Database, scanServic
 			if err != nil {
 				return errors.Wrapf(err, "could not parse schedule for group %v", groupSetting.GroupID)
 			}
-			sites, err := db.SiteDao.AllVerifiedForGroup(groupSetting.GroupID)
+			var sites []database.CrawlSite
+			err = db.All(&sites,
+				database.Join("JOIN auth_user AS u ON u.id = t.user_id"),
+				database.Join("JOIN auth_user_groups as ug ON ug.user_id = u.id"),
+				database.Where("ug.group_id = ?", groupSetting.GroupID),
+				database.Where("t.verified = true"),
+			)
 			if err != nil {
 				return errors.Wrapf(err, "could not get sites for group %v", groupSetting.GroupID)
 			}
 			for _, site := range sites {
 				log := logger.With("site_id", site.ID)
-				latestScan, err := db.ScanDao.Latest(site.ID)
+				var latestScan database.CrawlScan
+				err := db.Get(&latestScan,
+					database.Where("site_id = ?", site.ID),
+					database.Order("started_at DESC"),
+				)
 				if err != nil {
 					log.Errorf("could not get latest scan for site: %v", err)
 					continue

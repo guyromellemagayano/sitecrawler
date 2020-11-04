@@ -7,48 +7,48 @@ type PostprocessService struct {
 }
 
 type Postprocessor interface {
-	OnLink(l *database.CrawlLink) error
-	OnLinkLink(l *database.CrawlLinkLink) error
-	OnLinkImage(l *database.CrawlLinkImage) error
-	OnLinkScript(l *database.CrawlLinkScript) error
-	OnLinkStylesheet(l *database.CrawlLinkStylesheet) error
+	OnLink(db *database.Database, l *database.CrawlLink) error
+	OnLinkLink(db *database.Database, l *database.CrawlLinkLink) error
+	OnLinkImage(db *database.Database, l *database.CrawlLinkImage) error
+	OnLinkScript(db *database.Database, l *database.CrawlLinkScript) error
+	OnLinkStylesheet(db *database.Database, l *database.CrawlLinkStylesheet) error
 }
 
-func (p *PostprocessService) OnLink(l *database.CrawlLink) error {
+func (p *PostprocessService) OnLink(db *database.Database, l *database.CrawlLink) error {
 	for _, p := range p.Postprocessors {
-		if err := p.OnLink(l); err != nil {
+		if err := p.OnLink(db, l); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (p *PostprocessService) OnLinkLink(l *database.CrawlLinkLink) error {
+func (p *PostprocessService) OnLinkLink(db *database.Database, l *database.CrawlLinkLink) error {
 	for _, p := range p.Postprocessors {
-		if err := p.OnLinkLink(l); err != nil {
+		if err := p.OnLinkLink(db, l); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (p *PostprocessService) OnLinkImage(l *database.CrawlLinkImage) error {
+func (p *PostprocessService) OnLinkImage(db *database.Database, l *database.CrawlLinkImage) error {
 	for _, p := range p.Postprocessors {
-		if err := p.OnLinkImage(l); err != nil {
+		if err := p.OnLinkImage(db, l); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (p *PostprocessService) OnLinkScript(l *database.CrawlLinkScript) error {
+func (p *PostprocessService) OnLinkScript(db *database.Database, l *database.CrawlLinkScript) error {
 	for _, p := range p.Postprocessors {
-		if err := p.OnLinkScript(l); err != nil {
+		if err := p.OnLinkScript(db, l); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (p *PostprocessService) OnLinkStylesheet(l *database.CrawlLinkStylesheet) error {
+func (p *PostprocessService) OnLinkStylesheet(db *database.Database, l *database.CrawlLinkStylesheet) error {
 	for _, p := range p.Postprocessors {
-		if err := p.OnLinkStylesheet(l); err != nil {
+		if err := p.OnLinkStylesheet(db, l); err != nil {
 			return err
 		}
 	}

@@ -878,404 +878,404 @@ var Tables = struct {
 }
 
 type AccountEmailaddress struct {
-	tableName struct{} `sql:"account_emailaddress,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"account_emailaddress,alias:t,,discard_unknown_columns"`
 
-	ID       int    `sql:"id,pk"`
-	Email    string `sql:"email,notnull"`
-	Verified bool   `sql:"verified,notnull"`
-	Primary  bool   `sql:"primary,notnull"`
-	UserID   int    `sql:"user_id,notnull"`
+	ID       int    `pg:"id,pk"`
+	Email    string `pg:"email,use_zero"`
+	Verified bool   `pg:"verified,use_zero"`
+	Primary  bool   `pg:"primary,use_zero"`
+	UserID   int    `pg:"user_id,use_zero"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }
 
 type AccountEmailconfirmation struct {
-	tableName struct{} `sql:"account_emailconfirmation,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"account_emailconfirmation,alias:t,,discard_unknown_columns"`
 
-	ID             int        `sql:"id,pk"`
-	Created        time.Time  `sql:"created,notnull"`
-	Sent           *time.Time `sql:"sent"`
-	Key            string     `sql:"key,notnull"`
-	EmailAddressID int        `sql:"email_address_id,notnull"`
+	ID             int        `pg:"id,pk"`
+	Created        time.Time  `pg:"created,use_zero"`
+	Sent           *time.Time `pg:"sent"`
+	Key            string     `pg:"key,use_zero"`
+	EmailAddressID int        `pg:"email_address_id,use_zero"`
 
 	EmailAddress *AccountEmailaddress `pg:"fk:email_address_id"`
 }
 
 type AuthGroup struct {
-	tableName struct{} `sql:"auth_group,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"auth_group,alias:t,,discard_unknown_columns"`
 
-	ID   int    `sql:"id,pk"`
-	Name string `sql:"name,notnull"`
+	ID   int    `pg:"id,pk"`
+	Name string `pg:"name,use_zero"`
 }
 
 type AuthGroupPermission struct {
-	tableName struct{} `sql:"auth_group_permissions,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"auth_group_permissions,alias:t,,discard_unknown_columns"`
 
-	ID           int `sql:"id,pk"`
-	GroupID      int `sql:"group_id,notnull"`
-	PermissionID int `sql:"permission_id,notnull"`
+	ID           int `pg:"id,pk"`
+	GroupID      int `pg:"group_id,use_zero"`
+	PermissionID int `pg:"permission_id,use_zero"`
 
 	Permission *AuthPermission `pg:"fk:permission_id"`
 	Group      *AuthGroup      `pg:"fk:group_id"`
 }
 
 type AuthPermission struct {
-	tableName struct{} `sql:"auth_permission,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"auth_permission,alias:t,,discard_unknown_columns"`
 
-	ID            int    `sql:"id,pk"`
-	Name          string `sql:"name,notnull"`
-	ContentTypeID int    `sql:"content_type_id,notnull"`
-	Codename      string `sql:"codename,notnull"`
+	ID            int    `pg:"id,pk"`
+	Name          string `pg:"name,use_zero"`
+	ContentTypeID int    `pg:"content_type_id,use_zero"`
+	Codename      string `pg:"codename,use_zero"`
 
 	ContentType *DjangoContentType `pg:"fk:content_type_id"`
 }
 
 type AuthUser struct {
-	tableName struct{} `sql:"auth_user,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"auth_user,alias:t,,discard_unknown_columns"`
 
-	ID          int        `sql:"id,pk"`
-	Password    string     `sql:"password,notnull"`
-	LastLogin   *time.Time `sql:"last_login"`
-	IsSuperuser bool       `sql:"is_superuser,notnull"`
-	Username    string     `sql:"username,notnull"`
-	FirstName   string     `sql:"first_name,notnull"`
-	LastName    string     `sql:"last_name,notnull"`
-	Email       string     `sql:"email,notnull"`
-	IsStaff     bool       `sql:"is_staff,notnull"`
-	IsActive    bool       `sql:"is_active,notnull"`
-	DateJoined  time.Time  `sql:"date_joined,notnull"`
+	ID          int        `pg:"id,pk"`
+	Password    string     `pg:"password,use_zero"`
+	LastLogin   *time.Time `pg:"last_login"`
+	IsSuperuser bool       `pg:"is_superuser,use_zero"`
+	Username    string     `pg:"username,use_zero"`
+	FirstName   string     `pg:"first_name,use_zero"`
+	LastName    string     `pg:"last_name,use_zero"`
+	Email       string     `pg:"email,use_zero"`
+	IsStaff     bool       `pg:"is_staff,use_zero"`
+	IsActive    bool       `pg:"is_active,use_zero"`
+	DateJoined  time.Time  `pg:"date_joined,use_zero"`
 }
 
 type AuthUserGroup struct {
-	tableName struct{} `sql:"auth_user_groups,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"auth_user_groups,alias:t,,discard_unknown_columns"`
 
-	ID      int `sql:"id,pk"`
-	UserID  int `sql:"user_id,notnull"`
-	GroupID int `sql:"group_id,notnull"`
+	ID      int `pg:"id,pk"`
+	UserID  int `pg:"user_id,use_zero"`
+	GroupID int `pg:"group_id,use_zero"`
 
 	Group *AuthGroup `pg:"fk:group_id"`
 	User  *AuthUser  `pg:"fk:user_id"`
 }
 
 type AuthUserUserPermission struct {
-	tableName struct{} `sql:"auth_user_user_permissions,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"auth_user_user_permissions,alias:t,,discard_unknown_columns"`
 
-	ID           int `sql:"id,pk"`
-	UserID       int `sql:"user_id,notnull"`
-	PermissionID int `sql:"permission_id,notnull"`
+	ID           int `pg:"id,pk"`
+	UserID       int `pg:"user_id,use_zero"`
+	PermissionID int `pg:"permission_id,use_zero"`
 
 	Permission *AuthPermission `pg:"fk:permission_id"`
 	User       *AuthUser       `pg:"fk:user_id"`
 }
 
 type AuthtokenToken struct {
-	tableName struct{} `sql:"authtoken_token,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"authtoken_token,alias:t,,discard_unknown_columns"`
 
-	ID      string    `sql:"key,pk"`
-	Created time.Time `sql:"created,notnull"`
-	UserID  int       `sql:"user_id,notnull"`
+	ID      string    `pg:"key,pk"`
+	Created time.Time `pg:"created,use_zero"`
+	UserID  int       `pg:"user_id,use_zero"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }
 
 type CrawlGroupsetting struct {
-	tableName struct{} `sql:"crawl_groupsettings,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_groupsettings,alias:t,,discard_unknown_columns"`
 
-	ID              int    `sql:"id,pk"`
-	MaxSites        int    `sql:"max_sites,notnull"`
-	GroupID         int    `sql:"group_id,notnull"`
-	RecrawlSchedule string `sql:"recrawl_schedule,notnull"`
+	ID              int    `pg:"id,pk"`
+	MaxSites        int    `pg:"max_sites,use_zero"`
+	GroupID         int    `pg:"group_id,use_zero"`
+	RecrawlSchedule string `pg:"recrawl_schedule,use_zero"`
 
 	Group *AuthGroup `pg:"fk:group_id"`
 }
 
 type CrawlLink struct {
-	tableName struct{} `sql:"crawl_link,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_link,alias:t,,discard_unknown_columns"`
 
-	ID                         int       `sql:"id,pk"`
-	CreatedAt                  time.Time `sql:"created_at,notnull"`
-	Type                       int       `sql:"type,notnull"`
-	Url                        string    `sql:"url,notnull"`
-	Status                     int       `sql:"status,notnull"`
-	HttpStatus                 *int      `sql:"http_status"`
-	ResponseTime               int       `sql:"response_time,notnull"`
-	Error                      *string   `sql:"error"`
-	ScanID                     int       `sql:"scan_id,notnull"`
-	Size                       int       `sql:"size,notnull"`
-	TlsStatus                  int       `sql:"tls_status,notnull"`
-	TlsID                      *int      `sql:"tls_id"`
-	CachedNumNonTlsImages      *int      `sql:"cached_num_non_tls_images"`
-	CachedNumNonTlsScripts     *int      `sql:"cached_num_non_tls_scripts"`
-	CachedNumNonTlsStylesheets *int      `sql:"cached_num_non_tls_stylesheets"`
-	CachedNumTlsImages         *int      `sql:"cached_num_tls_images"`
-	CachedNumTlsScripts        *int      `sql:"cached_num_tls_scripts"`
-	CachedNumTlsStylesheets    *int      `sql:"cached_num_tls_stylesheets"`
-	CachedTlsImages            *bool     `sql:"cached_tls_images"`
-	CachedTlsScripts           *bool     `sql:"cached_tls_scripts"`
-	CachedTlsStylesheets       *bool     `sql:"cached_tls_stylesheets"`
-	CachedTlsTotal             *bool     `sql:"cached_tls_total"`
-	CachedSizeImages           *int      `sql:"cached_size_images"`
-	CachedSizeScripts          *int      `sql:"cached_size_scripts"`
-	CachedSizeStylesheets      *int      `sql:"cached_size_stylesheets"`
-	CachedSizeTotal            *int      `sql:"cached_size_total"`
-	CachedIsImage              bool      `sql:"cached_is_image,notnull"`
-	CachedIsLink               bool      `sql:"cached_is_link,notnull"`
-	CachedIsScript             bool      `sql:"cached_is_script,notnull"`
-	CachedIsStylesheet         bool      `sql:"cached_is_stylesheet,notnull"`
+	ID                         int       `pg:"id,pk"`
+	CreatedAt                  time.Time `pg:"created_at,use_zero"`
+	Type                       int       `pg:"type,use_zero"`
+	Url                        string    `pg:"url,use_zero"`
+	Status                     int       `pg:"status,use_zero"`
+	HttpStatus                 *int      `pg:"http_status"`
+	ResponseTime               int       `pg:"response_time,use_zero"`
+	Error                      *string   `pg:"error"`
+	ScanID                     int       `pg:"scan_id,use_zero"`
+	Size                       int       `pg:"size,use_zero"`
+	TlsStatus                  int       `pg:"tls_status,use_zero"`
+	TlsID                      *int      `pg:"tls_id"`
+	CachedNumNonTlsImages      *int      `pg:"cached_num_non_tls_images"`
+	CachedNumNonTlsScripts     *int      `pg:"cached_num_non_tls_scripts"`
+	CachedNumNonTlsStylesheets *int      `pg:"cached_num_non_tls_stylesheets"`
+	CachedNumTlsImages         *int      `pg:"cached_num_tls_images"`
+	CachedNumTlsScripts        *int      `pg:"cached_num_tls_scripts"`
+	CachedNumTlsStylesheets    *int      `pg:"cached_num_tls_stylesheets"`
+	CachedTlsImages            *bool     `pg:"cached_tls_images"`
+	CachedTlsScripts           *bool     `pg:"cached_tls_scripts"`
+	CachedTlsStylesheets       *bool     `pg:"cached_tls_stylesheets"`
+	CachedTlsTotal             *bool     `pg:"cached_tls_total"`
+	CachedSizeImages           *int      `pg:"cached_size_images"`
+	CachedSizeScripts          *int      `pg:"cached_size_scripts"`
+	CachedSizeStylesheets      *int      `pg:"cached_size_stylesheets"`
+	CachedSizeTotal            *int      `pg:"cached_size_total"`
+	CachedIsImage              bool      `pg:"cached_is_image,use_zero"`
+	CachedIsLink               bool      `pg:"cached_is_link,use_zero"`
+	CachedIsScript             bool      `pg:"cached_is_script,use_zero"`
+	CachedIsStylesheet         bool      `pg:"cached_is_stylesheet,use_zero"`
 
 	Scan *CrawlScan `pg:"fk:scan_id"`
 	Tls  *CrawlTl   `pg:"fk:tls_id"`
 }
 
 type CrawlLinkImage struct {
-	tableName struct{} `sql:"crawl_link_images,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_link_images,alias:t,,discard_unknown_columns"`
 
-	ID         int `sql:"id,pk"`
-	FromLinkID int `sql:"from_link_id,notnull"`
-	ToLinkID   int `sql:"to_link_id,notnull"`
+	ID         int `pg:"id,pk"`
+	FromLinkID int `pg:"from_link_id,use_zero"`
+	ToLinkID   int `pg:"to_link_id,use_zero"`
 
 	FromLink *CrawlLink `pg:"fk:from_link_id"`
 	ToLink   *CrawlLink `pg:"fk:to_link_id"`
 }
 
 type CrawlLinkLink struct {
-	tableName struct{} `sql:"crawl_link_links,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_link_links,alias:t,,discard_unknown_columns"`
 
-	ID         int `sql:"id,pk"`
-	FromLinkID int `sql:"from_link_id,notnull"`
-	ToLinkID   int `sql:"to_link_id,notnull"`
+	ID         int `pg:"id,pk"`
+	FromLinkID int `pg:"from_link_id,use_zero"`
+	ToLinkID   int `pg:"to_link_id,use_zero"`
 
 	FromLink *CrawlLink `pg:"fk:from_link_id"`
 	ToLink   *CrawlLink `pg:"fk:to_link_id"`
 }
 
 type CrawlLinkScript struct {
-	tableName struct{} `sql:"crawl_link_scripts,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_link_scripts,alias:t,,discard_unknown_columns"`
 
-	ID         int `sql:"id,pk"`
-	FromLinkID int `sql:"from_link_id,notnull"`
-	ToLinkID   int `sql:"to_link_id,notnull"`
+	ID         int `pg:"id,pk"`
+	FromLinkID int `pg:"from_link_id,use_zero"`
+	ToLinkID   int `pg:"to_link_id,use_zero"`
 
 	FromLink *CrawlLink `pg:"fk:from_link_id"`
 	ToLink   *CrawlLink `pg:"fk:to_link_id"`
 }
 
 type CrawlLinkStylesheet struct {
-	tableName struct{} `sql:"crawl_link_stylesheets,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_link_stylesheets,alias:t,,discard_unknown_columns"`
 
-	ID         int `sql:"id,pk"`
-	FromLinkID int `sql:"from_link_id,notnull"`
-	ToLinkID   int `sql:"to_link_id,notnull"`
+	ID         int `pg:"id,pk"`
+	FromLinkID int `pg:"from_link_id,use_zero"`
+	ToLinkID   int `pg:"to_link_id,use_zero"`
 
 	FromLink *CrawlLink `pg:"fk:from_link_id"`
 	ToLink   *CrawlLink `pg:"fk:to_link_id"`
 }
 
 type CrawlPagedatum struct {
-	tableName struct{} `sql:"crawl_pagedata,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_pagedata,alias:t,,discard_unknown_columns"`
 
-	ID          int    `sql:"id,pk"`
-	Title       string `sql:"title,notnull"`
-	Description string `sql:"description,notnull"`
-	H1First     string `sql:"h1_first,notnull"`
-	H1Second    string `sql:"h1_second,notnull"`
-	H2First     string `sql:"h2_first,notnull"`
-	H2Second    string `sql:"h2_second,notnull"`
-	LinkID      int    `sql:"link_id,notnull"`
+	ID          int    `pg:"id,pk"`
+	Title       string `pg:"title,use_zero"`
+	Description string `pg:"description,use_zero"`
+	H1First     string `pg:"h1_first,use_zero"`
+	H1Second    string `pg:"h1_second,use_zero"`
+	H2First     string `pg:"h2_first,use_zero"`
+	H2Second    string `pg:"h2_second,use_zero"`
+	LinkID      int    `pg:"link_id,use_zero"`
 
 	Link *CrawlLink `pg:"fk:link_id"`
 }
 
 type CrawlScan struct {
-	tableName struct{} `sql:"crawl_scan,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_scan,alias:t,,discard_unknown_columns"`
 
-	ID         int        `sql:"id,pk"`
-	StartedAt  time.Time  `sql:"started_at,notnull"`
-	FinishedAt *time.Time `sql:"finished_at"`
-	SiteID     int        `sql:"site_id,notnull"`
-	EmailSent  bool       `sql:"email_sent,notnull"`
+	ID         int        `pg:"id,pk"`
+	StartedAt  time.Time  `pg:"started_at,use_zero"`
+	FinishedAt *time.Time `pg:"finished_at"`
+	SiteID     int        `pg:"site_id,use_zero"`
+	EmailSent  bool       `pg:"email_sent,use_zero"`
 
 	Site *CrawlSite `pg:"fk:site_id"`
 }
 
 type CrawlSite struct {
-	tableName struct{} `sql:"crawl_site,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_site,alias:t,,discard_unknown_columns"`
 
-	ID              int       `sql:"id,pk"`
-	CreatedAt       time.Time `sql:"created_at,notnull"`
-	UpdatedAt       time.Time `sql:"updated_at,notnull"`
-	Url             string    `sql:"url,notnull"`
-	VerificationID  string    `sql:"verification_id,notnull"`
-	Verified        bool      `sql:"verified,notnull"`
-	UserID          int       `sql:"user_id,notnull"`
-	LastVerifyError *string   `sql:"last_verify_error"`
-	Name            string    `sql:"name,notnull"`
+	ID              int       `pg:"id,pk"`
+	CreatedAt       time.Time `pg:"created_at,use_zero"`
+	UpdatedAt       time.Time `pg:"updated_at,use_zero"`
+	Url             string    `pg:"url,use_zero"`
+	VerificationID  string    `pg:"verification_id,use_zero"`
+	Verified        bool      `pg:"verified,use_zero"`
+	UserID          int       `pg:"user_id,use_zero"`
+	LastVerifyError *string   `pg:"last_verify_error"`
+	Name            string    `pg:"name,use_zero"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }
 
 type CrawlTl struct {
-	tableName struct{} `sql:"crawl_tls,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_tls,alias:t,,discard_unknown_columns"`
 
-	ID                 int                    `sql:"id,pk"`
-	NotBefore          time.Time              `sql:"not_before,notnull"`
-	NotAfter           time.Time              `sql:"not_after,notnull"`
-	CommonName         string                 `sql:"common_name,notnull"`
-	Organization       string                 `sql:"organization,notnull"`
-	DnsNames           []string               `sql:"dns_names,array,notnull"`
-	IssuerOrganization string                 `sql:"issuer_organization,notnull"`
-	IssuerCn           string                 `sql:"issuer_cn,notnull"`
-	CipherSuite        string                 `sql:"cipher_suite,notnull"`
-	Version            string                 `sql:"version,notnull"`
-	Errors             map[string]interface{} `sql:"errors"`
+	ID                 int                    `pg:"id,pk"`
+	NotBefore          time.Time              `pg:"not_before,use_zero"`
+	NotAfter           time.Time              `pg:"not_after,use_zero"`
+	CommonName         string                 `pg:"common_name,use_zero"`
+	Organization       string                 `pg:"organization,use_zero"`
+	DnsNames           []string               `pg:"dns_names,array,use_zero"`
+	IssuerOrganization string                 `pg:"issuer_organization,use_zero"`
+	IssuerCn           string                 `pg:"issuer_cn,use_zero"`
+	CipherSuite        string                 `pg:"cipher_suite,use_zero"`
+	Version            string                 `pg:"version,use_zero"`
+	Errors             map[string]interface{} `pg:"errors"`
 }
 
 type CrawlUserprofile struct {
-	tableName struct{} `sql:"crawl_userprofile,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"crawl_userprofile,alias:t,,discard_unknown_columns"`
 
-	ID       int                    `sql:"id,pk"`
-	Settings map[string]interface{} `sql:"settings,notnull"`
-	UserID   int                    `sql:"user_id,notnull"`
+	ID       int                    `pg:"id,pk"`
+	Settings map[string]interface{} `pg:"settings,use_zero"`
+	UserID   int                    `pg:"user_id,use_zero"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }
 
 type DjangoAdminLog struct {
-	tableName struct{} `sql:"django_admin_log,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"django_admin_log,alias:t,,discard_unknown_columns"`
 
-	ID            int       `sql:"id,pk"`
-	ActionTime    time.Time `sql:"action_time,notnull"`
-	ObjectID      *string   `sql:"object_id"`
-	ObjectRepr    string    `sql:"object_repr,notnull"`
-	ActionFlag    int       `sql:"action_flag,notnull"`
-	ChangeMessage string    `sql:"change_message,notnull"`
-	ContentTypeID *int      `sql:"content_type_id"`
-	UserID        int       `sql:"user_id,notnull"`
+	ID            int       `pg:"id,pk"`
+	ActionTime    time.Time `pg:"action_time,use_zero"`
+	ObjectID      *string   `pg:"object_id"`
+	ObjectRepr    string    `pg:"object_repr,use_zero"`
+	ActionFlag    int       `pg:"action_flag,use_zero"`
+	ChangeMessage string    `pg:"change_message,use_zero"`
+	ContentTypeID *int      `pg:"content_type_id"`
+	UserID        int       `pg:"user_id,use_zero"`
 
 	ContentType *DjangoContentType `pg:"fk:content_type_id"`
 	User        *AuthUser          `pg:"fk:user_id"`
 }
 
 type DjangoContentType struct {
-	tableName struct{} `sql:"django_content_type,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"django_content_type,alias:t,,discard_unknown_columns"`
 
-	ID       int    `sql:"id,pk"`
-	AppLabel string `sql:"app_label,notnull"`
-	Model    string `sql:"model,notnull"`
+	ID       int    `pg:"id,pk"`
+	AppLabel string `pg:"app_label,use_zero"`
+	Model    string `pg:"model,use_zero"`
 }
 
 type DjangoMigration struct {
-	tableName struct{} `sql:"django_migrations,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"django_migrations,alias:t,,discard_unknown_columns"`
 
-	ID      int       `sql:"id,pk"`
-	App     string    `sql:"app,notnull"`
-	Name    string    `sql:"name,notnull"`
-	Applied time.Time `sql:"applied,notnull"`
+	ID      int       `pg:"id,pk"`
+	App     string    `pg:"app,use_zero"`
+	Name    string    `pg:"name,use_zero"`
+	Applied time.Time `pg:"applied,use_zero"`
 }
 
 type DjangoSession struct {
-	tableName struct{} `sql:"django_session,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"django_session,alias:t,,discard_unknown_columns"`
 
-	ID          string    `sql:"session_key,pk"`
-	SessionData string    `sql:"session_data,notnull"`
-	ExpireDate  time.Time `sql:"expire_date,notnull"`
+	ID          string    `pg:"session_key,pk"`
+	SessionData string    `pg:"session_data,use_zero"`
+	ExpireDate  time.Time `pg:"expire_date,use_zero"`
 }
 
 type DjangoSite struct {
-	tableName struct{} `sql:"django_site,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"django_site,alias:t,,discard_unknown_columns"`
 
-	ID     int    `sql:"id,pk"`
-	Domain string `sql:"domain,notnull"`
-	Name   string `sql:"name,notnull"`
+	ID     int    `pg:"id,pk"`
+	Domain string `pg:"domain,use_zero"`
+	Name   string `pg:"name,use_zero"`
 }
 
 type HealthCheckDbTestmodel struct {
-	tableName struct{} `sql:"health_check_db_testmodel,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"health_check_db_testmodel,alias:t,,discard_unknown_columns"`
 
-	ID    int    `sql:"id,pk"`
-	Title string `sql:"title,notnull"`
+	ID    int    `pg:"id,pk"`
+	Title string `pg:"title,use_zero"`
 }
 
 type PaymentStripecustomer struct {
-	tableName struct{} `sql:"payments_stripecustomer,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"payments_stripecustomer,alias:t,,discard_unknown_columns"`
 
-	ID         int    `sql:"id,pk"`
-	CustomerID string `sql:"customer_id,notnull"`
-	UserID     int    `sql:"user_id,notnull"`
+	ID         int    `pg:"id,pk"`
+	CustomerID string `pg:"customer_id,use_zero"`
+	UserID     int    `pg:"user_id,use_zero"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }
 
 type PaymentSubscription struct {
-	tableName struct{} `sql:"payments_subscription,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"payments_subscription,alias:t,,discard_unknown_columns"`
 
-	ID       int      `sql:"id,pk"`
-	PriceID  string   `sql:"price_id,notnull"`
-	GroupID  int      `sql:"group_id,notnull"`
-	Features []string `sql:"features,array,notnull"`
-	Name     string   `sql:"name,notnull"`
+	ID       int      `pg:"id,pk"`
+	PriceID  string   `pg:"price_id,use_zero"`
+	GroupID  int      `pg:"group_id,use_zero"`
+	Features []string `pg:"features,array,use_zero"`
+	Name     string   `pg:"name,use_zero"`
 
 	Group *AuthGroup `pg:"fk:group_id"`
 }
 
 type PaymentUsersubscription struct {
-	tableName struct{} `sql:"payments_usersubscription,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"payments_usersubscription,alias:t,,discard_unknown_columns"`
 
-	ID             int    `sql:"id,pk"`
-	SubscriptionID int    `sql:"subscription_id,notnull"`
-	UserID         int    `sql:"user_id,notnull"`
-	StripeID       string `sql:"stripe_id,notnull"`
-	Status         int    `sql:"status,notnull"`
+	ID             int    `pg:"id,pk"`
+	SubscriptionID int    `pg:"subscription_id,use_zero"`
+	UserID         int    `pg:"user_id,use_zero"`
+	StripeID       string `pg:"stripe_id,use_zero"`
+	Status         int    `pg:"status,use_zero"`
 
 	Subscription *PaymentSubscription `pg:"fk:subscription_id"`
 	User         *AuthUser            `pg:"fk:user_id"`
 }
 
 type SocialaccountSocialaccount struct {
-	tableName struct{} `sql:"socialaccount_socialaccount,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"socialaccount_socialaccount,alias:t,,discard_unknown_columns"`
 
-	ID         int       `sql:"id,pk"`
-	Provider   string    `sql:"provider,notnull"`
-	Uid        string    `sql:"uid,notnull"`
-	LastLogin  time.Time `sql:"last_login,notnull"`
-	DateJoined time.Time `sql:"date_joined,notnull"`
-	ExtraData  string    `sql:"extra_data,notnull"`
-	UserID     int       `sql:"user_id,notnull"`
+	ID         int       `pg:"id,pk"`
+	Provider   string    `pg:"provider,use_zero"`
+	Uid        string    `pg:"uid,use_zero"`
+	LastLogin  time.Time `pg:"last_login,use_zero"`
+	DateJoined time.Time `pg:"date_joined,use_zero"`
+	ExtraData  string    `pg:"extra_data,use_zero"`
+	UserID     int       `pg:"user_id,use_zero"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }
 
 type SocialaccountSocialapp struct {
-	tableName struct{} `sql:"socialaccount_socialapp,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"socialaccount_socialapp,alias:t,,discard_unknown_columns"`
 
-	ID       int    `sql:"id,pk"`
-	Provider string `sql:"provider,notnull"`
-	Name     string `sql:"name,notnull"`
-	ClientID string `sql:"client_id,notnull"`
-	Secret   string `sql:"secret,notnull"`
-	Key      string `sql:"key,notnull"`
+	ID       int    `pg:"id,pk"`
+	Provider string `pg:"provider,use_zero"`
+	Name     string `pg:"name,use_zero"`
+	ClientID string `pg:"client_id,use_zero"`
+	Secret   string `pg:"secret,use_zero"`
+	Key      string `pg:"key,use_zero"`
 }
 
 type SocialaccountSocialappSite struct {
-	tableName struct{} `sql:"socialaccount_socialapp_sites,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"socialaccount_socialapp_sites,alias:t,,discard_unknown_columns"`
 
-	ID          int `sql:"id,pk"`
-	SocialappID int `sql:"socialapp_id,notnull"`
-	SiteID      int `sql:"site_id,notnull"`
+	ID          int `pg:"id,pk"`
+	SocialappID int `pg:"socialapp_id,use_zero"`
+	SiteID      int `pg:"site_id,use_zero"`
 
 	Site      *DjangoSite             `pg:"fk:site_id"`
 	Socialapp *SocialaccountSocialapp `pg:"fk:socialapp_id"`
 }
 
 type SocialaccountSocialtoken struct {
-	tableName struct{} `sql:"socialaccount_socialtoken,alias:t" pg:",discard_unknown_columns"`
+	tableName struct{} `pg:"socialaccount_socialtoken,alias:t,,discard_unknown_columns"`
 
-	ID          int        `sql:"id,pk"`
-	Token       string     `sql:"token,notnull"`
-	TokenSecret string     `sql:"token_secret,notnull"`
-	ExpiresAt   *time.Time `sql:"expires_at"`
-	AccountID   int        `sql:"account_id,notnull"`
-	AppID       int        `sql:"app_id,notnull"`
+	ID          int        `pg:"id,pk"`
+	Token       string     `pg:"token,use_zero"`
+	TokenSecret string     `pg:"token_secret,use_zero"`
+	ExpiresAt   *time.Time `pg:"expires_at"`
+	AccountID   int        `pg:"account_id,use_zero"`
+	AppID       int        `pg:"app_id,use_zero"`
 
 	Account *SocialaccountSocialaccount `pg:"fk:account_id"`
 	App     *SocialaccountSocialapp     `pg:"fk:app_id"`

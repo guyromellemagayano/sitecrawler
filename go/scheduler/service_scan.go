@@ -18,7 +18,7 @@ func (s *ScanService) Start(siteId int) error {
 		SiteID:    siteId,
 		StartedAt: time.Now(),
 	}
-	if err := s.Database.ScanDao.Save(scan); err != nil {
+	if err := s.Database.Insert(scan); err != nil {
 		return err
 	}
 

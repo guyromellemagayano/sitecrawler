@@ -3,7 +3,7 @@ package common
 import (
 	"time"
 
-	"github.com/go-pg/pg"
+	"github.com/go-pg/pg/v9"
 	"go.uber.org/zap"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"

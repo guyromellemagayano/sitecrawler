@@ -18,7 +18,8 @@ type VerifyService struct {
 }
 
 func (v *VerifyService) VerifySite(log *zap.SugaredLogger, siteID int) error {
-	site, err := v.Database.SiteDao.ByID(siteID)
+	site := &database.CrawlSite{ID: siteID}
+	err := v.Database.ByID(site)
 	if err != nil {
 		return errors.Wrapf(err, "could not get site id %v", siteID)
 	}
@@ -36,7 +37,7 @@ func (v *VerifyService) VerifySite(log *zap.SugaredLogger, siteID int) error {
 		site.LastVerifyError = nil
 	}
 
-	if err := v.Database.SiteDao.Save(site); err != nil {
+	if err := v.Database.Update(site); err != nil {
 		return errors.Wrap(err, "could not save site")
 	}
 

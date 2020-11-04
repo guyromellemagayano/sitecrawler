@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	lastScanToProcess = 121
+	lastScanToProcess = 546
 	ignoreScan        = 0 // in progress on prod
-	firstSiteToProces = 0
+	firstSiteToProces = 86
 )
 
 func main() {
@@ -85,13 +85,13 @@ func main() {
 			if links != 0 && total != 0 {
 				log.Infof("Per link %v, per total %v", time.Since(start)/time.Duration(links), time.Since(start)/time.Duration(total))
 			}
-			log.Infof("Verifying site: %v, scan: %v", site.ID, scan.ID)
-			err = db.LinkDao.AllForScanForEach(scan.ID, func(l *database.CrawlLink) error {
-				return VerifyIsType(site, scan, l)
-			})
-			if err != nil {
-				return err
-			}
+			// log.Infof("Verifying site: %v, scan: %v", site.ID, scan.ID)
+			// err = db.LinkDao.AllForScanForEach(scan.ID, func(l *database.CrawlLink) error {
+			//     return VerifyIsType(site, scan, l)
+			// })
+			// if err != nil {
+			//     return err
+			// }
 			log.Infof("Done site: %v, scan: %v", site.ID, scan.ID)
 			return nil
 		})
