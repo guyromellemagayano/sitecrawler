@@ -12,16 +12,20 @@ type DB interface {
 }
 
 type Database struct {
-	LinkDao GenericDao
-	ScanDao GenericDao
-	db      DB
+	LinkDao         GenericDao
+	ScanDao         GenericDao
+	FifoEntryDao    GenericDao
+	FifoRelationDao GenericDao
+	db              DB
 }
 
 func NewDatabase(db DB) *Database {
 	return &Database{
-		LinkDao: GenericDao{model: &CrawlLink{}, db: db},
-		ScanDao: GenericDao{model: &CrawlScan{}, db: db},
-		db:      db,
+		LinkDao:         GenericDao{model: &CrawlLink{}, db: db},
+		ScanDao:         GenericDao{model: &CrawlScan{}, db: db},
+		FifoEntryDao:    GenericDao{model: &CrawlFifoentry{}, db: db},
+		FifoRelationDao: GenericDao{model: &CrawlFiforelation{}, db: db},
+		db:              db,
 	}
 }
 
@@ -57,6 +61,11 @@ func (d Database) All(m interface{}, options ...QueryOption) error {
 
 func (d Database) Update(m interface{}) error {
 	_, err := d.db.Model(m).WherePK().Update()
+	return err
+}
+
+func (d Database) Delete(m interface{}) error {
+	_, err := d.db.Model(m).WherePK().Delete()
 	return err
 }
 

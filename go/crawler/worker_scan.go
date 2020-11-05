@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"strconv"
+	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"github.com/pkg/errors"
@@ -9,7 +11,7 @@ import (
 )
 
 func ScanWorker(log *zap.SugaredLogger, scanSqsQueue *common.SQSService, scanService *ScanService) {
-	loop := func() error {
+	loop := func(ctx context.Context) error {
 		defer common.PanicLogger(log)
 
 		msg, err := scanSqsQueue.Read(log)
@@ -23,10 +25,16 @@ func ScanWorker(log *zap.SugaredLogger, scanSqsQueue *common.SQSService, scanSer
 			return errors.Wrap(err, "could not decode sqs msg")
 		}
 
+		ctx, cancel := context.WithTimeout(ctx, time.Hour*6)
+		defer cancel()
+		log.Infof("starting timeout")
+
 		log = log.With("scan_id", id)
-		err = scanService.ScanSite(log, id)
+		err = scanService.ScanSite(ctx, log, id)
 		if err != nil {
-			log.Errorf("Scan failed: %v", err)
+			if err != context.DeadlineExceeded {
+				log.Errorf("Scan failed: %v", err)
+			}
 			return nil
 		}
 
@@ -39,7 +47,7 @@ func ScanWorker(log *zap.SugaredLogger, scanSqsQueue *common.SQSService, scanSer
 		return nil
 	}
 	for {
-		if err := loop(); err != nil {
+		if err := loop(context.Background()); err != nil {
 			log.Errorf("Scan worker error: %v", err)
 		}
 	}

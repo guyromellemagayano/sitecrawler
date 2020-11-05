@@ -48,6 +48,16 @@ var Columns = struct {
 
 		User string
 	}
+	CrawlFifoentry struct {
+		ID, Url, Depth, ScanID string
+
+		Scan string
+	}
+	CrawlFiforelation struct {
+		ID, ParentID, ChildType, EntryID string
+
+		Entry string
+	}
 	CrawlGroupsetting struct {
 		ID, MaxSites, GroupID, RecrawlSchedule string
 
@@ -260,6 +270,30 @@ var Columns = struct {
 		UserID:  "user_id",
 
 		User: "User",
+	},
+	CrawlFifoentry: struct {
+		ID, Url, Depth, ScanID string
+
+		Scan string
+	}{
+		ID:     "id",
+		Url:    "url",
+		Depth:  "depth",
+		ScanID: "scan_id",
+
+		Scan: "Scan",
+	},
+	CrawlFiforelation: struct {
+		ID, ParentID, ChildType, EntryID string
+
+		Entry string
+	}{
+		ID:        "id",
+		ParentID:  "parent_id",
+		ChildType: "child_type",
+		EntryID:   "entry_id",
+
+		Entry: "Entry",
 	},
 	CrawlGroupsetting: struct {
 		ID, MaxSites, GroupID, RecrawlSchedule string
@@ -604,6 +638,12 @@ var Tables = struct {
 	AuthtokenToken struct {
 		Name, Alias string
 	}
+	CrawlFifoentry struct {
+		Name, Alias string
+	}
+	CrawlFiforelation struct {
+		Name, Alias string
+	}
 	CrawlGroupsetting struct {
 		Name, Alias string
 	}
@@ -729,6 +769,18 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "authtoken_token",
+		Alias: "t",
+	},
+	CrawlFifoentry: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_fifoentry",
+		Alias: "t",
+	},
+	CrawlFiforelation: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_fiforelation",
 		Alias: "t",
 	},
 	CrawlGroupsetting: struct {
@@ -976,6 +1028,28 @@ type AuthtokenToken struct {
 	UserID  int       `pg:"user_id,use_zero"`
 
 	User *AuthUser `pg:"fk:user_id"`
+}
+
+type CrawlFifoentry struct {
+	tableName struct{} `pg:"crawl_fifoentry,alias:t,,discard_unknown_columns"`
+
+	ID     int    `pg:"id,pk"`
+	Url    string `pg:"url,use_zero"`
+	Depth  int    `pg:"depth,use_zero"`
+	ScanID int    `pg:"scan_id,use_zero"`
+
+	Scan *CrawlScan `pg:"fk:scan_id"`
+}
+
+type CrawlFiforelation struct {
+	tableName struct{} `pg:"crawl_fiforelation,alias:t,,discard_unknown_columns"`
+
+	ID        int `pg:"id,pk"`
+	ParentID  int `pg:"parent_id,use_zero"`
+	ChildType int `pg:"child_type,use_zero"`
+	EntryID   int `pg:"entry_id,use_zero"`
+
+	Entry *CrawlFifoentry `pg:"fk:entry_id"`
 }
 
 type CrawlGroupsetting struct {

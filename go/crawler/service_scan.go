@@ -1,7 +1,7 @@
 package main
 
 import (
-	"container/list"
+	"context"
 	"io"
 	"io/ioutil"
 	"net/url"
@@ -38,7 +38,7 @@ type ScanService struct {
 	PostprocessService *PostprocessService
 }
 
-func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
+func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scanID int) error {
 	exists, err := s.Database.ScanDao.Exists(scanID)
 	if err != nil {
 		return errors.Wrapf(err, "could not check if scan id %v exists", scanID)
@@ -67,7 +67,7 @@ func (s *ScanService) ScanSite(log *zap.SugaredLogger, scanID int) error {
 		return nil
 	}
 
-	if err := s.Start(log, scan); err != nil {
+	if err := s.Start(ctx, log, scan); err != nil {
 		return err
 	}
 
@@ -94,31 +94,26 @@ func (s *ScanService) reverify(log *zap.SugaredLogger, scan *database.CrawlScan)
 	return s.VerifyService.VerifySite(log, scan.SiteID)
 }
 
-func (s *ScanService) Start(log *zap.SugaredLogger, scan *database.CrawlScan) error {
+func (s *ScanService) Start(ctx context.Context, log *zap.SugaredLogger, scan *database.CrawlScan) error {
+	linkCache, err := NewLinkCache(s.Database, scan.ID)
+	if err != nil {
+		return err
+	}
+	fifoCache, err := NewFifoCache(s.Database, scan.ID)
+	if err != nil {
+		return err
+	}
+
 	scanner := &scanner{
 		ScanService: s,
 		Scan:        scan,
 
 		tlsCache:  NewTlsCache(),
 		rateLimit: NewRateLimit(),
-
-		linkIDs: make(map[string]int),
-
-		fifo:   list.New(),
-		inFifo: make(map[string]*fifoEntry),
+		linkCache: linkCache,
+		fifoCache: fifoCache,
 	}
-	return scanner.Start(log)
-}
-
-type relation struct {
-	ParentId  int
-	ChildType uint8
-}
-
-type fifoEntry struct {
-	Url       *url.URL
-	Depth     uint
-	Relations []relation
+	return scanner.Start(ctx, log)
 }
 
 type scanner struct {
@@ -127,30 +122,33 @@ type scanner struct {
 
 	tlsCache  *TlsCache
 	rateLimit *RateLimit
-
-	linkIDs map[string]int
-
-	fifo   *list.List
-	inFifo map[string]*fifoEntry
-
-	pageCount int
+	linkCache *LinkCache
+	fifoCache *FifoCache
 }
 
-func (s *scanner) Start(log *zap.SugaredLogger) error {
+func (s *scanner) Start(ctx context.Context, log *zap.SugaredLogger) error {
 	u, err := s.normalizeURL("", s.Scan.Site.Url)
 	if err != nil {
 		return err
 	}
 
-	s.addLinkWithRelation(log, s.ScanService.Database, fifoEntry{
-		Url:   u,
-		Depth: 0,
-	}, relation{ChildType: CHILD_NONE})
+	if s.fifoCache.Len() == 0 {
+		s.addLinkWithRelation(log, s.ScanService.Database, fifoEntry{
+			Url:   u,
+			Depth: 0,
+		}, relation{ChildType: CHILD_NONE})
+	}
 
-	for s.fifo.Len() > 0 {
-		entry := s.popFifo()
+	for s.fifoCache.Len() > 0 {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
 
 		err := s.ScanService.Database.RunInTransaction(func(db *database.Database) error {
+			entry := s.fifoCache.Front()
+
 			childLinkId, err := s.scanURL(log, db, entry.Url, entry.Depth)
 			if err != nil {
 				return err
@@ -160,6 +158,10 @@ func (s *scanner) Start(log *zap.SugaredLogger) error {
 				if err := s.saveRelation(db, r, childLinkId); err != nil {
 					return err
 				}
+			}
+
+			if err := s.fifoCache.DeleteFront(db); err != nil {
+				return err
 			}
 
 			return nil
@@ -173,13 +175,13 @@ func (s *scanner) Start(log *zap.SugaredLogger) error {
 }
 
 func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceUrl *url.URL, depth uint) (int, error) {
-	if linkID, ok := s.linkIDs[sourceUrl.String()]; ok {
+	if linkID, ok := s.linkCache.LinkIDs[sourceUrl.String()]; ok {
 		return linkID, nil
 	}
 
 	link, doc := s.loadURL(log, db, sourceUrl)
 	// Recheck "destination url after redirects" if it's in cache
-	if linkID, ok := s.linkIDs[link.Url]; ok {
+	if linkID, ok := s.linkCache.LinkIDs[link.Url]; ok {
 		return linkID, nil
 	}
 
@@ -192,8 +194,8 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 	}
 
 	// cache both source and destination id
-	s.linkIDs[sourceUrl.String()] = link.ID
-	s.linkIDs[link.Url] = link.ID
+	s.linkCache.Add(link)
+	s.linkCache.LinkIDs[sourceUrl.String()] = link.ID
 
 	// If we have doc, than it's a page and we descend the scan, otherwise return
 	if doc == nil {
@@ -201,7 +203,6 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 	}
 
 	// save page stuff
-	s.pageCount++
 	if err := s.savePageData(db, doc, link.ID); err != nil {
 		log.Errorf("Could not save page data for link %v: %v", link.ID, err)
 	}
@@ -213,7 +214,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 		)
 		return link.ID, nil
 	}
-	if s.pageCount > pageLimit {
+	if s.linkCache.PageCount > pageLimit {
 		log.Errorw("Page limit hit",
 			"link_id", link.ID,
 		)
@@ -454,36 +455,27 @@ func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, db *database.Datab
 	urlStr := fe.Url.String()
 
 	// bypass fifo if url has been scanned already
-	if childId, ok := s.linkIDs[urlStr]; ok {
+	if childId, ok := s.linkCache.LinkIDs[urlStr]; ok {
 		if err := s.saveRelation(db, r, childId); err != nil {
 			log.Errorf("Could not save relation: %v", err)
 		}
 		// if url is already in fifo just add r to it's relations
-	} else if oldFe, ok := s.inFifo[urlStr]; ok {
-		if r.ChildType != CHILD_NONE {
-			oldFe.Relations = append(oldFe.Relations, r)
+	} else if oldFe := s.fifoCache.Get(urlStr); oldFe != nil {
+		if err := s.fifoCache.AddRelation(db, urlStr, r); err != nil {
+			log.Errorf("Could not add relation to fifo: %v", err)
 		}
 		// add to fifo if not hiting total limit
-	} else if len(s.linkIDs)+len(s.inFifo) <= totalLimit {
+	} else if len(s.linkCache.LinkIDs)+s.fifoCache.Len() <= totalLimit {
 		fep := &fe
 		fep.Relations = []relation{r}
-		s.fifo.PushBack(fep)
-		s.inFifo[urlStr] = fep
+		if err := s.fifoCache.Add(db, s.Scan.ID, fep); err != nil {
+			log.Errorf("Could not add to fifo: %v", err)
+		}
 	} else {
 		log.Errorw("Total limit hit",
 			"url", fe.Url,
 		)
 	}
-}
-
-func (s *scanner) popFifo() *fifoEntry {
-	element := s.fifo.Front()
-	entry := element.Value.(*fifoEntry)
-
-	s.fifo.Remove(element)
-	delete(s.inFifo, entry.Url.String())
-
-	return entry
 }
 
 func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId int) error {

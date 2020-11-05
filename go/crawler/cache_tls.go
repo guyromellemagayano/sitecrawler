@@ -18,6 +18,7 @@ type TlsCache struct {
 }
 
 func NewTlsCache() *TlsCache {
+	// We don't reinitialize the cache on crawl continue, since this is space saving optimization only anyway
 	return &TlsCache{
 		cache: make(map[tlsKey]*database.CrawlTl),
 	}
