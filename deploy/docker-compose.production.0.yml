@@ -20,7 +20,7 @@ services:
     restart: always
     ports:
       - "8000:3000"
-    mem_limit: 64M
+    mem_limit: 128M
   crawler:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
     restart: always
