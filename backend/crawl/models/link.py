@@ -164,5 +164,11 @@ class Link(models.Model):
     cached_is_script = models.BooleanField(null=False, default=False)
     cached_is_stylesheet = models.BooleanField(null=False, default=False)
 
+    # fields counting incoming relations
+    cached_link_occurences = models.PositiveIntegerField(null=True, blank=True)
+    cached_image_occurences = models.PositiveIntegerField(null=True, blank=True)
+    cached_script_occurences = models.PositiveIntegerField(null=True, blank=True)
+    cached_stylesheet_occurences = models.PositiveIntegerField(null=True, blank=True)
+
     def get_pages(self):
         return self.pages.all().union(self.image_pages.all(), self.script_pages.all(), self.stylesheet_pages.all())

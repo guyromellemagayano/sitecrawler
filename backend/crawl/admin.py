@@ -105,6 +105,10 @@ class PageInline(admin.TabularInline):
         "cached_is_image",
         "cached_is_script",
         "cached_is_stylesheet",
+        "cached_link_occurences",
+        "cached_image_occurences",
+        "cached_script_occurences",
+        "cached_stylesheet_occurences",
     )
     show_change_link = True
 

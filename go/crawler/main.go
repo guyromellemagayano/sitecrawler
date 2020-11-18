@@ -36,6 +36,7 @@ func main() {
 			&common.TlsPostprocessor{},
 			&common.SizePostprocessor{},
 			&common.IsTypePostprocessor{},
+			&common.OccurencesPostprocessor{},
 		},
 	}
 	backendService := &BackendService{Token: common.Env("BACKEND_TOKEN", "")}

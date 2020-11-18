@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
@@ -12,9 +11,9 @@ import (
 )
 
 const (
-	lastScanToProcess = 546
+	lastScanToProcess = 136
 	ignoreScan        = 0 // in progress on prod
-	firstSiteToProces = 86
+	firstSiteToProces = 0
 )
 
 func main() {
@@ -26,13 +25,13 @@ func main() {
 	db := common.ConfigureDatabase(log, env)
 	defer db.Close()
 
-	postprocessor := &common.IsTypePostprocessor{Database: db}
+	postprocessor := &common.OccurencesPostprocessor{}
 
-	err := db.SiteDao.AllForEach(func(site *database.CrawlSite) error {
+	err := db.SiteDao.ForEach(func(site *database.CrawlSite) error {
 		if site.ID < firstSiteToProces {
 			return nil
 		}
-		return db.ScanDao.AllForSiteForEach(site.ID, func(scan *database.CrawlScan) error {
+		return db.ScanDao.ForEach(func(scan *database.CrawlScan) error {
 			if scan.ID > lastScanToProcess {
 				return nil
 			}
@@ -43,59 +42,60 @@ func main() {
 			links := 0
 			total := 0
 			start := time.Now()
-			err := db.LinkDao.AllForScanForEach(scan.ID, func(l *database.CrawlLink) error {
+			err := db.LinkDao.ForEach(func(l *database.CrawlLink) error {
 				links++
 				total++
-				if err := postprocessor.OnLink(l); err != nil {
+				if err := postprocessor.OnLink(db, l); err != nil {
 					return err
 				}
-				err := db.LinkLinkDao.AllForLinkForEach(l.ID, func(ll *database.CrawlLinkLink) error {
+				err := db.LinkLinkDao.ForEach(func(ll *database.CrawlLinkLink) error {
 					total++
-					return postprocessor.OnLinkLink(ll)
-				})
+					return postprocessor.OnLinkLink(db, ll)
+				}, database.Where("from_link_id = ?", l.ID))
 				if err != nil {
 					return err
 				}
-				err = db.LinkImageDao.AllForLinkForEach(l.ID, func(li *database.CrawlLinkImage) error {
+				err = db.LinkImageDao.ForEach(func(li *database.CrawlLinkImage) error {
 					total++
-					return postprocessor.OnLinkImage(li)
-				})
+					return postprocessor.OnLinkImage(db, li)
+				}, database.Where("from_link_id = ?", l.ID))
 				if err != nil {
 					return err
 				}
-				err = db.LinkScriptDao.AllForLinkForEach(l.ID, func(ls *database.CrawlLinkScript) error {
+				err = db.LinkScriptDao.ForEach(func(ls *database.CrawlLinkScript) error {
 					total++
-					return postprocessor.OnLinkScript(ls)
-				})
+					return postprocessor.OnLinkScript(db, ls)
+				}, database.Where("from_link_id = ?", l.ID))
 				if err != nil {
 					return err
 				}
-				err = db.LinkStylesheetDao.AllForLinkForEach(l.ID, func(ls *database.CrawlLinkStylesheet) error {
+				err = db.LinkStylesheetDao.ForEach(func(ls *database.CrawlLinkStylesheet) error {
 					total++
-					return postprocessor.OnLinkStylesheet(ls)
-				})
+					return postprocessor.OnLinkStylesheet(db, ls)
+				}, database.Where("from_link_id = ?", l.ID))
 				if err != nil {
 					return err
 				}
 				return nil
-			})
+			}, database.Where("scan_id = ?", scan.ID))
 			if err != nil {
 				return err
 			}
 			if links != 0 && total != 0 {
 				log.Infof("Per link %v, per total %v", time.Since(start)/time.Duration(links), time.Since(start)/time.Duration(total))
 			}
-			// log.Infof("Verifying site: %v, scan: %v", site.ID, scan.ID)
-			// err = db.LinkDao.AllForScanForEach(scan.ID, func(l *database.CrawlLink) error {
-			//     return VerifyIsType(site, scan, l)
-			// })
-			// if err != nil {
-			//     return err
-			// }
+			log.Infof("Verifying site: %v, scan: %v", site.ID, scan.ID)
+			// err = db.LinkDao.ForEach(func(l *database.CrawlLink) error {
+			//     return VerifyOccurences(site, scan, l)
+			// }, database.Where("scan_id = ?", scan.ID))
+			err = VerifyOccurences(db, site, scan)
+			if err != nil {
+				return err
+			}
 			log.Infof("Done site: %v, scan: %v", site.ID, scan.ID)
 			return nil
-		})
-	})
+		}, database.Where("site_id = ?", site.ID), database.Order("id"))
+	}, database.Order("id"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -183,48 +183,155 @@ func main() {
 //     return nil
 // }
 
-func VerifyIsType(site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
-	var isLink, isImage, isScript, isStylesheet bool
-	isLinkPath := fmt.Sprintf("site/%v/scan/%v/link/%v/", site.ID, scan.ID, link.ID)
-	if err := backendRequest(isLinkPath, nil); err != nil {
-		if !strings.HasSuffix(err.Error(), "404 Not Found") {
+// func VerifyIsType(site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
+//     var isLink, isImage, isScript, isStylesheet bool
+//     isLinkPath := fmt.Sprintf("site/%v/scan/%v/link/%v/", site.ID, scan.ID, link.ID)
+//     if err := backendRequest(isLinkPath, nil); err != nil {
+//         if !strings.HasSuffix(err.Error(), "404 Not Found") {
+//             return err
+//         }
+//     } else {
+//         isLink = true
+//     }
+//     isImagePath := fmt.Sprintf("site/%v/scan/%v/image/%v/", site.ID, scan.ID, link.ID)
+//     if err := backendRequest(isImagePath, nil); err != nil {
+//         if !strings.HasSuffix(err.Error(), "404 Not Found") {
+//             return err
+//         }
+//     } else {
+//         isImage = true
+//     }
+//     isScriptPath := fmt.Sprintf("site/%v/scan/%v/script/%v/", site.ID, scan.ID, link.ID)
+//     if err := backendRequest(isScriptPath, nil); err != nil {
+//         if !strings.HasSuffix(err.Error(), "404 Not Found") {
+//             return err
+//         }
+//     } else {
+//         isScript = true
+//     }
+//     isStylesheetPath := fmt.Sprintf("site/%v/scan/%v/stylesheet/%v/", site.ID, scan.ID, link.ID)
+//     if err := backendRequest(isStylesheetPath, nil); err != nil {
+//         if !strings.HasSuffix(err.Error(), "404 Not Found") {
+//             return err
+//         }
+//     } else {
+//         isStylesheet = true
+//     }
+//
+//     if link.CachedIsLink != isLink ||
+//         link.CachedIsImage != isImage ||
+//         link.CachedIsScript != isScript ||
+//         link.CachedIsStylesheet != isStylesheet {
+//         return fmt.Errorf("invalid: %v, %v, %v", site.ID, scan.ID, link.ID)
+//     }
+//
+//     return nil
+// }
+
+func VerifyOccurences(db *database.Database, site *database.CrawlSite, scan *database.CrawlScan) error {
+	url := fmt.Sprintf("site/%v/scan/%v/link/", site.ID, scan.ID)
+	for url != "" {
+		result := struct {
+			Next    string `json:"next"`
+			Results []struct {
+				Id         int `json:"id"`
+				Occurences int `json:"occurences"`
+			} `json:"results"`
+		}{}
+		if err := backendRequest(url, &result); err != nil {
 			return err
 		}
-	} else {
-		isLink = true
-	}
-	isImagePath := fmt.Sprintf("site/%v/scan/%v/image/%v/", site.ID, scan.ID, link.ID)
-	if err := backendRequest(isImagePath, nil); err != nil {
-		if !strings.HasSuffix(err.Error(), "404 Not Found") {
-			return err
+
+		for _, row := range result.Results {
+			var link database.CrawlLink
+			if err := db.Get(&link, database.Where("id = ?", row.Id)); err != nil {
+				return err
+			}
+
+			if *link.CachedLinkOccurences != row.Occurences {
+				return fmt.Errorf("invalid: %v, %v, %v", site.ID, scan.ID, link.ID)
+			}
 		}
-	} else {
-		isImage = true
-	}
-	isScriptPath := fmt.Sprintf("site/%v/scan/%v/script/%v/", site.ID, scan.ID, link.ID)
-	if err := backendRequest(isScriptPath, nil); err != nil {
-		if !strings.HasSuffix(err.Error(), "404 Not Found") {
-			return err
-		}
-	} else {
-		isScript = true
-	}
-	isStylesheetPath := fmt.Sprintf("site/%v/scan/%v/stylesheet/%v/", site.ID, scan.ID, link.ID)
-	if err := backendRequest(isStylesheetPath, nil); err != nil {
-		if !strings.HasSuffix(err.Error(), "404 Not Found") {
-			return err
-		}
-	} else {
-		isStylesheet = true
+		url = result.Next
 	}
 
-	if link.CachedIsLink != isLink ||
-		link.CachedIsImage != isImage ||
-		link.CachedIsScript != isScript ||
-		link.CachedIsStylesheet != isStylesheet {
-		return fmt.Errorf("invalid: %v, %v, %v", site.ID, scan.ID, link.ID)
+	url = fmt.Sprintf("site/%v/scan/%v/image/", site.ID, scan.ID)
+	for url != "" {
+		result := struct {
+			Next    string `json:"next"`
+			Results []struct {
+				Id         int `json:"id"`
+				Occurences int `json:"occurences"`
+			} `json:"results"`
+		}{}
+		if err := backendRequest(url, &result); err != nil {
+			return err
+		}
+
+		for _, row := range result.Results {
+			var link database.CrawlLink
+			if err := db.Get(&link, database.Where("id = ?", row.Id)); err != nil {
+				return err
+			}
+
+			if *link.CachedImageOccurences != row.Occurences {
+				return fmt.Errorf("invalid: %v, %v, %v", site.ID, scan.ID, link.ID)
+			}
+		}
+		url = result.Next
 	}
 
+	url = fmt.Sprintf("site/%v/scan/%v/script/", site.ID, scan.ID)
+	for url != "" {
+		result := struct {
+			Next    string `json:"next"`
+			Results []struct {
+				Id         int `json:"id"`
+				Occurences int `json:"occurences"`
+			} `json:"results"`
+		}{}
+		if err := backendRequest(url, &result); err != nil {
+			return err
+		}
+
+		for _, row := range result.Results {
+			var link database.CrawlLink
+			if err := db.Get(&link, database.Where("id = ?", row.Id)); err != nil {
+				return err
+			}
+
+			if *link.CachedScriptOccurences != row.Occurences {
+				return fmt.Errorf("invalid: %v, %v, %v", site.ID, scan.ID, link.ID)
+			}
+		}
+		url = result.Next
+	}
+
+	url = fmt.Sprintf("site/%v/scan/%v/stylesheet/", site.ID, scan.ID)
+	for url != "" {
+		result := struct {
+			Next    string `json:"next"`
+			Results []struct {
+				Id         int `json:"id"`
+				Occurences int `json:"occurences"`
+			} `json:"results"`
+		}{}
+		if err := backendRequest(url, &result); err != nil {
+			return err
+		}
+
+		for _, row := range result.Results {
+			var link database.CrawlLink
+			if err := db.Get(&link, database.Where("id = ?", row.Id)); err != nil {
+				return err
+			}
+
+			if *link.CachedStylesheetOccurences != row.Occurences {
+				return fmt.Errorf("invalid: %v, %v, %v", site.ID, scan.ID, link.ID)
+			}
+		}
+		url = result.Next
+	}
 	return nil
 }
 
