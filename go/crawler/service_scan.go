@@ -554,7 +554,12 @@ func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
 
 	u, err := url.Parse(child)
 	if err != nil {
-		return nil, err
+		// just use child as path
+		path, err := url.PathUnescape(child)
+		if err != nil {
+			return nil, err
+		}
+		u = &url.URL{Path: path}
 	}
 	u.Fragment = ""
 	u.RawQuery = ""
