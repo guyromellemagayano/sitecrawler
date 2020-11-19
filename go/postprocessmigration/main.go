@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
@@ -11,9 +12,9 @@ import (
 )
 
 const (
-	lastScanToProcess = 136
+	lastScanToProcess = 573
 	ignoreScan        = 0 // in progress on prod
-	firstSiteToProces = 0
+	firstSiteToProces = 101
 )
 
 func main() {
@@ -335,8 +336,11 @@ func VerifyOccurences(db *database.Database, site *database.CrawlSite, scan *dat
 	return nil
 }
 
-func backendRequest(path string, result interface{}) error {
-	url := fmt.Sprintf("http://backend:8000/api/%v", path)
+func backendRequest(url string, result interface{}) error {
+	urlPrefix := "http://backend:8000/api/"
+	if !strings.HasPrefix(url, urlPrefix) {
+		url = urlPrefix + url
+	}
 	r, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
