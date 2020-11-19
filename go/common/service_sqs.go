@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"strings"
 	"time"
 
@@ -73,12 +74,13 @@ func (s *SQSService) Read(log *zap.SugaredLogger) (*SQSMessage, error) {
 			continue
 		}
 
+		ctx, cancel := context.WithCancel(context.Background())
 		sqsMsg := &SQSMessage{
-			svc:  s,
-			msg:  response.Messages[0],
-			done: make(chan bool),
+			svc:    s,
+			msg:    response.Messages[0],
+			cancel: cancel,
 		}
-		go sqsMsg.startPinger(log)
+		go sqsMsg.startPinger(ctx, log)
 		return sqsMsg, nil
 	}
 }
@@ -92,9 +94,9 @@ func (s *SQSService) Send(body string) error {
 }
 
 type SQSMessage struct {
-	svc  *SQSService
-	msg  *sqs.Message
-	done chan bool
+	svc    *SQSService
+	msg    *sqs.Message
+	cancel context.CancelFunc
 }
 
 func (m *SQSMessage) Body() string {
@@ -103,11 +105,12 @@ func (m *SQSMessage) Body() string {
 
 // Done stops acknowledging messsage
 func (m *SQSMessage) Done() {
-	m.done <- true
+	m.cancel()
 }
 
 // Success deletes the message on success
 func (m *SQSMessage) Success() error {
+	m.cancel()
 	_, err := m.svc.Sqs.DeleteMessage(&sqs.DeleteMessageInput{
 		QueueUrl:      m.svc.url,
 		ReceiptHandle: m.msg.ReceiptHandle,
@@ -118,16 +121,20 @@ func (m *SQSMessage) Success() error {
 	return nil
 }
 
-func (m *SQSMessage) startPinger(log *zap.SugaredLogger) {
+func (m *SQSMessage) startPinger(ctx context.Context, log *zap.SugaredLogger) {
 	ticker := time.NewTicker(PingInterval)
 	defer ticker.Stop()
 	for {
 		select {
-		case <-m.done:
+		case <-ctx.Done():
 			return
 		case <-ticker.C:
 			if err := m.ping(); err != nil {
-				log.Errorf("Sqs ping failed: %v", err)
+				select {
+				case <-ctx.Done():
+				default:
+					log.Errorf("Sqs ping failed: %v", err)
+				}
 			}
 		}
 	}
