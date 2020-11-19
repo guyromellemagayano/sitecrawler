@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
+	"github.com/pkg/errors"
 )
 
 type relation struct {
@@ -107,7 +108,7 @@ func (c *FifoCache) addRelationDb(db *database.Database, fe *fifoEntry, r relati
 	}
 	err := db.Insert(cfr)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "could not insert relation for entry_id=%v", fe.Id)
 	}
 	return nil
 }
@@ -126,10 +127,10 @@ func (c *FifoCache) DeleteFront(db *database.Database) error {
 	delete(c.inFifo, entry.Url.String())
 
 	if err := db.FifoRelationDao.DeleteAll(database.Where("entry_id = ?", entry.Id)); err != nil {
-		return err
+		return errors.Wrapf(err, "could not delete relations for entry_id=%v", entry.Id)
 	}
 	if err := db.FifoEntryDao.DeleteAll(database.Where("id = ?", entry.Id)); err != nil {
-		return err
+		return errors.Wrapf(err, "could not delete entry_id=%v", entry.Id)
 	}
 	return nil
 }
