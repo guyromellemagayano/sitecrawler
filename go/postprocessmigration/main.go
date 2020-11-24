@@ -12,9 +12,10 @@ import (
 )
 
 const (
-	lastScanToProcess = 573
-	ignoreScan        = 0 // in progress on prod
-	firstSiteToProces = 101
+	lastScanToProcess    = 135
+	ignoreScan           = 0 // in progress on prod
+	firstSiteToProces    = 15
+	firstScanOfFirstSite = 134
 )
 
 func main() {
@@ -39,45 +40,51 @@ func main() {
 			if scan.ID == ignoreScan {
 				return nil
 			}
+			if site.ID == firstSiteToProces && scan.ID < firstScanOfFirstSite {
+				return nil
+			}
 			log.Infof("Processing site: %v, scan: %v", site.ID, scan.ID)
 			links := 0
 			total := 0
 			start := time.Now()
 			err := db.LinkDao.ForEach(func(l *database.CrawlLink) error {
-				links++
-				total++
-				if err := postprocessor.OnLink(db, l); err != nil {
-					return err
-				}
-				err := db.LinkLinkDao.ForEach(func(ll *database.CrawlLinkLink) error {
+				time.Sleep(time.Millisecond * 100)
+				return db.RunInTransaction(func(tx *database.Database) error {
+					links++
 					total++
-					return postprocessor.OnLinkLink(db, ll)
-				}, database.Where("from_link_id = ?", l.ID))
-				if err != nil {
-					return err
-				}
-				err = db.LinkImageDao.ForEach(func(li *database.CrawlLinkImage) error {
-					total++
-					return postprocessor.OnLinkImage(db, li)
-				}, database.Where("from_link_id = ?", l.ID))
-				if err != nil {
-					return err
-				}
-				err = db.LinkScriptDao.ForEach(func(ls *database.CrawlLinkScript) error {
-					total++
-					return postprocessor.OnLinkScript(db, ls)
-				}, database.Where("from_link_id = ?", l.ID))
-				if err != nil {
-					return err
-				}
-				err = db.LinkStylesheetDao.ForEach(func(ls *database.CrawlLinkStylesheet) error {
-					total++
-					return postprocessor.OnLinkStylesheet(db, ls)
-				}, database.Where("from_link_id = ?", l.ID))
-				if err != nil {
-					return err
-				}
-				return nil
+					if err := postprocessor.OnLink(tx, l); err != nil {
+						return err
+					}
+					err := db.LinkLinkDao.ForEach(func(ll *database.CrawlLinkLink) error {
+						total++
+						return postprocessor.OnLinkLink(tx, ll)
+					}, database.Where("from_link_id = ?", l.ID))
+					if err != nil {
+						return err
+					}
+					err = db.LinkImageDao.ForEach(func(li *database.CrawlLinkImage) error {
+						total++
+						return postprocessor.OnLinkImage(tx, li)
+					}, database.Where("from_link_id = ?", l.ID))
+					if err != nil {
+						return err
+					}
+					err = db.LinkScriptDao.ForEach(func(ls *database.CrawlLinkScript) error {
+						total++
+						return postprocessor.OnLinkScript(tx, ls)
+					}, database.Where("from_link_id = ?", l.ID))
+					if err != nil {
+						return err
+					}
+					err = db.LinkStylesheetDao.ForEach(func(ls *database.CrawlLinkStylesheet) error {
+						total++
+						return postprocessor.OnLinkStylesheet(db, ls)
+					}, database.Where("from_link_id = ?", l.ID))
+					if err != nil {
+						return err
+					}
+					return nil
+				})
 			}, database.Where("scan_id = ?", scan.ID))
 			if err != nil {
 				return err
@@ -85,14 +92,14 @@ func main() {
 			if links != 0 && total != 0 {
 				log.Infof("Per link %v, per total %v", time.Since(start)/time.Duration(links), time.Since(start)/time.Duration(total))
 			}
-			log.Infof("Verifying site: %v, scan: %v", site.ID, scan.ID)
+			// log.Infof("Verifying site: %v, scan: %v", site.ID, scan.ID)
 			// err = db.LinkDao.ForEach(func(l *database.CrawlLink) error {
 			//     return VerifyOccurences(site, scan, l)
 			// }, database.Where("scan_id = ?", scan.ID))
-			err = VerifyOccurences(db, site, scan)
-			if err != nil {
-				return err
-			}
+			// err = VerifyOccurences(db, site, scan)
+			// if err != nil {
+			//     return err
+			// }
 			log.Infof("Done site: %v, scan: %v", site.ID, scan.ID)
 			return nil
 		}, database.Where("site_id = ?", site.ID), database.Order("id"))
