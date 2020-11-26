@@ -76,9 +76,9 @@ const SeoDiv = styled.section`
 		}
 	}
 
-	@media only screen and (max-width: 960px) {
+	@media only screen and (max-width: 1600px) {
 		.min-width-adjust {
-			min-width: 15rem;
+			min-width: 12rem;
 		}
 	}
 `;
