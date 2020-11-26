@@ -8,7 +8,17 @@ class SiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Site
-        fields = ["id", "created_at", "updated_at", "user_id", "url", "name", "verification_id", "verified"]
+        fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "user_id",
+            "url",
+            "name",
+            "verification_id",
+            "verified",
+            "large_page_size_threshold",
+        ]
         read_only_fields = ["id", "created_at", "updated_at", "user_id", "verification_id", "verified"]
 
     def update(self, instance, validated_data):

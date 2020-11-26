@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models import F, OuterRef, Q
+from django.db.models import F, OuterRef, Q, Value
+from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 
 from crawl.common import CalculatedField, SubQueryCount
@@ -7,7 +8,13 @@ from crawl.models import Link
 
 
 class ScanQuerySet(QuerySet):
-    def details(self):
+    def details(self, user_large_page_size_threshold=1024 * 1024, large_page_size_threshold=None):
+        # threshold is passed directly in view,
+        # but when queried in bulk only user threshold is supplied and we need to do a join
+        if not large_page_size_threshold:
+            large_page_size_threshold = Coalesce(
+                F("scan__site__large_page_size_threshold"), Value(user_large_page_size_threshold)
+            )
         pages = Link.objects.filter(type=Link.TYPE_PAGE, scan_id=OuterRef("pk"))
         external_links = Link.objects.filter(type=Link.TYPE_EXTERNAL, scan_id=OuterRef("pk"))
         links = Link.objects.filter(cached_is_link=True, scan_id=OuterRef("pk"))
@@ -35,7 +42,9 @@ class ScanQuerySet(QuerySet):
             .annotate(num_pages_without_h1_second=SubQueryCount(pages.filter(pagedata__h1_second="")))
             .annotate(num_pages_without_h2_first=SubQueryCount(pages.filter(pagedata__h2_first="")))
             .annotate(num_pages_without_h2_second=SubQueryCount(pages.filter(pagedata__h2_second="")))
-            .annotate(num_pages_big=SubQueryCount(pages.annotate_size().filter(size_total__gt=1024 * 1024)))
+            .annotate(
+                num_pages_big=SubQueryCount(pages.annotate_size().filter(size_total__gt=large_page_size_threshold))
+            )
             .annotate(num_pages_tls_non_ok=SubQueryCount(pages.annotate_tls().exclude(tls_total=1)))
         )
 
