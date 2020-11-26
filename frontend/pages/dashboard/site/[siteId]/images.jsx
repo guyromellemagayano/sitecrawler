@@ -58,6 +58,28 @@ const ImagesDiv = styled.section`
 		top: 0;
 		right: 0;
 		padding: 2.25rem 1.5rem;
+
+		@media only screen and (max-width: 1024px) {
+			margin: 0;
+		}
+
+		@media only screen and (max-width: 639px) {
+			padding: 0 1rem;
+		}
+
+		@media only screen and (min-width: 640px) and (max-width: 767px) {
+			padding: 0.5rem 1.5rem;
+		}
+
+		@media only screen and (min-width: 768px) and (max-width: 1023px) {
+			padding: 0 2rem;
+		}
+	}
+
+	@media only screen and (max-width: 1600px) {
+		.min-width-adjust {
+			min-width: 12rem;
+		}
 	}
 `;
 
@@ -531,14 +553,14 @@ const Images = (props) => {
 										<div className={`flex-1 min-w-0`}>
 											<div className={`flex items-center`}>
 												<div>
-													<div className={`flex items-center`}>
+													<div className={`lg:flex lg:items-center`}>
 														<h2
-															className={`text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}
+															className={`mb-2 lg:my-auto text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}
 														>
 															{site.name}
 														</h2>
 														<dl
-															className={`ml-5 flex flex-col sm:ml-5 sm:flex-row sm:flex-wrap`}
+															className={`flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap`}
 														>
 															<dd
 																className={`flex items-center text-md leading-5 text-gray-500 font-medium sm:mr-6`}
@@ -565,7 +587,7 @@ const Images = (props) => {
 										</div>
 									</div>
 								</div>
-								<div className={`btn-crawler absolute mt-4`}>
+								<div className={`btn-crawler lg:absolute mt-8`}>
 									{user.permissions.includes('can_start_scan') ? (
 										recrawlable ? (
 											<button
@@ -586,7 +608,9 @@ const Images = (props) => {
 										)
 									) : null}
 								</div>
-								<div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
+								<div
+									className={`max-w-full mx-auto px-4 pt-4 pb-0 sm:pb-4 lg:px-8 lg:py-8 sm:px-6 md:px-8`}
+								>
 									<LinkOptions
 										searchKey={searchKey}
 										onSearchEvent={searchEventHandler}
@@ -617,10 +641,17 @@ const Images = (props) => {
 														<thead>
 															<tr>
 																{ImageTableContent.map((site, key) => {
+																	console.log(site);
 																	return (
 																		<Fragment key={key}>
 																			<th
-																				className={`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
+																				className={`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider ${
+																					site.slug === 'image-size' ||
+																					site.slug === 'status' ||
+																					site.slug === 'occurrences'
+																						? 'min-width-adjust'
+																						: 'min-w-full'
+																				}`}
 																			>
 																				<div className={`flex items-center`}>
 																					{site.slug != undefined ? (

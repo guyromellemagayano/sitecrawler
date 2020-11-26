@@ -136,19 +136,21 @@ const MyPagination = (props) => {
 
 	return (
 		<PaginationDiv
-			className={`bg-white px-4 py-2 flex items-center justify-between sm:px-6 align-middle shadow-xs rounded-lg`}
+			className={`bg-white px-4 py-2 lg:flex items-center justify-between sm:px-6 align-middle shadow-xs rounded-lg`}
 		>
-			<div className={`flex items-center`}>
-				<div>
-					<p className={`text-sm leading-5 text-gray-700`}>
+			<div className={`flex items-center mb-8 lg:m-0`}>
+				<div className={`mt-2 lg:my-0`}>
+					<p
+						className={`text-center lg:text-left text-sm leading-5 text-gray-700`}
+					>
 						Showing
-						<span className={`sm:px-1 font-medium`}>{paginatedItems[0]}</span>
+						<span className={`px-1 font-medium`}>{paginatedItems[0]}</span>
 						to
-						<span className={`sm:px-1 font-medium`}>
+						<span className={`px-1 font-medium`}>
 							{paginatedItems[paginatedItems.length - 1]}
 						</span>
 						of
-						<span className={`sm:px-1 font-medium`}>{page.count}</span>
+						<span className={`px-1 font-medium`}>{page.count}</span>
 						results
 					</p>
 				</div>
@@ -161,14 +163,14 @@ const MyPagination = (props) => {
 				defaultCurrent={currentPage}
 				current={currentPage}
 				total={totalPages * props.linksPerPage}
-				className={`md:flex`}
+				className={`flex`}
 				onChange={handlePageChange}
 				locale={PaginationLocale}
 				prevIcon={`Previous`}
 				nextIcon={`Next`}
 			/>
 
-			<div className={`flex items-center`}>
+			<div className={`flex items-center mt-4 lg:m-0`}>
 				<h1
 					className={`-mt-px pr-4 inline-flex items-center text-sm leading-5 font-normal text-gray-500`}
 				>

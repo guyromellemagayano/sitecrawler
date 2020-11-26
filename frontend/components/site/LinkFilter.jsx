@@ -20,10 +20,10 @@ const LinkFilter = ({
 				className={`bg-white px-4 py-5 border-b border-gray-300 sm:px-6 bg-white rounded-lg sm:shadow-xs`}
 			>
 				<div
-					className={`-ml-4 -mt-2 flex items-center flex-start flex-wrap sm:flex-no-wrap`}
+					className={`-ml-4 lg:-mt-2 lg:flex items-center flex-start flex-wrap sm:flex-no-wrap`}
 				>
 					<h4
-						className={`ml-3 mt-1 mr-1 text-md leading-4 font-semibold text-gray-600`}
+						className={`ml-3 mb-4 lg:mb-0 mt-1 mr-1 text-md leading-4 font-semibold text-gray-600`}
 					>
 						Filter
 					</h4>
