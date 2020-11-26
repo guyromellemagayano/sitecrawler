@@ -180,7 +180,7 @@ const Support = () => {
 									</div>
 								</div>
 								<div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
-									<div className={`max-w-full bg-white shadow rounded-lg`}>
+									<div className={`max-w-full bg-white shadow rounded-lg overflow-hidden`}>
 										<Formik
 											initialValues={{
 												message: ''
