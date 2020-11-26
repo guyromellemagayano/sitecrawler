@@ -12,20 +12,30 @@ type DB interface {
 }
 
 type Database struct {
-	LinkDao         GenericDao
-	ScanDao         GenericDao
-	FifoEntryDao    GenericDao
-	FifoRelationDao GenericDao
-	db              DB
+	LinkDao           GenericDao
+	ScanDao           GenericDao
+	SiteDao           GenericDao
+	LinkLinkDao       GenericDao
+	LinkImageDao      GenericDao
+	LinkScriptDao     GenericDao
+	LinkStylesheetDao GenericDao
+	FifoEntryDao      GenericDao
+	FifoRelationDao   GenericDao
+	db                DB
 }
 
 func NewDatabase(db DB) *Database {
 	return &Database{
-		LinkDao:         GenericDao{model: &CrawlLink{}, db: db},
-		ScanDao:         GenericDao{model: &CrawlScan{}, db: db},
-		FifoEntryDao:    GenericDao{model: &CrawlFifoentry{}, db: db},
-		FifoRelationDao: GenericDao{model: &CrawlFiforelation{}, db: db},
-		db:              db,
+		LinkDao:           GenericDao{model: &CrawlLink{}, db: db},
+		ScanDao:           GenericDao{model: &CrawlScan{}, db: db},
+		SiteDao:           GenericDao{model: &CrawlSite{}, db: db},
+		LinkLinkDao:       GenericDao{model: &CrawlLinkLink{}, db: db},
+		LinkImageDao:      GenericDao{model: &CrawlLinkImage{}, db: db},
+		LinkScriptDao:     GenericDao{model: &CrawlLinkScript{}, db: db},
+		LinkStylesheetDao: GenericDao{model: &CrawlLinkStylesheet{}, db: db},
+		FifoEntryDao:      GenericDao{model: &CrawlFifoentry{}, db: db},
+		FifoRelationDao:   GenericDao{model: &CrawlFiforelation{}, db: db},
+		db:                db,
 	}
 }
 
@@ -36,6 +46,19 @@ func (d Database) Insert(m interface{}, options ...QueryOption) error {
 	}
 	_, err := q.Insert()
 	return err
+}
+
+func (d Database) InsertIgnoreDuplicates(m interface{}, options ...QueryOption) (bool, error) {
+	q := d.db.Model(m)
+	q = IgnoreDuplicates(q)
+	for _, o := range options {
+		q = o(q)
+	}
+	r, err := q.Insert()
+	if err != nil {
+		return false, err
+	}
+	return r.RowsAffected() > 0, err
 }
 
 func (d Database) ByID(m interface{}, options ...QueryOption) error {

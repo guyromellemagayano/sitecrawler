@@ -13,7 +13,9 @@ class Site(models.Model):
 
     verification_id = models.CharField(max_length=36, null=False)
     verified = models.BooleanField(null=False, default=False)
-    last_verify_error = models.CharField(max_length=255, null=True)
+    last_verify_error = models.CharField(max_length=255, null=True, blank=True)
+
+    large_page_size_threshold = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         permissions = (

@@ -486,11 +486,14 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 			ToLinkID:   childLinkId,
 		}
 
-		if err := db.Insert(linkLink, database.IgnoreDuplicates); err != nil {
+		inserted, err := db.InsertIgnoreDuplicates(linkLink)
+		if err != nil {
 			return err
 		}
-		if err := s.ScanService.PostprocessService.OnLinkLink(db, linkLink); err != nil {
-			return err
+		if inserted {
+			if err := s.ScanService.PostprocessService.OnLinkLink(db, linkLink); err != nil {
+				return err
+			}
 		}
 	case CHILD_IMAGE:
 		linkImage := &database.CrawlLinkImage{
@@ -498,11 +501,14 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 			ToLinkID:   childLinkId,
 		}
 
-		if err := db.Insert(linkImage, database.IgnoreDuplicates); err != nil {
+		inserted, err := db.InsertIgnoreDuplicates(linkImage)
+		if err != nil {
 			return err
 		}
-		if err := s.ScanService.PostprocessService.OnLinkImage(db, linkImage); err != nil {
-			return err
+		if inserted {
+			if err := s.ScanService.PostprocessService.OnLinkImage(db, linkImage); err != nil {
+				return err
+			}
 		}
 	case CHILD_SCRIPT:
 		linkScript := &database.CrawlLinkScript{
@@ -510,11 +516,14 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 			ToLinkID:   childLinkId,
 		}
 
-		if err := db.Insert(linkScript, database.IgnoreDuplicates); err != nil {
+		inserted, err := db.InsertIgnoreDuplicates(linkScript)
+		if err != nil {
 			return err
 		}
-		if err := s.ScanService.PostprocessService.OnLinkScript(db, linkScript); err != nil {
-			return err
+		if inserted {
+			if err := s.ScanService.PostprocessService.OnLinkScript(db, linkScript); err != nil {
+				return err
+			}
 		}
 	case CHILD_STYLESHEET:
 		linkStylesheet := &database.CrawlLinkStylesheet{
@@ -522,11 +531,14 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 			ToLinkID:   childLinkId,
 		}
 
-		if err := db.Insert(linkStylesheet, database.IgnoreDuplicates); err != nil {
+		inserted, err := db.InsertIgnoreDuplicates(linkStylesheet)
+		if err != nil {
 			return err
 		}
-		if err := s.ScanService.PostprocessService.OnLinkStylesheet(db, linkStylesheet); err != nil {
-			return err
+		if inserted {
+			if err := s.ScanService.PostprocessService.OnLinkStylesheet(db, linkStylesheet); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -542,7 +554,12 @@ func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
 
 	u, err := url.Parse(child)
 	if err != nil {
-		return nil, err
+		// just use child as path
+		path, err := url.PathUnescape(child)
+		if err != nil {
+			return nil, err
+		}
+		u = &url.URL{Path: path}
 	}
 	u.Fragment = ""
 	u.RawQuery = ""

@@ -8,6 +8,7 @@ from django.dispatch import receiver
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     settings = JSONField(default=dict)
+    large_page_size_threshold = models.PositiveIntegerField(default=1024 * 1024)
 
 
 @receiver(post_save, sender=User)

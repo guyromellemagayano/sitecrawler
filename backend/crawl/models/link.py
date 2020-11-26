@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models import (
-    Count,
     Sum,
     F,
     OuterRef,
@@ -67,16 +66,20 @@ class LinkQuerySet(QuerySet):
         )
 
     def links(self):
-        return self.filter(cached_is_link=True).annotate(occurences=Count("pages")).order_by("-status")
+        return self.filter(cached_is_link=True).annotate(occurences=F("cached_link_occurences")).order_by("-status")
 
     def images(self):
-        return self.filter(cached_is_image=True).annotate(occurences=Count("image_pages")).order_by("-status")
+        return self.filter(cached_is_image=True).annotate(occurences=F("cached_image_occurences")).order_by("-status")
 
     def scripts(self):
-        return self.filter(cached_is_script=True).annotate(occurences=Count("script_pages")).order_by("-status")
+        return self.filter(cached_is_script=True).annotate(occurences=F("cached_script_occurences")).order_by("-status")
 
     def stylesheets(self):
-        return self.filter(cached_is_stylesheet=True).annotate(occurences=Count("stylesheet_pages")).order_by("-status")
+        return (
+            self.filter(cached_is_stylesheet=True)
+            .annotate(occurences=F("cached_stylesheet_occurences"))
+            .order_by("-status")
+        )
 
 
 class Link(models.Model):
@@ -163,6 +166,12 @@ class Link(models.Model):
     cached_is_image = models.BooleanField(null=False, default=False)
     cached_is_script = models.BooleanField(null=False, default=False)
     cached_is_stylesheet = models.BooleanField(null=False, default=False)
+
+    # fields counting incoming relations
+    cached_link_occurences = models.PositiveIntegerField(null=True, blank=True)
+    cached_image_occurences = models.PositiveIntegerField(null=True, blank=True)
+    cached_script_occurences = models.PositiveIntegerField(null=True, blank=True)
+    cached_stylesheet_occurences = models.PositiveIntegerField(null=True, blank=True)
 
     def get_pages(self):
         return self.pages.all().union(self.image_pages.all(), self.script_pages.all(), self.stylesheet_pages.all())

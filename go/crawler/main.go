@@ -9,7 +9,7 @@ import (
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 )
 
-const numScanWorkers = 10
+const numScanWorkers = 4
 
 func main() {
 	port := common.Env("PORT", "8000")
@@ -36,6 +36,7 @@ func main() {
 			&common.TlsPostprocessor{},
 			&common.SizePostprocessor{},
 			&common.IsTypePostprocessor{},
+			&common.OccurencesPostprocessor{},
 		},
 	}
 	backendService := &BackendService{Token: common.Env("BACKEND_TOKEN", "")}
