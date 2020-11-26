@@ -68,7 +68,7 @@ const SeoDiv = styled.section`
 		}
 
 		@media only screen and (min-width: 640px) and (max-width: 767px) {
-			padding: 0 1.5rem;
+			padding: 0.5rem 1.5rem;
 		}
 
 		@media only screen and (min-width: 768px) and (max-width: 1023px) {
@@ -581,7 +581,7 @@ const Seo = (props) => {
 								tabIndex={`0`}
 							>
 								<div
-									className={`max-w-full mx-auto px-4 pt-4 pb-0 sm:pb-4 lg:px-8 lg:py-8 sm:px-6 md:px-8`}
+									className={`max-w-full mx-auto px-4 pt-4 pb-0 lg:px-8 lg:py-8 sm:px-6 md:px-8`}
 								>
 									<div>
 										<nav className={`sm:hidden`}>
