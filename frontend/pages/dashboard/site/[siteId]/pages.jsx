@@ -92,6 +92,7 @@ const Pages = (props) => {
 	const [crawlFinished, setCrawlFinished] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const pageTitle = 'Pages |';
+	const [filterQueryString, setFilterQueryString] = useState('');
 
 	const { user: user, userError: userError } = useUser({
 		redirectTo: '/',
@@ -142,13 +143,13 @@ const Pages = (props) => {
 			? scanApiEndpoint.includes('?')
 				? `&size_total_min=1048576`
 				: `?size_total_min=1048576`
-			: '';
+			: filterQueryString;
 	queryString +=
 		props.result.tls_total !== undefined
 			? (scanApiEndpoint + queryString).includes('?')
 				? `&tls_total=false`
 				: `?tls_total=false`
-			: '';
+			: filterQueryString;
 	queryString +=
 		props.result.search !== undefined
 			? (scanApiEndpoint + queryString).includes('?')
@@ -163,6 +164,8 @@ const Pages = (props) => {
 			: '';
 
 	scanApiEndpoint += queryString;
+
+	console.log(scanApiEndpoint);
 
 	const { data: page, error: pageError, mutate: updatePages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -241,7 +244,7 @@ const Pages = (props) => {
 		if (newPath.includes('?')) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push('/dashboard/site/[siteId]/pages', newPath);
+		Router.push(newPath);
 
 		updatePages();
 
@@ -274,6 +277,29 @@ const Pages = (props) => {
 		}
 	};
 
+	const loadFilterHandler = async () => {
+		let filterQueryStringValue = new URLSearchParams(window.location.search);
+
+		if (filterQueryStringValue.has('size_total_min')) {
+			setLargePageSizeFilter(true);
+			setAllFilter(false);
+		} else setLargePageSizeFilter(false);
+
+		if (filterQueryStringValue.has('tls_total')) {
+			setBrokenSecurityFilter(true);
+			setAllFilter(false);
+		} else setBrokenSecurityFilter(false);
+
+		if (
+			!filterQueryStringValue.has('size_total_min') &&
+			!filterQueryStringValue.has('tls_total')
+		) {
+			setLargePageSizeFilter(false);
+			setBrokenSecurityFilter(false);
+			setAllFilter(true);
+		}
+	};
+
 	useEffect(() => {
 		if (removeURLParameter(asPath, 'page').includes('?'))
 			setPagePath(`${removeURLParameter(asPath, 'page')}&`);
@@ -295,29 +321,31 @@ const Pages = (props) => {
 
 		if (props.result.per_page !== undefined)
 			setLinksPerPage(props.result.per_page);
+
+		loadFilterHandler();
 	}, []);
 
-	useEffect(() => {
-		if (props.result.size_total_min !== undefined) {
-			setLargePageSizeFilter(true);
-			setAllFilter(false);
-		} else setLargePageSizeFilter(false);
+	// useEffect(() => {
+	// 	if (props.result.size_total_min !== undefined) {
+	// 		setLargePageSizeFilter(true);
+	// 		setAllFilter(false);
+	// 	} else setLargePageSizeFilter(false);
 
-		if (props.result.tls_total !== undefined) {
-			setBrokenSecurityFilter(true);
-			setAllFilter(false);
-		} else setBrokenSecurityFilter(false);
+	// 	if (props.result.tls_total !== undefined) {
+	// 		setBrokenSecurityFilter(true);
+	// 		setAllFilter(false);
+	// 	} else setBrokenSecurityFilter(false);
 
-		if (
-			props.result.size_total_min == undefined &&
-			props.result.tls_total == undefined
-		) {
-			setLargePageSizeFilter(false);
-			setBrokenSecurityFilter(false);
+	// 	if (
+	// 		props.result.size_total_min == undefined &&
+	// 		props.result.tls_total == undefined
+	// 	) {
+	// 		setLargePageSizeFilter(false);
+	// 		setBrokenSecurityFilter(false);
 
-			setAllFilter(true);
-		}
-	}, [filterChangeHandler]);
+	// 		setAllFilter(true);
+	// 	}
+	// }, [filterChangeHandler]);
 
 	const SortHandler = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
@@ -622,7 +650,6 @@ const Pages = (props) => {
 														<thead>
 															<tr>
 																{LinksPagesContent.map((site, key) => {
-																	console.log(site);
 																	return (
 																		<Fragment key={key}>
 																			<th
