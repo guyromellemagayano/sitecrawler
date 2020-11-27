@@ -216,52 +216,72 @@ const MobilePrimaryMenu = () => {
 																	className={`absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden`}
 																>
 																	{site && site.results.length ? (
-																		<ul
-																			tabIndex='-1'
-																			role='listbox'
-																			aria-labelledby='listbox-label'
-																			aria-activedescendant='listbox-item-3'
-																			className={`max-h-xs py-2 rounded-md text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}
-																		>
-																			{site.results.map((val, key) => {
-																				return (
-																					<li
-																						key={key}
-																						onClick={() =>
-																							dropdownHandler(
-																								val.id,
-																								val.verified
-																							)
-																						}
-																						id={`listbox-item-${key}`}
-																						role='option'
-																						className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
-																							val.verified
-																								? 'cursor-pointer'
-																								: 'cursor-not-allowed'
-																						} select-none relative py-2 pl-3 pr-9`}
-																					>
-																						<div
-																							className={`flex items-center space-x-3`}
-																						>
-																							<span
-																								aria-label='Online'
-																								className={`${
+																		<>
+																			<ul
+																				tabIndex='-1'
+																				role='listbox'
+																				aria-labelledby='listbox-label'
+																				aria-activedescendant='listbox-item-3'
+																				className={`max-h-xs py-2 rounded-md text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}
+																			>
+																				{site.results.map((val, key) => {
+																					return (
+																						<li
+																							key={key}
+																							onClick={() =>
+																								dropdownHandler(
+																									val.id,
 																									val.verified
-																										? 'bg-green-400'
-																										: 'bg-red-400'
-																								} flex-shrink-0 inline-block h-2 w-2 rounded-full`}
-																							></span>
-																							<span
-																								className={`font-normal block truncate`}
+																								)
+																							}
+																							id={`listbox-item-${key}`}
+																							role='option'
+																							className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
+																								val.verified
+																									? 'cursor-pointer'
+																									: 'cursor-not-allowed'
+																							} select-none relative py-2 pl-3 pr-9`}
+																						>
+																							<div
+																								className={`flex items-center space-x-3`}
 																							>
-																								{val.name}
-																							</span>
-																						</div>
-																					</li>
-																				);
-																			})}
-																		</ul>
+																								<span
+																									aria-label='Online'
+																									className={`${
+																										val.verified
+																											? 'bg-green-400'
+																											: 'bg-red-400'
+																									} flex-shrink-0 inline-block h-2 w-2 rounded-full`}
+																								></span>
+																								<span
+																									className={`font-normal block truncate`}
+																								>
+																									{val.name}
+																								</span>
+																							</div>
+																						</li>
+																					);
+																				})}
+																			</ul>
+																			<span
+																				className={`flex m-2 justify-center shadow-sm rounded-md`}
+																			>
+																				<Link href='/dashboard/sites/information'>
+																					<a
+																						className={`w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700 transition ease-in-out duration-150`}
+																					>
+																						<svg
+																							className={`-ml-3 mr-2 h-4 w-4`}
+																							viewBox='0 0 20 20'
+																							fill='currentColor'
+																						>
+																							<path d='M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z' />
+																						</svg>
+																						{PrimaryMenuLabel[1].label}
+																					</a>
+																				</Link>
+																			</span>
+																		</>
 																	) : (
 																		<span
 																			className={`flex m-2 justify-center shadow-sm rounded-md`}
