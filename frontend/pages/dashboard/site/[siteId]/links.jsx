@@ -107,7 +107,7 @@ const initialOrder = {
 
 const Links = (props) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [allFilter, setAllFilter] = useState(false);
+	const [allFilter, setAllFilter] = useState(true);
 	const [issueFilter, setIssueFilter] = useState(false);
 	const [internalFilter, setInternalFilter] = useState(false);
 	const [externalFilter, setExternalFilter] = useState(false);
@@ -117,6 +117,7 @@ const Links = (props) => {
 	const [pagePath, setPagePath] = useState('');
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [searchKey, setSearchKey] = useState('');
+	const [filterQueryString, setFilterQueryString] = useState('');
 
 	const pageTitle = 'Links |';
 
@@ -169,7 +170,7 @@ const Links = (props) => {
 			? scanApiEndpoint.includes('?')
 				? '&status=' + props.result.status.join('&status=')
 				: '?status=' + props.result.status.join('&status=')
-			: '';
+			: '&' + filterQueryString;
 	const typeString = Array.isArray(props.result.type)
 		? props.result.type.join('&type=')
 		: props.result.type;
@@ -196,6 +197,8 @@ const Links = (props) => {
 			: '';
 
 	scanApiEndpoint += queryString;
+
+	console.log(scanApiEndpoint);
 
 	// console.log(scanApiEndpoint);
 
@@ -337,7 +340,34 @@ const Links = (props) => {
 		}
 	};
 
+	const loadFilterHandler = async () => {
+		let filterQueryStringValue = new URLSearchParams(window.location.search);
+
+		if (filterQueryStringValue.has('status')) {
+			setIssueFilter(true);
+			setAllFilter(false);
+		} else setIssueFilter(false);
+
+		if (filterQueryStringValue.has('type')) {
+			if (filterQueryStringValue.get('type') === 'PAGE') {
+				setInternalFilter(true);
+				setExternalFilter(false);
+				setAllFilter(false);
+			} else if (filterQueryStringValue.get('type') === 'EXTERNAL') {
+				setExternalFilter(true);
+				setInternalFilter(false);
+				setAllFilter(false);
+			} else if (filterQueryStringValue.get('type') === 'EXTERNALOTHER') {
+				setExternalFilter(true);
+				setInternalFilter(false);
+				setAllFilter(false);
+			}
+		} else setInternalFilter(false);
+	};
+
 	useEffect(() => {
+		setFilterQueryString(new URLSearchParams(window.location.search));
+
 		if (removeURLParameter(asPath, 'page').includes('?'))
 			setPagePath(`${removeURLParameter(asPath, 'page')}&`);
 		else setPagePath(`${removeURLParameter(asPath, 'page')}?`);
@@ -359,45 +389,47 @@ const Links = (props) => {
 		if (props.result.per_page !== undefined)
 			setLinksPerPage(props.result.per_page);
 
+		loadFilterHandler();
+
 		// console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
 	}, []);
 
-	useEffect(() => {
-		if (props.result.status !== undefined) {
-			setIssueFilter(true);
-			setAllFilter(false);
-		} else setIssueFilter(false);
+	// useEffect(() => {
+	// 	if (props.result.status !== undefined) {
+	// 		setIssueFilter(true);
+	// 		setAllFilter(false);
+	// 	} else setIssueFilter(false);
 
-		if (props.result.type !== undefined && props.result.type == 'PAGE') {
-			setInternalFilter(true);
-			setExternalFilter(false);
-			setAllFilter(false);
-		} else setInternalFilter(false);
+	// 	if (props.result.type !== undefined && props.result.type == 'PAGE') {
+	// 		setInternalFilter(true);
+	// 		setExternalFilter(false);
+	// 		setAllFilter(false);
+	// 	} else setInternalFilter(false);
 
-		if (Array.isArray(props.result.type)) {
-			if (
-				props.result.type !== undefined &&
-				props.result.type.join('') == 'EXTERNALOTHER'
-			) {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
-			} else setExternalFilter(false);
-		} else {
-			if (props.result.type !== undefined && props.result.type == 'EXTERNAL') {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
-			} else setExternalFilter(false);
-		}
+	// 	if (Array.isArray(props.result.type)) {
+	// 		if (
+	// 			props.result.type !== undefined &&
+	// 			props.result.type.join('') == 'EXTERNALOTHER'
+	// 		) {
+	// 			setExternalFilter(true);
+	// 			setInternalFilter(false);
+	// 			setAllFilter(false);
+	// 		} else setExternalFilter(false);
+	// 	} else {
+	// 		if (props.result.type !== undefined && props.result.type == 'EXTERNAL') {
+	// 			setExternalFilter(true);
+	// 			setInternalFilter(false);
+	// 			setAllFilter(false);
+	// 		} else setExternalFilter(false);
+	// 	}
 
-		if (props.result.type == undefined && props.result.status == undefined) {
-			setIssueFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(false);
-			setAllFilter(true);
-		}
-	}, [filterChangeHandler]);
+	// 	if (props.result.type == undefined && props.result.status == undefined) {
+	// 		setIssueFilter(false);
+	// 		setInternalFilter(false);
+	// 		setExternalFilter(false);
+	// 		setAllFilter(true);
+	// 	}
+	// }, [filterChangeHandler]);
 
 	const SortHandler = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
