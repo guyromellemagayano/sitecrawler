@@ -165,7 +165,7 @@ const Pages = (props) => {
 
 	scanApiEndpoint += queryString;
 
-	console.log(scanApiEndpoint);
+	// console.log(scanApiEndpoint);
 
 	const { data: page, error: pageError, mutate: updatePages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
