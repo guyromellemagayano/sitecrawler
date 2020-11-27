@@ -107,7 +107,7 @@ const initialOrder = {
 
 const Links = (props) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [allFilter, setAllFilter] = useState(true);
+	const [allFilter, setAllFilter] = useState(false);
 	const [issueFilter, setIssueFilter] = useState(false);
 	const [internalFilter, setInternalFilter] = useState(false);
 	const [externalFilter, setExternalFilter] = useState(false);
@@ -361,6 +361,16 @@ const Links = (props) => {
 				setAllFilter(false);
 			}
 		} else setInternalFilter(false);
+
+		if (
+			!filterQueryStringValue.has('status') &&
+			!filterQueryStringValue.has('type')
+		) {
+			setIssueFilter(false);
+			setInternalFilter(false);
+			setExternalFilter(false);
+			setAllFilter(true);
+		}
 	};
 
 	useEffect(() => {
