@@ -4,7 +4,7 @@ We've recrawled your site(s) and here's what we found:{% for scan in scans %}
 - {{scan.site.url}}: {{scan.num_non_ok_links|add:scan.num_pages_tls_non_ok|add:scan.num_pages_big|add:scan.num_non_ok_images|add:scan.num_pages_without_title|add:scan.num_pages_without_description|add:scan.num_pages_without_h1_first|add:scan.num_pages_without_h2_first}} issues{% endfor %}
 
 Visit your dashboard to learn more:
-https://{{site.domain}}/dashboard/site/{{scan.site_id}}/overview
+https://{{site.domain}}/dashboard/sites
 
 Thanks,
 {{site.name}}
