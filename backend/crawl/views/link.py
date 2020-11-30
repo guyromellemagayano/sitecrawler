@@ -2,6 +2,7 @@ from django_filters import rest_framework as filters
 from rest_framework import viewsets, mixins
 from rest_framework_extensions.mixins import DetailSerializerMixin, NestedViewSetMixin
 
+from crawl.common import HasPermission
 from crawl.models import Link
 from crawl.serializers import LinkDetailSerializer, LinkSerializer
 
@@ -69,15 +70,21 @@ class LinkViewSet(PageChildViewSet):
 
 
 class ImageViewSet(PageChildViewSet):
+    permission_classes = [HasPermission("crawl.can_see_images")]
+
     def get_queryset(self):
         return super().get_queryset().images()
 
 
 class ScriptViewSet(PageChildViewSet):
+    permission_classes = [HasPermission("crawl.can_see_scripts")]
+
     def get_queryset(self):
         return super().get_queryset().scripts()
 
 
 class StylesheetViewSet(PageChildViewSet):
+    permission_classes = [HasPermission("crawl.can_see_stylesheets")]
+
     def get_queryset(self):
         return super().get_queryset().stylesheets()

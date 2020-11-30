@@ -16,10 +16,3 @@ class Site(models.Model):
     last_verify_error = models.CharField(max_length=255, null=True, blank=True)
 
     large_page_size_threshold = models.PositiveIntegerField(null=True, blank=True)
-
-    class Meta:
-        permissions = (
-            ("can_see_page_size", "Can see page size"),
-            ("can_see_images", "Can see images"),
-            ("can_see_seo", "Can see seo"),
-        )

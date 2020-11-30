@@ -1,5 +1,5 @@
 from django.db.models import Count, Subquery, IntegerField
-from rest_framework import serializers
+from rest_framework import permissions, serializers
 
 
 class SubQueryCount(Subquery):
@@ -34,3 +34,13 @@ class CalculatedField:
 
             total += mult * value
         return total
+
+
+def HasPermission(perm):
+    class HasPermissionClass(permissions.BasePermission):
+        message = "Not available in this subscription."
+
+        def has_permission(self, request, view):
+            return request.user.has_perm(perm)
+
+    return HasPermissionClass
