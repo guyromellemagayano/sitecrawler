@@ -6,7 +6,15 @@ from ..models import StripeCustomer
 def get_id(request):
     if not hasattr(request.user, "stripe_customer"):
         return None
-    return request.user.stripe_customer.customer_id
+    customer_id = request.user.stripe_customer.customer_id
+    try:
+        stripe.Customer.retrieve(customer_id)
+        return customer_id
+    except stripe.error.StripeError as e:
+        if e.code == "resource_missing":
+            request.user.stripe_customer.delete()
+            return None
+        raise
 
 
 def get_or_create_id(request):
