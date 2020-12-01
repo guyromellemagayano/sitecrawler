@@ -136,7 +136,7 @@ const MyPagination = (props) => {
 
 	return (
 		<PaginationDiv
-			className={`bg-white px-4 py-2 lg:flex items-center justify-between sm:px-6 align-middle shadow-xs rounded-lg`}
+			className={`bg-white px-4 mb-4 py-2 lg:flex items-center justify-between sm:px-6 align-middle shadow-xs rounded-lg`}
 		>
 			<div className={`flex items-center mb-8 lg:m-0`}>
 				<div className={`mt-2 lg:my-0`}>
