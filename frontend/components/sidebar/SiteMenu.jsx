@@ -178,8 +178,7 @@ const SiteMenu = (props) => {
 														: '/dashboard/site/' + query.siteId + val2.url;
 
 												if (
-													user.permissions.includes('can_see_images') &&
-													user.permissions.includes('can_see_seo')
+													user.permissions.includes('can_see_images')
 												) {
 													return (
 														<Link key={key} href={hrefVal} as={asVal}>

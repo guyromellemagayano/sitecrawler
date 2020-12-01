@@ -175,3 +175,11 @@ class Link(models.Model):
 
     def get_pages(self):
         return self.pages.all().union(self.image_pages.all(), self.script_pages.all(), self.stylesheet_pages.all())
+
+    class Meta:
+        permissions = (
+            ("can_see_images", "Can see images"),
+            ("can_see_scripts", "Can see scripts"),
+            ("can_see_stylesheets", "Can see stylesheets"),
+            ("can_see_pages", "Can see pages"),
+        )
