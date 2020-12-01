@@ -18,7 +18,7 @@ export const linksChartContents = [
     color: '#f56565'
   }, {
     label: 'No Issues',
-    filter: '',
+    filter: 'status=OK',
     color: '#48bb78'
   }
 ]
