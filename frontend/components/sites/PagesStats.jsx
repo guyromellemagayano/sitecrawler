@@ -11,6 +11,7 @@ import Router from 'next/router';
 import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import useSWR from 'swr';
+import Layout from 'components/Layout';
 
 const fetcher = async (url) => {
 	const res = await fetch(url, {

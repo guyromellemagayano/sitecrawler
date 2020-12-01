@@ -11,6 +11,7 @@ import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import OverviewLabel from 'public/label/components/sites/Overview.json';
+import Layout from 'components/Layout';
 
 const fetcher = async (url) => {
 	const res = await fetch(url, {
