@@ -6,6 +6,7 @@ const LinkFilterDiv = styled.div``;
 const LinkFilter = ({
 	onFilterChange,
 	allFilter,
+	noIssueFilter,
 	issueFilter,
 	internalFilter,
 	externalFilter
@@ -41,6 +42,24 @@ const LinkFilter = ({
 									className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}
 								>
 									All Links
+								</span>
+							</label>
+						</div>
+					</div>
+					<div className={`ml-4 mt-2 mr-2`}>
+						<div>
+							<label className={`flex items-center`}>
+								<input
+									type='checkbox'
+									className={`form-checkbox`}
+									onChange={filterHandler}
+									checked={noIssueFilter}
+									value='no-issues'
+								/>
+								<span
+									className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}
+								>
+									Links with No Issues
 								</span>
 							</label>
 						</div>

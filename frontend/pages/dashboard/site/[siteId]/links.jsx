@@ -109,6 +109,7 @@ const Links = (props) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [allFilter, setAllFilter] = useState(false);
 	const [issueFilter, setIssueFilter] = useState(false);
+	const [noIssueFilter, setNoIssueFilter] = useState(false);
 	const [internalFilter, setInternalFilter] = useState(false);
 	const [externalFilter, setExternalFilter] = useState(false);
 	const [recrawlable, setRecrawlable] = useState(false);
@@ -165,12 +166,18 @@ const Links = (props) => {
 			  props.result.page
 			: `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
 			  linksPerPage;
+
 	let queryString =
-		props.result.status !== undefined && props.result.status.length != 0
+		props.result.status != undefined && props.result.status.length != 0
 			? scanApiEndpoint.includes('?')
-				? '&status=' + props.result.status.join('&status=')
+				? props.result.status.length > 2
+					? '&status=' + props.result.status.join('&status=')
+					: '&status=' + props.result.status
 				: '?status=' + props.result.status.join('&status=')
-			: '&' + filterQueryString;
+			: Array.from(filterQueryString).length > 0
+			? '&' + filterQueryString.toString()
+			: '';
+
 	const typeString = Array.isArray(props.result.type)
 		? props.result.type.join('&type=')
 		: props.result.type;
@@ -241,15 +248,41 @@ const Links = (props) => {
 
 		if (filterType == 'issues' && filterStatus == true) {
 			setIssueFilter(true);
+			setNoIssueFilter(false);
 			setAllFilter(false);
-			newPath = removeURLParameter(newPath, 'page');
+
+			newPath = removeURLParameter(newPath, 'status');
 
 			if (newPath.includes('?'))
 				newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 		} else if (filterType == 'issues' && filterStatus == false) {
-			newPath = removeURLParameter(newPath, 'status');
+			filterQueryString && filterQueryString.delete('status');
+
+			if (
+				newPath.includes('status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR')
+			)
+				newPath = removeURLParameter(newPath, 'status');
+
 			setIssueFilter(false);
+		}
+
+		if (filterType == 'no-issues' && filterStatus == true) {
+			setIssueFilter(false);
+			setNoIssueFilter(true);
+			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, 'status');
+
+			if (newPath.includes('?')) newPath += `&status=OK`;
+			else newPath += `?status=OK`;
+		} else if (filterType == 'no-issues' && filterStatus == false) {
+			filterQueryString && filterQueryString.delete('status');
+
+			if (newPath.includes('status=OK'))
+				newPath = removeURLParameter(newPath, 'status');
+
+			setNoIssueFilter(false);
 		}
 
 		if (filterType == 'internal' && filterStatus == true) {
@@ -289,6 +322,7 @@ const Links = (props) => {
 		if (filterType == 'all' && filterStatus == true) {
 			setAllFilter(true);
 			setIssueFilter(false);
+			setNoIssueFilter(false);
 			setExternalFilter(false);
 			setInternalFilter(false);
 
@@ -342,9 +376,21 @@ const Links = (props) => {
 		let filterQueryStringValue = new URLSearchParams(window.location.search);
 
 		if (filterQueryStringValue.has('status')) {
-			setIssueFilter(true);
-			setAllFilter(false);
-		} else setIssueFilter(false);
+			if (
+				filterQueryStringValue.getAll('status').includes('TIMEOUT') &&
+				filterQueryStringValue.getAll('status').includes('HTTP_ERROR') &&
+				filterQueryStringValue.getAll('status').includes('OTHER_ERROR')
+			) {
+				setIssueFilter(true);
+			}
+
+			if (filterQueryStringValue.getAll('status').includes('OK')) {
+				setNoIssueFilter(true);
+			}
+		} else {
+			setNoIssueFilter(false);
+			setIssueFilter(false);
+		}
 
 		if (filterQueryStringValue.has('type')) {
 			if (filterQueryStringValue.get('type') === 'PAGE') {
@@ -360,12 +406,17 @@ const Links = (props) => {
 				setInternalFilter(false);
 				setAllFilter(false);
 			}
-		} else setInternalFilter(false);
+		} else {
+			setExternalFilter(false);
+			setInternalFilter(false);
+		}
 
 		if (
 			!filterQueryStringValue.has('status') &&
-			!filterQueryStringValue.has('type')
+			!filterQueryStringValue.has('type') &&
+			Array.from(filterQueryStringValue).length === 0
 		) {
+			setNoIssueFilter(false);
 			setIssueFilter(false);
 			setInternalFilter(false);
 			setExternalFilter(false);
@@ -402,42 +453,66 @@ const Links = (props) => {
 		// console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
 	}, []);
 
-	// useEffect(() => {
-	// 	if (props.result.status !== undefined) {
-	// 		setIssueFilter(true);
-	// 		setAllFilter(false);
-	// 	} else setIssueFilter(false);
+	useEffect(() => {
+		if (
+			(props.result.status !== undefined && props.result.status === 'OK') ||
+			(filterQueryString && filterQueryString.getAll('status').includes('OK'))
+		) {
+			setNoIssueFilter(true);
+			setIssueFilter(false);
+			setAllFilter(false);
+		} else setNoIssueFilter(false);
 
-	// 	if (props.result.type !== undefined && props.result.type == 'PAGE') {
-	// 		setInternalFilter(true);
-	// 		setExternalFilter(false);
-	// 		setAllFilter(false);
-	// 	} else setInternalFilter(false);
+		if (
+			(props.result.status !== undefined &&
+				props.result.status.includes('TIMEOUT') &&
+				props.result.status.includes('HTTP_ERROR') &&
+				props.result.status.includes('OTHER_ERROR')) ||
+			(filterQueryString &&
+				filterQueryString.getAll('status').includes('TIMEOUT') &&
+				filterQueryString.getAll('status').includes('HTTP_ERROR') &&
+				filterQueryString.getAll('status').includes('OTHER_ERROR'))
+		) {
+			setNoIssueFilter(false);
+			setIssueFilter(true);
+			setAllFilter(false);
+		} else setIssueFilter(false);
 
-	// 	if (Array.isArray(props.result.type)) {
-	// 		if (
-	// 			props.result.type !== undefined &&
-	// 			props.result.type.join('') == 'EXTERNALOTHER'
-	// 		) {
-	// 			setExternalFilter(true);
-	// 			setInternalFilter(false);
-	// 			setAllFilter(false);
-	// 		} else setExternalFilter(false);
-	// 	} else {
-	// 		if (props.result.type !== undefined && props.result.type == 'EXTERNAL') {
-	// 			setExternalFilter(true);
-	// 			setInternalFilter(false);
-	// 			setAllFilter(false);
-	// 		} else setExternalFilter(false);
-	// 	}
+		if (props.result.type !== undefined && props.result.type == 'PAGE') {
+			setInternalFilter(true);
+			setExternalFilter(false);
+			setAllFilter(false);
+		} else setInternalFilter(false);
 
-	// 	if (props.result.type == undefined && props.result.status == undefined) {
-	// 		setIssueFilter(false);
-	// 		setInternalFilter(false);
-	// 		setExternalFilter(false);
-	// 		setAllFilter(true);
-	// 	}
-	// }, [filterChangeHandler]);
+		if (Array.isArray(props.result.type)) {
+			if (
+				props.result.type !== undefined &&
+				props.result.type.join('') == 'EXTERNALOTHER'
+			) {
+				setExternalFilter(true);
+				setInternalFilter(false);
+				setAllFilter(false);
+			} else setExternalFilter(false);
+		} else {
+			if (props.result.type !== undefined && props.result.type == 'EXTERNAL') {
+				setExternalFilter(true);
+				setInternalFilter(false);
+				setAllFilter(false);
+			} else setExternalFilter(false);
+		}
+
+		if (
+			props.result.type == undefined &&
+			props.result.status == undefined &&
+			Array.from(filterQueryString).length < 1
+		) {
+			setIssueFilter(false);
+			setNoIssueFilter(false);
+			setInternalFilter(false);
+			setExternalFilter(false);
+			setAllFilter(true);
+		}
+	}, [filterChangeHandler, filterQueryString]);
 
 	const SortHandler = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
@@ -718,6 +793,7 @@ const Links = (props) => {
 									<LinkFilter
 										onFilterChange={filterChangeHandler}
 										allFilter={allFilter}
+										noIssueFilter={noIssueFilter}
 										issueFilter={issueFilter}
 										internalFilter={internalFilter}
 										externalFilter={externalFilter}
