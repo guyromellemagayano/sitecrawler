@@ -167,13 +167,15 @@ const Links = (props) => {
 			: `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
 			  linksPerPage;
 
+	const statusString = Array.isArray(props.result.status)
+		? props.result.status.join('&status=')
+		: props.result.status;
+
 	let queryString =
 		props.result.status != undefined && props.result.status.length != 0
 			? scanApiEndpoint.includes('?')
-				? props.result.status.length > 2
-					? '&status=' + props.result.status.join('&status=')
-					: '&status=' + props.result.status
-				: '?status=' + props.result.status.join('&status=')
+				? `&status=${statusString}`
+				: `?status=${statusString}`
 			: Array.from(filterQueryString).length > 0
 			? '&' + filterQueryString.toString()
 			: '';
@@ -205,7 +207,7 @@ const Links = (props) => {
 
 	scanApiEndpoint += queryString;
 
-	// console.log(scanApiEndpoint);
+	console.log(scanApiEndpoint);
 
 	const { data: link, error: linkError, mutate: updateLinks } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -259,9 +261,7 @@ const Links = (props) => {
 		} else if (filterType == 'issues' && filterStatus == false) {
 			filterQueryString && filterQueryString.delete('status');
 
-			if (
-				newPath.includes('status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR')
-			)
+			if (newPath.includes('status'))
 				newPath = removeURLParameter(newPath, 'status');
 
 			setIssueFilter(false);
@@ -279,7 +279,7 @@ const Links = (props) => {
 		} else if (filterType == 'no-issues' && filterStatus == false) {
 			filterQueryString && filterQueryString.delete('status');
 
-			if (newPath.includes('status=OK'))
+			if (newPath.includes('status'))
 				newPath = removeURLParameter(newPath, 'status');
 
 			setNoIssueFilter(false);
@@ -456,10 +456,12 @@ const Links = (props) => {
 	useEffect(() => {
 		if (
 			(props.result.status !== undefined && props.result.status === 'OK') ||
-			(filterQueryString && filterQueryString.getAll('status').includes('OK'))
+			(filterQueryString &&
+				Array.from(filterQueryString).length === 1 &&
+				filterQueryString.getAll('status').includes('OK'))
 		) {
-			setNoIssueFilter(true);
 			setIssueFilter(false);
+			setNoIssueFilter(true);
 			setAllFilter(false);
 		} else setNoIssueFilter(false);
 
@@ -504,7 +506,7 @@ const Links = (props) => {
 		if (
 			props.result.type == undefined &&
 			props.result.status == undefined &&
-			Array.from(filterQueryString).length < 1
+			Array.from(filterQueryString).length === 0
 		) {
 			setIssueFilter(false);
 			setNoIssueFilter(false);
@@ -512,6 +514,8 @@ const Links = (props) => {
 			setExternalFilter(false);
 			setAllFilter(true);
 		}
+
+		console.log(props.result.status);
 	}, [filterChangeHandler, filterQueryString]);
 
 	const SortHandler = (slug, dir) => {
