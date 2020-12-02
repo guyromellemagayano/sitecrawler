@@ -26,6 +26,7 @@ import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import useSWR, { mutate } from 'swr';
 import useUser from 'hooks/useUser';
+import { array } from 'prop-types';
 
 const fetcher = async (url) => {
 	const res = await fetch(url, {
@@ -183,6 +184,7 @@ const Links = (props) => {
 	const typeString = Array.isArray(props.result.type)
 		? props.result.type.join('&type=')
 		: props.result.type;
+
 	queryString +=
 		props.result.type !== undefined
 			? scanApiEndpoint.includes('?')
@@ -326,6 +328,8 @@ const Links = (props) => {
 			setExternalFilter(false);
 			setInternalFilter(false);
 
+			console.log(filterQueryString);
+
 			newPath = removeURLParameter(newPath, 'status');
 			newPath = removeURLParameter(newPath, 'type');
 			newPath = removeURLParameter(newPath, 'page');
@@ -372,61 +376,7 @@ const Links = (props) => {
 		}
 	};
 
-	const loadFilterHandler = async () => {
-		let filterQueryStringValue = new URLSearchParams(window.location.search);
-
-		if (filterQueryStringValue.has('status')) {
-			if (
-				filterQueryStringValue.getAll('status').includes('TIMEOUT') &&
-				filterQueryStringValue.getAll('status').includes('HTTP_ERROR') &&
-				filterQueryStringValue.getAll('status').includes('OTHER_ERROR')
-			) {
-				setIssueFilter(true);
-			}
-
-			if (filterQueryStringValue.getAll('status').includes('OK')) {
-				setNoIssueFilter(true);
-			}
-		} else {
-			setNoIssueFilter(false);
-			setIssueFilter(false);
-		}
-
-		if (filterQueryStringValue.has('type')) {
-			if (filterQueryStringValue.get('type') === 'PAGE') {
-				setInternalFilter(true);
-				setExternalFilter(false);
-				setAllFilter(false);
-			} else if (filterQueryStringValue.get('type') === 'EXTERNAL') {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
-			} else if (filterQueryStringValue.get('type') === 'EXTERNALOTHER') {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
-			}
-		} else {
-			setExternalFilter(false);
-			setInternalFilter(false);
-		}
-
-		if (
-			!filterQueryStringValue.has('status') &&
-			!filterQueryStringValue.has('type') &&
-			Array.from(filterQueryStringValue).length === 0
-		) {
-			setNoIssueFilter(false);
-			setIssueFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(false);
-			setAllFilter(true);
-		}
-	};
-
 	useEffect(() => {
-		setFilterQueryString(new URLSearchParams(window.location.search));
-
 		if (removeURLParameter(asPath, 'page').includes('?'))
 			setPagePath(`${removeURLParameter(asPath, 'page')}&`);
 		else setPagePath(`${removeURLParameter(asPath, 'page')}?`);
@@ -448,37 +398,76 @@ const Links = (props) => {
 		if (props.result.per_page !== undefined)
 			setLinksPerPage(props.result.per_page);
 
-		loadFilterHandler();
+		setFilterQueryString(new URLSearchParams(window.location.search));
+
+		let filterQueryStringValue = new URLSearchParams(window.location.search);
+
+		if (filterQueryStringValue.has('status')) {
+			if (
+				filterQueryStringValue.getAll('status').includes('TIMEOUT') &&
+				filterQueryStringValue.getAll('status').includes('HTTP_ERROR') &&
+				filterQueryStringValue.getAll('status').includes('OTHER_ERROR')
+			) {
+				setIssueFilter(true);
+				setNoIssueFilter(false);
+				setAllFilter(false);
+			}
+
+			if (filterQueryStringValue.get('status') === 'OK') {
+				setNoIssueFilter(true);
+				setIssueFilter(false);
+				setAllFilter(false);
+			}
+		}
+
+		if (filterQueryStringValue.has('type')) {
+			if (filterQueryStringValue.get('type') === 'PAGE') {
+				setInternalFilter(true);
+				setExternalFilter(false);
+				setAllFilter(false);
+			} else if (filterQueryStringValue.get('type') === 'EXTERNAL') {
+				setExternalFilter(true);
+				setInternalFilter(false);
+				setAllFilter(false);
+			} else if (filterQueryStringValue.get('type') === 'EXTERNALOTHER') {
+				setExternalFilter(true);
+				setInternalFilter(false);
+				setAllFilter(false);
+			}
+		}
+
+		if (!filterQueryStringValue.toString().length) {
+			setNoIssueFilter(false);
+			setIssueFilter(false);
+			setInternalFilter(false);
+			setExternalFilter(false);
+			setAllFilter(true);
+		}
 
 		// console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
 	}, []);
 
 	useEffect(() => {
-		if (
-			(props.result.status !== undefined && props.result.status === 'OK') ||
-			(filterQueryString &&
-				Array.from(filterQueryString).length === 1 &&
-				filterQueryString.getAll('status').includes('OK'))
-		) {
-			setIssueFilter(false);
+		if (props.result.status !== undefined && props.result.status === 'OK') {
 			setNoIssueFilter(true);
+			setIssueFilter(false);
 			setAllFilter(false);
-		} else setNoIssueFilter(false);
+		} else if (!Array.from(filterQueryString).includes('status')) {
+			setNoIssueFilter(false);
+		}
 
 		if (
-			(props.result.status !== undefined &&
-				props.result.status.includes('TIMEOUT') &&
-				props.result.status.includes('HTTP_ERROR') &&
-				props.result.status.includes('OTHER_ERROR')) ||
-			(filterQueryString &&
-				filterQueryString.getAll('status').includes('TIMEOUT') &&
-				filterQueryString.getAll('status').includes('HTTP_ERROR') &&
-				filterQueryString.getAll('status').includes('OTHER_ERROR'))
+			props.result.status !== undefined &&
+			props.result.status.includes('TIMEOUT') &&
+			props.result.status.includes('HTTP_ERROR') &&
+			props.result.status.includes('OTHER_ERROR')
 		) {
-			setNoIssueFilter(false);
 			setIssueFilter(true);
+			setNoIssueFilter(false);
 			setAllFilter(false);
-		} else setIssueFilter(false);
+		} else if (!Array.from(filterQueryString).includes('status')) {
+			setIssueFilter(false);
+		}
 
 		if (props.result.type !== undefined && props.result.type == 'PAGE') {
 			setInternalFilter(true);
@@ -506,7 +495,8 @@ const Links = (props) => {
 		if (
 			props.result.type == undefined &&
 			props.result.status == undefined &&
-			Array.from(filterQueryString).length === 0
+			filterQueryString &&
+			!filterQueryString.toString().length
 		) {
 			setIssueFilter(false);
 			setNoIssueFilter(false);
@@ -514,8 +504,6 @@ const Links = (props) => {
 			setExternalFilter(false);
 			setAllFilter(true);
 		}
-
-		console.log(props.result.status);
 	}, [filterChangeHandler, filterQueryString]);
 
 	const SortHandler = (slug, dir) => {
