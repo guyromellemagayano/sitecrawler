@@ -7,11 +7,7 @@ export const linksChartContents = [
   //   label: 'Broken External Links',
   //   filter: 'status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR&type=EXTERNAL',
   //   color: '#e53e3e'
-  // }, {
-  //   label: 'No Issues',
-  //   filter: '',
-  //   color: '#48bb78'
-  // }
+  // },
   {
     label: 'Broken Links',
     filter: 'status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR',
@@ -58,7 +54,7 @@ export const pagesChartContents = [
     color: '#e53e3e'
   }, {
     label: 'No Issues',
-    filter: '',
+    filter: 'size_total_max=1048575&tls_total=true',
     color: '#48bb78'
   }
 ]
