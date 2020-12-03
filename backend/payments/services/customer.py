@@ -10,6 +10,7 @@ def get_id(request):
     try:
         c = stripe.Customer.retrieve(customer_id)
         if c.deleted:
+            request.user.stripe_customer.delete()
             return None
         return customer_id
     except stripe.error.StripeError as e:
