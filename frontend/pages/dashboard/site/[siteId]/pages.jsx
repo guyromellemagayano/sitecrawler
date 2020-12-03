@@ -86,6 +86,7 @@ const Pages = (props) => {
 	const [searchKey, setSearchKey] = useState('');
 	const [pagePath, setPagePath] = useState('');
 	const [allFilter, setAllFilter] = useState(false);
+	const [noIssueFilter, setNoIssueFilter] = useState(false);
 	const [largePageSizeFilter, setLargePageSizeFilter] = useState(false);
 	const [brokenSecurityFilter, setBrokenSecurityFilter] = useState(false);
 	const [recrawlable, setRecrawlable] = useState(false);
@@ -138,21 +139,44 @@ const Pages = (props) => {
 			  props.result.page
 			: `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` +
 			  linksPerPage;
+
 	let queryString =
-		props.result.size_total_min !== undefined
+		props.result.size_total_min !== undefined &&
+		props.result.size_total_min.length != 0
 			? scanApiEndpoint.includes('?')
 				? `&size_total_min=1048576`
 				: `?size_total_min=1048576`
-			: filterQueryString;
+			: Array.from(filterQueryString).length > 0 &&
+			  filterQueryString.toString().includes('size_total_min')
+			? '&' + filterQueryString.toString()
+			: '';
 	queryString +=
-		props.result.tls_total !== undefined
-			? (scanApiEndpoint + queryString).includes('?')
+		props.result.size_total_max !== undefined &&
+		props.result.size_total_max.length != 0
+			? scanApiEndpoint.includes('?')
+				? `&size_total_max=1048575`
+				: `?size_total_max=1048575`
+			: Array.from(filterQueryString).length > 0 &&
+			  filterQueryString.toString().includes('size_total_max')
+			? '&' + filterQueryString.toString()
+			: '';
+	queryString +=
+		props.result.tls_total !== undefined && props.result.tls_total.length != 0
+			? props.result.tls_total === 'true'
+				? scanApiEndpoint.includes('?')
+					? `&tls_total=true`
+					: `?tls_total=true`
+				: scanApiEndpoint.includes('?')
 				? `&tls_total=false`
 				: `?tls_total=false`
-			: filterQueryString;
+			: Array.from(filterQueryString).length > 0 &&
+			  filterQueryString.toString().includes('tls_total') &&
+			  !filterQueryString.toString().includes('size_total_max')
+			? '&tls_total=false'
+			: '';
 	queryString +=
 		props.result.search !== undefined
-			? (scanApiEndpoint + queryString).includes('?')
+			? scanApiEndpoint.includes('?')
 				? `&search=${props.result.search}`
 				: `?search=${props.result.search}`
 			: '';
@@ -165,7 +189,12 @@ const Pages = (props) => {
 
 	scanApiEndpoint += queryString;
 
-	// console.log(scanApiEndpoint);
+	console.log(
+		scanApiEndpoint,
+		props.result,
+		queryString,
+		filterQueryString.toString()
+	);
 
 	const { data: page, error: pageError, mutate: updatePages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -206,14 +235,56 @@ const Pages = (props) => {
 		let newPath = asPath;
 		newPath = removeURLParameter(newPath, 'page');
 
+		if (filterType == 'no-issues' && filterStatus == true) {
+			setNoIssueFilter(true);
+			setLargePageSizeFilter(false);
+			setBrokenSecurityFilter(false);
+			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, 'size_total_max');
+			newPath = removeURLParameter(newPath, 'size_total_min');
+			newPath = removeURLParameter(newPath, 'tls_total');
+
+			if (newPath.includes('?'))
+				newPath += `&size_total_max=1048575&tls_total=true`;
+			else newPath += `?size_total_max=1048575&tls_total=true`;
+		} else if (filterType == 'no-issues' && filterStatus == false) {
+			filterQueryString && filterQueryString.delete('size_total_max');
+			filterQueryString && filterQueryString.delete('size_total_min');
+			filterQueryString && filterQueryString.delete('tls_total');
+
+			if (newPath.includes('size_total_max') && newPath.includes('tls_total')) {
+				newPath = removeURLParameter(newPath, 'size_total_max');
+				newPath = removeURLParameter(newPath, 'size_total_min');
+				newPath = removeURLParameter(newPath, 'tls_total');
+			}
+
+			setNoIssueFilter(false);
+		}
+
 		if (filterType == 'pageLargePages' && filterStatus == true) {
 			setLargePageSizeFilter(true);
+			setNoIssueFilter(false);
+			setBrokenSecurityFilter(false);
 			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, 'size_total_max');
+			newPath = removeURLParameter(newPath, 'size_total_min');
+			newPath = removeURLParameter(newPath, 'tls_total');
 
 			if (newPath.includes('?')) newPath += `&size_total_min=1048576`;
 			else newPath += `?size_total_min=1048576`;
 		} else if (filterType == 'pageLargePages' && filterStatus == false) {
-			newPath = removeURLParameter(newPath, 'size_total_min');
+			filterQueryString && filterQueryString.delete('size_total_min');
+			filterQueryString && filterQueryString.delete('size_total_max');
+			filterQueryString && filterQueryString.delete('tls_total');
+
+			if (newPath.includes('size_total_min')) {
+				newPath = removeURLParameter(newPath, 'size_total_min');
+				newPath = removeURLParameter(newPath, 'size_total_max');
+				newPath = removeURLParameter(newPath, 'tls_total');
+			}
+
 			setLargePageSizeFilter(false);
 		}
 
@@ -221,20 +292,34 @@ const Pages = (props) => {
 			setBrokenSecurityFilter(true);
 			setAllFilter(false);
 
+			newPath = removeURLParameter(newPath, 'size_total_min');
+			newPath = removeURLParameter(newPath, 'size_total_max');
+			newPath = removeURLParameter(newPath, 'tls_total');
+
 			if (newPath.includes('?')) newPath += `&tls_total=false`;
 			else newPath += `?tls_total=false`;
 		} else if (filterType == 'pageBrokenSecurity' && filterStatus == false) {
-			newPath = removeURLParameter(newPath, 'tls_total');
+			filterQueryString && filterQueryString.delete('tls_total');
+			filterQueryString && filterQueryString.delete('size_total_min');
+			filterQueryString && filterQueryString.delete('size_total_max');
+
+			if (newPath.includes('tls_total')) {
+				newPath = removeURLParameter(newPath, 'size_total_max');
+				newPath = removeURLParameter(newPath, 'size_total_min');
+				newPath = removeURLParameter(newPath, 'tls_total');
+			}
+
 			setBrokenSecurityFilter(false);
 		}
 
 		if (filterType == 'all' && filterStatus == true) {
+			setNoIssueFilter(false);
 			setLargePageSizeFilter(false);
 			setBrokenSecurityFilter(false);
-
 			setAllFilter(true);
 
 			newPath = removeURLParameter(newPath, 'size_total_min');
+			newPath = removeURLParameter(newPath, 'size_total_max');
 			newPath = removeURLParameter(newPath, 'tls_total');
 
 			// if (!newPath.includes("search") && !newPath.includes("size_total_min"))
@@ -277,29 +362,6 @@ const Pages = (props) => {
 		}
 	};
 
-	const loadFilterHandler = async () => {
-		let filterQueryStringValue = new URLSearchParams(window.location.search);
-
-		if (filterQueryStringValue.has('size_total_min')) {
-			setLargePageSizeFilter(true);
-			setAllFilter(false);
-		} else setLargePageSizeFilter(false);
-
-		if (filterQueryStringValue.has('tls_total')) {
-			setBrokenSecurityFilter(true);
-			setAllFilter(false);
-		} else setBrokenSecurityFilter(false);
-
-		if (
-			!filterQueryStringValue.has('size_total_min') &&
-			!filterQueryStringValue.has('tls_total')
-		) {
-			setLargePageSizeFilter(false);
-			setBrokenSecurityFilter(false);
-			setAllFilter(true);
-		}
-	};
-
 	useEffect(() => {
 		if (removeURLParameter(asPath, 'page').includes('?'))
 			setPagePath(`${removeURLParameter(asPath, 'page')}&`);
@@ -322,30 +384,89 @@ const Pages = (props) => {
 		if (props.result.per_page !== undefined)
 			setLinksPerPage(props.result.per_page);
 
-		loadFilterHandler();
+		setFilterQueryString(new URLSearchParams(window.location.search));
+
+		let filterQueryStringValue = new URLSearchParams(window.location.search);
+
+		if (filterQueryStringValue.has('size_total_min')) {
+			setLargePageSizeFilter(true);
+			setAllFilter(false);
+			setNoIssueFilter(false);
+			setBrokenSecurityFilter(false);
+		}
+
+		if (filterQueryStringValue.get('tls_total') === 'false') {
+			setBrokenSecurityFilter(true);
+			setLargePageSizeFilter(false);
+			setAllFilter(false);
+			setNoIssueFilter(false);
+		}
+
+		if (
+			filterQueryStringValue.has('size_total_max') &&
+			filterQueryStringValue.get('tls_total') === 'true'
+		) {
+			setBrokenSecurityFilter(false);
+			setLargePageSizeFilter(false);
+			setAllFilter(false);
+			setNoIssueFilter(true);
+		}
+
+		if (!filterQueryStringValue.toString().length) {
+			setLargePageSizeFilter(false);
+			setBrokenSecurityFilter(false);
+			setNoIssueFilter(false);
+			setAllFilter(true);
+		}
 	}, []);
 
-	// useEffect(() => {
-	// 	if (props.result.size_total_min !== undefined) {
-	// 		setLargePageSizeFilter(true);
-	// 		setAllFilter(false);
-	// 	} else setLargePageSizeFilter(false);
+	useEffect(() => {
+		if (
+			props.result.size_total_max !== undefined &&
+			props.result.tls_total !== undefined &&
+			props.result.tls_total === 'true'
+		) {
+			filterQueryString && filterQueryString.delete('size_total_min');
 
-	// 	if (props.result.tls_total !== undefined) {
-	// 		setBrokenSecurityFilter(true);
-	// 		setAllFilter(false);
-	// 	} else setBrokenSecurityFilter(false);
+			setNoIssueFilter(true);
+			setBrokenSecurityFilter(false);
+			setLargePageSizeFilter(false);
+			setAllFilter(false);
+		}
 
-	// 	if (
-	// 		props.result.size_total_min == undefined &&
-	// 		props.result.tls_total == undefined
-	// 	) {
-	// 		setLargePageSizeFilter(false);
-	// 		setBrokenSecurityFilter(false);
+		if (props.result.size_total_min !== undefined) {
+			filterQueryString && filterQueryString.delete('size_total_max');
+			filterQueryString && filterQueryString.delete('tls_total');
 
-	// 		setAllFilter(true);
-	// 	}
-	// }, [filterChangeHandler]);
+			setNoIssueFilter(false);
+			setBrokenSecurityFilter(false);
+			setLargePageSizeFilter(true);
+			setAllFilter(false);
+		}
+
+		if (
+			props.result.tls_total !== undefined &&
+			props.result.tls_total === 'false'
+		) {
+			setNoIssueFilter(false);
+			setBrokenSecurityFilter(true);
+			setLargePageSizeFilter(false);
+			setAllFilter(false);
+		}
+
+		if (
+			props.result.size_total_max == undefined &&
+			props.result.size_total_min == undefined &&
+			props.result.tls_total == undefined &&
+			filterQueryString &&
+			!filterQueryString.toString().length
+		) {
+			setLargePageSizeFilter(false);
+			setNoIssueFilter(false);
+			setBrokenSecurityFilter(false);
+			setAllFilter(true);
+		}
+	}, [filterChangeHandler, filterQueryString]);
 
 	const SortHandler = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
@@ -627,6 +748,7 @@ const Pages = (props) => {
 									<PageFilter
 										onFilterChange={filterChangeHandler}
 										allFilter={allFilter}
+										noIssueFilter={noIssueFilter}
 										largePageSizeFilter={largePageSizeFilter}
 										brokenSecurityFilter={brokenSecurityFilter}
 									/>
@@ -638,7 +760,7 @@ const Pages = (props) => {
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
-									<div className={`py-4`}>
+									<div className={`pb-4`}>
 										<div className={`flex flex-col`}>
 											<div
 												className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
