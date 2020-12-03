@@ -191,6 +191,7 @@ const Links = (props) => {
 				? `&type=${typeString}`
 				: `?type=${typeString}`
 			: '';
+
 	queryString +=
 		props.result.search !== undefined
 			? props.result.page !== undefined ||
@@ -209,7 +210,7 @@ const Links = (props) => {
 
 	scanApiEndpoint += queryString;
 
-	console.log(scanApiEndpoint);
+	// console.log(scanApiEndpoint);
 
 	const { data: link, error: linkError, mutate: updateLinks } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),

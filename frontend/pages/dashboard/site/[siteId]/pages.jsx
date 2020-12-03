@@ -150,6 +150,7 @@ const Pages = (props) => {
 			  filterQueryString.toString().includes('size_total_min')
 			? '&' + filterQueryString.toString()
 			: '';
+
 	queryString +=
 		props.result.size_total_max !== undefined &&
 		props.result.size_total_max.length != 0
@@ -160,6 +161,7 @@ const Pages = (props) => {
 			  filterQueryString.toString().includes('size_total_max')
 			? '&' + filterQueryString.toString()
 			: '';
+
 	queryString +=
 		props.result.tls_total !== undefined && props.result.tls_total.length != 0
 			? props.result.tls_total === 'true'
@@ -174,12 +176,14 @@ const Pages = (props) => {
 			  !filterQueryString.toString().includes('size_total_max')
 			? '&tls_total=false'
 			: '';
+
 	queryString +=
 		props.result.search !== undefined
 			? scanApiEndpoint.includes('?')
 				? `&search=${props.result.search}`
 				: `?search=${props.result.search}`
 			: '';
+
 	queryString +=
 		props.result.ordering !== undefined
 			? (scanApiEndpoint + queryString).includes('?')
@@ -189,12 +193,7 @@ const Pages = (props) => {
 
 	scanApiEndpoint += queryString;
 
-	console.log(
-		scanApiEndpoint,
-		props.result,
-		queryString,
-		filterQueryString.toString()
-	);
+	// console.log(scanApiEndpoint);
 
 	const { data: page, error: pageError, mutate: updatePages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
