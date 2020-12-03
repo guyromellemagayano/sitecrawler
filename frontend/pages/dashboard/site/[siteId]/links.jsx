@@ -411,12 +411,16 @@ const Links = (props) => {
 				setIssueFilter(true);
 				setNoIssueFilter(false);
 				setAllFilter(false);
+				setInternalFilter(false);
+				setExternalFilter(false);
 			}
 
 			if (filterQueryStringValue.get('status') === 'OK') {
 				setNoIssueFilter(true);
 				setIssueFilter(false);
 				setAllFilter(false);
+				setInternalFilter(false);
+				setExternalFilter(false);
 			}
 		}
 
@@ -452,8 +456,8 @@ const Links = (props) => {
 			setNoIssueFilter(true);
 			setIssueFilter(false);
 			setAllFilter(false);
-		} else if (!Array.from(filterQueryString).includes('status')) {
-			setNoIssueFilter(false);
+			setInternalFilter(false);
+			setExternalFilter(false);
 		}
 
 		if (
@@ -465,15 +469,15 @@ const Links = (props) => {
 			setIssueFilter(true);
 			setNoIssueFilter(false);
 			setAllFilter(false);
-		} else if (!Array.from(filterQueryString).includes('status')) {
-			setIssueFilter(false);
+			setInternalFilter(false);
+			setExternalFilter(false);
 		}
 
 		if (props.result.type !== undefined && props.result.type == 'PAGE') {
 			setInternalFilter(true);
 			setExternalFilter(false);
 			setAllFilter(false);
-		} else setInternalFilter(false);
+		}
 
 		if (Array.isArray(props.result.type)) {
 			if (
@@ -483,13 +487,13 @@ const Links = (props) => {
 				setExternalFilter(true);
 				setInternalFilter(false);
 				setAllFilter(false);
-			} else setExternalFilter(false);
+			}
 		} else {
 			if (props.result.type !== undefined && props.result.type == 'EXTERNAL') {
 				setExternalFilter(true);
 				setInternalFilter(false);
 				setAllFilter(false);
-			} else setExternalFilter(false);
+			}
 		}
 
 		if (
