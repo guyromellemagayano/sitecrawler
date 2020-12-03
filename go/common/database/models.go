@@ -59,7 +59,7 @@ var Columns = struct {
 		Entry string
 	}
 	CrawlGroupsetting struct {
-		ID, MaxSites, GroupID, RecrawlSchedule string
+		ID, MaxSites, GroupID, RecrawlSchedule, UptimeSchedule string
 
 		Group string
 	}
@@ -99,7 +99,7 @@ var Columns = struct {
 		Site string
 	}
 	CrawlSite struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold string
 
 		User string
 	}
@@ -107,7 +107,7 @@ var Columns = struct {
 		ID, NotBefore, NotAfter, CommonName, Organization, DnsNames, IssuerOrganization, IssuerCn, CipherSuite, Version, Errors string
 	}
 	CrawlUserprofile struct {
-		ID, Settings, UserID string
+		ID, Settings, UserID, LargePageSizeThreshold string
 
 		User string
 	}
@@ -296,7 +296,7 @@ var Columns = struct {
 		Entry: "Entry",
 	},
 	CrawlGroupsetting: struct {
-		ID, MaxSites, GroupID, RecrawlSchedule string
+		ID, MaxSites, GroupID, RecrawlSchedule, UptimeSchedule string
 
 		Group string
 	}{
@@ -304,6 +304,7 @@ var Columns = struct {
 		MaxSites:        "max_sites",
 		GroupID:         "group_id",
 		RecrawlSchedule: "recrawl_schedule",
+		UptimeSchedule:  "uptime_schedule",
 
 		Group: "Group",
 	},
@@ -428,19 +429,20 @@ var Columns = struct {
 		Site: "Site",
 	},
 	CrawlSite: struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold string
 
 		User string
 	}{
-		ID:              "id",
-		CreatedAt:       "created_at",
-		UpdatedAt:       "updated_at",
-		Url:             "url",
-		VerificationID:  "verification_id",
-		Verified:        "verified",
-		UserID:          "user_id",
-		LastVerifyError: "last_verify_error",
-		Name:            "name",
+		ID:                     "id",
+		CreatedAt:              "created_at",
+		UpdatedAt:              "updated_at",
+		Url:                    "url",
+		VerificationID:         "verification_id",
+		Verified:               "verified",
+		UserID:                 "user_id",
+		LastVerifyError:        "last_verify_error",
+		Name:                   "name",
+		LargePageSizeThreshold: "large_page_size_threshold",
 
 		User: "User",
 	},
@@ -460,13 +462,14 @@ var Columns = struct {
 		Errors:             "errors",
 	},
 	CrawlUserprofile: struct {
-		ID, Settings, UserID string
+		ID, Settings, UserID, LargePageSizeThreshold string
 
 		User string
 	}{
-		ID:       "id",
-		Settings: "settings",
-		UserID:   "user_id",
+		ID:                     "id",
+		Settings:               "settings",
+		UserID:                 "user_id",
+		LargePageSizeThreshold: "large_page_size_threshold",
 
 		User: "User",
 	},
@@ -1063,6 +1066,7 @@ type CrawlGroupsetting struct {
 	MaxSites        int    `pg:"max_sites,use_zero"`
 	GroupID         int    `pg:"group_id,use_zero"`
 	RecrawlSchedule string `pg:"recrawl_schedule,use_zero"`
+	UptimeSchedule  string `pg:"uptime_schedule,use_zero"`
 
 	Group *AuthGroup `pg:"fk:group_id"`
 }
@@ -1183,15 +1187,16 @@ type CrawlScan struct {
 type CrawlSite struct {
 	tableName struct{} `pg:"crawl_site,alias:t,,discard_unknown_columns"`
 
-	ID              int       `pg:"id,pk"`
-	CreatedAt       time.Time `pg:"created_at,use_zero"`
-	UpdatedAt       time.Time `pg:"updated_at,use_zero"`
-	Url             string    `pg:"url,use_zero"`
-	VerificationID  string    `pg:"verification_id,use_zero"`
-	Verified        bool      `pg:"verified,use_zero"`
-	UserID          int       `pg:"user_id,use_zero"`
-	LastVerifyError *string   `pg:"last_verify_error"`
-	Name            string    `pg:"name,use_zero"`
+	ID                     int       `pg:"id,pk"`
+	CreatedAt              time.Time `pg:"created_at,use_zero"`
+	UpdatedAt              time.Time `pg:"updated_at,use_zero"`
+	Url                    string    `pg:"url,use_zero"`
+	VerificationID         string    `pg:"verification_id,use_zero"`
+	Verified               bool      `pg:"verified,use_zero"`
+	UserID                 int       `pg:"user_id,use_zero"`
+	LastVerifyError        *string   `pg:"last_verify_error"`
+	Name                   string    `pg:"name,use_zero"`
+	LargePageSizeThreshold *int      `pg:"large_page_size_threshold"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }
@@ -1215,9 +1220,10 @@ type CrawlTl struct {
 type CrawlUserprofile struct {
 	tableName struct{} `pg:"crawl_userprofile,alias:t,,discard_unknown_columns"`
 
-	ID       int                    `pg:"id,pk"`
-	Settings map[string]interface{} `pg:"settings,use_zero"`
-	UserID   int                    `pg:"user_id,use_zero"`
+	ID                     int                    `pg:"id,pk"`
+	Settings               map[string]interface{} `pg:"settings,use_zero"`
+	UserID                 int                    `pg:"user_id,use_zero"`
+	LargePageSizeThreshold int                    `pg:"large_page_size_threshold,use_zero"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }

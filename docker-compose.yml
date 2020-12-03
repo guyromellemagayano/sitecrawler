@@ -59,6 +59,17 @@ services:
       - ./go:/app
     # environment:
     #   - LOG_SQL=true
+  uptimer:
+    build:
+      context: ./go
+      target: dev
+      args:
+        SERVICE: uptimer
+    image: crawl-app-uptimer
+    volumes:
+      - ./go:/app
+    # environment:
+    #   - LOG_SQL=true
   db:
     image: postgres:12
     environment:
