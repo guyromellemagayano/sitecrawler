@@ -263,6 +263,7 @@ const Links = (props) => {
 			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 		} else if (filterType == 'issues' && filterStatus == false) {
 			filterQueryString && filterQueryString.delete('status');
+			filterQueryString && filterQueryString.delete('tls_status');
 
 			if (newPath.includes('status'))
 				newPath = removeURLParameter(newPath, 'status');
@@ -328,8 +329,6 @@ const Links = (props) => {
 			setNoIssueFilter(false);
 			setExternalFilter(false);
 			setInternalFilter(false);
-
-			console.log(filterQueryString);
 
 			newPath = removeURLParameter(newPath, 'status');
 			newPath = removeURLParameter(newPath, 'type');
