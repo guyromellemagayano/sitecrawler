@@ -37,3 +37,8 @@ services:
     command: sleep 3600
     restart: always
     mem_limit: 64M
+  uptimer:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    command: sleep 3600
+    restart: always
+    mem_limit: 64M

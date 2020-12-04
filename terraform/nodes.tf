@@ -5,7 +5,7 @@ resource "aws_key_pair" "deployer" {
 
 resource "aws_instance" "staging" {
   ami           = "ami-068663a3c619dd892"
-  instance_type = "t2.micro"
+  instance_type = "t2.small"
 	security_groups = ["${aws_security_group.node_security_group.name}"]
 	key_name = aws_key_pair.deployer.key_name
 	iam_instance_profile = aws_iam_instance_profile.node_profile.name

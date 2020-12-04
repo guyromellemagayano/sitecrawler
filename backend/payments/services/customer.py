@@ -8,7 +8,10 @@ def get_id(request):
         return None
     customer_id = request.user.stripe_customer.customer_id
     try:
-        stripe.Customer.retrieve(customer_id)
+        c = stripe.Customer.retrieve(customer_id)
+        if c.deleted:
+            request.user.stripe_customer.delete()
+            return None
         return customer_id
     except stripe.error.StripeError as e:
         if e.code == "resource_missing":

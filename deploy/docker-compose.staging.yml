@@ -75,6 +75,19 @@ services:
     environment:
       ENV: staging
     mem_limit: 64M
+  uptimer:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-uptimer
+    restart: always
+    links:
+      - db
+    environment:
+      ENV: staging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1M"
+        max-file: "3"
+    mem_limit: 64M
   db:
     image: postgres:12
     restart: always

@@ -9,7 +9,14 @@ class GroupSettings(models.Model):
     group = models.OneToOneField(Group, on_delete=models.CASCADE)
     max_sites = models.IntegerField(default=10)
     recrawl_schedule = models.CharField(
-        max_length=63, default="0 18 * * 0", help_text="<a href='https://en.wikipedia.org/wiki/Cron'>cron format</a>",
+        max_length=63,
+        default="0 18 * * 0",
+        help_text="<a href='https://en.wikipedia.org/wiki/Cron'>cron format</a>",
+    )
+    uptime_schedule = models.CharField(
+        max_length=63,
+        default="0 * * * *",
+        help_text="<a href='https://en.wikipedia.org/wiki/Cron'>cron format</a>",
     )
 
 

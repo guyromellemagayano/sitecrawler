@@ -7,7 +7,7 @@ resource "aws_db_instance" "production" {
   storage_type         = "gp2"
   engine               = "postgres"
   engine_version       = "12.3"
-  instance_class       = "db.t3.micro"
+  instance_class       = "db.t3.small"
   name                 = "production"
   username             = "production"
   password             = random_password.production_db_password.result

@@ -13,3 +13,13 @@ resource "aws_ecr_repository" "crawl-app-frontend" {
   image_tag_mutability = "MUTABLE"
 }
 
+# resource "aws_ecr_repository" "crawl-app-scheduler" {
+#   name                 = "crawl-app-scheduler"
+#   image_tag_mutability = "MUTABLE"
+# }
+
+resource "aws_ecr_repository" "crawl-app-uptimer" {
+  name                 = "crawl-app-uptimer"
+  image_tag_mutability = "MUTABLE"
+}
+

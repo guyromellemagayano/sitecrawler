@@ -25,8 +25,10 @@ build-push-go: ## Build and push production go images
 	deploy/ecr-login.sh
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler --build-arg SERVICE=crawler go/
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler --build-arg SERVICE=scheduler go/
+	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-uptimer --build-arg SERVICE=uptimer go/
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
+	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-uptimer
 
 test-go:
 	cd go && docker-compose -f docker-compose.test.yml up --build
