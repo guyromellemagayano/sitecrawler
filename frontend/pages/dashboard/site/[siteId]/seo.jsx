@@ -149,20 +149,20 @@ const Seo = (props) => {
 			  linksPerPage;
 
 	const hasTitleString = Array.isArray(props.result.has_title)
-		? props.result.has_title.join('&has_title')
+		? props.result.has_title.join('&has_title=')
 		: props.result.has_title;
 
 	let queryString =
 		props.result.has_title != undefined && props.result.has_title.length != 0
-			? !Array.from(filterQueryString).length
-				? scanApiEndpoint.includes('?')
-					? `&has_title=${hasTitleString}`
-					: `?has_title=${hasTitleString}`
-				: '&' + filterQueryString.toString()
+			? scanApiEndpoint.includes('?')
+				? `&has_title=${hasTitleString}`
+				: `?has_title=${hasTitleString}`
+			: Array.from(filterQueryString).length
+			? '&' + filterQueryString.toString()
 			: '';
 
 	const hasDescriptionString = Array.isArray(props.result.has_description)
-		? props.result.has_description.join('&has_description')
+		? props.result.has_description.join('&has_description=')
 		: props.result.has_description;
 
 	queryString +=
@@ -174,7 +174,7 @@ const Seo = (props) => {
 			: '';
 
 	const hasH1FirstString = Array.isArray(props.result.has_h1_first)
-		? props.result.has_h1_first.join('&has_h1_first')
+		? props.result.has_h1_first.join('&has_h1_first=')
 		: props.result.has_h1_first;
 
 	queryString +=
@@ -194,7 +194,7 @@ const Seo = (props) => {
 			: '';
 
 	const hasH2FirstString = Array.isArray(props.result.has_h2_first)
-		? props.result.has_h2_first.join('&has_h2_first')
+		? props.result.has_h2_first.join('&has_h2_first=')
 		: props.result.has_h2_first;
 
 	queryString +=

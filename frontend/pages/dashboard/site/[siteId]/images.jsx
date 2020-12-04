@@ -154,7 +154,7 @@ const Images = (props) => {
 			? scanApiEndpoint.includes('?')
 				? `&status=${statusString}`
 				: `?status=${statusString}`
-			: Array.from(filterQueryString).length > 0
+			: Array.from(filterQueryString).length
 			? '&' + filterQueryString.toString()
 			: '';
 
@@ -163,7 +163,7 @@ const Images = (props) => {
 		: props.result.tls_status;
 
 	queryString +=
-		props.result.tls_status !== undefined
+		props.result.tls_status !== undefined && props.result.tls_status != 0
 			? scanApiEndpoint.includes('?')
 				? `&tls_status=${tlsStatusString}`
 				: `?tls_status=${tlsStatusString}`
@@ -185,7 +185,7 @@ const Images = (props) => {
 
 	scanApiEndpoint += queryString;
 
-	console.log(scanApiEndpoint);
+	// console.log(scanApiEndpoint);
 
 	const { data: image, error: imageError, mutate: updateImages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -274,11 +274,10 @@ const Images = (props) => {
 			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 		} else if (filterType == 'notWorking' && filterStatus == false) {
 			filterQueryString && filterQueryString.delete('status');
-			filterQueryString && filterQueryString.delete('tls_status');
+			filterQueryString && filterQueryString.delete('page');
 
-			if (newPath.includes('status') || newPath.includes('tls_status')) {
+			if (newPath.includes('status')) {
 				newPath = removeURLParameter(newPath, 'status');
-				newPath = removeURLParameter(newPath, 'tls_status');
 			}
 
 			setImageNotWorkingFilter(false);
@@ -298,6 +297,7 @@ const Images = (props) => {
 		} else if (filterType == 'no-issues' && filterStatus == false) {
 			filterQueryString && filterQueryString.delete('status');
 			filterQueryString && filterQueryString.delete('tls_status');
+			filterQueryString && filterQueryString.delete('page');
 
 			if (newPath.includes('status') && newPath.includes('tls_status')) {
 				newPath = removeURLParameter(newPath, 'status');
@@ -319,11 +319,10 @@ const Images = (props) => {
 			if (newPath.includes('?')) newPath += `&tls_status=ERROR&tls_status=NONE`;
 			else newPath += `?tls_status=ERROR&tls_status=NONE`;
 		} else if (filterType == 'brokenSecurity' && filterStatus == false) {
-			filterQueryString && filterQueryString.delete('status');
 			filterQueryString && filterQueryString.delete('tls_status');
+			filterQueryString && filterQueryString.delete('page');
 
-			if (newPath.includes('status') && newPath.includes('tls_status')) {
-				newPath = removeURLParameter(newPath, 'status');
+			if (newPath.includes('tls_status')) {
 				newPath = removeURLParameter(newPath, 'tls_status');
 			}
 
