@@ -38,7 +38,7 @@ export const seoChartContents = [
     color: '#9b2c2c'
   }, {
     label: 'No Issues',
-    filter: '',
+    filter: 'has_title=true&has_description=true&has_h1_first=true&has_h2_first=true',
     color: '#48bb78'
   },
 ]
@@ -70,7 +70,7 @@ export const imagesChartContents = [
     color: '#e53e3e'
   }, {
     label: 'No Issues',
-    filter: '',
+    filter: 'status=OK&tls_status=OK',
     color: '#48bb78'
   }
 ]
