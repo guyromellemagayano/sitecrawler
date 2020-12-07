@@ -88,6 +88,7 @@ const Images = (props) => {
 	const [pagePath, setPagePath] = useState('');
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [allFilter, setAllFilter] = useState(false);
+	const [noIssueFilter, setNoIssueFilter] = useState(false);
 	const [imageNotWorkingFilter, setImageNotWorkingFilter] = useState(false);
 	const [imageBrokenSecurityFilter, setImageBrokenSecurityFilter] = useState(
 		false
@@ -95,10 +96,9 @@ const Images = (props) => {
 	const [recrawlable, setRecrawlable] = useState(false);
 	const [crawlFinished, setCrawlFinished] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
-
 	const [searchKey, setSearchKey] = useState('');
-
 	const pageTitle = 'Images |';
+	const [filterQueryString, setFilterQueryString] = useState('');
 
 	const { user: user, userError: userError } = useUser({
 		redirectTo: '/',
@@ -144,37 +144,38 @@ const Images = (props) => {
 			  props.result.page
 			: `/api/site/${query.siteId}/scan/${scanObjId}/image/?per_page=` +
 			  linksPerPage;
+
 	const statusString = Array.isArray(props.result.status)
 		? props.result.status.join('&status=')
 		: props.result.status;
+
 	let queryString =
-		props.result.status !== undefined && props.result.status.length != 0
+		props.result.status != undefined && props.result.status.length != 0
 			? scanApiEndpoint.includes('?')
-				? '&status=' + statusString
-				: '?status=' + statusString
-			: '';
-	const typeString = Array.isArray(props.result.type)
-		? props.result.type.join('&type=')
-		: props.result.type;
-	queryString +=
-		props.result.type !== undefined
-			? (scanApiEndpoint + queryString).includes('?')
-				? `&type=${typeString}`
-				: `?type=${typeString}`
+				? `&status=${statusString}`
+				: `?status=${statusString}`
+			: Array.from(filterQueryString).length
+			? '&' + filterQueryString.toString()
 			: '';
 
+	const tlsStatusString = Array.isArray(props.result.tls_status)
+		? props.result.tls_status.join('&tls_status=')
+		: props.result.tls_status;
+
 	queryString +=
-		props.result.tls_status !== undefined
-			? (scanApiEndpoint + queryString).includes('?')
-				? `&tls_status=ERROR&tls_status=NONE`
-				: `?tls_status=ERROR&tls_status=NONE`
+		props.result.tls_status !== undefined && props.result.tls_status != 0
+			? scanApiEndpoint.includes('?')
+				? `&tls_status=${tlsStatusString}`
+				: `?tls_status=${tlsStatusString}`
 			: '';
+
 	queryString +=
 		props.result.search !== undefined
 			? (scanApiEndpoint + queryString).includes('?')
 				? `&search=${props.result.search}`
 				: `?search=${props.result.search}`
 			: '';
+
 	queryString +=
 		props.result.ordering !== undefined
 			? (scanApiEndpoint + queryString).includes('?')
@@ -183,6 +184,8 @@ const Images = (props) => {
 			: '';
 
 	scanApiEndpoint += queryString;
+
+	// console.log(scanApiEndpoint);
 
 	const { data: image, error: imageError, mutate: updateImages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -212,7 +215,7 @@ const Images = (props) => {
 		else setPagePath(`${newPath}?`);
 
 		Router.push('/dashboard/site/[siteId]/images', newPath);
-		updateLinks();
+		updateImages();
 	};
 
 	const SortHandler = (slug, dir) => {
@@ -247,7 +250,7 @@ const Images = (props) => {
 		else setPagePath(`${removeURLParameter(newPath, 'page')}?`);
 
 		Router.push('/dashboard/site/[siteId]/images', newPath);
-		updateLinks();
+		updateImages();
 	};
 
 	const filterChangeHandler = async (e) => {
@@ -259,31 +262,77 @@ const Images = (props) => {
 
 		if (filterType == 'notWorking' && filterStatus == true) {
 			setImageNotWorkingFilter(true);
+			setImageBrokenSecurityFilter(false);
+			setNoIssueFilter(false);
 			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, 'status');
+			newPath = removeURLParameter(newPath, 'tls_status');
 
 			if (newPath.includes('?'))
 				newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 		} else if (filterType == 'notWorking' && filterStatus == false) {
-			newPath = removeURLParameter(newPath, 'status');
+			filterQueryString && filterQueryString.delete('status');
+			filterQueryString && filterQueryString.delete('page');
+
+			if (newPath.includes('status')) {
+				newPath = removeURLParameter(newPath, 'status');
+			}
+
 			setImageNotWorkingFilter(false);
 		}
 
-		if (filterType == 'brokenSecurity' && filterStatus == true) {
-			setImageBrokenSecurityFilter(true);
+		if (filterType == 'no-issues' && filterStatus == true) {
+			setImageNotWorkingFilter(false);
+			setImageBrokenSecurityFilter(false);
+			setNoIssueFilter(true);
 			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, 'status');
+			newPath = removeURLParameter(newPath, 'tls_status');
+
+			if (newPath.includes('?')) newPath += `&status=OK&tls_status=OK`;
+			else newPath += `?status=OK&tls_status=OK`;
+		} else if (filterType == 'no-issues' && filterStatus == false) {
+			filterQueryString && filterQueryString.delete('status');
+			filterQueryString && filterQueryString.delete('tls_status');
+			filterQueryString && filterQueryString.delete('page');
+
+			if (newPath.includes('status') && newPath.includes('tls_status')) {
+				newPath = removeURLParameter(newPath, 'status');
+				newPath = removeURLParameter(newPath, 'tls_status');
+			}
+
+			setNoIssueFilter(false);
+		}
+
+		if (filterType == 'brokenSecurity' && filterStatus == true) {
+			setImageNotWorkingFilter(false);
+			setImageBrokenSecurityFilter(true);
+			setNoIssueFilter(false);
+			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, 'status');
+			newPath = removeURLParameter(newPath, 'tls_status');
 
 			if (newPath.includes('?')) newPath += `&tls_status=ERROR&tls_status=NONE`;
 			else newPath += `?tls_status=ERROR&tls_status=NONE`;
 		} else if (filterType == 'brokenSecurity' && filterStatus == false) {
-			newPath = removeURLParameter(newPath, 'tls_status');
+			filterQueryString && filterQueryString.delete('tls_status');
+			filterQueryString && filterQueryString.delete('page');
+
+			if (newPath.includes('tls_status')) {
+				newPath = removeURLParameter(newPath, 'tls_status');
+			}
+
 			setImageBrokenSecurityFilter(false);
 		}
 
 		if (filterType == 'all' && filterStatus == true) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
-
+			setNoIssueFilter(false);
 			setAllFilter(true);
 
 			newPath = removeURLParameter(newPath, 'status');
@@ -296,7 +345,7 @@ const Images = (props) => {
 		if (newPath.includes('?')) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push('/dashboard/site/[siteId]/images', newPath);
+		Router.push(newPath);
 
 		updateImages();
 
@@ -350,32 +399,100 @@ const Images = (props) => {
 
 		if (props.result.per_page !== undefined)
 			setLinksPerPage(props.result.per_page);
+
+		setFilterQueryString(new URLSearchParams(window.location.search));
+
+		let filterQueryStringValue = new URLSearchParams(window.location.search);
+
+		if (
+			filterQueryStringValue.getAll('status').includes('TIMEOUT') &&
+			filterQueryStringValue.getAll('status').includes('HTTP_ERROR') &&
+			filterQueryStringValue.getAll('status').includes('OTHER_ERROR')
+		) {
+			setImageNotWorkingFilter(true);
+			setImageBrokenSecurityFilter(false);
+			setAllFilter(false);
+			setNoIssueFilter(false);
+		}
+
+		if (
+			filterQueryStringValue.get('status') === 'OK' &&
+			filterQueryStringValue.get('tls_status') === 'OK'
+		) {
+			setImageNotWorkingFilter(false);
+			setImageBrokenSecurityFilter(false);
+			setAllFilter(false);
+			setNoIssueFilter(true);
+		}
+
+		if (
+			filterQueryStringValue.getAll('tls_status').includes('ERROR') &&
+			filterQueryStringValue.getAll('tls_status').includes('NONE')
+		) {
+			setImageNotWorkingFilter(false);
+			setImageBrokenSecurityFilter(true);
+			setAllFilter(false);
+			setNoIssueFilter(false);
+		}
+
+		if (!filterQueryStringValue.toString().length) {
+			setImageNotWorkingFilter(false);
+			setImageBrokenSecurityFilter(false);
+			setAllFilter(true);
+			setNoIssueFilter(false);
+		}
 	}, []);
 
 	useEffect(() => {
 		if (
 			props.result.status !== undefined &&
-			Array.isArray(props.result.status)
+			props.result.tls_status == undefined &&
+			props.result.status.includes('HTTP_ERROR') &&
+			props.result.status.includes('OTHER_ERROR') &&
+			props.result.status.includes('TIMEOUT')
 		) {
 			setImageNotWorkingFilter(true);
+			setImageBrokenSecurityFilter(false);
+			setNoIssueFilter(false);
 			setAllFilter(false);
-		} else setImageNotWorkingFilter(false);
-
-		if (props.result.tls_status !== undefined) {
-			setImageBrokenSecurityFilter(true);
-			setAllFilter(false);
-		} else setImageBrokenSecurityFilter(false);
+		}
 
 		if (
 			props.result.status == undefined &&
-			props.result.tls_status == undefined
+			props.result.tls_status !== undefined &&
+			props.result.tls_status.includes('ERROR') &&
+			props.result.tls_status.includes('NONE')
+		) {
+			setImageNotWorkingFilter(false);
+			setImageBrokenSecurityFilter(true);
+			setNoIssueFilter(false);
+			setAllFilter(false);
+		}
+
+		if (
+			props.result.status !== undefined &&
+			props.result.tls_status !== undefined &&
+			props.result.status.includes('OK') &&
+			props.result.tls_status.includes('OK')
 		) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
+			setNoIssueFilter(true);
+			setAllFilter(false);
+		}
 
+		if (
+			props.result.status == undefined &&
+			props.result.tls_status == undefined &&
+			filterQueryString &&
+			!filterQueryString.toString().length
+		) {
+			setImageNotWorkingFilter(false);
+			setNoIssueFilter(false);
+			setImageBrokenSecurityFilter(false);
 			setAllFilter(true);
 		}
-	}, [filterChangeHandler]);
+	}, [filterChangeHandler, filterQueryString]);
 
 	const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`;
 
@@ -618,6 +735,7 @@ const Images = (props) => {
 									<ImageFilter
 										onFilterChange={filterChangeHandler}
 										allFilter={allFilter}
+										noIssueFilter={noIssueFilter}
 										imageNotWorkingFilter={imageNotWorkingFilter}
 										imageBrokenSecurityFilter={imageBrokenSecurityFilter}
 									/>
@@ -641,7 +759,6 @@ const Images = (props) => {
 														<thead>
 															<tr>
 																{ImageTableContent.map((site, key) => {
-																	console.log(site);
 																	return (
 																		<Fragment key={key}>
 																			<th

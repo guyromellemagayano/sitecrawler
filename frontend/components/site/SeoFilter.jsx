@@ -6,6 +6,7 @@ const SeoFilterDiv = styled.div``;
 const SeoFilter = ({
 	onFilterChange,
 	allFilter,
+	noIssueFilter,
 	noTitle,
 	noDescription,
 	noH1First,
@@ -44,6 +45,24 @@ const SeoFilter = ({
 									className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}
 								>
 									All Pages
+								</span>
+							</label>
+						</div>
+					</div>
+					<div className={`ml-4 mt-2 mr-2`}>
+						<div>
+							<label className={`flex items-center`}>
+								<input
+									type='checkbox'
+									className={`form-checkbox`}
+									onChange={filterHandler}
+									checked={noIssueFilter}
+									value='no-issues'
+								/>
+								<span
+									className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}
+								>
+									Pages with No Issues
 								</span>
 							</label>
 						</div>

@@ -26,6 +26,7 @@ import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import useSWR, { mutate } from 'swr';
 import useUser from 'hooks/useUser';
+import { array } from 'prop-types';
 
 const fetcher = async (url) => {
 	const res = await fetch(url, {
@@ -109,6 +110,7 @@ const Links = (props) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [allFilter, setAllFilter] = useState(false);
 	const [issueFilter, setIssueFilter] = useState(false);
+	const [noIssueFilter, setNoIssueFilter] = useState(false);
 	const [internalFilter, setInternalFilter] = useState(false);
 	const [externalFilter, setExternalFilter] = useState(false);
 	const [recrawlable, setRecrawlable] = useState(false);
@@ -117,6 +119,7 @@ const Links = (props) => {
 	const [pagePath, setPagePath] = useState('');
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [searchKey, setSearchKey] = useState('');
+	const [filterQueryString, setFilterQueryString] = useState('');
 
 	const pageTitle = 'Links |';
 
@@ -164,21 +167,31 @@ const Links = (props) => {
 			  props.result.page
 			: `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
 			  linksPerPage;
+
+	const statusString = Array.isArray(props.result.status)
+		? props.result.status.join('&status=')
+		: props.result.status;
+
 	let queryString =
-		props.result.status !== undefined && props.result.status.length != 0
+		props.result.status != undefined && props.result.status.length != 0
 			? scanApiEndpoint.includes('?')
-				? '&status=' + props.result.status.join('&status=')
-				: '?status=' + props.result.status.join('&status=')
+				? `&status=${statusString}`
+				: `?status=${statusString}`
+			: Array.from(filterQueryString).length
+			? '&' + filterQueryString.toString()
 			: '';
+
 	const typeString = Array.isArray(props.result.type)
 		? props.result.type.join('&type=')
 		: props.result.type;
+
 	queryString +=
 		props.result.type !== undefined
 			? scanApiEndpoint.includes('?')
 				? `&type=${typeString}`
 				: `?type=${typeString}`
 			: '';
+
 	queryString +=
 		props.result.search !== undefined
 			? props.result.page !== undefined ||
@@ -197,7 +210,7 @@ const Links = (props) => {
 
 	scanApiEndpoint += queryString;
 
-	// console.log(scanApiEndpoint);
+	console.log(scanApiEndpoint);
 
 	const { data: link, error: linkError, mutate: updateLinks } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -240,15 +253,41 @@ const Links = (props) => {
 
 		if (filterType == 'issues' && filterStatus == true) {
 			setIssueFilter(true);
+			setNoIssueFilter(false);
 			setAllFilter(false);
-			newPath = removeURLParameter(newPath, 'page');
+
+			newPath = removeURLParameter(newPath, 'status');
 
 			if (newPath.includes('?'))
 				newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 		} else if (filterType == 'issues' && filterStatus == false) {
-			newPath = removeURLParameter(newPath, 'status');
+			filterQueryString && filterQueryString.delete('status');
+			filterQueryString && filterQueryString.delete('page');
+
+			if (newPath.includes('status'))
+				newPath = removeURLParameter(newPath, 'status');
+
 			setIssueFilter(false);
+		}
+
+		if (filterType == 'no-issues' && filterStatus == true) {
+			setIssueFilter(false);
+			setNoIssueFilter(true);
+			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, 'status');
+
+			if (newPath.includes('?')) newPath += `&status=OK`;
+			else newPath += `?status=OK`;
+		} else if (filterType == 'no-issues' && filterStatus == false) {
+			filterQueryString && filterQueryString.delete('status');
+			filterQueryString && filterQueryString.delete('page');
+
+			if (newPath.includes('status'))
+				newPath = removeURLParameter(newPath, 'status');
+
+			setNoIssueFilter(false);
 		}
 
 		if (filterType == 'internal' && filterStatus == true) {
@@ -262,6 +301,9 @@ const Links = (props) => {
 			if (newPath.includes('?')) newPath += `&type=PAGE`;
 			else newPath += `?type=PAGE`;
 		} else if (filterType == 'internal' && filterStatus == false) {
+			filterQueryString && filterQueryString.delete('type');
+			filterQueryString && filterQueryString.delete('page');
+
 			if (newPath.includes('type=PAGE'))
 				newPath = removeURLParameter(newPath, 'type');
 
@@ -279,6 +321,9 @@ const Links = (props) => {
 			if (newPath.includes('?')) newPath += `&type=EXTERNAL`;
 			else newPath += `?type=EXTERNAL`;
 		} else if (filterType == 'external' && filterStatus == false) {
+			filterQueryString && filterQueryString.delete('type');
+			filterQueryString && filterQueryString.delete('page');
+
 			if (newPath.includes('type=EXTERNAL'))
 				newPath = removeURLParameter(newPath, 'type');
 
@@ -288,6 +333,7 @@ const Links = (props) => {
 		if (filterType == 'all' && filterStatus == true) {
 			setAllFilter(true);
 			setIssueFilter(false);
+			setNoIssueFilter(false);
 			setExternalFilter(false);
 			setInternalFilter(false);
 
@@ -359,20 +405,86 @@ const Links = (props) => {
 		if (props.result.per_page !== undefined)
 			setLinksPerPage(props.result.per_page);
 
+		setFilterQueryString(new URLSearchParams(window.location.search));
+
+		let filterQueryStringValue = new URLSearchParams(window.location.search);
+
+		if (filterQueryStringValue.has('status')) {
+			if (
+				filterQueryStringValue.getAll('status').includes('TIMEOUT') &&
+				filterQueryStringValue.getAll('status').includes('HTTP_ERROR') &&
+				filterQueryStringValue.getAll('status').includes('OTHER_ERROR')
+			) {
+				setIssueFilter(true);
+				setNoIssueFilter(false);
+				setAllFilter(false);
+				setInternalFilter(false);
+				setExternalFilter(false);
+			}
+
+			if (filterQueryStringValue.get('status') === 'OK') {
+				setNoIssueFilter(true);
+				setIssueFilter(false);
+				setAllFilter(false);
+				setInternalFilter(false);
+				setExternalFilter(false);
+			}
+		}
+
+		if (filterQueryStringValue.has('type')) {
+			if (filterQueryStringValue.get('type') === 'PAGE') {
+				setInternalFilter(true);
+				setExternalFilter(false);
+				setAllFilter(false);
+			} else if (filterQueryStringValue.get('type') === 'EXTERNAL') {
+				setExternalFilter(true);
+				setInternalFilter(false);
+				setAllFilter(false);
+			} else if (filterQueryStringValue.get('type') === 'EXTERNALOTHER') {
+				setExternalFilter(true);
+				setInternalFilter(false);
+				setAllFilter(false);
+			}
+		}
+
+		if (!filterQueryStringValue.toString().length) {
+			setNoIssueFilter(false);
+			setIssueFilter(false);
+			setInternalFilter(false);
+			setExternalFilter(false);
+			setAllFilter(true);
+		}
+
 		// console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
 	}, []);
 
 	useEffect(() => {
-		if (props.result.status !== undefined) {
-			setIssueFilter(true);
+		if (props.result.status !== undefined && props.result.status === 'OK') {
+			setNoIssueFilter(true);
+			setIssueFilter(false);
 			setAllFilter(false);
-		} else setIssueFilter(false);
+			setInternalFilter(false);
+			setExternalFilter(false);
+		}
+
+		if (
+			props.result.status !== undefined &&
+			props.result.status.includes('TIMEOUT') &&
+			props.result.status.includes('HTTP_ERROR') &&
+			props.result.status.includes('OTHER_ERROR')
+		) {
+			setIssueFilter(true);
+			setNoIssueFilter(false);
+			setAllFilter(false);
+			setInternalFilter(false);
+			setExternalFilter(false);
+		}
 
 		if (props.result.type !== undefined && props.result.type == 'PAGE') {
 			setInternalFilter(true);
 			setExternalFilter(false);
 			setAllFilter(false);
-		} else setInternalFilter(false);
+		}
 
 		if (Array.isArray(props.result.type)) {
 			if (
@@ -382,22 +494,28 @@ const Links = (props) => {
 				setExternalFilter(true);
 				setInternalFilter(false);
 				setAllFilter(false);
-			} else setExternalFilter(false);
+			}
 		} else {
 			if (props.result.type !== undefined && props.result.type == 'EXTERNAL') {
 				setExternalFilter(true);
 				setInternalFilter(false);
 				setAllFilter(false);
-			} else setExternalFilter(false);
+			}
 		}
 
-		if (props.result.type == undefined && props.result.status == undefined) {
+		if (
+			props.result.type == undefined &&
+			props.result.status == undefined &&
+			filterQueryString &&
+			!filterQueryString.toString().length
+		) {
 			setIssueFilter(false);
+			setNoIssueFilter(false);
 			setInternalFilter(false);
 			setExternalFilter(false);
 			setAllFilter(true);
 		}
-	}, [filterChangeHandler]);
+	}, [filterChangeHandler, filterQueryString]);
 
 	const SortHandler = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
@@ -678,6 +796,7 @@ const Links = (props) => {
 									<LinkFilter
 										onFilterChange={filterChangeHandler}
 										allFilter={allFilter}
+										noIssueFilter={noIssueFilter}
 										issueFilter={issueFilter}
 										internalFilter={internalFilter}
 										externalFilter={externalFilter}
@@ -690,7 +809,7 @@ const Links = (props) => {
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
-									<div className={`py-4`}>
+									<div className={`pb-4`}>
 										<div className={`flex flex-col`}>
 											<div
 												className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
