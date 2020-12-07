@@ -787,7 +787,7 @@ const Links = (props) => {
 									) : null}
 								</div>
 								<div
-									className={`max-w-full mx-auto px-4 pt-4 pb-0 sm:pb-4 lg:px-8 lg:py-8 sm:px-6 md:px-8`}
+									className={`max-w-full mx-auto px-4 sm:pb-4 lg:px-8 lg:pb-8 sm:px-6 md:px-8`}
 								>
 									<LinkOptions
 										searchKey={searchKey}

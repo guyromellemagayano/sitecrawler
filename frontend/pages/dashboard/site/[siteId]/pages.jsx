@@ -18,7 +18,7 @@ import PageFilter from 'components/site/PageFilter';
 import PagesLabel from 'public/label/pages/site/pages.json';
 import PageSorting from 'components/site/PageSorting';
 import PageTable from 'components/site/PageTable';
-import Pagination from 'components/sites/Pagination';
+import MyPagination from 'components/sites/Pagination';
 import Router, { useRouter } from 'next/router';
 import SiteFooter from 'components/footer/SiteFooter';
 import Skeleton from 'react-loading-skeleton';
@@ -733,7 +733,7 @@ const Pages = (props) => {
 									) : null}
 								</div>
 								<div
-									className={`max-w-full mx-auto px-4 pt-4 pb-0 sm:pb-4 lg:px-8 lg:py-8 sm:px-6 md:px-8`}
+									className={`max-w-full mx-auto px-4 sm:pb-4 lg:px-8 lg:pb-8 sm:px-6 md:px-8`}
 								>
 									<LinkOptions
 										searchKey={searchKey}
@@ -746,7 +746,7 @@ const Pages = (props) => {
 										largePageSizeFilter={largePageSizeFilter}
 										brokenSecurityFilter={brokenSecurityFilter}
 									/>
-									<Pagination
+									<MyPagination
 										href='/dashboard/site/[siteId]/pages'
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
@@ -806,7 +806,7 @@ const Pages = (props) => {
 										</div>
 									</div>
 
-									<Pagination
+									<MyPagination
 										href='/dashboard/site/[siteId]/pages'
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}

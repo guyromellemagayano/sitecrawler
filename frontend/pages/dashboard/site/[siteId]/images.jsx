@@ -607,7 +607,7 @@ const Images = (props) => {
 								tabIndex={`0`}
 							>
 								<div
-									className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
+									className={`max-w-full mx-auto px-4 pt-4 pb-0 lg:px-8 lg:py-8 sm:px-6 md:px-8`}
 								>
 									<div>
 										<nav className={`sm:hidden`}>
@@ -726,7 +726,7 @@ const Images = (props) => {
 									) : null}
 								</div>
 								<div
-									className={`max-w-full mx-auto px-4 pt-4 pb-0 sm:pb-4 lg:px-8 lg:py-8 sm:px-6 md:px-8`}
+									className={`max-w-full mx-auto px-4 sm:pb-4 lg:px-8 lg:pb-8 sm:px-6 md:px-8`}
 								>
 									<LinkOptions
 										searchKey={searchKey}
@@ -747,7 +747,7 @@ const Images = (props) => {
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
-									<div className={`py-4`}>
+									<div className={`pb-4`}>
 										<div className={`flex flex-col`}>
 											<div
 												className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
