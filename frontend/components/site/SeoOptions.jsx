@@ -58,7 +58,7 @@ const SeoOptions = ({ searchKey, onSearchEvent }) => {
 							</div>
 						</div>
 					</div>
-					<div className={`ml-4 mt-2 flex items-center flex-shrink-0`}>
+					{/* <div className={`ml-4 mt-2 flex items-center flex-shrink-0`}>
 						<span className={`inline-flex rounded-md shadow-xs-sm`}>
 							<div className={`relative inline-block text-left`}>
 								<div>
@@ -128,7 +128,7 @@ const SeoOptions = ({ searchKey, onSearchEvent }) => {
 								</Transition>
 							</div>
 						</span>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</SeoOptionsDiv>
