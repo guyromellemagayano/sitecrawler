@@ -9,7 +9,7 @@ def get_id(request):
     customer_id = request.user.stripe_customer.customer_id
     try:
         c = stripe.Customer.retrieve(customer_id)
-        if c.deleted:
+        if hasattr(c, "deleted") and c.deleted:
             request.user.stripe_customer.delete()
             return None
         return customer_id
