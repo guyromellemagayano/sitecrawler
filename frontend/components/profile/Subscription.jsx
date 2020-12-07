@@ -369,7 +369,7 @@ const ProfileSettingsSubscription = () => {
 							className={`flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row`}
 						>
 							<div
-								className={`flex justify-start xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1 sm:w-2/3 md:flex-col sm:w-full lg:order-1 lg:w-auto lg:flex lg:flex-row`}
+								className={`flex justify-start xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1 md:flex-col sm:w-full lg:order-1 lg:w-auto lg:flex lg:flex-row`}
 							>
 								<span
 									className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none`}
