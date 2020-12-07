@@ -15,7 +15,7 @@ import MobileSidebar from 'components/sidebar/MobileSidebar';
 import MainSidebar from 'components/sidebar/MainSidebar';
 import AddSite from 'components/sites/AddSite';
 import DataTable from 'components/sites/DataTable';
-import Pagination from 'components/sites/Pagination';
+import MyPagination from 'components/sites/Pagination';
 import SiteFooter from 'components/footer/SiteFooter';
 
 if (typeof window !== 'undefined') {
