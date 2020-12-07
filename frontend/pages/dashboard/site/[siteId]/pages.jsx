@@ -146,8 +146,7 @@ const Pages = (props) => {
 			? scanApiEndpoint.includes('?')
 				? `&size_total_min=1048576`
 				: `?size_total_min=1048576`
-			: Array.from(filterQueryString).length > 0 &&
-			  filterQueryString.toString().includes('size_total_min')
+			: Array.from(filterQueryString).length
 			? '&' + filterQueryString.toString()
 			: '';
 
@@ -157,9 +156,6 @@ const Pages = (props) => {
 			? scanApiEndpoint.includes('?')
 				? `&size_total_max=1048575`
 				: `?size_total_max=1048575`
-			: Array.from(filterQueryString).length > 0 &&
-			  filterQueryString.toString().includes('size_total_max')
-			? '&' + filterQueryString.toString()
 			: '';
 
 	queryString +=
@@ -171,10 +167,6 @@ const Pages = (props) => {
 				: scanApiEndpoint.includes('?')
 				? `&tls_total=false`
 				: `?tls_total=false`
-			: Array.from(filterQueryString).length > 0 &&
-			  filterQueryString.toString().includes('tls_total') &&
-			  !filterQueryString.toString().includes('size_total_max')
-			? '&tls_total=false'
 			: '';
 
 	queryString +=
@@ -251,8 +243,13 @@ const Pages = (props) => {
 			filterQueryString && filterQueryString.delete('size_total_max');
 			filterQueryString && filterQueryString.delete('size_total_min');
 			filterQueryString && filterQueryString.delete('tls_total');
+			filterQueryString && filterQueryString.delete('page');
 
-			if (newPath.includes('size_total_max') && newPath.includes('tls_total')) {
+			if (
+				newPath.includes('size_total_max') &&
+				newPath.includes('tls_total') &&
+				newPath.includes('size_total_min')
+			) {
 				newPath = removeURLParameter(newPath, 'size_total_max');
 				newPath = removeURLParameter(newPath, 'size_total_min');
 				newPath = removeURLParameter(newPath, 'tls_total');
@@ -275,13 +272,10 @@ const Pages = (props) => {
 			else newPath += `?size_total_min=1048576`;
 		} else if (filterType == 'pageLargePages' && filterStatus == false) {
 			filterQueryString && filterQueryString.delete('size_total_min');
-			filterQueryString && filterQueryString.delete('size_total_max');
-			filterQueryString && filterQueryString.delete('tls_total');
+			filterQueryString && filterQueryString.delete('page');
 
 			if (newPath.includes('size_total_min')) {
 				newPath = removeURLParameter(newPath, 'size_total_min');
-				newPath = removeURLParameter(newPath, 'size_total_max');
-				newPath = removeURLParameter(newPath, 'tls_total');
 			}
 
 			setLargePageSizeFilter(false);
@@ -301,6 +295,7 @@ const Pages = (props) => {
 			filterQueryString && filterQueryString.delete('tls_total');
 			filterQueryString && filterQueryString.delete('size_total_min');
 			filterQueryString && filterQueryString.delete('size_total_max');
+			filterQueryString && filterQueryString.delete('page');
 
 			if (newPath.includes('tls_total')) {
 				newPath = removeURLParameter(newPath, 'size_total_max');

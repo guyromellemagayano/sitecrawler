@@ -177,7 +177,7 @@ const Links = (props) => {
 			? scanApiEndpoint.includes('?')
 				? `&status=${statusString}`
 				: `?status=${statusString}`
-			: Array.from(filterQueryString).length > 0
+			: Array.from(filterQueryString).length
 			? '&' + filterQueryString.toString()
 			: '';
 
@@ -210,7 +210,7 @@ const Links = (props) => {
 
 	scanApiEndpoint += queryString;
 
-	// console.log(scanApiEndpoint);
+	console.log(scanApiEndpoint);
 
 	const { data: link, error: linkError, mutate: updateLinks } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -263,7 +263,7 @@ const Links = (props) => {
 			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 		} else if (filterType == 'issues' && filterStatus == false) {
 			filterQueryString && filterQueryString.delete('status');
-			filterQueryString && filterQueryString.delete('tls_status');
+			filterQueryString && filterQueryString.delete('page');
 
 			if (newPath.includes('status'))
 				newPath = removeURLParameter(newPath, 'status');
@@ -282,6 +282,7 @@ const Links = (props) => {
 			else newPath += `?status=OK`;
 		} else if (filterType == 'no-issues' && filterStatus == false) {
 			filterQueryString && filterQueryString.delete('status');
+			filterQueryString && filterQueryString.delete('page');
 
 			if (newPath.includes('status'))
 				newPath = removeURLParameter(newPath, 'status');
@@ -300,6 +301,9 @@ const Links = (props) => {
 			if (newPath.includes('?')) newPath += `&type=PAGE`;
 			else newPath += `?type=PAGE`;
 		} else if (filterType == 'internal' && filterStatus == false) {
+			filterQueryString && filterQueryString.delete('type');
+			filterQueryString && filterQueryString.delete('page');
+
 			if (newPath.includes('type=PAGE'))
 				newPath = removeURLParameter(newPath, 'type');
 
@@ -317,6 +321,9 @@ const Links = (props) => {
 			if (newPath.includes('?')) newPath += `&type=EXTERNAL`;
 			else newPath += `?type=EXTERNAL`;
 		} else if (filterType == 'external' && filterStatus == false) {
+			filterQueryString && filterQueryString.delete('type');
+			filterQueryString && filterQueryString.delete('page');
+
 			if (newPath.includes('type=EXTERNAL'))
 				newPath = removeURLParameter(newPath, 'type');
 
