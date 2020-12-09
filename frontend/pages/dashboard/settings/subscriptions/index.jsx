@@ -242,7 +242,7 @@ const Subscriptions = () => {
 						setShowChangeToBasicModal(!showChangeToBasicModal);
 					}
 				});
-			}, 1000);
+			}, 2000);
 
 			return false;
 		}
@@ -303,23 +303,23 @@ const Subscriptions = () => {
 			body: JSON.stringify({ id: subId })
 		});
 
-		// console.log('[subscriptionUpdated]');
-		subscriptionUpdated().then((info) => {
-			console.log(info);
-			if (info.status === 'PAID') {
-				subscriptions.results
-					.filter((sub) => sub.id === info.id)
-					.map((val) => {
-						setUpdatedPlanName(val.group.name);
-						setUpdatedPlanId(val.id);
-					});
+		setTimeout(() => {
+			subscriptionUpdated().then((info) => {
+				// console.log(info);
+				if (info.status === 'PAID') {
+					subscriptions.results
+						.filter((sub) => sub.id === info.id)
+						.map((val) => {
+							setUpdatedPlanName(val.group.name);
+							setUpdatedPlanId(val.id);
+						});
 
-				setShowNewActivePlanModal(true);
-			} else if (info.status === 'WAITING_PAYMENT') {
-				// TODO: WAITING_PAYMENT
-				handleSubscriptionUpdate(subId);
-			}
-		});
+					setShowNewActivePlanModal(true);
+				} else if (info.status === 'WAITING_PAYMENT') {
+					handleSubscriptionUpdate(subId);
+				}
+			});
+		}, 2000);
 	};
 
 	const handleCurrentPaymentPeriod = (sub, subs) => {

@@ -8,7 +8,7 @@ import {
 import { useMemo, useState } from 'react';
 import Cookies from 'js-cookie';
 import PaymentMethodFormLabel from 'public/label/components/form/PaymentMethodForm.json';
-import { useRouter } from 'next/router';
+import router from 'next/router';
 import styled from 'styled-components';
 import useSWR from 'swr';
 
@@ -66,26 +66,6 @@ const PaymentMethodForm = (props) => {
 	const options = useOptions();
 	const [loading, setLoading] = useState(false);
 
-	const { data: subscriptions } = useSWR(
-		() => `/api/stripe/subscription/`,
-		fetcher
-	);
-
-	const { data: subscription } = useSWR(
-		() => `/api/stripe/subscription/current/`,
-		fetcher
-	);
-
-	const { data: paymentMethods } = useSWR(
-		() => `/api/stripe/payment-method/`,
-		fetcher
-	);
-
-	const {
-		data: currentPaymentMethod,
-		mutate: currentPaymentMethodUpdated
-	} = useSWR(() => `/api/stripe/payment-method/default/`, fetcher);
-
 	const updatePaymentMethod = async (endpoint, payload) => {
 		const response = await fetch(endpoint, {
 			method: 'POST',
@@ -107,7 +87,7 @@ const PaymentMethodForm = (props) => {
 
 			setTimeout(() => {
 				router.push('/dashboard/settings/profile');
-			}, 1500);
+			}, 2000);
 
 			// console.log(data);
 		} else {
