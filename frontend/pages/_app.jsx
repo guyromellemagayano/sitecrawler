@@ -4,6 +4,8 @@ import { SWRConfig } from 'swr';
 import fetchJson from 'hooks/fetchJson';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 import 'css/styles.css';
 import 'nprogress/nprogress.css';
@@ -18,6 +20,8 @@ const TopProgressBar = dynamic(
 );
 
 const App = ({ Component, pageProps }) => {
+	const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY);
+
 	useEffect(() => {
 		'use strict';
 
@@ -74,8 +78,10 @@ const App = ({ Component, pageProps }) => {
 				revalidateOnFocus: true
 			}}
 		>
-			<TopProgressBar />
-			<Component {...pageProps} />
+			<Elements stripe={stripePromise}>
+				<TopProgressBar />
+				<Component {...pageProps} />
+			</Elements>
 		</SWRConfig>
 	);
 };
