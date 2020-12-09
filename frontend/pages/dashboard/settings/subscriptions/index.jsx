@@ -1,19 +1,24 @@
+import {
+	useStripe,
+	useElements,
+	CardNumberElement,
+	CardCvcElement,
+	CardExpiryElement
+} from '@stripe/react-stripe-js';
 import { Transition } from '@tailwindui/react';
-import { useState, useEffect, Fragment } from 'react';
+import { useMemo, useState, useEffect, Fragment } from 'react';
 import Cookies from 'js-cookie';
 import Head from 'next/head';
 import Layout from 'components/Layout';
-import Link from 'next/link';
 import MainSidebar from 'components/sidebar/MainSidebar';
 import MobileSidebar from 'components/sidebar/MobileSidebar';
 import PropTypes from 'prop-types';
 import SiteFooter from 'components/footer/SiteFooter';
 import styled from 'styled-components';
-import SubscriptionLabels from 'public/label/pages/subscriptions.json';
-import useSWR, { mutate } from 'swr';
+import SubscriptionLabel from 'public/label/pages/subscriptions.json';
+import PaymentMethodFormLabel from 'public/label/components/form/PaymentMethodForm.json';
+import useSWR from 'swr';
 import useUser from 'hooks/useUser';
-
-const SubscriptionsDiv = styled.section``;
 
 const fetcher = async (url) => {
 	const res = await fetch(url, {
@@ -34,10 +39,73 @@ const fetcher = async (url) => {
 	return data;
 };
 
+const useOptions = () => {
+	const options = useMemo(() => ({
+		style: {
+			base: {
+				'fontFamily':
+					'Inter var, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+				'::placeholder': {
+					color: '#aab7c4'
+				},
+				'color': '#424770',
+				'letterSpacing': '0.025em',
+				'lineHeight': '1.25rem'
+			},
+			invalid: {
+				color: '#9e2146'
+			}
+		}
+	}));
+
+	return options;
+};
+
+const SubscriptionsDiv = styled.section`
+	.confetti-bg-img {
+		background: url('/img/backgrounds/subscription-success-bg.png');
+		background-size: cover;
+		background-position: top center;
+		background-repeat: no-repeat;
+		min-height: 16rem;
+		width: 100%;
+		position: absolute;
+		z-index: -1;
+	}
+
+	.input-group {
+		margin-top: 2rem;
+		margin-bottom: 2rem;
+	}
+`;
+
 const Subscriptions = () => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+	const [showModal, setShowModal] = useState(false);
+	const [errorMsg, setErrorMsg] = useState('');
+	const [successMsg, setSuccessMsg] = useState('');
+	const [disableInputFields, setDisableInputFields] = useState(0);
+	const [showNotificationStatus, setShowNotificationStatus] = useState(false);
 	const [paymentMethod, setPaymentMethod] = useState(undefined);
 	const [togglePaymentPeriod, setTogglePaymentPeriod] = useState(false);
+	const [showNewActivePlanModal, setShowNewActivePlanModal] = useState(false);
+	const [updatedPlanName, setUpdatedPlanName] = useState(undefined);
+	const [updatedPlanId, setUpdatedPlanId] = useState(undefined);
+	const [showChangeToBasicModal, setShowChangeToBasicModal] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [loadingBasic, setLoadingBasic] = useState(false);
+	const [loadingProMonthly, setLoadingProMonthly] = useState(false);
+	const [loadingAgencyMonthly, setLoadingAgencyMonthly] = useState(false);
+	const [loadingProSemiAnnually, setLoadingProSemiAnnually] = useState(false);
+	const [loadingAgencySemiAnnually, setLoadingAgencySemiAnnually] = useState(
+		false
+	);
+	const [basicPlanId, setBasicPlanId] = useState(undefined);
+	const [basicPlanName, setBasicPlanName] = useState(undefined);
+
+	const stripe = useStripe();
+	const elements = useElements();
+	const options = useOptions();
 	const pageTitle = 'Subscriptions';
 
 	const { user: user, userError: userError } = useUser({
@@ -46,9 +114,15 @@ const Subscriptions = () => {
 	});
 
 	const { data: paymentMethods, error: paymentMethodsError } = useSWR(
-		() => `/api/stripe/payment-method/default`,
+		() => `/api/stripe/payment-method/`,
 		fetcher
 	);
+
+	const {
+		data: currentPaymentMethod,
+		error: currentPaymentMethodError,
+		mutate: currentPaymentMethodUpdated
+	} = useSWR(() => `/api/stripe/payment-method/default/`, fetcher);
 
 	const { data: subscriptions, error: subscriptionsError } = useSWR(
 		() => `/api/stripe/subscription/`,
@@ -63,6 +137,89 @@ const Subscriptions = () => {
 
 	// console.log('[subscriptions]', subscriptions, subscription)
 
+	const addPaymentMethod = async (endpoint, payload) => {
+		const response = await fetch(endpoint, {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'X-CSRFToken': Cookies.get('csrftoken')
+			},
+			body: JSON.stringify({ id: payload.paymentMethod.id })
+		});
+
+		const data = await response.json();
+
+		if (response.ok && response.status === 200) {
+			// console.log(data)
+
+			setTimeout(() => {
+				currentPaymentMethodUpdated().then((info) => {
+					if (info.id !== undefined) {
+						// TODO: selectPlan
+						setShowModal(false);
+						setDisableInputFields(0);
+						setSuccessMsg(
+							'Card information added successfully. Processing your plan now.'
+						);
+						setShowNotificationStatus(true);
+
+						setTimeout(() => {
+							selectPlan(updatedPlanId, updatedPlanName);
+						}, 1000);
+					} else {
+						setErrorMsg('An unexpected error occurred. Please try again.');
+						setShowNotificationStatus(true);
+
+						throw new Error(data.message);
+					}
+				});
+			}, 1000);
+		} else {
+			setErrorMsg('An unexpected error occurred. Please try again.');
+			setShowNotificationStatus(true);
+
+			throw new Error(data.message);
+		}
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+
+		if (!stripe || !elements) {
+			// Stripe.js has not loaded yet. Make sure to disable
+			// form submission until Stripe.js has loaded.
+			return;
+		}
+
+		setLoading(true);
+
+		const payload = await stripe.createPaymentMethod({
+			type: 'card',
+			card: elements.getElement(CardNumberElement)
+		});
+
+		// console.log('[PaymentMethod]', payload);
+
+		if (payload.error) {
+			if (payload.error.code === 'incomplete_number') {
+				alert('ERROR: ' + payload.error.message);
+			}
+
+			if (payload.error.code === 'incomplete_expiry') {
+				alert('ERROR: ' + payload.error.message);
+			}
+
+			if (payload.error.code === 'incomplete_cvc') {
+				alert('ERROR: ' + payload.error.message);
+			}
+
+			setLoading(false);
+		} else {
+			addPaymentMethod('/api/stripe/payment-method/', payload);
+		}
+	};
+
 	const selectPlan = async (id, name) => {
 		if (name === 'Basic') {
 			await fetch('/api/stripe/subscription/current/', {
@@ -75,12 +232,62 @@ const Subscriptions = () => {
 			});
 
 			setTimeout(() => {
-				// console.log("[subscriptionUpdated]");
-				subscriptionUpdated();
+				subscriptionUpdated().then((info) => {
+					// console.log(info);
+					if (info.id === null) {
+						setLoadingProMonthly(false);
+						setLoadingAgencyMonthly(false);
+						setLoadingProSemiAnnually(false);
+						setLoadingAgencySemiAnnually(false);
+						setShowChangeToBasicModal(!showChangeToBasicModal);
+					}
+				});
 			}, 1000);
 
 			return false;
 		}
+
+		subscriptions.results
+			.filter((sub) => sub.id === id)
+			.map((val) => {
+				if (
+					val.group.name === 'Pro' &&
+					val.price.recurring.interval === 'month' &&
+					val.price.recurring.interval_count == 1
+				) {
+					setLoadingBasic(false);
+					setLoadingProMonthly(true);
+					setLoadingAgencyMonthly(false);
+					setLoadingProSemiAnnually(false);
+					setLoadingAgencySemiAnnually(false);
+				} else if (
+					val.group.name === 'Agency' &&
+					val.price.recurring.interval === 'month' &&
+					val.price.recurring.interval_count == 1
+				) {
+					setLoadingBasic(false);
+					setLoadingProMonthly(false);
+					setLoadingAgencyMonthly(true);
+					setLoadingProSemiAnnually(false);
+					setLoadingAgencySemiAnnually(false);
+				} else if (
+					val.group.name === 'Pro' &&
+					val.price.recurring.interval === 'month' &&
+					val.price.recurring.interval_count == 6
+				) {
+					setLoadingBasic(false);
+					setLoadingProMonthly(false);
+					setLoadingAgencyMonthly(false);
+					setLoadingProSemiAnnually(true);
+					setLoadingAgencySemiAnnually(false);
+				} else {
+					setLoadingBasic(false);
+					setLoadingProMonthly(false);
+					setLoadingAgencyMonthly(false);
+					setLoadingProSemiAnnually(false);
+					setLoadingAgencySemiAnnually(true);
+				}
+			});
 
 		handleSubscriptionUpdate(id);
 	};
@@ -96,12 +303,23 @@ const Subscriptions = () => {
 			body: JSON.stringify({ id: subId })
 		});
 
-		setTimeout(() => {
-			// console.log("[subscriptionUpdated]");
-			subscriptionUpdated().then((info) => {
-				console.log(info);
-			});
-		}, 1000);
+		// console.log('[subscriptionUpdated]');
+		subscriptionUpdated().then((info) => {
+			console.log(info);
+			if (info.status === 'PAID') {
+				subscriptions.results
+					.filter((sub) => sub.id === info.id)
+					.map((val) => {
+						setUpdatedPlanName(val.group.name);
+						setUpdatedPlanId(val.id);
+					});
+
+				setShowNewActivePlanModal(true);
+			} else if (info.status === 'WAITING_PAYMENT') {
+				// TODO: WAITING_PAYMENT
+				handleSubscriptionUpdate(subId);
+			}
+		});
 	};
 
 	const handleCurrentPaymentPeriod = (sub, subs) => {
@@ -119,17 +337,38 @@ const Subscriptions = () => {
 	};
 
 	useEffect(() => {
+		if (
+			paymentMethods !== '' &&
+			paymentMethods !== undefined &&
+			currentPaymentMethod !== '' &&
+			currentPaymentMethod !== undefined
+		) {
+			paymentMethods
+				.filter((paymentMethod) => paymentMethod.id === currentPaymentMethod.id)
+				.map((val) => {
+					setPaymentMethod(val);
+				});
+		}
+
 		if (paymentMethods && paymentMethods.id === null) {
 			setPaymentMethod(false);
 		} else {
 			setPaymentMethod(true);
 		}
+	}, [paymentMethods, currentPaymentMethod]);
+
+	useEffect(() => {
+		if (showNotificationStatus === true)
+			setTimeout(() => setShowNotificationStatus(false), 7500);
+	}, [showNotificationStatus]);
+
+	useEffect(() => {
 		if (handleCurrentPaymentPeriod(subscription, subscriptions) > 1) {
 			setTogglePaymentPeriod(true);
 		} else {
 			setTogglePaymentPeriod(false);
 		}
-	}, [paymentMethods, subscription, subscriptions]);
+	}, [subscription, subscriptions]);
 
 	{
 		userError && <Layout>{userError.message}</Layout>;
@@ -139,6 +378,11 @@ const Subscriptions = () => {
 	}
 	{
 		subscriptionError && <Layout>{subscriptionError.message}</Layout>;
+	}
+	{
+		currentPaymentMethodError && (
+			<Layout>{currentPaymentMethodError.message}</Layout>
+		);
 	}
 	{
 		paymentMethodsError && <Layout>{paymentMethodsError.message}</Layout>;
@@ -191,48 +435,530 @@ const Subscriptions = () => {
 							>
 								<div className={`max-w-full px-4 py-4 sm:px-6 md:px-8`}>
 									<div>
-										{!paymentMethod && (
+										<Transition show={showNotificationStatus}>
 											<div
-												className={`flex w-full items-center justify-center`}
+												className={`fixed z-50 inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end`}
 											>
-												<div className={`w-auto rounded-md bg-red-200 p-4`}>
-													<div className={`flex`}>
-														<div className={`flex-shrink-0`}>
-															<svg
-																className={`h-5 w-5 text-red-400`}
-																xmlns='http://www.w3.org/2000/svg'
-																viewBox='0 0 20 20'
-																fill='currentColor'
-															>
-																<path
-																	fillRule='evenodd'
-																	d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
-																	clipRule='evenodd'
-																/>
-															</svg>
-														</div>
+												<Transition.Child
+													enter='transform ease-out duration-300 transition'
+													enterFrom='translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2'
+													enterTo='translate-y-0 opacity-100 sm:translate-x-0'
+													leave='transition ease-in duration-100'
+													leaveFrom='opacity-100'
+													leaveTo='opacity-0'
+													className='max-w-sm w-full'
+												>
+													<div
+														className={`bg-white shadow-lg rounded-lg pointer-events-auto`}
+													>
 														<div
-															className={`ml-3 flex-1 md:flex md:justify-between`}
+															className={`rounded-lg shadow-xs overflow-hidden`}
 														>
-															<p className={`text-sm leading-5 text-red-700`}>
-																{SubscriptionLabels[11].label}
-															</p>
-															<p
-																className={`mt-3 text-sm leading-5 md:mt-0 md:ml-12`}
-															>
-																<Link href='/dashboard/settings/profile'>
-																	<a
-																		className={`whitespace-no-wrap font-medium text-red-700 hover:text-red-600 transition ease-in-out duration-150`}
-																	>
-																		{SubscriptionLabels[12].label} &rarr;
-																	</a>
-																</Link>
-															</p>
+															<div className={`p-4`}>
+																<div className={`flex items-start`}>
+																	<div className={`flex-shrink-0`}>
+																		{errorMsg ? (
+																			<svg
+																				className={`h-8 w-8 text-red-400`}
+																				fill='currentColor'
+																				viewBox='0 0 24 24'
+																				stroke='currentColor'
+																			>
+																				<path
+																					fillRule='evenodd'
+																					d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+																					clipRule='evenodd'
+																				></path>
+																			</svg>
+																		) : successMsg ? (
+																			<svg
+																				className={`h-8 w-8 text-green-400`}
+																				fill='currentColor'
+																				viewBox='0 0 24 24'
+																				stroke='currentColor'
+																			>
+																				<path
+																					fillRule='evenodd'
+																					d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
+																					clipRule='evenodd'
+																				></path>
+																			</svg>
+																		) : (
+																			<svg
+																				className={`h-8 w-8 text-gray-400`}
+																				fill='currentColor'
+																				viewBox='0 0 24 24'
+																				stroke='currentColor'
+																			>
+																				<path
+																					fillRule='evenodd'
+																					d='M10 18a8 8 0 100-16 8 8 0 000 16zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z'
+																					clipRule='evenodd'
+																				></path>
+																			</svg>
+																		)}
+																	</div>
+																	<div className={`ml-3 w-0 flex-1 pt-0.5`}>
+																		<p
+																			className={`text-sm leading-5 font-medium ${
+																				errorMsg !== undefined &&
+																				errorMsg !== ''
+																					? 'text-red-500'
+																					: 'text-gray-900'
+																			} ${
+																				successMsg !== undefined &&
+																				successMsg !== ''
+																					? 'text-green-500'
+																					: 'text-gray-900'
+																			}`}
+																		>
+																			{errorMsg !== undefined && errorMsg !== ''
+																				? 'Card Addition Failed!'
+																				: successMsg !== undefined &&
+																				  successMsg !== ''
+																				? 'Card Addition Success!'
+																				: 'Verifying...'}
+																		</p>
+																		<p
+																			className={`mt-1 text-sm leading-5 text-gray-500`}
+																		>
+																			{errorMsg !== undefined && errorMsg !== ''
+																				? errorMsg
+																				: successMsg}
+																		</p>
+																	</div>
+																	<div className={`ml-4 flex-shrink-0 flex`}>
+																		<button
+																			className={`inline-flex text-gray-400 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
+																			onClick={() =>
+																				setTimeout(
+																					() =>
+																						setShowNotificationStatus(
+																							!showNotificationStatus
+																						),
+																					150
+																				)
+																			}
+																		>
+																			<svg
+																				className={`h-5 w-5`}
+																				viewBox='0 0 20 20'
+																				fill='currentColor'
+																			>
+																				<path
+																					fillRule='evenodd'
+																					d='M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z'
+																					clipRule='evenodd'
+																				/>
+																			</svg>
+																		</button>
+																	</div>
+																</div>
+															</div>
 														</div>
 													</div>
+												</Transition.Child>
+											</div>
+										</Transition>
+
+										<Transition show={showModal}>
+											<div className={`fixed z-10 inset-0 overflow-y-auto`}>
+												<div
+													className={`flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}
+												>
+													<Transition.Child
+														enter='ease-out duration-300'
+														enterFrom='opacity-0'
+														enterTo='opacity-100'
+														leave='ease-in duration-200'
+														leaveFrom='opacity-100'
+														leaveTo='opacity-0'
+													>
+														<div className={`fixed inset-0 transition-opacity`}>
+															<div
+																className={`absolute inset-0 bg-gray-500 opacity-75`}
+															></div>
+														</div>
+													</Transition.Child>
+													<span
+														className={`hidden sm:inline-block sm:align-middle sm:h-screen`}
+													></span>
+													&#8203;
+													<Transition.Child
+														enter='ease-out duration-300'
+														enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+														enterTo='opacity-100 translate-y-0 sm:scale-100'
+														leave='ease-in duration-200'
+														leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+														leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+														className='inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6'
+														role='dialog'
+														aria-modal='true'
+														aria-labelledby='modal-headline'
+													>
+														<div
+															className={`hidden sm:block absolute top-0 right-0 pt-4 pr-4`}
+														>
+															<button
+																type='button'
+																className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
+																aria-label='Close'
+																onClick={() =>
+																	setTimeout(() => {
+																		setShowModal(!showModal);
+																		setDisableInputFields(0);
+																	}, 150)
+																}
+															>
+																<svg
+																	className={`h-6 w-6`}
+																	fill='none'
+																	viewBox='0 0 24 24'
+																	stroke='currentColor'
+																>
+																	<path
+																		strokeLinecap='round'
+																		strokeLinejoin='round'
+																		strokeWidth='2'
+																		d='M6 18L18 6M6 6l12 12'
+																	/>
+																</svg>
+															</button>
+														</div>
+														<div>
+															<div className={`text-center sm:mt-3`}>
+																<h2
+																	className={`mb-6 text-xl leading-6 font-semibold text-gray-900`}
+																	id='modal-headline'
+																>
+																	{SubscriptionLabel[7].label}
+																</h2>
+															</div>
+														</div>
+
+														<div>
+															<form onSubmit={handleSubmit}>
+																<div className='input-group'>
+																	<label
+																		htmlFor='card-number'
+																		className={`block text-sm font-medium leading-5 text-gray-700`}
+																	>
+																		{PaymentMethodFormLabel[0].label}
+																	</label>
+																	<CardNumberElement options={options} />
+																</div>
+																<div className='input-group'>
+																	<label
+																		htmlFor='expiration-date'
+																		className={`block text-sm font-medium leading-5 text-gray-700`}
+																	>
+																		{PaymentMethodFormLabel[1].label}
+																	</label>
+																	<CardExpiryElement options={options} />
+																</div>
+																<div className='input-group'>
+																	<label
+																		htmlFor='cvc'
+																		className={`block text-sm font-medium leading-5 text-gray-700`}
+																	>
+																		{PaymentMethodFormLabel[2].label}
+																	</label>
+																	<CardCvcElement options={options} />
+																</div>
+																<div className={`mt-5 sm:mt-6`}>
+																	<span
+																		className={`flex w-full rounded-md shadow-sm sm:col-start-2`}
+																	>
+																		<button
+																			type='submit'
+																			className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
+																				loading
+																					? 'opacity-50 bg-indigo-300 cursor-not-allowed'
+																					: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo'
+																			}`}
+																			disabled={loading ? true : false}
+																		>
+																			{loading
+																				? 'Saving Changes...'
+																				: PaymentMethodFormLabel[3].label}
+																		</button>
+																	</span>
+																</div>
+															</form>
+														</div>
+													</Transition.Child>
 												</div>
 											</div>
-										)}
+										</Transition>
+
+										<Transition show={showNewActivePlanModal}>
+											<div className={`fixed z-10 inset-0 overflow-y-auto`}>
+												<div
+													className={`flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}
+												>
+													<Transition.Child
+														enter='ease-out duration-300'
+														enterFrom='opacity-0'
+														enterTo='opacity-100'
+														leave='ease-in duration-200'
+														leaveFrom='opacity-100'
+														leaveTo='opacity-0'
+													>
+														<div className={`fixed inset-0 transition-opacity`}>
+															<div
+																className={`absolute inset-0 bg-gray-500 opacity-75`}
+															></div>
+														</div>
+													</Transition.Child>
+													<span
+														className={`hidden sm:inline-block sm:align-middle sm:h-screen`}
+													></span>
+													&#8203;
+													<Transition.Child
+														enter='ease-out duration-300'
+														enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+														enterTo='opacity-100 translate-y-0 sm:scale-100'
+														leave='ease-in duration-200'
+														leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+														leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+														className='inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-6 lg:p-0'
+														role='dialog'
+														aria-modal='true'
+														aria-labelledby='modal-headline'
+													>
+														<span className={`confetti-bg-img`} />
+														<div
+															className={`hidden sm:block absolute top-0 right-0 pt-4 pr-4 z-50`}
+														>
+															<button
+																type='button'
+																className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
+																aria-label='Close'
+																onClick={() =>
+																	setTimeout(() => {
+																		setShowNewActivePlanModal(
+																			!showNewActivePlanModal
+																		);
+																	}, 150)
+																}
+															>
+																<svg
+																	className={`h-6 w-6`}
+																	fill='none'
+																	viewBox='0 0 24 24'
+																	stroke='currentColor'
+																>
+																	<path
+																		strokeLinecap='round'
+																		strokeLinejoin='round'
+																		strokeWidth='2'
+																		d='M6 18L18 6M6 6l12 12'
+																	/>
+																</svg>
+															</button>
+														</div>
+														<div>
+															<img
+																src={`/img/backgrounds/subscription-success-badge.png`}
+																alt='badge-modal-img'
+																className={`mx-auto mt-16 mb-6`}
+															/>
+															<div className={`text-center sm:mt-3`}>
+																<h2
+																	className={`mb-3 text-3xl leading-6 font-bold text-gray-900`}
+																	id='modal-headline'
+																>
+																	{SubscriptionLabel[13].label}
+																</h2>
+																<p
+																	className={`mb-6 text-md leading-6 font-semibold`}
+																>
+																	Your {updatedPlanName} plan is now active.
+																</p>
+																{subscriptions.results
+																	.filter(
+																		(result) => result.id === updatedPlanId
+																	)
+																	.map((val, key) => {
+																		return (
+																			<div
+																				key={key}
+																				className={`mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3`}
+																			>
+																				<div className={`h-full flex flex-col`}>
+																					<div
+																						className={`flex-1 flex flex-col`}
+																					>
+																						<div
+																							className={`flex-1 flex flex-col justify-between p-6 bg-white sm:p-10 lg:p-6 xl:p-6`}
+																						>
+																							<ul
+																								className={`grid grid-cols-2`}
+																							>
+																								{val.features.map(
+																									(val2, key) => {
+																										return (
+																											<li
+																												key={key}
+																												className={`flex items-start my-1`}
+																											>
+																												<div
+																													className={`flex-shrink-0`}
+																												>
+																													<svg
+																														className={`h-6 w-6 text-green-500`}
+																														stroke='currentColor'
+																														fill='none'
+																														viewBox='0 0 24 24'
+																													>
+																														<path
+																															strokeLinecap='round'
+																															strokeLinejoin='round'
+																															strokeWidth='2'
+																															d='M5 13l4 4L19 7'
+																														/>
+																													</svg>
+																												</div>
+																												<p
+																													className={`ml-3 text-sm leading-6 font-medium text-gray-500`}
+																												>
+																													{val2}
+																												</p>
+																											</li>
+																										);
+																									}
+																								)}
+																							</ul>
+																							<hr
+																								className={`my-6 border-b border-gray-300`}
+																							/>
+																							<button
+																								type='button'
+																								className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo`}
+																								aria-label='Start Crawling'
+																								onClick={() =>
+																									setTimeout(() => {
+																										setShowNewActivePlanModal(
+																											!showNewActivePlanModal
+																										);
+																									}, 150)
+																								}
+																							>
+																								Start Crawling
+																							</button>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+																		);
+																	})}
+															</div>
+														</div>
+													</Transition.Child>
+												</div>
+											</div>
+										</Transition>
+
+										<Transition show={showChangeToBasicModal}>
+											<div className={`fixed z-10 inset-0 overflow-y-auto`}>
+												<div
+													className={`flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}
+												>
+													<Transition.Child
+														enter='ease-out duration-300'
+														enterFrom='opacity-0'
+														enterTo='opacity-100'
+														leave='ease-in duration-200'
+														leaveFrom='opacity-100'
+														leaveTo='opacity-0'
+													>
+														<div className={`fixed inset-0 transition-opacity`}>
+															<div
+																className={`absolute inset-0 bg-gray-500 opacity-75`}
+															></div>
+														</div>
+													</Transition.Child>
+													<span
+														className={`hidden sm:inline-block sm:align-middle sm:h-screen`}
+													></span>
+													&#8203;
+													<Transition.Child
+														enter='ease-out duration-300'
+														enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+														enterTo='opacity-100 translate-y-0 sm:scale-100'
+														leave='ease-in duration-200'
+														leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+														leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+														className='inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6'
+														role='dialog'
+														aria-modal='true'
+														aria-labelledby='modal-headline'
+													>
+														<div>
+															<div
+																className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mb-3`}
+															>
+																<svg
+																	className={`h-6 w-6 text-red-600`}
+																	xmlns='http://www.w3.org/2000/svg'
+																	fill='none'
+																	viewBox='0 0 24 24'
+																	stroke='currentColor'
+																	aria-hidden='true'
+																>
+																	<path
+																		strokeLinecap='round'
+																		strokeLinejoin='round'
+																		strokeWidth='2'
+																		d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
+																	/>
+																</svg>
+															</div>
+															<div className={`text-center`}>
+																<h2
+																	className={`mb-6 text-xl leading-6 font-semibold text-gray-900`}
+																	id='modal-headline'
+																>
+																	{SubscriptionLabel[15].label}
+																</h2>
+																<p
+																	className={`mb-8 text-sm leading-5 font-regular`}
+																>
+																	{SubscriptionLabel[15].description}
+																</p>
+
+																<button
+																	type='button'
+																	className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 mb-2 bg-red-600 text-base leading-6 font-medium text-white shadow-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red`}
+																	aria-label='Downgrade to Basic'
+																	onClick={() =>
+																		setTimeout(() => {
+																			selectPlan(basicPlanId, basicPlanName);
+																		}, 150)
+																	}
+																>
+																	Downgrade to Basic Plan
+																</button>
+																<button
+																	type='button'
+																	className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
+																	aria-label='Cancel Downgrade to Basic'
+																	onClick={() =>
+																		setTimeout(() => {
+																			setShowChangeToBasicModal(
+																				!showChangeToBasicModal
+																			);
+																		}, 150)
+																	}
+																>
+																	Cancel
+																</button>
+															</div>
+														</div>
+													</Transition.Child>
+												</div>
+											</div>
+										</Transition>
 
 										<div
 											className={`flex items-center flex-col flex-wrap pt-12 px-4 sm:px-6 lg:px-8 lg:pt-20`}
@@ -241,12 +967,12 @@ const Subscriptions = () => {
 												<p
 													className={`text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10`}
 												>
-													{SubscriptionLabels[0].label}
+													{SubscriptionLabel[0].label}
 												</p>
 												<p
 													className={`mt-3 max-w-4xl mx-auto text-md leading-7 text-gray-600 sm:mt-5 sm:text-xl sm:leading-8`}
 												>
-													{SubscriptionLabels[0].description}
+													{SubscriptionLabel[0].description}
 												</p>
 											</div>
 
@@ -254,7 +980,7 @@ const Subscriptions = () => {
 												<p
 													className={`text-md leading-7 font-medium text-gray-500 mx-4`}
 												>
-													{SubscriptionLabels[1].label}
+													{SubscriptionLabel[1].label}
 												</p>
 												<span
 													role='checkbox'
@@ -267,7 +993,7 @@ const Subscriptions = () => {
 														togglePaymentPeriod
 															? 'bg-indigo-600'
 															: 'bg-gray-200'
-													} relative inline-flex mx-auto items-center flex-shrink-0 h-6 w-12 mx-auto border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}
+													} relative inline-flex items-center flex-shrink-0 h-6 w-12 mx-auto border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}
 												>
 													<span
 														aria-hidden='true'
@@ -281,7 +1007,7 @@ const Subscriptions = () => {
 												<p
 													className={`text-md leading-7 font-medium text-gray-500 mx-4`}
 												>
-													{SubscriptionLabels[2].label}
+													{SubscriptionLabel[2].label}
 												</p>
 											</div>
 
@@ -393,23 +1119,28 @@ const Subscriptions = () => {
 																								<button
 																									className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
 																								>
-																									{SubscriptionLabels[4].label}
+																									{SubscriptionLabel[4].label}
 																								</button>
 																							) : (
 																								<button
 																									className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150`}
 																									onClick={() =>
-																										setTimeout(
-																											() =>
-																												selectPlan(
-																													val.id,
-																													val.group.name
-																												),
-																											150
-																										)
+																										setTimeout(() => {
+																											setShowChangeToBasicModal(
+																												!showChangeToBasicModal
+																											);
+																											setBasicPlanId(val.id);
+																											setBasicPlanName(
+																												val.group.name
+																											);
+																											setLoadingBasic(true);
+																										}, 150)
 																									}
 																								>
-																									{SubscriptionLabels[3].label}
+																									{loadingBasic
+																										? 'Processing Plan...'
+																										: SubscriptionLabel[3]
+																												.label}
 																								</button>
 																							)}
 																						</div>
@@ -540,35 +1271,54 @@ const Subscriptions = () => {
 																									<button
 																										className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
 																									>
-																										{
-																											SubscriptionLabels[4]
-																												.label
-																										}
+																										{SubscriptionLabel[4].label}
 																									</button>
 																								) : (
 																									<button
 																										type='button'
 																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
-																											!paymentMethod
+																											!paymentMethod ||
+																											loadingProSemiAnnually
 																												? 'opacity-50 cursor-not-allowed'
 																												: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
 																										}`}
 																										disabled={
-																											!paymentMethod
+																											!paymentMethod ||
+																											loadingProSemiAnnually
 																												? 'disabled'
 																												: ''
 																										}
-																										onClick={() =>
-																											selectPlan(
-																												val.id,
-																												val.group.name
-																											)
-																										}
+																										onClick={() => {
+																											if (
+																												currentPaymentMethod.id ==
+																													undefined &&
+																												subscription.id == null
+																											) {
+																												setTimeout(() => {
+																													setUpdatedPlanId(
+																														val.id
+																													);
+																													setUpdatedPlanName(
+																														val.group.name
+																													);
+																													setShowModal(
+																														!showModal
+																													);
+																												}, 150);
+																											} else {
+																												setTimeout(() => {
+																													selectPlan(
+																														val.id,
+																														val.group.name
+																													);
+																												}, 150);
+																											}
+																										}}
 																									>
-																										{
-																											SubscriptionLabels[3]
-																												.label
-																										}
+																										{loadingProSemiAnnually
+																											? 'Processing Payment...'
+																											: SubscriptionLabel[3]
+																													.label}
 																									</button>
 																								)}
 																							</div>
@@ -681,37 +1431,56 @@ const Subscriptions = () => {
 																											className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
 																										>
 																											{
-																												SubscriptionLabels[4]
+																												SubscriptionLabel[4]
 																													.label
 																											}
 																										</button>
 																									) : (
 																										<button
 																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
-																												!paymentMethod
+																												!paymentMethod ||
+																												loadingAgencySemiAnnually
 																													? 'opacity-50 cursor-not-allowed'
 																													: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
 																											}`}
 																											disabled={
-																												!paymentMethod
+																												!paymentMethod ||
+																												loadingAgencySemiAnnually
 																													? 'disabled'
 																													: ''
 																											}
-																											onClick={() =>
-																												setTimeout(
-																													() =>
+																											onClick={() => {
+																												if (
+																													currentPaymentMethod.id ==
+																														undefined &&
+																													subscription.id ==
+																														null
+																												) {
+																													setTimeout(() => {
+																														setUpdatedPlanId(
+																															val.id
+																														);
+																														setUpdatedPlanName(
+																															val.group.name
+																														);
+																														setShowModal(
+																															!showModal
+																														);
+																													}, 150);
+																												} else {
+																													setTimeout(() => {
 																														selectPlan(
 																															val.id,
 																															val.group.name
-																														),
-																													150
-																												)
-																											}
+																														);
+																													}, 150);
+																												}
+																											}}
 																										>
-																											{
-																												SubscriptionLabels[3]
-																													.label
-																											}
+																											{loadingAgencySemiAnnually
+																												? 'Processing Payment...'
+																												: SubscriptionLabel[3]
+																														.label}
 																										</button>
 																									)}
 																								</div>
@@ -839,35 +1608,54 @@ const Subscriptions = () => {
 																									<button
 																										className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
 																									>
-																										{
-																											SubscriptionLabels[4]
-																												.label
-																										}
+																										{SubscriptionLabel[4].label}
 																									</button>
 																								) : (
 																									<button
 																										type='button'
 																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
-																											!paymentMethod
+																											!paymentMethod ||
+																											loadingProMonthly
 																												? 'opacity-50 cursor-not-allowed'
 																												: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
 																										}`}
 																										disabled={
-																											!paymentMethod
+																											!paymentMethod ||
+																											loadingProMonthly
 																												? 'disabled'
 																												: ''
 																										}
-																										onClick={() =>
-																											selectPlan(
-																												val.id,
-																												val.group.name
-																											)
-																										}
+																										onClick={() => {
+																											if (
+																												currentPaymentMethod.id ==
+																													undefined &&
+																												subscription.id == null
+																											) {
+																												setTimeout(() => {
+																													setUpdatedPlanId(
+																														val.id
+																													);
+																													setUpdatedPlanName(
+																														val.group.name
+																													);
+																													setShowModal(
+																														!showModal
+																													);
+																												}, 150);
+																											} else {
+																												setTimeout(() => {
+																													selectPlan(
+																														val.id,
+																														val.group.name
+																													);
+																												}, 150);
+																											}
+																										}}
 																									>
-																										{
-																											SubscriptionLabels[3]
-																												.label
-																										}
+																										{loadingProMonthly
+																											? 'Processing Payment...'
+																											: SubscriptionLabel[3]
+																													.label}
 																									</button>
 																								)}
 																							</div>
@@ -978,37 +1766,56 @@ const Subscriptions = () => {
 																											className={`block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed`}
 																										>
 																											{
-																												SubscriptionLabels[4]
+																												SubscriptionLabel[4]
 																													.label
 																											}
 																										</button>
 																									) : (
 																										<button
 																											className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
-																												!paymentMethod
+																												!paymentMethod ||
+																												loadingAgencyMonthly
 																													? 'opacity-50 cursor-not-allowed'
 																													: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150'
 																											}`}
 																											disabled={
-																												!paymentMethod
+																												!paymentMethod ||
+																												loadingAgencyMonthly
 																													? 'disabled'
 																													: ''
 																											}
-																											onClick={() =>
-																												setTimeout(
-																													() =>
+																											onClick={() => {
+																												if (
+																													currentPaymentMethod.id ==
+																														undefined &&
+																													subscription.id ==
+																														null
+																												) {
+																													setTimeout(() => {
+																														setUpdatedPlanId(
+																															val.id
+																														);
+																														setUpdatedPlanName(
+																															val.group.name
+																														);
+																														setShowModal(
+																															!showModal
+																														);
+																													}, 150);
+																												} else {
+																													setTimeout(() => {
 																														selectPlan(
 																															val.id,
 																															val.group.name
-																														),
-																													150
-																												)
-																											}
+																														);
+																													}, 150);
+																												}
+																											}}
 																										>
-																											{
-																												SubscriptionLabels[3]
-																													.label
-																											}
+																											{loadingAgencyMonthly
+																												? 'Processing Payment...'
+																												: SubscriptionLabel[3]
+																														.label}
 																										</button>
 																									)}
 																								</div>

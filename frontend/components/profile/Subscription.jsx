@@ -1,7 +1,5 @@
 import { Transition } from '@tailwindui/react';
 import { useState, useEffect, Fragment } from 'react';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import Cookies from 'js-cookie';
 import Layout from 'components/Layout';
 import PaymentMethodForm from 'components/form/PaymentMethodForm';
@@ -32,15 +30,12 @@ const fetcher = async (url) => {
 };
 
 const ProfileSettingsSubscription = () => {
-	const [paymentMethod, setPaymentMethod] = useState('');
+	const [paymentMethod, setPaymentMethod] = useState(undefined);
 	const [showModal, setShowModal] = useState(false);
-	const [subscriptionId, setSubscriptionId] = useState(undefined);
 	const [errorMsg, setErrorMsg] = useState('');
 	const [successMsg, setSuccessMsg] = useState('');
 	const [disableInputFields, setDisableInputFields] = useState(0);
 	const [showNotificationStatus, setShowNotificationStatus] = useState(false);
-
-	const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY);
 
 	const { data: paymentMethods, error: paymentMethodsError } = useSWR(
 		() => `/api/stripe/payment-method/`,
@@ -288,25 +283,19 @@ const ProfileSettingsSubscription = () => {
 							</div>
 
 							<div>
-								<Elements stripe={stripePromise}>
-									<PaymentMethodForm
-										subscriptionId={subscriptionId}
-										closeForm={() => setShowModal(false)}
-										disableInputFields={() => setDisableInputFields(0)}
-										errorMsg={() =>
-											setErrorMsg(
-												'Card information update failed. Please try again.'
-											)
-										}
-										successMsg={() =>
-											setSuccessMsg('Card information update successfully.')
-										}
-										showNotificationStatus={() =>
-											setShowNotificationStatus(true)
-										}
-										// onSubscriptionUpdated={subscriptionUpdated}
-									/>
-								</Elements>
+								<PaymentMethodForm
+									closeForm={() => setShowModal(false)}
+									disableInputFields={() => setDisableInputFields(0)}
+									errorMsg={() =>
+										setErrorMsg(
+											'An unexpected error occurred. Please try again.'
+										)
+									}
+									successMsg={() =>
+										setSuccessMsg('Card information update successfully.')
+									}
+									showNotificationStatus={() => setShowNotificationStatus(true)}
+								/>
 							</div>
 						</Transition.Child>
 					</div>

@@ -5,13 +5,31 @@ import {
 	CardCvcElement,
 	CardExpiryElement
 } from '@stripe/react-stripe-js';
-import { setTimeout } from 'core-js';
-import { Transition } from '@tailwindui/react';
-import { useMemo, useState, useEffect, Fragment } from 'react';
+import { useMemo, useState } from 'react';
 import Cookies from 'js-cookie';
 import PaymentMethodFormLabel from 'public/label/components/form/PaymentMethodForm.json';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import useSWR from 'swr';
+
+const fetcher = async (url) => {
+	const res = await fetch(url, {
+		method: 'GET',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json',
+			'X-CSRFToken': Cookies.get('csrftoken')
+		}
+	});
+
+	const data = await res.json();
+
+	if (res.status !== 200) {
+		throw new Error(data.message);
+	}
+
+	return data;
+};
 
 const useOptions = () => {
 	const options = useMemo(() => ({
@@ -48,6 +66,26 @@ const PaymentMethodForm = (props) => {
 	const options = useOptions();
 	const [loading, setLoading] = useState(false);
 
+	const { data: subscriptions } = useSWR(
+		() => `/api/stripe/subscription/`,
+		fetcher
+	);
+
+	const { data: subscription } = useSWR(
+		() => `/api/stripe/subscription/current/`,
+		fetcher
+	);
+
+	const { data: paymentMethods } = useSWR(
+		() => `/api/stripe/payment-method/`,
+		fetcher
+	);
+
+	const {
+		data: currentPaymentMethod,
+		mutate: currentPaymentMethodUpdated
+	} = useSWR(() => `/api/stripe/payment-method/default/`, fetcher);
+
 	const updatePaymentMethod = async (endpoint, payload) => {
 		const response = await fetch(endpoint, {
 			method: 'POST',
@@ -61,30 +99,20 @@ const PaymentMethodForm = (props) => {
 
 		const data = await response.json();
 
-		if (response.ok && response.status === 200) {
-			if (data) {
-				props.closeForm();
-				props.disableInputFields();
-				props.successMsg();
-				props.showNotificationStatus();
+		if (response.ok && response.status === 200 && data) {
+			props.closeForm();
+			props.disableInputFields();
+			props.successMsg();
+			props.showNotificationStatus();
 
-				setTimeout(() => {
-					router.push('/dashboard/settings/profile');
-				}, 1500);
-			} else {
-				props.errorMsg();
-				props.showNotificationStatus();
-			}
+			setTimeout(() => {
+				router.push('/dashboard/settings/profile');
+			}, 1500);
+
+			// console.log(data);
 		} else {
-			const error = new Error(response.statusText);
-
-			error.response = response;
-			error.data = data;
-
-			setErrorMsg('An unexpected error occurred. Please try again.');
-			setTimeout(() => setShowNotificationStatus(), 1500);
-
-			throw error;
+			props.errorMsg();
+			props.showNotificationStatus();
 		}
 	};
 
@@ -106,7 +134,23 @@ const PaymentMethodForm = (props) => {
 
 		// console.log('[PaymentMethod]', payload);
 
-		updatePaymentMethod('/api/stripe/payment-method/', payload);
+		if (payload.error) {
+			if (payload.error.code === 'incomplete_number') {
+				alert('ERROR: ' + payload.error.message);
+			}
+
+			if (payload.error.code === 'incomplete_expiry') {
+				alert('ERROR: ' + payload.error.message);
+			}
+
+			if (payload.error.code === 'incomplete_cvc') {
+				alert('ERROR: ' + payload.error.message);
+			}
+
+			setLoading(false);
+		} else {
+			updatePaymentMethod('/api/stripe/payment-method/', payload);
+		}
 	};
 
 	return (
@@ -119,13 +163,7 @@ const PaymentMethodForm = (props) => {
 					>
 						{PaymentMethodFormLabel[0].label}
 					</label>
-					<CardNumberElement
-						options={options}
-						// onReady={() => { console.log("CardNumberElement [ready]") }}
-						// onChange={(e) => { console.log("CardNumberElement [change]", e) }}
-						// onBlur={(e) => { console.log("CardNumberElement [blur]") }}
-						// onFocus={(e) => { console.log("CardNumberElement [focus]") }}
-					/>
+					<CardNumberElement options={options} />
 				</div>
 				<div className='input-group'>
 					<label
@@ -134,13 +172,7 @@ const PaymentMethodForm = (props) => {
 					>
 						{PaymentMethodFormLabel[1].label}
 					</label>
-					<CardExpiryElement
-						options={options}
-						// onReady={() => { console.log("CardExpiryElement [ready]") }}
-						// onChange={(e) => { console.log("CardExpiryElement [change]", e) }}
-						// onBlur={(e) => { console.log("CardExpiryElement [blur]") }}
-						// onFocus={(e) => { console.log("CardExpiryElement [focus]") }}
-					/>
+					<CardExpiryElement options={options} />
 				</div>
 				<div className='input-group'>
 					<label
@@ -149,13 +181,7 @@ const PaymentMethodForm = (props) => {
 					>
 						{PaymentMethodFormLabel[2].label}
 					</label>
-					<CardCvcElement
-						options={options}
-						// onReady={() => { console.log("CardCvcElement [ready]") }}
-						// onChange={(e) => { console.log("CardCvcElement [change]", e) }}
-						// onBlur={(e) => { console.log("CardCvcElement [blur]") }}
-						// onFocus={(e) => { console.log("CardCvcElement [focus]") }}
-					/>
+					<CardCvcElement options={options} />
 				</div>
 				<div className={`mt-5 sm:mt-6`}>
 					<span className={`flex w-full rounded-md shadow-sm sm:col-start-2`}>
