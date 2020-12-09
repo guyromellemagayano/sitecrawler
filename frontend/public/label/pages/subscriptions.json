@@ -48,7 +48,7 @@
 	},
 	{
 		"label": "Are you sure of this?",
-		"description": "Downgrading to Basic Plan will limit site features and functionalities but no data will be removed regardless."
+		"description": "Downgrading to the Basic plan will remove some of your premium features."
 	},
 	{
 		"label": "Downgrade to Basic Plan"
