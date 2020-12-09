@@ -23,7 +23,7 @@
 		"label": "Card Information"
 	},
 	{
-		"label": "Card Information Update"
+		"label": "Add/Update Card Information"
 	},
 	{
 		"label": "Payment Period"
@@ -39,5 +39,18 @@
 	},
 	{
 		"label": "Go to Payment Method"
+	},
+	{
+		"label": "Congratulations!"
+	},
+	{
+		"label": "Start Crawling"
+	},
+	{
+		"label": "Are you sure of this?",
+		"description": "Downgrading to Basic Plan will limit site features and functionalities but no data will be removed regardless."
+	},
+	{
+		"label": "Downgrade to Basic Plan"
 	}
 ]

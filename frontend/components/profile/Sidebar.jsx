@@ -39,7 +39,9 @@ const Sidebar = () => {
 
 	const fetcher = (url) => fetch(url, apiParameters).then((res) => res.json());
 
-	const { data: user, error: userError } = useSWR('/api/auth/user/', fetcher);
+	const { data: user, error: userError } = useSWR('/api/auth/user/', fetcher, {
+		refreshInterval: 2000
+	});
 
 	useEffect(() => {
 		if (user && user !== undefined) setUserLoaded(true);

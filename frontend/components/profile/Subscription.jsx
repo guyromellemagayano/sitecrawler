@@ -1,7 +1,5 @@
 import { Transition } from '@tailwindui/react';
 import { useState, useEffect, Fragment } from 'react';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import Cookies from 'js-cookie';
 import Layout from 'components/Layout';
 import PaymentMethodForm from 'components/form/PaymentMethodForm';
@@ -32,25 +30,27 @@ const fetcher = async (url) => {
 };
 
 const ProfileSettingsSubscription = () => {
-	const [paymentMethod, setPaymentMethod] = useState('');
+	const [paymentMethod, setPaymentMethod] = useState(undefined);
 	const [showModal, setShowModal] = useState(false);
-	const [subscriptionId, setSubscriptionId] = useState(undefined);
 	const [errorMsg, setErrorMsg] = useState('');
 	const [successMsg, setSuccessMsg] = useState('');
 	const [disableInputFields, setDisableInputFields] = useState(0);
 	const [showNotificationStatus, setShowNotificationStatus] = useState(false);
 
-	const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY);
-
 	const { data: paymentMethods, error: paymentMethodsError } = useSWR(
 		() => `/api/stripe/payment-method/`,
-		fetcher
+		fetcher,
+		{
+			refreshInterval: 2000
+		}
 	);
 
 	const {
 		data: currentPaymentMethod,
 		error: currentPaymentMethodError
-	} = useSWR(() => `/api/stripe/payment-method/default/`, fetcher);
+	} = useSWR(() => `/api/stripe/payment-method/default/`, fetcher, {
+		refreshInterval: 2000
+	});
 
 	useEffect(() => {
 		if (
@@ -288,25 +288,19 @@ const ProfileSettingsSubscription = () => {
 							</div>
 
 							<div>
-								<Elements stripe={stripePromise}>
-									<PaymentMethodForm
-										subscriptionId={subscriptionId}
-										closeForm={() => setShowModal(false)}
-										disableInputFields={() => setDisableInputFields(0)}
-										errorMsg={() =>
-											setErrorMsg(
-												'Card information update failed. Please try again.'
-											)
-										}
-										successMsg={() =>
-											setSuccessMsg('Card information update successfully.')
-										}
-										showNotificationStatus={() =>
-											setShowNotificationStatus(true)
-										}
-										// onSubscriptionUpdated={subscriptionUpdated}
-									/>
-								</Elements>
+								<PaymentMethodForm
+									closeForm={() => setShowModal(false)}
+									disableInputFields={() => setDisableInputFields(0)}
+									errorMsg={() =>
+										setErrorMsg(
+											'An unexpected error occurred. Please try again.'
+										)
+									}
+									successMsg={() =>
+										setSuccessMsg('Card information update successfully.')
+									}
+									showNotificationStatus={() => setShowNotificationStatus(true)}
+								/>
 							</div>
 						</Transition.Child>
 					</div>
@@ -369,7 +363,7 @@ const ProfileSettingsSubscription = () => {
 							className={`flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row`}
 						>
 							<div
-								className={`flex justify-start xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1 sm:w-2/3 md:flex-col sm:w-full lg:order-1 lg:w-auto lg:flex lg:flex-row`}
+								className={`flex justify-start xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1 md:flex-col sm:w-full lg:order-1 lg:w-auto lg:flex lg:flex-row`}
 							>
 								<span
 									className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none`}

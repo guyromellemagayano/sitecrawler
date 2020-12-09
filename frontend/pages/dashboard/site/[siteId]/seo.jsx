@@ -1125,7 +1125,9 @@ const Seo = (props) => {
 										)
 									) : null}
 								</div>
-								<div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
+								<div
+									className={`max-w-full mx-auto px-4 sm:pb-4 lg:px-8 lg:pb-8 sm:px-6 md:px-8`}
+								>
 									<SeoOptions
 										searchKey={searchKey}
 										onSearchEvent={searchEventHandler}
@@ -1149,7 +1151,7 @@ const Seo = (props) => {
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
-									<div className={`py-4`}>
+									<div className={`pb-4`}>
 										<div className={`flex flex-col`}>
 											<div
 												className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
