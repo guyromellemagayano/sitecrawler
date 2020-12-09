@@ -75,7 +75,7 @@ const App = ({ Component, pageProps }) => {
 		<SWRConfig
 			value={{
 				fetcher: fetchJson,
-				revalidateOnFocus: true
+				revalidateOnFocus: false
 			}}
 		>
 			<Elements stripe={stripePromise}>
