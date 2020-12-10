@@ -34,7 +34,7 @@ const Profile = () => {
 						<title>{pageTitle}</title>
 					</Head>
 
-					<ProfileDiv className={`h-screen flex overflow-hidden bg-gray-300`}>
+					<ProfileDiv className={`h-screen flex overflow-hidden bg-gray-200`}>
 						<MobileSidebar show={openMobileSidebar} />
 						<MainSidebar />
 

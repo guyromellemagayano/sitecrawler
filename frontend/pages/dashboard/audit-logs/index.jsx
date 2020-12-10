@@ -30,7 +30,7 @@ const Reports = () => {
 						<title>{pageTitle}</title>
 					</Head>
 
-					<ReportsDiv className={`h-screen flex overflow-hidden bg-gray-300`}>
+					<ReportsDiv className={`h-screen flex overflow-hidden bg-gray-200`}>
 						<MobileSidebar show={openMobileSidebar} />
 						<MainSidebar />
 
