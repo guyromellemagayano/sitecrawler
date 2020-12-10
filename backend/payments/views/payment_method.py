@@ -1,11 +1,17 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.response import Response
 import stripe
 
 from ..serializers import PaymentMethodSerializer
 from ..services import customer
+
+
+class CardError(APIException):
+    status_code = 400
+    default_detail = "Something went wrong."
+    default_code = "card_error"
 
 
 class PaymentMethodViewSet(viewsets.ViewSet):
@@ -23,10 +29,14 @@ class PaymentMethodViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         id = serializer.data["id"]
 
-        resp = stripe.PaymentMethod.attach(id, customer=customer_id)
-        stripe.Customer.modify(
-            customer_id, invoice_settings={"default_payment_method": id},
-        )
+        try:
+            resp = stripe.PaymentMethod.attach(id, customer=customer_id)
+            stripe.Customer.modify(
+                customer_id,
+                invoice_settings={"default_payment_method": id},
+            )
+        except stripe.error.CardError as e:
+            raise CardError(code=e.code, detail=e._message)
 
         return Response(resp)
 
