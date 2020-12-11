@@ -188,7 +188,7 @@ const MobileSiteMenu = (props) => {
 													user.permissions.includes('can_see_pages') &&
 													user.permissions.includes('can_see_scripts') &&
 													user.permissions.includes('can_see_stylesheets') &&
-													user.permissions.includes('can_start_manual_scan')
+													user.permissions.includes('can_start_scan')
 												) {
 													return (
 														<Link key={key} href={hrefVal} as={asVal}>
