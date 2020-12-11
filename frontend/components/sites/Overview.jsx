@@ -43,6 +43,8 @@ const SitesOverview = (props) => {
 	const { query } = useRouter();
 
 	const userApiEndpoint = '/api/auth/user/';
+	const nonTlsPages = '';
+	const nonTlsPagesError = '';
 
 	const calendarStrings = {
 		lastDay: '[Yesterday], dddd',
@@ -92,9 +94,9 @@ const SitesOverview = (props) => {
 			{userError && <Layout>{userError.message}</Layout>}
 			{scanError && <Layout>{scanError.message}</Layout>}
 			{statsError && <Layout>{statsError.message}</Layout>}
-			{user.permissions.includes('can_see_pages') && nonTlsPagesError && (
-				<Layout>{nonTlsPagesError.message}</Layout>
-			)}
+			{user.permissions.includes('can_see_pages')
+				? nonTlsPagesError && <Layout>{nonTlsPagesError.message}</Layout>
+				: ''}
 
 			{!user && !scan && !stats && !nonTlsPages ? (
 				<Skeleton width={280} height={198} duration={2} />
