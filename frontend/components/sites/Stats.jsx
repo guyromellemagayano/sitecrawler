@@ -7,7 +7,6 @@ import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import useSWR from 'swr';
-import BlurContent from 'components/utils/BlurContent';
 
 const fetcher = async (url) => {
 	const res = await fetch(url, {
@@ -32,10 +31,6 @@ const SitesStatsDiv = styled.footer``;
 
 const SitesStats = (props) => {
 	const { query } = useRouter();
-	const userApiEndpoint = '/api/auth/user/';
-
-	const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher);
-
 	const { data: scan, error: scanError } = useSWR(
 		() =>
 			query.siteId
@@ -173,9 +168,6 @@ const SitesStats = (props) => {
 			props.crawlableHandler(false);
 	}, [stats]);
 
-	{
-		userError && <Layout>{userError.message}</Layout>;
-	}
 	{
 		statsError && <Layout>{statsError.message}</Layout>;
 	}
@@ -318,17 +310,7 @@ const SitesStats = (props) => {
 												<dd
 													className={`mt-1 text-3xl leading-9 font-semibold text-gray-900`}
 												>
-													{user.permissions.includes('can_see_pages') &&
-													val.title === 'Total Issues' ? (
-														val.count
-													) : user.permissions.includes('can_see_images') &&
-													  val.title === 'Total Images' ? (
-														val.count
-													) : val.title === 'Total Links' ? (
-														val.count
-													) : (
-														<BlurContent enableBlur={true} content={'NULL'} />
-													)}
+													{val.count}
 												</dd>
 											)}
 										</dl>
