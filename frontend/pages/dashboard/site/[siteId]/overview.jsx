@@ -245,11 +245,16 @@ const SitesDashboard = () => {
 										/>
 										<SitesLinksStats url={query} />
 									</div>
-									<div className={`grid xs:grid-cols-1 xl:grid-cols-3 gap-8`}>
-										<SitesSeoStats url={query} />
-										<SitesPagesStats url={query} />
-										<SitesImagesStats url={query} />
-									</div>
+									{user.permissions.includes('can_see_pages') &&
+										user.permissions.includes('can_see_images') && (
+											<div
+												className={`grid xs:grid-cols-1 xl:grid-cols-3 gap-8`}
+											>
+												<SitesSeoStats url={query} />
+												<SitesPagesStats url={query} />
+												<SitesImagesStats url={query} />
+											</div>
+										)}
 								</div>
 
 								<div
