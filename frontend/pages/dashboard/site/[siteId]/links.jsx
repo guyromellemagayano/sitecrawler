@@ -210,7 +210,7 @@ const Links = (props) => {
 
 	scanApiEndpoint += queryString;
 
-	console.log(scanApiEndpoint);
+	// console.log(scanApiEndpoint);
 
 	const { data: link, error: linkError, mutate: updateLinks } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
@@ -627,7 +627,7 @@ const Links = (props) => {
 						</title>
 					</Head>
 
-					<LinksDiv className={`h-screen flex overflow-hidden bg-gray-300`}>
+					<LinksDiv className={`h-screen flex overflow-hidden bg-gray-200`}>
 						<MobileSidebar
 							show={openMobileSidebar}
 							crawlableHandler={crawlableHandler}

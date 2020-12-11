@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import Link from 'next/link';
@@ -41,7 +41,11 @@ const SitesOverviewDiv = styled.div`
 
 const SitesOverview = (props) => {
 	const { query } = useRouter();
+
 	const userApiEndpoint = '/api/auth/user/';
+	const nonTlsPages = '';
+	const nonTlsPagesError = '';
+
 	const calendarStrings = {
 		lastDay: '[Yesterday], dddd',
 		sameDay: '[Today], dddd',
@@ -77,18 +81,22 @@ const SitesOverview = (props) => {
 		props.id && scanObjId ? `/api/site/${props.id}/scan/${scanObjId}/` : null
 	);
 
-	const { data: nonTlsPages, error: nonTlsPagesError } = useSWR(() =>
-		props.id && scanObjId
-			? `/api/site/${props.id}/scan/${scanObjId}/page?tls_total=false`
-			: null
-	);
+	if (user.permissions.includes('can_see_pages')) {
+		const { data: nonTlsPages, error: nonTlsPagesError } = useSWR(() =>
+			props.id && scanObjId
+				? `/api/site/${props.id}/scan/${scanObjId}/page?tls_total=false`
+				: null
+		);
+	}
 
 	return (
 		<Fragment>
 			{userError && <Layout>{userError.message}</Layout>}
 			{scanError && <Layout>{scanError.message}</Layout>}
 			{statsError && <Layout>{statsError.message}</Layout>}
-			{nonTlsPagesError && <Layout>{nonTlsPagesError.message}</Layout>}
+			{user.permissions.includes('can_see_pages')
+				? nonTlsPagesError && <Layout>{nonTlsPagesError.message}</Layout>
+				: ''}
 
 			{!user && !scan && !stats && !nonTlsPages ? (
 				<Skeleton width={280} height={198} duration={2} />
@@ -137,7 +145,7 @@ const SitesOverview = (props) => {
 								<button
 									type={`button`}
 									onClick={props.onCrawl}
-									className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 xs:px-0 xs:mr-0 xs:mt-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+									className={`w-32 mt-3 mr-3 shadow sm:mt-0 relative items-center px-4 py-2 xs:px-0 xs:mr-0 xs:mt-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
 								>
 									{OverviewLabel[0].label}
 								</button>
@@ -145,7 +153,7 @@ const SitesOverview = (props) => {
 								<button
 									disabled={`disabled`}
 									type={`button`}
-									className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 xs:px-0 xs:mr-0 xs:mt-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
+									className={`w-32 mt-3 mr-3 shadow sm:mt-0 relative items-center px-4 py-2 xs:px-0 xs:mr-0 xs:mt-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
 								>
 									{OverviewLabel[0].label}
 								</button>
@@ -224,87 +232,90 @@ const SitesOverview = (props) => {
 											)}
 										</dd>
 									</div>
-									<div className={`sm:col-span-1`}>
-										<dt
-											className={`text-sm leading-5 font-medium text-gray-500`}
-										>
-											{OverviewLabel[3].label}
-										</dt>
-										<dd className={`mt-1 text-sm leading-5 text-gray-900`}>
-											{stats &&
-											stats.num_pages_tls_non_ok == 0 &&
-											stats.num_pages_tls_non_ok !== undefined ? (
-												<SiteSuccessStatus text={`Valid`} />
-											) : (
-												<Fragment>
-													<span className={`flex items-center justify-start`}>
-														<SiteDangerStatus text={`Not Valid`} />
-														<a
-															data-tip={``}
-															data-for={`stats-tls-not-ok`}
-															data-background-color={`#E53E3E`}
-															data-iscapture={true}
-															data-scroll-hide={false}
-															className={`flex cursor-pointer`}
-														>
-															<span
-																className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
+									{user.permissions.includes('can_see_pages') && (
+										<div className={`sm:col-span-1`}>
+											<dt
+												className={`text-sm leading-5 font-medium text-gray-500`}
+											>
+												{OverviewLabel[3].label}
+											</dt>
+											<dd className={`mt-1 text-sm leading-5 text-gray-900`}>
+												{stats &&
+												stats.num_pages_tls_non_ok == 0 &&
+												stats.num_pages_tls_non_ok !== undefined ? (
+													<SiteSuccessStatus text={`Valid`} />
+												) : (
+													<Fragment>
+														<span className={`flex items-center justify-start`}>
+															<SiteDangerStatus text={`Not Valid`} />
+															<a
+																data-tip={``}
+																data-for={`stats-tls-not-ok`}
+																data-background-color={`#E53E3E`}
+																data-iscapture={true}
+																data-scroll-hide={false}
+																className={`flex cursor-pointer`}
 															>
-																<svg
-																	fill='currentColor'
-																	viewBox='0 0 20 20'
-																	className={`text-red-400`}
+																<span
+																	className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
 																>
-																	<path
-																		fillRule='evenodd'
-																		d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z'
-																		clipRule='evenodd'
-																	></path>
-																</svg>
-															</span>
-														</a>
-														<ReactTooltip
-															id={`stats-tls-not-ok`}
-															className={`ssl-valid-tooltip w-64`}
-															type={`dark`}
-															effect={`solid`}
-															place={`bottom`}
-															clickable={true}
-															multiline={true}
-															delayHide={500}
-															delayShow={500}
-														>
-															<span
-																className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
+																	<svg
+																		fill='currentColor'
+																		viewBox='0 0 20 20'
+																		className={`text-red-400`}
+																	>
+																		<path
+																			fillRule='evenodd'
+																			d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z'
+																			clipRule='evenodd'
+																		></path>
+																	</svg>
+																</span>
+															</a>
+															<ReactTooltip
+																id={`stats-tls-not-ok`}
+																className={`ssl-valid-tooltip w-64`}
+																type={`dark`}
+																effect={`solid`}
+																place={`bottom`}
+																clickable={true}
+																multiline={true}
+																delayHide={500}
+																delayShow={500}
 															>
-																<p>
-																	<strong className={`block mb-3`}>
-																		Here are our findings:
-																	</strong>
-																	Apparently you have{' '}
-																	{nonTlsPages && nonTlsPages.count} pages that
-																	have some TLS issues. You can check this
-																	<strong className={`ml-1`}>
-																		{
-																			<Link
-																				href={`/dashboard/site/[siteId]/pages/?tls_total=false`}
-																				as={`/dashboard/site/${query.siteId}/pages/?tls_total=false`}
-																			>
-																				<a className={`hover:text-red-300`}>
-																					link
-																				</a>
-																			</Link>
-																		}
-																	</strong>{' '}
-																	for more information.
-																</p>
-															</span>
-														</ReactTooltip>
-													</span>
-												</Fragment>
-											)}
-										</dd>
-									</div>
+																<span
+																	className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
+																>
+																	<p>
+																		<strong className={`block mb-3`}>
+																			Here are our findings:
+																		</strong>
+																		Apparently you have{' '}
+																		{nonTlsPages && nonTlsPages.count} pages
+																		that have some TLS issues. You can check
+																		this
+																		<strong className={`ml-1`}>
+																			{
+																				<Link
+																					href={`/dashboard/site/[siteId]/pages/?tls_total=false`}
+																					as={`/dashboard/site/${query.siteId}/pages/?tls_total=false`}
+																				>
+																					<a className={`hover:text-red-300`}>
+																						link
+																					</a>
+																				</Link>
+																			}
+																		</strong>{' '}
+																		for more information.
+																	</p>
+																</span>
+															</ReactTooltip>
+														</span>
+													</Fragment>
+												)}
+											</dd>
+										</div>
+									)}
 									<div className={`sm:col-span-1`}>
 										<dt
 											className={`text-sm leading-5 font-medium text-gray-500`}

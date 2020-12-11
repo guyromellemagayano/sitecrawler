@@ -31,6 +31,12 @@ const SitesStatsDiv = styled.footer``;
 
 const SitesStats = (props) => {
 	const { query } = useRouter();
+
+	const images = '';
+	const imagesError = '';
+	const userApiEndpoint = '/api/auth/user/';
+
+	const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher);
 	const { data: scan, error: scanError } = useSWR(
 		() =>
 			query.siteId
@@ -72,13 +78,15 @@ const SitesStats = (props) => {
 		fetcher
 	);
 
-	const { data: images, error: imagesError } = useSWR(
-		() =>
-			query.siteId && scanObjId
-				? `/api/site/${query.siteId}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
-				: null,
-		fetcher
-	);
+	if (user.permissions.includes('can_see_images')) {
+		const { data: images, error: imagesError } = useSWR(
+			() =>
+				query.siteId && scanObjId
+					? `/api/site/${query.siteId}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
+					: null,
+			fetcher
+		);
+	}
 
 	// const setLinkErrors = (type) => {
 	//   let valLength = 0;
@@ -155,10 +163,6 @@ const SitesStats = (props) => {
 			}
 		}
 
-		if (images && images.count !== undefined) {
-			valLength = valLength + (images.count ? images.count : 0);
-		}
-
 		return valLength;
 	};
 
@@ -168,6 +172,9 @@ const SitesStats = (props) => {
 			props.crawlableHandler(false);
 	}, [stats]);
 
+	{
+		userError && <Layout>{userError.message}</Layout>;
+	}
 	{
 		statsError && <Layout>{statsError.message}</Layout>;
 	}

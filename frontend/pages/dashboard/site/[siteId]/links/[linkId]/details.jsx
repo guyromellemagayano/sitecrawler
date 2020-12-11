@@ -135,7 +135,7 @@ const LinkDetail = () => {
 					</Head>
 
 					<LinkDetailDiv
-						className={`h-screen flex overflow-hidden bg-gray-300`}
+						className={`h-screen flex overflow-hidden bg-gray-200`}
 					>
 						<MobileSidebar show={openMobileSidebar} />
 						<MainSidebar />

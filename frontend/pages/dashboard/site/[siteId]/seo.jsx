@@ -965,7 +965,7 @@ const Seo = (props) => {
 						</title>
 					</Head>
 
-					<SeoDiv className={`h-screen flex overflow-hidden bg-gray-300`}>
+					<SeoDiv className={`h-screen flex overflow-hidden bg-gray-200`}>
 						<MobileSidebar
 							show={openMobileSidebar}
 							crawlableHandler={crawlableHandler}

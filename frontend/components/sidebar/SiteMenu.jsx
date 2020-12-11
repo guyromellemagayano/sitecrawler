@@ -178,7 +178,11 @@ const SiteMenu = (props) => {
 														: '/dashboard/site/' + query.siteId + val2.url;
 
 												if (
-													user.permissions.includes('can_see_images')
+													user.permissions.includes('can_see_images') &&
+													user.permissions.includes('can_see_pages') &&
+													user.permissions.includes('can_see_scripts') &&
+													user.permissions.includes('can_see_stylesheets') &&
+													user.permissions.includes('can_start_scan')
 												) {
 													return (
 														<Link key={key} href={hrefVal} as={asVal}>
@@ -259,7 +263,11 @@ const SiteMenu = (props) => {
 														</Link>
 													);
 												} else {
-													if (val2.slug !== 'images' && val2.slug !== 'seo') {
+													if (
+														val2.slug !== 'images' &&
+														val2.slug !== 'seo' &&
+														val2.slug !== 'pages'
+													) {
 														return (
 															<Link key={key} href={hrefVal} as={asVal}>
 																<a
