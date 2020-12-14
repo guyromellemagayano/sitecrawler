@@ -368,7 +368,6 @@ const Links = (props) => {
 			else setPagePath(`${newPath}?`);
 
 			Router.push(newPath);
-
 			updateLinks();
 
 			return true;
