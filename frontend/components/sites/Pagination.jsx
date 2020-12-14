@@ -95,6 +95,8 @@ const MyPagination = (props) => {
 
 	const { data: page, error: pageError } = useSWR(props.apiEndpoint, fetcher);
 
+	// console.log(props.pathName);
+
 	const handlePageChange = (pageNum) => {
 		// console.log('[pageNum]', pageNum);
 		const newPath = removeURLParameter(props.pathName, 'page');

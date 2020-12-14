@@ -26,7 +26,6 @@ import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import useSWR, { mutate } from 'swr';
 import useUser from 'hooks/useUser';
-import { array } from 'prop-types';
 
 const fetcher = async (url) => {
 	const res = await fetch(url, {
@@ -119,7 +118,7 @@ const Links = (props) => {
 	const [pagePath, setPagePath] = useState('');
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [searchKey, setSearchKey] = useState('');
-	const [filterQueryString, setFilterQueryString] = useState('');
+	const [loadQueryString, setLoadQueryString] = useState('');
 
 	const pageTitle = 'Links |';
 
@@ -168,17 +167,17 @@ const Links = (props) => {
 			: `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
 			  linksPerPage;
 
+	let queryString = '';
+
 	const statusString = Array.isArray(props.result.status)
 		? props.result.status.join('&status=')
 		: props.result.status;
 
-	let queryString =
-		props.result.status != undefined && props.result.status.length != 0
+	queryString +=
+		props.result.status !== undefined
 			? scanApiEndpoint.includes('?')
 				? `&status=${statusString}`
 				: `?status=${statusString}`
-			: Array.from(filterQueryString).length
-			? '&' + filterQueryString.toString()
 			: '';
 
 	const typeString = Array.isArray(props.result.type)
@@ -194,16 +193,14 @@ const Links = (props) => {
 
 	queryString +=
 		props.result.search !== undefined
-			? props.result.page !== undefined ||
-			  props.result.status !== undefined ||
-			  props.result.type !== undefined
+			? scanApiEndpoint.includes('?')
 				? `&search=${props.result.search}`
 				: `?search=${props.result.search}`
 			: '';
 
 	queryString +=
 		props.result.ordering !== undefined
-			? (scanApiEndpoint + queryString).includes('?')
+			? scanApiEndpoint.includes('?')
 				? `&ordering=${props.result.ordering}`
 				: `?ordering=${props.result.ordering}`
 			: '';
@@ -218,29 +215,27 @@ const Links = (props) => {
 	);
 
 	const searchEventHandler = async (e) => {
-		if (e.keyCode != 13) return false;
+		const searchTargetValue = e.target.value;
 
-		let newPath = removeURLParameter(asPath, 'search');
+		if (e.keyCode !== 13) return false;
+
+		let newPath = asPath;
+		newPath = removeURLParameter(newPath, 'search');
 		newPath = removeURLParameter(newPath, 'page');
 
-		if (e.target.value == '' || e.target.value == ' ') {
-			setSearchKey(e.target.value);
-			if (newPath.includes('?')) setPagePath(`${newPath}&`);
-			else setPagePath(`${newPath}?`);
+		if (!/\S/.test(searchTargetValue)) {
+			setSearchKey(searchTargetValue);
+		} else {
+			if (newPath.includes('?')) newPath += `&search=${searchTargetValue}`;
+			else newPath += `?search=${searchTargetValue}`;
 
-			Router.push('/dashboard/site/[siteId]/links/', newPath);
-			return;
+			setSearchKey(searchTargetValue);
 		}
 
-		if (newPath.includes('?')) newPath += `&search=${e.target.value}`;
-		else newPath += `?search=${e.target.value}`;
-
-		setSearchKey(e.target.value);
 		if (newPath.includes('?')) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push('/dashboard/site/[siteId]/links/', newPath);
-
+		Router.push(newPath);
 		updateLinks();
 	};
 
@@ -249,7 +244,7 @@ const Links = (props) => {
 		const filterStatus = e.target.checked;
 
 		let newPath = asPath;
-		newPath = removeURLParameter(newPath, 'per_page');
+		newPath = removeURLParameter(newPath, 'page');
 
 		if (filterType == 'issues' && filterStatus == true) {
 			setIssueFilter(true);
@@ -262,8 +257,8 @@ const Links = (props) => {
 				newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 		} else if (filterType == 'issues' && filterStatus == false) {
-			filterQueryString && filterQueryString.delete('status');
-			filterQueryString && filterQueryString.delete('page');
+			loadQueryString && loadQueryString.delete('status');
+			loadQueryString && loadQueryString.delete('page');
 
 			if (newPath.includes('status'))
 				newPath = removeURLParameter(newPath, 'status');
@@ -281,8 +276,8 @@ const Links = (props) => {
 			if (newPath.includes('?')) newPath += `&status=OK`;
 			else newPath += `?status=OK`;
 		} else if (filterType == 'no-issues' && filterStatus == false) {
-			filterQueryString && filterQueryString.delete('status');
-			filterQueryString && filterQueryString.delete('page');
+			loadQueryString && loadQueryString.delete('status');
+			loadQueryString && loadQueryString.delete('page');
 
 			if (newPath.includes('status'))
 				newPath = removeURLParameter(newPath, 'status');
@@ -301,8 +296,8 @@ const Links = (props) => {
 			if (newPath.includes('?')) newPath += `&type=PAGE`;
 			else newPath += `?type=PAGE`;
 		} else if (filterType == 'internal' && filterStatus == false) {
-			filterQueryString && filterQueryString.delete('type');
-			filterQueryString && filterQueryString.delete('page');
+			loadQueryString && loadQueryString.delete('type');
+			loadQueryString && loadQueryString.delete('page');
 
 			if (newPath.includes('type=PAGE'))
 				newPath = removeURLParameter(newPath, 'type');
@@ -321,8 +316,8 @@ const Links = (props) => {
 			if (newPath.includes('?')) newPath += `&type=EXTERNAL`;
 			else newPath += `?type=EXTERNAL`;
 		} else if (filterType == 'external' && filterStatus == false) {
-			filterQueryString && filterQueryString.delete('type');
-			filterQueryString && filterQueryString.delete('page');
+			loadQueryString && loadQueryString.delete('type');
+			loadQueryString && loadQueryString.delete('page');
 
 			if (newPath.includes('type=EXTERNAL'))
 				newPath = removeURLParameter(newPath, 'type');
@@ -348,10 +343,7 @@ const Links = (props) => {
 		if (newPath.includes('?')) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		// console.log(newPath);
-
 		Router.push(newPath);
-
 		updateLinks();
 
 		return true;
@@ -375,8 +367,7 @@ const Links = (props) => {
 			if (newPath.includes('?')) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			Router.push('/dashboard/site/[siteId]/links/', newPath);
-
+			Router.push(newPath);
 			updateLinks();
 
 			return true;
@@ -405,15 +396,15 @@ const Links = (props) => {
 		if (props.result.per_page !== undefined)
 			setLinksPerPage(props.result.per_page);
 
-		setFilterQueryString(new URLSearchParams(window.location.search));
+		setLoadQueryString(new URLSearchParams(window.location.search));
 
-		let filterQueryStringValue = new URLSearchParams(window.location.search);
+		let loadQueryStringValue = new URLSearchParams(window.location.search);
 
-		if (filterQueryStringValue.has('status')) {
+		if (loadQueryStringValue.has('status')) {
 			if (
-				filterQueryStringValue.getAll('status').includes('TIMEOUT') &&
-				filterQueryStringValue.getAll('status').includes('HTTP_ERROR') &&
-				filterQueryStringValue.getAll('status').includes('OTHER_ERROR')
+				loadQueryStringValue.getAll('status').includes('TIMEOUT') &&
+				loadQueryStringValue.getAll('status').includes('HTTP_ERROR') &&
+				loadQueryStringValue.getAll('status').includes('OTHER_ERROR')
 			) {
 				setIssueFilter(true);
 				setNoIssueFilter(false);
@@ -422,7 +413,7 @@ const Links = (props) => {
 				setExternalFilter(false);
 			}
 
-			if (filterQueryStringValue.get('status') === 'OK') {
+			if (loadQueryStringValue.get('status') === 'OK') {
 				setNoIssueFilter(true);
 				setIssueFilter(false);
 				setAllFilter(false);
@@ -431,23 +422,26 @@ const Links = (props) => {
 			}
 		}
 
-		if (filterQueryStringValue.has('type')) {
-			if (filterQueryStringValue.get('type') === 'PAGE') {
+		if (loadQueryStringValue.has('type')) {
+			if (loadQueryStringValue.get('type') === 'PAGE') {
 				setInternalFilter(true);
 				setExternalFilter(false);
 				setAllFilter(false);
-			} else if (filterQueryStringValue.get('type') === 'EXTERNAL') {
+			} else if (loadQueryStringValue.get('type') === 'EXTERNAL') {
 				setExternalFilter(true);
 				setInternalFilter(false);
 				setAllFilter(false);
-			} else if (filterQueryStringValue.get('type') === 'EXTERNALOTHER') {
+			} else if (loadQueryStringValue.get('type') === 'EXTERNALOTHER') {
 				setExternalFilter(true);
 				setInternalFilter(false);
 				setAllFilter(false);
 			}
 		}
 
-		if (!filterQueryStringValue.toString().length) {
+		if (
+			!loadQueryStringValue.has('type') &&
+			!loadQueryStringValue.has('status')
+		) {
 			setNoIssueFilter(false);
 			setIssueFilter(false);
 			setInternalFilter(false);
@@ -503,19 +497,14 @@ const Links = (props) => {
 			}
 		}
 
-		if (
-			props.result.type == undefined &&
-			props.result.status == undefined &&
-			filterQueryString &&
-			!filterQueryString.toString().length
-		) {
+		if (props.result.type == undefined && props.result.status == undefined) {
 			setIssueFilter(false);
 			setNoIssueFilter(false);
 			setInternalFilter(false);
 			setExternalFilter(false);
 			setAllFilter(true);
 		}
-	}, [filterChangeHandler, filterQueryString]);
+	}, [filterChangeHandler, loadQueryString]);
 
 	const SortHandler = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
@@ -549,7 +538,7 @@ const Links = (props) => {
 			setPagePath(`${removeURLParameter(newPath, 'page')}&`);
 		else setPagePath(`${removeURLParameter(newPath, 'page')}?`);
 
-		Router.push('/dashboard/site/[siteId]/links/', newPath);
+		Router.push(newPath);
 		updateLinks();
 	};
 
