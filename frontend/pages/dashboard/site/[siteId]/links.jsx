@@ -230,8 +230,6 @@ const Links = (props) => {
 			else newPath += `?search=${searchTargetValue}`;
 
 			setSearchKey(searchTargetValue);
-
-			console.log(newPath);
 		}
 
 		if (newPath.includes('?')) setPagePath(`${newPath}&`);
