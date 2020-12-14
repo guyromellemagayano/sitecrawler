@@ -106,7 +106,6 @@ const initialOrder = {
 };
 
 const Links = (props) => {
-	console.log(props.result);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [allFilter, setAllFilter] = useState(false);
 	const [issueFilter, setIssueFilter] = useState(false);
@@ -247,7 +246,7 @@ const Links = (props) => {
 		const filterStatus = e.target.checked;
 
 		let newPath = asPath;
-		newPath = removeURLParameter(newPath, 'per_page');
+		newPath = removeURLParameter(newPath, 'page');
 
 		if (filterType == 'issues' && filterStatus == true) {
 			setIssueFilter(true);
@@ -370,7 +369,7 @@ const Links = (props) => {
 			if (newPath.includes('?')) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			Router.push('/dashboard/site/[siteId]/links/', newPath);
+			Router.push(newPath);
 
 			updateLinks();
 
@@ -442,7 +441,10 @@ const Links = (props) => {
 			}
 		}
 
-		if (!loadQueryStringValue.toString().length) {
+		if (
+			!loadQueryStringValue.has('type') &&
+			!loadQueryStringValue.has('status')
+		) {
 			setNoIssueFilter(false);
 			setIssueFilter(false);
 			setInternalFilter(false);
@@ -498,12 +500,7 @@ const Links = (props) => {
 			}
 		}
 
-		if (
-			props.result.type == undefined &&
-			props.result.status == undefined &&
-			loadQueryString &&
-			!loadQueryString.toString().length
-		) {
+		if (props.result.type == undefined && props.result.status == undefined) {
 			setIssueFilter(false);
 			setNoIssueFilter(false);
 			setInternalFilter(false);
@@ -544,7 +541,7 @@ const Links = (props) => {
 			setPagePath(`${removeURLParameter(newPath, 'page')}&`);
 		else setPagePath(`${removeURLParameter(newPath, 'page')}?`);
 
-		Router.push('/dashboard/site/[siteId]/links/', newPath);
+		Router.push(newPath);
 		updateLinks();
 	};
 
