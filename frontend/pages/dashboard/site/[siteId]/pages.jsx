@@ -92,8 +92,9 @@ const Pages = (props) => {
 	const [recrawlable, setRecrawlable] = useState(false);
 	const [crawlFinished, setCrawlFinished] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
+	const [loadQueryString, setLoadQueryString] = useState('');
+
 	const pageTitle = 'Pages |';
-	const [filterQueryString, setFilterQueryString] = useState('');
 
 	const { user: user, userError: userError } = useUser({
 		redirectTo: '/',
@@ -140,26 +141,24 @@ const Pages = (props) => {
 			: `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` +
 			  linksPerPage;
 
-	let queryString =
-		props.result.size_total_min !== undefined &&
-		props.result.size_total_min.length != 0
+	let queryString = '';
+
+	queryString +=
+		props.result.size_total_min !== undefined
 			? scanApiEndpoint.includes('?')
 				? `&size_total_min=1048576`
 				: `?size_total_min=1048576`
-			: Array.from(filterQueryString).length
-			? '&' + filterQueryString.toString()
 			: '';
 
 	queryString +=
-		props.result.size_total_max !== undefined &&
-		props.result.size_total_max.length != 0
+		props.result.size_total_max !== undefined
 			? scanApiEndpoint.includes('?')
 				? `&size_total_max=1048575`
 				: `?size_total_max=1048575`
 			: '';
 
 	queryString +=
-		props.result.tls_total !== undefined && props.result.tls_total.length != 0
+		props.result.tls_total !== undefined
 			? props.result.tls_total === 'true'
 				? scanApiEndpoint.includes('?')
 					? `&tls_total=true`
@@ -178,44 +177,42 @@ const Pages = (props) => {
 
 	queryString +=
 		props.result.ordering !== undefined
-			? (scanApiEndpoint + queryString).includes('?')
+			? scanApiEndpoint.includes('?')
 				? `&ordering=${props.result.ordering}`
 				: `?ordering=${props.result.ordering}`
 			: '';
 
 	scanApiEndpoint += queryString;
 
-	// console.log(scanApiEndpoint);
+	console.log(scanApiEndpoint);
 
 	const { data: page, error: pageError, mutate: updatePages } = useSWR(
 		() => (query.siteId && scanObjId ? scanApiEndpoint : null),
 		fetcher
 	);
 
-	const searchEventHandler = (e) => {
-		if (e.keyCode != 13) return false;
+	const searchEventHandler = async (e) => {
+		const searchTargetValue = e.target.value;
 
-		let newPath = removeURLParameter(asPath, 'search');
+		if (e.keyCode !== 13) return false;
+
+		let newPath = asPath;
+		newPath = removeURLParameter(newPath, 'search');
 		newPath = removeURLParameter(newPath, 'page');
 
-		if (e.target.value == '' || e.target.value == ' ') {
-			setSearchKey(e.target.value);
-			if (newPath.includes('?')) setPagePath(`${newPath}&`);
-			else setPagePath(`${newPath}?`);
+		if (!/\S/.test(searchTargetValue)) {
+			setSearchKey(searchTargetValue);
+		} else {
+			if (newPath.includes('?')) newPath += `&search=${searchTargetValue}`;
+			else newPath += `?search=${searchTargetValue}`;
 
-			Router.push('/dashboard/site/[siteId]/pages', newPath);
-			return;
+			setSearchKey(searchTargetValue);
 		}
 
-		if (newPath.includes('?')) newPath += `&search=${e.target.value}`;
-		else newPath += `?search=${e.target.value}`;
-
-		setSearchKey(e.target.value);
 		if (newPath.includes('?')) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push('/dashboard/site/[siteId]/pages', newPath);
-
+		Router.push(newPath);
 		updatePages();
 	};
 
@@ -240,18 +237,18 @@ const Pages = (props) => {
 				newPath += `&size_total_max=1048575&tls_total=true`;
 			else newPath += `?size_total_max=1048575&tls_total=true`;
 		} else if (filterType == 'no-issues' && filterStatus == false) {
-			filterQueryString && filterQueryString.delete('size_total_max');
-			filterQueryString && filterQueryString.delete('size_total_min');
-			filterQueryString && filterQueryString.delete('tls_total');
-			filterQueryString && filterQueryString.delete('page');
+			loadQueryString && loadQueryString.delete('size_total_max');
+			// loadQueryString && loadQueryString.delete('size_total_min');
+			loadQueryString && loadQueryString.delete('tls_total');
+			loadQueryString && loadQueryString.delete('page');
 
 			if (
 				newPath.includes('size_total_max') &&
-				newPath.includes('tls_total') &&
-				newPath.includes('size_total_min')
+				newPath.includes('tls_total')
+				// newPath.includes('size_total_min')
 			) {
 				newPath = removeURLParameter(newPath, 'size_total_max');
-				newPath = removeURLParameter(newPath, 'size_total_min');
+				// newPath = removeURLParameter(newPath, 'size_total_min');
 				newPath = removeURLParameter(newPath, 'tls_total');
 			}
 
@@ -271,8 +268,8 @@ const Pages = (props) => {
 			if (newPath.includes('?')) newPath += `&size_total_min=1048576`;
 			else newPath += `?size_total_min=1048576`;
 		} else if (filterType == 'pageLargePages' && filterStatus == false) {
-			filterQueryString && filterQueryString.delete('size_total_min');
-			filterQueryString && filterQueryString.delete('page');
+			loadQueryString && loadQueryString.delete('size_total_min');
+			loadQueryString && loadQueryString.delete('page');
 
 			if (newPath.includes('size_total_min')) {
 				newPath = removeURLParameter(newPath, 'size_total_min');
@@ -292,10 +289,10 @@ const Pages = (props) => {
 			if (newPath.includes('?')) newPath += `&tls_total=false`;
 			else newPath += `?tls_total=false`;
 		} else if (filterType == 'pageBrokenSecurity' && filterStatus == false) {
-			filterQueryString && filterQueryString.delete('tls_total');
-			filterQueryString && filterQueryString.delete('size_total_min');
-			filterQueryString && filterQueryString.delete('size_total_max');
-			filterQueryString && filterQueryString.delete('page');
+			loadQueryString && loadQueryString.delete('tls_total');
+			loadQueryString && loadQueryString.delete('size_total_min');
+			loadQueryString && loadQueryString.delete('size_total_max');
+			loadQueryString && loadQueryString.delete('page');
 
 			if (newPath.includes('tls_total')) {
 				newPath = removeURLParameter(newPath, 'size_total_max');
@@ -323,8 +320,9 @@ const Pages = (props) => {
 		if (newPath.includes('?')) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push(newPath);
+		console.log(newPath);
 
+		Router.push(newPath);
 		updatePages();
 
 		return true;
@@ -348,8 +346,7 @@ const Pages = (props) => {
 			if (newPath.includes('?')) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			Router.push('/dashboard/site/[siteId]/pages/', newPath);
-
+			Router.push(newPath);
 			updatePages();
 
 			return true;
@@ -378,18 +375,18 @@ const Pages = (props) => {
 		if (props.result.per_page !== undefined)
 			setLinksPerPage(props.result.per_page);
 
-		setFilterQueryString(new URLSearchParams(window.location.search));
+		setLoadQueryString(new URLSearchParams(window.location.search));
 
-		let filterQueryStringValue = new URLSearchParams(window.location.search);
+		let loadQueryStringValue = new URLSearchParams(window.location.search);
 
-		if (filterQueryStringValue.has('size_total_min')) {
+		if (loadQueryStringValue.has('size_total_min')) {
 			setLargePageSizeFilter(true);
 			setAllFilter(false);
 			setNoIssueFilter(false);
 			setBrokenSecurityFilter(false);
 		}
 
-		if (filterQueryStringValue.get('tls_total') === 'false') {
+		if (loadQueryStringValue.get('tls_total') === 'false') {
 			setBrokenSecurityFilter(true);
 			setLargePageSizeFilter(false);
 			setAllFilter(false);
@@ -397,8 +394,8 @@ const Pages = (props) => {
 		}
 
 		if (
-			filterQueryStringValue.has('size_total_max') &&
-			filterQueryStringValue.get('tls_total') === 'true'
+			loadQueryStringValue.has('size_total_max') &&
+			loadQueryStringValue.get('tls_total') === 'true'
 		) {
 			setBrokenSecurityFilter(false);
 			setLargePageSizeFilter(false);
@@ -406,7 +403,11 @@ const Pages = (props) => {
 			setNoIssueFilter(true);
 		}
 
-		if (!filterQueryStringValue.toString().length) {
+		if (
+			!loadQueryStringValue.has('size_total_max') &&
+			!loadQueryStringValue.has('size_total_min') &&
+			!loadQueryStringValue.has('tls_total')
+		) {
 			setLargePageSizeFilter(false);
 			setBrokenSecurityFilter(false);
 			setNoIssueFilter(false);
@@ -418,9 +419,9 @@ const Pages = (props) => {
 		if (
 			props.result.size_total_max !== undefined &&
 			props.result.tls_total !== undefined &&
-			props.result.tls_total === 'true'
+			props.result.tls_total == 'true'
 		) {
-			filterQueryString && filterQueryString.delete('size_total_min');
+			loadQueryString && loadQueryString.delete('size_total_min');
 
 			setNoIssueFilter(true);
 			setBrokenSecurityFilter(false);
@@ -429,8 +430,8 @@ const Pages = (props) => {
 		}
 
 		if (props.result.size_total_min !== undefined) {
-			filterQueryString && filterQueryString.delete('size_total_max');
-			filterQueryString && filterQueryString.delete('tls_total');
+			loadQueryString && loadQueryString.delete('size_total_max');
+			loadQueryString && loadQueryString.delete('tls_total');
 
 			setNoIssueFilter(false);
 			setBrokenSecurityFilter(false);
@@ -440,7 +441,7 @@ const Pages = (props) => {
 
 		if (
 			props.result.tls_total !== undefined &&
-			props.result.tls_total === 'false'
+			props.result.tls_total == 'false'
 		) {
 			setNoIssueFilter(false);
 			setBrokenSecurityFilter(true);
@@ -451,16 +452,14 @@ const Pages = (props) => {
 		if (
 			props.result.size_total_max == undefined &&
 			props.result.size_total_min == undefined &&
-			props.result.tls_total == undefined &&
-			filterQueryString &&
-			!filterQueryString.toString().length
+			props.result.tls_total == undefined
 		) {
 			setLargePageSizeFilter(false);
 			setNoIssueFilter(false);
 			setBrokenSecurityFilter(false);
 			setAllFilter(true);
 		}
-	}, [filterChangeHandler, filterQueryString]);
+	}, [filterChangeHandler, loadQueryString]);
 
 	const SortHandler = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
@@ -494,7 +493,7 @@ const Pages = (props) => {
 			setPagePath(`${removeURLParameter(newPath, 'page')}&`);
 		else setPagePath(`${removeURLParameter(newPath, 'page')}?`);
 
-		Router.push('/dashboard/site/[siteId]/pages', newPath);
+		Router.push(newPath);
 		updatePages();
 	};
 
