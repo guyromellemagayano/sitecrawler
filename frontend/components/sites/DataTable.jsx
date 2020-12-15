@@ -165,14 +165,6 @@ const DataTable = (props) => {
 		fetcher
 	);
 
-	const { data: images, error: imagesError } = useSWR(
-		() =>
-			props && scanObjId
-				? `/api/site/${props.site.id}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
-				: null,
-		fetcher
-	);
-
 	const setLinkErrors = (type) => {
 		let valLength = 0;
 
@@ -248,10 +240,6 @@ const DataTable = (props) => {
 			}
 		}
 
-		if (images && images.count !== undefined) {
-			valLength = valLength + (images.count ? images.count : 0);
-		}
-
 		return valLength;
 	};
 
@@ -276,9 +264,6 @@ const DataTable = (props) => {
 	}
 	{
 		linksError && <Layout>{linksError.message}</Layout>;
-	}
-	{
-		imagesError && <Layout>{imagesError.message}</Layout>;
 	}
 
 	if (!scan || !stats) {
