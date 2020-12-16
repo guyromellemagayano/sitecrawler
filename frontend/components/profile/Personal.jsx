@@ -260,8 +260,10 @@ const ProfileSettingsPersonal = () => {
 												{PersonalLabel[0].description}
 											</p>
 										</div>
+									</div>
+									<div className={`mt-8`}>
 										<div
-											className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
+											className={`grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
 										>
 											<div className={`sm:col-span-6`}>
 												<label
@@ -285,12 +287,7 @@ const ProfileSettingsPersonal = () => {
 													/>
 												</div>
 											</div>
-										</div>
-									</div>
-									<div className={`mt-8 border-t border-gray-300`}>
-										<div
-											className={`grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
-										>
+
 											<div className={`sm:col-span-3`}>
 												<label
 													htmlFor={`first_name`}
