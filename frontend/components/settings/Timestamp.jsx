@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState } from 'react';
 import Cookies from 'js-cookie';
 import fetch from 'node-fetch';
 import fetchJson from 'hooks/fetchJson';
@@ -83,7 +83,7 @@ const TimestampSettings = () => {
 				</TimestampSettingsDiv>
 			) : (
 				<TimestampSettingsDiv
-					className={`max-w-full bg-white shadow-xs rounded-lg`}
+					className={`max-w-full bg-white shadow-xs rounded-lg mb-5`}
 				>
 					<div className={`px-4 py-5 sm:p-6`}>
 						<div>

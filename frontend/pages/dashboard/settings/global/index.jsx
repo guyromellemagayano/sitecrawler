@@ -8,6 +8,7 @@ import SiteFooter from 'components/footer/SiteFooter';
 import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import TimestampSettings from 'components/settings/Timestamp';
+import LargePageSizeSettings from 'components/settings/LargePageSize';
 import useUser from 'hooks/useUser';
 
 const GlobalSettingsDiv = styled.section``;
@@ -79,8 +80,8 @@ const GlobalSettings = () => {
 								</div>
 								<div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
 									<TimestampSettings />
+									<LargePageSizeSettings />
 								</div>
-
 								<div
 									className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
 								>
