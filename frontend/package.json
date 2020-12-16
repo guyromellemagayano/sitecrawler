@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
+  "version": "1.22.5",
   "private": true,
   "scripts": {
     "build-css": "cross-env NODE_ENV=production tailwindcss build css/app.css -o css/styles.css",
@@ -9,7 +9,9 @@
     "dev": "concurrently \"yarn run next-dev\" \"yarn run dev-css\"",
     "next-build": "next build --profile",
     "build": "concurrently \"yarn run next-build\" \"yarn run build-css\"",
-    "start": "next start"
+    "start": "next start",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "browser": {
     "child_process": false
@@ -73,7 +75,15 @@
     "yup": "^0.29.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@storybook/addon-actions": "^6.1.11",
+    "@storybook/addon-essentials": "^6.1.11",
+    "@storybook/addon-links": "^6.1.11",
+    "@storybook/node-logger": "^6.1.11",
+    "@storybook/preset-create-react-app": "^3.1.5",
+    "@storybook/react": "^6.1.11",
     "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.2",
     "babel-plugin-inline-react-svg": "^1.1.1",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.2.0",
