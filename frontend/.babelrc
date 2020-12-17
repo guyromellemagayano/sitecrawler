@@ -14,6 +14,7 @@
   "plugins": [
     "inline-react-svg",
     "add-react-displayname",
+    "react-require",
     [
       "babel-plugin-styled-components",
       {

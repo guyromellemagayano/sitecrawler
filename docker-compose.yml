@@ -37,6 +37,17 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+  frontend-storybook:
+    build:
+      context: ./frontend
+      target: dev
+    image: crawl-app-frontend-storybook
+    command: yarn run storybook
+    ports:
+      - 6006:6006
+    volumes:
+      - node-data:/app/node_modules
+      - ./frontend:/app
   crawler:
     build:
       context: ./go

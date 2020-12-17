@@ -7,9 +7,11 @@ import PropTypes from 'prop-types';
 import SiteFooter from 'components/footer/SiteFooter';
 import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
+import useSWR from 'swr';
+import useUser from 'hooks/useUser';
+import fetchJson from 'hooks/fetchJson';
 import TimestampSettings from 'components/settings/Timestamp';
 import LargePageSizeSettings from 'components/settings/LargePageSize';
-import useUser from 'hooks/useUser';
 
 const GlobalSettingsDiv = styled.section``;
 
@@ -17,18 +19,39 @@ const GlobalSettings = () => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const pageTitle = 'Global Settings';
 
+	const fetchUserSettings = async (endpoint) => {
+		const userSettingsData = await fetchJson(endpoint, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'X-CSRFToken': Cookies.get('csrftoken')
+			}
+		});
+
+		return userSettingsData;
+	};
+
 	const { user: user, userError: userError } = useUser({
 		redirectTo: '/',
 		redirectIfFound: false
 	});
 
+	const { data: userSettings, error: userSettingsError } = useSWR(
+		() => '/api/auth/user/',
+		() => fetchUserSettings(`/api/auth/user/`)
+	);
+
 	{
 		userError && <Layout>{userError.message}</Layout>;
+	}
+	{
+		userSettingsError && <Layout>{userSettingsError.message}</Layout>;
 	}
 
 	return (
 		<Layout>
-			{user ? (
+			{user && userSettings ? (
 				<Fragment>
 					<Head>
 						<title>{pageTitle}</title>
@@ -80,7 +103,7 @@ const GlobalSettings = () => {
 								</div>
 								<div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
 									<TimestampSettings />
-									<LargePageSizeSettings />
+									<LargePageSizeSettings userData={userSettings} />
 								</div>
 								<div
 									className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
