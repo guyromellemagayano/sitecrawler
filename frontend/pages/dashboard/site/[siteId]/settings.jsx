@@ -15,6 +15,7 @@ import useSWR from 'swr';
 import useUser from 'hooks/useUser';
 import SiteInformationSettings from 'components/settings/SiteInformation';
 import DeleteSiteSettings from 'components/settings/DeleteSite';
+import LargePageSizeSettings from 'components/settings/LargePageSize';
 
 const SiteSettingsDiv = styled.section``;
 
@@ -179,7 +180,12 @@ const SiteSettings = () => {
 									</div>
 								</div>
 								<div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
-									<SiteInformationSettings />
+									<SiteInformationSettings
+										siteData={site}
+										queryData={query}
+										settingsLabelData={SettingsLabel}
+									/>
+									{/* <LargePageSizeSettings /> */}
 									<DeleteSiteSettings />
 								</div>
 

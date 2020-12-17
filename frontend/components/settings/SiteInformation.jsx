@@ -1,45 +1,20 @@
 import { Fragment, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { Transition } from '@tailwindui/react';
 import Cookies from 'js-cookie';
 import fetch from 'node-fetch';
-import fetchJson from 'hooks/fetchJson';
-import SettingsLabel from 'public/label/pages/site/settings.json';
 import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
-import useSWR from 'swr';
-import Layout from 'components/Layout';
 import PropTypes from 'prop-types';
 
 const SiteInformationDiv = styled.div``;
 
-const SiteInformation = () => {
+const SiteInformation = (props) => {
 	const [errorMsg, setErrorMsg] = useState('');
 	const [successMsg, setSuccessMsg] = useState('');
 	const [disableInputFields, setDisableInputFields] = useState(0);
 	const [siteName, setSiteName] = useState('');
 	const [siteUrl, setSiteUrl] = useState('');
 	const [showNotificationStatus, setShowNotificationStatus] = useState(false);
-
-	const { query } = useRouter();
-
-	const fetchSiteSettings = async (endpoint) => {
-		const siteSettingsData = await fetchJson(endpoint, {
-			method: 'GET',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			}
-		});
-
-		return siteSettingsData;
-	};
-
-	const { data: site, error: siteError } = useSWR(
-		() => (query.siteId ? `/api/site/${query.siteId}/` : null),
-		() => fetchSiteSettings(`/api/site/${query.siteId}/`)
-	);
 
 	const updateSiteSettings = async (endpoint, formData) => {
 		const response = await fetch(endpoint, {
@@ -84,7 +59,7 @@ const SiteInformation = () => {
 			url: e.currentTarget.site_url.value
 		};
 
-		await updateSiteSettings(`/api/site/${query.siteId}/`, body);
+		await updateSiteSettings(`/api/site/${props.queryData.siteId}/`, body);
 	};
 
 	const handleEditSiteDetails = (e) => {
@@ -98,20 +73,20 @@ const SiteInformation = () => {
 	};
 
 	useEffect(() => {
-		if (site !== '' && site !== undefined) {
-			setSiteName(site.name);
-			setSiteUrl(site.url);
+		if (
+			typeof props.siteData === 'object' &&
+			props.siteData !== undefined &&
+			props.siteData !== null
+		) {
+			setSiteName(props.siteData.name);
+			setSiteUrl(props.siteData.url);
 		}
-	}, [site]);
+	}, [props]);
 
 	useEffect(() => {
 		if (showNotificationStatus === true)
 			setTimeout(() => setShowNotificationStatus(false), 7500);
 	}, [showNotificationStatus]);
-
-	{
-		siteError && <Layout>{siteError.message}</Layout>;
-	}
 
 	return (
 		<Fragment>
@@ -233,6 +208,7 @@ const SiteInformation = () => {
 					</Transition.Child>
 				</div>
 			</Transition>
+
 			<SiteInformationDiv
 				className={`mb-5 max-w-full bg-white shadow-xs rounded-lg`}
 			>
@@ -242,10 +218,10 @@ const SiteInformation = () => {
 							<div>
 								<div>
 									<h3 className={`text-lg leading-6 font-medium text-gray-900`}>
-										{SettingsLabel[2].label}
+										{props.settingsLabelData[2].label}
 									</h3>
 									<p className={`mt-1 text-sm leading-5 text-gray-500`}>
-										{SettingsLabel[3].label}
+										{props.settingsLabelData[3].label}
 									</p>
 								</div>
 								<div
@@ -256,7 +232,7 @@ const SiteInformation = () => {
 											htmlFor={`site_name`}
 											className={`block text-sm font-medium leading-5 text-gray-700`}
 										>
-											{SettingsLabel[4].label}
+											{props.settingsLabelData[4].label}
 										</label>
 										<div className={`mt-1 flex rounded-md shadow-xs-sm`}>
 											<input
@@ -282,7 +258,7 @@ const SiteInformation = () => {
 											htmlFor={`password1`}
 											className={`block text-sm font-medium leading-5 text-gray-700`}
 										>
-											{SettingsLabel[5].label}
+											{props.settingsLabelData[5].label}
 										</label>
 										<div className={`mt-1 flex rounded-md shadow-xs-sm`}>
 											<input
@@ -312,7 +288,7 @@ const SiteInformation = () => {
 											}`}
 											onClick={handleEditSiteDetails}
 										>
-											{SettingsLabel[6].label}
+											{props.settingsLabelData[6].label}
 										</button>
 									</span>
 
@@ -326,7 +302,7 @@ const SiteInformation = () => {
 											}`}
 											onClick={handleEditSiteDetails}
 										>
-											{SettingsLabel[7].label}
+											{props.settingsLabelData[7].label}
 										</button>
 									</span>
 								</div>
@@ -334,13 +310,14 @@ const SiteInformation = () => {
 									<span className={`ml-3 inline-flex rounded-md shadow-xs-sm`}>
 										<button
 											type={`submit`}
+											disabled={disableInputFields == 1 ? false : true}
 											className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
 												disableInputFields == 0
 													? 'opacity-50 bg-green-300 cursor-not-allowed'
 													: 'hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700'
 											}`}
 										>
-											{SettingsLabel[8].label}
+											{props.settingsLabelData[8].label}
 										</button>
 									</span>
 								</div>
@@ -361,7 +338,6 @@ SiteInformation.propTypes = {
 	disableInputFields: PropTypes.func,
 	siteName: PropTypes.string,
 	siteUrl: PropTypes.string,
-	query: PropTypes.func,
 	fetchSiteSettings: PropTypes.func,
 	updateSiteSettings: PropTypes.func,
 	handleSiteUpdate: PropTypes.func,
