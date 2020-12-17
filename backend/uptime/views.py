@@ -1,0 +1,75 @@
+import datetime
+
+from django.db.models import DateTimeField, Avg, Max
+from django.db.models.functions import Trunc
+from django_filters import rest_framework as filters
+from rest_framework import viewsets
+from rest_framework.exceptions import APIException
+from rest_framework.response import Response
+from rest_framework_extensions.mixins import NestedViewSetMixin
+
+from .models import UptimeStat
+from .serializers import UptimeStatSerializer
+
+
+class TooLarge(APIException):
+    status_code = 413
+    default_detail = "Too many stats in range, use smaller range or bigger time step"
+    default_code = "too_large"
+
+
+class UptimeStatFilter(filters.FilterSet):
+    TIME_STEP_MINUTE = "minute"
+    TIME_STEP_HOUR = "hour"
+    TIME_STEP_DAY = "day"
+    TIME_STEP_CHOICES = (
+        (TIME_STEP_MINUTE, "Minute"),
+        (TIME_STEP_HOUR, "Hour"),
+        (TIME_STEP_DAY, "Day"),
+    )
+
+    time_step = filters.ChoiceFilter(choices=TIME_STEP_CHOICES, method="process_time_step", label="Time step")
+
+    def __init__(self, *args, **kwargs):
+        if "created_at__gte" not in kwargs["data"] and "created_at__lte" not in kwargs["data"]:
+            kwargs["data"] = kwargs["data"].copy()
+            kwargs["data"]["created_at__gte"] = (datetime.datetime.utcnow() - datetime.timedelta(days=1)).isoformat()
+        return super().__init__(*args, **kwargs)
+
+    def process_time_step(self, queryset, name, value):
+        queryset = queryset.values().annotate(created_at=Trunc("created_at", value, output_field=DateTimeField()))
+        queryset = queryset.values("created_at")
+        return queryset.annotate(
+            status=Max("status"),
+            http_status=Max("http_status"),
+            response_time=Avg("response_time"),
+            error=Max("error"),
+        )
+
+    class Meta:
+        model = UptimeStat
+        fields = {
+            "created_at": ["gte", "lte"],
+        }
+
+
+class UptimeStatViewSet(
+    NestedViewSetMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = UptimeStat.objects.all()
+    serializer_class = UptimeStatSerializer
+    pagination_class = None
+
+    filterset_class = UptimeStatFilter
+    ordering_fields = ["created_at"]
+    ordering = ["created_at"]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        if queryset.count() > 500:
+            raise TooLarge
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

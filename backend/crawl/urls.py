@@ -4,6 +4,8 @@ from rest_framework_extensions.routers import NestedRouterMixin
 
 from .views import LinkViewSet, PageViewSet, ScanViewSet, SiteViewSet, ImageViewSet, ScriptViewSet, StylesheetViewSet
 
+from uptime.views import UptimeStatViewSet
+
 
 class NestedDefaultRouter(NestedRouterMixin, routers.DefaultRouter):
     pass
@@ -33,6 +35,7 @@ page_router.register(
     parents_query_lookups=["scan__site", "scan", "stylesheet_pages"],
 )
 
+site_router.register(r"uptime", UptimeStatViewSet, basename="uptime", parents_query_lookups=["site"])
 
 urlpatterns = [
     path("", include(router.urls)),

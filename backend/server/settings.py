@@ -158,6 +158,7 @@ INSTALLED_APPS = [
     "crawl",
     "payments",
     "support",
+    "uptime",
 ]
 
 MIDDLEWARE = [
