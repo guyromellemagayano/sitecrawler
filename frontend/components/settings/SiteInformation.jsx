@@ -9,7 +9,6 @@ import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import Layout from 'components/Layout';
-import Link from 'next/link';
 import PropTypes from 'prop-types';
 
 const SiteInformationDiv = styled.div``;
