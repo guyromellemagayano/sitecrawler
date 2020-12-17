@@ -23,7 +23,7 @@ const SiteSettings = () => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [siteName, setSiteName] = useState('');
 
-	const { query } = useRouter();
+	const { query, asPath } = useRouter();
 	const pageTitle = 'Site Settings |';
 
 	const fetchSiteSettings = async (endpoint) => {
@@ -39,32 +39,57 @@ const SiteSettings = () => {
 		return siteSettingsData;
 	};
 
+	const fetchUserSettings = async (endpoint) => {
+		const userSettingsData = await fetchJson(endpoint, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'X-CSRFToken': Cookies.get('csrftoken')
+			}
+		});
+
+		return userSettingsData;
+	};
+
 	const { user: user, userError: userError } = useUser({
 		redirectTo: '/',
 		redirectIfFound: false
 	});
 
-	const { data: site, error: siteError } = useSWR(
+	const { data: siteSettings, error: siteSettingsError } = useSWR(
 		() => (query.siteId ? `/api/site/${query.siteId}/` : null),
 		() => fetchSiteSettings(`/api/site/${query.siteId}/`)
 	);
 
+	const { data: userSettings, error: userSettingsError } = useSWR(
+		() => '/api/auth/user/',
+		() => fetchUserSettings(`/api/auth/user/`)
+	);
+
 	useEffect(() => {
-		if (typeof site === 'object' && site !== undefined && site !== null) {
-			setSiteName(site.name);
+		if (
+			typeof siteSettings === 'object' &&
+			siteSettings !== undefined &&
+			siteSettings !== null
+		) {
+			setSiteName(siteSettings.name);
 		}
-	}, [site]);
+	}, [siteSettings]);
 
 	{
 		userError && <Layout>{userError.message}</Layout>;
 	}
 	{
-		siteError && <Layout>{siteError.message}</Layout>;
+		siteSettingsError && <Layout>{siteSettingsError.message}</Layout>;
+	}
+	{
+		userSettingsError && <Layout>{userSettingsError.message}</Layout>;
 	}
 
 	return (
 		<Layout>
-			{user && site ? (
+			{user && userSettings && siteSettings ? (
 				<Fragment>
 					<Head>
 						<title>
@@ -181,12 +206,20 @@ const SiteSettings = () => {
 								</div>
 								<div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
 									<SiteInformationSettings
-										siteData={site}
+										siteData={siteSettings}
 										queryData={query}
 										settingsLabelData={SettingsLabel}
 									/>
-									{/* <LargePageSizeSettings /> */}
-									<DeleteSiteSettings />
+									<LargePageSizeSettings
+										userData={userSettings}
+										siteData={siteSettings}
+										querySiteId={query.siteId}
+										pathData={asPath}
+									/>
+									<DeleteSiteSettings
+										querySiteId={query.siteId}
+										settingsLabelData={SettingsLabel}
+									/>
 								</div>
 
 								<div

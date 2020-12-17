@@ -10,10 +10,8 @@ import PropTypes from 'prop-types';
 
 const DeleteSiteDiv = styled.div``;
 
-const DeleteSite = () => {
+const DeleteSite = (props) => {
 	const [showModal, setShowModal] = useState(false);
-
-	const { query } = useRouter();
 
 	const deleteSiteSettings = async (endpoint) => {
 		const redirectTo = '/dashboard/sites';
@@ -33,7 +31,7 @@ const DeleteSite = () => {
 	const handleSiteDeletion = async (e) => {
 		e.preventDefault();
 
-		await deleteSiteSettings(`/api/site/${query.siteId}/`);
+		await deleteSiteSettings(`/api/site/${props.querySiteId}/`);
 	};
 
 	return (
@@ -137,7 +135,9 @@ const DeleteSite = () => {
 				</div>
 			</Transition>
 
-			<DeleteSiteDiv className={`max-w-full bg-white shadow-xs rounded-lg`}>
+			<DeleteSiteDiv
+				className={`max-w-full bg-white shadow-xs rounded-lg mb-5`}
+			>
 				<div className={`px-4 py-5 sm:p-6`}>
 					<div>
 						<div>

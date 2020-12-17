@@ -2,39 +2,19 @@ import { Transition } from '@tailwindui/react';
 import { Fragment, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import fetch from 'node-fetch';
-import fetchJson from 'hooks/fetchJson';
 import GlobalLabels from 'public/label/pages/global.json';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
-import useSWR from 'swr';
 
 const LargePageSizeSettingsDiv = styled.div``;
 
-const LargePageSizeSettings = () => {
+const LargePageSizeSettings = (props) => {
 	const [errorMsg, setErrorMsg] = useState('');
 	const [successMsg, setSuccessMsg] = useState('');
 	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState('');
 	const [disableInputFields, setDisableInputFields] = useState(0);
 	const [showNotificationStatus, setShowNotificationStatus] = useState(false);
-
-	const { data: user } = useSWR(
-		() => '/api/auth/user/',
-		() => fetchUserSettings(`/api/auth/user/`)
-	);
-
-	const fetchUserSettings = async (endpoint) => {
-		const userSettingsData = await fetchJson(endpoint, {
-			method: 'GET',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			}
-		});
-
-		return userSettingsData;
-	};
 
 	const updateLargePageSizeSettings = async (endpoint, formData) => {
 		const response = await fetch(endpoint, {
@@ -80,7 +60,12 @@ const LargePageSizeSettings = () => {
 			large_page_size_threshold: e.currentTarget.large_page_size_threshold.value
 		};
 
-		await updateLargePageSizeSettings(`/api/auth/user/`, body);
+		await updateLargePageSizeSettings(
+			props.querySiteId !== undefined && props.querySiteId !== null
+				? `/api/site/${props.querySiteId}/`
+				: `/api/auth/user/`,
+			body
+		);
 	};
 
 	const handleEditLargePageSize = (e) => {
@@ -94,10 +79,22 @@ const LargePageSizeSettings = () => {
 	};
 
 	useEffect(() => {
-		if (typeof user === 'object' && user !== undefined && user !== null) {
-			setLargePageSizeThreshold(user.large_page_size_threshold);
+		if (
+			props.querySiteId !== undefined &&
+			props.siteData.large_page_size_threshold == undefined &&
+			props.siteData.large_page_size_threshold == null
+		) {
+			setLargePageSizeThreshold(props.userData.large_page_size_threshold);
+		} else if (
+			props.querySiteId !== undefined &&
+			props.siteData.large_page_size_threshold !== undefined &&
+			props.siteData.large_page_size_threshold !== null
+		) {
+			setLargePageSizeThreshold(props.siteData.large_page_size_threshold);
+		} else {
+			setLargePageSizeThreshold(props.userData.large_page_size_threshold);
 		}
-	}, [user]);
+	}, [props.siteData, props.userData, props.querySiteId]);
 
 	useEffect(() => {
 		if (showNotificationStatus === true)
@@ -106,7 +103,7 @@ const LargePageSizeSettings = () => {
 
 	return (
 		<Fragment>
-			{!user ? (
+			{!props.userData && !props.siteData ? (
 				<LargePageSizeSettingsDiv className={`max-w-full`}>
 					<Skeleton duration={2} width={320} height={213} />
 				</LargePageSizeSettingsDiv>
@@ -230,6 +227,7 @@ const LargePageSizeSettings = () => {
 							</Transition.Child>
 						</div>
 					</Transition>
+
 					<LargePageSizeSettingsDiv
 						className={`max-w-full bg-white shadow-xs rounded-lg mb-5`}
 					>
