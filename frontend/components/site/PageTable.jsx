@@ -9,7 +9,6 @@ import Skeleton from 'react-loading-skeleton';
 import SiteSuccessIcon from '../icons/SiteSuccessIcon';
 import SiteWarningIcon from '../icons/SiteWarningIcon';
 import SiteDangerIcon from '../icons/SiteDangerIcon';
-import SiteNotApplicableIcon from '../icons/SiteNotApplicableIcon';
 import SiteDangerBadge from '../badges/SiteDangerBadge';
 import SiteSuccessBadge from '../badges/SiteSuccessBadge';
 import SiteWarningBadge from '../badges/SiteWarningBadge';
