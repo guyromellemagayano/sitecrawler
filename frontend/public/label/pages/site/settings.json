@@ -18,13 +18,13 @@
 		"label": "New Site URL Link"
 	},
 	{
-		"label": "Update Site"
+		"label": "Update"
 	},
 	{
-		"label": "Cancel Site Update"
+		"label": "Cancel"
 	},
 	{
-		"label": "Save Changes"
+		"label": "Save"
 	},
 	{
 		"label": "Delete Site"
