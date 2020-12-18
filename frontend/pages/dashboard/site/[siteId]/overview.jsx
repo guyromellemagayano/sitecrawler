@@ -46,6 +46,8 @@ const SitesDashboard = () => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [recrawlable, setRecrawlable] = useState(false);
 	const [crawlFinished, setCrawlFinished] = useState(false);
+
+	const { query } = useRouter();
 	const pageTitle = 'Overview |';
 
 	const { user: user, userError: userError } = useUser({
@@ -53,7 +55,6 @@ const SitesDashboard = () => {
 		redirectIfFound: false
 	});
 
-	const { query } = useRouter();
 	const { data: site, error: siteError } = useSWR(
 		() => query.siteId && `/api/site/${query.siteId}`,
 		fetcher
@@ -95,7 +96,7 @@ const SitesDashboard = () => {
 		if (
 			user &&
 			user.permissions !== undefined &&
-			user.permissions[0] == 'can_start_scan' &&
+			user.permissions.includes('can_start_scan') &&
 			site &&
 			site.verified &&
 			finished
@@ -108,7 +109,7 @@ const SitesDashboard = () => {
 		if (
 			user &&
 			user.permissions !== undefined &&
-			user.permissions[0] == 'can_start_scan' &&
+			user.permissions.includes('can_start_scan') &&
 			site &&
 			site.verified
 		)
