@@ -1,5 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Transition } from '@tailwindui/react';
+import { useRouter } from 'next/router';
 import AddSiteLabel from 'public/label/components/sites/AddSite.json';
 import Cookies from 'js-cookie';
 import fetchJson from 'hooks/fetchJson';
@@ -24,10 +25,12 @@ const fetchSiteData = async (endpoint) => {
 
 const AddSiteDiv = styled.div``;
 
-const AddSite = () => {
+const AddSite = ({ searchKey, onSearchEvent }) => {
 	const [siteLimitCounter, setSiteLimitCounter] = useState(0);
 	const [maxSiteLimit, setMaxSiteLimit] = useState(0);
 	const [showErrorModal, setShowErrorModal] = useState(false);
+
+	const { asPath } = useRouter();
 
 	const { data: sites, error: sitesError } = useSWR(`/api/site/`, () =>
 		fetchSiteData(`/api/site/`)
@@ -188,6 +191,9 @@ const AddSite = () => {
 										id={`email`}
 										className={`form-input block sm:w-full lg:w-64 pl-10 sm:text-sm sm:leading-5`}
 										placeholder={`Search Sites...`}
+										onKeyUp={onSearchEvent}
+										defaultValue={searchKey}
+										autoFocus
 									/>
 								</div>
 							</div>
