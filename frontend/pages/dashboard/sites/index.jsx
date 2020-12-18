@@ -58,8 +58,12 @@ const Sites = (props) => {
 
 	let sitesApiEndpoint =
 		props.page !== undefined
-			? '/api/site/?per_page=' + linksPerPage + `&page=` + props.page
-			: '/api/site/?per_page=' + linksPerPage;
+			? '/api/site/?per_page=' +
+			  linksPerPage +
+			  `&ordering=name` +
+			  `&page=` +
+			  props.page
+			: '/api/site/?per_page=' + linksPerPage + `&ordering=name`;
 	let queryString = '';
 
 	queryString +=
