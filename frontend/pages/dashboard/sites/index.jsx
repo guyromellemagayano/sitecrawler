@@ -122,7 +122,7 @@ const Sites = (props) => {
 			else setPagePath(`${newPath}?`);
 
 			Router.push(newPath);
-			updateLinks();
+			updateSites();
 
 			return true;
 		}
