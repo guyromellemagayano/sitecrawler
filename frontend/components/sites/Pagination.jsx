@@ -88,7 +88,7 @@ const PaginationDiv = styled.nav`
 
 const MyPagination = (props) => {
 	const pageNumbers = [];
-	const values = [20, 25, 50, 100];
+	const values = [3, 25, 50, 100];
 	const currentPage = parseInt(props.page) || 1;
 	const linkNumbers = [];
 	const offset = (currentPage - 1) * props.linksPerPage;

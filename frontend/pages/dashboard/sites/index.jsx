@@ -1,5 +1,6 @@
+import { removeURLParameter } from 'helpers/functions';
 import { Fragment, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 import Cookies from 'js-cookie';
@@ -47,15 +48,95 @@ const SitesDiv = styled.section``;
 const Sites = (props) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [userLoaded, setUserLoaded] = useState(false);
+	const [linksPerPage, setLinksPerPage] = useState(20);
+	const [pagePath, setPagePath] = useState('');
+	const [searchKey, setSearchKey] = useState('');
+
 	const pageTitle = 'Sites';
-	const sitesApiEndpoint =
+
+	const { asPath } = useRouter();
+
+	let sitesApiEndpoint =
 		props.page !== undefined ? '/api/site/?page=' + props.page : '/api/site/';
-	const router = useRouter();
+	let queryString = '';
+
+	queryString +=
+		props.search !== undefined
+			? sitesApiEndpoint.includes('?')
+				? `&search=${props.search}`
+				: `?search=${props.search}`
+			: '';
+
+	sitesApiEndpoint += queryString;
 
 	const { user: user, userError: userError } = useUser({
 		redirectTo: '/',
 		redirectIfFound: false
 	});
+
+	const { data: site, error: siteError, mutate: updateSites } = useSWR(
+		sitesApiEndpoint,
+		fetcher
+	);
+
+	const searchEventHandler = async (e) => {
+		const searchTargetValue = e.target.value;
+
+		if (e.keyCode !== 13) return false;
+
+		let newPath = asPath;
+		newPath = removeURLParameter(newPath, 'search');
+
+		if (!/\S/.test(searchTargetValue)) {
+			setSearchKey(searchTargetValue);
+		} else {
+			if (newPath.includes('?')) newPath += `&search=${searchTargetValue}`;
+			else newPath += `?search=${searchTargetValue}`;
+
+			setSearchKey(searchTargetValue);
+		}
+
+		if (newPath.includes('?')) setPagePath(`${newPath}&`);
+		else setPagePath(`${newPath}?`);
+
+		Router.push(newPath);
+		updateSites();
+	};
+
+	const onItemsPerPageChange = (count) => {
+		const countValue = parseInt(count.target.value);
+
+		let newPath = asPath;
+		newPath = removeURLParameter(newPath, 'page');
+
+		if (countValue) {
+			if (newPath.includes('per_page')) {
+				newPath = removeURLParameter(newPath, 'per_page');
+			}
+			if (newPath.includes('?')) newPath += `&per_page=${countValue}`;
+			else newPath += `?per_page=${countValue}`;
+
+			setLinksPerPage(countValue);
+
+			if (newPath.includes('?')) setPagePath(`${newPath}&`);
+			else setPagePath(`${newPath}?`);
+
+			Router.push(newPath);
+			updateLinks();
+
+			return true;
+		}
+	};
+
+	useEffect(() => {
+		if (removeURLParameter(asPath, 'page').includes('?'))
+			setPagePath(`${removeURLParameter(asPath, 'page')}&`);
+		else setPagePath(`${removeURLParameter(asPath, 'page')}?`);
+
+		if (props.search !== undefined) setSearchKey(props.search);
+
+		if (props.per_page !== undefined) setLinksPerPage(props.per_page);
+	}, []);
 
 	useEffect(() => {
 		if (user && user !== undefined && user.username) {
@@ -63,22 +144,18 @@ const Sites = (props) => {
 		}
 	}, [user]);
 
-	const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher);
-
-	if (user) {
-		LogRocket.identify('epic-design-labs/link-app', {
-			name: user.first_name + ' ' + user.last_name,
-			email: user.email
-		});
-	} else {
-		return null;
-	}
+	user
+		? LogRocket.identify('epic-design-labs/link-app', {
+				name: user.first_name + ' ' + user.last_name,
+				email: user.email
+		  })
+		: null;
 
 	{
-		userError ||
-			(siteError && (
-				<Layout>{userError?.message || siteError?.message}</Layout>
-			));
+		userError && <Layout>{userError.message}</Layout>;
+	}
+	{
+		siteError && <Layout>{siteError.message}</Layout>;
 	}
 
 	return (
@@ -140,7 +217,18 @@ const Sites = (props) => {
 									</div>
 								</div>
 								<div className={`max-w-full mx-auto px-4 py-4 sm:px-6 md:px-8`}>
-									<AddSite />
+									<AddSite
+										searchKey={searchKey}
+										onSearchEvent={searchEventHandler}
+									/>
+									<MyPagination
+										href='/dashboard/sites/'
+										pathName={pagePath}
+										apiEndpoint={sitesApiEndpoint}
+										page={props.page ? props.page : 0}
+										linksPerPage={linksPerPage}
+										onItemsPerPageChange={onItemsPerPageChange}
+									/>
 									<div className={`pb-4`}>
 										<div className={`flex flex-col`}>
 											<div
@@ -183,6 +271,14 @@ const Sites = (props) => {
 											</div>
 										</div>
 									</div>
+									<MyPagination
+										href='/dashboard/sites/'
+										pathName={pagePath}
+										apiEndpoint={sitesApiEndpoint}
+										page={props.page ? props.page : 0}
+										linksPerPage={linksPerPage}
+										onItemsPerPageChange={onItemsPerPageChange}
+									/>
 								</div>
 
 								<div
@@ -201,7 +297,9 @@ const Sites = (props) => {
 
 Sites.getInitialProps = ({ query }) => {
 	return {
-		page: query.page
+		page: query.page,
+		search: query.search,
+		per_page: query.per_page
 	};
 };
 
