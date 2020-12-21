@@ -1,29 +1,29 @@
-import { react } from "react";
-import Head from "next/head";
-import Link from "next/link";
-import styled from "styled-components";
-import PropTypes from "prop-types";
-import { useRouter } from "next/router";
-import Layout from "components/Layout";
-import SiteHead from "components/layout/SiteHead";
+import { react } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
+import Layout from 'components/Layout';
+import SiteHead from 'components/layout/SiteHead';
 
 const NotFoundDiv = styled.div``;
 
 const NotFound = () => {
-  const { query } = useRouter();
+	const { query } = useRouter();
 
-  const pageTitle = "404 Not Found";
+	const pageTitle = '404 Not Found';
 
-  return (
-    <Layout>
-      <Head>
-        <title>{pageTitle}</title>
-        <SiteHead />
-      </Head>
+	return (
+		<Layout>
+			<Head>
+				<title>{pageTitle}</title>
+				<SiteHead />
+			</Head>
 
-      <NotFoundDiv></NotFoundDiv>
-    </Layout>
-  );
+			<NotFoundDiv>Hello World</NotFoundDiv>
+		</Layout>
+	);
 };
 
 export default NotFound;
