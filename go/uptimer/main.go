@@ -9,7 +9,12 @@ func main() {
 
 	log := common.NewLog(env, "https://88a3d4bad4bf4faca9f69b2d10593f98@o432365.ingest.sentry.io/5542113")
 
-	db := common.ConfigureDatabase(log, env)
+	awsSession, err := common.NewAwsSession(env)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db := common.ConfigureDatabase(log, awsSession, env)
 	defer db.Close()
 
 	scheduleService := NewScheduleService(log, db)
