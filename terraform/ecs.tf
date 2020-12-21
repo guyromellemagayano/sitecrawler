@@ -54,6 +54,13 @@ resource "aws_ecs_service" "prod_crawler" {
     security_groups = [aws_security_group.prod_ecs_crawler.id]
     assign_public_ip = true
   }
+
+  lifecycle {
+    ignore_changes = [
+      desired_count,
+      task_definition,
+    ]
+  }
 }
 
 
