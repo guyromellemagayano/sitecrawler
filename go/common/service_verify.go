@@ -1,10 +1,9 @@
-package main
+package common
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
@@ -15,7 +14,7 @@ const metaTagName = "epic-crawl-id"
 
 type VerifyService struct {
 	Database    *database.Database
-	LoadService *common.LoadService
+	LoadService *LoadService
 }
 
 func (v *VerifyService) VerifySite(log *zap.SugaredLogger, siteID int) error {

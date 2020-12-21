@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,103 +54,103 @@ func TestRateLimit(t *testing.T) {
 
 	testCases := []struct {
 		Url                 *url.URL
-		Response            *LoadResponse
+		Response            *common.LoadResponse
 		ExpectedLimitSleep  *time.Duration
 		ExpectedUpdateSleep *time.Duration
 	}{
 		{
 			Url:                 testUrl,
-			Response:            &LoadResponse{StatusCode: 200},
+			Response:            &common.LoadResponse{StatusCode: 200},
 			ExpectedLimitSleep:  nil,
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 testUrl,
-			Response:            &LoadResponse{StatusCode: 200},
+			Response:            &common.LoadResponse{StatusCode: 200},
 			ExpectedLimitSleep:  nil,
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 shopifyUrl1,
-			Response:            &LoadResponse{StatusCode: 200, Header: shopifyHeaders},
+			Response:            &common.LoadResponse{StatusCode: 200, Header: shopifyHeaders},
 			ExpectedLimitSleep:  nil,
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 shopifyUrl1,
-			Response:            &LoadResponse{StatusCode: 200, Header: shopifyHeaders},
+			Response:            &common.LoadResponse{StatusCode: 200, Header: shopifyHeaders},
 			ExpectedLimitSleep:  expectedSeconds(2),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 shopifyUrl2,
-			Response:            &LoadResponse{StatusCode: 200, Header: shopifyHeaders},
+			Response:            &common.LoadResponse{StatusCode: 200, Header: shopifyHeaders},
 			ExpectedLimitSleep:  expectedSeconds(2),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 shopifyUrl1,
-			Response:            &LoadResponse{StatusCode: 430, Header: shopifyHeaders},
+			Response:            &common.LoadResponse{StatusCode: 430, Header: shopifyHeaders},
 			ExpectedLimitSleep:  expectedSeconds(2),
 			ExpectedUpdateSleep: expectedSeconds(5 * 60),
 		}, {
 			Url:                 shopifyUrl1,
-			Response:            &LoadResponse{StatusCode: 430, Header: shopifyHeaders},
+			Response:            &common.LoadResponse{StatusCode: 430, Header: shopifyHeaders},
 			ExpectedLimitSleep:  expectedSeconds(3),
 			ExpectedUpdateSleep: expectedSeconds(5 * 60),
 		}, {
 			Url:                 shopifyUrl1,
-			Response:            &LoadResponse{StatusCode: 200, Header: shopifyHeaders},
+			Response:            &common.LoadResponse{StatusCode: 200, Header: shopifyHeaders},
 			ExpectedLimitSleep:  expectedSeconds(4),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 shopifyUrl2,
-			Response:            &LoadResponse{StatusCode: 200, Header: shopifyHeaders},
+			Response:            &common.LoadResponse{StatusCode: 200, Header: shopifyHeaders},
 			ExpectedLimitSleep:  expectedSeconds(4),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 testUrl,
-			Response:            &LoadResponse{StatusCode: 200},
+			Response:            &common.LoadResponse{StatusCode: 200},
 			ExpectedLimitSleep:  nil,
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 otherUrl1,
-			Response:            &LoadResponse{StatusCode: 429},
+			Response:            &common.LoadResponse{StatusCode: 429},
 			ExpectedLimitSleep:  nil,
 			ExpectedUpdateSleep: expectedSeconds(10),
 		}, {
 			Url:                 otherUrl1,
-			Response:            &LoadResponse{StatusCode: 200},
+			Response:            &common.LoadResponse{StatusCode: 200},
 			ExpectedLimitSleep:  expectedSeconds(1),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 otherUrl2,
-			Response:            &LoadResponse{StatusCode: 200},
+			Response:            &common.LoadResponse{StatusCode: 200},
 			ExpectedLimitSleep:  expectedSeconds(1),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 otherUrl2,
-			Response:            &LoadResponse{StatusCode: 430},
+			Response:            &common.LoadResponse{StatusCode: 430},
 			ExpectedLimitSleep:  expectedSeconds(1),
 			ExpectedUpdateSleep: expectedSeconds(10),
 		}, {
 			Url:                 otherUrl1,
-			Response:            &LoadResponse{StatusCode: 200},
+			Response:            &common.LoadResponse{StatusCode: 200},
 			ExpectedLimitSleep:  expectedSeconds(2),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 otherUrl2,
-			Response:            &LoadResponse{StatusCode: 200},
+			Response:            &common.LoadResponse{StatusCode: 200},
 			ExpectedLimitSleep:  expectedSeconds(2),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 shopifyUrl1,
-			Response:            &LoadResponse{StatusCode: 200, Header: shopifyHeaders},
+			Response:            &common.LoadResponse{StatusCode: 200, Header: shopifyHeaders},
 			ExpectedLimitSleep:  expectedSeconds(4),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 shopifyUrl2,
-			Response:            &LoadResponse{StatusCode: 200, Header: shopifyHeaders},
+			Response:            &common.LoadResponse{StatusCode: 200, Header: shopifyHeaders},
 			ExpectedLimitSleep:  expectedSeconds(4),
 			ExpectedUpdateSleep: nil,
 		}, {
 			Url:                 testUrl,
-			Response:            &LoadResponse{StatusCode: 200},
+			Response:            &common.LoadResponse{StatusCode: 200},
 			ExpectedLimitSleep:  nil,
 			ExpectedUpdateSleep: nil,
 		},

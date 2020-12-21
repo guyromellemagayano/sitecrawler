@@ -3,16 +3,12 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
-	"net/http"
 	_ "net/http/pprof"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 )
 
-const numScanWorkers = 1
-
 func main() {
-	port := common.Env("PORT", "8000")
 	env := common.Env("ENV", "dev")
 
 	log := common.NewLog(env, "https://db4f18a5b0ef4334a81f275e6d443e0b@o432365.ingest.sentry.io/5394447")
@@ -39,9 +35,9 @@ func main() {
 			&common.OccurencesPostprocessor{},
 		},
 	}
-	backendService := &BackendService{Token: common.Secret(awsSession, env, "BACKEND_TOKEN", "")}
-	loadService := &LoadService{}
-	verifyService := &VerifyService{Database: db, LoadService: loadService}
+	backendService := &BackendService{Token: common.Secret(log, awsSession, env, "BACKEND_TOKEN", "")}
+	loadService := &common.LoadService{}
+	verifyService := &common.VerifyService{Database: db, LoadService: loadService}
 	scanService := &ScanService{
 		Database:           db,
 		VerifyService:      verifyService,
@@ -50,15 +46,7 @@ func main() {
 		PostprocessService: postprocessService,
 	}
 
-	http.Handle("/verify", common.WrapEndpoint(log, &VerifyEndpoint{VerifyService: verifyService}))
-
-	for i := 0; i < numScanWorkers; i++ {
-		go ScanWorker(log, scanSqsQueue, scanService)
-	}
-
-	listen := fmt.Sprintf(":%s", port)
-	log.Infof("Listening on: %s", listen)
-	log.Fatal(http.ListenAndServe(listen, nil))
+	ScanWorker(log, scanSqsQueue, scanService)
 }
 
 func findCipherSuite(id uint16) *tls.CipherSuite {

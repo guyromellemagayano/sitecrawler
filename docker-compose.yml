@@ -81,6 +81,17 @@ services:
       - ./go:/app
     # environment:
     #   - LOG_SQL=true
+  verifier:
+    build:
+      context: ./go
+      target: dev
+      args:
+        SERVICE: verifier
+    image: crawl-app-verifier
+    volumes:
+      - ./go:/app
+    # environment:
+    #   - LOG_SQL=true
   db:
     image: postgres:12
     environment:

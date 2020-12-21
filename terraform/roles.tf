@@ -162,7 +162,7 @@ resource "aws_iam_policy" "prod_secrets_policy" {
   "Statement": {
     "Effect": "Allow",
     "Action": "secretsmanager:GetSecretValue",
-    "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:prod/*"
+    "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:production/*"
   }
 }
   EOF

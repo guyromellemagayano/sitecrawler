@@ -55,7 +55,7 @@ STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
 if env == "dev":
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
-    CRAWLER_URL = "http://crawler:3000"
+    VERIFIER_URL = "http://verifier:3000"
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     AWS_ACCESS_KEY_ID = "foo"
     AWS_SECRET_ACCESS_KEY = "var"
@@ -68,7 +68,7 @@ elif env == "staging":
     ALLOWED_HOSTS = ["linkapp.epicsandbox.com", "backend"]
     SESSION_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    CRAWLER_URL = "http://crawler:8000"
+    VERIFIER_URL = "http://verifier:8000"
     EMAIL_HOST = "smtp.mailgun.org"
     EMAIL_PORT = 587
     EMAIL_HOST_USER = "postmaster@mg.epicsandbox.com"
@@ -81,7 +81,7 @@ elif env == "production":
     ALLOWED_HOSTS = ["app.sitecrawler.com", "backend"]
     SESSION_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    CRAWLER_URL = "http://crawler:8000"
+    VERIFIER_URL = "http://verifier:8000"
     EMAIL_HOST = "smtp.mailgun.org"
     EMAIL_PORT = 587
     EMAIL_HOST_USER = "app@mg.sitecrawler.com"

@@ -24,12 +24,17 @@ func main() {
 
 	log := common.NewLog(env, "")
 
-	db := common.ConfigureDatabase(log, env)
+	awsSession, err := common.NewAwsSession(env)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db := common.ConfigureDatabase(log, awsSession, env)
 	defer db.Close()
 
 	postprocessor := &common.OccurencesPostprocessor{}
 
-	err := db.SiteDao.ForEach(func(site *database.CrawlSite) error {
+	err = db.SiteDao.ForEach(func(site *database.CrawlSite) error {
 		if site.ID < firstSiteToProces {
 			return nil
 		}

@@ -6,7 +6,7 @@ services:
     ports:
       - "8001:8000"
     links:
-      - crawler
+      - verifier
     environment:
       ENV: production
     logging:
@@ -21,8 +21,8 @@ services:
     ports:
       - "8000:3000"
     mem_limit: 128M
-  crawler:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
+  verifier:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-verifier
     restart: always
     environment:
       ENV: production

@@ -11,7 +11,7 @@ import (
 )
 
 func ConfigureDatabase(log *zap.SugaredLogger, awsSession *session.Session, env string) *database.Database {
-	dbPass := Secret(awsSession, env, "DB_PASS", "crawldev")
+	dbPass := Secret(log, awsSession, env, "DB_PASS", "crawldev")
 	var pgOptions *pg.Options
 	if env == "production" {
 		pgOptions = &pg.Options{

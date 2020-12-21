@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"go.uber.org/zap"
 )
 
 type VerifyEndpoint struct {
-	VerifyService *VerifyService
+	VerifyService *common.VerifyService
 }
 
 type VerifyRequest struct {
