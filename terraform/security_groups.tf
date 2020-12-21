@@ -82,8 +82,20 @@ resource "aws_security_group" "production_db" {
 		from_port = 5432
 		to_port = 5432
 		protocol = "tcp"
-		security_groups = [aws_security_group.production.id]
+		security_groups = [aws_security_group.production.id, aws_security_group.prod_ecs_crawler.id]
 	}
+
+	egress {
+		from_port   = 0
+		to_port     = 0
+		protocol    = "-1"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+}
+
+resource "aws_security_group" "prod_ecs_crawler" {
+	name        = "prod_ecs_crawler_security_group"
+	description = "Allow outgoing traffic"
 
 	egress {
 		from_port   = 0

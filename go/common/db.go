@@ -3,14 +3,15 @@ package common
 import (
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/go-pg/pg/v9"
 	"go.uber.org/zap"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 )
 
-func ConfigureDatabase(log *zap.SugaredLogger, env string) *database.Database {
-	dbPass := Env("DB_PASS", "crawldev")
+func ConfigureDatabase(log *zap.SugaredLogger, awsSession *session.Session, env string) *database.Database {
+	dbPass := Secret(awsSession, env, "DB_PASS", "crawldev")
 	var pgOptions *pg.Options
 	if env == "production" {
 		pgOptions = &pg.Options{

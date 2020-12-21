@@ -9,7 +9,7 @@ import (
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 )
 
-const numScanWorkers = 4
+const numScanWorkers = 1
 
 func main() {
 	port := common.Env("PORT", "8000")
@@ -17,13 +17,13 @@ func main() {
 
 	log := common.NewLog(env, "https://db4f18a5b0ef4334a81f275e6d443e0b@o432365.ingest.sentry.io/5394447")
 
-	db := common.ConfigureDatabase(log, env)
-	defer db.Close()
-
 	awsSession, err := common.NewAwsSession(env)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	db := common.ConfigureDatabase(log, awsSession, env)
+	defer db.Close()
 
 	scanQueueName := fmt.Sprintf("linkapp-%s-scan", env)
 	scanSqsQueue, err := common.NewSQSService(awsSession, scanQueueName)
@@ -39,7 +39,7 @@ func main() {
 			&common.OccurencesPostprocessor{},
 		},
 	}
-	backendService := &BackendService{Token: common.Env("BACKEND_TOKEN", "")}
+	backendService := &BackendService{Token: common.Secret(awsSession, env, "BACKEND_TOKEN", "")}
 	loadService := &LoadService{}
 	verifyService := &VerifyService{Database: db, LoadService: loadService}
 	scanService := &ScanService{
