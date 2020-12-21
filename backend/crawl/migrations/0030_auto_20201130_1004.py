@@ -12,15 +12,18 @@ def remove_permissions(apps, schema_editor):
     # remove permissions from previous migrations
     ContentType = apps.get_model("contenttypes.ContentType")
     Permission = apps.get_model("auth.Permission")
-    content_type = ContentType.objects.get(
-        model="site",
-        app_label="crawl",
-    )
-    # This cascades to Group
-    Permission.objects.filter(
-        content_type=content_type,
-        codename__in=("can_see_images", "can_see_page_size", "can_see_seo"),
-    ).delete()
+    try:
+        content_type = ContentType.objects.get(
+            model="site",
+            app_label="crawl",
+        )
+        # This cascades to Group
+        Permission.objects.filter(
+            content_type=content_type,
+            codename__in=("can_see_images", "can_see_page_size", "can_see_seo"),
+        ).delete()
+    except Exception:
+        pass
 
 
 class Migration(migrations.Migration):
