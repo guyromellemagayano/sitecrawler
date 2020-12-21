@@ -57,9 +57,7 @@ const Sites = (props) => {
 	const { asPath } = useRouter();
 
 	let sitesApiEndpoint =
-		props.page !== undefined
-			? '/api/site/?per_page=' + linksPerPage + `&page=` + props.page
-			: '/api/site/?per_page=' + linksPerPage;
+		props.page !== undefined ? '/api/site/?page=' + props.page : '/api/site/';
 	let queryString = '';
 
 	queryString +=
@@ -88,7 +86,6 @@ const Sites = (props) => {
 
 		let newPath = asPath;
 		newPath = removeURLParameter(newPath, 'search');
-		newPath = removeURLParameter(newPath, 'page');
 
 		if (!/\S/.test(searchTargetValue)) {
 			setSearchKey(searchTargetValue);
