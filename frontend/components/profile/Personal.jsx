@@ -402,6 +402,7 @@ const ProfileSettingsPersonal = () => {
 											>
 												<button
 													type={`submit`}
+													disabled={disableInputFields == 1 ? false : true}
 													className={`inline-flex xs:w-full justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
 														disableInputFields == 0
 															? 'opacity-50 bg-green-300 cursor-not-allowed'

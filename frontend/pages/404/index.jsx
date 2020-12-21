@@ -21,7 +21,7 @@ const NotFound = () => {
 				<SiteHead />
 			</Head>
 
-			<NotFoundDiv>Hello World</NotFoundDiv>
+			<NotFoundDiv>Not Found</NotFoundDiv>
 		</Layout>
 	);
 };
