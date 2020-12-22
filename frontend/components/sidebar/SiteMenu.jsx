@@ -127,14 +127,22 @@ const SiteMenu = (props) => {
 		siteSelectOnLoad();
 	}, [site]);
 
+	{
+		userError && <Layout>{userError.message}</Layout>;
+	}
+	{
+		statsError && <Layout>{statsError.message}</Layout>;
+	}
+	{
+		scanError && <Layout>{scanError.message}</Layout>;
+	}
+	{
+		siteError && <Layout>{siteError.message}</Layout>;
+	}
+
 	return (
 		<Fragment>
-			{userError && <Layout>{userError.message}</Layout>}
-			{statsError && <Layout>{statsError.message}</Layout>}
-			{scanError && <Layout>{scanError.message}</Layout>}
-			{siteError && <Layout>{siteError.message}</Layout>}
-
-			{!user || !scan || !stats || !site || selectedSite == undefined ? (
+			{!user && !scan && !stats && !site && selectedSite == undefined ? (
 				<SiteMenuDiv className={`mt-5 flex-1 px-2 bg-gray-1000`}>
 					{[...Array(5)].map((val, index) => {
 						return (
@@ -307,42 +315,54 @@ const SiteMenu = (props) => {
 																		<span
 																			className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}
 																		>
-																			{stats.num_links}
+																			{stats && stats.num_links
+																				? stats.num_links
+																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/pages' && (
 																		<span
 																			className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}
 																		>
-																			{stats.num_pages}
+																			{stats && stats.num_pages
+																				? stats.num_pages
+																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/seo' && (
 																		<span
 																			className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}
 																		>
-																			{stats.num_pages}
+																			{stats && stats.num_pages
+																				? stats.num_pages
+																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/images' && (
 																		<span
 																			className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}
 																		>
-																			{stats.num_images}
+																			{stats && stats.num_images
+																				? stats.num_images
+																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/stylesheets' && (
 																		<span
 																			className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}
 																		>
-																			{stats.num_stylesheets}
+																			{stats && stats.num_stylesheets
+																				? stats.num_stylesheets
+																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/scripts' && (
 																		<span
 																			className={`ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150`}
 																		>
-																			{stats.num_scripts}
+																			{stats && stats.num_scripts
+																				? stats.num_scripts
+																				: ''}
 																		</span>
 																	)}
 																</a>
@@ -440,6 +460,7 @@ const SiteMenu = (props) => {
 																				<span
 																					aria-label='Online'
 																					className={`${
+																						selectedSite &&
 																						selectedSite.verified
 																							? 'bg-green-400'
 																							: 'bg-red-400'
@@ -448,7 +469,9 @@ const SiteMenu = (props) => {
 																				<span
 																					className={`block truncate text-gray-600`}
 																				>
-																					{selectedSite.name}
+																					{selectedSite && selectedSite.name
+																						? selectedSite.name
+																						: ''}
 																				</span>
 																			</div>
 																			<span
@@ -490,59 +513,61 @@ const SiteMenu = (props) => {
 																				aria-activedescendant='listbox-item-3'
 																				className={`max-h-xs py-2 rounded-md text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}
 																			>
-																				{site.results.map((val, key) => {
-																					return (
-																						<li
-																							key={key}
-																							onClick={() =>
-																								dropdownHandler(
-																									val.id,
-																									val.verified
-																								)
-																							}
-																							id={`listbox-item-${key}`}
-																							role='option'
-																							className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
-																								val.verified
-																									? 'cursor-pointer'
-																									: 'cursor-not-allowed'
-																							} select-none relative py-2 pl-3 pr-9`}
-																						>
-																							<div
-																								className={`flex items-center space-x-3`}
-																							>
-																								<span
-																									aria-label='Online'
-																									className={`${
+																				{site &&
+																					site.results.map((val, key) => {
+																						return (
+																							<li
+																								key={key}
+																								onClick={() =>
+																									dropdownHandler(
+																										val.id,
 																										val.verified
-																											? 'bg-green-400'
-																											: 'bg-red-400'
-																									} flex-shrink-0 inline-block h-2 w-2 rounded-full`}
-																								></span>
-																								<span
-																									className={`font-normal block truncate`}
+																									)
+																								}
+																								id={`listbox-item-${key}`}
+																								role='option'
+																								className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
+																									val.verified
+																										? 'cursor-pointer'
+																										: 'cursor-not-allowed'
+																								} select-none relative py-2 pl-3 pr-9`}
+																							>
+																								<div
+																									className={`flex items-center space-x-3`}
 																								>
-																									{val.name}
-																								</span>
-																							</div>
-																							{selectedSite.id == val.id ? (
-																								<span className='hover:text-white text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4'>
-																									<svg
-																										className='h-5 w-5'
-																										viewBox='0 0 20 20'
-																										fill='currentColor'
+																									<span
+																										aria-label='Online'
+																										className={`${
+																											val.verified
+																												? 'bg-green-400'
+																												: 'bg-red-400'
+																										} flex-shrink-0 inline-block h-2 w-2 rounded-full`}
+																									></span>
+																									<span
+																										className={`font-normal block truncate`}
 																									>
-																										<path
-																											fillRule='evenodd'
-																											d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
-																											clipRule='evenodd'
-																										/>
-																									</svg>
-																								</span>
-																							) : null}
-																						</li>
-																					);
-																				})}
+																										{val.name}
+																									</span>
+																								</div>
+																								{selectedSite &&
+																								selectedSite.id == val.id ? (
+																									<span className='hover:text-white text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4'>
+																										<svg
+																											className='h-5 w-5'
+																											viewBox='0 0 20 20'
+																											fill='currentColor'
+																										>
+																											<path
+																												fillRule='evenodd'
+																												d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+																												clipRule='evenodd'
+																											/>
+																										</svg>
+																									</span>
+																								) : null}
+																							</li>
+																						);
+																					})}
 																			</ul>
 																			<span
 																				className={`flex m-2 justify-center shadow-sm rounded-md`}

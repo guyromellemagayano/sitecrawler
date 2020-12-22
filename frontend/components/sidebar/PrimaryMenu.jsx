@@ -82,14 +82,16 @@ const PrimaryMenu = () => {
 		siteSelectOnLoad();
 	}, [site]);
 
+	{
+		userError && <Layout>{userError.message}</Layout>;
+	}
+	{
+		siteError && <Layout>{siteError.message}</Layout>;
+	}
+
 	return (
 		<Fragment>
-			{userError ||
-				(siteError && (
-					<Layout>{userError.message || siteError.message}</Layout>
-				))}
-
-			{!user || !site ? (
+			{!user && !site ? (
 				<PrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-gray-1000`}>
 					{[...Array(3)].map((val, index) => {
 						return (
