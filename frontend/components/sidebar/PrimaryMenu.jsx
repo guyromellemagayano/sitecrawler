@@ -56,7 +56,7 @@ const PrimaryMenu = () => {
 
 	const { data: site, error: siteError } = useSWR('/api/site/', fetcher);
 
-	const siteSelectOnLoad = (siteId = query.siteId) => {
+	const siteSelectOnLoad = (siteId) => {
 		if (site == undefined) return false;
 
 		for (let i = 0; i < site.results.length; i++) {
@@ -79,8 +79,8 @@ const PrimaryMenu = () => {
 	};
 
 	useEffect(() => {
-		siteSelectOnLoad();
-	}, [site]);
+		siteSelectOnLoad(query.siteId);
+	}, [site, query]);
 
 	{
 		userError && <Layout>{userError.message}</Layout>;

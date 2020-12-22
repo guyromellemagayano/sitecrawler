@@ -94,7 +94,7 @@ const SiteMenu = (props) => {
 
 	const { data: site, error: siteError } = useSWR(sitesApiEndpoint, fetcher);
 
-	const siteSelectOnLoad = (siteId = query.siteId) => {
+	const siteSelectOnLoad = (siteId) => {
 		if (site == undefined) return false;
 
 		for (let i = 0; i < site.results.length; i++) {
@@ -124,8 +124,8 @@ const SiteMenu = (props) => {
 	}, [stats]);
 
 	useEffect(() => {
-		siteSelectOnLoad();
-	}, [site]);
+		siteSelectOnLoad(query.siteId);
+	}, [site, query]);
 
 	{
 		userError && <Layout>{userError.message}</Layout>;
