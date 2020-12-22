@@ -67,12 +67,17 @@ func (t *TlsCache) Extract(db *database.Database, TLS *tls.ConnectionState, requ
 		return t.status(tl), &tl.ID, nil
 	}
 
+	dnsNames := certificate.DNSNames
+	if dnsNames == nil {
+		dnsNames = []string{}
+	}
+
 	tl := &database.CrawlTl{
 		NotBefore:          certificate.NotBefore,
 		NotAfter:           certificate.NotAfter,
 		CommonName:         key.CommonName,
 		Organization:       key.Organization,
-		DnsNames:           certificate.DNSNames,
+		DnsNames:           dnsNames,
 		IssuerOrganization: key.IssuerOrganization,
 		IssuerCn:           key.IssuerCn,
 		CipherSuite:        key.CipherSuite,

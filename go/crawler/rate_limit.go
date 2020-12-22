@@ -4,6 +4,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 )
 
 const (
@@ -41,7 +43,7 @@ func (rl *RateLimit) Limit(url *url.URL) {
 	rl.lastRequestTime[key] = now()
 }
 
-func (rl *RateLimit) Update(url *url.URL, resp *LoadResponse) {
+func (rl *RateLimit) Update(url *url.URL, resp *common.LoadResponse) {
 	key := rl.key(url)
 	if isShopify(resp) {
 		if _, ok := rl.limits[key]; !ok {
@@ -64,7 +66,7 @@ func (rl *RateLimit) key(url *url.URL) string {
 	return url.Host
 }
 
-func isShopify(resp *LoadResponse) bool {
+func isShopify(resp *common.LoadResponse) bool {
 	for _, cookieHeader := range resp.Header["Set-Cookie"] {
 		if strings.Contains(cookieHeader, "shopify") {
 			return true

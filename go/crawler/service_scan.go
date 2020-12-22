@@ -32,8 +32,8 @@ const (
 
 type ScanService struct {
 	Database           *database.Database
-	VerifyService      *VerifyService
-	LoadService        *LoadService
+	VerifyService      *common.VerifyService
+	LoadService        *common.LoadService
 	BackendService     *BackendService
 	PostprocessService *PostprocessService
 }

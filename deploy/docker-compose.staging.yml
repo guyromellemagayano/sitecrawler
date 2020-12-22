@@ -31,7 +31,7 @@ services:
     restart: always
     links:
       - db
-      - crawler
+      - verifier
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=(Host(`linkapp.epicsandbox.com`) && (PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)))"
@@ -67,6 +67,19 @@ services:
         max-size: "1M"
         max-file: "3"
     mem_limit: 256M
+  verifier:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-verifier
+    restart: always
+    links:
+      - db
+    environment:
+      ENV: staging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1M"
+        max-file: "3"
+    mem_limit: 64M
   scheduler:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
     restart: always

@@ -23,3 +23,7 @@ resource "aws_ecr_repository" "crawl-app-uptimer" {
   image_tag_mutability = "MUTABLE"
 }
 
+resource "aws_ecr_repository" "crawl-app-verifier" {
+  name                 = "crawl-app-verifier"
+  image_tag_mutability = "MUTABLE"
+}

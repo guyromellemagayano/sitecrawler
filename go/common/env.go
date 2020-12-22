@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
+	"go.uber.org/zap"
 )
 
 func Env(name, def string) string {
@@ -16,16 +17,19 @@ func Env(name, def string) string {
 	return def
 }
 
-func Secret(awsSession *session.Session, env, name, def string) string {
+func Secret(log *zap.SugaredLogger, awsSession *session.Session, env, name, def string) string {
 	envSecret := Env(name, "")
 	if envSecret != "" {
 		return envSecret
 	}
 
 	svc := secretsmanager.New(awsSession)
-	result, _ := svc.GetSecretValue(&secretsmanager.GetSecretValueInput{
+	result, err := svc.GetSecretValue(&secretsmanager.GetSecretValueInput{
 		SecretId: aws.String(fmt.Sprintf("%s/%s", env, name)),
 	})
+	if err != nil {
+		log.Warnf("Could not get secret value, using default: %v", err)
+	}
 	if result != nil && result.SecretString != nil && *result.SecretString != "" {
 		return *result.SecretString
 	}
