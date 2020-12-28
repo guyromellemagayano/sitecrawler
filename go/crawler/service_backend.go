@@ -9,11 +9,19 @@ import (
 )
 
 type BackendService struct {
+	Env   string
 	Token string
 }
 
+func (b BackendService) baseUrl() string {
+	if b.Env == "production" {
+		return "https://app.sitecrawler.com/"
+	}
+	return "http://backend:8000"
+}
+
 func (b BackendService) SendFinishedEmail(scan *database.CrawlScan) error {
-	url := fmt.Sprintf("http://backend:8000/api/site/%d/scan/%d/send_finished_email/", scan.SiteID, scan.ID)
+	url := fmt.Sprintf("%s/api/site/%d/scan/%d/send_finished_email/", b.baseUrl(), scan.SiteID, scan.ID)
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
 		return err
