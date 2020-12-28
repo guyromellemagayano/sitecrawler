@@ -63,4 +63,82 @@ resource "aws_ecs_service" "prod_crawler" {
   }
 }
 
+resource "aws_appautoscaling_target" "ecs_prod_crawler_target" {
+  max_capacity       = 4
+  min_capacity       = 1
+  resource_id        = "service/${aws_ecs_cluster.prod_fargate.name}/${aws_ecs_service.prod_crawler.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
 
+resource "aws_appautoscaling_policy" "ecs_prod_crawler_upscale_policy" {
+  name               = "ecs_prod_crawler_upscale_policy"
+  policy_type        = "StepScaling"
+  resource_id        = aws_appautoscaling_target.ecs_prod_crawler_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_prod_crawler_target.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_prod_crawler_target.service_namespace
+
+  step_scaling_policy_configuration {
+    adjustment_type         = "ChangeInCapacity"
+    cooldown                = 3*60
+    metric_aggregation_type = "Maximum"
+
+    step_adjustment {
+      metric_interval_lower_bound = 0
+      scaling_adjustment = 1
+    }
+  }
+}
+resource "aws_cloudwatch_metric_alarm" "ecs_prod_crawler_upscale_alarm" {
+  alarm_name          = "ecs_prod_crawler_upscale_alarm"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = "60"
+  statistic           = "Maximum"
+  threshold           = "0.5"
+  evaluation_periods  = "2"
+  datapoints_to_alarm = "2"
+
+  dimensions = {
+    QueueName = "linkapp-production-scan"
+  }
+
+  alarm_actions     = [aws_appautoscaling_policy.ecs_prod_crawler_upscale_policy.arn]
+}
+
+resource "aws_appautoscaling_policy" "ecs_prod_crawler_downscale_policy" {
+  name               = "ecs_prod_crawler_downscale_policy"
+  policy_type        = "StepScaling"
+  resource_id        = aws_appautoscaling_target.ecs_prod_crawler_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_prod_crawler_target.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_prod_crawler_target.service_namespace
+
+  step_scaling_policy_configuration {
+    adjustment_type         = "ChangeInCapacity"
+    cooldown                = 3*60
+    metric_aggregation_type = "Maximum"
+
+    step_adjustment {
+      metric_interval_lower_bound = 0
+      scaling_adjustment = -1
+    }
+  }
+}
+resource "aws_cloudwatch_metric_alarm" "ecs_prod_crawler_downscale_alarm" {
+  alarm_name          = "ecs_prod_crawler_downscale_alarm"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  metric_name         = "NumberOfEmptyReceives"
+  namespace           = "AWS/SQS"
+  period              = "60"
+  statistic           = "Maximum"
+  threshold           = "0.5"
+  evaluation_periods  = "5"
+  datapoints_to_alarm = "5"
+
+  dimensions = {
+    QueueName = "linkapp-production-scan"
+  }
+
+  alarm_actions     = [aws_appautoscaling_policy.ecs_prod_crawler_downscale_policy.arn]
+}
