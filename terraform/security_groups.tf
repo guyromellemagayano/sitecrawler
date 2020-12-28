@@ -1,3 +1,4 @@
+// for staging node
 resource "aws_security_group" "node_security_group" {
 	name        = "node_security_group"
 	description = "Allow required traffic"
@@ -26,6 +27,7 @@ resource "aws_security_group" "node_security_group" {
 	}
 }
 
+// for production nodes
 resource "aws_security_group" "production" {
 	name        = "production_security_group"
 	description = "Allow outgoing traffic"
