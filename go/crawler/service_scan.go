@@ -209,13 +209,13 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 
 	// check crawl limits
 	if depth > depthLimit {
-		log.Errorw("Depth limit hit",
+		log.Warnw("Depth limit hit",
 			"link_id", link.ID,
 		)
 		return link.ID, nil
 	}
 	if s.linkCache.PageCount > pageLimit {
-		log.Errorw("Page limit hit",
+		log.Warnw("Page limit hit",
 			"link_id", link.ID,
 		)
 		return link.ID, nil
@@ -472,7 +472,7 @@ func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, db *database.Datab
 			log.Errorf("Could not add to fifo: %v", err)
 		}
 	} else {
-		log.Errorw("Total limit hit",
+		log.Warnw("Total limit hit",
 			"url", fe.Url,
 		)
 	}
