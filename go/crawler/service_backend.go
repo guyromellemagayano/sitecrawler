@@ -15,7 +15,7 @@ type BackendService struct {
 
 func (b BackendService) baseUrl() string {
 	if b.Env == "production" {
-		return "https://app.sitecrawler.com/"
+		return "https://app.sitecrawler.com"
 	}
 	return "http://backend:8000"
 }
@@ -32,7 +32,7 @@ func (b BackendService) SendFinishedEmail(scan *database.CrawlScan) error {
 		return err
 	}
 	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
+		return errors.Errorf("Post %q: %v", url, resp.Status)
 	}
 	return nil
 }
