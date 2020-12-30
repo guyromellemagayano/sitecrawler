@@ -159,6 +159,7 @@ INSTALLED_APPS = [
     "payments",
     "support",
     "uptime",
+    "signup",
 ]
 
 MIDDLEWARE = [

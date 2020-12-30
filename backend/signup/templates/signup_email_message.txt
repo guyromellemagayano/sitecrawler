@@ -1,0 +1,9 @@
+Hello {{signup.first_name}},
+
+You've signed up for {{site.name}}.
+
+Visit your dashboard to continue with setup:
+https://{{site.domain}}/signup/{{signup.token}}/
+
+Thanks,
+{{site.name}}
