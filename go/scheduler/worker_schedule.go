@@ -47,6 +47,9 @@ func ScheduleWorker(logger *zap.SugaredLogger, db *database.Database, scanServic
 					log.Errorf("could not get latest scan for site: %v", err)
 					continue
 				}
+				if latestScan.FinishedAt == nil {
+					continue
+				}
 				nextScan := schedule.Next(latestScan.StartedAt)
 				if time.Now().After(nextScan) {
 					log.Infof("Scheduling scan for %v", site.Url)

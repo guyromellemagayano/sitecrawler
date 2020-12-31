@@ -3,7 +3,7 @@ resource "random_password" "production_db_password" {
 }
 
 resource "aws_db_instance" "production" {
-  allocated_storage    = 20
+  allocated_storage    = 200
   storage_type         = "gp2"
   engine               = "postgres"
   engine_version       = "12.3"
@@ -13,6 +13,7 @@ resource "aws_db_instance" "production" {
   password             = random_password.production_db_password.result
   backup_retention_period = 30
   vpc_security_group_ids = [aws_security_group.production_db.id]
+  apply_immediately = true
   tags = {
     Env = "production"
   }
