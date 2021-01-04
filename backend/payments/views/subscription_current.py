@@ -24,10 +24,18 @@ class SubscriptionCurrentView(APIView):
         if not hasattr(request.user, "user_subscription"):
             return Response(self._none())
 
-        stripe.Subscription.delete(request.user.user_subscription.stripe_id)
-        request.user.user_subscription.delete()
+        user_subscription = request.user.user_subscription
 
-        return Response(self._none())
+        stripe_subscription = stripe.Subscription.modify(
+            user_subscription.stripe_id,
+            cancel_at_period_end=True,
+        )
+
+        user_subscription.set_cancel_at_timestamp(stripe_subscription.cancel_at)
+        user_subscription.save()
+
+        serializer = UserSubscriptionSerializer(user_subscription)
+        return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = UserSubscriptionSerializer(data=request.data)
@@ -48,6 +56,7 @@ class SubscriptionCurrentView(APIView):
                 stripe.Subscription.modify(
                     request.user.user_subscription.stripe_id,
                     cancel_at_period_end=False,
+                    proration_behavior="always_invoice",
                     items=[{"id": stripe_subscription["items"]["data"][0].id, "price": subscription.price_id}],
                 )
                 user_subscription = request.user.user_subscription

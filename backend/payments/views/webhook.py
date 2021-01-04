@@ -47,7 +47,7 @@ class WebhookView(APIView):
                     user_subscription = UserSubscription.objects.get(stripe_id=subscription)
                     self._cancel_subscription(user_subscription.user)
                     user_subscription.delete()
-                    return
+                    return Response()
                 except UserSubscription.DoesNotExist:
                     pass
             customer_id = event.get("data", {}).get("object", {}).get("customer")
@@ -66,7 +66,10 @@ class WebhookView(APIView):
                 user_subscription = UserSubscription.objects.get(stripe_id=subscription)
             except UserSubscription.DoesNotExist:
                 return Response()
-            if event.get("data", {}).get("object", {}).get("canceled_at"):
+            if event.get("data", {}).get("object", {}).get("cancel_at"):
+                user_subscription.set_cancel_at_timestamp(event.get("data", {}).get("object", {}).get("cancel_at"))
+                user_subscription.save()
+            elif event.get("data", {}).get("object", {}).get("canceled_at"):
                 self._cancel_subscription(user_subscription.user)
                 user_subscription.delete()
             elif user_subscription.status == UserSubscription.STATUS_PAID:

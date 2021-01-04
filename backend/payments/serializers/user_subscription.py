@@ -10,4 +10,5 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserSubscription
-        fields = ["id", "status"]
+        read_only_fields = ["status", "cancel_at"]
+        fields = read_only_fields + ["id"]
