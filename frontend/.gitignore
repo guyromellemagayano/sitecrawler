@@ -74,8 +74,8 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file	
-.env	
+# dotenv environment variables file
+.env
 .env.test
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -118,3 +118,6 @@ dist
 
 # Visual Studio Code
 .vscode
+
+# Stylesheets
+.css
