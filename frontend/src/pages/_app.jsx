@@ -7,6 +7,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { loadStripe } from '@stripe/stripe-js';
 import { SWRConfig } from 'swr';
+import PropTypes from 'prop-types';
 
 // Hooks
 import fetchJson from 'src/hooks/fetchJson';
@@ -31,6 +32,11 @@ const App = ({ Component, pageProps }) => {
 			</Elements>
 		</SWRConfig>
 	);
+};
+
+App.propTypes = {
+	Component: PropTypes.element,
+	pageProps: PropTypes.node
 };
 
 export default App;
