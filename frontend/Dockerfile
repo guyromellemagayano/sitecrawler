@@ -3,8 +3,8 @@ FROM node:14 AS dev
 RUN mkdir /app
 WORKDIR /app
 
-COPY package*.json ./
-COPY yarn.lock ./
+COPY ./src/package*.json ./
+COPY ./src/yarn.lock ./
 RUN yarn install
 
 COPY . .
