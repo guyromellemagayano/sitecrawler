@@ -27,9 +27,10 @@ resource "aws_cloudwatch_metric_alarm" "alert_request_latency" {
   metric_name         = "TargetResponseTime"
   namespace           = "AWS/ApplicationELB"
   period              = "3600"
-  extended_statistic  = "p95"
+  extended_statistic  = "p90"
   threshold           = "5"
-  evaluation_periods  = "1"
+  evaluation_periods  = "2"
+  datapoints_to_alarm = "2"
 
   dimensions = {
     LoadBalancer = aws_lb.production.arn_suffix
@@ -45,7 +46,7 @@ resource "aws_cloudwatch_metric_alarm" "alert_db_read" {
   metric_name         = "ReadLatency"
   namespace           = "AWS/RDS"
   period              = "3600"
-  extended_statistic  = "p95"
+  extended_statistic  = "p90"
   threshold           = "0.1"
   evaluation_periods  = "1"
 
@@ -63,7 +64,7 @@ resource "aws_cloudwatch_metric_alarm" "alert_db_write" {
   metric_name         = "WriteLatency"
   namespace           = "AWS/RDS"
   period              = "3600"
-  extended_statistic  = "p95"
+  extended_statistic  = "p90"
   threshold           = "0.1"
   evaluation_periods  = "1"
 
