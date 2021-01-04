@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { Fragment } from 'react';
 import AppLogo from 'components/logo/AppLogo';
 import Link from 'next/link';
 import PrimaryMenu from 'components/sidebar/PrimaryMenu';
@@ -12,26 +12,13 @@ import useUser from 'hooks/useUser';
 const MainSidebarDiv = styled.aside``;
 
 const MainSidebar = (props) => {
-	const [windowSiteLocation, setWindowSiteLocation] = useState(false);
-	const [windowSettingsLocation, setWindowSettingsLocation] = useState(false);
-
 	const { user: user } = useUser({
 		redirectTo: '/',
 		redirectIfFound: false
 	});
 
-	useEffect(() => {
-		if (window.location.href.indexOf('/site/') > -1) {
-			setWindowSiteLocation(!windowSiteLocation);
-		}
-
-		if (window.location.href.indexOf('/settings/') > -1) {
-			setWindowSettingsLocation(!windowSettingsLocation);
-		}
-	}, []);
-
 	return (
-		<>
+		<Fragment>
 			{user ? (
 				<MainSidebarDiv className={`hidden md:flex md:flex-shrink-0`}>
 					<div
@@ -53,9 +40,9 @@ const MainSidebar = (props) => {
 									</a>
 								</Link>
 							</div>
-							{windowSiteLocation ? (
+							{window.location.href.indexOf('/site/') > -1 ? (
 								<SiteMenu crawlableHandler={props.crawlableHandler} />
-							) : windowSettingsLocation ? (
+							) : window.location.href.indexOf('/settings/') > -1 ? (
 								<SettingsMenu />
 							) : (
 								<PrimaryMenu />
@@ -65,7 +52,7 @@ const MainSidebar = (props) => {
 					</div>
 				</MainSidebarDiv>
 			) : null}
-		</>
+		</Fragment>
 	);
 };
 

@@ -1,9 +1,13 @@
 [
 	{
-		"label": "Site Details"
+		"label": "Site Name",
+		"slug": "site-name",
+		"key": "name"
 	},
 	{
-		"label": "Last Crawled"
+		"label": "Last Crawled",
+		"slug": "last-crawled",
+		"key": "updated_at"
 	},
 	{
 		"label": "Total Issues"

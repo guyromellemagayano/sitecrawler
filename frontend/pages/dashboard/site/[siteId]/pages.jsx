@@ -527,7 +527,7 @@ const Pages = (props) => {
 		if (
 			user &&
 			user.permissions !== undefined &&
-			user.permissions[0] == 'can_start_scan' &&
+			user.permissions.includes('can_start_scan') &&
 			site &&
 			site.verified &&
 			finished
@@ -540,7 +540,7 @@ const Pages = (props) => {
 		if (
 			user &&
 			user.permissions !== undefined &&
-			user.permissions[0] == 'can_start_scan' &&
+			user.permissions.includes('can_start_scan') &&
 			site &&
 			site.verified
 		)

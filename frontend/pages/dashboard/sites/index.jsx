@@ -1,4 +1,9 @@
-import { removeURLParameter } from 'helpers/functions';
+import {
+	removeURLParameter,
+	slugToCamelcase,
+	getSortKeyFromSlug,
+	getSlugFromSortKey
+} from 'helpers/functions';
 import { Fragment, useState, useEffect } from 'react';
 import Router, { useRouter } from 'next/router';
 import LogRocket from 'logrocket';
@@ -9,6 +14,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
 import useSWR from 'swr';
+import SiteSorting from 'components/sites/SiteSorting';
 import DataTableHeadsContent from 'public/data/data-table-heads.json';
 import useUser from 'hooks/useUser';
 import Layout from 'components/Layout';
@@ -43,6 +49,12 @@ const fetcher = async (url) => {
 	return data;
 };
 
+const initialOrder = {
+	siteName: 'asc',
+	lastCrawled: 'default',
+	totalIssues: 'default'
+};
+
 const SitesDiv = styled.section``;
 
 const Sites = (props) => {
@@ -50,6 +62,7 @@ const Sites = (props) => {
 	const [userLoaded, setUserLoaded] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [pagePath, setPagePath] = useState('');
+	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [searchKey, setSearchKey] = useState('');
 
 	const pageTitle = 'Sites';
@@ -58,8 +71,12 @@ const Sites = (props) => {
 
 	let sitesApiEndpoint =
 		props.page !== undefined
-			? '/api/site/?per_page=' + linksPerPage + `&page=` + props.page
-			: '/api/site/?per_page=' + linksPerPage;
+			? '/api/site/?per_page=' +
+			  linksPerPage +
+			  `&ordering=name` +
+			  `&page=` +
+			  props.page
+			: '/api/site/?per_page=' + linksPerPage + `&ordering=name`;
 	let queryString = '';
 
 	queryString +=
@@ -69,7 +86,16 @@ const Sites = (props) => {
 				: `?search=${props.search}`
 			: '';
 
+	queryString +=
+		props.ordering !== undefined
+			? sitesApiEndpoint.includes('?')
+				? `&ordering=${props.ordering}`
+				: `?ordering=${props.ordering}`
+			: '';
+
 	sitesApiEndpoint += queryString;
+
+	// console.log(sitesApiEndpoint);
 
 	const { user: user, userError: userError } = useUser({
 		redirectTo: '/',
@@ -131,12 +157,60 @@ const Sites = (props) => {
 		}
 	};
 
+	const SortHandler = (slug, dir) => {
+		setSortOrder({ ...initialOrder });
+
+		let newPath = removeURLParameter(asPath, 'ordering');
+
+		const sortItem = slugToCamelcase(slug);
+		const sortKey = getSortKeyFromSlug(DataTableHeadsContent, slug);
+
+		if (sortOrder[sortItem] == 'default') {
+			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
+			if (dir == 'asc') {
+				if (newPath.includes('?')) newPath += `&ordering=${sortKey}`;
+				else newPath += `?ordering=${sortKey}`;
+			} else {
+				if (newPath.includes('?')) newPath += `&ordering=-${sortKey}`;
+				else newPath += `?ordering=-${sortKey}`;
+			}
+		} else if (sortOrder[sortItem] == 'asc') {
+			setSortOrder((prevState) => ({ ...prevState, [sortItem]: 'desc' }));
+			if (newPath.includes('?')) newPath += `&ordering=-${sortKey}`;
+			else newPath += `?ordering=-${sortKey}`;
+		} else {
+			setSortOrder((prevState) => ({ ...prevState, [sortItem]: 'asc' }));
+			if (newPath.includes('?')) newPath += `&ordering=${sortKey}`;
+			else newPath += `?ordering=${sortKey}`;
+		}
+
+		// console.log('[pagePath]', newPath)
+		if (newPath.includes('?'))
+			setPagePath(`${removeURLParameter(newPath, 'page')}&`);
+		else setPagePath(`${removeURLParameter(newPath, 'page')}?`);
+
+		Router.push(newPath);
+		updateSites();
+	};
+
 	useEffect(() => {
 		if (removeURLParameter(asPath, 'page').includes('?'))
 			setPagePath(`${removeURLParameter(asPath, 'page')}&`);
 		else setPagePath(`${removeURLParameter(asPath, 'page')}?`);
 
 		if (props.search !== undefined) setSearchKey(props.search);
+
+		if (props.ordering !== undefined) {
+			const slug = getSlugFromSortKey(
+				DataTableHeadsContent,
+				props.ordering.replace('-', '')
+			);
+			const orderItem = slugToCamelcase(slug);
+
+			if (props.ordering.includes('-'))
+				setSortOrder((prevState) => ({ ...prevState, [orderItem]: 'desc' }));
+			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: 'asc' }));
+		}
 
 		if (props.per_page !== undefined) setLinksPerPage(props.per_page);
 	}, []);
@@ -249,8 +323,18 @@ const Sites = (props) => {
 																			<th
 																				className={`w-48 px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
 																			>
-																				<div className='flex items-center justify-between'>
-																					{site.label}
+																				<div className='flex items-center justify-start'>
+																					{site.slug != undefined ? (
+																						<SiteSorting
+																							sortOrder={sortOrder}
+																							onSortHandler={SortHandler}
+																							key={key}
+																							slug={site.slug}
+																						/>
+																					) : null}
+																					<span className='label flex items-center'>
+																						{site.label}
+																					</span>
 																				</div>
 																			</th>
 																		</Fragment>
@@ -302,7 +386,8 @@ Sites.getInitialProps = ({ query }) => {
 	return {
 		page: query.page,
 		search: query.search,
-		per_page: query.per_page
+		per_page: query.per_page,
+		ordering: query.ordering
 	};
 };
 

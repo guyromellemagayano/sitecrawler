@@ -56,7 +56,7 @@ const PrimaryMenu = () => {
 
 	const { data: site, error: siteError } = useSWR('/api/site/', fetcher);
 
-	const siteSelectOnLoad = (siteId = query.siteId) => {
+	const siteSelectOnLoad = (siteId) => {
 		if (site == undefined) return false;
 
 		for (let i = 0; i < site.results.length; i++) {
@@ -79,17 +79,19 @@ const PrimaryMenu = () => {
 	};
 
 	useEffect(() => {
-		siteSelectOnLoad();
-	}, [site]);
+		siteSelectOnLoad(query.siteId);
+	}, [site, query]);
+
+	{
+		userError && <Layout>{userError.message}</Layout>;
+	}
+	{
+		siteError && <Layout>{siteError.message}</Layout>;
+	}
 
 	return (
 		<Fragment>
-			{userError ||
-				(siteError && (
-					<Layout>{userError.message || siteError.message}</Layout>
-				))}
-
-			{!user || !site ? (
+			{!user && !site ? (
 				<PrimaryMenuDiv className={`mt-5 flex-1 px-2 bg-gray-1000`}>
 					{[...Array(3)].map((val, index) => {
 						return (
@@ -216,7 +218,7 @@ const PrimaryMenu = () => {
 																	className={`absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden`}
 																>
 																	{site && site.results.length ? (
-																		<>
+																		<Fragment>
 																			<ul
 																				tabIndex='-1'
 																				role='listbox'
@@ -224,44 +226,45 @@ const PrimaryMenu = () => {
 																				aria-activedescendant='listbox-item-3'
 																				className={`max-h-xs py-2 text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5`}
 																			>
-																				{site.results.map((val, key) => {
-																					return (
-																						<li
-																							key={key}
-																							onClick={() =>
-																								dropdownHandler(
-																									val.id,
-																									val.verified
-																								)
-																							}
-																							id={`listbox-item-${key}`}
-																							role='option'
-																							className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
-																								val.verified
-																									? 'cursor-pointer'
-																									: 'cursor-not-allowed'
-																							} select-none relative py-2 pl-3 pr-9`}
-																						>
-																							<div
-																								className={`flex items-center space-x-3`}
-																							>
-																								<span
-																									aria-label='Online'
-																									className={`${
+																				{site &&
+																					site.results.map((val, key) => {
+																						return (
+																							<li
+																								key={key}
+																								onClick={() =>
+																									dropdownHandler(
+																										val.id,
 																										val.verified
-																											? 'bg-green-400'
-																											: 'bg-red-400'
-																									} flex-shrink-0 inline-block h-2 w-2 rounded-full`}
-																								></span>
-																								<span
-																									className={`font-normal block truncate`}
+																									)
+																								}
+																								id={`listbox-item-${key}`}
+																								role='option'
+																								className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
+																									val.verified
+																										? 'cursor-pointer'
+																										: 'cursor-not-allowed'
+																								} select-none relative py-2 pl-3 pr-9`}
+																							>
+																								<div
+																									className={`flex items-center space-x-3`}
 																								>
-																									{val.name}
-																								</span>
-																							</div>
-																						</li>
-																					);
-																				})}
+																									<span
+																										aria-label='Online'
+																										className={`${
+																											val.verified
+																												? 'bg-green-400'
+																												: 'bg-red-400'
+																										} flex-shrink-0 inline-block h-2 w-2 rounded-full`}
+																									></span>
+																									<span
+																										className={`font-normal block truncate`}
+																									>
+																										{val.name}
+																									</span>
+																								</div>
+																							</li>
+																						);
+																					})}
 																			</ul>
 																			<span
 																				className={`flex m-2 justify-center shadow-sm rounded-md`}
@@ -281,7 +284,7 @@ const PrimaryMenu = () => {
 																					</a>
 																				</Link>
 																			</span>
-																		</>
+																		</Fragment>
 																	) : (
 																		<span
 																			className={`flex m-2 justify-center shadow-sm rounded-md`}

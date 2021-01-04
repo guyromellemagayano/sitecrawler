@@ -1,0 +1,29 @@
+[
+	{
+		"label": "Required Field"
+	},
+	{
+		"label": "Password too short"
+	},
+	{
+		"label": "Password too long"
+	},
+	{
+		"label": "Both passwords need to be the same"
+	},
+	{
+		"label": "Password details sent successfully. Redirecting you to Sites Dashboard"
+	},
+	{
+		"label": "Password details sent failed. Please try again"
+	},
+	{
+		"label": "Enter Password"
+	},
+	{
+		"label": "Confirm Password"
+	},
+	{
+		"label": "Submit Form"
+	}
+]
