@@ -120,4 +120,4 @@ dist
 .vscode
 
 # Stylesheets
-.css
+*.css
