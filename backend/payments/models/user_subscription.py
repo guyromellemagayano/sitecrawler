@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.db import models
 
@@ -18,3 +20,7 @@ class UserSubscription(models.Model):
     stripe_id = models.CharField(max_length=63)
     subscription = models.ForeignKey("Subscription", on_delete=models.PROTECT, null=False)
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, null=False, default=STATUS_WAITING_PAYMENT)
+    cancel_at = models.DateTimeField(null=True)
+
+    def set_cancel_at_timestamp(self, ts):
+        self.cancel_at = datetime.utcfromtimestamp(ts)
