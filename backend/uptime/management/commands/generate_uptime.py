@@ -18,12 +18,9 @@ class Command(BaseCommand):
 
         now = datetime.datetime.utcnow()
         now = now.replace(tzinfo=pytz.utc)
-        last = UptimeStat.objects.filter(site_id=site_id).order_by("-created_at").first()
-        if last is not None:
-            start_time = last.created_at + period
-            start_time
-        else:
-            start_time = now - datetime.timedelta(days=days)
+        start_time = now - datetime.timedelta(days=days)
+        UptimeStat.objects.filter(created_at__gte=start_time).delete()
+
         status = UptimeStat.STATUS_OK
         http_status = 200
         dt = start_time
