@@ -61,6 +61,8 @@ func (s *ScheduleService) Reload() error {
 }
 
 func (s *ScheduleService) add(gs database.CrawlGroupsetting) error {
+	s.Logger.Infof("Adding %v at %v", gs.GroupID, gs.UptimeSchedule)
+
 	g := &group{
 		ID:       gs.ID,
 		GroupID:  gs.GroupID,

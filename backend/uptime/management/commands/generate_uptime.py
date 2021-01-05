@@ -2,6 +2,7 @@ import datetime
 import random
 
 from django.core.management.base import BaseCommand
+import pytz
 
 from uptime.models import UptimeStat
 
@@ -12,11 +13,18 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         site_id = options["site_id"]
+        period = datetime.timedelta(minutes=5)
         days = 90
+
+        now = datetime.datetime.utcnow()
+        now = now.replace(tzinfo=pytz.utc)
+        start_time = now - datetime.timedelta(days=days)
+        UptimeStat.objects.filter(created_at__gte=start_time).delete()
+
         status = UptimeStat.STATUS_OK
         http_status = 200
-        dt = datetime.datetime.now() - datetime.timedelta(days=days)
-        while dt < datetime.datetime.now():
+        dt = start_time
+        while dt < now:
             if status == UptimeStat.STATUS_OK:
                 if random.randrange(100) >= 90:
                     status = UptimeStat.STATUS_HTTP_ERROR
@@ -35,4 +43,4 @@ class Command(BaseCommand):
             )
             # hack to get around auto now add
             UptimeStat.objects.filter(pk=result.pk).update(created_at=dt)
-            dt += datetime.timedelta(minutes=5)
+            dt += period

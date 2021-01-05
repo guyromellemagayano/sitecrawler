@@ -333,7 +333,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, url *ur
 	crawlLink := &database.CrawlLink{
 		ScanID:    s.Scan.ID,
 		CreatedAt: time.Now(),
-		Url:       lenLimit(url.String(), 2047),
+		Url:       common.LenLimit(url.String(), 2047),
 		Type:      common.TYPE_OTHER,
 		Status:    common.STATUS_OK,
 		TlsStatus: common.TLS_OK,
@@ -352,23 +352,9 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, url *ur
 	}()
 
 	handleError := func(err error) {
-		if strings.HasSuffix(err.Error(), "context deadline exceeded") {
-			crawlLink.Status = common.STATUS_TIMEOUT
-		} else if strings.HasSuffix(err.Error(), "stopped after 10 redirects") {
-			crawlLink.Status = common.STATUS_TOO_MANY_REDIRECTS
-		} else {
-			if !strings.HasSuffix(err.Error(), "unexpected EOF") &&
-				!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated") &&
-				!strings.HasSuffix(err.Error(), "connection reset by peer") {
-				log.Errorw("Other error for link",
-					"url", url,
-					"error", err,
-				)
-			}
-			crawlLink.Status = common.STATUS_OTHER_ERROR
-			errStr := lenLimit(err.Error(), 255)
-			crawlLink.Error = &errStr
-		}
+		status, errStr := common.SerializeLoadError(log, url.String(), err)
+		crawlLink.Status = status
+		crawlLink.Error = &errStr
 	}
 
 	resp, err := s.ScanService.LoadService.Load(log, url.String())
@@ -390,7 +376,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, url *ur
 	}()
 
 	// Override url with actual destination url after redirects
-	crawlLink.Url = lenLimit(resp.Request.URL.String(), 2047)
+	crawlLink.Url = common.LenLimit(resp.Request.URL.String(), 2047)
 
 	s.rateLimit.Update(url, resp)
 
@@ -576,11 +562,4 @@ func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
 func (s *scanner) isWebScheme(u *url.URL) bool {
 	scheme := strings.ToLower(u.Scheme)
 	return scheme == "http" || scheme == "https"
-}
-
-func lenLimit(s string, limit int) string {
-	if len(s) > limit {
-		return s[:limit]
-	}
-	return s
 }
