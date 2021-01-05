@@ -60,4 +60,8 @@ usePatchMethod.propTypes = {
 	data: PropTypes.array.isRequired
 };
 
+usePatchMethod.defaultProps = {
+	data: {}
+};
+
 export default usePatchMethod;

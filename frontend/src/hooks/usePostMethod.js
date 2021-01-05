@@ -60,4 +60,8 @@ usePostMethod.propTypes = {
 	data: PropTypes.array.isRequired
 };
 
+usePostMethod.defaultProps = {
+	data: {}
+};
+
 export default usePostMethod;

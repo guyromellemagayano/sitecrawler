@@ -60,4 +60,8 @@ usePutMethod.propTypes = {
 	data: PropTypes.array.isRequired
 };
 
+usePutMethod.defaultProps = {
+	data: {}
+};
+
 export default usePutMethod;
