@@ -1,64 +1,63 @@
-import { useEffect } from "react";
-import Router, { useRouter } from "next/router";
-import useSWR from "swr";
-import Cookies from "js-cookie";
+// React
+import React, { useEffect } from 'react';
 
-const fetcher = async (url) => {
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-      "X-CSRFToken": Cookies.get("csrftoken"),
-    },
-  });
+// NextJS
+import Router, { useRouter } from 'next/router';
 
-  const data = await res.json();
+// External
+import 'core-js';
+import PropTypes from 'prop-types';
+import useSWR from 'swr';
 
-  if (res.status !== 200) {
-    throw new Error(res.status);
-  }
+// Hooks
+import useFetcher from 'src/hooks/useFetcher';
 
-  return data;
+const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
+
+const useUser = async ({ redirectTo, redirectIfFound }) => {
+	const userApiEndpoint = '/api/auth/user/';
+
+	const { asPath } = useRouter();
+
+	const { data: user, mutate: mutateUser, error: userError } = useSWR(
+		userApiEndpoint,
+		useFetcher
+	);
+
+	useEffect(() => {
+		(async () => {
+			await sleep(500);
+
+			if (userError == 'Error: 403' && !redirectIfFound) {
+				Router.push({ pathname: redirectTo, query: { redirect: asPath } });
+				Cookies.set('errLogin', 'You must log in to access the page!', {
+					expires: new Date(new Date().getTime() + 0.05 * 60 * 1000) // expires in 3s
+				});
+			}
+
+			if (user && redirectIfFound) {
+				if ('key' in user) {
+					Router.push(redirectTo);
+				}
+			} else {
+				return;
+			}
+		})();
+	}, [user, redirectIfFound, redirectTo, userError]);
+
+	return { user, mutateUser, userError };
 };
 
-const timeDelay = () => {
-  return new Promise((resolve) => {
-    setTimeout(function () {
-      resolve();
-    }, 1000);
-  });
+useUser.propTypes = {
+	user: PropTypes.object.isRequired,
+	redirectIfFound: PropTypes.boolean,
+	redirectTo: PropTypes.boolean,
+	userError: PropTypes.object
 };
 
-const useUser = ({ redirectTo = false, redirectIfFound = false } = {}) => {
-  const { data: user, mutate: mutateUser, error: userError } = useSWR(
-    "/api/auth/user/",
-    fetcher
-  );
-  const { query, asPath } = useRouter();
-
-  useEffect(() => {
-    (async () => {
-      await timeDelay();
-      if (userError == "Error: 403" && !redirectIfFound) {
-        Router.push({ pathname: redirectTo, query: { redirect: asPath } });
-        Cookies.set("errLogin", "You must log in to access the page!", {
-          expires: new Date(new Date().getTime() + 0.05 * 60 * 1000), // expires in 3s
-        });
-      }
-
-      if (user && redirectIfFound) {
-        if ("key" in user) {
-          // console.log('[user]', user)
-          Router.push(redirectTo);
-        }
-      } else {
-        return;
-      }
-    })();
-  }, [user, redirectIfFound, redirectTo, userError]);
-
-  return { user, mutateUser, userError };
+useUser.defaultProps = {
+	redirectTo: false,
+	redirectIfFound: false
 };
 
 export default useUser;
