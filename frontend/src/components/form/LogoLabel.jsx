@@ -1,6 +1,15 @@
+// React
+import React from 'react';
+
+// NextJS
 import Link from 'next/link';
+
+// External
 import styled from 'styled-components';
-import AppLogo from 'components/logo/AppLogo';
+import PropTypes from 'prop-types';
+
+// Components
+import AppLogo from 'src/components/logo/AppLogo';
 
 const LogoLabelDiv = styled.div``;
 
@@ -8,7 +17,7 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 	return (
 		<LogoLabelDiv className={`sm:mx-auto sm:w-full sm:max-w-md`}>
 			{!isLogin ? (
-				<Link href='/'>
+				<Link href="/">
 					<a>
 						<AppLogo
 							className={`h-10 w-auto mx-auto`}
@@ -33,6 +42,13 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 			</h2>
 		</LogoLabelDiv>
 	);
+};
+
+LogoLabel.propTypes = {
+	isLogin: PropTypes.bool,
+	isSignUp: PropTypes.bool,
+	isResetPassword: PropTypes.bool,
+	isAddPassword: PropTypes.bool
 };
 
 export default LogoLabel;
