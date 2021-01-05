@@ -7,6 +7,7 @@ import (
 
 type DB interface {
 	Model(...interface{}) *orm.Query
+	Insert(...interface{}) error
 	Begin() (*pg.Tx, error)
 	Close() error
 }
@@ -46,6 +47,10 @@ func (d Database) Insert(m interface{}, options ...QueryOption) error {
 	}
 	_, err := q.Insert()
 	return err
+}
+
+func (d Database) MultiInsert(m ...interface{}) error {
+	return d.db.Insert(m...)
 }
 
 func (d Database) InsertIgnoreDuplicates(m interface{}, options ...QueryOption) (bool, error) {

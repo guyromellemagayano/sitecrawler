@@ -142,9 +142,12 @@ var Columns = struct {
 		Group string
 	}
 	PaymentUsersubscription struct {
-		ID, SubscriptionID, UserID, StripeID, Status string
+		ID, SubscriptionID, UserID, StripeID, Status, CancelAt string
 
 		Subscription, User string
+	}
+	SignupSignup struct {
+		ID, CreatedAt, FirstName, LastName, Username, Email, Url, Token string
 	}
 	SocialaccountSocialaccount struct {
 		ID, Provider, Uid, LastLogin, DateJoined, ExtraData, UserID string
@@ -163,6 +166,11 @@ var Columns = struct {
 		ID, Token, TokenSecret, ExpiresAt, AccountID, AppID string
 
 		Account, App string
+	}
+	UptimeUptimestat struct {
+		ID, CreatedAt, Status, HttpStatus, ResponseTime, Error, SiteID string
+
+		Site string
 	}
 }{
 	AccountEmailaddress: struct {
@@ -550,7 +558,7 @@ var Columns = struct {
 		Group: "Group",
 	},
 	PaymentUsersubscription: struct {
-		ID, SubscriptionID, UserID, StripeID, Status string
+		ID, SubscriptionID, UserID, StripeID, Status, CancelAt string
 
 		Subscription, User string
 	}{
@@ -559,9 +567,22 @@ var Columns = struct {
 		UserID:         "user_id",
 		StripeID:       "stripe_id",
 		Status:         "status",
+		CancelAt:       "cancel_at",
 
 		Subscription: "Subscription",
 		User:         "User",
+	},
+	SignupSignup: struct {
+		ID, CreatedAt, FirstName, LastName, Username, Email, Url, Token string
+	}{
+		ID:        "id",
+		CreatedAt: "created_at",
+		FirstName: "first_name",
+		LastName:  "last_name",
+		Username:  "username",
+		Email:     "email",
+		Url:       "url",
+		Token:     "token",
 	},
 	SocialaccountSocialaccount: struct {
 		ID, Provider, Uid, LastLogin, DateJoined, ExtraData, UserID string
@@ -614,6 +635,21 @@ var Columns = struct {
 
 		Account: "Account",
 		App:     "App",
+	},
+	UptimeUptimestat: struct {
+		ID, CreatedAt, Status, HttpStatus, ResponseTime, Error, SiteID string
+
+		Site string
+	}{
+		ID:           "id",
+		CreatedAt:    "created_at",
+		Status:       "status",
+		HttpStatus:   "http_status",
+		ResponseTime: "response_time",
+		Error:        "error",
+		SiteID:       "site_id",
+
+		Site: "Site",
 	},
 }
 
@@ -711,6 +747,9 @@ var Tables = struct {
 	PaymentUsersubscription struct {
 		Name, Alias string
 	}
+	SignupSignup struct {
+		Name, Alias string
+	}
 	SocialaccountSocialaccount struct {
 		Name, Alias string
 	}
@@ -721,6 +760,9 @@ var Tables = struct {
 		Name, Alias string
 	}
 	SocialaccountSocialtoken struct {
+		Name, Alias string
+	}
+	UptimeUptimestat struct {
 		Name, Alias string
 	}
 }{
@@ -910,6 +952,12 @@ var Tables = struct {
 		Name:  "payments_usersubscription",
 		Alias: "t",
 	},
+	SignupSignup: struct {
+		Name, Alias string
+	}{
+		Name:  "signup_signup",
+		Alias: "t",
+	},
 	SocialaccountSocialaccount: struct {
 		Name, Alias string
 	}{
@@ -932,6 +980,12 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "socialaccount_socialtoken",
+		Alias: "t",
+	},
+	UptimeUptimestat: struct {
+		Name, Alias string
+	}{
+		Name:  "uptime_uptimestat",
 		Alias: "t",
 	},
 }
@@ -1309,14 +1363,28 @@ type PaymentSubscription struct {
 type PaymentUsersubscription struct {
 	tableName struct{} `pg:"payments_usersubscription,alias:t,,discard_unknown_columns"`
 
-	ID             int    `pg:"id,pk"`
-	SubscriptionID int    `pg:"subscription_id,use_zero"`
-	UserID         int    `pg:"user_id,use_zero"`
-	StripeID       string `pg:"stripe_id,use_zero"`
-	Status         int    `pg:"status,use_zero"`
+	ID             int        `pg:"id,pk"`
+	SubscriptionID int        `pg:"subscription_id,use_zero"`
+	UserID         int        `pg:"user_id,use_zero"`
+	StripeID       string     `pg:"stripe_id,use_zero"`
+	Status         int        `pg:"status,use_zero"`
+	CancelAt       *time.Time `pg:"cancel_at"`
 
 	Subscription *PaymentSubscription `pg:"fk:subscription_id"`
 	User         *AuthUser            `pg:"fk:user_id"`
+}
+
+type SignupSignup struct {
+	tableName struct{} `pg:"signup_signup,alias:t,,discard_unknown_columns"`
+
+	ID        int       `pg:"id,pk"`
+	CreatedAt time.Time `pg:"created_at,use_zero"`
+	FirstName string    `pg:"first_name,use_zero"`
+	LastName  string    `pg:"last_name,use_zero"`
+	Username  string    `pg:"username,use_zero"`
+	Email     string    `pg:"email,use_zero"`
+	Url       string    `pg:"url,use_zero"`
+	Token     string    `pg:"token,use_zero"`
 }
 
 type SocialaccountSocialaccount struct {
@@ -1367,4 +1435,18 @@ type SocialaccountSocialtoken struct {
 
 	Account *SocialaccountSocialaccount `pg:"fk:account_id"`
 	App     *SocialaccountSocialapp     `pg:"fk:app_id"`
+}
+
+type UptimeUptimestat struct {
+	tableName struct{} `pg:"uptime_uptimestat,alias:t,,discard_unknown_columns"`
+
+	ID           int       `pg:"id,pk"`
+	CreatedAt    time.Time `pg:"created_at,use_zero"`
+	Status       int       `pg:"status,use_zero"`
+	HttpStatus   *int      `pg:"http_status"`
+	ResponseTime int       `pg:"response_time,use_zero"`
+	Error        *string   `pg:"error"`
+	SiteID       int       `pg:"site_id,use_zero"`
+
+	Site *CrawlSite `pg:"fk:site_id"`
 }

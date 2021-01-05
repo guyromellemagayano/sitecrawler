@@ -16,7 +16,7 @@ func UptimeWorker(log *zap.SugaredLogger, db *database.Database, scheduleService
 
 		return scheduleService.Reload()
 	}
-	log.Info("Initial check")
+	log.Info("Initial load")
 	if err := loop(); err != nil {
 		log.Error(err)
 	}
