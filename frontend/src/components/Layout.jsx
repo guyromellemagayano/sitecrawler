@@ -1,28 +1,15 @@
 // React
 import React from 'react';
 
-// NextJS
-import Head from 'next/head';
-
 // External
 import PropTypes from 'prop-types';
 
-const Layout = (props) => {
-	const { children, title = 'Welcome | Site Crawler' } = props;
-
-	return (
-		<div id="root">
-			<Head>
-				<SiteHead title={title} />
-			</Head>
-			{children}
-		</div>
-	);
+const Layout = ({ children }) => {
+	return <div id="root">{children}</div>;
 };
 
 Layout.propTypes = {
-	children: PropTypes.element,
-	title: PropTypes.string
+	children: PropTypes.array.isRequired
 };
 
 export default Layout;
