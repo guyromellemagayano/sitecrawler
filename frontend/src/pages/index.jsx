@@ -1,5 +1,5 @@
 // React
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // NextJS
 import { useRouter } from 'next/router';
@@ -115,7 +115,7 @@ const Login = () => {
 											)}
 
 											{!disableLoginForm ? (
-												<Fragment>
+												<>
 													<div className="bg-white py-8 px-4 rounded-lg sm:px-10 shadow-xl border border-gray-300">
 														<Formik
 															initialValues={{
@@ -362,7 +362,7 @@ const Login = () => {
 															</Link>
 														</span>
 													</div>
-												</Fragment>
+												</>
 											) : (
 												successMsg && (
 													<div className="rounded-md bg-green-100 p-4 mb-8">
