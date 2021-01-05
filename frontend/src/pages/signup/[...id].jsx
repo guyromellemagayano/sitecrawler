@@ -1,5 +1,5 @@
 import 'core-js';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import Router from 'next/router';
 import Head from 'next/head';
@@ -14,6 +14,8 @@ import SignupLabel from 'public/label/pages/signup.json';
 
 const SignupFormDiv = styled.div``;
 
+const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
+
 const SignupForm = (props) => {
 	const [successMsg, setSuccessMsg] = useState('');
 	const [errorMsg, setErrorMsg] = useState('');
@@ -23,8 +25,6 @@ const SignupForm = (props) => {
 	const signupConfirmApiEndpoint =
 		'/api/signup/' + props.result.id[0] + '/confirm/';
 	const sitesDashboardApiEndpoint = '/dashboard/sites';
-
-	const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
 
 	return (
 		<Layout>
