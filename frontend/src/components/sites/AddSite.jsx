@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 // External
+import 'core-js';
 import { Transition } from '@tailwindui/react';
 import styled from 'styled-components';
 import useSWR from 'swr';
