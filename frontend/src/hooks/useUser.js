@@ -14,7 +14,7 @@ import useFetcher from 'src/hooks/useFetcher';
 
 const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
 
-const useUser = async ({ redirectTo, redirectIfFound }) => {
+const useUser = ({ redirectTo, redirectIfFound }) => {
 	const userApiEndpoint = '/api/auth/user/';
 
 	const { asPath } = useRouter();
@@ -49,10 +49,8 @@ const useUser = async ({ redirectTo, redirectIfFound }) => {
 };
 
 useUser.propTypes = {
-	user: PropTypes.object.isRequired,
 	redirectIfFound: PropTypes.boolean,
-	redirectTo: PropTypes.boolean,
-	userError: PropTypes.object
+	redirectTo: PropTypes.boolean
 };
 
 useUser.defaultProps = {
