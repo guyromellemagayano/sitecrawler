@@ -1,8 +1,10 @@
+// React
 import React from 'react';
 
-const SiteHead = (props) => {
-	const { title } = props;
+// NextJS
+import Head from 'next/head';
 
+const SiteHead = () => {
 	const linkTags = [
 		{
 			rel: 'apple-touch-icon',
@@ -164,60 +166,61 @@ const SiteHead = (props) => {
 	];
 
 	return (
-		<>
-			{metaTags.map((val, key) => {
-				return (
-					<meta
-						key={key}
-						name={
-							val.name && val.name !== undefined && val.name !== null
-								? val.name
-								: undefined
-						}
-						content={
-							val.content && val.content !== undefined && val.content !== null
-								? val.content
-								: undefined
-						}
-					/>
-				);
-			})}
-			{linkTags.map((val, key) => {
-				return (
-					<link
-						key={key}
-						rel={
-							val.rel && val.rel !== undefined && val.rel !== null
-								? val.rel
-								: undefined
-						}
-						sizes={
-							val.sizes && val.sizes !== undefined && val.sizes !== null
-								? val.sizes
-								: undefined
-						}
-						href={
-							val.href && val.href !== undefined && val.href !== null
-								? val.href
-								: undefined
-						}
-						type={
-							val.type && val.type !== undefined && val.type !== null
-								? val.type
-								: undefined
-						}
-						color={
-							val.color && val.color !== undefined && val.color !== null
-								? val.color
-								: undefined
-						}
-					/>
-				);
-			})}
-			<title>{title}</title>
-			<script src="scripts/beacon.js" type="text/javascript" />
-			<script src="scripts/usetiful.js" type="text/javascript" />
-		</>
+		<Head>
+			<>
+				{metaTags.map((val, key) => {
+					return (
+						<meta
+							key={key}
+							name={
+								val.name && val.name !== undefined && val.name !== null
+									? val.name
+									: undefined
+							}
+							content={
+								val.content && val.content !== undefined && val.content !== null
+									? val.content
+									: undefined
+							}
+						/>
+					);
+				})}
+				{linkTags.map((val, key) => {
+					return (
+						<link
+							key={key}
+							rel={
+								val.rel && val.rel !== undefined && val.rel !== null
+									? val.rel
+									: undefined
+							}
+							sizes={
+								val.sizes && val.sizes !== undefined && val.sizes !== null
+									? val.sizes
+									: undefined
+							}
+							href={
+								val.href && val.href !== undefined && val.href !== null
+									? val.href
+									: undefined
+							}
+							type={
+								val.type && val.type !== undefined && val.type !== null
+									? val.type
+									: undefined
+							}
+							color={
+								val.color && val.color !== undefined && val.color !== null
+									? val.color
+									: undefined
+							}
+						/>
+					);
+				})}
+				<script src="scripts/beacon.js" type="text/javascript" />
+				<script src="scripts/usetiful.js" type="text/javascript" />
+			</>
+		</Head>
 	);
 };
 
