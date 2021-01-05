@@ -5,6 +5,6 @@
 	r.async = 1;
 	r.src = s;
 	r.setAttribute('id', 'usetifulScript');
-	r.dataset.token = process.env.USETIFUL_DATASET_TOKEN;
+	r.dataset.token = '4b8863eaef435adc652a9d86eb33cbf9';
 	a.appendChild(r);
 })(window, document, 'https://www.usetiful.com/dist/usetiful.js');

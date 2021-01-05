@@ -26,4 +26,4 @@
 		: e.addEventListener('load', a, !1);
 })(window, document, window.Beacon || (() => {}));
 
-window.Beacon('init', process.env.BEACON_PROVIDER_KEY);
+window.Beacon('init', '94d0425a-cb40-4582-909a-2175532bbfa9');
