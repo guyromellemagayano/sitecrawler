@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
 
-const usePostMethod = async ({ endpoint, method, data }) => {
+const usePostMethod = async (endpoint, method, data) => {
 	// Global axios defaults
 	axios.defaults.headers.common['Accept'] = 'application/json';
 	axios.defaults.headers.common['Content-Type'] =
@@ -21,7 +21,7 @@ const usePostMethod = async ({ endpoint, method, data }) => {
 
 	// Axios POST method
 	if (method === 'POST' || method === 'post') {
-		await axios
+		return await axios
 			.post(endpoint, data)
 			.then((response) => {
 				// Debugging purpose only
@@ -31,7 +31,7 @@ const usePostMethod = async ({ endpoint, method, data }) => {
 				// console.log(response.headers);
 				// console.log(response.config);
 
-				return response.data;
+				return response;
 			})
 			.catch((error) => {
 				// Debugging purpose only

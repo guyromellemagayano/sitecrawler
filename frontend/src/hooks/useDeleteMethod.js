@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
 
-const useDeleteMethod = async ({ endpoint, method }) => {
+const useDeleteMethod = async (endpoint, method) => {
 	// Global axios defaults
 	axios.defaults.headers.common['Accept'] = 'application/json';
 	axios.defaults.headers.common['Content-Type'] =
@@ -31,7 +31,7 @@ const useDeleteMethod = async ({ endpoint, method }) => {
 				// console.log(response.headers);
 				// console.log(response.config);
 
-				return response.data;
+				return response;
 			})
 			.catch((error) => {
 				// Debugging purpose only

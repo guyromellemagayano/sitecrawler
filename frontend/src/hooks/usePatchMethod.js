@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
 
-const usePatchMethod = async ({ endpoint, method, data }) => {
+const usePatchMethod = async (endpoint, method, data) => {
 	// Global axios defaults
 	axios.defaults.headers.common['Accept'] = 'application/json';
 	axios.defaults.headers.common['Content-Type'] =
@@ -31,7 +31,7 @@ const usePatchMethod = async ({ endpoint, method, data }) => {
 				// console.log(response.headers);
 				// console.log(response.config);
 
-				return response.data;
+				return response;
 			})
 			.catch((error) => {
 				// Debugging purpose only
