@@ -1,7 +1,32 @@
+import datetime
+
 from django.db import models
+from django.db.models.query import QuerySet
+import pytz
+
+
+class UptimeStatQuerySet(QuerySet):
+    def filter_timedelta(self, timedelta):
+        now = datetime.datetime.utcnow()
+        now = now.replace(tzinfo=pytz.utc)
+        return self.filter(created_at__gte=now - timedelta)
+
+    def uptime_percentage(self):
+        total = self.count()
+        if total == 0:
+            return None
+        return self.filter(status=UptimeStat.STATUS_OK).count() / total * 100
+
+    def first_created_at(self):
+        first = self.first()
+        if not first:
+            return None
+        return first.created_at
 
 
 class UptimeStat(models.Model):
+    objects = UptimeStatQuerySet.as_manager()
+
     STATUS_OK = 1
     STATUS_TIMEOUT = 2
     STATUS_HTTP_ERROR = 3

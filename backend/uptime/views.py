@@ -4,6 +4,7 @@ from django.db.models import DateTimeField, Avg, Max
 from django.db.models.functions import Trunc
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import NestedViewSetMixin
@@ -73,3 +74,22 @@ class UptimeStatViewSet(
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def summary(self, request, parent_lookup_site):
+        queryset = self.get_queryset().filter(site_id=parent_lookup_site)
+
+        last = queryset.order_by("-created_at").first()
+        serializer = self.get_serializer(last)
+        data = {
+            "current": serializer.data,
+            "uptime_percentage": {
+                "24h": queryset.filter_timedelta(datetime.timedelta(hours=24)).uptime_percentage(),
+                "7d": queryset.filter_timedelta(datetime.timedelta(days=7)).uptime_percentage(),
+                "30d": queryset.filter_timedelta(datetime.timedelta(days=30)).uptime_percentage(),
+            },
+            "last_downtime": queryset.order_by("-created_at").exclude(status=UptimeStat.STATUS_OK).first_created_at(),
+            "last_ok": queryset.order_by("-created_at").filter(status=UptimeStat.STATUS_OK).first_created_at(),
+        }
+
+        return Response(data)
