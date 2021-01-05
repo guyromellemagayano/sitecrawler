@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 // Hooks
-import useUser from 'hooks/useUser';
+import useUser from 'src/hooks/useUser';
 
 // Components
 import AppLogo from 'src/components/logo/AppLogo';
