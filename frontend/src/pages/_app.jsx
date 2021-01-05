@@ -1,42 +1,51 @@
 // React
 import React from 'react';
 
+// NextJS
+import App from 'next/app';
+
 // External
 import { Elements } from '@stripe/react-stripe-js';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { loadStripe } from '@stripe/stripe-js';
-import { SWRConfig } from 'swr';
+import { DefaultSeo } from 'next-seo';
 import PropTypes from 'prop-types';
 
-// Hooks
-import fetchJson from 'src/hooks/fetchJson';
+// Enums
+import SEO from 'src/enum/nextSEO';
+
+// Components
+import SiteHead from 'src/components/layout/SiteHead';
 
 // Other imports
 import 'public/styles/app.css';
 
+// Font awesome
 library.add(fab);
 
-const App = ({ Component, pageProps }) => {
+const SCApp = ({ Component, pageProps }) => {
 	const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY);
 
 	return (
-		<SWRConfig
-			value={{
-				fetcher: fetchJson,
-				revalidateOnFocus: false
-			}}
-		>
-			<Elements stripe={stripePromise}>
-				<Component {...pageProps} />
-			</Elements>
-		</SWRConfig>
+		<Elements stripe={stripePromise}>
+			<DefaultSeo {...SEO} />
+			<SiteHead />
+			<Component {...pageProps} />
+		</Elements>
 	);
 };
 
-App.propTypes = {
-	Component: PropTypes.element,
-	pageProps: PropTypes.node
+// Page SSR
+SCApp.getInitialProps = async (appContext) => {
+	const appProps = await App.getInitialProps(appContext);
+
+	return { ...appProps };
 };
 
-export default App;
+SCApp.propTypes = {
+	Component: PropTypes.func.isRequired,
+	pageProps: PropTypes.object.isRequired
+};
+
+export default SCApp;
