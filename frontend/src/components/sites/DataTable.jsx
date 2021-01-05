@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 
 // External
+import 'core-js';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Transition } from '@tailwindui/react';
 import Cookies from 'js-cookie';
