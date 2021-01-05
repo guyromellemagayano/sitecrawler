@@ -1,53 +1,50 @@
-import {
-	removeURLParameter,
-	slugToCamelcase,
-	getSortKeyFromSlug,
-	getSlugFromSortKey
-} from 'helpers/functions';
+// React
 import { Fragment, useState, useEffect } from 'react';
+
+// NextJS
 import Router, { useRouter } from 'next/router';
-import LogRocket from 'logrocket';
-import setupLogRocketReact from 'logrocket-react';
+
+// External
+import { NextSeo } from 'next-seo';
 import Cookies from 'js-cookie';
-import Head from 'next/head';
-import styled from 'styled-components';
+import LogRocket from 'logrocket';
 import PropTypes from 'prop-types';
+import setupLogRocketReact from 'logrocket-react';
 import Skeleton from 'react-loading-skeleton';
+import styled from 'styled-components';
 import useSWR from 'swr';
-import SiteSorting from 'components/sites/SiteSorting';
+
+// JSON
 import DataTableHeadsContent from 'public/data/data-table-heads.json';
-import useUser from 'hooks/useUser';
-import Layout from 'components/Layout';
-import MobileSidebar from 'components/sidebar/MobileSidebar';
-import MainSidebar from 'components/sidebar/MainSidebar';
-import AddSite from 'components/sites/AddSite';
-import DataTable from 'components/sites/DataTable';
-import MyPagination from 'components/sites/Pagination';
-import SiteFooter from 'components/footer/SiteFooter';
+
+// Hooks
+import useFetcher from 'src/hooks/useFetcher';
+import useUser from 'src/hooks/useUser';
+
+// Components
+import AddSite from 'src/components/sites/AddSite';
+import DataTable from 'src/components/sites/DataTable';
+import Layout from 'src/components/Layout';
+import MainSidebar from 'src/components/sidebar/MainSidebar';
+import MobileSidebar from 'src/components/sidebar/MobileSidebar';
+import MyPagination from 'src/components/sites/Pagination';
+import SiteFooter from 'src/components/footer/SiteFooter';
+import SiteSorting from 'src/components/sites/SiteSorting';
+
+// Helpers
+import {
+	getSlugFromSortKey,
+	getSortKeyFromSlug,
+	removeURLParameter,
+	slugToCamelcase
+} from 'src/helpers/functions';
 
 if (typeof window !== 'undefined') {
 	LogRocket.init('epic-design-labs/link-app');
 	setupLogRocketReact(LogRocket);
 }
 
-const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
-	});
-
-	const data = await res.json();
-
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
-
-	return data;
-};
+const SitesDiv = styled.section``;
 
 const initialOrder = {
 	siteName: 'asc',
@@ -55,15 +52,13 @@ const initialOrder = {
 	totalIssues: 'default'
 };
 
-const SitesDiv = styled.section``;
-
 const Sites = (props) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [userLoaded, setUserLoaded] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
-	const [pagePath, setPagePath] = useState('');
+	const [pagePath, setPagePath] = useState(null);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
-	const [searchKey, setSearchKey] = useState('');
+	const [searchKey, setSearchKey] = useState(null);
 
 	const pageTitle = 'Sites';
 
@@ -97,14 +92,14 @@ const Sites = (props) => {
 
 	// console.log(sitesApiEndpoint);
 
-	const { user: user, userError: userError } = useUser({
+	const { user: user } = useUser({
 		redirectTo: '/',
 		redirectIfFound: false
 	});
 
-	const { data: site, error: siteError, mutate: updateSites } = useSWR(
+	const { data: site, mutate: updateSites } = useSWR(
 		sitesApiEndpoint,
-		fetcher
+		useFetcher
 	);
 
 	const searchEventHandler = async (e) => {
@@ -228,20 +223,11 @@ const Sites = (props) => {
 		  })
 		: null;
 
-	{
-		userError && <Layout>{userError.message}</Layout>;
-	}
-	{
-		siteError && <Layout>{siteError.message}</Layout>;
-	}
-
 	return (
 		<Layout>
 			{userLoaded && site ? (
-				<Fragment>
-					<Head>
-						<title>{pageTitle}</title>
-					</Head>
+				<>
+					<NextSeo title={pageTitle} />
 
 					<SitesDiv className={`h-screen flex overflow-hidden bg-gray-200`}>
 						<MobileSidebar show={openMobileSidebar} />
@@ -299,7 +285,7 @@ const Sites = (props) => {
 										onSearchEvent={searchEventHandler}
 									/>
 									<MyPagination
-										href='/dashboard/sites/'
+										href="/dashboard/sites/"
 										pathName={pagePath}
 										apiEndpoint={sitesApiEndpoint}
 										page={props.page ? props.page : 0}
@@ -323,7 +309,7 @@ const Sites = (props) => {
 																			<th
 																				className={`w-48 px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
 																			>
-																				<div className='flex items-center justify-start'>
+																				<div className="flex items-center justify-start">
 																					{site.slug != undefined ? (
 																						<SiteSorting
 																							sortOrder={sortOrder}
@@ -332,7 +318,7 @@ const Sites = (props) => {
 																							slug={site.slug}
 																						/>
 																					) : null}
-																					<span className='label flex items-center'>
+																					<span className="label flex items-center">
 																						{site.label}
 																					</span>
 																				</div>
@@ -359,7 +345,7 @@ const Sites = (props) => {
 										</div>
 									</div>
 									<MyPagination
-										href='/dashboard/sites/'
+										href="/dashboard/sites/"
 										pathName={pagePath}
 										apiEndpoint={sitesApiEndpoint}
 										page={props.page ? props.page : 0}
@@ -376,7 +362,7 @@ const Sites = (props) => {
 							</main>
 						</div>
 					</SitesDiv>
-				</Fragment>
+				</>
 			) : null}
 		</Layout>
 	);
@@ -391,11 +377,17 @@ Sites.getInitialProps = ({ query }) => {
 	};
 };
 
-export default Sites;
-
 Sites.propTypes = {
+	page: PropTypes.number,
+	search: PropTypes.string,
+	per_page: PropTypes.number,
+	ordering: PropTypes.string,
 	openMobileSidebar: PropTypes.bool,
-	pageTitle: PropTypes.string,
-	sitesApiEndpoint: PropTypes.string,
-	router: PropTypes.elementType
+	userLoaded: PropTypes.bool,
+	linksPerPage: PropTypes.number.isRequired,
+	pagePath: PropTypes.string,
+	sortOrder: PropTypes.array.isRequired,
+	searchKey: PropTypes.string
 };
+
+export default Sites;
