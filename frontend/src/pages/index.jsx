@@ -162,7 +162,9 @@ const Login = () => {
 																	resetForm({ values: '' });
 																	setErrorMsg(LoginLabel[11].label);
 
-																	const error = new Error(response.statusText);
+																	const error = new Error(
+																		await response.statusText
+																	);
 
 																	error.response = response;
 																	error.data = data;
