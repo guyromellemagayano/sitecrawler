@@ -28,5 +28,14 @@
 	},
 	{
 		"label": "Create Account"
+	},
+	{
+		"label": "Required Field"
+	},
+	{
+		"label": "Login failed. Please try again"
+	},
+	{
+		"label": "Login Success! Redirecting you to Sites Dashboard"
 	}
 ]
