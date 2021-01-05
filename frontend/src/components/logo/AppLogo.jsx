@@ -1,11 +1,17 @@
-const AppLogo = props => {
-	return (
-		<img
-			className={props.className}
-			src={props.src}
-			alt={props.alt}
-		/>
-	)
-}
+// React
+import React from 'react';
 
-export default AppLogo
+// External
+import PropTypes from 'prop-types';
+
+const AppLogo = ({ className, src, alt }) => {
+	return <img className={className} src={src} alt={alt} />;
+};
+
+AppLogo.propTypes = {
+	className: PropTypes.string,
+	src: PropTypes.string.isRequired,
+	alt: PropTypes.string.isRequired
+};
+
+export default AppLogo;
