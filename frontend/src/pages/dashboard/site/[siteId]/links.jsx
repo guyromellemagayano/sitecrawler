@@ -448,8 +448,6 @@ const Links = (props) => {
 			setExternalFilter(false);
 			setAllFilter(true);
 		}
-
-		// console.log('[ENDPOINT]', process.env.NODE_ENV, process.env.ENDPOINT)
 	}, []);
 
 	useEffect(() => {
@@ -667,13 +665,13 @@ const Links = (props) => {
 												>
 													<svg
 														className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
-														viewBox='0 0 20 20'
-														fill='currentColor'
+														viewBox="0 0 20 20"
+														fill="currentColor"
 													>
 														<path
-															fillRule='evenodd'
-															d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
-															clipRule='evenodd'
+															fillRule="evenodd"
+															d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+															clipRule="evenodd"
 														/>
 													</svg>
 													{LinksLabel[0].label}
@@ -684,7 +682,7 @@ const Links = (props) => {
 											className={`hidden sm:flex items-center text-sm leading-5`}
 										>
 											<Link
-												href='/dashboard/site/[siteId]/overview'
+												href="/dashboard/site/[siteId]/overview"
 												as={'/dashboard/site/' + query.siteId + '/overview'}
 											>
 												<a
@@ -697,13 +695,13 @@ const Links = (props) => {
 												className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
 											>
 												<path
-													fillRule='evenodd'
-													d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
-													clipRule='evenodd'
+													fillRule="evenodd"
+													d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+													clipRule="evenodd"
 												/>
 											</svg>
 											<Link
-												href='/dashboard/site/[siteId]/links/'
+												href="/dashboard/site/[siteId]/links/"
 												as={'/dashboard/site/' + query.siteId + '/links'}
 											>
 												<a
@@ -734,13 +732,13 @@ const Links = (props) => {
 															>
 																<svg
 																	className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`}
-																	viewBox='0 0 20 20'
-																	fill='currentColor'
+																	viewBox="0 0 20 20"
+																	fill="currentColor"
 																>
 																	<path
-																		fillRule='evenodd'
-																		d='M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z'
-																		clipRule='evenodd'
+																		fillRule="evenodd"
+																		d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
+																		clipRule="evenodd"
 																	/>
 																</svg>
 																{link.count > 0
@@ -791,7 +789,7 @@ const Links = (props) => {
 										externalFilter={externalFilter}
 									/>
 									<MyPagination
-										href='/dashboard/site/[siteId]/links/'
+										href="/dashboard/site/[siteId]/links/"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
 										page={props.result.page ? props.result.page : 0}
@@ -831,7 +829,7 @@ const Links = (props) => {
 																							slug={site.slug}
 																						/>
 																					) : null}
-																					<span className='label flex items-center'>
+																					<span className="label flex items-center">
 																						{site.label}
 																						{site.slug === 'url-type' ||
 																						site.slug === 'status' ||
@@ -843,20 +841,20 @@ const Links = (props) => {
 																									data-background-color={
 																										'#4A5568'
 																									}
-																									data-iscapture='true'
+																									data-iscapture="true"
 																									className={`flex items-center`}
 																								>
 																									<span
 																										className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
 																									>
 																										<svg
-																											fill='currentColor'
-																											viewBox='0 0 20 20'
+																											fill="currentColor"
+																											viewBox="0 0 20 20"
 																										>
 																											<path
-																												fillRule='evenodd'
-																												d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z'
-																												clipRule='evenodd'
+																												fillRule="evenodd"
+																												d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+																												clipRule="evenodd"
 																											></path>
 																										</svg>
 																									</span>
@@ -866,9 +864,9 @@ const Links = (props) => {
 																									className={`${
 																										site.slug + '-tooltip'
 																									} w-36`}
-																									type='dark'
-																									effect='solid'
-																									place='bottom'
+																									type="dark"
+																									effect="solid"
+																									place="bottom"
 																									multiline={true}
 																								>
 																									<span
@@ -957,7 +955,7 @@ const Links = (props) => {
 									</div>
 
 									<MyPagination
-										href='/dashboard/site/[siteId]/links/'
+										href="/dashboard/site/[siteId]/links/"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
 										page={props.result.page ? props.result.page : 0}
