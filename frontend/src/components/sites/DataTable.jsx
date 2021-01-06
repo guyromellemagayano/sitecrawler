@@ -667,10 +667,10 @@ const DataTable = (props) => {
 				</DataTableDiv>
 			) : (
 				<DataTableDiv>
-					{[...Array(6)].map((index) => (
+					{[...Array(6)].map((val, key) => (
 						<td
 							className="flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-300"
-							key={index}
+							key={key}
 						>
 							<Skeleton duration={2} />
 						</td>
