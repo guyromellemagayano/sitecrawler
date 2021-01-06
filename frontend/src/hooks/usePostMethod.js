@@ -20,7 +20,7 @@ const usePostMethod = async (endpoint, data) => {
 	await sleep(500);
 
 	// Axios POST method
-	await axios
+	return await axios
 		.post(endpoint, data)
 		.then((response) => {
 			// Debugging purpose only

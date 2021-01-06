@@ -20,7 +20,7 @@ const usePatchMethod = async (endpoint, data) => {
 	await sleep(500);
 
 	// Axios PATCH method
-	await axios
+	return await axios
 		.patch(endpoint, data)
 		.then((response) => {
 			// Debugging purpose only

@@ -20,7 +20,7 @@ const usePutMethod = async (endpoint, data) => {
 	await sleep(500);
 
 	// Axios PUT method
-	await axios
+	return await axios
 		.put(endpoint, data)
 		.then((response) => {
 			// Debugging purpose only

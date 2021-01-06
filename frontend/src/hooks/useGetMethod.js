@@ -20,7 +20,7 @@ const useGetMethod = async (endpoint) => {
 	await sleep(500);
 
 	// Axios GET method
-	await axios
+	return await axios
 		.get(endpoint)
 		.then((response) => {
 			// Debugging purpose only

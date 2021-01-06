@@ -20,7 +20,7 @@ const useDeleteMethod = async (endpoint) => {
 	await sleep(500);
 
 	// Axios DELETE method
-	await axios
+	return await axios
 		.delete(endpoint)
 		.then((response) => {
 			// Debugging purpose only
