@@ -38,13 +38,9 @@ const Sidebar = () => {
 		setIsComponentVisible(!isComponentVisible);
 	};
 
-	const { data: user } = useSWR(
-		userApiEndpoint,
-		async () => await useFetcher(userApiEndpoint),
-		{
-			refreshInterval: 2500
-		}
-	);
+	const { data: user } = useSWR(userApiEndpoint, useFetcher, {
+		refreshInterval: 2500
+	});
 
 	useEffect(() => {
 		if (user && user !== undefined) setUserLoaded(true);
@@ -54,7 +50,7 @@ const Sidebar = () => {
 		<SidebarDiv ref={ref} className="flex-shrink-0 flex flex-col relative">
 			<button
 				type="button"
-				className={`p-4 flex items-center justify-between flex-shrink-0 outline-none w-full group transition ease-in-out duration-150 ${
+				className={`p-4 flex items-center justify-between flex-shrink-0 w-full group focus:outline-none transition ease-in-out duration-150 ${
 					isComponentVisible ? 'bg-gray-900' : 'hover:bg-gray-900'
 				}`}
 				id="options-menu"
