@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
 };
 
 Layout.propTypes = {
-	children: PropTypes.array.isRequired
+	children: PropTypes.array
 };
 
 export default Layout;

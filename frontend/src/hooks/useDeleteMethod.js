@@ -55,8 +55,8 @@ const useDeleteMethod = async (endpoint, method) => {
 };
 
 useDeleteMethod.propTypes = {
-	endpoint: PropTypes.string.isRequired,
-	method: PropTypes.string.isRequired
+	endpoint: PropTypes.string,
+	method: PropTypes.string
 };
 
 export default useDeleteMethod;

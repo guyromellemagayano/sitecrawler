@@ -385,9 +385,9 @@ Sites.propTypes = {
 	ordering: PropTypes.string,
 	openMobileSidebar: PropTypes.bool,
 	userLoaded: PropTypes.bool,
-	linksPerPage: PropTypes.number.isRequired,
+	linksPerPage: PropTypes.number,
 	pagePath: PropTypes.string,
-	sortOrder: PropTypes.array.isRequired,
+	sortOrder: PropTypes.array,
 	searchKey: PropTypes.string
 };
 

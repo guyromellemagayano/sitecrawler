@@ -55,9 +55,9 @@ const usePutMethod = async (endpoint, method, data) => {
 };
 
 usePutMethod.propTypes = {
-	endpoint: PropTypes.string.isRequired,
-	method: PropTypes.string.isRequired,
-	data: PropTypes.array.isRequired
+	endpoint: PropTypes.string,
+	method: PropTypes.string,
+	data: PropTypes.array
 };
 
 usePutMethod.defaultProps = {

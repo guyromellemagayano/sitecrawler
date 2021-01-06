@@ -11,8 +11,8 @@ const AppLogo = ({ className, src, alt }) => {
 
 AppLogo.propTypes = {
 	className: PropTypes.string,
-	src: PropTypes.string.isRequired,
-	alt: PropTypes.string.isRequired
+	src: PropTypes.string,
+	alt: PropTypes.string
 };
 
 export default AppLogo;

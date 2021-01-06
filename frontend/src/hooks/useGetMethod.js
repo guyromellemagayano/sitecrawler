@@ -55,8 +55,8 @@ const useGetMethod = async (endpoint, method) => {
 };
 
 useGetMethod.propTypes = {
-	endpoint: PropTypes.string.isRequired,
-	method: PropTypes.string.isRequired
+	endpoint: PropTypes.string,
+	method: PropTypes.string
 };
 
 export default useGetMethod;

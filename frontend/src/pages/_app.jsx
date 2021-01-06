@@ -45,8 +45,8 @@ SCApp.getInitialProps = async (appContext) => {
 };
 
 SCApp.propTypes = {
-	Component: PropTypes.func.isRequired,
-	pageProps: PropTypes.object.isRequired
+	Component: PropTypes.func,
+	pageProps: PropTypes.object
 };
 
 export default SCApp;

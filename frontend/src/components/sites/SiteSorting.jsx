@@ -36,8 +36,8 @@ const SiteSorting = ({ sortOrder, onSortHandler, slug }) => {
 };
 
 SiteSorting.propTypes = {
-	sortOrder: PropTypes.array.isRequired,
-	onSortHandler: PropTypes.func.isRequired,
+	sortOrder: PropTypes.array,
+	onSortHandler: PropTypes.func,
 	slug: PropTypes.string
 };
 
