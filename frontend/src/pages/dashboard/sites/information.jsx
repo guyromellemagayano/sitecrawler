@@ -1,5 +1,5 @@
 // React
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // NextJS
 import Router, { withRouter } from 'next/router';
@@ -34,8 +34,6 @@ const SitesInformationDiv = styled.section`
 	}
 `;
 
-const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
-
 const SitesInformation = (props) => {
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [errorMsg, setErrorMsg] = useState('');
@@ -51,6 +49,11 @@ const SitesInformation = (props) => {
 	const siteApiEndpoint = '/api/site/';
 
 	const { router } = props;
+
+	const { user: user } = useUser({
+		redirectTo: '/',
+		redirectIfFound: false
+	});
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -158,52 +161,35 @@ const SitesInformation = (props) => {
 				const data = await response.data;
 
 				if (response.statusText === 'OK' && response.status === 200) {
-					if (data) {
-						try {
-							const siteResponse = await fetch(
-								`/api/site/${router.query.sid}/`,
-								{
-									method: 'PATCH',
-									headers: {
-										'Accept': 'application/json',
-										'Content-Type': 'application/json',
-										'X-CSRFToken': Cookies.get('csrftoken')
-									},
-									body: JSON.stringify(body)
+					try {
+						const siteResponse = await usePatchMethod(
+							'/api/site/' + router.query.sid + '/',
+							body
+						);
+						const siteData = await siteResponse.data;
+
+						if (
+							siteResponse.statusText === 'OK' &&
+							siteResponse.status === 200
+						) {
+							setDisableSiteVerify(!disableSiteVerify);
+
+							Router.push({
+								pathname: '/dashboard/sites/verify-url',
+								query: {
+									sid: siteData.id,
+									sname: siteData.name,
+									surl: siteData.url,
+									vid: siteData.verification_id,
+									v: false
 								}
-							);
-
-							if (siteResponse.ok) {
-								const siteData = await siteResponse.json();
-
-								if (siteData) {
-									setDisableSiteVerify(!disableSiteVerify);
-
-									Router.push({
-										pathname: '/dashboard/sites/verify-url',
-										query: {
-											sid: siteData.id,
-											sname: siteData.name,
-											surl: siteData.url,
-											vid: siteData.verification_id,
-											v: false
-										}
-									});
-								}
-							}
-						} catch (error) {
-							setErrorMsg('An unexpected error occurred. Please try again.');
-
-							throw error.message;
+							});
 						}
+					} catch (error) {
+						setErrorMsg('An unexpected error occurred. Please try again.');
+
+						throw error.message;
 					}
-				} else {
-					const error = new Error(response.statusText);
-
-					error.response = response;
-					error.data = data;
-
-					throw error;
 				}
 			} catch (error) {
 				if (!error.data) {
@@ -221,22 +207,7 @@ const SitesInformation = (props) => {
 		}
 	};
 
-	const fetchSiteData = async (endpoint) => {
-		const siteData = await fetchJson(endpoint, {
-			method: 'GET',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			}
-		});
-
-		return siteData;
-	};
-
-	const { data: sites } = useSWR(`/api/site/`, () =>
-		fetchSiteData(`/api/site/`)
-	);
+	const { data: sites } = useSWR(siteApiEndpoint, useFetcher);
 
 	useEffect(() => {
 		if (sites !== '' && sites !== undefined) {
@@ -246,9 +217,7 @@ const SitesInformation = (props) => {
 	}, [sites]);
 
 	if (router.query.sid !== undefined) {
-		const { data: site } = useSWR(`/api/site/${router.query.sid}`, () =>
-			fetchSiteData(`/api/site/${router.query.sid}`)
-		);
+		const { data: site } = useSWR(`/api/site/${router.query.sid}`, useFetcher);
 
 		useEffect(() => {
 			if (site !== '' && site !== undefined) {
@@ -258,32 +227,21 @@ const SitesInformation = (props) => {
 		}, [site]);
 	}
 
-	const { user: user, userError: userError } = useUser({
-		redirectTo: '/',
-		redirectIfFound: false
-	});
-
-	{
-		userError && <Layout>{userError.message}</Layout>;
-	}
-
 	return (
 		<Layout>
 			{user ? (
-				<Fragment>
+				<>
 					<NextSeo title={pageTitle} />
 
-					<SitesInformationDiv
-						className={`h-screen flex overflow-hidden bg-gray-200`}
-					>
+					<SitesInformationDiv className="h-screen flex overflow-hidden bg-gray-200">
 						<MobileSidebar show={openMobileSidebar} />
 						<MainSidebar />
 
-						<div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
-							<div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
+						<div className="flex flex-col w-0 flex-1 overflow-hidden">
+							<div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
 								<button
-									className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
-									aria-label={`Open sidebar`}
+									className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150"
+									aria-label="Open sidebar"
 									onClick={() =>
 										setTimeout(
 											() => setOpenMobileSidebar(!openMobileSidebar),
@@ -292,73 +250,55 @@ const SitesInformation = (props) => {
 									}
 								>
 									<svg
-										className={`h-6 w-5`}
-										stroke={`currentColor`}
-										fill={`none`}
-										viewBox={`0 0 24 24`}
+										className="h-6 w-5"
+										stroke="currentColor"
+										fill="none"
+										viewBox="0 0 24 24"
 									>
 										<path
-											strokeLinecap={`round`}
-											strokeLinejoin={`round`}
-											strokeWidth={`2`}
-											d={`M4 6h16M4 12h16M4 18h16`}
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth="2"
+											d="M4 6h16M4 12h16M4 18h16"
 										/>
 									</svg>
 								</button>
 							</div>
 							<main
-								className={`flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6`}
-								tabIndex={`0`}
+								className="flex-1 relative z-0 overflow-y-auto pt-2 pb-6 focus:outline-none md:py-6"
+								tabIndex="0"
 							>
-								<div
-									className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8 grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12`}
-								>
-									<div
-										className={`lg:col-span-2 bg-white overflow-hidden shadow-xs rounded-lg`}
-									>
-										<div className={`px-4 pt-4 px-8 sm:pt-8`}>
-											<div className={`max-w-full pt-4 m-auto`}>
-												<h4
-													className={`text-2xl leading-6 font-medium text-gray-900`}
-												>
+								<div className="max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8 grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
+									<div className="lg:col-span-2 bg-white overflow-hidden shadow-xs rounded-lg">
+										<div className="pt-4 px-8 sm:pt-8">
+											<div className="max-w-full pt-4 m-auto">
+												<h4 className="text-2xl leading-6 font-medium text-gray-900">
 													{InformationLabel[0].label}
 												</h4>
-												<p
-													className={`max-w-full mt-2 text-sm leading-5 text-gray-500`}
-												>
+												<p className="max-w-full mt-2 text-sm leading-5 text-gray-500">
 													{InformationLabel[0].description}
 												</p>
 											</div>
 										</div>
-										<div
-											className={`max-w-full px-8 pb-8 sm:pt-6 grid gap-16 pt-12 lg:grid-cols-2 lg:col-gap-5 lg:row-gap-12`}
-										>
-											<div className={`wizard-indicator bg-green-500`}>
-												<p
-													className={`max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400`}
-												>
+										<div className="max-w-full px-8 pb-8 sm:pt-6 grid gap-16 pt-12 lg:grid-cols-2 lg:col-gap-5 lg:row-gap-12">
+											<div className="wizard-indicator bg-green-500">
+												<p className="max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400">
 													{InformationLabel[1].label}
 												</p>
 											</div>
-											<div className={`wizard-indicator bg-gray-100`}>
-												<p
-													className={`max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400`}
-												>
+											<div className="wizard-indicator bg-gray-100">
+												<p className="max-w-2xl mt-4 text-sm leading-2 font-medium text-black-400">
 													{InformationLabel[2].label}
 												</p>
 											</div>
 										</div>
-										<div className={`inline-block pt-8 pb-12 px-8`}>
-											<div className={`max-w-full py-4 m-auto`}>
+										<div className="inline-block pt-8 pb-12 px-8">
+											<div className="max-w-full py-4 m-auto">
 												<div>
-													<h4
-														className={`text-lg leading-7 font-medium text-gray-900`}
-													>
+													<h4 className="text-lg leading-7 font-medium text-gray-900">
 														{InformationLabel[3].label}
 													</h4>
-													<p
-														className={`mt-1 text-sm leading-5 text-gray-500 max-w-full`}
-													>
+													<p className="mt-1 text-sm leading-5 text-gray-500 max-w-full">
 														{InformationLabel[3].description}
 													</p>
 												</div>
@@ -368,21 +308,19 @@ const SitesInformation = (props) => {
 														router.query.sid ? handleUpdateSubmit : handleSubmit
 													}
 												>
-													<div className={`my-6 max-w-sm`}>
+													<div className="my-6 max-w-sm">
 														<label
 															htmlFor="sitename"
-															className={`block text-sm font-medium leading-5 text-gray-700`}
+															className="block text-sm font-medium leading-5 text-gray-700"
 														>
 															{InformationLabel[4].label}
 														</label>
-														<div
-															className={`mt-1 mb-1 relative rounded-md shadow-xs-sm`}
-														>
+														<div className="mt-1 mb-1 relative rounded-md shadow-xs-sm">
 															<input
-																id={`sitename`}
+																id="sitename"
 																type="text"
 																disabled={disableSiteVerify ? true : false}
-																name={`sitename`}
+																name="sitename"
 																value={siteName ? siteName : ''}
 																className={`${
 																	errorSiteNameMsg && !siteName
@@ -405,11 +343,9 @@ const SitesInformation = (props) => {
 																onChange={(e) => setSiteName(e.target.value)}
 															/>
 															{errorSiteNameMsg && !siteName ? (
-																<div
-																	className={`absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none`}
-																>
+																<div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
 																	<svg
-																		className={`h-5 w-5 text-red-500`}
+																		className="h-5 w-5 text-red-500"
 																		fill="currentColor"
 																		viewBox="0 0 20 20"
 																	>
@@ -424,12 +360,10 @@ const SitesInformation = (props) => {
 														</div>
 
 														{errorSiteNameMsg && !siteName ? (
-															<div className={`inline-block py-2`}>
-																<div className={`flex`}>
+															<div className="inline-block py-2">
+																<div className="flex">
 																	<div>
-																		<h3
-																			className={`text-sm leading-5 font-medium text-red-800 break-words`}
-																		>
+																		<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
 																			{errorSiteNameMsg}
 																		</h3>
 																	</div>
@@ -438,19 +372,15 @@ const SitesInformation = (props) => {
 														) : null}
 													</div>
 
-													<div className={`my-6 max-w-sm`}>
+													<div className="my-6 max-w-sm">
 														<label
 															htmlFor="siteurl"
-															className={`block text-sm font-medium leading-5 text-gray-700`}
+															className="block text-sm font-medium leading-5 text-gray-700"
 														>
 															{InformationLabel[5].label}
 														</label>
-														<div
-															className={`mt-1 relative rounded-md shadow-xs-sm`}
-														>
-															<div
-																className={`absolute inset-y-0 left-0 flex items-center`}
-															>
+														<div className="mt-1 relative rounded-md shadow-xs-sm">
+															<div className="absolute inset-y-0 left-0 flex items-center">
 																<select
 																	disabled={
 																		disableSiteVerify ||
@@ -461,7 +391,7 @@ const SitesInformation = (props) => {
 																	tabIndex="-1"
 																	value={urlProtocol}
 																	aria-label="site-url"
-																	className={`form-select h-full py-0 pl-3 pr-8 border-transparent bg-transparent text-gray-500 sm:text-sm sm:leading-5`}
+																	className="form-select h-full py-0 pl-3 pr-8 border-transparent bg-transparent text-gray-500 sm:text-sm sm:leading-5"
 																	onChange={(e) =>
 																		setUrlProtocol(e.target.value)
 																	}
@@ -471,9 +401,9 @@ const SitesInformation = (props) => {
 																</select>
 															</div>
 															<input
-																id={`siteurl`}
-																type={`text`}
-																name={`siteurl`}
+																id="siteurl"
+																type="text"
+																name="siteurl"
 																disabled={
 																	disableSiteVerify ||
 																	router.query.sid !== undefined
@@ -499,7 +429,7 @@ const SitesInformation = (props) => {
 																		: ''
 																}`}
 																placeholder={InformationLabel[5].placeholder}
-																aria-describedby={`site-url`}
+																aria-describedby="site-url"
 																aria-describedby={`${
 																	errorSiteUrlMsg
 																		? 'site-url-error'
@@ -518,7 +448,7 @@ const SitesInformation = (props) => {
 																}
 															/>
 															<input
-																id={`urlpath`}
+																id="urlpath"
 																type="hidden"
 																disabled={
 																	disableSiteVerify ||
@@ -526,17 +456,15 @@ const SitesInformation = (props) => {
 																		? true
 																		: false
 																}
-																name={`urlpath`}
+																name="urlpath"
 																value={urlProtocol + siteUrl}
 															/>
 
 															{(errorSiteUrlMsg && !siteUrl) ||
 															dupSiteProtocolExists ? (
-																<div
-																	className={`absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none`}
-																>
+																<div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
 																	<svg
-																		className={`h-5 w-5 text-red-500`}
+																		className="h-5 w-5 text-red-500"
 																		fill="currentColor"
 																		viewBox="0 0 20 20"
 																	>
@@ -552,12 +480,10 @@ const SitesInformation = (props) => {
 
 														{(errorSiteUrlMsg && !siteUrl) ||
 														dupSiteProtocolExists ? (
-															<div className={`inline-block py-2`}>
-																<div className={`flex`}>
+															<div className="inline-block py-2">
+																<div className="flex">
 																	<div>
-																		<h3
-																			className={`text-sm leading-5 font-medium text-red-800 break-words`}
-																		>
+																		<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
 																			{errorSiteUrlMsg}
 																		</h3>
 																	</div>
@@ -566,47 +492,41 @@ const SitesInformation = (props) => {
 														) : null}
 													</div>
 
-													<div
-														className={`sm:flex sm:items-center sm:justify-start`}
-													>
+													<div className="sm:flex sm:items-center sm:justify-start">
 														<div>
 															{router.query.sid === undefined ? (
-																<span
-																	className={`inline-flex rounded-md shadow-xs-sm`}
-																>
+																<span className="inline-flex rounded-md shadow-xs-sm">
 																	{disableSiteVerify ? (
 																		<button
-																			disabled={`disabled`}
-																			type={`submit`}
-																			className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+																			disabled="disabled"
+																			type="submit"
+																			className="mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed"
 																		>
 																			{InformationLabel[6].label}
 																		</button>
 																	) : (
 																		<button
-																			type={`submit`}
-																			className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+																			type="submit"
+																			className="mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700"
 																		>
 																			{InformationLabel[6].label}
 																		</button>
 																	)}
 																</span>
 															) : (
-																<span
-																	className={`inline-flex rounded-md shadow-xs-sm`}
-																>
+																<span className="inline-flex rounded-md shadow-xs-sm">
 																	{disableSiteVerify ? (
 																		<button
-																			disabled={`disabled`}
-																			type={`submit`}
-																			className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed`}
+																			disabled="disabled"
+																			type="submit"
+																			className="mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed"
 																		>
 																			Update Site Detail
 																		</button>
 																	) : (
 																		<button
-																			type={`submit`}
-																			className={`mt-3 mr-3 rounded-md shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700`}
+																			type="submit"
+																			className="mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700"
 																		>
 																			Update Site Detail
 																		</button>
@@ -616,12 +536,10 @@ const SitesInformation = (props) => {
 														</div>
 
 														{errorMsg && (
-															<div className={`inline-block p-2`}>
-																<div className={`flex`}>
+															<div className="inline-block p-2">
+																<div className="flex">
 																	<div>
-																		<h3
-																			className={`text-sm leading-5 font-medium text-red-800 break-words`}
-																		>
+																		<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
 																			{errorMsg}
 																		</h3>
 																	</div>
@@ -634,16 +552,14 @@ const SitesInformation = (props) => {
 										</div>
 									</div>
 
-									<div
-										className={`lg:col-span-1 bg-white overflow-hidden shadow-xs rounded-lg`}
-									>
+									<div className="lg:col-span-1 bg-white overflow-hidden shadow-xs rounded-lg">
 										<HowToSetup />
 									</div>
 								</div>
 							</main>
 						</div>
 					</SitesInformationDiv>
-				</Fragment>
+				</>
 			) : null}
 		</Layout>
 	);
