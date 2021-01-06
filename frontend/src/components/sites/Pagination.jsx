@@ -5,6 +5,7 @@ import React from 'react';
 import Router from 'next/router';
 
 // External
+import 'core-js';
 import Pagination from 'rc-pagination';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';

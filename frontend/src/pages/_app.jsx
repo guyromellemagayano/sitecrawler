@@ -5,6 +5,7 @@ import React from 'react';
 import App from 'next/app';
 
 // External
+import 'core-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';

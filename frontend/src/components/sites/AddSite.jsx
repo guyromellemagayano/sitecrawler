@@ -7,6 +7,7 @@ import Link from 'next/link';
 // External
 import 'core-js';
 import { Transition } from '@tailwindui/react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import useSWR from 'swr';
 

@@ -2,6 +2,7 @@
 import React from 'react';
 
 // External
+import 'core-js';
 import PropTypes from 'prop-types';
 
 const Layout = ({ children }) => {
