@@ -1,17 +1,14 @@
 // React
-import { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 
 // NextJS
 import Router, { useRouter } from 'next/router';
 
 // External
-
 import { NextSeo } from 'next-seo';
-import Cookies from 'js-cookie';
 import LogRocket from 'logrocket';
 import PropTypes from 'prop-types';
 import setupLogRocketReact from 'logrocket-react';
-import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 import useSWR from 'swr';
 
@@ -61,7 +58,7 @@ const Sites = (props) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [searchKey, setSearchKey] = useState(null);
 
-	const pageTitle = 'Sites';
+	const pageTitle = 'Dashboard';
 
 	const { asPath } = useRouter();
 
@@ -286,7 +283,6 @@ const Sites = (props) => {
 										onSearchEvent={searchEventHandler}
 									/>
 									<MyPagination
-										href="/dashboard/sites/"
 										pathName={pagePath}
 										apiEndpoint={sitesApiEndpoint}
 										page={props.page ? props.page : 0}
@@ -346,7 +342,6 @@ const Sites = (props) => {
 										</div>
 									</div>
 									<MyPagination
-										href="/dashboard/sites/"
 										pathName={pagePath}
 										apiEndpoint={sitesApiEndpoint}
 										page={props.page ? props.page : 0}
@@ -379,10 +374,6 @@ Sites.getInitialProps = ({ query }) => {
 };
 
 Sites.propTypes = {
-	page: PropTypes.number,
-	search: PropTypes.string,
-	per_page: PropTypes.number,
-	ordering: PropTypes.string,
 	openMobileSidebar: PropTypes.bool,
 	userLoaded: PropTypes.bool,
 	linksPerPage: PropTypes.number,
