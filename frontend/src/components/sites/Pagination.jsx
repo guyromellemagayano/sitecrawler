@@ -5,7 +5,6 @@ import React from 'react';
 import Router from 'next/router';
 
 // External
-
 import Pagination from 'rc-pagination';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
@@ -79,31 +78,24 @@ const PaginationLocale = {
 	next_3: 'Next 3'
 };
 
-const MyPagination = ({
-	href,
-	pathName,
-	apiEndpoint,
-	page,
-	linksPerPage,
-	onItemsPerPageChange
-}) => {
+const MyPagination = (props) => {
 	const pageNumbers = [];
 	const values = [20, 25, 50, 100];
-	const currentPage = parseInt(page) || 1;
+	const currentPage = parseInt(props.page) || 1;
 	const linkNumbers = [];
-	const offset = (currentPage - 1) * linksPerPage;
+	const offset = (currentPage - 1) * props.linksPerPage;
 
-	const { data: pages } = useSWR(apiEndpoint, useFetcher);
+	const { data: page } = useSWR(props.apiEndpoint, useFetcher);
 
-	// console.log(pathName);
+	// console.log(props.pathName);
 
 	const handlePageChange = (pageNum) => {
 		// console.log('[pageNum]', pageNum);
-		const newPath = removeURLParameter(pathName, 'page');
+		const newPath = removeURLParameter(props.pathName, 'page');
 		Router.push(`${newPath}page=${pageNum}`);
 	};
 
-	const totalPages = Math.ceil(page.count / linksPerPage);
+	const totalPages = Math.ceil(page.count / props.linksPerPage);
 
 	for (let i = 1; i <= totalPages; i++) {
 		pageNumbers.push(i);
@@ -115,9 +107,9 @@ const MyPagination = ({
 		linkNumbers.push(i);
 	}
 
-	const paginatedItems = linkNumbers.slice(offset).slice(0, linksPerPage);
+	const paginatedItems = linkNumbers.slice(offset).slice(0, props.linksPerPage);
 
-	return pages ? (
+	return page ? (
 		<PaginationDiv className="bg-white px-4 mb-4 py-2 lg:flex items-center justify-between sm:px-6 align-middle shadow-xs rounded-lg">
 			<div className="flex items-center mb-8 lg:m-0">
 				<div className="mt-2 lg:my-0">
@@ -138,10 +130,10 @@ const MyPagination = ({
 			<Pagination
 				showPrevNextJumpers={true}
 				defaultPageSize={20}
-				pageSize={linksPerPage}
+				pageSize={props.linksPerPage}
 				defaultCurrent={currentPage}
 				current={currentPage}
-				total={totalPages * linksPerPage}
+				total={totalPages * props.linksPerPage}
 				className="flex"
 				onChange={handlePageChange}
 				locale={PaginationLocale}
@@ -155,8 +147,8 @@ const MyPagination = ({
 				</h1>
 				<div>
 					<select
-						onChange={onItemsPerPageChange}
-						value={linksPerPage}
+						onChange={props.onItemsPerPageChange}
+						value={props.linksPerPage}
 						className="form-select block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5"
 					>
 						{values.map((val, key) => {
@@ -185,13 +177,6 @@ const MyPagination = ({
 	);
 };
 
-MyPagination.propTypes = {
-	href: PropTypes.string,
-	pathName: PropTypes.string,
-	apiEndpoint: PropTypes.string,
-	page: PropTypes.number,
-	linksPerPage: PropTypes.number,
-	onItemsPerPageChange: PropTypes.func
-};
+MyPagination.propTypes = {};
 
 export default MyPagination;
