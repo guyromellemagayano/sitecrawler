@@ -4,37 +4,24 @@ import axios from 'axios';
 const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
 
 const useFetcher = async (...args) => {
-	// Promise timeout
-	await sleep(500);
+	try {
+		const response = await axios.get(...args);
+		const data = await response.data;
 
-	await axios
-		.get(...args)
-		.then((response) => {
-			// Debugging purpose only
-			// console.log(response.data);
-			// console.log(response.status);
-			// console.log(response.statusText);
-			// console.log(response.headers);
-			// console.log(response.config);
+		// Promise timeout
+		await sleep(500);
 
-			return response.data;
-		})
-		.catch((error) => {
-			// Debugging purpose only
-			// console.log('Error', error.config);
+		return data;
+	} catch (error) {
+		// Debugging purpose only
+		// console.log('Error', error.config);
+		// console.log('Error', error.response.data);
+		// console.log('Error', error.response.headers);
+		// console.log('Error', error.response.status);
+		// console.log('Error', error.request);
 
-			if (error.response) {
-				// Debugging purpose only
-				// console.log('Error', error.response.data);
-				// console.log('Error', error.response.headers);
-
-				console.log('Error', error.response.status);
-			} else if (error.request) {
-				console.log('Error', error.request);
-			} else {
-				console.log('Error', error.message);
-			}
-		});
+		throw error.message;
+	}
 };
 
 export default useFetcher;
