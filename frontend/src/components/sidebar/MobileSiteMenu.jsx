@@ -56,7 +56,7 @@ const MobileSiteMenu = (props) => {
 			query.siteId
 				? `/api/site/${query.siteId}/scan/?ordering=-finished_at`
 				: null,
-		fetcher
+		useFetcher
 	);
 
 	let scanObjId = '';
