@@ -1,15 +1,10 @@
 // External
 import axios from 'axios';
 
-const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
-
 const useFetcher = async (...args) => {
 	try {
 		const response = await axios.get(...args);
 		const data = await response.data;
-
-		// Promise timeout
-		await sleep(500);
 
 		return data;
 	} catch (error) {
