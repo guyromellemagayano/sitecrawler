@@ -2,7 +2,6 @@
 import React from 'react';
 
 // External
-
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -36,7 +35,7 @@ const SiteSorting = ({ sortOrder, onSortHandler, slug }) => {
 };
 
 SiteSorting.propTypes = {
-	sortOrder: PropTypes.array,
+	sortOrder: PropTypes.object,
 	onSortHandler: PropTypes.func,
 	slug: PropTypes.string
 };
