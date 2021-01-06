@@ -5,7 +5,7 @@ import { Fragment, useState, useEffect } from 'react';
 import Router, { useRouter } from 'next/router';
 
 // External
-import 'core-js';
+
 import { NextSeo } from 'next-seo';
 import Cookies from 'js-cookie';
 import LogRocket from 'logrocket';

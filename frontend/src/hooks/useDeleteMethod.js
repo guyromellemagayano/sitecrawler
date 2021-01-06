@@ -2,7 +2,7 @@
 import React from 'react';
 
 // External
-import 'core-js';
+
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';

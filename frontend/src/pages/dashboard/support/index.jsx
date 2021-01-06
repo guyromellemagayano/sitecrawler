@@ -1,4 +1,3 @@
-import 'core-js';
 import { Formik } from 'formik';
 import { Fragment, useState } from 'react';
 import * as Yup from 'yup';
@@ -190,7 +189,7 @@ const Support = () => {
 															className={`mt-6 sm:mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-300 sm:pt-5`}
 														>
 															<label
-																htmlFor='about'
+																htmlFor="about"
 																className={`block text-sm font-medium leading-5 text-gray-700 sm:mt-px sm:pt-2`}
 															>
 																{SupportLabel[8].label}
@@ -239,7 +238,7 @@ const Support = () => {
 																className={`ml-3 inline-flex rounded-md shadow-sm`}
 															>
 																<button
-																	type='submit'
+																	type="submit"
 																	className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out`}
 																	disabled={isSubmitting}
 																>

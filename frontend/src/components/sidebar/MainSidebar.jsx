@@ -5,7 +5,7 @@ import React from 'react';
 import Link from 'next/link';
 
 // External
-import 'core-js';
+
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 

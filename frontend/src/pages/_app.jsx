@@ -1,9 +1,6 @@
 // React
 import React from 'react';
 
-// NextJS
-import App from 'next/app';
-
 // External
 import 'core-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -22,10 +19,10 @@ import SiteHead from 'src/components/layout/SiteHead';
 // Other imports
 import 'public/styles/app.css';
 
-// Font awesome
+// Font Awesome
 library.add(fab);
 
-const SCApp = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }) => {
 	const stripePromise = loadStripe(process.env.STRIPE_PUBLIC_KEY);
 
 	return (
@@ -37,16 +34,9 @@ const SCApp = ({ Component, pageProps }) => {
 	);
 };
 
-// Page SSR
-SCApp.getInitialProps = async (appContext) => {
-	const appProps = await App.getInitialProps(appContext);
-
-	return { ...appProps };
-};
-
-SCApp.propTypes = {
+App.propTypes = {
 	Component: PropTypes.func,
 	pageProps: PropTypes.object
 };
 
-export default SCApp;
+export default App;

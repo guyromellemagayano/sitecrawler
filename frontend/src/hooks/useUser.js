@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import Router, { useRouter } from 'next/router';
 
 // External
-import 'core-js';
+
 import PropTypes from 'prop-types';
 import useSWR from 'swr';
 

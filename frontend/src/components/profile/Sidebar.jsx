@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 // External
-import 'core-js';
+
 import { Transition } from '@tailwindui/react';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';

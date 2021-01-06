@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 // External
-import 'core-js';
+
 import { NextSeo } from 'next-seo';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';

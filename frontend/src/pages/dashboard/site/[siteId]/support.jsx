@@ -1,4 +1,3 @@
-import 'core-js';
 import { Formik } from 'formik';
 import { Fragment, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -122,13 +121,13 @@ const Support = () => {
 												>
 													<svg
 														className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
-														viewBox='0 0 20 20'
-														fill='currentColor'
+														viewBox="0 0 20 20"
+														fill="currentColor"
 													>
 														<path
-															fillRule='evenodd'
-															d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
-															clipRule='evenodd'
+															fillRule="evenodd"
+															d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+															clipRule="evenodd"
 														/>
 													</svg>
 													{SupportLabel[0].label}
@@ -151,9 +150,9 @@ const Support = () => {
 												className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
 											>
 												<path
-													fillRule='evenodd'
-													d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
-													clipRule='evenodd'
+													fillRule="evenodd"
+													d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+													clipRule="evenodd"
 												/>
 											</svg>
 											<Link
@@ -280,7 +279,7 @@ const Support = () => {
 															className={`mt-6 sm:mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-300 sm:pt-5`}
 														>
 															<label
-																htmlFor='about'
+																htmlFor="about"
 																className={`block text-sm font-medium leading-5 text-gray-700 sm:mt-px sm:pt-2`}
 															>
 																{SupportLabel[8].label}
@@ -329,7 +328,7 @@ const Support = () => {
 																className={`ml-3 inline-flex rounded-md shadow-sm`}
 															>
 																<button
-																	type='submit'
+																	type="submit"
 																	className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out`}
 																	disabled={isSubmitting}
 																>

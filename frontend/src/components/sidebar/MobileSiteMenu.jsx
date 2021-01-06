@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Router, { useRouter } from 'next/router';
 
 // External
-import 'core-js';
+
 import { Transition } from '@tailwindui/react';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
