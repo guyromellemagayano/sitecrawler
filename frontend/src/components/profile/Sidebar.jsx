@@ -38,41 +38,23 @@ const Sidebar = () => {
 		setIsComponentVisible(!isComponentVisible);
 	};
 
-	const { data: user } = useSWR(userApiEndpoint, useFetcher, {
-		refreshInterval: 2500
-	});
+	const { data: user } = useSWR(
+		userApiEndpoint,
+		async () => await useFetcher(userApiEndpoint),
+		{
+			refreshInterval: 2500
+		}
+	);
 
 	useEffect(() => {
 		if (user && user !== undefined) setUserLoaded(true);
 	}, [user]);
 
 	return userLoaded ? (
-		<SidebarDiv className="flex-shrink-0 flex flex-col border-gray-300">
-			<span className="flex justify-between items-center my-1 group px-3 py-2">
-				<span className="w-full flex justify-between">
-					<Skeleton duration={2} width={100} />
-					<Skeleton duration={2} width={50} />
-				</span>
-			</span>
-			<Link href="/dashboard/settings/profile">
-				<a className="border-t p-4 flex-shrink-0 w-full group block hover:text-gray-900 hover:bg-gray-100 transition ease-in-out duration-150">
-					<div className="flex items-center">
-						<div>
-							<Skeleton circle={true} duration={2} width={40} height={40} />
-						</div>
-						<div className="ml-3">
-							<Skeleton duration={2} width={145} />
-							<Skeleton duration={2} width={145} />
-						</div>
-					</div>
-				</a>
-			</Link>
-		</SidebarDiv>
-	) : (
 		<SidebarDiv ref={ref} className="flex-shrink-0 flex flex-col relative">
 			<button
 				type="button"
-				className={`p-4 flex items-center justify-between flex-shrink-0 w-full group transition ease-in-out duration-150 ${
+				className={`p-4 flex items-center justify-between flex-shrink-0 outline-none w-full group transition ease-in-out duration-150 ${
 					isComponentVisible ? 'bg-gray-900' : 'hover:bg-gray-900'
 				}`}
 				id="options-menu"
@@ -188,6 +170,28 @@ const Sidebar = () => {
 					</div>
 				</div>
 			</Transition>
+		</SidebarDiv>
+	) : (
+		<SidebarDiv className="flex-shrink-0 flex flex-col border-gray-300">
+			<span className="flex justify-between items-center my-1 group px-3 py-2">
+				<span className="w-full flex justify-between">
+					<Skeleton duration={2} width={100} />
+					<Skeleton duration={2} width={50} />
+				</span>
+			</span>
+			<Link href="/dashboard/settings/profile">
+				<a className="border-t p-4 flex-shrink-0 w-full group block hover:text-gray-900 hover:bg-gray-100 transition ease-in-out duration-150">
+					<div className="flex items-center">
+						<div>
+							<Skeleton circle={true} duration={2} width={40} height={40} />
+						</div>
+						<div className="ml-3">
+							<Skeleton duration={2} width={145} />
+							<Skeleton duration={2} width={145} />
+						</div>
+					</div>
+				</a>
+			</Link>
 		</SidebarDiv>
 	);
 };
