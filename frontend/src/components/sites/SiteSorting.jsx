@@ -1,23 +1,30 @@
+// React
+import React from 'react';
+
+// External
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Sorting from 'components/site/Sorting';
+
+// Components
+import Sorting from 'src/components/site/Sorting';
 
 const SiteSortingDiv = styled.div``;
 
-const SiteSorting = (props) => {
+const SiteSorting = ({ sortOrder, onSortHandler, slug }) => {
 	return (
-		<SiteSortingDiv className='flex flex-row mr-3'>
-			<div className={`inline-flex`}>
-				{props.slug == 'site-name' ? (
+		<SiteSortingDiv className="flex flex-row mr-3">
+			<div className="inline-flex">
+				{slug === 'site-name' ? (
 					<Sorting
-						direction={props.sortOrder.siteName}
-						onSortHandler={props.onSortHandler}
-						slug={props.slug}
+						direction={sortOrder.siteName}
+						onSortHandler={onSortHandler}
+						slug={slug}
 					/>
-				) : props.slug == 'last-crawled' ? (
+				) : slug === 'last-crawled' ? (
 					<Sorting
-						direction={props.sortOrder.lastCrawled}
-						onSortHandler={props.onSortHandler}
-						slug={props.slug}
+						direction={sortOrder.lastCrawled}
+						onSortHandler={onSortHandler}
+						slug={slug}
 					/>
 				) : (
 					''
@@ -25,6 +32,12 @@ const SiteSorting = (props) => {
 			</div>
 		</SiteSortingDiv>
 	);
+};
+
+SiteSorting.propTypes = {
+	sortOrder: PropTypes.array.isRequired,
+	onSortHandler: PropTypes.func.isRequired,
+	slug: PropTypes.string
 };
 
 export default SiteSorting;
