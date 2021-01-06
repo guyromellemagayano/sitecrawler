@@ -33,7 +33,7 @@ const Logout = () => {
 		(async () => {
 			await sleep(500);
 
-			const response = await usePostMethod(logoutApiEndpoint, 'POST');
+			const response = await usePostMethod(logoutApiEndpoint);
 			const data = await response.data;
 
 			if (response.statusText === 'OK' && response.status === 200) {

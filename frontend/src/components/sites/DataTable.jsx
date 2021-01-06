@@ -91,7 +91,7 @@ const DataTable = (props) => {
 			sid: e.currentTarget.site_verify_id.value
 		};
 
-		const response = await usePostMethod(siteVerifyApiEndpoint, 'POST', body);
+		const response = await usePostMethod(siteVerifyApiEndpoint, body);
 		const data = await response.data;
 
 		if (
