@@ -142,7 +142,6 @@ const Login = () => {
 
 																const response = await usePostMethod(
 																	loginApiEndpoint,
-																	'POST',
 																	body
 																);
 																const data = await response.data;
