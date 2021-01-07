@@ -158,9 +158,11 @@ const SitesInformation = (props) => {
 				const response = await useGetMethod(
 					'/api/site/' + router.query.sid + '/'
 				);
-				const data = await response.data;
 
-				if (response.statusText === 'OK' && response.status === 200) {
+				if (
+					response.statusText === 'OK' &&
+					Math.floor(response.status / 200) === 1
+				) {
 					try {
 						const siteResponse = await usePatchMethod(
 							'/api/site/' + router.query.sid + '/',
@@ -574,12 +576,12 @@ SitesInformation.getInitialProps = ({ query }) => {
 export default withRouter(SitesInformation);
 
 SitesInformation.propTypes = {
-	disableSiteVerify: PropTypes.bool,
-	errorMsg: PropTypes.string,
-	errorSiteUrlMsg: PropTypes.string,
-	siteName: PropTypes.string,
-	siteUrl: PropTypes.string,
-	pageTitle: PropTypes.string,
-	handleSubmit: PropTypes.func,
-	handleUpdateSubmit: PropTypes.func
+	disableSiteVerify: '',
+	errorMsg: '',
+	errorSiteUrlMsg: '',
+	siteName: '',
+	siteUrl: '',
+	pageTitle: '',
+	handleSubmit: '',
+	handleUpdateSubmit: ''
 };

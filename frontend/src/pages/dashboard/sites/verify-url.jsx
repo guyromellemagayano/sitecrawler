@@ -131,7 +131,6 @@ const SitesVerifyUrl = (props) => {
 			}
 		} catch (error) {
 			setErrorMsg('An unexpected error occurred. Please try again.');
-
 			setTimeout(() => setShowNotificationStatus(true), 1500);
 
 			throw error.message;
@@ -582,13 +581,13 @@ SitesVerifyUrl.getInitialProps = ({ query }) => {
 export default SitesVerifyUrl;
 
 SitesVerifyUrl.propTypes = {
-	copyValue: PropTypes.string,
-	copied: PropTypes.bool,
-	siteVerifyId: PropTypes.number,
-	errorMsg: PropTypes.string,
-	successMsg: PropTypes.string,
-	dataQuery: PropTypes.object,
-	disableSiteVerify: PropTypes.bool,
-	enableNextStep: PropTypes.bool,
-	pageTitle: PropTypes.string
+	copyValue: '',
+	copied: '',
+	siteVerifyId: '',
+	errorMsg: '',
+	successMsg: '',
+	dataQuery: '',
+	disableSiteVerify: '',
+	enableNextStep: '',
+	pageTitle: ''
 };
