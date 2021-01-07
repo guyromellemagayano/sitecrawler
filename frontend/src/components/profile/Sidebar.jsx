@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 // External
-
 import { Transition } from '@tailwindui/react';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
@@ -134,7 +133,7 @@ const Sidebar = () => {
 							{SidebarPages.filter((page) => page.slug !== 'logout').map(
 								(val, key) => {
 									return (
-										<Link key={key} href="${val.url}">
+										<Link key={key} href={val.url}>
 											<a
 												className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
 												role="menuitem"
@@ -151,7 +150,7 @@ const Sidebar = () => {
 							{SidebarPages.filter((page) => page.slug === 'logout').map(
 								(val, key) => {
 									return (
-										<Link key={key} href="${val.url}">
+										<Link key={key} href={val.url}>
 											<a
 												className="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
 												role="menuitem"
