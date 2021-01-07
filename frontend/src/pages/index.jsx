@@ -140,35 +140,30 @@ const Login = () => {
 																	password: values.password
 																};
 
-																const response = await usePostMethod(
-																	loginApiEndpoint,
-																	body
-																);
-																const data = await response.data;
+																try {
+																	const response = await usePostMethod(
+																		loginApiEndpoint,
+																		body
+																	);
+																	const data = await response.data;
 
-																if (
-																	response.statusText === 'OK' &&
-																	response.status === 200
-																) {
-																	setDisableLoginForm(!disableLoginForm);
-																	setSuccessMsg(LoginLabel[12].label);
+																	if (
+																		response.statusText === 'OK' &&
+																		response.status === 200
+																	) {
+																		setDisableLoginForm(!disableLoginForm);
+																		setSuccessMsg(LoginLabel[12].label);
 
-																	setTimeout(async () => {
-																		mutateUser(data);
-																	}, 1500);
-																} else {
+																		setTimeout(async () => {
+																			mutateUser(data);
+																		}, 1500);
+																	}
+																} catch (error) {
 																	setSubmitting(false);
 																	resetForm({ values: '' });
 																	setErrorMsg(LoginLabel[11].label);
 
-																	const error = new Error(
-																		await response.statusText
-																	);
-
-																	error.response = response;
-																	error.data = data;
-
-																	throw error;
+																	throw error.message;
 																}
 															}}
 														>
