@@ -172,7 +172,7 @@ const SitesInformation = (props) => {
 
 						if (
 							siteResponse.statusText === 'OK' &&
-							siteResponse.status === 200
+							Math.floor(siteResponse.status / 200) === 1
 						) {
 							setDisableSiteVerify(!disableSiteVerify);
 
@@ -194,13 +194,9 @@ const SitesInformation = (props) => {
 					}
 				}
 			} catch (error) {
-				if (!error.data) {
-					error.data = { message: error.message };
-				}
+				setErrorMsg('An unexpected error occurred. Please try again.');
 
-				setErrorSiteUrlMsg('An unexpected error occurred. Please try again.');
-
-				throw error;
+				throw error.message;
 			}
 		} else {
 			if (body.name === '' || body.name === undefined || body.name === null) {
@@ -573,8 +569,6 @@ SitesInformation.getInitialProps = ({ query }) => {
 	};
 };
 
-export default withRouter(SitesInformation);
-
 SitesInformation.propTypes = {
 	disableSiteVerify: '',
 	errorMsg: '',
@@ -585,3 +579,5 @@ SitesInformation.propTypes = {
 	handleSubmit: '',
 	handleUpdateSubmit: ''
 };
+
+export default withRouter(SitesInformation);
