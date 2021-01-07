@@ -304,7 +304,7 @@ const Sites = (props) => {
 																	return (
 																		<Fragment key={key}>
 																			<th
-																				className={`w-48 px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
+																				className={`sm:w-48 lg:w-auto px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`}
 																			>
 																				<div className="flex items-center justify-start">
 																					{site.slug != undefined ? (
