@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import sys
 
 import requests
 import sentry_sdk
@@ -20,14 +21,17 @@ import stripe
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", "3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0")
 
+TESTING = sys.argv[1:2] == ["test"]
+
 env = os.environ.get("ENV", "dev")
+if TESTING:
+    env = "test"
 
 AWS_SCAN_QUEUE_NAME = f"linkapp-{env}-scan"
 AWS_ACCESS_KEY_ID = None
@@ -99,11 +103,18 @@ elif env == "production":
         }
     }
     EMAIL_SUBJECT_PREFIX = "SiteCrawler - "
+elif env == "test":
+    DEBUG = True
+    ALLOWED_HOSTS = ["*"]
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    STRIPE_WEBHOOK_SECRET = None
+    EMAIL_SUBJECT_PREFIX = "SiteCrawlerTest - "
+    DEFAULT_FROM_EMAIL = "from@test.com"
 else:
     raise Exception(f"Unknown env: {env}")
 
 
-if env != "dev":
+if env != "dev" and env != "test":
     sentry_sdk.init(
         dsn="https://90c7ff164eee42279efb2d6c7d19b358@o432365.ingest.sentry.io/5394436",
         integrations=[DjangoIntegration()],

@@ -11,9 +11,14 @@ staging: install-deploy ## Deploy to staging environment
 production: install-deploy ## Deploy to production environment
 	deploy/production.py
 
-build-push-backend: ## Build and push production backend image
-	deploy/ecr-login.sh
+build-backend: ## Build backend prod image
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend backend/
+
+test-backend: ## Run tests on backend prod image
+	docker-compose -f docker-compose.test.yml run --rm backend ./manage.py test
+
+push-backend: ## Push backend prod image
+	deploy/ecr-login.sh
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
 
 build-push-frontend: ## Build and push production frontend image
