@@ -257,5 +257,4 @@ dist
 *.css
 
 # Storybook
-.storybook
 .storybook-static
