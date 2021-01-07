@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 // External
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Formik } from 'formik';
 import { NextSeo } from 'next-seo';
@@ -30,8 +29,6 @@ import LogoLabel from 'src/components/form/LogoLabel';
 import SiteFooter from 'src/components/footer/SiteFooter';
 
 const LoginDiv = styled.div``;
-
-const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
 
 const Login = () => {
 	const [errorMsg, setErrorMsg] = useState(null);
