@@ -64,16 +64,19 @@ class ScanViewSet(
         if Scan.objects.filter(site__user_id=scan.site.user_id, finished_at__isnull=True).count() > 0:
             return Response()
 
-        scans = (
+        all_scans = (
             Scan.objects.filter(site__user_id=scan.site.user_id, email_sent=False)
             .select_related("site")
             .details(user_large_page_size_threshold=request.user.userprofile.large_page_size_threshold)
         )
+        latest_scans_per_site = all_scans.order_by("site_id", "-finished_at").distinct("site_id")
+
         self._send_email(
             scan.site.user,
-            list(scans),
+            list(latest_scans_per_site),
         )
-        scans.update(email_sent=True)
+
+        all_scans.update(email_sent=True)
 
         return Response()
 

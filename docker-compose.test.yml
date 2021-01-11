@@ -1,0 +1,22 @@
+version: "2.4"
+services:
+  backend:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_PASSWORD: crawldev
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
+    driver: local

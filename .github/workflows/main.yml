@@ -10,8 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build and push backend
-      run: make build-push-backend
+    - name: Build backend
+      run: make build-backend
+    - name: Test backend
+      run: make test-backend
+    - name: Push backend
+      run: make push-backend
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
