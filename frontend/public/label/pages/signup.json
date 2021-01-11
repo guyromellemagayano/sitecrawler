@@ -1,12 +1,12 @@
 [
 	{
-		"label": "Required Field"
+		"label": "Required field"
 	},
 	{
-		"label": "Password too short"
+		"label": "Too short!"
 	},
 	{
-		"label": "Password too long"
+		"label": "Too long!"
 	},
 	{
 		"label": "Both passwords need to be the same"
