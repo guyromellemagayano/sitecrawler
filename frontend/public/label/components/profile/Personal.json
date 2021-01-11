@@ -23,5 +23,20 @@
 	},
 	{
 		"label": "Save"
+	},
+	{
+		"label": "Required field"
+	},
+	{
+		"label": "Too short!"
+	},
+	{
+		"label": "Too long!"
+	},
+	{
+		"label": "Update success!"
+	},
+	{
+		"label": "Saving..."
 	}
 ]
