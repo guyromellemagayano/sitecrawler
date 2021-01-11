@@ -59,7 +59,7 @@ const Sidebar = () => {
 			>
 				<div className="flex items-center">
 					<div className="flex flex-col flex-wrap text-left">
-						<p className="text-sm leading-5 font-medium text-white group-hover:text-gray-1000">
+						<p className="text-sm leading-tight mb-1 font-medium text-white group-hover:text-gray-1000">
 							{user.first_name} {user.last_name}
 						</p>
 						<p className="text-xs leading-4 font-medium text-white group-hover:text-gray-1000 transition ease-in-out duration-150">
