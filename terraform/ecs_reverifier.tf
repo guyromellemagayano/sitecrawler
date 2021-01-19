@@ -44,7 +44,8 @@ resource "aws_cloudwatch_event_target" "prod_reverifier" {
 
   ecs_target {
     launch_type = "FARGATE"
-    task_definition_arn = aws_ecs_task_definition.prod_reverifier.arn
+    // remove version and always use latest task definition
+    task_definition_arn = "${replace(aws_ecs_task_definition.prod_reverifier.arn, "/:\\d+$/", "")}"
 
     network_configuration {
       subnets = [aws_default_subnet.default_az1.id, aws_default_subnet.default_az2.id, aws_default_subnet.default_az3.id, aws_default_subnet.default_az4.id, aws_default_subnet.default_az5.id, aws_default_subnet.default_az6.id]
