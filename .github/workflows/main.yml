@@ -83,11 +83,18 @@ jobs:
     - name: Download crawler task definition
       run: |
         aws ecs describe-task-definition --task-definition prod_crawler_task --query taskDefinition > crawler-task-definition.json
-
-    - name: Deploy Amazon ECS task definition
+    - name: Deploy crawler task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: crawler-task-definition.json
         service: prod_crawler_service
         cluster: prod_fargate
         wait-for-service-stability: true
+    - name: Download reverifier task definition
+      run: |
+        aws ecs describe-task-definition --task-definition prod_reverifier_task --query taskDefinition > reverifier-task-definition.json
+    - name: Deploy reverifier task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: reverifier-task-definition.json
+        cluster: prod_fargate

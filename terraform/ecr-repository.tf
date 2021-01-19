@@ -27,3 +27,8 @@ resource "aws_ecr_repository" "crawl-app-verifier" {
   name                 = "crawl-app-verifier"
   image_tag_mutability = "MUTABLE"
 }
+
+resource "aws_ecr_repository" "crawl-app-reverifier" {
+  name                 = "crawl-app-reverifier"
+  image_tag_mutability = "MUTABLE"
+}
