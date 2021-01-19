@@ -22,12 +22,10 @@ test-backend: ## Run tests on backend prod image
 	docker-compose -f docker-compose.test.yml run --rm backend ./manage.py test
 
 build-push-frontend: ## Build and push production frontend image
-	deploy/ecr-login.sh
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend frontend/
 	make frontend-push
 
 build-push-go: ## Build and push production go images
-	deploy/ecr-login.sh
 	make crawler-build-push-go
 	make reverifier-build-push-go
 	make scheduler-build-push-go
@@ -39,6 +37,7 @@ build-push-go: ## Build and push production go images
 	make $(*F)-push
 
 %-push:
+	deploy/ecr-login.sh
 	docker tag 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):$(VERSION)
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F)
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):$(VERSION)
