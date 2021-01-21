@@ -17,7 +17,8 @@ func main() {
 	db := common.ConfigureDatabase(log, awsSession, env)
 	defer db.Close()
 
-	scheduleService := NewScheduleService(log, db)
+	backendService := &common.BackendService{Env: env, Token: common.Secret(log, awsSession, env, "BACKEND_TOKEN", "")}
+	scheduleService := NewScheduleService(log, db, backendService)
 
 	go UptimeWorker(log, db, scheduleService)
 

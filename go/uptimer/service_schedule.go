@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"go.uber.org/zap"
 
@@ -9,17 +10,19 @@ import (
 )
 
 type ScheduleService struct {
-	Database *database.Database
-	Logger   *zap.SugaredLogger
+	Database       *database.Database
+	Logger         *zap.SugaredLogger
+	BackendService *common.BackendService
 
 	cron   *cron.Cron
 	groups map[int]*group
 }
 
-func NewScheduleService(log *zap.SugaredLogger, db *database.Database) *ScheduleService {
+func NewScheduleService(log *zap.SugaredLogger, db *database.Database, backendService *common.BackendService) *ScheduleService {
 	s := &ScheduleService{
-		Database: db,
-		Logger:   log,
+		Database:       db,
+		Logger:         log,
+		BackendService: backendService,
 
 		cron:   cron.New(),
 		groups: make(map[int]*group),
@@ -69,9 +72,10 @@ func (s *ScheduleService) add(gs database.CrawlGroupsetting) error {
 		Schedule: gs.UptimeSchedule,
 	}
 	entryID, err := s.cron.AddJob(gs.UptimeSchedule, &UptimeJob{
-		Database: s.Database,
-		Logger:   s.Logger,
-		Group:    g,
+		Database:       s.Database,
+		Logger:         s.Logger,
+		BackendService: s.BackendService,
+		Group:          g,
 	})
 	if err != nil {
 		return err

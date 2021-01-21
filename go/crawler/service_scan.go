@@ -34,7 +34,7 @@ type ScanService struct {
 	Database           *database.Database
 	VerifyService      *common.VerifyService
 	LoadService        *common.LoadService
-	BackendService     *BackendService
+	BackendService     *common.BackendService
 	PostprocessService *PostprocessService
 }
 

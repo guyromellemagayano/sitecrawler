@@ -4,7 +4,7 @@ from rest_framework_extensions.routers import NestedRouterMixin
 
 from .views import LinkViewSet, PageViewSet, ScanViewSet, SiteViewSet, ImageViewSet, ScriptViewSet, StylesheetViewSet
 
-from uptime.views import UptimeStatViewSet
+from uptime.views import UptimeStatViewSet, SendUptimeEmailsView
 
 
 class NestedDefaultRouter(NestedRouterMixin, routers.DefaultRouter):
@@ -39,4 +39,5 @@ site_router.register(r"uptime", UptimeStatViewSet, basename="uptime", parents_qu
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("internal/send_uptime_emails/", SendUptimeEmailsView.as_view()),
 ]
