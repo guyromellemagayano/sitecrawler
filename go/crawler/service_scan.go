@@ -75,6 +75,16 @@ func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scan
 	// If we got here without errors, set the status done
 	finished := time.Now()
 	scan.FinishedAt = &finished
+
+	forceHttps, err := s.checkForceHttps(log, scan.Site.Url)
+	if err != nil {
+		log.Errorw("Error checking force https",
+			"err", err,
+		)
+	} else {
+		scan.ForceHttps = &forceHttps
+	}
+
 	if err := s.Database.Update(scan); err != nil {
 		return err
 	}
@@ -88,6 +98,22 @@ func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scan
 	}
 
 	return nil
+}
+
+func (s *ScanService) checkForceHttps(log *zap.SugaredLogger, urlStr string) (bool, error) {
+	u, err := url.Parse(urlStr)
+	if err != nil {
+		return false, err
+	}
+	u.Scheme = "http"
+
+	resp, err := s.LoadService.Load(log, u.String())
+	defer resp.Close()
+	if err != nil {
+		return false, err
+	}
+
+	return resp.Request.URL.Scheme == "https", nil
 }
 
 func (s *ScanService) reverify(log *zap.SugaredLogger, scan *database.CrawlScan) error {
