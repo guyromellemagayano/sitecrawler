@@ -77,7 +77,11 @@ func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scan
 	scan.FinishedAt = &finished
 
 	forceHttps, err := s.checkForceHttps(log, scan.Site.Url)
-	if err == nil {
+	if err != nil {
+		log.Errorw("Error checking force https",
+			"err", err,
+		)
+	} else {
 		scan.ForceHttps = &forceHttps
 	}
 
