@@ -2,20 +2,17 @@ package main
 
 import (
 	"context"
-	"io"
-	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 const (
-	timeout   = 5 * time.Second
-	sizeLimit = 10 * 1024 * 1024
+	timeout = 5 * time.Second
 )
 
 type UptimeJob struct {
@@ -105,14 +102,14 @@ func (j *UptimeJob) check(site *database.CrawlSite) (*database.UptimeUptimestat,
 		stat.ResponseTime = int(time.Since(startTime).Milliseconds())
 	}()
 
-	req, err := http.NewRequest("GET", site.Url, nil)
+	req, err := retryablehttp.NewRequest("HEAD", site.Url, nil)
 	if err != nil {
 		return nil, err
 	}
 	req = req.WithContext(ctx)
 	req.Header.Add("Cache-Control", "max-age=0")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := retryablehttp.NewClient().Do(req)
 	if err != nil {
 		status, errStr := common.SerializeLoadError(j.Logger, site.Url, err)
 		stat.Status = status
@@ -126,14 +123,6 @@ func (j *UptimeJob) check(site *database.CrawlSite) (*database.UptimeUptimestat,
 	if statusCode/100 != 2 {
 		stat.Status = common.STATUS_HTTP_ERROR
 		statusStr := resp.Status
-		stat.Error = &statusStr
-		return stat, nil
-	}
-
-	_, err = io.Copy(ioutil.Discard, io.LimitReader(resp.Body, sizeLimit))
-	if err != nil {
-		stat.Status = common.STATUS_OTHER_ERROR
-		statusStr := err.Error()
 		stat.Error = &statusStr
 		return stat, nil
 	}
