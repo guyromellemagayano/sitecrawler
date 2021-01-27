@@ -133,7 +133,13 @@ class Link(models.Model):
 
     links = models.ManyToManyField("self", symmetrical=False, related_name="pages", blank=True)
 
-    images = models.ManyToManyField("self", symmetrical=False, related_name="image_pages", blank=True)
+    images = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="image_pages",
+        blank=True,
+        through="LinkImage",
+    )
     stylesheets = models.ManyToManyField("self", symmetrical=False, related_name="stylesheet_pages", blank=True)
     scripts = models.ManyToManyField("self", symmetrical=False, related_name="script_pages", blank=True)
 
