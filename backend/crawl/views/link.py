@@ -4,7 +4,13 @@ from rest_framework_extensions.mixins import DetailSerializerMixin, NestedViewSe
 
 from crawl.common import HasPermission
 from crawl.models import Link
-from crawl.serializers import LinkDetailSerializer, LinkSerializer
+from crawl.serializers import (
+    LinkSerializer,
+    LinkDetailSerializer,
+    ImageDetailSerializer,
+    ScriptDetailSerializer,
+    StylesheetDetailSerializer,
+)
 
 
 class HumanReadableMultipleChoiceFilter(filters.MultipleChoiceFilter):
@@ -39,7 +45,6 @@ class PageChildViewSet(
 ):
     queryset = Link.objects.all()
     serializer_class = LinkSerializer
-    serializer_detail_class = LinkDetailSerializer
 
     filterset_class = LinkFilter
     search_fields = ["url"]
@@ -65,12 +70,15 @@ class PageChildViewSet(
 
 
 class LinkViewSet(PageChildViewSet):
+    serializer_detail_class = LinkDetailSerializer
+
     def get_queryset(self):
         return super().get_queryset().links()
 
 
 class ImageViewSet(PageChildViewSet):
     permission_classes = [HasPermission("crawl.can_see_images")]
+    serializer_detail_class = ImageDetailSerializer
 
     def get_queryset(self):
         return super().get_queryset().images()
@@ -78,6 +86,7 @@ class ImageViewSet(PageChildViewSet):
 
 class ScriptViewSet(PageChildViewSet):
     permission_classes = [HasPermission("crawl.can_see_scripts")]
+    serializer_detail_class = ScriptDetailSerializer
 
     def get_queryset(self):
         return super().get_queryset().scripts()
@@ -85,6 +94,7 @@ class ScriptViewSet(PageChildViewSet):
 
 class StylesheetViewSet(PageChildViewSet):
     permission_classes = [HasPermission("crawl.can_see_stylesheets")]
+    serializer_detail_class = StylesheetDetailSerializer
 
     def get_queryset(self):
         return super().get_queryset().stylesheets()

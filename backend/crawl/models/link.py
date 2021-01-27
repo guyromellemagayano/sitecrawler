@@ -179,9 +179,6 @@ class Link(models.Model):
     cached_script_occurences = models.PositiveIntegerField(null=True, blank=True)
     cached_stylesheet_occurences = models.PositiveIntegerField(null=True, blank=True)
 
-    def get_pages(self):
-        return self.pages.all().union(self.image_pages.all(), self.script_pages.all(), self.stylesheet_pages.all())
-
     class Meta:
         permissions = (
             ("can_see_images", "Can see images"),

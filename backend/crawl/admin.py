@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models.functions import Now
 
-from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData, Tls
+from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData, Tls, LinkImage
 
 
 class PageChildInline(admin.TabularInline):
@@ -42,9 +42,10 @@ class LinkInline(PageChildInline):
 
 
 class ImageInline(PageChildInline):
-    model = Link.images.through
+    model = LinkImage
     verbose_name = "Image"
     verbose_name_plural = "Images"
+    readonly_fields = PageChildInline.readonly_fields + ("alt_text",)
 
 
 class ScriptInline(PageChildInline):
