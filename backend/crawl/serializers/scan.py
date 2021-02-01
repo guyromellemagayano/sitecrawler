@@ -6,8 +6,8 @@ from crawl.models import Scan
 class ScanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Scan
-        fields = ["id", "started_at", "finished_at", "site_id"]
-        read_only_fields = ["id", "started_at", "finished_at", "site_id"]
+        fields = ["id", "started_at", "finished_at", "site_id", "force_https"]
+        read_only_fields = fields
 
 
 class ScanDetailSerializer(serializers.ModelSerializer):
@@ -38,11 +38,7 @@ class ScanDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Scan
-        fields = [
-            "id",
-            "started_at",
-            "finished_at",
-            "site_id",
+        fields = ScanSerializer.Meta.fields + [
             "num_pages",
             "num_external_links",
             "num_links",

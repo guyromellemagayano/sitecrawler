@@ -1,6 +1,10 @@
 help: ## Show this help.
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+
+GITHUB_SHA ?= $(shell git rev-parse HEAD)
+VERSION ?= $(shell date -u '+%Y%m%d.%H%M%S')-$(shell echo $(GITHUB_SHA) | head -c 6)
+
 dev:          ## Build and run local environment
 	docker-compose build
 	docker-compose up -d
@@ -17,25 +21,29 @@ build-backend: ## Build backend prod image
 test-backend: ## Run tests on backend prod image
 	docker-compose -f docker-compose.test.yml run --rm backend ./manage.py test
 
-push-backend: ## Push backend prod image
-	deploy/ecr-login.sh
-	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
-
 build-push-frontend: ## Build and push production frontend image
-	deploy/ecr-login.sh
 	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend frontend/
-	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
+	make frontend-push
 
 build-push-go: ## Build and push production go images
+	make crawler-build-push-go
+	make reverifier-build-push-go
+	make scheduler-build-push-go
+	make uptimer-build-push-go
+	make verifier-build-push-go
+
+%-build-push-go:
+	make $(*F)-build-go
+	make $(*F)-push
+
+%-push:
 	deploy/ecr-login.sh
-	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler --build-arg SERVICE=crawler go/
-	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler --build-arg SERVICE=scheduler go/
-	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-uptimer --build-arg SERVICE=uptimer go/
-	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-verifier --build-arg SERVICE=verifier go/
-	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
-	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
-	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-uptimer
-	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-verifier
+	docker tag 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):$(VERSION)
+	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F)
+	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):$(VERSION)
+
+%-build-go:
+	docker build -t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) --build-arg SERVICE=$(*F) go/
 
 test-go:
 	cd go && docker-compose -f docker-compose.test.yml up --build

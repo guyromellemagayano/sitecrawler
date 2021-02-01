@@ -9,8 +9,8 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
-from .models import UptimeStat
-from .serializers import UptimeStatSerializer
+from uptime.models import UptimeStat
+from uptime.serializers import UptimeStatSerializer
 
 
 class TooLarge(APIException):

@@ -58,6 +58,8 @@ class Scan(models.Model):
 
     email_sent = models.BooleanField(default=False)
 
+    force_https = models.BooleanField(null=True, blank=True)
+
     num_pages_tls_ok = CalculatedField("num_pages", "-num_pages_tls_non_ok")
     num_ok_links = CalculatedField("num_links", "-num_non_ok_links")
     num_ok_images = CalculatedField("num_images", "-num_non_ok_images")

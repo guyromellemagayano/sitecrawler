@@ -2,23 +2,23 @@ package main
 
 import (
 	"context"
-	"net/http"
 	"time"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 const (
-	timeout   = 5 * time.Second
-	sizeLimit = 10 * 1024 * 1024
+	timeout = 5 * time.Second
 )
 
 type UptimeJob struct {
-	Database *database.Database
-	Logger   *zap.SugaredLogger
+	Database       *database.Database
+	Logger         *zap.SugaredLogger
+	BackendService *common.BackendService
 
 	Group *group
 }
@@ -42,12 +42,23 @@ func (j *UptimeJob) run() error {
 	}
 	j.Logger.Infof("Running job for group id %v, with %v sites", j.Group.GroupID, len(sites))
 
+	lastStats, err := j.loadLastStats(sites)
+	if err != nil {
+		return errors.Wrapf(err, "could not get last stats for group %v", j.Group.GroupID)
+	}
+
 	var stats []*database.UptimeUptimestat
+	var statsToSendEmail []*database.UptimeUptimestat
 	for _, site := range sites {
 		s, err := j.check(site)
 		if err != nil {
 			j.Logger.Warnf("Uptime check for %q failed: %v", site.Url, err)
 		}
+
+		if isUp(s) != isUp(lastStats[site.ID]) {
+			statsToSendEmail = append(statsToSendEmail, s)
+		}
+
 		stats = append(stats, s)
 	}
 
@@ -58,6 +69,19 @@ func (j *UptimeJob) run() error {
 	err = j.Database.MultiInsert(&stats)
 	if err != nil {
 		return errors.Wrap(err, "could not insert stats")
+	}
+
+	if len(statsToSendEmail) != 0 {
+		statIDs := make([]int, len(statsToSendEmail))
+		for i, stat := range statsToSendEmail {
+			statIDs[i] = stat.ID
+		}
+		if err := j.BackendService.SendUptimeEmails(statIDs); err != nil {
+			j.Logger.Errorw("Could not send uptime emails from uptimer",
+				"err", err,
+				"stat_ids", statIDs,
+			)
+		}
 	}
 
 	return nil
@@ -75,23 +99,24 @@ func (j *UptimeJob) check(site *database.CrawlSite) (*database.UptimeUptimestat,
 
 	startTime := time.Now()
 	defer func() {
-		stat.ResponseTime = int(time.Now().Sub(startTime).Milliseconds())
+		stat.ResponseTime = int(time.Since(startTime).Milliseconds())
 	}()
 
-	req, err := http.NewRequest("GET", site.Url, nil)
+	req, err := retryablehttp.NewRequest("HEAD", site.Url, nil)
 	if err != nil {
 		return nil, err
 	}
 	req = req.WithContext(ctx)
 	req.Header.Add("Cache-Control", "max-age=0")
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := retryablehttp.NewClient().Do(req)
 	if err != nil {
 		status, errStr := common.SerializeLoadError(j.Logger, site.Url, err)
 		stat.Status = status
 		stat.Error = &errStr
 		return stat, nil
 	}
+	defer resp.Body.Close()
 
 	statusCode := resp.StatusCode
 	stat.HttpStatus = &statusCode
@@ -103,4 +128,41 @@ func (j *UptimeJob) check(site *database.CrawlSite) (*database.UptimeUptimestat,
 	}
 
 	return stat, nil
+}
+
+// loadLastStats returns last stat entry by site id
+func (j *UptimeJob) loadLastStats(sites []*database.CrawlSite) (map[int]*database.UptimeUptimestat, error) {
+	if len(sites) == 0 {
+		return nil, nil
+	}
+
+	siteIDs := make([]int, len(sites))
+	for i, site := range sites {
+		siteIDs[i] = site.ID
+	}
+
+	var lastStats []*database.UptimeUptimestat
+	err := j.Database.All(&lastStats,
+		database.DistinctOn("site_id"),
+		database.WhereIn("site_id IN (?)", siteIDs),
+		database.Order("site_id"),
+		database.Order("created_at DESC"),
+	)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not get sites for group %v", j.Group.GroupID)
+	}
+
+	result := make(map[int]*database.UptimeUptimestat, len(lastStats))
+	for _, stat := range lastStats {
+		result[stat.SiteID] = stat
+	}
+
+	return result, nil
+}
+
+func isUp(s *database.UptimeUptimestat) bool {
+	if s == nil {
+		return true
+	}
+	return s.Status == common.STATUS_OK
 }

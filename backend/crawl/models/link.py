@@ -133,7 +133,13 @@ class Link(models.Model):
 
     links = models.ManyToManyField("self", symmetrical=False, related_name="pages", blank=True)
 
-    images = models.ManyToManyField("self", symmetrical=False, related_name="image_pages", blank=True)
+    images = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="image_pages",
+        blank=True,
+        through="LinkImage",
+    )
     stylesheets = models.ManyToManyField("self", symmetrical=False, related_name="stylesheet_pages", blank=True)
     scripts = models.ManyToManyField("self", symmetrical=False, related_name="script_pages", blank=True)
 
@@ -172,9 +178,6 @@ class Link(models.Model):
     cached_image_occurences = models.PositiveIntegerField(null=True, blank=True)
     cached_script_occurences = models.PositiveIntegerField(null=True, blank=True)
     cached_stylesheet_occurences = models.PositiveIntegerField(null=True, blank=True)
-
-    def get_pages(self):
-        return self.pages.all().union(self.image_pages.all(), self.script_pages.all(), self.stylesheet_pages.all())
 
     class Meta:
         permissions = (

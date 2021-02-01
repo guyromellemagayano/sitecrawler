@@ -19,6 +19,8 @@ func SerializeLoadError(log *zap.SugaredLogger, url string, err error) (int, str
 		status = STATUS_TIMEOUT
 	} else if strings.HasSuffix(err.Error(), "stopped after 10 redirects") {
 		status = STATUS_TOO_MANY_REDIRECTS
+	} else if strings.HasSuffix(err.Error(), "INTERNAL_ERROR") && strings.HasPrefix(err.Error(), "stream error:") {
+		return STATUS_OTHER_ERROR, "http2 internal error"
 	} else {
 		if !strings.HasSuffix(err.Error(), "unexpected EOF") &&
 			!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated") &&

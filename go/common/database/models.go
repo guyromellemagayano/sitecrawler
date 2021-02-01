@@ -94,7 +94,7 @@ var Columns = struct {
 		Link string
 	}
 	CrawlScan struct {
-		ID, StartedAt, FinishedAt, SiteID, EmailSent string
+		ID, StartedAt, FinishedAt, SiteID, EmailSent, ForceHttps string
 
 		Site string
 	}
@@ -424,7 +424,7 @@ var Columns = struct {
 		Link: "Link",
 	},
 	CrawlScan: struct {
-		ID, StartedAt, FinishedAt, SiteID, EmailSent string
+		ID, StartedAt, FinishedAt, SiteID, EmailSent, ForceHttps string
 
 		Site string
 	}{
@@ -433,6 +433,7 @@ var Columns = struct {
 		FinishedAt: "finished_at",
 		SiteID:     "site_id",
 		EmailSent:  "email_sent",
+		ForceHttps: "force_https",
 
 		Site: "Site",
 	},
@@ -1234,6 +1235,7 @@ type CrawlScan struct {
 	FinishedAt *time.Time `pg:"finished_at"`
 	SiteID     int        `pg:"site_id,use_zero"`
 	EmailSent  bool       `pg:"email_sent,use_zero"`
+	ForceHttps *bool      `pg:"force_https"`
 
 	Site *CrawlSite `pg:"fk:site_id"`
 }

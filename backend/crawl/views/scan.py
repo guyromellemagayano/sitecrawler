@@ -26,6 +26,7 @@ class ScanViewSet(
     filterset_fields = {
         "started_at": ["gt", "gte", "lt", "lte"],
         "finished_at": ["isnull", "gt", "gte", "lt", "lte"],
+        "force_https": ["exact"],
     }
     search_fields = []
     ordering_fields = ["started_at", "finished_at"]

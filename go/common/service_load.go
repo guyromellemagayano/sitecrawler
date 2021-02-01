@@ -53,7 +53,7 @@ func (l *LoadService) Load(log *zap.SugaredLogger, url string) (*LoadResponse, e
 		return lr, err
 	}
 	req = req.WithContext(ctx)
-	req.Header.Add("Cache-Control", "max-age=0")
+	req.Header.Add("Cache-Control", "no-cache")
 	req.Header.Add("Accept-Encoding", "gzip")
 	resp, err := client.Do(req)
 	if err != nil {

@@ -16,6 +16,12 @@ func Where(cond string, args ...interface{}) QueryOption {
 	}
 }
 
+func WhereIn(cond string, slice interface{}) QueryOption {
+	return func(q *orm.Query) *orm.Query {
+		return q.WhereIn(cond, slice)
+	}
+}
+
 func Join(join string, args ...interface{}) QueryOption {
 	return func(q *orm.Query) *orm.Query {
 		return q.Join(join, args...)
@@ -31,6 +37,12 @@ func Limit(n int) QueryOption {
 func Order(o string) QueryOption {
 	return func(q *orm.Query) *orm.Query {
 		return q.Order(o)
+	}
+}
+
+func DistinctOn(distinct string, args ...interface{}) QueryOption {
+	return func(q *orm.Query) *orm.Query {
+		return q.DistinctOn(distinct, args...)
 	}
 }
 
