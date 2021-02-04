@@ -1,4 +1,4 @@
-FROM python:3 AS dev
+FROM python:3 AS base
 WORKDIR /app
 
 COPY requirements.txt .
@@ -10,7 +10,12 @@ CMD ./manage.py runserver
 EXPOSE 8000
 
 
-FROM dev as prod
+FROM base as dev
+
+RUN pip install -r requirements.dev.txt
+
+
+FROM base as prod
 
 RUN pip install -r requirements.prod.txt
 
