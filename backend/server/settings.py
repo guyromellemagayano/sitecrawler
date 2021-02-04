@@ -29,11 +29,11 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-
 
 TESTING = sys.argv[1:2] == ["test"]
 
-env = os.environ.get("ENV", "dev")
+ENV = os.environ.get("ENV", "dev")
 if TESTING:
-    env = "test"
+    ENV = "test"
 
-AWS_SCAN_QUEUE_NAME = f"linkapp-{env}-scan"
+AWS_SCAN_QUEUE_NAME = f"linkapp-{ENV}-scan"
 AWS_ACCESS_KEY_ID = None
 AWS_SECRET_ACCESS_KEY = None
 AWS_USE_SSL = True
@@ -56,7 +56,7 @@ DATABASES = {
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
 
 
-if env == "dev":
+if ENV == "dev":
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
     VERIFIER_URL = "http://verifier:3000"
@@ -67,7 +67,7 @@ if env == "dev":
     AWS_USE_SSL = False
     STRIPE_WEBHOOK_SECRET = None
     EMAIL_SUBJECT_PREFIX = "SiteCrawlerDev - "
-elif env == "staging":
+elif ENV == "staging":
     DEBUG = False
     ALLOWED_HOSTS = ["linkapp.epicsandbox.com", "backend"]
     SESSION_COOKIE_SECURE = True
@@ -80,7 +80,7 @@ elif env == "staging":
     EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
     DEFAULT_FROM_EMAIL = "linkapp@epicsandbox.com"
     EMAIL_SUBJECT_PREFIX = "SiteCrawlerSandbox - "
-elif env == "production":
+elif ENV == "production":
     DEBUG = False
     ALLOWED_HOSTS = ["app.sitecrawler.com", "backend"]
     SESSION_COOKIE_SECURE = True
@@ -103,7 +103,7 @@ elif env == "production":
         }
     }
     EMAIL_SUBJECT_PREFIX = "SiteCrawler - "
-elif env == "test":
+elif ENV == "test":
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
@@ -111,14 +111,14 @@ elif env == "test":
     EMAIL_SUBJECT_PREFIX = "SiteCrawlerTest - "
     DEFAULT_FROM_EMAIL = "from@test.com"
 else:
-    raise Exception(f"Unknown env: {env}")
+    raise Exception(f"Unknown ENV: {ENV}")
 
 
-if env != "dev" and env != "test":
+if ENV != "dev" and ENV != "test":
     sentry_sdk.init(
         dsn="https://90c7ff164eee42279efb2d6c7d19b358@o432365.ingest.sentry.io/5394436",
         integrations=[DjangoIntegration()],
-        environment=env,
+        environment=ENV,
         send_default_pii=True,
     )
 
@@ -182,6 +182,16 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if ENV == "dev":
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]
+    MIDDLEWARE += [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
+    DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda r: True}
+
 
 ROOT_URLCONF = "server.urls"
 

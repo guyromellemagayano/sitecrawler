@@ -41,3 +41,10 @@ urlpatterns = [
     path("api/", include("crawl.urls")),
     re_path(r"^static/(?P<path>.+)", serve, {"document_root": settings.STATIC_ROOT}),
 ]
+
+if settings.ENV == "dev":
+    import debug_toolbar
+
+    urlpatterns += [
+        path("api/__debug__/", include(debug_toolbar.urls)),
+    ]
