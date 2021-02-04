@@ -51,3 +51,4 @@ class UptimeStat(models.Model):
         indexes = [
             models.Index(fields=["site", "created_at"]),
         ]
+        permissions = (("can_get_uptime_emails", "Can get uptime emails"),)

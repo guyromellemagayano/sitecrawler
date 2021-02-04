@@ -21,6 +21,8 @@ class SendUptimeEmailsView(APIView):
         site = models.Site.objects.get_current()
         uptime_stats = UptimeStat.objects.select_related("site", "site__user").filter(id__in=request.data)
         for stat in uptime_stats:
+            if not stat.site.user.has_perm("uptime.can_get_uptime_emails"):
+                continue
             context = {
                 "user": stat.site.user,
                 "site": site,
