@@ -54,7 +54,7 @@ var Columns = struct {
 		Scan string
 	}
 	CrawlFiforelation struct {
-		ID, ParentID, ChildType, EntryID string
+		ID, ParentID, ChildType, EntryID, Data string
 
 		Entry string
 	}
@@ -69,7 +69,7 @@ var Columns = struct {
 		Scan, Tls string
 	}
 	CrawlLinkImage struct {
-		ID, FromLinkID, ToLinkID string
+		ID, FromLinkID, ToLinkID, AltText string
 
 		FromLink, ToLink string
 	}
@@ -292,7 +292,7 @@ var Columns = struct {
 		Scan: "Scan",
 	},
 	CrawlFiforelation: struct {
-		ID, ParentID, ChildType, EntryID string
+		ID, ParentID, ChildType, EntryID, Data string
 
 		Entry string
 	}{
@@ -300,6 +300,7 @@ var Columns = struct {
 		ParentID:  "parent_id",
 		ChildType: "child_type",
 		EntryID:   "entry_id",
+		Data:      "data",
 
 		Entry: "Entry",
 	},
@@ -360,13 +361,14 @@ var Columns = struct {
 		Tls:  "Tls",
 	},
 	CrawlLinkImage: struct {
-		ID, FromLinkID, ToLinkID string
+		ID, FromLinkID, ToLinkID, AltText string
 
 		FromLink, ToLink string
 	}{
 		ID:         "id",
 		FromLinkID: "from_link_id",
 		ToLinkID:   "to_link_id",
+		AltText:    "alt_text",
 
 		FromLink: "FromLink",
 		ToLink:   "ToLink",
@@ -1106,10 +1108,11 @@ type CrawlFifoentry struct {
 type CrawlFiforelation struct {
 	tableName struct{} `pg:"crawl_fiforelation,alias:t,,discard_unknown_columns"`
 
-	ID        int `pg:"id,pk"`
-	ParentID  int `pg:"parent_id,use_zero"`
-	ChildType int `pg:"child_type,use_zero"`
-	EntryID   int `pg:"entry_id,use_zero"`
+	ID        int                    `pg:"id,pk"`
+	ParentID  int                    `pg:"parent_id,use_zero"`
+	ChildType int                    `pg:"child_type,use_zero"`
+	EntryID   int                    `pg:"entry_id,use_zero"`
+	Data      map[string]interface{} `pg:"data"`
 
 	Entry *CrawlFifoentry `pg:"fk:entry_id"`
 }
@@ -1171,9 +1174,10 @@ type CrawlLink struct {
 type CrawlLinkImage struct {
 	tableName struct{} `pg:"crawl_link_images,alias:t,,discard_unknown_columns"`
 
-	ID         int `pg:"id,pk"`
-	FromLinkID int `pg:"from_link_id,use_zero"`
-	ToLinkID   int `pg:"to_link_id,use_zero"`
+	ID         int     `pg:"id,pk"`
+	FromLinkID int     `pg:"from_link_id,use_zero"`
+	ToLinkID   int     `pg:"to_link_id,use_zero"`
+	AltText    *string `pg:"alt_text"`
 
 	FromLink *CrawlLink `pg:"fk:from_link_id"`
 	ToLink   *CrawlLink `pg:"fk:to_link_id"`

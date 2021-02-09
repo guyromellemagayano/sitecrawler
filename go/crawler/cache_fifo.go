@@ -11,6 +11,14 @@ import (
 type relation struct {
 	ParentId  int
 	ChildType uint8
+	Data      map[string]interface{}
+}
+
+func (r *relation) SetData(k string, v interface{}) {
+	if r.Data == nil {
+		r.Data = make(map[string]interface{})
+	}
+	r.Data[k] = v
 }
 
 type fifoEntry struct {
@@ -35,6 +43,7 @@ func NewFifoCache(db *database.Database, scanID int) (*FifoCache, error) {
 		relMap[l.EntryID] = append(relMap[l.EntryID], relation{
 			ParentId:  l.ParentID,
 			ChildType: uint8(l.ChildType),
+			Data:      l.Data,
 		})
 		return nil
 	}, database.Where("entry_id IN (SELECT id FROM crawl_fifoentry WHERE scan_id = ?)", scanID))
@@ -105,6 +114,7 @@ func (c *FifoCache) addRelationDb(db *database.Database, fe *fifoEntry, r relati
 		EntryID:   fe.Id,
 		ParentID:  r.ParentId,
 		ChildType: int(r.ChildType),
+		Data:      r.Data,
 	}
 	err := db.Insert(cfr)
 	if err != nil {

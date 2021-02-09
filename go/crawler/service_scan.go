@@ -291,13 +291,20 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 			return
 		}
 
+		rel := relation{
+			ParentId:  link.ID,
+			ChildType: CHILD_IMAGE,
+		}
+
+		alt, ok := sel.Attr("alt")
+		if ok {
+			rel.SetData("AltText", alt)
+		}
+
 		s.addLinkWithRelation(log, db, fifoEntry{
 			Url:   childUrl,
 			Depth: depth + 1,
-		}, relation{
-			ParentId:  link.ID,
-			ChildType: CHILD_IMAGE,
-		})
+		}, rel)
 	})
 
 	doc.Find("script").Each(func(i int, sel *goquery.Selection) {
@@ -511,6 +518,11 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 		linkImage := &database.CrawlLinkImage{
 			FromLinkID: r.ParentId,
 			ToLinkID:   childLinkId,
+		}
+
+		if r.Data["AltText"] != nil {
+			altText := r.Data["AltText"].(string)
+			linkImage.AltText = &altText
 		}
 
 		inserted, err := db.InsertIgnoreDuplicates(linkImage)
