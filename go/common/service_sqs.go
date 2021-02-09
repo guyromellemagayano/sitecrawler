@@ -133,7 +133,9 @@ func (m *SQSMessage) startPinger(ctx context.Context, log *zap.SugaredLogger) {
 				select {
 				case <-ctx.Done():
 				default:
-					log.Errorf("Sqs ping failed: %v", err)
+					log.Errorw("Sqs ping failed",
+						"err", err,
+					)
 				}
 			}
 		}
