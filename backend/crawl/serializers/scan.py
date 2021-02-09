@@ -19,6 +19,7 @@ class ScanDetailSerializer(serializers.ModelSerializer):
     num_images = serializers.IntegerField(read_only=True)
     num_ok_images = serializers.IntegerField(read_only=True)
     num_non_ok_images = serializers.IntegerField(read_only=True)
+    num_images_with_missing_alts = serializers.IntegerField(read_only=True)
     num_scripts = serializers.IntegerField(read_only=True)
     num_ok_scripts = serializers.IntegerField(read_only=True)
     num_non_ok_scripts = serializers.IntegerField(read_only=True)
@@ -47,6 +48,7 @@ class ScanDetailSerializer(serializers.ModelSerializer):
             "num_images",
             "num_ok_images",
             "num_non_ok_images",
+            "num_images_with_missing_alts",
             "num_scripts",
             "num_ok_scripts",
             "num_non_ok_scripts",

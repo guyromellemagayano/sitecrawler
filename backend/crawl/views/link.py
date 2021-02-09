@@ -76,9 +76,46 @@ class LinkViewSet(PageChildViewSet):
         return super().get_queryset().links()
 
 
+class ImageFilter(LinkFilter):
+    # custom filters because field name doesn't match filter name
+    missing_alts__gt = filters.NumberFilter(
+        field_name="cached_image_missing_alts",
+        label="Missing alts is greater than",
+        lookup_expr="gt",
+    )
+    missing_alts__gte = filters.NumberFilter(
+        field_name="cached_image_missing_alts",
+        label="Missing alts is greater than or equal to",
+        lookup_expr="gte",
+    )
+    missing_alts__lt = filters.NumberFilter(
+        field_name="cached_image_missing_alts",
+        label="Missing alts is less than (doesn't work for 0)",
+        lookup_expr="lt",
+    )
+    missing_alts__lte = filters.NumberFilter(
+        field_name="cached_image_missing_alts",
+        label="Missing alts is less than or equal to (doesn't work for 0)",
+        lookup_expr="lte",
+    )
+    missing_alts__iszero = filters.BooleanFilter(
+        field_name="cached_image_missing_alts",
+        label="Missing alts is zero",
+        lookup_expr="isnull",
+    )
+
+    class Meta(LinkFilter.Meta):
+        pass
+
+
 class ImageViewSet(PageChildViewSet):
     permission_classes = [HasPermission("crawl.can_see_images")]
     serializer_detail_class = ImageDetailSerializer
+
+    filterset_class = ImageFilter
+    ordering_fields = PageChildViewSet.ordering_fields + [
+        "missing_alts",
+    ]
 
     def get_queryset(self):
         return super().get_queryset().images()

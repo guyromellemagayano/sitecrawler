@@ -64,7 +64,7 @@ var Columns = struct {
 		Group string
 	}
 	CrawlLink struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts string
 
 		Scan, Tls string
 	}
@@ -318,7 +318,7 @@ var Columns = struct {
 		Group: "Group",
 	},
 	CrawlLink: struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts string
 
 		Scan, Tls string
 	}{
@@ -356,6 +356,7 @@ var Columns = struct {
 		CachedLinkOccurences:       "cached_link_occurences",
 		CachedScriptOccurences:     "cached_script_occurences",
 		CachedStylesheetOccurences: "cached_stylesheet_occurences",
+		CachedImageMissingAlts:     "cached_image_missing_alts",
 
 		Scan: "Scan",
 		Tls:  "Tls",
@@ -1166,6 +1167,7 @@ type CrawlLink struct {
 	CachedLinkOccurences       *int      `pg:"cached_link_occurences"`
 	CachedScriptOccurences     *int      `pg:"cached_script_occurences"`
 	CachedStylesheetOccurences *int      `pg:"cached_stylesheet_occurences"`
+	CachedImageMissingAlts     *int      `pg:"cached_image_missing_alts"`
 
 	Scan *CrawlScan `pg:"fk:scan_id"`
 	Tls  *CrawlTl   `pg:"fk:tls_id"`

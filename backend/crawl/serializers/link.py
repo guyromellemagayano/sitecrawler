@@ -23,6 +23,7 @@ class LinkSerializer(serializers.ModelSerializer):
     type = ChoiceField(Link.TYPE_CHOICES)
     tls_status = ChoiceField(Link.TLS_STATUS_CHOICES)
     occurences = serializers.IntegerField(read_only=True)
+    missing_alts = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Link
@@ -39,6 +40,7 @@ class LinkSerializer(serializers.ModelSerializer):
             "size",
             "occurences",
             "tls_status",
+            "missing_alts",
         ]
         read_only_fields = fields
 
