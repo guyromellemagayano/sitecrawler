@@ -1,25 +1,32 @@
-import { Fragment, useState } from 'react';
-import fetch from 'node-fetch';
-import Cookies from 'js-cookie';
-import Head from 'next/head';
+// React
+import React, { Fragment, useState } from 'react';
+
+// NextJS
 import Link from 'next/link';
-import styled from 'styled-components';
-import PropTypes from 'prop-types';
-import Layout from 'components/Layout';
-import LogoLabel from 'components/form/LogoLabel';
+
+// External
+import { Formik } from 'formik';
+import { NextSeo } from 'next-seo';
+import * as Yup from 'yup';
 import PasswordStrengthBar from 'react-password-strength-bar';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
+// JSON
+import RegistrationLabel from 'public/label/pages/registration.json';
+
+// Hooks
+import usePostMethod from 'src/hooks/usePostMethod';
+
+// Components
+import Layout from 'src/components/Layout';
+import LogoLabel from 'src/components/form/LogoLabel';
 
 const RegistrationDiv = styled.div``;
 
 const Registration = () => {
 	const [errorMsg, setErrorMsg] = useState('');
 	const [successMsg, setSuccessMsg] = useState('');
-	const [firstname, setFirstname] = useState('');
-	const [lastname, setLastname] = useState('');
-	const [username, setUsername] = useState('');
-	const [email, setEmail] = useState('');
-	const [password1, setPassword1] = useState('');
-	const [password2, setPassword2] = useState('');
 	const [errorFirstnameMsg, setErrorFirstnameMsg] = useState('');
 	const [errorLastnameMsg, setErrorLastnameMsg] = useState('');
 	const [errorUsernameMsg, setErrorUsernameMsg] = useState('');
@@ -27,128 +34,36 @@ const Registration = () => {
 	const [errorPassword1Msg, setErrorPassword1Msg] = useState('');
 	const [errorPassword2Msg, setErrorPassword2Msg] = useState('');
 	const [disableRegistrationForm, setDisableRegistrationForm] = useState(false);
+
 	const pageTitle = 'Registration';
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-
-		if (errorMsg) setErrorMsg('');
-		if (successMsg) setSuccessMsg('');
-
-		const body = {
-			first_name: firstname,
-			last_name: lastname,
-			username: username,
-			email: email,
-			password1: password1,
-			password2: password2
-		};
-
-		if (body.password1 !== body.password2) {
-			setErrorMsg("The passwords don't match");
-			return;
-		}
-
-		try {
-			const response = await fetch('/api/auth/registration/', {
-				method: 'POST',
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-					'X-CSRFToken': Cookies.get('csrftoken')
-				},
-				body: JSON.stringify(body)
-			});
-
-			if (Math.floor(response.status / 200) === 1) {
-				setDisableRegistrationForm(!disableRegistrationForm);
-				setSuccessMsg(
-					'Thanks for signing up. Please check your email for confirmation!'
-				);
-			} else {
-				throw new Error(await response.text());
-			}
-		} catch (error) {
-			if (error.response) {
-				console.error(error.response.data);
-				console.error(error.response.status);
-				console.error(error.response.headers);
-			} else if (error.request) {
-				console.error(error.request);
-			} else {
-				let data = JSON.parse(error.message);
-
-				if (data.first_name) {
-					setErrorFirstnameMsg(data.first_name[0]);
-				}
-
-				if (data.last_name) {
-					setErrorLastnameMsg(data.last_name[0]);
-				}
-
-				if (data.username) {
-					setErrorUsernameMsg(data.username[0]);
-				}
-
-				if (data.email) {
-					setErrorEmailMsg(data.email[0]);
-				}
-
-				if (data.password1) {
-					setErrorPassword1Msg(data.password1[0]);
-				}
-
-				if (data.password2) {
-					setErrorPassword2Msg(data.password2[0]);
-				}
-
-				if (
-					!data.first_name &&
-					!data.last_name &&
-					!data.username &&
-					!data.email &&
-					!data.password1 &&
-					!data.password2
-				) {
-					console.error(error.message);
-					setErrorMsg('An unexpected error occurred. Please try again.');
-				}
-			}
-		}
-	};
+	const registrationApiEndpoint = '/api/auth/registration/';
 
 	return (
 		<Layout>
-			<Head>
-				<title>{pageTitle}</title>
-			</Head>
+			<NextSeo title={pageTitle} />
 
-			<RegistrationDiv
-				className={`min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
-			>
+			<RegistrationDiv className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 				{!disableRegistrationForm ? <LogoLabel isSignUp /> : null}
 
-				<div className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md`}>
+				<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 					{errorMsg && (
-						<div className={`rounded-md bg-red-100 p-4 mb-8`}>
-							<div className={`flex`}>
-								<div className={`flex-shrink-0`}>
+						<div className="rounded-md bg-red-100 p-4 mb-8">
+							<div className="flex">
+								<div className="flex-shrink-0">
 									<svg
-										className={`h-5 w-5 text-red-400`}
-										fill={`currentColor`}
-										viewBox={`0 0 20 20`}
+										className="h-5 w-5 text-red-400"
+										fill="currentColor"
+										viewBox="0 0 20 20"
 									>
 										<path
-											fillRule={`evenodd`}
-											d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
-											clipRule={`evenodd`}
+											fillRule="evenodd"
+											d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+											clipRule="evenodd"
 										/>
 									</svg>
 								</div>
-								<div className={`ml-3`}>
-									<h3
-										className={`text-sm leading-5 font-medium text-red-800 break-words`}
-									>
+								<div className="ml-3">
+									<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
 										{errorMsg}
 									</h3>
 								</div>
@@ -157,25 +72,23 @@ const Registration = () => {
 					)}
 
 					{successMsg && (
-						<div className={`rounded-md bg-green-100 p-4 mb-8`}>
-							<div className={`flex`}>
-								<div className={`flex-shrink-0`}>
+						<div className="rounded-md bg-green-100 p-4 mb-8">
+							<div className="flex">
+								<div className="flex-shrink-0">
 									<svg
-										className={`h-5 w-5 text-green-400`}
-										fill={`currentColor`}
-										viewBox={`0 0 20 20`}
+										className="h-5 w-5 text-green-400"
+										fill="currentColor"
+										viewBox="0 0 20 20"
 									>
 										<path
-											fillRule={`evenodd`}
-											d={`M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z`}
-											clipRule={`evenodd`}
+											fillRule="evenodd"
+											d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+											clipRule="evenodd"
 										/>
 									</svg>
 								</div>
-								<div className={`ml-3`}>
-									<h3
-										className={`text-sm leading-5 font-medium text-green-800 break-words`}
-									>
+								<div className="ml-3">
+									<h3 className="text-sm leading-5 font-medium text-green-800 break-words">
 										{successMsg}
 									</h3>
 								</div>
@@ -185,210 +98,382 @@ const Registration = () => {
 
 					{!disableRegistrationForm ? (
 						<Fragment>
-							<div
-								className={`bg-white py-8 px-4 shadow-xs rounded-lg sm:px-10`}
-							>
-								<form onSubmit={handleSubmit}>
-									<div className={`mt-1`}>
-										<label
-											htmlFor={`firstname`}
-											className={`block text-sm font-medium leading-5 text-gray-700`}
-										>
-											First Name
-										</label>
-										<div className={`mt-1 rounded-md shadow-xs-sm`}>
-											<input
-												id={`firstname`}
-												type={`text`}
-												name={`firstname`}
-												className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-													errorFirstnameMsg
-														? 'border-red-300'
-														: 'border-gray-300'
-												}`}
-												aria-describedby={`firstname`}
-												onChange={(e) => setFirstname(e.target.value)}
-											/>
-										</div>
-										<span
-											className={`block mt-2 text-sm leading-5 text-red-700`}
-										>
-											{errorFirstnameMsg}
-										</span>
-									</div>
+							<div className="bg-white py-8 px-4 shadow-xs rounded-lg sm:px-10">
+								<Formik
+									initialValues={{
+										firstname: '',
+										lastname: '',
+										username: '',
+										email: '',
+										password1: '',
+										password2: ''
+									}}
+									validationSchema={Yup.object({
+										firstname: Yup.string().required(
+											RegistrationLabel[0].label
+										),
+										lastname: Yup.string().required(RegistrationLabel[0].label),
+										username: Yup.string().required(RegistrationLabel[0].label),
+										email: Yup.string()
+											.email(RegistrationLabel[1].label)
+											.required(RegistrationLabel[0].label),
+										password1: Yup.string()
+											.min(10, RegistrationLabel[12].label)
+											.max(128, RegistrationLabel[13].label)
+											.required(RegistrationLabel[0].label),
+										password2: Yup.string()
+											.when('password1', {
+												is: (val) => val && val.length > 0,
+												then: Yup.string().oneOf(
+													[Yup.ref('password1')],
+													RegistrationLabel[14].label
+												)
+											})
+											.required(RegistrationLabel[0].label)
+									})}
+									onSubmit={async (values, { setSubmitting, resetForm }) => {
+										const body = {
+											username: values.username,
+											email: values.email,
+											password1: values.password1,
+											password2: values.password2,
+											first_name: values.firstname,
+											last_name: values.lastname
+										};
 
-									<div className={`mt-6`}>
-										<label
-											htmlFor={`lastname`}
-											className={`block text-sm font-medium leading-5 text-gray-700`}
-										>
-											Last Name
-										</label>
-										<div className={`mt-1 rounded-md shadow-xs-sm`}>
-											<input
-												id={`lastname`}
-												type={`text`}
-												name={`lastname`}
-												className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-													errorLastnameMsg
-														? 'border-red-300'
-														: 'border-gray-300'
-												}`}
-												aria-describedby={`lastname`}
-												onChange={(e) => setLastname(e.target.value)}
-											/>
-										</div>
-										<span
-											className={`block mt-2 text-sm leading-5 text-red-700`}
-										>
-											{errorLastnameMsg}
-										</span>
-									</div>
+										const response = await usePostMethod(
+											registrationApiEndpoint,
+											body,
+											3000
+										);
 
-									<div className={`mt-6`}>
-										<label
-											htmlFor={`username`}
-											className={`block text-sm font-medium leading-5 text-gray-700`}
-										>
-											Username
-										</label>
-										<div className={`mt-1 rounded-md shadow-xs-sm`}>
-											<input
-												id={`username`}
-												type={`text`}
-												name={`username`}
-												className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-													errorUsernameMsg
-														? 'border-red-300'
-														: 'border-gray-300'
-												}`}
-												aria-describedby={`username`}
-												onChange={(e) => setUsername(e.target.value)}
-											/>
-										</div>
-										<span
-											className={`block mt-2 text-sm leading-5 text-red-700`}
-										>
-											{errorUsernameMsg}
-										</span>
-									</div>
+										if (Math.floor(response.status / 200) === 1) {
+											setSubmitting(false);
+											setDisableRegistrationForm(!disableRegistrationForm);
+											resetForm({ values: '' });
+											setSuccessMsg(RegistrationLabel[2].label);
+										} else {
+											if (response.data) {
+												if (response.data.first_name) {
+													setErrorFirstnameMsg(response.data.first_name);
+												}
 
-									<div className={`mt-6`}>
-										<label
-											htmlFor={`email`}
-											className={`block text-sm font-medium leading-5 text-gray-700`}
-										>
-											Email Address
-										</label>
-										<div className={`mt-1 rounded-md shadow-xs-sm`}>
-											<input
-												id={`email`}
-												type={`email`}
-												name={`email`}
-												className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-													errorEmailMsg ? 'border-red-300' : 'border-gray-300'
-												}`}
-												aria-describedby={`email`}
-												onChange={(e) => setEmail(e.target.value)}
-											/>
-										</div>
-										<span
-											className={`block mt-2 text-sm leading-5 text-red-700`}
-										>
-											{errorEmailMsg}
-										</span>
-									</div>
+												if (response.data.last_name) {
+													setErrorLastnameMsg(response.data.last_name);
+												}
 
-									<div className={`mt-6`}>
-										<label
-											htmlFor={`password`}
-											className={`block text-sm font-medium leading-5 text-gray-700`}
-										>
-											Password
-										</label>
-										<div className={`mt-1 rounded-md shadow-xs-sm`}>
-											<input
-												id={`password1`}
-												type={`password`}
-												name={`password1`}
-												className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-													errorPassword1Msg
-														? 'border-red-300'
-														: 'border-gray-300'
-												}`}
-												aria-describedby={`password1`}
-												onChange={(e) => setPassword1(e.target.value)}
-											/>
-											<PasswordStrengthBar password={password1} />
-										</div>
-										<span
-											className={`block mt-2 text-sm leading-5 text-red-700`}
-										>
-											{errorPassword1Msg}
-										</span>
-									</div>
+												if (response.data.username) {
+													setErrorUsernameMsg(response.data.username);
+												}
 
-									<div className={`mt-6`}>
-										<label
-											htmlFor={`password`}
-											className={`block text-sm font-medium leading-5 text-gray-700`}
-										>
-											Repeat Password
-										</label>
-										<div className={`mt-1 rounded-md shadow-xs-sm`}>
-											<input
-												id={`password2`}
-												type={`password`}
-												name={`password2`}
-												className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-													errorPassword2Msg
-														? 'border-red-300'
-														: 'border-gray-300'
-												}`}
-												aria-describedby={`password2`}
-												onChange={(e) => setPassword2(e.target.value)}
-											/>
-										</div>
-										<span
-											className={`block mt-2 text-sm leading-5 text-red-700`}
-										>
-											{errorPassword2Msg}
-										</span>
-									</div>
+												if (response.data.email) {
+													setErrorEmailMsg(response.data.email);
+												}
 
-									<div className={`mt-6`}>
-										<span className={`block w-full rounded-md shadow-xs-sm`}>
-											<button
-												type={`submit`}
-												className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
-											>
-												Create Account
-											</button>
-										</span>
-									</div>
-								</form>
+												if (response.data.password1) {
+													setErrorPassword1Msg(response.data.password1);
+												}
 
-								<div className={`mt-6`}>
-									<div className={`relative`}>
-										<div
-											className={`relative flex justify-center wrap flex-row text-sm leading-5`}
-										>
-											<span
-												className={`px-2 bg-white text-gray-500 text-center`}
-											>
+												if (response.data.password2) {
+													setErrorPassword2Msg(response.data.password2);
+												}
+											} else {
+												setSubmitting(false);
+												resetForm({ values: '' });
+												setErrorMsg(RegistrationLabel[3].label);
+											}
+										}
+									}}
+								>
+									{({
+										values,
+										errors,
+										touched,
+										handleChange,
+										handleBlur,
+										handleSubmit,
+										isSubmitting
+									}) => (
+										<form onSubmit={handleSubmit}>
+											<div className="mt-1">
+												<label
+													htmlFor="firstname"
+													className="block text-sm font-medium leading-5 text-gray-700"
+												>
+													{RegistrationLabel[5].label}
+												</label>
+												<div className="mt-1 rounded-md shadow-xs-sm">
+													<input
+														id="firstname"
+														type="text"
+														name="firstname"
+														disabled={isSubmitting}
+														className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+															isSubmitting &&
+															'opacity-50 bg-gray-300 cursor-not-allowed'
+														} ${
+															errors.firstname || errorFirstnameMsg
+																? 'border-red-300'
+																: 'border-gray-300'
+														}`}
+														aria-describedby="firstname"
+														onChange={handleChange}
+														onBlur={handleBlur}
+														value={values.firstname}
+													/>
+												</div>
+												{errors.firstname && touched.firstname && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errors.firstname &&
+															touched.firstname &&
+															errors.firstname}
+													</span>
+												)}
+												{errorFirstnameMsg && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errorFirstnameMsg}
+													</span>
+												)}
+											</div>
+
+											<div className="mt-6">
+												<label
+													htmlFor="lastname"
+													className="block text-sm font-medium leading-5 text-gray-700"
+												>
+													{RegistrationLabel[6].label}
+												</label>
+												<div className="mt-1 rounded-md shadow-xs-sm">
+													<input
+														id="lastname"
+														type="text"
+														name="lastname"
+														disabled={isSubmitting}
+														className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+															isSubmitting &&
+															'opacity-50 bg-gray-300 cursor-not-allowed'
+														} ${
+															errors.lastname || errorLastnameMsg
+																? 'border-red-300'
+																: 'border-gray-300'
+														}`}
+														aria-describedby="lastname"
+														onChange={handleChange}
+														onBlur={handleBlur}
+														value={values.lastname}
+													/>
+												</div>
+												{errors.lastname && touched.lastname && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errors.lastname &&
+															touched.lastname &&
+															errors.lastname}
+													</span>
+												)}
+												{errorLastnameMsg && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errorLastnameMsg}
+													</span>
+												)}
+											</div>
+
+											<div className="mt-6">
+												<label
+													htmlFor="username"
+													className="block text-sm font-medium leading-5 text-gray-700"
+												>
+													{RegistrationLabel[7].label}
+												</label>
+												<div className="mt-1 rounded-md shadow-xs-sm">
+													<input
+														id="username"
+														type="text"
+														name="username"
+														disabled={isSubmitting}
+														className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+															isSubmitting &&
+															'opacity-50 bg-gray-300 cursor-not-allowed'
+														} ${
+															errors.username || errorUsernameMsg
+																? 'border-red-300'
+																: 'border-gray-300'
+														}`}
+														aria-describedby="username"
+														onChange={handleChange}
+														onBlur={handleBlur}
+														value={values.username}
+													/>
+												</div>
+												{errors.username && touched.username && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errors.username &&
+															touched.username &&
+															errors.username}
+													</span>
+												)}
+												{errorUsernameMsg && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errorUsernameMsg}
+													</span>
+												)}
+											</div>
+
+											<div className="mt-6">
+												<label
+													htmlFor="email"
+													className="block text-sm font-medium leading-5 text-gray-700"
+												>
+													{RegistrationLabel[8].label}
+												</label>
+												<div className="mt-1 rounded-md shadow-xs-sm">
+													<input
+														id="email"
+														type="email"
+														name="email"
+														disabled={isSubmitting}
+														className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+															isSubmitting &&
+															'opacity-50 bg-gray-300 cursor-not-allowed'
+														} ${
+															errors.email || errorEmailMsg
+																? 'border-red-300'
+																: 'border-gray-300'
+														}`}
+														aria-describedby="email"
+														onChange={handleChange}
+														onBlur={handleBlur}
+														value={values.email}
+													/>
+												</div>
+												{errors.email && touched.email && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errors.email && touched.email && errors.email}
+													</span>
+												)}
+												{errorEmailMsg && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errorEmailMsg}
+													</span>
+												)}
+											</div>
+
+											<div className="mt-6">
+												<label
+													htmlFor="password"
+													className="block text-sm font-medium leading-5 text-gray-700"
+												>
+													{RegistrationLabel[9].label}
+												</label>
+												<div className="mt-1 rounded-md shadow-xs-sm">
+													<input
+														id="password1"
+														type="password"
+														name="password1"
+														disabled={isSubmitting}
+														className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+															isSubmitting &&
+															'opacity-50 bg-gray-300 cursor-not-allowed'
+														} ${
+															errors.password1 || errorPassword1Msg
+																? 'border-red-300'
+																: 'border-gray-300'
+														}`}
+														aria-describedby="password1"
+														onChange={handleChange}
+														onBlur={handleBlur}
+														value={values.password1}
+													/>
+													<PasswordStrengthBar password={values.password1} />
+												</div>
+												{errors.password1 && touched.password1 && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errors.password1 &&
+															touched.password1 &&
+															errors.password1}
+													</span>
+												)}
+												{errorPassword1Msg && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errorFirstnameMsg}
+													</span>
+												)}
+											</div>
+
+											<div className="mt-6">
+												<label
+													htmlFor="password"
+													className="block text-sm font-medium leading-5 text-gray-700"
+												>
+													{RegistrationLabel[10].label}
+												</label>
+												<div className="mt-1 rounded-md shadow-xs-sm">
+													<input
+														id="password2"
+														type="password"
+														name="password2"
+														disabled={isSubmitting}
+														className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+															isSubmitting &&
+															'opacity-50 bg-gray-300 cursor-not-allowed'
+														} ${
+															errors.password2 || errorPassword2Msg
+																? 'border-red-300'
+																: 'border-gray-300'
+														}`}
+														aria-describedby="password2"
+														onChange={handleChange}
+														onBlur={handleBlur}
+														value={values.password2}
+													/>
+												</div>
+												{errors.password2 && touched.password2 && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errors.password2 &&
+															touched.password2 &&
+															errors.password2}
+													</span>
+												)}
+												{errorPassword2Msg && (
+													<span className="block mt-2 text-xs leading-5 text-red-700">
+														{errorPassword2Msg}
+													</span>
+												)}
+											</div>
+
+											<div className="mt-6">
+												<span className="block w-full rounded-md shadow-xs-sm">
+													<button
+														type="submit"
+														className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out ${
+															isSubmitting
+																? 'opacity-50 bg-indigo-300 cursor-not-allowed'
+																: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700'
+														}`}
+														disabled={isSubmitting}
+													>
+														{isSubmitting
+															? RegistrationLabel[15].label
+															: RegistrationLabel[11].label}
+													</button>
+												</span>
+											</div>
+										</form>
+									)}
+								</Formik>
+
+								<div className="mt-6">
+									<div className="relative">
+										<div className="relative flex justify-center wrap flex-row text-sm leading-5">
+											<span className="px-2 bg-white text-gray-500 text-center">
 												By signing up, you agree to the&nbsp;
 												<Link href="/service-terms">
-													<a
-														className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
-													>
+													<a className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 														Terms of Service
 													</a>
 												</Link>
 												&nbsp;and&nbsp;
 												<Link href="/privacy-policy">
-													<a
-														className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
-													>
+													<a className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 														Privacy Policy
 													</a>
 												</Link>
@@ -398,15 +483,11 @@ const Registration = () => {
 								</div>
 							</div>
 
-							<div
-								className={`relative flex justify-center wrap flex-row text-sm leading-5`}
-							>
-								<span className={`px-2 py-5 text-gray-500`}>
+							<div className="relative flex justify-center wrap flex-row text-sm leading-5">
+								<span className="px-2 py-5 text-gray-500">
 									Already have an account?&nbsp;
 									<Link href="/">
-										<a
-											className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
-										>
+										<a className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 											Log In
 										</a>
 									</Link>
@@ -414,14 +495,10 @@ const Registration = () => {
 							</div>
 						</Fragment>
 					) : (
-						<div
-							className={`relative flex justify-center wrap flex-row text-sm leading-5`}
-						>
-							<span className={`px-2 text-gray-500`}>
+						<div className="relative flex justify-center wrap flex-row text-sm leading-5">
+							<span className="px-2 text-gray-500">
 								<Link href="/">
-									<a
-										className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
-									>
+									<a className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 										Go to Login
 									</a>
 								</Link>
@@ -436,8 +513,4 @@ const Registration = () => {
 
 export default Registration;
 
-Registration.propTypes = {
-	errorMsg: PropTypes.string,
-	successMsg: PropTypes.string,
-	handleSubmit: PropTypes.func
-};
+Registration.propTypes = {};
