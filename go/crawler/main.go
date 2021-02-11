@@ -33,6 +33,7 @@ func main() {
 			&common.SizePostprocessor{},
 			&common.IsTypePostprocessor{},
 			&common.OccurencesPostprocessor{},
+			&AltPostprocessor{},
 		},
 	}
 	backendService := &common.BackendService{Env: env, Token: common.Secret(log, awsSession, env, "BACKEND_TOKEN", "")}

@@ -79,7 +79,8 @@ services:
     image: crawl-app-uptimer
     volumes:
       - ./go:/app
-    # environment:
+    environment:
+      - BACKEND_TOKEN=981b9c2848263ece99d67a10414eeea477a34297
     #   - LOG_SQL=true
   verifier:
     build:

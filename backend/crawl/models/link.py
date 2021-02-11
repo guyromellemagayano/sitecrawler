@@ -69,7 +69,14 @@ class LinkQuerySet(QuerySet):
         return self.filter(cached_is_link=True).annotate(occurences=F("cached_link_occurences")).order_by("-status")
 
     def images(self):
-        return self.filter(cached_is_image=True).annotate(occurences=F("cached_image_occurences")).order_by("-status")
+        return (
+            self.filter(cached_is_image=True)
+            .annotate(
+                occurences=F("cached_image_occurences"),
+                missing_alts=Coalesce(F("cached_image_missing_alts"), 0),
+            )
+            .order_by("-status")
+        )
 
     def scripts(self):
         return self.filter(cached_is_script=True).annotate(occurences=F("cached_script_occurences")).order_by("-status")
@@ -178,6 +185,8 @@ class Link(models.Model):
     cached_image_occurences = models.PositiveIntegerField(null=True, blank=True)
     cached_script_occurences = models.PositiveIntegerField(null=True, blank=True)
     cached_stylesheet_occurences = models.PositiveIntegerField(null=True, blank=True)
+
+    cached_image_missing_alts = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         permissions = (

@@ -110,6 +110,7 @@ class PageInline(admin.TabularInline):
         "cached_image_occurences",
         "cached_script_occurences",
         "cached_stylesheet_occurences",
+        "cached_image_missing_alts",
     )
     show_change_link = True
 
