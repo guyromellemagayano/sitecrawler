@@ -77,7 +77,7 @@ const Login = () => {
 											<h4 className="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none">
 												{LoginLabel[0].label}
 												<span className="text-red-600">
-													{LoginLabel[1].label}
+													{ReactHtmlParser(LoginLabel[1].label)}
 												</span>
 												<br className="hidden md:inline" />
 											</h4>
