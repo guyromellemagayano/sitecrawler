@@ -143,8 +143,7 @@ const Registration = () => {
 
 										const response = await usePostMethod(
 											registrationApiEndpoint,
-											body,
-											3000
+											body
 										);
 
 										if (Math.floor(response.status / 200) === 1) {
@@ -176,6 +175,17 @@ const Registration = () => {
 
 												if (response.data.password2) {
 													setErrorPassword2Msg(response.data.password2);
+												}
+
+												if (
+													!response.data.first_name &&
+													!response.data.last_name &&
+													!response.data.username &&
+													!response.data.email &&
+													!response.data.password1 &&
+													!response.data.password2
+												) {
+													setErrorMsg(RegistrationLabel[3].label);
 												}
 											} else {
 												setSubmitting(false);
@@ -212,7 +222,7 @@ const Registration = () => {
 															isSubmitting &&
 															'opacity-50 bg-gray-300 cursor-not-allowed'
 														} ${
-															errors.firstname || errorFirstnameMsg
+															errors.firstname || errorFirstnameMsg || errorMsg
 																? 'border-red-300'
 																: 'border-gray-300'
 														}`}
@@ -253,7 +263,7 @@ const Registration = () => {
 															isSubmitting &&
 															'opacity-50 bg-gray-300 cursor-not-allowed'
 														} ${
-															errors.lastname || errorLastnameMsg
+															errors.lastname || errorLastnameMsg || errorMsg
 																? 'border-red-300'
 																: 'border-gray-300'
 														}`}
@@ -294,7 +304,7 @@ const Registration = () => {
 															isSubmitting &&
 															'opacity-50 bg-gray-300 cursor-not-allowed'
 														} ${
-															errors.username || errorUsernameMsg
+															errors.username || errorUsernameMsg || errorMsg
 																? 'border-red-300'
 																: 'border-gray-300'
 														}`}
@@ -335,7 +345,7 @@ const Registration = () => {
 															isSubmitting &&
 															'opacity-50 bg-gray-300 cursor-not-allowed'
 														} ${
-															errors.email || errorEmailMsg
+															errors.email || errorEmailMsg || errorMsg
 																? 'border-red-300'
 																: 'border-gray-300'
 														}`}
@@ -374,7 +384,7 @@ const Registration = () => {
 															isSubmitting &&
 															'opacity-50 bg-gray-300 cursor-not-allowed'
 														} ${
-															errors.password1 || errorPassword1Msg
+															errors.password1 || errorPassword1Msg || errorMsg
 																? 'border-red-300'
 																: 'border-gray-300'
 														}`}
@@ -416,7 +426,7 @@ const Registration = () => {
 															isSubmitting &&
 															'opacity-50 bg-gray-300 cursor-not-allowed'
 														} ${
-															errors.password2 || errorPassword2Msg
+															errors.password2 || errorPassword2Msg || errorMsg
 																? 'border-red-300'
 																: 'border-gray-300'
 														}`}
@@ -511,6 +521,6 @@ const Registration = () => {
 	);
 };
 
-export default Registration;
-
 Registration.propTypes = {};
+
+export default Registration;

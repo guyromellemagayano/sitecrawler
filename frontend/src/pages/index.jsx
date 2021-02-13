@@ -33,6 +33,7 @@ const LoginDiv = styled.div``;
 const Login = () => {
 	const [errorMsg, setErrorMsg] = useState(null);
 	const [successMsg, setSuccessMsg] = useState(null);
+	const [errorEmailMsg, setErrorEmailMsg] = useState(null);
 	const [disableLoginForm, setDisableLoginForm] = useState(false);
 	const [redirectTo, setRedirectTo] = useState('/dashboard/sites');
 
@@ -137,30 +138,39 @@ const Login = () => {
 																	password: values.password
 																};
 
-																try {
-																	const response = await usePostMethod(
-																		loginApiEndpoint,
-																		body
-																	);
-																	const data = await response.data;
+																const response = await usePostMethod(
+																	loginApiEndpoint,
+																	body
+																);
 
-																	if (
-																		response.statusText === 'OK' &&
-																		response.status === 200
-																	) {
-																		setDisableLoginForm(!disableLoginForm);
-																		setSuccessMsg(LoginLabel[12].label);
-
-																		setTimeout(async () => {
-																			mutateUser(data);
-																		}, 1500);
-																	}
-																} catch (error) {
+																if (Math.floor(response.status / 200) === 1) {
 																	setSubmitting(false);
+																	setDisableLoginForm(!disableLoginForm);
 																	resetForm({ values: '' });
-																	setErrorMsg(LoginLabel[11].label);
+																	setSuccessMsg(LoginLabel[12].label);
 
-																	throw error.message;
+																	setTimeout(async () => {
+																		mutateUser(response.data);
+																	}, 1500);
+																} else {
+																	if (response.data) {
+																		if (
+																			response.data.non_field_errors ===
+																			'E-mail is not verified.'
+																		) {
+																			setErrorEmailMsg(
+																				response.data.non_field_errors
+																			);
+																		} else {
+																			setErrorMsg(
+																				response.data.non_field_errors
+																			);
+																		}
+																	} else {
+																		setSubmitting(false);
+																		resetForm({ values: '' });
+																		setErrorMsg(LoginLabel[11].label);
+																	}
 																}
 															}}
 														>
@@ -186,8 +196,14 @@ const Login = () => {
 																				id="username"
 																				type="text"
 																				name="username"
+																				disabled={isSubmitting}
 																				className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-																					errors.username
+																					isSubmitting &&
+																					'opacity-50 bg-gray-300 cursor-not-allowed'
+																				} ${
+																					errors.username ||
+																					errorEmailMsg ||
+																					errorMsg
 																						? 'border-red-300'
 																						: 'border-gray-300'
 																				}`}
@@ -198,10 +214,15 @@ const Login = () => {
 																			/>
 																		</div>
 																		{errors.username && touched.username && (
-																			<span className="block mt-2 text-sm leading-5 text-red-700">
+																			<span className="block mt-2 text-xs leading-5 text-red-700">
 																				{errors.username &&
 																					touched.username &&
 																					errors.username}
+																			</span>
+																		)}
+																		{errorEmailMsg && (
+																			<span className="block mt-2 text-xs leading-5 text-red-700">
+																				{errorEmailMsg}
 																			</span>
 																		)}
 																	</div>
@@ -218,8 +239,12 @@ const Login = () => {
 																				id="password"
 																				type="password"
 																				name="password"
+																				disabled={isSubmitting}
 																				className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-																					errors.password
+																					isSubmitting &&
+																					'opacity-50 bg-gray-300 cursor-not-allowed'
+																				} ${
+																					errors.password || errorMsg
 																						? 'border-red-300'
 																						: 'border-gray-300'
 																				}`}
@@ -230,7 +255,7 @@ const Login = () => {
 																			/>
 																		</div>
 																		{errors.password && touched.password && (
-																			<span className="block mt-2 text-sm leading-5 text-red-700">
+																			<span className="block mt-2 text-xs leading-5 text-red-700">
 																				{errors.password &&
 																					touched.password &&
 																					errors.password}
@@ -398,11 +423,6 @@ const Login = () => {
 	);
 };
 
-Login.propTypes = {
-	errorMsg: PropTypes.string,
-	successMsg: PropTypes.string,
-	disableLoginForm: PropTypes.bool,
-	redirectTo: PropTypes.func
-};
+Login.propTypes = {};
 
 export default Login;
