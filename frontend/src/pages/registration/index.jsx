@@ -454,12 +454,12 @@ const Registration = () => {
 												<span className="block w-full rounded-md shadow-xs-sm">
 													<button
 														type="submit"
+														disabled={isSubmitting}
 														className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out ${
 															isSubmitting
 																? 'opacity-50 bg-indigo-300 cursor-not-allowed'
 																: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700'
 														}`}
-														disabled={isSubmitting}
 													>
 														{isSubmitting
 															? RegistrationLabel[15].label
