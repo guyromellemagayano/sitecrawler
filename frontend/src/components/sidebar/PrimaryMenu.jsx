@@ -262,10 +262,10 @@ const PrimaryMenu = () => {
 		</PrimaryMenuDiv>
 	) : (
 		<PrimaryMenuDiv className="mt-5 flex-1 px-2 bg-gray-1000">
-			{[...Array(3)].map((index) => {
+			{[...Array(3)].map((val, key) => {
 				return (
 					<a
-						key={index}
+						key={key}
 						className="group ml-1 mt-2 flex justify-start items-center"
 					>
 						<Skeleton circle={true} duration={2} width={30} height={30} />
