@@ -1,37 +1,50 @@
-import { Formik } from 'formik';
-import { Fragment, useState, useEffect } from 'react';
+// React
+import React, { Fragment, useState, useEffect } from 'react';
+
+// NextJS
 import { useRouter } from 'next/router';
-import * as Yup from 'yup';
-import Cookies from 'js-cookie';
-import fetch from 'node-fetch';
-import fetchJson from 'hooks/fetchJson';
-import Head from 'next/head';
-import Layout from 'components/Layout';
 import Link from 'next/link';
-import MainSidebar from 'components/sidebar/MainSidebar';
-import MobileSidebar from 'components/sidebar/MobileSidebar';
+
+// External
+import { Formik } from 'formik';
+import { NextSeo } from 'next-seo';
+import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import SiteFooter from 'components/footer/SiteFooter';
 import styled from 'styled-components';
-import SupportLabel from 'public/label/pages/site/support.json';
 import useSWR from 'swr';
-import useUser from 'hooks/useUser';
+
+// JSON
+import SupportLabel from 'public/label/pages/site/support.json';
+
+// Hooks
+import usePostMethod from 'src/hooks/usePostMethod';
+import useUser from 'src/hooks/useUser';
+
+// Components
+import Layout from 'src/components/Layout';
+import MainSidebar from 'src/components/sidebar/MainSidebar';
+import MobileSidebar from 'src/components/sidebar/MobileSidebar';
+import SiteFooter from 'src/components/footer/SiteFooter';
 
 const SupportDiv = styled.section``;
 
 const Support = () => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+	const [disableSupportForm, setDisableSupportForm] = useState(false);
 	const [successMsg, setSuccessMsg] = useState('');
 	const [errorMsg, setErrorMsg] = useState('');
 	const [siteName, setSiteName] = useState('');
+
+	const pageTitle = 'Support |';
+	const contactApiEndpoint = '/api/support/contact/';
+
+	const { query } = useRouter();
 
 	const { user: user, userError: userError } = useUser({
 		redirectTo: '/',
 		redirectIfFound: false
 	});
 
-	const { query } = useRouter();
-	const pageTitle = 'Support |';
 	const { data: site, error: siteError } = useSWR(
 		() => (query.siteId ? `/api/site/${query.siteId}/` : null),
 		() => fetchSiteSettings(`/api/site/${query.siteId}/`)
@@ -67,11 +80,7 @@ const Support = () => {
 		<Layout>
 			{user && site ? (
 				<Fragment>
-					<Head>
-						<title>
-							{pageTitle} {siteName}
-						</title>
-					</Head>
+					<NextSeo title={pageTitle + siteName} />
 
 					<SupportDiv className={`h-screen flex overflow-hidden bg-gray-200`}>
 						<MobileSidebar show={openMobileSidebar} />
@@ -186,17 +195,8 @@ const Support = () => {
 											initialValues={{
 												message: ''
 											}}
-											validate={(values) => {
-												const errors = {};
-
-												if (!values.message) {
-													errors.message = SupportLabel[2].label;
-												}
-
-												return errors;
-											}}
 											validationSchema={Yup.object({
-												message: Yup.string()
+												message: Yup.string().required(SupportLabel[2].label)
 											})}
 											onSubmit={async (
 												values,
@@ -206,47 +206,35 @@ const Support = () => {
 													message: values.message
 												};
 
-												const supportMailResponse = await fetch(
-													'/api/support/contact/',
-													{
-														method: 'POST',
-														headers: {
-															'Accept': 'application/json',
-															'Content-Type': 'application/json',
-															'X-CSRFToken': Cookies.get('csrftoken')
-														},
-														body: JSON.stringify(body)
-													}
+												const response = await usePostMethod(
+													contactApiEndpoint,
+													body
 												);
 
-												const data = await supportMailResponse.json();
-
-												setTimeout(() => {
+												if (Math.floor(response.status / 200) === 1) {
+													setErrorMsg('');
+													setSuccessMsg(SupportLabel[3].label);
 													setSubmitting(false);
 													resetForm({ values: '' });
+													setDisableSupportForm(!disableSupportForm);
+												} else {
+													if (response.data) {
+														if (response.data.message) {
+															setSuccessMsg('');
+															setErrorMsg(response.data.message[0]);
+														}
 
-													if (
-														supportMailResponse.ok &&
-														supportMailResponse.status === 200
-													) {
-														if (data) {
-															setSuccessMsg(SupportLabel[3].label);
-														} else {
-															setErrorMsg(SupportLabel[4].label);
+														if (!response.data.message) {
+															setSuccessMsg('');
+															setErrorMsg(SupportLabel[5].label);
 														}
 													} else {
-														const error = new Error(
-															supportMailResponse.statusText
-														);
-
-														error.response = supportMailResponse;
-														error.data = data;
-
+														setSuccessMsg('');
 														setErrorMsg(SupportLabel[5].label);
-
-														throw error;
+														setSubmitting(false);
+														resetForm({ values: '' });
 													}
-												}, 400);
+												}
 											}}
 										>
 											{({
@@ -259,80 +247,83 @@ const Support = () => {
 												isSubmitting
 											}) => (
 												<form
-													className={`px-4 py-5 bg-white sm:p-6`}
+													className="px-4 py-5 bg-white sm:p-6"
 													onSubmit={handleSubmit}
 												>
 													<div>
-														<h3
-															className={`text-lg leading-6 font-medium text-gray-900`}
-														>
+														<h3 className="text-lg leading-6 font-medium text-gray-900">
 															{SupportLabel[6].label}
 														</h3>
-														<p
-															className={`mt-1 max-w-2xl text-sm leading-5 text-gray-500`}
-														>
+														<p className="mt-1 max-w-2xl text-sm leading-5 text-gray-500">
 															{SupportLabel[7].label}
 														</p>
 													</div>
-													<div className={`mt-6 sm:mt-5`}>
-														<div
-															className={`mt-6 sm:mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-300 sm:pt-5`}
-														>
+													<div className="mt-6 sm:mt-5">
+														<div className="mt-6 sm:mt-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-300 sm:pt-5">
 															<label
 																htmlFor="about"
-																className={`block text-sm font-medium leading-5 text-gray-700 sm:mt-px sm:pt-2`}
+																className="block text-sm font-medium leading-5 text-gray-700 sm:mt-px sm:pt-2"
 															>
 																{SupportLabel[8].label}
 															</label>
-															<div className={`mt-1 sm:mt-0 sm:col-span-2`}>
-																<div
-																	className={`max-w-lg flex rounded-md shadow-sm`}
-																>
+															<div className="mt-1 sm:mt-0 sm:col-span-2">
+																<div className="max-w-lg flex rounded-md shadow-sm">
 																	<textarea
-																		id={`message`}
+																		id="message"
+																		name="message"
 																		rows={5}
-																		className={`form-textarea block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
-																		name={`message`}
+																		disabled={isSubmitting}
+																		className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+																			isSubmitting &&
+																			'opacity-50 bg-gray-300 cursor-not-allowed'
+																		} ${
+																			errors.message || errorMsg
+																				? 'border-red-300'
+																				: 'border-gray-300'
+																		}`}
 																		placeholder={SupportLabel[9].label}
 																		onChange={handleChange}
 																		onBlur={handleBlur}
 																		value={values.message}
 																	/>
 																</div>
-																{successMsg ? (
-																	<span
-																		className={`block mt-2 text-sm leading-5 font-medium text-green-800 break-words`}
-																	>
+																{errors.message && touched.message && (
+																	<span className="block mt-2 text-xs leading-5 text-red-700">
+																		{errors.message &&
+																			touched.message &&
+																			errors.message}
+																	</span>
+																)}
+
+																{successMsg && (
+																	<span className="block mt-2 text-xs leading-5 text-green-700">
 																		{successMsg}
 																	</span>
-																) : (
-																	<span
-																		className={`block mt-2 text-sm leading-5 font-medium text-red-800 break-words`}
-																	>
+																)}
+
+																{errorMsg && (
+																	<span className="block mt-2 text-xs leading-5 text-red-700">
 																		{errorMsg}
 																	</span>
 																)}
-																<span
-																	className={`block mt-2 text-sm leading-5 font-medium text-red-800 break-words`}
-																>
-																	{errors.message &&
-																		touched.message &&
-																		errors.message}
-																</span>
 															</div>
 														</div>
 													</div>
-													<div className={`mt-8 border-t border-gray-300 pt-5`}>
-														<div className={`flex justify-end`}>
-															<span
-																className={`ml-3 inline-flex rounded-md shadow-sm`}
-															>
+													<div className="mt-8 border-t border-gray-300 pt-5">
+														<div className="flex justify-end">
+															<span className="ml-3 inline-flex rounded-md shadow-sm">
 																<button
 																	type="submit"
-																	className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out`}
 																	disabled={isSubmitting}
+																	className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
+																		isSubmitting
+																			? 'opacity-50 bg-green-300 cursor-not-allowed'
+																			: 'hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700'
+																	}`}
 																>
-																	{SupportLabel[10].label}
+																	{isSubmitting
+																		? SupportLabel[11].label
+																		: SupportLabel[10].label}
 																</button>
 															</span>
 														</div>
@@ -357,9 +348,6 @@ const Support = () => {
 	);
 };
 
-export default Support;
+Support.propTypes = {};
 
-Support.propTypes = {
-	openMobileSidebar: PropTypes.bool,
-	pageTitle: PropTypes.string
-};
+export default Support;

@@ -6,7 +6,7 @@
 		"label": "Support"
 	},
 	{
-		"label": "Required Field"
+		"label": "Required field"
 	},
 	{
 		"label": "Support message sent successfully."
@@ -31,5 +31,8 @@
 	},
 	{
 		"label": "Submit Form"
+	},
+	{
+		"label": "Submitting..."
 	}
 ]
