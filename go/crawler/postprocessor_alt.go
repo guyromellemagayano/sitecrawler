@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
+	"github.com/pkg/errors"
 )
 
 type AltPostprocessor struct {
@@ -19,7 +20,7 @@ func (p *AltPostprocessor) OnLinkImage(db *database.Database, l *database.CrawlL
 	if l.AltText == nil || *l.AltText == "" {
 		err := db.LinkDao.Update(l.ToLinkID, "cached_image_missing_alts = COALESCE(cached_image_missing_alts, 0) + 1")
 		if err != nil {
-			return err
+			return errors.Wrap(err, "alt postprocessor")
 		}
 	}
 	return nil

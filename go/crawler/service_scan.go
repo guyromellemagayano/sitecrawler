@@ -55,7 +55,7 @@ func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scan
 	}
 
 	if err := s.reverify(log, scan); err != nil {
-		return err
+		return errors.Wrap(err, "could not reverify")
 	}
 
 	log.Infof("Starting scan for %v", scan.Site.Url)
@@ -86,7 +86,7 @@ func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scan
 	}
 
 	if err := s.Database.Update(scan); err != nil {
-		return err
+		return errors.Wrap(err, "could not update scan on finish")
 	}
 	log.Infof("Finished scan for %v", scan.Site.Url)
 
@@ -123,11 +123,11 @@ func (s *ScanService) reverify(log *zap.SugaredLogger, scan *database.CrawlScan)
 func (s *ScanService) Start(ctx context.Context, log *zap.SugaredLogger, scan *database.CrawlScan) error {
 	linkCache, err := NewLinkCache(s.Database, scan.ID)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not init link cache")
 	}
 	fifoCache, err := NewFifoCache(s.Database, scan.ID)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not init fifo cache")
 	}
 
 	scanner := &scanner{
@@ -155,7 +155,7 @@ type scanner struct {
 func (s *scanner) Start(ctx context.Context, log *zap.SugaredLogger) error {
 	u, err := s.normalizeURL("", s.Scan.Site.Url)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not normalize site url")
 	}
 
 	if s.fifoCache.Len() == 0 {
@@ -182,18 +182,18 @@ func (s *scanner) Start(ctx context.Context, log *zap.SugaredLogger) error {
 
 			for _, r := range entry.Relations {
 				if err := s.saveRelation(db, r, childLinkId); err != nil {
-					return err
+					return errors.Wrap(err, "could not save relation")
 				}
 			}
 
 			if err := s.fifoCache.DeleteFront(db); err != nil {
-				return err
+				return errors.Wrap(err, "could not delete fifo cache entry")
 			}
 
 			return nil
 		})
 		if err != nil {
-			return err
+			return errors.Wrap(err, "scan transaction failed")
 		}
 	}
 
@@ -213,10 +213,10 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 
 	// save new link
 	if err := db.Insert(link); err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "could not insert link")
 	}
 	if err := s.ScanService.PostprocessService.OnLink(db, link); err != nil {
-		return link.ID, err
+		return link.ID, errors.Wrap(err, "could not postprocess link")
 	}
 
 	// cache both source and destination id
@@ -415,7 +415,9 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, url *ur
 
 	tlsStatus, tlsId, err := s.tlsCache.Extract(db, resp.TLS, resp.Request)
 	if err != nil {
-		log.Error(err)
+		log.Errorw("Tls extract error",
+			"err", err,
+		)
 	} else {
 		crawlLink.TlsStatus = tlsStatus
 		crawlLink.TlsID = tlsId
@@ -507,11 +509,11 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 
 		inserted, err := db.InsertIgnoreDuplicates(linkLink)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not insert link link")
 		}
 		if inserted {
 			if err := s.ScanService.PostprocessService.OnLinkLink(db, linkLink); err != nil {
-				return err
+				return errors.Wrap(err, "could not postprocess link link")
 			}
 		}
 	case CHILD_IMAGE:
@@ -527,11 +529,11 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 
 		inserted, err := db.InsertIgnoreDuplicates(linkImage)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not insert link image")
 		}
 		if inserted {
 			if err := s.ScanService.PostprocessService.OnLinkImage(db, linkImage); err != nil {
-				return err
+				return errors.Wrap(err, "could not postprocess link image")
 			}
 		}
 	case CHILD_SCRIPT:
@@ -542,11 +544,11 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 
 		inserted, err := db.InsertIgnoreDuplicates(linkScript)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not insert link script")
 		}
 		if inserted {
 			if err := s.ScanService.PostprocessService.OnLinkScript(db, linkScript); err != nil {
-				return err
+				return errors.Wrap(err, "could not postprocess link script")
 			}
 		}
 	case CHILD_STYLESHEET:
@@ -557,11 +559,11 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 
 		inserted, err := db.InsertIgnoreDuplicates(linkStylesheet)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not insert link stylesheet")
 		}
 		if inserted {
 			if err := s.ScanService.PostprocessService.OnLinkStylesheet(db, linkStylesheet); err != nil {
-				return err
+				return errors.Wrap(err, "could not postprocess link stylesheet")
 			}
 		}
 	}
@@ -581,7 +583,7 @@ func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
 		// just use child as path
 		path, err := url.PathUnescape(child)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "could not unescape path")
 		}
 		u = &url.URL{Path: path}
 	}
@@ -590,7 +592,7 @@ func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
 	if parent != "" {
 		parentUrl, err := url.Parse(parent)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "could not parse parent url")
 		}
 		return parentUrl.ResolveReference(u), nil
 	}

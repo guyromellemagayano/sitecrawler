@@ -85,7 +85,7 @@ func (c *FifoCache) Add(db *database.Database, scanID int, fe *fifoEntry) error 
 	}
 	err := db.Insert(cfe)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not insert fifo")
 	}
 	fe.Id = cfe.ID
 
@@ -118,7 +118,7 @@ func (c *FifoCache) addRelationDb(db *database.Database, fe *fifoEntry, r relati
 	}
 	err := db.Insert(cfr)
 	if err != nil {
-		return errors.Wrapf(err, "could not insert relation for entry_id=%v", fe.Id)
+		return errors.Wrapf(err, "could not insert fifo relation for entry_id=%v", fe.Id)
 	}
 	return nil
 }
@@ -137,10 +137,10 @@ func (c *FifoCache) DeleteFront(db *database.Database) error {
 	delete(c.inFifo, entry.Url.String())
 
 	if err := db.FifoRelationDao.DeleteAll(database.Where("entry_id = ?", entry.Id)); err != nil {
-		return errors.Wrapf(err, "could not delete relations for entry_id=%v", entry.Id)
+		return errors.Wrapf(err, "could not delete fifo relations for entry_id=%v", entry.Id)
 	}
 	if err := db.FifoEntryDao.DeleteAll(database.Where("id = ?", entry.Id)); err != nil {
-		return errors.Wrapf(err, "could not delete entry_id=%v", entry.Id)
+		return errors.Wrapf(err, "could not delete fifo entry_id=%v", entry.Id)
 	}
 	return nil
 }

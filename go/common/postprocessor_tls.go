@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
+	"github.com/pkg/errors"
 )
 
 type TlsPostprocessor struct {
@@ -51,12 +52,12 @@ func (p *TlsPostprocessor) handleChild(db *database.Database, fromID, toID int, 
 	toLink := &database.CrawlLink{ID: toID}
 	err := db.ByID(toLink)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "tls postprocessor")
 	}
 
 	if toLink.TlsStatus == TLS_OK {
 		if err := db.LinkDao.Update(fromID, fmt.Sprintf("cached_num_tls_%s = cached_num_tls_%s + 1", name, name)); err != nil {
-			return err
+			return errors.Wrap(err, "tls postprocessor")
 		}
 	} else {
 		err := db.LinkDao.Update(fromID,
@@ -65,7 +66,7 @@ func (p *TlsPostprocessor) handleChild(db *database.Database, fromID, toID int, 
 			"cached_tls_total = false",
 		)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "tls postprocessor")
 		}
 	}
 
