@@ -58,7 +58,8 @@ func (j *UptimeJob) run() error {
 		return errors.Wrapf(err, "could not get last stats for group %v", j.Group.GroupID)
 	}
 
-	statResultChan := make(chan *database.UptimeUptimestat, 32)
+	// Since non-retry results are written to channel sync, we need buffered channel for all sites
+	statResultChan := make(chan *database.UptimeUptimestat, len(sites))
 	for _, site := range sites {
 		err := j.checkWithAsyncRetry(ctx, site, statResultChan, numRetries)
 		if err != nil {
