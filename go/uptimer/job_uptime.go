@@ -174,7 +174,8 @@ func (j *UptimeJob) check(ctx context.Context, site *database.CrawlSite) (*datab
 		return nil, err
 	}
 	req = req.WithContext(ctx)
-	req.Header.Add("Cache-Control", "max-age=0")
+	req.Header.Add("Cache-Control", "no-cache")
+	req.Header.Add("Accept", "*/*")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
