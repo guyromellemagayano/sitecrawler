@@ -171,6 +171,7 @@ INSTALLED_APPS = [
     "support",
     "uptime",
     "signup",
+    "userext",
 ]
 
 MIDDLEWARE = [
@@ -282,7 +283,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-REST_AUTH_SERIALIZERS = {"USER_DETAILS_SERIALIZER": "crawl.serializers.UserSerializer"}
+REST_AUTH_SERIALIZERS = {"USER_DETAILS_SERIALIZER": "userext.serializers.UserSerializer"}
 REST_AUTH_REGISTER_SERIALIZERS = {
     "REGISTER_SERIALIZER": "server.serializers.NameRegistrationSerializer",
 }

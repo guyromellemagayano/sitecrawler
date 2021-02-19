@@ -34,6 +34,7 @@ urlpatterns = [
         include(("rest_auth.registration.urls", "rest_auth"), namespace="rest_auth_registration"),
     ),
     path("api/auth/", include("rest_auth.urls")),
+    path("api/auth/user/", include("userext.urls")),
     path("auth/", include("allauth.socialaccount.providers.google.urls")),
     path("api/support/", include("support.urls")),
     path("api/stripe/", include("payments.urls")),
