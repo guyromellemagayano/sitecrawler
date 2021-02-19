@@ -11,6 +11,7 @@ const (
 	STATUS_HTTP_ERROR         = 3
 	STATUS_OTHER_ERROR        = 4
 	STATUS_TOO_MANY_REDIRECTS = 5
+	STATUS_TLS_ERROR          = 6 // This is only used by uptimer, not by crawler
 
 	TLS_NONE  = 1
 	TLS_OK    = 2
