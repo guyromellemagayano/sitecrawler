@@ -21,9 +21,15 @@ func SerializeLoadError(log *zap.SugaredLogger, url string, err error) (int, str
 		status = STATUS_TOO_MANY_REDIRECTS
 	} else if strings.HasSuffix(err.Error(), "INTERNAL_ERROR") && strings.HasPrefix(err.Error(), "stream error:") {
 		return STATUS_OTHER_ERROR, "http2 internal error"
+	} else if strings.Contains(err.Error(), ": x509: ") {
+		return STATUS_TLS_ERROR, LenLimit(
+			err.Error()[strings.Index(err.Error(), ": x509: ")+len(": x509: "):], 255,
+		)
 	} else {
 		if !strings.HasSuffix(err.Error(), "unexpected EOF") &&
 			!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated") &&
+			!strings.HasSuffix(err.Error(), "use of closed network connection") &&
+			!strings.Contains(err.Error(), "http2: server sent GOAWAY and closed the connection") &&
 			!strings.HasSuffix(err.Error(), "connection reset by peer") {
 			log.Errorw("Other error for link",
 				"url", url,

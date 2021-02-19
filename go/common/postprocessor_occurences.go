@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
+	"github.com/pkg/errors"
 )
 
 type OccurencesPostprocessor struct {
@@ -34,7 +35,7 @@ func (p *OccurencesPostprocessor) handleChild(db *database.Database, fromID, toI
 		fmt.Sprintf("cached_%s_occurences = COALESCE(cached_%s_occurences, 0) + 1", name, name),
 	)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "occurences postprocessor")
 	}
 
 	return nil

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
+	"github.com/pkg/errors"
 )
 
 type SizePostprocessor struct {
@@ -41,7 +42,7 @@ func (p *SizePostprocessor) handleChild(db *database.Database, fromID, toID int,
 	toLink := &database.CrawlLink{ID: toID}
 	err := db.ByID(toLink)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "size postprocessor")
 	}
 
 	err = db.LinkDao.Update(fromID,
@@ -49,7 +50,7 @@ func (p *SizePostprocessor) handleChild(db *database.Database, fromID, toID int,
 		fmt.Sprintf("cached_size_total = cached_size_total + %v", toLink.Size),
 	)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "size postprocessor")
 	}
 
 	return nil

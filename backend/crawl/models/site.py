@@ -6,7 +6,7 @@ class Site(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
 
     url = models.CharField(max_length=2048, null=False)
     name = models.CharField(max_length=255, null=False, default="")

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 import stripe
 
-from crawl.serializers import GroupSerializer
+from userext.serializers import GroupSerializer
 from ..models import Subscription
 
 

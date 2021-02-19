@@ -2,6 +2,9 @@ from datetime import datetime
 
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+import stripe
 
 
 class UserSubscription(models.Model):
@@ -15,12 +18,24 @@ class UserSubscription(models.Model):
     ]
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=False, related_name="user_subscription"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False, related_name="user_subscription"
     )
     stripe_id = models.CharField(max_length=63)
     subscription = models.ForeignKey("Subscription", on_delete=models.PROTECT, null=False)
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, null=False, default=STATUS_WAITING_PAYMENT)
-    cancel_at = models.DateTimeField(null=True)
+    cancel_at = models.DateTimeField(null=True, blank=True)
 
     def set_cancel_at_timestamp(self, ts):
         self.cancel_at = datetime.utcfromtimestamp(ts)
+
+
+@receiver(post_delete, sender=UserSubscription)
+def cancel_subscription_in_stripe(sender, instance, **kwargs):
+    try:
+        stripe.Subscription.delete(
+            instance.stripe_id,
+            invoice_now=True,
+            prorate=False,
+        )
+    except stripe.error.InvalidRequestError:
+        pass

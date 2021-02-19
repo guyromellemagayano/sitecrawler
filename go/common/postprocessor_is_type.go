@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
+	"github.com/pkg/errors"
 )
 
 type IsTypePostprocessor struct {
@@ -30,5 +31,9 @@ func (p *IsTypePostprocessor) OnLinkStylesheet(db *database.Database, l *databas
 }
 
 func (p *IsTypePostprocessor) handleChild(db *database.Database, toID int, name string) error {
-	return db.LinkDao.Update(toID, fmt.Sprintf("cached_is_%s = true", name))
+	err := db.LinkDao.Update(toID, fmt.Sprintf("cached_is_%s = true", name))
+	if err != nil {
+		return errors.Wrap(err, "is type postprocessor")
+	}
+	return nil
 }
