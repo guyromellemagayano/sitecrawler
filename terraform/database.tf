@@ -13,6 +13,7 @@ resource "aws_db_instance" "production" {
   password             = random_password.production_db_password.result
   backup_retention_period = 30
   vpc_security_group_ids = [aws_security_group.production_db.id]
+  performance_insights_enabled = true
   apply_immediately = true
   tags = {
     Env = "production"
