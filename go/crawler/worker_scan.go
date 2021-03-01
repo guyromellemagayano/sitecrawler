@@ -24,12 +24,11 @@ func ScanWorker(log *zap.SugaredLogger, scanSqsQueue *common.SQSService, scanSer
 		if err != nil {
 			return errors.Wrap(err, "could not decode sqs msg")
 		}
+		log := log.With("scan_id", id)
 
 		ctx, cancel := context.WithTimeout(ctx, time.Hour*6)
 		defer cancel()
-		log.Infof("starting timeout")
 
-		log = log.With("scan_id", id)
 		err = scanService.ScanSite(ctx, log, id)
 		if err != nil {
 			if err != context.DeadlineExceeded {
