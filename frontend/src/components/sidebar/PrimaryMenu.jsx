@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Router, { useRouter } from 'next/router';
 
 // External
-
 import { Transition } from '@tailwindui/react';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
@@ -140,7 +139,9 @@ const PrimaryMenu = () => {
 														>
 															<div className="flex items-center space-x-3">
 																<span className="block truncate text-gray-600">
-																	{PrimaryMenuLabel[0].label}
+																	{selectedSite
+																		? selectedSite
+																		: PrimaryMenuLabel[0].label}
 																</span>
 															</div>
 															<span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
