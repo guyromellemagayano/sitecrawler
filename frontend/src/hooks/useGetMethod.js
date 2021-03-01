@@ -2,7 +2,6 @@
 import React from 'react';
 
 // External
-
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
@@ -23,30 +22,31 @@ const useGetMethod = async (endpoint) => {
 	return await axios
 		.get(endpoint)
 		.then((response) => {
-			// Debugging purpose only
-			// console.log(response.data);
-			// console.log(response.status);
-			// console.log(response.statusText);
-			// console.log(response.headers);
-			// console.log(response.config);
+			/**
+			 * Debugging purpose only
+			 *
+			 * console.log(response.data);
+			 * console.log(response.status);
+			 * console.log(response.statusText);
+			 * console.log(response.headers);
+			 * console.log(response.config);
+			 */
 
 			return response;
 		})
 		.catch((error) => {
-			// Debugging purpose only
-			// console.log('Error:', error.config);
+			/**
+			 * Debugging purpose only
+			 *
+			 * console.log('Error:', error.config);
+			 * console.log('Error:', error.request);
+			 * console.log('Error:', error.message);
+			 * console.log('Error:', error.response.data);
+			 * console.log('Error', error.response.headers);
+			 * console.log('Error', error.response.status);
+			 */
 
-			if (error.response) {
-				// Debugging purpose only
-				// console.log('Error', error.response.data);
-				// console.log('Error', error.response.headers);
-
-				console.log('Error:', error.response.status);
-			} else if (error.request) {
-				console.log('Error:', error.request);
-			} else {
-				console.log('Error:', error.message);
-			}
+			return error.response;
 		});
 };
 
