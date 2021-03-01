@@ -23,5 +23,23 @@
 	},
 	{
 		"label": "Proceed to Step 2"
+	},
+	{
+		"label": "Required field"
+	},
+	{
+		"label": "Enter a valid URL"
+	},
+	{
+		"label": "Update Site Detail"
+	},
+	{
+		"label": "Submitting..."
+	},
+	{
+		"label": "Unfortunately, this site URL already exists. Please try again."
+	},
+	{
+		"label": "An unexpected error occurred. Please try again."
 	}
 ]

@@ -5,11 +5,11 @@ import React, { useEffect, useState } from 'react';
 import Router, { withRouter } from 'next/router';
 
 // External
+import { Formik } from 'formik';
 import { NextSeo } from 'next-seo';
+import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import ReactHtmlParser from 'react-html-parser';
 import styled from 'styled-components';
-import Url from 'url-parse';
 import useSWR from 'swr';
 
 // JSON
@@ -37,16 +37,13 @@ const SitesInformationDiv = styled.section`
 const SitesInformation = (props) => {
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [errorMsg, setErrorMsg] = useState('');
-	const [errorSiteNameMsg, setErrorSiteNameMsg] = useState('');
-	const [errorSiteUrlMsg, setErrorSiteUrlMsg] = useState('');
-	const [dupSiteProtocolExists, setDupSiteProtocolExists] = useState(false);
 	const [siteName, setSiteName] = useState('');
-	const [urlProtocol, setUrlProtocol] = useState('https://');
 	const [siteUrl, setSiteUrl] = useState('');
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 
 	const pageTitle = 'Add New Site';
 	const siteApiEndpoint = '/api/site/';
+	const urlRegex = /^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
 
 	const { router } = props;
 
@@ -55,166 +52,7 @@ const SitesInformation = (props) => {
 		redirectIfFound: false
 	});
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-
-		if (errorMsg) setErrorMsg('');
-		if (errorSiteNameMsg) setErrorSiteNameMsg('');
-		if (errorSiteUrlMsg) setErrorSiteUrlMsg('');
-
-		const siteUrl = new Url(e.currentTarget.urlpath.value);
-		const body = {
-			url: siteUrl.href,
-			name: siteName
-		};
-
-		if (
-			body.name !== undefined &&
-			body.url !== 'https://undefined' &&
-			body.url !== 'http://undefined'
-		) {
-			if (
-				siteUrl.origin === 'https://https:' ||
-				siteUrl.origin === 'https://http:' ||
-				siteUrl.origin === 'http://https:' ||
-				siteUrl.origin === 'http://http:'
-			) {
-				setDupSiteProtocolExists(true);
-				setErrorSiteUrlMsg(
-					ReactHtmlParser(
-						'You should only add hostname inside the input <br /><em>e.g. yourdomain.com</em>'
-					)
-				);
-			} else {
-				try {
-					const response = await useGetMethod(siteApiEndpoint);
-					const data = await response.data;
-
-					if (
-						response.statusText === 'OK' &&
-						Math.floor(response.status / 200) === 1
-					) {
-						const result = data.results.find(
-							(site) => site.url === siteUrl.href
-						);
-
-						if (typeof result !== 'undefined') {
-							setErrorMsg(
-								'Unfortunately, this site URL already exists. Please try again.'
-							);
-							return false;
-						} else {
-							try {
-								const siteResponse = await usePostMethod(siteApiEndpoint, body);
-								const siteData = await siteResponse.data;
-
-								if (
-									siteResponse.statusText === 'Created' &&
-									Math.floor(siteResponse.status / 200) === 1
-								) {
-									setDisableSiteVerify(!disableSiteVerify);
-
-									Router.push({
-										pathname: '/dashboard/sites/verify-url/',
-										query: {
-											sid: siteData.id,
-											sname: siteData.name,
-											surl: siteData.url,
-											vid: siteData.verification_id,
-											v: false
-										}
-									});
-								}
-							} catch (error) {
-								setErrorMsg('An unexpected error occurred. Please try again.');
-
-								throw error.message;
-							}
-						}
-					}
-				} catch (error) {
-					setErrorMsg('An unexpected error occurred. Please try again.');
-
-					throw error.message;
-				}
-			}
-		} else {
-			setErrorSiteNameMsg('Please fill in the empty field.');
-			setErrorSiteUrlMsg('Please fill in the empty field.');
-		}
-	};
-
-	const handleUpdateSubmit = async (e) => {
-		e.preventDefault();
-
-		if (errorMsg) setErrorMsg('');
-
-		const body = {
-			name: siteName
-		};
-
-		if (body.name !== '' && body.name !== undefined && body.name !== null) {
-			try {
-				const response = await useGetMethod(
-					'/api/site/' + router.query.sid + '/'
-				);
-
-				if (
-					response.statusText === 'OK' &&
-					Math.floor(response.status / 200) === 1
-				) {
-					try {
-						const siteResponse = await usePatchMethod(
-							'/api/site/' + router.query.sid + '/',
-							body
-						);
-						const siteData = await siteResponse.data;
-
-						if (
-							siteResponse.statusText === 'OK' &&
-							Math.floor(siteResponse.status / 200) === 1
-						) {
-							setDisableSiteVerify(!disableSiteVerify);
-
-							Router.push({
-								pathname: '/dashboard/sites/verify-url',
-								query: {
-									sid: siteData.id,
-									sname: siteData.name,
-									surl: siteData.url,
-									vid: siteData.verification_id,
-									v: false
-								}
-							});
-						}
-					} catch (error) {
-						setErrorMsg('An unexpected error occurred. Please try again.');
-
-						throw error.message;
-					}
-				}
-			} catch (error) {
-				setErrorMsg('An unexpected error occurred. Please try again.');
-
-				throw error.message;
-			}
-		} else {
-			if (body.name === '' || body.name === undefined || body.name === null) {
-				setErrorSiteNameMsg('Please fill in the empty field.');
-			}
-		}
-	};
-
-	const { data: sites } = useSWR(siteApiEndpoint, useFetcher);
-
-	useEffect(() => {
-		if (sites !== '' && sites !== undefined) {
-			setSiteName(sites.name);
-			setSiteUrl(sites.url);
-		}
-	}, [sites]);
-
-	if (router.query.sid !== undefined) {
+	if (props.sid !== undefined && props.edit) {
 		const { data: site } = useSWR(`/api/site/${router.query.sid}`, useFetcher);
 
 		useEffect(() => {
@@ -300,252 +138,342 @@ const SitesInformation = (props) => {
 														{InformationLabel[3].description}
 													</p>
 												</div>
-
-												<form
-													onSubmit={
-														router.query.sid ? handleUpdateSubmit : handleSubmit
+												<Formik
+													enableReinitialize={
+														props.sid !== undefined && props.edit ? true : false
 													}
+													initialValues={{
+														siteurlprotocol: 'https://',
+														siteurl:
+															props.sid !== undefined && props.edit
+																? siteUrl.replace(/^\/\/|^.*?:(\/\/)?/, '')
+																: '',
+														sitename:
+															props.sid !== undefined && props.edit
+																? siteName
+																: ''
+													}}
+													validationSchema={Yup.object({
+														siteurl: Yup.string()
+															.matches(urlRegex, InformationLabel[8].label)
+															.required(InformationLabel[7].label),
+														sitename: Yup.string().required(
+															InformationLabel[7].label
+														)
+													})}
+													onSubmit={async (
+														values,
+														{ setSubmitting, resetForm }
+													) => {
+														if (props.sid !== undefined && props.edit) {
+															if (errorMsg) setErrorMsg('');
+
+															const response = await useGetMethod(
+																'/api/site/' + router.query.sid + '/'
+															);
+
+															if (Math.floor(response.status / 200) === 1) {
+																const body = {
+																	name: values.sitename
+																};
+
+																const siteResponse = await usePatchMethod(
+																	'/api/site/' + router.query.sid + '/',
+																	body
+																);
+
+																if (
+																	Math.floor(siteResponse.status / 200) === 1
+																) {
+																	setDisableSiteVerify(!disableSiteVerify);
+
+																	router.push({
+																		pathname: '/dashboard/sites/verify-url',
+																		query: {
+																			sid: siteResponse.data.id,
+																			sname: siteResponse.data.name,
+																			surl: siteResponse.data.url,
+																			vid: siteResponse.data.verification_id,
+																			v: false
+																		}
+																	});
+																} else {
+																	// FIXME: Error handling for siteResponse
+																	if (siteResponse.data) {
+																		console.log('ERROR: ' + siteResponse.data);
+																	} else {
+																		setSubmitting(false);
+																		resetForm({ values: '' });
+																		setErrorMsg(InformationLabel[12]);
+																	}
+																}
+															} else {
+																// FIXME: Error handling for response
+																if (response.data) {
+																	console.log('ERROR: ' + response.data);
+																} else {
+																	setSubmitting(false);
+																	resetForm({ values: '' });
+																	setErrorMsg(InformationLabel[12]);
+																}
+															}
+														} else {
+															const body = {
+																url: values.siteurlprotocol + values.siteurl,
+																name: values.sitename
+															};
+
+															const response = await useGetMethod(
+																siteApiEndpoint
+															);
+
+															if (errorMsg) setErrorMsg('');
+
+															if (Math.floor(response.status / 200) === 1) {
+																const siteResult = response.data.results.find(
+																	(site) => site.url === body.url
+																);
+
+																if (siteResult !== undefined) {
+																	setErrorMsg(InformationLabel[11].label);
+																	return false;
+																} else {
+																	const siteResponse = await usePostMethod(
+																		siteApiEndpoint,
+																		body
+																	);
+
+																	if (
+																		Math.floor(siteResponse.status / 200) === 1
+																	) {
+																		setSubmitting(false);
+																		setDisableSiteVerify(!disableSiteVerify);
+																		resetForm({ values: '' });
+
+																		Router.push({
+																			pathname: '/dashboard/sites/verify-url/',
+																			query: {
+																				sid: siteResponse.data.id,
+																				sname: siteResponse.data.name,
+																				surl: siteResponse.data.url,
+																				vid: siteResponse.data.verification_id,
+																				v: false
+																			}
+																		});
+																	} else {
+																		// FIXME: Error handling for siteResponse
+																		if (siteResponse.data) {
+																			console.log(
+																				'ERROR: ' + siteResponse.data
+																			);
+																		} else {
+																			setSubmitting(false);
+																			resetForm({ values: '' });
+																			setErrorMsg(InformationLabel[12]);
+																		}
+																	}
+																}
+															} else {
+																// FIXME: Error handling for response
+																if (response.data) {
+																	console.log('ERROR: ' + response.data);
+																} else {
+																	setSubmitting(false);
+																	resetForm({ values: '' });
+																	setErrorMsg(InformationLabel[12]);
+																}
+															}
+														}
+													}}
 												>
-													<div className="my-6 max-w-sm">
-														<label
-															htmlFor="sitename"
-															className="block text-sm font-medium leading-5 text-gray-700"
-														>
-															{InformationLabel[4].label}
-														</label>
-														<div className="mt-1 mb-1 relative rounded-md shadow-xs-sm">
-															<input
-																id="sitename"
-																type="text"
-																disabled={disableSiteVerify ? true : false}
-																name="sitename"
-																value={siteName ? siteName : ''}
-																className={`${
-																	errorSiteNameMsg && !siteName
-																		? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5'
-																		: 'form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5'
-																} ${
-																	disableSiteVerify
-																		? 'opacity-50 bg-gray-300 cursor-not-allowed'
-																		: ''
-																}`}
-																placeholder={InformationLabel[4].placeholder}
-																aria-describedby={`${
-																	errorSiteNameMsg
-																		? 'site-name-error'
-																		: 'site-name'
-																}`}
-																aria-invalid={`${
-																	errorSiteNameMsg ? true : false
-																}`}
-																onChange={(e) => setSiteName(e.target.value)}
-															/>
-															{errorSiteNameMsg && !siteName ? (
-																<div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-																	<svg
-																		className="h-5 w-5 text-red-500"
-																		fill="currentColor"
-																		viewBox="0 0 20 20"
-																	>
-																		<path
-																			fillRule="evenodd"
-																			d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-																			clipRule="evenodd"
-																		/>
-																	</svg>
-																</div>
-															) : null}
-														</div>
-
-														{errorSiteNameMsg && !siteName ? (
-															<div className="inline-block py-2">
-																<div className="flex">
-																	<div>
-																		<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
-																			{errorSiteNameMsg}
-																		</h3>
-																	</div>
-																</div>
-															</div>
-														) : null}
-													</div>
-
-													<div className="my-6 max-w-sm">
-														<label
-															htmlFor="siteurl"
-															className="block text-sm font-medium leading-5 text-gray-700"
-														>
-															{InformationLabel[5].label}
-														</label>
-														<div className="mt-1 relative rounded-md shadow-xs-sm">
-															<div className="absolute inset-y-0 left-0 flex items-center">
-																<select
-																	disabled={
-																		disableSiteVerify ||
-																		router.query.sid !== undefined
-																			? true
-																			: false
-																	}
-																	tabIndex="-1"
-																	value={urlProtocol}
-																	aria-label="site-url"
-																	className="form-select h-full py-0 pl-3 pr-8 border-transparent bg-transparent text-gray-500 sm:text-sm sm:leading-5"
-																	onChange={(e) =>
-																		setUrlProtocol(e.target.value)
-																	}
+													{({
+														values,
+														errors,
+														touched,
+														handleChange,
+														handleBlur,
+														handleSubmit,
+														isSubmitting
+													}) => (
+														<form onSubmit={handleSubmit}>
+															<div className="my-6 max-w-sm">
+																<label
+																	htmlFor="sitename"
+																	className="block text-sm font-medium leading-5 text-gray-700"
 																>
-																	<option value="https://">https://</option>
-																	<option value="http://">http://</option>
-																</select>
-															</div>
-															<input
-																id="siteurl"
-																type="text"
-																name="siteurl"
-																disabled={
-																	disableSiteVerify ||
-																	router.query.sid !== undefined
-																		? true
-																		: false
-																}
-																value={
-																	siteUrl
-																		? siteUrl.replace(
-																				/^(?:https?:\/\/)?(?:www\.)?/i,
-																				''
-																		  )
-																		: ''
-																}
-																className={`${
-																	(errorSiteUrlMsg && !siteUrl) ||
-																	dupSiteProtocolExists
-																		? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red form-input block pl-24 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5'
-																		: 'form-input block pl-24 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5'
-																} ${
-																	router.query.sid || disableSiteVerify
-																		? 'opacity-50 bg-gray-300 cursor-not-allowed'
-																		: ''
-																}`}
-																placeholder={InformationLabel[5].placeholder}
-																aria-describedby="site-url"
-																aria-describedby={`${
-																	errorSiteUrlMsg
-																		? 'site-url-error'
-																		: 'site-url'
-																}`}
-																aria-invalid={`${
-																	errorSiteUrlMsg ? true : false
-																}`}
-																onChange={(e) =>
-																	setSiteUrl(
-																		e.target.value.replace(
-																			/^http(s?):\/\//i,
-																			''
-																		)
-																	)
-																}
-															/>
-															<input
-																id="urlpath"
-																type="hidden"
-																disabled={
-																	disableSiteVerify ||
-																	router.query.sid !== undefined
-																		? true
-																		: false
-																}
-																name="urlpath"
-																value={urlProtocol + siteUrl}
-															/>
-
-															{(errorSiteUrlMsg && !siteUrl) ||
-															dupSiteProtocolExists ? (
-																<div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-																	<svg
-																		className="h-5 w-5 text-red-500"
-																		fill="currentColor"
-																		viewBox="0 0 20 20"
-																	>
-																		<path
-																			fillRule="evenodd"
-																			d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-																			clipRule="evenodd"
-																		/>
-																	</svg>
+																	{InformationLabel[4].label}
+																</label>
+																<div className="mt-1 mb-1 relative rounded-md shadow-xs-sm">
+																	<input
+																		id="sitename"
+																		type="text"
+																		name="sitename"
+																		disabled={isSubmitting}
+																		placeholder={
+																			InformationLabel[4].placeholder
+																		}
+																		className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+																			isSubmitting || disableSiteVerify
+																				? 'opacity-50 bg-gray-300 cursor-not-allowed'
+																				: ''
+																		} ${
+																			errors.sitename || errorMsg
+																				? 'border-red-300'
+																				: 'border-gray-300'
+																		}`}
+																		aria-describedby="sitename"
+																		onChange={handleChange}
+																		onBlur={handleBlur}
+																		value={values.sitename}
+																	/>
 																</div>
-															) : null}
-														</div>
 
-														{(errorSiteUrlMsg && !siteUrl) ||
-														dupSiteProtocolExists ? (
-															<div className="inline-block py-2">
-																<div className="flex">
-																	<div>
-																		<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
-																			{errorSiteUrlMsg}
-																		</h3>
+																{errors.sitename && touched.sitename && (
+																	<span className="block mt-2 text-xs leading-5 text-red-700">
+																		{errors.sitename &&
+																			touched.sitename &&
+																			errors.sitename}
+																	</span>
+																)}
+															</div>
+
+															<div className="my-6 max-w-sm">
+																<label
+																	htmlFor="siteurl"
+																	className="block text-sm font-medium leading-5 text-gray-700"
+																>
+																	{InformationLabel[5].label}
+																</label>
+																<div className="mt-1 relative rounded-md shadow-xs-sm">
+																	<div className="absolute inset-y-0 left-0 flex items-center">
+																		<select
+																			id="siteurlprotocol"
+																			name="siteurlprotocol"
+																			className={`form-select h-full py-0 pl-3 pr-8 border-transparent bg-transparent ${
+																				props.sid !== undefined && props.edit
+																					? 'text-gray-500'
+																					: ''
+																			} sm:text-sm sm:leading-5`}
+																			disabled={
+																				isSubmitting ||
+																				disableSiteVerify ||
+																				(props.sid !== undefined && props.edit)
+																					? true
+																					: false
+																			}
+																			tabIndex="-1"
+																			onChange={handleChange}
+																			onBlur={handleBlur}
+																			aria-label="siteurlprotocol"
+																			value={values.siteurlprotocol}
+																		>
+																			<option value="https://">https://</option>
+																			<option value="http://">http://</option>
+																		</select>
 																	</div>
+																	<input
+																		id="siteurl"
+																		type="text"
+																		name="siteurl"
+																		disabled={
+																			isSubmitting ||
+																			disableSiteVerify ||
+																			(props.sid !== undefined && props.edit)
+																				? true
+																				: false
+																		}
+																		className={`form-input block pl-24 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+																			props.sid !== undefined && props.edit
+																				? 'text-gray-500'
+																				: isSubmitting || disableSiteVerify
+																				? 'text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed'
+																				: ''
+																		} ${
+																			(errors.siteurl || errorMsg) &&
+																			router.query.sid === undefined
+																				? 'border-red-300'
+																				: 'border-gray-300'
+																		}`}
+																		placeholder={
+																			InformationLabel[5].placeholder
+																		}
+																		aria-describedby="siteurl"
+																		onChange={handleChange}
+																		onBlur={handleBlur}
+																		value={
+																			props.sid !== undefined && props.edit
+																				? siteUrl.replace(
+																						/^\/\/|^.*?:(\/\/)?/,
+																						''
+																				  )
+																				: values.siteurl
+																		}
+																	/>
 																</div>
+
+																{errors.siteurl &&
+																	touched.siteurl &&
+																	router.query.sid === undefined && (
+																		<span className="block mt-2 text-xs leading-5 text-red-700">
+																			{errors.siteurl &&
+																				touched.siteurl &&
+																				errors.siteurl}
+																		</span>
+																	)}
 															</div>
-														) : null}
-													</div>
 
-													<div className="sm:flex sm:items-center sm:justify-start">
-														<div>
-															{router.query.sid === undefined ? (
-																<span className="inline-flex rounded-md shadow-xs-sm">
-																	{disableSiteVerify ? (
-																		<button
-																			disabled="disabled"
-																			type="submit"
-																			className="mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed"
-																		>
-																			{InformationLabel[6].label}
-																		</button>
+															<div className="sm:flex sm:items-center sm:justify-start">
+																<div>
+																	{router.query.sid === undefined ? (
+																		<span className="inline-flex rounded-md shadow-xs-sm">
+																			<button
+																				type="submit"
+																				disabled={isSubmitting}
+																				className={`mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 ${
+																					isSubmitting
+																						? 'opacity-50 bg-indigo-300 cursor-not-allowed'
+																						: 'hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700'
+																				}`}
+																			>
+																				{isSubmitting
+																					? InformationLabel[10].label
+																					: InformationLabel[6].label}
+																			</button>
+																		</span>
 																	) : (
-																		<button
-																			type="submit"
-																			className="mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700"
-																		>
-																			{InformationLabel[6].label}
-																		</button>
+																		<span className="inline-flex rounded-md shadow-xs-sm">
+																			<button
+																				type="submit"
+																				disabled={isSubmitting}
+																				className={`mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 ${
+																					isSubmitting
+																						? 'opacity-50 bg-indigo-300 cursor-not-allowed'
+																						: 'hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700'
+																				}`}
+																			>
+																				{isSubmitting
+																					? InformationLabel[10].label
+																					: InformationLabel[9].label}
+																			</button>
+																		</span>
 																	)}
-																</span>
-															) : (
-																<span className="inline-flex rounded-md shadow-xs-sm">
-																	{disableSiteVerify ? (
-																		<button
-																			disabled="disabled"
-																			type="submit"
-																			className="mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed"
-																		>
-																			Update Site Detail
-																		</button>
-																	) : (
-																		<button
-																			type="submit"
-																			className="mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700"
-																		>
-																			Update Site Detail
-																		</button>
-																	)}
-																</span>
-															)}
-														</div>
+																</div>
 
-														{errorMsg && (
-															<div className="inline-block p-2">
-																<div className="flex">
-																	<div>
-																		<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
-																			{errorMsg}
-																		</h3>
+																{errorMsg && (
+																	<div className="inline-block p-2">
+																		<div className="flex">
+																			<div>
+																				<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
+																					{errorMsg}
+																				</h3>
+																			</div>
+																		</div>
 																	</div>
-																</div>
+																)}
 															</div>
-														)}
-													</div>
-												</form>
+														</form>
+													)}
+												</Formik>
 											</div>
 										</div>
 									</div>
@@ -565,19 +493,11 @@ const SitesInformation = (props) => {
 
 SitesInformation.getInitialProps = ({ query }) => {
 	return {
-		sid: query.sid
+		sid: query.sid,
+		edit: query.edit
 	};
 };
 
-SitesInformation.propTypes = {
-	disableSiteVerify: '',
-	errorMsg: '',
-	errorSiteUrlMsg: '',
-	siteName: '',
-	siteUrl: '',
-	pageTitle: '',
-	handleSubmit: '',
-	handleUpdateSubmit: ''
-};
+SitesInformation.propTypes = {};
 
 export default withRouter(SitesInformation);
