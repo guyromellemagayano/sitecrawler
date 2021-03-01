@@ -54,18 +54,11 @@ func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scan
 		return errors.Wrapf(err, "could not get scan id %v", scanID)
 	}
 
-	if err := s.reverify(log, scan); err != nil {
-		return errors.Wrap(err, "could not reverify")
-	}
-
-	log.Infof("Starting scan for %v", scan.Site.Url)
-
-	if !scan.Site.Verified {
-		return nil
-	}
 	if scan.FinishedAt != nil {
 		return nil
 	}
+
+	log.Infof("Starting scan for %v", scan.Site.Url)
 
 	if err := s.Start(ctx, log, scan); err != nil {
 		return err
@@ -114,10 +107,6 @@ func (s *ScanService) checkForceHttps(log *zap.SugaredLogger, urlStr string) (bo
 	}
 
 	return resp.Request.URL.Scheme == "https", nil
-}
-
-func (s *ScanService) reverify(log *zap.SugaredLogger, scan *database.CrawlScan) error {
-	return s.VerifyService.VerifySite(log, scan.SiteID)
 }
 
 func (s *ScanService) Start(ctx context.Context, log *zap.SugaredLogger, scan *database.CrawlScan) error {
