@@ -35,7 +35,6 @@ const SitesInformationDiv = styled.section`
 `;
 
 const SitesInformation = (props) => {
-	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [errorMsg, setErrorMsg] = useState('');
 	const [siteName, setSiteName] = useState('');
 	const [siteUrl, setSiteUrl] = useState('');
@@ -185,7 +184,7 @@ const SitesInformation = (props) => {
 																if (
 																	Math.floor(siteResponse.status / 200) === 1
 																) {
-																	setDisableSiteVerify(!disableSiteVerify);
+																	setSubmitting(false);
 
 																	router.push({
 																		pathname: '/dashboard/sites/verify-url',
@@ -247,7 +246,6 @@ const SitesInformation = (props) => {
 																		Math.floor(siteResponse.status / 200) === 1
 																	) {
 																		setSubmitting(false);
-																		setDisableSiteVerify(!disableSiteVerify);
 																		resetForm({ values: '' });
 
 																		Router.push({
@@ -313,7 +311,7 @@ const SitesInformation = (props) => {
 																			InformationLabel[4].placeholder
 																		}
 																		className={`appearance-none block w-full px-3 py-2 border rounded-md placeholder-gray-400 focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-																			isSubmitting || disableSiteVerify
+																			isSubmitting
 																				? 'opacity-50 bg-gray-300 cursor-not-allowed'
 																				: ''
 																		} ${
@@ -356,7 +354,6 @@ const SitesInformation = (props) => {
 																			} sm:text-sm sm:leading-5`}
 																			disabled={
 																				isSubmitting ||
-																				disableSiteVerify ||
 																				(props.sid !== undefined && props.edit)
 																					? true
 																					: false
@@ -377,7 +374,6 @@ const SitesInformation = (props) => {
 																		name="siteurl"
 																		disabled={
 																			isSubmitting ||
-																			disableSiteVerify ||
 																			(props.sid !== undefined && props.edit)
 																				? true
 																				: false
@@ -385,12 +381,13 @@ const SitesInformation = (props) => {
 																		className={`form-input block pl-24 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
 																			props.sid !== undefined && props.edit
 																				? 'text-gray-500'
-																				: isSubmitting || disableSiteVerify
+																				: isSubmitting
 																				? 'text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed'
 																				: ''
 																		} ${
 																			(errors.siteurl || errorMsg) &&
-																			router.query.sid === undefined
+																			props.sid === undefined &&
+																			!props.edit
 																				? 'border-red-300'
 																				: 'border-gray-300'
 																		}`}
@@ -413,7 +410,8 @@ const SitesInformation = (props) => {
 
 																{errors.siteurl &&
 																	touched.siteurl &&
-																	router.query.sid === undefined && (
+																	props.sid === undefined &&
+																	!props.edit && (
 																		<span className="block mt-2 text-xs leading-5 text-red-700">
 																			{errors.siteurl &&
 																				touched.siteurl &&
@@ -424,7 +422,7 @@ const SitesInformation = (props) => {
 
 															<div className="sm:flex sm:items-center sm:justify-start">
 																<div>
-																	{router.query.sid === undefined ? (
+																	{props.sid === undefined && !props.edit ? (
 																		<span className="inline-flex rounded-md shadow-xs-sm">
 																			<button
 																				type="submit"
