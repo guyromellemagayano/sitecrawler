@@ -145,6 +145,7 @@ mark_finished.short_description = "Mark scans as finished"
 class ScanAdmin(admin.ModelAdmin):
     readonly_fields = ("started_at",)
     list_display = ("url", "finished_at", "email_sent")
+    list_filter = ("finished_at", "email_sent")
     inlines = [PageInline]
     actions = [mark_finished, mark_sent]
 
