@@ -53,5 +53,17 @@
 	},
 	{
 		"label": "Paste the contents into an email and send it to your web developer's email address."
+	},
+	{
+		"label": "Verifying..."
+	},
+	{
+		"label": "Loading..."
+	},
+	{
+		"label": "You can now proceed to the site overview."
+	},
+	{
+		"label": "Site verification failed. You have not verify the site yet."
 	}
 ]

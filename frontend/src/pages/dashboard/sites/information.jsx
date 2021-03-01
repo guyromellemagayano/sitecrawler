@@ -255,7 +255,8 @@ const SitesInformation = (props) => {
 																				sname: siteResponse.data.name,
 																				surl: siteResponse.data.url,
 																				vid: siteResponse.data.verification_id,
-																				v: false
+																				v: false,
+																				edit: false
 																			}
 																		});
 																	} else {

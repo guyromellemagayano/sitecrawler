@@ -94,53 +94,44 @@ const SitesVerifyUrl = (props) => {
 		setHtmlCopied(true);
 	};
 
-	const handleSiteVerification = async (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		if (errorMsg) setErrorMsg('');
 		if (successMsg) setSuccessMsg('');
 
+		setDisableSiteVerify(!disableSiteVerify);
+
 		const body = {
 			sid: e.currentTarget.site_verify_id.value
 		};
 
-		try {
-			const response = await usePostMethod(
-				'/api/site/' + body.sid + '/verify/'
-			);
-			const data = await response.data;
+		const response = await usePostMethod('/api/site/' + body.sid + '/verify/');
 
-			if (
-				response.statusText === 'OK' &&
-				Math.floor(response.status / 200) === 1 &&
-				data.verified
-			) {
-				setSuccessMsg('You can now proceed to the site overview.');
-				setTimeout(() => setShowNotificationStatus(true), 1500);
-				setDisableSiteVerify(!disableSiteVerify);
-				setTimeout(() => setEnableNextStep(!enableNextStep), 1500);
-			} else if (
-				response.statusText === 'OK' &&
-				Math.floor(response.status / 200) === 1 &&
-				!data.verified
-			) {
-				setErrorMsg(
-					'Site verification failed. You have not verify the site yet.'
-				);
-				setTimeout(() => setShowNotificationStatus(true), 1500);
+		if (Math.floor(response.status / 200) === 1) {
+			if (response.data.verified === true) {
+				setSuccessMsg(VerifyUrlLabel[20].label);
+				setTimeout(() => {
+					setEnableNextStep(!enableNextStep);
+					setDisableSiteVerify(false);
+				}, 1500);
+			} else {
+				setErrorMsg(VerifyUrlLabel[21].label);
+				setTimeout(() => {
+					setDisableSiteVerify(false);
+				}, 1500);
 			}
-		} catch (error) {
-			setErrorMsg('An unexpected error occurred. Please try again.');
-			setTimeout(() => setShowNotificationStatus(true), 1500);
-
-			throw error.message;
+		} else {
+			// FIXME: Error handling for response
+			if (response.data) {
+				console.log('ERROR: ' + response.data);
+			} else {
+				setSubmitting(false);
+				resetForm({ values: '' });
+				setErrorMsg(InformationLabel[12]);
+			}
 		}
 	};
-
-	useEffect(() => {
-		if (showNotificationStatus === true)
-			setTimeout(() => setShowNotificationStatus(false), 7500);
-	}, [showNotificationStatus]);
 
 	return (
 		<Layout>
@@ -151,121 +142,6 @@ const SitesVerifyUrl = (props) => {
 					<SitesVerifyUrlDiv className="h-screen flex overflow-hidden bg-gray-200">
 						<MobileSidebar show={openMobileSidebar} />
 						<MainSidebar />
-
-						<Transition show={showNotificationStatus}>
-							<div className="fixed z-50 inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end">
-								<Transition.Child
-									enter="transform ease-out duration-300 transition"
-									enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-									enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-									leave="transition ease-in duration-100"
-									leaveFrom="opacity-100"
-									leaveTo="opacity-0"
-									className="max-w-sm w-full"
-								>
-									<div className="bg-white shadow-lg rounded-lg pointer-events-auto">
-										<div className="rounded-lg shadow-xs overflow-hidden">
-											<div className="p-4">
-												<div className="flex items-start">
-													<div className="flex-shrink-0">
-														{errorMsg ? (
-															<svg
-																className="h-8 w-8 text-red-400"
-																fill="currentColor"
-																viewBox="0 0 24 24"
-																stroke="currentColor"
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-																	clipRule="evenodd"
-																></path>
-															</svg>
-														) : successMsg ? (
-															<svg
-																className="h-8 w-8 text-green-400"
-																fill="currentColor"
-																viewBox="0 0 24 24"
-																stroke="currentColor"
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-																	clipRule="evenodd"
-																></path>
-															</svg>
-														) : (
-															<svg
-																className="h-8 w-8 text-gray-400"
-																fill="currentColor"
-																viewBox="0 0 24 24"
-																stroke="currentColor"
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-																	clipRule="evenodd"
-																></path>
-															</svg>
-														)}
-													</div>
-													<div className="ml-3 w-0 flex-1 pt-0.5">
-														<p
-															className={`text-sm leading-5 font-medium ${
-																errorMsg !== undefined && errorMsg !== ''
-																	? 'text-red-500'
-																	: 'text-gray-900'
-															} ${
-																successMsg !== undefined && successMsg !== ''
-																	? 'text-green-500'
-																	: 'text-gray-900'
-															}`}
-														>
-															{errorMsg !== undefined && errorMsg !== ''
-																? 'Site Verification Failed!'
-																: successMsg !== undefined && successMsg !== ''
-																? 'Site Verification Success!'
-																: 'Verifying...'}
-														</p>
-														<p className="mt-1 text-sm leading-5 text-gray-500">
-															{errorMsg !== undefined && errorMsg !== ''
-																? errorMsg
-																: successMsg}
-														</p>
-													</div>
-													<div className="ml-4 flex-shrink-0 flex">
-														<button
-															className="inline-flex text-gray-400 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150"
-															onClick={() =>
-																setTimeout(
-																	() =>
-																		setShowNotificationStatus(
-																			!showNotificationStatus
-																		),
-																	150
-																)
-															}
-														>
-															<svg
-																className="h-5 w-5"
-																viewBox="0 0 20 20"
-																fill="currentColor"
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-																	clipRule="evenodd"
-																/>
-															</svg>
-														</button>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</Transition.Child>
-							</div>
-						</Transition>
 
 						<div className="flex flex-col w-0 flex-1 overflow-hidden">
 							<div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
@@ -385,7 +261,11 @@ const SitesVerifyUrl = (props) => {
 																	<div className="rounded-md shadow-xs-sm max-w-sm relative flex-grow focus-within:z-10">
 																		<input
 																			id="email"
-																			className="form-input block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+																			className={`form-input block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
+																				disableSiteVerify
+																					? 'opacity-50 bg-gray-300 cursor-not-allowed'
+																					: ''
+																			}`}
 																			name="verify_id_meta_tag"
 																			value={copyValue}
 																			onChange={handleInputChange}
@@ -396,7 +276,13 @@ const SitesVerifyUrl = (props) => {
 																		onCopy={handleInputCopy}
 																		text={copyValue}
 																	>
-																		<button className="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
+																		<button
+																			className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 ${
+																				disableSiteVerify
+																					? 'opacity-50 bg-indigo-300 cursor-not-allowed'
+																					: 'hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150'
+																			}`}
+																		>
 																			<span>
 																				{copied
 																					? VerifyUrlLabel[7].label
@@ -417,7 +303,7 @@ const SitesVerifyUrl = (props) => {
 											<div className="mb-5 sm:flex sm:justify-between">
 												<div className="sm:flex sm:justify-start">
 													<form
-														onSubmit={handleSiteVerification}
+														onSubmit={handleSubmit}
 														className="sm:flex sm:items-center"
 													>
 														<input
@@ -427,73 +313,56 @@ const SitesVerifyUrl = (props) => {
 															onChange={handleHiddenInputChange}
 														/>
 														<span className="inline-flex rounded-md shadow-xs-sm">
-															{disableSiteVerify ? (
-																<button
-																	disabled="disabled"
-																	type="submit"
-																	className="w-full mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 opacity-50 cursor-not-allowed"
-																>
-																	{VerifyUrlLabel[10].label}
-																</button>
-															) : (
-																<button
-																	type="submit"
-																	className="w-full mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition ease-in-out duration-150"
-																>
-																	{VerifyUrlLabel[10].label}
-																</button>
-															)}
+															<button
+																type="submit"
+																disabled={disableSiteVerify}
+																className={`w-full mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 ${
+																	disableSiteVerify
+																		? 'opacity-50 cursor-not-allowed'
+																		: 'hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition ease-in-out duration-150'
+																}`}
+															>
+																{disableSiteVerify
+																	? VerifyUrlLabel[18].label
+																	: VerifyUrlLabel[10].label}
+															</button>
 														</span>
 
 														<span className="inline-flex rounded-md shadow-xs-sm">
-															{disableSiteVerify ? (
-																<button
-																	disabled="disabled"
-																	type="submit"
-																	className="w-full mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 opacity-50 cursor-not-allowed"
+															<Link href="/dashboard/sites">
+																<a
+																	className={`w-full mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 ${
+																		disableSiteVerify
+																			? 'opacity-50 cursor-not-allowed'
+																			: 'hover:bg-yellow-500 focus:outline-none focus:shadow-xs-outline-yellow focus:border-yellow-700 active:bg-yellow-700 transition ease-in-out duration-150'
+																	}`}
 																>
 																	{VerifyUrlLabel[11].label}
-																</button>
-															) : (
-																<Link href="/dashboard/sites">
-																	<a className="w-full mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:shadow-xs-outline-yellow focus:border-yellow-700 active:bg-yellow-700 transition ease-in-out duration-150">
-																		{VerifyUrlLabel[11].label}
-																	</a>
-																</Link>
-															)}
+																</a>
+															</Link>
 														</span>
 
 														<span className="inline-flex rounded-md shadow-xs-sm">
-															{disableSiteVerify ? (
-																<Link
-																	href={{
-																		pathname: '/dashboard/sites/information',
-																		query: {
-																			sid: props.sid
-																		}
-																	}}
+															<Link
+																href={{
+																	pathname: '/dashboard/sites/information',
+																	query: {
+																		sid: props.sid,
+																		edit: true
+																	}
+																}}
+															>
+																<a
+																	disabled="disabled"
+																	className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm sm:text-sm sm:leading-5 ${
+																		disableSiteVerify
+																			? 'opacity-50 cursor-not-allowed'
+																			: 'transition ease-in-out duration-150 sm:text-sm sm:leading-5 hover:text-gray-500 focus:outline-none'
+																	} `}
 																>
-																	<a
-																		disabled="disabled"
-																		className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm sm:text-sm sm:leading-5 opacity-50 cursor-not-allowed"
-																	>
-																		{VerifyUrlLabel[12].label}
-																	</a>
-																</Link>
-															) : (
-																<Link
-																	href={{
-																		pathname: '/dashboard/sites/information',
-																		query: {
-																			sid: props.sid
-																		}
-																	}}
-																>
-																	<a className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 hover:text-gray-500 focus:outline-none">
-																		{VerifyUrlLabel[12].label}
-																	</a>
-																</Link>
-															)}
+																	{VerifyUrlLabel[12].label}
+																</a>
+															</Link>
 														</span>
 													</form>
 												</div>
@@ -513,6 +382,30 @@ const SitesVerifyUrl = (props) => {
 													</>
 												) : null}
 											</div>
+
+											{errorMsg && (
+												<div className="block py-2 mt-3">
+													<div className="flex sm:ml-2 justify-center sm:justify-start">
+														<div>
+															<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
+																{errorMsg}
+															</h3>
+														</div>
+													</div>
+												</div>
+											)}
+
+											{successMsg && (
+												<div className="block py-2 mt-3">
+													<div className="flex sm:ml-2 justify-center sm:justify-start">
+														<div>
+															<h3 className="text-sm leading-5 font-medium text-green-800 break-words">
+																{successMsg}
+															</h3>
+														</div>
+													</div>
+												</div>
+											)}
 
 											<div className="w-full bg-orange-300 mt-5 sm:rounded-lg inline-block">
 												<div className="px-4 py-5 sm:p-6">
@@ -568,6 +461,8 @@ const SitesVerifyUrl = (props) => {
 	);
 };
 
+SitesVerifyUrl.propTypes = {};
+
 SitesVerifyUrl.getInitialProps = ({ query }) => {
 	return {
 		sid: query.sid,
@@ -579,15 +474,3 @@ SitesVerifyUrl.getInitialProps = ({ query }) => {
 };
 
 export default SitesVerifyUrl;
-
-SitesVerifyUrl.propTypes = {
-	copyValue: '',
-	copied: '',
-	siteVerifyId: '',
-	errorMsg: '',
-	successMsg: '',
-	dataQuery: '',
-	disableSiteVerify: '',
-	enableNextStep: '',
-	pageTitle: ''
-};

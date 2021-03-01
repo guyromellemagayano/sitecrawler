@@ -86,36 +86,36 @@ const DataTable = (props) => {
 		if (errorMsg) setErrorMsg('');
 		if (successMsg) setSuccessMsg('');
 
+		setDisableSiteVerify(!disableSiteVerify);
+
 		const body = {
 			sid: e.currentTarget.site_verify_id.value
 		};
 
 		const response = await usePostMethod(siteVerifyApiEndpoint, body);
-		const data = await response.data;
 
-		if (
-			response.statusText === 'OK' &&
-			Math.floor(response.status / 200) === 1 &&
-			data.verified
-		) {
-			setSuccessMsg('Site verification success. Proceed to the next step.');
-			setDisableSiteVerify(!disableSiteVerify);
-			setEnableNextStep(!enableNextStep);
-		} else if (
-			response.statusText === 'OK' &&
-			Math.floor(response.status / 200) === 1 &&
-			!data.verified
-		) {
-			setErrorMsg(
-				'Site verification failed. You have not verify the site yet.'
-			);
+		if (Math.floor(response.status / 200) === 1) {
+			if (response.data.verified === true) {
+				setTimeout(() => {
+					setEnableNextStep(!enableNextStep);
+					setSuccessMsg(DataTableLabel[13].label);
+					setDisableSiteVerify(false);
+				}, 1500);
+			} else {
+				setErrorMsg(DataTableLabel[14].label);
+				setTimeout(() => {
+					setDisableSiteVerify(false);
+				}, 1500);
+			}
 		} else {
-			const error = new Error(await response.statusText);
-
-			error.response = response;
-			error.data = data;
-
-			throw error;
+			// FIXME: Error handling for response
+			if (response.data) {
+				console.log('ERROR: ' + response.data);
+			} else {
+				setSubmitting(false);
+				resetForm({ values: '' });
+				setErrorMsg(DataTableLabel[15]);
+			}
 		}
 	};
 
@@ -474,7 +474,11 @@ const DataTable = (props) => {
 														<div className="rounded-md shadow-xs-sm max-w-sm relative flex-grow focus-within:z-10">
 															<input
 																id="email"
-																className="form-input block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+																className={`form-input block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
+																	disableSiteVerify
+																		? 'opacity-50 bg-gray-300 cursor-not-allowed'
+																		: ''
+																}`}
 																name="verify_id_meta_tag"
 																value={copyValue}
 																onChange={handleInputChange}
@@ -485,7 +489,13 @@ const DataTable = (props) => {
 															onCopy={handleInputCopy}
 															text={copyValue}
 														>
-															<button className="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
+															<button
+																className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 ${
+																	disableSiteVerify
+																		? 'opacity-50 bg-indigo-300 cursor-not-allowed'
+																		: 'hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150'
+																}`}
+															>
 																<span>{copied ? 'Copied!' : 'Copy'}</span>
 															</button>
 														</CopyToClipboard>
@@ -499,8 +509,8 @@ const DataTable = (props) => {
 									</div>
 
 									{errorMsg && (
-										<div className="block p-2 mt-3">
-											<div className="flex sm:ml-2 justify-center sm:justify-start">
+										<div className="block p-2 my-5">
+											<div className="flex justify-center sm:justify-start">
 												<div>
 													<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
 														{errorMsg}
@@ -511,8 +521,8 @@ const DataTable = (props) => {
 									)}
 
 									{successMsg && (
-										<div className="block p-2 mt-3">
-											<div className="flex sm:ml-2 justify-center sm:justify-start">
+										<div className="block p-2 my-5">
+											<div className="flex justify-center sm:justify-start">
 												<div>
 													<h3 className="text-sm leading-5 font-medium text-green-800 break-words">
 														{successMsg}
@@ -525,24 +535,29 @@ const DataTable = (props) => {
 							</div>
 
 							<div className="w-full my-3 sm:mt-4 sm:inline-flex sm:flex-row-reverse">
-								{!disableSiteVerify ? (
-									<span className="mt-3 sm:ml-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto">
-										<form onSubmit={handleSiteVerification} className="w-full">
-											<input
-												type="hidden"
-												value={siteVerifyId}
-												name="site_verify_id"
-												onChange={handleHiddenInputChange}
-											/>
-											<button
-												type="submit"
-												className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700"
-											>
-												{DataTableLabel[0].label}
-											</button>
-										</form>
-									</span>
-								) : null}
+								<span className="mt-3 sm:ml-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto">
+									<form onSubmit={handleSiteVerification} className="w-full">
+										<input
+											type="hidden"
+											value={siteVerifyId}
+											name="site_verify_id"
+											onChange={handleHiddenInputChange}
+										/>
+										<button
+											type="submit"
+											disabled={disableSiteVerify}
+											className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-indigo-600 ${
+												disableSiteVerify
+													? 'opacity-50 cursor-not-allowed'
+													: 'hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700'
+											}`}
+										>
+											{disableSiteVerify
+												? DataTableLabel[12].label
+												: DataTableLabel[0].label}
+										</button>
+									</form>
+								</span>
 
 								{enableNextStep ? (
 									<span className="mt-3 sm:ml-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto">
@@ -560,7 +575,12 @@ const DataTable = (props) => {
 								<span className="mt-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto">
 									<button
 										type="button"
-										className="inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+										disabled={disableSiteVerify}
+										className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm sm:text-sm sm:leading-5 ${
+											disableSiteVerify
+												? 'opacity-50 cursor-not-allowed'
+												: 'hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150'
+										}`}
 										onClick={() =>
 											setTimeout(
 												() => setShowVerifySiteModal(!showVerifySiteModal),
@@ -679,15 +699,6 @@ const DataTable = (props) => {
 	);
 };
 
-DataTable.propTypes = {
-	copyValue: PropTypes.string,
-	copied: PropTypes.bool,
-	errorMsg: PropTypes.string,
-	successMsg: PropTypes.string,
-	disableSiteVerify: PropTypes.bool,
-	enableNextStep: PropTypes.bool,
-	showVerifySiteModal: PropTypes.bool,
-	showDeleteSiteModal: PropTypes.bool
-};
+DataTable.propTypes = {};
 
 export default DataTable;
