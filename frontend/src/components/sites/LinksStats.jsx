@@ -1,5 +1,6 @@
 const Chart = loadable(() => import('react-apexcharts'));
 import { linksChartContents } from 'enum/chartContents';
+// FIXME: Remove react-responsive package in favor of react-resize-detector
 import { useMediaQuery } from 'react-responsive';
 import Cookies from 'js-cookie';
 import fetch from 'node-fetch';
@@ -291,16 +292,16 @@ const SitesLinksStats = (props) => {
 				<div className={`flex justify-between py-8 px-5`}>
 					<div className={`flex items-center`}>
 						<svg
-							fill='none'
-							viewBox='0 0 24 24'
-							stroke='currentColor'
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
 							className={`search w-5 h-5 text-gray-900 mr-2`}
 						>
 							<path
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
 							></path>
 						</svg>
 						<h2 className={`text-lg font-bold leading-7 text-gray-900`}>
@@ -331,7 +332,7 @@ const SitesLinksStats = (props) => {
 						<Chart
 							options={chartOptions}
 							series={chartSeries}
-							type='donut'
+							type="donut"
 							width={`${isMobileOrDesktop ? '600' : '300'}`}
 							height={`${isMobileOrDesktop ? '260' : '530'}`}
 						/>
