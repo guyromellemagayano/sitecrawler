@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "prod_crawler" {
   TASK_DEFINITION
 
   cpu = 256
-  memory = 512
+  memory = 1024
 
   requires_compatibilities = ["FARGATE"]
   network_mode = "awsvpc"
@@ -54,6 +54,7 @@ resource "aws_ecs_service" "prod_crawler" {
   }
 }
 
+# autoscaling
 resource "aws_appautoscaling_target" "ecs_prod_crawler_target" {
   max_capacity       = 4
   min_capacity       = 1
@@ -132,4 +133,43 @@ resource "aws_cloudwatch_metric_alarm" "ecs_prod_crawler_downscale_alarm" {
   }
 
   alarm_actions     = [aws_appautoscaling_policy.ecs_prod_crawler_downscale_policy.arn]
+}
+
+# monitoring
+resource "aws_cloudwatch_metric_alarm" "alert_ecs_prod_crawler_high_memory" {
+  alarm_name          = "alert_ecs_prod_crawler_high_memory"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  metric_name         = "MemoryUtilization"
+  namespace           = "AWS/ECS"
+  period              = "3600"
+  statistic           = "Maximum"
+  threshold           = 90
+  evaluation_periods  = "1"
+
+  dimensions = {
+    ClusterName = aws_ecs_cluster.prod_fargate.name
+    ServiceName = aws_ecs_service.prod_crawler.name
+  }
+
+  alarm_description = "Memory utilization for prod crawler is high"
+  alarm_actions     = [aws_sns_topic.production_alerts.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "alert_ecs_prod_crawler_high_cpu" {
+  alarm_name          = "alert_ecs_prod_crawler_high_cpu"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/ECS"
+  period              = "3600"
+  statistic           = "Maximum"
+  threshold           = 90
+  evaluation_periods  = "1"
+
+  dimensions = {
+    ClusterName = aws_ecs_cluster.prod_fargate.name
+    ServiceName = aws_ecs_service.prod_crawler.name
+  }
+
+  alarm_description = "Memory utilization for prod crawler is high"
+  alarm_actions     = [aws_sns_topic.production_alerts.arn]
 }
