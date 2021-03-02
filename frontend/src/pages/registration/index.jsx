@@ -214,7 +214,7 @@ const Registration = () => {
 												>
 													{RegistrationLabel[5].label}
 												</label>
-												<div className="mt-1 rounded-md shadow-xs-sm">
+												<div className="mt-1 rounded-md shadow-sm">
 													<input
 														id="firstname"
 														type="text"
@@ -255,7 +255,7 @@ const Registration = () => {
 												>
 													{RegistrationLabel[6].label}
 												</label>
-												<div className="mt-1 rounded-md shadow-xs-sm">
+												<div className="mt-1 rounded-md shadow-sm">
 													<input
 														id="lastname"
 														type="text"
@@ -296,7 +296,7 @@ const Registration = () => {
 												>
 													{RegistrationLabel[7].label}
 												</label>
-												<div className="mt-1 rounded-md shadow-xs-sm">
+												<div className="mt-1 rounded-md shadow-sm">
 													<input
 														id="username"
 														type="text"
@@ -337,7 +337,7 @@ const Registration = () => {
 												>
 													{RegistrationLabel[8].label}
 												</label>
-												<div className="mt-1 rounded-md shadow-xs-sm">
+												<div className="mt-1 rounded-md shadow-sm">
 													<input
 														id="email"
 														type="email"
@@ -376,7 +376,7 @@ const Registration = () => {
 												>
 													{RegistrationLabel[9].label}
 												</label>
-												<div className="mt-1 rounded-md shadow-xs-sm">
+												<div className="mt-1 rounded-md shadow-sm">
 													<input
 														id="password1"
 														type="password"
@@ -418,7 +418,7 @@ const Registration = () => {
 												>
 													{RegistrationLabel[10].label}
 												</label>
-												<div className="mt-1 rounded-md shadow-xs-sm">
+												<div className="mt-1 rounded-md shadow-sm">
 													<input
 														id="password2"
 														type="password"
@@ -453,7 +453,7 @@ const Registration = () => {
 											</div>
 
 											<div className="mt-6">
-												<span className="block w-full rounded-md shadow-xs-sm">
+												<span className="block w-full rounded-md shadow-sm">
 													<button
 														type="submit"
 														disabled={isSubmitting}

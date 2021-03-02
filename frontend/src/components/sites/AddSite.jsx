@@ -108,17 +108,17 @@ const AddSite = ({ searchKey, onSearchEvent }) => {
 								</div>
 							</div>
 							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<span className="flex w-full rounded-md shadow-xs-sm sm:ml-3 sm:w-auto">
+								<span className="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
 									<Link href="/dashboard/settings/subscriptions">
-										<a className="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-yellow-600 text-base leading-6 font-medium text-white shadow-xs-sm hover:bg-yellow-500 focus:outline-none focus:border-yellow-700 focus:shadow-xs-outline-yellow transition ease-in-out duration-150 sm:text-sm sm:leading-5">
+										<a className="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-yellow-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-yellow-500 focus:outline-none focus:border-yellow-700 focus:shadow-xs-outline-yellow transition ease-in-out duration-150 sm:text-sm sm:leading-5">
 											{AddSiteLabel[4].label}
 										</a>
 									</Link>
 								</span>
-								<span className="mt-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto">
+								<span className="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
 									<button
 										type="button"
-										className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+										className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5"
 										onClick={() =>
 											setTimeout(() => setShowErrorModal(!showErrorModal), 150)
 										}
@@ -137,7 +137,7 @@ const AddSite = ({ searchKey, onSearchEvent }) => {
 					<div className="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap">
 						<div className="ml-4 mt-2 w-full lg:w64">
 							<div>
-								<div className="mt-1 relative rounded-md shadow-xs-sm">
+								<div className="mt-1 relative rounded-md shadow-sm">
 									<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
 										<svg
 											className="h-5 w-5 text-gray-400"
@@ -163,7 +163,7 @@ const AddSite = ({ searchKey, onSearchEvent }) => {
 							</div>
 						</div>
 						<div className="ml-4 mt-2 flex-shrink-0">
-							<span className="inline-flex rounded-md shadow-xs-sm">
+							<span className="inline-flex rounded-md shadow-sm">
 								{siteLimitCounter === maxSiteLimit ||
 								siteLimitCounter > maxSiteLimit ? (
 									<button

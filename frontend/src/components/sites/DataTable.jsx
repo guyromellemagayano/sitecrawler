@@ -471,7 +471,7 @@ const DataTable = (props) => {
 												{ReactHtmlParser(DataTableLabel[7].label)}
 												<div>
 													<div className="my-3 flex">
-														<div className="rounded-md shadow-xs-sm max-w-sm relative flex-grow focus-within:z-10">
+														<div className="rounded-md shadow-sm max-w-sm relative flex-grow focus-within:z-10">
 															<input
 																id="email"
 																className={`form-input block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
@@ -535,7 +535,7 @@ const DataTable = (props) => {
 							</div>
 
 							<div className="w-full my-3 sm:mt-4 sm:inline-flex sm:flex-row-reverse">
-								<span className="mt-3 sm:ml-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto">
+								<span className="mt-3 sm:ml-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
 									<form onSubmit={handleSiteVerification} className="w-full">
 										<input
 											type="hidden"
@@ -560,7 +560,7 @@ const DataTable = (props) => {
 								</span>
 
 								{enableNextStep ? (
-									<span className="mt-3 sm:ml-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto">
+									<span className="mt-3 sm:ml-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
 										<Link
 											href="/dashboard/site/[siteId]/overview"
 											as={`/dashboard/site/${props.site.id}/overview`}
@@ -572,11 +572,11 @@ const DataTable = (props) => {
 									</span>
 								) : null}
 
-								<span className="mt-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto">
+								<span className="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
 									<button
 										type="button"
 										disabled={disableSiteVerify}
-										className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm sm:text-sm sm:leading-5 ${
+										className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5 ${
 											disableSiteVerify
 												? 'opacity-50 cursor-not-allowed'
 												: 'hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150'
@@ -656,19 +656,19 @@ const DataTable = (props) => {
 								</div>
 							</div>
 							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<span className="flex w-full rounded-md shadow-xs-sm sm:ml-3 sm:w-auto">
+								<span className="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
 									<button
 										type="button"
-										className="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-red-600 text-base leading-6 font-medium text-white shadow-xs-sm hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-xs-outline-red transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+										className="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-red-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-xs-outline-red transition ease-in-out duration-150 sm:text-sm sm:leading-5"
 										onClick={(e) => handleSiteDeletion(e)}
 									>
 										{DataTableLabel[10].label}
 									</button>
 								</span>
-								<span className="mt-3 flex w-full rounded-md shadow-xs-sm sm:mt-0 sm:w-auto">
+								<span className="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
 									<button
 										type="button"
-										className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+										className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5"
 										onClick={() =>
 											setTimeout(
 												() => setShowDeleteSiteModal(!showDeleteSiteModal),

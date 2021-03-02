@@ -440,13 +440,13 @@ const Subscriptions = () => {
 												className={`fixed z-50 inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end`}
 											>
 												<Transition.Child
-													enter='transform ease-out duration-300 transition'
-													enterFrom='translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2'
-													enterTo='translate-y-0 opacity-100 sm:translate-x-0'
-													leave='transition ease-in duration-100'
-													leaveFrom='opacity-100'
-													leaveTo='opacity-0'
-													className='max-w-sm w-full'
+													enter="transform ease-out duration-300 transition"
+													enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+													enterTo="translate-y-0 opacity-100 sm:translate-x-0"
+													leave="transition ease-in duration-100"
+													leaveFrom="opacity-100"
+													leaveTo="opacity-0"
+													className="max-w-sm w-full"
 												>
 													<div
 														className={`bg-white shadow-lg rounded-lg pointer-events-auto`}
@@ -460,40 +460,40 @@ const Subscriptions = () => {
 																		{errorMsg ? (
 																			<svg
 																				className={`h-8 w-8 text-red-400`}
-																				fill='currentColor'
-																				viewBox='0 0 24 24'
-																				stroke='currentColor'
+																				fill="currentColor"
+																				viewBox="0 0 24 24"
+																				stroke="currentColor"
 																			>
 																				<path
-																					fillRule='evenodd'
-																					d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
-																					clipRule='evenodd'
+																					fillRule="evenodd"
+																					d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+																					clipRule="evenodd"
 																				></path>
 																			</svg>
 																		) : successMsg ? (
 																			<svg
 																				className={`h-8 w-8 text-green-400`}
-																				fill='currentColor'
-																				viewBox='0 0 24 24'
-																				stroke='currentColor'
+																				fill="currentColor"
+																				viewBox="0 0 24 24"
+																				stroke="currentColor"
 																			>
 																				<path
-																					fillRule='evenodd'
-																					d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-																					clipRule='evenodd'
+																					fillRule="evenodd"
+																					d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+																					clipRule="evenodd"
 																				></path>
 																			</svg>
 																		) : (
 																			<svg
 																				className={`h-8 w-8 text-gray-400`}
-																				fill='currentColor'
-																				viewBox='0 0 24 24'
-																				stroke='currentColor'
+																				fill="currentColor"
+																				viewBox="0 0 24 24"
+																				stroke="currentColor"
 																			>
 																				<path
-																					fillRule='evenodd'
-																					d='M10 18a8 8 0 100-16 8 8 0 000 16zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z'
-																					clipRule='evenodd'
+																					fillRule="evenodd"
+																					d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+																					clipRule="evenodd"
 																				></path>
 																			</svg>
 																		)}
@@ -542,13 +542,13 @@ const Subscriptions = () => {
 																		>
 																			<svg
 																				className={`h-5 w-5`}
-																				viewBox='0 0 20 20'
-																				fill='currentColor'
+																				viewBox="0 0 20 20"
+																				fill="currentColor"
 																			>
 																				<path
-																					fillRule='evenodd'
-																					d='M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z'
-																					clipRule='evenodd'
+																					fillRule="evenodd"
+																					d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+																					clipRule="evenodd"
 																				/>
 																			</svg>
 																		</button>
@@ -567,12 +567,12 @@ const Subscriptions = () => {
 													className={`flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}
 												>
 													<Transition.Child
-														enter='ease-out duration-300'
-														enterFrom='opacity-0'
-														enterTo='opacity-100'
-														leave='ease-in duration-200'
-														leaveFrom='opacity-100'
-														leaveTo='opacity-0'
+														enter="ease-out duration-300"
+														enterFrom="opacity-0"
+														enterTo="opacity-100"
+														leave="ease-in duration-200"
+														leaveFrom="opacity-100"
+														leaveTo="opacity-0"
 													>
 														<div className={`fixed inset-0 transition-opacity`}>
 															<div
@@ -585,24 +585,24 @@ const Subscriptions = () => {
 													></span>
 													&#8203;
 													<Transition.Child
-														enter='ease-out duration-300'
-														enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-														enterTo='opacity-100 translate-y-0 sm:scale-100'
-														leave='ease-in duration-200'
-														leaveFrom='opacity-100 translate-y-0 sm:scale-100'
-														leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-														className='inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6'
-														role='dialog'
-														aria-modal='true'
-														aria-labelledby='modal-headline'
+														enter="ease-out duration-300"
+														enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+														enterTo="opacity-100 translate-y-0 sm:scale-100"
+														leave="ease-in duration-200"
+														leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+														leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+														className="inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6"
+														role="dialog"
+														aria-modal="true"
+														aria-labelledby="modal-headline"
 													>
 														<div
 															className={`hidden sm:block absolute top-0 right-0 pt-4 pr-4`}
 														>
 															<button
-																type='button'
+																type="button"
 																className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
-																aria-label='Close'
+																aria-label="Close"
 																onClick={() =>
 																	setTimeout(() => {
 																		setShowModal(!showModal);
@@ -612,15 +612,15 @@ const Subscriptions = () => {
 															>
 																<svg
 																	className={`h-6 w-6`}
-																	fill='none'
-																	viewBox='0 0 24 24'
-																	stroke='currentColor'
+																	fill="none"
+																	viewBox="0 0 24 24"
+																	stroke="currentColor"
 																>
 																	<path
-																		strokeLinecap='round'
-																		strokeLinejoin='round'
-																		strokeWidth='2'
-																		d='M6 18L18 6M6 6l12 12'
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth="2"
+																		d="M6 18L18 6M6 6l12 12"
 																	/>
 																</svg>
 															</button>
@@ -629,7 +629,7 @@ const Subscriptions = () => {
 															<div className={`text-center sm:mt-3`}>
 																<h2
 																	className={`mb-6 text-xl leading-6 font-semibold text-gray-900`}
-																	id='modal-headline'
+																	id="modal-headline"
 																>
 																	{SubscriptionLabel[7].label}
 																</h2>
@@ -638,27 +638,27 @@ const Subscriptions = () => {
 
 														<div>
 															<form onSubmit={handleSubmit}>
-																<div className='input-group'>
+																<div className="input-group">
 																	<label
-																		htmlFor='card-number'
+																		htmlFor="card-number"
 																		className={`block text-sm font-medium leading-5 text-gray-700`}
 																	>
 																		{PaymentMethodFormLabel[0].label}
 																	</label>
 																	<CardNumberElement options={options} />
 																</div>
-																<div className='input-group'>
+																<div className="input-group">
 																	<label
-																		htmlFor='expiration-date'
+																		htmlFor="expiration-date"
 																		className={`block text-sm font-medium leading-5 text-gray-700`}
 																	>
 																		{PaymentMethodFormLabel[1].label}
 																	</label>
 																	<CardExpiryElement options={options} />
 																</div>
-																<div className='input-group'>
+																<div className="input-group">
 																	<label
-																		htmlFor='cvc'
+																		htmlFor="cvc"
 																		className={`block text-sm font-medium leading-5 text-gray-700`}
 																	>
 																		{PaymentMethodFormLabel[2].label}
@@ -670,7 +670,7 @@ const Subscriptions = () => {
 																		className={`flex w-full rounded-md shadow-sm sm:col-start-2`}
 																	>
 																		<button
-																			type='submit'
+																			type="submit"
 																			className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
 																				loading
 																					? 'opacity-50 bg-indigo-300 cursor-not-allowed'
@@ -697,12 +697,12 @@ const Subscriptions = () => {
 													className={`flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}
 												>
 													<Transition.Child
-														enter='ease-out duration-300'
-														enterFrom='opacity-0'
-														enterTo='opacity-100'
-														leave='ease-in duration-200'
-														leaveFrom='opacity-100'
-														leaveTo='opacity-0'
+														enter="ease-out duration-300"
+														enterFrom="opacity-0"
+														enterTo="opacity-100"
+														leave="ease-in duration-200"
+														leaveFrom="opacity-100"
+														leaveTo="opacity-0"
 													>
 														<div className={`fixed inset-0 transition-opacity`}>
 															<div
@@ -715,25 +715,25 @@ const Subscriptions = () => {
 													></span>
 													&#8203;
 													<Transition.Child
-														enter='ease-out duration-300'
-														enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-														enterTo='opacity-100 translate-y-0 sm:scale-100'
-														leave='ease-in duration-200'
-														leaveFrom='opacity-100 translate-y-0 sm:scale-100'
-														leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-														className='inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-6 lg:p-0'
-														role='dialog'
-														aria-modal='true'
-														aria-labelledby='modal-headline'
+														enter="ease-out duration-300"
+														enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+														enterTo="opacity-100 translate-y-0 sm:scale-100"
+														leave="ease-in duration-200"
+														leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+														leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+														className="inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-6 lg:p-0"
+														role="dialog"
+														aria-modal="true"
+														aria-labelledby="modal-headline"
 													>
 														<span className={`confetti-bg-img`} />
 														<div
 															className={`hidden sm:block absolute top-0 right-0 pt-4 pr-4 z-50`}
 														>
 															<button
-																type='button'
+																type="button"
 																className={`text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
-																aria-label='Close'
+																aria-label="Close"
 																onClick={() =>
 																	setTimeout(() => {
 																		setShowNewActivePlanModal(
@@ -744,15 +744,15 @@ const Subscriptions = () => {
 															>
 																<svg
 																	className={`h-6 w-6`}
-																	fill='none'
-																	viewBox='0 0 24 24'
-																	stroke='currentColor'
+																	fill="none"
+																	viewBox="0 0 24 24"
+																	stroke="currentColor"
 																>
 																	<path
-																		strokeLinecap='round'
-																		strokeLinejoin='round'
-																		strokeWidth='2'
-																		d='M6 18L18 6M6 6l12 12'
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth="2"
+																		d="M6 18L18 6M6 6l12 12"
 																	/>
 																</svg>
 															</button>
@@ -760,13 +760,13 @@ const Subscriptions = () => {
 														<div>
 															<img
 																src={`/img/backgrounds/subscription-success-badge.png`}
-																alt='badge-modal-img'
+																alt="badge-modal-img"
 																className={`mx-auto mt-16 mb-6`}
 															/>
 															<div className={`text-center sm:mt-3`}>
 																<h2
 																	className={`mb-3 text-3xl leading-6 font-bold text-gray-900`}
-																	id='modal-headline'
+																	id="modal-headline"
 																>
 																	{SubscriptionLabel[13].label}
 																</h2>
@@ -807,15 +807,15 @@ const Subscriptions = () => {
 																												>
 																													<svg
 																														className={`h-6 w-6 text-green-500`}
-																														stroke='currentColor'
-																														fill='none'
-																														viewBox='0 0 24 24'
+																														stroke="currentColor"
+																														fill="none"
+																														viewBox="0 0 24 24"
 																													>
 																														<path
-																															strokeLinecap='round'
-																															strokeLinejoin='round'
-																															strokeWidth='2'
-																															d='M5 13l4 4L19 7'
+																															strokeLinecap="round"
+																															strokeLinejoin="round"
+																															strokeWidth="2"
+																															d="M5 13l4 4L19 7"
 																														/>
 																													</svg>
 																												</div>
@@ -833,9 +833,9 @@ const Subscriptions = () => {
 																								className={`my-6 border-b border-gray-300`}
 																							/>
 																							<button
-																								type='button'
+																								type="button"
 																								className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo`}
-																								aria-label='Start Crawling'
+																								aria-label="Start Crawling"
 																								onClick={() =>
 																									setTimeout(() => {
 																										setShowNewActivePlanModal(
@@ -865,12 +865,12 @@ const Subscriptions = () => {
 													className={`flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}
 												>
 													<Transition.Child
-														enter='ease-out duration-300'
-														enterFrom='opacity-0'
-														enterTo='opacity-100'
-														leave='ease-in duration-200'
-														leaveFrom='opacity-100'
-														leaveTo='opacity-0'
+														enter="ease-out duration-300"
+														enterFrom="opacity-0"
+														enterTo="opacity-100"
+														leave="ease-in duration-200"
+														leaveFrom="opacity-100"
+														leaveTo="opacity-0"
 													>
 														<div className={`fixed inset-0 transition-opacity`}>
 															<div
@@ -883,16 +883,16 @@ const Subscriptions = () => {
 													></span>
 													&#8203;
 													<Transition.Child
-														enter='ease-out duration-300'
-														enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-														enterTo='opacity-100 translate-y-0 sm:scale-100'
-														leave='ease-in duration-200'
-														leaveFrom='opacity-100 translate-y-0 sm:scale-100'
-														leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-														className='inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6'
-														role='dialog'
-														aria-modal='true'
-														aria-labelledby='modal-headline'
+														enter="ease-out duration-300"
+														enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+														enterTo="opacity-100 translate-y-0 sm:scale-100"
+														leave="ease-in duration-200"
+														leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+														leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+														className="inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6"
+														role="dialog"
+														aria-modal="true"
+														aria-labelledby="modal-headline"
 													>
 														<div>
 															<div
@@ -900,24 +900,24 @@ const Subscriptions = () => {
 															>
 																<svg
 																	className={`h-6 w-6 text-red-600`}
-																	xmlns='http://www.w3.org/2000/svg'
-																	fill='none'
-																	viewBox='0 0 24 24'
-																	stroke='currentColor'
-																	aria-hidden='true'
+																	xmlns="http://www.w3.org/2000/svg"
+																	fill="none"
+																	viewBox="0 0 24 24"
+																	stroke="currentColor"
+																	aria-hidden="true"
 																>
 																	<path
-																		strokeLinecap='round'
-																		strokeLinejoin='round'
-																		strokeWidth='2'
-																		d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth="2"
+																		d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
 																	/>
 																</svg>
 															</div>
 															<div className={`text-center`}>
 																<h2
 																	className={`mb-6 text-xl leading-6 font-semibold text-gray-900`}
-																	id='modal-headline'
+																	id="modal-headline"
 																>
 																	{SubscriptionLabel[15].label}
 																</h2>
@@ -928,9 +928,9 @@ const Subscriptions = () => {
 																</p>
 
 																<button
-																	type='button'
+																	type="button"
 																	className={`inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 mb-2 bg-red-600 text-base leading-6 font-medium text-white shadow-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red`}
-																	aria-label='Downgrade to Basic'
+																	aria-label="Downgrade to Basic"
 																	onClick={() =>
 																		setTimeout(() => {
 																			selectPlan(basicPlanId, basicPlanName);
@@ -940,9 +940,9 @@ const Subscriptions = () => {
 																	Downgrade to Basic Plan
 																</button>
 																<button
-																	type='button'
-																	className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-xs-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
-																	aria-label='Cancel Downgrade to Basic'
+																	type="button"
+																	className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5`}
+																	aria-label="Cancel Downgrade to Basic"
 																	onClick={() =>
 																		setTimeout(() => {
 																			setShowChangeToBasicModal(
@@ -983,8 +983,8 @@ const Subscriptions = () => {
 													{SubscriptionLabel[1].label}
 												</p>
 												<span
-													role='checkbox'
-													tabIndex='0'
+													role="checkbox"
+													tabIndex="0"
 													onClick={() =>
 														setTogglePaymentPeriod(!togglePaymentPeriod)
 													}
@@ -996,7 +996,7 @@ const Subscriptions = () => {
 													} relative inline-flex items-center flex-shrink-0 h-6 w-12 mx-auto border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}
 												>
 													<span
-														aria-hidden='true'
+														aria-hidden="true"
 														className={`${
 															togglePaymentPeriod
 																? 'translate-x-6'
@@ -1084,15 +1084,15 @@ const Subscriptions = () => {
 																									>
 																										<svg
 																											className={`h-6 w-6 text-green-500`}
-																											stroke='currentColor'
-																											fill='none'
-																											viewBox='0 0 24 24'
+																											stroke="currentColor"
+																											fill="none"
+																											viewBox="0 0 24 24"
 																										>
 																											<path
-																												strokeLinecap='round'
-																												strokeLinejoin='round'
-																												strokeWidth='2'
-																												d='M5 13l4 4L19 7'
+																												strokeLinecap="round"
+																												strokeLinejoin="round"
+																												strokeWidth="2"
+																												d="M5 13l4 4L19 7"
 																											/>
 																										</svg>
 																									</div>
@@ -1238,15 +1238,15 @@ const Subscriptions = () => {
 																										>
 																											<svg
 																												className={`h-6 w-6 text-green-500`}
-																												stroke='currentColor'
-																												fill='none'
-																												viewBox='0 0 24 24'
+																												stroke="currentColor"
+																												fill="none"
+																												viewBox="0 0 24 24"
 																											>
 																												<path
-																													strokeLinecap='round'
-																													strokeLinejoin='round'
-																													strokeWidth='2'
-																													d='M5 13l4 4L19 7'
+																													strokeLinecap="round"
+																													strokeLinejoin="round"
+																													strokeWidth="2"
+																													d="M5 13l4 4L19 7"
 																												/>
 																											</svg>
 																										</div>
@@ -1275,7 +1275,7 @@ const Subscriptions = () => {
 																									</button>
 																								) : (
 																									<button
-																										type='button'
+																										type="button"
 																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
 																											!paymentMethod ||
 																											loadingProSemiAnnually
@@ -1395,15 +1395,15 @@ const Subscriptions = () => {
 																												>
 																													<svg
 																														className={`h-6 w-6 text-green-500`}
-																														stroke='currentColor'
-																														fill='none'
-																														viewBox='0 0 24 24'
+																														stroke="currentColor"
+																														fill="none"
+																														viewBox="0 0 24 24"
 																													>
 																														<path
-																															strokeLinecap='round'
-																															strokeLinejoin='round'
-																															strokeWidth='2'
-																															d='M5 13l4 4L19 7'
+																															strokeLinecap="round"
+																															strokeLinejoin="round"
+																															strokeWidth="2"
+																															d="M5 13l4 4L19 7"
 																														/>
 																													</svg>
 																												</div>
@@ -1575,15 +1575,15 @@ const Subscriptions = () => {
 																										>
 																											<svg
 																												className={`h-6 w-6 text-green-500`}
-																												stroke='currentColor'
-																												fill='none'
-																												viewBox='0 0 24 24'
+																												stroke="currentColor"
+																												fill="none"
+																												viewBox="0 0 24 24"
 																											>
 																												<path
-																													strokeLinecap='round'
-																													strokeLinejoin='round'
-																													strokeWidth='2'
-																													d='M5 13l4 4L19 7'
+																													strokeLinecap="round"
+																													strokeLinejoin="round"
+																													strokeWidth="2"
+																													d="M5 13l4 4L19 7"
 																												/>
 																											</svg>
 																										</div>
@@ -1612,7 +1612,7 @@ const Subscriptions = () => {
 																									</button>
 																								) : (
 																									<button
-																										type='button'
+																										type="button"
 																										className={`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white ${
 																											!paymentMethod ||
 																											loadingProMonthly
@@ -1730,15 +1730,15 @@ const Subscriptions = () => {
 																												>
 																													<svg
 																														className={`h-6 w-6 text-green-500`}
-																														stroke='currentColor'
-																														fill='none'
-																														viewBox='0 0 24 24'
+																														stroke="currentColor"
+																														fill="none"
+																														viewBox="0 0 24 24"
 																													>
 																														<path
-																															strokeLinecap='round'
-																															strokeLinejoin='round'
-																															strokeWidth='2'
-																															d='M5 13l4 4L19 7'
+																															strokeLinecap="round"
+																															strokeLinejoin="round"
+																															strokeWidth="2"
+																															d="M5 13l4 4L19 7"
 																														/>
 																													</svg>
 																												</div>

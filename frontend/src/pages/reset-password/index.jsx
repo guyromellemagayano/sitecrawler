@@ -144,7 +144,7 @@ const ResetPassword = () => {
 												>
 													{ResetPasswordLabel[4].label}
 												</label>
-												<div className="mt-1 rounded-md shadow-xs-sm">
+												<div className="mt-1 rounded-md shadow-sm">
 													<input
 														id="email"
 														type="email"
@@ -172,7 +172,7 @@ const ResetPassword = () => {
 											</div>
 
 											<div className="mt-6">
-												<span className="block w-full rounded-md shadow-xs-sm">
+												<span className="block w-full rounded-md shadow-sm">
 													<button
 														type="submit"
 														disabled={isSubmitting}

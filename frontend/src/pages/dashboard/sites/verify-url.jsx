@@ -258,7 +258,7 @@ const SitesVerifyUrl = (props) => {
 															{ReactHtmlParser(VerifyUrlLabel[6].label)}
 															<div>
 																<div className="my-3 flex">
-																	<div className="rounded-md shadow-xs-sm max-w-sm relative flex-grow focus-within:z-10">
+																	<div className="rounded-md shadow-sm max-w-sm relative flex-grow focus-within:z-10">
 																		<input
 																			id="email"
 																			className={`form-input block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
@@ -312,7 +312,7 @@ const SitesVerifyUrl = (props) => {
 															name="site_verify_id"
 															onChange={handleHiddenInputChange}
 														/>
-														<span className="inline-flex rounded-md shadow-xs-sm">
+														<span className="inline-flex rounded-md shadow-sm">
 															<button
 																type="submit"
 																disabled={disableSiteVerify}
@@ -328,7 +328,7 @@ const SitesVerifyUrl = (props) => {
 															</button>
 														</span>
 
-														<span className="inline-flex rounded-md shadow-xs-sm">
+														<span className="inline-flex rounded-md shadow-sm">
 															<Link href="/dashboard/sites">
 																<a
 																	className={`w-full mt-3 mr-3 shadow-xs sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 ${
@@ -342,7 +342,7 @@ const SitesVerifyUrl = (props) => {
 															</Link>
 														</span>
 
-														<span className="inline-flex rounded-md shadow-xs-sm">
+														<span className="inline-flex rounded-md shadow-sm">
 															<Link
 																href={{
 																	pathname: '/dashboard/sites/information',
@@ -354,7 +354,7 @@ const SitesVerifyUrl = (props) => {
 															>
 																<a
 																	disabled="disabled"
-																	className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-xs-sm sm:text-sm sm:leading-5 ${
+																	className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5 ${
 																		disableSiteVerify
 																			? 'opacity-50 cursor-not-allowed'
 																			: 'transition ease-in-out duration-150 sm:text-sm sm:leading-5 hover:text-gray-500 focus:outline-none'

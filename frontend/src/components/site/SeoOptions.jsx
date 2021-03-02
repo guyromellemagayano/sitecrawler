@@ -25,7 +25,7 @@ const SeoOptions = ({ searchKey, onSearchEvent }) => {
 				>
 					<div className={`ml-4 mt-2 w-64`}>
 						<div>
-							<div className={`mt-1 relative rounded-md shadow-xs-sm`}>
+							<div className={`mt-1 relative rounded-md shadow-sm`}>
 								<div
 									className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none`}
 								>
@@ -59,10 +59,10 @@ const SeoOptions = ({ searchKey, onSearchEvent }) => {
 						</div>
 					</div>
 					{/* <div className={`ml-4 mt-2 flex items-center flex-shrink-0`}>
-						<span className={`inline-flex rounded-md shadow-xs-sm`}>
+						<span className={`inline-flex rounded-md shadow-sm`}>
 							<div className={`relative inline-block text-left`}>
 								<div>
-									<span className={`rounded-md shadow-xs-sm`}>
+									<span className={`rounded-md shadow-sm`}>
 										<button
 											type='button'
 											disabled='disabled'

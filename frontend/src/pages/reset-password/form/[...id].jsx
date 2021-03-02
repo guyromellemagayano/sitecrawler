@@ -174,7 +174,7 @@ const ResetPasswordForm = () => {
 										>
 											Password
 										</label>
-										<div className={`mt-1 rounded-md shadow-xs-sm`}>
+										<div className={`mt-1 rounded-md shadow-sm`}>
 											<input
 												id={`password1`}
 												type={`password`}
@@ -203,7 +203,7 @@ const ResetPasswordForm = () => {
 										>
 											Repeat Password
 										</label>
-										<div className={`mt-1 rounded-md shadow-xs-sm`}>
+										<div className={`mt-1 rounded-md shadow-sm`}>
 											<input
 												id={`password2`}
 												type={`password`}
@@ -225,7 +225,7 @@ const ResetPasswordForm = () => {
 									</div>
 
 									<div className={`mt-6`}>
-										<span className={`block w-full rounded-md shadow-xs-sm`}>
+										<span className={`block w-full rounded-md shadow-sm`}>
 											<button
 												type={`submit`}
 												className={`w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out`}
@@ -242,7 +242,7 @@ const ResetPasswordForm = () => {
 							>
 								<span className={`px-2 py-5 text-gray-500`}>
 									Already have an account?&nbsp;
-									<Link href='/'>
+									<Link href="/">
 										<a
 											className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
 										>
@@ -257,7 +257,7 @@ const ResetPasswordForm = () => {
 							className={`relative flex justify-center wrap flex-row text-sm leading-5`}
 						>
 							<span className={`px-2 text-gray-500`}>
-								<Link href='/'>
+								<Link href="/">
 									<a
 										className={`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`}
 									>

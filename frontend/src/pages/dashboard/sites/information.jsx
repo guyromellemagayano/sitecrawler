@@ -302,7 +302,7 @@ const SitesInformation = (props) => {
 																>
 																	{InformationLabel[4].label}
 																</label>
-																<div className="mt-1 mb-1 relative rounded-md shadow-xs-sm">
+																<div className="mt-1 mb-1 relative rounded-md shadow-sm">
 																	<input
 																		id="sitename"
 																		type="text"
@@ -343,7 +343,7 @@ const SitesInformation = (props) => {
 																>
 																	{InformationLabel[5].label}
 																</label>
-																<div className="mt-1 relative rounded-md shadow-xs-sm">
+																<div className="mt-1 relative rounded-md shadow-sm">
 																	<div className="absolute inset-y-0 left-0 flex items-center">
 																		<select
 																			id="siteurlprotocol"
@@ -424,7 +424,7 @@ const SitesInformation = (props) => {
 															<div className="sm:flex sm:items-center sm:justify-start">
 																<div>
 																	{props.sid === undefined && !props.edit ? (
-																		<span className="inline-flex rounded-md shadow-xs-sm">
+																		<span className="inline-flex rounded-md shadow-sm">
 																			<button
 																				type="submit"
 																				disabled={isSubmitting}
@@ -440,7 +440,7 @@ const SitesInformation = (props) => {
 																			</button>
 																		</span>
 																	) : (
-																		<span className="inline-flex rounded-md shadow-xs-sm">
+																		<span className="inline-flex rounded-md shadow-sm">
 																			<button
 																				type="submit"
 																				disabled={isSubmitting}

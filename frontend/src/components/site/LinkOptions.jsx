@@ -45,7 +45,7 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
 				>
 					<div className={`ml-4 mt-2 w-64`}>
 						<div>
-							<div className={`mt-1 relative rounded-md shadow-xs-sm`}>
+							<div className={`mt-1 relative rounded-md shadow-sm`}>
 								<div
 									className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none`}
 								>
@@ -82,33 +82,33 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
 					</div>
 					{profile.group.id === 3 ? (
 						<div className={`ml-4 mt-2 flex items-center flex-shrink-0`}>
-							<span className={`inline-flex rounded-md shadow-xs-sm`}>
+							<span className={`inline-flex rounded-md shadow-sm`}>
 								<div className={`relative inline-block text-left`}>
 									<div>
-										<span className={`rounded-md shadow-xs-sm`}>
+										<span className={`rounded-md shadow-sm`}>
 											<button
-												type='button'
-												disabled='disabled'
+												type="button"
+												disabled="disabled"
 												className={`${
 													disableButton
 														? 'opacity-50 cursor-not-allowed'
 														: 'hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue active:bg-gray-50 active:text-gray-800'
 												}  inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 transition ease-in-out duration-150`}
-												id='options-menu'
-												aria-haspopup='true'
+												id="options-menu"
+												aria-haspopup="true"
 												aria-expanded={`${showDropdown ? 'true' : 'false'}`}
 												onClick={setDropdownToggle}
 											>
 												Export
 												<svg
 													className={`-mr-1 ml-2 h-5 w-5`}
-													viewBox='0 0 20 20'
-													fill='currentColor'
+													viewBox="0 0 20 20"
+													fill="currentColor"
 												>
 													<path
-														fillRule='evenodd'
-														d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'
-														clipRule='evenodd'
+														fillRule="evenodd"
+														d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+														clipRule="evenodd"
 													/>
 												</svg>
 											</button>
@@ -117,12 +117,12 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
 
 									<Transition
 										show={showDropdown}
-										enter='transition ease-out duration-100'
-										enterFrom='transform opacity-0 scale-95'
-										enterTo='transform opacity-100 scale-100'
-										leave='transition ease-in duration-75'
-										leaveFrom='transform opacity-100 scale-100'
-										leaveTo='transform opacity-0 scale-95'
+										enter="transition ease-out duration-100"
+										enterFrom="transform opacity-0 scale-95"
+										enterTo="transform opacity-100 scale-100"
+										leave="transition ease-in duration-75"
+										leaveFrom="transform opacity-100 scale-100"
+										leaveTo="transform opacity-0 scale-95"
 									>
 										<div
 											className={`origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-xs-lg`}
@@ -130,9 +130,9 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
 											<div className={`rounded-md bg-white shadow-xs`}>
 												<div
 													className={`py-1`}
-													role='menu'
-													aria-orientation='vertical'
-													aria-labelledby='options-menu'
+													role="menu"
+													aria-orientation="vertical"
+													aria-labelledby="options-menu"
 												>
 													<button
 														className={`block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem`}
@@ -141,7 +141,7 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
 													</button>
 													<button
 														className={`block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-														role='menuitem'
+														role="menuitem"
 													>
 														PDF
 													</button>

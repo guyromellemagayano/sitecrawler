@@ -300,7 +300,7 @@ const ProfileSettingsSubscription = () => {
 									>
 										{SubscriptionLabel[6].label}
 									</label>
-									<div className="mt-1 flex rounded-md shadow-xs-sm">
+									<div className="mt-1 flex rounded-md shadow-sm">
 										<input
 											type="text"
 											id="paymentMethod"
@@ -331,7 +331,7 @@ const ProfileSettingsSubscription = () => {
 					<div className="mt-8 border-t border-gray-300 pt-5">
 						<div className="flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row">
 							<div className="flex justify-start xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1 md:flex-col sm:w-full lg:order-1 lg:w-auto lg:flex lg:flex-row">
-								<span className="inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none">
+								<span className="inline-flex sm:inline-block lg:inline-flex rounded-md shadow-sm sm:flex-1 lg:flex-none">
 									<button
 										type="submit"
 										disabled={disableInputFields == 1 ? true : false}
@@ -346,10 +346,10 @@ const ProfileSettingsSubscription = () => {
 									</button>
 								</span>
 
-								<span className="inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none">
+								<span className="inline-flex sm:inline-block lg:inline-flex rounded-md shadow-sm sm:flex-1 lg:flex-none">
 									<button
 										disabled={disableInputFields == 1 ? false : true}
-										className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 bg-white text-sm sm:text-sm leading-5 sm:leading-5 font-medium text-gray-700 shadow-xs-sm transition ease-in-out duration-150 ${
+										className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 bg-white text-sm sm:text-sm leading-5 sm:leading-5 font-medium text-gray-700 shadow-sm transition ease-in-out duration-150 ${
 											disableInputFields == 1
 												? 'hover:text-gray-500 focus:outline-none'
 												: 'opacity-50 cursor-not-allowed'

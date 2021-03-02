@@ -175,7 +175,7 @@ const ProfileSettingsPersonal = () => {
 												>
 													{PersonalLabel[1].label}
 												</label>
-												<div className="mt-1 relative flex rounded-md shadow-xs-sm">
+												<div className="mt-1 relative flex rounded-md shadow-sm">
 													<input
 														type="text"
 														id="username"
@@ -229,7 +229,7 @@ const ProfileSettingsPersonal = () => {
 												>
 													{PersonalLabel[2].label}
 												</label>
-												<div className="mt-1 relative rounded-md shadow-xs-sm">
+												<div className="mt-1 relative rounded-md shadow-sm">
 													<input
 														type="text"
 														id="firstname"
@@ -278,7 +278,7 @@ const ProfileSettingsPersonal = () => {
 												>
 													{PersonalLabel[3].label}
 												</label>
-												<div className="mt-1 relative rounded-md shadow-xs-sm">
+												<div className="mt-1 relative rounded-md shadow-sm">
 													<input
 														type="text"
 														id="lastname"
@@ -327,7 +327,7 @@ const ProfileSettingsPersonal = () => {
 												>
 													{PersonalLabel[4].label}
 												</label>
-												<div className="mt-1 rounded-md shadow-xs-sm">
+												<div className="mt-1 rounded-md shadow-sm">
 													<input
 														id="email"
 														type="email"
@@ -343,7 +343,7 @@ const ProfileSettingsPersonal = () => {
 								<div className="mt-8 border-t border-gray-300 pt-5">
 									<div className="flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row">
 										<div className="flex justify-start xs:order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-auto">
-											<span className="inline-flex sm:inline-block lg:inline-flex rounded-md shadow-xs-sm sm:flex-1 lg:flex-none">
+											<span className="inline-flex sm:inline-block lg:inline-flex rounded-md shadow-sm sm:flex-1 lg:flex-none">
 												<button
 													type="submit"
 													disabled={disableInputFields}
@@ -357,7 +357,7 @@ const ProfileSettingsPersonal = () => {
 													{PersonalLabel[5].label}
 												</button>
 											</span>
-											<span className="xs:w-full ml-3 xs:ml-0 xs:mt-3 lg:mt-0 lg:ml-3 inline-flex rounded-md shadow-xs-sm">
+											<span className="xs:w-full ml-3 xs:ml-0 xs:mt-3 lg:mt-0 lg:ml-3 inline-flex rounded-md shadow-sm">
 												<button
 													type="submit"
 													disabled={!disableInputFields && !isSubmitting}

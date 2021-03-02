@@ -153,7 +153,7 @@ const SignupForm = (props) => {
 											>
 												{SignupLabel[6].label}
 											</label>
-											<div className="mt-1 rounded-md shadow-xs-sm">
+											<div className="mt-1 rounded-md shadow-sm">
 												<input
 													id="password"
 													type="password"
@@ -186,7 +186,7 @@ const SignupForm = (props) => {
 											>
 												{SignupLabel[7].label}
 											</label>
-											<div className="mt-1 rounded-md shadow-xs-sm">
+											<div className="mt-1 rounded-md shadow-sm">
 												<input
 													id="repeatPassword"
 													type="password"
@@ -212,7 +212,7 @@ const SignupForm = (props) => {
 										</div>
 
 										<div className="mt-6">
-											<span className="block w-full rounded-md shadow-xs-sm">
+											<span className="block w-full rounded-md shadow-sm">
 												<button
 													type="submit"
 													className="w-full flex justify-center mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
