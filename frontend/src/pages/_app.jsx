@@ -35,9 +35,9 @@ const App = ({ Component, pageProps }) => {
 			}}
 		>
 			<Elements stripe={stripePromise}>
-				<GlobalStyles />
 				<DefaultSeo {...SEO} />
 				<SiteHead />
+				<GlobalStyles />
 				<Component {...pageProps} />
 			</Elements>
 		</SWRConfig>
