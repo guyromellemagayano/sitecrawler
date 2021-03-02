@@ -1,11 +1,11 @@
-require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` });
-
 module.exports = {
 	trailingSlash: true,
-	devIndicators: {
-		autoPrerender: false
-	},
-	env: {
-		STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY
+	webpack: (config, { isServer }) => {
+		// Fixes packages that depend on fs/module module
+		if (!isServer) {
+			config.node = { fs: 'empty', module: 'empty' };
+		}
+
+		return config;
 	}
 };
