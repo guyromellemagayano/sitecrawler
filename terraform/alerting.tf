@@ -31,6 +31,7 @@ resource "aws_cloudwatch_metric_alarm" "alert_request_latency" {
   threshold           = "5"
   evaluation_periods  = "2"
   datapoints_to_alarm = "2"
+  treat_missing_data  = "notBreaching"
 
   dimensions = {
     LoadBalancer = aws_lb.production.arn_suffix
