@@ -16,3 +16,6 @@ class Site(models.Model):
     last_verify_error = models.CharField(max_length=255, null=True, blank=True)
 
     large_page_size_threshold = models.PositiveIntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user}: {self.url} ({self.id})"

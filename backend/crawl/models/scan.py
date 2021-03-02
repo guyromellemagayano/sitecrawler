@@ -69,3 +69,6 @@ class Scan(models.Model):
 
     class Meta:
         permissions = (("can_start_scan", "Can start manual scan"),)
+
+    def __str__(self):
+        return f"{self.site}: {self.started_at.date()} ({self.id})"
