@@ -3,6 +3,7 @@ import React from 'react';
 
 // External
 import 'core-js';
+import 'tailwindcss/tailwind.css';
 import { DefaultSeo } from 'next-seo';
 import { Elements } from '@stripe/react-stripe-js';
 import { fab } from '@fortawesome/free-brands-svg-icons';
@@ -18,10 +19,8 @@ import SEO from 'src/enum/nextSEO';
 import useFetcher from 'src/hooks/useFetcher';
 
 // Components
+import GlobalStyles from 'src/components/GlobalStyles';
 import SiteHead from 'src/components/layout/SiteHead';
-
-// Other imports
-import 'public/styles/app.css';
 
 // Font Awesome
 library.add(fab);
@@ -36,6 +35,7 @@ const App = ({ Component, pageProps }) => {
 			}}
 		>
 			<Elements stripe={stripePromise}>
+				<GlobalStyles />
 				<DefaultSeo {...SEO} />
 				<SiteHead />
 				<Component {...pageProps} />
