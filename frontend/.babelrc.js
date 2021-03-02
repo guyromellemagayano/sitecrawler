@@ -20,7 +20,11 @@ module.exports = {
 		[
 			'styled-components',
 			{
-				ssr: true
+				ssr: true,
+				displayName: true,
+				minify: true,
+				preprocess: false,
+				pure: true
 			}
 		],
 		[
