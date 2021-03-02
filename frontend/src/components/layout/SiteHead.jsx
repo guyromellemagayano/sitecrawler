@@ -51,23 +51,6 @@ const SiteHead = () => {
 	];
 
 	const metaTags = [
-		{
-			charset: 'utf-8'
-		},
-		{
-			name: 'viewport',
-			content:
-				'width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no'
-		},
-		{
-			name: 'description',
-			content: 'Monitor and Strengthen Your Websites'
-		},
-		{
-			name: 'keywords',
-			content: 'site, crawler, monitor, website'
-		},
-
 		// Android
 		{
 			name: 'theme-color',
