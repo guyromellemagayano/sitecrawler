@@ -144,7 +144,9 @@ resource "aws_cloudwatch_metric_alarm" "alert_ecs_prod_crawler_high_memory" {
   period              = "3600"
   statistic           = "Maximum"
   threshold           = 90
-  evaluation_periods  = "1"
+  evaluation_periods  = "2"
+  datapoints_to_alarm = "2"
+  treat_missing_data  = "notBreaching"
 
   dimensions = {
     ClusterName = aws_ecs_cluster.prod_fargate.name
@@ -163,7 +165,9 @@ resource "aws_cloudwatch_metric_alarm" "alert_ecs_prod_crawler_high_cpu" {
   period              = "3600"
   statistic           = "Maximum"
   threshold           = 90
-  evaluation_periods  = "1"
+  evaluation_periods  = "2"
+  datapoints_to_alarm = "2"
+  treat_missing_data  = "notBreaching"
 
   dimensions = {
     ClusterName = aws_ecs_cluster.prod_fargate.name
