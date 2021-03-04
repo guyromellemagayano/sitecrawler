@@ -30,6 +30,7 @@ func SerializeLoadError(log *zap.SugaredLogger, url string, err error) (int, str
 			!strings.HasSuffix(err.Error(), "server replied with more than declared Content-Length; truncated") &&
 			!strings.HasSuffix(err.Error(), "use of closed network connection") &&
 			!strings.Contains(err.Error(), "http2: server sent GOAWAY and closed the connection") &&
+			!strings.HasSuffix(err.Error(), "no route to host") &&
 			!strings.HasSuffix(err.Error(), "connection reset by peer") {
 			log.Errorw("Other error for link",
 				"url", url,

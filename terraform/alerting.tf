@@ -8,10 +8,12 @@ resource "aws_cloudwatch_metric_alarm" "alert_sqs_scan_queue" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   metric_name         = "ApproximateNumberOfMessagesVisible"
   namespace           = "AWS/SQS"
-  period              = "36000"
+  period              = "7200"
   statistic           = "Minimum"
   threshold           = "5"
-  evaluation_periods  = "1"
+  evaluation_periods  = "2"
+  datapoints_to_alarm = "2"
+  treat_missing_data  = "notBreaching"
 
   dimensions = {
     QueueName = "linkapp-production-scan"
@@ -31,6 +33,7 @@ resource "aws_cloudwatch_metric_alarm" "alert_request_latency" {
   threshold           = "5"
   evaluation_periods  = "2"
   datapoints_to_alarm = "2"
+  treat_missing_data  = "notBreaching"
 
   dimensions = {
     LoadBalancer = aws_lb.production.arn_suffix
@@ -48,7 +51,9 @@ resource "aws_cloudwatch_metric_alarm" "alert_db_read" {
   period              = "3600"
   extended_statistic  = "p90"
   threshold           = "0.1"
-  evaluation_periods  = "1"
+  evaluation_periods  = "2"
+  datapoints_to_alarm = "2"
+  treat_missing_data  = "notBreaching"
 
   dimensions = {
     DBInstanceIdentifier = aws_db_instance.production.id
@@ -66,7 +71,9 @@ resource "aws_cloudwatch_metric_alarm" "alert_db_write" {
   period              = "3600"
   extended_statistic  = "p90"
   threshold           = "0.1"
-  evaluation_periods  = "1"
+  evaluation_periods  = "2"
+  datapoints_to_alarm = "2"
+  treat_missing_data  = "notBreaching"
 
   dimensions = {
     DBInstanceIdentifier = aws_db_instance.production.id
@@ -84,7 +91,9 @@ resource "aws_cloudwatch_metric_alarm" "alert_db_disk_space" {
   period              = "300"
   statistic           = "Minimum"
   threshold           = aws_db_instance.production.allocated_storage*1024*1024*1024*0.1
-  evaluation_periods  = "1"
+  evaluation_periods  = "2"
+  datapoints_to_alarm = "2"
+  treat_missing_data  = "notBreaching"
 
   dimensions = {
     DBInstanceIdentifier = aws_db_instance.production.id
