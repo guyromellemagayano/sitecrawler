@@ -40,5 +40,11 @@
 	},
 	{
 		"label": "Submitting..."
+	},
+	{
+		"label": "Show Password"
+	},
+	{
+		"label": "Hide Password"
 	}
 ]
