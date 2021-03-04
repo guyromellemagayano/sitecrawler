@@ -1,4 +1,5 @@
 const colors = require('tailwindcss/colors');
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
 	purge: {
@@ -12,7 +13,12 @@ module.exports = {
 		extend: {
 			xs: '0 0 0 1px rgba(0, 0, 0, 0.05)',
 			outline: '0 0 0 3px rgba(66, 153, 225, 0.5)',
-			accessibility: ['hover', 'active']
+			accessibility: ['hover', 'active'],
+			colors: {
+				gray: {
+					1000: '#2a324b'
+				}
+			}
 		},
 		screens: {
 			'sm': '640px',
@@ -179,22 +185,7 @@ module.exports = {
 			DEFAULT: '1'
 		},
 		fontFamily: {
-			sans: [
-				'ui-sans-serif',
-				'system-ui',
-				'-apple-system',
-				'BlinkMacSystemFont',
-				'"Segoe UI"',
-				'Roboto',
-				'"Helvetica Neue"',
-				'Arial',
-				'"Noto Sans"',
-				'sans-serif',
-				'"Apple Color Emoji"',
-				'"Segoe UI Emoji"',
-				'"Segoe UI Symbol"',
-				'"Noto Color Emoji"'
-			],
+			sans: ['Inter var', ...defaultTheme.fontFamily.sans],
 			serif: [
 				'ui-serif',
 				'Georgia',
