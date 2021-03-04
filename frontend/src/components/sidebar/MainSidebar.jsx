@@ -30,7 +30,7 @@ const MainSidebar = (props) => {
 	});
 
 	return user ? (
-		<MainSidebarDiv className="hidden md:flex md:flex-shrink-0">
+		<MainSidebarDiv className="hidden md:flex md:flex-shrink-0 bg-gray-1000">
 			<div className="flex flex-col border-r border-gray-300 bg-gray-1000 w-64">
 				<div className="h-0 flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
 					<div className="flex items-center flex-shrink-0 flex-column px-5">

@@ -145,7 +145,7 @@ const SitesOverview = (props) => {
 								<button
 									type={`button`}
 									onClick={props.onCrawl}
-									className={`w-32 mt-3 mr-3 shadow sm:mt-0 relative items-center px-4 py-2 xs:px-0 xs:mr-0 xs:mt-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+									className={`w-32 mt-3 mr-3 shadow sm:mt-0 relative items-center px-4 py-2 xs:px-0 xs:mr-0 xs:mt-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-1000 transition ease-in-out duration-150`}
 								>
 									{OverviewLabel[0].label}
 								</button>
@@ -187,7 +187,7 @@ const SitesOverview = (props) => {
 												&nbsp;
 												<Moment
 													date={props.finishedAt}
-													format='hh:mm:ss A'
+													format="hh:mm:ss A"
 													local
 												/>
 											</dd>
@@ -208,7 +208,7 @@ const SitesOverview = (props) => {
 												&nbsp;
 												<Moment
 													date={props.finishedAt}
-													format='hh:mm:ss A'
+													format="hh:mm:ss A"
 													utc
 												/>
 											</dd>
@@ -260,14 +260,14 @@ const SitesOverview = (props) => {
 																	className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
 																>
 																	<svg
-																		fill='currentColor'
-																		viewBox='0 0 20 20'
+																		fill="currentColor"
+																		viewBox="0 0 20 20"
 																		className={`text-red-400`}
 																	>
 																		<path
-																			fillRule='evenodd'
-																			d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z'
-																			clipRule='evenodd'
+																			fillRule="evenodd"
+																			d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+																			clipRule="evenodd"
 																		></path>
 																	</svg>
 																</span>

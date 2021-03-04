@@ -1005,7 +1005,7 @@ const Seo = (props) => {
 									<div>
 										<nav className={`sm:hidden`}>
 											<Link
-												href='/dashboard/site/[siteId]/overview'
+												href="/dashboard/site/[siteId]/overview"
 												as={'/dashboard/site/' + query.siteId + '/overview'}
 											>
 												<a
@@ -1013,13 +1013,13 @@ const Seo = (props) => {
 												>
 													<svg
 														className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
-														viewBox='0 0 20 20'
-														fill='currentColor'
+														viewBox="0 0 20 20"
+														fill="currentColor"
 													>
 														<path
-															fillRule='evenodd'
-															d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
-															clipRule='evenodd'
+															fillRule="evenodd"
+															d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+															clipRule="evenodd"
 														/>
 													</svg>
 													{SeoLabel[0].label}
@@ -1030,7 +1030,7 @@ const Seo = (props) => {
 											className={`hidden sm:flex items-center text-sm leading-5`}
 										>
 											<Link
-												href='/dashboard/site/[siteId]/overview'
+												href="/dashboard/site/[siteId]/overview"
 												as={'/dashboard/site/' + query.siteId + '/overview'}
 											>
 												<a
@@ -1043,13 +1043,13 @@ const Seo = (props) => {
 												className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
 											>
 												<path
-													fillRule='evenodd'
-													d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
-													clipRule='evenodd'
+													fillRule="evenodd"
+													d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+													clipRule="evenodd"
 												/>
 											</svg>
 											<Link
-												href='/dashboard/site/[siteId]/seo'
+												href="/dashboard/site/[siteId]/seo"
 												as={'/dashboard/site/' + query.siteId + '/seo'}
 											>
 												<a
@@ -1080,13 +1080,13 @@ const Seo = (props) => {
 															>
 																<svg
 																	className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`}
-																	viewBox='0 0 20 20'
-																	fill='currentColor'
+																	viewBox="0 0 20 20"
+																	fill="currentColor"
 																>
 																	<path
-																		fillRule='evenodd'
-																		d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
-																		clipRule='evenodd'
+																		fillRule="evenodd"
+																		d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+																		clipRule="evenodd"
 																	/>
 																</svg>
 																{page.count > 0
@@ -1106,7 +1106,7 @@ const Seo = (props) => {
 											<button
 												type={`button`}
 												onClick={onCrawlHandler}
-												className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+												className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-1000 transition ease-in-out duration-150`}
 											>
 												{SeoLabel[4].label}
 											</button>
@@ -1140,7 +1140,7 @@ const Seo = (props) => {
 										noH2Second={noH2Second}
 									/>
 									<MyPagination
-										href='/dashboard/site/[siteId]/seo'
+										href="/dashboard/site/[siteId]/seo"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
 										page={props.result.page ? props.result.page : 0}
@@ -1179,7 +1179,7 @@ const Seo = (props) => {
 																							slug={site.slug}
 																						/>
 																					) : null}
-																					<span className='label'>
+																					<span className="label">
 																						{site.label}
 																					</span>
 																				</div>
@@ -1200,7 +1200,7 @@ const Seo = (props) => {
 									</div>
 
 									<MyPagination
-										href='/dashboard/site/[siteId]/seo'
+										href="/dashboard/site/[siteId]/seo"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
 										page={props.result.page ? props.result.page : 0}

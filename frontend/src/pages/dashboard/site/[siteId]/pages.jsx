@@ -615,7 +615,7 @@ const Pages = (props) => {
 									<div>
 										<nav className={`sm:hidden`}>
 											<Link
-												href='/dashboard/site/[siteId]/overview'
+												href="/dashboard/site/[siteId]/overview"
 												as={'/dashboard/site/' + query.siteId + '/overview'}
 											>
 												<a
@@ -623,13 +623,13 @@ const Pages = (props) => {
 												>
 													<svg
 														className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
-														viewBox='0 0 20 20'
-														fill='currentColor'
+														viewBox="0 0 20 20"
+														fill="currentColor"
 													>
 														<path
-															fillRule='evenodd'
-															d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
-															clipRule='evenodd'
+															fillRule="evenodd"
+															d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+															clipRule="evenodd"
 														/>
 													</svg>
 													{PagesLabel[0].label}
@@ -640,7 +640,7 @@ const Pages = (props) => {
 											className={`hidden sm:flex items-center text-sm leading-5`}
 										>
 											<Link
-												href='/dashboard/site/[siteId]/overview'
+												href="/dashboard/site/[siteId]/overview"
 												as={'/dashboard/site/' + query.siteId + '/overview'}
 											>
 												<a
@@ -653,13 +653,13 @@ const Pages = (props) => {
 												className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
 											>
 												<path
-													fillRule='evenodd'
-													d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
-													clipRule='evenodd'
+													fillRule="evenodd"
+													d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+													clipRule="evenodd"
 												/>
 											</svg>
 											<Link
-												href='/dashboard/site/[siteId]/pages'
+												href="/dashboard/site/[siteId]/pages"
 												as={'/dashboard/site/' + query.siteId + '/pages'}
 											>
 												<a
@@ -690,13 +690,13 @@ const Pages = (props) => {
 															>
 																<svg
 																	className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`}
-																	viewBox='0 0 20 20'
-																	fill='currentColor'
+																	viewBox="0 0 20 20"
+																	fill="currentColor"
 																>
 																	<path
-																		fillRule='evenodd'
-																		d='M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z'
-																		clipRule='evenodd'
+																		fillRule="evenodd"
+																		d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"
+																		clipRule="evenodd"
 																	/>
 																</svg>
 																{page.count > 0
@@ -716,7 +716,7 @@ const Pages = (props) => {
 											<button
 												type={`button`}
 												onClick={onCrawlHandler}
-												className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+												className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-1000 transition ease-in-out duration-150`}
 											>
 												{PagesLabel[4].label}
 											</button>
@@ -746,7 +746,7 @@ const Pages = (props) => {
 										brokenSecurityFilter={brokenSecurityFilter}
 									/>
 									<MyPagination
-										href='/dashboard/site/[siteId]/pages'
+										href="/dashboard/site/[siteId]/pages"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
 										page={props.result.page ? props.result.page : 0}
@@ -785,7 +785,7 @@ const Pages = (props) => {
 																							slug={site.slug}
 																						/>
 																					) : null}
-																					<span className='label flex items-center'>
+																					<span className="label flex items-center">
 																						{site.label}
 																					</span>
 																				</div>
@@ -806,7 +806,7 @@ const Pages = (props) => {
 									</div>
 
 									<MyPagination
-										href='/dashboard/site/[siteId]/pages'
+										href="/dashboard/site/[siteId]/pages"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
 										page={props.result.page ? props.result.page : 0}

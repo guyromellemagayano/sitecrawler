@@ -618,13 +618,13 @@ const Images = (props) => {
 												>
 													<svg
 														className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
-														viewBox='0 0 20 20'
-														fill='currentColor'
+														viewBox="0 0 20 20"
+														fill="currentColor"
 													>
 														<path
-															fillRule='evenodd'
-															d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
-															clipRule='evenodd'
+															fillRule="evenodd"
+															d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+															clipRule="evenodd"
 														/>
 													</svg>
 													{ImagesLabel[0].label}
@@ -647,9 +647,9 @@ const Images = (props) => {
 												className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
 											>
 												<path
-													fillRule='evenodd'
-													d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
-													clipRule='evenodd'
+													fillRule="evenodd"
+													d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+													clipRule="evenodd"
 												/>
 											</svg>
 											<Link
@@ -683,13 +683,13 @@ const Images = (props) => {
 															>
 																<svg
 																	className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`}
-																	viewBox='0 0 20 20'
-																	fill='currentColor'
+																	viewBox="0 0 20 20"
+																	fill="currentColor"
 																>
 																	<path
-																		fillRule='evenodd'
-																		d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z'
-																		clipRule='evenodd'
+																		fillRule="evenodd"
+																		d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+																		clipRule="evenodd"
 																	/>
 																</svg>
 																{image.count > 0
@@ -709,7 +709,7 @@ const Images = (props) => {
 											<button
 												type={`button`}
 												onClick={onCrawlHandler}
-												className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-900 transition ease-in-out duration-150`}
+												className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-1000 transition ease-in-out duration-150`}
 											>
 												{ImagesLabel[4].label}
 											</button>
@@ -739,7 +739,7 @@ const Images = (props) => {
 										imageBrokenSecurityFilter={imageBrokenSecurityFilter}
 									/>
 									<MyPagination
-										href='/dashboard/site/[siteId]/images'
+										href="/dashboard/site/[siteId]/images"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
 										page={props.result.page ? props.result.page : 0}
@@ -778,7 +778,7 @@ const Images = (props) => {
 																							slug={site.slug}
 																						/>
 																					) : null}
-																					<span className='label'>
+																					<span className="label">
 																						{site.label}
 																					</span>
 																				</div>
@@ -799,7 +799,7 @@ const Images = (props) => {
 									</div>
 
 									<MyPagination
-										href='/dashboard/site/[siteId]/images'
+										href="/dashboard/site/[siteId]/images"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
 										page={props.result.page ? props.result.page : 0}

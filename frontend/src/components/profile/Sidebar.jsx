@@ -50,7 +50,7 @@ const Sidebar = () => {
 			<button
 				type="button"
 				className={`p-4 flex items-center justify-between flex-shrink-0 w-full group focus:outline-none transition ease-in-out duration-150 ${
-					isComponentVisible ? 'bg-gray-900' : 'hover:bg-gray-900'
+					isComponentVisible ? 'bg-gray-1000' : 'hover:bg-gray-1000'
 				}`}
 				id="options-menu"
 				aria-haspopup="true"
