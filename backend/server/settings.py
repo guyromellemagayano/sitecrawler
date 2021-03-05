@@ -40,18 +40,11 @@ AWS_USE_SSL = True
 AWS_ENDPOINT_URL = None
 AWS_REGION = "us-east-1"
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get("DB_NAME", "postgres"),
-        "USER": os.environ.get("DB_USER", "postgres"),
-        "PASSWORD": os.environ.get("DB_PASS", "crawldev"),
-        "HOST": os.environ.get("DB_HOST", "db"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
-    }
-}
+DB_NAME = os.environ.get("DB_NAME", "postgres")
+DB_USER = os.environ.get("DB_USER", "postgres")
+DB_PASS = os.environ.get("DB_PASS", "crawldev")
+DB_HOST = os.environ.get("DB_HOST", "db")
+DB_PORT = os.environ.get("DB_PORT", "5432")
 
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
 
@@ -92,16 +85,9 @@ elif ENV == "production":
     EMAIL_USE_TLS = True
     EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
     DEFAULT_FROM_EMAIL = "noreply@sitecrawler.com"
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": "production",
-            "USER": "production",
-            "PASSWORD": os.environ.get("DB_PASS", "crawldev"),
-            "HOST": "terraform-20200810173347645600000001.ceavi2ewfiqg.us-east-1.rds.amazonaws.com",
-            "PORT": os.environ.get("DB_PORT", "5432"),
-        }
-    }
+    DB_NAME = "production"
+    DB_USER = "production"
+    DB_HOST = "terraform-20200810173347645600000001.ceavi2ewfiqg.us-east-1.rds.amazonaws.com"
     EMAIL_SUBJECT_PREFIX = "SiteCrawler - "
 elif ENV == "test":
     DEBUG = True
@@ -142,6 +128,22 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get(
 
 # pk of group that new users are auto added to
 DEFAULT_USER_GROUP = 1
+
+# Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": DB_NAME,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASS,
+        "HOST": DB_HOST,
+        "PORT": DB_PORT,
+        "OPTIONS": {
+            "options": "-c statement_timeout=60000",
+        },
+    }
+}
 
 # Application definition
 
