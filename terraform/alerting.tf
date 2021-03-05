@@ -8,11 +8,11 @@ resource "aws_cloudwatch_metric_alarm" "alert_sqs_scan_queue" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   metric_name         = "ApproximateNumberOfMessagesVisible"
   namespace           = "AWS/SQS"
-  period              = "7200"
+  period              = "3600"
   statistic           = "Minimum"
   threshold           = "5"
-  evaluation_periods  = "2"
-  datapoints_to_alarm = "2"
+  evaluation_periods  = "6"
+  datapoints_to_alarm = "6"
   treat_missing_data  = "notBreaching"
 
   dimensions = {
