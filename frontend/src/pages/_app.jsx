@@ -13,7 +13,7 @@ import { SWRConfig } from 'swr';
 import PropTypes from 'prop-types';
 
 // Enums
-import SEO from 'src/enum/nextSEO';
+import SEO from 'src/enum/nextSeo';
 
 // Hooks
 import useFetcher from 'src/hooks/useFetcher';
