@@ -13,5 +13,14 @@
 	},
 	{
 		"label": "Reload Link"
+	},
+	{
+		"label": "Loading..."
+	},
+	{
+		"label": "Success"
+	},
+	{
+		"label": "Failed"
 	}
 ]
