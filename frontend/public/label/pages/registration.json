@@ -46,5 +46,20 @@
 	},
 	{
 		"label": "Submitting..."
+	},
+	{
+		"label": "By signing up, you agree to the&nbsp;"
+	},
+	{
+		"label": "Terms of Service"
+	},
+	{
+		"label": "Privacy Policy"
+	},
+	{
+		"label": "Already have an account?&nbsp;"
+	},
+	{
+		"label": "Log In"
 	}
 ]
