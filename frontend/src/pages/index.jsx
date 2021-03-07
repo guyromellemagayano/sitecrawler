@@ -138,7 +138,6 @@ const Login = () => {
 
 															if (Math.floor(response.status / 200) === 1) {
 																setErrorMsg('');
-																setDisableLoginForm(!disableLoginForm);
 																setSuccessMsg(LoginLabel[12].label);
 
 																setTimeout(async () => {
@@ -194,10 +193,10 @@ const Login = () => {
 																		type="text"
 																		autoComplete="username"
 																		autoFocus={true}
-																		disabled={isSubmitting || disableLoginForm}
+																		disabled={isSubmitting}
 																		css={[
-																			tw`appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`,
-																			(isSubmitting || disableLoginForm) &&
+																			tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
+																			isSubmitting &&
 																				tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 																			errors.username ||
 																			errorEmailMsg ||
@@ -218,6 +217,7 @@ const Login = () => {
 																			errors.username}
 																	</span>
 																)}
+
 																{errorEmailMsg && (
 																	<span tw="block mt-2 text-xs leading-5 text-red-700">
 																		{errorEmailMsg}
@@ -236,12 +236,10 @@ const Login = () => {
 																	<div tw="text-xs">
 																		<button
 																			type="button"
-																			disabled={disableLoginForm}
 																			css={[
 																				tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none`,
-																				isSubmitting ||
-																					(disableLoginForm &&
-																						tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`)
+																				isSubmitting &&
+																					tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
 																			]}
 																			onClick={() =>
 																				setIsPasswordShown(!isPasswordShown)
@@ -260,10 +258,10 @@ const Login = () => {
 																		name="password"
 																		type="password"
 																		autoComplete="current-password"
-																		disabled={isSubmitting || disableLoginForm}
+																		disabled={isSubmitting}
 																		css={[
-																			tw`appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`,
-																			(isSubmitting || disableLoginForm) &&
+																			tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
+																			isSubmitting &&
 																				tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 																			errors.password || errorMsg
 																				? tw`border-red-300`
@@ -290,10 +288,10 @@ const Login = () => {
 																		id="rememberme"
 																		name="rememberme"
 																		type="checkbox"
-																		disabled={isSubmitting || disableLoginForm}
+																		disabled={isSubmitting}
 																		css={[
 																			tw`h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded`,
-																			(isSubmitting || disableLoginForm) &&
+																			isSubmitting &&
 																				tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`
 																		]}
 																		aria-describedby="rememberme"
@@ -311,10 +309,9 @@ const Login = () => {
 																<div tw="text-sm">
 																	<Link href="/reset-password">
 																		<a
-																			disabled={disableLoginForm}
 																			css={[
 																				tw`font-medium text-indigo-600 cursor-pointer`,
-																				isSubmitting || disableLoginForm
+																				isSubmitting
 																					? tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
 																					: tw`hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`
 																			]}
@@ -329,10 +326,10 @@ const Login = () => {
 																<span tw="block w-full rounded-md shadow-sm">
 																	<button
 																		type="submit"
-																		disabled={isSubmitting || disableLoginForm}
+																		disabled={isSubmitting}
 																		css={[
 																			tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
-																			isSubmitting || disableLoginForm
+																			isSubmitting
 																				? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
 																				: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 																		]}
@@ -364,14 +361,11 @@ const Login = () => {
 															<span tw="w-full inline-flex rounded-md shadow-sm">
 																<a
 																	href={googleLoginApiEndpoint}
-																	css={[
-																		tw`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500`,
-																		disableLoginForm
-																			? tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`
-																			: tw`hover:bg-gray-50`
-																	]}
+																	tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
 																>
-																	<span tw="sr-only">Sign in with Google</span>
+																	<span tw="sr-only">
+																		{LoginLabel[16].label}
+																	</span>
 																	<FontAwesomeIcon
 																		icon={['fab', 'google']}
 																		tw="w-4 h-4"
@@ -388,7 +382,7 @@ const Login = () => {
 																	tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
 																>
 																	<span tw="sr-only">
-																		Sign in with Facebook
+																		{LoginLabel[17].label}
 																	</span>
 																	<FontAwesomeIcon
 																		icon={['fab', 'facebook-f']}
@@ -406,7 +400,7 @@ const Login = () => {
 																	tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
 																>
 																	<span tw="sr-only">
-																		Sign in with LinkedIn
+																		{LoginLabel[18].label}
 																	</span>
 																	<FontAwesomeIcon
 																		icon={['fab', 'linkedin-in']}
@@ -423,15 +417,7 @@ const Login = () => {
 												<span tw="px-2 py-5 text-gray-600">
 													{ReactHtmlParser(LoginLabel[8].label)}
 													<Link href="/registration">
-														<a
-															disabled={disableLoginForm}
-															css={[
-																tw`font-medium text-indigo-600 cursor-pointer`,
-																disableLoginForm
-																	? tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
-																	: tw`hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`
-															]}
-														>
+														<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 															{LoginLabel[9].label}
 														</a>
 													</Link>
