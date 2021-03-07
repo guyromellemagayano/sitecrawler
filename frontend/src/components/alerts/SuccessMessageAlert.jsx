@@ -8,7 +8,7 @@ import tw from 'twin.macro';
 import CheckCircleSvg from 'src/components/svg/CheckCircleSvg';
 
 const SuccessMessageAlert = ({ message }) => (
-	<div tw="rounded-md bg-green-100 p-4 mb-8">
+	<div tw="rounded-md bg-green-100 p-4 mb-2">
 		<div tw="flex">
 			<div tw="flex-shrink-0">
 				<CheckCircleSvg className={tw`h-5 w-5 text-green-400`} />

@@ -8,7 +8,7 @@ import tw from 'twin.macro';
 import XCircleSvg from 'src/components/svg/XCircleSvg';
 
 const ErrorMessageAlert = ({ message }) => (
-	<div tw="rounded-md bg-red-100 p-4 mb-8">
+	<div tw="rounded-md bg-red-100 p-4 mb-2">
 		<div tw="flex">
 			<div tw="flex-shrink-0">
 				<XCircleSvg className={tw`h-5 w-5 text-red-400`} />

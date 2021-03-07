@@ -22,18 +22,13 @@ import usePostMethod from 'src/hooks/usePostMethod';
 import ErrorMessageAlert from 'src/components/alerts/ErrorMessageAlert';
 import Layout from 'src/components/Layout';
 import LogoLabel from 'src/components/form/LogoLabel';
-import SiteFooter from 'src/components/footer/SiteFooter';
 import SuccessMessageAlert from 'src/components/alerts/SuccessMessageAlert';
 
 const Registration = () => {
-	const [errorMsg, setErrorMsg] = useState('');
+	const [errorMsg, setErrorMsg] = useState([]);
 	const [successMsg, setSuccessMsg] = useState('');
-	const [errorFirstnameMsg, setErrorFirstnameMsg] = useState('');
-	const [errorLastnameMsg, setErrorLastnameMsg] = useState('');
-	const [errorUsernameMsg, setErrorUsernameMsg] = useState('');
-	const [errorEmailMsg, setErrorEmailMsg] = useState('');
-	const [errorPassword1Msg, setErrorPassword1Msg] = useState('');
-	const [errorPassword2Msg, setErrorPassword2Msg] = useState('');
+	const [errorUsername, setErrorUsername] = useState(false);
+	const [errorEmail, setErrorEmail] = useState(false);
 
 	const pageTitle = 'Registration';
 	const registrationApiEndpoint = '/api/auth/registration/';
@@ -46,10 +41,12 @@ const Registration = () => {
 				<LogoLabel isSignUp />
 
 				<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-					{errorMsg && <ErrorMessageAlert message={errorMsg} />}
+					{errorMsg.map((value, index) => {
+						return <ErrorMessageAlert key={index} message={value} />;
+					})}
 					{successMsg && <SuccessMessageAlert message={successMsg} />}
 
-					<div tw="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
+					<div tw="bg-white my-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
 						<Formik
 							initialValues={{
 								firstname: '',
@@ -96,8 +93,9 @@ const Registration = () => {
 										body
 									);
 
+									setErrorMsg([]);
+
 									if (Math.floor(response.status / 200) === 1) {
-										setErrorMsg('');
 										setSubmitting(false);
 										resetForm({ values: '' });
 										setSuccessMsg(RegistrationLabel[2].label);
@@ -105,34 +103,22 @@ const Registration = () => {
 										if (response.data) {
 											setSuccessMsg('');
 
-											if (response.data.first_name) {
-												setErrorFirstnameMsg(response.data.first_name);
-											}
-											if (response.data.last_name) {
-												setErrorLastnameMsg(response.data.last_name);
-											}
 											if (response.data.username) {
-												setErrorUsernameMsg(response.data.username);
-											}
-											if (response.data.email) {
-												setErrorEmailMsg(response.data.email);
-											}
-											if (response.data.password1) {
-												setErrorPassword1Msg(response.data.password1);
-											}
-											if (response.data.password2) {
-												setErrorPassword2Msg(response.data.password2);
-											}
-											if (
-												!response.data.first_name &&
-												!response.data.last_name &&
-												!response.data.username &&
-												!response.data.email &&
-												!response.data.password1 &&
-												!response.data.password2
-											) {
 												setSubmitting(false);
-												setErrorMsg(RegistrationLabel[3].label);
+												setErrorMsg((errorMsg) => [
+													...errorMsg,
+													response.data.username
+												]);
+												setErrorUsername(!errorUsername);
+											}
+
+											if (response.data.email) {
+												setSubmitting(false);
+												setErrorMsg((errorMsg) => [
+													...errorMsg,
+													response.data.email
+												]);
+												setErrorEmail(!errorEmail);
 											}
 										} else {
 											setSubmitting(false);
@@ -172,7 +158,7 @@ const Registration = () => {
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 													isSubmitting &&
 														tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-													errors.firstname || errorFirstnameMsg || errorMsg
+													errors.firstname
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
@@ -187,11 +173,6 @@ const Registration = () => {
 												{errors.firstname &&
 													touched.firstname &&
 													errors.firstname}
-											</span>
-										)}
-										{errorFirstnameMsg && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
-												{errorFirstnameMsg}
 											</span>
 										)}
 									</div>
@@ -213,7 +194,7 @@ const Registration = () => {
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 													isSubmitting &&
 														tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-													errors.lastname || errorLastnameMsg || errorMsg
+													errors.lastname
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
@@ -226,11 +207,6 @@ const Registration = () => {
 										{errors.lastname && touched.lastname && (
 											<span tw="block mt-2 text-xs leading-5 text-red-700">
 												{errors.lastname && touched.lastname && errors.lastname}
-											</span>
-										)}
-										{errorLastnameMsg && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
-												{errorLastnameMsg}
 											</span>
 										)}
 									</div>
@@ -252,7 +228,7 @@ const Registration = () => {
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 													isSubmitting &&
 														tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-													errors.username || errorUsernameMsg || errorMsg
+													errors.username || errorUsername
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
@@ -265,11 +241,6 @@ const Registration = () => {
 										{errors.username && touched.username && (
 											<span tw="block mt-2 text-xs leading-5 text-red-700">
 												{errors.username && touched.username && errors.username}
-											</span>
-										)}
-										{errorUsernameMsg && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
-												{errorUsernameMsg}
 											</span>
 										)}
 									</div>
@@ -291,7 +262,7 @@ const Registration = () => {
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 													isSubmitting &&
 														tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none pointer-events-none`,
-													errors.email || errorEmailMsg || errorMsg
+													errors.email || errorEmail
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
@@ -304,11 +275,6 @@ const Registration = () => {
 										{errors.email && touched.email && (
 											<span tw="block mt-2 text-xs leading-5 text-red-700">
 												{errors.email && touched.email && errors.email}
-											</span>
-										)}
-										{errorEmailMsg && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
-												{errorEmailMsg}
 											</span>
 										)}
 									</div>
@@ -330,7 +296,7 @@ const Registration = () => {
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 													isSubmitting &&
 														tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-													errors.password1 || errorPassword1Msg || errorMsg
+													errors.password1
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
@@ -346,11 +312,6 @@ const Registration = () => {
 												{errors.password1 &&
 													touched.password1 &&
 													errors.password1}
-											</span>
-										)}
-										{errorPassword1Msg && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
-												{errorFirstnameMsg}
 											</span>
 										)}
 									</div>
@@ -372,7 +333,7 @@ const Registration = () => {
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:text-sm sm:leading-5`,
 													isSubmitting &&
 														tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-													errors.password2 || errorPassword2Msg || errorMsg
+													errors.password2
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
@@ -387,11 +348,6 @@ const Registration = () => {
 												{errors.password2 &&
 													touched.password2 &&
 													errors.password2}
-											</span>
-										)}
-										{errorPassword2Msg && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
-												{errorPassword2Msg}
 											</span>
 										)}
 									</div>
