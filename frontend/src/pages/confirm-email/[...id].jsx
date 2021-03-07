@@ -90,10 +90,7 @@ const ConfirmEmail = () => {
 								</div>
 								<div tw="mt-5">
 									<Link href="/">
-										<a
-											type="button"
-											tw="relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-										>
+										<a tw="relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 											{ConfirmEmailLabel[3].label}
 										</a>
 									</Link>
@@ -112,7 +109,7 @@ const ConfirmEmail = () => {
 								<div tw="mt-5">
 									<button
 										type="button"
-										tw="relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+										tw="relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white cursor-pointer bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
 										onClick={handlePageRefresh}
 									>
 										{ConfirmEmailLabel[4].label}
