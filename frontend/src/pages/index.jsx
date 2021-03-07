@@ -32,9 +32,8 @@ import SiteFooter from 'src/components/footer/SiteFooter';
 import SuccessMessageAlert from 'src/components/alerts/SuccessMessageAlert';
 
 const Login = () => {
-	const [errorMsg, setErrorMsg] = useState(null);
-	const [successMsg, setSuccessMsg] = useState(null);
-	const [errorEmailMsg, setErrorEmailMsg] = useState(null);
+	const [errorMsg, setErrorMsg] = useState([]);
+	const [successMsg, setSuccessMsg] = useState([]);
 	const [disableLoginForm, setDisableLoginForm] = useState(false);
 	const [redirectTo, setRedirectTo] = useState('/dashboard/sites');
 
@@ -96,12 +95,18 @@ const Login = () => {
 										<LogoLabel isLogin />
 
 										<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-											{errorMsg && <ErrorMessageAlert message={errorMsg} />}
-											{successMsg && (
-												<SuccessMessageAlert message={successMsg} />
-											)}
+											{errorMsg.map((value, index) => {
+												return (
+													<ErrorMessageAlert key={index} message={value} />
+												);
+											})}
+											{successMsg.map((value, index) => {
+												return (
+													<SuccessMessageAlert key={index} message={value} />
+												);
+											})}
 
-											<div tw="bg-white py-8 px-4 rounded-lg sm:px-10 shadow-xl">
+											<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
 												<Formik
 													initialValues={{
 														username: '',
@@ -136,30 +141,33 @@ const Login = () => {
 																body
 															);
 
+															setErrorMsg([]);
+															setSuccessMsg([]);
+
 															if (Math.floor(response.status / 200) === 1) {
-																setErrorMsg('');
-																setSuccessMsg(LoginLabel[12].label);
+																setSubmitting(false);
+																setDisableLoginForm(!disableLoginForm);
+																setSuccessMsg((successMsg) => [
+																	...successMsg,
+																	LoginLabel[12].label
+																]);
 
 																setTimeout(async () => {
 																	mutateUser(response.data);
 																}, 1500);
 															} else {
 																if (response.data) {
-																	setSuccessMsg('');
+																	// FIXME: Django exception error in response.data
+																	console.log(response.data);
 
-																	if (
-																		response.data.non_field_errors ===
-																		'E-mail is not verified.'
-																	) {
-																		setErrorEmailMsg(
-																			response.data.non_field_errors
-																		);
-																	} else {
-																		setErrorMsg(response.data.non_field_errors);
-																	}
-																} else {
 																	setSubmitting(false);
+																	setErrorMsg((errorMsg) => [
+																		...errorMsg,
+																		response.data.non_field_errors
+																	]);
+																} else {
 																	resetForm({ values: '' });
+																	setSubmitting(false);
 																	setErrorMsg(LoginLabel[11].label);
 																}
 															}
@@ -177,240 +185,247 @@ const Login = () => {
 														handleSubmit,
 														isSubmitting
 													}) => (
-														<form onSubmit={handleSubmit}>
-															<div tw="mt-1">
-																<label
-																	htmlFor="username"
-																	tw="block text-sm font-medium text-gray-700"
-																>
-																	{LoginLabel[2].label}
-																</label>
+														<>
+															<form onSubmit={handleSubmit}>
 																<div tw="mt-1">
-																	<input
-																		ref={usernameRef}
-																		id="username"
-																		name="username"
-																		type="text"
-																		autoComplete="username"
-																		autoFocus={true}
-																		disabled={isSubmitting}
-																		css={[
-																			tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-																			isSubmitting &&
-																				tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-																			errors.username ||
-																			errorEmailMsg ||
-																			errorMsg
-																				? tw`border-red-300`
-																				: tw`border-gray-300`
-																		]}
-																		aria-describedby="username"
-																		onChange={handleChange}
-																		value={values.username}
-																	/>
-																</div>
-
-																{errors.username && touched.username && (
-																	<span tw="block mt-2 text-xs leading-5 text-red-700">
-																		{errors.username &&
-																			touched.username &&
-																			errors.username}
-																	</span>
-																)}
-
-																{errorEmailMsg && (
-																	<span tw="block mt-2 text-xs leading-5 text-red-700">
-																		{errorEmailMsg}
-																	</span>
-																)}
-															</div>
-
-															<div tw="mt-6">
-																<div tw="flex items-center justify-between">
 																	<label
-																		htmlFor="password"
+																		htmlFor="username"
 																		tw="block text-sm font-medium text-gray-700"
 																	>
-																		{LoginLabel[3].label}
+																		{LoginLabel[2].label}
 																	</label>
-																	<div tw="text-xs">
-																		<button
-																			type="button"
-																			css={[
-																				tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none`,
-																				isSubmitting &&
-																					tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
-																			]}
-																			onClick={() =>
-																				setIsPasswordShown(!isPasswordShown)
+																	<div tw="mt-1">
+																		<input
+																			ref={usernameRef}
+																			id="username"
+																			name="username"
+																			type="text"
+																			autoComplete="username"
+																			autoFocus={true}
+																			disabled={
+																				isSubmitting || disableLoginForm
 																			}
+																			css={[
+																				tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
+																				(isSubmitting || disableLoginForm) &&
+																					tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+																				errors.username || errorMsg.length
+																					? tw`border-red-300`
+																					: tw`border-gray-300`
+																			]}
+																			aria-describedby="username"
+																			onChange={handleChange}
+																			value={values.username}
+																		/>
+																	</div>
+
+																	{errors.username && touched.username && (
+																		<span tw="block mt-2 text-xs leading-5 text-red-700">
+																			{errors.username &&
+																				touched.username &&
+																				errors.username}
+																		</span>
+																	)}
+																</div>
+
+																<div tw="mt-6">
+																	<div tw="flex items-center justify-between">
+																		<label
+																			htmlFor="password"
+																			tw="block text-sm font-medium text-gray-700"
 																		>
-																			{isPasswordShown
-																				? LoginLabel[15].label
-																				: LoginLabel[14].label}
-																		</button>
+																			{LoginLabel[3].label}
+																		</label>
+																		<div tw="text-xs">
+																			<button
+																				type="button"
+																				css={[
+																					tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none`,
+																					(isSubmitting || disableLoginForm) &&
+																						tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
+																				]}
+																				onClick={() =>
+																					setIsPasswordShown(!isPasswordShown)
+																				}
+																			>
+																				{isPasswordShown
+																					? LoginLabel[15].label
+																					: LoginLabel[14].label}
+																			</button>
+																		</div>
+																	</div>
+																	<div tw="mt-1">
+																		<input
+																			ref={passwordRef}
+																			id="password"
+																			name="password"
+																			type="password"
+																			autoComplete="current-password"
+																			disabled={
+																				isSubmitting || disableLoginForm
+																			}
+																			css={[
+																				tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
+																				(isSubmitting || disableLoginForm) &&
+																					tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+																				errors.password || errorMsg.length
+																					? tw`border-red-300`
+																					: tw`border-gray-300`
+																			]}
+																			aria-describedby="password"
+																			onChange={handleChange}
+																			value={values.password}
+																		/>
+																	</div>
+
+																	{errors.password && touched.password && (
+																		<span tw="block mt-2 text-xs leading-5 text-red-700">
+																			{errors.password &&
+																				touched.password &&
+																				errors.password}
+																		</span>
+																	)}
+																</div>
+
+																<div tw="mt-6 flex items-center justify-between">
+																	<div tw="flex items-center">
+																		<input
+																			id="rememberme"
+																			name="rememberme"
+																			type="checkbox"
+																			disabled={
+																				isSubmitting || disableLoginForm
+																			}
+																			css={[
+																				tw`h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded`,
+																				(isSubmitting || disableLoginForm) &&
+																					tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`
+																			]}
+																			aria-describedby="rememberme"
+																			onChange={handleChange}
+																			value={values.rememberme}
+																		/>
+																		<label
+																			htmlFor="rememberme"
+																			tw="ml-2 block text-sm text-gray-900"
+																		>
+																			{LoginLabel[4].label}
+																		</label>
+																	</div>
+
+																	<div tw="text-sm">
+																		<Link href="/reset-password">
+																			<a
+																				css={[
+																					tw`font-medium text-indigo-600 cursor-pointer`,
+																					isSubmitting || disableLoginForm
+																						? tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
+																						: tw`hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`
+																				]}
+																			>
+																				{LoginLabel[5].label}
+																			</a>
+																		</Link>
 																	</div>
 																</div>
-																<div tw="mt-1">
-																	<input
-																		ref={passwordRef}
-																		id="password"
-																		name="password"
-																		type="password"
-																		autoComplete="current-password"
-																		disabled={isSubmitting}
-																		css={[
-																			tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-																			isSubmitting &&
-																				tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-																			errors.password || errorMsg
-																				? tw`border-red-300`
-																				: tw`border-gray-300`
-																		]}
-																		aria-describedby="password"
-																		onChange={handleChange}
-																		value={values.password}
-																	/>
-																</div>
 
-																{errors.password && touched.password && (
-																	<span tw="block mt-2 text-xs leading-5 text-red-700">
-																		{errors.password &&
-																			touched.password &&
-																			errors.password}
-																	</span>
-																)}
-															</div>
-
-															<div tw="mt-6 flex items-center justify-between">
-																<div tw="flex items-center">
-																	<input
-																		id="rememberme"
-																		name="rememberme"
-																		type="checkbox"
-																		disabled={isSubmitting}
-																		css={[
-																			tw`h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded`,
-																			isSubmitting &&
-																				tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`
-																		]}
-																		aria-describedby="rememberme"
-																		onChange={handleChange}
-																		value={values.rememberme}
-																	/>
-																	<label
-																		htmlFor="rememberme"
-																		tw="ml-2 block text-sm text-gray-900"
-																	>
-																		{LoginLabel[4].label}
-																	</label>
-																</div>
-
-																<div tw="text-sm">
-																	<Link href="/reset-password">
-																		<a
+																<div tw="mt-6">
+																	<span tw="block w-full rounded-md shadow-sm">
+																		<button
+																			type="submit"
+																			disabled={
+																				isSubmitting || disableLoginForm
+																			}
 																			css={[
-																				tw`font-medium text-indigo-600 cursor-pointer`,
-																				isSubmitting
-																					? tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
-																					: tw`hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`
+																				tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
+																				isSubmitting || disableLoginForm
+																					? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
+																					: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 																			]}
 																		>
-																			{LoginLabel[5].label}
-																		</a>
-																	</Link>
+																			{isSubmitting || disableLoginForm
+																				? LoginLabel[13].label
+																				: LoginLabel[6].label}
+																		</button>
+																	</span>
 																</div>
-															</div>
+															</form>
 
 															<div tw="mt-6">
-																<span tw="block w-full rounded-md shadow-sm">
-																	<button
-																		type="submit"
-																		disabled={isSubmitting}
-																		css={[
-																			tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
-																			isSubmitting
-																				? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
-																				: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-																		]}
-																	>
-																		{isSubmitting
-																			? LoginLabel[13].label
-																			: LoginLabel[6].label}
-																	</button>
-																</span>
+																<div tw="relative">
+																	<div tw="absolute inset-0 flex items-center">
+																		<div tw="w-full border-t border-gray-300"></div>
+																	</div>
+																	<div tw="relative flex justify-center text-sm leading-5">
+																		<span tw="px-2 bg-white text-gray-600">
+																			{LoginLabel[7].label}
+																		</span>
+																	</div>
+																</div>
+
+																<div tw="mt-6 grid grid-cols-3 gap-3">
+																	<div>
+																		<span tw="w-full inline-flex rounded-md shadow-sm">
+																			<a
+																				href={googleLoginApiEndpoint}
+																				css={[
+																					tw`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500`,
+																					isSubmitting || disableLoginForm
+																						? tw`bg-gray-300 cursor-not-allowed pointer-events-none`
+																						: tw`hover:bg-gray-50`
+																				]}
+																			>
+																				<span tw="sr-only">
+																					{LoginLabel[16].label}
+																				</span>
+																				<FontAwesomeIcon
+																					icon={['fab', 'google']}
+																					tw="w-4 h-4"
+																				/>
+																			</a>
+																		</span>
+																	</div>
+
+																	<div>
+																		<span tw="w-full inline-flex rounded-md shadow-sm">
+																			<a
+																				href="#"
+																				disabled={true}
+																				tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
+																			>
+																				<span tw="sr-only">
+																					{LoginLabel[17].label}
+																				</span>
+																				<FontAwesomeIcon
+																					icon={['fab', 'facebook-f']}
+																					tw="w-4 h-4"
+																				/>
+																			</a>
+																		</span>
+																	</div>
+
+																	<div>
+																		<span tw="w-full inline-flex rounded-md shadow-sm">
+																			<a
+																				href="#"
+																				disabled={true}
+																				tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
+																			>
+																				<span tw="sr-only">
+																					{LoginLabel[18].label}
+																				</span>
+																				<FontAwesomeIcon
+																					icon={['fab', 'linkedin-in']}
+																					tw="w-4 h-4"
+																				/>
+																			</a>
+																		</span>
+																	</div>
+																</div>
 															</div>
-														</form>
+														</>
 													)}
 												</Formik>
-
-												<div tw="mt-6">
-													<div tw="relative">
-														<div tw="absolute inset-0 flex items-center">
-															<div tw="w-full border-t border-gray-300"></div>
-														</div>
-														<div tw="relative flex justify-center text-sm leading-5">
-															<span tw="px-2 bg-white text-gray-600">
-																{LoginLabel[7].label}
-															</span>
-														</div>
-													</div>
-
-													<div tw="mt-6 grid grid-cols-3 gap-3">
-														<div>
-															<span tw="w-full inline-flex rounded-md shadow-sm">
-																<a
-																	href={googleLoginApiEndpoint}
-																	tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-																>
-																	<span tw="sr-only">
-																		{LoginLabel[16].label}
-																	</span>
-																	<FontAwesomeIcon
-																		icon={['fab', 'google']}
-																		tw="w-4 h-4"
-																	/>
-																</a>
-															</span>
-														</div>
-
-														<div>
-															<span tw="w-full inline-flex rounded-md shadow-sm">
-																<a
-																	href="#"
-																	disabled="true"
-																	tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
-																>
-																	<span tw="sr-only">
-																		{LoginLabel[17].label}
-																	</span>
-																	<FontAwesomeIcon
-																		icon={['fab', 'facebook-f']}
-																		tw="w-4 h-4"
-																	/>
-																</a>
-															</span>
-														</div>
-
-														<div>
-															<span tw="w-full inline-flex rounded-md shadow-sm">
-																<a
-																	href="#"
-																	disabled="true"
-																	tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
-																>
-																	<span tw="sr-only">
-																		{LoginLabel[18].label}
-																	</span>
-																	<FontAwesomeIcon
-																		icon={['fab', 'linkedin-in']}
-																		tw="w-4 h-4"
-																	/>
-																</a>
-															</span>
-														</div>
-													</div>
-												</div>
 											</div>
 
 											<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">

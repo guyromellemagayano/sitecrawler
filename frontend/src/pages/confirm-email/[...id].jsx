@@ -46,9 +46,7 @@ const ConfirmEmail = () => {
 				if (response.data) {
 					setSuccessMsg('');
 					setFailure(!failure);
-
-					// FIXME: response.data of handleSendPostRequest function
-					console.log(response.data);
+					setErrorMsg(response.data.detail);
 				} else {
 					setErrorMsg(ConfirmEmailLabel[1].label);
 				}
@@ -79,8 +77,14 @@ const ConfirmEmail = () => {
 
 			<div tw="bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 				<div tw="sm:mx-auto sm:w-full sm:max-w-md">
-					<div tw="bg-white shadow rounded-lg">
-						{success && (
+					{!success && !failure ? (
+						<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
+							<h3 tw="text-lg leading-6 font-medium text-gray-500">
+								{ConfirmEmailLabel[5].label}
+							</h3>
+						</div>
+					) : success ? (
+						<div tw="bg-white shadow rounded-lg">
 							<div tw="px-4 py-5 sm:p-6">
 								<h3 tw="text-lg leading-6 font-medium text-gray-900">
 									{ConfirmEmailLabel[2].label} {ConfirmEmailLabel[6].label}
@@ -96,9 +100,9 @@ const ConfirmEmail = () => {
 									</Link>
 								</div>
 							</div>
-						)}
-
-						{failure && (
+						</div>
+					) : (
+						<div tw="bg-white shadow rounded-lg">
 							<div tw="px-4 py-5 sm:p-6">
 								<h3 tw="text-lg leading-6 font-medium text-gray-900">
 									{ConfirmEmailLabel[2].label} {ConfirmEmailLabel[7].label}
@@ -116,8 +120,8 @@ const ConfirmEmail = () => {
 									</button>
 								</div>
 							</div>
-						)}
-					</div>
+						</div>
+					)}
 				</div>
 			</div>
 		</Layout>

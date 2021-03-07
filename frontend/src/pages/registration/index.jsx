@@ -1,5 +1,5 @@
 // React
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 
 // NextJS
 import Link from 'next/link';
@@ -12,6 +12,7 @@ import PasswordStrengthBar from 'react-password-strength-bar';
 import PropTypes from 'prop-types';
 import ReactHtmlParser from 'react-html-parser';
 import tw from 'twin.macro';
+
 // JSON
 import RegistrationLabel from 'public/label/pages/registration.json';
 
@@ -26,7 +27,7 @@ import SuccessMessageAlert from 'src/components/alerts/SuccessMessageAlert';
 
 const Registration = () => {
 	const [errorMsg, setErrorMsg] = useState([]);
-	const [successMsg, setSuccessMsg] = useState('');
+	const [successMsg, setSuccessMsg] = useState([]);
 	const [errorUsername, setErrorUsername] = useState(false);
 	const [errorEmail, setErrorEmail] = useState(false);
 
@@ -44,9 +45,11 @@ const Registration = () => {
 					{errorMsg.map((value, index) => {
 						return <ErrorMessageAlert key={index} message={value} />;
 					})}
-					{successMsg && <SuccessMessageAlert message={successMsg} />}
+					{successMsg.map((value, index) => {
+						return <SuccessMessageAlert key={index} message={value} />;
+					})}
 
-					<div tw="bg-white my-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
+					<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
 						<Formik
 							initialValues={{
 								firstname: '',
@@ -93,16 +96,20 @@ const Registration = () => {
 										body
 									);
 
-									setErrorMsg([]);
-
 									if (Math.floor(response.status / 200) === 1) {
-										setSubmitting(false);
+										setErrorMsg([]);
+										setSuccessMsg([]);
 										resetForm({ values: '' });
-										setSuccessMsg(RegistrationLabel[2].label);
+										setSubmitting(false);
+										setSuccessMsg((successMsg) => [
+											...successMsg,
+											RegistrationLabel[2].label
+										]);
 									} else {
-										if (response.data) {
-											setSuccessMsg('');
+										setErrorMsg([]);
+										setSuccessMsg([]);
 
+										if (response.data) {
 											if (response.data.username) {
 												setSubmitting(false);
 												setErrorMsg((errorMsg) => [
@@ -121,8 +128,8 @@ const Registration = () => {
 												setErrorEmail(!errorEmail);
 											}
 										} else {
-											setSubmitting(false);
 											resetForm({ values: '' });
+											setSubmitting(false);
 											setErrorMsg(RegistrationLabel[3].label);
 										}
 									}
