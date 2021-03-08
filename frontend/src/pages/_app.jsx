@@ -44,10 +44,6 @@ const getStripeKey = async (...args) => {
 	}
 };
 
-// const stripePromise = loadStripe(
-// 	stripeKey && stripeKey !== undefined && stripeKey
-// );
-
 const App = ({ Component, pageProps }) => {
 	const stripeConfigApiEndpoint = '/api/stripe/config/';
 
