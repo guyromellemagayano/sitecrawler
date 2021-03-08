@@ -47,10 +47,7 @@ const useUser = ({ redirectTo, redirectIfFound }) => {
 	return { user, mutateUser, userError };
 };
 
-useUser.propTypes = {
-	redirectIfFound: PropTypes.boolean,
-	redirectTo: PropTypes.boolean
-};
+useUser.propTypes = {};
 
 useUser.defaultProps = {
 	redirectTo: false,
