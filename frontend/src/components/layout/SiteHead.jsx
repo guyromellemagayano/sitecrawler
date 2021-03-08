@@ -201,7 +201,9 @@ const SiteHead = () => {
 					);
 				})}
 				<script src="/scripts/beacon.js" type="text/javascript" />
-				<script src="/scripts/usetiful.js" type="text/javascript" />
+
+				{/* FIXME: usetiful script */}
+				{/* <script src="/scripts/usetiful.js" type="text/javascript" /> */}
 			</>
 		</Head>
 	);
