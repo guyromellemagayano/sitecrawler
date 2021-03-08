@@ -6,6 +6,9 @@ terraform {
     random = {
       source = "hashicorp/random"
     }
+    postgresql = {
+      source = "cyrilgdn/postgresql"
+    }
   }
   required_version = ">= 0.13"
 }
