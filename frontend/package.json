@@ -38,6 +38,7 @@
     "core-js": "^3.9.1",
     "formik": "^2.2.0",
     "js-cookie": "^2.2.1",
+    "lodash": "^4.17.21",
     "logrocket": "^1.0.12",
     "logrocket-react": "^4.0.1",
     "moment": "^2.29.1",
