@@ -18,7 +18,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db := common.ConfigureDatabase(log, awsSession, env)
+	db := common.ConfigureDatabase(log, awsSession, "crawler", env)
 	defer db.Close()
 
 	scanQueueName := fmt.Sprintf("linkapp-%s-scan", env)

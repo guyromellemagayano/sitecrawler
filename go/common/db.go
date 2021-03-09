@@ -1,6 +1,7 @@
 package common
 
 import (
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -10,13 +11,16 @@ import (
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 )
 
-func ConfigureDatabase(log *zap.SugaredLogger, awsSession *session.Session, env string) *database.Database {
-	dbPass := Secret(log, awsSession, env, "DB_PASS", "crawldev")
+func ConfigureDatabase(log *zap.SugaredLogger, awsSession *session.Session, user, env string) *database.Database {
+	dbPass := Secret(log, awsSession, env, "DB_PASS_"+strings.ToUpper(user), "")
+	if dbPass == "" {
+		dbPass = Secret(log, awsSession, env, "DB_PASS", "crawldev")
+	}
 	var pgOptions *pg.Options
 	if env == "production" {
 		pgOptions = &pg.Options{
 			Addr:     "terraform-20200810173347645600000001.ceavi2ewfiqg.us-east-1.rds.amazonaws.com:5432",
-			User:     "production",
+			User:     user,
 			Password: dbPass,
 			Database: "production",
 		}

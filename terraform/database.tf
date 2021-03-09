@@ -31,7 +31,7 @@ resource "aws_secretsmanager_secret_version" "prod_db_password" {
 
 variable "users" {
   type = list(string)
-  default = ["backend", "crawler", "reverifier", "uptimer", "scheduler"]
+  default = ["backend", "crawler", "reverifier", "uptimer", "scheduler", "verifier"]
 }
 
 variable "object_type_all_privileges" {
@@ -88,4 +88,15 @@ resource "postgresql_role" "prod_db_user" {
   login = true
   password = random_password.prod_db_user_password[each.key].result
   roles = [postgresql_role.prod_db_postgres_rw.name]
+}
+
+resource "aws_secretsmanager_secret" "prod_db_user_password_secret" {
+  for_each = toset(var.users)
+  name = "production/DB_PASS_${upper(each.key)}"
+}
+
+resource "aws_secretsmanager_secret_version" "prod_db_user_password_version" {
+  for_each = toset(var.users)
+  secret_id     = aws_secretsmanager_secret.prod_db_user_password_secret[each.key].id
+  secret_string = random_password.prod_db_user_password[each.key].result
 }

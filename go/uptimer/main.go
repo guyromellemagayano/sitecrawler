@@ -14,7 +14,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db := common.ConfigureDatabase(log, awsSession, env)
+	db := common.ConfigureDatabase(log, awsSession, "uptimer", env)
 	defer db.Close()
 
 	backendService := &common.BackendService{Env: env, Token: common.Secret(log, awsSession, env, "BACKEND_TOKEN", "")}

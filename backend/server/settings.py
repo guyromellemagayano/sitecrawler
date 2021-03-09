@@ -86,7 +86,7 @@ elif ENV == "production":
     EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
     DEFAULT_FROM_EMAIL = "noreply@sitecrawler.com"
     DB_NAME = "production"
-    DB_USER = "production"
+    DB_USER = "backend"
     DB_HOST = "terraform-20200810173347645600000001.ceavi2ewfiqg.us-east-1.rds.amazonaws.com"
     EMAIL_SUBJECT_PREFIX = "SiteCrawler - "
 elif ENV == "test":
