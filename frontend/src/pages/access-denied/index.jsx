@@ -16,6 +16,10 @@ import Layout from 'src/components/Layout';
 
 // Icons
 
-const AccessDenied = () => <Layout></Layout>;
+const AccessDenied = () => (
+	<Layout>
+		<h1>Access Denied</h1>
+	</Layout>
+);
 
 export default AccessDenied;
