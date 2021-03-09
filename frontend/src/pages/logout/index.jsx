@@ -25,19 +25,26 @@ const Logout = () => {
 
 	useEffect(() => {
 		(async () => {
-			const response = await usePostMethod(logoutApiEndpoint);
+			try {
+				const response = await usePostMethod(logoutApiEndpoint);
 
-			if (Math.floor(response.status / 200) === 1) {
-				setLogoutDetail(response.data.detail);
+				if (Math.floor(response.status / 200) === 1) {
+					if (response.data.detail) {
+						setLogoutDetail(response.data.detail);
 
-				setTimeout(async () => {
-					logout(response.data);
-				}, 1500);
-			} else {
-				if (response.data) {
-					// FIXME: Django exception error in response.data.detail
-					console.error(response.data.detail);
+						window.setTimeout(() => {
+							logout(response.data);
+						}, 1500);
+					}
+				} else {
+					if (response.data.detail) {
+						// FIXME: Django exception error in response.data
+						console.error(response.data.detail);
+					}
 				}
+			} catch (error) {
+				// FIXME: add logging solution here
+				return null;
 			}
 		})();
 	});
