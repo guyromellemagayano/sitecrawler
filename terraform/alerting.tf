@@ -11,8 +11,8 @@ resource "aws_cloudwatch_metric_alarm" "alert_sqs_scan_queue" {
   period              = "3600"
   statistic           = "Minimum"
   threshold           = "5"
-  evaluation_periods  = "6"
-  datapoints_to_alarm = "6"
+  evaluation_periods  = "12"
+  datapoints_to_alarm = "12"
   treat_missing_data  = "notBreaching"
 
   dimensions = {
