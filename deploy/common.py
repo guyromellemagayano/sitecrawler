@@ -21,9 +21,15 @@ def get_connections(**filters):
     return [Connection(instance, user="ubuntu", connect_kwargs={"pkey": pkey}) for instance in get_instances(**filters)]
 
 
+def getMyIp():
+    resp = requests.get("https://api.ipify.org")
+    resp.raise_for_status()
+    return resp.text
+
+
 def getIngressConfig(group):
     return {
-        "CidrIp": requests.get("https://api.ipify.org").text + "/32",
+        "CidrIp": getMyIp() + "/32",
         "FromPort": 22,
         "ToPort": 22,
         "GroupName": group,
