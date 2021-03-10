@@ -17,7 +17,9 @@ import DataTableHeadsContent from 'public/data/data-table-heads.json';
 
 // Hooks
 import useFetcher from 'src/hooks/useFetcher';
-import useUser from 'src/hooks/useUser';
+
+// Contexts
+import { useAuth } from 'src/contexts/auth';
 
 // Components
 import AddSite from 'src/components/sites/AddSite';
@@ -50,7 +52,7 @@ const initialOrder = {
 	totalIssues: 'default'
 };
 
-const Sites = (props) => {
+const SitesDashboard = (props) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [userLoaded, setUserLoaded] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
@@ -61,6 +63,7 @@ const Sites = (props) => {
 	const pageTitle = 'Dashboard';
 
 	const { asPath } = useRouter();
+	const { user } = useAuth();
 
 	let sitesApiEndpoint =
 		props.page !== undefined
@@ -87,13 +90,6 @@ const Sites = (props) => {
 			: '';
 
 	sitesApiEndpoint += queryString;
-
-	// console.log(sitesApiEndpoint);
-
-	const { user: user } = useUser({
-		redirectTo: '/',
-		redirectIfFound: false
-	});
 
 	const { data: site, mutate: updateSites } = useSWR(
 		sitesApiEndpoint,
@@ -364,7 +360,7 @@ const Sites = (props) => {
 	);
 };
 
-Sites.getInitialProps = ({ query }) => {
+SitesDashboard.getInitialProps = ({ query }) => {
 	return {
 		page: query.page,
 		search: query.search,
@@ -373,13 +369,6 @@ Sites.getInitialProps = ({ query }) => {
 	};
 };
 
-Sites.propTypes = {
-	openMobileSidebar: PropTypes.bool,
-	userLoaded: PropTypes.bool,
-	linksPerPage: PropTypes.number,
-	pagePath: PropTypes.string,
-	sortOrder: PropTypes.array,
-	searchKey: PropTypes.string
-};
+SitesDashboard.propTypes = {};
 
-export default Sites;
+export default SitesDashboard;

@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 // NextJS
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 // External
@@ -10,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Formik } from 'formik';
 import { NextSeo } from 'next-seo';
 import * as Yup from 'yup';
-import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import ReactHtmlParser from 'react-html-parser';
 import tw from 'twin.macro';
@@ -21,7 +19,9 @@ import LoginLabel from 'public/label/pages/login.json';
 // Hooks
 import usePostMethod from 'src/hooks/usePostMethod';
 import useShowPassword from 'src/hooks/useShowPassword';
-import useUser from 'src/hooks/useUser';
+
+// Contexts
+import { useAuth } from 'src/contexts/auth';
 
 // Components
 import AppLogo from 'src/components/logo/AppLogo';
@@ -35,7 +35,6 @@ const Login = () => {
 	const [errorMsg, setErrorMsg] = useState([]);
 	const [successMsg, setSuccessMsg] = useState([]);
 	const [disableLoginForm, setDisableLoginForm] = useState(false);
-	const [redirectTo, setRedirectTo] = useState('/dashboard/sites');
 
 	const usernameRef = useRef(null);
 
@@ -47,21 +46,9 @@ const Login = () => {
 	const loginApiEndpoint = '/api/auth/login/';
 	const googleLoginApiEndpoint = '/auth/google/login/';
 
-	const { query } = useRouter();
-
-	const { mutateUser } = useUser({
-		redirectTo: redirectTo,
-		redirectIfFound: true
-	});
+	const { handleLogin } = useAuth();
 
 	useEffect(() => {
-		if (Cookies.get('errLogin')) {
-			setErrorMsg(Cookies.get('errLogin'));
-			Cookies.remove('errLogin');
-		}
-
-		if (query.redirect !== undefined) setRedirectTo(query.redirect);
-
 		usernameRef.current.focus();
 	}, []);
 
@@ -153,7 +140,7 @@ const Login = () => {
 																]);
 
 																setTimeout(async () => {
-																	mutateUser(response.data);
+																	handleLogin(response.data);
 																}, 1500);
 															} else {
 																if (response.data) {
@@ -240,7 +227,7 @@ const Login = () => {
 																			<button
 																				type="button"
 																				css={[
-																					tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none`,
+																					tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none cursor-pointer`,
 																					(isSubmitting || disableLoginForm) &&
 																						tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
 																				]}
@@ -317,10 +304,9 @@ const Login = () => {
 																		<Link href="/reset-password">
 																			<a
 																				css={[
-																					tw`font-medium text-indigo-600 cursor-pointer`,
-																					isSubmitting || disableLoginForm
-																						? tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
-																						: tw`hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150`
+																					tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150 cursor-pointer`,
+																					(isSubmitting || disableLoginForm) &&
+																						tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
 																				]}
 																			>
 																				{LoginLabel[5].label}

@@ -21,7 +21,7 @@ const Logout = () => {
 	const pageTitle = 'Logout';
 	const logoutApiEndpoint = '/api/auth/logout/';
 
-	const { logout } = useAuth();
+	const { handleLogout } = useAuth();
 
 	useEffect(() => {
 		(async () => {
@@ -33,7 +33,7 @@ const Logout = () => {
 						setLogoutDetail(response.data.detail);
 
 						window.setTimeout(() => {
-							logout(response.data);
+							handleLogout(response.data);
 						}, 1500);
 					}
 				} else {
