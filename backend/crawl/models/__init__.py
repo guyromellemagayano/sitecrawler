@@ -1,4 +1,5 @@
 from .link import Link
+from .link_link import LinkLink
 from .link_image import LinkImage
 from .scan import Scan
 from .site import Site

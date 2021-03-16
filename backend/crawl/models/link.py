@@ -138,7 +138,7 @@ class Link(models.Model):
     tls_status = models.PositiveSmallIntegerField(choices=TLS_STATUS_CHOICES, null=False, default=TLS_NONE)
     tls = models.ForeignKey("Tls", on_delete=models.CASCADE, null=True)
 
-    links = models.ManyToManyField("self", symmetrical=False, related_name="pages", blank=True)
+    links = models.ManyToManyField("self", symmetrical=False, related_name="pages", blank=True, through="LinkLink")
 
     images = models.ManyToManyField(
         "self",
