@@ -139,6 +139,7 @@ DATABASES = {
         "PASSWORD": DB_PASS,
         "HOST": DB_HOST,
         "PORT": DB_PORT,
+        "ATOMIC_REQUESTS": True,
         "OPTIONS": {
             "options": "-c statement_timeout=60000",
         },
