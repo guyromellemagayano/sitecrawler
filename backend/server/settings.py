@@ -46,6 +46,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get("SECRET_KEY", "3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0")
 
 TESTING = sys.argv[1:2] == ["test"]
+IS_CRON = len(sys.argv) >= 2 and sys.argv[1].startswith("cron_")
 
 ENV = os.environ.get("ENV", "dev")
 if TESTING:
@@ -63,6 +64,8 @@ DB_USER = os.environ.get("DB_USER", "postgres")
 DB_PASS = secret("DB_PASS", "crawldev", "DB_PASS_BACKEND")
 DB_HOST = os.environ.get("DB_HOST", "db")
 DB_PORT = os.environ.get("DB_PORT", "5432")
+
+# db query timeout in seconds
 DB_TIMEOUT = os.environ.get("DB_TIMEOUT", "60")
 
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
@@ -147,6 +150,9 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get(
 
 # pk of group that new users are auto added to
 DEFAULT_USER_GROUP = 1
+
+if IS_CRON:
+    DB_TIMEOUT = 3600
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
