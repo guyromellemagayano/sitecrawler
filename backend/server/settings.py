@@ -29,7 +29,7 @@ def secret(environment, default, secretname=None):
 
     try:
         secretmanager = boto3.client("secretsmanager")
-        return secretmanager.get_secret_value(f"{ENV}/{secretname}")["SecretString"]
+        return secretmanager.get_secret_value(SecretId=f"{ENV}/{secretname}")["SecretString"]
     except Exception:
         pass
 
@@ -63,6 +63,7 @@ DB_USER = os.environ.get("DB_USER", "postgres")
 DB_PASS = secret("DB_PASS", "crawldev", "DB_PASS_BACKEND")
 DB_HOST = os.environ.get("DB_HOST", "db")
 DB_PORT = os.environ.get("DB_PORT", "5432")
+DB_TIMEOUT = os.environ.get("DB_TIMEOUT", "60")
 
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
 
@@ -159,7 +160,7 @@ DATABASES = {
         "PORT": DB_PORT,
         "ATOMIC_REQUESTS": True,
         "OPTIONS": {
-            "options": "-c statement_timeout=60000",
+            "options": f"-c statement_timeout={DB_TIMEOUT}000",
         },
     }
 }
