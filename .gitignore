@@ -131,3 +131,9 @@ env/
 go/scheduler/gin-bin
 
 # End of https://www.gitignore.io/api/django
+
+# sql dumps
+*.sql
+
+# terraform state
+*.tfstate*
