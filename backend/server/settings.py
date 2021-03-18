@@ -13,10 +13,28 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import sys
 
+import boto3
 import requests
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 import stripe
+
+
+def secret(environment, default, secretname=None):
+    v = os.getenv(environment)
+    if v is not None:
+        return v
+    if secretname is None:
+        secretname = environment
+
+    try:
+        secretmanager = boto3.client("secretsmanager")
+        return secretmanager.get_secret_value(f"{ENV}/{secretname}")["SecretString"]
+    except Exception:
+        pass
+
+    return default
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,7 +60,7 @@ AWS_REGION = "us-east-1"
 
 DB_NAME = os.environ.get("DB_NAME", "postgres")
 DB_USER = os.environ.get("DB_USER", "postgres")
-DB_PASS = os.environ.get("DB_PASS", "crawldev")
+DB_PASS = secret("DB_PASS", "crawldev", "DB_PASS_BACKEND")
 DB_HOST = os.environ.get("DB_HOST", "db")
 DB_PORT = os.environ.get("DB_PORT", "5432")
 
