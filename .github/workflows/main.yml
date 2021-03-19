@@ -92,7 +92,7 @@ jobs:
         wait-for-service-stability: true
     - name: Download reverifier task definition
       run: |
-        aws ecs describe-task-definition --task-definition prod_reverifier_task --query taskDefinition > reverifier-task-definition.json
+        aws ecs describe-task-definition --task-definition production_cron_reverifier --query taskDefinition > reverifier-task-definition.json
     - name: Deploy reverifier task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:

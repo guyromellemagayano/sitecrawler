@@ -258,3 +258,9 @@ dist
 
 # Storybook
 .storybook-static
+
+# sql dumps
+*.sql
+
+# terraform state
+*.tfstate*

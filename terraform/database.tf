@@ -6,7 +6,7 @@ resource "aws_db_instance" "production" {
   allocated_storage    = 200
   storage_type         = "gp2"
   engine               = "postgres"
-  engine_version       = "12.3"
+  engine_version       = "12"
   instance_class       = "db.t3.small"
   name                 = "production"
   username             = "production"
@@ -28,3 +28,5 @@ resource "aws_secretsmanager_secret_version" "prod_db_password" {
   secret_id     = aws_secretsmanager_secret.prod_db_password.id
   secret_string = random_password.production_db_password.result
 }
+
+

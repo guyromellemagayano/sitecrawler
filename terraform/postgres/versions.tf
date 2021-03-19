@@ -3,11 +3,11 @@ terraform {
     aws = {
       source = "hashicorp/aws"
     }
-    random = {
-      source = "hashicorp/random"
-    }
     postgresql = {
       source = "cyrilgdn/postgresql"
+    }
+    random = {
+      source = "hashicorp/random"
     }
   }
   required_version = ">= 0.13"

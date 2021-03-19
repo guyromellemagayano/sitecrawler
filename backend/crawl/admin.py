@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models.functions import Now
 
-from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData, Tls, LinkImage
+from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData, Tls, LinkImage, ScanArchive
 
 
 class PageChildInline(admin.TabularInline):
@@ -191,3 +191,11 @@ class GroupSettingsAdmin(admin.ModelAdmin):
 @admin.register(Tls)
 class TlsAdmin(admin.ModelAdmin):
     list_display = ("common_name", "issuer_organization", "version", "errors")
+
+
+@admin.register(ScanArchive)
+class ScanArchiveAdmin(admin.ModelAdmin):
+    list_display = ("url", "started_at", "finished_at", "scan_id")
+
+    def url(self, obj):
+        return obj.site.url

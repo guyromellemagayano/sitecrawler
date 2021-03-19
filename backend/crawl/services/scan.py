@@ -22,7 +22,8 @@ def site(site):
     )
     queue_url = sqs.get_queue_url(QueueName=settings.AWS_SCAN_QUEUE_NAME)["QueueUrl"]
     sqs.send_message(
-        QueueUrl=queue_url, MessageBody=str(scan.id),
+        QueueUrl=queue_url,
+        MessageBody=str(scan.id),
     )
 
     return scan

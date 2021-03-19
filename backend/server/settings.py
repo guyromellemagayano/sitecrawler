@@ -13,10 +13,28 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import sys
 
+import boto3
 import requests
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 import stripe
+
+
+def secret(environment, default, secretname=None):
+    v = os.getenv(environment)
+    if v is not None:
+        return v
+    if secretname is None:
+        secretname = environment
+
+    try:
+        secretmanager = boto3.client("secretsmanager")
+        return secretmanager.get_secret_value(SecretId=f"{ENV}/{secretname}")["SecretString"]
+    except Exception:
+        pass
+
+    return default
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,6 +46,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get("SECRET_KEY", "3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0")
 
 TESTING = sys.argv[1:2] == ["test"]
+IS_CRON = len(sys.argv) >= 2 and sys.argv[1].startswith("cron_")
 
 ENV = os.environ.get("ENV", "dev")
 if TESTING:
@@ -42,9 +61,12 @@ AWS_REGION = "us-east-1"
 
 DB_NAME = os.environ.get("DB_NAME", "postgres")
 DB_USER = os.environ.get("DB_USER", "postgres")
-DB_PASS = os.environ.get("DB_PASS", "crawldev")
+DB_PASS = secret("DB_PASS", "crawldev", "DB_PASS_BACKEND")
 DB_HOST = os.environ.get("DB_HOST", "db")
 DB_PORT = os.environ.get("DB_PORT", "5432")
+
+# db query timeout in seconds
+DB_TIMEOUT = os.environ.get("DB_TIMEOUT", "60")
 
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
 
@@ -86,7 +108,7 @@ elif ENV == "production":
     EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
     DEFAULT_FROM_EMAIL = "noreply@sitecrawler.com"
     DB_NAME = "production"
-    DB_USER = "production"
+    DB_USER = "backend"
     DB_HOST = "terraform-20200810173347645600000001.ceavi2ewfiqg.us-east-1.rds.amazonaws.com"
     EMAIL_SUBJECT_PREFIX = "SiteCrawler - "
 elif ENV == "test":
@@ -129,6 +151,9 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get(
 # pk of group that new users are auto added to
 DEFAULT_USER_GROUP = 1
 
+if IS_CRON:
+    DB_TIMEOUT = 3600
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
@@ -139,8 +164,9 @@ DATABASES = {
         "PASSWORD": DB_PASS,
         "HOST": DB_HOST,
         "PORT": DB_PORT,
+        "ATOMIC_REQUESTS": True,
         "OPTIONS": {
-            "options": "-c statement_timeout=60000",
+            "options": f"-c statement_timeout={DB_TIMEOUT}000",
         },
     }
 }

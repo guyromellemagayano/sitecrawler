@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db := common.ConfigureDatabase(log, awsSession, env)
+	db := common.ConfigureDatabase(log, awsSession, "verifier", env)
 	defer db.Close()
 
 	loadService := &common.LoadService{}
