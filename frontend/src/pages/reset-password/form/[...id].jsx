@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import Cookies from 'js-cookie';
 import Head from 'next/head';
 import Link from 'next/link';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import PropTypes from 'prop-types';
 import Layout from 'components/Layout';
 import LogoLabel from 'components/form/LogoLabel';
@@ -164,7 +164,7 @@ const ResetPasswordForm = () => {
 					{!disableResetPasswordForm ? (
 						<Fragment>
 							<div
-								className={`bg-white py-8 px-4 shadow-xs rounded-lg sm:px-10`}
+								className={`bg-white py-8 px-4 ring-1 ring-black ring-opacity-5 rounded-lg sm:px-10`}
 							>
 								<form onSubmit={handleSubmit}>
 									<div className={`mt-1`}>

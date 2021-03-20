@@ -1,5 +1,5 @@
 // React
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 
 // NextJS
 import Link from 'next/link';
@@ -35,33 +35,28 @@ const ResetPassword = () => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<div tw="bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+			<div tw='bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
 				<LogoLabel isResetPassword />
 
-				<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+				<div tw='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
 					{errorMsg && <ErrorMessageAlert message={errorMsg} />}
 					{successMsg && <SuccessMessageAlert message={successMsg} />}
 
-					<div tw="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
+					<div tw='bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10'>
 						<Formik
 							initialValues={{
-								email: ''
+								email: '',
 							}}
 							validationSchema={Yup.object({
-								email: Yup.string()
-									.email(ResetPasswordLabel[1].label)
-									.required(ResetPasswordLabel[0].label)
+								email: Yup.string().email(ResetPasswordLabel[1].label).required(ResetPasswordLabel[0].label),
 							})}
 							onSubmit={async (values, { setSubmitting, resetForm }) => {
 								const body = {
-									email: values.email
+									email: values.email,
 								};
 
 								try {
-									const response = await usePostMethod(
-										resetPasswordApiEndpoint,
-										body
-									);
+									const response = await usePostMethod(resetPasswordApiEndpoint, body);
 
 									if (Math.floor(response.status / 200) === 1) {
 										setErrorMsg('');
@@ -85,64 +80,50 @@ const ResetPassword = () => {
 								}
 							}}
 						>
-							{({
-								values,
-								errors,
-								touched,
-								handleChange,
-								handleSubmit,
-								isSubmitting
-							}) => (
+							{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
 								<form onSubmit={handleSubmit}>
-									<div tw="mt-1">
-										<label
-											htmlFor="email"
-											tw="block text-sm font-medium leading-5 text-gray-700"
-										>
+									<div tw='mt-1'>
+										<label htmlFor='email' tw='block text-sm font-medium leading-5 text-gray-700'>
 											{ResetPasswordLabel[4].label}
 										</label>
-										<div tw="mt-1 rounded-md shadow-sm">
+										<div tw='mt-1 rounded-md shadow-sm'>
 											<input
-												id="email"
-												type="email"
-												name="email"
+												id='email'
+												type='email'
+												name='email'
 												disabled={isSubmitting}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 													isSubmitting &&
 														tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none pointer-events-none`,
-													errors.email || errorMsg
-														? tw`border-red-300`
-														: tw`border-gray-300`
+													errors.email || errorMsg ? tw`border-red-300` : tw`border-gray-300`,
 												]}
-												aria-describedby="email"
+												aria-describedby='email'
 												onChange={handleChange}
 												value={values.email}
 											/>
 										</div>
 
 										{errors.email && touched.email && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
+											<span tw='block mt-2 text-xs leading-5 text-red-700'>
 												{errors.email && touched.email && errors.email}
 											</span>
 										)}
 									</div>
 
-									<div tw="mt-6">
-										<span tw="block w-full rounded-md shadow-sm">
+									<div tw='mt-6'>
+										<span tw='block w-full rounded-md shadow-sm'>
 											<button
-												type="submit"
+												type='submit'
 												disabled={isSubmitting}
 												css={[
 													tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
 													isSubmitting
 														? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
-														: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+														: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
 												]}
 											>
-												{isSubmitting
-													? ResetPasswordLabel[6].label
-													: ResetPasswordLabel[5].label}
+												{isSubmitting ? ResetPasswordLabel[6].label : ResetPasswordLabel[5].label}
 											</button>
 										</span>
 									</div>
@@ -151,11 +132,11 @@ const ResetPassword = () => {
 						</Formik>
 					</div>
 
-					<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-						<span tw="px-2 py-5 text-gray-500">
+					<div tw='relative flex justify-center flex-wrap flex-row text-sm leading-5'>
+						<span tw='px-2 py-5 text-gray-500'>
 							{ReactHtmlParser(ResetPasswordLabel[7].label)}
-							<Link href="/">
-								<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
+							<Link href='/'>
+								<a tw='font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150'>
 									{ResetPasswordLabel[8].label}
 								</a>
 							</Link>
