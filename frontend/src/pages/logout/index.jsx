@@ -1,25 +1,25 @@
 // React
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 // External
-import { NextSeo } from 'next-seo';
-import PropTypes from 'prop-types';
-import 'twin.macro';
+import { NextSeo } from "next-seo";
+import PropTypes from "prop-types";
+import "twin.macro";
 
 // Hooks
-import usePostMethod from 'src/hooks/usePostMethod';
+import usePostMethod from "src/hooks/usePostMethod";
 
 // Contexts
-import { useAuth } from 'src/contexts/auth';
+import { useAuth } from "src/contexts/auth";
 
 // Components
-import Layout from 'src/components/Layout';
+import Layout from "src/components/Layout";
 
 const Logout = () => {
 	const [logoutDetail, setLogoutDetail] = useState(null);
 
-	const pageTitle = 'Logout';
-	const logoutApiEndpoint = '/api/auth/logout/';
+	const pageTitle = "Logout";
+	const logoutApiEndpoint = "/api/auth/logout/";
 
 	const { handleLogout } = useAuth();
 
@@ -34,7 +34,7 @@ const Logout = () => {
 
 						window.setTimeout(() => {
 							handleLogout(response.data);
-						}, 1500);
+						}, 500);
 					}
 				} else {
 					if (response.data.detail) {
@@ -54,9 +54,7 @@ const Logout = () => {
 			<NextSeo title={pageTitle} />
 
 			<div tw="bg-white p-3">
-				<p tw="text-2xl font-bold leading-7 text-gray-900 sm:text-xl sm:leading-9 sm:truncate">
-					{logoutDetail}
-				</p>
+				<p tw="text-2xl font-bold leading-7 text-gray-900 sm:text-xl sm:leading-9 sm:truncate">{logoutDetail}</p>
 			</div>
 		</Layout>
 	);
