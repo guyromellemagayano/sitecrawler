@@ -1,5 +1,4 @@
 // React
-import React from 'react';
 
 // External
 import axios from 'axios';
@@ -51,11 +50,11 @@ const usePatchMethod = async (endpoint, data) => {
 
 usePatchMethod.propTypes = {
 	endpoint: PropTypes.string,
-	data: PropTypes.array
+	data: PropTypes.array,
 };
 
 usePatchMethod.defaultProps = {
-	data: {}
+	data: {},
 };
 
 export default usePatchMethod;

@@ -1,5 +1,4 @@
 // React
-import React from 'react';
 
 // External
 import axios from 'axios';
@@ -51,11 +50,11 @@ const usePostMethod = async (endpoint, data) => {
 
 usePostMethod.propTypes = {
 	endpoint: PropTypes.string,
-	data: PropTypes.array
+	data: PropTypes.array,
 };
 
 usePostMethod.defaultProps = {
-	data: {}
+	data: {},
 };
 
 export default usePostMethod;

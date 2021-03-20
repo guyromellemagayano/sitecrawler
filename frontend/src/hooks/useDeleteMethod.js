@@ -1,5 +1,4 @@
 // React
-import React from 'react';
 
 // External
 import axios from 'axios';
@@ -50,7 +49,7 @@ const useDeleteMethod = async (endpoint) => {
 };
 
 useDeleteMethod.propTypes = {
-	endpoint: PropTypes.string
+	endpoint: PropTypes.string,
 };
 
 export default useDeleteMethod;
