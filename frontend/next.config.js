@@ -1,11 +1,9 @@
-module.exports = {
-	trailingSlash: true,
-	webpack: (config, { isServer }) => {
-		// Fixes packages that depend on fs/module module
-		if (!isServer) {
-			config.node = { fs: 'empty', module: 'empty' };
-		}
+require("dotenv").config({ path: `./.env.${process.env.NODE_ENV}` });
 
-		return config;
-	}
+module.exports = {
+	trailingSlash: false,
+	devIndicators: {
+		autoPrerender: false,
+	},
+	env: {},
 };
