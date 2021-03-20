@@ -2,5 +2,7 @@
 	"singleQuote": true,
 	"trailingComma": "none",
 	"useTabs": true,
-	"quoteProps": "consistent"
+	"quoteProps": "consistent",
+	"proseWrap": "never",
+	"jsxSingleQuote": true
 }
