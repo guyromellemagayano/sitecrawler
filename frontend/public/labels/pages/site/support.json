@@ -34,5 +34,17 @@
 	},
 	{
 		"label": "Submitting..."
+	},
+	{
+		"label": "Form Submission Failed"
+	},
+	{
+		"label": "Form Submission Success"
+	},
+	{
+		"label": "Dismiss"
+	},
+	{
+		"label": "Close"
 	}
 ]

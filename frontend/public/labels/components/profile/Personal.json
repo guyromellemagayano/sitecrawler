@@ -22,7 +22,7 @@
 		"label": "Cancel"
 	},
 	{
-		"label": "Save"
+		"label": "Save Changes"
 	},
 	{
 		"label": "Required field"
@@ -34,9 +34,18 @@
 		"label": "Too long!"
 	},
 	{
-		"label": "Update success!"
+		"label": "Personal information form details sent successfully."
 	},
 	{
 		"label": "Saving..."
+	},
+	{
+		"label": "Form Submission Failed"
+	},
+	{
+		"label": "Form Submission Success"
+	},
+	{
+		"label": "Personal information form details sent failed. Please try again."
 	}
 ]

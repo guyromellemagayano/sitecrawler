@@ -4,10 +4,10 @@
 		"description": "Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment."
 	},
 	{
-		"label": "1. Fill in site information"
+		"label": "Fill in site information"
 	},
 	{
-		"label": "2. Verify site"
+		"label": "Verify site"
 	},
 	{
 		"label": "Fill in site information",
@@ -41,5 +41,20 @@
 	},
 	{
 		"label": "An unexpected error occurred. Please try again."
+	},
+	{
+		"label": "Step 1"
+	},
+	{
+		"label": "Step 2"
+	},
+	{
+		"label": "Close"
+	},
+	{
+		"label": "Form Submission Failed"
+	},
+	{
+		"label": "Dismiss"
 	}
 ]

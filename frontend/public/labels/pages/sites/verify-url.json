@@ -25,7 +25,7 @@
 		"label": "Copied!"
 	},
 	{
-		"label": "Copy to clipboard"
+		"label": "Copy"
 	},
 	{
 		"label": "Press <strong>Verify Site</strong> button below"
@@ -37,7 +37,7 @@
 		"label": "Verify Site Later"
 	},
 	{
-		"label": "Update Site Information"
+		"label": "Update Site Details"
 	},
 	{
 		"label": "Go to Site Overview"
@@ -61,9 +61,30 @@
 		"label": "Loading..."
 	},
 	{
-		"label": "You can now proceed to the site overview."
+		"label": "You can now proceed to our Site Overview."
 	},
 	{
-		"label": "Site verification failed. You have not verify the site yet."
+		"label": "You have not verify the site yet."
+	},
+	{
+		"label": "Step 1"
+	},
+	{
+		"label": "Step 2"
+	},
+	{
+		"label": "Need Help?"
+	},
+	{
+		"label": "Close"
+	},
+	{
+		"label": "Site Verification Failed"
+	},
+	{
+		"label": "Site Verification Success"
+	},
+	{
+		"label": "Dismiss"
 	}
 ]

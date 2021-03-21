@@ -36,7 +36,7 @@
 		"label": "Login failed. Please try again"
 	},
 	{
-		"label": "Login Success! Redirecting you to Sites Dashboard"
+		"label": "Login success! Redirecting you to the dashboard..."
 	},
 	{
 		"label": "Submitting..."
@@ -55,5 +55,8 @@
 	},
 	{
 		"label": "Sign in with LinkedIn"
+	},
+	{
+		"label": "Validating your credentials..."
 	}
 ]

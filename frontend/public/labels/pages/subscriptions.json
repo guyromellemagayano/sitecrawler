@@ -52,5 +52,17 @@
 	},
 	{
 		"label": "Downgrade to Basic Plan"
+	},
+	{
+		"label": "Subscription Plan Update Success"
+	},
+	{
+		"label": "Subscription Plan Update Failed"
+	},
+	{
+		"label": "An unexpected error occurred. Please try again."
+	},
+	{
+		"label": "Card information update successfully."
 	}
 ]

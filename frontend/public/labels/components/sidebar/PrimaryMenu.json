@@ -4,6 +4,10 @@
 		"slug": "select-site"
 	},
 	{
+		"label": "No Sites Found",
+		"slug": "no-sites-found"
+	},
+	{
 		"label": "Add New Site",
 		"slug": "add-new-site"
 	}
