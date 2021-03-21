@@ -1,85 +1,125 @@
-// React
-import React, { createContext, useState, useContext, useEffect } from 'react';
-
-// NextJS
-import { useRouter } from 'next/router';
-
 // External
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import PropTypes from 'prop-types';
-import useSWR from 'swr';
+import jwt from 'jsonwebtoken';
 
-// Hooks
-import useFetcher from 'src/hooks/useFetcher';
+export const getUserData = (token) => {
+	let user = null;
 
-const AuthContext = createContext();
-
-export const AuthProvider = ({ children }) => {
-	const [state, setState] = useState({
-		redirectIfFound: false
-	});
-
-	const userApiEndpoint = '/api/auth/user';
-
-	const router = useRouter();
-	const { data: user, mutate: mutateUser, error: userError } = useSWR(
-		userApiEndpoint,
-		useFetcher
-	);
-
-	useEffect(() => {
-		(async () => {
-			if (userError === 'Error 403') {
-				router.push({ pathname: '/', query: { redirect: '/' } });
-				Cookies.set('errLogin', 'You must log in to access the page!', {
-					expires: 60
-				});
-			}
-		})();
-	}, [user, state, userError]);
-
-	const handleLogin = async (data) => {
-		if (data) {
-			if (data.key) {
-				Cookies.set('token', data.key, { expires: 60 });
-				axios.defaults.headers.common = {
-					Authorization: `Bearer ${data.key}`
-				};
-			}
-
-			mutateUser(data);
-
-			if (user) {
-				setState({ redirectIfFound: true });
-				router.push('/dashboard/sites', undefined, { shallow: true });
-			}
+	if (token) {
+		try {
+		} catch (error) {
+			user = null;
 		}
-	};
+	}
 
-	const handleLogout = async (data) => {
-		if (data.detail) {
-			Cookies.remove('token');
-			delete axios.defaults.headers.Authorization;
-			window.location.pathname = '/';
-			router.replace('/', undefined, { shallow: true });
-		}
-	};
-
-	return (
-		<AuthContext.Provider
-			value={{
-				isAuthenticated: !!user,
-				user,
-				mutateUser,
-				userError,
-				handleLogin,
-				handleLogout
-			}}
-		>
-			{children}
-		</AuthContext.Provider>
-	);
+	return user;
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const redirectUnauth = (token, res) => {
+	let user = null;
+
+	if (token) {
+		try {
+			user = getValidateToken(token).user;
+		} catch (error) {
+			user = null;
+		}
+	}
+
+	if (!user) {
+		res.setHeader('Location', '/');
+		res.statusCode = 307;
+		res.end();
+	}
+};
+
+export const redirectAuth = (token, res) => {
+	let user = null;
+
+	if (token) {
+		try {
+			user = getValidateToken(token).user;
+		} catch (error) {
+			user = null;
+		}
+	}
+
+	if (user) {
+		res.setHeader('Location', '/');
+		res.statusCode = 307;
+		res.end();
+	}
+};
+
+export const getUserDataFromToken = (token) => {
+	try {
+		let decodedToken = jwt.verify(token, 'SiteCrawlerApp2020');
+
+		console.log('decodedToken', decodedToken);
+
+		if (!decodedToken) {
+			typeof localStorage !== 'undefined' && localStorage.removeItem('token');
+
+			return {
+				token: null,
+				user: null,
+				isLoggedIn: false
+			};
+		} else {
+			return {
+				token,
+				user: {
+					...decodedToken,
+					isLoggedIn: true
+				}
+			};
+		}
+	} catch (error) {
+		console.log(error);
+		typeof localStorage !== 'undefined' && localStorage.removeItem('token');
+		return {
+			user: null,
+			isLoggedIn: false
+		};
+	}
+};
+
+export const getValidateToken = (token) => {
+	try {
+		let decodedToken = jwt.verify(token, 'SiteCrawlerApp2020');
+
+		console.log('decoded token', decodedToken);
+
+		if (!decodedToken) {
+			typeof localStorage !== 'undefined' && localStorage.removeItem('token');
+
+			return {
+				token: null,
+				user: null,
+				isLoggedIn: false
+			};
+		} else {
+			return {
+				token,
+				user: {
+					...decodedToken,
+					isLoggedIn: true
+				}
+			};
+		}
+	} catch (error) {
+		console.log(error);
+
+		typeof localStorage !== 'undefined' && localStorage.removeItem('token');
+
+		return {
+			user: null,
+			user: null,
+			isLoggedIn: false
+		};
+	}
+};
+
+export const logoutUser = () => {
+	typeof localStorage !== 'undefined' && localStorage.removeItem('token');
+	window.location.href = '/';
+};
