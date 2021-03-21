@@ -1,3 +1,5 @@
+// FIXME: default SEO of app
+
 export default {
 	title: 'Welcome',
 	titleTemplate: '%s | Site Crawler',
