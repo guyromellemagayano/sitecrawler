@@ -1,13 +1,12 @@
-// React
-import React from 'react';
-
 // External
-import PropTypes from 'prop-types';
+import 'twin.macro';
 
 const Layout = ({ children }) => {
-	return <div id="root">{children}</div>;
+	return (
+		<div id='root-auth'>
+			<main tw='min-h-screen'>{children}</main>
+		</div>
+	);
 };
-
-Layout.propTypes = {};
 
 export default Layout;

@@ -1,21 +1,21 @@
 // React
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // NextJS
 import Link from 'next/link';
 
 // External
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Transition } from '@tailwindui/react';
+import { Transition } from '@headlessui/react';
 import Moment from 'react-moment';
 import PropTypes from 'prop-types';
 import ReactHtmlParser from 'react-html-parser';
 import Skeleton from 'react-loading-skeleton';
-import styled from 'styled-components';
+import tw, { styled } from 'twin.macro';
 import useSWR from 'swr';
 
 // JSON
-import DataTableLabel from 'public/label/components/sites/DataTable.json';
+import DataTableLabel from 'public/labels/components/sites/DataTable.json';
 
 // Hooks
 import useDeleteMethod from 'src/hooks/useDeleteMethod';
@@ -100,12 +100,12 @@ const DataTable = (props) => {
 					setEnableNextStep(!enableNextStep);
 					setSuccessMsg(DataTableLabel[13].label);
 					setDisableSiteVerify(false);
-				}, 1500);
+				}, 500);
 			} else {
 				setErrorMsg(DataTableLabel[14].label);
 				setTimeout(() => {
 					setDisableSiteVerify(false);
-				}, 1500);
+				}, 500);
 			}
 		} else {
 			// FIXME: Error handling for response
@@ -245,33 +245,33 @@ const DataTable = (props) => {
 
 	return scan && stats ? (
 		<DataTableDiv>
-			<td className="flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-300">
-				<div className="flex items-center">
+			<td tw='flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300'>
+				<div tw='flex items-center'>
 					{props.site.url && props.site.name ? (
-						<div className="mr-4">
-							<div className="text-overflow text-sm leading-5 font-medium text-gray-900">
+						<div tw='mr-4'>
+							<div tw='truncate text-sm leading-5 font-medium text-gray-900'>
 								{!props.site.verified ? (
-									<span className="text-sm leading-5 font-semibold text-gray-500">
+									<span tw='text-sm leading-5 font-semibold text-gray-500'>
 										{props.site.name}
 									</span>
 								) : (
 									<Link
-										href="/dashboard/site/[siteId]/overview"
+										href='/dashboard/site/[siteId]/overview'
 										as={`/dashboard/site/${props.site.id}/overview`}
 									>
-										<a className="text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500">
+										<a tw='text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500'>
 											{props.site.name}
 										</a>
 									</Link>
 								)}
 							</div>
-							<div className="flex justify-start text-sm leading-5 text-gray-500">
+							<div tw='flex justify-start text-sm leading-5 text-gray-500'>
 								{!props.site.verified && (
 									<>
 										<button
-											type="button"
-											id="siteVerifySiteModalButton"
-											className="flex items-center justify-start text-sm focus:outline-none  leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150"
+											type='button'
+											id='siteVerifySiteModalButton'
+											tw='flex items-center justify-start text-sm focus:outline-none  leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150'
 											onClick={() =>
 												setShowVerifySiteModal(!showVerifySiteModal)
 											}
@@ -279,9 +279,9 @@ const DataTable = (props) => {
 											{DataTableLabel[0].label}
 										</button>
 										<button
-											type="button"
-											id="siteVerifySiteModalButton"
-											className="ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+											type='button'
+											id='siteVerifySiteModalButton'
+											tw='ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150'
 											onClick={(e) =>
 												setShowDeleteSiteModal(!showDeleteSiteModal)
 											}
@@ -295,11 +295,11 @@ const DataTable = (props) => {
 					) : null}
 				</div>
 			</td>
-			<td className="px-6 py-4 whitespace-no-wrap border-b border-gray-300">
+			<td tw='px-6 py-4 whitespace-nowrap border-b border-gray-300'>
 				{stats['verified'] === undefined ? (
 					<>
-						<div className="text-sm leading-5 text-gray-900">
-							{!props.user.settings.disableLocalTime ? (
+						<div tw='text-sm leading-5 text-gray-900'>
+							{!props.userInfo.settings.disableLocalTime ? (
 								<Moment
 									calendar={calendarStrings}
 									date={stats.finished_at}
@@ -313,35 +313,33 @@ const DataTable = (props) => {
 								/>
 							)}
 						</div>
-						<div className="text-sm leading-5 text-gray-500">
-							{!props.user.settings.disableLocalTime ? (
-								<Moment date={stats.finished_at} format="hh:mm:ss A" local />
+						<div tw='text-sm leading-5 text-gray-500'>
+							{!props.userInfo.settings.disableLocalTime ? (
+								<Moment date={stats.finished_at} format='hh:mm:ss A' local />
 							) : (
-								<Moment date={stats.finished_at} format="hh:mm:ss A" utc />
+								<Moment date={stats.finished_at} format='hh:mm:ss A' utc />
 							)}
 						</div>
 					</>
 				) : (
-					<>
-						<div className="text-sm leading-5 text-gray-500">
-							{DataTableLabel[2].label}
-						</div>
-					</>
+					<div tw='text-sm leading-5 text-gray-500'>
+						{DataTableLabel[2].label}
+					</div>
 				)}
 			</td>
 			{setTotalIssues() > 0 ? (
-				<td className="px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 font-semibold text-red-500">
+				<td tw='px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold text-red-500'>
 					<Link
-						href="/dashboard/site/[siteId]/overview"
+						href='/dashboard/site/[siteId]/overview'
 						as={`/dashboard/site/${props.site.id}/overview`}
 					>
 						<a>{setTotalIssues()}</a>
 					</Link>
 				</td>
 			) : (
-				<td className="px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 font-semibold text-red-500">
+				<td tw='px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold text-red-500'>
 					<Link
-						href="/dashboard/site/[siteId]/overview"
+						href='/dashboard/site/[siteId]/overview'
 						as={`/dashboard/site/${props.site.id}/overview`}
 					>
 						<a>0</a>
@@ -349,140 +347,142 @@ const DataTable = (props) => {
 				</td>
 			)}
 			{stats.num_links ? (
-				<td className="px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500">
+				<td tw='px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500'>
 					<Link
-						href="/dashboard/site/[siteId]/links"
+						href='/dashboard/site/[siteId]/links'
 						as={`/dashboard/site/${props.site.id}/links`}
 					>
-						<a className="text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+						<a tw='text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150'>
 							{stats.num_links}
 						</a>
 					</Link>
 				</td>
 			) : (
-				<td className="px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500">
+				<td tw='px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500'>
 					0
 				</td>
 			)}
 			{stats.num_pages ? (
-				<td className="px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500">
+				<td tw='px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500'>
 					<Link
-						href="/dashboard/site/[siteId]/pages"
+						href='/dashboard/site/[siteId]/pages'
 						as={`/dashboard/site/${props.site.id}/pages`}
 					>
-						<a className="text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+						<a tw='text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150'>
 							{stats.num_pages}
 						</a>
 					</Link>
 				</td>
 			) : (
-				<td className="px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500">
+				<td tw='px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500'>
 					0
 				</td>
 			)}
 			{stats.num_images ? (
-				<td className="px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500">
+				<td tw='px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500'>
 					<Link
-						href="/dashboard/site/[siteId]/images"
+						href='/dashboard/site/[siteId]/images'
 						as={`/dashboard/site/${props.site.id}/images`}
 					>
-						<a className="text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+						<a tw='text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150'>
 							{stats.num_images}
 						</a>
 					</Link>
 				</td>
 			) : (
-				<td className="px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500">
+				<td tw='px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold text-gray-500'>
 					0
 				</td>
 			)}
 
 			<Transition show={showVerifySiteModal}>
-				<div className="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
+				<div tw='fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center'>
 					<Transition.Child
-						enter="ease-out duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-100"
+						enter='ease-out duration-300'
+						enterFrom='opacity-0'
+						enterTo='opacity-100'
+						leave='ease-in duration-200'
+						leaveFrom='opacity-100'
+						leaveTo='opacity-100'
 					>
-						<div className="fixed inset-0 transition-opacity">
-							<div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+						<div tw='fixed inset-0 transition-opacity'>
+							<div tw='absolute inset-0 bg-gray-500 opacity-75'></div>
 						</div>
 					</Transition.Child>
 					<Transition.Child
-						enter="ease-out duration-300"
-						enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-						enterTo="opacity-100 translate-y-0 sm:scale-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						enter='ease-out duration-300'
+						enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+						enterTo='opacity-100 translate-y-0 sm:scale-100'
+						leave='ease-in duration-200'
+						leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+						leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
 					>
 						<div
-							className="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden shadow-xs-xl transform transition-all sm:max-w-lg sm:w-full sm:p-6"
-							role="dialog"
-							aria-modal="true"
-							aria-labelledby="modal-headline"
+							tw='bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden ring-1 ring-black ring-opacity-5 transform transition-all sm:max-w-lg sm:w-full sm:p-6'
+							role='dialog'
+							aria-modal='true'
+							aria-labelledby='modal-headline'
 						>
-							<div className="sm:flex sm:items-start">
-								<div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+							<div tw='sm:flex sm:items-start'>
+								<div tw='mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10'>
+									{/* TODO: change this to SVG component */}
 									<svg
-										className="h-6 w-6 text-yellow-600"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
+										className='h-6 w-6 text-yellow-600'
+										fill='none'
+										viewBox='0 0 24 24'
+										stroke='currentColor'
 									>
 										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth="2"
-											d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+											strokeLinecap='round'
+											strokeLinejoin='round'
+											strokeWidth='2'
+											d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
 										/>
 									</svg>
 								</div>
-								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+								<div tw='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left'>
 									<h3
-										className="text-lg leading-6 font-medium text-gray-800"
-										id="modal-headline"
+										tw='text-lg leading-6 font-medium text-gray-800'
+										id='modal-headline'
 									>
 										{DataTableLabel[3].label}&nbsp;
 										<a
 											href={stats.url}
-											target="_blank"
+											target='_blank'
 											title={stats.url}
-											className="break-all text-md leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+											tw='break-all text-base leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150'
 										>
 											{stats.url}
 										</a>
 									</h3>
-									<div className="mt-2">
-										<p className="text-sm leading-5 text-gray-600">
+									<div tw='mt-2'>
+										<p tw='text-sm leading-5 text-gray-600'>
 											{DataTableLabel[4].label}
 										</p>
-										<p className="text-md font-medium leading-6 text-gray-700 mt-4 mb-3">
+										<p tw='text-base font-medium leading-6 text-gray-700 mt-4 mb-3'>
 											{DataTableLabel[5].label}
 										</p>
 										<ol>
-											<li className="text-sm leading-6 text-gray-600">
+											<li tw='text-sm leading-6 text-gray-600'>
 												{DataTableLabel[6].label}
 											</li>
-											<li className="text-sm leading-6 text-gray-600">
+											<li tw='text-sm leading-6 text-gray-600'>
 												{ReactHtmlParser(DataTableLabel[7].label)}
 												<div>
-													<div className="my-3 flex">
-														<div className="rounded-md shadow-sm max-w-sm relative flex-grow focus-within:z-10">
+													<div tw='my-3 flex'>
+														<div tw='rounded-md shadow-sm max-w-sm relative flex-grow focus-within:z-10'>
 															<input
-																id="email"
-																className={`form-input block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
+																id='email'
+																css={[
+																	tw`block w-full rounded-none rounded-l-md transition ease-in-out duration-150 sm:text-sm sm:leading-5`,
 																	disableSiteVerify
-																		? 'opacity-50 bg-gray-300 cursor-not-allowed'
-																		: ''
-																}`}
-																name="verify_id_meta_tag"
+																		? tw`opacity-50 bg-gray-300 cursor-not-allowed`
+																		: null
+																]}
+																name='verify_id_meta_tag'
 																value={copyValue}
 																onChange={handleInputChange}
-																autoComplete="off"
+																autoComplete='off'
 															/>
 														</div>
 														<CopyToClipboard
@@ -490,29 +490,34 @@ const DataTable = (props) => {
 															text={copyValue}
 														>
 															<button
-																className={`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100 ${
+																css={[
+																	tw`-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-r-md text-gray-700 bg-gray-100`,
 																	disableSiteVerify
-																		? 'opacity-50 bg-indigo-300 cursor-not-allowed'
-																		: 'hover:text-gray-500 hover:bg-white focus:outline-none focus:shadow-xs-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150'
-																}`}
+																		? tw`opacity-50 bg-indigo-300 cursor-not-allowed`
+																		: tw`hover:text-gray-500 hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150`
+																]}
 															>
-																<span>{copied ? 'Copied!' : 'Copy'}</span>
+																{copied ? (
+																	<span>Copied</span>
+																) : (
+																	<span>Copy</span>
+																)}
 															</button>
 														</CopyToClipboard>
 													</div>
 												</div>
 											</li>
-											<li className="text-sm leading-6 text-gray-600">
+											<li tw='text-sm leading-6 text-gray-600'>
 												{ReactHtmlParser(DataTableLabel[8].label)}
 											</li>
 										</ol>
 									</div>
 
 									{errorMsg && (
-										<div className="block p-2 my-5">
-											<div className="flex justify-center sm:justify-start">
+										<div tw='block p-2 my-5'>
+											<div tw='flex justify-center sm:justify-start'>
 												<div>
-													<h3 className="text-sm leading-5 font-medium text-red-800 break-words">
+													<h3 tw='text-sm leading-5 font-medium text-red-800 break-words'>
 														{errorMsg}
 													</h3>
 												</div>
@@ -521,10 +526,10 @@ const DataTable = (props) => {
 									)}
 
 									{successMsg && (
-										<div className="block p-2 my-5">
-											<div className="flex justify-center sm:justify-start">
+										<div tw='block p-2 my-5'>
+											<div tw='flex justify-center sm:justify-start'>
 												<div>
-													<h3 className="text-sm leading-5 font-medium text-green-800 break-words">
+													<h3 tw='text-sm leading-5 font-medium text-green-800 break-words'>
 														{successMsg}
 													</h3>
 												</div>
@@ -534,23 +539,24 @@ const DataTable = (props) => {
 								</div>
 							</div>
 
-							<div className="w-full my-3 sm:mt-4 sm:inline-flex sm:flex-row-reverse">
-								<span className="mt-3 sm:ml-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
-									<form onSubmit={handleSiteVerification} className="w-full">
+							<div tw='w-full my-3 sm:mt-4 sm:inline-flex sm:flex-row-reverse'>
+								<span tw='mt-3 sm:ml-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto'>
+									<form onSubmit={handleSiteVerification} tw='w-full'>
 										<input
-											type="hidden"
+											type='hidden'
 											value={siteVerifyId}
-											name="site_verify_id"
+											name='site_verify_id'
 											onChange={handleHiddenInputChange}
 										/>
 										<button
-											type="submit"
+											type='submit'
 											disabled={disableSiteVerify}
-											className={`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-indigo-600 ${
+											css={[
+												tw`inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-indigo-600`,
 												disableSiteVerify
-													? 'opacity-50 cursor-not-allowed'
-													: 'hover:bg-indigo-500 focus:outline-none focus:shadow-xs-outline-indigo focus:border-indigo-700 active:bg-indigo-700'
-											}`}
+													? tw`opacity-50 cursor-not-allowed`
+													: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:bg-indigo-700`
+											]}
 										>
 											{disableSiteVerify
 												? DataTableLabel[12].label
@@ -560,27 +566,28 @@ const DataTable = (props) => {
 								</span>
 
 								{enableNextStep ? (
-									<span className="mt-3 sm:ml-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
+									<span tw='mt-3 sm:ml-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto'>
 										<Link
-											href="/dashboard/site/[siteId]/overview"
+											href='/dashboard/site/[siteId]/overview'
 											as={`/dashboard/site/${props.site.id}/overview`}
 										>
-											<a className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700">
+											<a tw='inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700'>
 												Go to Site Overview
 											</a>
 										</Link>
 									</span>
 								) : null}
 
-								<span className="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
+								<span tw='mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto'>
 									<button
-										type="button"
+										type='button'
 										disabled={disableSiteVerify}
-										className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5 ${
+										css={[
+											tw`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
 											disableSiteVerify
-												? 'opacity-50 cursor-not-allowed'
-												: 'hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150'
-										}`}
+												? tw`opacity-50 cursor-not-allowed`
+												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
+										]}
 										onClick={() =>
 											setTimeout(
 												() => setShowVerifySiteModal(!showVerifySiteModal),
@@ -598,77 +605,78 @@ const DataTable = (props) => {
 			</Transition>
 
 			<Transition show={showDeleteSiteModal}>
-				<div className="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
+				<div tw='fixed z-20 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center'>
 					<Transition.Child
-						enter="ease-out duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-100"
+						enter='ease-out duration-300'
+						enterFrom='opacity-0'
+						enterTo='opacity-100'
+						leave='ease-in duration-200'
+						leaveFrom='opacity-100'
+						leaveTo='opacity-100'
 					>
-						<div className="fixed inset-0 transition-opacity">
-							<div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+						<div tw='fixed inset-0 transition-opacity'>
+							<div tw='absolute inset-0 bg-gray-500 opacity-75'></div>
 						</div>
 					</Transition.Child>
 					<Transition.Child
-						enter="ease-out duration-300"
-						enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-						enterTo="opacity-100 translate-y-0 sm:scale-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						enter='ease-out duration-300'
+						enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+						enterTo='opacity-100 translate-y-0 sm:scale-100'
+						leave='ease-in duration-200'
+						leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+						leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
 					>
 						<div
-							className="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden shadow-xs-xl transform transition-all sm:max-w-lg sm:w-full sm:p-6"
-							role="dialog"
-							aria-modal="true"
-							aria-labelledby="modal-headline"
+							tw='bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden ring-1 ring-black ring-opacity-5 transform transition-all sm:max-w-lg sm:w-full sm:p-6'
+							role='dialog'
+							aria-modal='true'
+							aria-labelledby='modal-headline'
 						>
-							<div className="sm:flex sm:items-start">
-								<div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+							<div tw='sm:flex sm:items-start'>
+								<div tw='mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10'>
+									{/* TODO: change this to JSX component */}
 									<svg
-										className="h-6 w-6 text-red-600"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
+										tw='h-6 w-6 text-red-600'
+										fill='none'
+										viewBox='0 0 24 24'
+										stroke='currentColor'
 									>
 										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth="2"
-											d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+											strokeLinecap='round'
+											strokeLinejoin='round'
+											strokeWidth='2'
+											d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
 										/>
 									</svg>
 								</div>
-								<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+								<div tw='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left'>
 									<h3
-										className="text-lg leading-6 font-medium text-gray-900"
-										id="modal-headline"
+										tw='text-lg leading-6 font-medium text-gray-900'
+										id='modal-headline'
 									>
 										{DataTableLabel[1].label}
 									</h3>
-									<div className="mt-2">
-										<p className="text-sm leading-5 text-gray-500">
+									<div tw='mt-2'>
+										<p tw='text-sm leading-5 text-gray-500'>
 											{DataTableLabel[9].label}
 										</p>
 									</div>
 								</div>
 							</div>
-							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<span className="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
+							<div tw='mt-5 sm:mt-4 sm:flex sm:flex-row-reverse'>
+								<span tw='flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto'>
 									<button
-										type="button"
-										className="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-red-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-xs-outline-red transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+										type='button'
+										tw='inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-red-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150 sm:text-sm sm:leading-5'
 										onClick={(e) => handleSiteDeletion(e)}
 									>
 										{DataTableLabel[10].label}
 									</button>
 								</span>
-								<span className="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
+								<span tw='mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto'>
 									<button
-										type="button"
-										className="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+										type='button'
+										tw='inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150 sm:text-sm sm:leading-5'
 										onClick={() =>
 											setTimeout(
 												() => setShowDeleteSiteModal(!showDeleteSiteModal),
@@ -689,7 +697,7 @@ const DataTable = (props) => {
 		<DataTableDiv>
 			{[...Array(6)].map((val, key) => (
 				<td
-					className="flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-300"
+					tw='flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300'
 					key={key}
 				>
 					<Skeleton duration={2} />

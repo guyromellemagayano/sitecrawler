@@ -1,13 +1,13 @@
 // React
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 // NextJS
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 // External
 import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
-import Skeleton from 'react-loading-skeleton';
 import tw from 'twin.macro';
 
 // Components
@@ -15,63 +15,54 @@ const AppLogo = loadable(() => import('src/components/logo/AppLogo'));
 const PrimaryMenu = loadable(() =>
 	import('src/components/sidebar/PrimaryMenu')
 );
-
-// FIXME: debug this
 const ProfileSidebar = loadable(() => import('src/components/profile/Sidebar'));
 const SettingsMenu = loadable(() =>
 	import('src/components/sidebar/SettingsMenu')
 );
 const SiteMenu = loadable(() => import('src/components/sidebar/SiteMenu'));
 
-const MainSidebar = ({ user, userLoaded, site, sitesLoaded }) => {
-	const [logoLoaded, setLogoLoaded] = useState(false);
+const MainSidebar = ({ user }) => {
+	const [selectedMenu, setSelectedMenu] = useState('');
 
-	const siteDashboardLink = '/dashboard/sites';
+	const siteDashboardLink = '/';
+
+	const router = useRouter();
 
 	useEffect(() => {
-		setTimeout(() => {
-			setLogoLoaded(true);
-		}, 1500);
-	}, [user, userLoaded]);
+		if (Object.keys(user).length > 0) {
+			switch (router.pathname) {
+				case '/site':
+					setSelectedMenu(<SiteMenu />);
+					break;
+				case '/settings':
+					setSelectedMenu(<SettingsMenu />);
+					break;
+				default:
+					setSelectedMenu(<PrimaryMenu user={user} />);
+					break;
+			}
+		}
+	}, [router.pathname, user]);
 
 	return (
-		<aside tw="hidden md:flex md:flex-shrink-0 bg-gray-1000">
-			<div tw="flex flex-col border-r border-gray-300 bg-gray-1000 w-64">
-				<div tw="h-0 flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-					<div tw="flex items-center flex-shrink-0 flex-row px-3">
-						<Link href={siteDashboardLink} replace={true}>
-							{logoLoaded ? (
-								<a tw="p-1 block w-full">
-									<AppLogo
-										className={tw`h-8 w-auto`}
-										src="/img/logos/site-logo-white.svg"
-										alt="app-logo"
-									/>
-								</a>
-							) : (
-								<div tw="p-1 block">
-									<Skeleton duration={2} width={175} height={35} />
-								</div>
-							)}
+		<aside tw='hidden lg:flex lg:flex-shrink-0 bg-gray-1000'>
+			<div tw='flex flex-col w-64'>
+				<div tw='flex flex-col h-0 flex-1 pt-5 pb-4 overflow-y-auto'>
+					<div tw='flex items-center flex-shrink-0 flex-row px-3 h-16'>
+						<Link href={siteDashboardLink} passHref>
+							<a tw='p-1 block w-full cursor-pointer'>
+								<AppLogo
+									className={tw`h-8 w-auto`}
+									src='/images/logos/site-logo-white.svg'
+									alt='app-logo'
+								/>
+							</a>
 						</Link>
 					</div>
-
-					{/* FIXME: fix React issue on switching components */}
-					{window.location.href.indexOf('/site/') > -1 ? (
-						<SiteMenu crawlableHandler={props.crawlableHandler} />
-					) : window.location.href.indexOf('/settings/') > -1 ? (
-						<SettingsMenu />
-					) : (
-						<PrimaryMenu
-							site={site}
-							sitesLoaded={sitesLoaded}
-							user={user}
-							userLoaded={userLoaded}
-						/>
-					)}
+					{selectedMenu}
 				</div>
 
-				<ProfileSidebar user={user} userLoaded={userLoaded} />
+				<ProfileSidebar />
 			</div>
 		</aside>
 	);

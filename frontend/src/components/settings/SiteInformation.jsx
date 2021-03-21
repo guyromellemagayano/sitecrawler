@@ -1,41 +1,41 @@
-import { Fragment, useState, useEffect } from 'react';
-import { Transition } from '@tailwindui/react';
-import Cookies from 'js-cookie';
-import fetch from 'node-fetch';
-import Skeleton from 'react-loading-skeleton';
-import styled from 'styled-components';
-import PropTypes from 'prop-types';
+import { Fragment, useState, useEffect } from "react";
+import { Transition } from "@headlessui/react";
+import Cookies from "js-cookie";
+import fetch from "node-fetch";
+import Skeleton from "react-loading-skeleton";
+import tw from "twin.macro";
+import PropTypes from "prop-types";
 
 const SiteInformationDiv = styled.div``;
 
 const SiteInformation = (props) => {
-	const [errorMsg, setErrorMsg] = useState('');
-	const [successMsg, setSuccessMsg] = useState('');
+	const [errorMsg, setErrorMsg] = useState("");
+	const [successMsg, setSuccessMsg] = useState("");
 	const [disableInputFields, setDisableInputFields] = useState(0);
-	const [siteName, setSiteName] = useState('');
-	const [siteUrl, setSiteUrl] = useState('');
+	const [siteName, setSiteName] = useState("");
+	const [siteUrl, setSiteUrl] = useState("");
 	const [showNotificationStatus, setShowNotificationStatus] = useState(false);
 
 	const updateSiteSettings = async (endpoint, formData) => {
 		const response = await fetch(endpoint, {
-			method: 'PUT',
+			method: "PUT",
 			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"X-CSRFToken": Cookies.get("csrftoken"),
 			},
-			body: JSON.stringify(formData)
+			body: JSON.stringify(formData),
 		});
 
 		const data = await response.json();
 
 		if (response.ok && response.status === 200) {
 			if (data) {
-				setSuccessMsg('Site information update successfully.');
+				setSuccessMsg("Site information update successfully.");
 				setTimeout(() => setShowNotificationStatus(true), 1500);
 				setDisableInputFields(!disableInputFields);
 			} else {
-				setErrorMsg('Site information update failed. Please try again.');
+				setErrorMsg("Site information update failed. Please try again.");
 				setTimeout(() => setShowNotificationStatus(true), 1500);
 			}
 		} else {
@@ -44,7 +44,7 @@ const SiteInformation = (props) => {
 			error.response = response;
 			error.data = data;
 
-			setErrorMsg('An unexpected error occurred. Please try again.');
+			setErrorMsg("An unexpected error occurred. Please try again.");
 			setTimeout(() => setShowNotificationStatus(true), 1500);
 
 			throw error;
@@ -56,7 +56,7 @@ const SiteInformation = (props) => {
 
 		const body = {
 			name: e.currentTarget.site_name.value,
-			url: e.currentTarget.site_url.value
+			url: e.currentTarget.site_url.value,
 		};
 
 		await updateSiteSettings(`/api/site/${props.queryData.siteId}/`, body);
@@ -73,19 +73,14 @@ const SiteInformation = (props) => {
 	};
 
 	useEffect(() => {
-		if (
-			typeof props.siteData === 'object' &&
-			props.siteData !== undefined &&
-			props.siteData !== null
-		) {
+		if (typeof props.siteData === "object" && props.siteData !== undefined && props.siteData !== null) {
 			setSiteName(props.siteData.name);
 			setSiteUrl(props.siteData.url);
 		}
 	}, [props.siteData]);
 
 	useEffect(() => {
-		if (showNotificationStatus === true)
-			setTimeout(() => setShowNotificationStatus(false), 7500);
+		if (showNotificationStatus === true) setTimeout(() => setShowNotificationStatus(false), 3500);
 	}, [showNotificationStatus]);
 
 	return (
@@ -109,10 +104,8 @@ const SiteInformation = (props) => {
 								leaveTo="opacity-0"
 								className="max-w-sm w-full"
 							>
-								<div
-									className={`bg-white shadow-lg rounded-lg pointer-events-auto`}
-								>
-									<div className={`rounded-lg shadow-xs overflow-hidden`}>
+								<div className={`bg-white shadow-lg rounded-lg pointer-events-auto`}>
+									<div className={`rounded-lg ring-1 ring-black ring-opacity-5 overflow-hidden`}>
 										<div className={`p-4`}>
 											<div className={`flex items-start`}>
 												<div className={`flex-shrink-0`}>
@@ -160,45 +153,25 @@ const SiteInformation = (props) => {
 												<div className={`ml-3 w-0 flex-1 pt-0.5`}>
 													<p
 														className={`text-sm leading-5 font-medium ${
-															errorMsg !== undefined && errorMsg !== ''
-																? 'text-red-500'
-																: 'text-gray-900'
-														} ${
-															successMsg !== undefined && successMsg !== ''
-																? 'text-green-500'
-																: 'text-gray-900'
-														}`}
+															errorMsg !== undefined && errorMsg !== "" ? "text-red-500" : "text-gray-900"
+														} ${successMsg !== undefined && successMsg !== "" ? "text-green-500" : "text-gray-900"}`}
 													>
-														{errorMsg !== undefined && errorMsg !== ''
-															? 'Update Failed!'
-															: successMsg !== undefined && successMsg !== ''
-															? 'Update Success!'
-															: 'Verifying...'}
+														{errorMsg !== undefined && errorMsg !== ""
+															? "Update Failed!"
+															: successMsg !== undefined && successMsg !== ""
+															? "Update Success!"
+															: "Verifying..."}
 													</p>
 													<p className={`mt-1 text-sm leading-5 text-gray-500`}>
-														{errorMsg !== undefined && errorMsg !== ''
-															? errorMsg
-															: successMsg}
+														{errorMsg !== undefined && errorMsg !== "" ? errorMsg : successMsg}
 													</p>
 												</div>
 												<div className={`ml-4 flex-shrink-0 flex`}>
 													<button
 														className={`inline-flex text-gray-400 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
-														onClick={() =>
-															setTimeout(
-																() =>
-																	setShowNotificationStatus(
-																		!showNotificationStatus
-																	),
-																150
-															)
-														}
+														onClick={() => setTimeout(() => setShowNotificationStatus(!showNotificationStatus), 150)}
 													>
-														<svg
-															className={`h-5 w-5`}
-															viewBox="0 0 20 20"
-															fill="currentColor"
-														>
+														<svg className={`h-5 w-5`} viewBox="0 0 20 20" fill="currentColor">
 															<path
 																fillRule="evenodd"
 																d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -215,31 +188,20 @@ const SiteInformation = (props) => {
 						</div>
 					</Transition>
 
-					<SiteInformationDiv
-						className={`mb-5 max-w-full bg-white shadow-xs rounded-lg`}
-					>
+					<SiteInformationDiv className={`mb-5 max-w-full bg-white ring-1 ring-black ring-opacity-5 rounded-lg`}>
 						<div className={`px-4 py-5 sm:p-6`}>
 							<form onSubmit={handleSiteUpdate}>
 								<div>
 									<div>
 										<div>
-											<h3
-												className={`text-lg leading-6 font-medium text-gray-900`}
-											>
+											<h3 className={`text-lg leading-6 font-medium text-gray-900`}>
 												{props.settingsLabelData[2].label}
 											</h3>
-											<p className={`mt-1 text-sm leading-5 text-gray-500`}>
-												{props.settingsLabelData[3].label}
-											</p>
+											<p className={`mt-1 text-sm leading-5 text-gray-500`}>{props.settingsLabelData[3].label}</p>
 										</div>
-										<div
-											className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
-										>
+										<div className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}>
 											<div className={`sm:col-span-6`}>
-												<label
-													htmlFor={`site_name`}
-													className={`block text-sm font-medium leading-5 text-gray-700`}
-												>
+												<label htmlFor={`site_name`} className={`block text-sm font-medium leading-5 text-gray-700`}>
 													{props.settingsLabelData[4].label}
 												</label>
 												<div className={`mt-1 flex rounded-md shadow-sm`}>
@@ -249,23 +211,17 @@ const SiteInformation = (props) => {
 														value={siteName}
 														name={`site_name`}
 														disabled={disableInputFields == 0 ? true : false}
-														className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-															disableInputFields == 0 &&
-															'opacity-50 bg-gray-300 cursor-not-allowed'
+														className={`block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
+															disableInputFields == 0 && "opacity-50 bg-gray-300 cursor-not-allowed"
 														}`}
 														onChange={handleSiteNameInputChange}
 													/>
 												</div>
 											</div>
 										</div>
-										<div
-											className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
-										>
+										<div className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}>
 											<div className={`sm:col-span-6`}>
-												<label
-													htmlFor={`password1`}
-													className={`block text-sm font-medium leading-5 text-gray-700`}
-												>
+												<label htmlFor={`password1`} className={`block text-sm font-medium leading-5 text-gray-700`}>
 													{props.settingsLabelData[5].label}
 												</label>
 												<div className={`mt-1 flex rounded-md shadow-sm`}>
@@ -275,7 +231,7 @@ const SiteInformation = (props) => {
 														value={siteUrl}
 														name={`site_url`}
 														disabled={`disabled`}
-														className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 opacity-50 bg-gray-300 cursor-not-allowed`}
+														className={`block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 opacity-50 bg-gray-300 cursor-not-allowed`}
 													/>
 												</div>
 											</div>
@@ -291,8 +247,8 @@ const SiteInformation = (props) => {
 													disabled={disableInputFields == 1 ? true : false}
 													className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
 														disableInputFields == 1
-															? 'opacity-50 bg-indigo-300 cursor-not-allowed'
-															: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700'
+															? "opacity-50 bg-indigo-300 cursor-not-allowed"
+															: "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700"
 													}`}
 													onClick={handleEditSiteDetails}
 												>
@@ -305,8 +261,8 @@ const SiteInformation = (props) => {
 													disabled={disableInputFields == 1 ? false : true}
 													className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
 														disableInputFields == 1
-															? 'hover:text-gray-500 focus:outline-none'
-															: 'opacity-50 cursor-not-allowed'
+															? "hover:text-gray-500 focus:outline-none"
+															: "opacity-50 cursor-not-allowed"
 													}`}
 													onClick={handleEditSiteDetails}
 												>
@@ -321,8 +277,8 @@ const SiteInformation = (props) => {
 													disabled={disableInputFields == 1 ? false : true}
 													className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
 														disableInputFields == 0
-															? 'opacity-50 bg-green-300 cursor-not-allowed'
-															: 'hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700'
+															? "opacity-50 bg-green-300 cursor-not-allowed"
+															: "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"
 													}`}
 												>
 													{props.settingsLabelData[8].label}
@@ -352,5 +308,5 @@ SiteInformation.propTypes = {
 	updateSiteSettings: PropTypes.func,
 	handleSiteUpdate: PropTypes.func,
 	handleEditSiteDetails: PropTypes.func,
-	handleSiteNameInputChange: PropTypes.func
+	handleSiteNameInputChange: PropTypes.func,
 };

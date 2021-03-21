@@ -8,9 +8,9 @@ import SiteDangerStatus from 'components/status/SiteDangerStatus';
 import SiteSuccessStatus from 'components/status/SiteSuccessStatus';
 import SiteWarningStatus from 'components/status/SiteWarningStatus';
 import Skeleton from 'react-loading-skeleton';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import useSWR from 'swr';
-import OverviewLabel from 'public/label/components/sites/Overview.json';
+import OverviewLabel from 'public/labels/components/sites/Overview.json';
 import Layout from 'components/Layout';
 
 const fetcher = async (url) => {
@@ -162,7 +162,7 @@ const SitesOverview = (props) => {
 					</div>
 					<SitesOverviewDiv className={`xs:min-h-0`}>
 						<div
-							className={`bg-white overflow-hidden shadow-xs rounded-lg h-full`}
+							className={`bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg h-full`}
 						>
 							<div className={`px-4 py-5 sm:p-6`}>
 								<h2
@@ -187,7 +187,7 @@ const SitesOverview = (props) => {
 												&nbsp;
 												<Moment
 													date={props.finishedAt}
-													format="hh:mm:ss A"
+													format='hh:mm:ss A'
 													local
 												/>
 											</dd>
@@ -208,7 +208,7 @@ const SitesOverview = (props) => {
 												&nbsp;
 												<Moment
 													date={props.finishedAt}
-													format="hh:mm:ss A"
+													format='hh:mm:ss A'
 													utc
 												/>
 											</dd>
@@ -260,14 +260,14 @@ const SitesOverview = (props) => {
 																	className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
 																>
 																	<svg
-																		fill="currentColor"
-																		viewBox="0 0 20 20"
+																		fill='currentColor'
+																		viewBox='0 0 20 20'
 																		className={`text-red-400`}
 																	>
 																		<path
-																			fillRule="evenodd"
-																			d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-																			clipRule="evenodd"
+																			fillRule='evenodd'
+																			d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z'
+																			clipRule='evenodd'
 																		></path>
 																	</svg>
 																</span>

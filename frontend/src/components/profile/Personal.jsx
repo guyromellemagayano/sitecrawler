@@ -1,57 +1,44 @@
 // React
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 // External
-import 'core-js';
 import { Formik } from 'formik';
-import { Transition } from '@tailwindui/react';
 import * as Yup from 'yup';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
-import Skeleton from 'react-loading-skeleton';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import useSWR from 'swr';
 
 // JSON
-import PersonalLabel from 'public/label/components/profile/Personal.json';
+import PersonalLabel from 'public/labels/components/profile/Personal.json';
 
 // Hooks
 import useFetcher from 'src/hooks/useFetcher';
+import usePatchMethod from 'src/hooks/usePatchMethod';
 
-const ProfileSettingsPersonalDiv = styled.div``;
-
-const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
+// Components
+const ErrorNotificationOverlay = loadable(() =>
+	import('src/components/overlay/ErrorNotificationOverlay')
+);
+const SuccessNotificationOverlay = loadable(() =>
+	import('src/components/overlay/SuccessNotificationOverlay')
+);
 
 const ProfileSettingsPersonal = () => {
+	const [disableForm, setDisableForm] = useState(true);
+	const [email, setEmail] = useState('');
 	const [errorMsg, setErrorMsg] = useState('');
-	const [successMsg, setSuccessMsg] = useState('');
-	const [username, setUsername] = useState('');
+	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
 	const [firstname, setFirstname] = useState('');
 	const [lastname, setLastname] = useState('');
-	const [email, setEmail] = useState('');
-	const [usernameError, setUsernameError] = useState(false);
-	const [disableInputFields, setDisableInputFields] = useState(false);
-	const [showNotificationStatus, setShowNotificationStatus] = useState(false);
+	const [successMsg, setSuccessMsg] = useState('');
+	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
+	const [username, setUsername] = useState('');
+	const [usernameError, setUsernameError] = useState('');
 
 	const userApiEndpoint = '/api/auth/user/';
 
 	const { data: profile } = useSWR(userApiEndpoint, useFetcher);
-
-	useEffect(() => {
-		if (profile !== '' && profile !== undefined) {
-			setUsername(profile.username);
-			setFirstname(profile.first_name);
-			setLastname(profile.last_name);
-			setEmail(profile.email);
-		}
-	}, [profile]);
-
-	const handleEditProfile = (e) => {
-		e.preventDefault();
-
-		setDisableInputFields(!disableInputFields);
-	};
 
 	const handleUserNameInputChange = (e) => {
 		setUsername(e.target.value);
@@ -66,364 +53,312 @@ const ProfileSettingsPersonal = () => {
 	};
 
 	useEffect(() => {
-		if (showNotificationStatus === true)
-			setTimeout(() => setShowNotificationStatus(false), 2500);
-	}, [showNotificationStatus]);
+		if (profile !== '' && profile !== undefined) {
+			setUsername(profile.username);
+			setFirstname(profile.first_name);
+			setLastname(profile.last_name);
+			setEmail(profile.email);
+		}
+	}, [profile]);
 
-	return profile ? (
-		<>
-			<ProfileSettingsPersonalDiv className="mb-5 max-w-full bg-white shadow-xs rounded-lg">
-				<div className="px-4 py-5 sm:p-6">
-					<Formik
-						enableReinitialize={true}
-						initialValues={{
-							username: username,
-							firstname: firstname,
-							lastname: lastname
-						}}
-						validationSchema={Yup.object().shape({
-							username: Yup.string()
-								.min(3, PersonalLabel[9].label)
-								.max(30, PersonalLabel[10].label)
-								.required(PersonalLabel[8].label),
-							firstname: Yup.string()
-								.min(2, PersonalLabel[9].label)
-								.max(78, PersonalLabel[10].label)
-								.required(PersonalLabel[8].label),
-							lastname: Yup.string()
-								.min(2, PersonalLabel[9].label)
-								.max(78, PersonalLabel[10].label)
-								.required(PersonalLabel[8].label)
-						})}
-						onSubmit={async (values, { setSubmitting }) => {
-							// Global axios defaults
-							axios.defaults.headers.common['Accept'] = 'application/json';
-							axios.defaults.headers.common['Content-Type'] =
-								'application/x-www-form-urlencoded';
-							axios.defaults.headers.common['X-CSRFToken'] = Cookies.get(
-								'csrftoken'
-							);
+	return (
+		<div>
+			<SuccessNotificationOverlay
+				successMsg={successMsg}
+				successMsgLoaded={successMsgLoaded}
+				setSuccessMsgLoaded={setSuccessMsgLoaded}
+				successMsgTitle={PersonalLabel[14].label}
+			/>
+			<ErrorNotificationOverlay
+				errorMsg={errorMsg}
+				errorMsgLoaded={errorMsgLoaded}
+				setErrorMsgLoaded={setErrorMsgLoaded}
+				errorMsgTitle={PersonalLabel[13].label}
+			/>
+			<ErrorNotificationOverlay
+				errorMsg={usernameError}
+				errorMsgLoaded={errorMsgLoaded}
+				setErrorMsgLoaded={setErrorMsgLoaded}
+				errorMsgTitle={PersonalLabel[13].label}
+			/>
+			<div tw='max-w-full py-4 px-8'>
+				<div tw='pt-4 m-auto'>
+					<h5 tw='text-xl leading-6 font-medium text-gray-900'>
+						{PersonalLabel[0].label}
+					</h5>
+					<p tw='max-w-full mt-2 text-sm leading-5 text-gray-500'>
+						{PersonalLabel[0].description}
+					</p>
+				</div>
+			</div>
+			<div tw='max-w-full lg:max-w-3xl p-8 pt-0 pb-2'>
+				<Formik
+					enableReinitialize={true}
+					initialValues={{
+						username: username,
+						firstname: firstname,
+						lastname: lastname
+					}}
+					validationSchema={Yup.object().shape({
+						username: Yup.string()
+							.min(3, PersonalLabel[9].label)
+							.max(30, PersonalLabel[10].label)
+							.required(PersonalLabel[8].label),
+						firstname: Yup.string()
+							.min(2, PersonalLabel[9].label)
+							.max(78, PersonalLabel[10].label)
+							.required(PersonalLabel[8].label),
+						lastname: Yup.string()
+							.min(2, PersonalLabel[9].label)
+							.max(78, PersonalLabel[10].label)
+							.required(PersonalLabel[8].label)
+					})}
+					onSubmit={async (values, { setSubmitting }) => {
+						const body = {
+							username: values.username,
+							first_name: values.firstname,
+							last_name: values.lastname,
+							settings: profile.settings,
+							large_page_size_threshold: profile.large_page_size_threshold
+						};
 
-							const body = {
-								username: values.username,
-								first_name: values.firstname,
-								last_name: values.lastname,
-								settings: profile.settings,
-								large_page_size_threshold: profile.large_page_size_threshold
-							};
+						try {
+							const response = await usePatchMethod(userApiEndpoint, body);
+							const data = await response.data;
 
-							try {
-								const response = await axios.patch(userApiEndpoint, body);
-								const data = await response.data;
+							if (Math.floor(response.status / 200) === 1) {
+								if (data) {
+									setTimeout(() => {
+										setSubmitting(false);
+									}, 1000);
 
-								// Promise timeout
-								await sleep(500);
-
-								if (Math.floor(response.status / 200) === 1) {
-									if (data) {
-										if (data.username) {
-											setUsernameError(false);
-										}
-
-										setSuccessMsg(PersonalLabel[11].label);
-										setTimeout(() => setShowNotificationStatus(true), 1500);
-										setDisableInputFields(!disableInputFields);
-									}
+									setSuccessMsg(PersonalLabel[11].label);
+									setSuccessMsgLoaded(true);
 								}
-							} catch (error) {
-								setSubmitting(false);
+							} else {
+								if (data) {
+									if (data.username) {
+										setTimeout(() => {
+											setSubmitting(false);
+										}, 1000);
 
-								if (error.response) {
-									if (error.response.data) {
-										if (error.response.data.username) {
-											setErrorMsg(error.response.data.username);
-											setUsernameError(true);
-										}
+										setUsernameError(data.username);
+										setErrorMsgLoaded(!errorMsgLoaded);
 									}
-								} else if (error.request) {
-									setErrorMsg(
-										'Error ' +
-											error.request.status +
-											' ' +
-											error.request.statusText
-									);
-								} else {
-									setErrorMsg(error.message);
 								}
 							}
-						}}
-					>
-						{({ values, errors, handleBlur, handleSubmit, isSubmitting }) => (
-							<form onSubmit={handleSubmit}>
-								<div>
-									<div>
-										<div>
-											<h3 className="text-lg leading-6 font-medium text-gray-900">
-												{PersonalLabel[0].label}
-											</h3>
-											<p className="mt-1 text-sm leading-5 text-gray-500">
-												{PersonalLabel[0].description}
-											</p>
-										</div>
+						} catch (error) {
+							setTimeout(() => {
+								setSubmitting(false);
+							}, 1000);
+
+							setErrorMsg(PersonalLabel[15].label);
+							setErrorMsgLoaded(!errorMsgLoaded);
+
+							throw error.message;
+						}
+					}}
+				>
+					{({
+						values,
+						errors,
+						handleBlur,
+						handleSubmit,
+						isSubmitting,
+						touched
+					}) => (
+						<form
+							tw='space-y-8 divide-y divide-gray-200'
+							onSubmit={handleSubmit}
+						>
+							<div tw='mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5'>
+								<div tw='sm:col-span-4'>
+									<label
+										htmlFor='username'
+										tw='block text-sm font-medium leading-5 text-gray-700'
+									>
+										{PersonalLabel[1].label}
+									</label>
+									<div tw='mt-1 relative flex rounded-md shadow-sm'>
+										<input
+											type='text'
+											id='username'
+											value={values.username}
+											name='username'
+											disabled={
+												isSubmitting
+													? isSubmitting
+													: usernameError
+													? !disableForm
+													: disableForm
+											}
+											css={[
+												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
+												(isSubmitting
+													? isSubmitting
+													: usernameError
+													? !disableForm
+													: disableForm) &&
+													tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+												errors.username
+													? tw`border-red-300`
+													: tw`border-gray-300`
+											]}
+											aria-describedby='username'
+											onChange={handleUserNameInputChange}
+											onBlur={handleBlur}
+										/>
 									</div>
-									<div className="mt-8">
-										<div className="grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6">
-											<div className="sm:col-span-6">
-												<label
-													htmlFor="username"
-													className="block text-sm font-medium leading-5 text-gray-700"
-												>
-													{PersonalLabel[1].label}
-												</label>
-												<div className="mt-1 relative flex rounded-md shadow-sm">
-													<input
-														type="text"
-														id="username"
-														value={values.username}
-														name="username"
-														disabled={!disableInputFields}
-														className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-															!disableInputFields &&
-															'opacity-50 bg-gray-300 cursor-not-allowed'
-														} ${
-															errors.username || usernameError
-																? 'border-red-300'
-																: 'border-gray-300'
-														}`}
-														aria-describedby="username"
-														onChange={handleUserNameInputChange}
-														onBlur={handleBlur}
-													/>
-													{errors.username || usernameError ? (
-														<div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-															<svg
-																className="h-5 w-5 text-red-500"
-																fill="currentColor"
-																viewBox="0 0 20 20"
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-																	clipRule="evenodd"
-																/>
-															</svg>
-														</div>
-													) : null}
-												</div>
-												{usernameError && (
-													<span className="block mt-2 text-xs leading-5 text-red-700">
-														{errorMsg && errorMsg}
-													</span>
-												)}
-												{errors.username && (
-													<span className="block mt-2 text-xs leading-5 text-red-700">
-														{errors.username && errors.username}
-													</span>
-												)}
-											</div>
+									{errors.username && touched.username && (
+										<span tw='block mt-2 text-xs leading-5 text-red-700'>
+											{errors.username && errors.username}
+										</span>
+									)}
+								</div>
 
-											<div className="sm:col-span-3">
-												<label
-													htmlFor="firstname"
-													className="block text-sm font-medium leading-5 text-gray-700"
-												>
-													{PersonalLabel[2].label}
-												</label>
-												<div className="mt-1 relative rounded-md shadow-sm">
-													<input
-														type="text"
-														id="firstname"
-														value={values.firstname}
-														name="firstname"
-														disabled={!disableInputFields}
-														className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-															!disableInputFields &&
-															'opacity-50 bg-gray-300 cursor-not-allowed'
-														} ${
-															errors.firstname
-																? 'border-red-300'
-																: 'border-gray-300'
-														}`}
-														aria-describedby="firstname"
-														onChange={handleFirstNameInputChange}
-														onBlur={handleBlur}
-													/>
-													{errors.firstname && (
-														<div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-															<svg
-																className="h-5 w-5 text-red-500"
-																fill="currentColor"
-																viewBox="0 0 20 20"
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-																	clipRule="evenodd"
-																/>
-															</svg>
-														</div>
-													)}
-												</div>
-												{errors.firstname && (
-													<span className="block mt-2 text-xs leading-5 text-red-700">
-														{errors.firstname && errors.firstname}
-													</span>
-												)}
-											</div>
+								<div tw='sm:col-span-2'>
+									<label
+										htmlFor='firstname'
+										tw='block text-sm font-medium leading-5 text-gray-700'
+									>
+										{PersonalLabel[2].label}
+									</label>
+									<div tw='mt-1 relative rounded-md shadow-sm'>
+										<input
+											type='text'
+											id='firstname'
+											value={values.firstname}
+											name='firstname'
+											disabled={
+												isSubmitting
+													? isSubmitting
+													: usernameError
+													? !disableForm
+													: disableForm
+											}
+											css={[
+												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
+												(isSubmitting
+													? isSubmitting
+													: usernameError
+													? !disableForm
+													: disableForm) &&
+													tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+												errors.firstname
+													? tw`border-red-300`
+													: tw`border-gray-300`
+											]}
+											aria-describedby='firstname'
+											onChange={handleFirstNameInputChange}
+											onBlur={handleBlur}
+										/>
+									</div>
+									{errors.firstname && touched.firstname && (
+										<span tw='block mt-2 text-xs leading-5 text-red-700'>
+											{errors.firstname && errors.firstname}
+										</span>
+									)}
+								</div>
 
-											<div className="sm:col-span-3">
-												<label
-													htmlFor="lastname"
-													className="block text-sm font-medium leading-5 text-gray-700"
-												>
-													{PersonalLabel[3].label}
-												</label>
-												<div className="mt-1 relative rounded-md shadow-sm">
-													<input
-														type="text"
-														id="lastname"
-														value={values.lastname}
-														name="lastname"
-														disabled={!disableInputFields}
-														className={`form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-															!disableInputFields &&
-															'opacity-50 bg-gray-300 cursor-not-allowed'
-														} ${
-															errors.lastname
-																? 'border-red-300'
-																: 'border-gray-300'
-														}`}
-														aria-describedby="lastname"
-														onChange={handleLastNameInputChange}
-														onBlur={handleBlur}
-													/>
-													{errors.lastname && (
-														<div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-															<svg
-																className="h-5 w-5 text-red-500"
-																fill="currentColor"
-																viewBox="0 0 20 20"
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-																	clipRule="evenodd"
-																/>
-															</svg>
-														</div>
-													)}
-												</div>
-												{errors.lastname && (
-													<span className="block mt-2 text-xs leading-5 text-red-700">
-														{errors.lastname && errors.lastname}
-													</span>
-												)}
-											</div>
+								<div tw='sm:col-span-2'>
+									<label
+										htmlFor='lastname'
+										tw='block text-sm font-medium leading-5 text-gray-700'
+									>
+										{PersonalLabel[3].label}
+									</label>
+									<div tw='mt-1 relative rounded-md shadow-sm'>
+										<input
+											type='text'
+											id='lastname'
+											value={values.lastname}
+											name='lastname'
+											disabled={
+												isSubmitting
+													? isSubmitting
+													: usernameError
+													? !disableForm
+													: disableForm
+											}
+											css={[
+												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
+												(isSubmitting
+													? isSubmitting
+													: usernameError
+													? !disableForm
+													: disableForm) &&
+													tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+												errors.lastname
+													? tw`border-red-300`
+													: tw`border-gray-300`
+											]}
+											aria-describedby='lastname'
+											onChange={handleLastNameInputChange}
+											onBlur={handleBlur}
+										/>
+									</div>
+									{errors.lastname && touched.lastname && (
+										<span tw='block mt-2 text-xs leading-5 text-red-700'>
+											{errors.lastname && errors.lastname}
+										</span>
+									)}
+								</div>
 
-											<div className="sm:col-span-6">
-												<label
-													htmlFor="email"
-													className="block text-sm font-medium leading-5 text-gray-700"
-												>
-													{PersonalLabel[4].label}
-												</label>
-												<div className="mt-1 rounded-md shadow-sm">
-													<input
-														id="email"
-														type="email"
-														value={email}
-														disabled={true}
-														className="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 opacity-50 bg-gray-300 cursor-not-allowed"
-													/>
-												</div>
-											</div>
-										</div>
+								<div tw='sm:col-span-4'>
+									<label
+										htmlFor='email'
+										tw='block text-sm font-medium leading-5 text-gray-700'
+									>
+										{PersonalLabel[4].label}
+									</label>
+									<div tw='mt-1 rounded-md shadow-sm'>
+										<input
+											id='email'
+											type='email'
+											value={email}
+											disabled={true}
+											tw='focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300 opacity-50 bg-gray-200 cursor-not-allowed'
+										/>
 									</div>
 								</div>
-								<div className="mt-8 border-t border-gray-300 pt-5">
-									<div className="flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row">
-										<div className="flex justify-start xs:order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-auto">
-											<span className="inline-flex sm:inline-block lg:inline-flex rounded-md shadow-sm sm:flex-1 lg:flex-none">
+
+								<div tw='sm:col-span-4'>
+									<div tw='flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row'>
+										<div tw='flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full'>
+											<span tw='inline-flex'>
 												<button
-													type="submit"
-													disabled={disableInputFields}
-													className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 lg:mt-0 sm:ml-0 px-4 py-2 text-sm leading-5 font-medium text-white bg-indigo-600 transition duration-150 ease-in-out ${
-														disableInputFields
-															? 'opacity-50 bg-indigo-300 cursor-not-allowed'
-															: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700'
-													}`}
-													onClick={handleEditProfile}
-												>
-													{PersonalLabel[5].label}
-												</button>
-											</span>
-											<span className="xs:w-full ml-3 xs:ml-0 xs:mt-3 lg:mt-0 lg:ml-3 inline-flex rounded-md shadow-sm">
-												<button
-													type="submit"
-													disabled={!disableInputFields && !isSubmitting}
-													className={`inline-flex xs:w-full justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
-														!disableInputFields && !isSubmitting
-															? 'opacity-50 bg-green-300 cursor-not-allowed'
-															: 'hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700'
-													}`}
+													type={
+														!disableForm && !usernameError ? 'button' : 'submit'
+													}
+													disabled={
+														isSubmitting || Object.keys(errors).length > 0
+													}
+													css={[
+														tw`w-full mt-3 mr-3 ring-1 ring-black ring-opacity-5 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
+														isSubmitting || Object.keys(errors).length > 0
+															? tw`opacity-50 cursor-not-allowed`
+															: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+													]}
+													onClick={() => setDisableForm(!disableForm)}
 												>
 													{isSubmitting
 														? PersonalLabel[12].label
-														: PersonalLabel[7].label}
+														: !usernameError && !disableForm
+														? PersonalLabel[7].label
+														: disableForm && usernameError
+														? PersonalLabel[7].label
+														: PersonalLabel[5].label}
 												</button>
 											</span>
 										</div>
-
-										<Transition
-											show={showNotificationStatus}
-											className="flex lg:items-center justify-end xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1 md:flex-col sm:w-full lg:order-2 lg:w-auto lg:flex lg:flex-row"
-										>
-											<div className="flex">
-												<Transition.Child
-													enter="transform ease-out duration-300 transition"
-													enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-													enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-													leave="transition ease-in duration-100"
-													leaveFrom="opacity-100"
-													leaveTo="opacity-0"
-													className="max-w-sm w-full"
-												>
-													<div className="flex">
-														<div className="flex-shrink-0">
-															<svg
-																className="h-5 w-5 text-green-400"
-																xmlns="http://www.w3.org/2000/svg"
-																viewBox="0 0 20 20"
-																fill="currentColor"
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-																	clipRule="evenodd"
-																/>
-															</svg>
-														</div>
-														<div className="ml-2">
-															<p className="text-sm leading-5 font-medium text-green-800">
-																{successMsg}
-															</p>
-														</div>
-													</div>
-												</Transition.Child>
-											</div>
-										</Transition>
 									</div>
 								</div>
-							</form>
-						)}
-					</Formik>
-				</div>
-			</ProfileSettingsPersonalDiv>
-		</>
-	) : (
-		<ProfileSettingsPersonalDiv className="mb-5 max-w-full">
-			<Skeleton duration={2} width={320} height={586} />
-		</ProfileSettingsPersonalDiv>
+							</div>
+						</form>
+					)}
+				</Formik>
+			</div>
+		</div>
 	);
 };
 

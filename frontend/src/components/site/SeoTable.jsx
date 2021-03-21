@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import useSWR from 'swr';
 import Cookies from 'js-cookie';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import Moment from 'react-moment';
 import Skeleton from 'react-loading-skeleton';
 import Layout from 'components/Layout';
@@ -143,7 +143,7 @@ const PageSeoTable = (props) => {
 								className={`flex justify-start inline-text-sm leading-5 text-gray-500`}
 							>
 								<Link
-									href='/dashboard/site/[siteId]/seo/[seoId]/details'
+									href="/dashboard/site/[siteId]/seo/[seoId]/details"
 									as={`/dashboard/site/${query.siteId}/seo/${pageDetail.id}/details`}
 								>
 									<a
@@ -176,9 +176,9 @@ const PageSeoTable = (props) => {
 					</div>
 					<div className={`text-sm leading-5 text-gray-500`}>
 						{!user.settings.disableLocalTime ? (
-							<Moment date={pageDetail.created_at} format='hh:mm:ss A' local />
+							<Moment date={pageDetail.created_at} format="hh:mm:ss A" local />
 						) : (
-							<Moment date={pageDetail.created_at} format='hh:mm:ss A' utc />
+							<Moment date={pageDetail.created_at} format="hh:mm:ss A" utc />
 						)}
 					</div>
 				</td>

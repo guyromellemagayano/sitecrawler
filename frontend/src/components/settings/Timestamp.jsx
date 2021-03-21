@@ -2,10 +2,10 @@ import { Fragment, useState } from 'react';
 import Cookies from 'js-cookie';
 import fetch from 'node-fetch';
 import fetchJson from 'hooks/fetchJson';
-import GlobalLabels from 'public/label/pages/global.json';
+import GlobalLabels from 'public/labels/pages/global.json';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import useSWR from 'swr';
 
 const TimestampSettingsDiv = styled.div``;
@@ -83,7 +83,7 @@ const TimestampSettings = () => {
 				</TimestampSettingsDiv>
 			) : (
 				<TimestampSettingsDiv
-					className={`max-w-full bg-white shadow-xs rounded-lg mb-5`}
+					className={`max-w-full bg-white ring-1 ring-black ring-opacity-5 rounded-lg mb-5`}
 				>
 					<div className={`px-4 py-5 sm:p-6`}>
 						<div>
@@ -119,7 +119,7 @@ const TimestampSettings = () => {
 															!user.settings.disableLocalTime
 																? 'translate-x-4'
 																: 'translate-x-0'
-														} relative inline-block h-5 w-5 rounded-full bg-white shadow-xs transform transition ease-in-out duration-200`}
+														} relative inline-block h-5 w-5 rounded-full bg-white ring-1 ring-black ring-opacity-5transform transition ease-in-out duration-200`}
 													>
 														<span
 															className={`${

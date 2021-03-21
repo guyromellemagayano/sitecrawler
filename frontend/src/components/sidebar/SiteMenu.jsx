@@ -1,34 +1,45 @@
 // React
-import React, { useState, Fragment, useEffect } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 
 // NextJS
 import Link from 'next/link';
 import Router, { useRouter } from 'next/router';
 
 // External
-
-import { Transition } from '@tailwindui/react';
+import { Transition } from '@headlessui/react';
+import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import useSWR from 'swr';
 
 // JSON
 import SitePages from 'public/data/site-pages.json';
-import PrimaryMenuLabel from 'public/label/components/sidebar/PrimaryMenu.json';
+import PrimaryMenuLabel from 'public/labels/components/sidebar/PrimaryMenu.json';
 
 // Hooks
 import useDropdownOutsideClick from 'src/hooks/useDropdownOutsideClick';
 import useFetcher from 'src/hooks/useFetcher';
 
-const SiteMenuDiv = styled.nav`
-	div[aria-labelledby='navigation-headline'] {
-		.back-nav {
-			margin-top: 2rem;
-			margin-bottom: 0.5rem;
-		}
-	}
-`;
+// Components
+const PlusSvg = loadable(() => import('src/components/svg/PlusSvg'));
+const SelectorSvg = loadable(() => import('src/components/svg/SelectorSvg'));
+const PrimaryMenuSkeleton = loadable(() =>
+	import('src/components/skeletons/PrimaryMenuSkeleton')
+);
+const SidebarSiteResultsSkeleton = loadable(() =>
+	import('src/components/skeletons/SidebarSiteResultsSkeleton')
+);
+
+// TODO: fix navigation-headline styling
+// const nav = styled.nav`
+// 	div[aria-labelledby="navigation-headline"] {
+// 		.back-nav {
+// 			margin-top: 2rem;
+// 			margin-bottom: 0.5rem;
+// 		}
+// 	}
+// `;
 
 const SiteMenu = (props) => {
 	const [selectedSite, setSelectedSite] = useState(undefined);
@@ -70,15 +81,15 @@ const SiteMenu = (props) => {
 		});
 	}
 
-	const { data: stats, error: statsError } = useSWR(
+	const { data: stats } = useSWR(
 		() =>
 			query.siteId && scanObjId
 				? `/api/site/${query.siteId}/scan/${scanObjId}/`
 				: null,
-		fetcher
+		useFetcher
 	);
 
-	const { data: site } = useSWR(sitesApiEndpoint, fetcher);
+	const { data: site } = useSWR(sitesApiEndpoint, useFetcher);
 
 	const setDropdownToggle = () => {
 		setIsComponentVisible(!isComponentVisible);
@@ -120,7 +131,7 @@ const SiteMenu = (props) => {
 	return (
 		<>
 			{user && scan && stats && site && selectedSite !== undefined ? (
-				<SiteMenuDiv className="flex-1 px-4 bg-gray-1000">
+				<nav className='flex-1 px-4 bg-gray-1000'>
 					{SitePages.map((val, key) => {
 						return (
 							<Fragment key={key}>
@@ -132,8 +143,8 @@ const SiteMenu = (props) => {
 											{val.category}
 										</h3>
 										<div
-											className="my-3"
-											role="group"
+											className='my-3'
+											role='group'
 											aria-labelledby={`${val.slug}-headline`}
 										>
 											{val.links.map((val2, key) => {
@@ -165,54 +176,54 @@ const SiteMenu = (props) => {
 																}`}
 															>
 																<svg
-																	className="mr-3 h-6 w-5"
-																	stroke="currentColor"
-																	fill="none"
-																	viewBox="0 0 24 24"
+																	className='mr-3 h-6 w-5'
+																	stroke='currentColor'
+																	fill='none'
+																	viewBox='0 0 24 24'
 																>
 																	<path
-																		strokeLinecap="round"
-																		strokeLinejoin="round"
-																		strokeWidth="2"
+																		strokeLinecap='round'
+																		strokeLinejoin='round'
+																		strokeWidth='2'
 																		d={val2.icon}
 																	/>
 																	{val2.icon2 ? (
 																		<path
-																			strokeLinecap="round"
-																			strokeLinejoin="round"
-																			strokeWidth="2"
+																			strokeLinecap='round'
+																			strokeLinejoin='round'
+																			strokeWidth='2'
 																			d={val2.icon2}
 																		/>
 																	) : null}
 																</svg>
 																<span>{val2.title}</span>
 																{val2.url === '/links' && (
-																	<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																	<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																		{stats.num_links}
 																	</span>
 																)}
 																{val2.url === '/pages' && (
-																	<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																	<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																		{stats.num_pages}
 																	</span>
 																)}
 																{val2.url === '/seo' && (
-																	<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																	<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																		{stats.num_pages}
 																	</span>
 																)}
 																{val2.url === '/images' && (
-																	<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																	<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																		{stats.num_images}
 																	</span>
 																)}
 																{val2.url === '/stylesheets' && (
-																	<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																	<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																		{stats.num_stylesheets}
 																	</span>
 																)}
 																{val2.url === '/scripts' && (
-																	<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																	<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																		{stats.num_scripts}
 																	</span>
 																)}
@@ -239,64 +250,64 @@ const SiteMenu = (props) => {
 																	}`}
 																>
 																	<svg
-																		className="mr-3 h-6 w-5"
-																		stroke="currentColor"
-																		fill="none"
-																		viewBox="0 0 24 24"
+																		className='mr-3 h-6 w-5'
+																		stroke='currentColor'
+																		fill='none'
+																		viewBox='0 0 24 24'
 																	>
 																		<path
-																			strokeLinecap="round"
-																			strokeLinejoin="round"
-																			strokeWidth="2"
+																			strokeLinecap='round'
+																			strokeLinejoin='round'
+																			strokeWidth='2'
 																			d={val2.icon}
 																		/>
 																		{val2.icon2 ? (
 																			<path
-																				strokeLinecap="round"
-																				strokeLinejoin="round"
-																				strokeWidth="2"
+																				strokeLinecap='round'
+																				strokeLinejoin='round'
+																				strokeWidth='2'
 																				d={val2.icon2}
 																			/>
 																		) : null}
 																	</svg>
 																	<span>{val2.title}</span>
 																	{val2.url === '/links' && (
-																		<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																		<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																			{stats && stats.num_links
 																				? stats.num_links
 																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/pages' && (
-																		<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																		<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																			{stats && stats.num_pages
 																				? stats.num_pages
 																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/seo' && (
-																		<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																		<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																			{stats && stats.num_pages
 																				? stats.num_pages
 																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/images' && (
-																		<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																		<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																			{stats && stats.num_images
 																				? stats.num_images
 																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/stylesheets' && (
-																		<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																		<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																			{stats && stats.num_stylesheets
 																				? stats.num_stylesheets
 																				: ''}
 																		</span>
 																	)}
 																	{val2.url === '/scripts' && (
-																		<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
+																		<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150'>
 																			{stats && stats.num_scripts
 																				? stats.num_scripts
 																				: ''}
@@ -312,8 +323,8 @@ const SiteMenu = (props) => {
 									</>
 								) : (
 									<div
-										className="mt-1"
-										role="group"
+										className='mt-1'
+										role='group'
 										aria-labelledby={`${val.slug}-headline`}
 									>
 										{val.links.map((val2, key) => {
@@ -339,55 +350,55 @@ const SiteMenu = (props) => {
 															}`}
 														>
 															<svg
-																className="mr-3 h-6 w-5"
-																stroke="currentColor"
-																fill="none"
-																viewBox="0 0 24 24"
+																className='mr-3 h-6 w-5'
+																stroke='currentColor'
+																fill='none'
+																viewBox='0 0 24 24'
 															>
 																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	strokeWidth="2"
+																	strokeLinecap='round'
+																	strokeLinejoin='round'
+																	strokeWidth='2'
 																	d={val2.icon}
 																/>
 																{val2.icon2 ? (
 																	<path
-																		strokeLinecap="round"
-																		strokeLinejoin="round"
-																		strokeWidth="2"
+																		strokeLinecap='round'
+																		strokeLinejoin='round'
+																		strokeWidth='2'
 																		d={val2.icon2}
 																	/>
 																) : null}
 															</svg>
 															<span>{val2.title}</span>
 															{val2.url === '/links' && (
-																<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150">
+																<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150'>
 																	{stats.num_links}
 																</span>
 															)}
 															{val2.url === '/pages' && (
-																<span className="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150">
+																<span className='ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150'>
 																	{stats.num_pages}
 																</span>
 															)}
 														</a>
 													</Link>
 													{val.slug !== 'dashboard' ? (
-														<div className="text-left py-4">
-															<div className="space-y-1">
-																<div ref={ref} className="relative">
-																	<span className="inline-block w-full rounded-md shadow-sm">
+														<div className='text-left py-4'>
+															<div className='space-y-1'>
+																<div ref={ref} className='relative'>
+																	<span className='inline-block w-full rounded-md shadow-sm'>
 																		<button
-																			type="button"
-																			aria-haspopup="listbox"
-																			aria-expanded="true"
-																			aria-labelledby="listbox-label"
-																			className="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left focus:outline-none transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+																			type='button'
+																			aria-haspopup='listbox'
+																			aria-expanded='true'
+																			aria-labelledby='listbox-label'
+																			className='cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left focus:outline-none transition ease-in-out duration-150 sm:text-sm sm:leading-5'
 																			onClick={setDropdownToggle}
 																		>
-																			<div className="flex items-center space-x-3">
+																			<div className='flex items-center space-x-3'>
 																				<span
-																					aria-label="Online"
+																					aria-label='Online'
 																					className={`${
 																						selectedSite &&
 																						selectedSite.verified
@@ -395,24 +406,24 @@ const SiteMenu = (props) => {
 																							: 'bg-red-400'
 																					} flex-shrink-0 inline-block h-2 w-2 rounded-full`}
 																				></span>
-																				<span className="block truncate text-gray-600">
+																				<span className='block truncate text-gray-600'>
 																					{selectedSite && selectedSite.name
 																						? selectedSite.name
 																						: ''}
 																				</span>
 																			</div>
-																			<span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+																			<span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
 																				<svg
-																					className="h-5 w-5 text-gray-400"
-																					viewBox="0 0 20 20"
-																					fill="none"
-																					stroke="currentColor"
+																					className='h-5 w-5 text-gray-400'
+																					viewBox='0 0 20 20'
+																					fill='none'
+																					stroke='currentColor'
 																				>
 																					<path
-																						d="M7 7l3-3 3 3m0 6l-3 3-3-3"
-																						strokeWidth="1.5"
-																						strokeLinecap="round"
-																						strokeLinejoin="round"
+																						d='M7 7l3-3 3 3m0 6l-3 3-3-3'
+																						strokeWidth='1.5'
+																						strokeLinecap='round'
+																						strokeLinejoin='round'
 																					/>
 																				</svg>
 																			</span>
@@ -421,20 +432,20 @@ const SiteMenu = (props) => {
 
 																	<Transition
 																		show={isComponentVisible}
-																		enter="transition ease-out duration-100"
-																		enterFrom="transform opacity-0 scale-95"
-																		enterTo="transform opacity-100 scale-100"
-																		leave="transition ease-in duration-75"
-																		leaveFrom="transform opacity-100 scale-100"
-																		leaveTo="transform opacity-0 scale-95"
+																		enter='transition ease-out duration-100'
+																		enterFrom='transform opacity-0 scale-95'
+																		enterTo='transform opacity-100 scale-100'
+																		leave='transition ease-in duration-75'
+																		leaveFrom='transform opacity-100 scale-100'
+																		leaveTo='transform opacity-0 scale-95'
 																	>
-																		<div className="absolute mt-1 w-full rounded-md bg-white shadow-lg">
+																		<div className='absolute mt-1 w-full rounded-md bg-white shadow-lg'>
 																			<ul
-																				tabIndex="-1"
-																				role="listbox"
-																				aria-labelledby="listbox-label"
-																				aria-activedescendant="listbox-item-3"
-																				className="max-h-xs py-2 rounded-md text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5"
+																				tabIndex='-1'
+																				role='listbox'
+																				aria-labelledby='listbox-label'
+																				aria-activedescendant='listbox-item-3'
+																				className='max-h-48 py-2 rounded-md text-base leading-6 ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm sm:leading-5'
 																			>
 																				{site &&
 																					site.results.map((val, key) => {
@@ -448,38 +459,38 @@ const SiteMenu = (props) => {
 																									)
 																								}
 																								id={`listbox-item-${key}`}
-																								role="option"
+																								role='option'
 																								className={`hover:text-white hover:bg-indigo-600 text-gray-900 ${
 																									val.verified
 																										? 'cursor-pointer'
 																										: 'cursor-not-allowed'
 																								} select-none relative py-2 pl-3 pr-9`}
 																							>
-																								<div className="flex items-center space-x-3">
+																								<div className='flex items-center space-x-3'>
 																									<span
-																										aria-label="Online"
+																										aria-label='Online'
 																										className={`${
 																											val.verified
 																												? 'bg-green-400'
 																												: 'bg-red-400'
 																										} flex-shrink-0 inline-block h-2 w-2 rounded-full`}
 																									></span>
-																									<span className="font-normal block truncate">
+																									<span className='font-normal block truncate'>
 																										{val.name}
 																									</span>
 																								</div>
 																								{selectedSite &&
 																								selectedSite.id == val.id ? (
-																									<span className="hover:text-white text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4">
+																									<span className='hover:text-white text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4'>
 																										<svg
-																											className="h-5 w-5"
-																											viewBox="0 0 20 20"
-																											fill="currentColor"
+																											className='h-5 w-5'
+																											viewBox='0 0 20 20'
+																											fill='currentColor'
 																										>
 																											<path
-																												fillRule="evenodd"
-																												d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-																												clipRule="evenodd"
+																												fillRule='evenodd'
+																												d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+																												clipRule='evenodd'
 																											/>
 																										</svg>
 																									</span>
@@ -488,15 +499,15 @@ const SiteMenu = (props) => {
 																						);
 																					})}
 																			</ul>
-																			<span className="flex m-2 justify-center shadow-sm rounded-md">
-																				<Link href="/dashboard/sites/information">
-																					<a className="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700 transition ease-in-out duration-150">
+																			<span className='flex m-2 justify-center shadow-sm rounded-md'>
+																				<Link href='/dashboard/sites/information'>
+																					<a className='w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:shadow-xs-outline-green focus:border-green-700 active:bg-green-700 transition ease-in-out duration-150'>
 																						<svg
-																							className="-ml-3 mr-2 h-4 w-4"
-																							viewBox="0 0 20 20"
-																							fill="currentColor"
+																							className='-ml-3 mr-2 h-4 w-4'
+																							viewBox='0 0 20 20'
+																							fill='currentColor'
 																						>
-																							<path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" />
+																							<path d='M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z' />
 																						</svg>
 																						{PrimaryMenuLabel[1].label}
 																					</a>
@@ -516,23 +527,23 @@ const SiteMenu = (props) => {
 							</Fragment>
 						);
 					})}
-				</SiteMenuDiv>
+				</nav>
 			) : (
-				<SiteMenuDiv className="mt-5 flex-1 px-2 bg-gray-1000">
+				<nav className='mt-5 flex-1 px-2 bg-gray-1000'>
 					{[...Array(5)].map((index) => {
 						return (
 							<a
 								key={index}
-								className="group ml-1 mt-2 flex justify-start items-center"
+								className='group ml-1 mt-2 flex justify-start items-center'
 							>
 								<Skeleton circle={true} duration={2} width={30} height={30} />
-								<span className="ml-3">
+								<span className='ml-3'>
 									<Skeleton duration={2} width={150} />
 								</span>
 							</a>
 						);
 					})}
-				</SiteMenuDiv>
+				</nav>
 			)}
 		</>
 	);
@@ -544,9 +555,6 @@ SiteMenu.getInitialProps = ({ query }) => {
 	};
 };
 
-SiteMenu.propTypes = {
-	selectedSite: PropTypes.bool,
-	sitesApiEndpoint: PropTypes.node
-};
+SiteMenu.propTypes = {};
 
 export default SiteMenu;

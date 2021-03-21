@@ -1,11 +1,11 @@
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import Sorting from 'components/site/Sorting';
 
 const LinkSortingDiv = styled.div``;
 
 const LinkSorting = (props) => {
 	return (
-		<LinkSortingDiv className='flex flex-row mr-3'>
+		<LinkSortingDiv className="flex flex-row mr-3">
 			<div className={`inline-flex`}>
 				{props.slug == 'link-url' ? (
 					<Sorting

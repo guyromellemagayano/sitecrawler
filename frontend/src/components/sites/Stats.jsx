@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 import Layout from 'components/Layout';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import useSWR from 'swr';
 
 const fetcher = async (url) => {
@@ -230,7 +230,7 @@ const SitesStats = (props) => {
 			<SitesStatsDiv>
 				<div>
 					<div
-						className={`mt-2 mb-4 py-6 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 bg-white overflow-hidden shadow-xs rounded-lg lg:divide-x lg:divide-gray-300`}
+						className={`mt-2 mb-4 py-6 grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg lg:divide-x lg:divide-gray-300`}
 					>
 						{PageTabs.map((val, key) => {
 							return (

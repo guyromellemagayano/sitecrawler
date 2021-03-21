@@ -1,43 +1,29 @@
 // React
-import React from 'react';
 
 // External
+import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 
 // Components
-import Sorting from 'src/components/site/Sorting';
-
-const SiteSortingDiv = styled.div``;
+const Sorting = loadable(() => import('src/components/site/Sorting'));
 
 const SiteSorting = ({ sortOrder, onSortHandler, slug }) => {
 	return (
-		<SiteSortingDiv className="flex flex-row mr-3">
-			<div className="inline-flex">
+		<div tw='flex flex-row mr-3'>
+			<div tw='inline-flex'>
 				{slug === 'site-name' ? (
-					<Sorting
-						direction={sortOrder.siteName}
-						onSortHandler={onSortHandler}
-						slug={slug}
-					/>
+					<Sorting direction={sortOrder.siteName} onSortHandler={onSortHandler} slug={slug} />
 				) : slug === 'last-crawled' ? (
-					<Sorting
-						direction={sortOrder.lastCrawled}
-						onSortHandler={onSortHandler}
-						slug={slug}
-					/>
+					<Sorting direction={sortOrder.lastCrawled} onSortHandler={onSortHandler} slug={slug} />
 				) : (
 					''
 				)}
 			</div>
-		</SiteSortingDiv>
+		</div>
 	);
 };
 
-SiteSorting.propTypes = {
-	sortOrder: PropTypes.object,
-	onSortHandler: PropTypes.func,
-	slug: PropTypes.string
-};
+SiteSorting.propTypes = {};
 
 export default SiteSorting;

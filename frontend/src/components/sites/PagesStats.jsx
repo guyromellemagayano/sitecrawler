@@ -6,11 +6,11 @@ import Cookies from 'js-cookie';
 import fetch from 'node-fetch';
 import Link from 'next/link';
 import loadable from '@loadable/component';
-import PagesStatsLabel from 'public/label/components/sites/PagesStats.json';
+import PagesStatsLabel from 'public/labels/components/sites/PagesStats.json';
 import PropTypes from 'prop-types';
 import Router from 'next/router';
 import Skeleton from 'react-loading-skeleton';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import useSWR from 'swr';
 import Layout from 'components/Layout';
 
@@ -218,9 +218,9 @@ const SitesPagesStats = (props) => {
 			},
 			formatter: function (seriesName, opts) {
 				return [
-					`<span class='legend-text'>${seriesName}</span>`,
+					`<span className='legend-text'>${seriesName}</span>`,
 					'   ',
-					`<span class='legend-val'>${
+					`<span className='legend-val'>${
 						opts.w.globals.series[opts.seriesIndex]
 					}</span>`
 				];
@@ -288,20 +288,22 @@ const SitesPagesStats = (props) => {
 
 	return (
 		<SitesPagesStatsDiv>
-			<div className={`bg-white overflow-hidden shadow-xs rounded-lg`}>
+			<div
+				className={`bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg`}
+			>
 				<div className={`flex justify-between py-8 px-5`}>
 					<div className={`flex items-center`}>
 						<svg
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
+							fill='none'
+							viewBox='0 0 24 24'
+							stroke='currentColor'
 							className={`search w-5 h-5 text-gray-900 mr-2`}
 						>
 							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth="2"
-								d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+								strokeLinecap='round'
+								strokeLinejoin='round'
+								strokeWidth='2'
+								d='M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z'
 							></path>
 						</svg>
 						<h2 className={`text-lg font-bold leading-7 text-gray-900`}>
@@ -333,7 +335,7 @@ const SitesPagesStats = (props) => {
 						<Chart
 							options={chartOptions}
 							series={chartSeries}
-							type="donut"
+							type='donut'
 							width={`${isMobileOrDesktop ? '400' : '600'}`}
 							height={`${isMobileOrDesktop ? '530' : '530'}`}
 						/>

@@ -7,9 +7,9 @@ import {
 } from '@stripe/react-stripe-js';
 import { useMemo, useState } from 'react';
 import Cookies from 'js-cookie';
-import PaymentMethodFormLabel from 'public/label/components/form/PaymentMethodForm.json';
+import PaymentMethodFormLabel from 'public/labels/components/form/PaymentMethodForm.json';
 import router from 'next/router';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import useSWR from 'swr';
 
 const fetcher = async (url) => {

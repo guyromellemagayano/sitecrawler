@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import useSWR from 'swr';
 import Cookies from 'js-cookie';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import bytes from 'bytes';
 import Skeleton from 'react-loading-skeleton';
 import SiteSuccessIcon from '../icons/SiteSuccessIcon';
@@ -101,7 +101,7 @@ const PagesTable = (props) => {
 								className={`flex justify-start inline-text-sm leading-5 text-gray-500`}
 							>
 								<Link
-									href='/dashboard/site/[siteId]/pages/[pageId]/details'
+									href="/dashboard/site/[siteId]/pages/[pageId]/details"
 									as={`/dashboard/site/${query.siteId}/pages/${pageDetail.id}/details`}
 								>
 									<a

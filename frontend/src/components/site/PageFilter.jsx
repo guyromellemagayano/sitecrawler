@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 
 const PageFilterDiv = styled.div``;
 
@@ -17,13 +17,13 @@ const PageFilter = ({
 	return (
 		<PageFilterDiv className={`pb-4`}>
 			<div
-				className={`px-4 py-5 border-b border-gray-300 sm:px-6 bg-white rounded-lg sm:shadow-xs lg:flex lg:justify-between`}
+				className={`px-4 py-5 border-b border-gray-300 sm:px-6 bg-white rounded-lg sm:ring-1 ring-black ring-opacity-5lg:flex lg:justify-between`}
 			>
 				<div
-					className={`-ml-4 lg:-mt-2 lg:flex items-center flex-start flex-wrap sm:flex-no-wrap`}
+					className={`-ml-4 lg:-mt-2 lg:flex items-center flex-start flex-wrap sm:flex-nowrap`}
 				>
 					<h4
-						className={`ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-md leading-4 font-semibold text-gray-600`}
+						className={`ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600`}
 					>
 						Filter
 					</h4>
@@ -31,11 +31,11 @@ const PageFilter = ({
 						<div>
 							<label className={`flex items-center`}>
 								<input
-									type='checkbox'
+									type="checkbox"
 									className={`form-checkbox`}
 									onChange={filterHandler}
 									checked={allFilter}
-									value='all'
+									value="all"
 								/>
 								<span
 									className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}
@@ -49,11 +49,11 @@ const PageFilter = ({
 						<div>
 							<label className={`flex items-center`}>
 								<input
-									type='checkbox'
+									type="checkbox"
 									className={`form-checkbox`}
 									onChange={filterHandler}
 									checked={largePageSizeFilter}
-									value='pageLargePages'
+									value="pageLargePages"
 								/>
 								<span
 									className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}
@@ -67,11 +67,11 @@ const PageFilter = ({
 						<div>
 							<label className={`flex items-center`}>
 								<input
-									type='checkbox'
+									type="checkbox"
 									className={`form-checkbox`}
 									onChange={filterHandler}
 									checked={brokenSecurityFilter}
-									value='pageBrokenSecurity'
+									value="pageBrokenSecurity"
 								/>
 								<span
 									className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}
@@ -83,17 +83,17 @@ const PageFilter = ({
 					</div>
 				</div>
 				<div
-					className={`lg:-mt-2 lg:flex items-center align-end justify-end flex-end flex-wrap sm:flex-no-wrap`}
+					className={`lg:-mt-2 lg:flex items-center align-end justify-end flex-end flex-wrap sm:flex-nowrap`}
 				>
 					<div className={`mt-2`}>
 						<div>
 							<label className={`flex items-center`}>
 								<input
-									type='checkbox'
+									type="checkbox"
 									className={`form-checkbox`}
 									onChange={filterHandler}
 									checked={noIssueFilter}
-									value='no-issues'
+									value="no-issues"
 								/>
 								<span
 									className={`ml-2 text-left text-xs leading-4 font-normal text-gray-500`}

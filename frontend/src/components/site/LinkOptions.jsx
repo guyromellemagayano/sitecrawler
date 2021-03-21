@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import styled from 'styled-components';
+import tw from 'twin.macro';
 import useSWR from 'swr';
 import Cookies from 'js-cookie';
 import fetchJson from 'hooks/fetchJson';
-import { Transition } from '@tailwindui/react';
+import { Transition } from '@headlessui/react';
 
 const LinkOptionsDiv = styled.div``;
 
@@ -41,7 +41,7 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
 				className={`bg-white px-4 py-5 border-b border-gray-300 sm:px-6 bg-white rounded-lg sm:shadow-xs`}
 			>
 				<div
-					className={`-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap`}
+					className={`-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap`}
 				>
 					<div className={`ml-4 mt-2 w-64`}>
 						<div>
@@ -63,7 +63,7 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
 								</div>
 								<input
 									id={`search`}
-									className={`form-input block w-full pl-10 sm:text-sm sm:leading-5`}
+									className={`block w-full pl-10 sm:text-sm sm:leading-5`}
 									placeholder={`${
 										asPath.includes('pages')
 											? 'Search Pages...'
@@ -125,9 +125,11 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
 										leaveTo="transform opacity-0 scale-95"
 									>
 										<div
-											className={`origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-xs-lg`}
+											className={`origin-top-right absolute right-0 mt-2 w-32 rounded-md ring-1 ring-black ring-opacity-5`}
 										>
-											<div className={`rounded-md bg-white shadow-xs`}>
+											<div
+												className={`rounded-md bg-white ring-1 ring-black ring-opacity-5`}
+											>
 												<div
 													className={`py-1`}
 													role="menu"

@@ -1,36 +1,33 @@
 // React
-import React from 'react';
 
 // NextJS
 import Link from 'next/link';
 
 // External
-
-import styled from 'styled-components';
+import 'twin.macro';
+import loadable from '@loadable/component';
 import PropTypes from 'prop-types';
 
 // Components
-import AppLogo from 'src/components/logo/AppLogo';
-
-const LogoLabelDiv = styled.div``;
+const AppLogo = loadable(() => import('src/components/logo/AppLogo'));
 
 const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
+	const siteLogoDarkSvg = '/images/logos/site-logo-dark.svg';
+
 	return (
-		<LogoLabelDiv className={`sm:mx-auto sm:w-full sm:max-w-md`}>
+		<div tw='sm:mx-auto sm:w-full sm:max-w-md'>
 			{!isLogin ? (
-				<Link href="/">
+				<Link href='/'>
 					<a>
 						<AppLogo
-							className={`h-10 w-auto mx-auto`}
-							src={`/img/logos/site-logo-dark.svg`}
-							alt={`app-logo`}
+							className='h-10 w-auto mx-auto'
+							src={siteLogoDarkSvg}
+							alt='app-logo'
 						/>
 					</a>
 				</Link>
 			) : null}
-			<h2
-				className={`mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900`}
-			>
+			<h2 tw='mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900'>
 				{isLogin
 					? 'Log In'
 					: isSignUp
@@ -41,15 +38,10 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 					? 'Add Password'
 					: 'Reset Password Form'}
 			</h2>
-		</LogoLabelDiv>
+		</div>
 	);
 };
 
-LogoLabel.propTypes = {
-	isLogin: PropTypes.bool,
-	isSignUp: PropTypes.bool,
-	isResetPassword: PropTypes.bool,
-	isAddPassword: PropTypes.bool
-};
+LogoLabel.propTypes = {};
 
 export default LogoLabel;
