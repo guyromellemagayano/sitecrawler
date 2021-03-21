@@ -1,5 +1,5 @@
 // React
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // NextJS
 import Link from 'next/link';
@@ -8,22 +8,29 @@ import Link from 'next/link';
 import { Formik } from 'formik';
 import { NextSeo } from 'next-seo';
 import * as Yup from 'yup';
+import loadable from '@loadable/component';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import PropTypes from 'prop-types';
 import ReactHtmlParser from 'react-html-parser';
 import tw from 'twin.macro';
 
 // JSON
-import RegistrationLabel from 'public/label/pages/registration.json';
+import RegistrationLabel from 'public/labels/pages/registration.json';
 
 // Hooks
 import usePostMethod from 'src/hooks/usePostMethod';
 
-// Components
-import ErrorMessageAlert from 'src/components/alerts/ErrorMessageAlert';
+// Layout
 import Layout from 'src/components/Layout';
-import LogoLabel from 'src/components/form/LogoLabel';
-import SuccessMessageAlert from 'src/components/alerts/SuccessMessageAlert';
+
+// Components
+const ErrorMessageAlert = loadable(() =>
+	import('src/components/alerts/ErrorMessageAlert')
+);
+const LogoLabel = loadable(() => import('src/components/form/LogoLabel'));
+const SuccessMessageAlert = loadable(() =>
+	import('src/components/alerts/SuccessMessageAlert')
+);
 
 const Registration = () => {
 	const [errorMsg, setErrorMsg] = useState([]);
@@ -38,10 +45,10 @@ const Registration = () => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<div tw="bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+			<div tw='bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
 				<LogoLabel isSignUp />
 
-				<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+				<div tw='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
 					{errorMsg.map((value, index) => {
 						return <ErrorMessageAlert key={index} message={value} />;
 					})}
@@ -49,7 +56,7 @@ const Registration = () => {
 						return <SuccessMessageAlert key={index} message={value} />;
 					})}
 
-					<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
+					<div tw='bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10'>
 						<Formik
 							initialValues={{
 								firstname: '',
@@ -148,18 +155,18 @@ const Registration = () => {
 								isSubmitting
 							}) => (
 								<form onSubmit={handleSubmit}>
-									<div tw="mt-1">
+									<div tw='mt-1'>
 										<label
-											htmlFor="firstname"
-											tw="block text-sm font-medium text-gray-700"
+											htmlFor='firstname'
+											tw='block text-sm font-medium text-gray-700'
 										>
 											{RegistrationLabel[5].label}
 										</label>
-										<div tw="mt-1 rounded-md">
+										<div tw='mt-1 rounded-md'>
 											<input
-												id="firstname"
-												type="text"
-												name="firstname"
+												id='firstname'
+												type='text'
+												name='firstname'
 												disabled={isSubmitting}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
@@ -169,14 +176,14 @@ const Registration = () => {
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
-												aria-describedby="firstname"
+												aria-describedby='firstname'
 												onChange={handleChange}
 												value={values.firstname}
 											/>
 										</div>
 
 										{errors.firstname && touched.firstname && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
+											<span tw='block mt-2 text-xs leading-5 text-red-700'>
 												{errors.firstname &&
 													touched.firstname &&
 													errors.firstname}
@@ -184,18 +191,18 @@ const Registration = () => {
 										)}
 									</div>
 
-									<div tw="mt-6">
+									<div tw='mt-6'>
 										<label
-											htmlFor="lastname"
-											tw="block text-sm font-medium text-gray-700"
+											htmlFor='lastname'
+											tw='block text-sm font-medium text-gray-700'
 										>
 											{RegistrationLabel[6].label}
 										</label>
-										<div tw="mt-1 rounded-md">
+										<div tw='mt-1 rounded-md'>
 											<input
-												id="lastname"
-												type="text"
-												name="lastname"
+												id='lastname'
+												type='text'
+												name='lastname'
 												disabled={isSubmitting}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
@@ -205,31 +212,31 @@ const Registration = () => {
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
-												aria-describedby="lastname"
+												aria-describedby='lastname'
 												onChange={handleChange}
 												value={values.lastname}
 											/>
 										</div>
 
 										{errors.lastname && touched.lastname && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
+											<span tw='block mt-2 text-xs leading-5 text-red-700'>
 												{errors.lastname && touched.lastname && errors.lastname}
 											</span>
 										)}
 									</div>
 
-									<div tw="mt-6">
+									<div tw='mt-6'>
 										<label
-											htmlFor="username"
-											tw="block text-sm font-medium text-gray-700"
+											htmlFor='username'
+											tw='block text-sm font-medium text-gray-700'
 										>
 											{RegistrationLabel[7].label}
 										</label>
-										<div tw="mt-1 rounded-md">
+										<div tw='mt-1 rounded-md'>
 											<input
-												id="username"
-												type="text"
-												name="username"
+												id='username'
+												type='text'
+												name='username'
 												disabled={isSubmitting}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
@@ -239,31 +246,31 @@ const Registration = () => {
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
-												aria-describedby="username"
+												aria-describedby='username'
 												onChange={handleChange}
 												value={values.username}
 											/>
 										</div>
 
 										{errors.username && touched.username && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
+											<span tw='block mt-2 text-xs leading-5 text-red-700'>
 												{errors.username && touched.username && errors.username}
 											</span>
 										)}
 									</div>
 
-									<div tw="mt-6">
+									<div tw='mt-6'>
 										<label
-											htmlFor="email"
-											tw="block text-sm font-medium text-gray-700"
+											htmlFor='email'
+											tw='block text-sm font-medium text-gray-700'
 										>
 											{RegistrationLabel[8].label}
 										</label>
-										<div tw="mt-1 rounded-md">
+										<div tw='mt-1 rounded-md'>
 											<input
-												id="email"
-												type="email"
-												name="email"
+												id='email'
+												type='email'
+												name='email'
 												disabled={isSubmitting}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
@@ -273,31 +280,31 @@ const Registration = () => {
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
-												aria-describedby="email"
+												aria-describedby='email'
 												onChange={handleChange}
 												value={values.email}
 											/>
 										</div>
 
 										{errors.email && touched.email && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
+											<span tw='block mt-2 text-xs leading-5 text-red-700'>
 												{errors.email && touched.email && errors.email}
 											</span>
 										)}
 									</div>
 
-									<div tw="mt-6">
+									<div tw='mt-6'>
 										<label
-											htmlFor="password"
-											tw="block text-sm font-medium text-gray-700"
+											htmlFor='password'
+											tw='block text-sm font-medium text-gray-700'
 										>
 											{RegistrationLabel[9].label}
 										</label>
-										<div tw="mt-1 rounded-md">
+										<div tw='mt-1 rounded-md'>
 											<input
-												id="password1"
-												type="password"
-												name="password1"
+												id='password1'
+												type='password'
+												name='password1'
 												disabled={isSubmitting}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
@@ -307,7 +314,7 @@ const Registration = () => {
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
-												aria-describedby="password1"
+												aria-describedby='password1'
 												onChange={handleChange}
 												value={values.password1}
 											/>
@@ -315,7 +322,7 @@ const Registration = () => {
 										<PasswordStrengthBar password={values.password1} />
 
 										{errors.password1 && touched.password1 && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
+											<span tw='block mt-2 text-xs leading-5 text-red-700'>
 												{errors.password1 &&
 													touched.password1 &&
 													errors.password1}
@@ -323,18 +330,18 @@ const Registration = () => {
 										)}
 									</div>
 
-									<div tw="mt-6">
+									<div tw='mt-6'>
 										<label
-											htmlFor="password"
-											tw="block text-sm font-medium text-gray-700"
+											htmlFor='password'
+											tw='block text-sm font-medium text-gray-700'
 										>
 											{RegistrationLabel[10].label}
 										</label>
-										<div tw="mt-1 rounded-md">
+										<div tw='mt-1 rounded-md'>
 											<input
-												id="password2"
-												type="password"
-												name="password2"
+												id='password2'
+												type='password'
+												name='password2'
 												disabled={isSubmitting}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:text-sm sm:leading-5`,
@@ -344,14 +351,14 @@ const Registration = () => {
 														? tw`border-red-300`
 														: tw`border-gray-300`
 												]}
-												aria-describedby="password2"
+												aria-describedby='password2'
 												onChange={handleChange}
 												value={values.password2}
 											/>
 										</div>
 
 										{errors.password2 && touched.password2 && (
-											<span tw="block mt-2 text-xs leading-5 text-red-700">
+											<span tw='block mt-2 text-xs leading-5 text-red-700'>
 												{errors.password2 &&
 													touched.password2 &&
 													errors.password2}
@@ -359,10 +366,10 @@ const Registration = () => {
 										)}
 									</div>
 
-									<div tw="mt-6">
-										<span tw="block w-full rounded-md shadow-sm">
+									<div tw='mt-6'>
+										<span tw='block w-full rounded-md shadow-sm'>
 											<button
-												type="submit"
+												type='submit'
 												disabled={isSubmitting}
 												css={[
 													tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
@@ -381,19 +388,19 @@ const Registration = () => {
 							)}
 						</Formik>
 
-						<div tw="mt-6">
-							<div tw="relative">
-								<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-									<span tw="px-2 bg-white text-gray-500 text-center">
+						<div tw='mt-6'>
+							<div tw='relative'>
+								<div tw='relative flex justify-center flex-wrap flex-row text-sm leading-5'>
+									<span tw='px-2 bg-white text-gray-500 text-center'>
 										{ReactHtmlParser(RegistrationLabel[16].label)}
-										<Link href="/service-terms">
-											<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
+										<Link href='/service-terms'>
+											<a tw='font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150'>
 												{RegistrationLabel[17].label}
 											</a>
 										</Link>
 										&nbsp;and&nbsp;
-										<Link href="/privacy-policy">
-											<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
+										<Link href='/privacy-policy'>
+											<a tw='font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150'>
 												{RegistrationLabel[18].label}
 											</a>
 										</Link>
@@ -403,11 +410,11 @@ const Registration = () => {
 						</div>
 					</div>
 
-					<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-						<span tw="px-2 py-5 text-gray-500">
+					<div tw='relative flex justify-center flex-wrap flex-row text-sm leading-5'>
+						<span tw='px-2 py-5 text-gray-500'>
 							{ReactHtmlParser(RegistrationLabel[19].label)}
-							<Link href="/">
-								<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
+							<Link href='/'>
+								<a tw='font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150'>
 									{RegistrationLabel[20].label}
 								</a>
 							</Link>
