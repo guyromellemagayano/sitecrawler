@@ -12,6 +12,10 @@
     ]
   },
   {
+    "category": "Sites",
+    "slug": "sites"
+  },
+  {
     "category": "Account",
     "slug": "account",
     "links": [
