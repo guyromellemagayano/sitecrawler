@@ -5,46 +5,29 @@ import { useEffect } from "react";
 import Router, { useRouter } from "next/router";
 
 // External
-import PropTypes from "prop-types";
 import useSWR from "swr";
+import PropTypes from "prop-types";
 
 // Hooks
 import useFetcher from "src/hooks/useFetcher";
 
-const useUser = ({ redirectTo, redirectIfFound }) => {
+// Contexts
+import { redirectAuth, redirectUnauth } from "src/contexts/auth";
+
+const useUser = ({ token = "", userInfo = [] }) => {
 	const userApiEndpoint = "/api/auth/user/";
 
-	const { asPath } = useRouter();
+	// const { asPath } = useRouter();
 
 	const { data: user, mutate: mutateUser, error: userError } = useSWR(userApiEndpoint, useFetcher);
 
 	useEffect(() => {
-		(async () => {
-			if (userError == "Error: 403" && !redirectIfFound) {
-				Router.push({ pathname: redirectTo, query: { redirect: asPath } });
-				Cookies.set("errLogin", "You must log in to access the page!", {
-					expires: new Date(new Date().getTime() + 0.05 * 60 * 1000), // expires in 3s
-				});
-			}
-
-			if (user && redirectIfFound) {
-				if ("key" in user) {
-					Router.push(redirectTo);
-				}
-			} else {
-				return;
-			}
-		})();
-	}, [user, redirectIfFound, redirectTo, userError]);
+		console.log(user, userError, userInfo);
+	}, [user, userError, userInfo]);
 
 	return { user, mutateUser, userError };
 };
 
 useUser.propTypes = {};
-
-useUser.defaultProps = {
-	redirectTo: false,
-	redirectIfFound: false,
-};
 
 export default useUser;
