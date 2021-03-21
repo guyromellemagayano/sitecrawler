@@ -1,9 +1,9 @@
-require("dotenv").config({ path: `./.env.${process.env.NODE_ENV}` });
+require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` });
 
 module.exports = {
-	trailingSlash: false,
+	trailingSlash: true,
 	devIndicators: {
-		autoPrerender: false,
+		autoPrerender: false
 	},
-	env: {},
+	env: {}
 };
