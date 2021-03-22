@@ -165,9 +165,11 @@ DATABASES = {
     }
 }
 
-# copy db config to longquery but set timeout to 1h
-DATABASES["longquery"] = DATABASES["default"]
-DATABASES["longquery"]["OPTIONS"]["options"] = "-c statement_timeout=3600000"
+# do not have multiple dbs for tests, cause it complains
+if not TESTING:
+    # copy db config to longquery but set timeout to 1h
+    DATABASES["longquery"] = DATABASES["default"]
+    DATABASES["longquery"]["OPTIONS"]["options"] = "-c statement_timeout=3600000"
 
 # Application definition
 
