@@ -17,7 +17,7 @@ class Command(BaseCommand):
                     self._archive_and_delete_scan(scan)
 
     def _archive_and_delete_scan(self, scan):
-        self.stdout.write(f"Archiving {scan.id} for {scan.site.url}")
+        print(f"Archiving {scan.id} for {scan.site.url}", flush=True)
 
         large_page_size_threshold = scan.site.large_page_size_threshold
         if not large_page_size_threshold:
@@ -37,5 +37,5 @@ class Command(BaseCommand):
         except IntegrityError:
             pass
 
-        self.stdout.write(f"Deleting {scan.id} for {scan.site.url}")
+        print(f"Deleting {scan.id} for {scan.site.url}", flush=True)
         scan.delete()
