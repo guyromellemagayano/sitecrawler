@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for site in Site.objects.all():
-            scans = site.scan_set.filter(finished_at__isnull=False)
+            scans = site.scan_set.filter(finished_at__isnull=False).order_by("started_at")
             scan_count = scans.count()
             if scan_count > 4:
                 for scan in scans[1 : scan_count - 3]:
