@@ -37,5 +37,10 @@ class Command(BaseCommand):
         except IntegrityError:
             pass
 
+        for i, link in enumerate(scan.link_set.all()):
+            if i % 1000 == 0:
+                print(f"Deleting link {i} for {scan.id} for {scan.site.url}", flush=True)
+            link.delete()
+
         print(f"Deleting {scan.id} for {scan.site.url}", flush=True)
         scan.delete()
