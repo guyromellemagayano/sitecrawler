@@ -1,5 +1,5 @@
 // External
-import axios from 'axios';
+import axios from "axios";
 
 const useFetcher = async (...args) => {
 	try {
@@ -8,7 +8,7 @@ const useFetcher = async (...args) => {
 
 		return data;
 	} catch (error) {
-		throw error.message;
+		throw error.response;
 	}
 };
 
