@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
+from django.db import connections
 
 from crawl.models import Site, Scan, ScanArchive
 from crawl.serializers import ScanDetailSerializer
@@ -15,6 +16,8 @@ class Command(BaseCommand):
             if scan_count > 4:
                 for scan in scans[1 : scan_count - 3]:
                     self._archive_and_delete_scan(scan)
+
+        self._vacuum()
 
     def _archive_and_delete_scan(self, scan):
         print(f"Archiving {scan.id} for {scan.site.url}", flush=True)
@@ -44,3 +47,10 @@ class Command(BaseCommand):
 
         print(f"Deleting {scan.id} for {scan.site.url}", flush=True)
         scan.delete()
+
+    def _vacuum(self):
+        tables = ["crawl_link", "crawl_link_links", "crawl_link_images", "crawl_link_scripts", "crawl_link_stylesheets"]
+        for table in tables:
+            print(f"Vacuuming {table}", flush=True)
+            with connections["longquery"].cursor() as cursor:
+                cursor.execute(f"VACUUM ANALYZE {table}")
