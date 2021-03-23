@@ -109,7 +109,7 @@ const PrimaryMenu = ({ user, site }) => {
 															className="group"
 															css={[
 																tw`cursor-pointer`,
-																router.pathname.indexOf(value2.url) == 0
+																router.pathname == value2.url
 																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
 																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150`,
 															]}
