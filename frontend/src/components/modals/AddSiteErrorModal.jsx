@@ -4,12 +4,15 @@ import Link from "next/link";
 // External
 import { Transition } from "@headlessui/react";
 import loadable from "@loadable/component";
+import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Components
 const ExclamationSvg = loadable(() => import("src/components/svg/ExclamationSvg"));
 
 const AddSiteErrorModal = ({ show, setShowErrorModal, label }) => {
+	const settingsSubscriptionsLink = "/settings/subscriptions";
+
 	return (
 		<Transition show={show}>
 			<div tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
@@ -57,7 +60,7 @@ const AddSiteErrorModal = ({ show, setShowErrorModal, label }) => {
 						</div>
 						<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 							<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
-								<Link href="/settings/subscriptions" passHref>
+								<Link href={settingsSubscriptionsLink} passHref>
 									<a tw="cursor-pointer w-full mt-3 ring-1 ring-black ring-opacity-5 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
 										{label[4].label}
 									</a>
@@ -79,5 +82,7 @@ const AddSiteErrorModal = ({ show, setShowErrorModal, label }) => {
 		</Transition>
 	);
 };
+
+AddSiteErrorModal.propTypes = {};
 
 export default AddSiteErrorModal;
