@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
+from django.db import connections
 
 from crawl.models import Site, Scan, ScanArchive
 from crawl.serializers import ScanDetailSerializer
@@ -10,14 +11,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for site in Site.objects.all():
-            scans = site.scan_set.filter(finished_at__isnull=False)
+            scans = site.scan_set.filter(finished_at__isnull=False).order_by("started_at")
             scan_count = scans.count()
             if scan_count > 4:
                 for scan in scans[1 : scan_count - 3]:
                     self._archive_and_delete_scan(scan)
 
+        self._vacuum()
+
     def _archive_and_delete_scan(self, scan):
-        self.stdout.write(f"Archiving {scan.id} for {scan.site.url}")
+        print(f"Archiving {scan.id} for {scan.site.url}", flush=True)
 
         large_page_size_threshold = scan.site.large_page_size_threshold
         if not large_page_size_threshold:
@@ -37,5 +40,17 @@ class Command(BaseCommand):
         except IntegrityError:
             pass
 
-        self.stdout.write(f"Deleting {scan.id} for {scan.site.url}")
+        for i, link in enumerate(scan.link_set.all()):
+            if i % 1000 == 0:
+                print(f"Deleting link {i} for {scan.id} for {scan.site.url}", flush=True)
+            link.delete()
+
+        print(f"Deleting {scan.id} for {scan.site.url}", flush=True)
         scan.delete()
+
+    def _vacuum(self):
+        tables = ["crawl_link", "crawl_link_links", "crawl_link_images", "crawl_link_scripts", "crawl_link_stylesheets"]
+        for table in tables:
+            print(f"Vacuuming {table}", flush=True)
+            with connections["longquery"].cursor() as cursor:
+                cursor.execute(f"VACUUM ANALYZE {table}")

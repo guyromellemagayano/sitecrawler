@@ -65,9 +65,6 @@ DB_PASS = secret("DB_PASS", "crawldev", "DB_PASS_BACKEND")
 DB_HOST = os.environ.get("DB_HOST", "db")
 DB_PORT = os.environ.get("DB_PORT", "5432")
 
-# db query timeout in seconds
-DB_TIMEOUT = os.environ.get("DB_TIMEOUT", "60")
-
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
 
 
@@ -151,9 +148,6 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get(
 # pk of group that new users are auto added to
 DEFAULT_USER_GROUP = 1
 
-if IS_CRON:
-    DB_TIMEOUT = 3600
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
@@ -166,10 +160,16 @@ DATABASES = {
         "PORT": DB_PORT,
         "ATOMIC_REQUESTS": True,
         "OPTIONS": {
-            "options": f"-c statement_timeout={DB_TIMEOUT}000",
+            "options": "-c statement_timeout=60000",
         },
     }
 }
+
+# do not have multiple dbs for tests, cause it complains
+if not TESTING:
+    # copy db config to longquery but set timeout to 1h
+    DATABASES["longquery"] = DATABASES["default"]
+    DATABASES["longquery"]["OPTIONS"]["options"] = "-c statement_timeout=3600000"
 
 # Application definition
 
