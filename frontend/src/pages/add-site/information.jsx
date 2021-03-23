@@ -47,10 +47,11 @@ const Information = (props) => {
 	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
+	const [shouldFetch, setShouldFetch] = useState(false);
 	const [siteData, setSiteData] = useState([]);
 	const [siteName, setSiteName] = useState("");
 	const [siteUrl, setSiteUrl] = useState("");
-	const [shouldFetch, setShouldFetch] = useState(false);
+	const [userData, setUserData] = useState([]);
 
 	const router = useRouter();
 
@@ -118,7 +119,7 @@ const Information = (props) => {
 	}, [errorMsgLoaded]);
 
 	return (
-		<Layout>
+		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<ErrorNotificationModal

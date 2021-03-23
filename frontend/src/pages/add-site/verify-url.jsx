@@ -189,7 +189,7 @@ const SitesVerifyUrl = (props) => {
 	}, [successMsgLoaded, errorMsgLoaded]);
 
 	return (
-		<Layout>
+		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<SuccessNotificationModal
