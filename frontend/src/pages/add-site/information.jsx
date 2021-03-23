@@ -52,7 +52,7 @@ const Information = (props) => {
 	const [siteUrl, setSiteUrl] = useState("");
 	const [shouldFetch, setShouldFetch] = useState(false);
 
-	const { user: user, error: userError } = useUser();
+	const router = useRouter();
 
 	const pageTitle = "Information";
 	const homeLabel = "Home";
@@ -61,9 +61,8 @@ const Information = (props) => {
 	const verifyUrlLink = "/add-site/verify-url";
 	const urlRegex = /^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
 
-	const router = useRouter();
+	const { user: user, error: userError } = useUser();
 	const { data: site, error: siteError } = useSWR(siteApiEndpoint, useFetcher);
-
 	const { data: siteId, error: siteIdError } = useSWR(
 		shouldFetch ? siteApiEndpoint + router.query.sid + "/" : null,
 		useFetcher
@@ -260,6 +259,7 @@ const Information = (props) => {
 																			setSubmitting(false);
 																			resetForm({ values: "" });
 																			setErrorMsg(InformationLabel[12]);
+																			setErrorMsgLoaded(!errorMsgLoaded);
 																		}
 																	}
 																} else {
@@ -270,6 +270,7 @@ const Information = (props) => {
 																		setSubmitting(false);
 																		resetForm({ values: "" });
 																		setErrorMsg(InformationLabel[12]);
+																		setErrorMsgLoaded(!errorMsgLoaded);
 																	}
 																}
 															} catch (error) {
@@ -316,6 +317,7 @@ const Information = (props) => {
 																				setSubmitting(false);
 																				resetForm({ values: "" });
 																				setErrorMsg(InformationLabel[12]);
+																				setErrorMsgLoaded(!errorMsgLoaded);
 																			}
 																		}
 																	}
@@ -327,6 +329,7 @@ const Information = (props) => {
 																		setSubmitting(false);
 																		resetForm({ values: "" });
 																		setErrorMsg(InformationLabel[12]);
+																		setErrorMsgLoaded(!errorMsgLoaded);
 																	}
 																}
 															} catch (error) {

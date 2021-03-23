@@ -59,8 +59,6 @@ const SitesVerifyUrl = (props) => {
 	const [successMsg, setSuccessMsg] = useState("");
 	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
 
-	const { user: user, error: userError } = useUser();
-
 	const pageTitle = "Verify URL";
 	const homeLabel = "Home";
 	const homePageLink = "/";
@@ -72,6 +70,7 @@ const SitesVerifyUrl = (props) => {
 	htmlText += "3. Save the changes you made in that file." + "\n\n";
 	htmlText += "4. Inform your client that you already made the update to the website.";
 
+	const { user: user, error: userError } = useUser();
 	const { data: site, error: siteError } = useSWR(siteApiEndpoint, useFetcher);
 
 	const handleInputChange = ({ copyValue }) => {
@@ -133,6 +132,7 @@ const SitesVerifyUrl = (props) => {
 					setSubmitting(false);
 					resetForm({ values: "" });
 					setErrorMsg(VerifyUrlLabel[21].label);
+					setErrorMsgLoaded(!errorMsgLoaded);
 				}
 			}
 		} catch (error) {
