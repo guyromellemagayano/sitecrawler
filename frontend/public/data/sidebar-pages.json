@@ -2,17 +2,17 @@
 	{
 		"label": "View Profile",
 		"slug": "view-profile",
-		"url": "/dashboard/settings/profile"
+		"url": "/settings/profile"
 	},
 	{
 		"label": "Subscription Plans",
 		"slug": "subscription-plans",
-		"url": "/dashboard/settings/subscriptions"
+		"url": "/settings/subscriptions"
 	},
 	{
 		"label": "App Settings",
 		"slug": "app-settings",
-		"url": "/dashboard/settings/global"
+		"url": "/settings/global"
 	},
 	{
 		"label": "Logout",

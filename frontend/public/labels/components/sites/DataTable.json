@@ -49,5 +49,11 @@
 	},
 	{
 		"label": "Close"
+	},
+	{
+		"label": "Copied!"
+	},
+	{
+		"label": "Copy"
 	}
 ]
