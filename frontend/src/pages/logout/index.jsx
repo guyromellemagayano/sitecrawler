@@ -1,28 +1,25 @@
 // React
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 // External
-import { NextSeo } from 'next-seo';
-import PropTypes from 'prop-types';
-import 'twin.macro';
+import { NextSeo } from "next-seo";
+import PropTypes from "prop-types";
+import "twin.macro";
 
 // Utils
-import { removeCookie } from 'src/utils/cookie';
+import { getCookie, removeCookie } from "src/utils/cookie";
 
 // Hooks
-import usePostMethod from 'src/hooks/usePostMethod';
-
-// Contexts
-import { logoutUser } from 'src/contexts/auth';
+import usePostMethod from "src/hooks/usePostMethod";
 
 // Components
-import Layout from 'src/components/Layout';
+import Layout from "src/components/Layout";
 
 const Logout = () => {
 	const [logoutDetail, setLogoutDetail] = useState(null);
 
-	const pageTitle = 'Logout';
-	const logoutApiEndpoint = '/api/auth/logout/';
+	const pageTitle = "Logout";
+	const logoutApiEndpoint = "/api/auth/logout/";
 
 	useEffect(() => {
 		(async () => {
@@ -34,8 +31,9 @@ const Logout = () => {
 						setLogoutDetail(response.data.detail);
 
 						if (response.data.detail !== undefined) {
-							removeCookie('token');
-							logoutUser();
+							removeCookie("token");
+							typeof localStorage !== "undefined" && localStorage.removeItem("token");
+							window.location.href = "/";
 						}
 					}
 				} else {
@@ -55,10 +53,8 @@ const Logout = () => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<div tw='bg-white p-3'>
-				<p tw='text-2xl font-bold leading-7 text-gray-900 sm:text-xl sm:leading-9 sm:truncate'>
-					{logoutDetail}
-				</p>
+			<div tw="bg-white p-3">
+				<p tw="text-2xl font-bold leading-7 text-gray-900 sm:text-xl sm:leading-9 sm:truncate">{logoutDetail}</p>
 			</div>
 		</Layout>
 	);
@@ -67,3 +63,20 @@ const Logout = () => {
 Logout.propTypes = {};
 
 export default Logout;
+
+export async function getServerSideProps({ req }) {
+	let token = getCookie("token", req);
+
+	if (!token) {
+		return {
+			redirect: {
+				permanent: false,
+				destination: "/",
+			},
+		};
+	}
+
+	return {
+		props: {},
+	};
+}
