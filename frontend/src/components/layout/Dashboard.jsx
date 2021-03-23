@@ -7,17 +7,14 @@ import Router, { useRouter } from "next/router";
 // External
 import { NextSeo } from "next-seo";
 import loadable from "@loadable/component";
-import LogRocket from "logrocket";
 import PropTypes from "prop-types";
-import setupLogRocketReact from "logrocket-react";
-import tw from "twin.macro";
-import useSWR from "swr";
+import "twin.macro";
 
 // JSON
 import DataTableHeadsContent from "public/data/data-table-heads.json";
 
 // Hooks
-import useFetcher from "src/hooks/useFetcher";
+import { useSite } from "src/hooks/useSite";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -36,31 +33,24 @@ const SiteSorting = loadable(() => import("src/components/sites/SiteSorting"));
 // Helpers
 import { getSlugFromSortKey, getSortKeyFromSlug, removeURLParameter, slugToCamelcase } from "src/helpers/functions";
 
-if (typeof window !== "undefined") {
-	LogRocket.init("epic-design-labs/link-app");
-	setupLogRocketReact(LogRocket);
-}
-
 const initialOrder = {
 	siteName: "asc",
 	lastCrawled: "default",
 	totalIssues: "default",
 };
 
-const Dashboard = ({ userInfo, tokenKey }, props) => {
+const Dashboard = (props) => {
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pagePath, setPagePath] = useState(null);
 	const [searchKey, setSearchKey] = useState(null);
+	const [siteData, setSiteData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
+	const [userData, setUserData] = useState([]);
 
 	const pageTitle = "Dashboard";
 
 	const { asPath } = useRouter();
-	const { user: user } = useUser({
-		token: tokenKey,
-		userInfo: userInfo,
-	});
 
 	let sitesApiEndpoint =
 		props.page !== undefined
@@ -84,8 +74,27 @@ const Dashboard = ({ userInfo, tokenKey }, props) => {
 
 	sitesApiEndpoint += queryString;
 
-	const { data: site, mutate: updateSites, error: siteError } = useSWR(sitesApiEndpoint, useFetcher);
+	const { user: user, userError: userError } = useUser();
+	const { site: site, mutateSite: mutateSite, siteError: siteError } = useSite({
+		endpoint: sitesApiEndpoint,
+		refreshInterval: 1000,
+	});
 
+	useEffect(() => {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0
+		) {
+			setUserData(user);
+			setSiteData(site);
+		}
+	}, [user, site]);
+
+	// FIXME: onSearchEventHandler
 	const onSearchEventHandler = async (e) => {
 		const searchTargetValue = e.target.value;
 
@@ -108,7 +117,7 @@ const Dashboard = ({ userInfo, tokenKey }, props) => {
 		else setPagePath(`${newPath}?`);
 
 		Router.push(newPath);
-		updateSites();
+		mutateSite();
 	};
 
 	const onItemsPerPageChange = (count) => {
@@ -130,12 +139,13 @@ const Dashboard = ({ userInfo, tokenKey }, props) => {
 			else setPagePath(`${newPath}?`);
 
 			Router.push(newPath);
-			updateSites();
+			mutateSite();
 
 			return true;
 		}
 	};
 
+	// FIXME: fix SortHandler
 	const SortHandler = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
 
@@ -168,7 +178,7 @@ const Dashboard = ({ userInfo, tokenKey }, props) => {
 		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
 		Router.push(newPath);
-		updateSites();
+		mutateSite();
 	};
 
 	useEffect(() => {
@@ -188,33 +198,24 @@ const Dashboard = ({ userInfo, tokenKey }, props) => {
 		if (props.per_page !== undefined) setLinksPerPage(props.per_page);
 	}, []);
 
-	useEffect(() => {
-		if (userInfo && userInfo !== undefined && Object.keys(userInfo).length > 0) {
-			LogRocket.identify("epic-design-labs/link-app", {
-				name: userInfo.first_name + " " + userInfo.last_name,
-				email: userInfo.email,
-			});
-		}
-	}, [userInfo]);
-
 	return (
-		<Layout>
+		<Layout user={userData}>
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				{/* FIXME: fix mobile sidebar */}
 				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-				<MainSidebar user={userInfo} />
+				<MainSidebar user={userData} site={siteData} />
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
-						<AddSite user={userInfo} site={site} searchKey={searchKey} onSearchEvent={onSearchEventHandler} />
+						<AddSite user={userData} site={siteData} searchKey={searchKey} onSearchEvent={onSearchEventHandler} />
 					</div>
 
-					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="-1">
+					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="max-w-full mx-12">
-							{site && site !== undefined && site.count > 0 && (
+							{siteData && siteData !== undefined && Object.keys(siteData).length > 0 && siteData.count > 0 && (
 								<>
 									<div tw="py-4">
 										<div tw="flex flex-col">
@@ -223,22 +224,25 @@ const Dashboard = ({ userInfo, tokenKey }, props) => {
 													<table tw="min-w-full">
 														<thead>
 															<tr>
-																{DataTableHeadsContent.map((site, key) => {
+																{DataTableHeadsContent.map((siteData, key) => {
 																	return (
 																		<th
 																			key={key}
 																			tw="sm:w-48 lg:w-auto px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																		>
 																			<div tw="flex items-center justify-start">
-																				{site.slug != undefined ? (
+																				{siteData &&
+																				siteData !== undefined &&
+																				Object.keys(siteData).length > 0 &&
+																				siteData.slug != undefined ? (
 																					<SiteSorting
 																						sortOrder={sortOrder}
 																						onSortHandler={SortHandler}
 																						key={key}
-																						slug={site.slug}
+																						slug={siteData.slug}
 																					/>
 																				) : null}
-																				<span tw="flex items-center">{site.label}</span>
+																				<span tw="flex items-center">{siteData.label}</span>
 																			</div>
 																		</th>
 																	);
@@ -246,8 +250,12 @@ const Dashboard = ({ userInfo, tokenKey }, props) => {
 															</tr>
 														</thead>
 														<tbody tw="bg-white">
-															{site.results && site.results !== undefined
-																? site.results.map((val, key) => <DataTable key={key} site={val} userInfo={userInfo} />)
+															{siteData &&
+															siteData !== undefined &&
+															Object.keys(siteData).length > 0 &&
+															siteData.results &&
+															siteData.results !== undefined
+																? siteData.results.map((val, key) => <DataTable key={key} site={val} user={userData} />)
 																: null}
 														</tbody>
 													</table>
