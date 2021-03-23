@@ -11,9 +11,6 @@ import { getCookie } from "src/utils/cookie";
 // Hooks
 import useUser from "src/hooks/useUser";
 
-// Contexts
-import { redirectAuth } from "src/contexts/auth";
-
 // Layout
 import Layout from "src/components/Layout";
 
@@ -21,34 +18,50 @@ import Layout from "src/components/Layout";
 const Login = loadable(() => import("src/components/layout/Login"));
 const Dashboard = loadable(() => import("src/components/layout/Dashboard"));
 
-const Home = ({ token }) => {
-	const [userInfo, setUserInfo] = useState([]);
+const Home = (props) => {
+	const [userData, setUserData] = useState([]);
 	const [tokenKey, setTokenKey] = useState("");
 
 	const { user: user } = useUser({
-		token: token,
+		token: props.token,
+		redirectIfFound: true,
+		redirectTo: "/",
 	});
 
 	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0 && token && token !== undefined && token !== "") {
-			setUserInfo(user);
-			setTokenKey(token);
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			props.token &&
+			props.token !== undefined &&
+			props.token !== ""
+		) {
+			setUserData(user);
+			setTokenKey(props.token);
 		}
-	}, [user, token]);
+	}, [user, props.token]);
 
 	return (
 		<Layout>
-			{userInfo !== undefined && tokenKey !== "" ? <Dashboard userInfo={userInfo} tokenKey={tokenKey} /> : <Login />}
+			{userData !== undefined && tokenKey !== "" ? <Dashboard user={userData} token={tokenKey} /> : <Login />}
 		</Layout>
 	);
 };
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req }) {
 	let token = getCookie("token", req);
-	redirectAuth(token, res);
+
+	if (!token) {
+		return {
+			props: {},
+		};
+	}
 
 	return {
-		props: {},
+		props: {
+			token: token,
+		},
 	};
 }
 
