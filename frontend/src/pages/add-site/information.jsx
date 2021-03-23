@@ -26,6 +26,7 @@ import useGetMethod from "src/hooks/useGetMethod";
 import usePostMethod from "src/hooks/usePostMethod";
 import usePatchMethod from "src/hooks/usePatchMethod";
 import useUser from "src/hooks/useUser";
+import { useSite, useSiteId } from "src/hooks/useSite";
 
 // Layout
 import Layout from "src/components/Layout";
@@ -58,16 +59,17 @@ const Information = (props) => {
 	const pageTitle = "Information";
 	const homeLabel = "Home";
 	const homePageLink = "/";
-	const siteApiEndpoint = "/api/site/";
 	const verifyUrlLink = "/add-site/verify-url";
+	const siteApiEndpoint = "/api/site/";
 	const urlRegex = /^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
 
 	const { user: user, error: userError } = useUser();
-	const { data: site, error: siteError } = useSWR(siteApiEndpoint, useFetcher);
-	const { data: siteId, error: siteIdError } = useSWR(
-		shouldFetch ? siteApiEndpoint + router.query.sid + "/" : null,
-		useFetcher
-	);
+	const { site: site, siteError: siteError } = useSite({
+		endpoint: siteApiEndpoint,
+	});
+	const { siteId: siteId, siteIdError: siteIdError } = useSiteId({
+		querySid: router.query.sid,
+	});
 
 	useEffect(() => {
 		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0 && shouldFetch) {
