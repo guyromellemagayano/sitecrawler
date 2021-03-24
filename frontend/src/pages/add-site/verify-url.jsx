@@ -12,7 +12,6 @@ import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
-import useSWR from "swr";
 
 // JSON
 import VerifyUrlLabel from "public/labels/pages/add-site/verify-url.json";
@@ -21,9 +20,9 @@ import VerifyUrlLabel from "public/labels/pages/add-site/verify-url.json";
 import { getCookie } from "src/utils/cookie";
 
 // Hooks
-import useFetcher from "src/hooks/useFetcher";
 import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
+import { useSite } from "src/hooks/useSite";
 
 // Layout
 import Layout from "src/components/Layout";
@@ -43,9 +42,9 @@ const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeleton
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const SuccessNotificationModal = loadable(() => import("src/components/modals/SuccessNotificationModal"));
 
-const SitesVerifyUrl = (props) => {
+const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
 	const [copied, setCopied] = useState(false);
-	const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${props.vid}" />`);
+	const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${vid}" />`);
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [enableNextStep, setEnableNextStep] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
@@ -55,23 +54,26 @@ const SitesVerifyUrl = (props) => {
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [showHelpModal, setShowHelpModal] = useState(false);
 	const [siteData, setSiteData] = useState([]);
-	const [siteVerifyId, setSiteVerifyId] = useState(props.sid);
+	const [userData, setUserData] = useState([]);
+	const [siteVerifyId, setSiteVerifyId] = useState(sid);
 	const [successMsg, setSuccessMsg] = useState("");
 	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
 
 	const pageTitle = "Verify URL";
 	const homeLabel = "Home";
 	const homePageLink = "/";
-	const siteApiEndpoint = "/api/site/";
+	const sitesApiEndpoint = "/api/site/";
 
-	let htmlText = "1. Sign in to the administrator account of the following website: " + props.surl + "\n\n";
+	let htmlText = "1. Sign in to the administrator account of the following website: " + surl + "\n\n";
 	htmlText +=
 		"2. Copy the following meta tag and add it within your website's <head> tag: " + "\n" + copyValue + "\n\n";
 	htmlText += "3. Save the changes you made in that file." + "\n\n";
 	htmlText += "4. Inform your client that you already made the update to the website.";
 
-	const { user: user, error: userError } = useUser();
-	const { data: site, error: siteError } = useSWR(siteApiEndpoint, useFetcher);
+	const { user: user, userError: userError } = useUser();
+	const { site: site, siteError: siteError } = useSite({
+		endpoint: sitesApiEndpoint,
+	});
 
 	const handleInputChange = ({ copyValue }) => {
 		setCopyValue({ copyValue, copied });
@@ -148,17 +150,18 @@ const SitesVerifyUrl = (props) => {
 			site &&
 			site !== undefined &&
 			Object.keys(site).length > 0 &&
-			props.token &&
-			props.token !== undefined &&
-			props.token !== ""
+			token &&
+			token !== undefined &&
+			token !== ""
 		) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 1000);
 
 			setSiteData(site);
+			setUserData(user);
 		}
-	}, [user, site, props.token]);
+	}, [user, site, token]);
 
 	useEffect(() => {
 		if (successMsg && successMsg !== "") {
@@ -189,7 +192,7 @@ const SitesVerifyUrl = (props) => {
 	}, [successMsgLoaded, errorMsgLoaded]);
 
 	return (
-		<Layout user={user}>
+		<Layout user={userData}>
 			<NextSeo title={pageTitle} />
 
 			<SuccessNotificationModal
@@ -283,7 +286,7 @@ const SitesVerifyUrl = (props) => {
 			<section tw="h-screen flex overflow-hidden bg-white">
 				{/* FIXME: fix mobile sidebar */}
 				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-				<MainSidebar user={user} site={siteData} />
+				<MainSidebar user={userData} site={siteData} />
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
@@ -352,15 +355,16 @@ const SitesVerifyUrl = (props) => {
 											<div tw="max-w-full py-4 m-auto">
 												<div tw="block mb-12">
 													<h4 tw="text-lg leading-7 font-medium text-gray-900 mb-5">
-														{VerifyUrlLabel[3].label}:{" "}
+														{VerifyUrlLabel[3].label}: {sname} (
 														<a
-															href={props.surl}
+															href={surl}
 															target="_blank"
-															title={props.surl}
+															title={surl}
 															tw="break-all text-base leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
 														>
-															{props.surl}
+															{surl}
 														</a>
+														)
 													</h4>
 													<p tw="max-w-full text-base leading-6 text-gray-700 mb-3">
 														<strong>{VerifyUrlLabel[4].label}:</strong>
@@ -434,7 +438,7 @@ const SitesVerifyUrl = (props) => {
 														<div tw="flex lg:justify-between w-full">
 															{enableNextStep ? (
 																<span tw="inline-flex">
-																	<Link href="/site/[id]/overview" as="/site/${props.sid}/overview" passHref>
+																	<Link href="/site/[id]/overview" as={`/site/${sid}/overview`} passHref>
 																		<a
 																			css={[
 																				tw`cursor-pointer inline-flex ring-1 ring-black ring-opacity-5 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
@@ -488,7 +492,7 @@ const SitesVerifyUrl = (props) => {
 																				href={{
 																					pathname: "/add-site/information",
 																					query: {
-																						sid: props.sid,
+																						sid: sid,
 																						edit: true,
 																					},
 																				}}
@@ -532,30 +536,27 @@ const SitesVerifyUrl = (props) => {
 	);
 };
 
-SitesVerifyUrl.propTypes = {};
+VerifyUrl.propTypes = {};
 
-export default SitesVerifyUrl;
+export default VerifyUrl;
 
 export async function getServerSideProps({ req, query }) {
 	let token = getCookie("token", req);
 
 	if (!token) {
 		return {
-			redirect: {
-				permanent: false,
-				destination: "/",
-			},
+			notFound: true,
 		};
 	}
 
 	return {
 		props: {
 			token: token,
-			sid: query.sid || "",
-			sname: query.sname || "",
-			surl: query.surl || "",
-			vid: query.vid || "",
-			v: query.v || false,
+			sid: query.sid,
+			sname: query.sname,
+			surl: query.surl,
+			vid: query.vid,
+			v: query.v,
 		},
 	};
 }

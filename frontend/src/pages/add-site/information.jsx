@@ -12,7 +12,6 @@ import * as Yup from "yup";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
-import useSWR from "swr";
 
 // JSON
 import InformationLabel from "public/labels/pages/add-site/information.json";
@@ -21,7 +20,6 @@ import InformationLabel from "public/labels/pages/add-site/information.json";
 import { getCookie } from "src/utils/cookie";
 
 // Hooks
-import useFetcher from "src/hooks/useFetcher";
 import useGetMethod from "src/hooks/useGetMethod";
 import usePostMethod from "src/hooks/usePostMethod";
 import usePatchMethod from "src/hooks/usePatchMethod";
@@ -43,7 +41,7 @@ const MobileSidebarButton = loadable(() => import("src/components/sidebar/Mobile
 const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeletons/SiteAdditionStepsSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
-const Information = (props) => {
+const Information = ({ token, sid, edit }) => {
 	const [errorMsg, setErrorMsg] = useState("");
 	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -79,10 +77,10 @@ const Information = (props) => {
 	}, [siteId]);
 
 	useEffect(() => {
-		if (props.sid && props.sid !== undefined && props.edit) {
+		if (sid && sid !== undefined && edit) {
 			setShouldFetch(!shouldFetch);
 		}
-	}, [props.sid, props.edit]);
+	}, [sid, edit]);
 
 	useEffect(() => {
 		if (
@@ -92,17 +90,18 @@ const Information = (props) => {
 			site &&
 			site !== undefined &&
 			Object.keys(site).length > 0 &&
-			props.token &&
-			props.token !== undefined &&
-			props.token !== ""
+			token &&
+			token !== undefined &&
+			token !== ""
 		) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 
 			setSiteData(site);
+			setUserData(user);
 		}
-	}, [user, site, props.token]);
+	}, [user, site, token]);
 
 	useEffect(() => {
 		if (errorMsg && errorMsg !== "") {
@@ -121,7 +120,7 @@ const Information = (props) => {
 	}, [errorMsgLoaded]);
 
 	return (
-		<Layout user={user}>
+		<Layout user={userData}>
 			<NextSeo title={pageTitle} />
 
 			<ErrorNotificationModal
@@ -134,7 +133,7 @@ const Information = (props) => {
 			<section tw="h-screen flex overflow-hidden bg-white">
 				{/* FIXME: fix mobile sidebar */}
 				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-				<MainSidebar user={user} site={siteData} />
+				<MainSidebar user={userData} site={siteData} />
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
@@ -211,14 +210,11 @@ const Information = (props) => {
 												</div>
 
 												<Formik
-													enableReinitialize={props.sid && props.sid !== undefined && props.edit ? true : false}
+													enableReinitialize={sid && sid !== undefined && edit ? true : false}
 													initialValues={{
 														siteurlprotocol: "https://",
-														siteurl:
-															props.sid && props.sid !== undefined && props.edit
-																? siteUrl.replace(/^\/\/|^.*?:(\/\/)?/, "")
-																: "",
-														sitename: props.sid && props.sid !== undefined && props.edit ? siteName : "",
+														siteurl: sid && sid !== undefined && edit ? siteUrl.replace(/^\/\/|^.*?:(\/\/)?/, "") : "",
+														sitename: sid && sid !== undefined && edit ? siteName : "",
 													}}
 													validationSchema={Yup.object({
 														siteurl: Yup.string()
@@ -227,7 +223,7 @@ const Information = (props) => {
 														sitename: Yup.string().required(InformationLabel[7].label),
 													})}
 													onSubmit={async (values, { setSubmitting, resetForm }) => {
-														if (props.sid && props.sid !== undefined && props.edit) {
+														if (sid && sid !== undefined && edit) {
 															try {
 																const response = await useGetMethod("/api/site/" + router.query.sid + "/");
 
@@ -388,13 +384,9 @@ const Information = (props) => {
 																				name="siteurlprotocol"
 																				css={[
 																					tw`focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-3 pr-7 border-transparent bg-transparent sm:text-sm rounded-md`,
-																					props.sid !== undefined &&
-																						props.edit &&
-																						tw`opacity-50 bg-gray-200 cursor-not-allowed`,
+																					sid !== undefined && edit && tw`opacity-50 bg-gray-200 cursor-not-allowed`,
 																				]}
-																				disabled={
-																					isSubmitting || (props.sid !== undefined && props.edit) ? true : false
-																				}
+																				disabled={isSubmitting || (sid !== undefined && edit) ? true : false}
 																				onChange={handleChange}
 																				onBlur={handleBlur}
 																				value={values.siteurlprotocol}
@@ -407,13 +399,13 @@ const Information = (props) => {
 																			id="siteurl"
 																			type="text"
 																			name="siteurl"
-																			disabled={isSubmitting || (props.sid !== undefined && props.edit) ? true : false}
+																			disabled={isSubmitting || (sid !== undefined && edit) ? true : false}
 																			css={[
 																				tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-24 sm:text-sm border-gray-300 rounded-md`,
-																				props.sid !== undefined && props.edit
+																				sid !== undefined && edit
 																					? tw`opacity-50 bg-gray-200 cursor-not-allowed`
 																					: isSubmitting && tw`text-gray-500 opacity-50 bg-gray-200 cursor-not-allowed`,
-																				(errors.siteurl || errorMsg) && props.sid === undefined && !props.edit
+																				(errors.siteurl || errorMsg) && sid === undefined && !edit
 																					? tw`border-red-300`
 																					: tw`border-gray-300`,
 																			]}
@@ -422,14 +414,14 @@ const Information = (props) => {
 																			onChange={handleChange}
 																			onBlur={handleBlur}
 																			value={
-																				props.sid !== undefined && props.edit
+																				sid !== undefined && edit
 																					? siteUrl.replace(/^\/\/|^.*?:(\/\/)?/, "")
 																					: values.siteurl
 																			}
 																		/>
 																	</div>
 
-																	{errors.siteurl && touched.siteurl && props.sid === undefined && !props.edit && (
+																	{errors.siteurl && touched.siteurl && sid === undefined && !edit && (
 																		<span tw="block mt-2 text-xs leading-5 text-red-700">
 																			{errors.siteurl && touched.siteurl && errors.siteurl}
 																		</span>
@@ -460,7 +452,7 @@ const Information = (props) => {
 																		>
 																			{isSubmitting
 																				? InformationLabel[10].label
-																				: props.sid === undefined && !props.edit
+																				: sid === undefined && !edit
 																				? InformationLabel[6].label
 																				: InformationLabel[9].label}
 																		</button>
@@ -498,10 +490,7 @@ export async function getServerSideProps({ req, query }) {
 
 	if (!token) {
 		return {
-			redirect: {
-				permanent: false,
-				destination: "/",
-			},
+			notFound: true,
 		};
 	}
 
