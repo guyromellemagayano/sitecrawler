@@ -15,7 +15,6 @@ import DataTableHeadsContent from "public/data/data-table-heads.json";
 
 // Hooks
 import { useSite } from "src/hooks/useSite";
-import useUser from "src/hooks/useUser";
 
 // Layout
 import Layout from "src/components/Layout";
@@ -39,7 +38,7 @@ const initialOrder = {
 	totalIssues: "default",
 };
 
-const Dashboard = (props) => {
+const Dashboard = ({ user, token, page, search, per_page, ordering }) => {
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pagePath, setPagePath] = useState(null);
@@ -53,28 +52,19 @@ const Dashboard = (props) => {
 	const { asPath } = useRouter();
 
 	let sitesApiEndpoint =
-		props.page !== undefined
-			? "/api/site/?per_page=" + linksPerPage + `&ordering=name` + `&page=` + props.page
+		page !== undefined
+			? "/api/site/?per_page=" + linksPerPage + `&ordering=name` + `&page=` + page
 			: "/api/site/?per_page=" + linksPerPage + `&ordering=name`;
 	let queryString = "";
 
 	queryString +=
-		props.search !== undefined
-			? sitesApiEndpoint.includes("?")
-				? `&search=${props.search}`
-				: `?search=${props.search}`
-			: "";
+		search !== undefined ? (sitesApiEndpoint.includes("?") ? `&search=${search}` : `?search=${search}`) : "";
 
 	queryString +=
-		props.ordering !== undefined
-			? sitesApiEndpoint.includes("?")
-				? `&ordering=${props.ordering}`
-				: `?ordering=${props.ordering}`
-			: "";
+		ordering !== undefined ? (sitesApiEndpoint.includes("?") ? `&ordering=${ordering}` : `?ordering=${ordering}`) : "";
 
 	sitesApiEndpoint += queryString;
 
-	const { user: user, userError: userError } = useUser();
 	const { site: site, mutateSite: mutateSite, siteError: siteError } = useSite({
 		endpoint: sitesApiEndpoint,
 		refreshInterval: 1000,
@@ -87,12 +77,15 @@ const Dashboard = (props) => {
 			Object.keys(user).length > 0 &&
 			site &&
 			site !== undefined &&
-			Object.keys(site).length > 0
+			Object.keys(site).length > 0 &&
+			token &&
+			token !== undefined &&
+			token !== ""
 		) {
 			setUserData(user);
 			setSiteData(site);
 		}
-	}, [user, site]);
+	}, [user, site, token]);
 
 	// FIXME: onSearchEventHandler
 	const onSearchEventHandler = async (e) => {
@@ -185,17 +178,17 @@ const Dashboard = (props) => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-		if (props.search !== undefined) setSearchKey(props.search);
+		if (search !== undefined) setSearchKey(search);
 
-		if (props.ordering !== undefined) {
-			const slug = getSlugFromSortKey(DataTableHeadsContent, props.ordering.replace("-", ""));
+		if (ordering !== undefined) {
+			const slug = getSlugFromSortKey(DataTableHeadsContent, ordering.replace("-", ""));
 			const orderItem = slugToCamelcase(slug);
 
-			if (props.ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+			if (ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
 			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
 		}
 
-		if (props.per_page !== undefined) setLinksPerPage(props.per_page);
+		if (per_page !== undefined) setLinksPerPage(per_page);
 	}, []);
 
 	return (
@@ -267,7 +260,7 @@ const Dashboard = (props) => {
 									<MyPagination
 										pathName={pagePath}
 										apiEndpoint={sitesApiEndpoint}
-										page={props.page ? props.page : 0}
+										page={page && page !== undefined ? page : 0}
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
