@@ -54,10 +54,10 @@ const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [showHelpModal, setShowHelpModal] = useState(false);
 	const [siteData, setSiteData] = useState([]);
-	const [userData, setUserData] = useState([]);
 	const [siteVerifyId, setSiteVerifyId] = useState(sid);
 	const [successMsg, setSuccessMsg] = useState("");
 	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
+	const [userData, setUserData] = useState([]);
 
 	const pageTitle = "Verify URL";
 	const homeLabel = "Home";
