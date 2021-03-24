@@ -9,16 +9,15 @@ import { styled } from "twin.macro";
 import loadable from "@loadable/component";
 import Pagination from "rc-pagination";
 import PropTypes from "prop-types";
-import useSWR from "swr";
 
 // Hooks
-import useFetcher from "src/hooks/useFetcher";
+import usePage from "src/hooks/usePage";
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
 // Components
-import PaginationSkeleton from "src/components/skeletons/PaginationSkeleton";
+const PaginationSkeleton = loadable(() => import("src/components/skeletons/PaginationSkeleton"));
 
 const PaginationDiv = styled.nav`
 .rc-pagination li {
@@ -83,9 +82,7 @@ const PaginationLocale = {
 
 const MyPagination = (props) => {
 	const [paginationLoaded, setPaginationLoaded] = useState(false);
-
-	let totalPages = 0;
-	let paginatedItems = 0;
+	const [pageData, setPageData] = useState([]);
 
 	const currentPage = parseInt(props.page) || 1;
 	const linkNumbers = [];
@@ -93,36 +90,38 @@ const MyPagination = (props) => {
 	const pageNumbers = [];
 	const values = [20, 25, 50, 100];
 
-	const { data: page } = useSWR(props.apiEndpoint, useFetcher);
-
-	// console.log(props.pathName);
+	const { page: page, pageError: pageError } = usePage({
+		endpoint: props.apiEndpoint,
+	});
 
 	const handlePageChange = (pageNum) => {
-		// console.log('[pageNum]', pageNum);
 		const newPath = removeURLParameter(props.pathName, "page");
 		Router.push(`${newPath}page=${pageNum}`);
 	};
 
 	useEffect(() => {
-		if (page && page !== undefined) {
+		if (page && page !== undefined && Object.keys(page).length > 0) {
 			setTimeout(() => {
 				setPaginationLoaded(true);
 			}, 500);
 
-			totalPages = Math.ceil(page.count / props.linksPerPage);
-			paginatedItems = linkNumbers.slice(offset).slice(0, props.linksPerPage);
-
-			for (let i = 1; i <= totalPages; i++) {
-				pageNumbers.push(i);
-			}
-
-			if (totalPages < 1) return null;
-
-			for (let i = 1; i <= page.count; i++) {
-				linkNumbers.push(i);
-			}
+			setPageData(page);
 		}
 	}, [page]);
+
+	const totalPages = Math.ceil(pageData.count / props.linksPerPage);
+
+	for (let i = 1; i <= totalPages; i++) {
+		pageNumbers.push(i);
+	}
+
+	if (totalPages < 1) return null;
+
+	for (let i = 1; i <= pageData.count; i++) {
+		linkNumbers.push(i);
+	}
+
+	const paginatedItems = linkNumbers.slice(offset).slice(0, props.linksPerPage);
 
 	return paginationLoaded ? (
 		<PaginationDiv tw="bg-white px-4 mb-4 py-2 lg:flex items-center justify-between sm:px-6 align-middle">
@@ -134,7 +133,9 @@ const MyPagination = (props) => {
 						to
 						<span tw="px-1 font-medium">{paginatedItems[paginatedItems.length - 1] || 0}</span>
 						of
-						<span tw="px-1 font-medium">{page.count}</span>
+						<span tw="px-1 font-medium">
+							{page && page !== undefined && Object.keys(page).length > 0 && page.count}
+						</span>
 						results
 					</p>
 				</div>
