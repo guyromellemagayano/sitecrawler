@@ -6,7 +6,7 @@ import Skeleton from "react-loading-skeleton";
 // Components
 const SkeletonEntries = loadable(() => import("src/components/skeletons/SkeletonEntries"));
 
-const SettingsPersonalSkeleton = () => {
+const SettingsPasswordSkeleton = () => {
 	const skeletonLimit = 1;
 	const skeletonEntry = (
 		<>
@@ -30,30 +30,6 @@ const SettingsPersonalSkeleton = () => {
 							<div tw="mt-1 mb-1">
 								<span tw="max-w-full mt-1">
 									<Skeleton duration={2} width={540} height={40} />
-								</span>
-							</div>
-						</div>
-					</div>
-					<div tw="sm:col-span-2">
-						<div tw="my-1 max-w-sm">
-							<span tw="block">
-								<Skeleton duration={2} width={75} height={20} />
-							</span>
-							<div tw="mt-1 mb-1">
-								<span tw="max-w-full mt-1">
-									<Skeleton duration={2} width={250} height={40} />
-								</span>
-							</div>
-						</div>
-					</div>
-					<div tw="sm:col-span-2">
-						<div tw="my-1 max-w-sm">
-							<span tw="block">
-								<Skeleton duration={2} width={75} height={20} />
-							</span>
-							<div tw="mt-1 mb-1">
-								<span tw="max-w-full mt-1">
-									<Skeleton duration={2} width={250} height={40} />
 								</span>
 							</div>
 						</div>
@@ -83,4 +59,4 @@ const SettingsPersonalSkeleton = () => {
 	return <SkeletonEntries str={skeletonEntry} limit={skeletonLimit} />;
 };
 
-export default SettingsPersonalSkeleton;
+export default SettingsPasswordSkeleton;
