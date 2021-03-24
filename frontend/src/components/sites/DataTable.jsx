@@ -377,7 +377,7 @@ const DataTable = (props) => {
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<h3 tw="text-lg leading-6 font-medium text-gray-800" id="modal-headline">
-										{DataTableLabel[3].label}&nbsp;
+										{DataTableLabel[3].label}: {stats.name} (
 										<a
 											href={stats.url}
 											target="_blank"
@@ -386,6 +386,7 @@ const DataTable = (props) => {
 										>
 											{stats.url}
 										</a>
+										)
 									</h3>
 									<div tw="mt-2">
 										<p tw="text-sm leading-5 text-gray-600">{DataTableLabel[4].label}</p>
