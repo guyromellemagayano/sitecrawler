@@ -29,7 +29,7 @@ const HomeSvg = loadable(() => import("src/components/svg/HomeSvg"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-// const SettingsPassword = loadable(() => import("src/components/profile/Password"));
+const SettingsPassword = loadable(() => import("src/components/profile/Password"));
 const SettingsPersonal = loadable(() => import("src/components/profile/Personal"));
 // const SettingsSubscription = loadable(() => import("src/components/profile/Subscription"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
@@ -122,8 +122,8 @@ const Profile = ({ token }) => {
 
 								<div tw="space-y-12 divide-y divide-gray-200">
 									<SettingsPersonal user={userData} />
-									{/* <SettingsPassword /> */}
-									{/* <SettingsSubscription /> */}
+									<SettingsPassword user={userData} />
+									{/* <SettingsSubscription user={userData} /> */}
 								</div>
 							</div>
 						</div>
