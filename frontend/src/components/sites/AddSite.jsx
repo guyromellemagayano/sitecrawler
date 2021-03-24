@@ -23,7 +23,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [showErrorModal, setShowErrorModal] = useState(false);
 	const [componentReady, setComponentReady] = useState(false);
 
-	const informationPage = "/information";
+	const informationPageLink = "/add-site/information";
 
 	const handleMaxSiteLimit = () => {
 		setShowErrorModal(!showErrorModal);
@@ -55,7 +55,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 				<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
 					<div tw="flex-1 p-4 flex justify-between">
 						<div tw="flex-1 flex">
-							<form tw="w-full flex lg:ml-0" action="#" method="GET">
+							<div tw="w-full flex lg:ml-0">
 								<label htmlFor="searchSites" tw="sr-only">
 									{AddSiteLabel[5].label}
 								</label>
@@ -74,7 +74,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 										autoFocus
 									/>
 								</div>
-							</form>
+							</div>
 						</div>
 						<div tw="ml-4 flex items-center lg:ml-6">
 							{siteLimitCounter === maxSiteLimit || siteLimitCounter > maxSiteLimit ? (
@@ -86,7 +86,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 									{AddSiteLabel[0].label}
 								</button>
 							) : (
-								<Link href={informationPage} passHref>
+								<Link href={informationPageLink} passHref>
 									<a tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
 										{AddSiteLabel[0].label}
 									</a>
