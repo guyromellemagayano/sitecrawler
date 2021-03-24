@@ -22,11 +22,7 @@ const Home = (props) => {
 	const [userData, setUserData] = useState([]);
 	const [tokenKey, setTokenKey] = useState("");
 
-	const { user: user } = useUser({
-		token: props.token,
-		redirectIfFound: true,
-		redirectTo: "/",
-	});
+	const { user: user, error: userError } = useUser();
 
 	useEffect(() => {
 		if (
@@ -43,7 +39,7 @@ const Home = (props) => {
 	}, [user, props.token]);
 
 	return (
-		<Layout>
+		<Layout user={userData}>
 			{userData !== undefined && tokenKey !== "" ? <Dashboard user={userData} token={tokenKey} /> : <Login />}
 		</Layout>
 	);
