@@ -354,7 +354,9 @@ const Information = ({ token, sid, edit }) => {
 																			css={[
 																				tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 																				isSubmitting && tw`opacity-50 bg-gray-200 cursor-not-allowed`,
-																				errors.sitename || errorMsg ? tw`border-red-300` : tw`border-gray-300`,
+																				(errors.sitename && touched.sitename) || errorMsg
+																					? tw`border-red-300`
+																					: tw`border-gray-300`,
 																			]}
 																			aria-describedby="sitename"
 																			onChange={handleChange}
@@ -405,7 +407,7 @@ const Information = ({ token, sid, edit }) => {
 																				sid !== undefined && edit
 																					? tw`opacity-50 bg-gray-200 cursor-not-allowed`
 																					: isSubmitting && tw`text-gray-500 opacity-50 bg-gray-200 cursor-not-allowed`,
-																				(errors.siteurl || errorMsg) && sid === undefined && !edit
+																				(errors.siteurl && touched.siteurl) || errorMsg
 																					? tw`border-red-300`
 																					: tw`border-gray-300`,
 																			]}
@@ -421,7 +423,7 @@ const Information = ({ token, sid, edit }) => {
 																		/>
 																	</div>
 
-																	{errors.siteurl && touched.siteurl && sid === undefined && !edit && (
+																	{errors.siteurl && touched.siteurl && (
 																		<span tw="block mt-2 text-xs leading-5 text-red-700">
 																			{errors.siteurl && touched.siteurl && errors.siteurl}
 																		</span>
