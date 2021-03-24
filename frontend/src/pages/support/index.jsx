@@ -7,12 +7,10 @@ import Link from "next/link";
 // External
 import { Formik } from "formik";
 import { NextSeo } from "next-seo";
-import { Transition } from "@headlessui/react";
 import * as Yup from "yup";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
-import useSWR from "swr";
 
 // JSON
 import SupportLabel from "public/labels/pages/site/support.json";
@@ -21,9 +19,9 @@ import SupportLabel from "public/labels/pages/site/support.json";
 import { getCookie } from "src/utils/cookie";
 
 // Hooks
-import useFetcher from "src/hooks/useFetcher";
 import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
+import { useSite } from "src/hooks/useSite";
 
 // Layout
 import Layout from "src/components/Layout";
@@ -38,7 +36,7 @@ const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const SuccessNotificationModal = loadable(() => import("src/components/modals/SuccessNotificationModal"));
 const SupportSkeleton = loadable(() => import("src/components/skeletons/SupportSkeleton"));
 
-const Support = (props) => {
+const Support = ({ token }) => {
 	const [disableSupportForm, setDisableSupportForm] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
 	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
@@ -47,6 +45,7 @@ const Support = (props) => {
 	const [siteData, setSiteData] = useState([]);
 	const [successMsg, setSuccessMsg] = useState("");
 	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
+	const [userData, setUserData] = useState([]);
 
 	const pageTitle = "Support";
 	const homeLabel = "Home";
@@ -54,8 +53,10 @@ const Support = (props) => {
 	const contactApiEndpoint = "/api/support/contact/";
 	const siteApiEndpoint = "/api/site/";
 
-	const { user: user, error: userError } = useUser();
-	const { data: site, error: siteError } = useSWR(siteApiEndpoint, useFetcher);
+	const { user: user, userError: userError } = useUser();
+	const { site: site, siteError: siteError } = useSite({
+		endpoint: siteApiEndpoint,
+	});
 
 	useEffect(() => {
 		if (
@@ -65,17 +66,18 @@ const Support = (props) => {
 			site &&
 			site !== undefined &&
 			Object.keys(site).length > 0 &&
-			props.token &&
-			props.token !== undefined &&
-			props.token !== ""
+			token &&
+			token !== undefined &&
+			token !== ""
 		) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 
 			setSiteData(site);
+			setUserData(user);
 		}
-	}, [user, site, props.token]);
+	}, [user, site, token]);
 
 	useEffect(() => {
 		if (successMsg && successMsg !== "") {
@@ -126,7 +128,7 @@ const Support = (props) => {
 			<section tw="h-screen flex overflow-hidden bg-white">
 				{/* FIXME: fix mobile sidebar */}
 				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-				<MainSidebar user={user} site={siteData} />
+				<MainSidebar user={userData} site={siteData} />
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
@@ -277,15 +279,12 @@ const Support = (props) => {
 
 Support.propTypes = {};
 
-Support.getInitialProps = async ({ req, query }) => {
+Support.getInitialProps = async ({ req }) => {
 	let token = getCookie("token", req);
 
 	if (!token) {
 		return {
-			redirect: {
-				permanent: false,
-				destination: "/",
-			},
+			notFound: true,
 		};
 	}
 
