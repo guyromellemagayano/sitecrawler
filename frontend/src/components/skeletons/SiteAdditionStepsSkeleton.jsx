@@ -55,15 +55,19 @@ const SiteAdditionStepsSkeleton = () => {
 						</div>
 					</div>
 
-					<div tw="my-6 max-w-sm">
-						<span tw="block">
-							<Skeleton duration={2} width={100} height={20} />
-						</span>
-						<div tw="mt-1 mb-1">
-							<span tw="max-w-full mt-1">
-								<Skeleton duration={2} width={400} height={40} />
-							</span>
-						</div>
+					<div tw="flex justify-between">
+						{[...Array(2)].map((value, key) => (
+							<div key={key} tw="my-6 max-w-sm">
+								<span tw="block">
+									<Skeleton duration={2} width={100} height={20} />
+								</span>
+								<div tw="mt-1 mb-1">
+									<span tw="max-w-full mt-1">
+										<Skeleton duration={2} width={400} height={40} />
+									</span>
+								</div>
+							</div>
+						))}
 					</div>
 
 					<div tw="mt-6 inline-flex w-full justify-between">
