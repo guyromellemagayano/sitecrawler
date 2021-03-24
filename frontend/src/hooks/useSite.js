@@ -8,7 +8,7 @@ export const useSite = ({ endpoint, refreshInterval = 0 }) => {
 	const { data: site, mutate: mutateSite, error: siteError } = useSWR(endpoint, useFetcher, {
 		onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
 			if (error.status === 404) return;
-			if (key === "/api/site") return;
+			if (key === endpoint) return;
 			if (retryCount >= 10) return;
 
 			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
