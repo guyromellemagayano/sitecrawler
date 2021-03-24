@@ -266,7 +266,6 @@ const SettingsPersonal = ({ user }) => {
 									<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
 										<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
 											<span tw="inline-flex">
-												{console.log("disableForm: " + disableForm, "hasUsernameError: " + hasUsernameError)}
 												{!disableForm ? (
 													<button
 														type="submit"
