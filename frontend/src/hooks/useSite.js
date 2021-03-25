@@ -25,7 +25,7 @@ export const useSiteId = ({ querySid = 0 }) => {
 	const { data: siteId, error: siteIdError } = useSWR(siteApiEndpoint + querySid + "/", useFetcher, {
 		onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
 			if (error.status === 404) return;
-			if (key === "/api/site/" + querySid) return;
+			if (key === siteApiEndpoint + querySid) return;
 			if (retryCount >= 10) return;
 
 			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
