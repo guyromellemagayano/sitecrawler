@@ -31,7 +31,7 @@ const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSideba
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SettingsPassword = loadable(() => import("src/components/profile/Password"));
 const SettingsPersonal = loadable(() => import("src/components/profile/Personal"));
-// const SettingsSubscription = loadable(() => import("src/components/profile/Subscription"));
+const SettingsSubscription = loadable(() => import("src/components/profile/Subscription"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 
@@ -123,7 +123,7 @@ const Profile = ({ token }) => {
 								<div tw="space-y-12 divide-y divide-gray-200">
 									<SettingsPersonal user={userData} />
 									<SettingsPassword user={userData} />
-									{/* <SettingsSubscription user={userData} /> */}
+									<SettingsSubscription user={userData} />
 								</div>
 							</div>
 						</div>

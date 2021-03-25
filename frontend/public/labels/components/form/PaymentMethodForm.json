@@ -9,6 +9,24 @@
 		"label": "CVC"
 	},
 	{
-		"label": "Set Card Information"
+		"label": "Saving..."
+	},
+	{
+		"label": "Update"
+	},
+	{
+		"label": "Save Changes"
+	},
+	{
+		"label": "Payment Method Update Success"
+	},
+	{
+		"label": "Payment Method Update Failed"
+	},
+	{
+		"label": "Payment method form details updated successfully."
+	},
+	{
+		"label": "Payment method form details updated failed. Please try again."
 	}
 ]
