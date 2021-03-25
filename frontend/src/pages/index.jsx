@@ -17,6 +17,7 @@ import Layout from "src/components/Layout";
 // Components
 const Login = loadable(() => import("src/components/layout/Login"));
 const Dashboard = loadable(() => import("src/components/layout/Dashboard"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 
 const Home = (props) => {
 	const [userData, setUserData] = useState([]);
@@ -40,7 +41,13 @@ const Home = (props) => {
 
 	return (
 		<Layout user={userData}>
-			{userData !== undefined && tokenKey !== "" ? <Dashboard user={userData} token={tokenKey} /> : <Login />}
+			{userData !== undefined && tokenKey !== "" ? (
+				<Dashboard user={userData} token={tokenKey} />
+			) : props.notLoggedIn ? (
+				<Login />
+			) : (
+				<Loader />
+			)}
 		</Layout>
 	);
 };
@@ -50,7 +57,9 @@ export async function getServerSideProps({ req }) {
 
 	if (!token) {
 		return {
-			props: {},
+			props: {
+				notLoggedIn: true,
+			},
 		};
 	}
 
