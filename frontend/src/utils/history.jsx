@@ -27,7 +27,9 @@ export const HistoryProvider = ({ children }) => {
 	};
 
 	useEffect(() => {
-		setHistory((previous) => [...previous, asPath]);
+		if (asPath && asPath !== [] && Object.keys(asPath).length > 0) {
+			setHistory((previous) => [...previous, asPath]);
+		}
 	}, [asPath]);
 
 	return (
