@@ -552,11 +552,11 @@ export async function getServerSideProps({ req, query }) {
 	return {
 		props: {
 			token: token,
-			sid: query.sid,
-			sname: query.sname,
-			surl: query.surl,
-			vid: query.vid,
-			v: query.v,
+			sid: query.sid || "",
+			sname: query.sname || "",
+			surl: query.surl || "",
+			vid: query.vid || 0,
+			v: query.v || false,
 		},
 	};
 }
