@@ -47,5 +47,8 @@
 	},
 	{
 		"label": "Personal information form details sent failed. Please try again."
+	},
+	{
+		"label": "An unexpected error occurred. Please try again."
 	}
 ]
