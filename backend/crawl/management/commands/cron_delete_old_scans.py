@@ -49,7 +49,7 @@ class Command(BaseCommand):
         scan.delete()
 
     def _vacuum(self):
-        tables = ["crawl_link", "crawl_link_links", "crawl_link_images", "crawl_link_scripts", "crawl_link_stylesheets"]
+        tables = ["crawl_link", "crawl_link_images", "crawl_link_scripts", "crawl_link_stylesheets", "crawl_link_links"]
         for table in tables:
             print(f"Vacuuming {table}", flush=True)
             with connections["superuser"].cursor() as cursor:
