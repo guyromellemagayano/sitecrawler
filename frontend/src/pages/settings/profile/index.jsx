@@ -31,7 +31,6 @@ const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSideba
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SettingsPassword = loadable(() => import("src/components/profile/Password"));
 const SettingsPersonal = loadable(() => import("src/components/profile/Personal"));
-const SettingsSubscription = loadable(() => import("src/components/profile/Subscription"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 
@@ -43,8 +42,8 @@ const Profile = ({ token }) => {
 
 	const pageTitle = "Profile Settings";
 	const homeLabel = "Home";
-	const homePageLink = "/dashboard/sites";
-	const sitesApiEndpoint = "/api/site/";
+	const homePageLink = "/";
+	const sitesApiEndpoint = "/api/site/?ordering=name";
 
 	const { user: user, error: userError } = useUser();
 	const { site: site, siteError: siteError } = useSite({
@@ -123,7 +122,6 @@ const Profile = ({ token }) => {
 								<div tw="space-y-12 divide-y divide-gray-200">
 									<SettingsPersonal user={userData} />
 									<SettingsPassword user={userData} />
-									<SettingsSubscription user={userData} />
 								</div>
 							</div>
 						</div>
