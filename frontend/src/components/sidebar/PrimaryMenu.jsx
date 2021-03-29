@@ -33,35 +33,25 @@ const PrimaryMenu = ({ user, site }) => {
 	const { query } = useRouter();
 	const router = useRouter();
 
-	const handleDropdownToggle = () => {
-		setIsComponentVisible(!isComponentVisible);
-	};
-
 	const handleSiteSelectOnLoad = (siteId) => {
-		if (site && site.results !== undefined) {
-			if (site.results.length > 0) {
-				for (let i = 0; i < site.results.length; i++) {
-					if (site.results[i].id == siteId) setSelectedSite(site.results[i]);
+		if (site && site.results !== undefined && Object.keys(site.results).length > 0) {
+			for (let i = 0; i < site.results.length; i++) {
+				if (site.results[i].id == siteId) {
+					setSelectedSite(site.results[i].name);
+
+					setTimeout(() => {
+						router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
+					}, 500);
 				}
-			} else return false;
+			}
 		}
 	};
 
 	const handleDropdownHandler = (siteId, verified) => {
 		if (!verified) return false;
 
-		router.push(`/dashboard/site/[siteId]/overview`, `/dashboard/site/${siteId}/overview`);
-
-		setTimeout(() => {
-			handleSiteSelectOnLoad(siteId);
-			setIsComponentVisible(!isComponentVisible);
-		}, 500);
-	};
-
-	const handleSiteResults = (site) => {
-		if (site && site.results !== undefined) {
-			return PrimaryMenuLabel[0].label;
-		} else return selectedSite;
+		handleSiteSelectOnLoad(siteId);
+		setIsComponentVisible(!isComponentVisible);
 	};
 
 	useEffect(() => {
@@ -133,10 +123,12 @@ const PrimaryMenu = ({ user, site }) => {
 																aria-expanded="true"
 																aria-labelledby="listbox-label"
 																tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 focus:ring-gray-1100 focus:border-gray-1100 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
-																onClick={handleDropdownToggle}
+																onClick={() => setIsComponentVisible(!isComponentVisible)}
 															>
 																<div tw="flex items-center space-x-3">
-																	<span tw="block truncate text-gray-600">{handleSiteResults(site)}</span>
+																	<span tw="block truncate text-gray-600">
+																		{selectedSite !== "" ? selectedSite : PrimaryMenuLabel[0].label}
+																	</span>
 																</div>
 																<span tw="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
 																	<SelectorSvg className={tw`w-4 h-4 text-gray-400`} />
@@ -168,7 +160,7 @@ const PrimaryMenu = ({ user, site }) => {
 																					<li
 																						key={index}
 																						onClick={() => handleDropdownHandler(value.id, value.verified)}
-																						id={`listbox-item-${index}`}
+																						id={`listbox-item-${index + 1}`}
 																						role="option"
 																						css={[
 																							tw`select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`,
@@ -177,10 +169,10 @@ const PrimaryMenu = ({ user, site }) => {
 																					>
 																						<div tw="flex items-center space-x-3">
 																							<span
-																								aria-label="Online"
+																								aria-label="Verified"
 																								css={[
 																									tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																									value.verified ? tw`bg-green-400` : tw`bg-red-400`,
+																									value.verified ? tw`bg-green-400` : tw`bg-yellow-400`,
 																								]}
 																							></span>
 																							<span
