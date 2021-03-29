@@ -11,7 +11,7 @@ import tw from "twin.macro";
 const XCircleSvg = loadable(() => import("src/components/svg/XCircleSvg"));
 const XSvg = loadable(() => import("src/components/svg/XSvg"));
 
-const ErrorNotificationModal = ({ errorMsg, errorMsgLoaded, setErrorMsgLoaded, errorMsgTitle }) => {
+const ErrorNotification = ({ errorMsg, errorMsgLoaded, setErrorMsgLoaded, errorMsgTitle }) => {
 	const closeNotificationLabel = "Close";
 	const dismissNotificationLabel = "Dismiss";
 
@@ -69,4 +69,4 @@ const ErrorNotificationModal = ({ errorMsg, errorMsgLoaded, setErrorMsgLoaded, e
 	);
 };
 
-export default ErrorNotificationModal;
+export default ErrorNotification;

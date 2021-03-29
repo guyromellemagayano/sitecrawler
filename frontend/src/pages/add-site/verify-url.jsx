@@ -30,7 +30,7 @@ import Layout from "src/components/Layout";
 // Components
 const ChevronRightSvg = loadable(() => import("src/components/svg/ChevronRightSvg"));
 const ClipboardSvg = loadable(() => import("src/components/svg/ClipboardSvg"));
-const ErrorNotificationModal = loadable(() => import("src/components/modals/ErrorNotificationModal"));
+const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const HomeSvg = loadable(() => import("src/components/svg/HomeSvg"));
 const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
@@ -40,7 +40,7 @@ const MobileSidebarButton = loadable(() => import("src/components/sidebar/Mobile
 const QuestionMarkCircleSvg = loadable(() => import("src/components/svg/QuestionMarkCircleSvg"));
 const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeletons/SiteAdditionStepsSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
-const SuccessNotificationModal = loadable(() => import("src/components/modals/SuccessNotificationModal"));
+const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 
 const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
 	const [copied, setCopied] = useState(false);
@@ -195,14 +195,14 @@ const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
 		<Layout user={userData}>
 			<NextSeo title={pageTitle} />
 
-			<SuccessNotificationModal
+			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
 				setSuccessMsgLoaded={setSuccessMsgLoaded}
 				successMsgTitle={VerifyUrlLabel[27].label}
 			/>
 
-			<ErrorNotificationModal
+			<ErrorNotification
 				errorMsg={errorMsg}
 				errorMsgLoaded={errorMsgLoaded}
 				setErrorMsgLoaded={setErrorMsgLoaded}
@@ -409,7 +409,7 @@ const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
 																	<span tw="inline-flex">
 																		<button
 																			type="button"
-																			tw="inline-flex items-center ml-3 text-sm leading-5 font-medium text-gray-400 focus:outline-none"
+																			tw="inline-flex items-center ml-3 text-gray-400 focus:outline-none"
 																			title={VerifyUrlLabel[24].label}
 																			onClick={handleTriggerHelpModal}
 																		>

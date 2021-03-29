@@ -15,8 +15,8 @@ import PersonalLabel from "public/labels/components/profile/Personal.json";
 import usePatchMethod from "src/hooks/usePatchMethod";
 
 // Components
-const ErrorNotificationModal = loadable(() => import("src/components/modals/ErrorNotificationModal"));
-const SuccessNotificationModal = loadable(() => import("src/components/modals/SuccessNotificationModal"));
+const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
+const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SettingsPersonalSkeleton = loadable(() => import("src/components/skeletons/SettingsPersonalSkeleton"));
 
 const SettingsPersonal = ({ user }) => {
@@ -66,19 +66,19 @@ const SettingsPersonal = ({ user }) => {
 
 	return componentReady ? (
 		<div>
-			<SuccessNotificationModal
+			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
 				setSuccessMsgLoaded={setSuccessMsgLoaded}
 				successMsgTitle={PersonalLabel[14].label}
 			/>
-			<ErrorNotificationModal
+			<ErrorNotification
 				errorMsg={errorMsg}
 				errorMsgLoaded={errorMsgLoaded}
 				setErrorMsgLoaded={setErrorMsgLoaded}
 				errorMsgTitle={PersonalLabel[13].label}
 			/>
-			<ErrorNotificationModal
+			<ErrorNotification
 				errorMsg={usernameError}
 				errorMsgLoaded={errorMsgLoaded}
 				setErrorMsgLoaded={setErrorMsgLoaded}

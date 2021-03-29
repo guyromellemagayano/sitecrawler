@@ -28,12 +28,12 @@ import Layout from "src/components/Layout";
 
 // Components
 const ChevronRightSvg = loadable(() => import("src/components/svg/ChevronRightSvg"));
-const ErrorNotificationModal = loadable(() => import("src/components/modals/ErrorNotificationModal"));
+const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const HomeSvg = loadable(() => import("src/components/svg/HomeSvg"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
-const SuccessNotificationModal = loadable(() => import("src/components/modals/SuccessNotificationModal"));
+const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SupportSkeleton = loadable(() => import("src/components/skeletons/SupportSkeleton"));
 
 const Support = ({ token }) => {
@@ -51,11 +51,11 @@ const Support = ({ token }) => {
 	const homeLabel = "Home";
 	const homePageLink = "/";
 	const contactApiEndpoint = "/api/support/contact/";
-	const siteApiEndpoint = "/api/site/";
+	const sitesApiEndpoint = "/api/site/?ordering=name";
 
 	const { user: user, userError: userError } = useUser();
 	const { site: site, siteError: siteError } = useSite({
-		endpoint: siteApiEndpoint,
+		endpoint: sitesApiEndpoint,
 	});
 
 	useEffect(() => {
@@ -111,14 +111,14 @@ const Support = ({ token }) => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<SuccessNotificationModal
+			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
 				setSuccessMsgLoaded={setSuccessMsgLoaded}
 				successMsgTitle={SupportLabel[13].label}
 			/>
 
-			<ErrorNotificationModal
+			<ErrorNotification
 				errorMsg={errorMsg}
 				errorMsgLoaded={errorMsgLoaded}
 				setErrorMsgLoaded={setErrorMsgLoaded}

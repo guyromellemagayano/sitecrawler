@@ -17,8 +17,8 @@ import usePostMethod from "src/hooks/usePostMethod";
 import SettingsPasswordSkeleton from "../skeletons/SettingsPasswordSkeleton";
 
 // Components
-const ErrorNotificationModal = loadable(() => import("src/components/modals/ErrorNotificationModal"));
-const SuccessNotificationModal = loadable(() => import("src/components/modals/SuccessNotificationModal"));
+const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
+const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 
 const SettingsPassword = ({ user }) => {
 	const [disableForm, setDisableForm] = useState(true);
@@ -42,13 +42,13 @@ const SettingsPassword = ({ user }) => {
 
 	return componentReady ? (
 		<div>
-			<SuccessNotificationModal
+			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
 				setSuccessMsgLoaded={setSuccessMsgLoaded}
 				successMsgTitle={PasswordLabel[12].label}
 			/>
-			<ErrorNotificationModal
+			<ErrorNotification
 				errorMsg={errorMsg}
 				errorMsgLoaded={errorMsgLoaded}
 				setErrorMsgLoaded={setErrorMsgLoaded}

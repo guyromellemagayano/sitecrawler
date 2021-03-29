@@ -166,7 +166,6 @@ const Dashboard = ({ user, token, page, search, per_page, ordering }) => {
 			else newPath += `?ordering=${sortKey}`;
 		}
 
-		// console.log('[pagePath]', newPath)
 		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 

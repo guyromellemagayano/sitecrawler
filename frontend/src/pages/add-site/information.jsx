@@ -31,7 +31,7 @@ import Layout from "src/components/Layout";
 
 // Components
 const ChevronRightSvg = loadable(() => import("src/components/svg/ChevronRightSvg"));
-const ErrorNotificationModal = loadable(() => import("src/components/modals/ErrorNotificationModal"));
+const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const HomeSvg = loadable(() => import("src/components/svg/HomeSvg"));
 const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
@@ -123,7 +123,7 @@ const Information = ({ token, sid, edit }) => {
 		<Layout user={userData}>
 			<NextSeo title={pageTitle} />
 
-			<ErrorNotificationModal
+			<ErrorNotification
 				errorMsg={errorMsg}
 				errorMsgLoaded={errorMsgLoaded}
 				setErrorMsgLoaded={setErrorMsgLoaded}
