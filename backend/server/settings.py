@@ -64,6 +64,8 @@ DB_USER = os.environ.get("DB_USER", "postgres")
 DB_PASS = secret("DB_PASS", "crawldev", "DB_PASS_BACKEND")
 DB_HOST = os.environ.get("DB_HOST", "db")
 DB_PORT = os.environ.get("DB_PORT", "5432")
+DB_SUPERUSER_USER = DB_USER
+DB_SUPERUSER_PASS = secret("DB_PASS", "crawldev", "DB_PASS")
 
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
 
@@ -106,6 +108,7 @@ elif ENV == "production":
     DEFAULT_FROM_EMAIL = "noreply@sitecrawler.com"
     DB_NAME = "production"
     DB_USER = "backend"
+    DB_SUPERUSER_USER = "production"
     DB_HOST = "terraform-20200810173347645600000001.ceavi2ewfiqg.us-east-1.rds.amazonaws.com"
     EMAIL_SUBJECT_PREFIX = "SiteCrawler - "
 elif ENV == "test":
@@ -162,7 +165,19 @@ DATABASES = {
         "OPTIONS": {
             "options": "-c statement_timeout=60000",
         },
-    }
+    },
+    "superuser": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": DB_NAME,
+        "USER": DB_SUPERUSER_USER,
+        "PASSWORD": DB_SUPERUSER_PASS,
+        "HOST": DB_HOST,
+        "PORT": DB_PORT,
+        # superuser timeout is 12h, so be careful, for now only used for vacuum
+        "OPTIONS": {
+            "options": "-c statement_timeout=43200000",
+        },
+    },
 }
 
 # do not have multiple dbs for tests, cause it complains

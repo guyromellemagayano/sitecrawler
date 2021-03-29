@@ -52,5 +52,5 @@ class Command(BaseCommand):
         tables = ["crawl_link", "crawl_link_links", "crawl_link_images", "crawl_link_scripts", "crawl_link_stylesheets"]
         for table in tables:
             print(f"Vacuuming {table}", flush=True)
-            with connections["longquery"].cursor() as cursor:
+            with connections["superuser"].cursor() as cursor:
                 cursor.execute(f"VACUUM ANALYZE {table}")
