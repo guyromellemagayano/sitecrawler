@@ -23,7 +23,8 @@
 		"label": "Card Information"
 	},
 	{
-		"label": "Add/Update Card Information"
+		"label": "Select Card",
+		"description": "User generated content in real-time will have multiple touchpoints for offshoring."
 	},
 	{
 		"label": "Payment Period"
@@ -61,5 +62,14 @@
 	},
 	{
 		"label": "An unexpected error occurred. Please try again."
+	},
+	{
+		"label": "Subscriptions"
+	},
+	{
+		"label": "Most Popular"
+	},
+	{
+		"label": "/month"
 	}
 ]
