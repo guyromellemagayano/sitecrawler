@@ -31,7 +31,7 @@ const Sidebar = () => {
 	const userApiEndpoint = "/api/auth/user/";
 	const siteApiEndpoint = "/api/site/";
 
-	const { data: user, error: userError } = useSWR(userApiEndpoint, useFetcher);
+	const { data: user, error: userError } = useSWR(userApiEndpoint, useFetcher, { refreshInterval: 1000 });
 
 	const handleDropdownToggle = () => {
 		setShowDropdown(!showDropdown);
