@@ -38,7 +38,7 @@ const Profile = ({ token }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [siteData, setSiteData] = useState([]);
 	const [userData, setUserData] = useState([]);
-	const [componentReady, setComponentReady] = useState(false);
+	const [pageLoaded, setPageLoaded] = useState(false);
 
 	const pageTitle = "Profile Settings";
 	const homeLabel = "Home";
@@ -63,7 +63,7 @@ const Profile = ({ token }) => {
 			token !== ""
 		) {
 			setTimeout(() => {
-				setComponentReady(true);
+				setPageLoaded(true);
 			}, 500);
 
 			setSiteData(site);
@@ -87,7 +87,7 @@ const Profile = ({ token }) => {
 					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12 min-h-screen">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-								{componentReady ? (
+								{pageLoaded ? (
 									<div className="max-w-full py-4 px-8">
 										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
 											<ol tw="flex items-center space-x-4">
