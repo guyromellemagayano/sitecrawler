@@ -56,7 +56,7 @@ resource "aws_ecs_service" "prod_crawler" {
 
 # autoscaling
 resource "aws_appautoscaling_target" "ecs_prod_crawler_target" {
-  max_capacity       = 4
+  max_capacity       = 8
   min_capacity       = 1
   resource_id        = "service/${aws_ecs_cluster.prod_fargate.name}/${aws_ecs_service.prod_crawler.name}"
   scalable_dimension = "ecs:service:DesiredCount"
