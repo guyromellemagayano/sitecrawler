@@ -73,12 +73,6 @@ const SettingsPersonal = ({ user }) => {
 				successMsgTitle={PersonalLabel[14].label}
 			/>
 			<ErrorNotification
-				errorMsg={errorMsg}
-				errorMsgLoaded={errorMsgLoaded}
-				setErrorMsgLoaded={setErrorMsgLoaded}
-				errorMsgTitle={PersonalLabel[13].label}
-			/>
-			<ErrorNotification
 				errorMsg={usernameError}
 				errorMsgLoaded={errorMsgLoaded}
 				setErrorMsgLoaded={setErrorMsgLoaded}
@@ -146,7 +140,7 @@ const SettingsPersonal = ({ user }) => {
 										setHasUsernameError(true);
 										setDisableForm(false);
 										setUsernameError(data.username);
-										setErrorMsgLoaded(!errorMsgLoaded);
+										setErrorMsgLoaded(true);
 									}
 								}
 							}

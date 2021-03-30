@@ -22,5 +22,38 @@
 	},
 	{
 		"label": "Save"
+	},
+	{
+		"label": "Form Submission Failed"
+	},
+	{
+		"label": "Form Submission Success"
+	},
+	{
+		"label": "Local time disabled globally."
+	},
+	{
+		"label": "Local time enabled globally."
+	},
+	{
+		"label": "An unexpected error occurred. Please try again."
+	},
+	{
+		"label": "Required field"
+	},
+	{
+		"label": "Large page size threshold update successfully."
+	},
+	{
+		"label": "Large page size threshold update failed. Please try again."
+	},
+	{
+		"label": "Saving..."
+	},
+	{
+		"label": "Update"
+	},
+	{
+		"label": "Save Changes"
 	}
 ]

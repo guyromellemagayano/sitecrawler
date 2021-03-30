@@ -1,357 +1,194 @@
-import { Transition } from '@headlessui/react';
-import { Fragment, useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
-import fetch from 'node-fetch';
-import GlobalLabels from 'public/labels/pages/global.json';
-import PropTypes from 'prop-types';
-import Skeleton from 'react-loading-skeleton';
-import tw from 'twin.macro';
+// React
+import { useState, useEffect } from "react";
 
-const LargePageSizeSettingsDiv = styled.div``;
+// External
+import { Formik } from "formik";
+import * as Yup from "yup";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import tw from "twin.macro";
 
-const LargePageSizeSettings = (props) => {
-	const [errorMsg, setErrorMsg] = useState('');
-	const [successMsg, setSuccessMsg] = useState('');
-	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState('');
-	const [disableInputFields, setDisableInputFields] = useState(0);
-	const [showNotificationStatus, setShowNotificationStatus] = useState(false);
+// JSON
+import GlobalLabel from "public/labels/pages/global.json";
 
-	const updateLargePageSizeSettings = async (endpoint, formData) => {
-		const response = await fetch(endpoint, {
-			method: 'PATCH',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			},
-			body: JSON.stringify(formData)
-		});
+// Hooks
+import usePatchMethod from "src/hooks/usePatchMethod";
 
-		const data = await response.json();
+// Components
+const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
+const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
+const SettingsLargePageSizeSkeleton = loadable(() => import("src/components/skeletons/SettingsLargePageSizeSkeleton"));
 
-		if (response.ok && response.status === 200) {
-			if (data) {
-				setSuccessMsg('Large page size threshold update successfully.');
-				setTimeout(() => setShowNotificationStatus(true), 1500);
-				setDisableInputFields(!disableInputFields);
-			} else {
-				setErrorMsg(
-					'Large page size threshold update failed. Please try again.'
-				);
-				setTimeout(() => setShowNotificationStatus(true), 1500);
-			}
-		} else {
-			const error = new Error(response.statusText);
+const LargePageSizeSettings = ({ user, site }) => {
+	const [componentReady, setComponentReady] = useState(false);
+	const [disableForm, setDisableForm] = useState(true);
+	const [errorMsg, setErrorMsg] = useState("");
+	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
+	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState("");
+	const [successMsg, setSuccessMsg] = useState("");
+	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
 
-			error.response = response;
-			error.data = data;
+	const userApiEndpoint = "/api/auth/user/";
 
-			setErrorMsg('An unexpected error occurred. Please try again.');
-			setTimeout(() => setShowNotificationStatus(true), 1500);
+	useEffect(() => {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0
+		) {
+			setLargePageSizeThreshold(user.large_page_size_threshold);
 
-			throw error;
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
 		}
-	};
-
-	const handleLargePageSizeUpdate = async (e) => {
-		e.preventDefault();
-
-		const body = {
-			large_page_size_threshold: e.currentTarget.large_page_size_threshold.value
-		};
-
-		await updateLargePageSizeSettings(
-			props.querySiteId !== undefined && props.querySiteId !== null
-				? `/api/site/${props.querySiteId}/`
-				: `/api/auth/user/`,
-			body
-		);
-	};
-
-	const handleEditLargePageSize = (e) => {
-		e.preventDefault();
-
-		setDisableInputFields(!disableInputFields);
-	};
+	}, [user, site]);
 
 	const handleLargePageSizeInputChange = (e) => {
 		setLargePageSizeThreshold(e.target.value);
 	};
 
-	useEffect(() => {
-		if (
-			props.querySiteId !== undefined &&
-			props.siteData.large_page_size_threshold == undefined &&
-			props.siteData.large_page_size_threshold == null
-		) {
-			setLargePageSizeThreshold(props.userData.large_page_size_threshold);
-		} else if (
-			props.querySiteId !== undefined &&
-			props.siteData.large_page_size_threshold !== undefined &&
-			props.siteData.large_page_size_threshold !== null
-		) {
-			setLargePageSizeThreshold(props.siteData.large_page_size_threshold);
-		} else {
-			setLargePageSizeThreshold(props.userData.large_page_size_threshold);
-		}
-	}, [props.siteData, props.userData, props.querySiteId]);
+	return componentReady ? (
+		<div>
+			<SuccessNotification
+				successMsg={successMsg}
+				successMsgLoaded={successMsgLoaded}
+				setSuccessMsgLoaded={setSuccessMsgLoaded}
+				successMsgTitle={GlobalLabel[8].label}
+			/>
+			<ErrorNotification
+				errorMsg={errorMsg}
+				errorMsgLoaded={errorMsgLoaded}
+				setErrorMsgLoaded={setErrorMsgLoaded}
+				errorMsgTitle={GlobalLabel[7].label}
+			/>
+			<div tw="max-w-full py-4 px-8">
+				<div tw="pt-4 m-auto">
+					<h5 tw="text-xl leading-6 font-medium text-gray-900">{GlobalLabel[2].label}</h5>
+					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{GlobalLabel[2].description}</p>
+				</div>
+			</div>
+			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
+				<Formik
+					enableReinitialize={true}
+					initialValues={{ largepagesizethreshold: largePageSizeThreshold }}
+					validationSchema={Yup.object().shape({
+						largepagesizethreshold: Yup.number().required(GlobalLabel[12].label),
+					})}
+					onSubmit={async (values, { setSubmitting }) => {
+						const body = {
+							large_page_size_threshold: values.largepagesizethreshold,
+						};
 
-	useEffect(() => {
-		if (showNotificationStatus === true)
-			setTimeout(() => setShowNotificationStatus(false), 3500);
-	}, [showNotificationStatus]);
+						try {
+							const response = await usePatchMethod(userApiEndpoint, body);
+							const data = await response.data;
 
-	return (
-		<Fragment>
-			{!props.userData && !props.siteData ? (
-				<LargePageSizeSettingsDiv className={`max-w-full`}>
-					<Skeleton duration={2} width={320} height={213} />
-				</LargePageSizeSettingsDiv>
-			) : (
-				<Fragment>
-					<Transition show={showNotificationStatus}>
-						<div
-							className={`fixed z-50 inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end`}
-						>
-							<Transition.Child
-								enter='transform ease-out duration-300 transition'
-								enterFrom='translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2'
-								enterTo='translate-y-0 opacity-100 sm:translate-x-0'
-								leave='transition ease-in duration-100'
-								leaveFrom='opacity-100'
-								leaveTo='opacity-0'
-								className='max-w-sm w-full'
-							>
-								<div
-									className={`bg-white shadow-lg rounded-lg pointer-events-auto`}
-								>
-									<div
-										className={`rounded-lg ring-1 ring-black ring-opacity-5 overflow-hidden`}
-									>
-										<div className={`p-4`}>
-											<div className={`flex items-start`}>
-												<div className={`flex-shrink-0`}>
-													{errorMsg ? (
-														<svg
-															className={`h-8 w-8 text-red-400`}
-															fill='currentColor'
-															viewBox='0 0 24 24'
-															stroke='currentColor'
-														>
-															<path
-																fillRule='evenodd'
-																d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
-																clipRule='evenodd'
-															></path>
-														</svg>
-													) : successMsg ? (
-														<svg
-															className={`h-8 w-8 text-green-400`}
-															fill='currentColor'
-															viewBox='0 0 24 24'
-															stroke='currentColor'
-														>
-															<path
-																fillRule='evenodd'
-																d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-																clipRule='evenodd'
-															></path>
-														</svg>
-													) : (
-														<svg
-															className={`h-8 w-8 text-gray-400`}
-															fill='currentColor'
-															viewBox='0 0 24 24'
-															stroke='currentColor'
-														>
-															<path
-																fillRule='evenodd'
-																d='M10 18a8 8 0 100-16 8 8 0 000 16zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z'
-																clipRule='evenodd'
-															></path>
-														</svg>
-													)}
-												</div>
-												<div className={`ml-3 w-0 flex-1 pt-0.5`}>
-													<p
-														className={`text-sm leading-5 font-medium ${
-															errorMsg !== undefined && errorMsg !== ''
-																? 'text-red-500'
-																: 'text-gray-900'
-														} ${
-															successMsg !== undefined && successMsg !== ''
-																? 'text-green-500'
-																: 'text-gray-900'
-														}`}
-													>
-														{errorMsg !== undefined && errorMsg !== ''
-															? 'Update Failed!'
-															: successMsg !== undefined && successMsg !== ''
-															? 'Update Success!'
-															: 'Verifying...'}
-													</p>
-													<p className={`mt-1 text-sm leading-5 text-gray-500`}>
-														{errorMsg !== undefined && errorMsg !== ''
-															? errorMsg
-															: successMsg}
-													</p>
-												</div>
-												<div className={`ml-4 flex-shrink-0 flex`}>
+							if (Math.floor(response.status / 200) === 1) {
+								if (data) {
+									setTimeout(() => {
+										setSubmitting(false);
+									}, 1000);
+
+									setDisableForm(true);
+									setSuccessMsg(GlobalLabel[13].label);
+									setSuccessMsgLoaded(true);
+								}
+							} else {
+								if (response) {
+									console.log(response);
+								}
+							}
+						} catch (error) {
+							throw error.message;
+						}
+					}}
+				>
+					{({ values, errors, handleBlur, handleSubmit, isSubmitting, touched }) => (
+						<form tw="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
+							<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
+								<div tw="sm:col-span-4">
+									<label htmlFor="largepagesizethreshold" tw="block text-sm font-medium leading-5 text-gray-700">
+										{GlobalLabel[3].label}
+									</label>
+									<div tw="mt-1 relative flex rounded-md shadow-sm">
+										<input
+											type="number"
+											id="largepagesizethreshold"
+											value={values.largepagesizethreshold}
+											name="largepagesizethreshold"
+											disabled={isSubmitting || disableForm}
+											css={[
+												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
+												(isSubmitting || disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+												errors.largepagesizethreshold ? tw`border-red-300` : tw`border-gray-300`,
+											]}
+											aria-describedby="largepagesizethreshold"
+											onChange={handleLargePageSizeInputChange}
+											onBlur={handleBlur}
+										/>
+									</div>
+									{errors.largepagesizethreshold && touched.largepagesizethreshold && (
+										<span tw="block mt-2 text-xs leading-5 text-red-700">
+											{errors.largepagesizethreshold && errors.largepagesizethreshold}
+										</span>
+									)}
+								</div>
+
+								<div tw="sm:col-span-4">
+									<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
+										<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
+											<span tw="inline-flex">
+												{!disableForm ? (
 													<button
-														className={`inline-flex text-gray-400 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
-														onClick={() =>
-															setTimeout(
-																() =>
-																	setShowNotificationStatus(
-																		!showNotificationStatus
-																	),
-																150
-															)
-														}
+														type="submit"
+														disabled={isSubmitting || Object.keys(errors).length > 0}
+														css={[
+															tw`w-full mt-3 mr-3 ring-1 ring-black ring-opacity-5 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
+															isSubmitting || Object.keys(errors).length > 0
+																? tw`opacity-50 cursor-not-allowed`
+																: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
+														]}
 													>
-														<svg
-															className={`h-5 w-5`}
-															viewBox='0 0 20 20'
-															fill='currentColor'
-														>
-															<path
-																fillRule='evenodd'
-																d='M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z'
-																clipRule='evenodd'
-															/>
-														</svg>
+														{isSubmitting
+															? GlobalLabel[15].label
+															: !disableForm
+															? GlobalLabel[17].label
+															: GlobalLabel[16].label}
 													</button>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</Transition.Child>
-						</div>
-					</Transition>
-
-					<LargePageSizeSettingsDiv
-						className={`max-w-full bg-white ring-1 ring-black ring-opacity-5 rounded-lg mb-5`}
-					>
-						<div className={`px-4 py-5 sm:p-6`}>
-							<form onSubmit={handleLargePageSizeUpdate}>
-								<div>
-									<div>
-										<div>
-											<h3
-												className={`text-lg leading-6 font-medium text-gray-900`}
-											>
-												{GlobalLabels[2].label}
-											</h3>
-											<p className={`mt-1 text-sm leading-5 text-gray-500`}>
-												{GlobalLabels[2].description}
-											</p>
-										</div>
-									</div>
-									<div className={`mt-8`}>
-										<div
-											className={`grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
-										>
-											<div className={`sm:col-span-6`}>
-												<label
-													htmlFor={`large_page_size_threshold`}
-													className={`block text-sm font-medium leading-5 text-gray-700`}
-												>
-													{GlobalLabels[3].label}
-												</label>
-												<div className={`mt-1 flex rounded-md shadow-sm`}>
-													<input
-														type={`text`}
-														id={`large_page_size_threshold`}
-														value={largePageSizeThreshold}
-														name={`large_page_size_threshold`}
-														disabled={disableInputFields == 0 ? true : false}
-														className={`block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-															disableInputFields == 0 &&
-															'opacity-50 bg-gray-300 cursor-not-allowed'
-														}`}
-														onChange={handleLargePageSizeInputChange}
-													/>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className={`mt-8 border-t border-gray-300 pt-5`}>
-									<div
-										className={`flex justify-between xs:flex-col sm:flex-row md:flex-col lg:flex-row`}
-									>
-										<div
-											className={`flex justify-start xs:flex-col xs:order-2 sm:flex-row sm:flex-1 sm:grid sm:grid-cols-2 sm:gap-1  md:flex-col sm:w-full lg:order-1 lg:w-auto lg:flex lg:flex-row`}
-										>
-											<span
-												className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-sm sm:flex-1 lg:flex-none`}
-											>
-												<button
-													type={`submit`}
-													disabled={disableInputFields == 1 ? true : false}
-													className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 text-sm leading-5 font-medium text-white bg-indigo-600 transition duration-150 ease-in-out ${
-														disableInputFields == 1
-															? 'opacity-50 bg-indigo-300 cursor-not-allowed'
-															: 'hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700'
-													}`}
-													onClick={handleEditLargePageSize}
-												>
-													{GlobalLabels[4].label}
-												</button>
-											</span>
-
-											<span
-												className={`inline-flex sm:inline-block lg:inline-flex rounded-md shadow-sm sm:flex-1 lg:flex-none`}
-											>
-												<button
-													disabled={disableInputFields == 1 ? false : true}
-													className={`inline-flex xs:w-full lg:w-auto justify-center w-full rounded-md border border-gray-300 ml-3 xs:ml-0 xs:mt-3 sm:ml-0 px-4 py-2 bg-white text-sm sm:text-sm leading-5 sm:leading-5 font-medium text-gray-700 shadow-sm transition ease-in-out duration-150 ${
-														disableInputFields == 1
-															? 'hover:text-gray-500 focus:outline-none'
-															: 'opacity-50 cursor-not-allowed'
-													}`}
-													onClick={handleEditLargePageSize}
-												>
-													{GlobalLabels[5].label}
-												</button>
-											</span>
-										</div>
-										<div
-											className={`flex justify-end xs:order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-2 lg:w-auto`}
-										>
-											<span
-												className={`xs:w-full ml-3 xs:ml-0 xs:mt-3 inline-flex rounded-md shadow-sm`}
-											>
-												<button
-													type={`submit`}
-													disabled={disableInputFields == 1 ? false : true}
-													className={`inline-flex xs:w-full justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
-														disableInputFields == 0
-															? 'opacity-50 bg-green-300 cursor-not-allowed'
-															: 'hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700'
-													}`}
-												>
-													{GlobalLabels[6].label}
-												</button>
+												) : (
+													<button
+														type="button"
+														disabled={isSubmitting || Object.keys(errors).length > 0}
+														css={[
+															tw`w-full mt-3 mr-3 ring-1 ring-black ring-opacity-5 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
+															isSubmitting || Object.keys(errors).length > 0
+																? tw`opacity-50 cursor-not-allowed`
+																: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+														]}
+														onClick={() => setDisableForm(!disableForm)}
+													>
+														{isSubmitting ? GlobalLabel[15].label : GlobalLabel[16].label}
+													</button>
+												)}
 											</span>
 										</div>
 									</div>
 								</div>
-							</form>
-						</div>
-					</LargePageSizeSettingsDiv>
-				</Fragment>
-			)}
-		</Fragment>
+							</div>
+						</form>
+					)}
+				</Formik>
+			</div>
+		</div>
+	) : (
+		<SettingsLargePageSizeSkeleton />
 	);
 };
 
-export default LargePageSizeSettings;
+LargePageSizeSettings.propTypes = {};
 
-LargePageSizeSettings.propTypes = {
-	errorMsg: PropTypes.string,
-	successMsg: PropTypes.string,
-	disableInputFields: PropTypes.func,
-	largePageSizeThreshold: PropTypes.string
-};
+export default LargePageSizeSettings;
