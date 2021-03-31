@@ -718,7 +718,7 @@ export async function getServerSideProps({ req }) {
 
 	return {
 		props: {
-			token: token,
+			token: token || "",
 		},
 	};
 }

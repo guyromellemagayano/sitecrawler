@@ -551,7 +551,7 @@ export async function getServerSideProps({ req, query }) {
 
 	return {
 		props: {
-			token: token,
+			token: token || "",
 			sid: query.sid || "",
 			sname: query.sname || "",
 			surl: query.surl || "",

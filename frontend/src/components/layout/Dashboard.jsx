@@ -278,10 +278,10 @@ const Dashboard = ({ user, token, page, search, per_page, ordering }) => {
 
 Dashboard.getInitialProps = ({ query }) => {
 	return {
-		page: query.page,
-		search: query.search,
-		per_page: query.per_page,
-		ordering: query.ordering,
+		page: query.page || 0,
+		search: query.search || "",
+		per_page: query.per_page || 0,
+		ordering: query.ordering || "",
 	};
 };
 

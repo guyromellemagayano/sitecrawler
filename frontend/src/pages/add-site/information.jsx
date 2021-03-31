@@ -498,7 +498,7 @@ export async function getServerSideProps({ req, query }) {
 
 	return {
 		props: {
-			token: token,
+			token: token || "",
 			sid: query.sid || "",
 			edit: query.edit || false,
 		},
