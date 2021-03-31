@@ -19,31 +19,24 @@ const Login = loadable(() => import("src/components/layout/Login"));
 const Dashboard = loadable(() => import("src/components/layout/Dashboard"));
 const Loader = loadable(() => import("src/components/layout/Loader"));
 
-const Home = (props) => {
+const Home = ({ token, notLoggedIn }) => {
 	const [userData, setUserData] = useState([]);
 	const [tokenKey, setTokenKey] = useState("");
 
 	const { user: user, error: userError } = useUser();
 
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			props.token &&
-			props.token !== undefined &&
-			props.token !== ""
-		) {
+		if (user && user !== undefined && Object.keys(user).length > 0 && token && token !== undefined && token !== "") {
 			setUserData(user);
-			setTokenKey(props.token);
+			setTokenKey(token);
 		}
-	}, [user, props.token]);
+	}, [user, token]);
 
 	return (
 		<Layout user={userData}>
 			{userData !== undefined && tokenKey !== "" ? (
 				<Dashboard user={userData} token={tokenKey} />
-			) : props.notLoggedIn ? (
+			) : notLoggedIn ? (
 				<Login />
 			) : (
 				<Loader />
@@ -51,6 +44,10 @@ const Home = (props) => {
 		</Layout>
 	);
 };
+
+Home.propTypes = {};
+
+export default Home;
 
 export async function getServerSideProps({ req }) {
 	let token = getCookie("token", req);
@@ -65,11 +62,7 @@ export async function getServerSideProps({ req }) {
 
 	return {
 		props: {
-			token: token,
+			token: token || "",
 		},
 	};
 }
-
-Home.propTypes = {};
-
-export default Home;
