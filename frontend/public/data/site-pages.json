@@ -6,14 +6,18 @@
       {
         "title": "Go Back to Sites",
         "slug": "go-back-to-sites",
-        "url": "/dashboard/sites",
+        "url": "/",
         "icon": "M10 19l-7-7m0 0l7-7m-7 7h18"
       }
     ]
   },
   {
-    "category": "Dashboard",
-    "slug": "dashboard",
+    "category": "Site Selection",
+    "slug": "site-selection"
+  },
+  {
+    "category": "Overview",
+    "slug": "overview",
     "links": [
       {
         "title": "Overview",
