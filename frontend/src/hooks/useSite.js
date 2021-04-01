@@ -80,3 +80,46 @@ export const useStats = ({ querySid = 0, scanObjId = 0 }) => {
 
 	return { stats, mutateStats, statsError };
 };
+
+export const useLinks = ({ querySid = 0, scanObjId = 0 }) => {
+	const { data: links, mutate: mutateLinks, error: linksError } = useSWR(
+		() =>
+			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/"
+				: null,
+		useFetcher,
+		{
+			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+				if (error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/") return;
+				if (retryCount >= 10) return;
+
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			},
+		}
+	);
+
+	return { links, mutateLinks, linksError };
+};
+
+export const useImages = ({ querySid = 0, scanObjId = 0 }) => {
+	const { data: images, mutate: mutateImages, error: imagesError } = useSWR(
+		() =>
+			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/?tls_status=NONE&tls_status=ERROR"
+				: null,
+		useFetcher,
+		{
+			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+				if (error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/?tls_status=NONE&tls_status=ERROR")
+					return;
+				if (retryCount >= 10) return;
+
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			},
+		}
+	);
+
+	return { images, mutateImages, imagesError };
+};
