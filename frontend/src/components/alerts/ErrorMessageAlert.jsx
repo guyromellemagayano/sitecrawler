@@ -37,14 +37,14 @@ const ErrorMessageAlert = ({ message }) => {
 				<div tw="ml-3">
 					<h3 tw="text-sm leading-5 font-medium text-red-800 break-words">{message}</h3>
 				</div>
-				<div class="ml-auto pl-3">
-					<div class="flex items-center -mx-1.5">
+				<div tw="ml-auto pl-3">
+					<div tw="flex items-center -mx-1.5">
 						<button
 							type="button"
-							class="inline-flex bg-red-50 rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600"
+							tw="inline-flex bg-red-50 rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600"
 							onClick={() => setIsOpen(!isOpen)}
 						>
-							<span class="sr-only">Dismiss</span>
+							<span tw="sr-only">Dismiss</span>
 							<XSvg className={tw`h-5 w-5`} />
 						</button>
 					</div>
