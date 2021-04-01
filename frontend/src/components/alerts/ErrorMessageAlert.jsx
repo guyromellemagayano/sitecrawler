@@ -41,7 +41,7 @@ const ErrorMessageAlert = ({ message }) => {
 					<div tw="flex items-center -mx-1.5">
 						<button
 							type="button"
-							tw="inline-flex bg-red-50 rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600"
+							tw="inline-flex bg-red-100 rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600"
 							onClick={() => setIsOpen(!isOpen)}
 						>
 							<span tw="sr-only">Dismiss</span>
