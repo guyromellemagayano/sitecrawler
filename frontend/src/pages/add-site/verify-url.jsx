@@ -62,7 +62,7 @@ const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
 	const pageTitle = "Verify URL";
 	const homeLabel = "Home";
 	const homePageLink = "/";
-	const sitesApiEndpoint = "/api/site/";
+	const sitesApiEndpoint = "/api/site/?ordering=name";
 
 	let htmlText = "1. Sign in to the administrator account of the following website: " + surl + "\n\n";
 	htmlText +=
