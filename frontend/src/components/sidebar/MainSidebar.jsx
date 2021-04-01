@@ -25,19 +25,24 @@ const MainSidebar = ({ user, site }) => {
 	const router = useRouter();
 
 	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0) {
-			if (Object.keys(user).length > 0) {
-				switch (true) {
-					case router.pathname.includes("/site"):
-						setSelectedMenu(<SiteMenu />);
-						break;
-					case router.pathname.includes("/settings"):
-						setSelectedMenu(<SettingsMenu user={user} site={site} />);
-						break;
-					default:
-						setSelectedMenu(<PrimaryMenu user={user} site={site} />);
-						break;
-				}
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0
+		) {
+			switch (true) {
+				case router.pathname.includes("/site"):
+					setSelectedMenu(<SiteMenu user={user} site={site} />);
+					break;
+				case router.pathname.includes("/settings"):
+					setSelectedMenu(<SettingsMenu user={user} site={site} />);
+					break;
+				default:
+					setSelectedMenu(<PrimaryMenu user={user} site={site} />);
+					break;
 			}
 		}
 	}, [router, user, site]);
