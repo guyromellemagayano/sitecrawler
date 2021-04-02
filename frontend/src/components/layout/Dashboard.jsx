@@ -74,6 +74,7 @@ const Dashboard = ({ user, userError, token, page, search, per_page, ordering })
 	useEffect(() => {
 		if (userError || siteError) {
 			// TODO: add generic alert here
+			console.log("ERROR: " + userError ? userError : siteError);
 		}
 
 		if (
