@@ -26,62 +26,102 @@ const SettingsMenuSkeleton = loadable(() => import("src/components/skeletons/Set
 const SidebarSiteResultsSkeleton = loadable(() => import("src/components/skeletons/SidebarSiteResultsSkeleton"));
 
 const SiteMenu = ({ user, site }) => {
-	const [sid, setSid] = useState(0);
+	const [componentReady, setComponentReady] = useState(false);
+	const [scanData, setScanData] = useState([]);
+	const [scanObjId, setScanObjId] = useState(0);
 	const [selectedSite, setSelectedSite] = useState("");
+	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
+	const [sid, setSid] = useState(0);
+	const [siteData, setSiteData] = useState([]);
 	const [sitesLoaded, setSitesLoaded] = useState(false);
-	const [userLoaded, setUserLoaded] = useState(false);
+	const [statsData, setStatsData] = useState([]);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
 
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0
-		) {
+		if (router.query.siteId && router.query.siteId !== undefined && router.query.siteId !== "") {
 			setSid(router.query.siteId);
 		}
-	}, [user, site, router]);
+	}, [router]);
 
 	const { scan: scan, scanError: scanError } = useScan({
 		querySid: sid,
 	});
 
-	let scanObjId = "";
+	useEffect(() => {
+		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+			setScanData(scan);
 
-	if (scan) {
-		let scanObj = [];
+			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
+				setScanObjId(scanData.results[scanData.results.length - 1].id);
+			}
+		}
 
-		scan.results.map((val) => {
-			scanObj.push(val);
-			return scanObj;
-		});
-
-		scanObj.map((val, index) => {
-			if (index == 0) scanObjId = val.id;
-
-			return scanObjId;
-		});
-	}
+		if (scanError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + scanError);
+		}
+	});
 
 	const { stats: stats, statsError: statsError } = useStats({
 		querySid: sid,
 		scanObjId: scanObjId,
 	});
 
-	const handleSiteSelectOnLoad = (siteId) => {
-		if (site && site.results !== undefined && Object.keys(site.results).length > 0) {
-			for (let i = 0; i < site.results.length; i++) {
-				if (site.results[i].id == siteId) {
-					setSelectedSite(site.results[i].name);
+	useEffect(() => {
+		if (site && site !== undefined && Object.keys(site).length > 0 && sid && sid !== undefined && sid !== "") {
+			setSiteData(site);
+			handleSiteSelectOnLoad(site, sid);
+		}
+
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setStatsData(stats);
+		}
+
+		if (scanError || statsError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + scanError ? scanError : statsError ? statsError : PrimaryMenuLabel[4].label);
+		}
+	}, [scan, stats, site, sid]);
+
+	useEffect(() => {
+		if (user && siteData) {
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [user, siteData]);
+
+	useEffect(() => {
+		if (isComponentVisible) {
+			setTimeout(() => {
+				setSitesLoaded(true);
+			}, 500);
+		}
+	}, [isComponentVisible]);
+
+	useEffect(() => {
+		if (siteData && siteData !== undefined && Object.keys(siteData).length > 0) {
+			if (Object.keys(siteData.results).length > 0) {
+				siteData.results
+					.filter((result) => result.name === selectedSite)
+					.map((val) => {
+						setSelectedSiteDetails(val);
+					});
+			}
+		}
+	}, [selectedSite, siteData]);
+
+	const handleSiteSelectOnLoad = (data, id) => {
+		if (data && data.results !== undefined && Object.keys(data.results).length > 0) {
+			for (let i = 0; i < data.results.length; i++) {
+				if (data.results[i].id == id) {
+					setSelectedSite(data.results[i].name);
 
 					setTimeout(() => {
-						router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
+						router.push(`/site/[siteId]/overview`, `/site/${id}/overview`);
 					}, 500);
 				}
 			}
@@ -95,47 +135,17 @@ const SiteMenu = ({ user, site }) => {
 		setIsComponentVisible(!isComponentVisible);
 	};
 
-	useEffect(() => {
-		if (stats && stats.finished_at) crawlableHandler !== undefined && crawlableHandler(true);
-		else if (stats && stats.started_at && stats.finished_at == null)
-			crawlableHandler !== undefined && crawlableHandler(false);
-	}, [stats]);
-
-	useEffect(() => {
-		if (site && sid) {
-			handleSiteSelectOnLoad(sid);
-		}
-	}, [site, sid]);
-
-	useEffect(() => {
-		if (user && user !== undefined) {
-			setTimeout(() => {
-				setUserLoaded(true);
-			}, 500);
-		}
-	}, [user]);
-
-	useEffect(() => {
-		if (isComponentVisible) {
-			setTimeout(() => {
-				setSitesLoaded(true);
-			}, 500);
-		} else {
-			setSitesLoaded(false);
-		}
-	}, [isComponentVisible]);
-
 	return (
 		<div tw="flex-1 flex flex-col overflow-y-auto">
 			<nav tw="flex-1 px-4">
-				{userLoaded ? (
+				{componentReady ? (
 					SitePages.map((value, index) => {
 						return (
 							<div key={index} tw="mb-8">
-								{value.slug !== "navigation" ? (
+								{value.slug && value.slug !== undefined && value.slug !== "navigation" ? (
 									<>
 										<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
-											{value.category}
+											{value.category ? value.category : null}
 										</h3>
 
 										<div tw="my-3" role="group">
@@ -145,6 +155,11 @@ const SiteMenu = ({ user, site }) => {
 													const asVal = "/site/" + sid + value2.url;
 
 													if (
+														user &&
+														user !== undefined &&
+														Object.keys(user).length > 0 &&
+														user.permissions &&
+														user.permissions !== undefined &&
 														user.permissions.includes("can_see_images") &&
 														user.permissions.includes("can_see_pages") &&
 														user.permissions.includes("can_see_scripts") &&
@@ -178,63 +193,66 @@ const SiteMenu = ({ user, site }) => {
 																			/>
 																		) : null}
 																	</svg>
-																	<span>{value2.title}</span>
+																	<span>{value2.title ? value2.title : null}</span>
 																	{value2.url === "/links" &&
-																		stats &&
-																		stats !== undefined &&
-																		Object.keys().length > 0 && (
+																		statsData &&
+																		statsData !== undefined &&
+																		Object.keys(statsData).length > 0 && (
 																			<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																				{stats.num_links}
+																				{statsData.num_links ? statsData.num_links : null}
 																			</span>
 																		)}
 																	{value2.url === "/pages" &&
-																		stats &&
-																		stats !== undefined &&
-																		Object.keys().length > 0 && (
+																		statsData &&
+																		statsData !== undefined &&
+																		Object.keys(statsData).length > 0 && (
 																			<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																				{stats.num_pages}
+																				{statsData.num_pages ? statsData.num_pages : null}
 																			</span>
 																		)}
 																	{value2.url === "/seo" &&
-																		stats &&
-																		stats !== undefined &&
-																		Object.keys().length > 0 && (
+																		statsData &&
+																		statsData !== undefined &&
+																		Object.keys(statsData).length > 0 && (
 																			<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																				{stats.num_pages}
+																				{statsData.num_pages ? statsData.num_pages : null}
 																			</span>
 																		)}
 																	{value2.url === "/images" &&
-																		stats &&
-																		stats !== undefined &&
-																		Object.keys().length > 0 && (
+																		statsData &&
+																		statsData !== undefined &&
+																		Object.keys(statsData).length > 0 && (
 																			<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																				{stats.num_images}
+																				{statsData.num_images ? statsData.num_images : null}
 																			</span>
 																		)}
 																	{value2.url === "/stylesheets" &&
-																		stats &&
-																		stats !== undefined &&
-																		Object.keys().length > 0 && (
+																		statsData &&
+																		statsData !== undefined &&
+																		Object.keys(statsData).length > 0 && (
 																			<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																				{stats &&
-																					stats !== undefined &&
-																					Object.keys().length > 0 &&
-																					stats.num_stylesheets}
+																				{statsData.num_stylesheets ? statsData.num_stylesheets : null}
 																			</span>
 																		)}
 																	{value2.url === "/scripts" &&
-																		stats &&
-																		stats !== undefined &&
-																		Object.keys().length > 0 && (
+																		statsData &&
+																		statsData !== undefined &&
+																		Object.keys(statsData).length > 0 && (
 																			<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																				{stats.num_scripts}
+																				{statsData.num_scripts ? statsData.num_scripts : null}
 																			</span>
 																		)}
 																</a>
 															</Link>
 														);
 													} else {
-														if (val2.slug !== "images" && val2.slug !== "seo" && val2.slug !== "pages") {
+														if (
+															val2.slug &&
+															val2.slug !== undefined &&
+															val2.slug !== "images" &&
+															val2.slug !== "seo" &&
+															val2.slug !== "pages"
+														) {
 															return (
 																<Link key={key} href={hrefVal} as={asVal} passHref>
 																	<a
@@ -263,52 +281,70 @@ const SiteMenu = ({ user, site }) => {
 																			) : null}
 																		</svg>
 																		<span>{val2.title}</span>
-																		{val2.url === "/links" &&
-																			stats &&
-																			stats !== undefined &&
-																			Object.keys().length > 0 && (
+																		{val2.url &&
+																			val2.url !== undefined &&
+																			val2.url === "/links" &&
+																			statsData &&
+																			statsData !== undefined &&
+																			Object.keys(statsData).length > 0 &&
+																			statsData.num_links > 0 && (
 																				<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																					{stats.num_links}
+																					{statsData.num_links}
 																				</span>
 																			)}
-																		{val2.url === "/pages" &&
-																			stats &&
-																			stats !== undefined &&
-																			Object.keys().length > 0 && (
+																		{val2.url &&
+																			val2.url !== undefined &&
+																			val2.url === "/pages" &&
+																			statsData &&
+																			statsData !== undefined &&
+																			Object.keys(statsData).length > 0 &&
+																			statsData.num_pages > 0 && (
 																				<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																					{stats.num_pages}
+																					{statsData.num_pages}
 																				</span>
 																			)}
-																		{val2.url === "/seo" &&
-																			stats &&
-																			stats !== undefined &&
-																			Object.keys().length > 0 && (
+																		{val2.url &&
+																			val2.url !== undefined &&
+																			val2.url === "/seo" &&
+																			statsData &&
+																			statsData !== undefined &&
+																			Object.keys(statsData).length > 0 &&
+																			statsData.num_pages > 0 && (
 																				<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																					{stats.num_pages}
+																					{statsData.num_pages}
 																				</span>
 																			)}
-																		{val2.url === "/images" &&
-																			stats &&
-																			stats !== undefined &&
-																			Object.keys().length > 0 && (
+																		{val2.url &&
+																			val2.url !== undefined &&
+																			val2.url === "/images" &&
+																			statsData &&
+																			statsData !== undefined &&
+																			Object.keys(statsData).length > 0 &&
+																			statsData.num_images > 0 && (
 																				<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																					{stats.num_images}
+																					{statsData.num_images}
 																				</span>
 																			)}
-																		{val2.url === "/stylesheets" &&
-																			stats &&
-																			stats !== undefined &&
-																			Object.keys().length > 0 && (
+																		{val2.url &&
+																			val2.url !== undefined &&
+																			val2.url === "/stylesheets" &&
+																			statsData &&
+																			statsData !== undefined &&
+																			Object.keys(statsData).length > 0 &&
+																			statsData.num_stylesheets > 0 && (
 																				<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																					{stats.num_stylesheets}
+																					{statsData.num_stylesheets}
 																				</span>
 																			)}
-																		{val2.url === "/scripts" &&
-																			stats &&
-																			stats !== undefined &&
-																			Object.keys().length > 0 && (
+																		{val2.url &&
+																			val2.url !== undefined &&
+																			val2.url === "/scripts" &&
+																			statsData &&
+																			statsData !== undefined &&
+																			Object.keys(statsData).length > 0 &&
+																			statsData.num_scripts > 0 && (
 																				<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																					{stats.num_scripts}
+																					{statsData.num_scripts}
 																				</span>
 																			)}
 																	</a>
@@ -332,7 +368,31 @@ const SiteMenu = ({ user, site }) => {
 																>
 																	<div tw="flex items-center space-x-3">
 																		<span tw="block truncate text-gray-600">
-																			{selectedSite !== "" ? selectedSite : PrimaryMenuLabel[0].label}
+																			{selectedSite !== "" ? (
+																				selectedSiteDetails ? (
+																					<div tw="flex items-center space-x-3">
+																						<span
+																							aria-label="Verified"
+																							css={[
+																								tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+																								selectedSiteDetails.verified ? tw`bg-green-400` : tw`bg-yellow-400`,
+																							]}
+																						></span>
+																						<span
+																							css={[
+																								tw`font-medium block truncate`,
+																								selectedSiteDetails.verified
+																									? tw`text-gray-500`
+																									: tw`text-gray-600 opacity-25`,
+																							]}
+																						>
+																							{selectedSite}
+																						</span>
+																					</div>
+																				) : null
+																			) : (
+																				PrimaryMenuLabel[0].label
+																			)}
 																		</span>
 																	</div>
 																	<span tw="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -352,20 +412,19 @@ const SiteMenu = ({ user, site }) => {
 																tw="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 															>
 																{sitesLoaded ? (
-																	site && site.results !== undefined ? (
-																		site.results.length > 0 ? (
+																	siteData && siteData.results !== undefined ? (
+																		siteData.results.length > 0 ? (
 																			<ul
 																				tabIndex="-1"
 																				role="listbox"
 																				aria-labelledby="listbox-label"
 																				tw="max-h-60 pt-2 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
 																			>
-																				{site.results.map((value, index) => {
+																				{siteData.results.map((value, index) => {
 																					return (
 																						<li
 																							key={index}
 																							onClick={() => handleDropdownHandler(value.id, value.verified)}
-																							id={`listbox-item-${index + 1}`}
 																							role="option"
 																							css={[
 																								tw`select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`,
@@ -416,39 +475,54 @@ const SiteMenu = ({ user, site }) => {
 									</>
 								) : (
 									<div tw="mt-4" role="group">
-										{value.links.map((value2, index) => {
-											return (
-												<Link key={index} href={value2.url} passHref>
-													<a
-														className="group"
-														css={[
-															tw`cursor-pointer`,
-															router.pathname == value2.url
-																? tw`mt-1 flex items-center px-3 pl-0 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
-																: tw`mt-1 flex items-center px-3 pl-0 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none transition ease-in-out duration-150`,
-														]}
-													>
-														<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
-															{value2.icon2 ? (
-																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
-															) : null}
-														</svg>
-														<span>{value2.title}</span>
-														{value2.url === "/links" && (
-															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150">
-																{stats.num_links}
-															</span>
-														)}
-														{value2.url === "/pages" && (
-															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150">
-																{stats.num_pages}
-															</span>
-														)}
-													</a>
-												</Link>
-											);
-										})}
+										{value.links &&
+											value.links !== undefined &&
+											Object.keys(value.links).length > 0 &&
+											value.links.map((value2, index) => {
+												return (
+													<Link key={index} href={value2.url} passHref>
+														<a
+															className="group"
+															css={[
+																tw`cursor-pointer`,
+																router.pathname == value2.url
+																	? tw`mt-1 flex items-center px-3 pl-0 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
+																	: tw`mt-1 flex items-center px-3 pl-0 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none transition ease-in-out duration-150`,
+															]}
+														>
+															<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
+																{value2.icon2 ? (
+																	<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
+																) : null}
+															</svg>
+															<span>{value2.title}</span>
+															{value2.url &&
+																value2.url !== undefined &&
+																value2.url === "/links" &&
+																statsData &&
+																statsData !== undefined &&
+																Object.keys(statsData).length > 0 &&
+																statsData.num_links > 0 && (
+																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150">
+																		{statsData.num_links}
+																	</span>
+																)}
+															{value2.url &&
+																value2.url !== undefined &&
+																value2.url === "/pages" &&
+																statsData &&
+																statsData !== undefined &&
+																Object.keys(statsData).length > 0 &&
+																statsData.num_pages > 0 && (
+																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-purple-100 text-purple-800 transition ease-in-out duration-150">
+																		{statsData.num_pages}
+																	</span>
+																)}
+														</a>
+													</Link>
+												);
+											})}
 									</div>
 								)}
 							</div>

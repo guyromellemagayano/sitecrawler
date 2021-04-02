@@ -10,5 +10,8 @@
 	{
 		"label": "Add New Site",
 		"slug": "add-new-site"
+	},
+	{
+		"label": "An unexpected error occurred. Please try again."
 	}
 ]
