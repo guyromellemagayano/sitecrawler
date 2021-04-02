@@ -72,19 +72,23 @@ const Dashboard = ({ user, userError, token, page, search, per_page, ordering })
 	});
 
 	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0) {
-			setUserData(user);
-		}
-
-		if (site && site !== undefined && Object.keys(site).length > 0) {
-			setSiteData(site);
-		}
-
 		if (userError || siteError) {
 			// TODO: add generic alert here
 		}
 
-		if (token && token !== undefined && token !== "" && userData && siteData) {
+		if (
+			token &&
+			token !== undefined &&
+			token !== "" &&
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0
+		) {
+			setUserData(user);
+			setSiteData(site);
 			setComponentReady(true);
 		}
 	}, [user, site, token]);

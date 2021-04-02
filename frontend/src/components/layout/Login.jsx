@@ -130,7 +130,12 @@ const Login = () => {
 																		localStorage.setItem("token", response.data.key);
 
 																	setCookie("token", response.data.key);
-																	router.reload();
+
+																	if (successMsg !== "") {
+																		setTimeout(() => {
+																			router.reload();
+																		}, 1500);
+																	}
 																}
 															} else {
 																if (response.data) {
