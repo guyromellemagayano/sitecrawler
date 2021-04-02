@@ -123,3 +123,24 @@ export const useImages = ({ querySid = 0, scanObjId = 0 }) => {
 
 	return { images, mutateImages, imagesError };
 };
+
+export const useNonTlsPages = ({ querySid = 0, scanObjId = 0 }) => {
+	const { data: nonTlsPages, mutate: mutateNonTlsPages, error: nonTlsPagesError } = useSWR(
+		() =>
+			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/?tls_total=false"
+				: null,
+		useFetcher,
+		{
+			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+				if (error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/?tls_total=false") return;
+				if (retryCount >= 10) return;
+
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			},
+		}
+	);
+
+	return { nonTlsPages, mutateNonTlsPages, nonTlsPagesError };
+};
