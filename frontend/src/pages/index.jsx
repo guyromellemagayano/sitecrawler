@@ -35,7 +35,7 @@ const Home = ({ token, notLoggedIn }) => {
 	return (
 		<Layout user={userData}>
 			{userData !== undefined && tokenKey !== "" ? (
-				<Dashboard user={userData} token={tokenKey} />
+				<Dashboard user={userData} userError={userError} token={tokenKey} />
 			) : notLoggedIn ? (
 				<Login />
 			) : (
