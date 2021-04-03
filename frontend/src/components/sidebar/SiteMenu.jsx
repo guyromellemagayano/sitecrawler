@@ -87,7 +87,7 @@ const SiteMenu = ({ user, site }) => {
 	}, [scan, stats, site, sid]);
 
 	useEffect(() => {
-		if (user && siteData) {
+		if (user && siteData && siteData !== undefined && Object.keys(siteData).length > 0) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
@@ -99,6 +99,8 @@ const SiteMenu = ({ user, site }) => {
 			setTimeout(() => {
 				setSitesLoaded(true);
 			}, 500);
+		} else {
+			setSitesLoaded(false);
 		}
 	}, [isComponentVisible]);
 

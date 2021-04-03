@@ -25,19 +25,35 @@ const PrimaryMenuSkeleton = loadable(() => import("src/components/skeletons/Prim
 const SidebarSiteResultsSkeleton = loadable(() => import("src/components/skeletons/SidebarSiteResultsSkeleton"));
 
 const PrimaryMenu = ({ user, site }) => {
+	const [componentReady, setComponentReady] = useState(false);
 	const [selectedSite, setSelectedSite] = useState("");
+	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
+	const [siteData, setSiteData] = useState([]);
 	const [sitesLoaded, setSitesLoaded] = useState(false);
-	const [userLoaded, setUserLoaded] = useState(false);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
 	const { query } = useRouter();
 	const router = useRouter();
 
+	useEffect(() => {
+		if (
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0 &&
+			query &&
+			query !== undefined &&
+			query.siteId !== ""
+		) {
+			setSiteData(site);
+			handleSiteSelectOnLoad(query.siteId);
+		}
+	}, [site, query]);
+
 	const handleSiteSelectOnLoad = (siteId) => {
-		if (site && site.results !== undefined && Object.keys(site.results).length > 0) {
-			for (let i = 0; i < site.results.length; i++) {
-				if (site.results[i].id == siteId) {
-					setSelectedSite(site.results[i].name);
+		if (siteData && siteData.results !== undefined && Object.keys(siteData.results).length > 0) {
+			for (let i = 0; i < siteData.results.length; i++) {
+				if (siteData.results[i].id == siteId) {
+					setSelectedSite(siteData.results[i].name);
 
 					setTimeout(() => {
 						router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
@@ -55,18 +71,12 @@ const PrimaryMenu = ({ user, site }) => {
 	};
 
 	useEffect(() => {
-		if (site && query) {
-			handleSiteSelectOnLoad(query.siteId);
-		}
-	}, [site, query]);
-
-	useEffect(() => {
-		if (user && user !== undefined) {
+		if (user && siteData && siteData !== undefined && Object.keys(siteData).length > 0) {
 			setTimeout(() => {
-				setUserLoaded(true);
+				setComponentReady(true);
 			}, 500);
 		}
-	}, [user]);
+	}, [user, siteData]);
 
 	useEffect(() => {
 		if (isComponentVisible) {
@@ -78,10 +88,22 @@ const PrimaryMenu = ({ user, site }) => {
 		}
 	}, [isComponentVisible]);
 
+	useEffect(() => {
+		if (siteData && siteData !== undefined && Object.keys(siteData).length > 0) {
+			if (Object.keys(siteData.results).length > 0) {
+				siteData.results
+					.filter((result) => result.name === selectedSite)
+					.map((val) => {
+						setSelectedSiteDetails(val);
+					});
+			}
+		}
+	}, [selectedSite, siteData]);
+
 	return (
 		<div tw="flex-1 flex flex-col overflow-y-auto">
 			<nav tw="flex-1 px-4">
-				{userLoaded ? (
+				{componentReady ? (
 					DashboardPages.map((value, index) => {
 						return (
 							(user.group.name === "Agency" || (user.group.name !== "Agency" && value.slug !== "reports")) && (
@@ -127,7 +149,31 @@ const PrimaryMenu = ({ user, site }) => {
 															>
 																<div tw="flex items-center space-x-3">
 																	<span tw="block truncate text-gray-600">
-																		{selectedSite !== "" ? selectedSite : PrimaryMenuLabel[0].label}
+																		{selectedSite !== "" ? (
+																			selectedSiteDetails ? (
+																				<div tw="flex items-center space-x-3">
+																					<span
+																						aria-label="Verified"
+																						css={[
+																							tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+																							selectedSiteDetails.verified ? tw`bg-green-400` : tw`bg-yellow-400`,
+																						]}
+																					></span>
+																					<span
+																						css={[
+																							tw`font-medium block truncate`,
+																							selectedSiteDetails.verified
+																								? tw`text-gray-500`
+																								: tw`text-gray-600 opacity-25`,
+																						]}
+																					>
+																						{selectedSite}
+																					</span>
+																				</div>
+																			) : null
+																		) : (
+																			PrimaryMenuLabel[0].label
+																		)}
 																	</span>
 																</div>
 																<span tw="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -147,15 +193,15 @@ const PrimaryMenu = ({ user, site }) => {
 															className="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 														>
 															{sitesLoaded ? (
-																site && site.results !== undefined ? (
-																	site.results.length > 0 ? (
+																siteData && siteData.results !== undefined ? (
+																	siteData.results.length > 0 ? (
 																		<ul
 																			tabIndex="-1"
 																			role="listbox"
 																			aria-labelledby="listbox-label"
 																			tw="max-h-60 pt-2 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
 																		>
-																			{site.results.map((value, index) => {
+																			{siteData.results.map((value, index) => {
 																				return (
 																					<li
 																						key={index}
