@@ -71,5 +71,8 @@
 	},
 	{
 		"label": "/month"
+	},
+	{
+		"label": "* credit/debit card required"
 	}
 ]
