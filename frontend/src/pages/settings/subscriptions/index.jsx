@@ -12,6 +12,7 @@ import { NextSeo } from "next-seo";
 import { Transition } from "@headlessui/react";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
 import tw, { styled } from "twin.macro";
 
 // JSON
@@ -43,7 +44,6 @@ const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"))
 const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const PaymentMethodForm = loadable(() => import("src/components/forms/PaymentMethodForm"));
-const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const BasicPlan = loadable(() => import("src/components/subscription/BasicPlan"));
 const SemiAnnualPlans = loadable(() => import("src/components/subscription/SemiAnnualPlans"));
@@ -466,6 +466,7 @@ const Subscriptions = ({ token }) => {
 					</Transition.Child>
 				</div>
 			</Transition>
+
 			<Transition show={showPaymentFormModal} className="fixed z-50 inset-0 overflow-y-auto">
 				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
@@ -536,81 +537,105 @@ const Subscriptions = ({ token }) => {
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 							<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12 min-h-screen">
 								<div tw="lg:col-span-3 xl:col-span-3 xl:pr-8">
-									{pageLoaded ? (
-										<>
-											<div className="max-w-full py-4 px-8">
-												<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-													<ol tw="flex items-center space-x-4">
-														<li>
-															<div>
-																<Link href={homePageLink} passHref>
-																	<a tw="text-gray-400 hover:text-gray-500">
-																		<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
-																		<span tw="sr-only">{homeLabel}</span>
-																	</a>
-																</Link>
-															</div>
-														</li>
-														<li>
-															<div tw="flex items-center">
-																<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
-																<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-																	{pageTitle}
-																</p>
-															</div>
-														</li>
-													</ol>
-												</nav>
-												<div className="pt-4 m-auto">
-													<h4 className="text-2xl leading-6 font-medium text-gray-900">
-														{SubscriptionLabel[20].label}
-													</h4>
-												</div>
+									<div className="max-w-full py-4 px-8">
+										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+											<ol tw="flex items-center space-x-4">
+												<li>
+													<div>
+														{pageLoaded ? (
+															<Link href={homePageLink} passHref>
+																<a tw="text-gray-400 hover:text-gray-500">
+																	<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+																	<span tw="sr-only">{homeLabel}</span>
+																</a>
+															</Link>
+														) : (
+															<Skeleton duration={2} width={40} height={20} />
+														)}
+													</div>
+												</li>
+												<li>
+													<div tw="flex items-center">
+														{pageLoaded ? (
+															<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+														) : (
+															<Skeleton duration={2} width={20} height={20} />
+														)}
+
+														<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+															{pageLoaded ? pageTitle : <Skeleton duration={2} width={100} height={20} />}
+														</p>
+													</div>
+												</li>
+											</ol>
+										</nav>
+										<div className="pt-4 m-auto">
+											<h4 className="text-2xl leading-6 font-medium text-gray-900">
+												{pageLoaded ? SubscriptionLabel[20].label : <Skeleton duration={2} width={150} height={35} />}
+											</h4>
+										</div>
+									</div>
+									<div tw="max-w-full py-4 px-8">
+										<div tw="flex items-center flex-col flex-wrap pt-12 px-4 sm:px-6 lg:px-8 lg:pt-20">
+											<div tw="text-center mb-10">
+												<p tw="text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10">
+													{pageLoaded ? SubscriptionLabel[0].label : <Skeleton duration={2} width={200} height={35} />}
+												</p>
+												<p tw="mt-3 max-w-4xl mx-auto text-base leading-7 text-gray-600 sm:mt-5 sm:text-xl sm:leading-8">
+													{pageLoaded ? (
+														SubscriptionLabel[0].description
+													) : (
+														<Skeleton duration={2} width={300} height={25} />
+													)}
+												</p>
 											</div>
-											<div tw="max-w-full py-4 px-8">
-												<div tw="flex items-center flex-col flex-wrap pt-12 px-4 sm:px-6 lg:px-8 lg:pt-20">
-													<div tw="text-center mb-10">
-														<p tw="text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10">
-															{SubscriptionLabel[0].label}
-														</p>
-														<p tw="mt-3 max-w-4xl mx-auto text-base leading-7 text-gray-600 sm:mt-5 sm:text-xl sm:leading-8">
-															{SubscriptionLabel[0].description}
-														</p>
-													</div>
 
-													<div tw="flex items-center justify-center">
-														<p tw="text-base leading-7 font-medium text-gray-500 mx-4">{SubscriptionLabel[1].label}</p>
+											<div tw="flex items-center justify-center">
+												<p tw="text-base leading-7 font-medium text-gray-500 mx-4">
+													{pageLoaded ? SubscriptionLabel[1].label : <Skeleton duration={2} width={100} height={20} />}
+												</p>
+												{pageLoaded ? (
+													<span
+														role="checkbox"
+														tabIndex="0"
+														onClick={() => setTogglePaymentPeriod(!togglePaymentPeriod)}
+														aria-checked={togglePaymentPeriod}
+														css={[
+															tw`relative inline-flex items-center flex-shrink-0 h-6 w-12 mx-auto border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring`,
+															togglePaymentPeriod ? tw`bg-indigo-600` : tw`bg-gray-200`,
+														]}
+													>
 														<span
-															role="checkbox"
-															tabIndex="0"
-															onClick={() => setTogglePaymentPeriod(!togglePaymentPeriod)}
-															aria-checked={togglePaymentPeriod}
+															aria-hidden="true"
 															css={[
-																tw`relative inline-flex items-center flex-shrink-0 h-6 w-12 mx-auto border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring`,
-																togglePaymentPeriod ? tw`bg-indigo-600` : tw`bg-gray-200`,
+																tw`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`,
+																togglePaymentPeriod ? tw`translate-x-6` : tw`translate-x-0`,
 															]}
-														>
-															<span
-																aria-hidden="true"
-																css={[
-																	tw`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`,
-																	togglePaymentPeriod ? tw`translate-x-6` : tw`translate-x-0`,
-																]}
-															/>
-														</span>
-														<p tw="text-base leading-7 font-medium text-gray-500 mx-4">{SubscriptionLabel[2].label}</p>
-													</div>
+														/>
+													</span>
+												) : (
+													<Skeleton duration={2} width={50} height={20} />
+												)}
 
-													<div tw="mt-10 mb-2">
-														<p tw="text-center text-red-400">* credit/debit card required.</p>
-													</div>
-												</div>
+												<p tw="text-base leading-7 font-medium text-gray-500 mx-4">
+													{pageLoaded ? SubscriptionLabel[2].label : <Skeleton duration={2} width={100} height={20} />}
+												</p>
+											</div>
 
-												<div tw="mt-16 pb-12 lg:mt-20 lg:pb-20">
-													<div tw="relative z-0">
-														<div tw="absolute inset-0 h-5/6 lg:h-2/3"></div>
-														<div tw="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-															<div tw="relative lg:grid lg:grid-cols-7">
+											<div tw="mt-10 mb-2">
+												<p tw="text-center text-red-400">
+													{pageLoaded ? SubscriptionLabel[23].label : <Skeleton duration={2} width={200} height={20} />}
+												</p>
+											</div>
+										</div>
+
+										<div tw="mt-16 pb-12 lg:mt-20 lg:pb-20">
+											<div tw="relative z-0">
+												<div tw="absolute inset-0 h-5/6 lg:h-2/3"></div>
+												<div tw="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+													<div tw="relative lg:grid lg:grid-cols-7">
+														{pageLoaded ? (
+															<>
 																{currentSubscriptions &&
 																	currentSubscriptions.results &&
 																	currentSubscriptions.results !== undefined &&
@@ -681,15 +706,25 @@ const Subscriptions = ({ token }) => {
 																					setShowPaymentFormModal={setShowPaymentFormModal}
 																				/>
 																			))}
-															</div>
-														</div>
+															</>
+														) : (
+															<>
+																<span tw="mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3">
+																	<Skeleton duration={2} width={347.41} height={553} />
+																</span>
+																<span tw="mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4">
+																	<Skeleton duration={2} width={521.11} height={811} />
+																</span>
+																<span tw="mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3">
+																	<Skeleton duration={2} width={347.41} height={553} />
+																</span>
+															</>
+														)}
 													</div>
 												</div>
 											</div>
-										</>
-									) : (
-										<ProfileSkeleton />
-									)}
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
