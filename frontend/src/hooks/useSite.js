@@ -39,7 +39,7 @@ export const useSiteId = ({ querySid = 0 }) => {
 	return { siteId, mutateSiteId, siteIdError };
 };
 
-export const useScan = ({ querySid = 0 }) => {
+export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
 	const { data: scan, mutate: mutateScan, error: scanError } = useSWR(
 		() =>
 			querySid && querySid !== 0 && querySid !== undefined
@@ -54,6 +54,7 @@ export const useScan = ({ querySid = 0 }) => {
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
 			},
+			refreshInterval: refreshInterval,
 		}
 	);
 
