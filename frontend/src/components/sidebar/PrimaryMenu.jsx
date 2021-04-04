@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { Transition } from "@headlessui/react";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
 // JSON
@@ -22,7 +23,6 @@ import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 const PlusSvg = loadable(() => import("src/components/svg/solid/PlusSvg"));
 const SelectorSvg = loadable(() => import("src/components/svg/solid/SelectorSvg"));
 const PrimaryMenuSkeleton = loadable(() => import("src/components/skeletons/PrimaryMenuSkeleton"));
-const SidebarSiteResultsSkeleton = loadable(() => import("src/components/skeletons/SidebarSiteResultsSkeleton"));
 
 const PrimaryMenu = ({ user, site }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -192,53 +192,62 @@ const PrimaryMenu = ({ user, site }) => {
 															leaveTo="transform opacity-0 scale-95"
 															className="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 														>
-															{sitesLoaded ? (
-																siteData && siteData.results !== undefined ? (
-																	siteData.results.length > 0 ? (
-																		<ul
-																			tabIndex="-1"
-																			role="listbox"
-																			aria-labelledby="listbox-label"
-																			tw="max-h-60 pt-2 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
-																		>
-																			{siteData.results.map((value, index) => {
-																				return (
-																					<li
-																						key={index}
-																						onClick={() => handleDropdownHandler(value.id, value.verified)}
-																						id={`listbox-item-${index + 1}`}
-																						role="option"
-																						css={[
-																							tw`select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`,
-																							value.verified ? tw`cursor-pointer` : tw`cursor-not-allowed`,
-																						]}
-																					>
-																						<div tw="flex items-center space-x-3">
-																							<span
-																								aria-label="Verified"
-																								css={[
-																									tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																									value.verified ? tw`bg-green-400` : tw`bg-yellow-400`,
-																								]}
-																							></span>
-																							<span
-																								css={[
-																									tw`font-medium block truncate`,
-																									value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`,
-																								]}
-																							>
-																								{value.name}
-																							</span>
-																						</div>
-																					</li>
-																				);
-																			})}
-																		</ul>
-																	) : null
+															{siteData && siteData.results !== undefined ? (
+																siteData.results.length > 0 ? (
+																	<ul
+																		tabIndex="-1"
+																		role="listbox"
+																		aria-labelledby="listbox-label"
+																		tw="max-h-60 pt-2 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
+																	>
+																		{siteData.results.map((value, index) => {
+																			return (
+																				<li
+																					key={index}
+																					onClick={() => handleDropdownHandler(value.id, value.verified)}
+																					id={`listbox-item-${index + 1}`}
+																					role="option"
+																					css={[
+																						tw`select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`,
+																						value.verified ? tw`cursor-pointer` : tw`cursor-not-allowed`,
+																					]}
+																				>
+																					<div tw="flex items-center space-x-3">
+																						{sitesLoaded ? (
+																							<>
+																								<span
+																									aria-label="Verified"
+																									css={[
+																										tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+																										value.verified ? tw`bg-green-400` : tw`bg-yellow-400`,
+																									]}
+																								></span>
+																								<span
+																									css={[
+																										tw`font-medium block truncate`,
+																										value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`,
+																									]}
+																								>
+																									{value.name}
+																								</span>
+																							</>
+																						) : (
+																							<div tw="flex items-center space-x-3 my-1">
+																								<div>
+																									<Skeleton circle={true} duration={2} width={20} height={20} />
+																								</div>
+																								<div tw="ml-3">
+																									<Skeleton duration={2} width={145} />
+																								</div>
+																							</div>
+																						)}
+																					</div>
+																				</li>
+																			);
+																		})}
+																	</ul>
 																) : null
-															) : (
-																<SidebarSiteResultsSkeleton />
-															)}
+															) : null}
 
 															<span tw="flex m-2 justify-center shadow-sm rounded-md">
 																<Link href="/add-site/information">
