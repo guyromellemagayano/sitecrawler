@@ -1,7 +1,7 @@
 // External
 import PropTypes from "prop-types";
 
-const Document = ({ className }) => (
+const DocumentSvg = ({ className }) => (
 	<svg css={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 		<path
 			fillRule="evenodd"
@@ -11,6 +11,6 @@ const Document = ({ className }) => (
 	</svg>
 );
 
-Document.propTypes = {};
+DocumentSvg.propTypes = {};
 
-export default Document;
+export default DocumentSvg;
