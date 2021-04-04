@@ -25,9 +25,6 @@ import useShowPassword from "src/hooks/useShowPassword";
 // Utils
 import { setCookie } from "src/utils/cookie";
 
-// Layout
-import Layout from "src/components/Layout";
-
 // Components
 const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
@@ -53,7 +50,7 @@ const Login = () => {
 	}, []);
 
 	return (
-		<Layout>
+		<>
 			<NextSeo title={pageTitle} />
 
 			<div tw="bg-gray-50 min-h-screen">
@@ -373,7 +370,7 @@ const Login = () => {
 					</div>
 				</div>
 			</div>
-		</Layout>
+		</>
 	);
 };
 

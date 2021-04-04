@@ -5,25 +5,23 @@ import { useState, useEffect } from "react";
 import Router, { useRouter } from "next/router";
 
 // External
+import "twin.macro";
 import { NextSeo } from "next-seo";
+import { useResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import "twin.macro";
 
 // JSON
 import DataTableHeadsContent from "public/data/data-table-heads.json";
 
 // Hooks
 import { useSite } from "src/hooks/useSite";
-
-// Layout
-import Layout from "src/components/Layout";
+import useMobileDetector from "src/hooks/useMobileDetector";
 
 // Components
 const AddSite = loadable(() => import("src/components/sites/AddSite"));
 const DataTable = loadable(() => import("src/components/sites/DataTable"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const MyPagination = loadable(() => import("src/components/sites/Pagination"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
@@ -47,6 +45,8 @@ const Dashboard = ({ user, userError, token, page, search, per_page, ordering })
 	const [siteData, setSiteData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [userData, setUserData] = useState([]);
+	const { width, height } = useResizeDetector({ screenRef });
+	const { screenRef, screenWidth, screenHeight } = useMobileDetector(width, height);
 
 	const pageTitle = "Dashboard";
 
@@ -199,13 +199,19 @@ const Dashboard = ({ user, userError, token, page, search, per_page, ordering })
 
 	return (
 		componentReady && (
-			<Layout user={userData}>
+			<>
 				<NextSeo title={pageTitle} />
 
-				<section tw="h-screen flex overflow-hidden bg-white">
-					{/* FIXME: fix mobile sidebar */}
-					{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-					<MainSidebar user={userData} site={siteData} />
+				<div ref={screenRef}>
+					{screenWidth} x {screenHeight}
+				</div>
+				<section ref={screenRef} tw="h-screen flex overflow-hidden bg-white">
+					<MainSidebar
+						user={userData}
+						site={siteData}
+						openMobileSidebar={openMobileSidebar}
+						setOpenMobileSidebar={setOpenMobileSidebar}
+					/>
 
 					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
@@ -282,7 +288,7 @@ const Dashboard = ({ user, userError, token, page, search, per_page, ordering })
 						</main>
 					</div>
 				</section>
-			</Layout>
+			</>
 		)
 	);
 };
