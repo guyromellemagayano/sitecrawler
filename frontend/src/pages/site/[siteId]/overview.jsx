@@ -56,7 +56,6 @@ const SitesDashboard = ({ token, sid }) => {
 	const sitesApiEndpoint = "/api/site/?ordering=name";
 
 	const { user: user, userError: userError } = useUser({ refreshInterval: 1000 });
-
 	const { scan: scan, scanError: scanError } = useScan({
 		querySid: sid,
 	});
