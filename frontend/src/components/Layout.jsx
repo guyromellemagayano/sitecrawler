@@ -10,6 +10,7 @@ import setupLogRocketReact from "logrocket-react";
 import { useHistory } from "src/utils/history";
 
 const Layout = ({ user, children }) => {
+	// FIXME: figure something out this useHistory()
 	const { history } = useHistory();
 
 	// console.log(history);
