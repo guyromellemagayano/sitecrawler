@@ -13,7 +13,7 @@ import tw from "twin.macro";
 import AddSiteLabel from "public/labels/components/sites/AddSite.json";
 
 // Components
-const SearchSvg = loadable(() => import("src/components/svg/SearchSvg"));
+const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
 const AddSiteErrorModal = loadable(() => import("src/components/modals/AddSiteErrorModal"));
 const AddSiteSkeleton = loadable(() => import("src/components/skeletons/AddSiteSkeleton"));
 

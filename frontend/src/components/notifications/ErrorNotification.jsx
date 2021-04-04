@@ -8,8 +8,8 @@ import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Components
-const XCircleSvg = loadable(() => import("src/components/svg/XCircleSvg"));
-const XSvg = loadable(() => import("src/components/svg/XSvg"));
+const XCircleSvg = loadable(() => import("src/components/svg/solid/XCircleSvg"));
+const XSvg = loadable(() => import("src/components/svg/solid/XSvg"));
 
 const ErrorNotification = ({ errorMsg, errorMsgLoaded, setErrorMsgLoaded, errorMsgTitle }) => {
 	const closeNotificationLabel = "Close";

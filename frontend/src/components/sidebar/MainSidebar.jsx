@@ -17,7 +17,7 @@ const ProfileSidebar = loadable(() => import("src/components/profile/Sidebar"));
 const SettingsMenu = loadable(() => import("src/components/sidebar/SettingsMenu"));
 const SiteMenu = loadable(() => import("src/components/sidebar/SiteMenu"));
 
-const MainSidebar = ({ user, site, crawlableHandler }) => {
+const MainSidebar = ({ user, site }) => {
 	const [selectedMenu, setSelectedMenu] = useState("");
 
 	const siteDashboardLink = "/";
@@ -35,7 +35,7 @@ const MainSidebar = ({ user, site, crawlableHandler }) => {
 		) {
 			switch (true) {
 				case router.pathname.includes("/site"):
-					setSelectedMenu(<SiteMenu user={user} site={site} crawlableHandler={crawlableHandler} />);
+					setSelectedMenu(<SiteMenu user={user} site={site} />);
 					break;
 				case router.pathname.includes("/settings"):
 					setSelectedMenu(<SettingsMenu user={user} site={site} />);

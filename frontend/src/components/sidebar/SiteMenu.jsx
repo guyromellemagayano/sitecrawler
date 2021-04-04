@@ -20,8 +20,8 @@ import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
-const PlusSvg = loadable(() => import("src/components/svg/PlusSvg"));
-const SelectorSvg = loadable(() => import("src/components/svg/SelectorSvg"));
+const PlusSvg = loadable(() => import("src/components/svg/solid/PlusSvg"));
+const SelectorSvg = loadable(() => import("src/components/svg/solid/SelectorSvg"));
 const SettingsMenuSkeleton = loadable(() => import("src/components/skeletons/SettingsMenuSkeleton"));
 const SidebarSiteResultsSkeleton = loadable(() => import("src/components/skeletons/SidebarSiteResultsSkeleton"));
 

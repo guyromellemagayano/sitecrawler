@@ -28,16 +28,16 @@ import { useSite } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
-const ChevronRightSvg = loadable(() => import("src/components/svg/ChevronRightSvg"));
-const ClipboardSvg = loadable(() => import("src/components/svg/ClipboardSvg"));
+const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
+const ClipboardSvg = loadable(() => import("src/components/svg/solid/ClipboardSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
-const HomeSvg = loadable(() => import("src/components/svg/HomeSvg"));
+const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const QuestionMarkCircleSvg = loadable(() => import("src/components/svg/QuestionMarkCircleSvg"));
+const QuestionMarkCircleSvg = loadable(() => import("src/components/svg/solid/QuestionMarkCircleSvg"));
 const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeletons/SiteAdditionStepsSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));

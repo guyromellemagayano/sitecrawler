@@ -19,8 +19,8 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 
 // Components
-const PlusSvg = loadable(() => import("src/components/svg/PlusSvg"));
-const SelectorSvg = loadable(() => import("src/components/svg/SelectorSvg"));
+const PlusSvg = loadable(() => import("src/components/svg/solid/PlusSvg"));
+const SelectorSvg = loadable(() => import("src/components/svg/solid/SelectorSvg"));
 const PrimaryMenuSkeleton = loadable(() => import("src/components/skeletons/PrimaryMenuSkeleton"));
 const SidebarSiteResultsSkeleton = loadable(() => import("src/components/skeletons/SidebarSiteResultsSkeleton"));
 

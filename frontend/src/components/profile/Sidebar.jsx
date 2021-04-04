@@ -20,7 +20,7 @@ import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 import useFetcher from "src/hooks/useFetcher";
 
 // Components
-const ChevronTopSvg = loadable(() => import("src/components/svg/ChevronTopSvg"));
+const ChevronTopSvg = loadable(() => import("src/components/svg/solid/ChevronTopSvg"));
 const ProfileSidebarSkeleton = loadable(() => import("src/components/skeletons/ProfileSidebarSkeleton"));
 
 const Sidebar = () => {

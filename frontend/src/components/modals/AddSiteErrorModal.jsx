@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Components
-const ExclamationSvg = loadable(() => import("src/components/svg/ExclamationSvg"));
+const ExclamationSvg = loadable(() => import("src/components/svg/solid/ExclamationSvg"));
 
 const AddSiteErrorModal = ({ show, setShowErrorModal, label }) => {
 	const settingsSubscriptionsLink = "/settings/subscriptions";

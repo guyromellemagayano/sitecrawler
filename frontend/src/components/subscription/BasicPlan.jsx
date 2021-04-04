@@ -5,8 +5,8 @@ import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Components
-const CheckSvg = loadable(() => import("src/components/svg/CheckSvg"));
-const ExclamationSvg = loadable(() => import("src/components/svg/ExclamationSvg"));
+const CheckSvg = loadable(() => import("src/components/svg/solid/CheckSvg"));
+const ExclamationSvg = loadable(() => import("src/components/svg/solid/ExclamationSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 

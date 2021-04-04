@@ -24,8 +24,8 @@ import { useSite } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
-const ChevronRightSvg = loadable(() => import("src/components/svg/ChevronRightSvg"));
-const HomeSvg = loadable(() => import("src/components/svg/HomeSvg"));
+const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
+const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));

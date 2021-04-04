@@ -30,9 +30,9 @@ import { useSite, useSiteId } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
-const ChevronRightSvg = loadable(() => import("src/components/svg/ChevronRightSvg"));
+const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
-const HomeSvg = loadable(() => import("src/components/svg/HomeSvg"));
+const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));

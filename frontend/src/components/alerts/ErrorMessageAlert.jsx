@@ -7,8 +7,8 @@ import loadable from "@loadable/component";
 import tw from "twin.macro";
 
 // Components
-import XCircleSvg from "src/components/svg/XCircleSvg";
-import XSvg from "../svg/XSvg";
+import XCircleSvg from "src/components/svg/solid/XCircleSvg";
+import XSvg from "../svg/solid/XSvg";
 
 const ErrorMessageAlert = ({ message }) => {
 	const [isOpen, setIsOpen] = useState(true);

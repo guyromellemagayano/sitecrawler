@@ -3,7 +3,7 @@ import loadable from "@loadable/component";
 import tw from "twin.macro";
 
 // Components
-const MenuSvg = loadable(() => import("src/components/svg/MenuSvg"));
+const MenuSvg = loadable(() => import("src/components/svg/solid/MenuSvg"));
 
 const MobileSidebarButton = ({ openMobileSidebar, setOpenMobileSidebar }) => {
 	const openSidebarLabel = "Open sidebar";

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Components
-const CheckSvg = loadable(() => import("src/components/svg/CheckSvg"));
+const CheckSvg = loadable(() => import("src/components/svg/solid/CheckSvg"));
 
 const SemiAnnualPlans = ({
 	key,

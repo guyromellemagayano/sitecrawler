@@ -9,10 +9,10 @@ import tw from "twin.macro";
 import ComingSoonLabel from "public/labels/components/layout/ComingSoon.json";
 
 // Components
-const ChevronRightSvg = loadable(() => import("src/components/svg/ChevronRightSvg"));
+const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const ComingSoonSkeleton = loadable(() => import("src/components/skeletons/ComingSoonSkeleton"));
-const HomeSvg = loadable(() => import("src/components/svg/HomeSvg"));
-const MenuSvg = loadable(() => import("src/components/svg/MenuSvg"));
+const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
+const MenuSvg = loadable(() => import("src/components/svg/solid/MenuSvg"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
 const ComingSoon = ({ pageTitle, pageLoaded, openMobileSidebar, setOpenMobileSidebar }) => {

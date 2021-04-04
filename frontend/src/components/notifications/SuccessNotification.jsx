@@ -8,8 +8,8 @@ import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Components
-const CheckCircleSvg = loadable(() => import("src/components/svg/CheckCircleSvg"));
-const XSvg = loadable(() => import("src/components/svg/XSvg"));
+const CheckCircleSvg = loadable(() => import("src/components/svg/solid/CheckCircleSvg"));
+const XSvg = loadable(() => import("src/components/svg/solid/XSvg"));
 
 const SuccessNotificationOverlay = ({ successMsg, successMsgLoaded, setSuccessMsgLoaded, successMsgTitle }) => {
 	const closeNotificationLabel = "Close";

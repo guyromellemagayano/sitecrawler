@@ -17,10 +17,10 @@ import { usePaymentMethods, useDefaultPaymentMethod } from "src/hooks/useStripeP
 import usePostMethod from "src/hooks/usePostMethod";
 
 // Components
-const CheckSvg = loadable(() => import("src/components/svg/CheckSvg"));
-const CreditCardSvg = loadable(() => import("src/components/svg/CreditCardSvg"));
+const CheckSvg = loadable(() => import("src/components/svg/solid/CheckSvg"));
+const CreditCardSvg = loadable(() => import("src/components/svg/solid/CreditCardSvg"));
 const PaymentMethodsSkeleton = loadable(() => import("src/components/skeletons/PaymentMethodsSkeleton"));
-const SelectorSvg = loadable(() => import("src/components/svg/SelectorSvg"));
+const SelectorSvg = loadable(() => import("src/components/svg/solid/SelectorSvg"));
 
 const useOptions = () => {
 	const options = useMemo(() => ({

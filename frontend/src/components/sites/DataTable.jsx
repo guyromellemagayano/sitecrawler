@@ -24,9 +24,9 @@ import useFetcher from "src/hooks/useFetcher";
 import usePostMethod from "src/hooks/usePostMethod";
 
 // Components
-const ClipboardSvg = loadable(() => import("src/components/svg/ClipboardSvg"));
-const ExclamationSvg = loadable(() => import("src/components/svg/ExclamationSvg"));
-const InformationCircleSvg = loadable(() => import("src/components/svg/InformationCircleSvg"));
+const ClipboardSvg = loadable(() => import("src/components/svg/solid/ClipboardSvg"));
+const ExclamationSvg = loadable(() => import("src/components/svg/solid/ExclamationSvg"));
+const InformationCircleSvg = loadable(() => import("src/components/svg/solid/InformationCircleSvg"));
 
 const DataTableDiv = styled.tr`
 	div {

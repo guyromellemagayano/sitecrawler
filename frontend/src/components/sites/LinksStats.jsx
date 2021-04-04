@@ -1,27 +1,29 @@
-const Chart = loadable(() => import('react-apexcharts'));
-import { linksChartContents } from 'enum/chartContents';
-// FIXME: Remove react-responsive package in favor of react-resize-detector
-import { useMediaQuery } from 'react-responsive';
-import Cookies from 'js-cookie';
-import fetch from 'node-fetch';
-import Link from 'next/link';
-import LinksStatsLabel from 'public/labels/components/sites/LinksStats.json';
-import loadable from '@loadable/component';
-import PropTypes from 'prop-types';
-import Router from 'next/router';
-import Skeleton from 'react-loading-skeleton';
-import tw from 'twin.macro';
-import useSWR from 'swr';
-import Layout from 'components/Layout';
+// React
+
+// NextJS
+import Router from "next/router";
+import Link from "next/link";
+
+import { linksChartContents } from "enum/chartContents";
+import ResizeObserver from "react-resize-detector";
+import LinksStatsLabel from "public/labels/components/sites/LinksStats.json";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import tw from "twin.macro";
+import useSWR from "swr";
+import Layout from "components/Layout";
+
+const Chart = loadable(() => import("react-apexcharts"));
 
 const fetcher = async (url) => {
 	const res = await fetch(url, {
-		method: 'GET',
+		method: "GET",
 		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
+			Accept: "application/json",
+			"Content-Type": "application/json",
+			"X-CSRFToken": Cookies.get("csrftoken"),
+		},
 	});
 
 	const data = await res.json();
@@ -101,19 +103,18 @@ const SitesLinksStatsDiv = styled.div`
 `;
 
 const SitesLinksStats = (props) => {
+	const router = useRouter();
+	// TODO: update this using ResizeObserver
 	const isMobileOrDesktop = useMediaQuery({
-		query: '(min-device-width: 1300px)'
+		query: "(min-device-width: 1300px)",
 	});
 
 	const { data: scan, error: scanError } = useSWR(
-		() =>
-			props.url.siteId
-				? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at`
-				: null,
+		() => (props.url.siteId ? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at` : null),
 		fetcher
 	);
 
-	let scanObjId = '';
+	let scanObjId = "";
 
 	if (scan) {
 		let scanObj = [];
@@ -131,18 +132,12 @@ const SitesLinksStats = (props) => {
 	}
 
 	const { data: stats, error: statsError } = useSWR(
-		() =>
-			props.url.siteId && scanObjId
-				? `/api/site/${props.url.siteId}/scan/${scanObjId}/`
-				: null,
+		() => (props.url.siteId && scanObjId ? `/api/site/${props.url.siteId}/scan/${scanObjId}/` : null),
 		fetcher
 	);
 
 	const { data: links, error: linksError } = useSWR(
-		() =>
-			props.url.siteId && scanObjId
-				? `/api/site/${props.url.siteId}/scan/${scanObjId}/link/`
-				: null,
+		() => (props.url.siteId && scanObjId ? `/api/site/${props.url.siteId}/scan/${scanObjId}/link/` : null),
 		fetcher
 	);
 
@@ -173,69 +168,65 @@ const SitesLinksStats = (props) => {
 	// }
 
 	const legendClickHandler = (label) => {
-		let path = `/dashboard/site/${props.url.siteId}/links`;
+		let path = `/site/${props.url.siteId}/links`;
 
 		linksChartContents.forEach((item, index) => {
-			if (label === item.label && item.filter !== '')
-				path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`;
+			if (label === item.label && item.filter !== "")
+				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		Router.push('/dashboard/site/[siteId]/links', path);
+		router.push("/site/[siteId]/links", path);
 	};
 
 	const chartSeries = [
 		// setBrokenLinks('PAGE'),
 		// setBrokenLinks('EXTERNAL'),
-		stats && stats.num_non_ok_links !== undefined
-			? stats && stats.num_non_ok_links
-			: 0,
-		stats && stats.num_ok_links !== undefined ? stats && stats.num_ok_links : 0
+		stats && stats.num_non_ok_links !== undefined ? stats && stats.num_non_ok_links : 0,
+		stats && stats.num_ok_links !== undefined ? stats && stats.num_ok_links : 0,
 	];
 
 	const chartOptions = {
 		chart: {
-			id: 'linkStatus',
-			type: 'donut',
+			id: "linkStatus",
+			type: "donut",
 			events: {
 				legendClick: function (chartContext, seriesIndex, config) {
 					legendClickHandler(config.config.labels[seriesIndex]);
-				}
-			}
+				},
+			},
 		},
 		labels: linksChartContents.map((item) => item.label),
 		colors: linksChartContents.map((item) => item.color),
 		fill: {
-			colors: linksChartContents.map((item) => item.color)
+			colors: linksChartContents.map((item) => item.color),
 		},
 		stroke: {
-			width: 0
+			width: 0,
 		},
 		dataLabels: {
 			enabled: true,
 			formatter: function (val, opts) {
 				return opts.w.config.series[opts.seriesIndex];
-			}
+			},
 		},
 		legend: {
 			show: true,
-			fontSize: '14px',
-			position: 'right',
+			fontSize: "14px",
+			position: "right",
 			floating: false,
 			width: 300,
-			horizontalAlign: 'center',
+			horizontalAlign: "center",
 			itemMargin: {
 				horizontal: 5,
-				vertical: 5
+				vertical: 5,
 			},
 			formatter: function (seriesName, opts) {
 				return [
 					`<span className='legend-text'>${seriesName}</span>`,
-					'   ',
-					`<span className='legend-val'>${
-						opts.w.globals.series[opts.seriesIndex]
-					}</span>`
+					"   ",
+					`<span className='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`,
 				];
-			}
+			},
 		},
 		plotOptions: {
 			pie: {
@@ -245,25 +236,21 @@ const SitesLinksStats = (props) => {
 						total: {
 							show: true,
 							showAlways: true,
-							label: 'Link Errors',
-							fontSize: '15px',
-							color: '#2A324B',
+							label: "Link Errors",
+							fontSize: "15px",
+							color: "#2A324B",
 							formatter: function (val) {
 								let num_errs = 0;
-								for (
-									let i = 0;
-									i < val.config.series.slice(0, -1).length;
-									i++
-								) {
+								for (let i = 0; i < val.config.series.slice(0, -1).length; i++) {
 									num_errs += val.config.series[i];
 								}
 
 								return num_errs;
-							}
-						}
-					}
-				}
-			}
+							},
+						},
+					},
+				},
+			},
 		},
 		responsive: [
 			{
@@ -271,53 +258,39 @@ const SitesLinksStats = (props) => {
 				options: {
 					chart: {
 						width: 315,
-						height: 415
+						height: 415,
 					},
 					legend: {
-						position: 'bottom',
-						height: 'auto',
+						position: "bottom",
+						height: "auto",
 						itemMargin: {
 							horizontal: 15,
-							vertical: 10
-						}
-					}
-				}
-			}
-		]
+							vertical: 10,
+						},
+					},
+				},
+			},
+		],
 	};
 
 	return (
 		<SitesLinksStatsDiv>
-			<div
-				className={`bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg h-full`}
-			>
+			<div className={`bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg h-full`}>
 				<div className={`flex justify-between py-8 px-5`}>
 					<div className={`flex items-center`}>
-						<svg
-							fill='none'
-							viewBox='0 0 24 24'
-							stroke='currentColor'
-							className={`search w-5 h-5 text-gray-900 mr-2`}
-						>
+						<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className={`search w-5 h-5 text-gray-900 mr-2`}>
 							<path
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
 							></path>
 						</svg>
-						<h2 className={`text-lg font-bold leading-7 text-gray-900`}>
-							{LinksStatsLabel[0].label}
-						</h2>
+						<h2 className={`text-lg font-bold leading-7 text-gray-900`}>{LinksStatsLabel[0].label}</h2>
 					</div>
 					<div>
-						<Link
-							href={`/dashboard/site/[siteId]/links`}
-							as={`/dashboard/site/${props.url.siteId}/links`}
-						>
-							<a
-								className={`text-sm leading-5 font-medium text-gray-500 hover:underline`}
-							>
+						<Link href={`/site/[siteId]/links`} as={`/site/${props.url.siteId}/links`}>
+							<a className={`text-sm leading-5 font-medium text-gray-500 hover:underline`}>
 								{LinksStatsLabel[1].label}
 							</a>
 						</Link>
@@ -334,9 +307,9 @@ const SitesLinksStats = (props) => {
 						<Chart
 							options={chartOptions}
 							series={chartSeries}
-							type='donut'
-							width={`${isMobileOrDesktop ? '600' : '300'}`}
-							height={`${isMobileOrDesktop ? '260' : '530'}`}
+							type="donut"
+							width={`${isMobileOrDesktop ? "600" : "300"}`}
+							height={`${isMobileOrDesktop ? "260" : "530"}`}
 						/>
 					)}
 				</div>
@@ -345,6 +318,6 @@ const SitesLinksStats = (props) => {
 	);
 };
 
-export default SitesLinksStats;
-
 SitesLinksStats.propTypes = {};
+
+export default SitesLinksStats;
