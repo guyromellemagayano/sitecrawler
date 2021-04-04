@@ -53,7 +53,7 @@ const Support = ({ token }) => {
 	const contactApiEndpoint = "/api/support/contact/";
 	const sitesApiEndpoint = "/api/site/?ordering=name";
 
-	const { user: user, userError: userError } = useUser();
+	const { user: user, userError: userError } = useUser({ refreshInterval: 1000 });
 	const { site: site, siteError: siteError } = useSite({
 		endpoint: sitesApiEndpoint,
 	});

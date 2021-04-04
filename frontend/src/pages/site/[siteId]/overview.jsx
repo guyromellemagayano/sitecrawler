@@ -1,93 +1,129 @@
-import { useRouter } from 'next/router';
-import { useState, Fragment, useEffect } from 'react';
-import Cookies from 'js-cookie';
-import fetch from 'node-fetch';
-import Head from 'next/head';
-import Layout from 'components/Layout';
-import Link from 'next/link';
-import MainSidebar from 'components/sidebar/MainSidebar';
-import MobileSidebar from 'components/sidebar/MobileSidebar';
-import OverviewLabel from 'public/labels/pages/site/overview.json';
-import PropTypes from 'prop-types';
-import SiteFooter from 'components/footer/SiteFooter';
-import SitesImagesStats from 'components/sites/ImagesStats';
-import SitesLinksStats from 'components/sites/LinksStats';
-import SitesOverview from 'components/sites/Overview';
-import SitesPagesStats from 'components/sites/PagesStats';
-import SitesSeoStats from 'components/sites/SeoStats';
-import SitesStats from 'components/sites/Stats';
-import Skeleton from 'react-loading-skeleton';
-import tw from 'twin.macro';
-import useSWR from 'swr';
-import useUser from 'hooks/useUser';
+// React
+import { useState, useEffect } from "react";
 
-const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
-	});
+// NextJS
+import Link from "next/link";
 
-	const data = await res.json();
+// External
+import { NextSeo } from "next-seo";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import tw from "twin.macro";
 
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
+// JSON
+import OverviewLabel from "public/labels/pages/site/overview.json";
 
-	return data;
-};
+// Utils
+import { getCookie } from "src/utils/cookie";
 
-const SitesDashboardDiv = styled.section``;
+// Hooks
+import usePostMethod from "src/hooks/usePostMethod";
+import useUser from "src/hooks/useUser";
+import { useScan, useSite, useSiteId } from "src/hooks/useSite";
 
-const SitesDashboard = () => {
-	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [recrawlable, setRecrawlable] = useState(false);
+// Layout
+import Layout from "src/components/Layout";
+
+// Components
+// const SitesImagesStats = loadable(() => import("src/components/sites/ImagesStats"));
+// const SitesLinksStats = loadable(() => import("src/components/sites/LinksStats"));
+// const SitesPagesStats = loadable(() => import("src/components/sites/PagesStats"));
+// const SitesSeoStats = loadable(() => import("src/components/sites/SeoStats"));
+const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
+const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
+const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
+const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
+const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
+const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SitesOverview = loadable(() => import("src/components/sites/Overview"));
+const SitesStats = loadable(() => import("src/components/sites/Stats"));
+
+const SitesDashboard = ({ token, sid }) => {
 	const [crawlFinished, setCrawlFinished] = useState(false);
+	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+	const [pageLoaded, setPageLoaded] = useState(false);
+	const [recrawlable, setRecrawlable] = useState(false);
+	const [scanData, setScanData] = useState([]);
+	const [siteData, setSiteData] = useState([]);
+	const [siteIdData, setSiteIdData] = useState([]);
+	const [userData, setUserData] = useState([]);
 
-	const { query } = useRouter();
-	const pageTitle = 'Overview |';
+	const pageTitle = siteIdData.name && siteIdData.name !== undefined ? "Overview | " + siteIdData.name : "Overview";
+	const homeLabel = "Home";
+	const homePageLink = "/";
+	const reCrawlEndpoint = `/api/site/${sid}/start_scan/`;
+	const sitesApiEndpoint = "/api/site/?ordering=name";
 
-	const { user: user, userError: userError } = useUser({
-		redirectTo: '/',
-		redirectIfFound: false
+	const { user: user, userError: userError } = useUser({ refreshInterval: 1000 });
+
+	const { scan: scan, scanError: scanError } = useScan({
+		querySid: sid,
 	});
 
-	const { data: site, error: siteError } = useSWR(
-		() => query.siteId && `/api/site/${query.siteId}`,
-		fetcher
-	);
+	const { site: site, siteError: siteError } = useSite({
+		endpoint: sitesApiEndpoint,
+		refreshInterval: 1000,
+	});
 
-	const { data: scan, error: scanError } = useSWR(
-		() =>
-			query.siteId && `/api/site/${query.siteId}/scan/?ordering=-finished_at`,
-		fetcher
-	);
+	const { siteId: siteId, siteIdError: siteIdError } = useSiteId({
+		querySid: sid,
+	});
 
-	const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`;
+	useEffect(() => {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			scan &&
+			scan !== undefined &&
+			Object.keys(scan).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0 &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0 &&
+			token &&
+			token !== undefined &&
+			token !== ""
+		) {
+			setUserData(user);
+			setScanData(scan);
+			setSiteData(site);
+			setSiteIdData(siteId);
+		}
+
+		if (userError || scanError || siteError || siteIdError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + userError ? userError : scanError ? scanError : siteError ? siteError : siteIdError);
+		}
+
+		if (userData && scanData && siteData && siteIdData) {
+			setTimeout(() => {
+				setPageLoaded(true);
+			}, 500);
+		}
+	}, [user, scan, site, siteId, token]);
 
 	const onCrawlHandler = async () => {
 		setCrawlFinished(false);
-		const res = await fetch(reCrawlEndpoint, {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
+
+		try {
+			const response = await usePostMethod(reCrawlEndpoint);
+			const data = await response.data;
+
+			if (Math.floor(response.status / 200) === 1) {
+				if (data) {
+					return data;
+				}
+			} else {
+				// FIXME: report issues from here to Sentry
+				return null;
 			}
-		});
-
-		const data = await res.json();
-
-		if (res.status !== 200) {
-			throw new Error(data.message);
+		} catch (error) {
+			throw error.message;
 		}
-
-		// console.log('[onCrawlHandler]', data)
-
-		return data;
 	};
 
 	const crawlableHandler = (finished) => {
@@ -95,10 +131,10 @@ const SitesDashboard = () => {
 
 		if (
 			user &&
-			user.permissions !== undefined &&
-			user.permissions.includes('can_start_scan') &&
-			site &&
-			site.verified &&
+			userData.permissions !== undefined &&
+			userData.permissions.includes("can_start_scan") &&
+			siteData &&
+			siteData.verified &&
 			finished
 		)
 			setRecrawlable(true);
@@ -106,176 +142,140 @@ const SitesDashboard = () => {
 	};
 
 	useEffect(() => {
-		if (
-			user &&
-			user.permissions !== undefined &&
-			user.permissions.includes('can_start_scan') &&
-			site &&
-			site.verified
-		)
-			setRecrawlable(true);
-		else setRecrawlable(false);
-	}, [user, site]);
-
-	{
-		userError && <Layout>{userError.message}</Layout>;
-	}
-	{
-		siteError && <Layout>{siteError.message}</Layout>;
-	}
-	{
-		scanError && <Layout>{scanError.message}</Layout>;
-	}
+		if (userData && siteIdData) {
+			if (
+				userData.permissions !== undefined &&
+				userData.permissions !== "" &&
+				userData.permissions.includes("can_start_scan") &&
+				siteIdData.verified
+			) {
+				setRecrawlable(true);
+			} else setRecrawlable(false);
+		}
+	}, [userData, siteIdData]);
 
 	return (
-		<Layout>
-			{user && scan && site ? (
-				<Fragment>
-					<Head>
-						<title>
-							{pageTitle} {site.name}
-						</title>
-					</Head>
+		<Layout user={userData}>
+			<NextSeo title={pageTitle} />
 
-					<SitesDashboardDiv
-						className={`h-screen flex overflow-hidden bg-gray-200`}
-					>
-						<MobileSidebar show={openMobileSidebar} />
-						<MainSidebar />
+			<section tw="h-screen flex overflow-hidden bg-white">
+				{/* FIXME: fix mobile sidebar */}
+				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
+				<MainSidebar user={userData} site={siteData} />
 
-						<div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
-							<div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
-								<button
-									className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
-									aria-label={`Open sidebar`}
-									onClick={() =>
-										setTimeout(
-											() => setOpenMobileSidebar(!openMobileSidebar),
-											150
-										)
-									}
-								>
-									<svg
-										className={`h-6 w-5`}
-										stroke={`currentColor`}
-										fill={`none`}
-										viewBox={`0 0 24 24`}
-									>
-										<path
-											strokeLinecap={`round`}
-											strokeLinejoin={`round`}
-											strokeWidth={`2`}
-											d={`M4 6h16M4 12h16M4 18h16`}
-										/>
-									</svg>
-								</button>
+				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
+					<div tw="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					</div>
+					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+						<div tw="w-full p-6 mx-auto min-h-screen">
+							{pageLoaded ? (
+								<div className="max-w-full py-4 px-8">
+									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+										<ol tw="flex items-center space-x-4">
+											<li>
+												<div>
+													<Link href={homePageLink} passHref>
+														<a tw="text-gray-400 hover:text-gray-500">
+															<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+															<span tw="sr-only">{homeLabel}</span>
+														</a>
+													</Link>
+												</div>
+											</li>
+											<li>
+												<div tw="flex items-center">
+													<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+														{pageTitle}
+													</p>
+												</div>
+											</li>
+										</ol>
+									</nav>
+									<div className="pt-4 m-auto">
+										<h4 className="text-2xl leading-6 font-medium text-gray-900">{OverviewLabel[0].label}</h4>
+									</div>
+								</div>
+							) : (
+								<ProfileSkeleton />
+							)}
+							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+								<div tw="pb-4">
+									<SitesStats crawlableHandler={crawlableHandler} sid={sid} user={userData} />
+								</div>
+								<div tw="grid grid-cols-2 grid-cols-1 xl:grid-cols-2 gap-8 pb-10">
+									<SitesOverview
+										id={siteIdData.id}
+										verified={siteIdData.verified}
+										finishedAt={
+											scanData &&
+											scanData !== undefined &&
+											Object.keys(scanData).length > 0 &&
+											scanData.results
+												.map((e) => {
+													return e.finished_at;
+												})
+												.sort()
+												.reverse()[0]
+										}
+										forceHttps={
+											scanData &&
+											scanData !== undefined &&
+											Object.keys(scanData).length > 0 &&
+											scanData.results
+												.map((e) => {
+													return e.force_https;
+												})
+												.sort()
+												.reverse()[0]
+										}
+										onCrawl={onCrawlHandler}
+										crawlable={recrawlable}
+										crawlFinished={crawlFinished}
+										user={userData}
+									/>
+									{/* <SitesLinksStats url={query} /> */}
+								</div>
+								{/* {userData.permissions.includes("can_see_pages") && userData.permissions.includes("can_see_images") && (
+								<div tw="grid grid-cols-1 xl:grid-cols-3 gap-8">
+									<SitesSeoStats url={query} />
+									<SitesPagesStats url={query} />
+									<SitesImagesStats url={query} />
+								</div>
+							)} */}
 							</div>
-							<main
-								className={`flex-1 relative z-0 overflow-y-auto focus:outline-none`}
-								tabIndex={`0`}
-							>
-								<div
-									className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
-								>
-									<div className={`md:flex md:items-center md:justify-between`}>
-										<div className={`flex-1 min-w-0`}>
-											<h2
-												className={`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate lg:overflow-visible`}
-											>
-												{OverviewLabel[0].label}
-											</h2>
-										</div>
-									</div>
-									<div>
-										<nav
-											className={`mt-2 hidden sm:flex items-center text-sm leading-5`}
-										>
-											<Link href='/dashboard/sites'>
-												<a
-													className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-												>
-													{OverviewLabel[1].label}
-												</a>
-											</Link>
-											<svg
-												className={`flex-shrink-0 mx-1 h-5 w-5 text-gray-500`}
-												viewBox='0 0 20 20'
-												fill='currentColor'
-											>
-												<path
-													fillRule='evenodd'
-													d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
-													clipRule='evenodd'
-												/>
-											</svg>
-											<Link
-												href='/dashboard/site/[siteId]/overview'
-												as={'/dashboard/site/' + query.siteId + '/overview'}
-											>
-												<a
-													className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-												>
-													{site.name}
-												</a>
-											</Link>
-										</nav>
-									</div>
-								</div>
-								<div className={`max-w-full px-4 py-4 sm:px-6 md:px-8`}>
-									<div className={`pb-4`}>
-										<SitesStats crawlableHandler={crawlableHandler} />
-									</div>
-									<div
-										className={`grid grid-cols-2 xs:grid-cols-1 xl:grid-cols-2 gap-8 pb-10`}
-									>
-										<SitesOverview
-											id={site.id}
-											url={site.url}
-											verified={site.verified}
-											finishedAt={
-												scan.results
-													.map((e) => {
-														return e.finished_at;
-													})
-													.sort()
-													.reverse()[0]
-											}
-											onCrawl={onCrawlHandler}
-											crawlable={recrawlable}
-											crawlFinished={crawlFinished}
-										/>
-										<SitesLinksStats url={query} />
-									</div>
-									{user.permissions.includes('can_see_pages') &&
-										user.permissions.includes('can_see_images') && (
-											<div
-												className={`grid xs:grid-cols-1 xl:grid-cols-3 gap-8`}
-											>
-												<SitesSeoStats url={query} />
-												<SitesPagesStats url={query} />
-												<SitesImagesStats url={query} />
-											</div>
-										)}
-								</div>
 
-								<div
-									className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
-								>
-									<SiteFooter />
-								</div>
-							</main>
+							<div tw="static bottom-0 w-full mx-auto px-4 sm:px-6 py-4">
+								<SiteFooter />
+							</div>
 						</div>
-					</SitesDashboardDiv>
-				</Fragment>
-			) : null}
+					</main>
+				</div>
+			</section>
 		</Layout>
 	);
 };
 
+SitesDashboard.propTypes = {};
+
 export default SitesDashboard;
 
-SitesDashboard.propTypes = {
-	openMobileSidebar: PropTypes.bool,
-	pageTitle: PropTypes.string,
-	query: PropTypes.elementType
-};
+export async function getServerSideProps({ req, query }) {
+	let token = getCookie("token", req);
+
+	if (!token) {
+		return {
+			props: {
+				notLoggedIn: true,
+			},
+		};
+	}
+
+	return {
+		props: {
+			token: token || "",
+			sid: query.siteId || 0,
+		},
+	};
+}

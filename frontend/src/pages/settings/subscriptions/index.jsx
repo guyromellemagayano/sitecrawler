@@ -95,7 +95,7 @@ const Subscriptions = ({ token }) => {
 	const pageTitle = "Subscriptions";
 	const siteApiEndpoint = "/api/site/?ordering=name";
 
-	const { user: user, userError: userError } = useUser();
+	const { user: user, userError: userError } = useUser({ refreshInterval: 1000 });
 	const { site: site, siteError: siteError } = useSite({
 		endpoint: siteApiEndpoint,
 		refreshInterval: 1000,

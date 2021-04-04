@@ -70,7 +70,7 @@ const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
 	htmlText += "3. Save the changes you made in that file." + "\n\n";
 	htmlText += "4. Inform your client that you already made the update to the website.";
 
-	const { user: user, userError: userError } = useUser();
+	const { user: user, userError: userError } = useUser({ refreshInterval: 1000 });
 	const { site: site, siteError: siteError } = useSite({
 		endpoint: sitesApiEndpoint,
 	});

@@ -23,7 +23,7 @@ const Home = ({ token, notLoggedIn }) => {
 	const [userData, setUserData] = useState([]);
 	const [tokenKey, setTokenKey] = useState("");
 
-	const { user: user, error: userError } = useUser();
+	const { user: user, error: userError } = useUser({ refreshInterval: 1000 });
 
 	useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0 && token && token !== undefined && token !== "") {
