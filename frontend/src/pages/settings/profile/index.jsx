@@ -45,7 +45,7 @@ const Profile = ({ token }) => {
 	const homePageLink = "/";
 	const sitesApiEndpoint = "/api/site/?ordering=name";
 
-	const { user: user, error: userError } = useUser();
+	const { user: user, error: userError } = useUser({ refreshInterval: 1000 });
 	const { site: site, siteError: siteError } = useSite({
 		endpoint: sitesApiEndpoint,
 	});
