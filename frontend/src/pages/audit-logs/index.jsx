@@ -1,8 +1,12 @@
 // React
 import { useState, useEffect } from "react";
 
+// NextJS
+import Link from "next/link";
+
 // External
 import { NextSeo } from "next-seo";
+import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
@@ -18,18 +22,14 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
 const ComingSoon = loadable(() => import("src/components/layout/ComingSoon"));
 
-const Reports = ({ token }) => {
+const Reports = ({ width, token }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [siteData, setSiteData] = useState([]);
 	const [userData, setUserData] = useState([]);
 
-	const homeLabel = "Home";
-	const homePageLink = "/";
 	const pageTitle = "Audit Logs";
 	const siteApiEndpoint = "/api/site/?ordering=name";
 
@@ -58,6 +58,11 @@ const Reports = ({ token }) => {
 			setUserData(user);
 			setSiteData(site);
 		}
+
+		if (userError || siteError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + userError ? userError : siteError);
+		}
 	}, [token, user, site]);
 
 	return (
@@ -65,11 +70,10 @@ const Reports = ({ token }) => {
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				{/* FIXME: fix mobile sidebar */}
-				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-				<MainSidebar user={userData} site={siteData} />
-
 				<ComingSoon
+					width={width}
+					user={userData}
+					site={siteData}
 					pageTitle={pageTitle}
 					pageLoaded={pageLoaded}
 					openMobileSidebar={openMobileSidebar}
@@ -82,7 +86,7 @@ const Reports = ({ token }) => {
 
 Reports.propTypes = {};
 
-export default Reports;
+export default withResizeDetector(Reports);
 
 export async function getServerSideProps({ req }) {
 	let token = getCookie("token", req);
