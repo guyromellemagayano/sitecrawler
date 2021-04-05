@@ -24,25 +24,23 @@ const ChevronTopSvg = loadable(() => import("src/components/svg/solid/ChevronTop
 const ProfileSidebarSkeleton = loadable(() => import("src/components/skeletons/ProfileSidebarSkeleton"));
 
 const Sidebar = () => {
-	const [showDropdown, setShowDropdown] = useState(false);
 	const [profileLoaded, setProfileLoaded] = useState(false);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
 	const userApiEndpoint = "/api/auth/user/";
-	const siteApiEndpoint = "/api/site/";
 
 	const { data: user, error: userError } = useSWR(userApiEndpoint, useFetcher, { refreshInterval: 1000 });
-
-	const handleDropdownToggle = () => {
-		setShowDropdown(!showDropdown);
-		setIsComponentVisible(!isComponentVisible);
-	};
 
 	useEffect(() => {
 		if (user && user !== undefined) {
 			setTimeout(() => {
 				setProfileLoaded(true);
 			}, 500);
+		}
+
+		if (userError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + userError);
 		}
 	}, [user]);
 
@@ -57,7 +55,7 @@ const Sidebar = () => {
 						id="options-menu"
 						aria-haspopup="true"
 						aria-expanded={isComponentVisible ? "true" : "false"}
-						onClick={handleDropdownToggle}
+						onClick={() => setIsComponentVisible(!isComponentVisible)}
 					>
 						<div tw="flex items-center">
 							<div tw="flex flex-col flex-wrap text-left">
