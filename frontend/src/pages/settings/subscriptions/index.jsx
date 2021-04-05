@@ -10,6 +10,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { NextSeo } from "next-seo";
 import { Transition } from "@headlessui/react";
+import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
@@ -38,10 +39,10 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
+const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const PaymentMethodForm = loadable(() => import("src/components/forms/PaymentMethodForm"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
@@ -60,7 +61,7 @@ const ConfettiBgImgSpan = styled.span`
 	z-index: -1;
 `;
 
-const Subscriptions = ({ token }) => {
+const Subscriptions = ({ width, token }) => {
 	const [basicPlanId, setBasicPlanId] = useState(0);
 	const [basicPlanName, setBasicPlanName] = useState("");
 	const [pageLoaded, setPageLoaded] = useState(false);
@@ -96,20 +97,25 @@ const Subscriptions = ({ token }) => {
 	const siteApiEndpoint = "/api/site/?ordering=name";
 
 	const { user: user, userError: userError } = useUser({ refreshInterval: 1000 });
+
 	const { site: site, siteError: siteError } = useSite({
 		endpoint: siteApiEndpoint,
 		refreshInterval: 1000,
 	});
+
 	const { stripePromise: stripePromise, stripePromiseError: stripePromiseError } = useStripePromise();
+
 	const {
 		defaultPaymentMethod: defaultPaymentMethod,
 		defaultPaymentMethodError: defaultPaymentMethodError,
 	} = useDefaultPaymentMethod({
 		refreshInterval: 1000,
 	});
+
 	const { subscriptions: subscriptions, subscriptionsError: subscriptionsError } = useSubscriptions({
 		refreshInterval: 1000,
 	});
+
 	const {
 		defaultSubscription: defaultSubscription,
 		mutateDefaultSubscription: mutateDefaultSubscription,
@@ -152,6 +158,21 @@ const Subscriptions = ({ token }) => {
 			setCurrentPaymentMethod(defaultPaymentMethod);
 			setCurrentSubscriptions(subscriptions);
 			setCurrentSubscription(defaultSubscription);
+		}
+
+		if (userError || siteError || defaultPaymentMethodError || subscriptionsError || defaultSubscriptionError) {
+			// TODO: add generic alert here
+			console.log(
+				"ERROR: " + userError
+					? userError
+					: siteError
+					? siteError
+					: defaultPaymentMethodError
+					? defaultPaymentMethodError
+					: subscriptionsError
+					? subscrioptionsError
+					: defaultSubscriptionError
+			);
 		}
 	}, [token, user, site, stripePromise, defaultPaymentMethod, subscriptions, defaultSubscription]);
 
@@ -525,14 +546,28 @@ const Subscriptions = ({ token }) => {
 			</Transition>
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				{/* FIXME: fix mobile sidebar */}
-				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-				<MainSidebar user={userData} site={siteData} />
+				<MainSidebar
+					width={width}
+					user={userData}
+					site={siteData}
+					openMobileSidebar={openMobileSidebar}
+					setOpenMobileSidebar={setOpenMobileSidebar}
+				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+					<div tw="relative z-10 flex-shrink-0 flex h-16 lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						<Link href={homePageLink} passHref>
+							<a tw="p-1 block w-full cursor-pointer lg:hidden">
+								<AppLogo
+									className={tw`mt-4 mx-auto h-8 w-auto`}
+									src="/images/logos/site-logo-dark.svg"
+									alt="app-logo"
+								/>
+							</a>
+						</Link>
 					</div>
+
 					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 							<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12 min-h-screen">
@@ -740,7 +775,7 @@ const Subscriptions = ({ token }) => {
 
 Subscriptions.propTypes = {};
 
-export default Subscriptions;
+export default withResizeDetector(Subscriptions);
 
 export async function getServerSideProps({ req }) {
 	let token = getCookie("token", req);
