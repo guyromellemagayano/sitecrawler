@@ -139,7 +139,7 @@ const Information = ({ width, token, sid, edit }) => {
 					<div tw="relative z-10 flex-shrink-0 flex h-16 lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
 						<Link href={homePageLink} passHref>
-							<a tw="p-1 block w-full cursor-pointer">
+							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
 									className={tw`mt-4 mx-auto h-8 w-auto`}
 									src="/images/logos/site-logo-dark.svg"

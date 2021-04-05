@@ -8,6 +8,7 @@ import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { NextSeo } from "next-seo";
 import { Transition } from "@headlessui/react";
+import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
@@ -28,6 +29,7 @@ import { useSite } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
+const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const ClipboardSvg = loadable(() => import("src/components/svg/solid/ClipboardSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
@@ -35,14 +37,13 @@ const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const QuestionMarkCircleSvg = loadable(() => import("src/components/svg/solid/QuestionMarkCircleSvg"));
 const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeletons/SiteAdditionStepsSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 
-const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
+const VerifyUrl = ({ width, token, sid, sname, surl, vid, v }) => {
 	const [copied, setCopied] = useState(false);
 	const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${vid}" />`);
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
@@ -284,16 +285,30 @@ const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
 			</Transition>
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				{/* FIXME: fix mobile sidebar */}
-				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-				<MainSidebar user={userData} site={siteData} />
+				<MainSidebar
+					width={width}
+					user={userData}
+					site={siteData}
+					openMobileSidebar={openMobileSidebar}
+					setOpenMobileSidebar={setOpenMobileSidebar}
+				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+					<div tw="relative z-10 flex-shrink-0 flex h-16 lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						<Link href={homePageLink} passHref>
+							<a tw="p-1 block w-full cursor-pointer lg:hidden">
+								<AppLogo
+									className={tw`mt-4 mx-auto h-8 w-auto`}
+									src="/images/logos/site-logo-dark.svg"
+									alt="app-logo"
+								/>
+							</a>
+						</Link>
 					</div>
+
 					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
-						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
+						<div tw="w-full p-6 mx-auto grid gap-16 xl:grid-cols-1 2xl:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 								{pageLoaded ? (
 									<>
@@ -538,7 +553,7 @@ const VerifyUrl = ({ token, sid, sname, surl, vid, v }) => {
 
 VerifyUrl.propTypes = {};
 
-export default VerifyUrl;
+export default withResizeDetector(VerifyUrl);
 
 export async function getServerSideProps({ req, query }) {
 	let token = getCookie("token", req);
