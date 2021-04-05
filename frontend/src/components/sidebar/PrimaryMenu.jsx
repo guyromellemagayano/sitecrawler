@@ -112,22 +112,22 @@ const PrimaryMenu = ({ user, site }) => {
 
 								<div tw="my-3" role="group">
 									{value.links && value.links !== undefined && Object.keys(value.links).length > 0 ? (
-										value.links.map((value2, index) => {
+										value.links.map((value, index) => {
 											return componentReady ? (
-												<Link key={index} href={value2.url} passHref>
+												<Link key={index} href={value.url} passHref>
 													<a
 														className="group"
 														css={[
 															tw`cursor-pointer`,
-															router.pathname == value2.url
+															router.pathname == value.url
 																? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
 																: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150`,
 														]}
 													>
 														<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value.icon} />
 														</svg>
-														<span>{value2.title}</span>
+														<span>{value.title}</span>
 													</a>
 												</Link>
 											) : (
