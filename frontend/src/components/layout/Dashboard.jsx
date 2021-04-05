@@ -5,18 +5,17 @@ import { useState, useEffect } from "react";
 import Router, { useRouter } from "next/router";
 
 // External
-import "twin.macro";
 import { NextSeo } from "next-seo";
-import { useResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
+import { withResizeDetector } from "react-resize-detector";
+import tw from "twin.macro";
 
 // JSON
 import DataTableHeadsContent from "public/data/data-table-heads.json";
 
 // Hooks
 import { useSite } from "src/hooks/useSite";
-import useMobileDetector from "src/hooks/useMobileDetector";
 
 // Components
 const AddSite = loadable(() => import("src/components/sites/AddSite"));
@@ -36,8 +35,7 @@ const initialOrder = {
 	totalIssues: "default",
 };
 
-const Dashboard = ({ user, userError, token, page, search, per_page, ordering }) => {
-	const [componentReady, setComponentReady] = useState(false);
+const Dashboard = ({ width, user, userError, token, page, search, per_page, ordering }) => {
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pagePath, setPagePath] = useState(null);
@@ -45,8 +43,6 @@ const Dashboard = ({ user, userError, token, page, search, per_page, ordering })
 	const [siteData, setSiteData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [userData, setUserData] = useState([]);
-	const { width, height } = useResizeDetector({ screenRef });
-	const { screenRef, screenWidth, screenHeight } = useMobileDetector(width, height);
 
 	const pageTitle = "Dashboard";
 
@@ -90,7 +86,6 @@ const Dashboard = ({ user, userError, token, page, search, per_page, ordering })
 		) {
 			setUserData(user);
 			setSiteData(site);
-			setComponentReady(true);
 		}
 	}, [user, site, token]);
 
@@ -198,98 +193,91 @@ const Dashboard = ({ user, userError, token, page, search, per_page, ordering })
 	}, []);
 
 	return (
-		componentReady && (
-			<>
-				<NextSeo title={pageTitle} />
+		<>
+			<NextSeo title={pageTitle} />
 
-				<div ref={screenRef}>
-					{screenWidth} x {screenHeight}
-				</div>
-				<section ref={screenRef} tw="h-screen flex overflow-hidden bg-white">
-					<MainSidebar
-						user={userData}
-						site={siteData}
-						openMobileSidebar={openMobileSidebar}
-						setOpenMobileSidebar={setOpenMobileSidebar}
-					/>
+			<section tw="h-screen flex overflow-hidden bg-white">
+				<MainSidebar
+					width={width}
+					user={userData}
+					site={siteData}
+					openMobileSidebar={openMobileSidebar}
+					setOpenMobileSidebar={setOpenMobileSidebar}
+				/>
+				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
+					<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
+						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						<AddSite user={userData} site={siteData} searchKey={searchKey} onSearchEvent={onSearchEventHandler} />
+					</div>
 
-					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-						<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
-							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
-							<AddSite user={userData} site={siteData} searchKey={searchKey} onSearchEvent={onSearchEventHandler} />
-						</div>
-
-						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-							<div tw="max-w-full mx-12">
-								{siteData && siteData !== undefined && Object.keys(siteData).length > 0 && siteData.count > 0 && (
-									<>
-										<div tw="py-4">
-											<div tw="flex flex-col">
-												<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-													<div tw="align-middle inline-block min-w-full overflow-hidden border-gray-300">
-														<table tw="min-w-full">
-															<thead>
-																<tr>
-																	{DataTableHeadsContent.map((siteData, key) => {
-																		return (
-																			<th
-																				key={key}
-																				tw="sm:w-48 lg:w-auto px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																			>
-																				<span tw="flex items-center justify-start">
-																					{siteData &&
-																					siteData !== undefined &&
-																					Object.keys(siteData).length > 0 &&
-																					siteData.slug != undefined ? (
-																						<SiteSorting
-																							sortOrder={sortOrder}
-																							onSortHandler={SortHandler}
-																							key={key}
-																							slug={siteData.slug}
-																						/>
-																					) : null}
-																					<span tw="flex items-center">{siteData.label}</span>
-																				</span>
-																			</th>
-																		);
-																	})}
-																</tr>
-															</thead>
-															<tbody tw="bg-white">
-																{siteData &&
-																siteData !== undefined &&
-																Object.keys(siteData).length > 0 &&
-																siteData.results &&
-																siteData.results !== undefined
-																	? siteData.results.map((val, key) => (
-																			<DataTable key={key} site={val} user={userData} />
-																	  ))
-																	: null}
-															</tbody>
-														</table>
-													</div>
+					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+						<div tw="max-w-full mx-12">
+							{siteData && siteData !== undefined && Object.keys(siteData).length > 0 && siteData.count > 0 && (
+								<>
+									<div tw="py-4">
+										<div tw="flex flex-col">
+											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+												<div tw="align-middle inline-block min-w-full overflow-hidden border-gray-300">
+													<table tw="min-w-full">
+														<thead>
+															<tr>
+																{DataTableHeadsContent.map((siteData, key) => {
+																	return (
+																		<th
+																			key={key}
+																			tw="sm:w-48 lg:w-auto px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																		>
+																			<span tw="flex items-center justify-start">
+																				{siteData &&
+																				siteData !== undefined &&
+																				Object.keys(siteData).length > 0 &&
+																				siteData.slug != undefined ? (
+																					<SiteSorting
+																						sortOrder={sortOrder}
+																						onSortHandler={SortHandler}
+																						key={key}
+																						slug={siteData.slug}
+																					/>
+																				) : null}
+																				<span tw="flex items-center">{siteData.label}</span>
+																			</span>
+																		</th>
+																	);
+																})}
+															</tr>
+														</thead>
+														<tbody tw="bg-white">
+															{siteData &&
+															siteData !== undefined &&
+															Object.keys(siteData).length > 0 &&
+															siteData.results &&
+															siteData.results !== undefined
+																? siteData.results.map((val, key) => <DataTable key={key} site={val} user={userData} />)
+																: null}
+														</tbody>
+													</table>
 												</div>
 											</div>
 										</div>
+									</div>
 
-										<MyPagination
-											pathName={pagePath}
-											apiEndpoint={sitesApiEndpoint}
-											page={page && page !== undefined ? page : 0}
-											linksPerPage={linksPerPage}
-											onItemsPerPageChange={onItemsPerPageChange}
-										/>
-									</>
-								)}
-							</div>
-							<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-								<SiteFooter />
-							</div>
-						</main>
-					</div>
-				</section>
-			</>
-		)
+									<MyPagination
+										pathName={pagePath}
+										apiEndpoint={sitesApiEndpoint}
+										page={page && page !== undefined ? page : 0}
+										linksPerPage={linksPerPage}
+										onItemsPerPageChange={onItemsPerPageChange}
+									/>
+								</>
+							)}
+						</div>
+						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
+							<SiteFooter />
+						</div>
+					</main>
+				</div>
+			</section>
+		</>
 	);
 };
 
@@ -304,4 +292,4 @@ Dashboard.getInitialProps = ({ query }) => {
 
 Dashboard.propTypes = {};
 
-export default Dashboard;
+export default withResizeDetector(Dashboard);
