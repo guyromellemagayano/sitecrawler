@@ -8,6 +8,7 @@ import Router, { useRouter } from "next/router";
 // External
 import { Formik } from "formik";
 import { NextSeo } from "next-seo";
+import { withResizeDetector } from "react-resize-detector";
 import * as Yup from "yup";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
@@ -30,23 +31,22 @@ import { useSite, useSiteId } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
+const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebar = loadable(() => import("src/components/sidebar/MobileSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeletons/SiteAdditionStepsSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
-const Information = ({ token, sid, edit }) => {
+const Information = ({ width, token, sid, edit }) => {
 	const [errorMsg, setErrorMsg] = useState("");
 	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
-	const [shouldFetch, setShouldFetch] = useState(false);
 	const [siteData, setSiteData] = useState([]);
 	const [siteName, setSiteName] = useState("");
 	const [siteUrl, setSiteUrl] = useState("");
@@ -70,21 +70,16 @@ const Information = ({ token, sid, edit }) => {
 	});
 
 	useEffect(() => {
-		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0 && shouldFetch) {
+		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
 			setSiteName(siteId.name);
 			setSiteUrl(siteId.url);
 		}
 	}, [siteId]);
 
 	useEffect(() => {
-		if (sid && sid !== undefined && edit) {
-			setShouldFetch(!shouldFetch);
-		}
-	}, [sid, edit]);
-
-	useEffect(() => {
-		if (userError || siteError) {
+		if (userError || siteError || siteIdError) {
 			// TODO: add generic alert here
+			console.log("ERROR: " + userError ? userError : siteError ? siteError : siteIdError);
 		}
 
 		if (
@@ -102,7 +97,7 @@ const Information = ({ token, sid, edit }) => {
 			setSiteData(site);
 			setPageLoaded(true);
 		}
-	}, [user, site, token]);
+	}, [user, site, siteId, token]);
 
 	useEffect(() => {
 		if (errorMsg && errorMsg !== "") {
@@ -132,16 +127,30 @@ const Information = ({ token, sid, edit }) => {
 			/>
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				{/* FIXME: fix mobile sidebar */}
-				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-				<MainSidebar user={userData} site={siteData} />
+				<MainSidebar
+					width={width}
+					user={userData}
+					site={siteData}
+					openMobileSidebar={openMobileSidebar}
+					setOpenMobileSidebar={setOpenMobileSidebar}
+				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+					<div tw="relative z-10 flex-shrink-0 flex h-16 lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						<Link href={homePageLink} passHref>
+							<a tw="p-1 block w-full cursor-pointer">
+								<AppLogo
+									className={tw`mt-4 mx-auto h-8 w-auto`}
+									src="/images/logos/site-logo-dark.svg"
+									alt="app-logo"
+								/>
+							</a>
+						</Link>
 					</div>
+
 					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
-						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
+						<div tw="w-full p-6 mx-auto grid gap-16 xl:grid-cols-1 2xl:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 								{pageLoaded ? (
 									<>
@@ -486,7 +495,7 @@ const Information = ({ token, sid, edit }) => {
 
 Information.propTypes = {};
 
-export default Information;
+export default withResizeDetector(Information);
 
 export async function getServerSideProps({ req, query }) {
 	let token = getCookie("token", req);

@@ -6,9 +6,9 @@ import Router, { useRouter } from "next/router";
 
 // External
 import { NextSeo } from "next-seo";
+import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import { withResizeDetector } from "react-resize-detector";
 import tw from "twin.macro";
 
 // JSON
