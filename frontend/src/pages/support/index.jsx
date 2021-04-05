@@ -7,6 +7,7 @@ import Link from "next/link";
 // External
 import { Formik } from "formik";
 import { NextSeo } from "next-seo";
+import { withResizeDetector } from "react-resize-detector";
 import * as Yup from "yup";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
@@ -27,6 +28,7 @@ import { useSite } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
+const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
@@ -36,7 +38,7 @@ const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SupportSkeleton = loadable(() => import("src/components/skeletons/SupportSkeleton"));
 
-const Support = ({ token }) => {
+const Support = ({ width, token }) => {
 	const [disableSupportForm, setDisableSupportForm] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
 	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
@@ -76,6 +78,11 @@ const Support = ({ token }) => {
 
 			setSiteData(site);
 			setUserData(user);
+
+			if (userError || siteError) {
+				// TODO: add generic alert here
+				console.log("ERROR: " + userError ? userError : siteError);
+			}
 		}
 	}, [user, site, token]);
 
@@ -126,14 +133,28 @@ const Support = ({ token }) => {
 			/>
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				{/* FIXME: fix mobile sidebar */}
-				{/* <MobileSidebar show={openMobileSidebar} setShow={setOpenMobileSidebar} /> */}
-				<MainSidebar user={userData} site={siteData} />
+				<MainSidebar
+					width={width}
+					user={userData}
+					site={siteData}
+					openMobileSidebar={openMobileSidebar}
+					setOpenMobileSidebar={setOpenMobileSidebar}
+				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+					<div tw="relative z-10 flex-shrink-0 flex h-16 lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						<Link href={homePageLink} passHref>
+							<a tw="p-1 block w-full cursor-pointer lg:hidden">
+								<AppLogo
+									className={tw`mt-4 mx-auto h-8 w-auto`}
+									src="/images/logos/site-logo-dark.svg"
+									alt="app-logo"
+								/>
+							</a>
+						</Link>
 					</div>
+
 					<main tw="flex-1 h-screen relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
@@ -295,4 +316,4 @@ Support.getInitialProps = async ({ req }) => {
 	};
 };
 
-export default Support;
+export default withResizeDetector(Support);
