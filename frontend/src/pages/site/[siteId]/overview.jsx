@@ -96,7 +96,17 @@ const SitesDashboard = ({ width, token, sid }) => {
 
 		if (userError || scanError || siteError || siteIdError) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + userError ? userError : scanError ? scanError : siteError ? siteError : siteIdError);
+			console.log(
+				"ERROR: " + userError.message !== "" && userError.message !== undefined
+					? userError.message
+					: scanError.message !== "" && scanError.message !== undefined
+					? scanError.message
+					: siteError.message !== "" && siteError.message !== undefined
+					? siteError.message
+					: siteIdError.message !== "" && siteIdError.message !== undefined
+					? siteIdError.message
+					: OverviewLabel[2].label
+			);
 		}
 
 		if (userData && scanData && siteData && siteIdData) {
@@ -114,7 +124,7 @@ const SitesDashboard = ({ width, token, sid }) => {
 			const data = await response.data;
 
 			// FIXME: fix scan errors
-			console.log(response);
+			console.log("response: " + response.data);
 
 			if (Math.floor(response.status / 200) === 1) {
 				if (data) {

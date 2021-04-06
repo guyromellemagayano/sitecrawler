@@ -6,10 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
-import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
 import tw, { styled } from "twin.macro";
 
 // JSON
@@ -112,9 +112,9 @@ const SitesPagesStats = ({ width, sid, user }) => {
 			}
 		}
 
-		if (scanError) {
+		if (scanError && scanError.message !== "" && scanError.message !== undefined) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + scanError);
+			console.log("ERROR: " + scanError.message);
 		}
 	});
 
@@ -139,7 +139,13 @@ const SitesPagesStats = ({ width, sid, user }) => {
 
 		if (statsError || noPageIssuesError) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + statsError ? statsError : noPageIssuesError);
+			console.log(
+				"ERROR: " + statsError.message !== "" && statsError.message !== undefined
+					? statsError.message
+					: noPageIssuesError.message !== "" && noPageIssuesError.message !== undefined
+					? noPageIssuesError.message
+					: PagesStatsLabel[2].label
+			);
 		}
 	}, [stats, noPageIssues]);
 

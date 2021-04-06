@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
-import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
@@ -112,9 +111,9 @@ const SitesSeoStats = ({ width, sid, user }) => {
 			}
 		}
 
-		if (scanError) {
+		if (scanError && scanError.message !== "" && scanError.message !== undefined) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + scanError);
+			console.log("ERROR: " + scanError.message);
 		}
 	});
 
@@ -130,7 +129,11 @@ const SitesSeoStats = ({ width, sid, user }) => {
 
 		if (statsError) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + statsError);
+			console.log(
+				"ERROR: " + statsError.message !== "" && statsError.message !== undefined
+					? statsError.message
+					: SeoStatsLabel[2].label
+			);
 		}
 	}, [stats]);
 

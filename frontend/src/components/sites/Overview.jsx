@@ -157,7 +157,7 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 									user.permissions.includes("can_start_scan") ? (
 										<button
 											type="button"
-											disabled={!crawlFinished}
+											disabled={crawlable}
 											onClick={onCrawl}
 											css={[
 												tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600`,

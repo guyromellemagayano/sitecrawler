@@ -67,9 +67,9 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 			}
 		}
 
-		if (scanError) {
+		if (scanError && scanError.message !== "" && scanError.message !== undefined) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + scanError);
+			console.log("ERROR: " + scanError.message);
 		}
 	});
 
@@ -103,7 +103,15 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 
 		if (statsError || linksError || imagesError) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + statsError ? statsError : linksError ? linksError : imagesError);
+			console.log(
+				"ERROR: " + statsError.message !== "" && statsError.message !== undefined
+					? statsError.message
+					: linksError.message !== "" && linksError.message !== undefined
+					? linksError
+					: imagesError.message !== "" && imagesError.message !== undefined
+					? imagesError.message
+					: StatsLabel[1].label
+			);
 		}
 	}, [stats, links, images]);
 

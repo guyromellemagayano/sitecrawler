@@ -112,9 +112,9 @@ const SitesLinksStats = ({ width, sid, user }) => {
 			}
 		}
 
-		if (scanError) {
+		if (scanError && scanError.message !== "" && scanError.message !== undefined) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + scanError);
+			console.log("ERROR: " + scanError.message);
 		}
 	});
 
@@ -139,7 +139,13 @@ const SitesLinksStats = ({ width, sid, user }) => {
 
 		if (statsError || linksError) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + statsError ? statsError : linksError);
+			console.log(
+				"ERROR: " + statsError.message !== "" && statsError.message !== undefined
+					? statsError.message
+					: linksError.message !== "" && linksError.message !== undefined
+					? linksError.message
+					: LinksStatsLabel[2].label
+			);
 		}
 	}, [stats, links]);
 

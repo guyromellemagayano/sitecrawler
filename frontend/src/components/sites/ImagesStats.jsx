@@ -6,10 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
-import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
 import tw, { styled } from "twin.macro";
 
 // JSON
@@ -112,9 +112,9 @@ const SitesImagesStats = ({ width, sid, user }) => {
 			}
 		}
 
-		if (scanError) {
+		if (scanError && scanError.message !== "" && scanError.message !== undefined) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + scanError);
+			console.log("ERROR: " + scanError.message);
 		}
 	});
 
@@ -137,9 +137,15 @@ const SitesImagesStats = ({ width, sid, user }) => {
 			setImagesData(images);
 		}
 
-		if (statsError || imagesData) {
+		if (statsError || imagesError) {
 			// TODO: add generic alert here
-			console.log("ERROR: " + statsError ? statsError : imagesData);
+			console.log(
+				"ERROR: " + statsError.message !== "" && statsError.message !== undefined
+					? statsError.message
+					: imagesError.message !== "" && imagesError.message !== undefined
+					? imagesError.message
+					: ImagesStatsLabel[2].label
+			);
 		}
 	}, [stats, images]);
 
@@ -298,6 +304,6 @@ const SitesImagesStats = ({ width, sid, user }) => {
 	);
 };
 
-export default SitesImagesStats;
-
 SitesImagesStats.propTypes = {};
+
+export default withResizeDetector(SitesImagesStats);
