@@ -4,8 +4,8 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev",
-    "build": "next build --profile --debug",
+    "dev": "NODE_ENV=development NODE_OPTIONS='--inspect' next dev",
+    "build": "NODE_ENV=production next build --profile --debug",
     "start": "next start",
     "storybook": "start-storybook -p 6006 -c ./.storybook/ -s ./",
     "build-storybook": "build-storybook -c ./.storybook/ -s ./"
@@ -83,6 +83,7 @@
     "@storybook/node-logger": "^6.1.11",
     "@storybook/preset-create-react-app": "^3.1.7",
     "@storybook/react": "^6.1.11",
+    "@tailwindcss/jit": "^0.1.18",
     "autoprefixer": "^10.2.4",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
