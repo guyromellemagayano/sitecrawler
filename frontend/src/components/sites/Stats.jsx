@@ -4,7 +4,11 @@ import { useState, useEffect } from "react";
 // External
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
+
+// JSON
+import StatsLabel from "public/labels/components/sites/Stats.json";
 
 // Hooks
 import { useScan, useStats, useLinks, useImages } from "src/hooks/useSite";
@@ -190,37 +194,40 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 	];
 
 	return componentReady ? (
-		<div tw="mt-2 mb-4 py-6 grid grid-cols-1 grid-cols-2 lg:grid-cols-4 bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg lg:divide-x lg:divide-gray-300">
-			{PageTabs.map((val, key) => {
-				return (
-					<div key={key} tw="flex items-center justify-center py-5 pr-3 lg:p-0">
-						<div tw="flex items-start justify-center">
-							<dl tw="mr-2 mr-1">
-								<dt>
-									{val.title === "Total Pages" ? (
-										<PageSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
-									) : val.title === "Total Links" ? (
-										<LinksSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
-									) : val.title === "Total Images" ? (
-										<ImageSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
-									) : (
-										<InformationCircleSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
-									)}
-								</dt>
-							</dl>
-							<dl>
-								<dt tw="text-sm text-xs lg:text-sm leading-5 font-medium text-gray-500 truncate">{val.title}</dt>
+		<div tw="px-6 py-5 sm:p-6  bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg">
+			<h2 tw="text-lg font-bold leading-7 text-gray-900">{StatsLabel[0].label}</h2>
+			<div tw="grid grid-cols-2 h-full overflow-hidden py-6">
+				{PageTabs.map((val, key) => {
+					return (
+						<div key={key} tw="flex items-center justify-start space-y-px space-x-px">
+							<div tw="flex items-start justify-center">
+								<dl tw="mr-2 mr-1">
+									<dt>
+										{val.title === "Total Pages" ? (
+											<PageSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
+										) : val.title === "Total Links" ? (
+											<LinksSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
+										) : val.title === "Total Images" ? (
+											<ImageSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
+										) : (
+											<InformationCircleSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
+										)}
+									</dt>
+								</dl>
+								<dl>
+									<dt tw="text-sm text-xs lg:text-sm leading-5 font-medium text-gray-500 truncate">{val.title}</dt>
 
-								{val.title === "Total Issues" && val.count > 0 ? (
-									<dd tw="mt-1 text-3xl leading-9 font-semibold text-red-700">{val.count}</dd>
-								) : (
-									<dd tw="mt-1 text-3xl leading-9 font-semibold text-gray-900">{val.count}</dd>
-								)}
-							</dl>
+									{val.title === "Total Issues" && val.count > 0 ? (
+										<dd tw="mt-1 text-3xl leading-9 font-semibold text-red-700">{val.count}</dd>
+									) : (
+										<dd tw="mt-1 text-3xl leading-9 font-semibold text-gray-900">{val.count}</dd>
+									)}
+								</dl>
+							</div>
 						</div>
-					</div>
-				);
-			})}
+					);
+				})}
+			</div>
 		</div>
 	) : (
 		<SiteStatsSkeleton />

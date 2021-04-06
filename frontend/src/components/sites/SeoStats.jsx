@@ -1,36 +1,30 @@
-const Chart = loadable(() => import('react-apexcharts'));
-import { seoChartContents } from 'enum/chartContents';
-// FIXME: Remove react-responsive package in favor of react-resize-detector
-import { useMediaQuery } from 'react-responsive';
-import Cookies from 'js-cookie';
-import fetch from 'node-fetch';
-import Link from 'next/link';
-import loadable from '@loadable/component';
-import PropTypes from 'prop-types';
-import Router from 'next/router';
-import SeoStatsLabel from 'public/labels/components/sites/SeoStats.json';
-import Skeleton from 'react-loading-skeleton';
-import tw from 'twin.macro';
-import useSWR from 'swr';
+// React
+import { useState, useEffect } from "react";
 
-const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
-	});
+// NextJS
+import { useRouter } from "next/router";
+import Link from "next/link";
 
-	const data = await res.json();
+// External
+import { NextSeo } from "next-seo";
+import { withResizeDetector } from "react-resize-detector";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import tw, { styled } from "twin.macro";
 
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
+// JSON
+import SeoStatsLabel from "public/labels/components/sites/SeoStats.json";
 
-	return data;
-};
+// Enums
+import { seoChartContents } from "src/enum/chartContents";
+
+// Hooks
+import { useScan, useStats } from "src/hooks/useSite";
+
+// Components
+const Chart = loadable(() => import("react-apexcharts"));
+const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
 
 const SitesSeoStatsDiv = styled.div`
 	.status-indicator {
@@ -62,12 +56,7 @@ const SitesSeoStatsDiv = styled.div`
 		display: block;
 		margin-left: auto !important;
 		margin-right: auto !important;
-		@media only screen and (min-width: 1281px) {
-			max-width: 45%;
-		}
-		@media only screen and (min-width: 1400px) {
-			max-width: 85%;
-		}
+		max-width: 16rem;
 	}
 	.apexcharts-legend-series {
 		display: flex;
@@ -99,227 +88,194 @@ const SitesSeoStatsDiv = styled.div`
 	}
 `;
 
-const SitesSeoStats = (props) => {
-	const isMobileOrDesktop = useMediaQuery({
-		query: '(min-device-width: 1300px)'
+const SitesSeoStats = ({ width, sid, user }) => {
+	const [componentReady, setComponentReady] = useState(false);
+	const [scanData, setScanData] = useState([]);
+	const [scanObjId, setScanObjId] = useState(0);
+	const [statsData, setStatsData] = useState([]);
+
+	const lgScreenBreakpoint = 1024;
+
+	const router = useRouter();
+
+	const { scan: scan, scanError: scanError } = useScan({
+		querySid: sid,
+		refreshInterval: 1000,
 	});
 
-	const { data: scan, error: scanError } = useSWR(
-		() =>
-			props.url.siteId
-				? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at`
-				: null,
-		fetcher
-	);
+	useEffect(() => {
+		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+			setScanData(scan);
 
-	let scanObjId = '';
+			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
+				setScanObjId(scanData.results[scanData.results.length - 1].id);
+			}
+		}
 
-	if (scan) {
-		let scanObj = [];
+		if (scanError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + scanError);
+		}
+	});
 
-		scan.results.map((val) => {
-			scanObj.push(val);
-			return scanObj;
-		});
+	const { stats: stats, statsError: statsError } = useStats({
+		querySid: sid,
+		scanObjId: scanObjId,
+	});
 
-		scanObj.map((val, index) => {
-			if (index == 0) scanObjId = val.id;
+	useEffect(() => {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setStatsData(stats);
+		}
 
-			return scanObjId;
-		});
-	}
+		if (statsError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + statsError);
+		}
+	}, [stats]);
 
-	const { data: stats, error: statsError } = useSWR(
-		() =>
-			props.url.siteId && scanObjId
-				? `/api/site/${props.url.siteId}/scan/${scanObjId}/`
-				: null,
-		fetcher
-	);
+	useEffect(() => {
+		if (user && statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [user, statsData]);
 
 	const legendClickHandler = (label) => {
-		let path = `/dashboard/site/${props.url.siteId}/seo`;
+		let path = `/site/${sid}/seo`;
 
 		seoChartContents.forEach((item, index) => {
-			if (label === item.label && item.filter !== '')
-				path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`;
+			if (label === item.label && item.filter !== "")
+				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		Router.push('/dashboard/site/[siteId]/seo', path);
+		router.push("/site/[siteId]/seo", path);
 	};
 
 	const chartSeries = [
-		stats && stats.num_pages_without_title !== undefined
-			? stats && stats.num_pages_without_title
-			: 0,
-		stats && stats.num_pages_without_description !== undefined
-			? stats && stats.num_pages_without_description
-			: 0,
-		stats && stats.num_pages_without_h1_first !== undefined
-			? stats && stats.num_pages_without_h1_first
-			: 0,
-		stats && stats.num_pages_without_h2_first !== undefined
-			? stats && stats.num_pages_without_h2_first
-			: 0,
-		stats && stats.num_pages_seo_ok !== undefined
-			? stats && stats.num_pages_seo_ok
-			: 0
+		statsData && statsData.num_pages_without_title !== undefined ? statsData.num_pages_without_title : 0,
+		statsData && statsData.num_pages_without_description !== undefined ? statsData.num_pages_without_description : 0,
+		statsData && statsData.num_pages_without_h1_first !== undefined ? statsData.num_pages_without_h1_first : 0,
+		statsData && statsData.num_pages_without_h2_first !== undefined ? statsData.num_pages_without_h2_first : 0,
+		statsData && statsData.num_pages_seo_ok !== undefined ? statsData.num_pages_seo_ok : 0,
 	];
 
 	const chartOptions = {
 		chart: {
-			id: 'seoStats',
-			type: 'donut',
+			id: "seoStats",
+			type: "donut",
 			events: {
 				legendClick: function (chartContext, seriesIndex, config) {
 					legendClickHandler(config.config.labels[seriesIndex]);
-				}
-			}
+				},
+			},
 		},
 		labels: seoChartContents.map((item) => item.label),
 		colors: seoChartContents.map((item) => item.color),
 		fill: {
-			colors: seoChartContents.map((item) => item.color)
+			colors: seoChartContents.map((item) => item.color),
 		},
 		stroke: {
-			width: 0
+			width: 0,
 		},
 		dataLabels: {
 			enabled: true,
 			formatter: function (val, opts) {
 				return opts.w.config.series[opts.seriesIndex];
-			}
+			},
 		},
 		legend: {
 			show: true,
-			fontSize: '14px',
-			position: 'bottom',
-			horizontalAlign: 'center',
+			fontSize: "14px",
+			position: "bottom",
+			horizontalAlign: "center",
 			height: 210,
 			itemMargin: {
 				horizontal: 15,
-				vertical: 10
+				vertical: 10,
 			},
 			formatter: function (seriesName, opts) {
 				return [
 					`<span className='legend-text'>${seriesName}</span>`,
-					'   ',
-					`<span className='legend-val'>${
-						opts.w.globals.series[opts.seriesIndex]
-					}</span>`
+					"   ",
+					`<span className='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`,
 				];
-			}
+			},
 		},
 		plotOptions: {
 			pie: {
+				customScale: 0.8,
 				donut: {
 					labels: {
 						show: true,
 						total: {
 							show: true,
 							showAlways: true,
-							label: 'SEO Errors',
-							fontSize: '15px',
-							color: '#2A324B',
+							label: "SEO Errors",
+							fontSize: "15px",
+							color: "#2A324B",
 							formatter: function (val) {
 								let num_errs = 0;
-								for (
-									let i = 0;
-									i < val.config.series.slice(0, -1).length;
-									i++
-								) {
+								for (let i = 0; i < val.config.series.slice(0, -1).length; i++) {
 									num_errs += val.config.series[i];
 								}
 
 								return num_errs;
-							}
-						}
-					}
-				}
-			}
+							},
+						},
+					},
+				},
+			},
 		},
 		responsive: [
 			{
-				breakpoint: 1281,
+				breakpoint: 320,
 				options: {
 					chart: {
-						width: 615,
-						height: 'auto'
+						width: 420,
+						height: "auto",
 					},
 					legend: {
-						position: 'bottom',
+						position: "bottom",
 						width: 315,
-						height: 'auto',
+						height: "auto",
 						itemMargin: {
 							horizontal: 25,
-							vertical: 10
-						}
-					}
-				}
-			}
-		]
+							vertical: 10,
+						},
+					},
+				},
+			},
+		],
 	};
-
-	{
-		statsError && <Layout>{statsError.message}</Layout>;
-	}
-	{
-		scanError && <Layout>{scanError.message}</Layout>;
-	}
 
 	return (
 		<SitesSeoStatsDiv>
-			<div
-				className={`bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg`}
-			>
-				<div className={`flex justify-between py-8 px-5`}>
-					<div className={`flex items-center`}>
-						<svg
-							fill='none'
-							viewBox='0 0 24 24'
-							stroke='currentColor'
-							className={`search w-5 h-5 text-gray-900 mr-2`}
-						>
-							<path
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-							></path>
-						</svg>
-						<h2 className={`text-lg font-bold leading-7 text-gray-900`}>
-							{SeoStatsLabel[0].label}
-						</h2>
+			<div tw="bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg h-full">
+				<div tw="flex justify-between py-8 px-5">
+					<div tw="flex items-center">
+						<SearchSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
+						<h2 tw="text-lg font-bold leading-7 text-gray-900">{SeoStatsLabel[0].label}</h2>
 					</div>
 					<div>
-						<Link
-							href={`/dashboard/site/[siteId]/seo`}
-							as={`/dashboard/site/${props.url.siteId}/seo`}
-						>
-							<a
-								className={`text-sm leading-5 font-medium text-gray-500 hover:underline`}
-							>
-								{SeoStatsLabel[1].label}
-							</a>
+						<Link href="/site/[siteId]/seo" as={`/site/${sid}/seo`} passHref>
+							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{SeoStatsLabel[1].label}</a>
 						</Link>
 					</div>
 				</div>
-				<div className={`flex justify-center`}>
-					{stats == undefined ? (
-						<div className={`skeleton-wrapper`}>
-							<Skeleton circle={true} duration={2} width={240} height={240} />
-							<br />
-							<br />
-							<Skeleton duration={2} width={240} height={190} />
-						</div>
-					) : (
+				<div tw="flex justify-center mx-auto max-w-sm">
+					{componentReady ? (
 						<Chart
 							options={chartOptions}
 							series={chartSeries}
-							type='donut'
-							width={`${isMobileOrDesktop ? '400' : '600'}`}
-							height={`${isMobileOrDesktop ? '530' : '530'}`}
+							type="donut"
+							width={lgScreenBreakpoint > width ? "400" : "600"}
+							height={lgScreenBreakpoint > width ? "530" : "530"}
 						/>
+					) : (
+						// FIXME: update skeleton for chart
+						<h1>Loading...</h1>
 					)}
 				</div>
 			</div>
@@ -327,6 +283,6 @@ const SitesSeoStats = (props) => {
 	);
 };
 
-export default SitesSeoStats;
-
 SitesSeoStats.propTypes = {};
+
+export default withResizeDetector(SitesSeoStats);

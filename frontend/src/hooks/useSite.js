@@ -145,3 +145,25 @@ export const useNonTlsPages = ({ querySid = 0, scanObjId = 0 }) => {
 
 	return { nonTlsPages, mutateNonTlsPages, nonTlsPagesError };
 };
+
+export const useNoPageIssues = ({ querySid = 0, scanObjId = 0 }) => {
+	const { data: noPageIssues, mutate: mutateNoPageIssues, error: noPageIssuesError } = useSWR(
+		() =>
+			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/?size_total_max=1048576&tls_total=true"
+				: null,
+		useFetcher,
+		{
+			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+				if (error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/?size_total_max=1048576&tls_total=true")
+					return;
+				if (retryCount >= 10) return;
+
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			},
+		}
+	);
+
+	return { noPageIssues, mutateNoPageIssues, noPageIssuesError };
+};

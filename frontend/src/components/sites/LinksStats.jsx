@@ -1,42 +1,31 @@
 // React
+import { useState, useEffect } from "react";
 
 // NextJS
-import Router from "next/router";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
-import { linksChartContents } from "enum/chartContents";
-import ResizeObserver from "react-resize-detector";
-import LinksStatsLabel from "public/labels/components/sites/LinksStats.json";
+// External
+import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
-import useSWR from "swr";
-import Layout from "components/Layout";
+import tw, { styled } from "twin.macro";
 
+// JSON
+import LinksStatsLabel from "public/labels/components/sites/LinksStats.json";
+
+// Enums
+import { linksChartContents } from "src/enum/chartContents";
+
+// Hooks
+import { useScan, useStats, useLinks } from "src/hooks/useSite";
+
+// Components
 const Chart = loadable(() => import("react-apexcharts"));
-
-const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: "GET",
-		headers: {
-			Accept: "application/json",
-			"Content-Type": "application/json",
-			"X-CSRFToken": Cookies.get("csrftoken"),
-		},
-	});
-
-	const data = await res.json();
-
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
-
-	return data;
-};
+const LinksSvg = loadable(() => import("src/components/svg/outline/LinksSvg"));
 
 const SitesLinksStatsDiv = styled.div`
-	height: 100%;
 	.status-indicator {
 		display: block;
 		flex: 0 0 0.85rem;
@@ -64,10 +53,9 @@ const SitesLinksStatsDiv = styled.div`
 	}
 	.apexcharts-legend {
 		display: block;
-		@media only screen and (max-width: 640px) {
-			margin-left: auto !important;
-			margin-right: auto !important;
-		}
+		margin-left: auto !important;
+		margin-right: auto !important;
+		max-width: 16rem;
 	}
 	.apexcharts-legend-series {
 		display: flex;
@@ -94,62 +82,82 @@ const SitesLinksStatsDiv = styled.div`
 	.legend-text {
 		margin-right: 10px;
 	}
-	.space {
-		width: 20px;
-	}
 	.skeleton-wrapper {
 		margin-bottom: 20px;
 	}
 `;
 
-const SitesLinksStats = (props) => {
+const SitesLinksStats = ({ width, sid, user }) => {
+	const [componentReady, setComponentReady] = useState(false);
+	const [linksData, setLinksData] = useState([]);
+	const [scanData, setScanData] = useState([]);
+	const [scanObjId, setScanObjId] = useState(0);
+	const [statsData, setStatsData] = useState([]);
+
+	const lgScreenBreakpoint = 1024;
+
 	const router = useRouter();
-	// TODO: update this using ResizeObserver
-	const isMobileOrDesktop = useMediaQuery({
-		query: "(min-device-width: 1300px)",
+
+	const { scan: scan, scanError: scanError } = useScan({
+		querySid: sid,
+		refreshInterval: 1000,
 	});
 
-	const { data: scan, error: scanError } = useSWR(
-		() => (props.url.siteId ? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at` : null),
-		fetcher
-	);
+	useEffect(() => {
+		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+			setScanData(scan);
 
-	let scanObjId = "";
+			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
+				setScanObjId(scanData.results[scanData.results.length - 1].id);
+			}
+		}
 
-	if (scan) {
-		let scanObj = [];
+		if (scanError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + scanError);
+		}
+	});
 
-		scan.results.map((val) => {
-			scanObj.push(val);
-			return scanObj;
-		});
+	const { stats: stats, statsError: statsError } = useStats({
+		querySid: sid,
+		scanObjId: scanObjId,
+	});
 
-		scanObj.map((val, index) => {
-			if (index == 0) scanObjId = val.id;
+	const { links: links, linksError: linksError } = useLinks({
+		querySid: sid,
+		scanObjId: scanObjId,
+	});
 
-			return scanObjId;
-		});
-	}
+	useEffect(() => {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setStatsData(stats);
+		}
 
-	const { data: stats, error: statsError } = useSWR(
-		() => (props.url.siteId && scanObjId ? `/api/site/${props.url.siteId}/scan/${scanObjId}/` : null),
-		fetcher
-	);
+		if (links && links !== undefined && Object.keys(links).length > 0) {
+			setLinksData(links);
+		}
 
-	const { data: links, error: linksError } = useSWR(
-		() => (props.url.siteId && scanObjId ? `/api/site/${props.url.siteId}/scan/${scanObjId}/link/` : null),
-		fetcher
-	);
+		if (statsError || linksError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + statsError ? statsError : linksError);
+		}
+	}, [stats, links]);
 
-	{
-		statsError && <Layout>{statsError.message}</Layout>;
-	}
-	{
-		scanError && <Layout>{scanError.message}</Layout>;
-	}
-	{
-		linksError && <Layout>{linksError.message}</Layout>;
-	}
+	useEffect(() => {
+		if (
+			user &&
+			statsData &&
+			statsData !== undefined &&
+			Object.keys(statsData).length > 0 &&
+			linksData &&
+			linksData !== undefined &&
+			Object.keys(linksData).length > 0
+		) {
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [user, statsData, linksData]);
 
 	// const setBrokenLinks = type => {
 	// 	let valLength = 0
@@ -168,7 +176,7 @@ const SitesLinksStats = (props) => {
 	// }
 
 	const legendClickHandler = (label) => {
-		let path = `/site/${props.url.siteId}/links`;
+		let path = `/site/${sid}/links`;
 
 		linksChartContents.forEach((item, index) => {
 			if (label === item.label && item.filter !== "")
@@ -181,8 +189,8 @@ const SitesLinksStats = (props) => {
 	const chartSeries = [
 		// setBrokenLinks('PAGE'),
 		// setBrokenLinks('EXTERNAL'),
-		stats && stats.num_non_ok_links !== undefined ? stats && stats.num_non_ok_links : 0,
-		stats && stats.num_ok_links !== undefined ? stats && stats.num_ok_links : 0,
+		statsData && statsData.num_non_ok_links !== undefined ? statsData.num_non_ok_links : 0,
+		statsData && statsData.num_ok_links !== undefined ? statsData.num_ok_links : 0,
 	];
 
 	const chartOptions = {
@@ -212,13 +220,12 @@ const SitesLinksStats = (props) => {
 		legend: {
 			show: true,
 			fontSize: "14px",
-			position: "right",
-			floating: false,
-			width: 300,
+			position: "bottom",
 			horizontalAlign: "center",
+			height: 210,
 			itemMargin: {
-				horizontal: 5,
-				vertical: 5,
+				horizontal: 15,
+				vertical: 10,
 			},
 			formatter: function (seriesName, opts) {
 				return [
@@ -230,6 +237,7 @@ const SitesLinksStats = (props) => {
 		},
 		plotOptions: {
 			pie: {
+				customScale: 0.8,
 				donut: {
 					labels: {
 						show: true,
@@ -254,17 +262,18 @@ const SitesLinksStats = (props) => {
 		},
 		responsive: [
 			{
-				breakpoint: 1600,
+				breakpoint: 320,
 				options: {
 					chart: {
-						width: 315,
-						height: 415,
+						width: 420,
+						height: "auto",
 					},
 					legend: {
 						position: "bottom",
+						width: 315,
 						height: "auto",
 						itemMargin: {
-							horizontal: 15,
+							horizontal: 25,
 							vertical: 10,
 						},
 					},
@@ -275,42 +284,30 @@ const SitesLinksStats = (props) => {
 
 	return (
 		<SitesLinksStatsDiv>
-			<div className={`bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg h-full`}>
-				<div className={`flex justify-between py-8 px-5`}>
-					<div className={`flex items-center`}>
-						<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className={`search w-5 h-5 text-gray-900 mr-2`}>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth="2"
-								d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-							></path>
-						</svg>
-						<h2 className={`text-lg font-bold leading-7 text-gray-900`}>{LinksStatsLabel[0].label}</h2>
+			<div tw="bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg h-full">
+				<div tw="flex justify-between py-8 px-5">
+					<div tw="flex items-center">
+						<LinksSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
+						<h2 tw="text-lg font-bold leading-7 text-gray-900">{LinksStatsLabel[0].label}</h2>
 					</div>
 					<div>
-						<Link href={`/site/[siteId]/links`} as={`/site/${props.url.siteId}/links`}>
-							<a className={`text-sm leading-5 font-medium text-gray-500 hover:underline`}>
-								{LinksStatsLabel[1].label}
-							</a>
+						<Link href="/site/[siteId]/links" as={`/site/${sid}/links`} passHref>
+							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{LinksStatsLabel[1].label}</a>
 						</Link>
 					</div>
 				</div>
-				<div className={`flex justify-center`}>
-					{stats == undefined && scan == undefined && links == undefined ? (
-						<div className={`skeleton-wrapper`}>
-							<Skeleton circle={true} duration={2} width={240} height={240} />
-							<span className={`space`}></span>
-							<Skeleton duration={2} width={240} height={240} />
-						</div>
-					) : (
+				<div tw="flex justify-center mx-auto max-w-sm">
+					{componentReady ? (
 						<Chart
 							options={chartOptions}
 							series={chartSeries}
 							type="donut"
-							width={`${isMobileOrDesktop ? "600" : "300"}`}
-							height={`${isMobileOrDesktop ? "260" : "530"}`}
+							width={lgScreenBreakpoint > width ? "400" : "600"}
+							height={lgScreenBreakpoint > width ? "530" : "530"}
 						/>
+					) : (
+						// FIXME: update skeleton for chart
+						<h1>Loading...</h1>
 					)}
 				</div>
 			</div>
@@ -320,4 +317,4 @@ const SitesLinksStats = (props) => {
 
 SitesLinksStats.propTypes = {};
 
-export default SitesLinksStats;
+export default withResizeDetector(SitesLinksStats);

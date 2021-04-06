@@ -1,37 +1,29 @@
-const Chart = loadable(() => import('react-apexcharts'));
-import { imagesChartContents } from 'enum/chartContents';
-// FIXME: Remove react-responsive package in favor of react-resize-detector
-import { useMediaQuery } from 'react-responsive';
-import Cookies from 'js-cookie';
-import fetch from 'node-fetch';
-import Layout from 'components/Layout';
-import Link from 'next/link';
-import loadable from '@loadable/component';
-import ImagesStatsLabel from 'public/labels/components/sites/ImagesStats.json';
-import PropTypes from 'prop-types';
-import Router from 'next/router';
-import Skeleton from 'react-loading-skeleton';
-import tw from 'twin.macro';
-import useSWR from 'swr';
+// React
+import { useState, useEffect } from "react";
 
-const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
-	});
+// NextJS
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-	const data = await res.json();
+// External
+import { NextSeo } from "next-seo";
+import { withResizeDetector } from "react-resize-detector";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import tw, { styled } from "twin.macro";
 
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
+// JSON
+import ImagesStatsLabel from "public/labels/components/sites/ImagesStats.json";
 
-	return data;
-};
+// Enums
+import { imagesChartContents } from "src/enum/chartContents";
+
+// Hooks
+import { useScan, useStats, useImages } from "src/hooks/useSite";
+
+// Components
+const Chart = loadable(() => import("react-apexcharts"));
+const ImageSvg = loadable(() => import("src/components/svg/outline/ImageSvg"));
 
 const SitesImagesStatsDiv = styled.div`
 	.status-indicator {
@@ -63,12 +55,7 @@ const SitesImagesStatsDiv = styled.div`
 		display: block;
 		margin-left: auto !important;
 		margin-right: auto !important;
-		@media only screen and (min-width: 1281px) {
-			max-width: 45%;
-		}
-		@media only screen and (min-width: 1400px) {
-			max-width: 85%;
-		}
+		max-width: 16rem;
 	}
 	.apexcharts-legend-series {
 		display: flex;
@@ -100,234 +87,210 @@ const SitesImagesStatsDiv = styled.div`
 	}
 `;
 
-const SitesImagesStats = (props) => {
-	const isMobileOrDesktop = useMediaQuery({
-		query: '(min-device-width: 1300px)'
+const SitesImagesStats = ({ width, sid, user }) => {
+	const [componentReady, setComponentReady] = useState(false);
+	const [imagesData, setImagesData] = useState([]);
+	const [scanData, setScanData] = useState([]);
+	const [scanObjId, setScanObjId] = useState(0);
+	const [statsData, setStatsData] = useState([]);
+
+	const lgScreenBreakpoint = 1024;
+
+	const router = useRouter();
+
+	const { scan: scan, scanError: scanError } = useScan({
+		querySid: sid,
+		refreshInterval: 1000,
 	});
 
-	const { data: scan, error: scanError } = useSWR(
-		() =>
-			props.url.siteId
-				? `/api/site/${props.url.siteId}/scan/?ordering=-finished_at`
-				: null,
-		fetcher
-	);
+	useEffect(() => {
+		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+			setScanData(scan);
 
-	let scanObjId = '';
+			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
+				setScanObjId(scanData.results[scanData.results.length - 1].id);
+			}
+		}
 
-	if (scan) {
-		let scanObj = [];
+		if (scanError) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + scanError);
+		}
+	});
 
-		scan.results.map((val) => {
-			scanObj.push(val);
-			return scanObj;
-		});
+	const { stats: stats, statsError: statsError } = useStats({
+		querySid: sid,
+		scanObjId: scanObjId,
+	});
 
-		scanObj.map((val, index) => {
-			if (index == 0) scanObjId = val.id;
+	const { images: images, imagesError: imagesError } = useImages({
+		querySid: sid,
+		scanObjId: scanObjId,
+	});
 
-			return scanObjId;
-		});
-	}
+	useEffect(() => {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setStatsData(stats);
+		}
 
-	const { data: stats, error: statsError } = useSWR(
-		() =>
-			props.url.siteId && scanObjId
-				? `/api/site/${props.url.siteId}/scan/${scanObjId}/`
-				: null,
-		fetcher
-	);
+		if (images && images !== undefined && Object.keys(images).length > 0) {
+			setImagesData(images);
+		}
 
-	const { data: images, error: imagesError } = useSWR(
-		() =>
-			props.url.siteId && scanObjId
-				? `/api/site/${props.url.siteId}/scan/${scanObjId}/image/?tls_status=NONE&tls_status=ERROR`
-				: null,
-		fetcher
-	);
+		if (statsError || imagesData) {
+			// TODO: add generic alert here
+			console.log("ERROR: " + statsError ? statsError : imagesData);
+		}
+	}, [stats, images]);
+
+	useEffect(() => {
+		if (
+			user &&
+			statsData &&
+			statsData !== undefined &&
+			Object.keys(statsData).length > 0 &&
+			imagesData &&
+			imagesData !== undefined &&
+			Object.keys(imagesData).length > 0
+		) {
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [user, statsData, imagesData]);
 
 	const legendClickHandler = (label) => {
-		let path = `/dashboard/site/${props.url.siteId}/images`;
+		let path = `/site/${sid}/images`;
 
 		imagesChartContents.forEach((item, index) => {
-			if (label === item.label && item.filter !== '')
-				path += path.includes('?') ? `&${item.filter}` : `?${item.filter}`;
+			if (label === item.label && item.filter !== "")
+				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		Router.push('/dashboard/site/[siteId]/images', path);
+		Router.push("/site/[siteId]/images", path);
 	};
 
 	const chartSeries = [
-		stats && stats.num_non_ok_images !== undefined
-			? stats && stats.num_non_ok_images
-			: 0,
-		images && images.count !== undefined ? images && images.count : 0,
-		stats && stats.num_ok_images !== undefined
-			? stats && stats.num_ok_images
-			: 0
+		statsData && statsData.num_non_ok_images !== undefined ? statsData.num_non_ok_images : 0,
+		imagesData && imagesData.count !== undefined ? imagesData.count : 0,
+		statsData && statsData.num_ok_images !== undefined ? statsData.num_ok_images : 0,
 	];
 
 	const chartOptions = {
 		chart: {
-			type: 'donut',
+			id: "linkStatus",
+			type: "donut",
 			events: {
 				legendClick: function (chartContext, seriesIndex, config) {
 					legendClickHandler(config.config.labels[seriesIndex]);
-				}
-			}
+				},
+			},
 		},
-		// labels: ['No Issues', 'Broken Images', 'Broken Image Links', 'Unlinked Images', 'No Alt Text'],
-		// colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9'],
-		// fill: {
-		//   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338', '#D8E7E9']
-		// },
 		labels: imagesChartContents.map((item) => item.label),
 		colors: imagesChartContents.map((item) => item.color),
 		fill: {
-			colors: imagesChartContents.map((item) => item.color)
+			colors: imagesChartContents.map((item) => item.color),
 		},
 		stroke: {
-			width: 0
+			width: 0,
 		},
 		dataLabels: {
 			enabled: true,
 			formatter: function (val, opts) {
 				return opts.w.config.series[opts.seriesIndex];
-			}
+			},
 		},
 		legend: {
 			show: true,
-			fontSize: '14px',
-			position: 'bottom',
-			horizontalAlign: 'center',
+			fontSize: "14px",
+			position: "bottom",
+			horizontalAlign: "center",
 			height: 210,
 			itemMargin: {
 				horizontal: 15,
-				vertical: 10
+				vertical: 10,
 			},
 			formatter: function (seriesName, opts) {
 				return [
 					`<span className='legend-text'>${seriesName}</span>`,
-					'   ',
-					`<span className='legend-val'>${
-						opts.w.globals.series[opts.seriesIndex]
-					}</span>`
+					"   ",
+					`<span className='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`,
 				];
-			}
+			},
 		},
 		plotOptions: {
 			pie: {
+				customScale: 0.8,
 				donut: {
 					labels: {
 						show: true,
 						total: {
 							show: true,
 							showAlways: true,
-							label: 'Image Errors',
-							fontSize: '15px',
-							color: '#2A324B',
+							label: "Link Errors",
+							fontSize: "15px",
+							color: "#2A324B",
 							formatter: function (val) {
 								let num_errs = 0;
-								for (
-									let i = 0;
-									i < val.config.series.slice(0, -1).length;
-									i++
-								) {
+								for (let i = 0; i < val.config.series.slice(0, -1).length; i++) {
 									num_errs += val.config.series[i];
 								}
 
 								return num_errs;
-							}
-						}
-					}
-				}
-			}
+							},
+						},
+					},
+				},
+			},
 		},
 		responsive: [
 			{
-				breakpoint: 1281,
+				breakpoint: 320,
 				options: {
 					chart: {
-						width: 525,
-						height: 'auto'
+						width: 420,
+						height: "auto",
 					},
 					legend: {
-						position: 'bottom',
+						position: "bottom",
 						width: 315,
-						height: 'auto',
+						height: "auto",
 						itemMargin: {
 							horizontal: 25,
-							vertical: 10
-						}
-					}
-				}
-			}
-		]
+							vertical: 10,
+						},
+					},
+				},
+			},
+		],
 	};
-
-	{
-		statsError && <Layout>{statsError.message}</Layout>;
-	}
-	{
-		scanError && <Layout>{scanError.message}</Layout>;
-	}
-	{
-		imagesError && <Layout>{imagesError.message}</Layout>;
-	}
 
 	return (
 		<SitesImagesStatsDiv>
-			<div
-				className={`bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg`}
-			>
-				<div className={`flex justify-between py-8 px-5`}>
-					<div className={`flex items-center`}>
-						<svg
-							fill='none'
-							viewBox='0 0 24 24'
-							stroke='currentColor'
-							className={`search w-5 h-5 text-gray-900 mr-2`}
-						>
-							<path
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth='2'
-								d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
-							></path>
-						</svg>
-						<h2 className={`text-lg font-bold leading-7 text-gray-900`}>
-							{ImagesStatsLabel[0].label}
-						</h2>
+			<div tw="bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg h-full">
+				<div tw="flex justify-between py-8 px-5">
+					<div tw="flex items-center">
+						<ImageSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
+						<h2 tw="text-lg font-bold leading-7 text-gray-900">{ImagesStatsLabel[0].label}</h2>
 					</div>
 					<div>
-						<Link
-							href={`/dashboard/site/[siteId]/images`}
-							as={`/dashboard/site/${props.url.siteId}/images`}
-						>
-							<a
-								className={`text-sm leading-5 font-medium text-gray-500 hover:underline`}
-							>
-								{ImagesStatsLabel[1].label}
-							</a>
+						<Link href="/site/[siteId]/images" as={`/site/${sid}/images`} passHref>
+							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{ImagesStatsLabel[1].label}</a>
 						</Link>
 					</div>
 				</div>
-				<div className={`flex justify-center`}>
-					{stats == undefined ? (
-						<div className={`skeleton-wrapper`}>
-							<Skeleton circle={true} duration={2} width={240} height={240} />
-							<br />
-							<br />
-							<Skeleton duration={2} width={240} height={190} />
-						</div>
-					) : (
+				<div tw="flex justify-center mx-auto max-w-sm">
+					{componentReady ? (
 						<Chart
 							options={chartOptions}
 							series={chartSeries}
-							type='donut'
-							width={`${isMobileOrDesktop ? '400' : '600'}`}
-							height={`${isMobileOrDesktop ? '530' : '530'}`}
+							type="donut"
+							width={lgScreenBreakpoint > width ? "400" : "600"}
+							height={lgScreenBreakpoint > width ? "530" : "530"}
 						/>
+					) : (
+						// FIXME: update skeleton for chart
+						<h1>Loading...</h1>
 					)}
 				</div>
 			</div>
