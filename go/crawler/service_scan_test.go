@@ -25,7 +25,7 @@ func TestNormalizeURLWithoutBase(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if result.String() != tc.Expected {
+			if result != tc.Expected {
 				t.Errorf("normalizeURL(%v) = %v, want %v", tc.Input, result, tc.Expected)
 			}
 		})
@@ -55,7 +55,7 @@ func TestNormalizeURLWithBase(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if result.String() != tc.Expected {
+			if result != tc.Expected {
 				t.Errorf("normalizeURL(%v) = %v, want %v", tc.Input, result, tc.Expected)
 			}
 		})

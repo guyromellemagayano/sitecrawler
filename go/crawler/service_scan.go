@@ -114,7 +114,7 @@ func (s *ScanService) Start(ctx context.Context, log *zap.SugaredLogger, scan *d
 	if err != nil {
 		return errors.Wrap(err, "could not init link cache")
 	}
-	fifoCache, err := NewFifoCache(s.Database, scan.ID)
+	fifoCache, err := NewQueueDb(s.Database, scan.ID, NewQueueCacheFifo())
 	if err != nil {
 		return errors.Wrap(err, "could not init fifo cache")
 	}
@@ -126,7 +126,7 @@ func (s *ScanService) Start(ctx context.Context, log *zap.SugaredLogger, scan *d
 		tlsCache:  NewTlsCache(),
 		rateLimit: NewRateLimit(),
 		linkCache: linkCache,
-		fifoCache: fifoCache,
+		queue:     fifoCache,
 	}
 	return scanner.Start(ctx, log)
 }
@@ -138,7 +138,7 @@ type scanner struct {
 	tlsCache  *TlsCache
 	rateLimit *RateLimit
 	linkCache *LinkCache
-	fifoCache *FifoCache
+	queue     Queue
 }
 
 func (s *scanner) Start(ctx context.Context, log *zap.SugaredLogger) error {
@@ -147,14 +147,19 @@ func (s *scanner) Start(ctx context.Context, log *zap.SugaredLogger) error {
 		return errors.Wrap(err, "could not normalize site url")
 	}
 
-	if s.fifoCache.Len() == 0 {
-		s.addLinkWithRelation(log, s.ScanService.Database, fifoEntry{
+	l, err := s.queue.Len(s.ScanService.Database)
+	if err != nil {
+		return errors.Wrap(err, "could not get start queue length")
+	}
+	if l == 0 {
+		s.addLinkWithRelation(log, s.ScanService.Database, &QueueEntry{
 			Url:   u,
 			Depth: 0,
-		}, relation{ChildType: CHILD_NONE})
+		}, QueueRelation{ChildType: CHILD_NONE})
+		l++
 	}
 
-	for s.fifoCache.Len() > 0 {
+	for l > 0 {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
@@ -162,21 +167,30 @@ func (s *scanner) Start(ctx context.Context, log *zap.SugaredLogger) error {
 		}
 
 		err := s.ScanService.Database.RunInTransaction(func(db *database.Database) error {
-			entry := s.fifoCache.Front()
+			entry, err := s.queue.Front(db)
+			if err != nil {
+				return errors.Wrap(err, "could not get queue front")
+			}
 
-			childLinkId, err := s.scanURL(log, db, entry.Url, entry.Depth)
+			log.Info(entry)
+			childLinkId, err := s.scanURL(log, db, entry)
 			if err != nil {
 				return err
 			}
 
-			for _, r := range entry.Relations {
+			relations, err := s.queue.GetRelations(db, entry.Url)
+			if err != nil {
+				return errors.Wrap(err, "could not get relations")
+			}
+
+			for _, r := range relations {
 				if err := s.saveRelation(db, r, childLinkId); err != nil {
 					return errors.Wrap(err, "could not save relation")
 				}
 			}
 
-			if err := s.fifoCache.DeleteFront(db); err != nil {
-				return errors.Wrap(err, "could not delete fifo cache entry")
+			if err := s.queue.DeleteFront(db); err != nil {
+				return errors.Wrap(err, "could not delete queue cache entry")
 			}
 
 			return nil
@@ -184,17 +198,22 @@ func (s *scanner) Start(ctx context.Context, log *zap.SugaredLogger) error {
 		if err != nil {
 			return errors.Wrap(err, "scan transaction failed")
 		}
+
+		l, err = s.queue.Len(s.ScanService.Database)
+		if err != nil {
+			return errors.Wrap(err, "could not get start queue length")
+		}
 	}
 
 	return nil
 }
 
-func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceUrl *url.URL, depth uint) (int, error) {
-	if linkID, ok := s.linkCache.LinkIDs[sourceUrl.String()]; ok {
+func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, entry *QueueEntry) (int, error) {
+	if linkID, ok := s.linkCache.LinkIDs[entry.Url]; ok {
 		return linkID, nil
 	}
 
-	link, doc := s.loadURL(log, db, sourceUrl)
+	link, doc := s.loadURL(log, db, entry.Url)
 	// Recheck "destination url after redirects" if it's in cache
 	if linkID, ok := s.linkCache.LinkIDs[link.Url]; ok {
 		return linkID, nil
@@ -210,7 +229,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 
 	// cache both source and destination id
 	s.linkCache.Add(link)
-	s.linkCache.LinkIDs[sourceUrl.String()] = link.ID
+	s.linkCache.LinkIDs[entry.Url] = link.ID
 
 	// If we have doc, than it's a page and we descend the scan, otherwise return
 	if doc == nil {
@@ -223,7 +242,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 	}
 
 	// check crawl limits
-	if depth > depthLimit {
+	if entry.Depth > depthLimit {
 		log.Warnw("Depth limit hit",
 			"link_id", link.ID,
 		)
@@ -254,10 +273,10 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 			return
 		}
 
-		s.addLinkWithRelation(log, db, fifoEntry{
+		s.addLinkWithRelation(log, db, &QueueEntry{
 			Url:   childUrl,
-			Depth: depth + 1,
-		}, relation{
+			Depth: entry.Depth + 1,
+		}, QueueRelation{
 			ParentId:  link.ID,
 			ChildType: CHILD_LINK,
 		})
@@ -280,7 +299,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 			return
 		}
 
-		rel := relation{
+		rel := QueueRelation{
 			ParentId:  link.ID,
 			ChildType: CHILD_IMAGE,
 		}
@@ -290,9 +309,9 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 			rel.SetData("AltText", alt)
 		}
 
-		s.addLinkWithRelation(log, db, fifoEntry{
+		s.addLinkWithRelation(log, db, &QueueEntry{
 			Url:   childUrl,
-			Depth: depth + 1,
+			Depth: entry.Depth + 1,
 		}, rel)
 	})
 
@@ -313,10 +332,10 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 			return
 		}
 
-		s.addLinkWithRelation(log, db, fifoEntry{
+		s.addLinkWithRelation(log, db, &QueueEntry{
 			Url:   childUrl,
-			Depth: depth + 1,
-		}, relation{
+			Depth: entry.Depth + 1,
+		}, QueueRelation{
 			ParentId:  link.ID,
 			ChildType: CHILD_SCRIPT,
 		})
@@ -339,10 +358,10 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 			return
 		}
 
-		s.addLinkWithRelation(log, db, fifoEntry{
+		s.addLinkWithRelation(log, db, &QueueEntry{
 			Url:   childUrl,
-			Depth: depth + 1,
-		}, relation{
+			Depth: entry.Depth + 1,
+		}, QueueRelation{
 			ParentId:  link.ID,
 			ChildType: CHILD_STYLESHEET,
 		})
@@ -351,35 +370,41 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, sourceU
 	return link.ID, nil
 }
 
-func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, url *url.URL) (*database.CrawlLink, *goquery.Document) {
+func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, urlStr string) (*database.CrawlLink, *goquery.Document) {
 	crawlLink := &database.CrawlLink{
 		ScanID:    s.Scan.ID,
 		CreatedAt: time.Now(),
-		Url:       common.LenLimit(url.String(), 2047),
+		Url:       common.LenLimit(urlStr, 2047),
 		Type:      common.TYPE_OTHER,
 		Status:    common.STATUS_OK,
 		TlsStatus: common.TLS_OK,
 	}
 
-	if !s.isWebScheme(url) {
+	handleError := func(err error) {
+		status, errStr := common.SerializeLoadError(log, urlStr, err)
+		crawlLink.Status = status
+		crawlLink.Error = &errStr
+	}
+
+	u, err := url.Parse(urlStr)
+	if err != nil {
+		handleError(err)
+		return crawlLink, nil
+	}
+
+	if !s.isWebScheme(u) {
 		crawlLink.Type = common.TYPE_NON_WEB
 		return crawlLink, nil
 	}
 
-	s.rateLimit.Limit(url)
+	s.rateLimit.Limit(u)
 
 	start := time.Now()
 	defer func() {
 		crawlLink.ResponseTime = int(time.Since(start).Milliseconds())
 	}()
 
-	handleError := func(err error) {
-		status, errStr := common.SerializeLoadError(log, url.String(), err)
-		crawlLink.Status = status
-		crawlLink.Error = &errStr
-	}
-
-	resp, err := s.ScanService.LoadService.Load(log, url.String())
+	resp, err := s.ScanService.LoadService.Load(log, urlStr)
 	defer resp.Close()
 	if err != nil {
 		handleError(err)
@@ -400,7 +425,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, url *ur
 	// Override url with actual destination url after redirects
 	crawlLink.Url = common.LenLimit(resp.Request.URL.String(), 2047)
 
-	s.rateLimit.Update(url, resp)
+	s.rateLimit.Update(u, resp)
 
 	tlsStatus, tlsId, err := s.tlsCache.Extract(db, resp.TLS, resp.Request)
 	if err != nil {
@@ -460,35 +485,44 @@ func (s *scanner) savePageData(db *database.Database, doc *goquery.Document, lin
 
 }
 
-// adds link to fifo for scanning, save relation to parent objects
-func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, db *database.Database, fe fifoEntry, r relation) {
-	urlStr := fe.Url.String()
-
-	// bypass fifo if url has been scanned already
-	if childId, ok := s.linkCache.LinkIDs[urlStr]; ok {
+// adds link to queue for scanning, save relation to parent objects
+func (s *scanner) addLinkWithRelation(log *zap.SugaredLogger, db *database.Database, entry *QueueEntry, r QueueRelation) {
+	// bypass queue if url has been scanned already
+	if childId, ok := s.linkCache.LinkIDs[entry.Url]; ok {
 		if err := s.saveRelation(db, r, childId); err != nil {
 			log.Errorf("Could not save relation: %v", err)
 		}
-		// if url is already in fifo just add r to it's relations
-	} else if oldFe := s.fifoCache.Get(urlStr); oldFe != nil {
-		if err := s.fifoCache.AddRelation(db, urlStr, r); err != nil {
-			log.Errorf("Could not add relation to fifo: %v", err)
-		}
-		// add to fifo if not hiting total limit
-	} else if len(s.linkCache.LinkIDs)+s.fifoCache.Len() <= totalLimit {
-		fep := &fe
-		fep.Relations = []relation{r}
-		if err := s.fifoCache.Add(db, s.Scan.ID, fep); err != nil {
-			log.Errorf("Could not add to fifo: %v", err)
-		}
+		// if url is already in queue just add r to it's relations
 	} else {
-		log.Warnw("Total limit hit",
-			"url", fe.Url,
-		)
+		exists, err := s.queue.Exists(db, entry.Url)
+		if err != nil {
+			log.Errorf("Could not check if link exists in queue: %v", err)
+		} else if exists {
+			if err := s.queue.AddRelation(db, entry.Url, r); err != nil {
+				log.Errorf("Could not add relation to queue: %v", err)
+			}
+			// add to queue if not hiting total limit
+		} else {
+			queueLen, err := s.queue.Len(db)
+			if err != nil {
+				log.Errorf("Could not get queue len: %v", err)
+			} else if len(s.linkCache.LinkIDs)+queueLen <= totalLimit {
+				if err := s.queue.Add(db, entry); err != nil {
+					log.Errorf("Could not add entry to queue: %v", err)
+				}
+				if err := s.queue.AddRelation(db, entry.Url, r); err != nil {
+					log.Errorf("Could not add relation to queue: %v", err)
+				}
+			} else {
+				log.Warnw("Total limit hit",
+					"url", entry.Url,
+				)
+			}
+		}
 	}
 }
 
-func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId int) error {
+func (s *scanner) saveRelation(db *database.Database, r QueueRelation, childLinkId int) error {
 	switch r.ChildType {
 	case CHILD_LINK:
 		linkLink := &database.CrawlLinkLink{
@@ -560,7 +594,7 @@ func (s *scanner) saveRelation(db *database.Database, r relation, childLinkId in
 }
 
 // normalizeUrl resolves urls by parent reference and removes query params and anchors
-func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
+func (s *scanner) normalizeURL(parent string, child string) (string, error) {
 	// Remove leading and trailing whitespace
 	child = strings.TrimSpace(child)
 	// Remove new lines from the middle of url
@@ -572,7 +606,7 @@ func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
 		// just use child as path
 		path, err := url.PathUnescape(child)
 		if err != nil {
-			return nil, errors.Wrap(err, "could not unescape path")
+			return "", errors.Wrap(err, "could not unescape path")
 		}
 		u = &url.URL{Path: path}
 	}
@@ -581,11 +615,11 @@ func (s *scanner) normalizeURL(parent string, child string) (*url.URL, error) {
 	if parent != "" {
 		parentUrl, err := url.Parse(parent)
 		if err != nil {
-			return nil, errors.Wrap(err, "could not parse parent url")
+			return "", errors.Wrap(err, "could not parse parent url")
 		}
-		return parentUrl.ResolveReference(u), nil
+		return parentUrl.ResolveReference(u).String(), nil
 	}
-	return u, nil
+	return u.String(), nil
 }
 
 func (s *scanner) isWebScheme(u *url.URL) bool {
