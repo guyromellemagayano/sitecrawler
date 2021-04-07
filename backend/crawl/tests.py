@@ -97,7 +97,7 @@ We've recrawled your site(s) and here's what we found:
 - other.com: 0 issues
 
 Visit your dashboard to learn more:
-https://example.com/dashboard/sites
+https://example.com
 
 Thanks,
 example.com
