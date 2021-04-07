@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "prod_crawler" {
   TASK_DEFINITION
 
   cpu = 256
-  memory = 1024
+  memory = 512
 
   requires_compatibilities = ["FARGATE"]
   network_mode = "awsvpc"
