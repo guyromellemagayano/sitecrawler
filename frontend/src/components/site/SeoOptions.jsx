@@ -1,64 +1,64 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import tw from 'twin.macro';
-import { Transition } from '@headlessui/react';
+import { useState } from "react";
+import { useRouter } from "next/router";
+import tw from "twin.macro";
+import { Transition } from "@headlessui/react";
 
 const SeoOptionsDiv = styled.div``;
 
 const SeoOptions = ({ searchKey, onSearchEvent }) => {
-	const [showDropdown, setShowDropdown] = useState(false);
-	const [disableButton, setDisableButton] = useState(true);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [disableButton, setDisableButton] = useState(true);
 
-	const { query, asPath } = useRouter();
+  const { query, asPath } = useRouter();
 
-	const setDropdownToggle = (e) => {
-		setShowDropdown(!showDropdown);
-	};
+  const setDropdownToggle = (e) => {
+    setShowDropdown(!showDropdown);
+  };
 
-	return (
-		<SeoOptionsDiv className={`py-4`}>
-			<div
-				className={`bg-white px-4 py-5 border-b border-gray-300 sm:px-6 bg-white rounded-lg sm:shadow-xs`}
-			>
-				<div
-					className={`-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap`}
-				>
-					<div className={`ml-4 mt-2 w-64`}>
-						<div>
-							<div className={`mt-1 relative rounded-md shadow-sm`}>
-								<div
-									className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none`}
-								>
-									<svg
-										className={`h-5 w-5 text-gray-400`}
-										fill={`currentColor`}
-										viewBox={`0 0 20 20`}
-									>
-										<path
-											fillRule={`evenodd`}
-											d={`M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z`}
-											clipRule={`evenodd`}
-										/>
-									</svg>
-								</div>
-								<input
-									id={`search`}
-									className={`block w-full pl-10 sm:text-sm sm:leading-5`}
-									placeholder={`${
-										asPath.includes('seo')
-											? 'Search Pages...'
-											: asPath.includes('links')
-											? 'Search Links...'
-											: 'Search URL...'
-									}`}
-									onKeyUp={onSearchEvent}
-									defaultValue={searchKey}
-									autoFocus
-								/>
-							</div>
-						</div>
-					</div>
-					{/* <div className={`ml-4 mt-2 flex items-center flex-shrink-0`}>
+  return (
+    <SeoOptionsDiv className={`py-4`}>
+      <div
+        className={`bg-white px-4 py-5 border-b border-gray-300 sm:px-6 bg-white rounded-lg sm:shadow-xs`}
+      >
+        <div
+          className={`-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap`}
+        >
+          <div className={`ml-4 mt-2 w-64`}>
+            <div>
+              <div className={`mt-1 relative rounded-md shadow-sm`}>
+                <div
+                  className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none`}
+                >
+                  <svg
+                    className={`h-5 w-5 text-gray-400`}
+                    fill={`currentColor`}
+                    viewBox={`0 0 20 20`}
+                  >
+                    <path
+                      fillRule={`evenodd`}
+                      d={`M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z`}
+                      clipRule={`evenodd`}
+                    />
+                  </svg>
+                </div>
+                <input
+                  id={`search`}
+                  className={`block w-full pl-10 sm:text-sm sm:leading-5`}
+                  placeholder={`${
+                    asPath.includes("seo")
+                      ? "Search Pages..."
+                      : asPath.includes("links")
+                      ? "Search Links..."
+                      : "Search URL..."
+                  }`}
+                  onKeyUp={onSearchEvent}
+                  defaultValue={searchKey}
+                  autoFocus
+                />
+              </div>
+            </div>
+          </div>
+          {/* <div className={`ml-4 mt-2 flex items-center flex-shrink-0`}>
 						<span className={`inline-flex rounded-md shadow-sm`}>
 							<div className={`relative inline-block text-left`}>
 								<div>
@@ -102,9 +102,9 @@ const SeoOptions = ({ searchKey, onSearchEvent }) => {
 									leaveTo='transform opacity-0 scale-95'
 								>
 									<div
-										className={`origin-top-right absolute right-0 mt-2 w-32 rounded-md ring-1 ring-black ring-opacity-5`}
+										className={`origin-top-right absolute right-0 mt-2 w-32 rounded-md`}
 									>
-										<div className={`rounded-md bg-white ring-1 ring-black ring-opacity-5`}>
+										<div className={`rounded-md bg-white`}>
 											<div
 												className={`py-1`}
 												role='menu'
@@ -129,10 +129,10 @@ const SeoOptions = ({ searchKey, onSearchEvent }) => {
 							</div>
 						</span>
 					</div> */}
-				</div>
-			</div>
-		</SeoOptionsDiv>
-	);
+        </div>
+      </div>
+    </SeoOptionsDiv>
+  );
 };
 
 export default SeoOptions;

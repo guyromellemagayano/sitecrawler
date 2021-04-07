@@ -26,282 +26,309 @@ const Chart = loadable(() => import("react-apexcharts"));
 const ImageSvg = loadable(() => import("src/components/svg/outline/ImageSvg"));
 
 const SitesImagesStatsDiv = styled.div`
-	.status-indicator {
-		display: block;
-		flex: 0 0 0.85rem;
-		max-width: 0.85rem;
-		height: 0.85rem;
-		border-radius: 50%;
+  .status-indicator {
+    display: block;
+    flex: 0 0 0.85rem;
+    max-width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
 
-		&.error {
-			&-1 {
-				background-color: #19b080;
-			}
-			&-2 {
-				background-color: #ef2917;
-			}
-			&-3 {
-				background-color: #ed5244;
-			}
-			&-4 {
-				background-color: #bb4338;
-			}
-			&-5 {
-				background-color: #2d99ff;
-			}
-		}
-	}
-	.apexcharts-legend {
-		display: block;
-		margin-left: auto !important;
-		margin-right: auto !important;
-		max-width: 16rem;
-	}
-	.apexcharts-legend-series {
-		display: flex;
-		align-items: center;
-		border-bottom: 1px solid #e7efef;
-		padding-bottom: 10px;
-	}
-	.apexcharts-legend-series:last-child {
-		border: none;
-	}
-	.apexcharts-legend-text {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-	}
-	.apexcharts-legend-marker {
-		margin-right: 10px;
-	}
-	.legend-val {
-		color: #1d2626;
-		font-weight: 600;
-	}
-	.legend-text {
-		margin-right: 10px;
-	}
-	.skeleton-wrapper {
-		margin-bottom: 20px;
-	}
+    &.error {
+      &-1 {
+        background-color: #19b080;
+      }
+      &-2 {
+        background-color: #ef2917;
+      }
+      &-3 {
+        background-color: #ed5244;
+      }
+      &-4 {
+        background-color: #bb4338;
+      }
+      &-5 {
+        background-color: #2d99ff;
+      }
+    }
+  }
+  .apexcharts-legend {
+    display: block;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 16rem;
+  }
+  .apexcharts-legend-series {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e7efef;
+    padding-bottom: 10px;
+  }
+  .apexcharts-legend-series:last-child {
+    border: none;
+  }
+  .apexcharts-legend-text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .apexcharts-legend-marker {
+    margin-right: 10px;
+  }
+  .legend-val {
+    color: #1d2626;
+    font-weight: 600;
+  }
+  .legend-text {
+    margin-right: 10px;
+  }
+  .skeleton-wrapper {
+    margin-bottom: 20px;
+  }
 `;
 
 const SitesImagesStats = ({ width, sid, user }) => {
-	const [componentReady, setComponentReady] = useState(false);
-	const [imagesData, setImagesData] = useState([]);
-	const [scanData, setScanData] = useState([]);
-	const [scanObjId, setScanObjId] = useState(0);
-	const [statsData, setStatsData] = useState([]);
+  const [componentReady, setComponentReady] = useState(false);
+  const [imagesData, setImagesData] = useState([]);
+  const [scanData, setScanData] = useState([]);
+  const [scanObjId, setScanObjId] = useState(0);
+  const [statsData, setStatsData] = useState([]);
 
-	const lgScreenBreakpoint = 1024;
+  const lgScreenBreakpoint = 1024;
 
-	const router = useRouter();
+  const router = useRouter();
 
-	const { scan: scan, scanError: scanError } = useScan({
-		querySid: sid,
-		refreshInterval: 1000,
-	});
+  const { scan: scan, scanError: scanError } = useScan({
+    querySid: sid,
+    refreshInterval: 1000,
+  });
 
-	useEffect(() => {
-		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+  useEffect(() => {
+    if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+      setScanData(scan);
 
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(scanData.results[scanData.results.length - 1].id);
-			}
-		}
+      if (
+        scanData.results &&
+        scanData.results !== undefined &&
+        Object.keys(scanData.results).length > 0
+      ) {
+        setScanObjId(scanData.results[scanData.results.length - 1].id);
+      }
+    }
 
-		if (scanError && scanError.message !== "" && scanError.message !== undefined) {
-			// TODO: add generic alert here
-			console.log("ERROR: " + scanError.message);
-		}
-	});
+    if (
+      scanError &&
+      scanError.message !== "" &&
+      scanError.message !== undefined
+    ) {
+      // TODO: add generic alert here
+      console.log("ERROR: " + scanError.message);
+    }
+  });
 
-	const { stats: stats, statsError: statsError } = useStats({
-		querySid: sid,
-		scanObjId: scanObjId,
-	});
+  const { stats: stats, statsError: statsError } = useStats({
+    querySid: sid,
+    scanObjId: scanObjId,
+  });
 
-	const { images: images, imagesError: imagesError } = useImages({
-		querySid: sid,
-		scanObjId: scanObjId,
-	});
+  const { images: images, imagesError: imagesError } = useImages({
+    querySid: sid,
+    scanObjId: scanObjId,
+  });
 
-	useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
+  useEffect(() => {
+    if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+      setStatsData(stats);
+    }
 
-		if (images && images !== undefined && Object.keys(images).length > 0) {
-			setImagesData(images);
-		}
+    if (images && images !== undefined && Object.keys(images).length > 0) {
+      setImagesData(images);
+    }
 
-		if (statsError || imagesError) {
-			// TODO: add generic alert here
-			console.log(
-				"ERROR: " + statsError.message !== "" && statsError.message !== undefined
-					? statsError.message
-					: imagesError.message !== "" && imagesError.message !== undefined
-					? imagesError.message
-					: ImagesStatsLabel[2].label
-			);
-		}
-	}, [stats, images]);
+    if (statsError || imagesError) {
+      // TODO: add generic alert here
+      console.log(
+        "ERROR: " + statsError.message !== "" &&
+          statsError.message !== undefined
+          ? statsError.message
+          : imagesError.message !== "" && imagesError.message !== undefined
+          ? imagesError.message
+          : ImagesStatsLabel[2].label
+      );
+    }
+  }, [stats, images]);
 
-	useEffect(() => {
-		if (
-			user &&
-			statsData &&
-			statsData !== undefined &&
-			Object.keys(statsData).length > 0 &&
-			imagesData &&
-			imagesData !== undefined &&
-			Object.keys(imagesData).length > 0
-		) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [user, statsData, imagesData]);
+  useEffect(() => {
+    if (
+      user &&
+      statsData &&
+      statsData !== undefined &&
+      Object.keys(statsData).length > 0 &&
+      imagesData &&
+      imagesData !== undefined &&
+      Object.keys(imagesData).length > 0
+    ) {
+      setTimeout(() => {
+        setComponentReady(true);
+      }, 500);
+    }
+  }, [user, statsData, imagesData]);
 
-	const legendClickHandler = (label) => {
-		let path = `/site/${sid}/images`;
+  const legendClickHandler = (label) => {
+    let path = `/site/${sid}/images`;
 
-		imagesChartContents.forEach((item, index) => {
-			if (label === item.label && item.filter !== "")
-				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
-		});
+    imagesChartContents.forEach((item, index) => {
+      if (label === item.label && item.filter !== "")
+        path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
+    });
 
-		Router.push("/site/[siteId]/images", path);
-	};
+    Router.push("/site/[siteId]/images", path);
+  };
 
-	const chartSeries = [
-		statsData && statsData.num_non_ok_images !== undefined ? statsData.num_non_ok_images : 0,
-		imagesData && imagesData.count !== undefined ? imagesData.count : 0,
-		statsData && statsData.num_ok_images !== undefined ? statsData.num_ok_images : 0,
-	];
+  const chartSeries = [
+    statsData && statsData.num_non_ok_images !== undefined
+      ? statsData.num_non_ok_images
+      : 0,
+    imagesData && imagesData.count !== undefined ? imagesData.count : 0,
+    statsData && statsData.num_ok_images !== undefined
+      ? statsData.num_ok_images
+      : 0,
+  ];
 
-	const chartOptions = {
-		chart: {
-			id: "linkStatus",
-			type: "donut",
-			events: {
-				legendClick: function (chartContext, seriesIndex, config) {
-					legendClickHandler(config.config.labels[seriesIndex]);
-				},
-			},
-		},
-		labels: imagesChartContents.map((item) => item.label),
-		colors: imagesChartContents.map((item) => item.color),
-		fill: {
-			colors: imagesChartContents.map((item) => item.color),
-		},
-		stroke: {
-			width: 0,
-		},
-		dataLabels: {
-			enabled: true,
-			formatter: function (val, opts) {
-				return opts.w.config.series[opts.seriesIndex];
-			},
-		},
-		legend: {
-			show: true,
-			fontSize: "14px",
-			position: "bottom",
-			horizontalAlign: "center",
-			height: 210,
-			itemMargin: {
-				horizontal: 15,
-				vertical: 10,
-			},
-			formatter: function (seriesName, opts) {
-				return [
-					`<span className='legend-text'>${seriesName}</span>`,
-					"   ",
-					`<span className='legend-val'>${opts.w.globals.series[opts.seriesIndex]}</span>`,
-				];
-			},
-		},
-		plotOptions: {
-			pie: {
-				customScale: 0.8,
-				donut: {
-					labels: {
-						show: true,
-						total: {
-							show: true,
-							showAlways: true,
-							label: "Link Errors",
-							fontSize: "15px",
-							color: "#2A324B",
-							formatter: function (val) {
-								let num_errs = 0;
-								for (let i = 0; i < val.config.series.slice(0, -1).length; i++) {
-									num_errs += val.config.series[i];
-								}
+  const chartOptions = {
+    chart: {
+      id: "linkStatus",
+      type: "donut",
+      events: {
+        legendClick: function (chartContext, seriesIndex, config) {
+          legendClickHandler(config.config.labels[seriesIndex]);
+        },
+      },
+    },
+    labels: imagesChartContents.map((item) => item.label),
+    colors: imagesChartContents.map((item) => item.color),
+    fill: {
+      colors: imagesChartContents.map((item) => item.color),
+    },
+    stroke: {
+      width: 0,
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function (val, opts) {
+        return opts.w.config.series[opts.seriesIndex];
+      },
+    },
+    legend: {
+      show: true,
+      fontSize: "14px",
+      position: "bottom",
+      horizontalAlign: "center",
+      height: 210,
+      itemMargin: {
+        horizontal: 15,
+        vertical: 10,
+      },
+      formatter: function (seriesName, opts) {
+        return [
+          `<span className='legend-text'>${seriesName}</span>`,
+          "   ",
+          `<span className='legend-val'>${
+            opts.w.globals.series[opts.seriesIndex]
+          }</span>`,
+        ];
+      },
+    },
+    plotOptions: {
+      pie: {
+        customScale: 0.8,
+        donut: {
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              showAlways: true,
+              label: "Link Errors",
+              fontSize: "15px",
+              color: "#2A324B",
+              formatter: function (val) {
+                let num_errs = 0;
+                for (
+                  let i = 0;
+                  i < val.config.series.slice(0, -1).length;
+                  i++
+                ) {
+                  num_errs += val.config.series[i];
+                }
 
-								return num_errs;
-							},
-						},
-					},
-				},
-			},
-		},
-		responsive: [
-			{
-				breakpoint: 320,
-				options: {
-					chart: {
-						width: 420,
-						height: "auto",
-					},
-					legend: {
-						position: "bottom",
-						width: 315,
-						height: "auto",
-						itemMargin: {
-							horizontal: 25,
-							vertical: 10,
-						},
-					},
-				},
-			},
-		],
-	};
+                return num_errs;
+              },
+            },
+          },
+        },
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 320,
+        options: {
+          chart: {
+            width: 420,
+            height: "auto",
+          },
+          legend: {
+            position: "bottom",
+            width: 315,
+            height: "auto",
+            itemMargin: {
+              horizontal: 25,
+              vertical: 10,
+            },
+          },
+        },
+      },
+    ],
+  };
 
-	return (
-		<SitesImagesStatsDiv>
-			<div tw="bg-white overflow-hidden ring-1 ring-black ring-opacity-5 rounded-lg h-full">
-				<div tw="flex justify-between py-8 px-5">
-					<div tw="flex items-center">
-						<ImageSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
-						<h2 tw="text-lg font-bold leading-7 text-gray-900">{ImagesStatsLabel[0].label}</h2>
-					</div>
-					<div>
-						<Link href="/site/[siteId]/images" as={`/site/${sid}/images`} passHref>
-							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{ImagesStatsLabel[1].label}</a>
-						</Link>
-					</div>
-				</div>
-				<div tw="flex justify-center mx-auto max-w-sm">
-					{componentReady ? (
-						<Chart
-							options={chartOptions}
-							series={chartSeries}
-							type="donut"
-							width={lgScreenBreakpoint > width ? "400" : "600"}
-							height={lgScreenBreakpoint > width ? "530" : "530"}
-						/>
-					) : (
-						// FIXME: update skeleton for chart
-						<h1>Loading...</h1>
-					)}
-				</div>
-			</div>
-		</SitesImagesStatsDiv>
-	);
+  return (
+    <SitesImagesStatsDiv>
+      <div tw="bg-white overflow-hidden rounded-lg h-full">
+        <div tw="flex justify-between py-8 px-5">
+          <div tw="flex items-center">
+            <ImageSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
+            <h2 tw="text-lg font-bold leading-7 text-gray-900">
+              {ImagesStatsLabel[0].label}
+            </h2>
+          </div>
+          <div>
+            <Link
+              href="/site/[siteId]/images"
+              as={`/site/${sid}/images`}
+              passHref
+            >
+              <a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">
+                {ImagesStatsLabel[1].label}
+              </a>
+            </Link>
+          </div>
+        </div>
+        <div tw="flex justify-center mx-auto max-w-sm">
+          {componentReady ? (
+            <Chart
+              options={chartOptions}
+              series={chartSeries}
+              type="donut"
+              width={lgScreenBreakpoint > width ? "400" : "600"}
+              height={lgScreenBreakpoint > width ? "530" : "530"}
+            />
+          ) : (
+            // FIXME: update skeleton for chart
+            <h1>Loading...</h1>
+          )}
+        </div>
+      </div>
+    </SitesImagesStatsDiv>
+  );
 };
 
 SitesImagesStats.propTypes = {};
