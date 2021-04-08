@@ -280,10 +280,10 @@ const PaymentMethodForm = ({
                       type="submit"
                       disabled={loading}
                       css={[
-                        tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
+                        tw`cursor-pointer flex-shrink flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
                         loading
                           ? tw`opacity-50 cursor-not-allowed`
-                          : tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
+                          : tw`hover:bg-green-700`,
                       ]}
                     >
                       {loading
@@ -293,10 +293,10 @@ const PaymentMethodForm = ({
                     <button
                       type="button"
                       css={[
-                        tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm`,
+                        tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
                         loading
                           ? tw`opacity-50 cursor-not-allowed`
-                          : tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+                          : tw`hover:bg-gray-50`,
                       ]}
                       onClick={() => setDisableForm(true)}
                     >
@@ -305,10 +305,10 @@ const PaymentMethodForm = ({
                     <button
                       type="button"
                       css={[
-                        tw`flex-shrink flex-1 w-full justify-center mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm`,
+                        tw`flex-shrink flex-1 w-full justify-center mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
                         loading
                           ? tw`opacity-50 cursor-not-allowed`
-                          : tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+                          : tw`hover:bg-gray-50`,
                       ]}
                       onClick={() =>
                         setTimeout(
@@ -343,14 +343,10 @@ const PaymentMethodForm = ({
                   <input
                     type="text"
                     disabled={disableForm}
-                    css={[
-                      tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300`,
-                      disableForm &&
-                        tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-                    ]}
+                    tw="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300"
                     id="cardinformation"
                     tw="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
-                    placeholder="Default Payment Method"
+                    placeholder={PaymentMethodFormLabel[16].label}
                     value={
                       currentPaymentMethod &&
                       currentPaymentMethod !== undefined &&
@@ -378,10 +374,10 @@ const PaymentMethodForm = ({
                     <button
                       type="button"
                       css={[
-                        tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
+                        tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
                         loading
                           ? tw`opacity-50 cursor-not-allowed`
-                          : tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
+                          : tw`hover:bg-green-700`,
                       ]}
                       onClick={() =>
                         handleSelectPlan(
@@ -398,10 +394,10 @@ const PaymentMethodForm = ({
                     <button
                       type="button"
                       css={[
-                        tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
+                        tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
                         !disableForm || loading
                           ? tw`opacity-50 cursor-not-allowed`
-                          : tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+                          : tw`hover:bg-indigo-700`,
                       ]}
                       onClick={() => setDisableForm(!disableForm)}
                     >
@@ -410,10 +406,10 @@ const PaymentMethodForm = ({
                     <button
                       type="button"
                       css={[
-                        tw`flex-shrink flex-1 w-full justify-center mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm`,
+                        tw`flex-shrink flex-1 w-full justify-center mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
                         !disableForm || loading
                           ? tw`opacity-50 cursor-not-allowed`
-                          : tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+                          : tw`hover:bg-gray-50`,
                       ]}
                       onClick={() =>
                         setTimeout(
