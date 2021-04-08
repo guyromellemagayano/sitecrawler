@@ -11,7 +11,7 @@ import tw from "twin.macro";
 import StatsLabel from "public/labels/components/sites/Stats.json";
 
 // Hooks
-import { useScan, useStats, useLinks, useImages } from "src/hooks/useSite";
+import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
 const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
@@ -20,14 +20,9 @@ const ImageSvg = loadable(() => import("src/components/svg/outline/ImageSvg"));
 const InformationCircleSvg = loadable(() =>
   import("src/components/svg/outline/InformationCircleSvg")
 );
-const SiteStatsSkeleton = loadable(() =>
-  import("src/components/skeletons/SiteStatsSkeleton")
-);
 
-const SitesStats = ({ crawlableHandler, sid, user }) => {
+const SitesStats = ({ crawlableHandler, crawlFinished, sid, user }) => {
   const [componentReady, setComponentReady] = useState(false);
-  const [imagesData, setImagesData] = useState([]);
-  const [linksData, setLinksData] = useState([]);
   const [scanData, setScanData] = useState([]);
   const [scanObjId, setScanObjId] = useState(0);
   const [statsData, setStatsData] = useState([]);
@@ -88,16 +83,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
   const { stats: stats, statsError: statsError } = useStats({
     querySid: sid,
     scanObjId: scanObjId,
-  });
-
-  const { links: links, linksError: linksError } = useLinks({
-    querySid: sid,
-    scanObjId: scanObjId,
-  });
-
-  const { images: images, imagesError: imagesError } = useImages({
-    querySid: sid,
-    scanObjId: scanObjId,
+    refreshInterval: 1000,
   });
 
   useEffect(() => {
@@ -105,36 +91,24 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
       setStatsData(stats);
     }
 
-    if (links && links !== undefined && Object.keys(links).length > 0) {
-      setLinksData(links);
-    }
-
-    if (images && images !== undefined && Object.keys(images).length > 0) {
-      setImagesData(images);
-    }
-
-    if (statsError || linksError || imagesError) {
+    if (statsError) {
       // TODO: add generic alert here
       console.log(
         "ERROR: " + statsError.message !== "" &&
           statsError.message !== undefined
           ? statsError.message
-          : linksError.message !== "" && linksError.message !== undefined
-          ? linksError
-          : imagesError.message !== "" && imagesError.message !== undefined
-          ? imagesError.message
           : StatsLabel[1].label
       );
     }
-  }, [stats, links, images]);
+  }, [stats]);
 
   useEffect(() => {
-    if (user && statsData && linksData && imagesData) {
+    if (user && statsData) {
       setTimeout(() => {
         setComponentReady(true);
       }, 500);
     }
-  }, [user, statsData, linksData, imagesData]);
+  }, [user, statsData]);
 
   const setSeoErrors = () => {
     let valLength = 0;
@@ -245,10 +219,14 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
     },
   ];
 
-  return componentReady ? (
+  return (
     <div tw="px-6 py-5 sm:p-6  bg-white overflow-hidden rounded-lg">
       <h2 tw="text-lg font-bold leading-7 text-gray-900">
-        {StatsLabel[0].label}
+        {componentReady ? (
+          StatsLabel[0].label
+        ) : (
+          <Skeleton duration={2} width={120} height={20} />
+        )}
       </h2>
       <div tw="grid grid-cols-2 h-full overflow-hidden py-6">
         {PageTabs.map((val, key) => {
@@ -258,24 +236,46 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
               tw="flex items-center justify-start space-y-px space-x-px"
             >
               <div tw="flex items-start justify-center">
-                <dl tw="mr-2 mr-1">
+                <dl tw="mr-2">
                   <dt>
                     {val.title === "Total Pages" ? (
-                      <PageSvg
-                        className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`}
-                      />
+                      componentReady ? (
+                        <PageSvg
+                          className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`}
+                        />
+                      ) : (
+                        <span tw="flex -mt-1">
+                          <Skeleton duration={2} width={20} height={20} />
+                        </span>
+                      )
                     ) : val.title === "Total Links" ? (
-                      <LinksSvg
-                        className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`}
-                      />
+                      componentReady ? (
+                        <LinksSvg
+                          className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`}
+                        />
+                      ) : (
+                        <span tw="flex -mt-1">
+                          <Skeleton duration={2} width={20} height={20} />
+                        </span>
+                      )
                     ) : val.title === "Total Images" ? (
-                      <ImageSvg
-                        className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`}
-                      />
-                    ) : (
+                      componentReady ? (
+                        <ImageSvg
+                          className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`}
+                        />
+                      ) : (
+                        <span tw="flex -mt-1">
+                          <Skeleton duration={2} width={20} height={20} />
+                        </span>
+                      )
+                    ) : componentReady ? (
                       <InformationCircleSvg
                         className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`}
                       />
+                    ) : (
+                      <span tw="flex -mt-1">
+                        <Skeleton duration={2} width={20} height={20} />
+                      </span>
                     )}
                   </dt>
                 </dl>
@@ -284,13 +284,21 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
                     {val.title}
                   </dt>
 
-                  {val.title === "Total Issues" && val.count > 0 ? (
+                  {val.title === "Total Issues" ? (
                     <dd tw="mt-1 text-3xl leading-9 font-semibold text-red-700">
-                      {val.count}
+                      {val.count >= 0 && !crawlFinished ? (
+                        <Skeleton duration={2} width={50} height={50} />
+                      ) : (
+                        val.count
+                      )}
                     </dd>
                   ) : (
                     <dd tw="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                      {val.count}
+                      {val.count >= 0 && !crawlFinished ? (
+                        <Skeleton duration={2} width={50} height={50} />
+                      ) : (
+                        val.count
+                      )}
                     </dd>
                   )}
                 </dl>
@@ -300,8 +308,6 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
         })}
       </div>
     </div>
-  ) : (
-    <SiteStatsSkeleton />
   );
 };
 

@@ -174,22 +174,6 @@ const SitesLinksStats = ({ width, sid, user }) => {
     }
   }, [user, statsData, linksData]);
 
-  // const setBrokenLinks = type => {
-  // 	let valLength = 0
-
-  // 	if (links) {
-  // 		links.results.map((val, key) => {
-  // 			if (val.status === 'HTTP_ERROR' || val.status === 'TIMEOUT' || val.status === 'OTHER_ERROR') {
-  // 				if (val.type === type) {
-  // 					valLength++
-  // 				}
-  // 			}
-  // 		})
-  // 	}
-
-  // 	return valLength
-  // }
-
   const legendClickHandler = (label) => {
     let path = `/site/${sid}/links`;
 
@@ -202,8 +186,6 @@ const SitesLinksStats = ({ width, sid, user }) => {
   };
 
   const chartSeries = [
-    // setBrokenLinks('PAGE'),
-    // setBrokenLinks('EXTERNAL'),
     statsData && statsData.num_non_ok_links !== undefined
       ? statsData.num_non_ok_links
       : 0,
