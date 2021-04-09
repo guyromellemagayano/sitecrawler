@@ -40,7 +40,6 @@ const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
 const HowToSetupSkeleton = loadable(() =>
   import("src/components/skeletons/HowToSetupSkeleton")
 );
-const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() =>
   import("src/components/sidebar/MainSidebar")
 );
@@ -74,6 +73,7 @@ const Information = ({ width, sid, edit }) => {
   const { user: user } = useUser({
     redirectIfFound: false,
     redirectTo: "/login",
+    refreshInterval: 1000,
   });
 
   const { site: site } = useSite({
@@ -613,9 +613,7 @@ const Information = ({ width, sid, edit }) => {
         </div>
       </section>
     </Layout>
-  ) : (
-    <Loader />
-  );
+  ) : null;
 };
 
 Information.propTypes = {};

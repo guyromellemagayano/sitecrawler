@@ -14,9 +14,6 @@ import tw from "twin.macro";
 // JSON
 import OverviewLabel from "public/labels/pages/site/overview.json";
 
-// Utils
-import { getCookie } from "src/utils/cookie";
-
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
@@ -54,7 +51,7 @@ const SitesPagesStats = loadable(() =>
 const SitesSeoStats = loadable(() => import("src/components/sites/SeoStats"));
 const SitesStats = loadable(() => import("src/components/sites/Stats"));
 
-const SitesDashboard = ({ width, token, sid }) => {
+const SitesDashboard = ({ width, sid }) => {
   const [crawlFinished, setCrawlFinished] = useState(false);
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -73,20 +70,20 @@ const SitesDashboard = ({ width, token, sid }) => {
   const reCrawlEndpoint = `/api/site/${sid}/start_scan/`;
   const sitesApiEndpoint = "/api/site/?ordering=name";
 
-  const { user: user, userError: userError } = useUser({
+  const { user: user } = useUser({
     refreshInterval: 1000,
   });
-  const { scan: scan, scanError: scanError } = useScan({
+  const { scan: scan } = useScan({
     querySid: sid,
     refreshInterval: 1000,
   });
 
-  const { site: site, siteError: siteError } = useSite({
+  const { site: site } = useSite({
     endpoint: sitesApiEndpoint,
     refreshInterval: 1000,
   });
 
-  const { siteId: siteId, siteIdError: siteIdError } = useSiteId({
+  const { siteId: siteId } = useSiteId({
     querySid: sid,
   });
 
@@ -103,10 +100,7 @@ const SitesDashboard = ({ width, token, sid }) => {
       Object.keys(site).length > 0 &&
       siteId &&
       siteId !== undefined &&
-      Object.keys(siteId).length > 0 &&
-      token &&
-      token !== undefined &&
-      token !== ""
+      Object.keys(siteId).length > 0
     ) {
       setUserData(user);
       setScanData(scan);
@@ -114,27 +108,12 @@ const SitesDashboard = ({ width, token, sid }) => {
       setSiteIdData(siteId);
     }
 
-    if (userError || scanError || siteError || siteIdError) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + userError.message !== "" && userError.message !== undefined
-          ? userError.message
-          : scanError.message !== "" && scanError.message !== undefined
-          ? scanError.message
-          : siteError.message !== "" && siteError.message !== undefined
-          ? siteError.message
-          : siteIdError.message !== "" && siteIdError.message !== undefined
-          ? siteIdError.message
-          : OverviewLabel[2].label
-      );
-    }
-
     if (userData && scanData && siteData && siteIdData) {
       setTimeout(() => {
         setPageLoaded(true);
       }, 500);
     }
-  }, [user, scan, site, siteId, token]);
+  }, [user, scan, site, siteId]);
 
   const onCrawlHandler = async () => {
     setCrawlFinished(false);
@@ -332,22 +311,3 @@ const SitesDashboard = ({ width, token, sid }) => {
 SitesDashboard.propTypes = {};
 
 export default withResizeDetector(SitesDashboard);
-
-export async function getServerSideProps({ req, query }) {
-  let token = getCookie("token", req);
-
-  if (!token) {
-    return {
-      props: {
-        notLoggedIn: true,
-      },
-    };
-  }
-
-  return {
-    props: {
-      token: token || "",
-      sid: query.siteId || 0,
-    },
-  };
-}

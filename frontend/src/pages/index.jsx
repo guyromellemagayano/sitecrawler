@@ -38,9 +38,7 @@ const Home = () => {
     <Layout user={userData}>
       <Dashboard user={userData} />
     </Layout>
-  ) : (
-    <Loader />
-  );
+  ) : null;
 };
 
 Home.propTypes = {};

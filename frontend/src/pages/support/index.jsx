@@ -16,9 +16,6 @@ import tw from "twin.macro";
 // JSON
 import SupportLabel from "public/labels/pages/site/support.json";
 
-// Utils
-import { getCookie } from "src/utils/cookie";
-
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
@@ -67,10 +64,13 @@ const Support = ({ width, token }) => {
   const contactApiEndpoint = "/api/support/contact/";
   const sitesApiEndpoint = "/api/site/?ordering=name";
 
-  const { user: user, userError: userError } = useUser({
+  const { user: user } = useUser({
+    redirectIfFound: false,
+    redirectTo: "/login",
     refreshInterval: 1000,
   });
-  const { site: site, siteError: siteError } = useSite({
+
+  const { site: site } = useSite({
     endpoint: sitesApiEndpoint,
   });
 
@@ -81,10 +81,7 @@ const Support = ({ width, token }) => {
       Object.keys(user).length > 0 &&
       site &&
       site !== undefined &&
-      Object.keys(site).length > 0 &&
-      token &&
-      token !== undefined &&
-      token !== ""
+      Object.keys(site).length > 0
     ) {
       setTimeout(() => {
         setPageLoaded(true);
@@ -92,13 +89,8 @@ const Support = ({ width, token }) => {
 
       setSiteData(site);
       setUserData(user);
-
-      if (userError || siteError) {
-        // TODO: add generic alert here
-        console.log("ERROR: " + userError ? userError : siteError);
-      }
     }
-  }, [user, site, token]);
+  }, [user, site]);
 
   useEffect(() => {
     if (successMsg && successMsg !== "") {
@@ -128,7 +120,7 @@ const Support = ({ width, token }) => {
     }
   }, [successMsgLoaded, errorMsgLoaded]);
 
-  return (
+  return pageLoaded ? (
     <Layout>
       <NextSeo title={pageTitle} />
 
@@ -353,25 +345,9 @@ const Support = ({ width, token }) => {
         </div>
       </section>
     </Layout>
-  );
+  ) : null;
 };
 
 Support.propTypes = {};
-
-Support.getInitialProps = async ({ req }) => {
-  let token = getCookie("token", req);
-
-  if (!token) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      token: token,
-    },
-  };
-};
 
 export default withResizeDetector(Support);

@@ -17,9 +17,6 @@ import tw from "twin.macro";
 // JSON
 import VerifyUrlLabel from "public/labels/pages/add-site/verify-url.json";
 
-// Utils
-import { getCookie } from "src/utils/cookie";
-
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
@@ -61,7 +58,7 @@ const SuccessNotification = loadable(() =>
   import("src/components/notifications/SuccessNotification")
 );
 
-const VerifyUrl = ({ width, token, sid, sname, surl, vid, v }) => {
+const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
   const [copied, setCopied] = useState(false);
   const [copyValue, setCopyValue] = useState(
     `<meta name="epic-crawl-id" content="${vid}" />`
@@ -98,10 +95,13 @@ const VerifyUrl = ({ width, token, sid, sname, surl, vid, v }) => {
   htmlText +=
     "4. Inform your client that you already made the update to the website.";
 
-  const { user: user, userError: userError } = useUser({
+  const { user: user } = useUser({
+    redirectIfFound: false,
+    redirectTo: "/login",
     refreshInterval: 1000,
   });
-  const { site: site, siteError: siteError } = useSite({
+
+  const { site: site } = useSite({
     endpoint: sitesApiEndpoint,
   });
 
@@ -181,10 +181,7 @@ const VerifyUrl = ({ width, token, sid, sname, surl, vid, v }) => {
       Object.keys(user).length > 0 &&
       site &&
       site !== undefined &&
-      Object.keys(site).length > 0 &&
-      token &&
-      token !== undefined &&
-      token !== ""
+      Object.keys(site).length > 0
     ) {
       setTimeout(() => {
         setPageLoaded(true);
@@ -193,7 +190,7 @@ const VerifyUrl = ({ width, token, sid, sname, surl, vid, v }) => {
       setSiteData(site);
       setUserData(user);
     }
-  }, [user, site, token]);
+  }, [user, site]);
 
   useEffect(() => {
     if (successMsg && successMsg !== "") {
@@ -223,7 +220,7 @@ const VerifyUrl = ({ width, token, sid, sname, surl, vid, v }) => {
     }
   }, [successMsgLoaded, errorMsgLoaded]);
 
-  return (
+  return pageLoaded ? (
     <Layout user={userData}>
       <NextSeo title={pageTitle} />
 
@@ -652,25 +649,16 @@ const VerifyUrl = ({ width, token, sid, sname, surl, vid, v }) => {
         </div>
       </section>
     </Layout>
-  );
+  ) : null;
 };
 
 VerifyUrl.propTypes = {};
 
 export default withResizeDetector(VerifyUrl);
 
-export async function getServerSideProps({ req, query }) {
-  let token = getCookie("token", req);
-
-  if (!token) {
-    return {
-      notFound: true,
-    };
-  }
-
+export async function getServerSideProps({ query }) {
   return {
     props: {
-      token: token || "",
       sid: query.sid || "",
       sname: query.sname || "",
       surl: query.surl || "",

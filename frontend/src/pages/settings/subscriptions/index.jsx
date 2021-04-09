@@ -20,9 +20,6 @@ import tw, { styled } from "twin.macro";
 import PaymentMethodFormLabel from "public/labels/components/form/PaymentMethodForm.json";
 import SubscriptionLabel from "public/labels/pages/subscriptions.json";
 
-// Utils
-import { getCookie } from "src/utils/cookie";
-
 // Hooks
 import {
   useStripePromise,
@@ -75,7 +72,7 @@ const ConfettiBgImgSpan = styled.span`
   z-index: -1;
 `;
 
-const Subscriptions = ({ width, token }) => {
+const Subscriptions = ({ width }) => {
   const [basicPlanId, setBasicPlanId] = useState(0);
   const [basicPlanName, setBasicPlanName] = useState("");
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -112,31 +109,25 @@ const Subscriptions = ({ width, token }) => {
   const pageTitle = "Subscriptions";
   const siteApiEndpoint = "/api/site/?ordering=name";
 
-  const { user: user, userError: userError } = useUser({
+  const { user: user } = useUser({
+    redirectIfFound: false,
+    redirectTo: "/login",
     refreshInterval: 1000,
   });
 
-  const { site: site, siteError: siteError } = useSite({
+  const { site: site } = useSite({
     endpoint: siteApiEndpoint,
-    refreshInterval: 1000,
   });
 
-  const {
-    stripePromise: stripePromise,
-    stripePromiseError: stripePromiseError,
-  } = useStripePromise();
+  const { stripePromise: stripePromise } = useStripePromise();
 
   const {
     defaultPaymentMethod: defaultPaymentMethod,
-    defaultPaymentMethodError: defaultPaymentMethodError,
   } = useDefaultPaymentMethod({
     refreshInterval: 1000,
   });
 
-  const {
-    subscriptions: subscriptions,
-    subscriptionsError: subscriptionsError,
-  } = useSubscriptions({
+  const { subscriptions: subscriptions } = useSubscriptions({
     refreshInterval: 1000,
   });
 
@@ -150,9 +141,6 @@ const Subscriptions = ({ width, token }) => {
 
   useEffect(() => {
     if (
-      token &&
-      token !== undefined &&
-      Object.keys(token).length > 0 &&
       user &&
       user !== undefined &&
       Object.keys(user).length > 0 &&
@@ -183,29 +171,7 @@ const Subscriptions = ({ width, token }) => {
       setCurrentSubscriptions(subscriptions);
       setCurrentSubscription(defaultSubscription);
     }
-
-    if (
-      userError ||
-      siteError ||
-      defaultPaymentMethodError ||
-      subscriptionsError ||
-      defaultSubscriptionError
-    ) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + userError
-          ? userError
-          : siteError
-          ? siteError
-          : defaultPaymentMethodError
-          ? defaultPaymentMethodError
-          : subscriptionsError
-          ? subscrioptionsError
-          : defaultSubscriptionError
-      );
-    }
   }, [
-    token,
     user,
     site,
     stripePromise,
@@ -410,7 +376,7 @@ const Subscriptions = ({ width, token }) => {
     }
   }, [currentSubscription, currentSubscriptions]);
 
-  return (
+  return pageLoaded ? (
     <Layout user={user}>
       <NextSeo title={pageTitle} />
 
@@ -597,7 +563,7 @@ const Subscriptions = ({ width, token }) => {
                 <h3 tw="text-lg leading-6 font-medium text-gray-900">
                   {SubscriptionLabel[7].label}
                 </h3>
-                <p class="mt-2 text-sm text-gray-500">
+                <p tw="mt-2 text-sm text-gray-500">
                   {SubscriptionLabel[7].description}
                 </p>
                 <div tw="mt-8 mb-3 max-w-full lg:max-w-3xl">
@@ -962,25 +928,9 @@ const Subscriptions = ({ width, token }) => {
         </div>
       </section>
     </Layout>
-  );
+  ) : null;
 };
 
 Subscriptions.propTypes = {};
 
 export default withResizeDetector(Subscriptions);
-
-export async function getServerSideProps({ req }) {
-  let token = getCookie("token", req);
-
-  if (!token) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      token: token || "",
-    },
-  };
-}
