@@ -317,7 +317,10 @@ const SiteMenu = ({ user, site }) => {
                               </a>
                             </Link>
                           ) : (
-                            <span tw="mt-1 flex items-center px-3 py-2 space-x-3">
+                            <span
+                              key={index}
+                              tw="mt-1 flex items-center px-3 py-2 space-x-3"
+                            >
                               <Skeleton
                                 circle={true}
                                 duration={2}
