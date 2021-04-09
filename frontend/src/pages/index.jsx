@@ -19,7 +19,8 @@ const Home = () => {
   const [userData, setUserData] = useState([]);
   const [pageLoaded, setPageLoaded] = useState(false);
 
-  const { user: user, userError: userError } = useUser({
+  const { user: user } = useUser({
+    redirectIfFound: false,
     redirectTo: "/login",
   });
 
@@ -31,15 +32,11 @@ const Home = () => {
         setPageLoaded(true);
       }, 3000);
     }
-
-    if (userError && userError.message !== undefined) {
-      console.log("ERROR: " + userError.message);
-    }
-  }, [user, userError]);
+  }, [user]);
 
   return pageLoaded ? (
     <Layout user={userData}>
-      <Dashboard user={userData} userError={userError} />
+      <Dashboard user={userData} />
     </Layout>
   ) : (
     <Loader />

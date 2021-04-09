@@ -17,9 +17,6 @@ import tw from "twin.macro";
 // JSON
 import InformationLabel from "public/labels/pages/add-site/information.json";
 
-// Utils
-import { getCookie } from "src/utils/cookie";
-
 // Hooks
 import useGetMethod from "src/hooks/useGetMethod";
 import usePostMethod from "src/hooks/usePostMethod";
@@ -43,6 +40,7 @@ const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
 const HowToSetupSkeleton = loadable(() =>
   import("src/components/skeletons/HowToSetupSkeleton")
 );
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() =>
   import("src/components/sidebar/MainSidebar")
 );
@@ -54,7 +52,7 @@ const SiteAdditionStepsSkeleton = loadable(() =>
 );
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
-const Information = ({ width, token, sid, edit }) => {
+const Information = ({ width, sid, edit }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -73,11 +71,16 @@ const Information = ({ width, token, sid, edit }) => {
   const siteApiEndpoint = "/api/site/?ordering=name";
   const urlRegex = /^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
 
-  const { user: user, error: userError } = useUser({ refreshInterval: 1000 });
-  const { site: site, siteError: siteError } = useSite({
+  const { user: user } = useUser({
+    redirectIfFound: false,
+    redirectTo: "/login",
+  });
+
+  const { site: site } = useSite({
     endpoint: siteApiEndpoint,
   });
-  const { siteId: siteId, siteIdError: siteIdError } = useSiteId({
+
+  const { siteId: siteId } = useSiteId({
     querySid: router.query.sid,
   });
 
@@ -89,17 +92,7 @@ const Information = ({ width, token, sid, edit }) => {
   }, [siteId]);
 
   useEffect(() => {
-    if (userError || siteError || siteIdError) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + userError ? userError : siteError ? siteError : siteIdError
-      );
-    }
-
     if (
-      token &&
-      token !== undefined &&
-      token !== "" &&
       user &&
       user !== undefined &&
       Object.keys(user).length > 0 &&
@@ -109,9 +102,12 @@ const Information = ({ width, token, sid, edit }) => {
     ) {
       setUserData(user);
       setSiteData(site);
-      setPageLoaded(true);
+
+      setTimeout(() => {
+        setPageLoaded(true);
+      }, 500);
     }
-  }, [user, site, siteId, token]);
+  }, [user, site, siteId]);
 
   useEffect(() => {
     if (errorMsg && errorMsg !== "") {
@@ -129,7 +125,7 @@ const Information = ({ width, token, sid, edit }) => {
     }
   }, [errorMsgLoaded]);
 
-  return (
+  return pageLoaded ? (
     <Layout user={userData}>
       <NextSeo title={pageTitle} />
 
@@ -617,27 +613,11 @@ const Information = ({ width, token, sid, edit }) => {
         </div>
       </section>
     </Layout>
+  ) : (
+    <Loader />
   );
 };
 
 Information.propTypes = {};
 
 export default withResizeDetector(Information);
-
-export async function getServerSideProps({ req, query }) {
-  let token = getCookie("token", req);
-
-  if (!token) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      token: token || "",
-      sid: query.sid || "",
-      edit: query.edit || false,
-    },
-  };
-}

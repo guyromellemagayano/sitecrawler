@@ -44,15 +44,7 @@ const initialOrder = {
   totalIssues: "default",
 };
 
-const Dashboard = ({
-  width,
-  user,
-  userError,
-  page,
-  search,
-  per_page,
-  ordering,
-}) => {
+const Dashboard = ({ width, user, page, search, per_page, ordering }) => {
   const [linksPerPage, setLinksPerPage] = useState(20);
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
   const [pagePath, setPagePath] = useState(null);
@@ -91,17 +83,12 @@ const Dashboard = ({
 
   sitesApiEndpoint += queryString;
 
-  const { site: site, mutateSite: mutateSite, siteError: siteError } = useSite({
+  const { site: site, mutateSite: mutateSite } = useSite({
     endpoint: sitesApiEndpoint,
     refreshInterval: 1000,
   });
 
   useEffect(() => {
-    if (userError || siteError) {
-      // TODO: add generic alert here
-      console.log("ERROR: " + userError ? userError : siteError);
-    }
-
     if (
       user &&
       user !== undefined &&
