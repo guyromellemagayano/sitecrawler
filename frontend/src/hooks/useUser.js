@@ -19,26 +19,27 @@ const useUser = ({
 
   const router = useRouter();
 
-  const {
-    data: user,
-    mutate: mutateUser,
-    error: userError,
-    isValidating,
-  } = useSWR(userApiEndpoint, useFetcher, {
-    onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-      if (error.status === 404) return;
-      if (key === userApiEndpoint) return;
-      if (retryCount >= 10) return;
+  const { data: user, mutate: mutateUser, error: userError } = useSWR(
+    userApiEndpoint,
+    useFetcher,
+    {
+      onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+        if (error.status === 404) return;
+        if (key === userApiEndpoint) return;
+        if (retryCount >= 10) return;
 
-      setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
-    },
-    refreshInterval: refreshInterval,
-    dedupingInterval: 0,
-  });
+        setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+      },
+      refreshInterval: refreshInterval,
+      dedupingInterval: 0,
+    }
+  );
 
   useEffect(() => {
-    if (userError && userError.status === 403 && !redirectIfFound) {
-      router.push({ pathname: redirectTo });
+    if (userError && !redirectIfFound) {
+      if (userError.status === 403) {
+        router.push({ pathname: redirectTo });
+      }
     }
 
     if (
