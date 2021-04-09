@@ -331,7 +331,7 @@ const PaymentMethodForm = ({
             <div tw="sm:col-span-6">
               <div tw="space-y-1">
                 <label
-                  for="email"
+                  htmlFor="email"
                   tw="block text-sm text-left font-medium text-gray-700"
                 >
                   {SubscriptionLabel[6].label}
