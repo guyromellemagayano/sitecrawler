@@ -12,11 +12,9 @@ import XSvg from "../svg/solid/XSvg";
 const SuccessMessageAlert = ({ message }) => {
   const [isOpen, setIsOpen] = useState(true);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsOpen(!isOpen);
-    }, 3000);
-  }, isOpen);
+  setTimeout(() => {
+    setIsOpen(false);
+  }, 3000);
 
   return (
     <Transition
@@ -43,7 +41,7 @@ const SuccessMessageAlert = ({ message }) => {
             <button
               type="button"
               tw="inline-flex bg-green-100 rounded-md p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-50 focus:ring-green-600"
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => setIsOpen(false)}
             >
               <span tw="sr-only">Dismiss</span>
               <XSvg className={tw`h-5 w-5`} />

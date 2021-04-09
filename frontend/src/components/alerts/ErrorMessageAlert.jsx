@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // External
 import { Transition } from "@headlessui/react";
@@ -12,11 +12,9 @@ import XSvg from "../svg/solid/XSvg";
 const ErrorMessageAlert = ({ message }) => {
   const [isOpen, setIsOpen] = useState(true);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsOpen(!isOpen);
-    }, 3000);
-  }, isOpen);
+  setTimeout(() => {
+    setIsOpen(false);
+  }, 3000);
 
   return (
     <Transition
@@ -43,7 +41,7 @@ const ErrorMessageAlert = ({ message }) => {
             <button
               type="button"
               tw="inline-flex bg-red-100 rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600"
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => setIsOpen(false)}
             >
               <span tw="sr-only">Dismiss</span>
               <XSvg className={tw`h-5 w-5`} />
