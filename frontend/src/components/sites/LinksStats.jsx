@@ -98,7 +98,7 @@ const SitesLinksStats = ({ width, sid, user }) => {
 
   const router = useRouter();
 
-  const { scan: scan, scanError: scanError } = useScan({
+  const { scan: scan } = useScan({
     querySid: sid,
     refreshInterval: 1000,
   });
@@ -115,23 +115,14 @@ const SitesLinksStats = ({ width, sid, user }) => {
         setScanObjId(scanData.results[scanData.results.length - 1].id);
       }
     }
-
-    if (
-      scanError &&
-      scanError.message !== "" &&
-      scanError.message !== undefined
-    ) {
-      // TODO: add generic alert here
-      console.log("ERROR: " + scanError.message);
-    }
   });
 
-  const { stats: stats, statsError: statsError } = useStats({
+  const { stats: stats } = useStats({
     querySid: sid,
     scanObjId: scanObjId,
   });
 
-  const { links: links, linksError: linksError } = useLinks({
+  const { links: links } = useLinks({
     querySid: sid,
     scanObjId: scanObjId,
   });
@@ -143,18 +134,6 @@ const SitesLinksStats = ({ width, sid, user }) => {
 
     if (links && links !== undefined && Object.keys(links).length > 0) {
       setLinksData(links);
-    }
-
-    if (statsError || linksError) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + statsError.message !== "" &&
-          statsError.message !== undefined
-          ? statsError.message
-          : linksError.message !== "" && linksError.message !== undefined
-          ? linksError.message
-          : LinksStatsLabel[2].label
-      );
     }
   }, [stats, links]);
 

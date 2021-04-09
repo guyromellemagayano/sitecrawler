@@ -97,7 +97,7 @@ const SitesSeoStats = ({ width, sid, user }) => {
 
   const router = useRouter();
 
-  const { scan: scan, scanError: scanError } = useScan({
+  const { scan: scan } = useScan({
     querySid: sid,
     refreshInterval: 1000,
   });
@@ -114,18 +114,9 @@ const SitesSeoStats = ({ width, sid, user }) => {
         setScanObjId(scanData.results[scanData.results.length - 1].id);
       }
     }
-
-    if (
-      scanError &&
-      scanError.message !== "" &&
-      scanError.message !== undefined
-    ) {
-      // TODO: add generic alert here
-      console.log("ERROR: " + scanError.message);
-    }
   });
 
-  const { stats: stats, statsError: statsError } = useStats({
+  const { stats: stats } = useStats({
     querySid: sid,
     scanObjId: scanObjId,
   });
@@ -133,16 +124,6 @@ const SitesSeoStats = ({ width, sid, user }) => {
   useEffect(() => {
     if (stats && stats !== undefined && Object.keys(stats).length > 0) {
       setStatsData(stats);
-    }
-
-    if (statsError) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + statsError.message !== "" &&
-          statsError.message !== undefined
-          ? statsError.message
-          : SeoStatsLabel[2].label
-      );
     }
   }, [stats]);
 

@@ -71,8 +71,11 @@ const SitesDashboard = ({ width, sid }) => {
   const sitesApiEndpoint = "/api/site/?ordering=name";
 
   const { user: user } = useUser({
+    redirectIfFound: false,
+    redirectTo: "/login",
     refreshInterval: 1000,
   });
+
   const { scan: scan } = useScan({
     querySid: sid,
     refreshInterval: 1000,
@@ -166,7 +169,7 @@ const SitesDashboard = ({ width, sid }) => {
     }
   }, [userData, siteIdData]);
 
-  return (
+  return pageLoaded ? (
     <Layout user={userData}>
       <NextSeo title={pageTitle} />
 
@@ -305,9 +308,17 @@ const SitesDashboard = ({ width, sid }) => {
         </div>
       </section>
     </Layout>
-  );
+  ) : null;
 };
 
 SitesDashboard.propTypes = {};
 
 export default withResizeDetector(SitesDashboard);
+
+export async function getServerSideProps({ query }) {
+  return {
+    props: {
+      sid: query.siteId || 0,
+    },
+  };
+}

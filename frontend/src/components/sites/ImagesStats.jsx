@@ -98,7 +98,7 @@ const SitesImagesStats = ({ width, sid, user }) => {
 
   const router = useRouter();
 
-  const { scan: scan, scanError: scanError } = useScan({
+  const { scan: scan } = useScan({
     querySid: sid,
     refreshInterval: 1000,
   });
@@ -115,23 +115,14 @@ const SitesImagesStats = ({ width, sid, user }) => {
         setScanObjId(scanData.results[scanData.results.length - 1].id);
       }
     }
-
-    if (
-      scanError &&
-      scanError.message !== "" &&
-      scanError.message !== undefined
-    ) {
-      // TODO: add generic alert here
-      console.log("ERROR: " + scanError.message);
-    }
   });
 
-  const { stats: stats, statsError: statsError } = useStats({
+  const { stats: stats } = useStats({
     querySid: sid,
     scanObjId: scanObjId,
   });
 
-  const { images: images, imagesError: imagesError } = useImages({
+  const { images: images } = useImages({
     querySid: sid,
     scanObjId: scanObjId,
   });
@@ -143,18 +134,6 @@ const SitesImagesStats = ({ width, sid, user }) => {
 
     if (images && images !== undefined && Object.keys(images).length > 0) {
       setImagesData(images);
-    }
-
-    if (statsError || imagesError) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + statsError.message !== "" &&
-          statsError.message !== undefined
-          ? statsError.message
-          : imagesError.message !== "" && imagesError.message !== undefined
-          ? imagesError.message
-          : ImagesStatsLabel[2].label
-      );
     }
   }, [stats, images]);
 

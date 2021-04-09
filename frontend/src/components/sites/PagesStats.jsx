@@ -98,7 +98,7 @@ const SitesPagesStats = ({ width, sid, user }) => {
 
   const router = useRouter();
 
-  const { scan: scan, scanError: scanError } = useScan({
+  const { scan: scan } = useScan({
     querySid: sid,
     refreshInterval: 1000,
   });
@@ -115,26 +115,14 @@ const SitesPagesStats = ({ width, sid, user }) => {
         setScanObjId(scanData.results[scanData.results.length - 1].id);
       }
     }
-
-    if (
-      scanError &&
-      scanError.message !== "" &&
-      scanError.message !== undefined
-    ) {
-      // TODO: add generic alert here
-      console.log("ERROR: " + scanError.message);
-    }
   });
 
-  const { stats: stats, statsError: statsError } = useStats({
+  const { stats: stats } = useStats({
     querySid: sid,
     scanObjId: scanObjId,
   });
 
-  const {
-    noPageIssues: noPageIssues,
-    noPageIssuesError: noPageIssuesError,
-  } = useNoPageIssues({
+  const { noPageIssues: noPageIssues } = useNoPageIssues({
     querySid: sid,
     scanObjId: scanObjId,
   });
@@ -150,19 +138,6 @@ const SitesPagesStats = ({ width, sid, user }) => {
       Object.keys(noPageIssues).length > 0
     ) {
       setNoPageIssuesData(noPageIssues);
-    }
-
-    if (statsError || noPageIssuesError) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + statsError.message !== "" &&
-          statsError.message !== undefined
-          ? statsError.message
-          : noPageIssuesError.message !== "" &&
-            noPageIssuesError.message !== undefined
-          ? noPageIssuesError.message
-          : PagesStatsLabel[2].label
-      );
     }
   }, [stats, noPageIssues]);
 
