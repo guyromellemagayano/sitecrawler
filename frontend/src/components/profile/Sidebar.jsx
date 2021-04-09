@@ -37,20 +37,15 @@ const Sidebar = () => {
 
   const userApiEndpoint = "/api/auth/user/";
 
-  const { data: user, error: userError } = useSWR(userApiEndpoint, useFetcher, {
+  const { data: user } = useSWR(userApiEndpoint, useFetcher, {
     refreshInterval: 1000,
   });
 
   useEffect(() => {
-    if (user && user !== undefined) {
+    if (user && user !== undefined && Object.keys(user).length > 0) {
       setTimeout(() => {
         setProfileLoaded(true);
       }, 500);
-    }
-
-    if (userError) {
-      // TODO: add generic alert here
-      console.log("ERROR: " + userError);
     }
   }, [user]);
 
