@@ -3,9 +3,9 @@ import "tailwindcss/tailwind.css";
 import { DefaultSeo } from "next-seo";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import PropTypes from "prop-types";
 
 // Utils
-import { getCookie } from "src/utils/cookie";
 import { HistoryProvider } from "src/utils/history";
 
 // Enums
@@ -19,30 +19,19 @@ import TopProgressBar from "src/components/TopProgressBar";
 library.add(fab);
 
 const MyApp = ({ Component, pageProps }) => {
-	return (
-		<HistoryProvider>
-			<DefaultSeo {...appSeo} />
-			<GlobalStyles />
-			<TopProgressBar />
-			<Component {...pageProps} />
-		</HistoryProvider>
-	);
+  return (
+    <HistoryProvider>
+      <DefaultSeo {...appSeo} />
+      <GlobalStyles />
+      <TopProgressBar />
+      <Component {...pageProps} />
+    </HistoryProvider>
+  );
 };
 
-MyApp.getInitialProps = async (appContext) => {
-	let pageProps = {};
-
-	if (appContext.Component.getInitialProps) {
-		pageProps = await appContext.Component.getInitialProps(appContext.ctx);
-	}
-
-	const token = getCookie("token", appContext.ctx.req) || "";
-
-	pageProps.token = token;
-
-	return {
-		pageProps,
-	};
+MyApp.propTypes = {
+  Component: PropTypes.elementType.isRequired,
+  pageProps: PropTypes.object.isRequired,
 };
 
 export default MyApp;
