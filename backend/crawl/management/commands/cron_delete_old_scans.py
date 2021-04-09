@@ -19,6 +19,8 @@ class Command(BaseCommand):
 
         self._vacuum()
 
+        print("Delete job done", flush=True)
+
     def _archive_and_delete_scan(self, scan):
         print(f"Archiving {scan.id} for {scan.site.url}", flush=True)
 
