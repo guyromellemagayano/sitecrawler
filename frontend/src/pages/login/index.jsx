@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 
 // NextJS
 import Link from "next/link";
-import Router from "next/router";
+import { useRouter } from "next/router";
 
 // External
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,6 +22,9 @@ import LoginLabel from "public/labels/pages/login.json";
 import usePostMethod from "src/hooks/usePostMethod";
 import useShowPassword from "src/hooks/useShowPassword";
 import useUser from "src/hooks/useUser";
+
+// Layout
+import Layout from "src/components/Layout";
 
 // Components
 const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
@@ -43,6 +46,13 @@ const Login = () => {
   const loginApiEndpoint = "/api/auth/login/";
   const googleLoginApiEndpoint = "/auth/google/login/";
 
+  const router = useRouter();
+
+  // const { user: user, userError: userError } = useUser({
+  //   redirectIfFound: true,
+  //   redirectTo: "/",
+  // });
+
   const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(
     false
   );
@@ -53,7 +63,7 @@ const Login = () => {
   }, []);
 
   return (
-    <>
+    <Layout>
       <NextSeo title={pageTitle} />
 
       <div tw="bg-gray-50 min-h-screen">
@@ -147,7 +157,7 @@ const Login = () => {
 
                                   if (successMsg !== "") {
                                     setTimeout(() => {
-                                      Router.replace("/");
+                                      router.push("/");
                                     }, 1500);
                                   }
                                 }
@@ -442,7 +452,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-    </>
+    </Layout>
   );
 };
 
