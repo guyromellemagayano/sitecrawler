@@ -5,9 +5,6 @@ import { useState, useEffect } from "react";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
-// Utils
-import { getCookie } from "src/utils/cookie";
-
 // Hooks
 import useUser from "src/hooks/useUser";
 
@@ -15,54 +12,40 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const Login = loadable(() => import("src/components/layout/Login"));
 const Dashboard = loadable(() => import("src/components/layout/Dashboard"));
 const Loader = loadable(() => import("src/components/layout/Loader"));
 
-const Home = ({ token, notLoggedIn }) => {
-	const [userData, setUserData] = useState([]);
-	const [tokenKey, setTokenKey] = useState("");
+const Home = () => {
+  const [userData, setUserData] = useState([]);
+  const [pageLoaded, setPageLoaded] = useState(false);
 
-	const { user: user, error: userError } = useUser({ refreshInterval: 1000 });
+  const { user: user, userError: userError } = useUser({
+    redirectTo: "/login",
+  });
 
-	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0 && token && token !== undefined && token !== "") {
-			setUserData(user);
-			setTokenKey(token);
-		}
-	}, [user, token]);
+  useEffect(() => {
+    if (user && user !== undefined && Object.keys(user).length > 0) {
+      setUserData(user);
 
-	return (
-		<Layout user={userData}>
-			{userData !== undefined && tokenKey !== "" ? (
-				<Dashboard user={userData} userError={userError} token={tokenKey} />
-			) : notLoggedIn ? (
-				<Login />
-			) : (
-				<Loader />
-			)}
-		</Layout>
-	);
+      setTimeout(() => {
+        setPageLoaded(true);
+      }, 3000);
+    }
+
+    if (userError && userError.message !== undefined) {
+      console.log("ERROR: " + userError.message);
+    }
+  }, [user, userError]);
+
+  return pageLoaded ? (
+    <Layout user={userData}>
+      <Dashboard user={userData} userError={userError} />
+    </Layout>
+  ) : (
+    <Loader />
+  );
 };
 
 Home.propTypes = {};
 
 export default Home;
-
-export async function getServerSideProps({ req }) {
-	let token = getCookie("token", req);
-
-	if (!token) {
-		return {
-			props: {
-				notLoggedIn: true,
-			},
-		};
-	}
-
-	return {
-		props: {
-			token: token || "",
-		},
-	};
-}
