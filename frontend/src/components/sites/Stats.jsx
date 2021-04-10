@@ -220,7 +220,7 @@ const SitesStats = ({ crawlableHandler, crawlFinished, sid, user }) => {
   ];
 
   return (
-    <div tw="px-6 py-5 sm:p-6  bg-white overflow-hidden rounded-lg">
+    <div tw="px-6 py-5 sm:p-6 bg-white overflow-hidden rounded-lg border">
       <h2 tw="text-lg font-bold leading-7 text-gray-900">
         {componentReady ? (
           StatsLabel[0].label
@@ -286,18 +286,18 @@ const SitesStats = ({ crawlableHandler, crawlFinished, sid, user }) => {
 
                   {val.title === "Total Issues" ? (
                     <dd tw="mt-1 text-3xl leading-9 font-semibold text-red-700">
-                      {val.count >= 0 && !crawlFinished ? (
-                        <Skeleton duration={2} width={50} height={50} />
-                      ) : (
+                      {componentReady ? (
                         val.count
+                      ) : (
+                        <Skeleton duration={2} width={50} height={50} />
                       )}
                     </dd>
                   ) : (
                     <dd tw="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                      {val.count >= 0 && !crawlFinished ? (
-                        <Skeleton duration={2} width={50} height={50} />
-                      ) : (
+                      {componentReady ? (
                         val.count
+                      ) : (
+                        <Skeleton duration={2} width={50} height={50} />
                       )}
                     </dd>
                   )}

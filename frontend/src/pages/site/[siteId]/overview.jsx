@@ -63,7 +63,7 @@ const SitesDashboard = ({ width, sid }) => {
 
   const pageTitle =
     siteIdData.name && siteIdData.name !== undefined
-      ? "Overview | " + siteIdData.name
+      ? "Overview - " + siteIdData.name
       : "Overview";
   const homeLabel = "Home";
   const homePageLink = "/";

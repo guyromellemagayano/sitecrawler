@@ -271,24 +271,40 @@ const SitesImagesStats = ({ width, sid, user }) => {
 
   return (
     <SitesImagesStatsDiv>
-      <div tw="bg-white overflow-hidden rounded-lg h-full">
+      <div tw="bg-white overflow-hidden rounded-lg h-full border">
         <div tw="flex justify-between py-8 px-5">
           <div tw="flex items-center">
-            <ImageSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
+            {componentReady ? (
+              <ImageSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
+            ) : (
+              <span tw="w-6 h-6 mr-2">
+                <Skeleton duration={2} width={15} height={15} />
+              </span>
+            )}
             <h2 tw="text-lg font-bold leading-7 text-gray-900">
-              {ImagesStatsLabel[0].label}
+              {componentReady ? (
+                ImagesStatsLabel[0].label
+              ) : (
+                <Skeleton duration={2} width={100} height={15} />
+              )}
             </h2>
           </div>
           <div>
-            <Link
-              href="/site/[siteId]/images"
-              as={`/site/${sid}/images`}
-              passHref
-            >
-              <a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">
-                {ImagesStatsLabel[1].label}
-              </a>
-            </Link>
+            {componentReady ? (
+              <Link
+                href="/site/[siteId]/images"
+                as={`/site/${sid}/images`}
+                passHref
+              >
+                <a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">
+                  {ImagesStatsLabel[1].label}
+                </a>
+              </Link>
+            ) : (
+              <span tw="leading-5">
+                <Skeleton duration={2} width={75} height={15} />
+              </span>
+            )}
           </div>
         </div>
         <div tw="flex justify-center mx-auto max-w-sm">
@@ -301,8 +317,24 @@ const SitesImagesStats = ({ width, sid, user }) => {
               height={lgScreenBreakpoint > width ? "530" : "530"}
             />
           ) : (
-            // FIXME: update skeleton for chart
-            <h1>Loading...</h1>
+            <div tw="flex flex-col items-start h-530">
+              <Skeleton
+                circle={true}
+                duration={2}
+                width={208.23}
+                height={208.23}
+                className="mt-6 block"
+              />
+              <div tw="flex flex-col space-y-3 mt-16">
+                {[...Array(3)].map((value, key) => (
+                  <span key={key} tw="space-x-3">
+                    <Skeleton circle={true} width={20} height={20} />
+                    <Skeleton width={150} height={20} />
+                    <Skeleton width={20} height={20} />
+                  </span>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </div>
