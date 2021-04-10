@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 // NextJS
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
@@ -45,6 +45,11 @@ const SiteMenu = ({ user, site }) => {
   const { asPath } = useRouter();
   const router = useRouter();
 
+  const { scan: scan } = useScan({
+    querySid: sid,
+    refreshInterval: 1000,
+  });
+
   useEffect(() => {
     if (
       router.query.siteId &&
@@ -53,13 +58,7 @@ const SiteMenu = ({ user, site }) => {
     ) {
       setSid(router.query.siteId);
     }
-  }, [router]);
 
-  const { scan: scan, scanError: scanError } = useScan({
-    querySid: sid,
-  });
-
-  useEffect(() => {
     if (scan && scan !== undefined && Object.keys(scan).length > 0) {
       setScanData(scan);
 
@@ -68,19 +67,22 @@ const SiteMenu = ({ user, site }) => {
         scanData.results !== undefined &&
         Object.keys(scanData.results).length > 0
       ) {
-        setScanObjId(scanData.results[scanData.results.length - 1].id);
+        setScanObjId(
+          scanData.results
+            .map((e) => {
+              return e.id;
+            })
+            .sort((a, b) => a.id - b.id)
+            .reverse()[0]
+        );
       }
-    }
-
-    if (scanError) {
-      // TODO: add generic alert here
-      console.log("ERROR: " + scanError);
     }
   });
 
-  const { stats: stats, statsError: statsError } = useStats({
+  const { stats: stats } = useStats({
     querySid: sid,
     scanObjId: scanObjId,
+    refreshInterval: 1000,
   });
 
   useEffect(() => {
@@ -96,10 +98,16 @@ const SiteMenu = ({ user, site }) => {
       handleSiteSelectOnLoad(site, sid);
     }
 
-    if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+    if (
+      stats &&
+      stats !== undefined &&
+      Object.keys(stats).length > 0 &&
+      scanObjId &&
+      scanObjId !== 0
+    ) {
       setStatsData(stats);
     }
-  }, [scan, stats, site, sid]);
+  }, [scan, stats, scanObjId, site, sid]);
 
   useEffect(() => {
     if (
@@ -138,6 +146,22 @@ const SiteMenu = ({ user, site }) => {
           });
       }
     }
+
+    if (selectedSite == []) {
+      if (
+        siteData &&
+        siteData !== undefined &&
+        Object.keys(siteData).length > 0
+      ) {
+        if (Object.keys(siteData.results).length > 0) {
+          siteData.results
+            .filter((result) => result.id == sid)
+            .map((val) => {
+              setSelectedSite(val.name);
+            });
+        }
+      }
+    }
   }, [selectedSite, siteData]);
 
   const handleSiteSelectOnLoad = (siteId) => {
@@ -151,7 +175,7 @@ const SiteMenu = ({ user, site }) => {
           setSelectedSite(siteData.results[i].name);
 
           setTimeout(() => {
-            router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
+            Router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
           }, 500);
         }
       }
