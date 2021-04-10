@@ -99,17 +99,6 @@ const SiteMenu = ({ user, site }) => {
     if (stats && stats !== undefined && Object.keys(stats).length > 0) {
       setStatsData(stats);
     }
-
-    if (scanError || statsError) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + scanError
-          ? scanError
-          : statsError
-          ? statsError
-          : PrimaryMenuLabel[4].label
-      );
-    }
   }, [scan, stats, site, sid]);
 
   useEffect(() => {
@@ -151,18 +140,18 @@ const SiteMenu = ({ user, site }) => {
     }
   }, [selectedSite, siteData]);
 
-  const handleSiteSelectOnLoad = (data, id) => {
+  const handleSiteSelectOnLoad = (siteId) => {
     if (
-      data &&
-      data.results !== undefined &&
-      Object.keys(data.results).length > 0
+      siteData &&
+      siteData.results !== undefined &&
+      Object.keys(siteData.results).length > 0
     ) {
-      for (let i = 0; i < data.results.length; i++) {
-        if (data.results[i].id == id) {
-          setSelectedSite(data.results[i].name);
+      for (let i = 0; i < siteData.results.length; i++) {
+        if (siteData.results[i].id == siteId) {
+          setSelectedSite(siteData.results[i].name);
 
           setTimeout(() => {
-            router.push(`/site/[siteId]/overview`, `/site/${id}/overview`);
+            router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
           }, 500);
         }
       }
@@ -339,7 +328,12 @@ const SiteMenu = ({ user, site }) => {
                             value2.slug !== "pages"
                           ) {
                             return componentReady ? (
-                              <Link href={hrefVal} as={asVal} passHref>
+                              <Link
+                                key={index}
+                                href={hrefVal}
+                                as={asVal}
+                                passHref
+                              >
                                 <a
                                   className="group"
                                   css={[
@@ -440,7 +434,10 @@ const SiteMenu = ({ user, site }) => {
                                 </a>
                               </Link>
                             ) : (
-                              <span tw="mt-1 flex items-center px-3 py-2 space-x-3">
+                              <span
+                                key={index}
+                                tw="mt-1 flex items-center px-3 py-2 space-x-3"
+                              >
                                 <Skeleton
                                   circle={true}
                                   duration={2}
@@ -519,17 +516,17 @@ const SiteMenu = ({ user, site }) => {
                               leave="transition ease-in duration-75"
                               leaveFrom="transform opacity-100 scale-100"
                               leaveTo="transform opacity-0 scale-95"
-                              tw="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
+                              className="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
                             >
-                              {site && site.results !== undefined ? (
-                                site.results.length > 0 ? (
+                              {siteData && siteData.results !== undefined ? (
+                                siteData.results.length > 0 ? (
                                   <ul
                                     tabIndex="-1"
                                     role="listbox"
                                     aria-labelledby="listbox-label"
                                     tw="max-h-60 pt-2 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
                                   >
-                                    {site.results.map((value, index) => {
+                                    {siteData.results.map((value, index) => {
                                       return (
                                         <li
                                           key={index}
@@ -549,25 +546,46 @@ const SiteMenu = ({ user, site }) => {
                                           ]}
                                         >
                                           <div tw="flex items-center space-x-3">
-                                            <span
-                                              aria-label="Verified"
-                                              css={[
-                                                tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-                                                value.verified
-                                                  ? tw`bg-green-400`
-                                                  : tw`bg-yellow-400`,
-                                              ]}
-                                            ></span>
-                                            <span
-                                              css={[
-                                                tw`font-medium block truncate`,
-                                                value.verified
-                                                  ? tw`text-gray-500`
-                                                  : tw`text-gray-600 opacity-25`,
-                                              ]}
-                                            >
-                                              {value.name}
-                                            </span>
+                                            {sitesLoaded ? (
+                                              <>
+                                                <span
+                                                  aria-label="Verified"
+                                                  css={[
+                                                    tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+                                                    value.verified
+                                                      ? tw`bg-green-400`
+                                                      : tw`bg-yellow-400`,
+                                                  ]}
+                                                ></span>
+                                                <span
+                                                  css={[
+                                                    tw`font-medium block truncate`,
+                                                    value.verified
+                                                      ? tw`text-gray-500`
+                                                      : tw`text-gray-600 opacity-25`,
+                                                  ]}
+                                                >
+                                                  {value.name}
+                                                </span>
+                                              </>
+                                            ) : (
+                                              <div tw="flex items-center space-x-3 my-1">
+                                                <div>
+                                                  <Skeleton
+                                                    circle={true}
+                                                    duration={2}
+                                                    width={20}
+                                                    height={20}
+                                                  />
+                                                </div>
+                                                <div tw="ml-3">
+                                                  <Skeleton
+                                                    duration={2}
+                                                    width={145}
+                                                  />
+                                                </div>
+                                              </div>
+                                            )}
                                           </div>
                                         </li>
                                       );
