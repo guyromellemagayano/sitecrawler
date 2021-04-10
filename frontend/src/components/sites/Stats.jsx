@@ -21,7 +21,7 @@ const InformationCircleSvg = loadable(() =>
   import("src/components/svg/outline/InformationCircleSvg")
 );
 
-const SitesStats = ({ crawlableHandler, crawlFinished, sid, user }) => {
+const SitesStats = ({ crawlableHandler, sid, user }) => {
   const [componentReady, setComponentReady] = useState(false);
   const [scanData, setScanData] = useState([]);
   const [scanObjId, setScanObjId] = useState(0);
@@ -52,7 +52,7 @@ const SitesStats = ({ crawlableHandler, crawlFinished, sid, user }) => {
   //   return valLength;
   // };
 
-  const { scan: scan, scanError: scanError } = useScan({
+  const { scan: scan } = useScan({
     querySid: sid,
     refreshInterval: 1000,
   });
@@ -69,18 +69,9 @@ const SitesStats = ({ crawlableHandler, crawlFinished, sid, user }) => {
         setScanObjId(scanData.results[scanData.results.length - 1].id);
       }
     }
-
-    if (
-      scanError &&
-      scanError.message !== "" &&
-      scanError.message !== undefined
-    ) {
-      // TODO: add generic alert here
-      console.log("ERROR: " + scanError.message);
-    }
   });
 
-  const { stats: stats, statsError: statsError } = useStats({
+  const { stats: stats } = useStats({
     querySid: sid,
     scanObjId: scanObjId,
     refreshInterval: 1000,
@@ -89,16 +80,6 @@ const SitesStats = ({ crawlableHandler, crawlFinished, sid, user }) => {
   useEffect(() => {
     if (statsData && stats !== undefined && Object.keys(stats).length > 0) {
       setStatsData(stats);
-    }
-
-    if (statsError) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + statsError.message !== "" &&
-          statsError.message !== undefined
-          ? statsError.message
-          : StatsLabel[1].label
-      );
     }
   }, [stats]);
 
