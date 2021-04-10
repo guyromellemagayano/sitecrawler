@@ -112,7 +112,14 @@ const SitesImagesStats = ({ width, sid, user }) => {
         scanData.results !== undefined &&
         Object.keys(scanData.results).length > 0
       ) {
-        setScanObjId(scanData.results[scanData.results.length - 1].id);
+        setScanObjId(
+          scanData.results
+            .map((e) => {
+              return e.id;
+            })
+            .sort((a, b) => a.id - b.id)
+            .reverse()[0]
+        );
       }
     }
   });
@@ -120,6 +127,7 @@ const SitesImagesStats = ({ width, sid, user }) => {
   const { stats: stats } = useStats({
     querySid: sid,
     scanObjId: scanObjId,
+    refreshInterval: 1000,
   });
 
   const { images: images } = useImages({
@@ -161,7 +169,7 @@ const SitesImagesStats = ({ width, sid, user }) => {
         path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
     });
 
-    Router.push("/site/[siteId]/images", path);
+    router.push("/site/[siteId]/images", path);
   };
 
   const chartSeries = [
@@ -227,7 +235,7 @@ const SitesImagesStats = ({ width, sid, user }) => {
             total: {
               show: true,
               showAlways: true,
-              label: "Link Errors",
+              label: "Image Errors",
               fontSize: "15px",
               color: "#2A324B",
               formatter: function (val) {

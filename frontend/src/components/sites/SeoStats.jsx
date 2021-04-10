@@ -111,7 +111,14 @@ const SitesSeoStats = ({ width, sid, user }) => {
         scanData.results !== undefined &&
         Object.keys(scanData.results).length > 0
       ) {
-        setScanObjId(scanData.results[scanData.results.length - 1].id);
+        setScanObjId(
+          scanData.results
+            .map((e) => {
+              return e.id;
+            })
+            .sort((a, b) => a.id - b.id)
+            .reverse()[0]
+        );
       }
     }
   });
@@ -119,6 +126,7 @@ const SitesSeoStats = ({ width, sid, user }) => {
   const { stats: stats } = useStats({
     querySid: sid,
     scanObjId: scanObjId,
+    refreshInterval: 1000,
   });
 
   useEffect(() => {
