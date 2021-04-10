@@ -659,11 +659,11 @@ export default withResizeDetector(VerifyUrl);
 export async function getServerSideProps({ query }) {
   return {
     props: {
-      sid: query.sid || "",
-      sname: query.sname || "",
-      surl: query.surl || "",
-      vid: query.vid || 0,
-      v: query.v || false,
+      sid: query.sid,
+      sname: query.sname,
+      surl: query.surl,
+      vid: query.vid,
+      v: query.v,
     },
   };
 }
