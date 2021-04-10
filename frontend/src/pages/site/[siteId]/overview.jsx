@@ -246,7 +246,6 @@ const SitesDashboard = ({ width, sid }) => {
                 <div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
                   <SitesStats
                     crawlableHandler={crawlableHandler}
-                    crawlFinished={crawlFinished}
                     sid={sid}
                     user={userData}
                   />
