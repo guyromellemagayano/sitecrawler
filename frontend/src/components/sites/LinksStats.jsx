@@ -122,7 +122,9 @@ const SitesLinksStats = ({ width, sid, user }) => {
     scanObjId: scanObjId,
   });
 
+  const sitesApiEndpoint = `/api/site/${sid}/scan/${scanObjId}/link/`;
   const { links: links } = useLinks({
+    endpoint: sitesApiEndpoint,
     querySid: sid,
     scanObjId: scanObjId,
   });
