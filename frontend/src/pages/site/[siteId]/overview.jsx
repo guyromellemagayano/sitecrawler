@@ -126,7 +126,7 @@ const SitesDashboard = ({ width, sid }) => {
       const data = await response.data;
 
       // FIXME: fix scan errors
-      console.log("response: " + response.data);
+      console.log("response: " + response);
 
       if (Math.floor(response.status / 200) === 1) {
         if (data) {
