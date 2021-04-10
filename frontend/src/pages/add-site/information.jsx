@@ -619,3 +619,12 @@ const Information = ({ width, sid, edit }) => {
 Information.propTypes = {};
 
 export default withResizeDetector(Information);
+
+export async function getServerSideProps({ query }) {
+  return {
+    props: {
+      sid: query.sid || 0,
+      edit: query.edit || false,
+    },
+  };
+}
