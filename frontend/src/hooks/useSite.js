@@ -104,7 +104,7 @@ export const useStats = ({
   return { stats, mutateStats, statsError };
 };
 
-export const useLinks = ({ querySid = 0, scanObjId = 0 }) => {
+export const useLinks = ({ endpoint, querySid = 0, scanObjId = 0 }) => {
   const { data: links, mutate: mutateLinks, error: linksError } = useSWR(
     () =>
       querySid &&
@@ -113,17 +113,13 @@ export const useLinks = ({ querySid = 0, scanObjId = 0 }) => {
       scanObjId &&
       scanObjId !== 0 &&
       scanObjId !== undefined
-        ? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/"
+        ? endpoint
         : null,
     useFetcher,
     {
       onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
         if (error.status === 404) return;
-        if (
-          key ===
-          siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/"
-        )
-          return;
+        if (key === endpoint) return;
         if (retryCount >= 10) return;
 
         setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
