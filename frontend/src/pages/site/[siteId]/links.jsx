@@ -1,50 +1,64 @@
+// React
+import { Fragment, useState, useEffect } from "react";
+
+// NextJS
+import Head from "next/head";
+import Link from "next/link";
+import Router, { useRouter } from "next/router";
+
+// External
+import { NextSeo } from "next-seo";
+import { withResizeDetector } from "react-resize-detector";
+import Cookies from "js-cookie";
+import fetch from "node-fetch";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import ReactTooltip from "react-tooltip";
+import Skeleton from "react-loading-skeleton";
+import tw, { styled } from "twin.macro";
+
+// JSON
+import LinksLabel from "public/labels/pages/site/links.json";
+import LinksUrlContent from "public/data/links-url.json";
+
+// Hooks
+import usePostMethod from "src/hooks/usePostMethod";
+import { useScan, useSite, useLinks, useSiteId } from "src/hooks/useSite";
+import useUser from "src/hooks/useUser";
+
+// Layout
+import Layout from "src/components/Layout";
+
+// Components
+const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const ChevronRightSvg = loadable(() =>
+  import("src/components/svg/solid/ChevronRightSvg")
+);
+const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
+const LinkFilter = loadable(() => import("src/components/site/LinkFilter"));
+const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
+const LinkSorting = loadable(() => import("src/components/site/LinkSorting"));
+const LinkUrlTable = loadable(() => import("src/components/site/LinkTable"));
+const MainSidebar = loadable(() =>
+  import("src/components/sidebar/MainSidebar")
+);
+const MobileSidebarButton = loadable(() =>
+  import("src/components/sidebar/MobileSidebarButton")
+);
+const ProfileSkeleton = loadable(() =>
+  import("src/components/skeletons/ProfileSkeleton")
+);
+const MyPagination = loadable(() => import("src/components/sites/Pagination"));
+const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+
+// Helpers
 import {
   removeURLParameter,
   slugToCamelcase,
   getSortKeyFromSlug,
   getSlugFromSortKey,
-} from "helpers/functions";
-import { Fragment, useState, useEffect } from "react";
-import Cookies from "js-cookie";
-import fetch from "node-fetch";
-import Head from "next/head";
-import Layout from "components/Layout";
-import Link from "next/link";
-import LinkFilter from "components/site/LinkFilter";
-import LinkOptions from "components/site/LinkOptions";
-import LinksLabel from "public/labels/pages/site/links.json";
-import LinkSorting from "components/site/LinkSorting";
-import LinksUrlContent from "public/data/links-url.json";
-import LinkUrlTable from "components/site/LinkTable";
-import MainSidebar from "components/sidebar/MainSidebar";
-import MobileSidebar from "components/sidebar/MobileSidebar";
-import MyPagination from "components/sites/Pagination";
-import ReactTooltip from "react-tooltip";
-import Router, { useRouter } from "next/router";
-import SiteFooter from "components/footer/SiteFooter";
-import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
-import useSWR, { mutate } from "swr";
-import useUser from "hooks/useUser";
-
-const fetcher = async (url) => {
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "X-CSRFToken": Cookies.get("csrftoken"),
-    },
-  });
-
-  const data = await res.json();
-
-  if (res.status !== 200) {
-    throw new Error(data.message);
-  }
-
-  return data;
-};
+} from "src/helpers/functions";
+import LinksSvg from "src/components/svg/outline/LinksSvg";
 
 const LinksDiv = styled.section`
   .url-type-tooltip,
@@ -67,27 +81,6 @@ const LinksDiv = styled.section`
       }
     }
   }
-  .btn-crawler {
-    top: 0;
-    right: 0;
-    padding: 2.25rem 1.5rem;
-
-    @media only screen and (max-width: 1024px) {
-      margin: 0;
-    }
-
-    @media only screen and (max-width: 639px) {
-      padding: 0 1rem;
-    }
-
-    @media only screen and (min-width: 640px) and (max-width: 767px) {
-      padding: 0 1.5rem;
-    }
-
-    @media only screen and (min-width: 768px) and (max-width: 1023px) {
-      padding: 0 2rem;
-    }
-  }
 
   @media only screen and (max-width: 960px) {
     .min-width-adjust {
@@ -105,114 +98,167 @@ const initialOrder = {
   occurrences: "default",
 };
 
-const Links = (props) => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+const Links = ({ width, result }) => {
   const [allFilter, setAllFilter] = useState(false);
-  const [issueFilter, setIssueFilter] = useState(false);
-  const [noIssueFilter, setNoIssueFilter] = useState(false);
-  const [internalFilter, setInternalFilter] = useState(false);
-  const [externalFilter, setExternalFilter] = useState(false);
-  const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
+  const [externalFilter, setExternalFilter] = useState(false);
+  const [internalFilter, setInternalFilter] = useState(false);
+  const [issueFilter, setIssueFilter] = useState(false);
+  const [linksData, setLinksData] = useState([]);
   const [linksPerPage, setLinksPerPage] = useState(20);
-  const [pagePath, setPagePath] = useState("");
-  const [sortOrder, setSortOrder] = useState(initialOrder);
-  const [searchKey, setSearchKey] = useState("");
   const [loadQueryString, setLoadQueryString] = useState("");
-
-  const pageTitle = "Links |";
-
-  const { user: user, userError: userError } = useUser({
-    redirectTo: "/",
-    redirectIfFound: false,
-  });
+  const [noIssueFilter, setNoIssueFilter] = useState(false);
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [pagePath, setPagePath] = useState("");
+  const [recrawlable, setRecrawlable] = useState(false);
+  const [scanData, setScanData] = useState([]);
+  const [scanObjId, setScanObjId] = useState(0);
+  const [searchKey, setSearchKey] = useState("");
+  const [siteData, setSiteData] = useState([]);
+  const [siteIdData, setSiteIdData] = useState([]);
+  const [sortOrder, setSortOrder] = useState(initialOrder);
+  const [userData, setUserData] = useState([]);
 
   const { query, asPath } = useRouter();
-  const { data: site, error: siteError } = useSWR(
-    () => (query.siteId ? `/api/site/${query.siteId}/` : null),
-    fetcher
-  );
 
-  const { data: scan, error: scanError } = useSWR(
-    () =>
-      query.siteId
-        ? `/api/site/${query.siteId}/scan/?ordering=-finished_at`
-        : null,
-    fetcher
-  );
+  const pageTitle =
+    siteIdData.name && siteIdData.name !== undefined
+      ? "Links - " + siteIdData.name
+      : "Links";
+  const homeLabel = "Home";
+  const homePageLink = "/";
+  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`;
+  const sitesApiEndpoint = `/api/site/${query.siteId}/?ordering=name`;
 
-  let scanObjId = "";
+  const { user: user } = useUser({
+    redirectIfFound: false,
+    redirectTo: "/login",
+    refreshInterval: 1000,
+  });
 
-  if (scan) {
-    let scanObj = [];
+  const { scan: scan } = useScan({
+    querySid: query.siteId,
+    refreshInterval: 1000,
+  });
 
-    scan.results.map((val) => {
-      scanObj.push(val);
-      return scanObj;
-    });
+  const { site: site } = useSite({
+    endpoint: sitesApiEndpoint,
+    refreshInterval: 1000,
+  });
 
-    scanObj.map((val, index) => {
-      if (index == 0) scanObjId = val.id;
+  const { siteId: siteId } = useSiteId({
+    querySid: query.siteId,
+  });
 
-      return scanObjId;
-    });
-  }
+  useEffect(() => {
+    if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+      setScanData(scan);
+
+      if (
+        scanData.results &&
+        scanData.results !== undefined &&
+        Object.keys(scanData.results).length > 0
+      ) {
+        setScanObjId(
+          scanData.results
+            .map((e) => {
+              return e.id;
+            })
+            .sort((a, b) => a.id - b.id)
+            .reverse()[0]
+        );
+      }
+    }
+  });
 
   let scanApiEndpoint =
-    props.result.page !== undefined
+    result.page !== undefined
       ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
         linksPerPage +
         `&page=` +
-        props.result.page
+        result.page
       : `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
         linksPerPage;
 
   let queryString = "";
 
-  const statusString = Array.isArray(props.result.status)
-    ? props.result.status.join("&status=")
-    : props.result.status;
+  const statusString = Array.isArray(result.status)
+    ? result.status.join("&status=")
+    : result.status;
 
   queryString +=
-    props.result.status !== undefined
+    result.status !== undefined
       ? scanApiEndpoint.includes("?")
         ? `&status=${statusString}`
         : `?status=${statusString}`
       : "";
 
-  const typeString = Array.isArray(props.result.type)
-    ? props.result.type.join("&type=")
-    : props.result.type;
+  const typeString = Array.isArray(result.type)
+    ? result.type.join("&type=")
+    : result.type;
 
   queryString +=
-    props.result.type !== undefined
+    result.type !== undefined
       ? scanApiEndpoint.includes("?")
         ? `&type=${typeString}`
         : `?type=${typeString}`
       : "";
 
   queryString +=
-    props.result.search !== undefined
+    result.search !== undefined
       ? scanApiEndpoint.includes("?")
-        ? `&search=${props.result.search}`
-        : `?search=${props.result.search}`
+        ? `&search=${result.search}`
+        : `?search=${result.search}`
       : "";
 
   queryString +=
-    props.result.ordering !== undefined
+    result.ordering !== undefined
       ? scanApiEndpoint.includes("?")
-        ? `&ordering=${props.result.ordering}`
-        : `?ordering=${props.result.ordering}`
+        ? `&ordering=${result.ordering}`
+        : `?ordering=${result.ordering}`
       : "";
 
   scanApiEndpoint += queryString;
 
-  // console.log(scanApiEndpoint);
+  const { links: links, mutateLinks: mutateLinks } = useLinks({
+    endpoint: scanApiEndpoint,
+    querySid: query.siteId,
+    scanObjId: scanObjId,
+    refreshInterval: 1000,
+  });
 
-  const { data: link, error: linkError, mutate: updateLinks } = useSWR(
-    () => (query.siteId && scanObjId ? scanApiEndpoint : null),
-    fetcher
-  );
+  useEffect(() => {
+    if (
+      user &&
+      user !== undefined &&
+      Object.keys(user).length > 0 &&
+      scan &&
+      scan !== undefined &&
+      Object.keys(scan).length > 0 &&
+      site &&
+      site !== undefined &&
+      Object.keys(site).length > 0 &&
+      siteId &&
+      siteId !== undefined &&
+      Object.keys(siteId).length > 0 &&
+      links &&
+      links !== undefined &&
+      Object.keys(links).length > 0
+    ) {
+      setUserData(user);
+      setScanData(scan);
+      setSiteData(site);
+      setSiteIdData(siteId);
+      setLinksData(links);
+    }
+
+    if (userData && scanData && siteData && siteIdData && linksData) {
+      setTimeout(() => {
+        setPageLoaded(true);
+      }, 500);
+    }
+  }, [user, scan, site, siteId, links]);
 
   const searchEventHandler = async (e) => {
     const searchTargetValue = e.target.value;
@@ -236,7 +282,7 @@ const Links = (props) => {
     else setPagePath(`${newPath}?`);
 
     Router.push(newPath);
-    updateLinks();
+    mutateLinks();
   };
 
   const filterChangeHandler = async (e) => {
@@ -344,7 +390,7 @@ const Links = (props) => {
     else setPagePath(`${newPath}?`);
 
     Router.push(newPath);
-    updateLinks();
+    mutateLinks();
 
     return true;
   };
@@ -368,7 +414,7 @@ const Links = (props) => {
       else setPagePath(`${newPath}?`);
 
       Router.push(newPath);
-      updateLinks();
+      mutateLinks();
 
       return true;
     }
@@ -379,22 +425,21 @@ const Links = (props) => {
       setPagePath(`${removeURLParameter(asPath, "page")}&`);
     else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-    if (props.result.search !== undefined) setSearchKey(props.result.search);
+    if (result.search !== undefined) setSearchKey(result.search);
 
-    if (props.result.ordering !== undefined) {
+    if (result.ordering !== undefined) {
       const slug = getSlugFromSortKey(
         LinksUrlContent,
-        props.result.ordering.replace("-", "")
+        result.ordering.replace("-", "")
       );
       const orderItem = slugToCamelcase(slug);
 
-      if (props.result.ordering.includes("-"))
+      if (result.ordering.includes("-"))
         setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
 
-    if (props.result.per_page !== undefined)
-      setLinksPerPage(props.result.per_page);
+    if (result.per_page !== undefined) setLinksPerPage(result.per_page);
 
     setLoadQueryString(new URLSearchParams(window.location.search));
 
@@ -451,7 +496,7 @@ const Links = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props.result.status !== undefined && props.result.status === "OK") {
+    if (result.status !== undefined && result.status === "OK") {
       setNoIssueFilter(true);
       setIssueFilter(false);
       setAllFilter(false);
@@ -460,10 +505,10 @@ const Links = (props) => {
     }
 
     if (
-      props.result.status !== undefined &&
-      props.result.status.includes("TIMEOUT") &&
-      props.result.status.includes("HTTP_ERROR") &&
-      props.result.status.includes("OTHER_ERROR")
+      result.status !== undefined &&
+      result.status.includes("TIMEOUT") &&
+      result.status.includes("HTTP_ERROR") &&
+      result.status.includes("OTHER_ERROR")
     ) {
       setIssueFilter(true);
       setNoIssueFilter(false);
@@ -472,30 +517,30 @@ const Links = (props) => {
       setExternalFilter(false);
     }
 
-    if (props.result.type !== undefined && props.result.type == "PAGE") {
+    if (result.type !== undefined && result.type == "PAGE") {
       setInternalFilter(true);
       setExternalFilter(false);
       setAllFilter(false);
     }
 
-    if (Array.isArray(props.result.type)) {
+    if (Array.isArray(result.type)) {
       if (
-        props.result.type !== undefined &&
-        props.result.type.join("") == "EXTERNALOTHER"
+        result.type !== undefined &&
+        result.type.join("") == "EXTERNALOTHER"
       ) {
         setExternalFilter(true);
         setInternalFilter(false);
         setAllFilter(false);
       }
     } else {
-      if (props.result.type !== undefined && props.result.type == "EXTERNAL") {
+      if (result.type !== undefined && result.type == "EXTERNAL") {
         setExternalFilter(true);
         setInternalFilter(false);
         setAllFilter(false);
       }
     }
 
-    if (props.result.type == undefined && props.result.status == undefined) {
+    if (result.type == undefined && result.status == undefined) {
       setIssueFilter(false);
       setNoIssueFilter(false);
       setInternalFilter(false);
@@ -537,31 +582,27 @@ const Links = (props) => {
     else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
     Router.push(newPath);
-    updateLinks();
+    mutateLinks();
   };
-
-  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`;
 
   const onCrawlHandler = async () => {
     setCrawlFinished(false);
-    const res = await fetch(reCrawlEndpoint, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "X-CSRFToken": Cookies.get("csrftoken"),
-      },
-    });
 
-    const data = await res.json();
+    try {
+      const response = await usePostMethod(reCrawlEndpoint);
+      const data = await response.data;
 
-    if (res.status !== 200) {
-      throw new Error(data.message);
+      if (Math.floor(response.status / 200) === 1) {
+        if (data) {
+          return data;
+        }
+      } else {
+        // FIXME: report issues from here to Sentry
+        return null;
+      }
+    } catch (error) {
+      throw error.message;
     }
-
-    // console.log('[onCrawlHandler]', data)
-
-    return data;
   };
 
   const crawlableHandler = (finished) => {
@@ -580,403 +621,273 @@ const Links = (props) => {
   };
 
   useEffect(() => {
-    if (
-      user &&
-      user.permissions !== undefined &&
-      user.permissions.includes("can_start_scan") &&
-      site &&
-      site.verified
-    )
-      setRecrawlable(true);
-    else setRecrawlable(false);
-  }, [user, site]);
+    if (userData && siteIdData) {
+      if (
+        userData.permissions !== undefined &&
+        userData.permissions !== "" &&
+        userData.permissions.includes("can_start_scan") &&
+        siteIdData.verified
+      ) {
+        setRecrawlable(true);
+      } else setRecrawlable(false);
+    }
+  }, [userData, siteIdData]);
 
-  {
-    userError && <Layout>{userError.message}</Layout>;
-  }
-  {
-    linkError && <Layout>{linkError.message}</Layout>;
-  }
-  {
-    scanError && <Layout>{scanError.message}</Layout>;
-  }
-  {
-    siteError && <Layout>{siteError.message}</Layout>;
-  }
+  return pageLoaded ? (
+    <Layout user={userData}>
+      <NextSeo title={pageTitle} />
 
-  return (
-    <Layout>
-      {user && link && site ? (
-        <Fragment>
-          <Head>
-            <title>
-              {pageTitle} {site.name}
-            </title>
-          </Head>
+      <LinksDiv tw="h-screen flex overflow-hidden bg-white">
+        <MainSidebar
+          width={width}
+          user={userData}
+          site={siteData}
+          openMobileSidebar={openMobileSidebar}
+          setOpenMobileSidebar={setOpenMobileSidebar}
+        />
 
-          <LinksDiv className={`h-screen flex overflow-hidden bg-gray-200`}>
-            <MobileSidebar
-              show={openMobileSidebar}
+        <div tw="flex flex-col w-0 flex-1 overflow-hidden">
+          <div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
+            <MobileSidebarButton
+              openMobileSidebar={openMobileSidebar}
+              setOpenMobileSidebar={setOpenMobileSidebar}
+            />
+            <LinkOptions
+              sid={result.siteId}
+              user={userData}
+              site={siteData}
+              searchKey={searchKey}
+              onSearchEvent={searchEventHandler}
+              onCrawl={onCrawlHandler}
+              crawlable={recrawlable}
+              crawlFinished={crawlFinished}
               crawlableHandler={crawlableHandler}
             />
-            <MainSidebar crawlableHandler={crawlableHandler} />
+          </div>
 
-            <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
-              <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
-                <button
-                  className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
-                  aria-label={`Open sidebar`}
-                  onClick={() =>
-                    setTimeout(
-                      () => setOpenMobileSidebar(!openMobileSidebar),
-                      150
-                    )
-                  }
-                >
-                  <svg
-                    className={`h-6 w-5`}
-                    stroke={`currentColor`}
-                    fill={`none`}
-                    viewBox={`0 0 24 24`}
-                  >
-                    <path
-                      strokeLinecap={`round`}
-                      strokeLinejoin={`round`}
-                      strokeWidth={`2`}
-                      d={`M4 6h16M4 12h16M4 18h16`}
-                    />
-                  </svg>
-                </button>
-              </div>
-              <main
-                className={`flex-1 relative z-0 overflow-y-auto focus:outline-none`}
-                tabIndex={`0`}
-              >
-                <div
-                  className={`max-w-full mx-auto px-4 pt-4 pb-0 lg:px-8 lg:py-8 sm:px-6 md:px-8`}
-                >
-                  <div>
-                    <nav className={`sm:hidden`}>
-                      <Link
-                        href={"/dashboard/site/" + query.siteId + "/overview"}
-                      >
-                        <a
-                          className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-                        >
-                          <svg
-                            className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          {LinksLabel[0].label}
-                        </a>
-                      </Link>
-                    </nav>
-                    <nav
-                      className={`hidden sm:flex items-center text-sm leading-5`}
-                    >
-                      <Link
-                        href="/dashboard/site/[siteId]/overview"
-                        as={"/dashboard/site/" + query.siteId + "/overview"}
-                      >
-                        <a
-                          className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-                        >
-                          {site.name}
-                        </a>
-                      </Link>
-                      <svg
-                        className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <Link
-                        href="/dashboard/site/[siteId]/links/"
-                        as={"/dashboard/site/" + query.siteId + "/links"}
-                      >
-                        <a
-                          className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-                        >
-                          {LinksLabel[1].label}
-                        </a>
-                      </Link>
-                    </nav>
-                  </div>
-                  <div
-                    className={`mt-2 md:flex md:items-center md:justify-between`}
-                  >
-                    <div className={`flex-1 min-w-0`}>
-                      <div className={`flex items-center`}>
+          <main
+            tw="flex-1 relative overflow-y-auto focus:outline-none"
+            tabIndex="0"
+          >
+            <div tw="w-full p-6 mx-auto">
+              {pageLoaded ? (
+                <div className="max-w-full py-4 px-8">
+                  <nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+                    <ol tw="flex items-center space-x-4">
+                      <li>
                         <div>
-                          <div className={`lg:flex lg:items-center`}>
-                            <h2
-                              className={`mb-2 lg:my-auto text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}
-                            >
-                              {site.name}
-                            </h2>
-                            <dl
-                              className={`flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap`}
-                            >
-                              <dd
-                                className={`flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6`}
-                              >
-                                <svg
-                                  className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`}
-                                  viewBox="0 0 20 20"
-                                  fill="currentColor"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                                {link.count > 0
-                                  ? link.count + " " + LinksLabel[2].label
-                                  : LinksLabel[3].label}
-                              </dd>
-                            </dl>
-                          </div>
+                          <Link href={homePageLink} passHref>
+                            <a tw="text-gray-400 hover:text-gray-500">
+                              <HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+                              <span tw="sr-only">{homeLabel}</span>
+                            </a>
+                          </Link>
                         </div>
-                      </div>
-                    </div>
+                      </li>
+                      <li>
+                        <div tw="flex items-center">
+                          <ChevronRightSvg
+                            className={tw`flex-shrink-0 h-5 w-5 text-gray-400`}
+                          />
+                          <p
+                            aria-current="page"
+                            tw="cursor-default ml-4 text-sm font-medium text-gray-700"
+                          >
+                            {pageTitle}
+                          </p>
+                        </div>
+                      </li>
+                    </ol>
+                  </nav>
+                  <div className="pt-4 m-auto">
+                    <h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
+                      {LinksLabel[1].label} - {siteData.name}
+                      <dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+                        <dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+                          <LinksSvg
+                            className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`}
+                          />
+                          {linksData.count > 0
+                            ? linksData.count + " " + LinksLabel[2].label
+                            : LinksLabel[3].label}
+                        </dd>
+                      </dl>
+                    </h4>
                   </div>
                 </div>
-                <div className={`btn-crawler lg:absolute mt-8`}>
-                  {user.permissions.includes("can_start_scan") ? (
-                    recrawlable ? (
-                      <button
-                        type={`button`}
-                        onClick={onCrawlHandler}
-                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-1000 transition ease-in-out duration-150`}
-                      >
-                        {LinksLabel[4].label}
-                      </button>
-                    ) : (
-                      <button
-                        disabled={`disabled`}
-                        type={`button`}
-                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
-                      >
-                        {LinksLabel[4].label}
-                      </button>
-                    )
-                  ) : null}
-                </div>
-                <div
-                  className={`max-w-full mx-auto px-4 sm:pb-4 lg:px-8 lg:pb-8 sm:px-6 md:px-8`}
-                >
-                  <LinkOptions
-                    searchKey={searchKey}
-                    onSearchEvent={searchEventHandler}
-                  />
-                  <LinkFilter
-                    onFilterChange={filterChangeHandler}
-                    allFilter={allFilter}
-                    noIssueFilter={noIssueFilter}
-                    issueFilter={issueFilter}
-                    internalFilter={internalFilter}
-                    externalFilter={externalFilter}
-                  />
-                  <MyPagination
-                    href="/dashboard/site/[siteId]/links/"
-                    pathName={pagePath}
-                    apiEndpoint={scanApiEndpoint}
-                    page={props.result.page ? props.result.page : 0}
-                    linksPerPage={linksPerPage}
-                    onItemsPerPageChange={onItemsPerPageChange}
-                  />
-                  <div className={`pb-4`}>
-                    <div className={`flex flex-col`}>
-                      <div
-                        className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
-                      >
-                        <div
-                          className={`align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300`}
-                        >
-                          <table className={`min-w-full`}>
-                            <thead>
-                              <tr>
-                                {LinksUrlContent.map((site, key) => {
-                                  return (
-                                    <Fragment key={key}>
-                                      <th
-                                        className={`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider ${
-                                          site.slug === "url-type" ||
-                                          site.slug === "occurrences"
-                                            ? "min-width-adjust"
-                                            : "min-w-full"
-                                        }`}
-                                      >
-                                        <div
-                                          className={`flex items-center justify-start`}
-                                        >
-                                          {site.slug != undefined ? (
-                                            <LinkSorting
-                                              sortOrder={sortOrder}
-                                              onSortHandler={SortHandler}
-                                              key={key}
-                                              slug={site.slug}
-                                            />
-                                          ) : null}
-                                          <span className="label flex items-center">
-                                            {site.label}
-                                            {site.slug === "url-type" ||
-                                            site.slug === "status" ||
-                                            site.slug === "http-code" ? (
-                                              <Fragment>
-                                                <a
-                                                  data-tip
-                                                  data-for={site.slug}
-                                                  data-background-color={
-                                                    "#4A5568"
-                                                  }
-                                                  data-iscapture="true"
-                                                  className={`flex items-center`}
-                                                >
-                                                  <span
-                                                    className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
-                                                  >
-                                                    <svg
-                                                      fill="currentColor"
-                                                      viewBox="0 0 20 20"
-                                                    >
-                                                      <path
-                                                        fillRule="evenodd"
-                                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-                                                        clipRule="evenodd"
-                                                      ></path>
-                                                    </svg>
-                                                  </span>
-                                                </a>
-                                                <ReactTooltip
-                                                  id={site.slug}
-                                                  className={`${
-                                                    site.slug + "-tooltip"
-                                                  } w-36`}
-                                                  type="dark"
-                                                  effect="solid"
-                                                  place="bottom"
-                                                  multiline={true}
-                                                >
-                                                  <span
-                                                    className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
-                                                  >
-                                                    {site.slug === "status" ? (
-                                                      <ul>
-                                                        <li className={`mb-2`}>
-                                                          <strong>
-                                                            {
-                                                              LinksLabel[5]
-                                                                .label
-                                                            }
-                                                          </strong>{" "}
-                                                          -{" "}
-                                                          {
-                                                            LinksLabel[5]
-                                                              .description
-                                                          }
-                                                        </li>
-                                                        <li className={`mb-2`}>
-                                                          <strong>
-                                                            {
-                                                              LinksLabel[6]
-                                                                .label
-                                                            }
-                                                          </strong>{" "}
-                                                          -{" "}
-                                                          {
-                                                            LinksLabel[6]
-                                                              .description
-                                                          }
-                                                        </li>
-                                                        <li className={`mb-2`}>
-                                                          <strong>
-                                                            {
-                                                              LinksLabel[7]
-                                                                .label
-                                                            }
-                                                          </strong>{" "}
-                                                          -{" "}
-                                                          {
-                                                            LinksLabel[7]
-                                                              .description
-                                                          }
-                                                        </li>
-                                                        <li className={`mb-2`}>
-                                                          <strong>
-                                                            {
-                                                              LinksLabel[8]
-                                                                .label
-                                                            }
-                                                          </strong>{" "}
-                                                          -{" "}
-                                                          {
-                                                            LinksLabel[8]
-                                                              .description
-                                                          }
-                                                        </li>
-                                                      </ul>
-                                                    ) : (
-                                                      <p>
-                                                        {LinksLabel[9].label}
-                                                      </p>
-                                                    )}
-                                                  </span>
-                                                </ReactTooltip>
-                                              </Fragment>
-                                            ) : null}
-                                          </span>
-                                        </div>
-                                      </th>
-                                    </Fragment>
-                                  );
-                                })}
-                              </tr>
-                            </thead>
-                            {link.results &&
-                              link.results.map((val, key) => (
-                                <LinkUrlTable key={key} val={val} />
-                              ))}
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <MyPagination
-                    href="/dashboard/site/[siteId]/links/"
-                    pathName={pagePath}
-                    apiEndpoint={scanApiEndpoint}
-                    page={props.result.page ? props.result.page : 0}
-                    linksPerPage={linksPerPage}
-                    onItemsPerPageChange={onItemsPerPageChange}
-                  />
-                </div>
-
-                <div
-                  className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
-                >
-                  <SiteFooter />
-                </div>
-              </main>
+              ) : (
+                <ProfileSkeleton />
+              )}
             </div>
-          </LinksDiv>
-        </Fragment>
-      ) : null}
+            <div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+              <LinkFilter
+                onFilterChange={filterChangeHandler}
+                allFilter={allFilter}
+                noIssueFilter={noIssueFilter}
+                issueFilter={issueFilter}
+                internalFilter={internalFilter}
+                externalFilter={externalFilter}
+              />
+              <div tw="pb-4">
+                <div tw="flex flex-col">
+                  <div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+                    <div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
+                      <table tw="min-w-full">
+                        <thead>
+                          <tr>
+                            {LinksUrlContent.map((site, key) => {
+                              return (
+                                <Fragment key={key}>
+                                  <th
+                                    css={[
+                                      tw`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`,
+                                      site.slug === "url-type" ||
+                                      site.slug === "occurrences"
+                                        ? "min-width-adjust"
+                                        : "min-w-full",
+                                    ]}
+                                  >
+                                    <div tw="flex items-center justify-start">
+                                      {site.slug != undefined ? (
+                                        <LinkSorting
+                                          sortOrder={sortOrder}
+                                          onSortHandler={SortHandler}
+                                          key={key}
+                                          slug={site.slug}
+                                        />
+                                      ) : null}
+                                      <span
+                                        className="label"
+                                        tw="flex items-center"
+                                      >
+                                        {site.label}
+                                        {site.slug === "url-type" ||
+                                        site.slug === "status" ||
+                                        site.slug === "http-code" ? (
+                                          <Fragment>
+                                            <a
+                                              data-tip
+                                              data-for={site.slug}
+                                              data-background-color={"#4A5568"}
+                                              data-iscapture="true"
+                                              tw="flex items-center"
+                                            >
+                                              <span tw="ml-2 inline-block w-4 h-4 overflow-hidden">
+                                                <svg
+                                                  fill="currentColor"
+                                                  viewBox="0 0 20 20"
+                                                >
+                                                  <path
+                                                    fillRule="evenodd"
+                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                                                    clipRule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </span>
+                                            </a>
+                                            <ReactTooltip
+                                              id={site.slug}
+                                              tw="w-36"
+                                              className={site.slug + "-tooltip"}
+                                              type="dark"
+                                              effect="solid"
+                                              place="bottom"
+                                              multiline={true}
+                                            >
+                                              <span tw="text-left text-xs leading-4 font-normal text-white normal-case tracking-wider">
+                                                {site.slug === "status" ? (
+                                                  <ul>
+                                                    <li tw="mb-2">
+                                                      <strong>
+                                                        {LinksLabel[5].label}
+                                                      </strong>{" "}
+                                                      -{" "}
+                                                      {
+                                                        LinksLabel[5]
+                                                          .description
+                                                      }
+                                                    </li>
+                                                    <li tw="mb-2">
+                                                      <strong>
+                                                        {LinksLabel[6].label}
+                                                      </strong>{" "}
+                                                      -{" "}
+                                                      {
+                                                        LinksLabel[6]
+                                                          .description
+                                                      }
+                                                    </li>
+                                                    <li tw="mb-2">
+                                                      <strong>
+                                                        {LinksLabel[7].label}
+                                                      </strong>{" "}
+                                                      -{" "}
+                                                      {
+                                                        LinksLabel[7]
+                                                          .description
+                                                      }
+                                                    </li>
+                                                    <li tw="mb-2">
+                                                      <strong>
+                                                        {LinksLabel[8].label}
+                                                      </strong>{" "}
+                                                      -{" "}
+                                                      {
+                                                        LinksLabel[8]
+                                                          .description
+                                                      }
+                                                    </li>
+                                                  </ul>
+                                                ) : (
+                                                  <p>{LinksLabel[9].label}</p>
+                                                )}
+                                              </span>
+                                            </ReactTooltip>
+                                          </Fragment>
+                                        ) : null}
+                                      </span>
+                                    </div>
+                                  </th>
+                                </Fragment>
+                              );
+                            })}
+                          </tr>
+                        </thead>
+                        {linksData.results &&
+                          linksData.results.map((val, key) => (
+                            <>
+                              <LinkUrlTable key={key} val={val} />
+                            </>
+                          ))}
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <MyPagination
+                href="/dashboard/site/[siteId]/links/"
+                pathName={pagePath}
+                apiEndpoint={scanApiEndpoint}
+                page={result.page ? result.page : 0}
+                linksPerPage={linksPerPage}
+                onItemsPerPageChange={onItemsPerPageChange}
+              />
+            </div>
+
+            <div tw="static bottom-0 w-full mx-auto px-4 sm:px-6 py-4">
+              <SiteFooter />
+            </div>
+          </main>
+        </div>
+      </LinksDiv>
     </Layout>
-  );
+  ) : null;
 };
+
+Links.propTypes = {};
+
+export default withResizeDetector(Links);
 
 export async function getServerSideProps(context) {
   return {
@@ -985,5 +896,3 @@ export async function getServerSideProps(context) {
     },
   };
 }
-
-export default Links;

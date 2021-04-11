@@ -1,78 +1,139 @@
-import { useState } from "react";
+// React
+import { useState, useEffect } from "react";
+
+// NextJS
 import { useRouter } from "next/router";
-import tw from "twin.macro";
-import useSWR from "swr";
-import Cookies from "js-cookie";
-import fetchJson from "hooks/fetchJson";
+
+// External
 import { Transition } from "@headlessui/react";
+import loadable from "@loadable/component";
+import tw from "twin.macro";
 
-const LinkOptionsDiv = styled.div``;
+// JSON
+import LinkOptionsLabel from "public/labels/components/site/LinkOptionsLabel.json";
 
-const LinkOptions = ({ searchKey, onSearchEvent }) => {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [disableButton, setDisableButton] = useState(true);
+// Hooks
+import { useScan, useStats } from "src/hooks/useSite";
 
-  const { data: profile } = useSWR(`/api/auth/user/`, () =>
-    fetchProfileSettings(`/api/auth/user/`)
-  );
+// Components
+const AddSiteSkeleton = loadable(() =>
+  import("src/components/skeletons/AddSiteSkeleton")
+);
+const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
 
-  const { query, asPath } = useRouter();
+const LinkOptions = ({
+  sid,
+  user,
+  site,
+  searchKey,
+  onSearchEvent,
+  onCrawl,
+  crawlable,
+  crawlFinished,
+  crawlableHandler,
+}) => {
+  const [componentReady, setComponentReady] = useState(false);
+  const [scanData, setScanData] = useState([]);
+  const [scanObjId, setScanObjId] = useState(0);
+  const [statsData, setStatsData] = useState([]);
 
-  const setDropdownToggle = (e) => {
-    setShowDropdown(!showDropdown);
-  };
+  const { asPath } = useRouter();
 
-  const fetchProfileSettings = async (endpoint) => {
-    const siteProfileData = await fetchJson(endpoint, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "X-CSRFToken": Cookies.get("csrftoken"),
-      },
-    });
+  const { scan: scan } = useScan({
+    querySid: sid,
+    refreshInterval: 1000,
+  });
 
-    return siteProfileData;
-  };
+  useEffect(() => {
+    if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+      setScanData(scan);
 
-  return (
-    <LinkOptionsDiv className={`py-4`}>
-      <div
-        className={`bg-white px-4 py-5 border-b border-gray-300 sm:px-6 bg-white rounded-lg sm:shadow-xs`}
-      >
-        <div
-          className={`-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap`}
-        >
-          <div className={`ml-4 mt-2 w-64`}>
-            <div>
-              <div className={`mt-1 relative rounded-md shadow-sm`}>
-                <div
-                  className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none`}
-                >
-                  <svg
-                    className={`h-5 w-5 text-gray-400`}
-                    fill={`currentColor`}
-                    viewBox={`0 0 20 20`}
-                  >
-                    <path
-                      fillRule={`evenodd`}
-                      d={`M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z`}
-                      clipRule={`evenodd`}
-                    />
-                  </svg>
+      if (
+        scanData.results &&
+        scanData.results !== undefined &&
+        Object.keys(scanData.results).length > 0
+      ) {
+        setScanObjId(
+          scanData.results
+            .map((e) => {
+              return e.id;
+            })
+            .sort((a, b) => a.id - b.id)
+            .reverse()[0]
+        );
+      }
+    }
+  });
+
+  const { stats: stats } = useStats({
+    querySid: sid,
+    scanObjId: scanObjId,
+    refreshInterval: 1000,
+  });
+
+  useEffect(() => {
+    if (statsData && stats !== undefined && Object.keys(stats).length > 0) {
+      setStatsData(stats);
+    }
+  }, [stats]);
+
+  useEffect(() => {
+    if (
+      statsData &&
+      statsData !== undefined &&
+      Object.keys(statsData).length > 0
+    ) {
+      if (statsData.finished_at) crawlableHandler(true);
+      else if (statsData.started_at && statsData.finished_at == null)
+        crawlableHandler(false);
+    }
+  }, [statsData]);
+
+  useEffect(() => {
+    if (
+      user &&
+      user !== undefined &&
+      user !== [] &&
+      Object.keys(user).length > 0 &&
+      site &&
+      site !== undefined &&
+      site !== [] &&
+      Object.keys(site).length > 0 &&
+      statsData
+    ) {
+      setTimeout(() => {
+        setComponentReady(true);
+      }, [500]);
+    }
+  }, [site, user, statsData]);
+
+  return componentReady ? (
+    <div tw="flex flex-col w-0 flex-1 overflow-hidden">
+      <div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
+        <div tw="flex-1 p-4 flex justify-between">
+          <div tw="flex-1 flex">
+            <div tw="w-full flex lg:ml-0">
+              <label htmlFor="searchSites" tw="sr-only">
+                {LinkOptionsLabel[1].label}
+              </label>
+              <div tw="relative w-full text-gray-400 focus-within:text-gray-600">
+                <div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+                  <SearchSvg className={tw`h-5 w-5 text-gray-400`} />
                 </div>
                 <input
-                  id={`search`}
-                  className={`block w-full pl-10 sm:text-sm sm:leading-5`}
-                  placeholder={`${
+                  type="search"
+                  name="search-links"
+                  id="searchlinks"
+                  tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+                  placeholder={
                     asPath.includes("pages")
-                      ? "Search Pages..."
+                      ? LinkOptionsLabel[0].label
                       : asPath.includes("links")
-                      ? "Search Links..."
+                      ? LinkOptionsLabel[1].label
                       : asPath.includes("images")
-                      ? "Search Images..."
-                      : "Search URL..."
-                  }`}
+                      ? LinkOptionsLabel[2].label
+                      : LinkOptionsLabel[3].label
+                  }
                   onKeyUp={onSearchEvent}
                   defaultValue={searchKey}
                   autoFocus
@@ -80,82 +141,37 @@ const LinkOptions = ({ searchKey, onSearchEvent }) => {
               </div>
             </div>
           </div>
-          {profile.group.id === 3 ? (
-            <div className={`ml-4 mt-2 flex items-center flex-shrink-0`}>
-              <span className={`inline-flex rounded-md shadow-sm`}>
-                <div className={`relative inline-block text-left`}>
-                  <div>
-                    <span className={`rounded-md shadow-sm`}>
-                      <button
-                        type="button"
-                        disabled="disabled"
-                        className={`${
-                          disableButton
-                            ? "opacity-50 cursor-not-allowed"
-                            : "hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-xs-outline-blue active:bg-gray-50 active:text-gray-800"
-                        }  inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 transition ease-in-out duration-150`}
-                        id="options-menu"
-                        aria-haspopup="true"
-                        aria-expanded={`${showDropdown ? "true" : "false"}`}
-                        onClick={setDropdownToggle}
-                      >
-                        Export
-                        <svg
-                          className={`-mr-1 ml-2 h-5 w-5`}
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                    </span>
-                  </div>
-
-                  <Transition
-                    show={showDropdown}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <div
-                      className={`origin-top-right absolute right-0 mt-2 w-32 rounded-md`}
-                    >
-                      <div className={`rounded-md bg-white`}>
-                        <div
-                          className={`py-1`}
-                          role="menu"
-                          aria-orientation="vertical"
-                          aria-labelledby="options-menu"
-                        >
-                          <button
-                            className={`block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem`}
-                          >
-                            CSV
-                          </button>
-                          <button
-                            className={`block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`}
-                            role="menuitem"
-                          >
-                            PDF
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </Transition>
-                </div>
-              </span>
-            </div>
-          ) : null}
+          <div tw="ml-4 flex items-center lg:ml-6">
+            {componentReady ? (
+              user &&
+              user !== undefined &&
+              Object.keys(user).length > 0 &&
+              user.permissions.includes("can_start_scan") ? (
+                <button
+                  type="button"
+                  disabled={!crawlable}
+                  onClick={onCrawl}
+                  css={[
+                    tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 focus:outline-none`,
+                    !crawlFinished
+                      ? tw`opacity-50 cursor-not-allowed`
+                      : tw`hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
+                  ]}
+                >
+                  {crawlFinished
+                    ? LinkOptionsLabel[4].label
+                    : LinkOptionsLabel[5].label}
+                </button>
+              ) : null
+            ) : (
+              <Skeleton duration={2} width={150} height={40} />
+            )}
+          </div>
         </div>
       </div>
-    </LinkOptionsDiv>
+    </div>
+  ) : (
+    <AddSiteSkeleton />
   );
 };
 
