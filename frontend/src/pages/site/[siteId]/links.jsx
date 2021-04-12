@@ -2,19 +2,15 @@
 import { Fragment, useState, useEffect } from "react";
 
 // NextJS
-import Head from "next/head";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 
 // External
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
-import Cookies from "js-cookie";
-import fetch from "node-fetch";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import ReactTooltip from "react-tooltip";
-import Skeleton from "react-loading-skeleton";
 import tw, { styled } from "twin.macro";
 
 // JSON
@@ -30,7 +26,6 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() =>
   import("src/components/svg/solid/ChevronRightSvg")
 );
@@ -124,7 +119,7 @@ const Links = ({ width, result }) => {
 
   const pageTitle =
     siteIdData.name && siteIdData.name !== undefined
-      ? "Links - " + siteIdData.name
+      ? siteIdData.name
       : "Links";
   const homeLabel = "Home";
   const homePageLink = "/";
@@ -233,9 +228,6 @@ const Links = ({ width, result }) => {
       user &&
       user !== undefined &&
       Object.keys(user).length > 0 &&
-      scan &&
-      scan !== undefined &&
-      Object.keys(scan).length > 0 &&
       site &&
       site !== undefined &&
       Object.keys(site).length > 0 &&
@@ -247,18 +239,17 @@ const Links = ({ width, result }) => {
       Object.keys(links).length > 0
     ) {
       setUserData(user);
-      setScanData(scan);
       setSiteData(site);
       setSiteIdData(siteId);
       setLinksData(links);
     }
 
-    if (userData && scanData && siteData && siteIdData && linksData) {
+    if (userData && siteData && siteIdData && linksData) {
       setTimeout(() => {
         setPageLoaded(true);
       }, 500);
     }
-  }, [user, scan, site, siteId, links]);
+  }, [user, site, siteId, links]);
 
   const searchEventHandler = async (e) => {
     const searchTargetValue = e.target.value;
@@ -701,7 +692,7 @@ const Links = ({ width, result }) => {
                   </nav>
                   <div className="pt-4 m-auto">
                     <h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-                      {LinksLabel[1].label} - {siteData.name}
+                      {siteData.name}
                       <dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
                         <dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
                           <LinksSvg

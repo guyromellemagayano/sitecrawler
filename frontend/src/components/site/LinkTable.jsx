@@ -15,7 +15,6 @@ import Url from "url-parse";
 
 // Hooks
 import { useLinkDetail } from "src/hooks/useSite";
-import InformationCircleSvg from "../svg/outline/InformationCircleSvg";
 
 // Components
 const SiteDangerBadge = loadable(() =>
@@ -26,6 +25,9 @@ const SiteSuccessBadge = loadable(() =>
 );
 const SiteWarningBadge = loadable(() =>
   import("src/components/badges/SiteWarningBadge")
+);
+const InformationCircleSvg = loadable(() =>
+  import("src/components/svg/outline/InformationCircleSvg")
 );
 
 const LinkTableDiv = styled.tbody`
@@ -96,22 +98,21 @@ const LinkTable = (props) => {
   }, [linkDetail]);
 
   return (
-    <LinkTableDiv className={`bg-white`}>
+    <LinkTableDiv tw="bg-white">
       <tr>
-        <td
-          className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-300`}
-        >
-          <div className={`flex items-center`}>
+        <td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
+          <div tw="flex items-center">
             <div>
               <div
-                className={`link-item text-sm leading-5 font-medium text-gray-900`}
+                className="link-item"
+                tw="text-sm leading-5 font-medium text-gray-900"
               >
                 {componentReady ? (
                   <a
                     href={props.val.url}
-                    target={`_blank`}
+                    target="_blank"
                     title={props.val.url}
-                    className={`text-sm leading-6 font-semibold text-blue-1000 hover:text-blue-900 transition ease-in-out duration-150 truncate`}
+                    tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 transition ease-in-out duration-150 truncate"
                   >
                     {props.val.url}
                   </a>
@@ -119,9 +120,7 @@ const LinkTable = (props) => {
                   <Skeleton duration={2} />
                 )}
               </div>
-              <div
-                className={`flex justify-start inline-text-sm leading-5 text-gray-500`}
-              >
+              <div tw="flex justify-start leading-5 text-gray-500">
                 {componentReady ? (
                   linkDetail &&
                   linkDetail !== undefined &&
@@ -130,9 +129,11 @@ const LinkTable = (props) => {
                     <Link
                       href="/site/[siteId]/links/[linkId]/details"
                       as={`/site/${query.siteId}/links/${linkDetail.id}/details`}
+                      passHref
                     >
                       <a
-                        className={`btn-detail mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-white bg-indigo-600 rounded hover:bg-indigo-500 hover:border-0 transition ease-in-out duration-150`}
+                        className="btn-detail"
+                        tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
                         View Details
                       </a>
@@ -150,9 +151,7 @@ const LinkTable = (props) => {
             </div>
           </div>
         </td>
-        <td
-          className={`px-6 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-        >
+        <td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
           {componentReady ? (
             props.val.type === "PAGE" ? (
               "Internal"
@@ -165,9 +164,7 @@ const LinkTable = (props) => {
             <Skeleton duration={2} width={100} />
           )}
         </td>
-        <td
-          className={`px-6 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-        >
+        <td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
           {componentReady ? (
             props.val.status === "OK" ? (
               <SiteSuccessBadge text={"OK"} />
@@ -175,17 +172,17 @@ const LinkTable = (props) => {
               <SiteWarningBadge text={"TIMEOUT"} />
             ) : props.val.status === "HTTP_ERROR" ? (
               <>
-                <span className={`flex items-center justify-start`}>
+                <span tw="flex items-center justify-start">
                   <SiteDangerBadge
                     text={`${props.val.http_status} HTTP ERROR`}
                   />
                   <a
-                    data-tip={``}
+                    data-tip=""
                     data-for={props.val.url}
                     data-background-color={"#E53E3E"}
                     data-iscapture={true}
                     data-scroll-hide={false}
-                    className={`flex cursor-pointer`}
+                    tw="flex cursor-pointer"
                   >
                     <InformationCircleSvg
                       className={tw`ml-2 text-red-400 inline-block w-4 h-4 overflow-hidden`}
@@ -194,15 +191,13 @@ const LinkTable = (props) => {
                   <ReactTooltip
                     id={props.val.url}
                     className={`${props.val.status + "-tooltip"} w-36`}
-                    type={`dark`}
-                    effect={`solid`}
-                    place={`bottom`}
+                    type="dark"
+                    effect="solid"
+                    place="bottom"
                     clickable={true}
                     multiline={true}
                   >
-                    <span
-                      className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
-                    >
+                    <span tw="text-left text-xs leading-4 font-normal text-white normal-case tracking-wider">
                       <p>
                         <strong>{props.val.error}</strong>
                       </p>
@@ -217,9 +212,7 @@ const LinkTable = (props) => {
             <Skeleton duration={2} width={150} />
           )}
         </td>
-        <td
-          className={`px-6 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-        >
+        <td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
           {componentReady ? (
             linkDetail &&
             linkDetail !== undefined &&
@@ -228,12 +221,11 @@ const LinkTable = (props) => {
             linkDetail.pages.length > 0 && (
               <Link
                 href="/site/[siteId]/links/[linkId]/details"
-                as={`/site/${query.siteId}/links/${linkDetail.id}/details`}
+                as="/site/${query.siteId}/links/${linkDetail.id}/details"
+                passHref
               >
-                <a
-                  className={`mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
-                >
-                  <span className={`truncate-link`}>
+                <a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+                  <span className="truncate-link">
                     {linkDetail.pages[0] &&
                     Url(linkDetail.pages[0].url).pathname !== "" ? (
                       Url(linkDetail.pages[0].url).pathname
@@ -257,9 +249,7 @@ const LinkTable = (props) => {
             <Skeleton duration={2} width={120} />
           )}
         </td>
-        <td
-          className={`px-6 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-        >
+        <td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
           {componentReady ? (
             props.val.occurences
           ) : (
