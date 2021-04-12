@@ -33,7 +33,7 @@ const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const LinkFilter = loadable(() => import("src/components/site/LinkFilter"));
 const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
 const LinkSorting = loadable(() => import("src/components/site/LinkSorting"));
-const LinkUrlTable = loadable(() => import("src/components/site/LinkTable"));
+const LinkTable = loadable(() => import("src/components/site/LinkTable"));
 const MainSidebar = loadable(() =>
   import("src/components/sidebar/MainSidebar")
 );
@@ -847,7 +847,7 @@ const Links = ({ width, result }) => {
                         {linksData.results &&
                           linksData.results.map((val, key) => (
                             <>
-                              <LinkUrlTable key={key} val={val} />
+                              <LinkTable key={key} val={val} />
                             </>
                           ))}
                       </table>
