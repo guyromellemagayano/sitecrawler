@@ -1,78 +1,61 @@
+// React
+import { Fragment, useState, useEffect } from "react";
+
+// NextJS
+import Link from "next/link";
+import Router, { useRouter } from "next/router";
+
+// External
+import { NextSeo } from "next-seo";
+import { withResizeDetector } from "react-resize-detector";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import ReactTooltip from "react-tooltip";
+import tw, { styled } from "twin.macro";
+
+// JSON
+import LinksPagesContent from "public/data/links-pages.json";
+import PagesLabel from "public/labels/pages/site/pages.json";
+
+// Hooks
+import usePostMethod from "src/hooks/usePostMethod";
+import { useScan, useSite, usePages, useSiteId } from "src/hooks/useSite";
+import useUser from "src/hooks/useUser";
+
+// Layout
+import Layout from "src/components/Layout";
+
+// Components
+const ChevronRightSvg = loadable(() =>
+  import("src/components/svg/solid/ChevronRightSvg")
+);
+const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
+const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
+const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
+const PageTable = loadable(() => import("src/components/site/PageTable"));
+const PageFilter = loadable(() => import("src/components/site/PageFilter"));
+const PageSorting = loadable(() => import("src/components/site/PageSorting"));
+const MainSidebar = loadable(() =>
+  import("src/components/sidebar/MainSidebar")
+);
+const MobileSidebarButton = loadable(() =>
+  import("src/components/sidebar/MobileSidebarButton")
+);
+const ProfileSkeleton = loadable(() =>
+  import("src/components/skeletons/ProfileSkeleton")
+);
+const MyPagination = loadable(() => import("src/components/sites/Pagination"));
+const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+
+// Helpers
 import {
   removeURLParameter,
   slugToCamelcase,
   getSortKeyFromSlug,
   getSlugFromSortKey,
-} from "helpers/functions";
-import { Fragment, useState, useEffect } from "react";
-import Cookies from "js-cookie";
-import fetch from "node-fetch";
-import Head from "next/head";
-import Layout from "components/Layout";
-import Link from "next/link";
-import LinkOptions from "components/site/LinkOptions";
-import LinksPagesContent from "public/data/links-pages.json";
-import MainSidebar from "components/sidebar/MainSidebar";
-import MobileSidebar from "components/sidebar/MobileSidebar";
-import PageFilter from "components/site/PageFilter";
-import PagesLabel from "public/labels/pages/site/pages.json";
-import PageSorting from "components/site/PageSorting";
-import PageTable from "components/site/PageTable";
-import MyPagination from "components/sites/Pagination";
-import Router, { useRouter } from "next/router";
-import SiteFooter from "components/footer/SiteFooter";
-import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
-import useSWR from "swr";
-import useUser from "hooks/useUser";
-
-const fetcher = async (url) => {
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "X-CSRFToken": Cookies.get("csrftoken"),
-    },
-  });
-
-  const data = await res.json();
-
-  if (res.status !== 200) {
-    throw new Error(data.message);
-  }
-
-  return data;
-};
-
-const initialOrder = {
-  pageLargePages: "default",
-  pageBrokenSecurity: "default",
-};
+} from "src/helpers/functions";
 
 const PagesDiv = styled.section`
-  .btn-crawler {
-    top: 0;
-    right: 0;
-    padding: 2.25rem 1.5rem;
-
-    @media only screen and (max-width: 1024px) {
-      margin: 0;
-    }
-
-    @media only screen and (max-width: 639px) {
-      padding: 0 1rem;
-    }
-
-    @media only screen and (min-width: 640px) and (max-width: 767px) {
-      padding: 0 1.5rem;
-    }
-
-    @media only screen and (min-width: 768px) and (max-width: 1023px) {
-      padding: 0 2rem;
-    }
-  }
-
   @media only screen and (max-width: 960px) {
     .min-width-adjust {
       min-width: 12rem;
@@ -80,86 +63,112 @@ const PagesDiv = styled.section`
   }
 `;
 
-const Pages = (props) => {
-  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-  const [sortOrder, setSortOrder] = useState(initialOrder);
-  const [searchKey, setSearchKey] = useState("");
-  const [pagePath, setPagePath] = useState("");
+const initialOrder = {
+  pageLargePages: "default",
+  pageBrokenSecurity: "default",
+};
+
+const Pages = ({ width, result }) => {
   const [allFilter, setAllFilter] = useState(false);
-  const [noIssueFilter, setNoIssueFilter] = useState(false);
-  const [largePageSizeFilter, setLargePageSizeFilter] = useState(false);
   const [brokenSecurityFilter, setBrokenSecurityFilter] = useState(false);
-  const [recrawlable, setRecrawlable] = useState(false);
   const [crawlFinished, setCrawlFinished] = useState(false);
+  const [largePageSizeFilter, setLargePageSizeFilter] = useState(false);
   const [linksPerPage, setLinksPerPage] = useState(20);
   const [loadQueryString, setLoadQueryString] = useState("");
+  const [noIssueFilter, setNoIssueFilter] = useState(false);
+  const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [pagePath, setPagePath] = useState("");
+  const [pagesData, setPagesData] = useState([]);
+  const [recrawlable, setRecrawlable] = useState(false);
+  const [scanData, setScanData] = useState([]);
+  const [scanObjId, setScanObjId] = useState(0);
+  const [searchKey, setSearchKey] = useState("");
+  const [siteData, setSiteData] = useState([]);
+  const [siteIdData, setSiteIdData] = useState([]);
+  const [sortOrder, setSortOrder] = useState(initialOrder);
+  const [userData, setUserData] = useState([]);
 
-  const pageTitle = "Pages |";
+  const { asPath } = useRouter();
 
-  const { user: user, userError: userError } = useUser({
-    redirectTo: "/",
+  const pageTitle =
+    siteIdData.name && siteIdData.name !== undefined
+      ? PagesLabel[1].label + " - " + siteIdData.name
+      : PagesLabel[1].label;
+  const homeLabel = "Home";
+  const homePageLink = `/site/${result.siteId}/overview`;
+  const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
+  const sitesApiEndpoint = `/api/site/${result.siteId}/?ordering=name`;
+
+  const { user: user } = useUser({
     redirectIfFound: false,
+    redirectTo: "/login",
+    refreshInterval: 1000,
   });
 
-  const { query, asPath } = useRouter();
-  const { data: site, error: siteError } = useSWR(
-    () => (query.siteId ? `/api/site/${query.siteId}/` : null),
-    fetcher
-  );
+  const { scan: scan } = useScan({
+    querySid: result.siteId,
+    refreshInterval: 1000,
+  });
 
-  const { data: scan, error: scanError } = useSWR(
-    () =>
-      query.siteId
-        ? `/api/site/${query.siteId}/scan/?ordering=-finished_at`
-        : null,
-    fetcher
-  );
+  const { site: site } = useSite({
+    endpoint: sitesApiEndpoint,
+    refreshInterval: 1000,
+  });
 
-  let scanObjId = "";
+  const { siteId: siteId } = useSiteId({
+    querySid: result.siteId,
+  });
 
-  if (scan) {
-    let scanObj = [];
+  useEffect(() => {
+    if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+      setScanData(scan);
 
-    scan.results.map((val) => {
-      scanObj.push(val);
-      return scanObj;
-    });
-
-    scanObj.map((val, index) => {
-      if (index == 0) scanObjId = val.id;
-
-      return scanObjId;
-    });
-  }
+      if (
+        scanData.results &&
+        scanData.results !== undefined &&
+        Object.keys(scanData.results).length > 0
+      ) {
+        setScanObjId(
+          scanData.results
+            .map((e) => {
+              return e.id;
+            })
+            .sort((a, b) => a.id - b.id)
+            .reverse()[0]
+        );
+      }
+    }
+  });
 
   let scanApiEndpoint =
-    props.result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` +
+    result.page !== undefined
+      ? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` +
         linksPerPage +
         `&page=` +
-        props.result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/page/?per_page=` +
+        result.page
+      : `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` +
         linksPerPage;
 
   let queryString = "";
 
   queryString +=
-    props.result.size_total_min !== undefined
+    result.size_total_min !== undefined
       ? scanApiEndpoint.includes("?")
         ? `&size_total_min=1048576`
         : `?size_total_min=1048576`
       : "";
 
   queryString +=
-    props.result.size_total_max !== undefined
+    result.size_total_max !== undefined
       ? scanApiEndpoint.includes("?")
         ? `&size_total_max=1048575`
         : `?size_total_max=1048575`
       : "";
 
   queryString +=
-    props.result.tls_total !== undefined
-      ? props.result.tls_total === "true"
+    result.tls_total !== undefined
+      ? result.tls_total === "true"
         ? scanApiEndpoint.includes("?")
           ? `&tls_total=true`
           : `?tls_total=true`
@@ -169,27 +178,55 @@ const Pages = (props) => {
       : "";
 
   queryString +=
-    props.result.search !== undefined
+    result.search !== undefined
       ? scanApiEndpoint.includes("?")
-        ? `&search=${props.result.search}`
-        : `?search=${props.result.search}`
+        ? `&search=${result.search}`
+        : `?search=${result.search}`
       : "";
 
   queryString +=
-    props.result.ordering !== undefined
+    result.ordering !== undefined
       ? scanApiEndpoint.includes("?")
-        ? `&ordering=${props.result.ordering}`
-        : `?ordering=${props.result.ordering}`
+        ? `&ordering=${result.ordering}`
+        : `?ordering=${result.ordering}`
       : "";
 
   scanApiEndpoint += queryString;
 
-  console.log(scanApiEndpoint);
+  const { pages: pages, mutatePages: mutatePages } = usePages({
+    endpoint: scanApiEndpoint,
+    querySid: result.siteId,
+    scanObjId: scanObjId,
+    refreshInterval: 1000,
+  });
 
-  const { data: page, error: pageError, mutate: updatePages } = useSWR(
-    () => (query.siteId && scanObjId ? scanApiEndpoint : null),
-    fetcher
-  );
+  useEffect(() => {
+    if (
+      user &&
+      user !== undefined &&
+      Object.keys(user).length > 0 &&
+      site &&
+      site !== undefined &&
+      Object.keys(site).length > 0 &&
+      siteId &&
+      siteId !== undefined &&
+      Object.keys(siteId).length > 0 &&
+      pages &&
+      pages !== undefined &&
+      Object.keys(pages).length > 0
+    ) {
+      setUserData(user);
+      setSiteData(site);
+      setSiteIdData(siteId);
+      setPagesData(pages);
+    }
+
+    if (userData && siteData && siteIdData && pagesData) {
+      setTimeout(() => {
+        setPageLoaded(true);
+      }, 500);
+    }
+  }, [user, site, siteId, pages]);
 
   const searchEventHandler = async (e) => {
     const searchTargetValue = e.target.value;
@@ -213,7 +250,7 @@ const Pages = (props) => {
     else setPagePath(`${newPath}?`);
 
     Router.push(newPath);
-    updatePages();
+    mutatePages();
   };
 
   const filterChangeHandler = async (e) => {
@@ -320,10 +357,10 @@ const Pages = (props) => {
     if (newPath.includes("?")) setPagePath(`${newPath}&`);
     else setPagePath(`${newPath}?`);
 
-    console.log(newPath);
+    // console.log(newPath);
 
     Router.push(newPath);
-    updatePages();
+    mutatePages();
 
     return true;
   };
@@ -347,7 +384,7 @@ const Pages = (props) => {
       else setPagePath(`${newPath}?`);
 
       Router.push(newPath);
-      updatePages();
+      mutatePages();
 
       return true;
     }
@@ -358,22 +395,21 @@ const Pages = (props) => {
       setPagePath(`${removeURLParameter(asPath, "page")}&`);
     else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-    if (props.result.search !== undefined) setSearchKey(props.result.search);
+    if (result.search !== undefined) setSearchKey(result.search);
 
-    if (props.result.ordering !== undefined) {
+    if (result.ordering !== undefined) {
       const slug = getSlugFromSortKey(
         LinksPagesContent,
-        props.result.ordering.replace("-", "")
+        result.ordering.replace("-", "")
       );
       const orderItem = slugToCamelcase(slug);
 
-      if (props.result.ordering.includes("-"))
+      if (result.ordering.includes("-"))
         setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
       else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
     }
 
-    if (props.result.per_page !== undefined)
-      setLinksPerPage(props.result.per_page);
+    if (result.per_page !== undefined) setLinksPerPage(result.per_page);
 
     setLoadQueryString(new URLSearchParams(window.location.search));
 
@@ -417,9 +453,9 @@ const Pages = (props) => {
 
   useEffect(() => {
     if (
-      props.result.size_total_max !== undefined &&
-      props.result.tls_total !== undefined &&
-      props.result.tls_total == "true"
+      result.size_total_max !== undefined &&
+      result.tls_total !== undefined &&
+      result.tls_total == "true"
     ) {
       loadQueryString && loadQueryString.delete("size_total_min");
 
@@ -429,7 +465,7 @@ const Pages = (props) => {
       setAllFilter(false);
     }
 
-    if (props.result.size_total_min !== undefined) {
+    if (result.size_total_min !== undefined) {
       loadQueryString && loadQueryString.delete("size_total_max");
       loadQueryString && loadQueryString.delete("tls_total");
 
@@ -439,10 +475,7 @@ const Pages = (props) => {
       setAllFilter(false);
     }
 
-    if (
-      props.result.tls_total !== undefined &&
-      props.result.tls_total == "false"
-    ) {
+    if (result.tls_total !== undefined && result.tls_total == "false") {
       setNoIssueFilter(false);
       setBrokenSecurityFilter(true);
       setLargePageSizeFilter(false);
@@ -450,9 +483,9 @@ const Pages = (props) => {
     }
 
     if (
-      props.result.size_total_max == undefined &&
-      props.result.size_total_min == undefined &&
-      props.result.tls_total == undefined
+      result.size_total_max == undefined &&
+      result.size_total_min == undefined &&
+      result.tls_total == undefined
     ) {
       setLargePageSizeFilter(false);
       setNoIssueFilter(false);
@@ -494,31 +527,27 @@ const Pages = (props) => {
     else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
     Router.push(newPath);
-    updatePages();
+    mutatePages();
   };
-
-  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`;
 
   const onCrawlHandler = async () => {
     setCrawlFinished(false);
-    const res = await fetch(reCrawlEndpoint, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "X-CSRFToken": Cookies.get("csrftoken"),
-      },
-    });
 
-    const data = await res.json();
+    try {
+      const response = await usePostMethod(reCrawlEndpoint);
+      const data = await response.data;
 
-    if (res.status !== 200) {
-      throw new Error(data.message);
+      if (Math.floor(response.status / 200) === 1) {
+        if (data) {
+          return data;
+        }
+      } else {
+        // FIXME: report issues from here to Sentry
+        return null;
+      }
+    } catch (error) {
+      throw error.message;
     }
-
-    // console.log('[onCrawlHandler]', data)
-
-    return data;
   };
 
   const crawlableHandler = (finished) => {
@@ -529,7 +558,7 @@ const Pages = (props) => {
       user.permissions !== undefined &&
       user.permissions.includes("can_start_scan") &&
       site &&
-      site.verified &&
+      siteData.verified &&
       finished
     )
       setRecrawlable(true);
@@ -537,305 +566,193 @@ const Pages = (props) => {
   };
 
   useEffect(() => {
-    if (
-      user &&
-      user.permissions !== undefined &&
-      user.permissions.includes("can_start_scan") &&
-      site &&
-      site.verified
-    )
-      setRecrawlable(true);
-    else setRecrawlable(false);
-  }, [user, site]);
+    if (userData && siteIdData) {
+      if (
+        userData.permissions !== undefined &&
+        userData.permissions !== "" &&
+        userData.permissions.includes("can_start_scan") &&
+        siteIdData.verified
+      ) {
+        setRecrawlable(true);
+      } else setRecrawlable(false);
+    }
+  }, [userData, siteIdData]);
 
-  {
-    userError && <Layout>{userError.message}</Layout>;
-  }
-  {
-    pageError && <Layout>{pageError.message}</Layout>;
-  }
-  {
-    scanError && <Layout>{scanError.message}</Layout>;
-  }
-  {
-    siteError && <Layout>{siteError.message}</Layout>;
-  }
+  return pageLoaded ? (
+    <Layout user={userData}>
+      <NextSeo title={pageTitle} />
 
-  return (
-    <Layout>
-      {user && page && site ? (
-        <Fragment>
-          <Head>
-            <title>
-              {pageTitle} {site.name}
-            </title>
-          </Head>
+      <PagesDiv tw="h-screen flex overflow-hidden bg-white">
+        <MainSidebar
+          width={width}
+          user={userData}
+          site={siteData}
+          openMobileSidebar={openMobileSidebar}
+          setOpenMobileSidebar={setOpenMobileSidebar}
+        />
 
-          <PagesDiv className={`h-screen flex overflow-hidden bg-gray-200`}>
-            <MobileSidebar
-              show={openMobileSidebar}
+        <div tw="flex flex-col w-0 flex-1 overflow-hidden">
+          <div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
+            <MobileSidebarButton
+              openMobileSidebar={openMobileSidebar}
+              setOpenMobileSidebar={setOpenMobileSidebar}
+            />
+            <LinkOptions
+              sid={result.siteId}
+              user={userData}
+              site={siteData}
+              searchKey={searchKey}
+              onSearchEvent={searchEventHandler}
+              onCrawl={onCrawlHandler}
+              crawlable={recrawlable}
+              crawlFinished={crawlFinished}
               crawlableHandler={crawlableHandler}
             />
-            <MainSidebar crawlableHandler={crawlableHandler} />
+          </div>
 
-            <div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
-              <div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
-                <button
-                  className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
-                  aria-label={`Open sidebar`}
-                  onClick={() =>
-                    setTimeout(
-                      () => setOpenMobileSidebar(!openMobileSidebar),
-                      150
-                    )
-                  }
-                >
-                  <svg
-                    className={`h-6 w-5`}
-                    stroke={`currentColor`}
-                    fill={`none`}
-                    viewBox={`0 0 24 24`}
-                  >
-                    <path
-                      strokeLinecap={`round`}
-                      strokeLinejoin={`round`}
-                      strokeWidth={`2`}
-                      d={`M4 6h16M4 12h16M4 18h16`}
-                    />
-                  </svg>
-                </button>
-              </div>
-              <main
-                className={`flex-1 relative z-0 overflow-y-auto focus:outline-none`}
-                tabIndex={`0`}
-              >
-                <div
-                  className={`max-w-full mx-auto px-4 pt-4 pb-0 lg:px-8 lg:py-8 sm:px-6 md:px-8`}
-                >
-                  <div>
-                    <nav className={`sm:hidden`}>
-                      <Link
-                        href="/dashboard/site/[siteId]/overview"
-                        as={"/dashboard/site/" + query.siteId + "/overview"}
-                      >
-                        <a
-                          className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-                        >
-                          <svg
-                            className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          {PagesLabel[0].label}
-                        </a>
-                      </Link>
-                    </nav>
-                    <nav
-                      className={`hidden sm:flex items-center text-sm leading-5`}
-                    >
-                      <Link
-                        href="/dashboard/site/[siteId]/overview"
-                        as={"/dashboard/site/" + query.siteId + "/overview"}
-                      >
-                        <a
-                          className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-                        >
-                          {site.name}
-                        </a>
-                      </Link>
-                      <svg
-                        className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <Link
-                        href="/dashboard/site/[siteId]/pages"
-                        as={"/dashboard/site/" + query.siteId + "/pages"}
-                      >
-                        <a
-                          className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-                        >
-                          {PagesLabel[1].label}
-                        </a>
-                      </Link>
-                    </nav>
-                  </div>
-                  <div
-                    className={`mt-2 md:flex md:items-center md:justify-between`}
-                  >
-                    <div className={`flex-1 min-w-0`}>
-                      <div className={`flex items-center`}>
+          <main
+            tw="flex-1 relative overflow-y-auto focus:outline-none"
+            tabIndex="0"
+          >
+            <div tw="w-full p-6 mx-auto">
+              {pageLoaded ? (
+                <div className="max-w-full py-4 px-8">
+                  <nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+                    <ol tw="flex items-center space-x-4">
+                      <li>
                         <div>
-                          <div className={`lg:flex lg:items-center`}>
-                            <h2
-                              className={`mb-2 lg:my-auto text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}
-                            >
-                              {site.name}
-                            </h2>
-                            <dl
-                              className={`flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap`}
-                            >
-                              <dd
-                                className={`flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6`}
-                              >
-                                <svg
-                                  className={`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`}
-                                  viewBox="0 0 20 20"
-                                  fill="currentColor"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                                {page.count > 0
-                                  ? page.count + " " + PagesLabel[2].label
-                                  : PagesLabel[3].label}
-                              </dd>
-                            </dl>
-                          </div>
+                          <Link href={homePageLink} passHref>
+                            <a tw="text-gray-400 hover:text-gray-500">
+                              <HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+                              <span tw="sr-only">{homeLabel}</span>
+                            </a>
+                          </Link>
                         </div>
-                      </div>
-                    </div>
+                      </li>
+                      <li>
+                        <div tw="flex items-center">
+                          <ChevronRightSvg
+                            className={tw`flex-shrink-0 h-5 w-5 text-gray-400`}
+                          />
+                          <p
+                            aria-current="page"
+                            tw="cursor-default ml-4 text-sm font-medium text-gray-700"
+                          >
+                            {pageTitle}
+                          </p>
+                        </div>
+                      </li>
+                    </ol>
+                  </nav>
+                  <div className="pt-4 m-auto">
+                    <h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
+                      {pageTitle}
+                      <dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+                        <dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+                          <PageSvg
+                            className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`}
+                          />
+                          {pagesData.count > 0
+                            ? pagesData.count + " " + PagesLabel[2].label
+                            : PagesLabel[2].label}
+                        </dd>
+                      </dl>
+                    </h4>
                   </div>
                 </div>
-                <div className={`btn-crawler lg:absolute mt-8`}>
-                  {user.permissions.includes("can_start_scan") ? (
-                    recrawlable ? (
-                      <button
-                        type={`button`}
-                        onClick={onCrawlHandler}
-                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray active:bg-gray-1000 transition ease-in-out duration-150`}
-                      >
-                        {PagesLabel[4].label}
-                      </button>
-                    ) : (
-                      <button
-                        disabled={`disabled`}
-                        type={`button`}
-                        className={`w-32 mt-3 mr-3 rounded-md shadow sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm uppercase leading-5 font-medium rounded-md block text-white text-center bg-gray-1000 opacity-50 cursor-not-allowed`}
-                      >
-                        {PagesLabel[4].label}
-                      </button>
-                    )
-                  ) : null}
-                </div>
-                <div
-                  className={`max-w-full mx-auto px-4 sm:pb-4 lg:px-8 lg:pb-8 sm:px-6 md:px-8`}
-                >
-                  <LinkOptions
-                    searchKey={searchKey}
-                    onSearchEvent={searchEventHandler}
-                  />
-                  <PageFilter
-                    onFilterChange={filterChangeHandler}
-                    allFilter={allFilter}
-                    noIssueFilter={noIssueFilter}
-                    largePageSizeFilter={largePageSizeFilter}
-                    brokenSecurityFilter={brokenSecurityFilter}
-                  />
-                  <MyPagination
-                    href="/dashboard/site/[siteId]/pages"
-                    pathName={pagePath}
-                    apiEndpoint={scanApiEndpoint}
-                    page={props.result.page ? props.result.page : 0}
-                    linksPerPage={linksPerPage}
-                    onItemsPerPageChange={onItemsPerPageChange}
-                  />
-                  <div className={`pb-4`}>
-                    <div className={`flex flex-col`}>
-                      <div
-                        className={`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`}
-                      >
-                        <div
-                          className={`align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300`}
-                        >
-                          <table className={`min-w-full`}>
-                            <thead>
-                              <tr>
-                                {LinksPagesContent.map((site, key) => {
-                                  return (
-                                    <Fragment key={key}>
-                                      <th
-                                        className={`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider ${
-                                          site.slug === "page-size"
-                                            ? "min-width-adjust"
-                                            : "min-w-full"
-                                        }`}
-                                      >
-                                        <div
-                                          className={`flex items-center justify-start`}
-                                        >
-                                          {site.slug != undefined ? (
-                                            <PageSorting
-                                              sortOrder={sortOrder}
-                                              onSortHandler={SortHandler}
-                                              key={key}
-                                              slug={site.slug}
-                                            />
-                                          ) : null}
-                                          <span className="label flex items-center">
-                                            {site.label}
-                                          </span>
-                                        </div>
-                                      </th>
-                                    </Fragment>
-                                  );
-                                })}
-                              </tr>
-                            </thead>
-                            {page.results &&
-                              page.results.map((val, key) => (
-                                <PageTable key={key} val={val} />
-                              ))}
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <MyPagination
-                    href="/dashboard/site/[siteId]/pages"
-                    pathName={pagePath}
-                    apiEndpoint={scanApiEndpoint}
-                    page={props.result.page ? props.result.page : 0}
-                    linksPerPage={linksPerPage}
-                    onItemsPerPageChange={onItemsPerPageChange}
-                  />
-                </div>
-
-                <div
-                  className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
-                >
-                  <SiteFooter />
-                </div>
-              </main>
+              ) : (
+                <ProfileSkeleton />
+              )}
             </div>
-          </PagesDiv>
-        </Fragment>
-      ) : null}
+            <div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+              <PageFilter
+                onFilterChange={filterChangeHandler}
+                allFilter={allFilter}
+                noIssueFilter={noIssueFilter}
+                largePageSizeFilter={largePageSizeFilter}
+                brokenSecurityFilter={brokenSecurityFilter}
+              />
+              <div tw="pb-4">
+                <div tw="flex flex-col">
+                  <div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+                    <div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
+                      <table tw="min-w-full">
+                        <thead>
+                          <tr>
+                            {LinksPagesContent.map((site, key) => {
+                              return (
+                                <Fragment key={key}>
+                                  <th
+                                    css={[
+                                      tw`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`,
+                                      site.slug === "url-type" ||
+                                      site.slug === "occurrences"
+                                        ? "min-width-adjust"
+                                        : "min-w-full",
+                                    ]}
+                                  >
+                                    <div tw="flex items-center justify-start">
+                                      {site.slug !== undefined ? (
+                                        <PageSorting
+                                          sortOrder={sortOrder}
+                                          onSortHandler={SortHandler}
+                                          key={key}
+                                          slug={site.slug}
+                                        />
+                                      ) : null}
+                                      <span
+                                        className="label"
+                                        tw="flex items-center"
+                                      >
+                                        {site.label}
+                                      </span>
+                                    </div>
+                                  </th>
+                                </Fragment>
+                              );
+                            })}
+                          </tr>
+                        </thead>
+                        {pagesData.results &&
+                          pagesData.results.map((val, key) => (
+                            <>
+                              <PageTable key={key} val={val} />
+                            </>
+                          ))}
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <MyPagination
+                href="/dashboard/site/[siteId]/pages"
+                pathName={pagePath}
+                apiEndpoint={scanApiEndpoint}
+                page={result.page ? result.page : 0}
+                linksPerPage={linksPerPage}
+                onItemsPerPageChange={onItemsPerPageChange}
+              />
+            </div>
+
+            <div tw="static bottom-0 w-full mx-auto px-4 sm:px-6 py-4">
+              <SiteFooter />
+            </div>
+          </main>
+        </div>
+      </PagesDiv>
     </Layout>
-  );
+  ) : null;
 };
 
-export async function getServerSideProps(context) {
-  // console.log('[Query]', context.query)
+Pages.propTypes = {};
+
+export default withResizeDetector(Pages);
+
+export async function getServerSideProps(ctx) {
   return {
     props: {
-      result: context.query,
+      result: ctx.query,
     },
   };
 }
-
-export default Pages;

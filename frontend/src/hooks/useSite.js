@@ -174,6 +174,38 @@ export const useImages = ({ querySid = 0, scanObjId = 0 }) => {
   return { images, mutateImages, imagesError };
 };
 
+export const usePages = ({
+  endpoint,
+  querySid = 0,
+  scanObjId = 0,
+  refreshInterval = 0,
+}) => {
+  const { data: pages, mutate: mutatePages, error: pagesError } = useSWR(
+    () =>
+      querySid &&
+      querySid !== 0 &&
+      querySid !== undefined &&
+      scanObjId &&
+      scanObjId !== 0 &&
+      scanObjId !== undefined
+        ? endpoint
+        : null,
+    useFetcher,
+    {
+      onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+        if (error.status === 404) return;
+        if (key === endpoint) return;
+        if (retryCount >= 10) return;
+
+        setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+      },
+      refreshInterval: refreshInterval,
+    }
+  );
+
+  return { pages, mutatePages, pagesError };
+};
+
 export const useNonTlsPages = ({ querySid = 0, scanObjId = 0 }) => {
   const {
     data: nonTlsPages,
@@ -262,7 +294,7 @@ export const useLinkDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
   const {
     data: linkDetail,
     mutate: mutateLinkDetail,
-    error: noLinkDetailError,
+    error: linkDetailError,
   } = useSWR(
     () =>
       querySid &&
@@ -292,5 +324,42 @@ export const useLinkDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
     }
   );
 
-  return { linkDetail, mutateLinkDetail, noLinkDetailError };
+  return { linkDetail, mutateLinkDetail, linkDetailError };
+};
+
+export const usePageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
+  const {
+    data: pageDetail,
+    mutate: mutatePageDetail,
+    error: pageDetailError,
+  } = useSWR(
+    () =>
+      querySid &&
+      querySid !== 0 &&
+      querySid !== undefined &&
+      scanObjId &&
+      scanObjId !== 0 &&
+      scanObjId !== undefined &&
+      linkId &&
+      linkId !== 0 &&
+      linkId !== undefined
+        ? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId
+        : null,
+    useFetcher,
+    {
+      onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+        if (error.status === 404) return;
+        if (
+          key ===
+          siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId
+        )
+          return;
+        if (retryCount >= 10) return;
+
+        setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+      },
+    }
+  );
+
+  return { pageDetail, mutatePageDetail, pageDetailError };
 };

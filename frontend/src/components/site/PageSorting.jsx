@@ -1,22 +1,39 @@
-import styled from 'styled-components'
-import Sorting from 'components/site/Sorting'
+// External
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import "twin.macro";
 
-const PageSortingDiv = styled.div``
+// Components
+const Sorting = loadable(() => import("src/components/site/Sorting"));
 
-const PageSorting = props => {
+const PageSorting = (props) => {
   return (
-    <PageSortingDiv className="flex flex-row mr-3">
+    <div className="flex flex-row mr-3">
       <div className={`inline-flex`}>
         {props.slug == "page-url" ? (
-          <Sorting direction={props.sortOrder.pageUrl} onSortHandler={props.onSortHandler} slug={props.slug} />
+          <Sorting
+            direction={props.sortOrder.pageUrl}
+            onSortHandler={props.onSortHandler}
+            slug={props.slug}
+          />
         ) : props.slug == "page-size" ? (
-          <Sorting direction={props.sortOrder.pageSize} onSortHandler={props.onSortHandler} slug={props.slug} />
+          <Sorting
+            direction={props.sortOrder.pageSize}
+            onSortHandler={props.onSortHandler}
+            slug={props.slug}
+          />
         ) : props.slug == "page-ssl" ? (
-          <Sorting direction={props.sortOrder.pageSsl} onSortHandler={props.onSortHandler} slug={props.slug} />
+          <Sorting
+            direction={props.sortOrder.pageSsl}
+            onSortHandler={props.onSortHandler}
+            slug={props.slug}
+          />
         ) : null}
       </div>
-    </PageSortingDiv>
-  )
-}
+    </div>
+  );
+};
 
-export default PageSorting
+PageSorting.propTypes = {};
+
+export default PageSorting;

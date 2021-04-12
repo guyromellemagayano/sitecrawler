@@ -3,7 +3,7 @@
 		"label": "Back to Overview"
 	},
 	{
-		"label": "All Pages"
+		"label": "Pages"
 	},
 	{
 		"label": "pages found"
@@ -12,6 +12,9 @@
 		"label": "No pages found"
 	},
 	{
-		"label": "Recrawl"
+		"label": "Recrawl Site"
+	},
+	{
+		"label": "An unexpected error occurred. Please try again."
 	}
 ]

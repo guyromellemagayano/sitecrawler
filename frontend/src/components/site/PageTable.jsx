@@ -1,151 +1,169 @@
-import { Fragment } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import useSWR from 'swr';
-import Cookies from 'js-cookie';
-import tw from 'twin.macro';
-import bytes from 'bytes';
-import Skeleton from 'react-loading-skeleton';
-import SiteSuccessIcon from '../icons/SiteSuccessIcon';
-import SiteWarningIcon from '../icons/SiteWarningIcon';
-import SiteDangerIcon from '../icons/SiteDangerIcon';
-import SiteDangerBadge from '../badges/SiteDangerBadge';
-import SiteSuccessBadge from '../badges/SiteSuccessBadge';
-import SiteWarningBadge from '../badges/SiteWarningBadge';
+// React
+import { useState, useEffect } from "react";
 
-const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
-	});
+// NextJS
+import { useRouter } from "next/router";
+import Link from "next/link";
 
-	const data = await res.json();
+// External
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import tw, { styled } from "twin.macro";
+import bytes from "bytes";
 
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
+// Hooks
+import { usePageDetail } from "src/hooks/useSite";
 
-	return data;
-};
+// Components
+const SiteSuccessBadge = loadable(() =>
+  import("src/components/badges/SiteSuccessBadge")
+);
+const SiteSuccessIcon = loadable(() =>
+  import("src/components/icons/SiteSuccessIcon")
+);
+const SiteDangerIcon = loadable(() =>
+  import("src/components/icons/SiteDangerIcon")
+);
 
-const PagesTableDiv = styled.tbody`
-	a,
-	div {
-		max-width: 100%;
-		display: block;
-	}
+const PageTableDiv = styled.tbody`
+  a,
+  div {
+    max-width: 100%;
+    display: block;
+  }
+  td {
+    & > div {
+      max-width: 100%;
+      display: block;
 
-	.btn-detail {
-		display: inline-block;
-		padding: 8px 10px;
-		line-height: 1;
-		font-size: 0.7rem;
-		margin-top: 5px;
-	}
+      & > div {
+        max-width: 100%;
+        display: block;
+      }
+    }
+  }
+
+  .btn-detail {
+    display: inline-block;
+    padding: 8px 10px;
+    line-height: 1;
+    font-size: 0.7rem;
+    margin-top: 5px;
+  }
 `;
 
-const PagesTable = (props) => {
-	const { query } = useRouter();
-	const { data: pageDetail, error: pageDetailError } = useSWR(
-		() =>
-			query.siteId
-				? `/api/site/${query.siteId}/scan/${props.val.scan_id}/page/${props.val.id}/`
-				: null,
-		fetcher
-	);
+const PageTable = (props) => {
+  const [componentReady, setComponentReady] = useState(false);
 
-	if (pageDetailError) return <div>{pageDetailError.message}</div>;
+  const { query } = useRouter();
 
-	if (!pageDetail) {
-		return (
-			<Fragment>
-				<PagesTableDiv className={`bg-white`}>
-					<tr>
-						{[...Array(4)].map((val, index) => (
-							<td
-								className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300`}
-								key={index}
-							>
-								<Skeleton duration={2} />
-							</td>
-						))}
-					</tr>
-				</PagesTableDiv>
-			</Fragment>
-		);
-	}
+  const { pageDetail: pageDetail } = usePageDetail({
+    querySid: query.siteId,
+    scanObjId: props.val.scan_id,
+    linkId: props.val.id,
+  });
 
-	return (
-		<PagesTableDiv className={`bg-white`}>
-			<tr>
-				<td
-					className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300`}
-				>
-					<div className={`flex items-center`}>
-						<div>
-							<div className={`text-sm leading-5 font-medium text-gray-900`}>
-								<a
-									href={props.val.url}
-									target={`_blank`}
-									title={props.val.url}
-									className={`text-sm leading-6 font-semibold text-blue-1000 hover:text-blue-900 transition ease-in-out duration-150 truncate`}
-								>
-									{props.val.url}
-								</a>
-							</div>
-							<div
-								className={`flex justify-start inline-text-sm leading-5 text-gray-500`}
-							>
-								<Link
-									href="/dashboard/site/[siteId]/pages/[pageId]/details"
-									as={`/dashboard/site/${query.siteId}/pages/${pageDetail.id}/details`}
-								>
-									<a
-										className={`btn-detail mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-white bg-indigo-600 rounded hover:bg-indigo-500 hover:border-0 transition ease-in-out duration-150`}
-									>
-										View Details
-									</a>
-								</Link>
-							</div>
-						</div>
-					</div>
-				</td>
-				<td
-					className={`pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-				>
-					{bytes(props.val.size_total, {
-						thousandsSeparator: ' ',
-						unitSeparator: ' '
-					})}
-				</td>
-				<td
-					className={`px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-				>
-					<SiteSuccessBadge text={'Good'} />
-				</td>
-				{/* <td
-          className={`pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-        >
-          <SiteSuccessIcon />
-        </td> */}
-				<td
-					className={`px-16 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-				>
-					{props.val.tls_total == true ? (
-						<SiteSuccessIcon />
-					) : (
-						<SiteDangerIcon />
-					)}
-				</td>
-			</tr>
-		</PagesTableDiv>
-	);
+  useEffect(() => {
+    if (
+      pageDetail &&
+      pageDetail !== undefined &&
+      pageDetail !== [] &&
+      Object.keys(pageDetail).length > 0
+    ) {
+      setTimeout(() => {
+        setComponentReady(true);
+      }, 500);
+    }
+  }, [pageDetail]);
+
+  return (
+    <PageTableDiv tw="bg-white">
+      <tr>
+        <td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
+          <div tw="flex items-center">
+            <div>
+              <div
+                className="link-item"
+                tw="text-sm leading-5 font-medium text-gray-900"
+              >
+                {componentReady ? (
+                  <a
+                    href={props.val.url}
+                    target="_blank"
+                    title={props.val.url}
+                    tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 transition ease-in-out duration-150 truncate"
+                  >
+                    {props.val.url}
+                  </a>
+                ) : (
+                  <Skeleton duration={2} width={300} />
+                )}
+              </div>
+              <div tw="flex justify-start leading-5 text-gray-500">
+                {componentReady ? (
+                  pageDetail &&
+                  pageDetail !== undefined &&
+                  pageDetail !== [] &&
+                  Object.keys(pageDetail).length > 0 && (
+                    <Link
+                      href="/site/[siteId]/pages/[pageId]/details"
+                      as={`/site/${query.siteId}/pages/${pageDetail.id}/details`}
+                      passHref
+                    >
+                      <a
+                        className="btn-detail"
+                        tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      >
+                        View Details
+                      </a>
+                    </Link>
+                  )
+                ) : (
+                  <Skeleton
+                    duration={2}
+                    className="btn-detail"
+                    width={82.2}
+                    height={27}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </td>
+        <td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+          {componentReady ? (
+            bytes(props.val.size_total, {
+              thousandsSeparator: " ",
+              unitSeparator: " ",
+            })
+          ) : (
+            <Skeleton duration={2} width={100} />
+          )}
+        </td>
+        <td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+          {componentReady ? (
+            <SiteSuccessBadge text={"Good"} />
+          ) : (
+            <Skeleton duration={2} width={50} />
+          )}
+        </td>
+        <td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+          {componentReady ? (
+            props.val.tls_total == true ? (
+              <SiteSuccessIcon />
+            ) : (
+              <SiteDangerIcon />
+            )
+          ) : (
+            <Skeleton duration={2} width={30} />
+          )}
+        </td>
+      </tr>
+    </PageTableDiv>
+  );
 };
 
-export default PagesTable;
+PageTable.propTypes = {};
 
-PagesTable.propTypes = {};
+export default PageTable;
