@@ -51,7 +51,7 @@ const SitesPagesStats = loadable(() =>
 const SitesSeoStats = loadable(() => import("src/components/sites/SeoStats"));
 const SitesStats = loadable(() => import("src/components/sites/Stats"));
 
-const SitesDashboard = ({ width, sid }) => {
+const SiteOverview = ({ width, sid }) => {
   const [crawlFinished, setCrawlFinished] = useState(false);
   const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -124,9 +124,6 @@ const SitesDashboard = ({ width, sid }) => {
     try {
       const response = await usePostMethod(reCrawlEndpoint);
       const data = await response.data;
-
-      // FIXME: fix scan errors
-      console.log("response: " + response);
 
       if (Math.floor(response.status / 200) === 1) {
         if (data) {
@@ -310,9 +307,9 @@ const SitesDashboard = ({ width, sid }) => {
   ) : null;
 };
 
-SitesDashboard.propTypes = {};
+SiteOverview.propTypes = {};
 
-export default withResizeDetector(SitesDashboard);
+export default withResizeDetector(SiteOverview);
 
 export async function getServerSideProps({ query }) {
   return {
