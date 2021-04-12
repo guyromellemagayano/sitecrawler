@@ -42,7 +42,7 @@ const SiteMenu = ({ user, site }) => {
     setIsComponentVisible,
   } = useDropdownOutsideClick(false);
 
-  const { asPath } = useRouter();
+  const { query, asPath } = useRouter();
   const router = useRouter();
 
   const { scan: scan } = useScan({
@@ -51,12 +51,8 @@ const SiteMenu = ({ user, site }) => {
   });
 
   useEffect(() => {
-    if (
-      router.query.siteId &&
-      router.query.siteId !== undefined &&
-      router.query.siteId !== ""
-    ) {
-      setSid(router.query.siteId);
+    if (query.siteId && query.siteId !== undefined && query.siteId !== "") {
+      setSid(query.siteId);
     }
 
     if (scan && scan !== undefined && Object.keys(scan).length > 0) {
@@ -107,7 +103,7 @@ const SiteMenu = ({ user, site }) => {
     ) {
       setStatsData(stats);
     }
-  }, [scan, stats, scanObjId, site, sid]);
+  }, [stats, scanObjId, site, sid]);
 
   useEffect(() => {
     if (
@@ -134,11 +130,14 @@ const SiteMenu = ({ user, site }) => {
 
   useEffect(() => {
     if (
-      siteData &&
-      siteData !== undefined &&
-      Object.keys(siteData).length > 0
+      (siteData && siteData !== undefined && siteData !== [],
+      Object.keys(siteData).length > 0)
     ) {
-      if (Object.keys(siteData.results).length > 0) {
+      if (
+        siteData.results &&
+        siteData.results !== undefined &&
+        Object.keys(siteData.results).length > 0
+      ) {
         siteData.results
           .filter((result) => result.name === selectedSite)
           .map((val) => {
@@ -149,11 +148,14 @@ const SiteMenu = ({ user, site }) => {
 
     if (selectedSite == []) {
       if (
-        siteData &&
-        siteData !== undefined &&
-        Object.keys(siteData).length > 0
+        (siteData && siteData !== undefined && siteData !== [],
+        Object.keys(siteData).length > 0)
       ) {
-        if (Object.keys(siteData.results).length > 0) {
+        if (
+          siteData.results &&
+          siteData.results !== undefined &&
+          Object.keys(siteData.results).length > 0
+        ) {
           siteData.results
             .filter((result) => result.id == sid)
             .map((val) => {
