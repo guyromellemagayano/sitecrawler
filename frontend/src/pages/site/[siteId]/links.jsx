@@ -34,6 +34,7 @@ const LinkFilter = loadable(() => import("src/components/site/LinkFilter"));
 const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
 const LinkSorting = loadable(() => import("src/components/site/LinkSorting"));
 const LinkTable = loadable(() => import("src/components/site/LinkTable"));
+const LinksSvg = loadable(() => import("src/components/svg/outline/LinksSvg"));
 const MainSidebar = loadable(() =>
   import("src/components/sidebar/MainSidebar")
 );
@@ -53,7 +54,6 @@ import {
   getSortKeyFromSlug,
   getSlugFromSortKey,
 } from "src/helpers/functions";
-import LinksSvg from "src/components/svg/outline/LinksSvg";
 
 const LinksDiv = styled.section`
   .url-type-tooltip,
@@ -119,10 +119,10 @@ const Links = ({ width, result }) => {
 
   const pageTitle =
     siteIdData.name && siteIdData.name !== undefined
-      ? siteIdData.name
-      : "Links";
+      ? LinksLabel[1].label + " - " + siteIdData.name
+      : LinksLabel[1].label;
   const homeLabel = "Home";
-  const homePageLink = "/";
+  const homePageLink = `/site/${result.siteId}/overview`;
   const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
   const sitesApiEndpoint = `/api/site/${result.siteId}/?ordering=name`;
 
@@ -604,7 +604,7 @@ const Links = ({ width, result }) => {
       user.permissions !== undefined &&
       user.permissions.includes("can_start_scan") &&
       site &&
-      site.verified &&
+      siteData.verified &&
       finished
     )
       setRecrawlable(true);
@@ -692,7 +692,7 @@ const Links = ({ width, result }) => {
                   </nav>
                   <div className="pt-4 m-auto">
                     <h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-                      {siteData.name}
+                      {pageTitle}
                       <dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
                         <dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
                           <LinksSvg
@@ -739,7 +739,7 @@ const Links = ({ width, result }) => {
                                     ]}
                                   >
                                     <div tw="flex items-center justify-start">
-                                      {site.slug != undefined ? (
+                                      {site.slug !== undefined ? (
                                         <LinkSorting
                                           sortOrder={sortOrder}
                                           onSortHandler={SortHandler}

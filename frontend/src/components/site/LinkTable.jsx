@@ -221,7 +221,7 @@ const LinkTable = (props) => {
             linkDetail.pages.length > 0 && (
               <Link
                 href="/site/[siteId]/links/[linkId]/details"
-                as="/site/${query.siteId}/links/${linkDetail.id}/details"
+                as={`/site/${query.siteId}/links/${linkDetail.id}/details`}
                 passHref
               >
                 <a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">

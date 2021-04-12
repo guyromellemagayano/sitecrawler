@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 
 // NextJS
 import Link from "next/link";
-import Head from "next/head";
 
 // External
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -12,7 +11,11 @@ import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
 import tw, { styled } from "twin.macro";
+
+// JSON
+import LinksLabel from "public/labels/pages/site/links.json";
 
 // Hooks
 import { useScan, useSite, useSiteId, useLinkDetail } from "src/hooks/useSite";
@@ -32,6 +35,9 @@ const MainSidebar = loadable(() =>
 );
 const MobileSidebarButton = loadable(() =>
   import("src/components/sidebar/MobileSidebarButton")
+);
+const ProfileSkeleton = loadable(() =>
+  import("src/components/skeletons/ProfileSkeleton")
 );
 const SiteDangerBadge = loadable(() =>
   import("src/components/badges/SiteDangerBadge")
@@ -64,8 +70,8 @@ const LinkDetail = ({ width, result }) => {
 
   const linksPageTitle =
     siteIdData.name && siteIdData.name !== undefined
-      ? siteIdData.name
-      : "Links";
+      ? LinksLabel[1].label + " - " + siteIdData.name
+      : LinksLabel[1].label;
   const linksDetailPageTitle =
     linkDetailData.url &&
     linkDetailData.url !== undefined &&
@@ -200,64 +206,53 @@ const LinkDetail = ({ width, result }) => {
             <div tw="w-full p-6 mx-auto grid gap-16 xl:grid-cols-1 2xl:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
               <div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
                 <div tw="max-w-full py-4 px-8">
-                  {pageLoaded ? (
-                    <>
-                      <nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-                        <ol tw="flex items-center space-x-4">
-                          <li>
-                            <div>
-                              <Link href={homePageLink} passHref>
-                                <a tw="text-gray-400 hover:text-gray-500">
-                                  <HomeSvg
-                                    className={tw`flex-shrink-0 h-5 w-5`}
-                                  />
-                                  <span tw="sr-only">{homeLabel}</span>
-                                </a>
-                              </Link>
-                            </div>
-                          </li>
-                          <li>
-                            <div tw="flex items-center">
-                              <ChevronRightSvg
-                                className={tw`flex-shrink-0 h-5 w-5 text-gray-400`}
-                              />
-                              <Link
-                                href={`/site/${result.siteId}/links`}
-                                passHref
-                              >
-                                <a
-                                  aria-current="page"
-                                  tw="cursor-pointer ml-4 text-sm text-gray-700"
-                                >
-                                  {linksPageTitle}
-                                </a>
-                              </Link>
-                            </div>
-                          </li>
-                          <li>
-                            <div tw="flex items-center">
-                              <ChevronRightSvg
-                                className={tw`flex-shrink-0 h-5 w-5 text-gray-400`}
-                              />
-                              <p
-                                aria-current="page"
-                                tw="cursor-default ml-4 text-sm font-medium text-gray-700"
-                              >
-                                {linkDetailData.url}
-                              </p>
-                            </div>
-                          </li>
-                        </ol>
-                      </nav>
-                      <div className="pt-4 m-auto">
-                        <h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-                          {linkDetailData.url} - {siteData.name}
-                        </h4>
-                      </div>
-                    </>
-                  ) : (
-                    <ProfileSkeleton />
-                  )}
+                  <nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+                    <ol tw="flex items-center space-x-4">
+                      <li>
+                        <div>
+                          <Link href={homePageLink} passHref>
+                            <a tw="text-gray-400 hover:text-gray-500">
+                              <HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+                              <span tw="sr-only">{homeLabel}</span>
+                            </a>
+                          </Link>
+                        </div>
+                      </li>
+                      <li>
+                        <div tw="flex items-center">
+                          <ChevronRightSvg
+                            className={tw`flex-shrink-0 h-5 w-5 text-gray-400`}
+                          />
+                          <Link href={`/site/${result.siteId}/links`} passHref>
+                            <a
+                              aria-current="page"
+                              tw="cursor-pointer ml-4 text-sm text-gray-700"
+                            >
+                              {linksPageTitle}
+                            </a>
+                          </Link>
+                        </div>
+                      </li>
+                      <li>
+                        <div tw="flex items-center">
+                          <ChevronRightSvg
+                            className={tw`flex-shrink-0 h-5 w-5 text-gray-400`}
+                          />
+                          <p
+                            aria-current="page"
+                            tw="cursor-default ml-4 text-sm font-medium text-gray-700"
+                          >
+                            {linkDetailData.url}
+                          </p>
+                        </div>
+                      </li>
+                    </ol>
+                  </nav>
+                  <div tw="pt-4 m-auto">
+                    <h4 tw="flex items-center text-2xl leading-8 font-medium text-gray-900 leading-5 break-all">
+                      {linkDetailData.url} - {siteData.name}
+                    </h4>
+                  </div>
                 </div>
                 <div tw="max-w-4xl py-6 px-8">
                   <div tw="bg-white border border-gray-300 overflow-hidden sm:rounded-lg py-2 px-1">
