@@ -59,7 +59,7 @@ const SitesOverview = ({
     sameElse: "MMMM DD, YYYY",
   };
 
-  const { scan: scan, scanError: scanError } = useScan({
+  const { scan: scan } = useScan({
     querySid: id,
   });
 
@@ -84,15 +84,12 @@ const SitesOverview = ({
     }
   }, [scan]);
 
-  const { stats: stats, statsError: statsError } = useStats({
+  const { stats: stats } = useStats({
     querySid: id,
     scanObjId: scanObjId,
   });
 
-  const {
-    nonTlsPages: nonTlsPages,
-    nonTlsPagesError: nonTlsPagesError,
-  } = useNonTlsPages({
+  const { nonTlsPages: nonTlsPages } = useNonTlsPages({
     querySid: id,
     scanObjId: scanObjId,
   });
@@ -108,19 +105,6 @@ const SitesOverview = ({
     ) {
       setStatsData(stats);
       setNonTlsPagesData(nonTlsPages);
-    }
-
-    if (scanError || statsError || nonTlsPagesError) {
-      // TODO: add generic alert here
-      console.log(
-        "ERROR: " + scanError
-          ? scanError
-          : statsError
-          ? statsError
-          : nonTlsPagesError
-          ? nonTlsPagesError
-          : OverviewLabel[2].label
-      );
     }
   }, [scan, stats, nonTlsPages]);
 
@@ -151,7 +135,7 @@ const SitesOverview = ({
               user.permissions.includes("can_start_scan") ? (
                 <button
                   type="button"
-                  disabled={crawlable}
+                  disabled={!crawlable}
                   onClick={onCrawl}
                   css={[
                     tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 focus:outline-none`,

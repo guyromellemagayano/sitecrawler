@@ -145,26 +145,13 @@ const SiteOverview = ({ width, sid }) => {
       user &&
       userData.permissions !== undefined &&
       userData.permissions.includes("can_start_scan") &&
-      siteData &&
-      siteData.verified &&
+      siteIdData &&
+      siteIdData.verified &&
       finished
     )
       setRecrawlable(true);
     else setRecrawlable(false);
   };
-
-  useEffect(() => {
-    if (userData && siteIdData) {
-      if (
-        userData.permissions !== undefined &&
-        userData.permissions !== "" &&
-        userData.permissions.includes("can_start_scan") &&
-        siteIdData.verified
-      ) {
-        setRecrawlable(true);
-      } else setRecrawlable(false);
-    }
-  }, [userData, siteIdData]);
 
   return pageLoaded ? (
     <Layout user={userData}>

@@ -98,6 +98,18 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
     }
   }, [user, statsData]);
 
+  useEffect(() => {
+    if (
+      statsData &&
+      statsData !== undefined &&
+      Object.keys(statsData).length > 0
+    ) {
+      if (statsData.finished_at) crawlableHandler(true);
+      else if (statsData.started_at && statsData.finished_at == null)
+        crawlableHandler(false);
+    }
+  }, [statsData]);
+
   const setSeoErrors = () => {
     let valLength = 0;
 
@@ -156,18 +168,6 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 
     return valLength;
   };
-
-  useEffect(() => {
-    if (
-      statsData &&
-      statsData !== undefined &&
-      Object.keys(statsData).length > 0
-    ) {
-      if (statsData.finished_at) crawlableHandler(true);
-      else if (statsData.started_at && statsData.finished_at == null)
-        crawlableHandler(false);
-    }
-  }, [statsData]);
 
   const PageTabs = [
     {
