@@ -755,7 +755,7 @@ const Links = ({ width, result }) => {
                                         {site.slug === "url-type" ||
                                         site.slug === "status" ||
                                         site.slug === "http-code" ? (
-                                          <Fragment>
+                                          <>
                                             <a
                                               data-tip
                                               data-for={site.slug}
@@ -834,7 +834,7 @@ const Links = ({ width, result }) => {
                                                 )}
                                               </span>
                                             </ReactTooltip>
-                                          </Fragment>
+                                          </>
                                         ) : null}
                                       </span>
                                     </div>
