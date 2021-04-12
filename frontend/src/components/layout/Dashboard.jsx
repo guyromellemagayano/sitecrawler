@@ -324,15 +324,15 @@ const Dashboard = ({ width, user, page, search, per_page, ordering }) => {
   );
 };
 
-Dashboard.getInitialProps = ({ query }) => {
+Dashboard.propTypes = {};
+
+export default withResizeDetector(Dashboard);
+
+export async function getServerSideProps({ query }) {
   return {
     page: query.page || 0,
     search: query.search || "",
     per_page: query.per_page || 0,
     ordering: query.ordering || "",
   };
-};
-
-Dashboard.propTypes = {};
-
-export default withResizeDetector(Dashboard);
+}
