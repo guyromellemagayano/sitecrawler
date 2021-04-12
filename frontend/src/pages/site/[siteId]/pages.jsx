@@ -98,7 +98,7 @@ const Pages = ({ width, result }) => {
   const homeLabel = "Home";
   const homePageLink = `/site/${result.siteId}/overview`;
   const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-  const sitesApiEndpoint = `/api/site/${result.siteId}/?ordering=name`;
+  const sitesApiEndpoint = `/api/site/?ordering=name`;
 
   const { user: user } = useUser({
     redirectIfFound: false,
@@ -189,6 +189,15 @@ const Pages = ({ width, result }) => {
       ? scanApiEndpoint.includes("?")
         ? `&ordering=${result.ordering}`
         : `?ordering=${result.ordering}`
+      : "";
+
+  queryString +=
+    typeof window !== "undefined" &&
+    loadQueryString.toString() !== "" &&
+    loadQueryString.toString() !== undefined
+      ? scanApiEndpoint.includes("?")
+        ? window.location.search.replace("?", "&")
+        : window.location.search
       : "";
 
   scanApiEndpoint += queryString;
@@ -483,14 +492,20 @@ const Pages = ({ width, result }) => {
     }
 
     if (
-      result.size_total_max == undefined &&
-      result.size_total_min == undefined &&
-      result.tls_total == undefined
+      loadQueryString &&
+      loadQueryString !== undefined &&
+      loadQueryString.toString().length === 0
     ) {
-      setLargePageSizeFilter(false);
-      setNoIssueFilter(false);
-      setBrokenSecurityFilter(false);
-      setAllFilter(true);
+      if (
+        result.size_total_max == undefined &&
+        result.size_total_min == undefined &&
+        result.tls_total == undefined
+      ) {
+        setLargePageSizeFilter(false);
+        setNoIssueFilter(false);
+        setBrokenSecurityFilter(false);
+        setAllFilter(true);
+      }
     }
   }, [filterChangeHandler, loadQueryString]);
 
@@ -557,26 +572,13 @@ const Pages = ({ width, result }) => {
       user &&
       user.permissions !== undefined &&
       user.permissions.includes("can_start_scan") &&
-      site &&
-      siteData.verified &&
+      siteIdData &&
+      siteIdData.verified &&
       finished
     )
       setRecrawlable(true);
     else setRecrawlable(false);
   };
-
-  useEffect(() => {
-    if (userData && siteIdData) {
-      if (
-        userData.permissions !== undefined &&
-        userData.permissions !== "" &&
-        userData.permissions.includes("can_start_scan") &&
-        siteIdData.verified
-      ) {
-        setRecrawlable(true);
-      } else setRecrawlable(false);
-    }
-  }, [userData, siteIdData]);
 
   return pageLoaded ? (
     <Layout user={userData}>
@@ -600,7 +602,6 @@ const Pages = ({ width, result }) => {
             <LinkOptions
               sid={result.siteId}
               user={userData}
-              site={siteData}
               searchKey={searchKey}
               onSearchEvent={searchEventHandler}
               onCrawl={onCrawlHandler}
