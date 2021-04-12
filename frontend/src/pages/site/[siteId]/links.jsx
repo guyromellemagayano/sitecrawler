@@ -115,7 +115,7 @@ const Links = ({ width, result }) => {
   const [sortOrder, setSortOrder] = useState(initialOrder);
   const [userData, setUserData] = useState([]);
 
-  const { query, asPath } = useRouter();
+  const { asPath } = useRouter();
 
   const pageTitle =
     siteIdData.name && siteIdData.name !== undefined
@@ -123,8 +123,8 @@ const Links = ({ width, result }) => {
       : "Links";
   const homeLabel = "Home";
   const homePageLink = "/";
-  const reCrawlEndpoint = `/api/site/${query.siteId}/start_scan/`;
-  const sitesApiEndpoint = `/api/site/${query.siteId}/?ordering=name`;
+  const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
+  const sitesApiEndpoint = `/api/site/${result.siteId}/?ordering=name`;
 
   const { user: user } = useUser({
     redirectIfFound: false,
@@ -133,7 +133,7 @@ const Links = ({ width, result }) => {
   });
 
   const { scan: scan } = useScan({
-    querySid: query.siteId,
+    querySid: result.siteId,
     refreshInterval: 1000,
   });
 
@@ -143,7 +143,7 @@ const Links = ({ width, result }) => {
   });
 
   const { siteId: siteId } = useSiteId({
-    querySid: query.siteId,
+    querySid: result.siteId,
   });
 
   useEffect(() => {
@@ -169,11 +169,11 @@ const Links = ({ width, result }) => {
 
   let scanApiEndpoint =
     result.page !== undefined
-      ? `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
+      ? `/api/site/${result.siteId}/scan/${scanObjId}/link/?per_page=` +
         linksPerPage +
         `&page=` +
         result.page
-      : `/api/site/${query.siteId}/scan/${scanObjId}/link/?per_page=` +
+      : `/api/site/${result.siteId}/scan/${scanObjId}/link/?per_page=` +
         linksPerPage;
 
   let queryString = "";
@@ -218,7 +218,7 @@ const Links = ({ width, result }) => {
 
   const { links: links, mutateLinks: mutateLinks } = useLinks({
     endpoint: scanApiEndpoint,
-    querySid: query.siteId,
+    querySid: result.siteId,
     scanObjId: scanObjId,
     refreshInterval: 1000,
   });
@@ -880,10 +880,10 @@ Links.propTypes = {};
 
 export default withResizeDetector(Links);
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(ctx) {
   return {
     props: {
-      result: context.query,
+      result: ctx.query,
     },
   };
 }
