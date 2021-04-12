@@ -483,10 +483,6 @@ const Links = ({ width, result }) => {
       }
     }
 
-    console.log(
-      !loadQueryStringValue.has("type") && !loadQueryStringValue.has("status")
-    );
-
     if (
       !loadQueryStringValue.has("type") &&
       !loadQueryStringValue.has("status")
