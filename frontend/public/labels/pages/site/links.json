@@ -3,7 +3,7 @@
 		"label": "Back to Overview"
 	},
 	{
-		"label": "All Links"
+		"label": "Links"
 	},
 	{
 		"label": "links found"
@@ -12,7 +12,7 @@
 		"label": "No links found"
 	},
 	{
-		"label": "Recrawl"
+		"label": "Recrawl Site"
 	},
 	{
 		"label": "OK",
@@ -32,5 +32,8 @@
 	},
 	{
 		"label": "Leverage agile frameworks to provide a robust synopsis for high level overviews."
+	},
+	{
+		"label": "An unexpected error occurred. Please try again."
 	}
 ]
