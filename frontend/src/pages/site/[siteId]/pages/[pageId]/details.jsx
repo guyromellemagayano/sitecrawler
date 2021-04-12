@@ -75,14 +75,14 @@ const PageDetail = ({ width, result }) => {
       ? pageDetailData.url + " | " + siteIdData.name
       : "Links Detail";
   const homeLabel = "Home";
-  const homePageLink = "/";
+  const homePageLink = `/site/${result.siteId}/overview`;
   const calendarStrings = {
     lastDay: "[Yesterday], dddd",
     sameDay: "[Today], dddd",
     lastWeek: "MMMM DD, YYYY",
     sameElse: "MMMM DD, YYYY",
   };
-  const sitesApiEndpoint = `/api/site/${result.siteId}/?ordering=name`;
+  const sitesApiEndpoint = "/api/site/?ordering=name";
 
   const { user: user } = useUser({
     redirectIfFound: false,
@@ -248,7 +248,7 @@ const PageDetail = ({ width, result }) => {
                         </ol>
                       </nav>
                       <div tw="pt-4 m-auto">
-                        <h4 tw="flex items-center text-2xl leading-8 font-medium text-gray-900 leading-5 break-all">
+                        <h4 tw="flex items-center text-2xl leading-8 font-medium text-gray-900 leading-8 break-all">
                           {pageDetailData.url} - {siteData.name}
                         </h4>
                       </div>
