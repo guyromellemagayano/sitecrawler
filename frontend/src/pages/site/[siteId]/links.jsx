@@ -124,7 +124,7 @@ const Links = ({ width, result }) => {
   const homeLabel = "Home";
   const homePageLink = `/site/${result.siteId}/overview`;
   const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-  const sitesApiEndpoint = `/api/site/${result.siteId}/?ordering=name`;
+  const sitesApiEndpoint = `/api/site/?ordering=name`;
 
   const { user: user } = useUser({
     redirectIfFound: false,
@@ -212,6 +212,15 @@ const Links = ({ width, result }) => {
       ? scanApiEndpoint.includes("?")
         ? `&ordering=${result.ordering}`
         : `?ordering=${result.ordering}`
+      : "";
+
+  queryString +=
+    typeof window !== "undefined" &&
+    loadQueryString.toString() !== "" &&
+    loadQueryString.toString() !== undefined
+      ? scanApiEndpoint.includes("?")
+        ? window.location.search.replace("?", "&")
+        : window.location.search
       : "";
 
   scanApiEndpoint += queryString;
@@ -474,6 +483,10 @@ const Links = ({ width, result }) => {
       }
     }
 
+    console.log(
+      !loadQueryStringValue.has("type") && !loadQueryStringValue.has("status")
+    );
+
     if (
       !loadQueryStringValue.has("type") &&
       !loadQueryStringValue.has("status")
@@ -508,6 +521,18 @@ const Links = ({ width, result }) => {
       setExternalFilter(false);
     }
 
+    if (
+      result.status == undefined &&
+      result.type !== undefined &&
+      (result.type === "EXTERNAL" || result.type === "PAGE")
+    ) {
+      setIssueFilter(false);
+      setNoIssueFilter(false);
+      setAllFilter(false);
+      setInternalFilter(false);
+      setExternalFilter(false);
+    }
+
     if (result.type !== undefined && result.type == "PAGE") {
       setInternalFilter(true);
       setExternalFilter(false);
@@ -531,12 +556,18 @@ const Links = ({ width, result }) => {
       }
     }
 
-    if (result.type == undefined && result.status == undefined) {
-      setIssueFilter(false);
-      setNoIssueFilter(false);
-      setInternalFilter(false);
-      setExternalFilter(false);
-      setAllFilter(true);
+    if (
+      loadQueryString &&
+      loadQueryString !== undefined &&
+      loadQueryString.toString().length === 0
+    ) {
+      if (result.type == undefined && result.status == undefined) {
+        setIssueFilter(false);
+        setNoIssueFilter(false);
+        setInternalFilter(false);
+        setExternalFilter(false);
+        setAllFilter(true);
+      }
     }
   }, [filterChangeHandler, loadQueryString]);
 
@@ -603,26 +634,13 @@ const Links = ({ width, result }) => {
       user &&
       user.permissions !== undefined &&
       user.permissions.includes("can_start_scan") &&
-      site &&
-      siteData.verified &&
+      siteIdData &&
+      siteIdData.verified &&
       finished
     )
       setRecrawlable(true);
     else setRecrawlable(false);
   };
-
-  useEffect(() => {
-    if (userData && siteIdData) {
-      if (
-        userData.permissions !== undefined &&
-        userData.permissions !== "" &&
-        userData.permissions.includes("can_start_scan") &&
-        siteIdData.verified
-      ) {
-        setRecrawlable(true);
-      } else setRecrawlable(false);
-    }
-  }, [userData, siteIdData]);
 
   return pageLoaded ? (
     <Layout user={userData}>
@@ -646,7 +664,6 @@ const Links = ({ width, result }) => {
             <LinkOptions
               sid={result.siteId}
               user={userData}
-              site={siteData}
               searchKey={searchKey}
               onSearchEvent={searchEventHandler}
               onCrawl={onCrawlHandler}

@@ -24,7 +24,6 @@ const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
 const LinkOptions = ({
   sid,
   user,
-  site,
   searchKey,
   onSearchEvent,
   onCrawl,
@@ -95,17 +94,13 @@ const LinkOptions = ({
       user !== undefined &&
       user !== [] &&
       Object.keys(user).length > 0 &&
-      site &&
-      site !== undefined &&
-      site !== [] &&
-      Object.keys(site).length > 0 &&
       statsData
     ) {
       setTimeout(() => {
         setComponentReady(true);
       }, [500]);
     }
-  }, [site, user, statsData]);
+  }, [user, statsData]);
 
   return componentReady ? (
     <div tw="flex flex-col w-0 flex-1 overflow-hidden">
