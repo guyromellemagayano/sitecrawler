@@ -160,7 +160,9 @@ const SitesOverview = ({
                       : tw`hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
                   ]}
                 >
-                  {OverviewLabel[0].label}
+                  {crawlFinished
+                    ? OverviewLabel[0].label
+                    : OverviewLabel[6].label}
                 </button>
               ) : null
             ) : (
