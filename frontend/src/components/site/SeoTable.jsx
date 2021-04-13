@@ -1,33 +1,22 @@
-import { Fragment } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import useSWR from 'swr';
-import Cookies from 'js-cookie';
-import tw from 'twin.macro';
-import Moment from 'react-moment';
-import Skeleton from 'react-loading-skeleton';
-import Layout from 'components/Layout';
+// React
+import { useState, useEffect } from "react";
 
-const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
-	});
+// NextJS
+import { useRouter } from "next/router";
+import Link from "next/link";
 
-	const data = await res.json();
+// External
+import loadable from "@loadable/component";
+import Moment from "react-moment";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import tw, { styled } from "twin.macro";
 
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
+// Hooks
+import { usePageDetail } from "src/hooks/useSite";
+import useUser from "src/hooks/useUser";
 
-	return data;
-};
-
-const PageSeoTableDiv = styled.tbody`
+const SeoTableDiv = styled.tbody`
 	td {
 		& > div {
 			max-width: 100%;
@@ -52,7 +41,7 @@ const PageSeoTableDiv = styled.tbody`
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		max-width: 30rem;
+		max-width: 7rem;
 	}
 
 	.icon-status {
@@ -73,135 +62,137 @@ const PageSeoTableDiv = styled.tbody`
 	}
 `;
 
-const PageSeoTable = (props) => {
-	const userApiEndpoint = '/api/auth/user/';
+const SeoTable = (props) => {
+	const [componentReady, setComponentReady] = useState(false);
+	const [pageDetailData, setPageDetailData] = useState([]);
+	const [userData, setUserData] = useState([]);
+
 	const calendarStrings = {
-		lastDay: '[Yesterday], dddd',
-		sameDay: '[Today], dddd',
-		lastWeek: 'MMMM DD, YYYY',
-		sameElse: 'MMMM DD, YYYY'
+		lastDay: "[Yesterday], dddd",
+		sameDay: "[Today], dddd",
+		lastWeek: "MMMM DD, YYYY",
+		sameElse: "MMMM DD, YYYY"
 	};
 
 	const { query } = useRouter();
-	const { data: pageDetail, error: pageDetailError } = useSWR(
-		() =>
-			query.siteId
-				? `/api/site/${query.siteId}/scan/${props.val.scan_id}/page/${props.val.id}/`
-				: null,
-		fetcher
-	);
 
-	const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher);
+	const { user: user } = useUser({
+		redirectIfFound: false,
+		redirectTo: ""
+	});
 
-	{
-		pageDetailError && <Layout>{pageDetailError.message}</Layout>;
-	}
-	{
-		userError && <Layout>{userError.message}</Layout>;
-	}
+	const { pageDetail: pageDetail } = usePageDetail({
+		querySid: query.siteId,
+		scanObjId: props.val.scan_id,
+		linkId: props.val.id
+	});
 
-	if (!pageDetail || !user) {
-		return (
-			<Fragment>
-				<PageSeoTableDiv className={`bg-white`}>
-					<tr>
-						{[...Array(7)].map((val, index) => (
-							<td
-								className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-300`}
-								key={index}
-							>
-								<Skeleton duration={2} />
-							</td>
-						))}
-					</tr>
-				</PageSeoTableDiv>
-			</Fragment>
-		);
-	}
+	useEffect(() => {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			pageDetail &&
+			pageDetail !== undefined &&
+			pageDetail !== [] &&
+			Object.keys(pageDetail).length > 0
+		) {
+			setUserData(user);
+			setPageDetailData(pageDetail);
+
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [pageDetail, user]);
 
 	return (
-		<PageSeoTableDiv className={`bg-white`}>
+		<SeoTableDiv tw="bg-white">
 			<tr>
-				<td
-					className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300`}
-				>
-					<div className={`flex items-center`}>
+				<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
+					<div tw="flex items-center">
 						<div>
-							<div
-								className={`link-item text-sm leading-5 font-medium text-gray-900`}
-							>
-								<a
-									href={props.val.url}
-									target={`_blank`}
-									title={props.val.url}
-									className={`text-sm leading-6 font-semibold text-blue-1000 hover:text-blue-900 transition ease-in-out duration-150 truncate`}
-								>
-									{props.val.url}
-								</a>
-							</div>
-							<div
-								className={`flex justify-start inline-text-sm leading-5 text-gray-500`}
-							>
-								<Link
-									href="/dashboard/site/[siteId]/seo/[seoId]/details"
-									as={`/dashboard/site/${query.siteId}/seo/${pageDetail.id}/details`}
-								>
+							<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
+								{componentReady ? (
 									<a
-										className={`btn-detail mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-white bg-indigo-600 rounded hover:bg-indigo-500 hover:border-0 transition ease-in-out duration-150`}
+										href={props.val.url}
+										target="_blank"
+										title={props.val.url}
+										tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 transition ease-in-out duration-150 truncate"
 									>
-										View Details
+										{props.val.url}
 									</a>
-								</Link>
+								) : (
+									<Skeleton duration={2} />
+								)}
+							</div>
+							<div tw="flex justify-start leading-5 text-gray-500">
+								{componentReady ? (
+									pageDetail &&
+									pageDetail !== undefined &&
+									pageDetail !== [] &&
+									Object.keys(pageDetail).length > 0 && (
+										<Link
+											href="/site/[siteId]/seo/[seoId]/details"
+											as={`/site/${query.siteId}/seo/${pageDetailData.id}/details`}
+											passHref
+										>
+											<a
+												className="btn-detail"
+												tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+											>
+												View Details
+											</a>
+										</Link>
+									)
+								) : (
+									<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
+								)}
 							</div>
 						</div>
 					</div>
 				</td>
-				<td
-					className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-				>
+				<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 					<div className={`text-sm leading-5 text-gray-900`}>
-						{!user.settings.disableLocalTime ? (
-							<Moment
-								calendar={calendarStrings}
-								date={pageDetail.created_at}
-								local
-							/>
+						{componentReady ? (
+							<>
+								{!userData.settings.disableLocalTime ? (
+									<Moment calendar={calendarStrings} date={pageDetailData.created_at} local />
+								) : (
+									<Moment calendar={calendarStrings} date={pageDetailData.created_at} utc />
+								)}
+								&nbsp;
+								{!userData.settings.disableLocalTime ? (
+									<Moment date={pageDetailData.created_at} format="hh:mm:ss A" local />
+								) : (
+									<Moment date={pageDetailData.created_at} format="hh:mm:ss A" utc />
+								)}
+							</>
 						) : (
-							<Moment
-								calendar={calendarStrings}
-								date={pageDetail.created_at}
-								utc
-							/>
-						)}
-					</div>
-					<div className={`text-sm leading-5 text-gray-500`}>
-						{!user.settings.disableLocalTime ? (
-							<Moment date={pageDetail.created_at} format="hh:mm:ss A" local />
-						) : (
-							<Moment date={pageDetail.created_at} format="hh:mm:ss A" utc />
+							<Skeleton duration={2} width={250} />
 						)}
 					</div>
 				</td>
-				<td
-					className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-				>
-					{pageDetail.num_links}
+				<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+					{componentReady ? pageDetailData.num_links : <Skeleton duration={2} width={45} />}
 				</td>
 				<td
-					className={`icon-status pl-16 pr-6 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-green-500`}
+					className="icon-status "
+					tw="pl-16 pr-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-green-500"
 				>
-					{pageDetail.num_ok_links}
+					{componentReady ? pageDetailData.num_ok_links : <Skeleton duration={2} width={45} />}
 				</td>
 				<td
-					className={`icon-status pl-16 pr-6 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-red-500`}
+					className="icon-status "
+					tw="pl-16 pr-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-red-500"
 				>
-					{pageDetail.num_non_ok_links}
+					{componentReady ? pageDetailData.num_non_ok_links : <Skeleton duration={2} width={45} />}
 				</td>
 			</tr>
-		</PageSeoTableDiv>
+		</SeoTableDiv>
 	);
 };
 
-export default PageSeoTable;
+export default SeoTable;
 
-PageSeoTable.propTypes = {};
+SeoTable.propTypes = {};
