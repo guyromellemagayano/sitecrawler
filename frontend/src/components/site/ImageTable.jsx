@@ -1,37 +1,27 @@
-import { Fragment } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import useSWR from 'swr';
-import Cookies from 'js-cookie';
-import tw from 'twin.macro';
-import Url from 'url-parse';
-import bytes from 'bytes';
-import PropTypes from 'prop-types';
-import ReactTooltip from 'react-tooltip';
-import Skeleton from 'react-loading-skeleton';
-import Layout from 'components/Layout';
-import SiteDangerBadge from 'components/badges/SiteDangerBadge';
-import SiteSuccessBadge from 'components/badges/SiteSuccessBadge';
-import SiteWarningBadge from 'components/badges/SiteWarningBadge';
+// React
+import { useState, useEffect } from "react";
 
-const fetcher = async (url) => {
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
-	});
+// NextJS
+import { useRouter } from "next/router";
+import Link from "next/link";
 
-	const data = await res.json();
+// External
+import bytes from "bytes";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import ReactTooltip from "react-tooltip";
+import Skeleton from "react-loading-skeleton";
+import tw, { styled } from "twin.macro";
+import Url from "url-parse";
 
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
+// Hooks
+import { useImageDetail } from "src/hooks/useSite";
 
-	return data;
-};
+// Components
+const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
+const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
+const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
+const InformationCircleSvg = loadable(() => import("src/components/svg/outline/InformationCircleSvg"));
 
 const ImagesTableDiv = styled.tbody`
 	td {
@@ -75,180 +65,162 @@ const ImagesTableDiv = styled.tbody`
 `;
 
 const ImagesTable = (props) => {
-	const userApiEndpoint = '/api/auth/user/';
+	const [componentReady, setComponentReady] = useState(false);
 
 	const { query } = useRouter();
-	const { data: user, error: userError } = useSWR(userApiEndpoint, fetcher);
 
-	{
-		userError && <Layout>{userError.message}</Layout>;
-	}
+	const { imageDetail: imageDetail } = useImageDetail({
+		querySid: query.siteId,
+		scanObjId: props.val.scan_id,
+		linkId: props.val.id
+	});
+
+	useEffect(() => {
+		if (imageDetail && imageDetail !== undefined && imageDetail !== [] && Object.keys(imageDetail).length > 0) {
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [imageDetail]);
 
 	return (
-		<Fragment>
-			{user && props ? (
-				<ImagesTableDiv className={`bg-white`}>
-					<tr>
-						<td
-							className={`flex-none pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300`}
-						>
-							<div className={`flex items-center`}>
-								<div>
-									<div
-										className={`link-item text-sm leading-5 font-medium text-gray-900`}
+		<ImagesTableDiv tw="bg-white">
+			<tr>
+				<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
+					<div tw="flex items-center">
+						<div>
+							<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
+								{componentReady ? (
+									<a
+										href={props.val.url}
+										target="_blank"
+										title={props.val.url}
+										tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 transition ease-in-out duration-150 truncate"
 									>
-										<a
-											href={props.val.url}
-											target={`_blank`}
-											title={props.val.url}
-											className={`text-sm leading-6 font-semibold text-blue-1000 hover:text-blue-900 transition ease-in-out duration-150 truncate-link`}
-										>
-											{props.val.url}
-										</a>
-									</div>
-									<div
-										className={`flex justify-start inline-text-sm leading-5 text-gray-500`}
-									>
+										{props.val.url}
+									</a>
+								) : (
+									<Skeleton duration={2} />
+								)}
+							</div>
+							<div tw="flex justify-start leading-5 text-gray-500">
+								{componentReady ? (
+									imageDetail &&
+									imageDetail !== undefined &&
+									imageDetail !== [] &&
+									Object.keys(imageDetail).length > 0 && (
 										<Link
-											href="/dashboard/site/[id]/images/[id]/details"
-											as={`/dashboard/site/${query.siteId}/images/${props.val.id}/details`}
+											href="/site/[siteId]/images/[imageId]/details"
+											as={`/site/${query.siteId}/images/${imageDetail.id}/details`}
+											passHref
 										>
 											<a
-												className={`btn-detail mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold text-white bg-indigo-600 rounded hover:bg-indigo-500 hover:border-0 transition ease-in-out duration-150`}
+												className="btn-detail"
+												tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 											>
 												View Details
 											</a>
 										</Link>
-									</div>
-								</div>
+									)
+								) : (
+									<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
+								)}
 							</div>
-						</td>
-						<td
-							className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-						>
-							{bytes(props.val.size, {
-								thousandsSeparator: ' ',
-								unitSeparator: ' '
-							})}
-						</td>
-						<td
-							className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-						>
-							{props.val.status === 'OK' ? (
-								<SiteSuccessBadge text={'OK'} />
-							) : props.val.status === 'TIMEOUT' ? (
-								<SiteWarningBadge text={'TIMEOUT'} />
-							) : props.val.status === 'HTTP_ERROR' ? (
-								<Fragment>
-									<span className={`flex items-center justify-start`}>
-										<SiteDangerBadge
-											text={`${props.val.http_status} HTTP ERROR`}
-										/>
-										<a
-											data-tip={``}
-											data-for={props.val.url}
-											data-background-color={'#E53E3E'}
-											data-iscapture={true}
-											data-scroll-hide={false}
-											className={`flex cursor-pointer`}
-										>
-											<span
-												className={`ml-2 inline-block w-4 h-4 overflow-hidden`}
-											>
-												<svg
-													fill="currentColor"
-													viewBox="0 0 20 20"
-													className={`text-red-400`}
-												>
-													<path
-														fillRule="evenodd"
-														d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-														clipRule="evenodd"
-													></path>
-												</svg>
-											</span>
-										</a>
-										<ReactTooltip
-											id={props.val.url}
-											className={`${props.val.status + '-tooltip'} w-36`}
-											type={`dark`}
-											effect={`solid`}
-											place={`bottom`}
-											clickable={true}
-											multiline={true}
-										>
-											<span
-												className={`text-left text-xs leading-4 font-normal text-white normal-case tracking-wider`}
-											>
-												<p>
-													<strong>{props.val.error}</strong>
-												</p>
-											</span>
-										</ReactTooltip>
-									</span>
-								</Fragment>
-							) : (
-								<SiteDangerBadge text={'OTHER ERROR'} />
-							)}
-						</td>
-						<td
-							className={`icon-status px-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-red-500`}
-						>
-							{props.val.length !== 0 ? (
-								<Link
-									href="/dashboard/site/[id]/links/[id]/details"
-									as={`/dashboard/site/${query.siteId}/links/${props.val.id}/details`}
-								>
+						</div>
+					</div>
+				</td>
+				<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+					{componentReady ? (
+						bytes(props.val.size, {
+							thousandsSeparator: " ",
+							unitSeparator: " "
+						})
+					) : (
+						<Skeleton duration={2} width={100} />
+					)}
+				</td>
+				<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+					{componentReady ? (
+						props.val.status === "OK" ? (
+							<SiteSuccessBadge text={"OK"} />
+						) : props.val.status === "TIMEOUT" ? (
+							<SiteWarningBadge text={"TIMEOUT"} />
+						) : props.val.status === "HTTP_ERROR" ? (
+							<>
+								<span tw="flex items-center justify-start">
+									<SiteDangerBadge text={`${props.val.http_status} HTTP ERROR`} />
 									<a
-										className={`mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150`}
+										data-tip=""
+										data-for={props.val.url}
+										data-background-color={"#E53E3E"}
+										data-iscapture={true}
+										data-scroll-hide={false}
+										tw="flex cursor-pointer"
 									>
-										<span className={`truncate-link`}>
-											{props.val[0] && Url(props.val[0].url).pathname !== '' ? (
-												Url(props.val[0].url).pathname
-											) : (
-												<em>_domain</em>
-											)}
-										</span>
-										&nbsp;
-										{props.val.length - 1 > 0
-											? '+' + parseInt(props.val.length - 1)
-											: null}{' '}
-										{props.val.length - 1 > 1
-											? 'others'
-											: props.val.length - 1 === 1
-											? 'other'
-											: null}
+										<InformationCircleSvg className={tw`ml-2 text-red-400 inline-block w-4 h-4 overflow-hidden`} />
 									</a>
-								</Link>
-							) : (
-								''
-							)}
-						</td>
-						<td
-							className={`icon-status pl-16 pr-6 py-4 whitespace-no-wrap border-b border-gray-300 text-sm leading-5 text-gray-500`}
-						>
-							{props.val.occurences}
-						</td>
-					</tr>
-				</ImagesTableDiv>
-			) : (
-				<ImagesTableDiv className={`bg-white`}>
-					<tr>
-						{[...Array(6)].map((val, index) => (
-							<td
-								className={`flex-none px-6 py-4 whitespace-no-wrap border-b border-gray-300`}
-								key={index}
+									<ReactTooltip
+										id={props.val.url}
+										className={`${props.val.status + "-tooltip"} w-36`}
+										type="dark"
+										effect="solid"
+										place="bottom"
+										clickable={true}
+										multiline={true}
+									>
+										<span tw="text-left text-xs leading-4 font-normal text-white normal-case tracking-wider">
+											<p>
+												<strong>{props.val.error}</strong>
+											</p>
+										</span>
+									</ReactTooltip>
+								</span>
+							</>
+						) : (
+							<SiteDangerBadge text={"OTHER ERROR"} />
+						)
+					) : (
+						<Skeleton duration={2} width={150} />
+					)}
+				</td>
+				<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+					{componentReady ? (
+						imageDetail &&
+						imageDetail !== undefined &&
+						imageDetail !== [] &&
+						Object.keys(imageDetail).length > 0 &&
+						props.val.length !== 0 && (
+							<Link
+								href="/site/[siteId]/images/[imageId]/details"
+								as={`/site/${query.siteId}/images/${imageDetail.id}/details`}
+								passHref
 							>
-								<Skeleton duration={2} />
-							</td>
-						))}
-					</tr>
-				</ImagesTableDiv>
-			)}
-		</Fragment>
+								<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									<span className="truncate-link">
+										{props.val[0] && Url(props.val[0].url).pathname !== "" ? (
+											Url(props.val[0].url).pathname
+										) : (
+											<em>_domain</em>
+										)}
+									</span>
+									&nbsp;
+									{props.val.length - 1 > 0 ? "+" + parseInt(props.val.length - 1) : null}{" "}
+									{props.val.length - 1 > 1 ? "others" : props.val.length - 1 === 1 ? "other" : null}
+								</a>
+							</Link>
+						)
+					) : (
+						<Skeleton duration={2} width={120} />
+					)}
+				</td>
+				<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+					{componentReady ? props.val.occurences : <Skeleton duration={2} width={45} />}
+				</td>
+			</tr>
+		</ImagesTableDiv>
 	);
 };
 
-export default ImagesTable;
-
 ImagesTable.propTypes = {};
+
+export default ImagesTable;
