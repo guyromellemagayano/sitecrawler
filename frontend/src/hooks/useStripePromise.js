@@ -12,12 +12,12 @@ export const useStripePromise = () => {
 		useFetcher,
 		{
 			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-				if (error.status === 404) return;
+				if (error && error !== undefined && error.status === 404) return;
 				if (key === stripePromiseApiEndpoint) return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
-			},
+			}
 		}
 	);
 
@@ -32,13 +32,13 @@ export const usePaymentMethods = ({ refreshInterval = 0 }) => {
 		useFetcher,
 		{
 			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-				if (error.status === 404) return;
+				if (error && error !== undefined && error.status === 404) return;
 				if (key === paymentMethodApiEndpoint) return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
 			},
-			refreshInterval: refreshInterval,
+			refreshInterval: refreshInterval
 		}
 	);
 
@@ -53,13 +53,13 @@ export const useDefaultPaymentMethod = ({ refreshInterval = 0 }) => {
 		useFetcher,
 		{
 			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-				if (error.status === 404) return;
+				if (error && error !== undefined && error.status === 404) return;
 				if (key === defaultPaymentMethodApiEndpoint) return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
 			},
-			refreshInterval: refreshInterval,
+			refreshInterval: refreshInterval
 		}
 	);
 
@@ -74,13 +74,13 @@ export const useSubscriptions = ({ refreshInterval = 0 }) => {
 		useFetcher,
 		{
 			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-				if (error.status === 404) return;
+				if (error && error !== undefined && error.status === 404) return;
 				if (key === subscriptionsApiEndpoint) return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
 			},
-			refreshInterval: refreshInterval,
+			refreshInterval: refreshInterval
 		}
 	);
 
@@ -95,13 +95,13 @@ export const useDefaultSubscription = ({ refreshInterval = 0 }) => {
 		useFetcher,
 		{
 			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-				if (error.status === 404) return;
+				if (error && error !== undefined && error.status === 404) return;
 				if (key === defaultSubscriptionApiEndpoint) return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
 			},
-			refreshInterval: refreshInterval,
+			refreshInterval: refreshInterval
 		}
 	);
 
