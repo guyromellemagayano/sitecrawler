@@ -616,45 +616,41 @@ const Links = ({ width, result }) => {
 
 					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto">
-							{pageLoaded ? (
-								<div className="max-w-full py-4 px-8">
-									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-										<ol tw="flex items-center space-x-4">
-											<li>
-												<div>
-													<Link href={homePageLink} passHref>
-														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
-															<span tw="sr-only">{homeLabel}</span>
-														</a>
-													</Link>
-												</div>
-											</li>
-											<li>
-												<div tw="flex items-center">
-													<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
-													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-														{pageTitle}
-													</p>
-												</div>
-											</li>
-										</ol>
-									</nav>
-									<div className="pt-4 m-auto">
-										<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-											{pageTitle}
-											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-													<LinksSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
-													{linksData.count > 0 ? linksData.count + " " + LinksLabel[2].label : LinksLabel[3].label}
-												</dd>
-											</dl>
-										</h4>
-									</div>
+							<div className="max-w-full py-4 px-8">
+								<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+									<ol tw="flex items-center space-x-4">
+										<li>
+											<div>
+												<Link href={homePageLink} passHref>
+													<a tw="text-gray-400 hover:text-gray-500">
+														<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+														<span tw="sr-only">{homeLabel}</span>
+													</a>
+												</Link>
+											</div>
+										</li>
+										<li>
+											<div tw="flex items-center">
+												<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+												<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+													{pageTitle}
+												</p>
+											</div>
+										</li>
+									</ol>
+								</nav>
+								<div className="pt-4 m-auto">
+									<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
+										{pageTitle}
+										<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+											<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+												<LinksSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
+												{linksData.count > 0 ? linksData.count + " " + LinksLabel[2].label : LinksLabel[3].label}
+											</dd>
+										</dl>
+									</h4>
 								</div>
-							) : (
-								<ProfileSkeleton />
-							)}
+							</div>
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 							<LinkFilter
@@ -759,12 +755,7 @@ const Links = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{linksData.results &&
-													linksData.results.map((val, key) => (
-														<>
-															<LinkTable key={key} val={val} />
-														</>
-													))}
+												{linksData.results && linksData.results.map((val, key) => <LinkTable key={key} val={val} />)}
 											</table>
 										</div>
 									</div>
