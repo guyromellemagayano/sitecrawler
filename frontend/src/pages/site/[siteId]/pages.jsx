@@ -117,7 +117,7 @@ const Pages = ({ width, result }) => {
 						.map((e) => {
 							return e.id;
 						})
-						.sort((a, b) => a.id - b.id)
+						.sort()
 						.reverse()[0]
 				);
 			}

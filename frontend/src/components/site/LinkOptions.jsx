@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // External
-import { Transition } from "@headlessui/react";
 import loadable from "@loadable/component";
 import tw from "twin.macro";
 
@@ -42,7 +41,7 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 						.map((e) => {
 							return e.id;
 						})
-						.sort((a, b) => a.id - b.id)
+						.sort()
 						.reverse()[0]
 				);
 			}
@@ -62,19 +61,19 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 	}, [stats]);
 
 	useEffect(() => {
-		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
-			if (statsData.finished_at) crawlableHandler(true);
-			else if (statsData.started_at && statsData.finished_at == null) crawlableHandler(false);
-		}
-	}, [statsData]);
-
-	useEffect(() => {
 		if (user && user !== undefined && user !== [] && Object.keys(user).length > 0 && statsData) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, [500]);
 		}
 	}, [user, statsData]);
+
+	useEffect(() => {
+		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
+			if (statsData.finished_at) crawlableHandler(true);
+			else if (statsData.started_at && statsData.finished_at == null) crawlableHandler(false);
+		}
+	}, [statsData]);
 
 	return componentReady ? (
 		<div tw="flex flex-col w-0 flex-1 overflow-hidden">

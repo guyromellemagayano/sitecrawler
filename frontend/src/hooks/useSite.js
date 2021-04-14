@@ -43,13 +43,13 @@ export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
 	const { data: scan, mutate: mutateScan, error: scanError } = useSWR(
 		() =>
 			querySid && querySid !== 0 && querySid !== undefined
-				? siteApiEndpoint + querySid + "/scan/?ordering=-finished_at/"
+				? siteApiEndpoint + querySid + "/scan/?ordering=-finished_at"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
 				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/?ordering=-finished_at/") return;
+				if (key === siteApiEndpoint + querySid + "/scan/?ordering=-finished_at") return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
