@@ -15,6 +15,11 @@
 		"url": "/settings/global"
 	},
 	{
+		"label": "Help and Support",
+		"slug": "help-support",
+		"url": "/support"
+	},
+	{
 		"label": "Logout",
 		"slug": "logout",
 		"url": "/logout"
