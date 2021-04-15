@@ -17,11 +17,7 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 	return (
 		<div tw="sm:mx-auto sm:w-full sm:max-w-md">
 			{!isLogin && !isSignUp ? (
-				<Link href="/" passHref>
-					<a>
-						<AppLogo className={tw`h-12 w-auto mx-auto`} src={siteLogoDarkSvg} alt="app-logo" />
-					</a>
-				</Link>
+				<AppLogo className={tw`h-12 w-auto mx-auto`} src={siteLogoDarkSvg} alt="app-logo" />
 			) : null}
 			<h2 tw="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
 				{isLogin
