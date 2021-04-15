@@ -111,7 +111,7 @@ const SiteMenu = ({ user, site }) => {
 			}
 		}
 
-		if (selectedSite) {
+		if (selectedSite == [] || selectedSite !== "") {
 			if ((siteData && siteData !== undefined && siteData !== [], Object.keys(siteData).length > 0)) {
 				if (siteData.results && siteData.results !== undefined && Object.keys(siteData.results).length > 0) {
 					siteData.results
