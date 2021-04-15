@@ -65,7 +65,7 @@ DB_PASS = secret("DB_PASS", "crawldev", "DB_PASS_BACKEND")
 DB_HOST = os.environ.get("DB_HOST", "db")
 DB_PORT = os.environ.get("DB_PORT", "5432")
 DB_SUPERUSER_USER = DB_USER
-DB_SUPERUSER_PASS = secret("DB_PASS", "crawldev", "DB_PASS")
+DB_SUPERUSER_PASS = secret("DB_SUPERUSER_PASS", DB_PASS, "DB_PASS")
 
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
 
