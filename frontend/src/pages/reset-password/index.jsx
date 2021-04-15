@@ -1,5 +1,5 @@
 // React
-import { Fragment, useState } from "react";
+import { useState } from "react";
 
 // NextJS
 import Link from "next/link";
