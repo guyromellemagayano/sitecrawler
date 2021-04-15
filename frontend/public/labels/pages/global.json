@@ -42,7 +42,7 @@
 		"label": "Required field"
 	},
 	{
-		"label": "Large page size threshold update successfully."
+		"label": "Large page size threshold updated successfully."
 	},
 	{
 		"label": "Large page size threshold update failed. Please try again."
@@ -55,5 +55,11 @@
 	},
 	{
 		"label": "Save Changes"
+	},
+	{
+		"label": "Site information updated successfully"
+	},
+	{
+		"label": "Site information update failed. Please try again"
 	}
 ]

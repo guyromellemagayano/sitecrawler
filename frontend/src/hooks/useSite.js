@@ -21,7 +21,7 @@ export const useSite = ({ endpoint, refreshInterval = 0 }) => {
 	return { site, mutateSite, siteError };
 };
 
-export const useSiteId = ({ querySid = 0 }) => {
+export const useSiteId = ({ querySid = 0, refreshInterval = 0 }) => {
 	const { data: siteId, mutate: mutateSiteId, error: siteIdError } = useSWR(
 		() => (querySid && querySid !== 0 && querySid !== undefined ? siteApiEndpoint + querySid + "/" : null),
 		useFetcher,
@@ -32,7 +32,8 @@ export const useSiteId = ({ querySid = 0 }) => {
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
-			}
+			},
+			refreshInterval: refreshInterval
 		}
 	);
 

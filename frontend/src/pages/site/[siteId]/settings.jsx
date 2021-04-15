@@ -1,245 +1,180 @@
-import { Fragment, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
-import fetchJson from 'hooks/fetchJson';
-import Head from 'next/head';
-import Layout from 'components/Layout';
-import Link from 'next/link';
-import MainSidebar from 'components/sidebar/MainSidebar';
-import MobileSidebar from 'components/sidebar/MobileSidebar';
-import SettingsLabel from 'public/labels/pages/site/settings.json';
-import SiteFooter from 'components/footer/SiteFooter';
-import tw from 'twin.macro';
-import PropTypes from 'prop-types';
-import useSWR from 'swr';
-import useUser from 'hooks/useUser';
-import SiteInformationSettings from 'components/settings/SiteInformation';
-import DeleteSiteSettings from 'components/settings/DeleteSite';
-import LargePageSizeSettings from 'components/settings/LargePageSize';
+// React
+import { useState, useEffect } from "react";
 
-const SiteSettingsDiv = styled.section``;
+// NextJS
+import { useRouter } from "next/router";
+import Link from "next/link";
 
-const SiteSettings = () => {
+// External
+import { NextSeo } from "next-seo";
+import { withResizeDetector } from "react-resize-detector";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import tw from "twin.macro";
+
+// JSON
+import SettingsLabel from "public/labels/pages/site/settings.json";
+
+// Hooks
+import { useSite, useSiteId } from "src/hooks/useSite";
+import useUser from "src/hooks/useUser";
+
+// Layout
+import Layout from "src/components/Layout";
+
+// Components
+const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
+const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
+const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
+const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
+const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteInformationSettings = loadable(() => import("src/components/settings/SiteInformation"));
+const DeleteSiteSettings = loadable(() => import("src/components/settings/DeleteSite"));
+const LargePageSizeSettings = loadable(() => import("src/components/settings/LargePageSize"));
+
+const SiteSettings = ({ width, result }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [siteName, setSiteName] = useState('');
+	const [pageLoaded, setPageLoaded] = useState(false);
+	const [siteData, setSiteData] = useState([]);
+	const [siteIdData, setSiteIdData] = useState([]);
+	const [userData, setUserData] = useState([]);
 
-	const { query, asPath } = useRouter();
-	const pageTitle = 'Site Settings |';
+	const pageTitle =
+		siteIdData.name && siteIdData.name !== undefined
+			? SettingsLabel[1].label + " - " + siteIdData.name
+			: SettingsLabel[1].label;
+	const homeLabel = "Home";
+	const homePageLink = `/site/${result.siteId}/overview`;
+	const sitesApiEndpoint = `/api/site/?ordering=name`;
 
-	const fetchSiteSettings = async (endpoint) => {
-		const siteSettingsData = await fetchJson(endpoint, {
-			method: 'GET',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			}
-		});
-
-		return siteSettingsData;
-	};
-
-	const fetchUserSettings = async (endpoint) => {
-		const userSettingsData = await fetchJson(endpoint, {
-			method: 'GET',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			}
-		});
-
-		return userSettingsData;
-	};
-
-	const { user: user, userError: userError } = useUser({
-		redirectTo: '/',
-		redirectIfFound: false
+	const { user: user } = useUser({
+		redirectIfFound: false,
+		redirectTo: "/login",
+		refreshInterval: 1000
 	});
 
-	const { data: siteSettings, error: siteSettingsError } = useSWR(
-		() => (query.siteId ? `/api/site/${query.siteId}/` : null),
-		() => fetchSiteSettings(`/api/site/${query.siteId}/`)
-	);
+	const { site: site } = useSite({
+		endpoint: sitesApiEndpoint,
+		refreshInterval: 1000
+	});
 
-	const { data: userSettings, error: userSettingsError } = useSWR(
-		() => '/api/auth/user/',
-		() => fetchUserSettings(`/api/auth/user/`)
-	);
+	const { siteId: siteId } = useSiteId({
+		querySid: result.siteId,
+		refreshInterval: 1000
+	});
 
 	useEffect(() => {
 		if (
-			typeof siteSettings === 'object' &&
-			siteSettings !== undefined &&
-			siteSettings !== null
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0 &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0
 		) {
-			setSiteName(siteSettings.name);
-		}
-	}, [siteSettings]);
+			setSiteData(site);
+			setUserData(user);
+			setSiteIdData(siteId);
 
-	{
-		userError && <Layout>{userError.message}</Layout>;
-	}
-	{
-		siteSettingsError && <Layout>{siteSettingsError.message}</Layout>;
-	}
-	{
-		userSettingsError && <Layout>{userSettingsError.message}</Layout>;
-	}
+			setTimeout(() => {
+				setPageLoaded(true);
+			}, 500);
+		}
+	}, [user, site, siteId]);
 
 	return (
-		<Layout>
-			{user && userSettings && siteSettings ? (
-				<Fragment>
-					<Head>
-						<title>
-							{pageTitle} {siteName}
-						</title>
-					</Head>
+		<Layout user={user}>
+			<NextSeo title={pageTitle} />
 
-					<SiteSettingsDiv
-						className={`h-screen flex overflow-hidden bg-gray-200`}
-					>
-						<MobileSidebar show={openMobileSidebar} />
-						<MainSidebar />
+			<section tw="h-screen flex overflow-hidden bg-white">
+				<MainSidebar
+					width={width}
+					user={userData}
+					site={siteData}
+					openMobileSidebar={openMobileSidebar}
+					setOpenMobileSidebar={setOpenMobileSidebar}
+				/>
 
-						<div className={`flex flex-col w-0 flex-1 overflow-hidden`}>
-							<div className={`md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3`}>
-								<button
-									className={`-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150`}
-									aria-label={`Open sidebar`}
-									onClick={() =>
-										setTimeout(
-											() => setOpenMobileSidebar(!openMobileSidebar),
-											150
-										)
-									}
-								>
-									<svg
-										className={`h-6 w-5`}
-										stroke={`currentColor`}
-										fill={`none`}
-										viewBox={`0 0 24 24`}
-									>
-										<path
-											strokeLinecap={`round`}
-											strokeLinejoin={`round`}
-											strokeWidth={`2`}
-											d={`M4 6h16M4 12h16M4 18h16`}
-										/>
-									</svg>
-								</button>
-							</div>
-							<main
-								className={`flex-1 relative z-0 overflow-y-auto focus:outline-none`}
-								tabIndex={`0`}
-							>
-								<div
-									className={`max-w-full mx-auto px-4 md:py-4 sm:px-6 md:px-8`}
-								>
-									<div>
-										<nav className={`sm:hidden`}>
-											<Link
-												href={'/dashboard/site/' + query.siteId + '/overview'}
-											>
-												<a
-													className={`flex items-center text-sm leading-5 font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-												>
-													<svg
-														className={`flex-shrink-0 -ml-1 mr-1 h-5 w-5 text-gray-400`}
-														viewBox='0 0 20 20'
-														fill='currentColor'
-													>
-														<path
-															fillRule='evenodd'
-															d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
-															clipRule='evenodd'
-														/>
-													</svg>
-													{SettingsLabel[0].label}
-												</a>
-											</Link>
+				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
+					<div tw="relative z-10 flex-shrink-0 flex h-16 lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
+						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						<Link href={homePageLink} passHref>
+							<a tw="p-1 block w-full cursor-pointer lg:hidden">
+								<AppLogo
+									className={tw`mt-4 mx-auto h-8 w-auto`}
+									src="/images/logos/site-logo-dark.svg"
+									alt="app-logo"
+								/>
+							</a>
+						</Link>
+					</div>
+
+					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
+						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
+							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
+								{pageLoaded ? (
+									<div className="max-w-full py-4 px-8">
+										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+											<ol tw="flex items-center space-x-4">
+												<li>
+													<div>
+														<Link href={homePageLink} passHref>
+															<a tw="text-gray-400 hover:text-gray-500">
+																<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+																<span tw="sr-only">{homeLabel}</span>
+															</a>
+														</Link>
+													</div>
+												</li>
+												<li>
+													<div tw="flex items-center">
+														<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+														<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+															{pageTitle}
+														</p>
+													</div>
+												</li>
+											</ol>
 										</nav>
-										<nav
-											className={`hidden sm:flex items-center text-sm leading-5`}
-										>
-											<Link
-												href={'/dashboard/site/' + query.siteId + '/overview'}
-											>
-												<a
-													className={`font-normal text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-												>
-													{siteName}
-												</a>
-											</Link>
-											<svg
-												className={`flex-shrink-0 mx-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor`}
-											>
-												<path
-													fillRule='evenodd'
-													d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
-													clipRule='evenodd'
-												/>
-											</svg>
-											<Link
-												href={'/dashboard/site/' + query.siteId + '/settings'}
-											>
-												<a
-													className={`font-medium text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out`}
-												>
-													{SettingsLabel[1].label}
-												</a>
-											</Link>
-										</nav>
-									</div>
-									<div
-										className={`mt-2 md:flex md:items-center md:justify-between`}
-									>
-										<div className={`flex-1 min-w-0`}>
-											<h2
-												className={`text-2xl font-bold leading-7 text-gray-900 sm:leading-9 sm:truncate`}
-											>
-												{SettingsLabel[1].label} - {siteName}
-											</h2>
+										<div className="pt-4 m-auto">
+											<h4 className="text-2xl leading-6 font-medium text-gray-900">{pageTitle}</h4>
 										</div>
 									</div>
-								</div>
-								<div className={`max-w-2xl px-4 py-4 sm:px-6 md:px-8`}>
-									<SiteInformationSettings
-										siteData={siteSettings}
-										queryData={query}
-										settingsLabelData={SettingsLabel}
-									/>
-									<LargePageSizeSettings
-										userData={userSettings}
-										siteData={siteSettings}
-										querySiteId={query.siteId}
-										pathData={asPath}
-									/>
-									<DeleteSiteSettings
-										querySiteId={query.siteId}
-										settingsLabelData={SettingsLabel}
-									/>
-								</div>
+								) : (
+									<ProfileSkeleton />
+								)}
 
-								<div
-									className={`static bottom-0 w-full mx-auto px-4 sm:px-6 py-4`}
-								>
-									<SiteFooter />
+								<div tw="space-y-12 divide-y divide-gray-200">
+									<SiteInformationSettings user={userData} siteId={siteIdData} settingsLabel={SettingsLabel} />
+									<LargePageSizeSettings user={userData} siteId={siteIdData} querySiteId={result.siteId} />
+									{/* <DeleteSiteSettings querySiteId={result.siteId} settingsLabelData={SettingsLabel} /> */}
 								</div>
-							</main>
+							</div>
 						</div>
-					</SiteSettingsDiv>
-				</Fragment>
-			) : null}
+
+						<div tw="static bottom-0 w-full mx-auto px-12 py-4 bg-white border-t border-gray-200">
+							<SiteFooter />
+						</div>
+					</main>
+				</div>
+			</section>
 		</Layout>
 	);
 };
 
-export default SiteSettings;
+SiteSettings.propTypes = {};
 
-SiteSettings.propTypes = {
-	openMobileSidebar: PropTypes.bool,
-	pageTitle: PropTypes.string,
-	fetchSiteSettings: PropTypes.func
-};
+export default withResizeDetector(SiteSettings);
+
+export async function getServerSideProps(ctx) {
+	return {
+		props: {
+			result: ctx.query
+		}
+	};
+}

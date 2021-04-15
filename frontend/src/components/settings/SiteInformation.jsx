@@ -1,354 +1,223 @@
-import { Fragment, useState, useEffect } from "react";
-import { Transition } from "@headlessui/react";
-import Cookies from "js-cookie";
-import fetch from "node-fetch";
-import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
+// React
+import { useState, useEffect } from "react";
+
+// External
+import { Formik } from "formik";
+import * as Yup from "yup";
+import loadable from "@loadable/component";
 import PropTypes from "prop-types";
+import tw from "twin.macro";
 
-const SiteInformationDiv = styled.div``;
+// Hooks
+import usePatchMethod from "src/hooks/usePatchMethod";
 
-const SiteInformation = (props) => {
-  const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
-  const [disableInputFields, setDisableInputFields] = useState(0);
-  const [siteName, setSiteName] = useState("");
-  const [siteUrl, setSiteUrl] = useState("");
-  const [showNotificationStatus, setShowNotificationStatus] = useState(false);
+// Components
+const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
+const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
+const SettingsPersonalSkeleton = loadable(() => import("src/components/skeletons/SettingsPersonalSkeleton"));
 
-  const updateSiteSettings = async (endpoint, formData) => {
-    const response = await fetch(endpoint, {
-      method: "PUT",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "X-CSRFToken": Cookies.get("csrftoken"),
-      },
-      body: JSON.stringify(formData),
-    });
+const SiteInformation = ({ user, siteId, settingsLabel }) => {
+	const [componentReady, setComponentReady] = useState(false);
+	const [disableForm, setDisableForm] = useState(true);
+	const [errorMsg, setErrorMsg] = useState("");
+	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
+	const [sitename, setSitename] = useState("");
+	const [siteurl, setSiteurl] = useState("");
+	const [successMsg, setSuccessMsg] = useState("");
+	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
 
-    const data = await response.json();
+	const siteIdApiEndpoint = `/api/site/${siteId.id}/`;
 
-    if (response.ok && response.status === 200) {
-      if (data) {
-        setSuccessMsg("Site information update successfully.");
-        setTimeout(() => setShowNotificationStatus(true), 1500);
-        setDisableInputFields(!disableInputFields);
-      } else {
-        setErrorMsg("Site information update failed. Please try again.");
-        setTimeout(() => setShowNotificationStatus(true), 1500);
-      }
-    } else {
-      const error = new Error(response.statusText);
+	const handleSiteNameInputChange = (e) => {
+		setSitename(e.target.value);
+	};
 
-      error.response = response;
-      error.data = data;
+	const handleSiteUrlInputChange = (e) => {
+		setSiteurl(e.target.value);
+	};
 
-      setErrorMsg("An unexpected error occurred. Please try again.");
-      setTimeout(() => setShowNotificationStatus(true), 1500);
+	useEffect(() => {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0
+		) {
+			setSitename(siteId.name);
+			setSiteurl(siteId.url);
 
-      throw error;
-    }
-  };
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [user, siteId]);
 
-  const handleSiteUpdate = async (e) => {
-    e.preventDefault();
+	return componentReady ? (
+		<div>
+			<SuccessNotification
+				successMsg={successMsg}
+				successMsgLoaded={successMsgLoaded}
+				setSuccessMsgLoaded={setSuccessMsgLoaded}
+				successMsgTitle={settingsLabel[18].label}
+			/>
+			<ErrorNotification
+				errorMsg={errorMsg}
+				errorMsgLoaded={errorMsgLoaded}
+				setErrorMsgLoaded={setErrorMsgLoaded}
+				errorMsgTitle={settingsLabel[17].label}
+			/>
+			<div tw="max-w-full py-4 px-8">
+				<div tw="pt-4 m-auto">
+					<h5 tw="text-xl leading-6 font-medium text-gray-900">{settingsLabel[2].label}</h5>
+					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{settingsLabel[2].description}</p>
+				</div>
+			</div>
+			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
+				<Formik
+					enableReinitialize={true}
+					initialValues={{
+						sitename: sitename
+					}}
+					validationSchema={Yup.object().shape({
+						sitename: Yup.string()
+							.min(3, settingsLabel[21].label)
+							.max(60, settingsLabel[22].label)
+							.required(settingsLabel[20].label)
+					})}
+					onSubmit={async (values, { setSubmitting }) => {
+						const body = {
+							name: values.sitename
+						};
 
-    const body = {
-      name: e.currentTarget.site_name.value,
-      url: e.currentTarget.site_url.value,
-    };
+						try {
+							const response = await usePatchMethod(siteIdApiEndpoint, body);
+							const data = await response.data;
 
-    await updateSiteSettings(`/api/site/${props.queryData.siteId}/`, body);
-  };
+							if (Math.floor(response.status / 200) === 1) {
+								if (data) {
+									setTimeout(() => {
+										setSubmitting(false);
+									}, 1000);
 
-  const handleEditSiteDetails = (e) => {
-    e.preventDefault();
+									setDisableForm(true);
+									setSuccessMsg(settingsLabel[15].label);
+									setSuccessMsgLoaded(true);
+								}
+							} else {
+								if (response) {
+									// FIXME: fix error handling
+									console.log(response);
 
-    setDisableInputFields(!disableInputFields);
-  };
+									setDisableForm(false);
+									setErrorMsg(settingsLabel[14].label);
+									setErrorMsgLoaded(true);
+								}
+							}
+						} catch (error) {
+							throw error.message;
+						}
+					}}
+				>
+					{({ values, errors, handleBlur, handleSubmit, isSubmitting, touched }) => (
+						<form tw="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
+							<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
+								<div tw="sm:col-span-4">
+									<label htmlFor="sitename" tw="block text-sm font-medium leading-5 text-gray-700">
+										{settingsLabel[4].label}
+									</label>
+									<div tw="mt-1 relative flex rounded-md shadow-sm">
+										<input
+											type="text"
+											id="sitename"
+											value={values.sitename}
+											name="sitename"
+											disabled={isSubmitting ? isSubmitting : disableForm}
+											css={[
+												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
+												(isSubmitting ? isSubmitting : disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+												errors.sitename ? tw`border-red-300` : tw`border-gray-300`
+											]}
+											aria-describedby="username"
+											onChange={handleSiteNameInputChange}
+											onBlur={handleBlur}
+										/>
+									</div>
+									{errors.sitename && touched.sitename && (
+										<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.sitename && errors.sitename}</span>
+									)}
+								</div>
 
-  const handleSiteNameInputChange = (e) => {
-    setSiteName(e.target.value);
-  };
+								<div tw="sm:col-span-4">
+									<label htmlFor="siteurl" tw="block text-sm font-medium leading-5 text-gray-700">
+										{settingsLabel[5].label}
+									</label>
+									<div tw="mt-1 rounded-md shadow-sm">
+										<input
+											id="siteurl"
+											type="url"
+											value={siteurl}
+											disabled={true}
+											tw="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300 opacity-50 bg-gray-200 cursor-not-allowed"
+											aria-describedby="email"
+											onChange={handleSiteUrlInputChange}
+										/>
+									</div>
+								</div>
 
-  useEffect(() => {
-    if (
-      typeof props.siteData === "object" &&
-      props.siteData !== undefined &&
-      props.siteData !== null
-    ) {
-      setSiteName(props.siteData.name);
-      setSiteUrl(props.siteData.url);
-    }
-  }, [props.siteData]);
-
-  useEffect(() => {
-    if (showNotificationStatus === true)
-      setTimeout(() => setShowNotificationStatus(false), 3500);
-  }, [showNotificationStatus]);
-
-  return (
-    <Fragment>
-      {!props.siteData ? (
-        <LargePageSizeSettingsDiv className={`max-w-full`}>
-          <Skeleton duration={2} width={320} height={213} />
-        </LargePageSizeSettingsDiv>
-      ) : (
-        <Fragment>
-          <Transition show={showNotificationStatus}>
-            <div
-              className={`fixed z-50 inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end`}
-            >
-              <Transition.Child
-                enter="transform ease-out duration-300 transition"
-                enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-                enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-                leave="transition ease-in duration-100"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-                className="max-w-sm w-full"
-              >
-                <div
-                  className={`bg-white shadow-lg rounded-lg pointer-events-auto`}
-                >
-                  <div className={`rounded-lg overflow-hidden`}>
-                    <div className={`p-4`}>
-                      <div className={`flex items-start`}>
-                        <div className={`flex-shrink-0`}>
-                          {errorMsg ? (
-                            <svg
-                              className={`h-8 w-8 text-red-400`}
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                clipRule="evenodd"
-                              ></path>
-                            </svg>
-                          ) : successMsg ? (
-                            <svg
-                              className={`h-8 w-8 text-green-400`}
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                clipRule="evenodd"
-                              ></path>
-                            </svg>
-                          ) : (
-                            <svg
-                              className={`h-8 w-8 text-gray-400`}
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                                clipRule="evenodd"
-                              ></path>
-                            </svg>
-                          )}
-                        </div>
-                        <div className={`ml-3 w-0 flex-1 pt-0.5`}>
-                          <p
-                            className={`text-sm leading-5 font-medium ${
-                              errorMsg !== undefined && errorMsg !== ""
-                                ? "text-red-500"
-                                : "text-gray-900"
-                            } ${
-                              successMsg !== undefined && successMsg !== ""
-                                ? "text-green-500"
-                                : "text-gray-900"
-                            }`}
-                          >
-                            {errorMsg !== undefined && errorMsg !== ""
-                              ? "Update Failed!"
-                              : successMsg !== undefined && successMsg !== ""
-                              ? "Update Success!"
-                              : "Verifying..."}
-                          </p>
-                          <p className={`mt-1 text-sm leading-5 text-gray-500`}>
-                            {errorMsg !== undefined && errorMsg !== ""
-                              ? errorMsg
-                              : successMsg}
-                          </p>
-                        </div>
-                        <div className={`ml-4 flex-shrink-0 flex`}>
-                          <button
-                            className={`inline-flex text-gray-400 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150`}
-                            onClick={() =>
-                              setTimeout(
-                                () =>
-                                  setShowNotificationStatus(
-                                    !showNotificationStatus
-                                  ),
-                                150
-                              )
-                            }
-                          >
-                            <svg
-                              className={`h-5 w-5`}
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Transition.Child>
-            </div>
-          </Transition>
-
-          <SiteInformationDiv className={`mb-5 max-w-full bg-white rounded-lg`}>
-            <div className={`px-4 py-5 sm:p-6`}>
-              <form onSubmit={handleSiteUpdate}>
-                <div>
-                  <div>
-                    <div>
-                      <h3
-                        className={`text-lg leading-6 font-medium text-gray-900`}
-                      >
-                        {props.settingsLabelData[2].label}
-                      </h3>
-                      <p className={`mt-1 text-sm leading-5 text-gray-500`}>
-                        {props.settingsLabelData[3].label}
-                      </p>
-                    </div>
-                    <div
-                      className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
-                    >
-                      <div className={`sm:col-span-6`}>
-                        <label
-                          htmlFor={`site_name`}
-                          className={`block text-sm font-medium leading-5 text-gray-700`}
-                        >
-                          {props.settingsLabelData[4].label}
-                        </label>
-                        <div className={`mt-1 flex rounded-md shadow-sm`}>
-                          <input
-                            type={`text`}
-                            id={`site_name`}
-                            value={siteName}
-                            name={`site_name`}
-                            disabled={disableInputFields == 0 ? true : false}
-                            className={`block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 ${
-                              disableInputFields == 0 &&
-                              "opacity-50 bg-gray-300 cursor-not-allowed"
-                            }`}
-                            onChange={handleSiteNameInputChange}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className={`mt-6 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6`}
-                    >
-                      <div className={`sm:col-span-6`}>
-                        <label
-                          htmlFor={`password1`}
-                          className={`block text-sm font-medium leading-5 text-gray-700`}
-                        >
-                          {props.settingsLabelData[5].label}
-                        </label>
-                        <div className={`mt-1 flex rounded-md shadow-sm`}>
-                          <input
-                            type={`text`}
-                            id={`site_url`}
-                            value={siteUrl}
-                            name={`site_url`}
-                            disabled={`disabled`}
-                            className={`block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 opacity-50 bg-gray-300 cursor-not-allowed`}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={`mt-8 border-t border-gray-300 pt-5`}>
-                  <div className={`flex justify-between`}>
-                    <div className={`flex justify-start`}>
-                      <span className={`inline-flex rounded-md shadow-sm`}>
-                        <button
-                          type={`submit`}
-                          disabled={disableInputFields == 1 ? true : false}
-                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 transition duration-150 ease-in-out ${
-                            disableInputFields == 1
-                              ? "opacity-50 bg-indigo-300 cursor-not-allowed"
-                              : "hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-xs-outline-indigo active:bg-indigo-700"
-                          }`}
-                          onClick={handleEditSiteDetails}
-                        >
-                          {props.settingsLabelData[6].label}
-                        </button>
-                      </span>
-
-                      <span className={`inline-flex rounded-md shadow-sm`}>
-                        <button
-                          disabled={disableInputFields == 1 ? false : true}
-                          className={`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm transition ease-in-out duration-150 sm:text-sm sm:leading-5 ${
-                            disableInputFields == 1
-                              ? "hover:text-gray-500 focus:outline-none"
-                              : "opacity-50 cursor-not-allowed"
-                          }`}
-                          onClick={handleEditSiteDetails}
-                        >
-                          {props.settingsLabelData[7].label}
-                        </button>
-                      </span>
-                    </div>
-                    <div className={`flex justify-end`}>
-                      <span className={`ml-3 inline-flex rounded-md shadow-sm`}>
-                        <button
-                          type={`submit`}
-                          disabled={disableInputFields == 1 ? false : true}
-                          className={`inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 transition duration-150 ease-in-out ${
-                            disableInputFields == 0
-                              ? "opacity-50 bg-green-300 cursor-not-allowed"
-                              : "hover:bg-green-500 focus:outline-none focus:border-green-700 focus:shadow-xs-outline-green active:bg-green-700"
-                          }`}
-                        >
-                          {props.settingsLabelData[8].label}
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </SiteInformationDiv>
-        </Fragment>
-      )}
-    </Fragment>
-  );
+								<div tw="sm:col-span-4">
+									<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
+										<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
+											<span tw="inline-flex">
+												{!disableForm ? (
+													<button
+														type="submit"
+														disabled={isSubmitting || Object.keys(errors).length > 0}
+														css={[
+															tw`w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
+															isSubmitting || Object.keys(errors).length > 0
+																? tw`opacity-50 cursor-not-allowed`
+																: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
+														]}
+													>
+														{isSubmitting
+															? settingsLabel[19].label
+															: !disableForm
+															? settingsLabel[8].label
+															: settingsLabel[6].label}
+													</button>
+												) : (
+													<button
+														type="button"
+														disabled={isSubmitting || Object.keys(errors).length > 0}
+														css={[
+															tw`w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
+															isSubmitting || Object.keys(errors).length > 0
+																? tw`opacity-50 cursor-not-allowed`
+																: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+														]}
+														onClick={() => setDisableForm(!disableForm)}
+													>
+														{isSubmitting ? settingsLabel[19].label : settingsLabel[6].label}
+													</button>
+												)}
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					)}
+				</Formik>
+			</div>
+		</div>
+	) : (
+		// FIXME: update this skeleton
+		<SettingsPersonalSkeleton />
+	);
 };
+
+SiteInformation.propTypes = {};
 
 export default SiteInformation;
-
-SiteInformation.propTypes = {
-  errorMsg: PropTypes.string,
-  successMsg: PropTypes.string,
-  disableInputFields: PropTypes.func,
-  siteName: PropTypes.string,
-  siteUrl: PropTypes.string,
-  fetchSiteSettings: PropTypes.func,
-  updateSiteSettings: PropTypes.func,
-  handleSiteUpdate: PropTypes.func,
-  handleEditSiteDetails: PropTypes.func,
-  handleSiteNameInputChange: PropTypes.func,
-};
