@@ -21,6 +21,11 @@ services:
     command: ./docker.dev.sh
     volumes:
       - ./backend:/app
+    depends_on:
+      localstack:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)"
@@ -57,6 +62,11 @@ services:
     image: crawl-app-crawler
     volumes:
       - ./go:/app
+    depends_on:
+      localstack:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     # environment:
     #   - LOG_SQL=true
   scheduler:
@@ -114,8 +124,18 @@ services:
       - "listen_addresses=*"
     volumes:
       - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U postgres
   localstack:
     image: localstack/localstack
+    environment:
+      HOSTNAME_EXTERNAL: localstack
+    healthcheck:
+      test: curl -f http://localhost:4566/health
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.localstack.rule=PathPrefix(`/localstack/`)"
+      - "traefik.port=49501"
 
 volumes:
   db-data:

@@ -10,7 +10,9 @@ def site(site):
     if scans_in_progress > 0:
         raise Throttled(60, "Scan in progress.")
 
-    scan = Scan.objects.create(site=site)
+    # using superuser causes the operation to not be in request transaction,
+    # so the crawler can see it immediately when it receives the msg
+    scan = Scan.objects.using("superuser").create(site=site)
 
     sqs = boto3.client(
         "sqs",

@@ -53,6 +53,8 @@ class LinkDetailSerializer(LinkSerializer):
         query = getattr(obj, self.Meta.pages_attr)
         many = True
         pages_parent_lookup = getattr(self.Meta, "pages_parent_lookup", "parent_lookup_" + self.Meta.pages_attr)
+        if getattr(self.Meta, "pages_select_related", None):
+            query = query.select_related(*self.Meta.pages_select_related)
         if pages_parent_lookup in self.context["view"].kwargs:
             query = query.get(
                 **{
@@ -81,6 +83,7 @@ class ImageDetailSerializer(LinkDetailSerializer):
         pages_parent_lookup = "parent_lookup_image_pages"
         pages_serializer = SourceLinkImageSerializer
         pages_get_key = "from_link_id"
+        pages_select_related = ["from_link"]
 
 
 class ScriptDetailSerializer(LinkDetailSerializer):

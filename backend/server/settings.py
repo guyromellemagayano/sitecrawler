@@ -166,6 +166,7 @@ DATABASES = {
             "options": "-c statement_timeout=60000",
         },
     },
+    # connection with superuser privileges, larger timeout and no atomic requests
     "superuser": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": DB_NAME,
