@@ -152,7 +152,7 @@ const SiteSettings = ({ width, result }) => {
 								<div tw="space-y-12 divide-y divide-gray-200">
 									<SiteInformationSettings user={userData} siteId={siteIdData} settingsLabel={SettingsLabel} />
 									<LargePageSizeSettings user={userData} siteId={siteIdData} querySiteId={result.siteId} />
-									{/* <DeleteSiteSettings querySiteId={result.siteId} settingsLabelData={SettingsLabel} /> */}
+									<DeleteSiteSettings user={userData} siteId={siteIdData} settingsLabel={SettingsLabel} />
 								</div>
 							</div>
 						</div>

@@ -34,7 +34,8 @@
 		"label": "User generated content in real-time will have multiple touchpoints for offshoring."
 	},
 	{
-		"label": "Are you sure you want to delete this website You will lose all its data and settings."
+		"label": "Are you sure you want to delete this website?",
+		"description": "You will lose all its data and settings."
 	},
 	{
 		"label": "Delete"
