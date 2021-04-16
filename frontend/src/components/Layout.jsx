@@ -24,7 +24,7 @@ const Layout = ({ user, children }) => {
 
 			LogRocket.identify("epic-design-labs/link-app", {
 				name: user.first_name + " " + user.last_name,
-				email: user.email,
+				email: user.email
 			});
 		}
 	}, [user]);
