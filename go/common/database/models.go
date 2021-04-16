@@ -64,7 +64,7 @@ var Columns = struct {
 		Group string
 	}
 	CrawlLink struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts, CachedNumImages, CachedNumLinks, CachedNumNonOkImages, CachedNumNonOkLinks, CachedNumNonOkScripts, CachedNumNonOkStylesheets, CachedNumOkImages, CachedNumOkLinks, CachedNumOkScripts, CachedNumOkStylesheets, CachedNumScripts, CachedNumStylesheets string
 
 		Scan, Tls string
 	}
@@ -95,6 +95,11 @@ var Columns = struct {
 	}
 	CrawlScan struct {
 		ID, StartedAt, FinishedAt, SiteID, EmailSent, ForceHttps string
+
+		Site string
+	}
+	CrawlScanarchive struct {
+		ID, StartedAt, FinishedAt, ScanID, Data, SiteID string
 
 		Site string
 	}
@@ -318,7 +323,7 @@ var Columns = struct {
 		Group: "Group",
 	},
 	CrawlLink: struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts, CachedNumImages, CachedNumLinks, CachedNumNonOkImages, CachedNumNonOkLinks, CachedNumNonOkScripts, CachedNumNonOkStylesheets, CachedNumOkImages, CachedNumOkLinks, CachedNumOkScripts, CachedNumOkStylesheets, CachedNumScripts, CachedNumStylesheets string
 
 		Scan, Tls string
 	}{
@@ -357,6 +362,18 @@ var Columns = struct {
 		CachedScriptOccurences:     "cached_script_occurences",
 		CachedStylesheetOccurences: "cached_stylesheet_occurences",
 		CachedImageMissingAlts:     "cached_image_missing_alts",
+		CachedNumImages:            "cached_num_images",
+		CachedNumLinks:             "cached_num_links",
+		CachedNumNonOkImages:       "cached_num_non_ok_images",
+		CachedNumNonOkLinks:        "cached_num_non_ok_links",
+		CachedNumNonOkScripts:      "cached_num_non_ok_scripts",
+		CachedNumNonOkStylesheets:  "cached_num_non_ok_stylesheets",
+		CachedNumOkImages:          "cached_num_ok_images",
+		CachedNumOkLinks:           "cached_num_ok_links",
+		CachedNumOkScripts:         "cached_num_ok_scripts",
+		CachedNumOkStylesheets:     "cached_num_ok_stylesheets",
+		CachedNumScripts:           "cached_num_scripts",
+		CachedNumStylesheets:       "cached_num_stylesheets",
 
 		Scan: "Scan",
 		Tls:  "Tls",
@@ -437,6 +454,20 @@ var Columns = struct {
 		SiteID:     "site_id",
 		EmailSent:  "email_sent",
 		ForceHttps: "force_https",
+
+		Site: "Site",
+	},
+	CrawlScanarchive: struct {
+		ID, StartedAt, FinishedAt, ScanID, Data, SiteID string
+
+		Site string
+	}{
+		ID:         "id",
+		StartedAt:  "started_at",
+		FinishedAt: "finished_at",
+		ScanID:     "scan_id",
+		Data:       "data",
+		SiteID:     "site_id",
 
 		Site: "Site",
 	},
@@ -715,6 +746,9 @@ var Tables = struct {
 	CrawlScan struct {
 		Name, Alias string
 	}
+	CrawlScanarchive struct {
+		Name, Alias string
+	}
 	CrawlSite struct {
 		Name, Alias string
 	}
@@ -882,6 +916,12 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "crawl_scan",
+		Alias: "t",
+	},
+	CrawlScanarchive: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_scanarchive",
 		Alias: "t",
 	},
 	CrawlSite: struct {
@@ -1168,6 +1208,18 @@ type CrawlLink struct {
 	CachedScriptOccurences     *int      `pg:"cached_script_occurences"`
 	CachedStylesheetOccurences *int      `pg:"cached_stylesheet_occurences"`
 	CachedImageMissingAlts     *int      `pg:"cached_image_missing_alts"`
+	CachedNumImages            *int      `pg:"cached_num_images"`
+	CachedNumLinks             *int      `pg:"cached_num_links"`
+	CachedNumNonOkImages       *int      `pg:"cached_num_non_ok_images"`
+	CachedNumNonOkLinks        *int      `pg:"cached_num_non_ok_links"`
+	CachedNumNonOkScripts      *int      `pg:"cached_num_non_ok_scripts"`
+	CachedNumNonOkStylesheets  *int      `pg:"cached_num_non_ok_stylesheets"`
+	CachedNumOkImages          *int      `pg:"cached_num_ok_images"`
+	CachedNumOkLinks           *int      `pg:"cached_num_ok_links"`
+	CachedNumOkScripts         *int      `pg:"cached_num_ok_scripts"`
+	CachedNumOkStylesheets     *int      `pg:"cached_num_ok_stylesheets"`
+	CachedNumScripts           *int      `pg:"cached_num_scripts"`
+	CachedNumStylesheets       *int      `pg:"cached_num_stylesheets"`
 
 	Scan *CrawlScan `pg:"fk:scan_id"`
 	Tls  *CrawlTl   `pg:"fk:tls_id"`
@@ -1242,6 +1294,19 @@ type CrawlScan struct {
 	SiteID     int        `pg:"site_id,use_zero"`
 	EmailSent  bool       `pg:"email_sent,use_zero"`
 	ForceHttps *bool      `pg:"force_https"`
+
+	Site *CrawlSite `pg:"fk:site_id"`
+}
+
+type CrawlScanarchive struct {
+	tableName struct{} `pg:"crawl_scanarchive,alias:t,,discard_unknown_columns"`
+
+	ID         int                    `pg:"id,pk"`
+	StartedAt  time.Time              `pg:"started_at,use_zero"`
+	FinishedAt time.Time              `pg:"finished_at,use_zero"`
+	ScanID     int                    `pg:"scan_id,use_zero"`
+	Data       map[string]interface{} `pg:"data,use_zero"`
+	SiteID     int                    `pg:"site_id,use_zero"`
 
 	Site *CrawlSite `pg:"fk:site_id"`
 }

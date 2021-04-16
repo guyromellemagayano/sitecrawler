@@ -111,6 +111,18 @@ class PageInline(admin.TabularInline):
         "cached_script_occurences",
         "cached_stylesheet_occurences",
         "cached_image_missing_alts",
+        "cached_num_links",
+        "cached_num_images",
+        "cached_num_scripts",
+        "cached_num_stylesheets",
+        "cached_num_ok_links",
+        "cached_num_ok_images",
+        "cached_num_ok_scripts",
+        "cached_num_ok_stylesheets",
+        "cached_num_non_ok_links",
+        "cached_num_non_ok_images",
+        "cached_num_non_ok_scripts",
+        "cached_num_non_ok_stylesheets",
     )
     show_change_link = True
 

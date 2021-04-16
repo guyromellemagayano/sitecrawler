@@ -188,6 +188,20 @@ class Link(models.Model):
 
     cached_image_missing_alts = models.PositiveIntegerField(null=True, blank=True)
 
+    # fields counting outgoing relations: total and ok and non-ok status
+    cached_num_links = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_images = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_scripts = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_stylesheets = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_ok_links = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_ok_images = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_ok_scripts = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_ok_stylesheets = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_non_ok_links = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_non_ok_images = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_non_ok_scripts = models.PositiveIntegerField(null=True, blank=True)
+    cached_num_non_ok_stylesheets = models.PositiveIntegerField(null=True, blank=True)
+
     class Meta:
         permissions = (
             ("can_see_images", "Can see images"),
