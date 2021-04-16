@@ -21,8 +21,6 @@ import TopProgressBar from "src/components/TopProgressBar";
 library.add(fab);
 
 // Sentry
-console.log(process.env.NODE_ENV);
-
 if (process.env.NODE_ENV === "production") {
 	Sentry.init({
 		dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
