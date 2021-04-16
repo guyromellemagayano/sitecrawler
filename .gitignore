@@ -264,3 +264,6 @@ dist
 
 # terraform state
 *.tfstate*
+
+# frontend
+!frontend/.env

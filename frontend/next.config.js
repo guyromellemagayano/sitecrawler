@@ -1,7 +1,6 @@
 module.exports = {
-  trailingSlash: false,
-  devIndicators: {
-    autoPrerender: false,
-  },
-  env: {},
+	trailingSlash: false,
+	devIndicators: {
+		autoPrerender: false
+	}
 };
