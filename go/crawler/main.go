@@ -34,6 +34,7 @@ func main() {
 			&common.IsTypePostprocessor{},
 			&common.OccurencesPostprocessor{},
 			&AltPostprocessor{},
+			&common.RelCountsPostprocessor{},
 		},
 	}
 	backendService := &common.BackendService{Env: env, Token: common.Secret(log, awsSession, env, "BACKEND_TOKEN", "")}
