@@ -21,11 +21,15 @@ import TopProgressBar from "src/components/TopProgressBar";
 library.add(fab);
 
 // Sentry
-Sentry.init({
-	dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-	integrations: [new Integrations.BrowserTracing()],
-	tracesSampleRate: 0.5
-});
+console.log(process.env.NODE_ENV);
+
+if (process.env.NODE_ENV === "production") {
+	Sentry.init({
+		dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+		integrations: [new Integrations.BrowserTracing()],
+		tracesSampleRate: 0.5
+	});
+}
 
 const MyApp = ({ Component, pageProps }) => {
 	return (
