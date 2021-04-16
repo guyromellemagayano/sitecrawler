@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 
 // NextJS
 import Link from "next/link";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 
 // External
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -131,7 +131,7 @@ const Login = () => {
 
 																	if (successMsg !== "") {
 																		setTimeout(() => {
-																			router.push("/");
+																			Router.push("/");
 																		}, 1500);
 																	}
 																}
