@@ -587,56 +587,64 @@ const DataTable = ({ site, disableLocalTime }) => {
 					</td>
 					<td css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold`]}>
 						{componentReady ? (
-							<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
-								<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
-									{setTotalIssues()}
-								</a>
-							</Link>
+							site.verified ? (
+								<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
+									<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
+										{setTotalIssues()}
+									</a>
+								</Link>
+							) : null
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
 					</td>
 					<td css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold`]}>
 						{componentReady ? (
-							statsData.num_links > 0 ? (
-								<Link href="/site/[siteId]/links" as={`/site/${site.id}/links`} passHref>
-									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-										{statsData.num_links}
-									</a>
-								</Link>
-							) : (
-								<span tw="text-sm leading-5 text-gray-500">{statsData.num_links}</span>
-							)
+							site.verified ? (
+								statsData.num_links > 0 ? (
+									<Link href="/site/[siteId]/links" as={`/site/${site.id}/links`} passHref>
+										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+											{statsData.num_links}
+										</a>
+									</Link>
+								) : (
+									<span tw="text-sm leading-5 text-gray-500">{statsData.num_links}</span>
+								)
+							) : null
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
 					</td>
 					<td css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold`]}>
 						{componentReady ? (
-							statsData.num_pages > 0 ? (
-								<Link href="/site/[siteId]/pages" as={`/site/${site.id}/pages`} passHref>
-									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-										{statsData.num_pages}
-									</a>
-								</Link>
-							) : (
-								<span tw="text-sm leading-5 text-gray-500">{statsData.num_pages}</span>
-							)
+							site.verified ? (
+								statsData.num_pages > 0 ? (
+									<Link href="/site/[siteId]/pages" as={`/site/${site.id}/pages`} passHref>
+										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+											{statsData.num_pages}
+										</a>
+									</Link>
+								) : (
+									<span tw="text-sm leading-5 text-gray-500">{statsData.num_pages}</span>
+								)
+							) : null
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
 					</td>
 					<td css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold`]}>
 						{componentReady ? (
-							statsData.num_images > 0 ? (
-								<Link href="/site/[siteId]/images" as={`/site/${site.id}/images`} passHref>
-									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-										{statsData.num_images}
-									</a>
-								</Link>
-							) : (
-								<span tw="text-sm leading-5 text-gray-500">{statsData.num_images}</span>
-							)
+							site.verified ? (
+								statsData.num_images > 0 ? (
+									<Link href="/site/[siteId]/images" as={`/site/${site.id}/images`} passHref>
+										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+											{statsData.num_images}
+										</a>
+									</Link>
+								) : (
+									<span tw="text-sm leading-5 text-gray-500">{statsData.num_images}</span>
+								)
+							) : null
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
