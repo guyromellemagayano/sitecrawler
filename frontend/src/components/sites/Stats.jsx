@@ -123,7 +123,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 	const setPageErrors = () => {
 		let valLength = 0;
 
-		if (stats) {
+		if (statsData) {
 			if (
 				(statsData.num_pages_big !== 0 && statsData.num_pages_big !== undefined) ||
 				(statsData.num_pages_tls_non_ok !== 0 && statsData.num_pages_tls_non_ok !== undefined)
@@ -138,7 +138,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 	const setImageErrors = () => {
 		let valLength = 0;
 
-		if (stats) {
+		if (statsData) {
 			if (statsData.num_non_ok_images !== 0 && statsData.num_non_ok_images !== undefined) {
 				valLength = statsData ? statsData.num_non_ok_images : 0;
 			}

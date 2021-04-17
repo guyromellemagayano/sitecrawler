@@ -7,9 +7,6 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import * as Sentry from "@sentry/react";
 import PropTypes from "prop-types";
 
-// Utils
-import { HistoryProvider } from "src/utils/history";
-
 // Enums
 import appSeo from "src/enum/nextSeo";
 
@@ -31,12 +28,12 @@ if (process.env.NODE_ENV === "production") {
 
 const MyApp = ({ Component, pageProps }) => {
 	return (
-		<HistoryProvider>
+		<>
 			<DefaultSeo {...appSeo} />
 			<GlobalStyles />
 			<TopProgressBar />
 			<Component {...pageProps} />
-		</HistoryProvider>
+		</>
 	);
 };
 
