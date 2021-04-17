@@ -118,6 +118,7 @@ const Login = () => {
 
 														try {
 															const response = await usePostMethod(loginApiEndpoint, body);
+															const data = response.data;
 
 															setErrorMsg([]);
 															setSuccessMsg([]);
@@ -126,23 +127,17 @@ const Login = () => {
 																setSubmitting(false);
 																setDisableLoginForm(!disableLoginForm);
 
-																if (
-																	response.data.key &&
-																	response.data.key !== undefined &&
-																	response.data.key.length > 0
-																) {
+																if (data.key && data.key !== undefined && data.key.length > 0) {
 																	setSuccessMsg((successMsg) => [...successMsg, LoginLabel[12].label]);
 
-																	if (successMsg !== "") {
-																		setTimeout(() => {
-																			Router.push("/");
-																		}, 1500);
-																	}
+																	setTimeout(() => {
+																		Router.push("/");
+																	}, 1500);
 																}
 															} else {
-																if (response.data) {
+																if (data) {
 																	setSubmitting(false);
-																	setErrorMsg((errorMsg) => [...errorMsg, response.data.non_field_errors]);
+																	setErrorMsg((errorMsg) => [...errorMsg, data.non_field_errors]);
 																} else {
 																	resetForm({ values: "" });
 																	setSubmitting(false);
