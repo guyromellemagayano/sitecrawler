@@ -19,7 +19,7 @@ import LinksStatsLabel from "public/labels/components/sites/LinksStats.json";
 import { linksChartContents } from "src/enum/chartContents";
 
 // Hooks
-import { useScan, useStats, useLinks } from "src/hooks/useSite";
+import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
@@ -89,7 +89,7 @@ const SitesLinksStatsDiv = styled.div`
 
 const SitesLinksStats = ({ width, sid, user }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [linksData, setLinksData] = useState([]);
+	const [crawlInProgress, setCrawlInProgress] = useState(false);
 	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [statsData, setStatsData] = useState([]);
@@ -106,63 +106,73 @@ const SitesLinksStats = ({ width, sid, user }) => {
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
 			setScanData(scan);
+		}
+	}, [scan]);
 
+	useEffect(() => {
+		if (scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0) {
 			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
+				setScanObjId((prevState) => ({
+					...prevState,
+					id: scanData.results
 						.map((e) => {
+							let result = prevState;
+
+							if (e !== undefined && e.finished_at == null) {
+								result = e.id;
+
+								setCrawlInProgress(true);
+
+								return result;
+							}
+
 							return e.id;
 						})
 						.sort()
 						.reverse()[0]
-				);
+				}));
 			}
 		}
-	});
+	}, [scanData]);
+
+	useEffect(() => {
+		if (crawlInProgress) {
+			if (scanObjId && scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
+				scanData.results
+					.filter((result) => result.id == scanObjId.id)
+					.map((e) => {
+						if (e !== undefined && e.finished_at !== null) {
+							setCrawlInProgress(false);
+						}
+					});
+			}
+		}
+	}, [crawlInProgress, scanObjId]);
 
 	const { stats: stats } = useStats({
 		querySid: sid,
-		scanObjId: scanObjId,
+		scanObjId: scanObjId.id,
 		refreshInterval: 1000
-	});
-
-	const sitesApiEndpoint = `/api/site/${sid}/scan/${scanObjId}/link/`;
-	const { links: links } = useLinks({
-		endpoint: sitesApiEndpoint,
-		querySid: sid,
-		scanObjId: scanObjId
 	});
 
 	useEffect(() => {
 		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setStatsData(stats);
 		}
-
-		if (links && links !== undefined && Object.keys(links).length > 0) {
-			setLinksData(links);
-		}
-	}, [stats, links]);
+	}, [stats]);
 
 	useEffect(() => {
-		if (
-			user &&
-			statsData &&
-			statsData !== undefined &&
-			Object.keys(statsData).length > 0 &&
-			linksData &&
-			linksData !== undefined &&
-			Object.keys(linksData).length > 0
-		) {
+		if (statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [user, statsData, linksData]);
+	}, [statsData]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/links`;
 
-		linksChartContents.forEach((item, index) => {
+		linksChartContents.forEach((item) => {
 			if (label === item.label && item.filter !== "")
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
@@ -171,8 +181,20 @@ const SitesLinksStats = ({ width, sid, user }) => {
 	};
 
 	const chartSeries = [
-		statsData && statsData.num_non_ok_links !== undefined ? statsData.num_non_ok_links : 0,
-		statsData && statsData.num_ok_links !== undefined ? statsData.num_ok_links : 0
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_non_ok_links !== undefined
+			? statsData.num_non_ok_links
+			: 0,
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_ok_links !== undefined
+			? statsData.num_ok_links
+			: 0
 	];
 
 	const chartOptions = {
@@ -196,7 +218,7 @@ const SitesLinksStats = ({ width, sid, user }) => {
 		dataLabels: {
 			enabled: true,
 			formatter: function (val, opts) {
-				return opts.w.config.series[opts.seriesIndex];
+				return opts.w.globals.series[opts.seriesIndex];
 			}
 		},
 		legend: {
@@ -231,8 +253,8 @@ const SitesLinksStats = ({ width, sid, user }) => {
 							color: "#2A324B",
 							formatter: function (val) {
 								let num_errs = 0;
-								for (let i = 0; i < val.config.series.slice(0, -1).length; i++) {
-									num_errs += val.config.series[i];
+								for (let i = 0; i < parseInt(val.config.series.slice(0, -1)); i++) {
+									num_errs++;
 								}
 
 								return num_errs;
