@@ -6,15 +6,7 @@ import "twin.macro";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 
-// Utils
-import { useHistory } from "src/utils/history";
-
 const Layout = ({ user, children }) => {
-	// FIXME: figure something out this useHistory()
-	const { history } = useHistory();
-
-	// console.log(history);
-
 	useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {
 			if (typeof window !== "undefined") {
