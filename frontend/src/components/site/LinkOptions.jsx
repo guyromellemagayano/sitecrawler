@@ -9,7 +9,7 @@ import loadable from "@loadable/component";
 import tw from "twin.macro";
 
 // JSON
-import LinkOptionsLabel from "public/labels/components/site/LinkOptionsLabel.json";
+import LinkOptionsLabel from "public/labels/components/sites/LinkOptions.json";
 
 // Hooks
 import { useScan, useStats } from "src/hooks/useSite";
