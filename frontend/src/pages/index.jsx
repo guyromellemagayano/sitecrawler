@@ -12,6 +12,7 @@ import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // JSON
+import DashboardLabel from "public/labels/pages/dashboard.json";
 import DataTableHeadsContent from "public/data/data-table-heads.json";
 
 // Hooks
@@ -41,6 +42,7 @@ const initialOrder = {
 };
 
 const Dashboard = ({ width, result }) => {
+	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
@@ -50,7 +52,7 @@ const Dashboard = ({ width, result }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [userData, setUserData] = useState([]);
 
-	const pageTitle = "Sites Dashboard";
+	const pageTitle = DashboardLabel[0].label;
 
 	const { asPath } = useRouter();
 
@@ -98,14 +100,29 @@ const Dashboard = ({ width, result }) => {
 		) {
 			setUserData(user);
 			setSiteData(site);
-
-			if (userData && siteData) {
-				setTimeout(() => {
-					setPageLoaded(true);
-				}, 500);
-			}
 		}
 	}, [user, site]);
+
+	useEffect(() => {
+		if (
+			userData &&
+			userData !== undefined &&
+			userData !== [] &&
+			Object.keys(userData).length > 0 &&
+			siteData &&
+			siteData !== undefined &&
+			siteData !== [] &&
+			Object.keys(siteData).length > 0
+		) {
+			if (userData.settings && userData.settings.disableLocaltime) {
+				setDisableLocalTime(true);
+			}
+
+			setTimeout(() => {
+				setPageLoaded(true);
+			}, 500);
+		}
+	}, [userData, siteData]);
 
 	const onSearchEventHandler = async (e) => {
 		const searchTargetValue = e.target.value;
@@ -227,10 +244,10 @@ const Dashboard = ({ width, result }) => {
 						<AddSite user={userData} site={siteData} searchKey={searchKey} onSearchEvent={onSearchEventHandler} />
 					</div>
 
-					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-						<div tw="max-w-full mx-12">
-							{siteData && siteData !== undefined && Object.keys(siteData).length > 0 && siteData.count > 0 && (
-								<>
+					{userData && Object.keys(userData).length > 0 && siteData && Object.keys(siteData).length > 0 ? (
+						siteData.count > 0 ? (
+							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+								<div tw="max-w-full mx-12">
 									<div tw="py-4">
 										<div tw="flex flex-col">
 											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -263,7 +280,10 @@ const Dashboard = ({ width, result }) => {
 																})}
 															</tr>
 														</thead>
-														{siteData.results && siteData.results.map((val, key) => <DataTable key={key} site={val} />)}
+														{siteData.results &&
+															siteData.results.map((val, key) => {
+																return <DataTable key={key} site={val} disableLocalTime={disableLocalTime} />;
+															})}
 													</table>
 												</div>
 											</div>
@@ -277,13 +297,14 @@ const Dashboard = ({ width, result }) => {
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
-								</>
-							)}
-						</div>
-						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-							<SiteFooter />
-						</div>
-					</main>
+								</div>
+							</main>
+						) : null
+					) : null}
+
+					<div tw="static bottom-0 w-full mx-auto px-12 py-4">
+						<SiteFooter />
+					</div>
 				</div>
 			</section>
 		</Layout>
