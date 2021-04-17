@@ -160,7 +160,7 @@ const SettingsMenu = ({ user, site }) => {
 																						aria-label="Verified"
 																						css={[
 																							tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																							selectedSiteDetails.verified ? tw`bg-green-400` : tw`bg-yellow-400`
+																							selectedSiteDetails.verified ? tw`bg-green-400` : tw`bg-red-400`
 																						]}
 																					></span>
 																					<span
@@ -223,7 +223,7 @@ const SettingsMenu = ({ user, site }) => {
 																									aria-label="Verified"
 																									css={[
 																										tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																										value.verified ? tw`bg-green-400` : tw`bg-yellow-400`
+																										value.verified ? tw`bg-green-400` : tw`bg-red-400`
 																									]}
 																								></span>
 																								<span
