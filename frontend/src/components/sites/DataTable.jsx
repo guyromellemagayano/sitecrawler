@@ -102,6 +102,8 @@ const DataTable = ({ site, disableLocalTime }) => {
 
 								return result;
 							} else {
+								setCrawlInProgress(false);
+
 								return e.id;
 							}
 						})
