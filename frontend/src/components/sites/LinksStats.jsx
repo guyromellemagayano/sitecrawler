@@ -89,7 +89,6 @@ const SitesLinksStatsDiv = styled.div`
 
 const SitesLinksStats = ({ width, sid, user }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [crawlInProgress, setCrawlInProgress] = useState(false);
 	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [statsData, setStatsData] = useState([]);
@@ -121,8 +120,6 @@ const SitesLinksStats = ({ width, sid, user }) => {
 							if (e !== undefined && e.finished_at == null) {
 								result = e.id;
 
-								setCrawlInProgress(true);
-
 								return result;
 							}
 
@@ -134,20 +131,6 @@ const SitesLinksStats = ({ width, sid, user }) => {
 			}
 		}
 	}, [scanData]);
-
-	useEffect(() => {
-		if (crawlInProgress) {
-			if (scanObjId && scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				scanData.results
-					.filter((result) => result.id == scanObjId.id)
-					.map((e) => {
-						if (e !== undefined && e.finished_at !== null) {
-							setCrawlInProgress(false);
-						}
-					});
-			}
-		}
-	}, [crawlInProgress, scanObjId]);
 
 	const { stats: stats } = useStats({
 		querySid: sid,
