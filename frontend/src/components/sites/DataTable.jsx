@@ -101,11 +101,9 @@ const DataTable = ({ site, disableLocalTime }) => {
 								setCrawlInProgress(true);
 
 								return result;
-							} else {
-								setCrawlInProgress(false);
-
-								return e.id;
 							}
+
+							return e.id;
 						})
 						.sort()
 						.reverse()[0]
@@ -113,6 +111,20 @@ const DataTable = ({ site, disableLocalTime }) => {
 			}
 		}
 	}, [scanData]);
+
+	useEffect(() => {
+		if (crawlInProgress) {
+			if (scanObjId && scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
+				scanData.results
+					.filter((result) => result.id == scanObjId.id)
+					.map((e) => {
+						if (e !== undefined && e.finished_at !== null) {
+							setCrawlInProgress(false);
+						}
+					});
+			}
+		}
+	}, [crawlInProgress, scanObjId]);
 
 	const handleInputChange = ({ copyValue }) => {
 		setCopyValue({ copyValue, copied });
@@ -190,12 +202,10 @@ const DataTable = ({ site, disableLocalTime }) => {
 	}, [stats]);
 
 	useEffect(() => {
-		if (statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [statsData]);
+		setTimeout(() => {
+			setComponentReady(true);
+		}, 500);
+	}, []);
 
 	const setSeoErrors = () => {
 		let valLength = 0;
@@ -501,7 +511,27 @@ const DataTable = ({ site, disableLocalTime }) => {
 								<span className="link-item">
 									{componentReady ? (
 										!site.verified ? (
-											<span tw="truncate text-sm leading-5 font-semibold text-gray-500">{site.name}</span>
+											<>
+												<span tw="truncate text-sm leading-5 font-semibold text-gray-500">{site.name}</span>
+												<span tw="flex justify-start text-sm leading-5 text-gray-500">
+													<button
+														type="button"
+														id="siteVerifySiteModalButton"
+														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150"
+														onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
+													>
+														{DataTableLabel[0].label}
+													</button>
+													<button
+														type="button"
+														id="siteVerifySiteModalButton"
+														tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+														onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
+													>
+														{DataTableLabel[1].label}
+													</button>
+												</span>
+											</>
 										) : (
 											<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
 												<a tw="cursor-pointer text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500">
@@ -522,7 +552,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 							statsData !== undefined &&
 							statsData !== [] &&
 							Object.keys(statsData).length > 0 &&
-							statsData["verified"] === undefined ? (
+							site.verified ? (
 								<span tw="space-x-2">
 									<span tw="text-sm leading-5 text-gray-500">
 										{!disableLocalTime ? (
@@ -548,7 +578,9 @@ const DataTable = ({ site, disableLocalTime }) => {
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
 						{componentReady ? (
-							<span tw="text-sm leading-5 text-gray-500">{crawlInProgress ? "In Progress" : "Recrawled"}</span>
+							<span tw="text-sm leading-5 text-gray-500">
+								{site.verified ? (crawlInProgress ? "In Progress" : "Recrawled") : null}
+							</span>
 						) : (
 							<Skeleton duration={2} width={100} />
 						)}
