@@ -83,12 +83,16 @@ const Login = () => {
 										<LogoLabel isLogin />
 
 										<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-											{errorMsg.map((value, index) => {
-												return <ErrorMessageAlert key={index} message={value} />;
-											})}
-											{successMsg.map((value, index) => {
-												return <SuccessMessageAlert key={index} message={value} />;
-											})}
+											{errorMsg &&
+												errorMsg !== undefined &&
+												errorMsg !== [] &&
+												Object.keys(errorMsg).length > 0 &&
+												errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)}
+											{successMsg &&
+												successMsg !== undefined &&
+												errorMsg !== [] &&
+												Object.keys(successMsg).length > 0 &&
+												successMsg.map((value, index) => <SuccessMessageAlert key={index} message={value} />)}
 
 											<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
 												<Formik
