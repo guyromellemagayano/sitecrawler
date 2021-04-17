@@ -18,9 +18,13 @@ import DataTableHeadsContent from "public/data/data-table-heads.json";
 import { useSite } from "src/hooks/useSite";
 import useUser from "src/hooks/useUser";
 
+// Layout
+import Layout from "src/components/Layout";
+
 // Components
 const AddSite = loadable(() => import("src/components/sites/AddSite"));
 const DataTable = loadable(() => import("src/components/sites/DataTable"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const MyPagination = loadable(() => import("src/components/sites/Pagination"));
@@ -39,46 +43,47 @@ const initialOrder = {
 const Dashboard = ({ width, result }) => {
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+	const [pageLoaded, setPageLoaded] = useState(false);
 	const [pagePath, setPagePath] = useState(null);
 	const [searchKey, setSearchKey] = useState(null);
 	const [siteData, setSiteData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [userData, setUserData] = useState([]);
-	const [pageLoaded, setPageLoaded] = useState(false);
 
-	const pageTitle = "Dashboard";
+	const pageTitle = "Sites Dashboard";
 
 	const { asPath } = useRouter();
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login"
+		redirectTo: "/login",
+		refreshInterval: 1000
 	});
 
-	let sitesApiEndpoint =
+	let scanApiEndpoint =
 		result.page !== undefined
 			? "/api/site/?per_page=" + linksPerPage + `&ordering=name` + `&page=` + result.page
-			: "/api/site/?per_page=" + linksPerPage + `&ordering=name`;
+			: "/api/site/?per_page=" + linksPerPage;
 	let queryString = "";
 
 	queryString +=
 		result.search !== undefined
-			? sitesApiEndpoint.includes("?")
+			? scanApiEndpoint.includes("?")
 				? `&search=${result.search}`
 				: `?search=${result.search}`
 			: "";
 
 	queryString +=
 		result.ordering !== undefined
-			? sitesApiEndpoint.includes("?")
+			? scanApiEndpoint.includes("?")
 				? `&ordering=${result.ordering}`
 				: `?ordering=${result.ordering}`
 			: "";
 
-	sitesApiEndpoint += queryString;
+	scanApiEndpoint += queryString;
 
 	const { site: site, mutateSite: mutateSite } = useSite({
-		endpoint: sitesApiEndpoint,
+		endpoint: scanApiEndpoint,
 		refreshInterval: 1000
 	});
 
@@ -94,13 +99,14 @@ const Dashboard = ({ width, result }) => {
 			setUserData(user);
 			setSiteData(site);
 
-			setTimeout(() => {
-				setPageLoaded(true);
-			}, 3000);
+			if (userData && siteData) {
+				setTimeout(() => {
+					setPageLoaded(true);
+				}, 500);
+			}
 		}
 	}, [user, site]);
 
-	// FIXME: onSearchEventHandler
 	const onSearchEventHandler = async (e) => {
 		const searchTargetValue = e.target.value;
 
@@ -151,7 +157,6 @@ const Dashboard = ({ width, result }) => {
 		}
 	};
 
-	// FIXME: fix SortHandler
 	const SortHandler = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
 
@@ -193,10 +198,10 @@ const Dashboard = ({ width, result }) => {
 		if (result.search !== undefined) setSearchKey(result.search);
 
 		if (result.ordering !== undefined) {
-			const slug = getSlugFromSortKey(DataTableHeadsContent, ordering.replace("-", ""));
+			const slug = getSlugFromSortKey(DataTableHeadsContent, result.ordering.replace("-", ""));
 			const orderItem = slugToCamelcase(slug);
 
-			if (ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+			if (result.ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
 			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
 		}
 
@@ -204,7 +209,7 @@ const Dashboard = ({ width, result }) => {
 	}, []);
 
 	return pageLoaded ? (
-		<>
+		<Layout user={userData}>
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
@@ -215,6 +220,7 @@ const Dashboard = ({ width, result }) => {
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
+
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
@@ -232,40 +238,32 @@ const Dashboard = ({ width, result }) => {
 													<table tw="min-w-full">
 														<thead>
 															<tr>
-																{DataTableHeadsContent.map((siteData, key) => {
+																{DataTableHeadsContent.map((site, key) => {
 																	return (
 																		<th
 																			key={key}
 																			tw="sm:w-48 lg:w-auto px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																		>
 																			<span tw="flex items-center justify-start">
-																				{siteData &&
-																				siteData !== undefined &&
-																				Object.keys(siteData).length > 0 &&
-																				siteData.slug != undefined ? (
+																				{site &&
+																				site !== undefined &&
+																				Object.keys(site).length > 0 &&
+																				site.slug != undefined ? (
 																					<SiteSorting
 																						sortOrder={sortOrder}
 																						onSortHandler={SortHandler}
 																						key={key}
-																						slug={siteData.slug}
+																						slug={site.slug}
 																					/>
 																				) : null}
-																				<span tw="flex items-center">{siteData.label}</span>
+																				<span tw="flex items-center">{site.label}</span>
 																			</span>
 																		</th>
 																	);
 																})}
 															</tr>
 														</thead>
-														<tbody tw="bg-white">
-															{siteData &&
-															siteData !== undefined &&
-															Object.keys(siteData).length > 0 &&
-															siteData.results &&
-															siteData.results !== undefined
-																? siteData.results.map((val, key) => <DataTable key={key} site={val} user={userData} />)
-																: null}
-														</tbody>
+														{siteData.results && siteData.results.map((val, key) => <DataTable key={key} site={val} />)}
 													</table>
 												</div>
 											</div>
@@ -274,7 +272,7 @@ const Dashboard = ({ width, result }) => {
 
 									<MyPagination
 										pathName={pagePath}
-										apiEndpoint={sitesApiEndpoint}
+										apiEndpoint={scanApiEndpoint}
 										page={result.page ? result.page : 0}
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
@@ -288,8 +286,10 @@ const Dashboard = ({ width, result }) => {
 					</main>
 				</div>
 			</section>
-		</>
-	) : null;
+		</Layout>
+	) : (
+		<Loader />
+	);
 };
 
 Dashboard.propTypes = {};

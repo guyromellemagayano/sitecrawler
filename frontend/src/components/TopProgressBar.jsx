@@ -1,28 +1,24 @@
 // NextJS
-import Router from 'next/router';
+import Router from "next/router";
 
 // External
-import 'nprogress/nprogress.css';
-import NProgress from 'nprogress';
+import "nprogress/nprogress.css";
+import NProgress from "nprogress";
 
 const TopProgressBar = () => {
-	let timer;
 	let state;
 	let activeRequests = 0;
-	const delay = 250;
 
 	NProgress.configure({ showSpinner: false });
 
 	const load = () => {
-		if (state === 'loading') {
+		if (state === "loading") {
 			return;
 		}
 
-		state = 'loading';
+		state = "loading";
 
-		timer = setTimeout(function () {
-			NProgress.start();
-		}, delay); // only show progress bar if it takes longer than the delay
+		NProgress.start();
 	};
 
 	const stop = () => {
@@ -30,17 +26,16 @@ const TopProgressBar = () => {
 			return;
 		}
 
-		state = 'stop';
+		state = "stop";
 
-		clearTimeout(timer);
 		NProgress.done();
 	};
 
-	Router.events.on('routeChangeStart', load);
-	Router.events.on('routeChangeComplete', stop);
-	Router.events.on('routeChangeError', stop);
+	Router.events.on("routeChangeStart", load);
+	Router.events.on("routeChangeComplete", stop);
+	Router.events.on("routeChangeError", stop);
 
-	if (typeof window !== 'undefined') {
+	if (typeof window !== "undefined") {
 		const originalFetch = window.fetch;
 
 		window.fetch = async function (...args) {
