@@ -87,7 +87,7 @@ const SitesPagesStatsDiv = styled.div`
 	}
 `;
 
-const SitesPagesStats = ({ width, sid, user }) => {
+const SitesPagesStats = ({ width, sid }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [noPageIssuesData, setNoPageIssuesData] = useState([]);
 	const [scanData, setScanData] = useState([]);
@@ -106,29 +106,42 @@ const SitesPagesStats = ({ width, sid, user }) => {
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
 			setScanData(scan);
+		}
+	}, [scan]);
 
+	useEffect(() => {
+		if (scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0) {
 			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
+				setScanObjId((prevState) => ({
+					...prevState,
+					id: scanData.results
 						.map((e) => {
+							let result = prevState;
+
+							if (e !== undefined && e.finished_at == null) {
+								result = e.id;
+
+								return result;
+							}
+
 							return e.id;
 						})
 						.sort()
 						.reverse()[0]
-				);
+				}));
 			}
 		}
-	});
+	}, [scanData]);
 
 	const { stats: stats } = useStats({
 		querySid: sid,
-		scanObjId: scanObjId,
+		scanObjId: scanObjId.id,
 		refreshInterval: 1000
 	});
 
 	const { noPageIssues: noPageIssues } = useNoPageIssues({
 		querySid: sid,
-		scanObjId: scanObjId
+		scanObjId: scanObjId.id
 	});
 
 	useEffect(() => {
@@ -143,7 +156,6 @@ const SitesPagesStats = ({ width, sid, user }) => {
 
 	useEffect(() => {
 		if (
-			user &&
 			statsData &&
 			statsData !== undefined &&
 			Object.keys(statsData).length > 0 &&
@@ -155,7 +167,7 @@ const SitesPagesStats = ({ width, sid, user }) => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [user, statsData, noPageIssuesData]);
+	}, [statsData, noPageIssuesData]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/pages`;
@@ -170,9 +182,27 @@ const SitesPagesStats = ({ width, sid, user }) => {
 	};
 
 	const chartSeries = [
-		statsData && statsData.num_pages_big !== undefined ? statsData.num_pages_big : 0,
-		statsData && statsData.num_pages_tls_non_ok !== undefined ? statsData.num_pages_tls_non_ok : 0,
-		noPageIssuesData && noPageIssuesData.count !== undefined ? noPageIssuesData.count : 0
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_pages_big !== undefined
+			? statsData.num_pages_big
+			: 0,
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_pages_tls_non_ok !== undefined
+			? statsData.num_pages_tls_non_ok
+			: 0,
+		noPageIssuesData &&
+		noPageIssuesData !== undefined &&
+		noPageIssuesData !== [] &&
+		Object.keys(noPageIssuesData).length > 0 &&
+		noPageIssuesData.count !== undefined
+			? noPageIssuesData.count
+			: 0
 	];
 
 	const chartOptions = {
@@ -201,7 +231,7 @@ const SitesPagesStats = ({ width, sid, user }) => {
 		dataLabels: {
 			enabled: true,
 			formatter: function (val, opts) {
-				return opts.w.config.series[opts.seriesIndex];
+				return opts.w.globals.series[opts.seriesIndex];
 			}
 		},
 		legend: {
@@ -235,12 +265,7 @@ const SitesPagesStats = ({ width, sid, user }) => {
 							fontSize: "15px",
 							color: "#2A324B",
 							formatter: function (val) {
-								let num_errs = 0;
-								for (let i = 0; i < val.config.series.slice(0, -1).length; i++) {
-									num_errs += val.config.series[i];
-								}
-
-								return num_errs;
+								return val.config.series.slice(0, -1).reduce((a, b) => a + b);
 							}
 						}
 					}

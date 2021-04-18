@@ -87,7 +87,7 @@ const SitesImagesStatsDiv = styled.div`
 	}
 `;
 
-const SitesImagesStats = ({ width, sid, user }) => {
+const SitesImagesStats = ({ width, sid }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [imagesData, setImagesData] = useState([]);
 	const [scanData, setScanData] = useState([]);
@@ -95,6 +95,7 @@ const SitesImagesStats = ({ width, sid, user }) => {
 	const [statsData, setStatsData] = useState([]);
 
 	const lgScreenBreakpoint = 1024;
+	const imagesApiEndpoint = `/api/site/${sid}/scan/${scanObjId.id}/image/`;
 
 	const router = useRouter();
 
@@ -106,46 +107,75 @@ const SitesImagesStats = ({ width, sid, user }) => {
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
 			setScanData(scan);
+		}
+	}, [scan]);
 
+	useEffect(() => {
+		if (scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0) {
 			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
+				setScanObjId((prevState) => ({
+					...prevState,
+					id: scanData.results
 						.map((e) => {
+							let result = prevState;
+
+							if (e !== undefined && e.finished_at == null) {
+								result = e.id;
+
+								return result;
+							}
+
 							return e.id;
 						})
 						.sort()
 						.reverse()[0]
-				);
+				}));
 			}
 		}
-	});
+	}, [scanData]);
 
 	const { stats: stats } = useStats({
 		querySid: sid,
-		scanObjId: scanObjId,
+		scanObjId: scanObjId.id,
 		refreshInterval: 1000
-	});
-
-	const imagesApiEndpoint = `/api/site/${sid}/scan/${scanObjId}/image/`;
-	const { images: images } = useImages({
-		endpoint: imagesApiEndpoint,
-		querySid: sid,
-		scanObjId: scanObjId
 	});
 
 	useEffect(() => {
 		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setStatsData(stats);
 		}
+	}, [stats]);
 
-		if (images && images !== undefined && Object.keys(images).length > 0) {
+	useEffect(() => {
+		if (statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0) {
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [statsData]);
+
+	const { images: images } = useImages({
+		endpoint: imagesApiEndpoint,
+		querySid: sid,
+		scanObjId: scanObjId.id
+	});
+
+	useEffect(() => {
+		if (
+			stats &&
+			stats !== undefined &&
+			Object.keys(stats).length > 0 &&
+			images &&
+			images !== undefined &&
+			Object.keys(images).length > 0
+		) {
+			setStatsData(stats);
 			setImagesData(images);
 		}
 	}, [stats, images]);
 
 	useEffect(() => {
 		if (
-			user &&
 			statsData &&
 			statsData !== undefined &&
 			Object.keys(statsData).length > 0 &&
@@ -157,7 +187,7 @@ const SitesImagesStats = ({ width, sid, user }) => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [user, statsData, imagesData]);
+	}, [statsData, imagesData]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/images`;
@@ -171,9 +201,27 @@ const SitesImagesStats = ({ width, sid, user }) => {
 	};
 
 	const chartSeries = [
-		statsData && statsData.num_non_ok_images !== undefined ? statsData.num_non_ok_images : 0,
-		imagesData && imagesData.count !== undefined ? imagesData.count : 0,
-		statsData && statsData.num_ok_images !== undefined ? statsData.num_ok_images : 0
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_non_ok_images !== undefined
+			? statsData.num_non_ok_images
+			: 0,
+		imagesData &&
+		imagesData !== undefined &&
+		imagesData !== [] &&
+		Object.keys(imagesData).length > 0 &&
+		imagesData.count !== undefined
+			? imagesData.count
+			: 0,
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_ok_images !== undefined
+			? statsData.num_ok_images
+			: 0
 	];
 
 	const chartOptions = {
@@ -197,7 +245,7 @@ const SitesImagesStats = ({ width, sid, user }) => {
 		dataLabels: {
 			enabled: true,
 			formatter: function (val, opts) {
-				return opts.w.config.series[opts.seriesIndex];
+				return opts.w.globals.series[opts.seriesIndex];
 			}
 		},
 		legend: {
@@ -231,12 +279,7 @@ const SitesImagesStats = ({ width, sid, user }) => {
 							fontSize: "15px",
 							color: "#2A324B",
 							formatter: function (val) {
-								let num_errs = 0;
-								for (let i = 0; i < val.config.series.slice(0, -1).length; i++) {
-									num_errs += val.config.series[i];
-								}
-
-								return num_errs;
+								return val.config.series.slice(0, -1).reduce((a, b) => a + b);
 							}
 						}
 					}

@@ -54,12 +54,12 @@ const DataTable = ({ site, disableLocalTime }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${site.verification_id}" />`);
+	const [crawlInProgress, setCrawlInProgress] = useState(false);
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [enableNextStep, setEnableNextStep] = useState(false);
 	const [errorMsg, setErrorMsg] = useState(null);
 	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
-	const [crawlInProgress, setCrawlInProgress] = useState(false);
 	const [showDeleteSiteModal, setShowDeleteSiteModal] = useState(false);
 	const [showVerifySiteModal, setShowVerifySiteModal] = useState(false);
 	const [siteVerifyId, setSiteVerifyId] = useState(site.id);
