@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 // NextJS
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
@@ -131,7 +131,7 @@ const SiteMenu = ({ user, site }) => {
 					setSelectedSite(siteData.results[i].name);
 
 					setTimeout(() => {
-						Router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
+						router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
 					}, 500);
 				}
 			}
