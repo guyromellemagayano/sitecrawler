@@ -265,7 +265,9 @@ const SitesPagesStats = ({ width, sid }) => {
 							fontSize: "15px",
 							color: "#2A324B",
 							formatter: function (val) {
-								return val.config.series.slice(0, -1).reduce((a, b) => a + b);
+								return val.globals.seriesTotals.slice(0, -1).reduce((a, b) => {
+									return a + b;
+								}, 0);
 							}
 						}
 					}

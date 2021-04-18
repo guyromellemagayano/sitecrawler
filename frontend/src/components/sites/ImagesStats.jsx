@@ -161,15 +161,11 @@ const SitesImagesStats = ({ width, sid }) => {
 	});
 
 	useEffect(() => {
-		if (
-			stats &&
-			stats !== undefined &&
-			Object.keys(stats).length > 0 &&
-			images &&
-			images !== undefined &&
-			Object.keys(images).length > 0
-		) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setStatsData(stats);
+		}
+
+		if (images && images !== undefined && Object.keys(images).length > 0) {
 			setImagesData(images);
 		}
 	}, [stats, images]);
@@ -279,7 +275,9 @@ const SitesImagesStats = ({ width, sid }) => {
 							fontSize: "15px",
 							color: "#2A324B",
 							formatter: function (val) {
-								return val.config.series.slice(0, -1).reduce((a, b) => a + b);
+								return val.globals.seriesTotals.slice(0, -1).reduce((a, b) => {
+									return a + b;
+								}, 0);
 							}
 						}
 					}
