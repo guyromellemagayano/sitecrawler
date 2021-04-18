@@ -23,7 +23,6 @@ const InformationCircleSvg = loadable(() => import("src/components/svg/solid/Inf
 const SiteDangerStatus = loadable(() => import("src/components/status/SiteDangerStatus"));
 const SiteSuccessStatus = loadable(() => import("src/components/status/SiteSuccessStatus"));
 const SiteWarningStatus = loadable(() => import("src/components/status/SiteWarningStatus"));
-const SitesOverviewSkeleton = loadable(() => import("src/components/skeletons/SitesOverviewSkeleton"));
 
 const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlable, crawlFinished, user }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -280,7 +279,7 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 								crawlFinished ? (
 									<SiteSuccessStatus text="Finished" />
 								) : (
-									<SiteWarningStatus text="In Progress" />
+									<SiteWarningStatus text="In Process" />
 								)
 							) : (
 								<span tw="flex space-x-3">

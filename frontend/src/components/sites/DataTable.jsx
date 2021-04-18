@@ -579,7 +579,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
 						{componentReady ? (
 							<span tw="text-sm leading-5 text-gray-500">
-								{site.verified ? (crawlInProgress ? "In Progress" : "Recrawled") : null}
+								{site.verified ? (crawlInProgress ? DataTableLabel[19].label : DataTableLabel[20].label) : null}
 							</span>
 						) : (
 							<Skeleton duration={2} width={100} />
