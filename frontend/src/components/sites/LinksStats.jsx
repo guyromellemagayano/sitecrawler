@@ -87,7 +87,7 @@ const SitesLinksStatsDiv = styled.div`
 	}
 `;
 
-const SitesLinksStats = ({ width, sid, user }) => {
+const SitesLinksStats = ({ width, sid }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
@@ -235,12 +235,7 @@ const SitesLinksStats = ({ width, sid, user }) => {
 							fontSize: "15px",
 							color: "#2A324B",
 							formatter: function (val) {
-								let num_errs = 0;
-								for (let i = 0; i < parseInt(val.config.series.slice(0, -1)); i++) {
-									num_errs++;
-								}
-
-								return num_errs;
+								return val.config.series.slice(0, -1).reduce((a, b) => a + b);
 							}
 						}
 					}
