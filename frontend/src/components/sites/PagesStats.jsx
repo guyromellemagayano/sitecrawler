@@ -178,7 +178,7 @@ const SitesPagesStats = ({ width, sid }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.push("/site/[siteId]/pages", path);
+		router.replace("/site/[siteId]/pages", path);
 	};
 
 	const chartSeries = [

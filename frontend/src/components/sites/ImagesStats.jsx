@@ -193,7 +193,7 @@ const SitesImagesStats = ({ width, sid }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.push("/site/[siteId]/images", path);
+		router.replace("/site/[siteId]/images", path);
 	};
 
 	const chartSeries = [

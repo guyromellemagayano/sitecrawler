@@ -160,7 +160,7 @@ const SitesSeoStats = ({ width, sid }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.push("/site/[siteId]/seo", path);
+		router.replace("/site/[siteId]/seo", path);
 	};
 
 	const chartSeries = [
