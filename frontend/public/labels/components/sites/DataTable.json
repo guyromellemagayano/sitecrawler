@@ -55,5 +55,11 @@
 	},
 	{
 		"label": "Copy"
+	},
+	{
+		"label": "In Process"
+	},
+	{
+		"label": "Recrawled"
 	}
 ]
