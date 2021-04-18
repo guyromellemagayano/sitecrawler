@@ -190,7 +190,7 @@ const SiteOverview = ({ width, result }) => {
 										</ol>
 									</nav>
 									<div className="pt-4 m-auto">
-										<h4 className="text-2xl leading-6 font-medium text-gray-900">{OverviewLabel[0].label}</h4>
+										<h4 className="text-2xl leading-6 font-medium text-gray-900">{pageTitle}</h4>
 									</div>
 								</div>
 							) : (
@@ -238,11 +238,11 @@ const SiteOverview = ({ width, result }) => {
 											<>
 												<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
 													<SitesLinksStats sid={result.siteId} />
-													<SitesPagesStats sid={result.siteId} user={userData} />
+													<SitesPagesStats sid={result.siteId} />
 												</div>
 												<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-													<SitesImagesStats sid={result.siteId} user={userData} />
-													<SitesSeoStats sid={result.siteId} user={userData} />
+													<SitesImagesStats sid={result.siteId} />
+													<SitesSeoStats sid={result.siteId} />
 												</div>
 											</>
 										)}
