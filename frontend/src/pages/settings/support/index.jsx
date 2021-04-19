@@ -29,6 +29,7 @@ const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
@@ -289,7 +290,9 @@ const Support = ({ width, token }) => {
 				</div>
 			</section>
 		</Layout>
-	) : null;
+	) : (
+		<Loader />
+	);
 };
 
 Support.propTypes = {};

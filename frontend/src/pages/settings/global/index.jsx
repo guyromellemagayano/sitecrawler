@@ -27,6 +27,7 @@ const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const LargePageSizeSettings = loadable(() => import("src/components/settings/LargePageSize"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
@@ -146,7 +147,9 @@ const GlobalSettings = ({ width }) => {
 				</div>
 			</section>
 		</Layout>
-	) : null;
+	) : (
+		<Loader />
+	);
 };
 
 export default withResizeDetector(GlobalSettings);

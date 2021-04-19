@@ -39,6 +39,7 @@ import Layout from "src/components/Layout";
 const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const PaymentMethodForm = loadable(() => import("src/components/forms/PaymentMethodForm"));
@@ -551,7 +552,7 @@ const Subscriptions = ({ width }) => {
 
 					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-							<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12 min-h-screen">
+							<div tw="w-full mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12 min-h-screen">
 								<div tw="lg:col-span-3 xl:col-span-3 xl:pr-8">
 									<div className="max-w-full py-4 px-8">
 										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
@@ -751,7 +752,9 @@ const Subscriptions = ({ width }) => {
 				</div>
 			</section>
 		</Layout>
-	) : null;
+	) : (
+		<Loader />
+	);
 };
 
 Subscriptions.propTypes = {};

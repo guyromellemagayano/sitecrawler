@@ -145,7 +145,6 @@ const Login = () => {
 																}
 															}
 														} catch (error) {
-															// FIXME: add logging solution here
 															return null;
 														}
 													}}

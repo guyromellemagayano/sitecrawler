@@ -29,6 +29,7 @@ const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronR
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const ImageFilter = loadable(() => import("src/components/site/ImageFilter"));
 const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const ImageSorting = loadable(() => import("src/components/site/ImageSorting"));
 const ImageTable = loadable(() => import("src/components/site/ImageTable"));
 const ImageSvg = loadable(() => import("src/components/svg/outline/ImageSvg"));
@@ -674,7 +675,9 @@ const Images = ({ width, result }) => {
 				</div>
 			</ImagesDiv>
 		</Layout>
-	) : null;
+	) : (
+		<Loader />
+	);
 };
 
 Images.propTypes = {};
