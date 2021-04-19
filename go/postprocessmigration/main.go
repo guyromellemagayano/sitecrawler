@@ -87,10 +87,15 @@ func main() {
 					if err != nil {
 						return err
 					}
+					err = postprocessor.Flush(tx)
+					if err != nil {
+						return err
+					}
 					return nil
 				})
 			}, database.Where("scan_id = ?", scan.ID))
 			if err != nil {
+				log.Errorf("Processing error: %v", err)
 				return err
 			}
 			if links != 0 && total != 0 {
@@ -101,6 +106,7 @@ func main() {
 				return VerifyRelCounts(site, scan, l)
 			}, database.Where("scan_id = ?", scan.ID))
 			if err != nil {
+				log.Errorf("Verification error: %v", err)
 				return err
 			}
 			log.Infof("Done site: %v, scan: %v", site.ID, scan.ID)

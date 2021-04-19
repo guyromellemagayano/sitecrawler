@@ -31,11 +31,10 @@ const (
 )
 
 type ScanService struct {
-	Database           *database.Database
-	VerifyService      *common.VerifyService
-	LoadService        *common.LoadService
-	BackendService     *common.BackendService
-	PostprocessService *PostprocessService
+	Database       *database.Database
+	VerifyService  *common.VerifyService
+	LoadService    *common.LoadService
+	BackendService *common.BackendService
 }
 
 func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scanID int) error {
@@ -123,10 +122,11 @@ func (s *ScanService) Start(ctx context.Context, log *zap.SugaredLogger, scan *d
 		ScanService: s,
 		Scan:        scan,
 
-		tlsCache:  NewTlsCache(),
-		rateLimit: NewRateLimit(),
-		linkCache: linkCache,
-		queue:     fifoCache,
+		postprocessor: NewPostprocessorStack(),
+		tlsCache:      NewTlsCache(),
+		rateLimit:     NewRateLimit(),
+		linkCache:     linkCache,
+		queue:         fifoCache,
 	}
 	return scanner.Start(ctx, log)
 }
@@ -135,10 +135,11 @@ type scanner struct {
 	ScanService *ScanService
 	Scan        *database.CrawlScan
 
-	tlsCache  *TlsCache
-	rateLimit *RateLimit
-	linkCache *LinkCache
-	queue     Queue
+	tlsCache      *TlsCache
+	rateLimit     *RateLimit
+	linkCache     *LinkCache
+	queue         Queue
+	postprocessor Postprocessor
 }
 
 func (s *scanner) Start(ctx context.Context, log *zap.SugaredLogger) error {
@@ -189,6 +190,12 @@ func (s *scanner) Start(ctx context.Context, log *zap.SugaredLogger) error {
 				}
 			}
 
+			// Warning: if postprocessors cache commands, then this prevents parallel scanning
+			// This is not thread safe!
+			if err := s.postprocessor.Flush(db); err != nil {
+				return errors.Wrap(err, "could not flush postprocessors")
+			}
+
 			if err := s.queue.DeleteFront(db); err != nil {
 				return errors.Wrap(err, "could not delete queue cache entry")
 			}
@@ -223,7 +230,7 @@ func (s *scanner) scanURL(log *zap.SugaredLogger, db *database.Database, entry *
 	if err := db.Insert(link); err != nil {
 		return 0, errors.Wrap(err, "could not insert link")
 	}
-	if err := s.ScanService.PostprocessService.OnLink(db, link); err != nil {
+	if err := s.postprocessor.OnLink(db, link); err != nil {
 		return link.ID, errors.Wrap(err, "could not postprocess link")
 	}
 
@@ -535,7 +542,7 @@ func (s *scanner) saveRelation(db *database.Database, r QueueRelation, childLink
 			return errors.Wrap(err, "could not insert link link")
 		}
 		if inserted {
-			if err := s.ScanService.PostprocessService.OnLinkLink(db, linkLink); err != nil {
+			if err := s.postprocessor.OnLinkLink(db, linkLink); err != nil {
 				return errors.Wrap(err, "could not postprocess link link")
 			}
 		}
@@ -555,7 +562,7 @@ func (s *scanner) saveRelation(db *database.Database, r QueueRelation, childLink
 			return errors.Wrap(err, "could not insert link image")
 		}
 		if inserted {
-			if err := s.ScanService.PostprocessService.OnLinkImage(db, linkImage); err != nil {
+			if err := s.postprocessor.OnLinkImage(db, linkImage); err != nil {
 				return errors.Wrap(err, "could not postprocess link image")
 			}
 		}
@@ -570,7 +577,7 @@ func (s *scanner) saveRelation(db *database.Database, r QueueRelation, childLink
 			return errors.Wrap(err, "could not insert link script")
 		}
 		if inserted {
-			if err := s.ScanService.PostprocessService.OnLinkScript(db, linkScript); err != nil {
+			if err := s.postprocessor.OnLinkScript(db, linkScript); err != nil {
 				return errors.Wrap(err, "could not postprocess link script")
 			}
 		}
@@ -585,7 +592,7 @@ func (s *scanner) saveRelation(db *database.Database, r QueueRelation, childLink
 			return errors.Wrap(err, "could not insert link stylesheet")
 		}
 		if inserted {
-			if err := s.ScanService.PostprocessService.OnLinkStylesheet(db, linkStylesheet); err != nil {
+			if err := s.postprocessor.OnLinkStylesheet(db, linkStylesheet); err != nil {
 				return errors.Wrap(err, "could not postprocess link stylesheet")
 			}
 		}

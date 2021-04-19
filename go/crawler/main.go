@@ -27,24 +27,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	postprocessService := &PostprocessService{
-		Postprocessors: []Postprocessor{
-			&common.TlsPostprocessor{},
-			&common.SizePostprocessor{},
-			&common.OccurencesPostprocessor{},
-			&AltPostprocessor{},
-			&common.RelCountsPostprocessor{},
-		},
-	}
 	backendService := &common.BackendService{Env: env, Token: common.Secret(log, awsSession, env, "BACKEND_TOKEN", "")}
 	loadService := &common.LoadService{}
 	verifyService := &common.VerifyService{Database: db, LoadService: loadService}
 	scanService := &ScanService{
-		Database:           db,
-		VerifyService:      verifyService,
-		LoadService:        loadService,
-		BackendService:     backendService,
-		PostprocessService: postprocessService,
+		Database:       db,
+		VerifyService:  verifyService,
+		LoadService:    loadService,
+		BackendService: backendService,
 	}
 
 	ScanWorker(log, scanSqsQueue, scanService)

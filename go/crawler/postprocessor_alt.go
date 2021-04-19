@@ -33,3 +33,7 @@ func (p *AltPostprocessor) OnLinkScript(db *database.Database, l *database.Crawl
 func (p *AltPostprocessor) OnLinkStylesheet(db *database.Database, l *database.CrawlLinkStylesheet) error {
 	return nil
 }
+
+func (p *AltPostprocessor) Flush(db *database.Database) error {
+	return nil
+}
