@@ -36,6 +36,8 @@ class ScanDetailSerializer(serializers.ModelSerializer):
     num_pages_big = serializers.IntegerField(read_only=True)
     num_pages_tls_ok = serializers.IntegerField(read_only=True)
     num_pages_tls_non_ok = serializers.IntegerField(read_only=True)
+    num_images_tls_ok = serializers.IntegerField(read_only=True)
+    num_images_tls_non_ok = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Scan
@@ -65,5 +67,7 @@ class ScanDetailSerializer(serializers.ModelSerializer):
             "num_pages_big",
             "num_pages_tls_ok",
             "num_pages_tls_non_ok",
+            "num_images_tls_ok",
+            "num_images_tls_non_ok",
         ]
         read_only_fields = fields

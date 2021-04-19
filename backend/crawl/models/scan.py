@@ -46,6 +46,7 @@ class ScanQuerySet(QuerySet):
                 num_pages_big=SubQueryCount(pages.annotate_size().filter(size_total__gt=large_page_size_threshold))
             )
             .annotate(num_pages_tls_non_ok=SubQueryCount(pages.annotate_tls().exclude(tls_total=1)))
+            .annotate(num_images_tls_non_ok=SubQueryCount(images.exclude(tls_status=Link.TLS_OK)))
             .annotate(num_images_with_missing_alts=SubQueryCount(images.filter(cached_image_missing_alts__gt=0)))
         )
 
@@ -66,6 +67,7 @@ class Scan(models.Model):
     num_ok_images = CalculatedField("num_images", "-num_non_ok_images")
     num_ok_scripts = CalculatedField("num_scripts", "-num_non_ok_scripts")
     num_ok_stylesheets = CalculatedField("num_stylesheets", "-num_non_ok_stylesheets")
+    num_images_tls_ok = CalculatedField("num_images", "-num_images_tls_non_ok")
 
     class Meta:
         permissions = (("can_start_scan", "Can start manual scan"),)
