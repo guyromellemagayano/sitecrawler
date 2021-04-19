@@ -29,6 +29,7 @@ import Layout from "src/components/Layout";
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
 const PageTable = loadable(() => import("src/components/site/PageTable"));
 const PageFilter = loadable(() => import("src/components/site/PageFilter"));
@@ -679,7 +680,9 @@ const Pages = ({ width, result }) => {
 				</div>
 			</PagesDiv>
 		</Layout>
-	) : null;
+	) : (
+		<Loader />
+	);
 };
 
 Pages.propTypes = {};

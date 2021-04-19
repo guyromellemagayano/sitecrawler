@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 
 // NextJS
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // External
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -131,7 +131,7 @@ const Login = () => {
 																	setSuccessMsg((successMsg) => [...successMsg, LoginLabel[12].label]);
 
 																	setTimeout(() => {
-																		Router.push("/");
+																		router.replace("/");
 																	}, 1500);
 																}
 															} else {
@@ -145,7 +145,6 @@ const Login = () => {
 																}
 															}
 														} catch (error) {
-															// FIXME: add logging solution here
 															return null;
 														}
 													}}

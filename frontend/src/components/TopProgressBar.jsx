@@ -1,5 +1,5 @@
 // NextJS
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 
 // External
 import "nprogress/nprogress.css";

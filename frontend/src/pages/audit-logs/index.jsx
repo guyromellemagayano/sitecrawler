@@ -20,6 +20,7 @@ import Layout from "src/components/Layout";
 
 // Components
 const ComingSoon = loadable(() => import("src/components/layout/ComingSoon"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 
 const Reports = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -28,11 +29,16 @@ const Reports = ({ width }) => {
 	const [userData, setUserData] = useState([]);
 
 	const pageTitle = "Audit Logs";
-	const siteApiEndpoint = "/api/site/?ordering=name";
+	const sitesApiEndpoint = "/api/site/?ordering=name";
 
-	const { user: user, userError: userError } = useUser({ refreshInterval: 1000 });
-	const { site: site, siteError: siteError } = useSite({
-		endpoint: siteApiEndpoint,
+	const { user: user } = useUser({
+		redirectIfFound: false,
+		redirectTo: "/login",
+		refreshInterval: 1000
+	});
+
+	const { site: site } = useSite({
+		endpoint: sitesApiEndpoint,
 		refreshInterval: 1000
 	});
 
@@ -52,14 +58,26 @@ const Reports = ({ width }) => {
 			setUserData(user);
 			setSiteData(site);
 		}
-
-		if (userError || siteError) {
-			// TODO: add generic alert here
-			console.log("ERROR: " + userError ? userError : siteError);
-		}
 	}, [user, site]);
 
-	return (
+	useEffect(() => {
+		if (
+			userData &&
+			userData !== undefined &&
+			userData !== [] &&
+			Object.keys(userData).length > 0 &&
+			siteData &&
+			siteData !== undefined &&
+			siteData !== [] &&
+			Object.keys(siteData).length > 0
+		) {
+			setTimeout(() => {
+				setPageLoaded(true);
+			}, 500);
+		}
+	}, [userData, siteData]);
+
+	return pageLoaded ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
@@ -75,6 +93,8 @@ const Reports = ({ width }) => {
 				/>
 			</section>
 		</Layout>
+	) : (
+		<Loader />
 	);
 };
 

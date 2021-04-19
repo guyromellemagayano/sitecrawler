@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // NextJS
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 
 // External
 import { Transition } from "@headlessui/react";
@@ -10,9 +10,6 @@ import loadable from "@loadable/component";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 import PropTypes from "prop-types";
-
-// JSON
-import SettingsLabel from "public/labels/pages/site/settings.json";
 
 // Hooks
 import useDeleteMethod from "src/hooks/useDeleteMethod";

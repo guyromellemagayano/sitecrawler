@@ -30,13 +30,13 @@ const useUser = ({ redirectIfFound = false, redirectTo = "", refreshInterval = 0
 	useEffect(() => {
 		if (userError && !redirectIfFound) {
 			if (userError.status === 403) {
-				router.push({ pathname: redirectTo });
+				router.replace({ pathname: redirectTo });
 			}
 		}
 
 		if (user && user !== undefined && Object.keys(user).length > 0 && redirectIfFound) {
 			if ("key" in user) {
-				router.push(redirectTo);
+				router.replace(redirectTo);
 			}
 		} else {
 			return;

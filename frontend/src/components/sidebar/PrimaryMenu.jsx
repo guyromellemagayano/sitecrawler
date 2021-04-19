@@ -55,7 +55,7 @@ const PrimaryMenu = ({ user, site }) => {
 					setSelectedSite(siteData.results[i].name);
 
 					setTimeout(() => {
-						router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
+						router.replace(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
 					}, 500);
 				}
 			}

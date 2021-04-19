@@ -28,11 +28,11 @@ import Layout from "src/components/Layout";
 const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
 const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
-const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
 const PageDetailDiv = styled.div`
@@ -102,8 +102,6 @@ const PageDetail = ({ width, result }) => {
 		scanObjId: scanObjId,
 		linkId: result.pageId
 	});
-
-	console.log(result);
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint,
@@ -403,7 +401,9 @@ const PageDetail = ({ width, result }) => {
 				</div>
 			</PageDetailDiv>
 		</Layout>
-	) : null;
+	) : (
+		<Loader />
+	);
 };
 
 PageDetail.propTypes = {};

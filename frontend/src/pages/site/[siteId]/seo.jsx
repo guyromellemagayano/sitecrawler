@@ -27,14 +27,15 @@ import Layout from "src/components/Layout";
 // Components
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
-const SeoFilter = loadable(() => import("src/components/site/SeoFilter"));
 const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
-const SeoSorting = loadable(() => import("src/components/site/SeoSorting"));
-const SeoTable = loadable(() => import("src/components/site/SeoTable"));
-const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const MyPagination = loadable(() => import("src/components/sites/Pagination"));
+const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
+const SeoFilter = loadable(() => import("src/components/site/SeoFilter"));
+const SeoSorting = loadable(() => import("src/components/site/SeoSorting"));
+const SeoTable = loadable(() => import("src/components/site/SeoTable"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
 // Helpers
@@ -1043,7 +1044,9 @@ const Seo = ({ width, result }) => {
 				</div>
 			</SeoDiv>
 		</Layout>
-	) : null;
+	) : (
+		<Loader />
+	);
 };
 
 Seo.propTypes = {};

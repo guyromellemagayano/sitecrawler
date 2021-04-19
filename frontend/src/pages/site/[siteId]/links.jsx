@@ -33,6 +33,7 @@ const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
 const LinkSorting = loadable(() => import("src/components/site/LinkSorting"));
 const LinkTable = loadable(() => import("src/components/site/LinkTable"));
 const LinksSvg = loadable(() => import("src/components/svg/outline/LinksSvg"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
@@ -779,7 +780,9 @@ const Links = ({ width, result }) => {
 				</div>
 			</LinksDiv>
 		</Layout>
-	) : null;
+	) : (
+		<Loader />
+	);
 };
 
 Links.propTypes = {};

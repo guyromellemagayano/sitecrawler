@@ -17,7 +17,7 @@ const SemiAnnualPlans = ({
 	setUpdatedPlanId,
 	setUpdatedPlanName,
 	showPaymentFormModal,
-	setShowPaymentFormModal,
+	setShowPaymentFormModal
 }) => {
 	return data.group.name === "Pro" ? (
 		<div
@@ -74,7 +74,7 @@ const SemiAnnualPlans = ({
 										tw`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white`,
 										!currentPaymentMethod || loadingProSemiAnnually
 											? tw`opacity-50 cursor-not-allowed`
-											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
 									disabled={!currentPaymentMethod || loadingProSemiAnnually ? "disabled" : ""}
 									onClick={() => {
@@ -128,7 +128,11 @@ const SemiAnnualPlans = ({
 								);
 							})}
 						</ul>
+
 						<div tw="mt-8">
+							<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
+								<span tw="px-2 py-5 text-gray-600">Hello World!</span>
+							</div>
 							<div css={[tw`rounded-lg`, data.id === currentSubscription.id ? tw`shadow-none` : tw`shadow-sm`]}>
 								{data.id === currentSubscription.id ? (
 									<button tw="block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed focus:outline-none">
@@ -140,7 +144,7 @@ const SemiAnnualPlans = ({
 											tw`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white`,
 											!currentPaymentMethod || loadingAgencySemiAnnually
 												? tw`opacity-50 cursor-not-allowed`
-												: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+												: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 										]}
 										disabled={!currentPaymentMethod || loadingAgencySemiAnnually ? "disabled" : ""}
 										onClick={() => {

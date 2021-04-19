@@ -13,7 +13,7 @@ import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // JSON
-import SettingsLabel from "public/labels/pages/site/settings.json";
+import SettingsLabel from "public/labels/pages/settings/settings.json";
 
 // Hooks
 import { useSite, useSiteId } from "src/hooks/useSite";
@@ -25,14 +25,15 @@ import Layout from "src/components/Layout";
 // Components
 const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
+const DeleteSiteSettings = loadable(() => import("src/components/settings/DeleteSite"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
+const LargePageSizeSettings = loadable(() => import("src/components/settings/LargePageSize"));
+const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const SiteInformationSettings = loadable(() => import("src/components/settings/SiteInformation"));
-const DeleteSiteSettings = loadable(() => import("src/components/settings/DeleteSite"));
-const LargePageSizeSettings = loadable(() => import("src/components/settings/LargePageSize"));
 
 const SiteSettings = ({ width, result }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -87,7 +88,7 @@ const SiteSettings = ({ width, result }) => {
 		}
 	}, [user, site, siteId]);
 
-	return (
+	return pageLoaded ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
@@ -164,6 +165,8 @@ const SiteSettings = ({ width, result }) => {
 				</div>
 			</section>
 		</Layout>
+	) : (
+		<Loader />
 	);
 };
 

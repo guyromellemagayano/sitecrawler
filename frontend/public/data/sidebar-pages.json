@@ -17,7 +17,7 @@
 	{
 		"label": "Help and Support",
 		"slug": "help-support",
-		"url": "/support"
+		"url": "/settings/support"
 	},
 	{
 		"label": "Logout",
