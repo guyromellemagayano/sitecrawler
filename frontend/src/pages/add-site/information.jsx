@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 // NextJS
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // External
 import { Formik } from "formik";
@@ -236,6 +236,7 @@ const Information = ({ width, sid, edit }) => {
 														if (sid && sid !== undefined && edit) {
 															try {
 																const response = await useGetMethod("/api/site/" + router.query.sid + "/");
+																const data = data;
 
 																if (Math.floor(response.status / 200) === 1) {
 																	const body = {
@@ -250,7 +251,7 @@ const Information = ({ width, sid, edit }) => {
 																	if (Math.floor(siteResponse.status / 200) === 1) {
 																		setSubmitting(false);
 
-																		Router.push({
+																		router.replace({
 																			pathname: verifyUrlLink,
 																			query: {
 																				sid: siteResponse.data.id,
@@ -273,8 +274,8 @@ const Information = ({ width, sid, edit }) => {
 																	}
 																} else {
 																	// FIXME: Error handling for response
-																	if (response.data) {
-																		console.log("ERROR: " + response.data);
+																	if (data) {
+																		console.log("ERROR: " + data);
 																	} else {
 																		setSubmitting(false);
 																		resetForm({ values: "" });
@@ -293,9 +294,10 @@ const Information = ({ width, sid, edit }) => {
 
 															try {
 																const response = await useGetMethod(siteApiEndpoint);
+																const data = await response.data;
 
 																if (Math.floor(response.status / 200) === 1) {
-																	const siteResult = response.data.results.find((site) => site.url === body.url);
+																	const siteResult = data.results.find((site) => site.url === body.url);
 
 																	if (siteResult !== undefined) {
 																		setErrorMsg(InformationLabel[11].label);
@@ -307,7 +309,7 @@ const Information = ({ width, sid, edit }) => {
 																			setSubmitting(false);
 																			resetForm({ values: "" });
 
-																			Router.push({
+																			router.replace({
 																				pathname: verifyUrlLink,
 																				query: {
 																					sid: siteResponse.data.id,
@@ -332,8 +334,8 @@ const Information = ({ width, sid, edit }) => {
 																	}
 																} else {
 																	// FIXME: Error handling for response
-																	if (response.data) {
-																		console.log("ERROR: " + response.data);
+																	if (data) {
+																		console.log("ERROR: " + data);
 																	} else {
 																		setSubmitting(false);
 																		resetForm({ values: "" });

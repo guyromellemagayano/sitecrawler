@@ -303,14 +303,14 @@ const DataTable = ({ site, disableLocalTime }) => {
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<h3 tw="text-lg leading-6 font-medium text-gray-800" id="modal-headline">
-										{DataTableLabel[3].label}: {statsData.name} (
+										{DataTableLabel[3].label}: {site.name} (
 										<a
-											href={statsData.url}
+											href={site.url}
 											target="_blank"
-											title={statsData.url}
+											title={site.url}
 											tw="cursor-pointer break-all text-base leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
 										>
-											{statsData.url}
+											{site.url}
 										</a>
 										)
 									</h3>
@@ -361,7 +361,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 									</div>
 
 									{errorMsg && (
-										<div tw="block px-3 my-5">
+										<div tw="block my-5">
 											<div tw="flex justify-center sm:justify-start">
 												<div>
 													<h3 tw="text-sm leading-5 font-medium text-red-800 break-words">{errorMsg}</h3>
@@ -371,7 +371,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 									)}
 
 									{successMsg && (
-										<div tw="block p-2 my-5">
+										<div tw="block my-5">
 											<div tw="flex justify-center sm:justify-start">
 												<div>
 													<h3 tw="text-sm leading-5 font-medium text-green-800 break-words">{successMsg}</h3>
@@ -395,10 +395,10 @@ const DataTable = ({ site, disableLocalTime }) => {
 											type="submit"
 											disabled={disableSiteVerify}
 											css={[
-												tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-indigo-600`,
+												tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600`,
 												disableSiteVerify
 													? tw`opacity-50 cursor-not-allowed`
-													: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:bg-indigo-700`
+													: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700`
 											]}
 										>
 											{disableSiteVerify ? DataTableLabel[12].label : DataTableLabel[0].label}

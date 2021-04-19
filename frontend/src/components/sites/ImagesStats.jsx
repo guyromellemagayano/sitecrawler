@@ -89,7 +89,6 @@ const SitesImagesStatsDiv = styled.div`
 
 const SitesImagesStats = ({ width, sid }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [imagesData, setImagesData] = useState([]);
 	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [statsData, setStatsData] = useState([]);
@@ -154,36 +153,19 @@ const SitesImagesStats = ({ width, sid }) => {
 		}
 	}, [statsData]);
 
-	const { images: images } = useImages({
-		endpoint: imagesApiEndpoint,
-		querySid: sid,
-		scanObjId: scanObjId.id
-	});
-
 	useEffect(() => {
 		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setStatsData(stats);
 		}
-
-		if (images && images !== undefined && Object.keys(images).length > 0) {
-			setImagesData(images);
-		}
-	}, [stats, images]);
+	}, [stats]);
 
 	useEffect(() => {
-		if (
-			statsData &&
-			statsData !== undefined &&
-			Object.keys(statsData).length > 0 &&
-			imagesData &&
-			imagesData !== undefined &&
-			Object.keys(imagesData).length > 0
-		) {
+		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [statsData, imagesData]);
+	}, [statsData]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/images`;
@@ -204,12 +186,12 @@ const SitesImagesStats = ({ width, sid }) => {
 		statsData.num_non_ok_images !== undefined
 			? statsData.num_non_ok_images
 			: 0,
-		imagesData &&
-		imagesData !== undefined &&
-		imagesData !== [] &&
-		Object.keys(imagesData).length > 0 &&
-		imagesData.count !== undefined
-			? imagesData.count
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_images_tls_non_ok !== undefined
+			? statsData.num_images_tls_non_ok
 			: 0,
 		statsData &&
 		statsData !== undefined &&
