@@ -64,7 +64,7 @@ var Columns = struct {
 		Group string
 	}
 	CrawlLink struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts, CachedNumImages, CachedNumLinks, CachedNumNonOkImages, CachedNumNonOkLinks, CachedNumNonOkScripts, CachedNumNonOkStylesheets, CachedNumOkImages, CachedNumOkLinks, CachedNumOkScripts, CachedNumOkStylesheets, CachedNumScripts, CachedNumStylesheets string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts, CachedNumImages, CachedNumLinks, CachedNumNonOkImages, CachedNumNonOkLinks, CachedNumNonOkScripts, CachedNumNonOkStylesheets, CachedNumOkImages, CachedNumOkLinks, CachedNumOkScripts, CachedNumOkStylesheets, CachedNumScripts, CachedNumStylesheets string
 
 		Scan, Tls string
 	}
@@ -323,7 +323,7 @@ var Columns = struct {
 		Group: "Group",
 	},
 	CrawlLink: struct {
-		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedIsImage, CachedIsLink, CachedIsScript, CachedIsStylesheet, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts, CachedNumImages, CachedNumLinks, CachedNumNonOkImages, CachedNumNonOkLinks, CachedNumNonOkScripts, CachedNumNonOkStylesheets, CachedNumOkImages, CachedNumOkLinks, CachedNumOkScripts, CachedNumOkStylesheets, CachedNumScripts, CachedNumStylesheets string
+		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts, CachedNumImages, CachedNumLinks, CachedNumNonOkImages, CachedNumNonOkLinks, CachedNumNonOkScripts, CachedNumNonOkStylesheets, CachedNumOkImages, CachedNumOkLinks, CachedNumOkScripts, CachedNumOkStylesheets, CachedNumScripts, CachedNumStylesheets string
 
 		Scan, Tls string
 	}{
@@ -353,10 +353,6 @@ var Columns = struct {
 		CachedSizeScripts:          "cached_size_scripts",
 		CachedSizeStylesheets:      "cached_size_stylesheets",
 		CachedSizeTotal:            "cached_size_total",
-		CachedIsImage:              "cached_is_image",
-		CachedIsLink:               "cached_is_link",
-		CachedIsScript:             "cached_is_script",
-		CachedIsStylesheet:         "cached_is_stylesheet",
 		CachedImageOccurences:      "cached_image_occurences",
 		CachedLinkOccurences:       "cached_link_occurences",
 		CachedScriptOccurences:     "cached_script_occurences",
@@ -1199,10 +1195,6 @@ type CrawlLink struct {
 	CachedSizeScripts          *int      `pg:"cached_size_scripts"`
 	CachedSizeStylesheets      *int      `pg:"cached_size_stylesheets"`
 	CachedSizeTotal            *int      `pg:"cached_size_total"`
-	CachedIsImage              bool      `pg:"cached_is_image,use_zero"`
-	CachedIsLink               bool      `pg:"cached_is_link,use_zero"`
-	CachedIsScript             bool      `pg:"cached_is_script,use_zero"`
-	CachedIsStylesheet         bool      `pg:"cached_is_stylesheet,use_zero"`
 	CachedImageOccurences      *int      `pg:"cached_image_occurences"`
 	CachedLinkOccurences       *int      `pg:"cached_link_occurences"`
 	CachedScriptOccurences     *int      `pg:"cached_script_occurences"`
