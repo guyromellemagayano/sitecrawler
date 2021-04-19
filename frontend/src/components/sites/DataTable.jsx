@@ -383,30 +383,30 @@ const DataTable = ({ site, disableLocalTime }) => {
 							</div>
 
 							<div tw="w-full my-3 sm:mt-4 sm:inline-flex sm:flex-row-reverse">
-								<span tw="mt-3 sm:ml-3 flex w-full sm:mt-0 sm:w-auto">
-									<form onSubmit={handleSiteVerification} tw="w-full">
-										<input
-											type="hidden"
-											value={siteVerifyId}
-											name="site_verify_id"
-											onChange={handleHiddenInputChange}
-										/>
-										<button
-											type="submit"
-											disabled={disableSiteVerify}
-											css={[
-												tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600`,
-												disableSiteVerify
-													? tw`opacity-50 cursor-not-allowed`
-													: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700`
-											]}
-										>
-											{disableSiteVerify ? DataTableLabel[12].label : DataTableLabel[0].label}
-										</button>
-									</form>
-								</span>
-
-								{enableNextStep ? (
+								{!enableNextStep ? (
+									<span tw="mt-3 sm:ml-3 flex w-full sm:mt-0 sm:w-auto">
+										<form onSubmit={handleSiteVerification} tw="w-full">
+											<input
+												type="hidden"
+												value={siteVerifyId}
+												name="site_verify_id"
+												onChange={handleHiddenInputChange}
+											/>
+											<button
+												type="submit"
+												disabled={disableSiteVerify}
+												css={[
+													tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600`,
+													disableSiteVerify
+														? tw`opacity-50 cursor-not-allowed`
+														: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700`
+												]}
+											>
+												{disableSiteVerify ? DataTableLabel[12].label : DataTableLabel[0].label}
+											</button>
+										</form>
+									</span>
+								) : (
 									<span tw="mt-3 sm:ml-3 flex w-full sm:mt-0 sm:w-auto">
 										<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
 											<a tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
@@ -414,7 +414,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 											</a>
 										</Link>
 									</span>
-								) : null}
+								)}
 
 								<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
 									<button
