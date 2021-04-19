@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // JSON
-import GlobalLabel from "public/labels/pages/global.json";
+import GlobalLabel from "public/labels/pages/settings/global.json";
 
 // Hooks
 import usePatchMethod from "src/hooks/usePatchMethod";
