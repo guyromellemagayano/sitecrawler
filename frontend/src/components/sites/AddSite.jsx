@@ -13,9 +13,9 @@ import tw from "twin.macro";
 import AddSiteLabel from "public/labels/components/sites/AddSite.json";
 
 // Components
-const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
 const AddSiteErrorModal = loadable(() => import("src/components/modals/AddSiteErrorModal"));
 const AddSiteSkeleton = loadable(() => import("src/components/skeletons/AddSiteSkeleton"));
+const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
 
 const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [siteLimitCounter, setSiteLimitCounter] = useState(0);
@@ -24,10 +24,6 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [componentReady, setComponentReady] = useState(false);
 
 	const informationPageLink = "/add-site/information";
-
-	const handleMaxSiteLimit = () => {
-		setShowErrorModal(!showErrorModal);
-	};
 
 	useEffect(() => {
 		if (
@@ -76,14 +72,14 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 								</div>
 							</div>
 						</div>
-						<div tw="ml-4 flex items-center lg:ml-6">
+						<div tw="ml-4 flex items-center lg:ml-6 space-x-2">
 							{siteLimitCounter === maxSiteLimit || siteLimitCounter > maxSiteLimit ? (
 								<button
 									type="button"
-									tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700"
-									onClick={handleMaxSiteLimit}
+									tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"
+									onClick={() => setShowErrorModal(!showErrorModal)}
 								>
-									{AddSiteLabel[0].label}
+									{AddSiteLabel[1].label}
 								</button>
 							) : (
 								<Link href={informationPageLink} passHref>
