@@ -66,11 +66,15 @@ class LinkQuerySet(QuerySet):
         )
 
     def links(self):
-        return self.filter(cached_is_link=True).annotate(occurences=F("cached_link_occurences")).order_by("-status")
+        return (
+            self.filter(cached_link_occurences__gt=0)
+            .annotate(occurences=F("cached_link_occurences"))
+            .order_by("-status")
+        )
 
     def images(self):
         return (
-            self.filter(cached_is_image=True)
+            self.filter(cached_image_occurences__gt=0)
             .annotate(
                 occurences=F("cached_image_occurences"),
                 missing_alts=Coalesce(F("cached_image_missing_alts"), 0),
@@ -79,11 +83,15 @@ class LinkQuerySet(QuerySet):
         )
 
     def scripts(self):
-        return self.filter(cached_is_script=True).annotate(occurences=F("cached_script_occurences")).order_by("-status")
+        return (
+            self.filter(cached_script_occurences__gt=0)
+            .annotate(occurences=F("cached_script_occurences"))
+            .order_by("-status")
+        )
 
     def stylesheets(self):
         return (
-            self.filter(cached_is_stylesheet=True)
+            self.filter(cached_stylesheet_occurences__gt=0)
             .annotate(occurences=F("cached_stylesheet_occurences"))
             .order_by("-status")
         )

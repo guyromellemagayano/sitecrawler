@@ -31,7 +31,6 @@ func main() {
 		Postprocessors: []Postprocessor{
 			&common.TlsPostprocessor{},
 			&common.SizePostprocessor{},
-			&common.IsTypePostprocessor{},
 			&common.OccurencesPostprocessor{},
 			&AltPostprocessor{},
 			&common.RelCountsPostprocessor{},
