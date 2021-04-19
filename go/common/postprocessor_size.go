@@ -55,3 +55,7 @@ func (p *SizePostprocessor) handleChild(db *database.Database, fromID, toID int,
 
 	return nil
 }
+
+func (p *SizePostprocessor) Flush(db *database.Database) error {
+	return nil
+}

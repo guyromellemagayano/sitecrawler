@@ -68,3 +68,7 @@ func (p *RelCountsPostprocessor) handleChild(db *database.Database, fromID, toID
 
 	return nil
 }
+
+func (p *RelCountsPostprocessor) Flush(db *database.Database) error {
+	return nil
+}

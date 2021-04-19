@@ -72,3 +72,7 @@ func (p *TlsPostprocessor) handleChild(db *database.Database, fromID, toID int, 
 
 	return nil
 }
+
+func (p *TlsPostprocessor) Flush(db *database.Database) error {
+	return nil
+}
