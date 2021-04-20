@@ -231,22 +231,18 @@ const SiteOverview = ({ width, result }) => {
 										user={userData}
 									/>
 
-									{userData &&
-										userData !== undefined &&
-										Object.keys(userData).length > 0 &&
-										userData.permissions.includes("can_see_pages") &&
-										userData.permissions.includes("can_see_images") && (
-											<>
-												<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-													<SitesLinksStats sid={result.siteId} />
-													<SitesPagesStats sid={result.siteId} />
-												</div>
-												<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-													<SitesImagesStats sid={result.siteId} />
-													<SitesSeoStats sid={result.siteId} />
-												</div>
-											</>
-										)}
+									{userData && userData !== undefined && Object.keys(userData).length > 0 && (
+										<>
+											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+												<SitesLinksStats sid={result.siteId} />
+												<SitesPagesStats sid={result.siteId} />
+											</div>
+											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+												<SitesImagesStats sid={result.siteId} />
+												<SitesSeoStats sid={result.siteId} />
+											</div>
+										</>
+									)}
 								</div>
 							</div>
 
