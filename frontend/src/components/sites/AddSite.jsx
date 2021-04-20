@@ -79,7 +79,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 									tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"
 									onClick={() => setShowErrorModal(!showErrorModal)}
 								>
-									{AddSiteLabel[1].label}
+									{AddSiteLabel[0].label}
 								</button>
 							) : (
 								<Link href={informationPageLink} passHref>
