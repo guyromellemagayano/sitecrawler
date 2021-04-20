@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common/database"
 	"github.com/pkg/errors"
 )
@@ -84,7 +82,6 @@ func (q *QueueDb) GetRelations(db *database.Database, url string) ([]QueueRelati
 }
 
 func (q *QueueDb) Add(db *database.Database, entry *QueueEntry) error {
-	log.Printf("Add: %v", entry.Url)
 	cfe := &database.CrawlFifoentry{
 		ScanID: q.scanID,
 		Url:    entry.Url,
