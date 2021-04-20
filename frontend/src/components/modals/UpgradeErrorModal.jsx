@@ -10,8 +10,13 @@ import tw from "twin.macro";
 // Components
 const ExclamationSvg = loadable(() => import("src/components/svg/solid/ExclamationSvg"));
 
-const RecrawlSiteErrorModal = ({ show, setShowErrorModal, label }) => {
+const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) => {
 	const settingsSubscriptionsLink = "/settings/subscriptions";
+	const defaultModalHeadlineLabel = "Site Feature Not Available";
+	const defaultModalDescriptionLabel =
+		"The site feature you are currently using is not available on your current plan. Please subscribe to our Pro or Agency plans so you can use them at any time.";
+	const defaultModalCancelLabel = "Cancel";
+	const defaultModalUpgradePlanLabel = "Upgrade Plan";
 
 	return (
 		<Transition
@@ -53,10 +58,18 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, label }) => {
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-								{label[7].label}
+								{component === "Overview"
+									? label[7].label
+									: component === "AddSite"
+									? label[1].label
+									: component === "LinkOptions"
+									? label[6].label
+									: defaultModalHeadlineLabel}
 							</h3>
 							<div tw="mt-2">
-								<p tw="text-sm leading-5 text-gray-500">{label[8].label}</p>
+								<p tw="text-sm leading-5 text-gray-500">
+									{component === "Overview" ? label[8].label : defaultModalDescriptionLabel}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -64,7 +77,7 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, label }) => {
 						<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
 							<Link href={settingsSubscriptionsLink} passHref>
 								<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-									{label[10].label}
+									{defaultModalUpgradePlanLabel}
 								</a>
 							</Link>
 						</span>
@@ -74,7 +87,7 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, label }) => {
 								tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 								onClick={() => setTimeout(() => setShowErrorModal(!show), 150)}
 							>
-								{label[9].label}
+								{defaultModalCancelLabel}
 							</button>
 						</span>
 					</div>

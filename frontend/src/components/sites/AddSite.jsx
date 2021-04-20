@@ -13,7 +13,7 @@ import tw from "twin.macro";
 import AddSiteLabel from "public/labels/components/sites/AddSite.json";
 
 // Components
-const AddSiteErrorModal = loadable(() => import("src/components/modals/AddSiteErrorModal"));
+const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 const AddSiteSkeleton = loadable(() => import("src/components/skeletons/AddSiteSkeleton"));
 const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
 
@@ -45,7 +45,12 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 
 	return componentReady ? (
 		<>
-			<AddSiteErrorModal show={showErrorModal} setShowErrorModal={setShowErrorModal} label={AddSiteLabel} />
+			<UpgradeErrorModal
+				show={showErrorModal}
+				setShowErrorModal={setShowErrorModal}
+				component="AddSite"
+				label={AddSiteLabel}
+			/>
 
 			<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 				<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
@@ -53,7 +58,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 						<div tw="flex-1 flex">
 							<div tw="w-full flex lg:ml-0">
 								<label htmlFor="searchSites" tw="sr-only">
-									{AddSiteLabel[5].label}
+									{AddSiteLabel[3].label}
 								</label>
 								<div tw="relative w-full text-gray-400 focus-within:text-gray-600">
 									<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
@@ -64,7 +69,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 										name="search-sites"
 										id="searchSites"
 										tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-										placeholder={AddSiteLabel[5].label}
+										placeholder={AddSiteLabel[3].label}
 										onKeyUp={onSearchEvent}
 										defaultValue={searchKey}
 										autoFocus

@@ -27,12 +27,6 @@
 		"label": "You cannot recrawl any websites you added in your current plan. Upgrade today to enable on-demand site recrawling"
 	},
 	{
-		"label": "Cancel"
-	},
-	{
-		"label": "Upgrade Plan"
-	},
-	{
 		"label": "Site Crawling In Process..."
 	}
 ]
