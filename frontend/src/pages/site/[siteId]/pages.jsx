@@ -651,10 +651,18 @@ const Pages = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{pagesData.results &&
+												{userData &&
+													userData !== undefined &&
+													userData !== [] &&
+													Object.keys(userData).length > 0 &&
+													pagesData &&
+													pagesData !== undefined &&
+													pagesData !== [] &&
+													Object.keys(pagesData).length > 0 &&
+													pagesData.results &&
 													pagesData.results.map((val, key) => (
 														<>
-															<PageTable key={key} val={val} />
+															<PageTable key={key} val={val} user={userData} />
 														</>
 													))}
 											</table>

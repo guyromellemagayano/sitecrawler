@@ -1020,7 +1020,16 @@ const Seo = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{pagesData.results && pagesData.results.map((val, key) => <SeoTable key={key} val={val} />)}
+												{userData &&
+													userData !== undefined &&
+													userData !== [] &&
+													Object.keys(userData).length > 0 &&
+													pagesData &&
+													pagesData !== undefined &&
+													pagesData !== [] &&
+													Object.keys(pagesData).length > 0 &&
+													pagesData.results &&
+													pagesData.results.map((val, key) => <SeoTable key={key} val={val} />)}
 											</table>
 										</div>
 									</div>

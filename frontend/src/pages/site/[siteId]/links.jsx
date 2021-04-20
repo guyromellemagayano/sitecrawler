@@ -756,7 +756,16 @@ const Links = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{linksData.results && linksData.results.map((val, key) => <LinkTable key={key} val={val} />)}
+												{userData &&
+													userData !== undefined &&
+													userData !== [] &&
+													Object.keys(userData).length > 0 &&
+													linksData &&
+													linksData !== undefined &&
+													linksData !== [] &&
+													Object.keys(linksData).length > 0 &&
+													linksData.results &&
+													linksData.results.map((val, key) => <LinkTable key={key} val={val} user={userData} />)}
 											</table>
 										</div>
 									</div>
