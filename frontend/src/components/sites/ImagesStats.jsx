@@ -19,7 +19,7 @@ import ImagesStatsLabel from "public/labels/components/sites/ImagesStats.json";
 import { imagesChartContents } from "src/enum/chartContents";
 
 // Hooks
-import { useScan, useStats, useImages } from "src/hooks/useSite";
+import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));

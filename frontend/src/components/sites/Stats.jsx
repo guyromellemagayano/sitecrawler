@@ -25,11 +25,6 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 	const [scanObjId, setScanObjId] = useState(0);
 	const [statsData, setStatsData] = useState([]);
 
-	// FIXME: if user.permissions.includes("can_see_images") > apply images
-	// add code here
-	// ---------------------
-	// ---------------------
-
 	// const setLinkErrors = (type) => {
 	//   let valLength = 0;
 

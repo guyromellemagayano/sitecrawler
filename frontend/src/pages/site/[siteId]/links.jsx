@@ -601,7 +601,7 @@ const Links = ({ width, result }) => {
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
+					<div tw="relative flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
 						<LinkOptions
 							sid={result.siteId}
@@ -756,7 +756,16 @@ const Links = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{linksData.results && linksData.results.map((val, key) => <LinkTable key={key} val={val} />)}
+												{userData &&
+													userData !== undefined &&
+													userData !== [] &&
+													Object.keys(userData).length > 0 &&
+													linksData &&
+													linksData !== undefined &&
+													linksData !== [] &&
+													Object.keys(linksData).length > 0 &&
+													linksData.results &&
+													linksData.results.map((val, key) => <LinkTable key={key} val={val} user={userData} />)}
 											</table>
 										</div>
 									</div>

@@ -1,7 +1,7 @@
 [
 	{
-		"label": "View Profile",
-		"slug": "view-profile",
+		"label": "Profile Settings",
+		"slug": "profile-settings",
 		"url": "/settings/profile"
 	},
 	{

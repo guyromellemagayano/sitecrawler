@@ -545,7 +545,7 @@ const Images = ({ width, result }) => {
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
+					<div tw="relative flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
 						<LinkOptions
 							sid={result.siteId}
@@ -646,10 +646,18 @@ const Images = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{imagesData.results &&
+												{userData &&
+													userData !== undefined &&
+													userData !== [] &&
+													Object.keys(userData).length > 0 &&
+													imagesData &&
+													imagesData !== undefined &&
+													imagesData !== [] &&
+													Object.keys(imagesData).length > 0 &&
+													imagesData.results &&
 													imagesData.results.map((val, key) => (
 														<>
-															<ImageTable key={key} val={val} />
+															<ImageTable key={key} val={val} user={userData} />
 														</>
 													))}
 											</table>

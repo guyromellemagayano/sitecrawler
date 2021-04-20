@@ -918,7 +918,7 @@ const Seo = ({ width, result }) => {
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
+					<div tw="relative flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
 						<LinkOptions
 							sid={result.siteId}
@@ -1020,7 +1020,16 @@ const Seo = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{pagesData.results && pagesData.results.map((val, key) => <SeoTable key={key} val={val} />)}
+												{userData &&
+													userData !== undefined &&
+													userData !== [] &&
+													Object.keys(userData).length > 0 &&
+													pagesData &&
+													pagesData !== undefined &&
+													pagesData !== [] &&
+													Object.keys(pagesData).length > 0 &&
+													pagesData.results &&
+													pagesData.results.map((val, key) => <SeoTable key={key} val={val} />)}
 											</table>
 										</div>
 									</div>
