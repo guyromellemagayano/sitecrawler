@@ -17,7 +17,7 @@ const SeoFilter = ({
 	};
 
 	return (
-		<div tw="sticky z-50 top-0 pb-4 bg-white">
+		<div tw="sticky z-10 top-0 pb-4 bg-white">
 			<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 				<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
 					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">Filter</h4>
