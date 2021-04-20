@@ -163,18 +163,7 @@ const SiteMenu = ({ user, site }) => {
 												const hrefVal = "/site/[siteId]" + value2.url;
 												const asVal = "/site/" + sid + value2.url;
 
-												if (
-													user &&
-													user !== undefined &&
-													Object.keys(user).length > 0 &&
-													user.permissions &&
-													user.permissions !== undefined &&
-													user.permissions.includes("can_see_images") &&
-													user.permissions.includes("can_see_pages") &&
-													user.permissions.includes("can_see_scripts") &&
-													user.permissions.includes("can_see_stylesheets") &&
-													user.permissions.includes("can_start_scan")
-												) {
+												if (user && user !== undefined && Object.keys(user).length > 0) {
 													return componentReady ? (
 														<Link key={index} href={hrefVal} as={asVal} passHref>
 															<a
