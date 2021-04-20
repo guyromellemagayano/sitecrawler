@@ -146,7 +146,15 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 											<SearchSvg className={tw`h-5 w-5 text-gray-400`} />
 										</div>
 										<span tw="flex items-center">
-											<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-yellow-600" />
+											{user.permissions &&
+											user.permissions !== undefined &&
+											user.permissions.includes("can_see_images") &&
+											user.permissions.includes("can_see_pages") &&
+											user.permissions.includes("can_see_scripts") &&
+											user.permissions.includes("can_see_stylesheets") &&
+											user.permissions.includes("can_start_scan") ? null : (
+												<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-yellow-600" />
+											)}
 										</span>
 									</div>
 								</div>
@@ -174,7 +182,15 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 											]}
 										>
 											<span tw="flex items-center space-x-2">
-												<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+												{user.permissions &&
+												user.permissions !== undefined &&
+												user.permissions.includes("can_see_images") &&
+												user.permissions.includes("can_see_pages") &&
+												user.permissions.includes("can_see_scripts") &&
+												user.permissions.includes("can_see_stylesheets") &&
+												user.permissions.includes("can_start_scan") ? null : (
+													<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+												)}
 												<span>
 													{crawlFinished
 														? LinkOptionsLabel[4].label

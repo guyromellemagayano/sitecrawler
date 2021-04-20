@@ -13,7 +13,16 @@ const PageFilter = ({ user, onFilterChange, allFilter, noIssueFilter, largePageS
 			<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 				<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
 					<span tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 flex items-center space-x-3">
-						<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-yellow-600" />
+						{user.permissions &&
+						user.permissions !== undefined &&
+						user.permissions.includes("can_see_images") &&
+						user.permissions.includes("can_see_pages") &&
+						user.permissions.includes("can_see_scripts") &&
+						user.permissions.includes("can_see_stylesheets") &&
+						user.permissions.includes("can_start_scan") ? null : (
+							<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-yellow-600" />
+						)}
+
 						<h4 tw="text-base leading-4 font-semibold text-gray-600">Filter</h4>
 					</span>
 					<div tw="ml-4 mt-2 mr-2">

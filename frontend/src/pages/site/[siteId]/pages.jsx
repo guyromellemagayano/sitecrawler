@@ -660,7 +660,19 @@ const Pages = ({ width, result }) => {
 																			) : null}
 																			<div tw="flex items-center space-x-2">
 																				<span className="label">{site.label}</span>
-																				<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-yellow-600" />
+																				{userData &&
+																				userData !== undefined &&
+																				userData !== [] &&
+																				Object.keys(userData).length > 0 &&
+																				userData.permissions &&
+																				userData.permissions !== undefined &&
+																				userData.permissions.includes("can_see_images") &&
+																				userData.permissions.includes("can_see_pages") &&
+																				userData.permissions.includes("can_see_scripts") &&
+																				userData.permissions.includes("can_see_stylesheets") &&
+																				userData.permissions.includes("can_start_scan") ? null : (
+																					<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-yellow-600" />
+																				)}
 																			</div>
 																		</div>
 																	</th>
