@@ -57,9 +57,9 @@
 		"label": "Copy"
 	},
 	{
-		"label": "In Process"
+		"label": "Site Recrawl In Process..."
 	},
 	{
-		"label": "Recrawled"
+		"label": "Site Recrawled"
 	}
 ]
