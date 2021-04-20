@@ -646,20 +646,22 @@ const Images = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{userData &&
-													userData !== undefined &&
-													userData !== [] &&
-													Object.keys(userData).length > 0 &&
-													imagesData &&
-													imagesData !== undefined &&
-													imagesData !== [] &&
-													Object.keys(imagesData).length > 0 &&
-													imagesData.results &&
-													imagesData.results.map((val, key) => (
-														<>
-															<ImageTable key={key} val={val} user={userData} />
-														</>
-													))}
+												<tbody>
+													{userData &&
+														userData !== undefined &&
+														userData !== [] &&
+														Object.keys(userData).length > 0 &&
+														imagesData &&
+														imagesData !== undefined &&
+														imagesData !== [] &&
+														Object.keys(imagesData).length > 0 &&
+														imagesData.results &&
+														imagesData.results.map((val, key) => (
+															<>
+																<ImageTable key={key} val={val} user={userData} />
+															</>
+														))}
+												</tbody>
 											</table>
 										</div>
 									</div>
