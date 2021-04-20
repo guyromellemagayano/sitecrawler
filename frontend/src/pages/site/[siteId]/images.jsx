@@ -183,23 +183,19 @@ const Images = ({ width, result }) => {
 	});
 
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			siteId &&
-			siteId !== undefined &&
-			Object.keys(siteId).length > 0 &&
-			images &&
-			images !== undefined &&
-			Object.keys(images).length > 0
-		) {
+		if (user && user !== undefined && Object.keys(user).length > 0) {
 			setUserData(user);
+		}
+
+		if (site && site !== undefined && Object.keys(site).length > 0) {
 			setSiteData(site);
+		}
+
+		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
 			setSiteIdData(siteId);
+		}
+
+		if (images && images !== undefined && Object.keys(images).length > 0) {
 			setImagesData(images);
 		}
 
@@ -678,7 +674,7 @@ const Images = ({ width, result }) => {
 							/>
 						</div>
 
-						<div tw="static bottom-0 w-full mx-auto px-4 sm:px-6 py-4">
+						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
 							<SiteFooter />
 						</div>
 					</main>

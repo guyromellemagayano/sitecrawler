@@ -2,6 +2,7 @@
 import "tailwindcss/tailwind.css";
 import { DefaultSeo } from "next-seo";
 import { fab } from "@fortawesome/free-brands-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 import { Integrations } from "@sentry/tracing";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import * as Sentry from "@sentry/react";
@@ -16,6 +17,7 @@ import TopProgressBar from "src/components/TopProgressBar";
 
 // Font Awesome
 library.add(fab);
+library.add(fas);
 
 // Sentry
 if (process.env.NODE_ENV === "production") {

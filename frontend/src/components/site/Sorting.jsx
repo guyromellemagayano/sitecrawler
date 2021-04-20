@@ -1,12 +1,15 @@
-import styled from "styled-components";
+// External
+import tw from "twin.macro";
+import PropTypes from "prop-types";
 
-const SortingDiv = styled.div``;
-
-const Sorting = ({ direction, onSortHandler, slug }) => {
-	return (
-		<SortingDiv>
+const Sorting = ({ enabled, direction, onSortHandler, slug }) => {
+	return enabled ? (
+		<>
 			<button onClick={(e) => onSortHandler(slug, "asc")}>
-				<span className={`${direction == "asc" ? "text-gray-500" : "text-gray-300"} asc w-4 h-4 inline-block`}>
+				<span
+					className="asc"
+					css={[tw`w-4 h-4 inline-block`, direction == "asc" ? tw`text-gray-500` : tw`text-gray-300`]}
+				>
 					<svg
 						fill="none"
 						strokeLinecap="round"
@@ -20,7 +23,10 @@ const Sorting = ({ direction, onSortHandler, slug }) => {
 				</span>
 			</button>
 			<button onClick={(e) => onSortHandler(slug, "desc")}>
-				<span className={`${direction == "desc" ? "text-gray-500" : "text-gray-300"} desc w-4 h-4 inline-block`}>
+				<span
+					className="desc"
+					css={[tw`w-4 h-4 inline-block`, direction == "desc" ? tw`text-gray-500` : tw`text-gray-300`]}
+				>
 					<svg
 						fill="none"
 						strokeLinecap="round"
@@ -33,8 +39,47 @@ const Sorting = ({ direction, onSortHandler, slug }) => {
 					</svg>
 				</span>
 			</button>
-		</SortingDiv>
+		</>
+	) : (
+		<>
+			<button disabled={true} tw="cursor-default">
+				<span
+					className="asc"
+					css={[tw`w-4 h-4 inline-block`, direction == "asc" ? tw`text-gray-500` : tw`text-gray-300`]}
+				>
+					<svg
+						fill="none"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path d="M5 15l7-7 7 7"></path>
+					</svg>
+				</span>
+			</button>
+			<button disabled={true} tw="cursor-default">
+				<span
+					className="desc"
+					css={[tw`w-4 h-4 inline-block`, direction == "desc" ? tw`text-gray-500` : tw`text-gray-300`]}
+				>
+					<svg
+						fill="none"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path d="M19 9l-7 7-7-7"></path>
+					</svg>
+				</span>
+			</button>
+		</>
 	);
 };
+
+Sorting.propTypes = {};
 
 export default Sorting;

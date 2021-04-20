@@ -784,7 +784,7 @@ const Links = ({ width, result }) => {
 							/>
 						</div>
 
-						<div tw="static bottom-0 w-full mx-auto px-4 sm:px-6 py-4">
+						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
 							<SiteFooter />
 						</div>
 					</main>
