@@ -11,9 +11,19 @@ const SiteSorting = (props) => {
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				{props.slug === "site-name" ? (
-					<Sorting direction={props.sortOrder.siteName} onSortHandler={props.onSortHandler} slug={props.slug} />
+					<Sorting
+						enabled={true}
+						direction={props.sortOrder.siteName}
+						onSortHandler={props.onSortHandler}
+						slug={props.slug}
+					/>
 				) : props.slug === "last-crawled" ? (
-					<Sorting direction={props.sortOrder.lastCrawled} onSortHandler={props.onSortHandler} slug={props.slug} />
+					<Sorting
+						enabled={true}
+						direction={props.sortOrder.lastCrawled}
+						onSortHandler={props.onSortHandler}
+						slug={props.slug}
+					/>
 				) : (
 					""
 				)}
