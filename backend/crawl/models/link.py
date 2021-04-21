@@ -2,15 +2,11 @@ from django.db import models
 from django.db.models import (
     Sum,
     F,
-    OuterRef,
     Subquery,
     PositiveIntegerField,
 )
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
-
-
-from crawl.common import CalculatedField, SubQueryCount
 
 
 class SubQuerySizeSum(Subquery):
@@ -46,22 +42,22 @@ class LinkQuerySet(QuerySet):
         )
 
     def pages(self):
-        links = Link.objects.filter(pages__id=OuterRef("pk"))
-        images = Link.objects.filter(image_pages__id=OuterRef("pk"))
-        scripts = Link.objects.filter(script_pages__id=OuterRef("pk"))
-        stylesheets = Link.objects.filter(stylesheet_pages__id=OuterRef("pk"))
         return (
             self.filter(type=Link.TYPE_PAGE)
             .annotate_size()
             .annotate_tls()
-            .annotate(num_links=SubQueryCount(links))
-            .annotate(num_images=SubQueryCount(images))
-            .annotate(num_scripts=SubQueryCount(scripts))
-            .annotate(num_stylesheets=SubQueryCount(stylesheets))
-            .annotate(num_non_ok_links=SubQueryCount(links.exclude(status=Link.STATUS_OK)))
-            .annotate(num_non_ok_images=SubQueryCount(images.exclude(status=Link.STATUS_OK)))
-            .annotate(num_non_ok_scripts=SubQueryCount(scripts.exclude(status=Link.STATUS_OK)))
-            .annotate(num_non_ok_stylesheets=SubQueryCount(stylesheets.exclude(status=Link.STATUS_OK)))
+            .annotate(num_links=F("cached_num_links"))
+            .annotate(num_images=F("cached_num_images"))
+            .annotate(num_scripts=F("cached_num_scripts"))
+            .annotate(num_stylesheets=F("cached_num_stylesheets"))
+            .annotate(num_ok_links=F("cached_num_ok_links"))
+            .annotate(num_ok_images=F("cached_num_ok_images"))
+            .annotate(num_ok_scripts=F("cached_num_ok_scripts"))
+            .annotate(num_ok_stylesheets=F("cached_num_ok_stylesheets"))
+            .annotate(num_non_ok_links=F("cached_num_non_ok_links"))
+            .annotate(num_non_ok_images=F("cached_num_non_ok_images"))
+            .annotate(num_non_ok_scripts=F("cached_num_non_ok_scripts"))
+            .annotate(num_non_ok_stylesheets=F("cached_num_non_ok_stylesheets"))
             .order_by("-num_non_ok_links")
         )
 
@@ -157,11 +153,6 @@ class Link(models.Model):
     )
     stylesheets = models.ManyToManyField("self", symmetrical=False, related_name="stylesheet_pages", blank=True)
     scripts = models.ManyToManyField("self", symmetrical=False, related_name="script_pages", blank=True)
-
-    num_ok_links = CalculatedField("num_links", "-num_non_ok_links")
-    num_ok_images = CalculatedField("num_images", "-num_non_ok_images")
-    num_ok_scripts = CalculatedField("num_scripts", "-num_non_ok_scripts")
-    num_ok_stylesheets = CalculatedField("num_stylesheets", "-num_non_ok_stylesheets")
 
     cached_num_tls_images = models.PositiveIntegerField(null=True, blank=True)
     cached_num_non_tls_images = models.PositiveIntegerField(null=True, blank=True)
