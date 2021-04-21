@@ -17,10 +17,10 @@ import Url from "url-parse";
 import { useLinkDetail } from "src/hooks/useSite";
 
 // Components
-const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
-const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
-const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
-const InformationCircleSvg = loadable(() => import("src/components/svg/outline/InformationCircleSvg"));
+import SiteDangerBadge from "src/components/badges/SiteDangerBadge";
+import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
+import SiteWarningBadge from "src/components/badges/SiteWarningBadge";
+import InformationCircleSvg from "src/components/svg/outline/InformationCircleSvg";
 
 const LinkTableDiv = styled.tr`
 	.HTTP_ERROR-tooltip {
@@ -100,7 +100,7 @@ const LinkTable = (props) => {
 								{props.val.url}
 							</a>
 						) : (
-							<Skeleton duration={2} />
+							<Skeleton duration={2} width={300} />
 						)}
 					</div>
 					<div tw="flex justify-start leading-5 text-gray-500">
