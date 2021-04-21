@@ -775,7 +775,7 @@ const Links = ({ width, result }) => {
 							</div>
 
 							<MyPagination
-								href="/dashboard/site/[siteId]/links/"
+								href="/site/[siteId]/links/"
 								pathName={pagePath}
 								apiEndpoint={scanApiEndpoint}
 								page={result.page ? result.page : 0}

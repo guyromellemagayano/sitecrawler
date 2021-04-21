@@ -736,7 +736,7 @@ const Pages = ({ width, result }) => {
 							pagesData !== [] &&
 							Object.keys(pagesData).length > 0 ? (
 								<MyPagination
-									href="/dashboard/site/[siteId]/pages"
+									href="/site/[siteId]/pages"
 									pathName={pagePath}
 									apiEndpoint={scanApiEndpoint}
 									page={result.page ? result.page : 0}

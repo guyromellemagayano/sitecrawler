@@ -735,7 +735,7 @@ const Images = ({ width, result }) => {
 							pagesData !== [] &&
 							Object.keys(pagesData).length > 0 ? (
 								<MyPagination
-									href="/dashboard/site/[siteId]/images/"
+									href="/site/[siteId]/images/"
 									pathName={pagePath}
 									apiEndpoint={scanApiEndpoint}
 									page={result.page ? result.page : 0}
