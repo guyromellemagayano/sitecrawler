@@ -19,7 +19,7 @@ import PagesStatsLabel from "public/labels/components/sites/PagesStats.json";
 import { pagesChartContents } from "src/enum/chartContents";
 
 // Hooks
-import { useScan, useStats, useNoPageIssues } from "src/hooks/useSite";
+import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
@@ -89,7 +89,6 @@ const SitesPagesStatsDiv = styled.div`
 
 const SitesPagesStats = ({ width, sid }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [noPageIssuesData, setNoPageIssuesData] = useState([]);
 	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [statsData, setStatsData] = useState([]);
@@ -139,35 +138,19 @@ const SitesPagesStats = ({ width, sid }) => {
 		refreshInterval: 1000
 	});
 
-	const { noPageIssues: noPageIssues } = useNoPageIssues({
-		querySid: sid,
-		scanObjId: scanObjId.id
-	});
-
 	useEffect(() => {
 		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setStatsData(stats);
 		}
-
-		if (noPageIssues && noPageIssues !== undefined && Object.keys(noPageIssues).length > 0) {
-			setNoPageIssuesData(noPageIssues);
-		}
-	}, [stats, noPageIssues]);
+	}, [stats]);
 
 	useEffect(() => {
-		if (
-			statsData &&
-			statsData !== undefined &&
-			Object.keys(statsData).length > 0 &&
-			noPageIssuesData &&
-			noPageIssuesData !== undefined &&
-			Object.keys(noPageIssuesData).length > 0
-		) {
+		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [statsData, noPageIssuesData]);
+	}, [statsData]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/pages`;
@@ -196,12 +179,12 @@ const SitesPagesStats = ({ width, sid }) => {
 		statsData.num_pages_tls_non_ok !== undefined
 			? statsData.num_pages_tls_non_ok
 			: 0,
-		noPageIssuesData &&
-		noPageIssuesData !== undefined &&
-		noPageIssuesData !== [] &&
-		Object.keys(noPageIssuesData).length > 0 &&
-		noPageIssuesData.count !== undefined
-			? noPageIssuesData.count
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_pages_tls_ok !== undefined
+			? statsData.num_pages_tls_ok
 			: 0
 	];
 

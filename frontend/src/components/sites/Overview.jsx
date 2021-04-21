@@ -17,7 +17,7 @@ import tw from "twin.macro";
 import OverviewLabel from "public/labels/components/sites/Overview.json";
 
 // Hooks
-import { useScan, useStats, useNonTlsPages } from "src/hooks/useSite";
+import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
 const InformationCircleSvg = loadable(() => import("src/components/svg/solid/InformationCircleSvg"));
@@ -28,7 +28,6 @@ const SiteWarningStatus = loadable(() => import("src/components/status/SiteWarni
 
 const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlable, crawlFinished, user }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [nonTlsPagesData, setNonTlsPagesData] = useState([]);
 	const [scanData, setScanData] = useState([]);
 	const [showErrorModal, setShowErrorModal] = useState(false);
 	const [statsData, setStatsData] = useState([]);
@@ -72,32 +71,19 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 		scanObjId: scanObjId
 	});
 
-	const { nonTlsPages: nonTlsPages } = useNonTlsPages({
-		querySid: id,
-		scanObjId: scanObjId
-	});
-
 	useEffect(() => {
-		if (
-			stats &&
-			stats !== undefined &&
-			Object.keys(stats).length > 0 &&
-			nonTlsPages &&
-			nonTlsPages !== undefined &&
-			Object.keys(nonTlsPages).length > 0
-		) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setStatsData(stats);
-			setNonTlsPagesData(nonTlsPages);
 		}
-	}, [scan, stats, nonTlsPages]);
+	}, [scan, stats]);
 
 	useEffect(() => {
-		if (user && statsData && nonTlsPagesData) {
+		if (user && statsData) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [user, statsData, nonTlsPagesData]);
+	}, [user, statsData]);
 
 	const handleOnCrawlPermissions = (e) => {
 		e.preventDefault();
@@ -261,13 +247,13 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 															<span tw="text-left text-xs leading-4 font-normal text-white normal-case tracking-wider">
 																<p>
 																	<strong tw="block mb-3">Here are our findings:</strong>
-																	Apparently you have {nonTlsPagesData && nonTlsPagesData.count} pages that have some
+																	Apparently you have {statsData && statsData.num_pages_tls_non_ok} pages that have some
 																	TLS issues. You can check this
 																	<strong tw="ml-1">
 																		{
 																			<Link
-																				href="/dashboard/site/[siteId]/pages/?tls_total=false"
-																				as="/dashboard/site/${query.siteId}/pages/?tls_total=false"
+																				href="/site/[siteId]/pages/?tls_total=false"
+																				as={`/site/${query.siteId}/pages/?tls_total=false`}
 																			>
 																				<a tw="hover:text-red-300">link</a>
 																			</Link>
