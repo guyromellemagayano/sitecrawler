@@ -12,9 +12,12 @@ import (
 )
 
 const (
-	lastScanToProcess    = 48
-	ignoreScan           = 0 // in progress on prod
-	firstSiteToProces    = 0
+	// lastScanToProcess = 1035 // for staging
+	lastScanToProcess = 3886 // for prod
+	// lastScanToProcess = 61 // for local
+	ignoreScan        = 0  // in progress on prod
+	firstSiteToProces = 41 // for prod
+	// firstSiteToProces    = 0
 	firstScanOfFirstSite = 0
 )
 
@@ -29,7 +32,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db := common.ConfigureDatabase(log, awsSession, "crawler", env)
+	db := common.ConfigureDatabase(log, awsSession, "uptimer", env)
 	defer db.Close()
 
 	postprocessor := &common.RelCountsPostprocessor{}
