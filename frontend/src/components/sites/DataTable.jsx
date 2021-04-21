@@ -44,7 +44,6 @@ const DataTableDiv = styled.tbody`
 		display: block;
 
 		a {
-			max-width: 100%;
 			display: block;
 		}
 	}
@@ -262,7 +261,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 			statsData &&
 			statsData !== undefined &&
 			Object.keys(statsData).length > 0 &&
-			statsData.num_non_ok_links + +setSeoErrors() + setPageErrors() + setImageErrors();
+			statsData.num_non_ok_links + setSeoErrors() + setPageErrors() + setImageErrors();
 
 		return valLength;
 	};
@@ -534,7 +533,10 @@ const DataTable = ({ site, disableLocalTime }) => {
 											</>
 										) : (
 											<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
-												<a tw="cursor-pointer text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500">
+												<a
+													tw="max-w-sm truncate cursor-pointer text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500"
+													title={site.name}
+												>
 													{site.name}
 												</a>
 											</Link>
@@ -568,9 +570,12 @@ const DataTable = ({ site, disableLocalTime }) => {
 											<Moment date={statsData.finished_at} format="hh:mm:ss A" utc />
 										)}
 									</span>
+									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
 								</span>
-							) : (
+							) : !site.verified ? (
 								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[2].label}</span>
+							) : (
+								<Skeleton duration={2} width={176.7} />
 							)
 						) : (
 							<Skeleton duration={2} width={176.7} />
@@ -579,7 +584,17 @@ const DataTable = ({ site, disableLocalTime }) => {
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
 						{componentReady ? (
 							<span tw="text-sm leading-5 text-gray-500">
-								{site.verified ? (crawlInProgress ? DataTableLabel[19].label : DataTableLabel[20].label) : null}
+								{site.verified ? (
+									crawlInProgress ? (
+										DataTableLabel[19].label
+									) : !crawlInProgress && scanData.count > 1 ? (
+										DataTableLabel[20].label
+									) : !crawlInProgress && scanData.count === 1 ? (
+										DataTableLabel[21].label
+									) : (
+										<Skeleton duration={2} width={100} />
+									)
+								) : null}
 							</span>
 						) : (
 							<Skeleton duration={2} width={100} />
@@ -608,7 +623,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 										</a>
 									</Link>
 								) : (
-									<span tw="text-sm leading-5 text-gray-500">{statsData.num_links}</span>
+									<Skeleton duration={2} width={45} />
 								)
 							) : null
 						) : (
@@ -625,7 +640,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 										</a>
 									</Link>
 								) : (
-									<span tw="text-sm leading-5 text-gray-500">{statsData.num_pages}</span>
+									<Skeleton duration={2} width={45} />
 								)
 							) : null
 						) : (
@@ -642,7 +657,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 										</a>
 									</Link>
 								) : (
-									<span tw="text-sm leading-5 text-gray-500">{statsData.num_images}</span>
+									<Skeleton duration={2} width={45} />
 								)
 							) : null
 						) : (

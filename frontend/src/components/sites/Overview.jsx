@@ -253,7 +253,7 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 																		{
 																			<Link
 																				href="/site/[siteId]/pages/?tls_total=false"
-																				as={`/site/${query.siteId}/pages/?tls_total=false`}
+																				as={`/site/${id}/pages/?tls_total=false`}
 																			>
 																				<a tw="hover:text-red-300">link</a>
 																			</Link>

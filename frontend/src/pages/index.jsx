@@ -23,14 +23,16 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const AddSite = loadable(() => import("src/components/sites/AddSite"));
-const DataTable = loadable(() => import("src/components/sites/DataTable"));
+import AddSite from "src/components/sites/AddSite";
+import DataTable from "src/components/sites/DataTable";
+import MainSidebar from "src/components/sidebar/MainSidebar";
+import MyPagination from "src/components/sites/Pagination";
+import SiteSorting from "src/components/sites/SiteSorting";
+
+// Loadable
 const Loader = loadable(() => import("src/components/layout/Loader"));
-const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const MyPagination = loadable(() => import("src/components/sites/Pagination"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
-const SiteSorting = loadable(() => import("src/components/sites/SiteSorting"));
 
 // Helpers
 import { getSlugFromSortKey, getSortKeyFromSlug, removeURLParameter, slugToCamelcase } from "src/helpers/functions";
@@ -65,7 +67,7 @@ const Dashboard = ({ width, result }) => {
 	let scanApiEndpoint =
 		result.page !== undefined
 			? "/api/site/?per_page=" + linksPerPage + `&ordering=name` + `&page=` + result.page
-			: "/api/site/?per_page=" + linksPerPage;
+			: "/api/site/?per_page=" + linksPerPage + `&ordering=name`;
 	let queryString = "";
 
 	queryString +=
@@ -114,8 +116,12 @@ const Dashboard = ({ width, result }) => {
 			siteData !== [] &&
 			Object.keys(siteData).length > 0
 		) {
-			if (userData.settings && userData.settings.disableLocaltime) {
-				setDisableLocalTime(true);
+			if (userData.settings !== []) {
+				if (userData.settings.disableLocalTime) {
+					setDisableLocalTime(true);
+				} else {
+					setDisableLocalTime(false);
+				}
 			}
 
 			setTimeout(() => {
