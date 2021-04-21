@@ -163,7 +163,19 @@ const SiteMenu = ({ user, site }) => {
 												const hrefVal = "/site/[siteId]" + value2.url;
 												const asVal = "/site/" + sid + value2.url;
 
-												if (user && user !== undefined && Object.keys(user).length > 0) {
+												if (
+													user &&
+													user !== undefined &&
+													user !== [] &&
+													Object.keys(user).length > 0 &&
+													user.permissions &&
+													user.permissions !== undefined &&
+													user.permissions.includes("can_see_images") &&
+													user.permissions.includes("can_see_pages") &&
+													user.permissions.includes("can_see_scripts") &&
+													user.permissions.includes("can_see_stylesheets") &&
+													user.permissions.includes("can_start_scan")
+												) {
 													return componentReady ? (
 														<Link key={index} href={hrefVal} as={asVal} passHref>
 															<a
@@ -244,13 +256,7 @@ const SiteMenu = ({ user, site }) => {
 														</span>
 													);
 												} else {
-													if (
-														value2.slug &&
-														value2.slug !== undefined &&
-														value2.slug !== "images" &&
-														value2.slug !== "seo" &&
-														value2.slug !== "pages"
-													) {
+													if (value2.slug && value2.slug !== undefined) {
 														return componentReady ? (
 															<Link key={index} href={hrefVal} as={asVal} passHref>
 																<a

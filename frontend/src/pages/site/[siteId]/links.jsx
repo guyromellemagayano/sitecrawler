@@ -756,16 +756,18 @@ const Links = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{userData &&
-													userData !== undefined &&
-													userData !== [] &&
-													Object.keys(userData).length > 0 &&
-													linksData &&
-													linksData !== undefined &&
-													linksData !== [] &&
-													Object.keys(linksData).length > 0 &&
-													linksData.results &&
-													linksData.results.map((val, key) => <LinkTable key={key} val={val} user={userData} />)}
+												<tbody>
+													{userData &&
+														userData !== undefined &&
+														userData !== [] &&
+														Object.keys(userData).length > 0 &&
+														linksData &&
+														linksData !== undefined &&
+														linksData !== [] &&
+														Object.keys(linksData).length > 0 &&
+														linksData.results &&
+														linksData.results.map((val, key) => <LinkTable key={key} val={val} user={userData} />)}
+												</tbody>
 											</table>
 										</div>
 									</div>
@@ -782,7 +784,7 @@ const Links = ({ width, result }) => {
 							/>
 						</div>
 
-						<div tw="static bottom-0 w-full mx-auto px-4 sm:px-6 py-4">
+						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
 							<SiteFooter />
 						</div>
 					</main>

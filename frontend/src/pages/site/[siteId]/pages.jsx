@@ -10,7 +10,6 @@ import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import ReactTooltip from "react-tooltip";
 import tw, { styled } from "twin.macro";
 
 // JSON
@@ -19,7 +18,7 @@ import PagesLabel from "public/labels/pages/site/pages.json";
 
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
-import { useScan, useSite, usePages, useSiteId } from "src/hooks/useSite";
+import { useScan, useSite, usePages, useSiteId, useStats } from "src/hooks/useSite";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -30,14 +29,15 @@ const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronR
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
 const Loader = loadable(() => import("src/components/layout/Loader"));
-const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
-const PageTable = loadable(() => import("src/components/site/PageTable"));
-const PageFilter = loadable(() => import("src/components/site/PageFilter"));
-const PageSorting = loadable(() => import("src/components/site/PageSorting"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const MyPagination = loadable(() => import("src/components/sites/Pagination"));
+const PageFilter = loadable(() => import("src/components/site/PageFilter"));
+const PageSorting = loadable(() => import("src/components/site/PageSorting"));
+const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
+const PageTable = loadable(() => import("src/components/site/PageTable"));
+const PageTableSkeleton = loadable(() => import("src/components/skeletons/PageTableSkeleton"));
+const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
 // Helpers
@@ -75,6 +75,7 @@ const Pages = ({ width, result }) => {
 	const [siteData, setSiteData] = useState([]);
 	const [siteIdData, setSiteIdData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
+	const [statsData, setStatsData] = useState([]);
 	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
@@ -87,6 +88,11 @@ const Pages = ({ width, result }) => {
 	const homePageLink = `/site/${result.siteId}/overview`;
 	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
 	const sitesApiEndpoint = `/api/site/?ordering=name`;
+
+	let pages = [];
+	let mutatePages = [];
+	let scanApiEndpoint = "";
+	let queryString = "";
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -125,95 +131,113 @@ const Pages = ({ width, result }) => {
 		}
 	});
 
-	let scanApiEndpoint =
-		result.page !== undefined
-			? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result.page
-			: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
-
-	let queryString = "";
-
-	queryString +=
-		result.size_total_min !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&size_total_min=1048576`
-				: `?size_total_min=1048576`
-			: "";
-
-	queryString +=
-		result.size_total_max !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&size_total_max=1048575`
-				: `?size_total_max=1048575`
-			: "";
-
-	queryString +=
-		result.tls_total !== undefined
-			? result.tls_total === "true"
-				? scanApiEndpoint.includes("?")
-					? `&tls_total=true`
-					: `?tls_total=true`
-				: scanApiEndpoint.includes("?")
-				? `&tls_total=false`
-				: `?tls_total=false`
-			: "";
-
-	queryString +=
-		result.search !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&search=${result.search}`
-				: `?search=${result.search}`
-			: "";
-
-	queryString +=
-		result.ordering !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&ordering=${result.ordering}`
-				: `?ordering=${result.ordering}`
-			: "";
-
-	queryString +=
-		typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
-			? scanApiEndpoint.includes("?")
-				? window.location.search.replace("?", "&")
-				: window.location.search
-			: "";
-
-	scanApiEndpoint += queryString;
-
-	const { pages: pages, mutatePages: mutatePages } = usePages({
-		endpoint: scanApiEndpoint,
+	const { stats: stats } = useStats({
 		querySid: result.siteId,
 		scanObjId: scanObjId,
 		refreshInterval: 1000
 	});
 
+	if (
+		user &&
+		user !== undefined &&
+		user !== [] &&
+		Object.keys(user).length > 0 &&
+		user.permissions &&
+		user.permissions !== undefined &&
+		user.permissions.includes("can_see_images") &&
+		user.permissions.includes("can_see_pages") &&
+		user.permissions.includes("can_see_scripts") &&
+		user.permissions.includes("can_see_stylesheets") &&
+		user.permissions.includes("can_start_scan")
+	) {
+		scanApiEndpoint =
+			result.page !== undefined
+				? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result.page
+				: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+
+		queryString +=
+			result.size_total_min !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&size_total_min=1048576`
+					: `?size_total_min=1048576`
+				: "";
+
+		queryString +=
+			result.size_total_max !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&size_total_max=1048575`
+					: `?size_total_max=1048575`
+				: "";
+
+		queryString +=
+			result.tls_total !== undefined
+				? result.tls_total === "true"
+					? scanApiEndpoint.includes("?")
+						? `&tls_total=true`
+						: `?tls_total=true`
+					: scanApiEndpoint.includes("?")
+					? `&tls_total=false`
+					: `?tls_total=false`
+				: "";
+
+		queryString +=
+			result.search !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&search=${result.search}`
+					: `?search=${result.search}`
+				: "";
+
+		queryString +=
+			result.ordering !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&ordering=${result.ordering}`
+					: `?ordering=${result.ordering}`
+				: "";
+
+		queryString +=
+			typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
+				? scanApiEndpoint.includes("?")
+					? window.location.search.replace("?", "&")
+					: window.location.search
+				: "";
+
+		scanApiEndpoint += queryString;
+	}
+
+	({ pages: pages, mutatePages: mutatePages } = usePages({
+		endpoint: scanApiEndpoint,
+		querySid: result.siteId,
+		scanObjId: scanObjId,
+		refreshInterval: 1000
+	}));
+
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			siteId &&
-			siteId !== undefined &&
-			Object.keys(siteId).length > 0 &&
-			pages &&
-			pages !== undefined &&
-			Object.keys(pages).length > 0
-		) {
+		if (user && user !== undefined && Object.keys(user).length > 0) {
 			setUserData(user);
+		}
+
+		if (site && site !== undefined && Object.keys(site).length > 0) {
 			setSiteData(site);
+		}
+
+		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
 			setSiteIdData(siteId);
+		}
+
+		if (pages && pages !== undefined && Object.keys(pages).length > 0) {
 			setPagesData(pages);
 		}
 
-		if (userData && siteData && siteIdData && pagesData) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setStatsData(stats);
+		}
+
+		if (userData && siteData && siteIdData && pagesData && statsData) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [user, site, siteId, pages]);
+	}, [user, site, siteId, pages, stats]);
 
 	const searchEventHandler = async (e) => {
 		const searchTargetValue = e.target.value;
@@ -593,12 +617,16 @@ const Pages = ({ width, result }) => {
 									<div className="pt-4 m-auto">
 										<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
 											{pageTitle}
-											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-													<PageSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
-													{pagesData.count > 0 ? pagesData.count + " " + PagesLabel[2].label : PagesLabel[2].label}
-												</dd>
-											</dl>
+											{statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
+												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+														<PageSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
+														{statsData.num_pages > 0
+															? statsData.num_pages + " " + PagesLabel[2].label
+															: PagesLabel[2].label}
+													</dd>
+												</dl>
+											) : null}
 										</h4>
 									</div>
 								</div>
@@ -607,13 +635,26 @@ const Pages = ({ width, result }) => {
 							)}
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-							<PageFilter
-								onFilterChange={filterChangeHandler}
-								allFilter={allFilter}
-								noIssueFilter={noIssueFilter}
-								largePageSizeFilter={largePageSizeFilter}
-								brokenSecurityFilter={brokenSecurityFilter}
-							/>
+							{userData &&
+							userData !== undefined &&
+							userData !== [] &&
+							Object.keys(userData).length > 0 &&
+							userData.permissions &&
+							userData.permissions !== undefined &&
+							userData.permissions.includes("can_see_images") &&
+							userData.permissions.includes("can_see_pages") &&
+							userData.permissions.includes("can_see_scripts") &&
+							userData.permissions.includes("can_see_stylesheets") &&
+							userData.permissions.includes("can_start_scan") ? (
+								<PageFilter
+									onFilterChange={filterChangeHandler}
+									allFilter={allFilter}
+									noIssueFilter={noIssueFilter}
+									largePageSizeFilter={largePageSizeFilter}
+									brokenSecurityFilter={brokenSecurityFilter}
+								/>
+							) : null}
+
 							<div tw="pb-4">
 								<div tw="flex flex-col">
 									<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -639,11 +680,12 @@ const Pages = ({ width, result }) => {
 																					onSortHandler={SortHandler}
 																					key={key}
 																					slug={site.slug}
+																					user={userData}
 																				/>
 																			) : null}
-																			<span className="label" tw="flex items-center">
-																				{site.label}
-																			</span>
+																			<div tw="flex items-center space-x-2">
+																				<span className="label">{site.label}</span>
+																			</div>
 																		</div>
 																	</th>
 																</Fragment>
@@ -651,37 +693,60 @@ const Pages = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{userData &&
+												<tbody>
+													{userData &&
 													userData !== undefined &&
 													userData !== [] &&
 													Object.keys(userData).length > 0 &&
+													userData.permissions &&
+													userData.permissions !== undefined &&
+													userData.permissions.includes("can_see_images") &&
+													userData.permissions.includes("can_see_pages") &&
+													userData.permissions.includes("can_see_scripts") &&
+													userData.permissions.includes("can_see_stylesheets") &&
+													userData.permissions.includes("can_start_scan") &&
 													pagesData &&
 													pagesData !== undefined &&
 													pagesData !== [] &&
 													Object.keys(pagesData).length > 0 &&
-													pagesData.results &&
-													pagesData.results.map((val, key) => (
-														<>
-															<PageTable key={key} val={val} user={userData} />
-														</>
-													))}
+													pagesData.results ? (
+														pagesData.results.map((val, key) => <PageTable key={key} val={val} user={userData} />)
+													) : (
+														<PageTableSkeleton />
+													)}
+												</tbody>
 											</table>
 										</div>
 									</div>
 								</div>
 							</div>
-
-							<MyPagination
-								href="/dashboard/site/[siteId]/pages"
-								pathName={pagePath}
-								apiEndpoint={scanApiEndpoint}
-								page={result.page ? result.page : 0}
-								linksPerPage={linksPerPage}
-								onItemsPerPageChange={onItemsPerPageChange}
-							/>
+							{userData &&
+							userData !== undefined &&
+							userData !== [] &&
+							Object.keys(userData).length > 0 &&
+							userData.permissions &&
+							userData.permissions !== undefined &&
+							userData.permissions.includes("can_see_images") &&
+							userData.permissions.includes("can_see_pages") &&
+							userData.permissions.includes("can_see_scripts") &&
+							userData.permissions.includes("can_see_stylesheets") &&
+							userData.permissions.includes("can_start_scan") &&
+							pagesData &&
+							pagesData !== undefined &&
+							pagesData !== [] &&
+							Object.keys(pagesData).length > 0 ? (
+								<MyPagination
+									href="/dashboard/site/[siteId]/pages"
+									pathName={pagePath}
+									apiEndpoint={scanApiEndpoint}
+									page={result.page ? result.page : 0}
+									linksPerPage={linksPerPage}
+									onItemsPerPageChange={onItemsPerPageChange}
+								/>
+							) : null}
 						</div>
 
-						<div tw="static bottom-0 w-full mx-auto px-4 sm:px-6 py-4">
+						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
 							<SiteFooter />
 						</div>
 					</main>

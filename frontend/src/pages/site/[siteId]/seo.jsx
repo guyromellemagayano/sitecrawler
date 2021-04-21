@@ -18,25 +18,29 @@ import SeoTableContent from "public/data/seo-table.json";
 
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
-import { useScan, useSite, usePages, useSiteId } from "src/hooks/useSite";
+import { useScan, useSite, usePages, useSiteId, useStats } from "src/hooks/useSite";
 import useUser from "src/hooks/useUser";
 
 // Layout
 import Layout from "src/components/Layout";
 
 // Components
-const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
-const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
 const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const MyPagination = loadable(() => import("src/components/sites/Pagination"));
-const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
+const SeoTableSkeleton = loadable(() => import("src/components/skeletons/SeoTableSkeleton"));
+const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const SeoFilter = loadable(() => import("src/components/site/SeoFilter"));
 const SeoSorting = loadable(() => import("src/components/site/SeoSorting"));
 const SeoTable = loadable(() => import("src/components/site/SeoTable"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+
+// Loadable
+import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
+import HomeSvg from "src/components/svg/solid/HomeSvg";
+import SearchSvg from "src/components/svg/solid/SearchSvg";
 
 // Helpers
 import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
@@ -80,6 +84,7 @@ const Seo = ({ width, result }) => {
 	const [siteData, setSiteData] = useState([]);
 	const [siteIdData, setSiteIdData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
+	const [statsData, setStatsData] = useState([]);
 	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
@@ -90,6 +95,15 @@ const Seo = ({ width, result }) => {
 	const homePageLink = `/site/${result.siteId}/overview`;
 	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
 	const sitesApiEndpoint = `/api/site/?ordering=name`;
+
+	let pages = [];
+	let mutatePages = [];
+	let scanApiEndpoint = "";
+	let queryString = "";
+	let hasTitleString = "";
+	let hasDescriptionString = "";
+	let hasH1FirstString = "";
+	let hasH2FirstString = "";
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -128,126 +142,144 @@ const Seo = ({ width, result }) => {
 		}
 	});
 
-	let scanApiEndpoint =
-		result.page !== undefined
-			? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result.page
-			: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
-
-	let queryString = "";
-
-	const hasTitleString = Array.isArray(result.has_title) ? result.has_title.join("&has_title=") : result.has_title;
-
-	queryString +=
-		result.has_title !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&has_title=${hasTitleString}`
-				: `?has_title=${hasTitleString}`
-			: "";
-
-	const hasDescriptionString = Array.isArray(result.has_description)
-		? result.has_description.join("&has_description=")
-		: result.has_description;
-
-	queryString +=
-		result.has_description !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&has_description=${hasDescriptionString}`
-				: `?has_description=${hasDescriptionString}`
-			: "";
-
-	const hasH1FirstString = Array.isArray(result.has_h1_first)
-		? result.has_h1_first.join("&has_h1_first=")
-		: result.has_h1_first;
-
-	queryString +=
-		result.has_h1_first !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&has_h1_first=${hasH1FirstString}`
-				: `?has_h1_first=${hasH1FirstString}`
-			: "";
-
-	queryString +=
-		result.has_h1_second !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&has_h1_second=false`
-				: `?has_h1_second=false`
-			: "";
-
-	const hasH2FirstString = Array.isArray(result.has_h2_first)
-		? result.has_h2_first.join("&has_h2_first=")
-		: result.has_h2_first;
-
-	queryString +=
-		result.has_h2_first !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&has_h2_first=${hasH2FirstString}`
-				: `?has_h2_first=${hasH2FirstString}`
-			: "";
-
-	queryString +=
-		result.has_h2_second !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&has_h2_second=false`
-				: `?has_h2_second=false`
-			: "";
-
-	queryString +=
-		result.search !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&search=${result.search}`
-				: `?search=${result.search}`
-			: "";
-
-	queryString +=
-		result.ordering !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&ordering=${result.ordering}`
-				: `?ordering=${result.ordering}`
-			: "";
-
-	queryString +=
-		typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
-			? scanApiEndpoint.includes("?")
-				? window.location.search.replace("?", "&")
-				: window.location.search
-			: "";
-
-	scanApiEndpoint += queryString;
-
-	const { pages: pages, mutatePages: mutatePages } = usePages({
-		endpoint: scanApiEndpoint,
+	const { stats: stats } = useStats({
 		querySid: result.siteId,
 		scanObjId: scanObjId,
 		refreshInterval: 1000
 	});
 
+	if (
+		user &&
+		user !== undefined &&
+		user !== [] &&
+		Object.keys(user).length > 0 &&
+		user.permissions &&
+		user.permissions !== undefined &&
+		user.permissions.includes("can_see_images") &&
+		user.permissions.includes("can_see_pages") &&
+		user.permissions.includes("can_see_scripts") &&
+		user.permissions.includes("can_see_stylesheets") &&
+		user.permissions.includes("can_start_scan")
+	) {
+		scanApiEndpoint =
+			result.page !== undefined
+				? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result.page
+				: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+
+		hasTitleString = Array.isArray(result.has_title) ? result.has_title.join("&has_title=") : result.has_title;
+
+		queryString +=
+			result.has_title !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&has_title=${hasTitleString}`
+					: `?has_title=${hasTitleString}`
+				: "";
+
+		hasDescriptionString = Array.isArray(result.has_description)
+			? result.has_description.join("&has_description=")
+			: result.has_description;
+
+		queryString +=
+			result.has_description !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&has_description=${hasDescriptionString}`
+					: `?has_description=${hasDescriptionString}`
+				: "";
+
+		hasH1FirstString = Array.isArray(result.has_h1_first)
+			? result.has_h1_first.join("&has_h1_first=")
+			: result.has_h1_first;
+
+		queryString +=
+			result.has_h1_first !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&has_h1_first=${hasH1FirstString}`
+					: `?has_h1_first=${hasH1FirstString}`
+				: "";
+
+		queryString +=
+			result.has_h1_second !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&has_h1_second=false`
+					: `?has_h1_second=false`
+				: "";
+
+		hasH2FirstString = Array.isArray(result.has_h2_first)
+			? result.has_h2_first.join("&has_h2_first=")
+			: result.has_h2_first;
+
+		queryString +=
+			result.has_h2_first !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&has_h2_first=${hasH2FirstString}`
+					: `?has_h2_first=${hasH2FirstString}`
+				: "";
+
+		queryString +=
+			result.has_h2_second !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&has_h2_second=false`
+					: `?has_h2_second=false`
+				: "";
+
+		queryString +=
+			result.search !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&search=${result.search}`
+					: `?search=${result.search}`
+				: "";
+
+		queryString +=
+			result.ordering !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&ordering=${result.ordering}`
+					: `?ordering=${result.ordering}`
+				: "";
+
+		queryString +=
+			typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
+				? scanApiEndpoint.includes("?")
+					? window.location.search.replace("?", "&")
+					: window.location.search
+				: "";
+
+		scanApiEndpoint += queryString;
+	}
+
+	({ pages: pages, mutatePages: mutatePages } = usePages({
+		endpoint: scanApiEndpoint,
+		querySid: result.siteId,
+		scanObjId: scanObjId,
+		refreshInterval: 1000
+	}));
+
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			siteId &&
-			siteId !== undefined &&
-			Object.keys(siteId).length > 0 &&
-			pages &&
-			pages !== undefined &&
-			Object.keys(pages).length > 0
-		) {
+		if (user && user !== undefined && Object.keys(user).length > 0) {
 			setUserData(user);
+		}
+
+		if (site && site !== undefined && Object.keys(site).length > 0) {
 			setSiteData(site);
+		}
+
+		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
 			setSiteIdData(siteId);
+		}
+
+		if (pages && pages !== undefined && Object.keys(pages).length > 0) {
 			setPagesData(pages);
 		}
 
-		if (userData && siteData && siteIdData && pagesData) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setStatsData(stats);
+		}
+
+		if (userData && siteData && siteIdData && pagesData && statsData) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [user, site, siteId, pages]);
+	}, [user, site, siteId, pages, stats]);
 
 	const searchEventHandler = async (e) => {
 		const searchTargetValue = e.target.value;
@@ -897,13 +929,6 @@ const Seo = ({ width, result }) => {
 		else setRecrawlable(false);
 	};
 
-	// TODO: fix this recrawlable code
-	// useEffect(() => {
-	// 	if (user && user.permissions !== undefined && user.permissions.includes("can_start_scan") && site && site.verified)
-	// 		setRecrawlable(true);
-	// 	else setRecrawlable(false);
-	// }, [user, site]);
-
 	return pageLoaded ? (
 		<Layout user={userData}>
 			<NextSeo title={pageTitle} />
@@ -934,54 +959,74 @@ const Seo = ({ width, result }) => {
 
 					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto">
-							<div className="max-w-full py-4 px-8">
-								<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-									<ol tw="flex items-center space-x-4">
-										<li>
-											<div>
-												<Link href={homePageLink} passHref>
-													<a tw="text-gray-400 hover:text-gray-500">
-														<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
-														<span tw="sr-only">{homeLabel}</span>
-													</a>
-												</Link>
-											</div>
-										</li>
-										<li>
-											<div tw="flex items-center">
-												<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
-												<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-													{pageTitle}
-												</p>
-											</div>
-										</li>
-									</ol>
-								</nav>
-								<div className="pt-4 m-auto">
-									<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-										{pageTitle}
-										<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-											<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-												<PageSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
-												{pagesData.count > 0 ? pagesData.count + " " + SeoLabel[2].label : SeoLabel[3].label}
-											</dd>
-										</dl>
-									</h4>
+							{pageLoaded ? (
+								<div className="max-w-full py-4 px-8">
+									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+										<ol tw="flex items-center space-x-4">
+											<li>
+												<div>
+													<Link href={homePageLink} passHref>
+														<a tw="text-gray-400 hover:text-gray-500">
+															<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+															<span tw="sr-only">{homeLabel}</span>
+														</a>
+													</Link>
+												</div>
+											</li>
+											<li>
+												<div tw="flex items-center">
+													<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+														{pageTitle}
+													</p>
+												</div>
+											</li>
+										</ol>
+									</nav>
+									<div className="pt-4 m-auto">
+										<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
+											{pageTitle}
+											{statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
+												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+														<SearchSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
+														{statsData.num_pages > 0
+															? statsData.num_pages + " " + SeoLabel[2].label
+															: SeoLabel[2].label}
+													</dd>
+												</dl>
+											) : null}
+										</h4>
+									</div>
 								</div>
-							</div>
+							) : (
+								<ProfileSkeleton />
+							)}
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-							<SeoFilter
-								onFilterChange={filterChangeHandler}
-								allFilter={allFilter}
-								noIssueFilter={noIssueFilter}
-								noTitle={noTitle}
-								noDescription={noDescription}
-								noH1First={noH1First}
-								noH1Second={noH1Second}
-								noH2First={noH2First}
-								noH2Second={noH2Second}
-							/>
+							{userData &&
+							userData !== undefined &&
+							userData !== [] &&
+							Object.keys(userData).length > 0 &&
+							userData.permissions &&
+							userData.permissions !== undefined &&
+							userData.permissions.includes("can_see_images") &&
+							userData.permissions.includes("can_see_pages") &&
+							userData.permissions.includes("can_see_scripts") &&
+							userData.permissions.includes("can_see_stylesheets") &&
+							userData.permissions.includes("can_start_scan") ? (
+								<SeoFilter
+									onFilterChange={filterChangeHandler}
+									allFilter={allFilter}
+									noIssueFilter={noIssueFilter}
+									noTitle={noTitle}
+									noDescription={noDescription}
+									noH1First={noH1First}
+									noH1Second={noH1Second}
+									noH2First={noH2First}
+									noH2Second={noH2Second}
+								/>
+							) : null}
 
 							<div tw="pb-4">
 								<div tw="flex flex-col">
@@ -1008,6 +1053,7 @@ const Seo = ({ width, result }) => {
 																					onSortHandler={SortHandler}
 																					key={key}
 																					slug={site.slug}
+																					user={userData}
 																				/>
 																			) : null}
 																			<span className="label" tw="flex items-center">
@@ -1020,33 +1066,60 @@ const Seo = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												{userData &&
+												<tbody>
+													{userData &&
 													userData !== undefined &&
 													userData !== [] &&
 													Object.keys(userData).length > 0 &&
+													userData.permissions &&
+													userData.permissions !== undefined &&
+													userData.permissions.includes("can_see_images") &&
+													userData.permissions.includes("can_see_pages") &&
+													userData.permissions.includes("can_see_scripts") &&
+													userData.permissions.includes("can_see_stylesheets") &&
+													userData.permissions.includes("can_start_scan") &&
 													pagesData &&
 													pagesData !== undefined &&
 													pagesData !== [] &&
 													Object.keys(pagesData).length > 0 &&
-													pagesData.results &&
-													pagesData.results.map((val, key) => <SeoTable key={key} val={val} />)}
+													pagesData.results ? (
+														pagesData.results.map((val, key) => <SeoTable key={key} val={val} user={userData} />)
+													) : (
+														<SeoTableSkeleton />
+													)}
+												</tbody>
 											</table>
 										</div>
 									</div>
 								</div>
 							</div>
-
-							<MyPagination
-								href="/dashboard/site/[siteId]/seo/"
-								pathName={pagePath}
-								apiEndpoint={scanApiEndpoint}
-								page={result.page ? result.page : 0}
-								linksPerPage={linksPerPage}
-								onItemsPerPageChange={onItemsPerPageChange}
-							/>
+							{userData &&
+							userData !== undefined &&
+							userData !== [] &&
+							Object.keys(userData).length > 0 &&
+							userData.permissions &&
+							userData.permissions !== undefined &&
+							userData.permissions.includes("can_see_images") &&
+							userData.permissions.includes("can_see_pages") &&
+							userData.permissions.includes("can_see_scripts") &&
+							userData.permissions.includes("can_see_stylesheets") &&
+							userData.permissions.includes("can_start_scan") &&
+							pagesData &&
+							pagesData !== undefined &&
+							pagesData !== [] &&
+							Object.keys(pagesData).length > 0 ? (
+								<MyPagination
+									href="/dashboard/site/[siteId]/seo"
+									pathName={pagePath}
+									apiEndpoint={scanApiEndpoint}
+									page={result.page ? result.page : 0}
+									linksPerPage={linksPerPage}
+									onItemsPerPageChange={onItemsPerPageChange}
+								/>
+							) : null}
 						</div>
 
-						<div tw="static bottom-0 w-full mx-auto px-4 sm:px-6 py-4">
+						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
 							<SiteFooter />
 						</div>
 					</main>

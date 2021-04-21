@@ -58,9 +58,7 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) =>
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-								{component === "Overview"
-									? label[7].label
-									: component === "AddSite"
+								{component === "AddSite"
 									? label[1].label
 									: component === "LinkOptions"
 									? label[6].label
@@ -68,7 +66,7 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) =>
 							</h3>
 							<div tw="mt-2">
 								<p tw="text-sm leading-5 text-gray-500">
-									{component === "Overview" ? label[8].label : defaultModalDescriptionLabel}
+									{component === "AddSite" ? label[2].label : defaultModalDescriptionLabel}
 								</p>
 							</div>
 						</div>

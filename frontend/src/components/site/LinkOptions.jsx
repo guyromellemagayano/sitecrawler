@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // External
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import loadable from "@loadable/component";
 import tw from "twin.macro";
 
@@ -15,9 +16,8 @@ import LinkOptionsLabel from "public/labels/components/sites/LinkOptions.json";
 import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
-const AddSiteSkeleton = loadable(() => import("src/components/skeletons/AddSiteSkeleton"));
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
-const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
+import SearchSvg from "src/components/svg/solid/SearchSvg";
 
 const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, crawlFinished, crawlableHandler }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -27,6 +27,7 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 	const [statsData, setStatsData] = useState([]);
 
 	const { asPath } = useRouter();
+	const router = useRouter();
 
 	const { scan: scan } = useScan({
 		querySid: sid,
@@ -94,37 +95,47 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 
 			<div tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
 				<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
-					<div tw="flex-1 p-4 flex justify-between">
-						<div tw="flex-1 flex">
-							<div tw="w-full flex lg:ml-0">
-								<label htmlFor="searchSites" tw="sr-only">
-									{LinkOptionsLabel[1].label}
-								</label>
-								<div tw="relative w-full text-gray-400 focus-within:text-gray-600">
-									<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-										<SearchSvg className={tw`h-5 w-5 text-gray-400`} />
+					<div tw="flex-1 p-4 flex justify-end">
+						{router.pathname.includes("/links") ||
+						(user.permissions &&
+							user.permissions !== undefined &&
+							user.permissions.includes("can_see_images") &&
+							user.permissions.includes("can_see_pages") &&
+							user.permissions.includes("can_see_scripts") &&
+							user.permissions.includes("can_see_stylesheets") &&
+							user.permissions.includes("can_start_scan")) ? (
+							<div tw="flex-1 flex">
+								<div tw="w-full flex lg:ml-0">
+									<label htmlFor="searchSites" tw="sr-only">
+										{LinkOptionsLabel[1].label}
+									</label>
+									<div tw="relative w-full text-gray-400 focus-within:text-gray-600">
+										<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+											<SearchSvg className={tw`h-5 w-5 text-gray-400`} />
+										</div>
+										<input
+											type="search"
+											name="search-links"
+											id="searchlinks"
+											tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+											placeholder={
+												asPath.includes("pages")
+													? LinkOptionsLabel[0].label
+													: asPath.includes("links")
+													? LinkOptionsLabel[1].label
+													: asPath.includes("images")
+													? LinkOptionsLabel[2].label
+													: LinkOptionsLabel[3].label
+											}
+											onKeyUp={onSearchEvent}
+											defaultValue={searchKey}
+											autoFocus
+										/>
 									</div>
-									<input
-										type="search"
-										name="search-links"
-										id="searchlinks"
-										tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-										placeholder={
-											asPath.includes("pages")
-												? LinkOptionsLabel[0].label
-												: asPath.includes("links")
-												? LinkOptionsLabel[1].label
-												: asPath.includes("images")
-												? LinkOptionsLabel[2].label
-												: LinkOptionsLabel[3].label
-										}
-										onKeyUp={onSearchEvent}
-										defaultValue={searchKey}
-										autoFocus
-									/>
 								</div>
 							</div>
-						</div>
+						) : null}
+
 						<div tw="ml-4 flex items-center lg:ml-6">
 							{componentReady ? (
 								user && user !== undefined && Object.keys(user).length > 0 ? (
@@ -145,25 +156,34 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 													: tw`hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
 											]}
 										>
-											{crawlFinished
-												? LinkOptionsLabel[4].label
-												: scanData.count == 1
-												? LinkOptionsLabel[8].label
-												: LinkOptionsLabel[5].label}
+											<span tw="flex items-center space-x-2">
+												{user.permissions &&
+												user.permissions !== undefined &&
+												user.permissions.includes("can_see_images") &&
+												user.permissions.includes("can_see_pages") &&
+												user.permissions.includes("can_see_scripts") &&
+												user.permissions.includes("can_see_stylesheets") &&
+												user.permissions.includes("can_start_scan") ? null : (
+													<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+												)}
+												<span>
+													{crawlFinished
+														? LinkOptionsLabel[4].label
+														: scanData.count == 1
+														? LinkOptionsLabel[8].label
+														: LinkOptionsLabel[5].label}
+												</span>
+											</span>
 										</button>
 									</>
 								) : null
-							) : (
-								<Skeleton duration={2} width={150} height={40} />
-							)}
+							) : null}
 						</div>
 					</div>
 				</div>
 			</div>
 		</>
-	) : (
-		<AddSiteSkeleton />
-	);
+	) : null;
 };
 
 export default LinkOptions;
