@@ -43,7 +43,8 @@ const DataTableDiv = styled.tbody`
 		max-width: 100%;
 		display: block;
 
-		a {
+		a,
+		span:first-child {
 			display: block;
 		}
 	}
@@ -511,7 +512,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 									{componentReady ? (
 										!site.verified ? (
 											<>
-												<span tw="truncate text-sm leading-5 font-semibold text-gray-500">{site.name}</span>
+												<span tw="max-w-sm truncate text-sm leading-5 font-semibold text-gray-500">{site.name}</span>
 												<span tw="flex justify-start text-sm leading-5 text-gray-500">
 													<button
 														type="button"

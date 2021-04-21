@@ -271,7 +271,7 @@ const Dashboard = ({ width, result }) => {
 																				{site &&
 																				site !== undefined &&
 																				Object.keys(site).length > 0 &&
-																				site.slug != undefined ? (
+																				site.slug !== undefined ? (
 																					<SiteSorting
 																						sortOrder={sortOrder}
 																						onSortHandler={SortHandler}

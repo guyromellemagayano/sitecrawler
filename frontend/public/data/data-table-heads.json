@@ -10,7 +10,9 @@
 		"key": "updated_at"
 	},
 	{
-		"label": "Crawl Status"
+		"label": "Crawl Status",
+		"slug": "crawl-status",
+		"key": "finished_at"
 	},
 	{
 		"label": "Total Issues"
