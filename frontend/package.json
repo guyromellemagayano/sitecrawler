@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development NODE_OPTIONS='--inspect' next dev",
-    "build": "NODE_ENV=production next build --profile --debug",
+    "build": "NODE_ENV=production next build",
     "start": "next start",
     "storybook": "start-storybook -p 6006 -c ./.storybook/ -s ./",
     "build-storybook": "build-storybook -c ./.storybook/ -s ./"
