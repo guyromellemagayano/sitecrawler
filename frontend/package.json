@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development NODE_OPTIONS='--inspect' next dev",
-    "build": "NODE_ENV=production next build --profile --debug",
+    "build": "NODE_ENV=production next build",
     "start": "next start",
     "storybook": "start-storybook -p 6006 -c ./.storybook/ -s ./",
     "build-storybook": "build-storybook -c ./.storybook/ -s ./"
@@ -21,8 +21,10 @@
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@headlessui/react": "^1.0.0",
+    "@heroicons/react": "^1.0.1",
     "@loadable/component": "^5.14.1",
     "@sentry/react": "^6.2.5",
     "@sentry/tracing": "^6.2.5",
