@@ -23,20 +23,22 @@ import { useScan, useSite, useSiteId } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
+import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
+import HomeSvg from "src/components/svg/solid/HomeSvg";
+import MainSidebar from "src/components/sidebar/MainSidebar";
+import SitesImagesStats from "src/components/sites/ImagesStats";
+import SitesLinksStats from "src/components/sites/LinksStats";
+import SitesOverview from "src/components/sites/Overview";
+import SitesPagesStats from "src/components/sites/PagesStats";
+import SitesSeoStats from "src/components/sites/SeoStats";
+import SitesStats from "src/components/sites/Stats";
+
+// Loadable
 const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
-const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
-const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const Loader = loadable(() => import("src/components/layout/Loader"));
-const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
-const SitesImagesStats = loadable(() => import("src/components/sites/ImagesStats"));
-const SitesLinksStats = loadable(() => import("src/components/sites/LinksStats"));
-const SitesOverview = loadable(() => import("src/components/sites/Overview"));
-const SitesPagesStats = loadable(() => import("src/components/sites/PagesStats"));
-const SitesSeoStats = loadable(() => import("src/components/sites/SeoStats"));
-const SitesStats = loadable(() => import("src/components/sites/Stats"));
 
 const SiteOverview = ({ width, result }) => {
 	const [crawlFinished, setCrawlFinished] = useState(false);
