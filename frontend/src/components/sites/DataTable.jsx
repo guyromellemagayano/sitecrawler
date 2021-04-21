@@ -88,7 +88,12 @@ const DataTable = ({ site, disableLocalTime }) => {
 
 	useEffect(() => {
 		if (scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0) {
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
+			if (
+				scanData.results &&
+				scanData.results !== undefined &&
+				scanData.results !== [] &&
+				Object.keys(scanData.results).length > 0
+			) {
 				setScanObjId((prevState) => ({
 					...prevState,
 					id: scanData.results

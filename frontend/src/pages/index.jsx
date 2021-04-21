@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 // NextJS
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // External
 import "twin.macro";
@@ -57,6 +57,7 @@ const Dashboard = ({ width, result }) => {
 	const pageTitle = DashboardLabel[0].label;
 
 	const { asPath } = useRouter();
+	const router = useRouter();
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -151,8 +152,11 @@ const Dashboard = ({ width, result }) => {
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push(newPath);
 		mutateSite();
+
+		setTimeout(() => {
+			router.push(newPath);
+		}, 500);
 	};
 
 	const onItemsPerPageChange = (count) => {
@@ -173,8 +177,8 @@ const Dashboard = ({ width, result }) => {
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			Router.push(newPath);
 			mutateSite();
+			router.push(newPath);
 
 			return true;
 		}
@@ -210,8 +214,8 @@ const Dashboard = ({ width, result }) => {
 		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
-		Router.push(newPath);
 		mutateSite();
+		router.push(newPath);
 	};
 
 	useEffect(() => {
