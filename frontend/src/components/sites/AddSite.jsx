@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
@@ -13,9 +14,10 @@ import tw from "twin.macro";
 import AddSiteLabel from "public/labels/components/sites/AddSite.json";
 
 // Components
+import SearchSvg from "src/components/svg/solid/SearchSvg";
+
+// Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
-const AddSiteSkeleton = loadable(() => import("src/components/skeletons/AddSiteSkeleton"));
-const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
 
 const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [siteLimitCounter, setSiteLimitCounter] = useState(0);
@@ -84,7 +86,18 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 									tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"
 									onClick={() => setShowErrorModal(!showErrorModal)}
 								>
-									{AddSiteLabel[0].label}
+									<span tw="flex items-center space-x-2">
+										{user.permissions &&
+										user.permissions !== undefined &&
+										user.permissions.includes("can_see_images") &&
+										user.permissions.includes("can_see_pages") &&
+										user.permissions.includes("can_see_scripts") &&
+										user.permissions.includes("can_see_stylesheets") &&
+										user.permissions.includes("can_start_scan") ? null : (
+											<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+										)}
+										<span>{AddSiteLabel[0].label}</span>
+									</span>
 								</button>
 							) : (
 								<Link href={informationPageLink} passHref>
@@ -98,9 +111,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 				</div>
 			</div>
 		</>
-	) : (
-		<AddSiteSkeleton />
-	);
+	) : null;
 };
 
 AddSite.propTypes = {};

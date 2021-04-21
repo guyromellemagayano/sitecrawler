@@ -7,7 +7,7 @@ import useFetcher from "src/hooks/useFetcher";
 const siteApiEndpoint = "/api/site/";
 
 export const useSite = ({ endpoint, refreshInterval = 0 }) => {
-	const { data: site, mutate: mutateSite, error: siteError } = useSWR(endpoint, useFetcher, {
+	const { data: site, mutate: mutateSite, error: siteError } = useSWR(endpoint ? endpoint : null, useFetcher, {
 		onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
 			if (error && error !== undefined && error.status === 404) return;
 			if (key === endpoint) return;

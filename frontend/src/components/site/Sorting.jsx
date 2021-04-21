@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 const Sorting = ({ enabled, direction, onSortHandler, slug }) => {
 	return enabled ? (
 		<>
-			<button onClick={(e) => onSortHandler(slug, "asc")}>
+			<button disabled={false} onClick={(e) => onSortHandler(slug, "asc")}>
 				<span
 					className="asc"
 					css={[tw`w-4 h-4 inline-block`, direction == "asc" ? tw`text-gray-500` : tw`text-gray-300`]}
@@ -22,7 +22,7 @@ const Sorting = ({ enabled, direction, onSortHandler, slug }) => {
 					</svg>
 				</span>
 			</button>
-			<button onClick={(e) => onSortHandler(slug, "desc")}>
+			<button disabled={false} onClick={(e) => onSortHandler(slug, "desc")}>
 				<span
 					className="desc"
 					css={[tw`w-4 h-4 inline-block`, direction == "desc" ? tw`text-gray-500` : tw`text-gray-300`]}

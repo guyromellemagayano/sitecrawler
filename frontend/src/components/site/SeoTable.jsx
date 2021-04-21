@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
-import loadable from "@loadable/component";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";

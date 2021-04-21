@@ -18,7 +18,7 @@ import ImageTableContent from "public/data/image-table.json";
 
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
-import { useScan, useSite, useImages, useSiteId } from "src/hooks/useSite";
+import { useScan, useSite, useImages, useSiteId, useStats } from "src/hooks/useSite";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -35,6 +35,7 @@ const ImageTable = loadable(() => import("src/components/site/ImageTable"));
 const ImageSvg = loadable(() => import("src/components/svg/outline/ImageSvg"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const ImageTableSkeleton = loadable(() => import("src/components/skeletons/ImageTableSkeleton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const MyPagination = loadable(() => import("src/components/sites/Pagination"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
@@ -77,6 +78,7 @@ const Images = ({ width, result }) => {
 	const [siteData, setSiteData] = useState([]);
 	const [siteIdData, setSiteIdData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
+	const [statsData, setStatsData] = useState([]);
 	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
@@ -89,6 +91,12 @@ const Images = ({ width, result }) => {
 	const homePageLink = `/site/${result.siteId}/overview`;
 	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
 	const sitesApiEndpoint = `/api/site/?ordering=name`;
+
+	let images = [];
+	let mutateImages = [];
+	let scanApiEndpoint = "";
+	let queryString = "";
+	let statusString = "";
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -127,60 +135,80 @@ const Images = ({ width, result }) => {
 		}
 	});
 
-	let scanApiEndpoint =
-		result.page !== undefined
-			? `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage + `&page=` + result.page
-			: `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
-
-	let queryString = "";
-
-	const statusString = Array.isArray(result.status) ? result.status.join("&status=") : result.status;
-
-	queryString +=
-		result.status !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&status=${statusString}`
-				: `?status=${statusString}`
-			: "";
-
-	const tlsStatusString = Array.isArray(result.tls_status) ? result.tls_status.join("&tls_status=") : result.tls_status;
-
-	queryString +=
-		result.tls_status !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&tls_status=${tlsStatusString}`
-				: `?tls_status=${tlsStatusString}`
-			: "";
-
-	queryString +=
-		result.search !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&search=${result.search}`
-				: `?search=${result.search}`
-			: "";
-
-	queryString +=
-		result.ordering !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&ordering=${result.ordering}`
-				: `?ordering=${result.ordering}`
-			: "";
-
-	queryString +=
-		typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
-			? scanApiEndpoint.includes("?")
-				? window.location.search.replace("?", "&")
-				: window.location.search
-			: "";
-
-	scanApiEndpoint += queryString;
-
-	const { images: images, mutateImages: mutateImages } = useImages({
-		endpoint: scanApiEndpoint,
+	const { stats: stats } = useStats({
 		querySid: result.siteId,
 		scanObjId: scanObjId,
 		refreshInterval: 1000
 	});
+
+	if (
+		user &&
+		user !== undefined &&
+		user !== [] &&
+		Object.keys(user).length > 0 &&
+		user.permissions &&
+		user.permissions !== undefined &&
+		user.permissions.includes("can_see_images") &&
+		user.permissions.includes("can_see_pages") &&
+		user.permissions.includes("can_see_scripts") &&
+		user.permissions.includes("can_see_stylesheets") &&
+		user.permissions.includes("can_start_scan")
+	) {
+		scanApiEndpoint =
+			result.page !== undefined
+				? `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage + `&page=` + result.page
+				: `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
+
+		statusString = Array.isArray(result.status) ? result.status.join("&status=") : result.status;
+
+		queryString +=
+			result.status !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&status=${statusString}`
+					: `?status=${statusString}`
+				: "";
+
+		const tlsStatusString = Array.isArray(result.tls_status)
+			? result.tls_status.join("&tls_status=")
+			: result.tls_status;
+
+		queryString +=
+			result.tls_status !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&tls_status=${tlsStatusString}`
+					: `?tls_status=${tlsStatusString}`
+				: "";
+
+		queryString +=
+			result.search !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&search=${result.search}`
+					: `?search=${result.search}`
+				: "";
+
+		queryString +=
+			result.ordering !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&ordering=${result.ordering}`
+					: `?ordering=${result.ordering}`
+				: "";
+
+		queryString +=
+			typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
+				? scanApiEndpoint.includes("?")
+					? window.location.search.replace("?", "&")
+					: window.location.search
+				: "";
+
+		scanApiEndpoint += queryString;
+	}
+
+	({ images: images, mutateImages: mutateImages } = useImages({
+		endpoint: scanApiEndpoint,
+		querySid: result.siteId,
+		scanObjId: scanObjId,
+		refreshInterval: 1000
+	}));
 
 	useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {
@@ -199,12 +227,16 @@ const Images = ({ width, result }) => {
 			setImagesData(images);
 		}
 
-		if (userData && siteData && siteIdData && imagesData) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setStatsData(stats);
+		}
+
+		if (userData && siteData && siteIdData && imagesData && statsData) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [user, site, siteId, images]);
+	}, [user, site, siteId, images, stats]);
 
 	const searchEventHandler = async (e) => {
 		const searchTargetValue = e.target.value;
@@ -587,7 +619,9 @@ const Images = ({ width, result }) => {
 											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
 													<ImageSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
-													{imagesData.count > 0 ? imagesData.count + " " + ImagesLabel[2].label : ImagesLabel[3].label}
+													{statsData.num_images > 0
+														? statsData.num_images + " " + ImagesLabel[2].label
+														: ImagesLabel[2].label}
 												</dd>
 											</dl>
 										</h4>
@@ -598,13 +632,27 @@ const Images = ({ width, result }) => {
 							)}
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-							<ImageFilter
-								onFilterChange={filterChangeHandler}
-								allFilter={allFilter}
-								noIssueFilter={noIssueFilter}
-								imageNotWorkingFilter={imageNotWorkingFilter}
-								imageBrokenSecurityFilter={imageBrokenSecurityFilter}
-							/>
+							{userData &&
+							userData !== undefined &&
+							userData !== [] &&
+							Object.keys(userData).length > 0 &&
+							userData.permissions &&
+							userData.permissions !== undefined &&
+							userData.permissions.includes("can_see_images") &&
+							userData.permissions.includes("can_see_pages") &&
+							userData.permissions.includes("can_see_scripts") &&
+							userData.permissions.includes("can_see_stylesheets") &&
+							userData.permissions.includes("can_start_scan") ? (
+								<ImageFilter
+									user={userData}
+									onFilterChange={filterChangeHandler}
+									allFilter={allFilter}
+									noIssueFilter={noIssueFilter}
+									imageNotWorkingFilter={imageNotWorkingFilter}
+									imageBrokenSecurityFilter={imageBrokenSecurityFilter}
+								/>
+							) : null}
+
 							<div tw="pb-4">
 								<div tw="flex flex-col">
 									<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -630,6 +678,7 @@ const Images = ({ width, result }) => {
 																					onSortHandler={SortHandler}
 																					key={key}
 																					slug={site.slug}
+																					user={userData}
 																				/>
 																			) : null}
 																			<span className="label" tw="flex items-center">
@@ -644,19 +693,25 @@ const Images = ({ width, result }) => {
 												</thead>
 												<tbody>
 													{userData &&
-														userData !== undefined &&
-														userData !== [] &&
-														Object.keys(userData).length > 0 &&
-														imagesData &&
-														imagesData !== undefined &&
-														imagesData !== [] &&
-														Object.keys(imagesData).length > 0 &&
-														imagesData.results &&
-														imagesData.results.map((val, key) => (
-															<>
-																<ImageTable key={key} val={val} user={userData} />
-															</>
-														))}
+													userData !== undefined &&
+													userData !== [] &&
+													Object.keys(userData).length > 0 &&
+													userData.permissions &&
+													userData.permissions !== undefined &&
+													userData.permissions.includes("can_see_images") &&
+													userData.permissions.includes("can_see_pages") &&
+													userData.permissions.includes("can_see_scripts") &&
+													userData.permissions.includes("can_see_stylesheets") &&
+													userData.permissions.includes("can_start_scan") &&
+													imagesData &&
+													imagesData !== undefined &&
+													imagesData !== [] &&
+													Object.keys(imagesData).length > 0 &&
+													imagesData.results ? (
+														imagesData.results.map((val, key) => <ImageTable key={key} val={val} user={userData} />)
+													) : (
+														<ImageTableSkeleton />
+													)}
 												</tbody>
 											</table>
 										</div>
@@ -664,14 +719,30 @@ const Images = ({ width, result }) => {
 								</div>
 							</div>
 
-							<MyPagination
-								href="/dashboard/site/[siteId]/images/"
-								pathName={pagePath}
-								apiEndpoint={scanApiEndpoint}
-								page={result.page ? result.page : 0}
-								linksPerPage={linksPerPage}
-								onItemsPerPageChange={onItemsPerPageChange}
-							/>
+							{userData &&
+							userData !== undefined &&
+							userData !== [] &&
+							Object.keys(userData).length > 0 &&
+							userData.permissions &&
+							userData.permissions !== undefined &&
+							userData.permissions.includes("can_see_images") &&
+							userData.permissions.includes("can_see_pages") &&
+							userData.permissions.includes("can_see_scripts") &&
+							userData.permissions.includes("can_see_stylesheets") &&
+							userData.permissions.includes("can_start_scan") &&
+							pagesData &&
+							pagesData !== undefined &&
+							pagesData !== [] &&
+							Object.keys(pagesData).length > 0 ? (
+								<MyPagination
+									href="/dashboard/site/[siteId]/images/"
+									pathName={pagePath}
+									apiEndpoint={scanApiEndpoint}
+									page={result.page ? result.page : 0}
+									linksPerPage={linksPerPage}
+									onItemsPerPageChange={onItemsPerPageChange}
+								/>
+							) : null}
 						</div>
 
 						<div tw="static bottom-0 w-full mx-auto px-12 py-4">

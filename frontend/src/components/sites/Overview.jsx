@@ -5,9 +5,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
-import PropTypes from "prop-types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import loadable from "@loadable/component";
 import Moment from "react-moment";
+import PropTypes from "prop-types";
 import ReactTooltip from "react-tooltip";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
@@ -138,11 +139,28 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 												: tw`hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
 										]}
 									>
-										{crawlFinished
-											? OverviewLabel[0].label
-											: scanData.count == 1
-											? OverviewLabel[9].label
-											: OverviewLabel[6].label}
+										<span tw="flex items-center space-x-2">
+											{user &&
+											user !== undefined &&
+											user !== [] &&
+											Object.keys(user).length > 0 &&
+											user.permissions &&
+											user.permissions !== undefined &&
+											user.permissions.includes("can_see_images") &&
+											user.permissions.includes("can_see_pages") &&
+											user.permissions.includes("can_see_scripts") &&
+											user.permissions.includes("can_see_stylesheets") &&
+											user.permissions.includes("can_start_scan") ? null : (
+												<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+											)}
+											<span>
+												{crawlFinished
+													? OverviewLabel[0].label
+													: scanData.count == 1
+													? OverviewLabel[8].label
+													: OverviewLabel[6].label}
+											</span>
+										</span>
 									</button>
 								) : null
 							) : (

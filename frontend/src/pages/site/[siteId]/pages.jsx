@@ -6,7 +6,6 @@ import Link from "next/link";
 import Router, { useRouter } from "next/router";
 
 // External
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
@@ -90,6 +89,11 @@ const Pages = ({ width, result }) => {
 	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
 	const sitesApiEndpoint = `/api/site/?ordering=name`;
 
+	let pages = [];
+	let mutatePages = [];
+	let scanApiEndpoint = "";
+	let queryString = "";
+
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login",
@@ -133,67 +137,79 @@ const Pages = ({ width, result }) => {
 		refreshInterval: 1000
 	});
 
-	let scanApiEndpoint =
-		result.page !== undefined
-			? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result.page
-			: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+	if (
+		user &&
+		user !== undefined &&
+		user !== [] &&
+		Object.keys(user).length > 0 &&
+		user.permissions &&
+		user.permissions !== undefined &&
+		user.permissions.includes("can_see_images") &&
+		user.permissions.includes("can_see_pages") &&
+		user.permissions.includes("can_see_scripts") &&
+		user.permissions.includes("can_see_stylesheets") &&
+		user.permissions.includes("can_start_scan")
+	) {
+		scanApiEndpoint =
+			result.page !== undefined
+				? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result.page
+				: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
-	let queryString = "";
-
-	queryString +=
-		result.size_total_min !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&size_total_min=1048576`
-				: `?size_total_min=1048576`
-			: "";
-
-	queryString +=
-		result.size_total_max !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&size_total_max=1048575`
-				: `?size_total_max=1048575`
-			: "";
-
-	queryString +=
-		result.tls_total !== undefined
-			? result.tls_total === "true"
+		queryString +=
+			result.size_total_min !== undefined
 				? scanApiEndpoint.includes("?")
-					? `&tls_total=true`
-					: `?tls_total=true`
-				: scanApiEndpoint.includes("?")
-				? `&tls_total=false`
-				: `?tls_total=false`
-			: "";
+					? `&size_total_min=1048576`
+					: `?size_total_min=1048576`
+				: "";
 
-	queryString +=
-		result.search !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&search=${result.search}`
-				: `?search=${result.search}`
-			: "";
+		queryString +=
+			result.size_total_max !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&size_total_max=1048575`
+					: `?size_total_max=1048575`
+				: "";
 
-	queryString +=
-		result.ordering !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&ordering=${result.ordering}`
-				: `?ordering=${result.ordering}`
-			: "";
+		queryString +=
+			result.tls_total !== undefined
+				? result.tls_total === "true"
+					? scanApiEndpoint.includes("?")
+						? `&tls_total=true`
+						: `?tls_total=true`
+					: scanApiEndpoint.includes("?")
+					? `&tls_total=false`
+					: `?tls_total=false`
+				: "";
 
-	queryString +=
-		typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
-			? scanApiEndpoint.includes("?")
-				? window.location.search.replace("?", "&")
-				: window.location.search
-			: "";
+		queryString +=
+			result.search !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&search=${result.search}`
+					: `?search=${result.search}`
+				: "";
 
-	scanApiEndpoint += queryString;
+		queryString +=
+			result.ordering !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&ordering=${result.ordering}`
+					: `?ordering=${result.ordering}`
+				: "";
 
-	const { pages: pages, mutatePages: mutatePages } = usePages({
+		queryString +=
+			typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
+				? scanApiEndpoint.includes("?")
+					? window.location.search.replace("?", "&")
+					: window.location.search
+				: "";
+
+		scanApiEndpoint += queryString;
+	}
+
+	({ pages: pages, mutatePages: mutatePages } = usePages({
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
 		scanObjId: scanObjId,
 		refreshInterval: 1000
-	});
+	}));
 
 	useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {
@@ -619,9 +635,18 @@ const Pages = ({ width, result }) => {
 							)}
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-							{userData && userData !== undefined && userData !== [] && Object.keys(userData).length > 0 ? (
+							{userData &&
+							userData !== undefined &&
+							userData !== [] &&
+							Object.keys(userData).length > 0 &&
+							userData.permissions &&
+							userData.permissions !== undefined &&
+							userData.permissions.includes("can_see_images") &&
+							userData.permissions.includes("can_see_pages") &&
+							userData.permissions.includes("can_see_scripts") &&
+							userData.permissions.includes("can_see_stylesheets") &&
+							userData.permissions.includes("can_start_scan") ? (
 								<PageFilter
-									user={userData}
 									onFilterChange={filterChangeHandler}
 									allFilter={allFilter}
 									noIssueFilter={noIssueFilter}
@@ -660,19 +685,6 @@ const Pages = ({ width, result }) => {
 																			) : null}
 																			<div tw="flex items-center space-x-2">
 																				<span className="label">{site.label}</span>
-																				{userData &&
-																				userData !== undefined &&
-																				userData !== [] &&
-																				Object.keys(userData).length > 0 &&
-																				userData.permissions &&
-																				userData.permissions !== undefined &&
-																				userData.permissions.includes("can_see_images") &&
-																				userData.permissions.includes("can_see_pages") &&
-																				userData.permissions.includes("can_see_scripts") &&
-																				userData.permissions.includes("can_see_stylesheets") &&
-																				userData.permissions.includes("can_start_scan") ? null : (
-																					<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-yellow-600" />
-																				)}
 																			</div>
 																		</div>
 																	</th>

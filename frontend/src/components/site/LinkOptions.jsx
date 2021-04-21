@@ -16,9 +16,8 @@ import LinkOptionsLabel from "public/labels/components/sites/LinkOptions.json";
 import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
-const AddSiteSkeleton = loadable(() => import("src/components/skeletons/AddSiteSkeleton"));
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
-const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
+import SearchSvg from "src/components/svg/solid/SearchSvg";
 
 const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, crawlFinished, crawlableHandler }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -96,7 +95,7 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 
 			<div tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
 				<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
-					<div tw="flex-1 p-4 flex justify-between">
+					<div tw="flex-1 p-4 flex justify-end">
 						{router.pathname.includes("/links") ||
 						(user.permissions &&
 							user.permissions !== undefined &&
@@ -135,31 +134,7 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 									</div>
 								</div>
 							</div>
-						) : (
-							<div tw="flex-1 flex">
-								<div tw="w-full flex lg:ml-0">
-									<label htmlFor="searchSites" tw="sr-only">
-										{LinkOptionsLabel[1].label}
-									</label>
-									<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center space-x-8">
-										<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-											<SearchSvg className={tw`h-5 w-5 text-gray-400`} />
-										</div>
-										<span tw="flex items-center">
-											{user.permissions &&
-											user.permissions !== undefined &&
-											user.permissions.includes("can_see_images") &&
-											user.permissions.includes("can_see_pages") &&
-											user.permissions.includes("can_see_scripts") &&
-											user.permissions.includes("can_see_stylesheets") &&
-											user.permissions.includes("can_start_scan") ? null : (
-												<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-yellow-600" />
-											)}
-										</span>
-									</div>
-								</div>
-							</div>
-						)}
+						) : null}
 
 						<div tw="ml-4 flex items-center lg:ml-6">
 							{componentReady ? (
@@ -202,17 +177,13 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 										</button>
 									</>
 								) : null
-							) : (
-								<Skeleton duration={2} width={150} height={40} />
-							)}
+							) : null}
 						</div>
 					</div>
 				</div>
 			</div>
 		</>
-	) : (
-		<AddSiteSkeleton />
-	);
+	) : null;
 };
 
 export default LinkOptions;

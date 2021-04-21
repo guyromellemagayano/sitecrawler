@@ -207,7 +207,7 @@ const PageDetail = ({ width, result }) => {
 											</nav>
 											<div tw="pt-4 m-auto">
 												<h4 tw="flex items-center text-2xl leading-8 font-medium text-gray-900 leading-8 break-all">
-													{pageDetailData.url} - {siteData.name}
+													{pageDetailData.url} - {siteIdData.name}
 												</h4>
 											</div>
 										</>
