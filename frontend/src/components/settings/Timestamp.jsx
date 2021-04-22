@@ -24,7 +24,9 @@ const TimestampSettings = ({ user }) => {
 
 	const userApiEndpoint = "/api/auth/user/";
 
-	const { mutateUser: mutateUser } = useUser({ // refreshInterval: 1000 });
+	const { mutateUser: mutateUser } = useUser({
+		// refreshInterval: 1000
+	});
 
 	const updateTimestampSettings = async (endpoint, state) => {
 		user.settings.disableLocalTime = state;
