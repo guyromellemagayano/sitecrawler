@@ -25,22 +25,22 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
-const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const MyPagination = loadable(() => import("src/components/sites/Pagination"));
-const SeoTableSkeleton = loadable(() => import("src/components/skeletons/SeoTableSkeleton"));
-const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
-const SeoFilter = loadable(() => import("src/components/site/SeoFilter"));
-const SeoSorting = loadable(() => import("src/components/site/SeoSorting"));
-const SeoTable = loadable(() => import("src/components/site/SeoTable"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
-
-// Loadable
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
+import LinkOptions from "src/components/site/LinkOptions";
+import MainSidebar from "src/components/sidebar/MainSidebar";
+import MyPagination from "src/components/sites/Pagination";
+import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
 import SearchSvg from "src/components/svg/solid/SearchSvg";
+import SeoFilter from "src/components/site/SeoFilter";
+import SeoSorting from "src/components/site/SeoSorting";
+import SeoTable from "src/components/site/SeoTable";
+import SeoTableSkeleton from "src/components/skeletons/SeoTableSkeleton";
+
+// Loadable
+const Loader = loadable(() => import("src/components/layout/Loader"));
+const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
 // Helpers
 import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
@@ -64,6 +64,7 @@ const initialOrder = {
 const Seo = ({ width, result }) => {
 	const [allFilter, setAllFilter] = useState(false);
 	const [crawlFinished, setCrawlFinished] = useState(false);
+	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [loadQueryString, setLoadQueryString] = useState("");
 	const [noDescription, setNoDescription] = useState(false);
@@ -256,6 +257,14 @@ const Seo = ({ width, result }) => {
 	useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {
 			setUserData(user);
+
+			if (userData && userData !== undefined && userData !== [] && userData.settings && userData.settings !== []) {
+				if (userData.settings.disableLocalTime) {
+					setDisableLocalTime(true);
+				} else {
+					setDisableLocalTime(false);
+				}
+			}
 		}
 
 		if (site && site !== undefined && Object.keys(site).length > 0) {
@@ -986,13 +995,15 @@ const Seo = ({ width, result }) => {
 									<div className="pt-4 m-auto">
 										<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
 											{pageTitle}
-											{statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
+											{pagesData && pagesData !== undefined && pagesData !== [] && Object.keys(pagesData).length > 0 ? (
 												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
 														<SearchSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
-														{statsData.num_pages > 0
-															? statsData.num_pages + " " + SeoLabel[2].label
-															: SeoLabel[2].label}
+														{pagesData.count > 1
+															? pagesData.count + " " + SeoLabel[2].label
+															: pagesData.count == 1
+															? pagesData.count + " " + SeoLabel[6].label
+															: SeoLabel[3].label}
 													</dd>
 												</dl>
 											) : null}
@@ -1083,7 +1094,15 @@ const Seo = ({ width, result }) => {
 													pagesData !== [] &&
 													Object.keys(pagesData).length > 0 &&
 													pagesData.results ? (
-														pagesData.results.map((val, key) => <SeoTable key={key} val={val} user={userData} />)
+														pagesData.results.map((val, key) => (
+															<SeoTable
+																key={key}
+																val={val}
+																disableLocalTime={disableLocalTime}
+																user={userData}
+																label={SeoLabel}
+															/>
+														))
 													) : (
 														<SeoTableSkeleton />
 													)}

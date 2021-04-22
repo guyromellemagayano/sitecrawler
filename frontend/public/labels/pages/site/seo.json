@@ -12,9 +12,12 @@
 		"label": "No pages found"
 	},
 	{
-		"label": "Recrawl"
+		"label": "Start Site Recrawl"
 	},
 	{
 		"label": "An unexpected error occurred. Please try again."
+	},
+	{
+		"label": "page found"
 	}
 ]

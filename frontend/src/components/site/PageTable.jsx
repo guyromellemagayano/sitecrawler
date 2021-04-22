@@ -77,7 +77,7 @@ const PageTable = (props) => {
 								href={props.val.url}
 								target="_blank"
 								title={props.val.url}
-								tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 transition ease-in-out duration-150 truncate"
+								tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
 							>
 								{props.val.url}
 							</a>
@@ -87,10 +87,7 @@ const PageTable = (props) => {
 					</div>
 					<div tw="flex justify-start leading-5 text-gray-500">
 						{componentReady ? (
-							pageDetail &&
-							pageDetail !== undefined &&
-							pageDetail !== [] &&
-							Object.keys(pageDetail).length > 0 && (
+							pageDetail && pageDetail !== undefined && pageDetail !== [] && Object.keys(pageDetail).length > 0 ? (
 								<Link
 									href="/site/[siteId]/pages/[pageId]/details"
 									as={`/site/${query.siteId}/pages/${pageDetail.id}/details`}
@@ -103,6 +100,8 @@ const PageTable = (props) => {
 										View Details
 									</a>
 								</Link>
+							) : (
+								<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
 							)
 						) : (
 							<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />

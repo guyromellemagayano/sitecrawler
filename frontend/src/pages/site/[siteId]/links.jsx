@@ -204,23 +204,19 @@ const Links = ({ width, result }) => {
 	});
 
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			siteId &&
-			siteId !== undefined &&
-			Object.keys(siteId).length > 0 &&
-			links &&
-			links !== undefined &&
-			Object.keys(links).length > 0
-		) {
+		if (user && user !== undefined && Object.keys(user).length > 0) {
 			setUserData(user);
+		}
+
+		if (site && site !== undefined && Object.keys(site).length > 0) {
 			setSiteData(site);
+		}
+
+		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
 			setSiteIdData(siteId);
+		}
+
+		if (links && links !== undefined && Object.keys(links).length > 0) {
 			setLinksData(links);
 		}
 

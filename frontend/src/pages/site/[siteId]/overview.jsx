@@ -42,6 +42,7 @@ const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
 const SiteOverview = ({ width, result }) => {
 	const [crawlFinished, setCrawlFinished] = useState(false);
+	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [recrawlable, setRecrawlable] = useState(false);
@@ -50,7 +51,10 @@ const SiteOverview = ({ width, result }) => {
 	const [siteIdData, setSiteIdData] = useState([]);
 	const [userData, setUserData] = useState([]);
 
-	const pageTitle = siteIdData.name && siteIdData.name !== undefined ? "Overview - " + siteIdData.name : "Overview";
+	const pageTitle =
+		siteIdData.name && siteIdData.name !== undefined
+			? OverviewLabel[0].label + " - " + siteIdData.name
+			: OverviewLabel[0].label;
 	const homeLabel = "Home";
 	const homePageLink = "/";
 	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
@@ -96,13 +100,36 @@ const SiteOverview = ({ width, result }) => {
 			setSiteData(site);
 			setSiteIdData(siteId);
 		}
+	}, [user, scan, site, siteId]);
 
-		if (userData && scanData && siteData && siteIdData) {
+	useEffect(() => {
+		if (
+			userData &&
+			userData !== undefined &&
+			userData !== [] &&
+			Object.keys(userData).length > 0 &&
+			siteData &&
+			siteData !== undefined &&
+			siteData !== [] &&
+			Object.keys(siteData).length > 0 &&
+			siteIdData &&
+			siteIdData !== undefined &&
+			siteIdData !== [] &&
+			Object.keys(siteIdData).length > 0
+		) {
+			if (userData.settings !== []) {
+				if (userData.settings.disableLocalTime) {
+					setDisableLocalTime(true);
+				} else {
+					setDisableLocalTime(false);
+				}
+			}
+
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [user, scan, site, siteId]);
+	}, [userData, siteData, siteIdData]);
 
 	const onCrawlHandler = async () => {
 		setCrawlFinished(false);
@@ -208,6 +235,7 @@ const SiteOverview = ({ width, result }) => {
 										finishedAt={
 											scanData &&
 											scanData !== undefined &&
+											scanData !== [] &&
 											Object.keys(scanData).length > 0 &&
 											scanData.results
 												.map((e) => {
@@ -231,6 +259,7 @@ const SiteOverview = ({ width, result }) => {
 										crawlable={recrawlable}
 										crawlFinished={crawlFinished}
 										user={userData}
+										disableLocalTime={disableLocalTime}
 									/>
 
 									{userData && userData !== undefined && Object.keys(userData).length > 0 && (
