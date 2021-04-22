@@ -24,9 +24,7 @@ const SiteSorting = (props) => {
 						onSortHandler={props.onSortHandler}
 						slug={props.slug}
 					/>
-				) : (
-					""
-				)}
+				) : null}
 			</div>
 		</div>
 	);
