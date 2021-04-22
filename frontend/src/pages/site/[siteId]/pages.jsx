@@ -18,7 +18,7 @@ import PagesLabel from "public/labels/pages/site/pages.json";
 
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
-import { useScan, useSite, usePages, useSiteId, useStats } from "src/hooks/useSite";
+import { useScan, useSite, usePages, useSiteId } from "src/hooks/useSite";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -77,7 +77,6 @@ const Pages = ({ width, result }) => {
 	const [siteData, setSiteData] = useState([]);
 	const [siteIdData, setSiteIdData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
-	const [statsData, setStatsData] = useState([]);
 	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
@@ -131,12 +130,6 @@ const Pages = ({ width, result }) => {
 				);
 			}
 		}
-	});
-
-	const { stats: stats } = useStats({
-		querySid: result.siteId,
-		scanObjId: scanObjId,
-		refreshInterval: 1000
 	});
 
 	if (
@@ -230,16 +223,12 @@ const Pages = ({ width, result }) => {
 			setPagesData(pages);
 		}
 
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-
-		if (userData && siteData && siteIdData && pagesData && statsData) {
+		if (userData && siteData && siteIdData && pagesData) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [user, site, siteId, pages, stats]);
+	}, [user, site, siteId, pages]);
 
 	const searchEventHandler = async (e) => {
 		const searchTargetValue = e.target.value;
@@ -734,11 +723,7 @@ const Pages = ({ width, result }) => {
 							userData.permissions.includes("can_see_pages") &&
 							userData.permissions.includes("can_see_scripts") &&
 							userData.permissions.includes("can_see_stylesheets") &&
-							userData.permissions.includes("can_start_scan") &&
-							pagesData &&
-							pagesData !== undefined &&
-							pagesData !== [] &&
-							Object.keys(pagesData).length > 0 ? (
+							userData.permissions.includes("can_start_scan") ? (
 								<MyPagination
 									href="/site/[siteId]/pages"
 									pathName={pagePath}

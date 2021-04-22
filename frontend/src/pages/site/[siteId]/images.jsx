@@ -18,26 +18,28 @@ import ImageTableContent from "public/data/image-table.json";
 
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
-import { useScan, useSite, useImages, useSiteId, useStats } from "src/hooks/useSite";
+import { useScan, useSite, useImages, useSiteId } from "src/hooks/useSite";
 import useUser from "src/hooks/useUser";
 
 // Layout
 import Layout from "src/components/Layout";
 
 // Components
-const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
-const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
-const ImageFilter = loadable(() => import("src/components/site/ImageFilter"));
-const LinkOptions = loadable(() => import("src/components/site/LinkOptions"));
+import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
+import HomeSvg from "src/components/svg/solid/HomeSvg";
+import ImageFilter from "src/components/site/ImageFilter";
+import LinkOptions from "src/components/site/LinkOptions";
+import ImageSorting from "src/components/site/ImageSorting";
+import ImageTable from "src/components/site/ImageTable";
+import ImageSvg from "src/components/svg/outline/ImageSvg";
+import MainSidebar from "src/components/sidebar/MainSidebar";
+import ImageTableSkeleton from "src/components/skeletons/ImageTableSkeleton";
+import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
+import MyPagination from "src/components/sites/Pagination";
+
+// Loadable
 const Loader = loadable(() => import("src/components/layout/Loader"));
-const ImageSorting = loadable(() => import("src/components/site/ImageSorting"));
-const ImageTable = loadable(() => import("src/components/site/ImageTable"));
-const ImageSvg = loadable(() => import("src/components/svg/outline/ImageSvg"));
-const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const ImageTableSkeleton = loadable(() => import("src/components/skeletons/ImageTableSkeleton"));
-const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
-const MyPagination = loadable(() => import("src/components/sites/Pagination"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 
 // Helpers
@@ -94,8 +96,10 @@ const Images = ({ width, result }) => {
 
 	let images = [];
 	let mutateImages = [];
-	let scanApiEndpoint = "";
+	let mutatePages = [];
+	let pages = [];
 	let queryString = "";
+	let scanApiEndpoint = "";
 	let statusString = "";
 
 	const { user: user } = useUser({
@@ -133,12 +137,6 @@ const Images = ({ width, result }) => {
 				);
 			}
 		}
-	});
-
-	const { stats: stats } = useStats({
-		querySid: result.siteId,
-		scanObjId: scanObjId,
-		refreshInterval: 1000
 	});
 
 	if (
@@ -227,16 +225,12 @@ const Images = ({ width, result }) => {
 			setImagesData(images);
 		}
 
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-
-		if (userData && siteData && siteIdData && imagesData && statsData) {
+		if (userData && siteData && siteIdData && imagesData) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [user, site, siteId, images, stats]);
+	}, [user, site, siteId, images]);
 
 	const searchEventHandler = async (e) => {
 		const searchTargetValue = e.target.value;
@@ -616,14 +610,21 @@ const Images = ({ width, result }) => {
 									<div className="pt-4 m-auto">
 										<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
 											{pageTitle}
-											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-													<ImageSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
-													{statsData.num_images > 0
-														? statsData.num_images + " " + ImagesLabel[2].label
-														: ImagesLabel[2].label}
-												</dd>
-											</dl>
+											{imagesData &&
+											imagesData !== undefined &&
+											imagesData !== [] &&
+											Object.keys(imagesData).length > 0 ? (
+												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+														<ImageSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
+														{imagesData.count > 1
+															? imagesData.count + " " + ImagesLabel[2].label
+															: imagesData.count == 1
+															? imagesData.count + " " + ImagesLabel[6].label
+															: ImagesLabel[3].label}
+													</dd>
+												</dl>
+											) : null}
 										</h4>
 									</div>
 								</div>
@@ -729,11 +730,7 @@ const Images = ({ width, result }) => {
 							userData.permissions.includes("can_see_pages") &&
 							userData.permissions.includes("can_see_scripts") &&
 							userData.permissions.includes("can_see_stylesheets") &&
-							userData.permissions.includes("can_start_scan") &&
-							pagesData &&
-							pagesData !== undefined &&
-							pagesData !== [] &&
-							Object.keys(pagesData).length > 0 ? (
+							userData.permissions.includes("can_start_scan") ? (
 								<MyPagination
 									href="/site/[siteId]/images/"
 									pathName={pagePath}

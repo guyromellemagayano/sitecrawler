@@ -7,7 +7,6 @@ import Link from "next/link";
 
 // External
 import bytes from "bytes";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import ReactTooltip from "react-tooltip";
 import Skeleton from "react-loading-skeleton";
@@ -18,10 +17,10 @@ import Url from "url-parse";
 import { useImageDetail } from "src/hooks/useSite";
 
 // Components
-const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
-const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
-const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
-const InformationCircleSvg = loadable(() => import("src/components/svg/outline/InformationCircleSvg"));
+import SiteDangerBadge from "src/components/badges/SiteDangerBadge";
+import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
+import SiteWarningBadge from "src/components/badges/SiteWarningBadge";
+import InformationCircleSvg from "src/components/svg/outline/InformationCircleSvg";
 
 const ImagesTableDiv = styled.tr`
 	td {
@@ -94,32 +93,33 @@ const ImagesTable = (props) => {
 									href={props.val.url}
 									target="_blank"
 									title={props.val.url}
-									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 transition ease-in-out duration-150 truncate"
+									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
 								>
 									{props.val.url}
 								</a>
 							) : (
-								<Skeleton duration={2} />
+								<Skeleton duration={2} width={300} />
 							)}
 						</div>
 						<div tw="flex justify-start leading-5 text-gray-500">
 							{componentReady ? (
-								imageDetail &&
-								imageDetail !== undefined &&
-								imageDetail !== [] &&
-								Object.keys(imageDetail).length > 0 && (
-									<Link
-										href="/site/[siteId]/images/[imageId]/details"
-										as={`/site/${query.siteId}/images/${imageDetail.id}/details`}
-										passHref
-									>
-										<a
-											className="btn-detail"
-											tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+								imageDetail && imageDetail !== undefined && imageDetail !== [] ? (
+									Object.keys(imageDetail).length > 0 && (
+										<Link
+											href="/site/[siteId]/images/[imageId]/details"
+											as={`/site/${query.siteId}/images/${imageDetail.id}/details`}
+											passHref
 										>
-											View Details
-										</a>
-									</Link>
+											<a
+												className="btn-detail"
+												tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+											>
+												View Details
+											</a>
+										</Link>
+									)
+								) : (
+									<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
 								)
 							) : (
 								<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />

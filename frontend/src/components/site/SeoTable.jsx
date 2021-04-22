@@ -116,20 +116,17 @@ const SeoTable = (props) => {
 									href={props.val.url}
 									target="_blank"
 									title={props.val.url}
-									tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 transition ease-in-out duration-150 truncate"
+									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
 								>
 									{props.val.url}
 								</a>
 							) : (
-								<Skeleton duration={2} />
+								<Skeleton duration={2} width={300} />
 							)}
 						</div>
 						<div tw="flex justify-start leading-5 text-gray-500">
 							{componentReady ? (
-								pageDetail &&
-								pageDetail !== undefined &&
-								pageDetail !== [] &&
-								Object.keys(pageDetail).length > 0 && (
+								pageDetail && pageDetail !== undefined && pageDetail !== [] && Object.keys(pageDetail).length > 0 ? (
 									<Link
 										href="/site/[siteId]/seo/[seoId]/details"
 										as={`/site/${query.siteId}/seo/${pageDetailData.id}/details`}
@@ -142,6 +139,8 @@ const SeoTable = (props) => {
 											View Details
 										</a>
 									</Link>
+								) : (
+									<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
 								)
 							) : (
 								<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
@@ -150,29 +149,39 @@ const SeoTable = (props) => {
 					</div>
 				</div>
 			</td>
-			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
-				<div className={`text-sm leading-5 text-gray-900`}>
-					{componentReady ? (
-						<>
-							{!userData.settings.disableLocalTime ? (
-								<Moment calendar={calendarStrings} date={pageDetailData.created_at} local />
-							) : (
-								<Moment calendar={calendarStrings} date={pageDetailData.created_at} utc />
-							)}
-							&nbsp;
-							{!userData.settings.disableLocalTime ? (
-								<Moment date={pageDetailData.created_at} format="hh:mm:ss A" local />
-							) : (
-								<Moment date={pageDetailData.created_at} format="hh:mm:ss A" utc />
-							)}
-						</>
+			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
+				{componentReady ? (
+					userData && userData !== undefined && userData !== [] && Object.keys(userData).length > 0 ? (
+						<span tw="space-x-2">
+							<span tw="text-sm leading-5 text-gray-500">
+								{!props.disableLocalTime ? (
+									<Moment calendar={calendarStrings} date={pageDetailData.created_at} local />
+								) : (
+									<Moment calendar={calendarStrings} date={pageDetailData.created_at} utc />
+								)}
+							</span>
+							<span tw="text-sm leading-5 text-gray-500">
+								{!props.disableLocalTime ? (
+									<Moment date={pageDetailData.created_at} format="hh:mm:ss A" local />
+								) : (
+									<Moment date={pageDetailData.created_at} format="hh:mm:ss A" utc />
+								)}
+							</span>
+							{props.disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
+						</span>
 					) : (
-						<Skeleton duration={2} width={250} />
-					)}
-				</div>
+						<Skeleton duration={2} width={176.7} />
+					)
+				) : (
+					<Skeleton duration={2} width={176.7} />
+				)}
 			</td>
-			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
-				{componentReady ? pageDetailData.num_links : <Skeleton duration={2} width={45} />}
+			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
+				{componentReady ? (
+					<span tw="text-sm leading-5 text-gray-500">{pageDetailData.num_links}</span>
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
 			</td>
 			<td
 				className="icon-status "

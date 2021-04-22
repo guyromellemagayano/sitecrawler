@@ -26,7 +26,17 @@ const SiteDangerStatus = loadable(() => import("src/components/status/SiteDanger
 const SiteSuccessStatus = loadable(() => import("src/components/status/SiteSuccessStatus"));
 const SiteWarningStatus = loadable(() => import("src/components/status/SiteWarningStatus"));
 
-const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlable, crawlFinished, user }) => {
+const SitesOverview = ({
+	id,
+	verified,
+	finishedAt,
+	forceHttps,
+	onCrawl,
+	crawlable,
+	crawlFinished,
+	user,
+	disableLocalTime
+}) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [scanData, setScanData] = useState([]);
 	const [showErrorModal, setShowErrorModal] = useState(false);
@@ -173,11 +183,11 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 						) : (
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
 								{componentReady ? (
-									<>
+									<span tw="space-x-2">
 										<Moment calendar={calendarStrings} date={finishedAt} utc />
-										&nbsp;
 										<Moment date={finishedAt} format="hh:mm:ss A" utc />
-									</>
+										{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
+									</span>
 								) : (
 									<Skeleton duration={2} width={240} height={15} />
 								)}
@@ -212,9 +222,7 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 								<dd tw="mt-1 text-sm leading-5 text-gray-900">
 									{componentReady ? (
 										verified && verified !== undefined ? (
-											statsData &&
-											statsData.num_pages_tls_non_ok == 0 &&
-											statsData.num_pages_tls_non_ok !== undefined ? (
+											statsData && statsData !== undefined && statsData.num_pages_tls_non_ok == 0 ? (
 												<SiteSuccessStatus text="Valid" />
 											) : (
 												<>
@@ -222,8 +230,7 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 														<SiteDangerStatus text="Not Valid" />
 
 														<a
-															data-tip=""
-															data-for="stats-tls-not-ok"
+															data-for="pages-tls-not-ok"
 															data-background-color="#E53E3E"
 															data-iscapture={true}
 															data-scroll-hide={false}
@@ -234,7 +241,7 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 															</span>
 														</a>
 														<ReactTooltip
-															id="stats-tls-not-ok"
+															id="pages-tls-not-ok"
 															className="ssl-valid-tooltip w-64"
 															type="dark"
 															effect="solid"
@@ -254,6 +261,7 @@ const SitesOverview = ({ id, verified, finishedAt, forceHttps, onCrawl, crawlabl
 																			<Link
 																				href="/site/[siteId]/pages/?tls_total=false"
 																				as={`/site/${id}/pages/?tls_total=false`}
+																				passHref
 																			>
 																				<a tw="hover:text-red-300">link</a>
 																			</Link>
