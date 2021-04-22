@@ -41,6 +41,7 @@ import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
 const Loader = loadable(() => import("src/components/layout/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
 import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
@@ -738,6 +739,20 @@ const Pages = ({ width, result }) => {
 						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
 							<SiteFooter />
 						</div>
+
+						{userData &&
+							userData !== undefined &&
+							userData !== [] &&
+							Object.keys(userData).length > 0 &&
+							userData.permissions &&
+							userData.permissions !== undefined &&
+							!userData.permissions.includes("can_see_images") &&
+							!userData.permissions.includes("can_see_pages") &&
+							!userData.permissions.includes("can_see_scripts") &&
+							!userData.permissions.includes("can_see_stylesheets") &&
+							!userData.permissions.includes("can_start_scan") && (
+								<UpgradeErrorAlert link="/settings/subscription-plans" />
+							)}
 					</main>
 				</div>
 			</PagesDiv>
