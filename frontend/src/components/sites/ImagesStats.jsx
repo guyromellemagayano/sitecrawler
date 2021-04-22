@@ -99,8 +99,8 @@ const SitesImagesStats = ({ width, sid }) => {
 	const router = useRouter();
 
 	const { scan: scan } = useScan({
-		querySid: sid,
-		refreshInterval: 1000
+		querySid: sid
+		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -135,8 +135,8 @@ const SitesImagesStats = ({ width, sid }) => {
 
 	const { stats: stats } = useStats({
 		querySid: sid,
-		scanObjId: scanObjId.id,
-		refreshInterval: 1000
+		scanObjId: scanObjId.id
+		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

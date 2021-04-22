@@ -61,8 +61,8 @@ const Dashboard = ({ width, result }) => {
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login",
-		refreshInterval: 1000
+		redirectTo: "/login"
+		// refreshInterval: 1000
 	});
 
 	let scanApiEndpoint =
@@ -88,20 +88,15 @@ const Dashboard = ({ width, result }) => {
 	scanApiEndpoint += queryString;
 
 	const { site: site, mutateSite: mutateSite } = useSite({
-		endpoint: scanApiEndpoint,
-		refreshInterval: 1000
+		endpoint: scanApiEndpoint
 	});
 
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0
-		) {
+		if (user && user !== undefined && Object.keys(user).length > 0) {
 			setUserData(user);
+		}
+
+		if (site && site !== undefined && Object.keys(site).length > 0) {
 			setSiteData(site);
 		}
 	}, [user, site]);

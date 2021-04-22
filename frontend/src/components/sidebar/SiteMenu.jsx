@@ -39,8 +39,8 @@ const SiteMenu = ({ user, site }) => {
 	const router = useRouter();
 
 	const { scan: scan } = useScan({
-		querySid: sid,
-		refreshInterval: 1000
+		querySid: sid
+		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -66,8 +66,8 @@ const SiteMenu = ({ user, site }) => {
 
 	const { stats: stats } = useStats({
 		querySid: sid,
-		scanObjId: scanObjId,
-		refreshInterval: 1000
+		scanObjId: scanObjId
+		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

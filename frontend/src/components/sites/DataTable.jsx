@@ -76,8 +76,8 @@ const DataTable = ({ site, disableLocalTime }) => {
 	};
 
 	const { scan: scan } = useScan({
-		querySid: site.id,
-		refreshInterval: 1000
+		querySid: site.id
+		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -196,8 +196,8 @@ const DataTable = ({ site, disableLocalTime }) => {
 
 	const { stats: stats } = useStats({
 		querySid: site.id,
-		scanObjId: scanObjId.id,
-		refreshInterval: 1000
+		scanObjId: scanObjId.id
+		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

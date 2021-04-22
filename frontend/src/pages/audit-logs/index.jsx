@@ -33,13 +33,13 @@ const Reports = ({ width }) => {
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login",
-		refreshInterval: 1000
+		redirectTo: "/login"
+		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
-		endpoint: sitesApiEndpoint,
-		refreshInterval: 1000
+		endpoint: sitesApiEndpoint
+		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
