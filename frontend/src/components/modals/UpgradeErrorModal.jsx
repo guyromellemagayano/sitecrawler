@@ -2,19 +2,18 @@
 import Link from "next/link";
 
 // External
+import { ExclamationIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
+import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 
-// Components
-const ExclamationSvg = loadable(() => import("src/components/svg/solid/ExclamationSvg"));
-
 const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) => {
-	const settingsSubscriptionsLink = "/settings/subscriptions";
+	const settingsSubscriptionsLink = "/settings/subscription-plans";
 	const defaultModalHeadlineLabel = "Site Feature Not Available";
 	const defaultModalDescriptionLabel =
-		"The site feature you are currently using is not available on your current plan. Please subscribe to our Pro or Agency plans so you can use them at any time.";
+		"The feature you are trying to use is not available on your current plan. Subscribe to our <strong>Pro</strong> or <strong>Agency</strong> plans so you can use them at any time.";
 	const defaultModalCancelLabel = "Cancel";
 	const defaultModalUpgradePlanLabel = "Upgrade Plan";
 
@@ -54,7 +53,7 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) =>
 				>
 					<div tw="sm:flex sm:items-start">
 						<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
-							<ExclamationSvg className={tw`h-6 w-6 text-yellow-600`} />
+							<ExclamationIcon className="h-6 w-6 text-yellow-600" aria-hidden="true" />
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
@@ -66,7 +65,7 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) =>
 							</h3>
 							<div tw="mt-2">
 								<p tw="text-sm leading-5 text-gray-500">
-									{component === "AddSite" ? label[2].label : defaultModalDescriptionLabel}
+									{component === "AddSite" ? label[2].label : ReactHtmlParser(defaultModalDescriptionLabel)}
 								</p>
 							</div>
 						</div>

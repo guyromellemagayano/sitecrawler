@@ -7,7 +7,7 @@
 	{
 		"label": "Subscription Plans",
 		"slug": "subscription-plans",
-		"url": "/settings/subscriptions"
+		"url": "/settings/subscription-plans"
 	},
 	{
 		"label": "App Settings",

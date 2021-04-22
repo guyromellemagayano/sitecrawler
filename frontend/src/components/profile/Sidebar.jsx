@@ -92,7 +92,7 @@ const Sidebar = () => {
 											{user.group.name} {SidebarLabel[0].label}
 										</span>
 										{(user.group.name === "Basic" || user.group.name === "Pro") && (
-											<Link href="/settings/subscriptions" passHref>
+											<Link href="/settings/subscription-plans" passHref>
 												<a
 													css={[
 														tw`text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded hover:text-white cursor-pointer transition ease-in-out duration-150`,
