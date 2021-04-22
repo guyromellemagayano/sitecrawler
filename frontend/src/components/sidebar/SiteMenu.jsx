@@ -170,211 +170,97 @@ const SiteMenu = ({ user, site }) => {
 										const hrefVal = "/site/[siteId]" + value2.url;
 										const asVal = "/site/" + sid + value2.url;
 
-										if (
-											user &&
-											user !== undefined &&
-											user !== [] &&
-											Object.keys(user).length > 0 &&
-											user.permissions &&
-											user.permissions !== undefined &&
-											user.permissions.includes("can_see_images") &&
-											user.permissions.includes("can_see_pages") &&
-											user.permissions.includes("can_see_scripts") &&
-											user.permissions.includes("can_see_stylesheets") &&
-											user.permissions.includes("can_start_scan")
-										) {
-											return componentReady ? (
-												value2.slug !== "go-back-to-sites" ? (
-													<Link key={index} href={hrefVal} as={asVal} passHref>
-														<a
-															className="group"
-															css={[
-																tw`cursor-pointer`,
-																asPath.includes("/site/" + sid + value2.url)
-																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
-																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150`
-															]}
-														>
-															<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
-																{value2.icon2 ? (
-																	<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
-																) : null}
-															</svg>
-															<span>{value2.title ? value2.title : null}</span>
-															{value2.url === "/links" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_links ? statsData.num_links : null}
-																	</span>
-																)}
-															{value2.url === "/pages" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_pages ? statsData.num_pages : null}
-																	</span>
-																)}
-															{value2.url === "/seo" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_pages ? statsData.num_pages : null}
-																	</span>
-																)}
-															{value2.url === "/images" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_images ? statsData.num_images : null}
-																	</span>
-																)}
-															{value2.url === "/stylesheets" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_stylesheets ? statsData.num_stylesheets : null}
-																	</span>
-																)}
-															{value2.url === "/scripts" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_scripts ? statsData.num_scripts : null}
-																	</span>
-																)}
-														</a>
-													</Link>
-												) : (
-													<Link key={index} href={value2.url} passHref>
-														<a
-															className="group"
-															css={[
-																tw`cursor-pointer`,
-																asPath.includes("/site/" + sid + value2.url)
-																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150`
-																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
-															]}
-														>
-															<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
-																{value2.icon2 ? (
-																	<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
-																) : null}
-															</svg>
-															<span>{value2.title ? value2.title : null}</span>
-														</a>
-													</Link>
-												)
+										return componentReady ? (
+											value2.slug !== "go-back-to-sites" ? (
+												<Link key={index} href={hrefVal} as={asVal} passHref>
+													<a
+														className="group"
+														css={[
+															tw`cursor-pointer`,
+															asPath.includes("/site/" + sid + value2.url)
+																? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
+																: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100`
+														]}
+													>
+														<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
+															{value2.icon2 ? (
+																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
+															) : null}
+														</svg>
+														<span>{value2.title ? value2.title : null}</span>
+														{value2.url === "/links" &&
+															statsData &&
+															statsData !== undefined &&
+															Object.keys(statsData).length > 0 && (
+																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																	{statsData.num_links ? statsData.num_links : null}
+																</span>
+															)}
+														{value2.url === "/pages" &&
+															statsData &&
+															statsData !== undefined &&
+															Object.keys(statsData).length > 0 && (
+																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																	{statsData.num_pages ? statsData.num_pages : null}
+																</span>
+															)}
+														{value2.url === "/seo" &&
+															statsData &&
+															statsData !== undefined &&
+															Object.keys(statsData).length > 0 && (
+																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																	{statsData.num_pages ? statsData.num_pages : null}
+																</span>
+															)}
+														{value2.url === "/images" &&
+															statsData &&
+															statsData !== undefined &&
+															Object.keys(statsData).length > 0 && (
+																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																	{statsData.num_images ? statsData.num_images : null}
+																</span>
+															)}
+														{value2.url === "/stylesheets" &&
+															statsData &&
+															statsData !== undefined &&
+															Object.keys(statsData).length > 0 && (
+																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																	{statsData.num_stylesheets ? statsData.num_stylesheets : null}
+																</span>
+															)}
+														{value2.url === "/scripts" &&
+															statsData &&
+															statsData !== undefined &&
+															Object.keys(statsData).length > 0 && (
+																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																	{statsData.num_scripts ? statsData.num_scripts : null}
+																</span>
+															)}
+													</a>
+												</Link>
 											) : (
-												<span key={index} tw="mt-1 flex items-center px-3 py-2 space-x-3">
-													<Skeleton circle={true} duration={2} width={20} height={20} />
-													<Skeleton duration={2} width={150} height={20} />
-												</span>
-											);
-										} else {
-											if (value2.slug && value2.slug !== undefined) {
-												return componentReady ? (
-													<Link key={index} href={hrefVal} as={asVal} passHref>
-														<a
-															className="group"
-															css={[
-																tw`cursor-pointer`,
-																asPath.includes("/site/" + sid + value2.url)
-																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
-																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150`
-															]}
-														>
-															<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
-																{value2.icon2 ? (
-																	<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
-																) : null}
-															</svg>
-															<span>{value2.title}</span>
-															{value2.url &&
-																value2.url !== undefined &&
-																value2.url === "/links" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 &&
-																statsData.num_links > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_links}
-																	</span>
-																)}
-															{value2.url &&
-																value2.url !== undefined &&
-																value2.url === "/pages" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 &&
-																statsData.num_pages > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_pages}
-																	</span>
-																)}
-															{value2.url &&
-																value2.url !== undefined &&
-																value2.url === "/seo" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 &&
-																statsData.num_pages > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_pages}
-																	</span>
-																)}
-															{value2.url &&
-																value2.url !== undefined &&
-																value2.url === "/images" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 &&
-																statsData.num_images > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_images}
-																	</span>
-																)}
-															{value2.url &&
-																value2.url !== undefined &&
-																value2.url === "/stylesheets" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 &&
-																statsData.num_stylesheets > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_stylesheets}
-																	</span>
-																)}
-															{value2.url &&
-																value2.url !== undefined &&
-																value2.url === "/scripts" &&
-																statsData &&
-																statsData !== undefined &&
-																Object.keys(statsData).length > 0 &&
-																statsData.num_scripts > 0 && (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black transition ease-in-out duration-150">
-																		{statsData.num_scripts}
-																	</span>
-																)}
-														</a>
-													</Link>
-												) : (
-													<span key={index} tw="mt-1 flex items-center px-3 py-2 space-x-3">
-														<Skeleton circle={true} duration={2} width={20} height={20} />
-														<Skeleton duration={2} width={150} height={20} />
-													</span>
-												);
-											}
-										}
+												<Link key={index} href={value2.url} passHref>
+													<a
+														className="group"
+														tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
+													>
+														<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
+															{value2.icon2 ? (
+																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
+															) : null}
+														</svg>
+														<span>{value2.title ? value2.title : null}</span>
+													</a>
+												</Link>
+											)
+										) : (
+											<span key={index} tw="mt-1 flex items-center px-3 py-2 space-x-3">
+												<Skeleton circle={true} duration={2} width={20} height={20} />
+												<Skeleton duration={2} width={150} height={20} />
+											</span>
+										);
 									})
 								) : componentReady ? (
 									<div tw="space-y-1">
@@ -386,7 +272,7 @@ const SiteMenu = ({ user, site }) => {
 														aria-haspopup="listbox"
 														aria-expanded="true"
 														aria-labelledby="listbox-label"
-														tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 focus:ring-gray-1100 focus:border-gray-1100 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+														tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 focus:ring-gray-1100 focus:border-gray-1100 sm:text-sm sm:leading-5"
 														onClick={() => setIsComponentVisible(!isComponentVisible)}
 													>
 														<div tw="flex items-center space-x-3">
@@ -493,7 +379,7 @@ const SiteMenu = ({ user, site }) => {
 
 													<span tw="flex m-2 justify-center shadow-sm rounded-md">
 														<Link href="/add-site/information">
-															<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer transition ease-in-out duration-150 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+															<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 																<PlusSvg className={tw`-ml-3 mr-2 h-4 w-4`} />
 																{PrimaryMenuLabel[2].label}
 															</a>
