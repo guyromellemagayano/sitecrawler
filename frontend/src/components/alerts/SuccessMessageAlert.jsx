@@ -9,7 +9,7 @@ import tw from "twin.macro";
 import CheckCircleSvg from "src/components/svg/solid/CheckCircleSvg";
 import XSvg from "../svg/solid/XSvg";
 
-const SuccessMessageAlert = ({ message }) => {
+const SuccessMessageAlert = ({ message = "" }) => {
 	const [isOpen, setIsOpen] = useState(true);
 
 	const dismissMessage = "Dismiss";
