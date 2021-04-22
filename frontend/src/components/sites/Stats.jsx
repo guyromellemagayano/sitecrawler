@@ -25,26 +25,6 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 	const [scanObjId, setScanObjId] = useState(0);
 	const [statsData, setStatsData] = useState([]);
 
-	// const setLinkErrors = (type) => {
-	//   let valLength = 0;
-
-	//   if (links) {
-	//     links.results.map((val, key) => {
-	//       if (
-	//         val.status === "HTTP_ERROR" ||
-	//         val.status === "TIMEOUT" ||
-	//         val.status === "OTHER_ERROR"
-	//       ) {
-	//         if (val.type === type) {
-	//           valLength++;
-	//         }
-	//       }
-	//     });
-	//   }
-
-	//   return valLength;
-	// };
-
 	const { scan: scan } = useScan({
 		querySid: sid,
 		refreshInterval: 1000
