@@ -97,18 +97,18 @@ const Pages = ({ width, result }) => {
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login",
-		refreshInterval: 1000
+		redirectTo: "/login"
+		// refreshInterval: 1000
 	});
 
 	const { scan: scan } = useScan({
-		querySid: result.siteId,
-		refreshInterval: 1000
+		querySid: result.siteId
+		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
-		endpoint: sitesApiEndpoint,
-		refreshInterval: 1000
+		endpoint: sitesApiEndpoint
+		// refreshInterval: 1000
 	});
 
 	const { siteId: siteId } = useSiteId({
@@ -202,8 +202,8 @@ const Pages = ({ width, result }) => {
 	({ pages: pages, mutatePages: mutatePages } = usePages({
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
-		scanObjId: scanObjId,
-		refreshInterval: 1000
+		scanObjId: scanObjId
+		// refreshInterval: 1000
 	}));
 
 	useEffect(() => {

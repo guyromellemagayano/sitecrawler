@@ -61,13 +61,13 @@ const Information = ({ width, sid, edit }) => {
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login",
-		refreshInterval: 1000
+		redirectTo: "/login"
+		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
-		endpoint: siteApiEndpoint,
-		refreshInterval: 1000
+		endpoint: siteApiEndpoint
+		// refreshInterval: 1000
 	});
 
 	const { siteId: siteId } = useSiteId({
