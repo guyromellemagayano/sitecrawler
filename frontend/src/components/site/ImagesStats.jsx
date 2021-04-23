@@ -19,7 +19,7 @@ import ImagesStatsLabel from "public/labels/components/sites/ImagesStats.json";
 import { imagesChartContents } from "src/enum/chartContents";
 
 // Hooks
-import { useScan, useStats } from "src/hooks/useSite";
+import { useStats } from "src/hooks/useSite";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
@@ -87,87 +87,23 @@ const SitesImagesStatsDiv = styled.div`
 	}
 `;
 
-const SitesImagesStats = ({ width, sid }) => {
+const SitesImagesStats = ({ width, sid, stats }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [scanData, setScanData] = useState([]);
-	const [scanObjId, setScanObjId] = useState(0);
-	const [statsData, setStatsData] = useState([]);
 
 	const lgScreenBreakpoint = 1024;
 
 	const router = useRouter();
 
-	const { scan: scan } = useScan({
-		querySid: sid
-	});
-
 	useEffect(() => {
-		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
-		}
-	}, [scan]);
-
-	useEffect(() => {
-		if (scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0) {
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId((prevState) => ({
-					...prevState,
-					id: scanData.results
-						.map((e) => {
-							let result = prevState;
-
-							if (e !== undefined && e.finished_at == null) {
-								result = e.id;
-
-								return result;
-							}
-
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				}));
-			}
-		}
-	}, [scanData]);
-
-	const { stats: stats } = useStats({
-		querySid: sid,
-		scanObjId: scanObjId.id
-	});
-
-	useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-	}, [stats]);
-
-	useEffect(() => {
-		if (statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [statsData]);
-
-	useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-	}, [stats]);
-
-	useEffect(() => {
-		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [statsData]);
+		setTimeout(() => {
+			setComponentReady(true);
+		}, 500);
+	}, []);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/images`;
 
-		imagesChartContents.forEach((item, index) => {
+		imagesChartContents.forEach((item) => {
 			if (label === item.label && item.filter !== "")
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
@@ -176,26 +112,22 @@ const SitesImagesStats = ({ width, sid }) => {
 	};
 
 	const chartSeries = [
-		statsData &&
-		statsData !== undefined &&
-		statsData !== [] &&
-		Object.keys(statsData).length > 0 &&
-		statsData.num_non_ok_images !== undefined
-			? statsData.num_non_ok_images
+		stats &&
+		stats !== undefined &&
+		stats !== [] &&
+		Object.keys(stats).length > 0 &&
+		stats.num_non_ok_images !== undefined
+			? stats.num_non_ok_images
 			: 0,
-		statsData &&
-		statsData !== undefined &&
-		statsData !== [] &&
-		Object.keys(statsData).length > 0 &&
-		statsData.num_images_tls_non_ok !== undefined
-			? statsData.num_images_tls_non_ok
+		stats &&
+		stats !== undefined &&
+		stats !== [] &&
+		Object.keys(stats).length > 0 &&
+		stats.num_images_tls_non_ok !== undefined
+			? stats.num_images_tls_non_ok
 			: 0,
-		statsData &&
-		statsData !== undefined &&
-		statsData !== [] &&
-		Object.keys(statsData).length > 0 &&
-		statsData.num_ok_images !== undefined
-			? statsData.num_ok_images
+		stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0 && stats.num_ok_images !== undefined
+			? stats.num_ok_images
 			: 0
 	];
 
