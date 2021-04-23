@@ -17,6 +17,13 @@ const SiteSorting = (props) => {
 						onSortHandler={props.onSortHandler}
 						slug={props.slug}
 					/>
+				) : props.slug === "crawl-status" ? (
+					<Sorting
+						enabled={true}
+						direction={props.sortOrder.crawlStatus}
+						onSortHandler={props.onSortHandler}
+						slug={props.slug}
+					/>
 				) : props.slug === "last-crawled" ? (
 					<Sorting
 						enabled={true}

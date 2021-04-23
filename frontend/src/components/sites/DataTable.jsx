@@ -50,7 +50,7 @@ const DataTableDiv = styled.tbody`
 	}
 `;
 
-const DataTable = ({ site, disableLocalTime }) => {
+const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${site.verification_id}" />`);
@@ -143,13 +143,25 @@ const DataTable = ({ site, disableLocalTime }) => {
 		setCopied(true);
 	};
 
-	const handleSiteDeletion = async () => {
-		await useDeleteMethod(siteIdApiEndpoint);
+	const handleSiteDeletion = async (e) => {
+		e.preventDefault();
 
-		setTimeout(() => {
-			setShowDeleteSiteModal(false);
-		}, 500);
+		const response = await useDeleteMethod(siteIdApiEndpoint);
+
+		if (Math.floor(response.status / 200) === 1) {
+			setTimeout(() => {
+				setShowDeleteSiteModal(false);
+			}, 500);
+
+			mutateSite();
+		}
 	};
+
+	useEffect(() => {
+		if (!showDeleteSiteModal) {
+			router.push("/");
+		}
+	}, [showDeleteSiteModal]);
 
 	const handleSiteVerification = async (e) => {
 		e.preventDefault();
@@ -167,6 +179,8 @@ const DataTable = ({ site, disableLocalTime }) => {
 			const response = await usePostMethod(siteVerifyApiEndpoint, body);
 
 			if (Math.floor(response.status / 200) === 1) {
+				mutateSite();
+
 				if (response.data.verified === true) {
 					setTimeout(() => {
 						setEnableNextStep(!enableNextStep);
@@ -180,17 +194,18 @@ const DataTable = ({ site, disableLocalTime }) => {
 					}, 500);
 				}
 			} else {
-				// FIXME: Error handling for response
-				if (response.data) {
-					console.log("ERROR: " + response.data);
-				} else {
-					setSubmitting(false);
-					resetForm({ values: "" });
-					setErrorMsg(DataTableLabel[15]);
-				}
+				setSubmitting(false);
+				resetForm({ values: "" });
+				setErrorMsg(DataTableLabel[15]);
+
+				return null;
 			}
 		} catch (error) {
-			throw error.message;
+			setSubmitting(false);
+			resetForm({ values: "" });
+			setErrorMsg(DataTableLabel[15]);
+
+			return null;
 		}
 	};
 
@@ -513,12 +528,16 @@ const DataTable = ({ site, disableLocalTime }) => {
 					<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
 						<span tw="flex items-center">
 							<span>
-								<span className="link-item">
-									{componentReady ? (
-										!site.verified ? (
-											<>
+								{componentReady ? (
+									<>
+										{!site.verified ? (
+											<div>
+												<span
+													aria-label="Verified"
+													tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-red-400"
+												></span>
 												<span tw="max-w-sm truncate text-sm leading-5 font-semibold text-gray-500">{site.name}</span>
-												<span tw="flex justify-start text-sm leading-5 text-gray-500">
+												<span tw="ml-2 flex justify-start text-sm leading-5 text-gray-500">
 													<button
 														type="button"
 														id="siteVerifySiteModalButton"
@@ -536,23 +555,67 @@ const DataTable = ({ site, disableLocalTime }) => {
 														{DataTableLabel[1].label}
 													</button>
 												</span>
-											</>
+											</div>
 										) : (
-											<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
-												<a
-													tw="max-w-sm truncate cursor-pointer text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500"
-													title={site.name}
-												>
-													{site.name}
-												</a>
-											</Link>
-										)
-									) : (
+											<>
+												<span
+													aria-label="Verified"
+													tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-green-400"
+												></span>
+												<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
+													<a
+														tw="max-w-sm truncate cursor-pointer text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500"
+														title={site.name}
+													>
+														{site.name}
+													</a>
+												</Link>
+											</>
+										)}
+									</>
+								) : (
+									<span tw="flex flex-row items-center py-2 space-x-3">
+										<Skeleton circle={true} duration={2} width={9} height={9} className="relative top-1" />
 										<Skeleton duration={2} width={150} />
-									)}
-								</span>
+									</span>
+								)}
 							</span>
 						</span>
+					</td>
+					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
+						{componentReady ? (
+							<>
+								<span
+									css={[
+										tw`text-sm leading-5`,
+										crawlInProgress || (crawlInProgress && scanData.finished_at == null)
+											? tw`text-yellow-500`
+											: !crawlInProgress && !scanData.count
+											? tw`text-red-500`
+											: tw`text-green-500`
+									]}
+								>
+									{console.log(site.verified, crawlInProgress, scanData)}
+									{site.verified ? (
+										crawlInProgress && scanData.count > 1 ? (
+											DataTableLabel[19].label
+										) : !crawlInProgress && scanData.count > 1 ? (
+											DataTableLabel[20].label
+										) : crawlInProgress && scanData.finished_at == null && scanData.count == 1 ? (
+											DataTableLabel[24].label
+										) : !crawlInProgress && scanData.count == 1 ? (
+											DataTableLabel[21].label
+										) : (
+											<Skeleton duration={2} width={100} />
+										)
+									) : (
+										DataTableLabel[2].label
+									)}
+								</span>
+							</>
+						) : (
+							<Skeleton duration={2} width={100} />
+						)}
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
 						{componentReady ? (
@@ -579,7 +642,7 @@ const DataTable = ({ site, disableLocalTime }) => {
 									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
 								</span>
 							) : !site.verified ? (
-								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[2].label}</span>
+								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
 							) : (
 								<Skeleton duration={2} width={176.7} />
 							)
@@ -587,39 +650,34 @@ const DataTable = ({ site, disableLocalTime }) => {
 							<Skeleton duration={2} width={176.7} />
 						)}
 					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
-						{componentReady ? (
-							<span tw="text-sm leading-5 text-gray-500">
-								{site.verified ? (
-									crawlInProgress ? (
-										DataTableLabel[19].label
-									) : !crawlInProgress && scanData.count > 1 ? (
-										DataTableLabel[20].label
-									) : !crawlInProgress && scanData.count === 1 ? (
-										DataTableLabel[21].label
-									) : (
-										<Skeleton duration={2} width={100} />
-									)
-								) : null}
-							</span>
-						) : (
-							<Skeleton duration={2} width={100} />
-						)}
-					</td>
-					<td css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold`]}>
+					<td
+						css={[
+							tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold`
+						]}
+					>
 						{componentReady ? (
 							site.verified ? (
-								<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
-									<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
-										{setTotalIssues()}
-									</a>
-								</Link>
-							) : null
+								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
+									<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
+										<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
+											{setTotalIssues()}
+										</a>
+									</Link>
+								) : (
+									<Skeleton duration={2} width={45} />
+								)
+							) : (
+								0
+							)
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
 					</td>
-					<td css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold`]}>
+					<td
+						css={[
+							tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold`
+						]}
+					>
 						{componentReady ? (
 							site.verified ? (
 								statsData.num_links > 0 ? (
@@ -631,12 +689,18 @@ const DataTable = ({ site, disableLocalTime }) => {
 								) : (
 									<Skeleton duration={2} width={45} />
 								)
-							) : null
+							) : (
+								0
+							)
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
 					</td>
-					<td css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold`]}>
+					<td
+						css={[
+							tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold`
+						]}
+					>
 						{componentReady ? (
 							site.verified ? (
 								statsData.num_pages > 0 ? (
@@ -648,12 +712,18 @@ const DataTable = ({ site, disableLocalTime }) => {
 								) : (
 									<Skeleton duration={2} width={45} />
 								)
-							) : null
+							) : (
+								0
+							)
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
 					</td>
-					<td css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm leading-5 font-semibold`]}>
+					<td
+						css={[
+							tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold`
+						]}
+					>
 						{componentReady ? (
 							site.verified ? (
 								statsData.num_images > 0 ? (
@@ -665,7 +735,9 @@ const DataTable = ({ site, disableLocalTime }) => {
 								) : (
 									<Skeleton duration={2} width={45} />
 								)
-							) : null
+							) : (
+								0
+							)
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}

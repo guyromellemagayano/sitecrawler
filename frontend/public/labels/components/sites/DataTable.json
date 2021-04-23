@@ -6,7 +6,7 @@
 		"label": "Delete Site"
 	},
 	{
-		"label": "Not Crawled Yet"
+		"label": "Not Yet Crawled"
 	},
 	{
 		"label": "Verify Site"
@@ -57,12 +57,21 @@
 		"label": "Copy"
 	},
 	{
-		"label": "Recrawl In Process..."
+		"label": "Recrawling..."
 	},
 	{
 		"label": "Recrawled"
 	},
 	{
 		"label": "Crawled"
+	},
+	{
+		"label": "No Available Data"
+	},
+	{
+		"label": "Deleting Site..."
+	},
+	{
+		"label": "Crawling..."
 	}
 ]

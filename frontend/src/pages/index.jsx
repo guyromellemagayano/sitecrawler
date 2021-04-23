@@ -39,6 +39,7 @@ import { getSlugFromSortKey, getSortKeyFromSlug, removeURLParameter, slugToCamel
 
 const initialOrder = {
 	siteName: "asc",
+	crawlStatus: "default",
 	lastCrawled: "default",
 	totalIssues: "default"
 };
@@ -210,7 +211,10 @@ const Dashboard = ({ width, result }) => {
 		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
 		mutateSite();
-		router.push(newPath);
+
+		setTimeout(() => {
+			router.push(newPath);
+		}, 500);
 	};
 
 	useEffect(() => {
@@ -287,7 +291,15 @@ const Dashboard = ({ width, result }) => {
 														</thead>
 														{siteData.results &&
 															siteData.results.map((val, key) => {
-																return <DataTable key={key} site={val} disableLocalTime={disableLocalTime} />;
+																return (
+																	<DataTable
+																		key={key}
+																		site={val}
+																		disableLocalTime={disableLocalTime}
+																		mutateSite={mutateSite}
+																		router={router}
+																	/>
+																);
 															})}
 													</table>
 												</div>
