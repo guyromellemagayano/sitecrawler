@@ -63,7 +63,6 @@ const Dashboard = ({ width, result }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	let scanApiEndpoint =

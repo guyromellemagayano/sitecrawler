@@ -74,15 +74,11 @@ const PaymentMethodForm = ({
 	const elements = useElements();
 	const options = useOptions();
 
-	const { paymentMethods: paymentMethods, paymentMethodsError: paymentMethodsError } = usePaymentMethods({
-		// refreshInterval: 1000
-	});
+	const { paymentMethods: paymentMethods, paymentMethodsError: paymentMethodsError } = usePaymentMethods({});
 	const {
 		defaultPaymentMethod: defaultPaymentMethod,
 		defaultPaymentMethodError: defaultPaymentMethodError
-	} = useDefaultPaymentMethod({
-		// refreshInterval: 1000
-	});
+	} = useDefaultPaymentMethod({});
 
 	useEffect(() => {
 		if (

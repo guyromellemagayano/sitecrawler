@@ -40,7 +40,6 @@ const SiteMenu = ({ user, site }) => {
 
 	const { scan: scan } = useScan({
 		querySid: sid
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -67,7 +66,6 @@ const SiteMenu = ({ user, site }) => {
 	const { stats: stats } = useStats({
 		querySid: sid,
 		scanObjId: scanObjId
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

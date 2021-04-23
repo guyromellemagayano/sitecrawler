@@ -53,17 +53,14 @@ const SiteSettings = ({ width, result }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	const { siteId: siteId } = useSiteId({
 		querySid: result.siteId
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

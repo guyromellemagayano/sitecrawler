@@ -72,12 +72,10 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	const handleInputChange = ({ copyValue }) => {

@@ -94,13 +94,11 @@ const SitesImagesStats = ({ width, sid }) => {
 	const [statsData, setStatsData] = useState([]);
 
 	const lgScreenBreakpoint = 1024;
-	const imagesApiEndpoint = `/api/site/${sid}/scan/${scanObjId.id}/image/`;
 
 	const router = useRouter();
 
 	const { scan: scan } = useScan({
 		querySid: sid
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -136,7 +134,6 @@ const SitesImagesStats = ({ width, sid }) => {
 	const { stats: stats } = useStats({
 		querySid: sid,
 		scanObjId: scanObjId.id
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

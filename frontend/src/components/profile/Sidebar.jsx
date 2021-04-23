@@ -28,9 +28,7 @@ const Sidebar = () => {
 
 	const userApiEndpoint = "/api/auth/user/";
 
-	const { data: user } = useSWR(userApiEndpoint, useFetcher, {
-		// refreshInterval: 1000
-	});
+	const { data: user } = useSWR(userApiEndpoint, useFetcher, {});
 
 	useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {

@@ -97,7 +97,6 @@ const Subscriptions = ({ width }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
@@ -106,20 +105,14 @@ const Subscriptions = ({ width }) => {
 
 	const { stripePromise: stripePromise } = useStripePromise();
 
-	const { defaultPaymentMethod: defaultPaymentMethod } = useDefaultPaymentMethod({
-		// refreshInterval: 1000
-	});
+	const { defaultPaymentMethod: defaultPaymentMethod } = useDefaultPaymentMethod({});
 
-	const { subscriptions: subscriptions } = useSubscriptions({
-		// refreshInterval: 1000
-	});
+	const { subscriptions: subscriptions } = useSubscriptions({});
 
 	const {
 		defaultSubscription: defaultSubscription,
 		mutateDefaultSubscription: mutateDefaultSubscription
-	} = useDefaultSubscription({
-		// refreshInterval: 1000
-	});
+	} = useDefaultSubscription({});
 
 	useEffect(() => {
 		if (

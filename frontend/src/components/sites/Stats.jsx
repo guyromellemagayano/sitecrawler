@@ -27,7 +27,6 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 
 	const { scan: scan } = useScan({
 		querySid: sid
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -50,7 +49,6 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 	const { stats: stats } = useStats({
 		querySid: sid,
 		scanObjId: scanObjId
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

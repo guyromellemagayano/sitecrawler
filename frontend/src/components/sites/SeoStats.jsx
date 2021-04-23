@@ -99,7 +99,6 @@ const SitesSeoStats = ({ width, sid }) => {
 
 	const { scan: scan } = useScan({
 		querySid: sid
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -135,7 +134,6 @@ const SitesSeoStats = ({ width, sid }) => {
 	const { stats: stats } = useStats({
 		querySid: sid,
 		scanObjId: scanObjId.id
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

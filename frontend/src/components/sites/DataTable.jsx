@@ -77,7 +77,6 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 
 	const { scan: scan } = useScan({
 		querySid: site.id
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -212,7 +211,6 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 	const { stats: stats } = useStats({
 		querySid: site.id,
 		scanObjId: scanObjId.id
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -628,7 +626,6 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 											: tw`text-green-500`
 									]}
 								>
-									{console.log(site.verified, crawlInProgress, scanData)}
 									{site.verified ? (
 										crawlInProgress && scanData.count > 1 ? (
 											DataTableLabel[19].label

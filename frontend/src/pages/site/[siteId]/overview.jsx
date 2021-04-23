@@ -63,17 +63,14 @@ const SiteOverview = ({ width, result }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { scan: scan } = useScan({
 		querySid: result.siteId
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	const { siteId: siteId } = useSiteId({
@@ -81,23 +78,19 @@ const SiteOverview = ({ width, result }) => {
 	});
 
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			scan &&
-			scan !== undefined &&
-			Object.keys(scan).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			siteId &&
-			siteId !== undefined &&
-			Object.keys(siteId).length > 0
-		) {
+		if (user && user !== undefined && Object.keys(user).length > 0) {
 			setUserData(user);
+		}
+
+		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
 			setScanData(scan);
+		}
+
+		if (site && site !== undefined && Object.keys(site).length > 0) {
 			setSiteData(site);
+		}
+
+		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
 			setSiteIdData(siteId);
 		}
 	}, [user, scan, site, siteId]);
@@ -262,18 +255,14 @@ const SiteOverview = ({ width, result }) => {
 										disableLocalTime={disableLocalTime}
 									/>
 
-									{userData && userData !== undefined && Object.keys(userData).length > 0 && (
-										<>
-											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesLinksStats sid={result.siteId} />
-												<SitesPagesStats sid={result.siteId} />
-											</div>
-											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesImagesStats sid={result.siteId} />
-												<SitesSeoStats sid={result.siteId} />
-											</div>
-										</>
-									)}
+									<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+										<SitesLinksStats sid={result.siteId} scan={scanData} />
+										<SitesPagesStats sid={result.siteId} scan={scanData} />
+									</div>
+									<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+										<SitesImagesStats sid={result.siteId} scan={scanData} />
+										<SitesSeoStats sid={result.siteId} scan={scanData} />
+									</div>
 								</div>
 							</div>
 
