@@ -29,7 +29,7 @@ import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
 import LinkOptions from "src/components/site/LinkOptions";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import MyPagination from "src/components/sites/Pagination";
+import MyPagination from "src/components/pagination/Pagination";
 import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
 import SearchSvg from "src/components/svg/solid/SearchSvg";
 import SeoFilter from "src/components/site/SeoFilter";

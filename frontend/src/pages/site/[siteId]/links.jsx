@@ -34,7 +34,7 @@ import LinkSorting from "src/components/site/LinkSorting";
 import LinkTable from "src/components/site/LinkTable";
 import LinksSvg from "src/components/svg/outline/LinksSvg";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import MyPagination from "src/components/sites/Pagination";
+import MyPagination from "src/components/pagination/Pagination";
 
 // Loadable
 const Loader = loadable(() => import("src/components/layout/Loader"));

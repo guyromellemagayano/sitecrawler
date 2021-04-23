@@ -29,7 +29,7 @@ import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
 import LinkOptions from "src/components/site/LinkOptions";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import MyPagination from "src/components/sites/Pagination";
+import MyPagination from "src/components/pagination/Pagination";
 import PageFilter from "src/components/site/PageFilter";
 import PageSorting from "src/components/site/PageSorting";
 import PageSvg from "src/components/svg/outline/PageSvg";

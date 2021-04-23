@@ -35,7 +35,7 @@ import ImageSvg from "src/components/svg/outline/ImageSvg";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import ImageTableSkeleton from "src/components/skeletons/ImageTableSkeleton";
 import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
-import MyPagination from "src/components/sites/Pagination";
+import MyPagination from "src/components/pagination/Pagination";
 
 // Loadable
 const Loader = loadable(() => import("src/components/layout/Loader"));

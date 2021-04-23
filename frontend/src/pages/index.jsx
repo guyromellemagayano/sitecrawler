@@ -26,8 +26,8 @@ import Layout from "src/components/Layout";
 import AddSite from "src/components/sites/AddSite";
 import DataTable from "src/components/sites/DataTable";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import MyPagination from "src/components/sites/Pagination";
-import SiteSorting from "src/components/sites/SiteSorting";
+import MyPagination from "src/components/pagination/Pagination";
+import SiteSorting from "src/components/site/SiteSorting";
 
 // Loadable
 const Loader = loadable(() => import("src/components/layout/Loader"));
