@@ -584,6 +584,39 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
 						{componentReady ? (
+							statsData &&
+							statsData !== undefined &&
+							statsData !== [] &&
+							Object.keys(statsData).length > 0 &&
+							site.verified ? (
+								<span tw="space-x-2">
+									<span tw="text-sm leading-5 text-gray-500">
+										{!disableLocalTime ? (
+											<Moment calendar={calendarStrings} date={statsData.finished_at} local />
+										) : (
+											<Moment calendar={calendarStrings} date={statsData.finished_at} utc />
+										)}
+									</span>
+									<span tw="text-sm leading-5 text-gray-500">
+										{!disableLocalTime ? (
+											<Moment date={statsData.finished_at} format="hh:mm:ss A" local />
+										) : (
+											<Moment date={statsData.finished_at} format="hh:mm:ss A" utc />
+										)}
+									</span>
+									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
+								</span>
+							) : !site.verified ? (
+								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
+							) : (
+								<Skeleton duration={2} width={176.7} />
+							)
+						) : (
+							<Skeleton duration={2} width={176.7} />
+						)}
+					</td>
+					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
+						{componentReady ? (
 							<>
 								<span
 									css={[
@@ -615,39 +648,6 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 							</>
 						) : (
 							<Skeleton duration={2} width={100} />
-						)}
-					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
-						{componentReady ? (
-							statsData &&
-							statsData !== undefined &&
-							statsData !== [] &&
-							Object.keys(statsData).length > 0 &&
-							site.verified ? (
-								<span tw="space-x-2">
-									<span tw="text-sm leading-5 text-gray-500">
-										{!disableLocalTime ? (
-											<Moment calendar={calendarStrings} date={statsData.finished_at} local />
-										) : (
-											<Moment calendar={calendarStrings} date={statsData.finished_at} utc />
-										)}
-									</span>
-									<span tw="text-sm leading-5 text-gray-500">
-										{!disableLocalTime ? (
-											<Moment date={statsData.finished_at} format="hh:mm:ss A" local />
-										) : (
-											<Moment date={statsData.finished_at} format="hh:mm:ss A" utc />
-										)}
-									</span>
-									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
-								</span>
-							) : !site.verified ? (
-								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
-							) : (
-								<Skeleton duration={2} width={176.7} />
-							)
-						) : (
-							<Skeleton duration={2} width={176.7} />
 						)}
 					</td>
 					<td
