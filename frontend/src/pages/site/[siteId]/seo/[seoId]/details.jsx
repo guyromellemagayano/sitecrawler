@@ -31,7 +31,7 @@ const Loader = loadable(() => import("src/components/layout/Loader"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
 
 const SeoDetailDiv = styled.div`
 	.url-heading {

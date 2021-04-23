@@ -22,7 +22,7 @@ import useFetcher from "src/hooks/useFetcher";
 import ChevronTopSvg from "src/components/svg/solid/ChevronTopSvg";
 import ProfileSidebarSkeleton from "src/components/skeletons/ProfileSidebarSkeleton";
 
-const Sidebar = () => {
+const ProfileMenu = () => {
 	const [profileLoaded, setProfileLoaded] = useState(false);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
@@ -146,6 +146,6 @@ const Sidebar = () => {
 	);
 };
 
-Sidebar.propTypes = {};
+ProfileMenu.propTypes = {};
 
-export default Sidebar;
+export default ProfileMenu;

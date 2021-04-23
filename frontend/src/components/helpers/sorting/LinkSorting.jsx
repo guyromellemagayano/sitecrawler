@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import "twin.macro";
 
 // Components
-const Sorting = loadable(() => import("src/components/site/Sorting"));
+const Sorting = loadable(() => import("src/components/page/site/Sorting"));
 
 const LinkSorting = (props) => {
 	return (

@@ -25,15 +25,15 @@ import Layout from "src/components/Layout";
 // Components
 const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
-const DeleteSiteSettings = loadable(() => import("src/components/settings/DeleteSite"));
+const DeleteSiteSettings = loadable(() => import("src/components/page/settings/DeleteSite"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
-const LargePageSizeSettings = loadable(() => import("src/components/settings/LargePageSize"));
+const LargePageSizeSettings = loadable(() => import("src/components/page/settings/LargePageSize"));
 const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
-const SiteInformationSettings = loadable(() => import("src/components/settings/SiteInformation"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
+const SiteInformationSettings = loadable(() => import("src/components/page/settings/SiteInformation"));
 
 const SiteSettings = ({ width, result }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);

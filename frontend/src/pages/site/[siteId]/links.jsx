@@ -28,10 +28,10 @@ import Layout from "src/components/Layout";
 // Components
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
-import LinkFilter from "src/components/site/LinkFilter";
-import LinkOptions from "src/components/site/LinkOptions";
-import LinkSorting from "src/components/site/LinkSorting";
-import LinkTable from "src/components/site/LinkTable";
+import LinkFilter from "src/components/page/site/LinkFilter";
+import LinkOptions from "src/components/page/site/LinkOptions";
+import LinkSorting from "src/components/page/site/LinkSorting";
+import LinkTable from "src/components/page/site/LinkTable";
 import LinksSvg from "src/components/svg/outline/LinksSvg";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MyPagination from "src/components/pagination/Pagination";
@@ -39,7 +39,7 @@ import MyPagination from "src/components/pagination/Pagination";
 // Loadable
 const Loader = loadable(() => import("src/components/layout/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
 
 // Helpers
 import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";

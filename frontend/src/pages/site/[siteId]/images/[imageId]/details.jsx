@@ -33,7 +33,7 @@ const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
 const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
 const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
 

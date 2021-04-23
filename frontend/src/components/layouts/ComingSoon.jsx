@@ -15,7 +15,7 @@ const ComingSoonSkeleton = loadable(() => import("src/components/skeletons/Comin
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
 
 const ComingSoon = ({ width, user, site, pageTitle, pageLoaded, openMobileSidebar, setOpenMobileSidebar }) => {
 	const homeLabel = "Home";

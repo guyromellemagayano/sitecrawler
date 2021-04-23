@@ -27,20 +27,20 @@ import Layout from "src/components/Layout";
 // Components
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
-import LinkOptions from "src/components/site/LinkOptions";
+import LinkOptions from "src/components/page/site/LinkOptions";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MyPagination from "src/components/pagination/Pagination";
-import PageFilter from "src/components/site/PageFilter";
-import PageSorting from "src/components/site/PageSorting";
+import PageFilter from "src/components/page/site/PageFilter";
+import PageSorting from "src/components/page/site/PageSorting";
 import PageSvg from "src/components/svg/outline/PageSvg";
-import PageTable from "src/components/site/PageTable";
+import PageTable from "src/components/page/site/PageTable";
 import PageTableSkeleton from "src/components/skeletons/PageTableSkeleton";
 import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
 
 // Loadable
 const Loader = loadable(() => import("src/components/layout/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers

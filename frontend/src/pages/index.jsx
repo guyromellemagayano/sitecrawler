@@ -27,12 +27,12 @@ import AddSite from "src/components/sites/AddSite";
 import DataTable from "src/components/sites/DataTable";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MyPagination from "src/components/pagination/Pagination";
-import SiteSorting from "src/components/site/SiteSorting";
+import SiteSorting from "src/components/page/site/SiteSorting";
 
 // Loadable
 const Loader = loadable(() => import("src/components/layout/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
 
 // Helpers
 import { getSlugFromSortKey, getSortKeyFromSlug, removeURLParameter, slugToCamelcase } from "src/helpers/functions";

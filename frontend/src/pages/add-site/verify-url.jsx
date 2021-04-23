@@ -38,7 +38,7 @@ const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"))
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const QuestionMarkCircleSvg = loadable(() => import("src/components/svg/solid/QuestionMarkCircleSvg"));
 const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeletons/SiteAdditionStepsSkeleton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 
 const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {

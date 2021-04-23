@@ -34,7 +34,7 @@ const MobileSidebarButton = loadable(() => import("src/components/sidebar/Mobile
 const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
 const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
 const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
 
 const LinkDetailDiv = styled.div`
 	.url-heading {

@@ -30,7 +30,7 @@ const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"))
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SettingsPassword = loadable(() => import("src/components/profile/Password"));
 const SettingsPersonal = loadable(() => import("src/components/profile/Personal"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 
 const Profile = ({ width }) => {

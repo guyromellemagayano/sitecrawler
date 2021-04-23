@@ -43,10 +43,10 @@ const Loader = loadable(() => import("src/components/layout/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const PaymentMethodForm = loadable(() => import("src/components/forms/PaymentMethodForm"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
-const BasicPlan = loadable(() => import("src/components/subscription/BasicPlan"));
-const SemiAnnualPlans = loadable(() => import("src/components/subscription/SemiAnnualPlans"));
-const MonthlyPlans = loadable(() => import("src/components/subscription/MonthlyPlans"));
+const SiteFooter = loadable(() => import("src/components/footer/Footer"));
+const BasicPlan = loadable(() => import("src/components/page/subscription/BasicPlan"));
+const SemiAnnualPlans = loadable(() => import("src/components/page/subscription/SemiAnnualPlans"));
+const MonthlyPlans = loadable(() => import("src/components/page/subscription/MonthlyPlans"));
 
 const ConfettiBgImgSpan = styled.span`
 	background: url("/images/backgrounds/subscription-success-bg.png");
