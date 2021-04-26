@@ -165,6 +165,9 @@ DATABASES = {
         "OPTIONS": {
             "options": "-c statement_timeout=60000",
         },
+        "TEST": {
+            "SERIALIZE": False,
+        },
     },
     # connection with superuser privileges, larger timeout and no atomic requests
     "superuser": {
