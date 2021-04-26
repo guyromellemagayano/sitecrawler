@@ -13,8 +13,8 @@ class LinkSummarySerializer(serializers.ModelSerializer):
 
 
 class SourceLinkImageSerializer(serializers.Serializer):
-    id = serializers.IntegerField(source="from_link.id")
-    url = serializers.CharField(source="from_link.url")
+    id = serializers.IntegerField()
+    url = serializers.CharField()
     alt_text = serializers.CharField()
 
 
@@ -84,6 +84,31 @@ class ImageDetailSerializer(LinkDetailSerializer):
         pages_serializer = SourceLinkImageSerializer
         pages_get_key = "from_link_id"
         pages_select_related = ["from_link"]
+
+    def get_pages(self, obj):
+        query_str = """
+SELECT
+  i.alt_text AS alt_text,
+  l.id AS id,
+  l.url AS url
+FROM crawl_link_images i
+JOIN crawl_link l
+  ON i.from_link_id = l.id
+WHERE i.to_link_id = %(to_link_id)s
+"""
+        query_params = {"to_link_id": obj.id}
+        many = True
+
+        if "parent_lookup_image_pages" in self.context["view"].kwargs:
+            query_str += "AND i.from_link_id = %(from_link_id)s"
+            query_params["from_link_id"] = int(self.context["view"].kwargs["parent_lookup_image_pages"])
+            many = False
+
+        query = obj.source_link_images.raw(query_str, query_params)
+        if not many:
+            query = query[0]
+
+        return SourceLinkImageSerializer(query, many=many).data
 
 
 class ScriptDetailSerializer(LinkDetailSerializer):
