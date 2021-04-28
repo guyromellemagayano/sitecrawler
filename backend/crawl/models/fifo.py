@@ -9,6 +9,7 @@ class FifoEntry(models.Model):
 
 
 class FifoRelation(models.Model):
+    id = models.BigAutoField(primary_key=True)
     entry = models.ForeignKey("FifoEntry", on_delete=models.CASCADE, null=False)
     parent_id = models.PositiveIntegerField()
     child_type = models.PositiveSmallIntegerField()

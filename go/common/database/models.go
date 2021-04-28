@@ -69,22 +69,22 @@ var Columns = struct {
 		Scan, Tls string
 	}
 	CrawlLinkImage struct {
-		ID, FromLinkID, ToLinkID, AltText string
+		FromLinkID, ToLinkID, AltText string
 
 		FromLink, ToLink string
 	}
 	CrawlLinkLink struct {
-		ID, FromLinkID, ToLinkID string
+		FromLinkID, ToLinkID string
 
 		FromLink, ToLink string
 	}
 	CrawlLinkScript struct {
-		ID, FromLinkID, ToLinkID string
+		FromLinkID, ToLinkID string
 
 		FromLink, ToLink string
 	}
 	CrawlLinkStylesheet struct {
-		ID, FromLinkID, ToLinkID string
+		FromLinkID, ToLinkID string
 
 		FromLink, ToLink string
 	}
@@ -375,11 +375,10 @@ var Columns = struct {
 		Tls:  "Tls",
 	},
 	CrawlLinkImage: struct {
-		ID, FromLinkID, ToLinkID, AltText string
+		FromLinkID, ToLinkID, AltText string
 
 		FromLink, ToLink string
 	}{
-		ID:         "id",
 		FromLinkID: "from_link_id",
 		ToLinkID:   "to_link_id",
 		AltText:    "alt_text",
@@ -388,11 +387,10 @@ var Columns = struct {
 		ToLink:   "ToLink",
 	},
 	CrawlLinkLink: struct {
-		ID, FromLinkID, ToLinkID string
+		FromLinkID, ToLinkID string
 
 		FromLink, ToLink string
 	}{
-		ID:         "id",
 		FromLinkID: "from_link_id",
 		ToLinkID:   "to_link_id",
 
@@ -400,11 +398,10 @@ var Columns = struct {
 		ToLink:   "ToLink",
 	},
 	CrawlLinkScript: struct {
-		ID, FromLinkID, ToLinkID string
+		FromLinkID, ToLinkID string
 
 		FromLink, ToLink string
 	}{
-		ID:         "id",
 		FromLinkID: "from_link_id",
 		ToLinkID:   "to_link_id",
 
@@ -412,11 +409,10 @@ var Columns = struct {
 		ToLink:   "ToLink",
 	},
 	CrawlLinkStylesheet: struct {
-		ID, FromLinkID, ToLinkID string
+		FromLinkID, ToLinkID string
 
 		FromLink, ToLink string
 	}{
-		ID:         "id",
 		FromLinkID: "from_link_id",
 		ToLinkID:   "to_link_id",
 
@@ -1145,7 +1141,7 @@ type CrawlFifoentry struct {
 type CrawlFiforelation struct {
 	tableName struct{} `pg:"crawl_fiforelation,alias:t,,discard_unknown_columns"`
 
-	ID        int                    `pg:"id,pk"`
+	ID        int64                  `pg:"id,pk"`
 	ParentID  int                    `pg:"parent_id,use_zero"`
 	ChildType int                    `pg:"child_type,use_zero"`
 	EntryID   int                    `pg:"entry_id,use_zero"`
@@ -1220,7 +1216,6 @@ type CrawlLink struct {
 type CrawlLinkImage struct {
 	tableName struct{} `pg:"crawl_link_images,alias:t,,discard_unknown_columns"`
 
-	ID         int     `pg:"id,pk"`
 	FromLinkID int     `pg:"from_link_id,use_zero"`
 	ToLinkID   int     `pg:"to_link_id,use_zero"`
 	AltText    *string `pg:"alt_text"`
@@ -1232,7 +1227,6 @@ type CrawlLinkImage struct {
 type CrawlLinkLink struct {
 	tableName struct{} `pg:"crawl_link_links,alias:t,,discard_unknown_columns"`
 
-	ID         int `pg:"id,pk"`
 	FromLinkID int `pg:"from_link_id,use_zero"`
 	ToLinkID   int `pg:"to_link_id,use_zero"`
 
@@ -1243,7 +1237,6 @@ type CrawlLinkLink struct {
 type CrawlLinkScript struct {
 	tableName struct{} `pg:"crawl_link_scripts,alias:t,,discard_unknown_columns"`
 
-	ID         int `pg:"id,pk"`
 	FromLinkID int `pg:"from_link_id,use_zero"`
 	ToLinkID   int `pg:"to_link_id,use_zero"`
 
@@ -1254,7 +1247,6 @@ type CrawlLinkScript struct {
 type CrawlLinkStylesheet struct {
 	tableName struct{} `pg:"crawl_link_stylesheets,alias:t,,discard_unknown_columns"`
 
-	ID         int `pg:"id,pk"`
 	FromLinkID int `pg:"from_link_id,use_zero"`
 	ToLinkID   int `pg:"to_link_id,use_zero"`
 
