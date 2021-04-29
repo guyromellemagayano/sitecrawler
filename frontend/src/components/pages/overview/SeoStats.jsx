@@ -13,19 +13,19 @@ import Skeleton from "react-loading-skeleton";
 import tw, { styled } from "twin.macro";
 
 // JSON
-import LinksStatsLabel from "public/labels/components/sites/LinksStats.json";
+import SeoStatsLabel from "public/labels/components/sites/SeoStats.json";
 
 // Enums
-import { linksChartContents } from "src/enum/chartContents";
+import { seoChartContents } from "src/enum/chartContents";
 
 // Hooks
 import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
-const LinksSvg = loadable(() => import("src/components/svg/outline/LinksSvg"));
+const SearchSvg = loadable(() => import("src/components/svg/solid/SearchSvg"));
 
-const SitesLinksStatsDiv = styled.div`
+const SitesSeoStatsDiv = styled.div`
 	.status-indicator {
 		display: block;
 		flex: 0 0 0.85rem;
@@ -87,7 +87,7 @@ const SitesLinksStatsDiv = styled.div`
 	}
 `;
 
-const SitesLinksStats = ({ width, sid }) => {
+const SitesSeoStats = ({ width, sid }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
@@ -99,7 +99,6 @@ const SitesLinksStats = ({ width, sid }) => {
 
 	const { scan: scan } = useScan({
 		querySid: sid
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -135,7 +134,6 @@ const SitesLinksStats = ({ width, sid }) => {
 	const { stats: stats } = useStats({
 		querySid: sid,
 		scanObjId: scanObjId.id
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -153,14 +151,14 @@ const SitesLinksStats = ({ width, sid }) => {
 	}, [statsData]);
 
 	const legendClickHandler = (label) => {
-		let path = `/site/${sid}/links`;
+		let path = `/site/${sid}/seo`;
 
-		linksChartContents.forEach((item) => {
+		seoChartContents.forEach((item, index) => {
 			if (label === item.label && item.filter !== "")
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.replace("/site/[siteId]/links", path);
+		router.replace("/site/[siteId]/seo", path);
 	};
 
 	const chartSeries = [
@@ -168,21 +166,42 @@ const SitesLinksStats = ({ width, sid }) => {
 		statsData !== undefined &&
 		statsData !== [] &&
 		Object.keys(statsData).length > 0 &&
-		statsData.num_non_ok_links !== undefined
-			? statsData.num_non_ok_links
+		statsData.num_pages_without_title !== undefined
+			? statsData.num_pages_without_title
 			: 0,
 		statsData &&
 		statsData !== undefined &&
 		statsData !== [] &&
 		Object.keys(statsData).length > 0 &&
-		statsData.num_ok_links !== undefined
-			? statsData.num_ok_links
+		statsData.num_pages_without_description !== undefined
+			? statsData.num_pages_without_description
+			: 0,
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_pages_without_h1_first !== undefined
+			? statsData.num_pages_without_h1_first
+			: 0,
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_pages_without_h2_first !== undefined
+			? statsData.num_pages_without_h2_first
+			: 0,
+		statsData &&
+		statsData !== undefined &&
+		statsData !== [] &&
+		Object.keys(statsData).length > 0 &&
+		statsData.num_pages_seo_ok !== undefined
+			? statsData.num_pages_seo_ok
 			: 0
 	];
 
 	const chartOptions = {
 		chart: {
-			id: "linkStatus",
+			id: "seoStats",
 			type: "donut",
 			events: {
 				legendClick: function (chartContext, seriesIndex, config) {
@@ -190,10 +209,10 @@ const SitesLinksStats = ({ width, sid }) => {
 				}
 			}
 		},
-		labels: linksChartContents.map((item) => item.label),
-		colors: linksChartContents.map((item) => item.color),
+		labels: seoChartContents.map((item) => item.label),
+		colors: seoChartContents.map((item) => item.color),
 		fill: {
-			colors: linksChartContents.map((item) => item.color)
+			colors: seoChartContents.map((item) => item.color)
 		},
 		stroke: {
 			width: 0
@@ -231,7 +250,7 @@ const SitesLinksStats = ({ width, sid }) => {
 						total: {
 							show: true,
 							showAlways: true,
-							label: "Link Errors",
+							label: "SEO Errors",
 							fontSize: "15px",
 							color: "#2A324B",
 							formatter: function (val) {
@@ -267,25 +286,25 @@ const SitesLinksStats = ({ width, sid }) => {
 	};
 
 	return (
-		<SitesLinksStatsDiv>
+		<SitesSeoStatsDiv>
 			<div tw="bg-white overflow-hidden rounded-lg h-full border">
 				<div tw="flex justify-between py-8 px-5">
 					<div tw="flex items-center">
 						{componentReady ? (
-							<LinksSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
+							<SearchSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
 						) : (
 							<span tw="w-6 h-6 mr-2">
 								<Skeleton duration={2} width={15} height={15} />
 							</span>
 						)}
 						<h2 tw="text-lg font-bold leading-7 text-gray-900">
-							{componentReady ? LinksStatsLabel[0].label : <Skeleton duration={2} width={100} height={15} />}
+							{componentReady ? SeoStatsLabel[0].label : <Skeleton duration={2} width={100} height={15} />}
 						</h2>
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/links" as={`/site/${sid}/links`} passHref>
-								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{LinksStatsLabel[1].label}</a>
+							<Link href="/site/[siteId]/seo" as={`/site/${sid}/seo`} passHref>
+								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{SeoStatsLabel[1].label}</a>
 							</Link>
 						) : (
 							<span tw="leading-5">
@@ -307,7 +326,7 @@ const SitesLinksStats = ({ width, sid }) => {
 						<div tw="flex flex-col items-start h-530">
 							<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
 							<div tw="flex flex-col space-y-3 mt-16">
-								{[...Array(2)].map((value, key) => (
+								{[...Array(5)].map((value, key) => (
 									<span key={key} tw="space-x-3">
 										<Skeleton circle={true} width={20} height={20} />
 										<Skeleton width={150} height={20} />
@@ -319,10 +338,10 @@ const SitesLinksStats = ({ width, sid }) => {
 					)}
 				</div>
 			</div>
-		</SitesLinksStatsDiv>
+		</SitesSeoStatsDiv>
 	);
 };
 
-SitesLinksStats.propTypes = {};
+SitesSeoStats.propTypes = {};
 
-export default withResizeDetector(SitesLinksStats);
+export default withResizeDetector(SitesSeoStats);

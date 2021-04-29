@@ -17,7 +17,7 @@ import OverviewLabel from "public/labels/pages/site/overview.json";
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
-import { useScan, useSite, useSiteId } from "src/hooks/useSite";
+import { useScan, useStats, useSite, useSiteId } from "src/hooks/useSite";
 
 // Layout
 import Layout from "src/components/Layout";
@@ -26,19 +26,19 @@ import Layout from "src/components/Layout";
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import SitesImagesStats from "src/components/sites/ImagesStats";
-import SitesLinksStats from "src/components/sites/LinksStats";
-import SitesOverview from "src/components/sites/Overview";
-import SitesPagesStats from "src/components/sites/PagesStats";
-import SitesSeoStats from "src/components/sites/SeoStats";
-import SitesStats from "src/components/sites/Stats";
+import SitesImagesStats from "src/components/pages/overview/ImagesStats";
+import SitesLinksStats from "src/components/pages/overview/LinksStats";
+import SitesOverview from "src/components/pages/overview/Overview";
+import SitesPagesStats from "src/components/pages/overview/PagesStats";
+import SitesSeoStats from "src/components/pages/overview/SeoStats";
+import SitesStats from "src/components/pages/overview/Stats";
 
 // Loadable
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 const SiteOverview = ({ width, result }) => {
 	const [crawlFinished, setCrawlFinished] = useState(false);
@@ -47,8 +47,10 @@ const SiteOverview = ({ width, result }) => {
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [recrawlable, setRecrawlable] = useState(false);
 	const [scanData, setScanData] = useState([]);
+	const [scanObjId, setScanObjId] = useState([]);
 	const [siteData, setSiteData] = useState([]);
 	const [siteIdData, setSiteIdData] = useState([]);
+	const [statsData, setStatsData] = useState([]);
 	const [userData, setUserData] = useState([]);
 
 	const pageTitle =
@@ -63,17 +65,19 @@ const SiteOverview = ({ width, result }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { scan: scan } = useScan({
 		querySid: result.siteId
-		// refreshInterval: 1000
+	});
+
+	const { stats: stats } = useStats({
+		querySid: result.siteId,
+		scanObjId: scanObjId.id
 	});
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	const { siteId: siteId } = useSiteId({
@@ -81,55 +85,69 @@ const SiteOverview = ({ width, result }) => {
 	});
 
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			scan &&
-			scan !== undefined &&
-			Object.keys(scan).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			siteId &&
-			siteId !== undefined &&
-			Object.keys(siteId).length > 0
-		) {
+		if (userData && user !== undefined && Object.keys(user).length > 0) {
 			setUserData(user);
-			setScanData(scan);
-			setSiteData(site);
-			setSiteIdData(siteId);
-		}
-	}, [user, scan, site, siteId]);
 
-	useEffect(() => {
-		if (
-			userData &&
-			userData !== undefined &&
-			userData !== [] &&
-			Object.keys(userData).length > 0 &&
-			siteData &&
-			siteData !== undefined &&
-			siteData !== [] &&
-			Object.keys(siteData).length > 0 &&
-			siteIdData &&
-			siteIdData !== undefined &&
-			siteIdData !== [] &&
-			Object.keys(siteIdData).length > 0
-		) {
-			if (userData.settings !== []) {
-				if (userData.settings.disableLocalTime) {
-					setDisableLocalTime(true);
-				} else {
-					setDisableLocalTime(false);
+			if (userData && userData !== undefined && userData !== [] && Object.keys(userData).length > 0) {
+				if (userData.settings && userData.settings !== []) {
+					if (userData.settings.disableLocalTime) {
+						setDisableLocalTime(true);
+					} else {
+						setDisableLocalTime(false);
+					}
 				}
 			}
+		}
 
+		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+			setScanData(scan);
+
+			if (scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0) {
+				if (
+					scanData.results &&
+					scanData.results !== undefined &&
+					scanData.results !== [] &&
+					Object.keys(scanData.results).length > 0
+				) {
+					setScanObjId((prevState) => ({
+						...prevState,
+						id: scanData.results
+							.map((e) => {
+								let result = prevState;
+
+								if (e !== undefined && e.finished_at == null) {
+									result = e.id;
+
+									return result;
+								}
+
+								return e.id;
+							})
+							.sort()
+							.reverse()[0]
+					}));
+				}
+			}
+		}
+
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setStatsData(stats);
+		}
+
+		if (site && site !== undefined && Object.keys(site).length > 0) {
+			setSiteData(site);
+		}
+
+		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+			setSiteIdData(siteId);
+		}
+
+		if (userData && statsData && siteData && siteIdData) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [userData, siteData, siteIdData]);
+	}, [user, scan, stats, site, siteId]);
 
 	const onCrawlHandler = async () => {
 		setCrawlFinished(false);
@@ -143,11 +161,10 @@ const SiteOverview = ({ width, result }) => {
 					return data;
 				}
 			} else {
-				// FIXME: report issues from here to Sentry
 				return null;
 			}
 		} catch (error) {
-			throw error.message;
+			return null;
 		}
 	};
 
@@ -155,8 +172,9 @@ const SiteOverview = ({ width, result }) => {
 		if (finished) setCrawlFinished(true);
 
 		if (
-			user &&
+			userData &&
 			userData.permissions !== undefined &&
+			userData.permissions !== [] &&
 			userData.permissions.includes("can_start_scan") &&
 			siteIdData &&
 			siteIdData.verified &&
@@ -219,8 +237,10 @@ const SiteOverview = ({ width, result }) => {
 											</li>
 										</ol>
 									</nav>
+
+									{/* TODO: <Heading title={pageTitle} */}
 									<div className="pt-4 m-auto">
-										<h4 className="text-2xl leading-6 font-medium text-gray-900">{pageTitle}</h4>
+										<h1 className="text-2xl leading-6 font-medium text-gray-900">{pageTitle}</h1>
 									</div>
 								</div>
 							) : (
@@ -262,18 +282,14 @@ const SiteOverview = ({ width, result }) => {
 										disableLocalTime={disableLocalTime}
 									/>
 
-									{userData && userData !== undefined && Object.keys(userData).length > 0 && (
-										<>
-											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesLinksStats sid={result.siteId} />
-												<SitesPagesStats sid={result.siteId} />
-											</div>
-											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesImagesStats sid={result.siteId} />
-												<SitesSeoStats sid={result.siteId} />
-											</div>
-										</>
-									)}
+									<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+										<SitesLinksStats sid={result.siteId} stats={statsData} />
+										<SitesPagesStats sid={result.siteId} stats={statsData} />
+									</div>
+									<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+										<SitesImagesStats sid={result.siteId} stats={statsData} />
+										<SitesSeoStats sid={result.siteId} stats={statsData} />
+									</div>
 								</div>
 							</div>
 

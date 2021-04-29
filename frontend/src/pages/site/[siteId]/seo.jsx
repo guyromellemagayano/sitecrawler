@@ -27,20 +27,20 @@ import Layout from "src/components/Layout";
 // Components
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
-import LinkOptions from "src/components/site/LinkOptions";
+import LinkOptions from "src/components/pages/overview/LinkOptions";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import MyPagination from "src/components/sites/Pagination";
+import MyPagination from "src/components/pagination/Pagination";
 import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
 import SearchSvg from "src/components/svg/solid/SearchSvg";
-import SeoFilter from "src/components/site/SeoFilter";
-import SeoSorting from "src/components/site/SeoSorting";
-import SeoTable from "src/components/site/SeoTable";
+import SeoFilter from "src/components/helpers/filters/SeoFilter";
+import SeoSorting from "src/components/helpers/sorting/SeoSorting";
+import SeoTable from "src/components/tables/SeoTable";
 import SeoTableSkeleton from "src/components/skeletons/SeoTableSkeleton";
 
 // Loadable
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
@@ -110,17 +110,14 @@ const Seo = ({ width, result }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { scan: scan } = useScan({
 		querySid: result.siteId
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	const { siteId: siteId } = useSiteId({
@@ -147,7 +144,6 @@ const Seo = ({ width, result }) => {
 	const { stats: stats } = useStats({
 		querySid: result.siteId,
 		scanObjId: scanObjId
-		// refreshInterval: 1000
 	});
 
 	if (
@@ -252,7 +248,6 @@ const Seo = ({ width, result }) => {
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
 		scanObjId: scanObjId
-		// refreshInterval: 1000
 	}));
 
 	useEffect(() => {

@@ -22,15 +22,13 @@ import useFetcher from "src/hooks/useFetcher";
 import ChevronTopSvg from "src/components/svg/solid/ChevronTopSvg";
 import ProfileSidebarSkeleton from "src/components/skeletons/ProfileSidebarSkeleton";
 
-const Sidebar = () => {
+const ProfileMenu = () => {
 	const [profileLoaded, setProfileLoaded] = useState(false);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
 	const userApiEndpoint = "/api/auth/user/";
 
-	const { data: user } = useSWR(userApiEndpoint, useFetcher, {
-		// refreshInterval: 1000
-	});
+	const { data: user } = useSWR(userApiEndpoint, useFetcher, {});
 
 	useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {
@@ -148,6 +146,6 @@ const Sidebar = () => {
 	);
 };
 
-Sidebar.propTypes = {};
+ProfileMenu.propTypes = {};
 
-export default Sidebar;
+export default ProfileMenu;

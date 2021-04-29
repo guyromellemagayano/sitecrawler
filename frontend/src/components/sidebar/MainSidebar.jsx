@@ -15,9 +15,9 @@ import tw from "twin.macro";
 import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const PrimaryMenu = loadable(() => import("src/components/sidebar/PrimaryMenu"));
-const ProfileSidebar = loadable(() => import("src/components/profile/Sidebar"));
+const ProfileMenu = loadable(() => import("src/components/sidebar/ProfileMenu"));
 const SettingsMenu = loadable(() => import("src/components/sidebar/SettingsMenu"));
 const SiteMenu = loadable(() => import("src/components/sidebar/SiteMenu"));
 const XSvg = loadable(() => import("src/components/svg/solid/XSvg"));
@@ -129,7 +129,7 @@ const MainSidebar = ({ width, user, site, openMobileSidebar, setOpenMobileSideba
 									{selectedMenu}
 								</div>
 
-								<ProfileSidebar />
+								<ProfileMenu />
 							</div>
 						</Transition.Child>
 					</div>
@@ -150,7 +150,7 @@ const MainSidebar = ({ width, user, site, openMobileSidebar, setOpenMobileSideba
 					{selectedMenu}
 				</div>
 
-				<ProfileSidebar />
+				<ProfileMenu />
 			</div>
 		</aside>
 	);

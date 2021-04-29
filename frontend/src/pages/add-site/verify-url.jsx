@@ -26,19 +26,19 @@ import { useSite } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const ClipboardSvg = loadable(() => import("src/components/svg/solid/ClipboardSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
-const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
+const HowToSetup = loadable(() => import("src/components/pages/dashboard/HowToSetup"));
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const QuestionMarkCircleSvg = loadable(() => import("src/components/svg/solid/QuestionMarkCircleSvg"));
 const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeletons/SiteAdditionStepsSkeleton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 
 const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
@@ -72,12 +72,10 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	const handleInputChange = ({ copyValue }) => {

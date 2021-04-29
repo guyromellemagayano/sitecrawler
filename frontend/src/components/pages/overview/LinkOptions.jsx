@@ -31,7 +31,6 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 
 	const { scan: scan } = useScan({
 		querySid: sid
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -54,7 +53,6 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 	const { stats: stats } = useStats({
 		querySid: sid,
 		scanObjId: scanObjId
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

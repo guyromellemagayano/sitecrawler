@@ -27,10 +27,10 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
 const LogoLabel = loadable(() => import("src/components/labels/LogoLabel"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
 
 const Login = () => {

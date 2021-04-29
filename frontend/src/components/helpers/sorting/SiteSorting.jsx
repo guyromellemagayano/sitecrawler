@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import "twin.macro";
 
 // Components
-const Sorting = loadable(() => import("src/components/site/Sorting"));
+const Sorting = loadable(() => import("src/components/helpers/sorting/Sorting"));
 
 const SiteSorting = (props) => {
 	return (
@@ -14,6 +14,13 @@ const SiteSorting = (props) => {
 					<Sorting
 						enabled={true}
 						direction={props.sortOrder.siteName}
+						onSortHandler={props.onSortHandler}
+						slug={props.slug}
+					/>
+				) : props.slug === "crawl-status" ? (
+					<Sorting
+						enabled={true}
+						direction={props.sortOrder.crawlStatus}
 						onSortHandler={props.onSortHandler}
 						slug={props.slug}
 					/>

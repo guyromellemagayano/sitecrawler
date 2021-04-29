@@ -36,17 +36,17 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
+const BasicPlan = loadable(() => import("src/components/pages/subscription/BasicPlan"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MonthlyPlans = loadable(() => import("src/components/pages/subscription/MonthlyPlans"));
 const PaymentMethodForm = loadable(() => import("src/components/forms/PaymentMethodForm"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
-const BasicPlan = loadable(() => import("src/components/subscription/BasicPlan"));
-const SemiAnnualPlans = loadable(() => import("src/components/subscription/SemiAnnualPlans"));
-const MonthlyPlans = loadable(() => import("src/components/subscription/MonthlyPlans"));
+const SemiAnnualPlans = loadable(() => import("src/components/pages/subscription/SemiAnnualPlans"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 const ConfettiBgImgSpan = styled.span`
 	background: url("/images/backgrounds/subscription-success-bg.png");
@@ -97,7 +97,6 @@ const Subscriptions = ({ width }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
@@ -106,20 +105,14 @@ const Subscriptions = ({ width }) => {
 
 	const { stripePromise: stripePromise } = useStripePromise();
 
-	const { defaultPaymentMethod: defaultPaymentMethod } = useDefaultPaymentMethod({
-		// refreshInterval: 1000
-	});
+	const { defaultPaymentMethod: defaultPaymentMethod } = useDefaultPaymentMethod({});
 
-	const { subscriptions: subscriptions } = useSubscriptions({
-		// refreshInterval: 1000
-	});
+	const { subscriptions: subscriptions } = useSubscriptions({});
 
 	const {
 		defaultSubscription: defaultSubscription,
 		mutateDefaultSubscription: mutateDefaultSubscription
-	} = useDefaultSubscription({
-		// refreshInterval: 1000
-	});
+	} = useDefaultSubscription({});
 
 	useEffect(() => {
 		if (

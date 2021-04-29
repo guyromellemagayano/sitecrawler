@@ -8,6 +8,7 @@ import "twin.macro";
 
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
+import useUser from "src/hooks/useUser";
 
 // Components
 import Layout from "src/components/Layout";
@@ -18,6 +19,11 @@ const Logout = () => {
 	const pageTitle = "Logout";
 	const logoutApiEndpoint = "/api/auth/logout/";
 
+	const { mutateUser: mutateUser } = useUser({
+		redirectIfFound: false,
+		redirectTo: "/login"
+	});
+
 	useEffect(() => {
 		(async () => {
 			try {
@@ -26,19 +32,16 @@ const Logout = () => {
 				if (Math.floor(response.status / 200) === 1) {
 					if (response.data.detail) {
 						setLogoutDetail(response.data.detail);
+						mutateUser();
 
 						if (response.data.detail !== undefined) {
 							window.location.href = "/login";
 						}
 					}
 				} else {
-					if (response.data.detail) {
-						// FIXME: Django exception error in response.data
-						console.error(response.data.detail);
-					}
+					return null;
 				}
 			} catch (error) {
-				// FIXME: add logging solution here
 				return null;
 			}
 		})();

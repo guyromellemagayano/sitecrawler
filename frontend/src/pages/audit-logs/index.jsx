@@ -19,8 +19,8 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const ComingSoon = loadable(() => import("src/components/layout/ComingSoon"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const ComingSoon = loadable(() => import("src/components/layouts/ComingSoon"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 
 const Reports = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -34,12 +34,10 @@ const Reports = ({ width }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {

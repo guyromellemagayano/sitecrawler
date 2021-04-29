@@ -22,16 +22,16 @@ import { useSite } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SettingsPassword = loadable(() => import("src/components/profile/Password"));
-const SettingsPersonal = loadable(() => import("src/components/profile/Personal"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
+const SettingsPassword = loadable(() => import("src/components/pages/settings/profile/Password"));
+const SettingsPersonal = loadable(() => import("src/components/pages/settings/profile/Personal"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 const Profile = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -47,7 +47,6 @@ const Profile = ({ width }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({

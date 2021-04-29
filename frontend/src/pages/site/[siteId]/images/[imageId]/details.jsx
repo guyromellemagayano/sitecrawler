@@ -26,14 +26,14 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
 const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
 
@@ -76,12 +76,10 @@ const ImagesDetail = ({ width, result }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { scan: scan } = useScan({
 		querySid: result.siteId
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
@@ -109,7 +107,6 @@ const ImagesDetail = ({ width, result }) => {
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	const { siteId: siteId } = useSiteId({

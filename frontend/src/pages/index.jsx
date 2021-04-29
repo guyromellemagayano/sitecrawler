@@ -23,22 +23,23 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-import AddSite from "src/components/sites/AddSite";
-import DataTable from "src/components/sites/DataTable";
+import AddSite from "src/components/pages/dashboard/AddSite";
+import DataTable from "src/components/tables/DataTable";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import MyPagination from "src/components/sites/Pagination";
-import SiteSorting from "src/components/sites/SiteSorting";
+import MyPagination from "src/components/pagination/Pagination";
+import SiteSorting from "src/components/helpers/sorting/SiteSorting";
 
 // Loadable
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 // Helpers
 import { getSlugFromSortKey, getSortKeyFromSlug, removeURLParameter, slugToCamelcase } from "src/helpers/functions";
 
 const initialOrder = {
 	siteName: "asc",
+	crawlStatus: "default",
 	lastCrawled: "default",
 	totalIssues: "default"
 };
@@ -62,7 +63,6 @@ const Dashboard = ({ width, result }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	let scanApiEndpoint =
@@ -210,7 +210,10 @@ const Dashboard = ({ width, result }) => {
 		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
 		mutateSite();
-		router.push(newPath);
+
+		setTimeout(() => {
+			router.push(newPath);
+		}, 500);
 	};
 
 	useEffect(() => {
@@ -287,7 +290,15 @@ const Dashboard = ({ width, result }) => {
 														</thead>
 														{siteData.results &&
 															siteData.results.map((val, key) => {
-																return <DataTable key={key} site={val} disableLocalTime={disableLocalTime} />;
+																return (
+																	<DataTable
+																		key={key}
+																		site={val}
+																		disableLocalTime={disableLocalTime}
+																		mutateSite={mutateSite}
+																		router={router}
+																	/>
+																);
 															})}
 													</table>
 												</div>

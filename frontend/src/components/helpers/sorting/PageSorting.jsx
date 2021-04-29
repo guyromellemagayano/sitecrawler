@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 import "twin.macro";
 
 // Components
-const Sorting = loadable(() => import("src/components/site/Sorting"));
+const Sorting = loadable(() => import("src/components/helpers/sorting/Sorting"));
 
-const ImageSorting = (props) => {
+const PageSorting = (props) => {
 	return props.user.permissions &&
 		props.user.permissions !== undefined &&
 		props.user.permissions.includes("can_see_images") &&
@@ -17,38 +17,24 @@ const ImageSorting = (props) => {
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
-					{props.slug == "image-url" ? (
+					{props.slug == "page-url" ? (
 						<Sorting
 							enabled={true}
-							direction={props.sortOrder.imageUrl}
+							direction={props.sortOrder.pageUrl}
 							onSortHandler={props.onSortHandler}
 							slug={props.slug}
 						/>
-					) : props.slug == "image-size" ? (
+					) : props.slug == "page-size" ? (
 						<Sorting
 							enabled={true}
-							direction={props.sortOrder.imageSize}
+							direction={props.sortOrder.pageSize}
 							onSortHandler={props.onSortHandler}
 							slug={props.slug}
 						/>
-					) : props.slug == "status" ? (
+					) : props.slug == "page-ssl" ? (
 						<Sorting
 							enabled={true}
-							direction={props.sortOrder.status}
-							onSortHandler={props.onSortHandler}
-							slug={props.slug}
-						/>
-					) : props.slug == "http-code" ? (
-						<Sorting
-							enabled={true}
-							direction={props.sortOrder.httpCode}
-							onSortHandler={props.onSortHandler}
-							slug={props.slug}
-						/>
-					) : props.slug == "occurrences" ? (
-						<Sorting
-							enabled={true}
-							direction={props.sortOrder.occurrences}
+							direction={props.sortOrder.pageSsl}
 							onSortHandler={props.onSortHandler}
 							slug={props.slug}
 						/>
@@ -59,6 +45,6 @@ const ImageSorting = (props) => {
 	) : null;
 };
 
-ImageSorting.propTypes = {};
+PageSorting.propTypes = {};
 
-export default ImageSorting;
+export default PageSorting;

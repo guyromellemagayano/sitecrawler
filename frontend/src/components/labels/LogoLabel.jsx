@@ -1,5 +1,3 @@
-// React
-
 // NextJS
 import Link from "next/link";
 
@@ -9,7 +7,7 @@ import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 
 const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 	const siteLogoDarkSvg = "/images/logos/site-logo-dark.svg";

@@ -27,20 +27,20 @@ import Layout from "src/components/Layout";
 // Components
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
-import LinkOptions from "src/components/site/LinkOptions";
+import LinkOptions from "src/components/pages/overview/LinkOptions";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import MyPagination from "src/components/sites/Pagination";
-import PageFilter from "src/components/site/PageFilter";
-import PageSorting from "src/components/site/PageSorting";
+import MyPagination from "src/components/pagination/Pagination";
+import PageFilter from "src/components/helpers/filters/PageFilter";
+import PageSorting from "src/components/helpers/sorting/PageSorting";
 import PageSvg from "src/components/svg/outline/PageSvg";
-import PageTable from "src/components/site/PageTable";
+import PageTable from "src/components/tables/PageTable";
 import PageTableSkeleton from "src/components/skeletons/PageTableSkeleton";
 import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
 
 // Loadable
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
@@ -99,17 +99,14 @@ const Pages = ({ width, result }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { scan: scan } = useScan({
 		querySid: result.siteId
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	const { siteId: siteId } = useSiteId({
@@ -204,7 +201,6 @@ const Pages = ({ width, result }) => {
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
 		scanObjId: scanObjId
-		// refreshInterval: 1000
 	}));
 
 	useEffect(() => {

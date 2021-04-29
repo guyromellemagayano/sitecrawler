@@ -28,18 +28,18 @@ import Layout from "src/components/Layout";
 // Components
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
-import LinkFilter from "src/components/site/LinkFilter";
-import LinkOptions from "src/components/site/LinkOptions";
-import LinkSorting from "src/components/site/LinkSorting";
-import LinkTable from "src/components/site/LinkTable";
+import LinkFilter from "src/components/helpers/filters/LinkFilter";
+import LinkOptions from "src/components/pages/overview/LinkOptions";
+import LinkSorting from "src/components/helpers/sorting/LinkSorting";
+import LinkTable from "src/components/tables/LinkTable";
 import LinksSvg from "src/components/svg/outline/LinksSvg";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import MyPagination from "src/components/sites/Pagination";
+import MyPagination from "src/components/pagination/Pagination";
 
 // Loadable
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/SiteFooter"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 // Helpers
 import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
@@ -118,17 +118,14 @@ const Links = ({ width, result }) => {
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-		// refreshInterval: 1000
 	});
 
 	const { scan: scan } = useScan({
 		querySid: result.siteId
-		// refreshInterval: 1000
 	});
 
 	const { site: site } = useSite({
 		endpoint: sitesApiEndpoint
-		// refreshInterval: 1000
 	});
 
 	const { siteId: siteId } = useSiteId({
@@ -200,7 +197,6 @@ const Links = ({ width, result }) => {
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
 		scanObjId: scanObjId
-		// refreshInterval: 1000
 	});
 
 	useEffect(() => {
