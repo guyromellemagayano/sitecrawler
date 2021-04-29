@@ -19,7 +19,7 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const ComingSoon = loadable(() => import("src/components/layout/ComingSoon"));
+const ComingSoon = loadable(() => import("src/components/layouts/ComingSoon"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 
 const Reports = ({ width }) => {

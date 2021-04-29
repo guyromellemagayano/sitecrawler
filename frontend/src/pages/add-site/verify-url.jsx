@@ -31,7 +31,7 @@ const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronR
 const ClipboardSvg = loadable(() => import("src/components/svg/solid/ClipboardSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
-const HowToSetup = loadable(() => import("src/components/sites/HowToSetup"));
+const HowToSetup = loadable(() => import("src/components/pages/dashboard/HowToSetup"));
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
