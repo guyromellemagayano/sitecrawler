@@ -10,8 +10,8 @@
 		"url": "/settings/subscription-plans"
 	},
 	{
-		"label": "App Settings",
-		"slug": "app-settings",
+		"label": "Global Settings",
+		"slug": "global-settings",
 		"url": "/settings/global"
 	},
 	{
