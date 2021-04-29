@@ -20,7 +20,7 @@ import Layout from "src/components/Layout";
 
 // Components
 const ComingSoon = loadable(() => import("src/components/layout/ComingSoon"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 
 const Reports = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);

@@ -27,20 +27,20 @@ import Layout from "src/components/Layout";
 // Components
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
-import LinkOptions from "src/components/page/site/LinkOptions";
+import LinkOptions from "src/components/pages/overview/LinkOptions";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MyPagination from "src/components/pagination/Pagination";
 import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
 import SearchSvg from "src/components/svg/solid/SearchSvg";
-import SeoFilter from "src/components/page/site/SeoFilter";
-import SeoSorting from "src/components/page/site/SeoSorting";
-import SeoTable from "src/components/page/site/SeoTable";
+import SeoFilter from "src/components/helpers/filters/SeoFilter";
+import SeoSorting from "src/components/helpers/sorting/SeoSorting";
+import SeoTable from "src/components/tables/SeoTable";
 import SeoTableSkeleton from "src/components/skeletons/SeoTableSkeleton";
 
 // Loadable
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/Footer"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers

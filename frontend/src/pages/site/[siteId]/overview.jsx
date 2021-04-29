@@ -26,19 +26,19 @@ import Layout from "src/components/Layout";
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import SitesImagesStats from "src/components/page/site/ImagesStats";
-import SitesLinksStats from "src/components/page/site/LinksStats";
-import SitesOverview from "src/components/page/site/Overview";
-import SitesPagesStats from "src/components/page/site/PagesStats";
-import SitesSeoStats from "src/components/page/site/SeoStats";
-import SitesStats from "src/components/page/site/Stats";
+import SitesImagesStats from "src/components/pages/overview/ImagesStats";
+import SitesLinksStats from "src/components/pages/overview/LinksStats";
+import SitesOverview from "src/components/pages/overview/Overview";
+import SitesPagesStats from "src/components/pages/overview/PagesStats";
+import SitesSeoStats from "src/components/pages/overview/SeoStats";
+import SitesStats from "src/components/pages/overview/Stats";
 
 // Loadable
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
-const SiteFooter = loadable(() => import("src/components/footer/Footer"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 const SiteOverview = ({ width, result }) => {
 	const [crawlFinished, setCrawlFinished] = useState(false);
@@ -215,7 +215,6 @@ const SiteOverview = ({ width, result }) => {
 						<div tw="w-full p-6 mx-auto min-h-screen">
 							{pageLoaded ? (
 								<div className="max-w-full py-4 px-8">
-									{/* TODO: <Breadcrumbs page={pageTitle} /> */}
 									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
 										<ol tw="flex items-center space-x-4">
 											<li>

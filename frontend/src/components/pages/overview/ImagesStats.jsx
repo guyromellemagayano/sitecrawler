@@ -18,9 +18,6 @@ import ImagesStatsLabel from "public/labels/components/sites/ImagesStats.json";
 // Enums
 import { imagesChartContents } from "src/enum/chartContents";
 
-// Hooks
-import { useStats } from "src/hooks/useSite";
-
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
 const ImageSvg = loadable(() => import("src/components/svg/outline/ImageSvg"));

@@ -25,15 +25,15 @@ import MainSidebar from "src/components/sidebar/MainSidebar";
 // Components
 import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
 import HomeSvg from "src/components/svg/solid/HomeSvg";
-import LargePageSizeSettings from "src/components/page/settings/LargePageSize";
-import TimestampSettings from "src/components/page/settings/Timestamp";
+import LargePageSizeSettings from "src/components/pages/settings/site/LargePageSize";
+import TimestampSettings from "src/components/pages/settings/profile/Timestamp";
 
 // Loadable
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
-const SiteFooter = loadable(() => import("src/components/footer/Footer"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 const GlobalSettings = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);

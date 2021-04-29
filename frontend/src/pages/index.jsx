@@ -23,16 +23,16 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-import AddSite from "src/components/sites/AddSite";
-import DataTable from "src/components/sites/DataTable";
+import AddSite from "src/components/pages/dashboard/AddSite";
+import DataTable from "src/components/tables/DataTable";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MyPagination from "src/components/pagination/Pagination";
-import SiteSorting from "src/components/page/site/SiteSorting";
+import SiteSorting from "src/components/helpers/sorting/SiteSorting";
 
 // Loadable
-const Loader = loadable(() => import("src/components/layout/Loader"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/Footer"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 // Helpers
 import { getSlugFromSortKey, getSortKeyFromSlug, removeURLParameter, slugToCamelcase } from "src/helpers/functions";

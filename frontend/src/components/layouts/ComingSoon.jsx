@@ -9,13 +9,13 @@ import tw from "twin.macro";
 import ComingSoonLabel from "public/labels/components/layout/ComingSoon.json";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const ComingSoonSkeleton = loadable(() => import("src/components/skeletons/ComingSoonSkeleton"));
 const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/footer/Footer"));
+const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 const ComingSoon = ({ width, user, site, pageTitle, pageLoaded, openMobileSidebar, setOpenMobileSidebar }) => {
 	const homeLabel = "Home";

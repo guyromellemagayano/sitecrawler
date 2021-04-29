@@ -20,7 +20,7 @@ import usePostMethod from "src/hooks/usePostMethod";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logo/AppLogo"));
+const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 
 const ConfirmEmail = () => {
 	const [success, setSuccess] = useState(false);
