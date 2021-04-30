@@ -35,7 +35,7 @@ const HowToSetup = loadable(() => import("src/components/pages/dashboard/HowToSe
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeletons/SiteAdditionStepsSkeleton"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 

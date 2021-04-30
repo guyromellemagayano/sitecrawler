@@ -37,7 +37,7 @@ import MyPagination from "src/components/pagination/Pagination";
 
 // Loadable
 const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 // Helpers

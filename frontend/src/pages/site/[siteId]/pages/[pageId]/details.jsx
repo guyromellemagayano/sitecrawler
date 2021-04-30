@@ -29,7 +29,7 @@ import Layout from "src/components/Layout";
 const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
 const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));

@@ -30,7 +30,7 @@ const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SupportSkeleton = loadable(() => import("src/components/skeletons/SupportSkeleton"));

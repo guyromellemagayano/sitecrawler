@@ -26,7 +26,7 @@ import Layout from "src/components/Layout";
 const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const SettingsPassword = loadable(() => import("src/components/pages/settings/profile/Password"));
 const SettingsPersonal = loadable(() => import("src/components/pages/settings/profile/Personal"));

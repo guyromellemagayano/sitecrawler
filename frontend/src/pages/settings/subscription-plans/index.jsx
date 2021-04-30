@@ -41,7 +41,7 @@ const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const BasicPlan = loadable(() => import("src/components/pages/subscription/BasicPlan"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const MonthlyPlans = loadable(() => import("src/components/pages/subscription/MonthlyPlans"));
 const PaymentMethodForm = loadable(() => import("src/components/forms/PaymentMethodForm"));
 const SemiAnnualPlans = loadable(() => import("src/components/pages/subscription/SemiAnnualPlans"));

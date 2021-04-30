@@ -17,10 +17,10 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 
 // Components
 const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const PrimaryMenu = loadable(() => import("src/components/sidebar/PrimaryMenu"));
-const ProfileMenu = loadable(() => import("src/components/sidebar/ProfileMenu"));
-const SettingsMenu = loadable(() => import("src/components/sidebar/SettingsMenu"));
-const SiteMenu = loadable(() => import("src/components/sidebar/SiteMenu"));
+const PrimaryMenu = loadable(() => import("src/components/menus/PrimaryMenu"));
+const ProfileMenu = loadable(() => import("src/components/menus/ProfileMenu"));
+const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"));
+const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
 
 const MainSidebar = ({ width, user, site, openMobileSidebar, setOpenMobileSidebar }) => {
 	const [selectedMenu, setSelectedMenu] = useState("");

@@ -14,7 +14,7 @@ import ComingSoonLabel from "public/labels/components/layout/ComingSoon.json";
 const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const ComingSoonSkeleton = loadable(() => import("src/components/skeletons/ComingSoonSkeleton"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 const ComingSoon = ({ width, user, site, pageTitle, pageLoaded, openMobileSidebar, setOpenMobileSidebar }) => {
