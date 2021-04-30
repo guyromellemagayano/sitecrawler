@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
-import { ChevronTopIcon } from "@heroicons/react/solid";
+import { ChevronUpIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
@@ -61,7 +61,7 @@ const ProfileMenu = () => {
 							</div>
 						</div>
 						<div>
-							<ChevronTopIcon tw="w-4 h-4 text-white" />
+							<ChevronUpIcon tw="w-4 h-4 text-white" />
 						</div>
 					</button>
 

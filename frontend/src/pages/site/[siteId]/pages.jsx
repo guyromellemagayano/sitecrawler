@@ -7,7 +7,7 @@ import Router, { useRouter } from "next/router";
 
 // External
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
-import { PageIcon } from "@heroicons/react/outline";
+import { DocumentIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
@@ -607,7 +607,7 @@ const Pages = ({ width, result }) => {
 											{pagesData && pagesData !== undefined && pagesData !== [] && Object.keys(pagesData).length > 0 ? (
 												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-														<PageIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+														<DocumentIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
 														{pagesData.count > 1
 															? pagesData.count + " " + PagesLabel[2].label
 															: pagesData.count == 1

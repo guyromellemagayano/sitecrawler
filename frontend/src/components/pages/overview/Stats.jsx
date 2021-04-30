@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 // External
 import "twin.macro";
-import { PageIcon, LinksIcon, ImageIcon, InformationCircleIcon } from "@heroicons/react/outline";
+import { DocumentIcon, LinkIcon, PhotographIcon, InformationCircleIcon } from "@heroicons/react/outline";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
@@ -151,7 +151,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 									<dt>
 										{val.title === "Total Pages" ? (
 											componentReady ? (
-												<PageIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
+												<DocumentIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
 											) : (
 												<span tw="flex -mt-1">
 													<Skeleton duration={2} width={20} height={20} />
@@ -159,7 +159,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 											)
 										) : val.title === "Total Links" ? (
 											componentReady ? (
-												<LinksIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
+												<LinkIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
 											) : (
 												<span tw="flex -mt-1">
 													<Skeleton duration={2} width={20} height={20} />
@@ -167,7 +167,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 											)
 										) : val.title === "Total Images" ? (
 											componentReady ? (
-												<ImageIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
+												<PhotographIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
 											) : (
 												<span tw="flex -mt-1">
 													<Skeleton duration={2} width={20} height={20} />

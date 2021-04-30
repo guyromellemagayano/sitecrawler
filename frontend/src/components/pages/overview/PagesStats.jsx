@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
-import { PageIcon } from "@heroicons/react/outline";
+import { DocumentIcon } from "@heroicons/react/outline";
 import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
@@ -285,7 +285,7 @@ const SitesPagesStats = ({ width, sid }) => {
 				<div tw="flex justify-between py-8 px-5">
 					<div tw="flex items-center">
 						{componentReady ? (
-							<PageIcon tw="w-5 h-5 text-gray-900 mr-2" />
+							<DocumentIcon tw="w-5 h-5 text-gray-900 mr-2" />
 						) : (
 							<span tw="w-6 h-6 mr-2">
 								<Skeleton duration={2} width={15} height={15} />

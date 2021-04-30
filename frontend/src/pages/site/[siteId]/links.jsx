@@ -7,7 +7,7 @@ import Router, { useRouter } from "next/router";
 
 // External
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
-import { LinksIcon } from "@heroicons/react/outline";
+import { LinkIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
@@ -637,7 +637,7 @@ const Links = ({ width, result }) => {
 										{pageTitle}
 										<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 											<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-												<LinksIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+												<LinkIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
 												{linksData.count > 1
 													? linksData.count + " " + LinksLabel[2].label
 													: linksData.count == 1

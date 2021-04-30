@@ -7,7 +7,7 @@ import Router, { useRouter } from "next/router";
 
 // External
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
-import { ImageIcon } from "@heroicons/react/outline";
+import { PhotographIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
@@ -612,7 +612,7 @@ const Images = ({ width, result }) => {
 											Object.keys(imagesData).length > 0 ? (
 												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-														<ImageIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+														<PhotographIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
 														{imagesData.count > 1
 															? imagesData.count + " " + ImagesLabel[2].label
 															: imagesData.count == 1
