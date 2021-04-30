@@ -40,7 +40,7 @@ const UpgradeErrorAlert = ({ message = "", link = "#" }) => {
 		>
 			<div tw="flex">
 				<div tw="flex-shrink-0">
-					<ExclamationIcon className="h-5 w-5 text-yellow-400" aria-hidden="true" />
+					<ExclamationIcon tw="h-5 w-5 text-yellow-400" aria-hidden="true" />
 				</div>
 				<div tw="ml-3 flex-1 md:flex md:justify-between">
 					<p tw="text-sm text-yellow-700">

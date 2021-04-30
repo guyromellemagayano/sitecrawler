@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 // External
+import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { NextSeo } from "next-seo";
@@ -38,8 +39,6 @@ import Layout from "src/components/Layout";
 // Components
 const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const BasicPlan = loadable(() => import("src/components/pages/subscription/BasicPlan"));
-const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
-const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
@@ -555,7 +554,7 @@ const Subscriptions = ({ width }) => {
 														{pageLoaded ? (
 															<Link href={homePageLink} passHref>
 																<a tw="text-gray-400 hover:text-gray-500">
-																	<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+																	<HomeIcon tw="flex-shrink-0 h-5 w-5" />
 																	<span tw="sr-only">{homeLabel}</span>
 																</a>
 															</Link>
@@ -567,7 +566,7 @@ const Subscriptions = ({ width }) => {
 												<li>
 													<div tw="flex items-center">
 														{pageLoaded ? (
-															<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+															<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 														) : (
 															<Skeleton duration={2} width={20} height={20} />
 														)}

@@ -1,12 +1,11 @@
 // External
+import { CheckIcon, ExclamationIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Components
-const CheckSvg = loadable(() => import("src/components/svg/solid/CheckSvg"));
-const ExclamationSvg = loadable(() => import("src/components/svg/solid/ExclamationSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 
@@ -31,7 +30,7 @@ const BasicPlan = ({
 	errorMsg,
 	errorMsgLoaded,
 	setErrorMsgLoaded,
-	handleSelectPlan,
+	handleSelectPlan
 }) => {
 	return (
 		<>
@@ -76,7 +75,7 @@ const BasicPlan = ({
 					>
 						<div role="dialog" aria-modal="true" aria-labelledby="modal-headline">
 							<div tw="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mb-3">
-								<ExclamationSvg className={tw`h-6 w-6 text-red-600`} />
+								<ExclamationIcon tw="h-6 w-6 text-red-600" />
 							</div>
 							<div tw="text-center">
 								<h2 tw="mb-6 text-xl leading-6 font-semibold text-gray-900" id="modal-headline">
@@ -139,7 +138,7 @@ const BasicPlan = ({
 									return (
 										<li key={key} tw="flex items-start my-3">
 											<div tw="flex-shrink-0">
-												<CheckSvg className={tw`h-6 w-6 text-green-500`} />
+												<CheckIcon tw="h-6 w-6 text-green-500" />
 											</div>
 											<p tw="ml-3 text-base leading-6 font-medium text-gray-500">{val2}</p>
 										</li>
@@ -152,7 +151,7 @@ const BasicPlan = ({
 										tw`rounded-lg`,
 										data.id === currentSubscription.id || currentSubscription.id === null
 											? tw`shadow-none`
-											: tw`shadow-sm`,
+											: tw`shadow-sm`
 									]}
 								>
 									{data.id === currentSubscription.id || currentSubscription.id === null ? (
@@ -183,5 +182,7 @@ const BasicPlan = ({
 		</>
 	);
 };
+
+BasicPlan.propTypes = {};
 
 export default BasicPlan;

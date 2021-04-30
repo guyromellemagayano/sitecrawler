@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
+import { InformationCircleIcon } from "@heroicons/react/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import loadable from "@loadable/component";
 import Moment from "react-moment";
@@ -20,11 +21,10 @@ import OverviewLabel from "public/labels/components/sites/Overview.json";
 import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
-const InformationCircleSvg = loadable(() => import("src/components/svg/solid/InformationCircleSvg"));
-const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 const SiteDangerStatus = loadable(() => import("src/components/status/SiteDangerStatus"));
 const SiteSuccessStatus = loadable(() => import("src/components/status/SiteSuccessStatus"));
 const SiteWarningStatus = loadable(() => import("src/components/status/SiteWarningStatus"));
+const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
 const SitesOverview = ({
 	id,
@@ -237,7 +237,7 @@ const SitesOverview = ({
 															tw="inline-flex items-center ml-3 focus:outline-none"
 														>
 															<span tw="w-5 h-5">
-																<InformationCircleSvg className={tw`text-red-400`} />
+																<InformationCircleIcon tw="text-red-400" />
 															</span>
 														</a>
 														<ReactTooltip
@@ -332,6 +332,6 @@ const SitesOverview = ({
 	);
 };
 
-export default SitesOverview;
-
 SitesOverview.propTypes = {};
+
+export default SitesOverview;

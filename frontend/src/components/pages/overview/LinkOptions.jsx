@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // External
+import { SearchIcon } from "@heroicons/react/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import loadable from "@loadable/component";
 import tw from "twin.macro";
@@ -17,7 +18,6 @@ import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
-import SearchSvg from "src/components/svg/solid/SearchSvg";
 
 const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, crawlFinished, crawlableHandler }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -109,7 +109,7 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 									</label>
 									<div tw="relative w-full text-gray-400 focus-within:text-gray-600">
 										<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-											<SearchSvg className={tw`h-5 w-5 text-gray-400`} />
+											<SearchIcon tw="h-5 w-5 text-gray-400" />
 										</div>
 										<input
 											type="search"

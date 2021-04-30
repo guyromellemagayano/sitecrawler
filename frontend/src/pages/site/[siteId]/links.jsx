@@ -6,6 +6,8 @@ import Link from "next/link";
 import Router, { useRouter } from "next/router";
 
 // External
+import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
+import { LinksIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
@@ -26,13 +28,10 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
-import HomeSvg from "src/components/svg/solid/HomeSvg";
 import LinkFilter from "src/components/helpers/filters/LinkFilter";
 import LinkOptions from "src/components/pages/overview/LinkOptions";
 import LinkSorting from "src/components/helpers/sorting/LinkSorting";
 import LinkTable from "src/components/tables/LinkTable";
-import LinksSvg from "src/components/svg/outline/LinksSvg";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MyPagination from "src/components/pagination/Pagination";
 
@@ -617,7 +616,7 @@ const Links = ({ width, result }) => {
 											<div>
 												<Link href={homePageLink} passHref>
 													<a tw="text-gray-400 hover:text-gray-500">
-														<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+														<HomeIcon tw="flex-shrink-0 h-5 w-5" />
 														<span tw="sr-only">{homeLabel}</span>
 													</a>
 												</Link>
@@ -625,7 +624,7 @@ const Links = ({ width, result }) => {
 										</li>
 										<li>
 											<div tw="flex items-center">
-												<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+												<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 												<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
 													{pageTitle}
 												</p>
@@ -638,7 +637,7 @@ const Links = ({ width, result }) => {
 										{pageTitle}
 										<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 											<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-												<LinksSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
+												<LinksIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
 												{linksData.count > 1
 													? linksData.count + " " + LinksLabel[2].label
 													: linksData.count == 1

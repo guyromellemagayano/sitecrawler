@@ -1,9 +1,6 @@
 // External
-import loadable from "@loadable/component";
-import tw from "twin.macro";
-
-// Components
-const MenuSvg = loadable(() => import("src/components/svg/solid/MenuSvg"));
+import "twin.macro";
+import { MenuIcon } from "@heroicons/react/solid";
 
 const MobileSidebarButton = ({ openMobileSidebar, setOpenMobileSidebar }) => {
 	const openSidebarLabel = "Open sidebar";
@@ -14,7 +11,7 @@ const MobileSidebarButton = ({ openMobileSidebar, setOpenMobileSidebar }) => {
 			onClick={() => setOpenMobileSidebar(!openMobileSidebar)}
 		>
 			<span tw="sr-only">{openSidebarLabel}</span>
-			<MenuSvg className={tw`h-6 w-6`} />
+			<MenuIcon tw="h-6 w-6" />
 		</button>
 	);
 };

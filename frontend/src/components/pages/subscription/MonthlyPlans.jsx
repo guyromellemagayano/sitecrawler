@@ -1,10 +1,7 @@
 // External
-import loadable from "@loadable/component";
+import { CheckIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
-
-// Components
-const CheckSvg = loadable(() => import("src/components/svg/solid/CheckSvg"));
 
 const MonthlyPlans = ({
 	key,
@@ -17,7 +14,7 @@ const MonthlyPlans = ({
 	setUpdatedPlanId,
 	setUpdatedPlanName,
 	showPaymentFormModal,
-	setShowPaymentFormModal,
+	setShowPaymentFormModal
 }) => {
 	return data.group.name === "Pro" ? (
 		<div
@@ -54,7 +51,7 @@ const MonthlyPlans = ({
 							return (
 								<li key={key} tw="flex items-start my-3">
 									<div tw="flex-shrink-0">
-										<CheckSvg className={tw`h-6 w-6 text-green-500`} />
+										<CheckIcon tw="h-6 w-6 text-green-500" />
 									</div>
 									<p tw="ml-3 text-base leading-6 font-medium text-gray-500">{val2}</p>
 								</li>
@@ -74,7 +71,7 @@ const MonthlyPlans = ({
 										tw`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white`,
 										!currentPaymentMethod || loadingProMonthly
 											? tw`opacity-50 cursor-not-allowed`
-											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
 									disabled={!currentPaymentMethod || loadingProMonthly ? "disabled" : ""}
 									onClick={() => {
@@ -121,7 +118,7 @@ const MonthlyPlans = ({
 								return (
 									<li key={key} tw="flex items-start my-3">
 										<div tw="flex-shrink-0">
-											<CheckSvg className={tw`h-6 w-6 text-green-500`} />
+											<CheckIcon tw="h-6 w-6 text-green-500" />
 										</div>
 										<p tw="ml-3 text-base leading-6 font-medium text-gray-500">{val2}</p>
 									</li>
@@ -140,7 +137,7 @@ const MonthlyPlans = ({
 											tw`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white`,
 											!currentPaymentMethod || loadingAgencyMonthly
 												? tw`opacity-50 cursor-not-allowed`
-												: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+												: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 										]}
 										disabled={!currentPaymentMethod || loadingAgencyMonthly ? "disabled" : ""}
 										onClick={() => {
@@ -162,5 +159,7 @@ const MonthlyPlans = ({
 		</div>
 	) : null;
 };
+
+MonthlyPlans.propTypes = {};
 
 export default MonthlyPlans;

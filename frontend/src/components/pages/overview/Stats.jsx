@@ -2,22 +2,16 @@
 import { useState, useEffect } from "react";
 
 // External
-import loadable from "@loadable/component";
+import "twin.macro";
+import { PageIcon, LinksIcon, ImageIcon, InformationCircleIcon } from "@heroicons/react/outline";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
 
 // JSON
 import StatsLabel from "public/labels/components/sites/Stats.json";
 
 // Hooks
 import { useScan, useStats } from "src/hooks/useSite";
-
-// Components
-const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
-const LinksSvg = loadable(() => import("src/components/svg/outline/LinksSvg"));
-const ImageSvg = loadable(() => import("src/components/svg/outline/ImageSvg"));
-const InformationCircleSvg = loadable(() => import("src/components/svg/outline/InformationCircleSvg"));
 
 const SitesStats = ({ crawlableHandler, sid, user }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -157,7 +151,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 									<dt>
 										{val.title === "Total Pages" ? (
 											componentReady ? (
-												<PageSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
+												<PageIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
 											) : (
 												<span tw="flex -mt-1">
 													<Skeleton duration={2} width={20} height={20} />
@@ -165,7 +159,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 											)
 										) : val.title === "Total Links" ? (
 											componentReady ? (
-												<LinksSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
+												<LinksIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
 											) : (
 												<span tw="flex -mt-1">
 													<Skeleton duration={2} width={20} height={20} />
@@ -173,14 +167,14 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 											)
 										) : val.title === "Total Images" ? (
 											componentReady ? (
-												<ImageSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
+												<ImageIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
 											) : (
 												<span tw="flex -mt-1">
 													<Skeleton duration={2} width={20} height={20} />
 												</span>
 											)
 										) : componentReady ? (
-											<InformationCircleSvg className={tw`mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500`} />
+											<InformationCircleIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
 										) : (
 											<span tw="flex -mt-1">
 												<Skeleton duration={2} width={20} height={20} />

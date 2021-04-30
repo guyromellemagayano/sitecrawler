@@ -2,12 +2,10 @@
 import { useState, useEffect } from "react";
 
 // External
+import "twin.macro";
+import { CheckCircleIcon, XIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
-import tw from "twin.macro";
-
-// Components
-import CheckCircleSvg from "src/components/svg/solid/CheckCircleSvg";
-import XSvg from "../svg/solid/XSvg";
+import PropTypes from "prop-types";
 
 const SuccessMessageAlert = ({ message = "" }) => {
 	const [isOpen, setIsOpen] = useState(true);
@@ -37,7 +35,7 @@ const SuccessMessageAlert = ({ message = "" }) => {
 		>
 			<div tw="flex items-center">
 				<div tw="flex-shrink-0">
-					<CheckCircleSvg className={tw`h-5 w-5 text-green-400`} />
+					<CheckCircleIcon tw="h-5 w-5 text-green-400" />
 				</div>
 				<div tw="ml-3">
 					<h3 tw="text-sm leading-5 font-medium text-green-800 break-words">{message}</h3>
@@ -50,7 +48,7 @@ const SuccessMessageAlert = ({ message = "" }) => {
 							onClick={() => setIsOpen(false)}
 						>
 							<span tw="sr-only">{dismissMessage}</span>
-							<XSvg className={tw`h-5 w-5`} />
+							<XIcon tw="h-5 w-5" />
 						</button>
 					</div>
 				</div>
@@ -58,5 +56,7 @@ const SuccessMessageAlert = ({ message = "" }) => {
 		</Transition>
 	);
 };
+
+SuccessMessageAlert.propTypes = {};
 
 export default SuccessMessageAlert;

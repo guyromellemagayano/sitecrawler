@@ -5,16 +5,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
+import "twin.macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { SearchIcon } from "@heroicons/react/solid";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
 
 // JSON
 import AddSiteLabel from "public/labels/components/sites/AddSite.json";
-
-// Components
-import SearchSvg from "src/components/svg/solid/SearchSvg";
 
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
@@ -64,7 +62,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 								</label>
 								<div tw="relative w-full text-gray-400 focus-within:text-gray-600">
 									<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-										<SearchSvg className={tw`h-5 w-5 text-gray-400`} />
+										<SearchIcon tw="h-5 w-5 text-gray-400" />
 									</div>
 									<input
 										type="search"

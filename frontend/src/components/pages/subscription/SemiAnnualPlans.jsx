@@ -1,10 +1,7 @@
 // External
-import loadable from "@loadable/component";
+import { CheckIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
-
-// Components
-const CheckSvg = loadable(() => import("src/components/svg/solid/CheckSvg"));
 
 const SemiAnnualPlans = ({
 	key,
@@ -54,7 +51,7 @@ const SemiAnnualPlans = ({
 							return (
 								<li key={key} tw="flex items-start my-3">
 									<div tw="flex-shrink-0">
-										<CheckSvg className={tw`h-6 w-6 text-green-500`} />
+										<CheckIcon tw="h-6 w-6 text-green-500" />
 									</div>
 									<p tw="ml-3 text-base leading-6 font-medium text-gray-500">{val2}</p>
 								</li>
@@ -121,7 +118,7 @@ const SemiAnnualPlans = ({
 								return (
 									<li key={key} tw="flex items-start my-3">
 										<div tw="flex-shrink-0">
-											<CheckSvg className={tw`h-6 w-6 text-green-500`} />
+											<CheckIcon tw="h-6 w-6 text-green-500" />
 										</div>
 										<p tw="ml-3 text-base leading-6 font-medium text-gray-500">{val2}</p>
 									</li>
@@ -166,5 +163,7 @@ const SemiAnnualPlans = ({
 		</div>
 	) : null;
 };
+
+SemiAnnualPlans.propTypes = {};
 
 export default SemiAnnualPlans;

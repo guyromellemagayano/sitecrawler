@@ -6,11 +6,12 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
+import { InformationCircleIcon } from "@heroicons/react/outline";
+import { styled } from "twin.macro";
 import bytes from "bytes";
 import PropTypes from "prop-types";
 import ReactTooltip from "react-tooltip";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
 import Url from "url-parse";
 
 // Hooks
@@ -20,7 +21,6 @@ import { useImageDetail } from "src/hooks/useSite";
 import SiteDangerBadge from "src/components/badges/SiteDangerBadge";
 import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
 import SiteWarningBadge from "src/components/badges/SiteWarningBadge";
-import InformationCircleSvg from "src/components/svg/outline/InformationCircleSvg";
 
 const ImagesTableDiv = styled.tr`
 	td {
@@ -34,6 +34,7 @@ const ImagesTableDiv = styled.tr`
 			}
 		}
 	}
+
 	.link-item {
 		max-width: 100%;
 		display: block;
@@ -156,7 +157,7 @@ const ImagesTable = (props) => {
 									data-scroll-hide={false}
 									tw="flex cursor-pointer"
 								>
-									<InformationCircleSvg className={tw`ml-2 text-red-400 inline-block w-4 h-4 overflow-hidden`} />
+									<InformationCircleIcon tw="ml-2 text-red-400 inline-block w-4 h-4 overflow-hidden" />
 								</a>
 								<ReactTooltip
 									id={props.val.url}
