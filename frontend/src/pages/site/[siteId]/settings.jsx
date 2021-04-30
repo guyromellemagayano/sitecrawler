@@ -29,7 +29,7 @@ const DeleteSiteSettings = loadable(() => import("src/components/pages/settings/
 const LargePageSizeSettings = loadable(() => import("src/components/pages/settings/site/LargePageSize"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const SiteInformationSettings = loadable(() => import("src/components/pages/settings/site/SiteInformation"));

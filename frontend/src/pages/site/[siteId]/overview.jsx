@@ -35,7 +35,7 @@ import SitesStats from "src/components/pages/overview/Stats";
 // Loadable
 const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 

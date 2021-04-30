@@ -37,7 +37,7 @@ import SeoTableSkeleton from "src/components/skeletons/SeoTableSkeleton";
 
 // Loadable
 const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
+const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
