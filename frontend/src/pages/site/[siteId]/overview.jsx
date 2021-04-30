@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
+import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
@@ -23,8 +24,6 @@ import { useScan, useStats, useSite, useSiteId } from "src/hooks/useSite";
 import Layout from "src/components/Layout";
 
 // Components
-import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
-import HomeSvg from "src/components/svg/solid/HomeSvg";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import SitesImagesStats from "src/components/pages/overview/ImagesStats";
 import SitesLinksStats from "src/components/pages/overview/LinksStats";
@@ -221,7 +220,7 @@ const SiteOverview = ({ width, result }) => {
 												<div>
 													<Link href={homePageLink} passHref>
 														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
 															<span tw="sr-only">{homeLabel}</span>
 														</a>
 													</Link>
@@ -229,7 +228,7 @@ const SiteOverview = ({ width, result }) => {
 											</li>
 											<li>
 												<div tw="flex items-center">
-													<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
 														{pageTitle}
 													</p>

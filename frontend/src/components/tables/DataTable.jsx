@@ -5,9 +5,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
+import { ClipboardIcon, ExclamationIcon, InformationCircleIcon } from "@heroicons/react/solid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Transition } from "@headlessui/react";
-import loadable from "@loadable/component";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
@@ -18,14 +18,9 @@ import tw, { styled } from "twin.macro";
 import DataTableLabel from "public/labels/components/sites/DataTable.json";
 
 // Hooks
+import { useScan, useStats } from "src/hooks/useSite";
 import useDeleteMethod from "src/hooks/useDeleteMethod";
 import usePostMethod from "src/hooks/usePostMethod";
-import { useScan, useStats } from "src/hooks/useSite";
-
-// Components
-const ClipboardSvg = loadable(() => import("src/components/svg/solid/ClipboardSvg"));
-const ExclamationSvg = loadable(() => import("src/components/svg/solid/ExclamationSvg"));
-const InformationCircleSvg = loadable(() => import("src/components/svg/solid/InformationCircleSvg"));
 
 const DataTableDiv = styled.tbody`
 	td {
@@ -39,6 +34,7 @@ const DataTableDiv = styled.tbody`
 			}
 		}
 	}
+
 	.link-item {
 		max-width: 100%;
 		display: block;
@@ -317,7 +313,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 						>
 							<div tw="sm:flex sm:items-start">
 								<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
-									<InformationCircleSvg className={tw`h-6 w-6 text-yellow-600`} />
+									<InformationCircleIcon tw="h-6 w-6 text-yellow-600" />
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<h3 tw="text-lg leading-6 font-medium text-gray-800" id="modal-headline">
@@ -366,7 +362,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 																			: tw`hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500`
 																	]}
 																>
-																	<ClipboardSvg className={tw`h-5 w-5 text-gray-400`} />
+																	<ClipboardIcon tw="h-5 w-5 text-gray-400" />
 																	<span>{copied ? DataTableLabel[17].label : DataTableLabel[18].label}</span>
 																</button>
 															</CopyToClipboard>
@@ -485,7 +481,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 						>
 							<div tw="sm:flex sm:items-start">
 								<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-									<ExclamationSvg className={tw`h-6 w-6 text-red-600`} />
+									<ExclamationIcon tw="h-6 w-6 text-red-600" />
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">

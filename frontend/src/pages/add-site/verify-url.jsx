@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
+import { ChevronRightIcon, ClipboardIcon, HomeIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { NextSeo } from "next-seo";
 import { Transition } from "@headlessui/react";
@@ -18,25 +19,21 @@ import tw from "twin.macro";
 import VerifyUrlLabel from "public/labels/pages/add-site/verify-url.json";
 
 // Hooks
+import { useSite } from "src/hooks/useSite";
 import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
-import { useSite } from "src/hooks/useSite";
 
 // Layout
 import Layout from "src/components/Layout";
 
 // Components
 const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
-const ClipboardSvg = loadable(() => import("src/components/svg/solid/ClipboardSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
-const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const HowToSetup = loadable(() => import("src/components/pages/dashboard/HowToSetup"));
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
-const QuestionMarkCircleSvg = loadable(() => import("src/components/svg/solid/QuestionMarkCircleSvg"));
 const SiteAdditionStepsSkeleton = loadable(() => import("src/components/skeletons/SiteAdditionStepsSkeleton"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
@@ -240,7 +237,7 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 							<div role="dialog" aria-modal="true" aria-labelledby="modal-headline">
 								<div>
 									<div tw="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100">
-										<QuestionMarkCircleSvg className={tw`h-6 w-6 text-yellow-600`} />
+										<QuestionMarkCircleIcon tw="h-6 w-6 text-yellow-600" />
 									</div>
 									<div tw="w-full text-center mt-5 sm:rounded-lg inline-block">
 										<h3 tw="text-lg leading-6 font-medium text-gray-900">{VerifyUrlLabel[14].label}</h3>
@@ -318,7 +315,7 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 														<div>
 															<Link href={homePageLink} passHref>
 																<a tw="text-gray-400 hover:text-gray-500">
-																	<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+																	<HomeIcon tw="flex-shrink-0 h-5 w-5" />
 																	<span tw="sr-only">{homeLabel}</span>
 																</a>
 															</Link>
@@ -326,7 +323,7 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 													</li>
 													<li>
 														<div tw="flex items-center">
-															<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+															<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 															<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
 																{pageTitle}
 															</p>
@@ -415,7 +412,7 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 																						: tw`hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500`
 																				]}
 																			>
-																				<ClipboardSvg className={tw`h-5 w-5 text-gray-400`} />
+																				<ClipboardIcon tw="h-5 w-5 text-gray-400" />
 																				<span>{copied ? VerifyUrlLabel[7].label : VerifyUrlLabel[8].label}</span>
 																			</button>
 																		</CopyToClipboard>
@@ -427,7 +424,7 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 																			title={VerifyUrlLabel[24].label}
 																			onClick={handleTriggerHelpModal}
 																		>
-																			<QuestionMarkCircleSvg className={tw`h-7 w-7`} />
+																			<QuestionMarkCircleIcon tw="h-7 w-7" />
 																		</button>
 																	</span>
 																</div>

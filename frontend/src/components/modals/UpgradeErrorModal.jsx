@@ -53,7 +53,7 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) =>
 				>
 					<div tw="sm:flex sm:items-start">
 						<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
-							<ExclamationIcon className="h-6 w-6 text-yellow-600" aria-hidden="true" />
+							<ExclamationIcon tw="h-6 w-6 text-yellow-600" aria-hidden="true" />
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">

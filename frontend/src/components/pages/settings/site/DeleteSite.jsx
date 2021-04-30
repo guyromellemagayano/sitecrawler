@@ -6,16 +6,13 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
+import "twin.macro";
+import { ExclamationIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
-import loadable from "@loadable/component";
-import tw from "twin.macro";
 import PropTypes from "prop-types";
 
 // Hooks
 import useDeleteMethod from "src/hooks/useDeleteMethod";
-
-// Components
-const ExclamationSvg = loadable(() => import("src/components/svg/solid/ExclamationSvg"));
 
 const DeleteSite = ({ user, siteId, settingsLabel }) => {
 	const [showModal, setShowModal] = useState(false);
@@ -82,7 +79,7 @@ const DeleteSite = ({ user, siteId, settingsLabel }) => {
 					>
 						<div tw="sm:flex sm:items-start">
 							<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-								<ExclamationSvg className={tw`h-6 w-6 text-red-600`} />
+								<ExclamationIcon tw="h-6 w-6 text-red-600" />
 							</div>
 							<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 								<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">

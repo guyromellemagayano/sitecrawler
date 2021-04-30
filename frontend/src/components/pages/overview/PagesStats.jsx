@@ -2,15 +2,16 @@
 import { useState, useEffect } from "react";
 
 // NextJS
-import Link from "next/link";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 // External
+import { DocumentIcon } from "@heroicons/react/outline";
+import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
 
 // JSON
 import PagesStatsLabel from "public/labels/components/sites/PagesStats.json";
@@ -23,7 +24,6 @@ import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
-const PageSvg = loadable(() => import("src/components/svg/outline/PageSvg"));
 
 const SitesPagesStatsDiv = styled.div`
 	.status-indicator {
@@ -51,37 +51,45 @@ const SitesPagesStatsDiv = styled.div`
 			}
 		}
 	}
+
 	.apexcharts-legend {
 		display: block;
 		margin-left: auto !important;
 		margin-right: auto !important;
 		max-width: 16rem;
 	}
+
 	.apexcharts-legend-series {
 		display: flex;
 		align-items: center;
 		border-bottom: 1px solid #e7efef;
 		padding-bottom: 10px;
 	}
+
 	.apexcharts-legend-series:last-child {
 		border: none;
 	}
+
 	.apexcharts-legend-text {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		width: 100%;
 	}
+
 	.apexcharts-legend-marker {
 		margin-right: 10px;
 	}
+
 	.legend-val {
 		color: #1d2626;
 		font-weight: 600;
 	}
+
 	.legend-text {
 		margin-right: 10px;
 	}
+
 	.skeleton-wrapper {
 		margin-bottom: 20px;
 	}
@@ -154,7 +162,6 @@ const SitesPagesStats = ({ width, sid }) => {
 		let path = `/site/${sid}/pages`;
 
 		pagesChartContents.forEach((item, index) => {
-			// console.log(item)
 			if (label === item.label && item.filter !== "")
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
@@ -196,11 +203,6 @@ const SitesPagesStats = ({ width, sid }) => {
 				}
 			}
 		},
-		// labels: ['No Issues', 'Large Page Size', 'Broken Security', 'Not on Google'],
-		// colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338'],
-		// fill: {
-		//   colors: ['#19B080', '#EF2917', '#ED5244', '#BB4338']
-		// },
 		labels: pagesChartContents.map((item) => item.label),
 		colors: pagesChartContents.map((item) => item.color),
 		fill: {
@@ -283,7 +285,7 @@ const SitesPagesStats = ({ width, sid }) => {
 				<div tw="flex justify-between py-8 px-5">
 					<div tw="flex items-center">
 						{componentReady ? (
-							<PageSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
+							<DocumentIcon tw="w-5 h-5 text-gray-900 mr-2" />
 						) : (
 							<span tw="w-6 h-6 mr-2">
 								<Skeleton duration={2} width={15} height={15} />

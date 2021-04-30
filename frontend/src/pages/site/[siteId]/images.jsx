@@ -6,6 +6,8 @@ import Link from "next/link";
 import Router, { useRouter } from "next/router";
 
 // External
+import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
+import { PhotographIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
@@ -17,21 +19,18 @@ import ImagesLabel from "public/labels/pages/site/images.json";
 import ImageTableContent from "public/data/image-table.json";
 
 // Hooks
-import usePostMethod from "src/hooks/usePostMethod";
 import { useScan, useSite, useImages, useSiteId } from "src/hooks/useSite";
+import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
 
 // Layout
 import Layout from "src/components/Layout";
 
 // Components
-import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
-import HomeSvg from "src/components/svg/solid/HomeSvg";
 import ImageFilter from "src/components/helpers/filters/ImageFilter";
 import LinkOptions from "src/components/pages/overview/LinkOptions";
 import ImageSorting from "src/components/helpers/sorting/ImageSorting";
 import ImageTable from "src/components/tables/ImageTable";
-import ImageSvg from "src/components/svg/outline/ImageSvg";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import ImageTableSkeleton from "src/components/skeletons/ImageTableSkeleton";
 import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
@@ -588,7 +587,7 @@ const Images = ({ width, result }) => {
 												<div>
 													<Link href={homePageLink} passHref>
 														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
 															<span tw="sr-only">{homeLabel}</span>
 														</a>
 													</Link>
@@ -596,7 +595,7 @@ const Images = ({ width, result }) => {
 											</li>
 											<li>
 												<div tw="flex items-center">
-													<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
 														{pageTitle}
 													</p>
@@ -613,7 +612,7 @@ const Images = ({ width, result }) => {
 											Object.keys(imagesData).length > 0 ? (
 												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-														<ImageSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
+														<PhotographIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
 														{imagesData.count > 1
 															? imagesData.count + " " + ImagesLabel[2].label
 															: imagesData.count == 1

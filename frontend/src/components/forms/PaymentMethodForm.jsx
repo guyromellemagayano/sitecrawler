@@ -2,8 +2,8 @@
 import { useState, useMemo, useEffect } from "react";
 
 // External
+import { CreditCardIcon } from "@heroicons/react/solid";
 import { useStripe, useElements, CardNumberElement, CardCvcElement, CardExpiryElement } from "@stripe/react-stripe-js";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
@@ -14,12 +14,6 @@ import SubscriptionLabel from "public/labels/pages/settings/subscriptions.json";
 // Hooks
 import { usePaymentMethods, useDefaultPaymentMethod } from "src/hooks/useStripePromise";
 import usePostMethod from "src/hooks/usePostMethod";
-
-// Components
-const CheckSvg = loadable(() => import("src/components/svg/solid/CheckSvg"));
-const CreditCardSvg = loadable(() => import("src/components/svg/solid/CreditCardSvg"));
-const PaymentMethodsSkeleton = loadable(() => import("src/components/skeletons/PaymentMethodsSkeleton"));
-const SelectorSvg = loadable(() => import("src/components/svg/solid/SelectorSvg"));
 
 const useOptions = () => {
 	const options = useMemo(() => ({
@@ -279,7 +273,7 @@ const PaymentMethodForm = ({
 								</label>
 								<div tw="mt-1 relative rounded-md shadow-sm">
 									<div tw="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-										<CreditCardSvg className={tw`h-5 w-5 text-gray-400`} />
+										<CreditCardIcon tw="h-5 w-5 text-gray-400" />
 									</div>
 									<input
 										type="text"

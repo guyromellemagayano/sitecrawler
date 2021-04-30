@@ -2,15 +2,16 @@
 import { useState, useEffect } from "react";
 
 // NextJS
-import Link from "next/link";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 // External
+import { PhotographIcon } from "@heroicons/react/solid";
+import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
 
 // JSON
 import ImagesStatsLabel from "public/labels/components/sites/ImagesStats.json";
@@ -20,7 +21,6 @@ import { imagesChartContents } from "src/enum/chartContents";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
-const ImageSvg = loadable(() => import("src/components/svg/outline/ImageSvg"));
 
 const SitesImagesStatsDiv = styled.div`
 	.status-indicator {
@@ -48,37 +48,45 @@ const SitesImagesStatsDiv = styled.div`
 			}
 		}
 	}
+
 	.apexcharts-legend {
 		display: block;
 		margin-left: auto !important;
 		margin-right: auto !important;
 		max-width: 16rem;
 	}
+
 	.apexcharts-legend-series {
 		display: flex;
 		align-items: center;
 		border-bottom: 1px solid #e7efef;
 		padding-bottom: 10px;
 	}
+
 	.apexcharts-legend-series:last-child {
 		border: none;
 	}
+
 	.apexcharts-legend-text {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		width: 100%;
 	}
+
 	.apexcharts-legend-marker {
 		margin-right: 10px;
 	}
+
 	.legend-val {
 		color: #1d2626;
 		font-weight: 600;
 	}
+
 	.legend-text {
 		margin-right: 10px;
 	}
+
 	.skeleton-wrapper {
 		margin-bottom: 20px;
 	}
@@ -220,7 +228,7 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 				<div tw="flex justify-between py-8 px-5">
 					<div tw="flex items-center">
 						{componentReady ? (
-							<ImageSvg className={tw`w-5 h-5 text-gray-900 mr-2`} />
+							<PhotographIcon tw="w-5 h-5 text-gray-900 mr-2" />
 						) : (
 							<span tw="w-6 h-6 mr-2">
 								<Skeleton duration={2} width={15} height={15} />

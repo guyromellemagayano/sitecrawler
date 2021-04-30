@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
+import { PlusIcon, SelectorIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
@@ -18,10 +19,6 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 // Hooks
 import { useScan, useStats } from "src/hooks/useSite";
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
-
-// Components
-import PlusSvg from "src/components/svg/solid/PlusSvg";
-import SelectorSvg from "src/components/svg/solid/SelectorSvg";
 
 const SiteMenu = ({ user, site }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -303,7 +300,7 @@ const SiteMenu = ({ user, site }) => {
 															</span>
 														</div>
 														<span tw="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-															<SelectorSvg className={tw`w-4 h-4 text-gray-400`} />
+															<SelectorIcon tw="w-4 h-4 text-gray-400" />
 														</span>
 													</button>
 												</span>
@@ -378,7 +375,7 @@ const SiteMenu = ({ user, site }) => {
 													<span tw="flex m-2 justify-center shadow-sm rounded-md">
 														<Link href="/add-site/information">
 															<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-																<PlusSvg className={tw`-ml-3 mr-2 h-4 w-4`} />
+																<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
 																{PrimaryMenuLabel[2].label}
 															</a>
 														</Link>

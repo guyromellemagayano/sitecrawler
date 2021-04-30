@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
+import { XIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
@@ -20,7 +21,6 @@ const PrimaryMenu = loadable(() => import("src/components/sidebar/PrimaryMenu"))
 const ProfileMenu = loadable(() => import("src/components/sidebar/ProfileMenu"));
 const SettingsMenu = loadable(() => import("src/components/sidebar/SettingsMenu"));
 const SiteMenu = loadable(() => import("src/components/sidebar/SiteMenu"));
-const XSvg = loadable(() => import("src/components/svg/solid/XSvg"));
 
 const MainSidebar = ({ width, user, site, openMobileSidebar, setOpenMobileSidebar }) => {
 	const [selectedMenu, setSelectedMenu] = useState("");
@@ -113,7 +113,7 @@ const MainSidebar = ({ width, user, site, openMobileSidebar, setOpenMobileSideba
 									onClick={() => setOpenMobileSidebar(false)}
 								>
 									<span tw="sr-only">{PrimaryMenuLabel[4].label}</span>
-									<XSvg className={tw`h-6 w-6 text-white`} />
+									<XIcon tw="h-6 w-6 text-white" />
 								</button>
 							</div>
 

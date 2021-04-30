@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
+import { ChevronUpIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
@@ -19,7 +20,6 @@ import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 import useFetcher from "src/hooks/useFetcher";
 
 // Components
-import ChevronTopSvg from "src/components/svg/solid/ChevronTopSvg";
 import ProfileSidebarSkeleton from "src/components/skeletons/ProfileSidebarSkeleton";
 
 const ProfileMenu = () => {
@@ -28,6 +28,7 @@ const ProfileMenu = () => {
 
 	const userApiEndpoint = "/api/auth/user/";
 
+	// FIXME: Update this React hook into useUser
 	const { data: user } = useSWR(userApiEndpoint, useFetcher, {});
 
 	useEffect(() => {
@@ -60,7 +61,7 @@ const ProfileMenu = () => {
 							</div>
 						</div>
 						<div>
-							<ChevronTopSvg className={tw`w-4 h-4 text-white`} />
+							<ChevronUpIcon tw="w-4 h-4 text-white" />
 						</div>
 					</button>
 

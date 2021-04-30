@@ -6,6 +6,8 @@ import Link from "next/link";
 import Router, { useRouter } from "next/router";
 
 // External
+import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
+import { DocumentIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
@@ -17,22 +19,19 @@ import LinksPagesContent from "public/data/links-pages.json";
 import PagesLabel from "public/labels/pages/site/pages.json";
 
 // Hooks
-import usePostMethod from "src/hooks/usePostMethod";
 import { useScan, useSite, usePages, useSiteId } from "src/hooks/useSite";
+import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
 
 // Layout
 import Layout from "src/components/Layout";
 
 // Components
-import ChevronRightSvg from "src/components/svg/solid/ChevronRightSvg";
-import HomeSvg from "src/components/svg/solid/HomeSvg";
 import LinkOptions from "src/components/pages/overview/LinkOptions";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MyPagination from "src/components/pagination/Pagination";
 import PageFilter from "src/components/helpers/filters/PageFilter";
 import PageSorting from "src/components/helpers/sorting/PageSorting";
-import PageSvg from "src/components/svg/outline/PageSvg";
 import PageTable from "src/components/tables/PageTable";
 import PageTableSkeleton from "src/components/skeletons/PageTableSkeleton";
 import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
@@ -586,7 +585,7 @@ const Pages = ({ width, result }) => {
 												<div>
 													<Link href={homePageLink} passHref>
 														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
 															<span tw="sr-only">{homeLabel}</span>
 														</a>
 													</Link>
@@ -594,7 +593,7 @@ const Pages = ({ width, result }) => {
 											</li>
 											<li>
 												<div tw="flex items-center">
-													<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
 														{pageTitle}
 													</p>
@@ -608,7 +607,7 @@ const Pages = ({ width, result }) => {
 											{pagesData && pagesData !== undefined && pagesData !== [] && Object.keys(pagesData).length > 0 ? (
 												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-														<PageSvg className={tw`flex-shrink-0 mr-2 h-5 w-5 text-gray-400`} />
+														<DocumentIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
 														{pagesData.count > 1
 															? pagesData.count + " " + PagesLabel[2].label
 															: pagesData.count == 1

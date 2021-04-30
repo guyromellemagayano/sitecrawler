@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
+import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { Formik } from "formik";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
@@ -17,18 +18,16 @@ import tw from "twin.macro";
 import SupportLabel from "public/labels/pages/settings/support.json";
 
 // Hooks
+import { useSite } from "src/hooks/useSite";
 import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
-import { useSite } from "src/hooks/useSite";
 
 // Layout
 import Layout from "src/components/Layout";
 
 // Components
 const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const ChevronRightSvg = loadable(() => import("src/components/svg/solid/ChevronRightSvg"));
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
-const HomeSvg = loadable(() => import("src/components/svg/solid/HomeSvg"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
 const MobileSidebarButton = loadable(() => import("src/components/sidebar/MobileSidebarButton"));
@@ -161,7 +160,7 @@ const Support = ({ width, token }) => {
 														<div>
 															<Link href={homePageLink} passHref>
 																<a tw="text-gray-400 hover:text-gray-500">
-																	<HomeSvg className={tw`flex-shrink-0 h-5 w-5`} />
+																	<HomeIcon tw="flex-shrink-0 h-5 w-5" />
 																	<span tw="sr-only">{homeLabel}</span>
 																</a>
 															</Link>
@@ -169,7 +168,7 @@ const Support = ({ width, token }) => {
 													</li>
 													<li>
 														<div tw="flex items-center">
-															<ChevronRightSvg className={tw`flex-shrink-0 h-5 w-5 text-gray-400`} />
+															<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 															<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
 																{pageTitle}
 															</p>
