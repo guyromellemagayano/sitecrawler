@@ -6,6 +6,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 import { Integrations } from "@sentry/tracing";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import * as Sentry from "@sentry/react";
+import App from "next/app";
 import PropTypes from "prop-types";
 
 // Enums
@@ -39,9 +40,12 @@ const MyApp = ({ Component, pageProps }) => {
 	);
 };
 
-MyApp.propTypes = {
-	Component: PropTypes.elementType.isRequired,
-	pageProps: PropTypes.object.isRequired
+MyApp.propTypes = {};
+
+MyApp.getInitialProps = async (appContext) => {
+	const appProps = await App.getInitialProps(appContext);
+
+	return { ...appProps };
 };
 
 export default MyApp;
