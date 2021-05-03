@@ -7,7 +7,9 @@ import { Integrations } from "@sentry/tracing";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import * as Sentry from "@sentry/react";
 import App from "next/app";
+import LogRocket, { sessionURL } from "logrocket";
 import PropTypes from "prop-types";
+import setupLogRocketReact from "logrocket-react";
 
 // Enums
 import appSeo from "src/enum/nextSeo";
@@ -22,11 +24,33 @@ library.add(fas);
 
 // Sentry
 if (process.env.NODE_ENV === "production") {
-	Sentry.init({
-		dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-		integrations: [new Integrations.BrowserTracing()],
-		tracesSampleRate: 0.5
-	});
+	if (typeof window !== "undefined") {
+		Sentry.init({
+			dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+			integrations: [new Integrations.BrowserTracing()],
+			tracesSampleRate: 0.5,
+			beforeSend(event) {
+				const logRocketSession = LogRocket.sessionURL;
+
+				if (logRocketSession !== null) {
+					event.extra["LogRocket"] = logRocketSession;
+
+					return event;
+				} else {
+					return event;
+				}
+			}
+		});
+
+		LogRocket.init("epic-design-labs/link-app");
+		setupLogRocketReact(LogRocket);
+
+		LogRocket.getSessionURL((sessionURL) => {
+			Sentry.configureScope((scope) => {
+				scope.setExtra("sessionURL", sessionURL);
+			});
+		});
+	}
 }
 
 const MyApp = ({ Component, pageProps }) => {
