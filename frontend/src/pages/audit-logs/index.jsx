@@ -83,7 +83,6 @@ const Reports = ({ width }) => {
 				<ComingSoon
 					width={width}
 					user={userData}
-					site={siteData}
 					pageTitle={pageTitle}
 					pageLoaded={pageLoaded}
 					openMobileSidebar={openMobileSidebar}

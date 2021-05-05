@@ -95,7 +95,7 @@ const SitesImagesStatsDiv = styled.div`
 const SitesImagesStats = ({ width, sid, stats }) => {
 	const [componentReady, setComponentReady] = useState(false);
 
-	const lgScreenBreakpoint = 1024;
+	let lgScreenBreakpoint = 1024;
 
 	const router = useRouter();
 

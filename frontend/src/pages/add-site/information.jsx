@@ -127,7 +127,6 @@ const Information = ({ width, sid, edit }) => {
 				<MainSidebar
 					width={width}
 					user={userData}
-					site={siteData}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
