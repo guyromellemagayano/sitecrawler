@@ -653,7 +653,7 @@ const Images = ({ width, result }) => {
 								<div tw="flex flex-col">
 									<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
 										<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
-											<table tw="min-w-full">
+											<table tw="relative min-w-full">
 												<thead>
 													<tr>
 														{ImageTableContent.map((site, key) => {
@@ -687,7 +687,7 @@ const Images = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												<tbody>
+												<tbody tw="relative">
 													{userData &&
 													userData !== undefined &&
 													userData !== [] &&
@@ -706,7 +706,10 @@ const Images = ({ width, result }) => {
 													imagesData.results ? (
 														imagesData.results.map((val, key) => <ImageTable key={key} val={val} user={userData} />)
 													) : (
-														<ImageTableSkeleton />
+														<>
+															<ImageTableSkeleton />
+															<UpgradeErrorAlert link="/settings/subscription-plans" />
+														</>
 													)}
 												</tbody>
 											</table>
@@ -740,20 +743,6 @@ const Images = ({ width, result }) => {
 						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
 							<SiteFooter />
 						</div>
-
-						{userData &&
-							userData !== undefined &&
-							userData !== [] &&
-							Object.keys(userData).length > 0 &&
-							userData.permissions &&
-							userData.permissions !== undefined &&
-							!userData.permissions.includes("can_see_images") &&
-							!userData.permissions.includes("can_see_pages") &&
-							!userData.permissions.includes("can_see_scripts") &&
-							!userData.permissions.includes("can_see_stylesheets") &&
-							!userData.permissions.includes("can_start_scan") && (
-								<UpgradeErrorAlert link="/settings/subscription-plans" />
-							)}
 					</main>
 				</div>
 			</ImagesDiv>

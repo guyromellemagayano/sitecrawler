@@ -661,7 +661,7 @@ const Links = ({ width, result }) => {
 								<div tw="flex flex-col">
 									<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
 										<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
-											<table tw="min-w-full">
+											<table tw="relative min-w-full">
 												<thead>
 													<tr>
 														{LinksUrlContent.map((site, key) => {
@@ -751,7 +751,7 @@ const Links = ({ width, result }) => {
 														})}
 													</tr>
 												</thead>
-												<tbody>
+												<tbody tw="relative">
 													{userData &&
 														userData !== undefined &&
 														userData !== [] &&
