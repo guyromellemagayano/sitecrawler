@@ -101,7 +101,7 @@ const SitesSeoStats = ({ width, sid }) => {
 	const [scanObjId, setScanObjId] = useState(0);
 	const [statsData, setStatsData] = useState([]);
 
-	const lgScreenBreakpoint = 1024;
+	let lgScreenBreakpoint = 1024;
 
 	const router = useRouter();
 

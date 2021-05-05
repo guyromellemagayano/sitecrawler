@@ -78,7 +78,6 @@ const Profile = ({ width }) => {
 				<MainSidebar
 					width={width}
 					user={userData}
-					site={siteData}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>

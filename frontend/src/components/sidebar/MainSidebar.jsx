@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef } from "react";
 
 // NextJS
-import Link from "next/link";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 // External
 import { XIcon } from "@heroicons/react/solid";
@@ -15,6 +15,9 @@ import tw from "twin.macro";
 // JSON
 import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json";
 
+// Hooks
+import { useSite } from "src/hooks/useSite";
+
 // Components
 const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
 const PrimaryMenu = loadable(() => import("src/components/menus/PrimaryMenu"));
@@ -22,37 +25,51 @@ const ProfileMenu = loadable(() => import("src/components/menus/ProfileMenu"));
 const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"));
 const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
 
-const MainSidebar = ({ width, user, site, openMobileSidebar, setOpenMobileSidebar }) => {
+const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) => {
 	const [selectedMenu, setSelectedMenu] = useState("");
+	const [siteData, setSiteData] = useState([]);
 
-	const lgScreenBreakpoint = 1024;
-	const siteDashboardLink = "/";
+	let lgScreenBreakpoint = 1024;
+	let siteApiEndpoint = "/api/site/?ordering=name";
+	let siteDashboardLink = "/";
 
 	const router = useRouter();
 	const ref = useRef(null);
+
+	const { site: site } = useSite({
+		endpoint: siteApiEndpoint
+	});
+
+	useEffect(() => {
+		if (site && site !== undefined && Object.keys(site).length > 0) {
+			setSiteData(site);
+		}
+	}, [site]);
 
 	useEffect(() => {
 		if (
 			user &&
 			user !== undefined &&
 			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0
+			siteData &&
+			siteData !== undefined &&
+			siteData !== [] &&
+			Object.keys(siteData).length > 0
 		) {
 			switch (true) {
 				case router.pathname.includes("/site"):
-					setSelectedMenu(<SiteMenu user={user} site={site} />);
+					setSelectedMenu(<SiteMenu user={user} site={siteData} />);
 					break;
 				case router.pathname.includes("/settings"):
-					setSelectedMenu(<SettingsMenu user={user} site={site} />);
+					setSelectedMenu(<SettingsMenu user={user} site={siteData} />);
 					break;
 				default:
-					setSelectedMenu(<PrimaryMenu user={user} site={site} />);
+					setSelectedMenu(<PrimaryMenu user={user} site={siteData} />);
 					break;
 			}
 		}
-	}, [router, user, site]);
+		1;
+	}, [router, user, siteData]);
 
 	const handleHideSidebarMenu = (event) => {
 		if (event.key === "Escape") {

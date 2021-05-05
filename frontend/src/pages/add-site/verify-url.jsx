@@ -284,7 +284,6 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 				<MainSidebar
 					width={width}
 					user={userData}
-					site={siteData}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>

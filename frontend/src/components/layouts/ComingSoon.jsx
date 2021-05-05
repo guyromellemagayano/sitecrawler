@@ -26,7 +26,6 @@ const ComingSoon = ({ width, user, site, pageTitle, pageLoaded, openMobileSideba
 			<MainSidebar
 				width={width}
 				user={user}
-				site={site}
 				openMobileSidebar={openMobileSidebar}
 				setOpenMobileSidebar={setOpenMobileSidebar}
 			/>
