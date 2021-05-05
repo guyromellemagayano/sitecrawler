@@ -28,34 +28,42 @@ const UpgradeErrorAlert = ({ message = "", link = "#" }) => {
 	}, []);
 
 	return (
-		<Transition
-			show={isOpen}
-			enter="transition-opacity duration-75"
-			enterFrom="opacity-0"
-			enterTo="opacity-100"
-			leave="transition-opacity duration-150"
-			leaveFrom="opacity-100"
-			leaveTo="opacity-0"
-			className="max-w-2xl z-10 origin-top fixed right-0 left-0 bottom-0 rounded-md bg-yellow-100 shadow-lg p-4 mt-1 mx-auto mb-10"
-		>
-			<div tw="flex">
-				<div tw="flex-shrink-0">
-					<ExclamationIcon tw="h-5 w-5 text-yellow-400" aria-hidden="true" />
+		<>
+			<style jsx>{`
+				.error-alert {
+					transform: translateY(-230%);
+				}
+			`}</style>
+
+			<Transition
+				show={isOpen}
+				enter="transition-opacity duration-75"
+				enterFrom="opacity-0"
+				enterTo="opacity-100"
+				leave="transition-opacity duration-150"
+				leaveFrom="opacity-100"
+				leaveTo="opacity-0"
+				css={tw`max-w-2xl z-10 origin-top transform -translate-y-42 absolute right-0 left-0 bottom-0 rounded-md bg-yellow-100 shadow-lg p-4 my-1 mx-auto`}
+			>
+				<div tw="flex">
+					<div tw="flex-shrink-0">
+						<ExclamationIcon tw="h-5 w-5 text-yellow-400" aria-hidden="true" />
+					</div>
+					<div tw="ml-3 flex-1 md:flex md:justify-between">
+						<p tw="text-sm text-yellow-700">
+							{message !== "" && message !== undefined ? message : ReactHtmlParser(upgradeMessage)}
+						</p>
+						<p tw="mt-3 text-sm md:mt-0 md:ml-6">
+							<Link href={link} passHref>
+								<a tw="whitespace-nowrap font-medium text-yellow-700 hover:text-yellow-600">
+									{upgradeButtonLabel} <span aria-hidden="true">&rarr;</span>
+								</a>
+							</Link>
+						</p>
+					</div>
 				</div>
-				<div tw="ml-3 flex-1 md:flex md:justify-between">
-					<p tw="text-sm text-yellow-700">
-						{message !== "" && message !== undefined ? message : ReactHtmlParser(upgradeMessage)}
-					</p>
-					<p tw="mt-3 text-sm md:mt-0 md:ml-6">
-						<Link href={link} passHref>
-							<a tw="whitespace-nowrap font-medium text-yellow-700 hover:text-yellow-600">
-								{upgradeButtonLabel} <span aria-hidden="true">&rarr;</span>
-							</a>
-						</Link>
-					</p>
-				</div>
-			</div>
-		</Transition>
+			</Transition>
+		</>
 	);
 };
 
