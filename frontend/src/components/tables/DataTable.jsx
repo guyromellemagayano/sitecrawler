@@ -603,10 +603,10 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 							) : !site.verified ? (
 								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
 							) : (
-								<Skeleton duration={2} width={176.7} />
+								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[25].label}</span>
 							)
 						) : (
-							<Skeleton duration={2} width={176.7} />
+							0
 						)}
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
@@ -614,7 +614,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 							<>
 								<span
 									css={[
-										tw`text-sm leading-5`,
+										tw`text-sm leading-5 text-gray-500`,
 										crawlInProgress || (crawlInProgress && scanData.finished_at == null)
 											? tw`text-yellow-500`
 											: !crawlInProgress && !scanData.count
@@ -640,7 +640,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 								</span>
 							</>
 						) : (
-							<Skeleton duration={2} width={100} />
+							<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[25].label}</span>
 						)}
 					</td>
 					<td
@@ -657,7 +657,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										</a>
 									</Link>
 								) : (
-									<Skeleton duration={2} width={45} />
+									0
 								)
 							) : (
 								0
@@ -673,15 +673,11 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					>
 						{componentReady ? (
 							site.verified ? (
-								statsData.num_links > 0 ? (
-									<Link href="/site/[siteId]/links" as={`/site/${site.id}/links`} passHref>
-										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-											{statsData.num_links}
-										</a>
-									</Link>
-								) : (
-									<Skeleton duration={2} width={45} />
-								)
+								<Link href="/site/[siteId]/links" as={`/site/${site.id}/links`} passHref>
+									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+										{statsData.num_links}
+									</a>
+								</Link>
 							) : (
 								0
 							)
@@ -696,15 +692,11 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					>
 						{componentReady ? (
 							site.verified ? (
-								statsData.num_pages > 0 ? (
-									<Link href="/site/[siteId]/pages" as={`/site/${site.id}/pages`} passHref>
-										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-											{statsData.num_pages}
-										</a>
-									</Link>
-								) : (
-									<Skeleton duration={2} width={45} />
-								)
+								<Link href="/site/[siteId]/pages" as={`/site/${site.id}/pages`} passHref>
+									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+										{statsData.num_pages}
+									</a>
+								</Link>
 							) : (
 								0
 							)
@@ -719,15 +711,11 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					>
 						{componentReady ? (
 							site.verified ? (
-								statsData.num_images > 0 ? (
-									<Link href="/site/[siteId]/images" as={`/site/${site.id}/images`} passHref>
-										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-											{statsData.num_images}
-										</a>
-									</Link>
-								) : (
-									<Skeleton duration={2} width={45} />
-								)
+								<Link href="/site/[siteId]/images" as={`/site/${site.id}/images`} passHref>
+									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+										{statsData.num_images}
+									</a>
+								</Link>
 							) : (
 								0
 							)
