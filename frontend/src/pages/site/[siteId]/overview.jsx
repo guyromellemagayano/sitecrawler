@@ -46,7 +46,7 @@ const SiteOverview = ({ width, result }) => {
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [recrawlable, setRecrawlable] = useState(false);
 	const [scanData, setScanData] = useState([]);
-	const [scanObjId, setScanObjId] = useState([]);
+	const [scanObjId, setScanObjId] = useState(0);
 	const [siteData, setSiteData] = useState([]);
 	const [siteIdData, setSiteIdData] = useState([]);
 	const [statsData, setStatsData] = useState([]);
@@ -67,12 +67,8 @@ const SiteOverview = ({ width, result }) => {
 	});
 
 	const { scan: scan } = useScan({
-		querySid: result.siteId
-	});
-
-	const { stats: stats } = useStats({
 		querySid: result.siteId,
-		scanObjId: scanObjId.id
+		refreshInterval: crawlFinished ? 0 : 1000
 	});
 
 	const { site: site } = useSite({
@@ -103,34 +99,31 @@ const SiteOverview = ({ width, result }) => {
 
 			if (scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0) {
 				if (
+					scanData.count > 1 &&
 					scanData.results &&
 					scanData.results !== undefined &&
 					scanData.results !== [] &&
 					Object.keys(scanData.results).length > 0
 				) {
-					setScanObjId((prevState) => ({
-						...prevState,
-						id: scanData.results
-							.map((e) => {
-								let result = prevState;
-
-								if (e !== undefined && e.finished_at == null) {
-									result = e.id;
-
-									return result;
-								}
-
-								return e.id;
-							})
-							.sort()
-							.reverse()[0]
-					}));
+					scanData.results.find((e, key) => {
+						if (e.finished_at !== null && e.force_https !== null) {
+							if (key === 0) {
+								setScanObjId(e.id);
+								return;
+							}
+						}
+					});
+				} else {
+					scanData.results.find((e, key) => {
+						if (e.finished_at === null && e.force_https === null) {
+							if (key === 0) {
+								setScanObjId(e.id);
+								return;
+							}
+						}
+					});
 				}
 			}
-		}
-
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
 		}
 
 		if (site && site !== undefined && Object.keys(site).length > 0) {
@@ -140,13 +133,27 @@ const SiteOverview = ({ width, result }) => {
 		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
 			setSiteIdData(siteId);
 		}
+	}, [user, scan, site, siteId]);
 
+	const { stats: stats } = useStats({
+		querySid: result.siteId,
+		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId,
+		refreshInterval: crawlFinished ? 0 : 1000
+	});
+
+	useEffect(() => {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setStatsData(stats);
+		}
+	}, [stats]);
+
+	useEffect(() => {
 		if (userData && statsData && siteData && siteIdData) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [user, scan, stats, site, siteId]);
+	}, [statsData, userData, siteData, siteIdData]);
 
 	const onCrawlHandler = async () => {
 		setCrawlFinished(false);
