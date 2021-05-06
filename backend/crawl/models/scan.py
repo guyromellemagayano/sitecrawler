@@ -58,8 +58,6 @@ class Scan(models.Model):
     started_at = models.DateTimeField(auto_now_add=True, null=False)
     finished_at = models.DateTimeField(null=True, blank=True)
 
-    email_sent = models.BooleanField(default=False)
-
     force_https = models.BooleanField(null=True, blank=True)
 
     num_pages_tls_ok = CalculatedField("num_pages", "-num_pages_tls_non_ok")

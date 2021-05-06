@@ -135,13 +135,6 @@ class PageInline(admin.TabularInline):
         return obj.num_non_ok_links
 
 
-def mark_sent(modeladmin, request, queryset):
-    queryset.filter(email_sent=False).update(email_sent=True)
-
-
-mark_sent.short_description = "Mark scans as email sent"
-
-
 def mark_finished(modeladmin, request, queryset):
     queryset.filter(finished_at__isnull=True).update(finished_at=Now())
 
@@ -152,10 +145,10 @@ mark_finished.short_description = "Mark scans as finished"
 @admin.register(Scan)
 class ScanAdmin(admin.ModelAdmin):
     readonly_fields = ("started_at",)
-    list_display = ("url", "started_at", "finished_at", "email_sent")
-    list_filter = ("finished_at", "email_sent")
+    list_display = ("url", "started_at", "finished_at")
+    list_filter = ("finished_at",)
     inlines = [PageInline]
-    actions = [mark_finished, mark_sent]
+    actions = [mark_finished]
 
     def url(self, obj):
         return obj.site.url
@@ -166,7 +159,7 @@ class ScanAdmin(admin.ModelAdmin):
 
 class ScanInline(admin.TabularInline):
     model = Scan
-    readonly_fields = ("id", "started_at", "finished_at", "email_sent", "force_https")
+    readonly_fields = ("id", "started_at", "finished_at", "force_https")
     show_change_link = True
     max_num = 10
     ordering = ("-finished_at",)
