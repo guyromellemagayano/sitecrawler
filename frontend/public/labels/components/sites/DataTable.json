@@ -9,7 +9,7 @@
 		"label": "Not Yet Crawled"
 	},
 	{
-		"label": "Verify Site"
+		"label": "Visit Site"
 	},
 	{
 		"label": "At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution."
@@ -66,12 +66,18 @@
 		"label": "Crawled"
 	},
 	{
-		"label": "No Available Data"
+		"label": "Not Available"
 	},
 	{
 		"label": "Deleting Site..."
 	},
 	{
 		"label": "Crawling..."
+	},
+	{
+		"label": "Loading..."
+	},
+	{
+		"label": "Visit Site"
 	}
 ]

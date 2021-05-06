@@ -46,7 +46,7 @@ const DataTableDiv = styled.tbody`
 	}
 `;
 
-const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
+const DataTable = ({ user, site, disableLocalTime, mutateSite, router }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${site.verification_id}" />`);
@@ -329,7 +329,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										)
 									</h3>
 									<div tw="mt-2">
-										<p tw="text-sm leading-5 text-gray-600">{DataTableLabel[4].label}</p>
+										<p tw="text-sm leading-5 text-gray-600">{DataTableLabel[0].label}</p>
 										<p tw="text-base font-medium leading-6 text-gray-700 mt-4 mb-3">{DataTableLabel[5].label}</p>
 										<ol tw="space-y-2">
 											<li tw="text-sm leading-6 text-gray-600">{DataTableLabel[6].label}</li>
@@ -551,7 +551,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 												</span>
 											</div>
 										) : (
-											<>
+											<div>
 												<span
 													aria-label="Verified"
 													tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-green-400"
@@ -564,66 +564,80 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 														{site.name}
 													</a>
 												</Link>
-											</>
+												<span tw="ml-2 flex justify-start text-sm leading-5">
+													<Link href={site.url} passHref>
+														<a
+															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+															title={DataTableLabel[26].label}
+															target="_blank"
+														>
+															{DataTableLabel[26].label}
+														</a>
+													</Link>
+												</span>
+											</div>
 										)}
 									</>
 								) : (
-									<span tw="flex flex-row items-center py-2 space-x-3">
-										<Skeleton circle={true} duration={2} width={9} height={9} className="relative top-1" />
-										<Skeleton duration={2} width={150} />
-									</span>
+									<>
+										<span tw="flex flex-row items-center py-2 space-x-3">
+											<Skeleton circle={true} duration={2} width={9} height={9} className="relative top-1" />
+											<Skeleton duration={2} width={150} />
+										</span>
+										<span tw="ml-5 flex justify-start text-sm leading-5 text-gray-500">
+											<Skeleton duration={2} width={75} />
+										</span>
+									</>
 								)}
 							</span>
 						</span>
 					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
+					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							statsData &&
-							statsData !== undefined &&
-							statsData !== [] &&
-							Object.keys(statsData).length > 0 &&
 							site.verified ? (
-								<span tw="space-x-2">
-									<span tw="text-sm leading-5 text-gray-500">
-										{!disableLocalTime ? (
-											<Moment calendar={calendarStrings} date={statsData.finished_at} local />
-										) : (
-											<Moment calendar={calendarStrings} date={statsData.finished_at} utc />
-										)}
+								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
+									<span tw="space-x-2">
+										<span tw="text-sm leading-5 text-gray-500">
+											{!disableLocalTime ? (
+												<Moment calendar={calendarStrings} date={statsData.finished_at} local />
+											) : (
+												<Moment calendar={calendarStrings} date={statsData.finished_at} utc />
+											)}
+										</span>
+										<span tw="text-sm leading-5 text-gray-500">
+											{!disableLocalTime ? (
+												<Moment date={statsData.finished_at} format="hh:mm:ss A" local />
+											) : (
+												<Moment date={statsData.finished_at} format="hh:mm:ss A" utc />
+											)}
+										</span>
+										{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
 									</span>
-									<span tw="text-sm leading-5 text-gray-500">
-										{!disableLocalTime ? (
-											<Moment date={statsData.finished_at} format="hh:mm:ss A" local />
-										) : (
-											<Moment date={statsData.finished_at} format="hh:mm:ss A" utc />
-										)}
-									</span>
-									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
-								</span>
-							) : !site.verified ? (
-								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
+								) : (
+									DataTableLabel[25].label
+								)
 							) : (
-								<Skeleton duration={2} width={176.7} />
+								DataTableLabel[22].label
 							)
 						) : (
 							<Skeleton duration={2} width={176.7} />
 						)}
 					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300">
+					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							<>
-								<span
-									css={[
-										tw`text-sm leading-5`,
-										crawlInProgress || (crawlInProgress && scanData.finished_at == null)
-											? tw`text-yellow-500`
-											: !crawlInProgress && !scanData.count
-											? tw`text-red-500`
-											: tw`text-green-500`
-									]}
-								>
-									{site.verified ? (
-										crawlInProgress && scanData.count > 1 ? (
+							site.verified ? (
+								scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0 ? (
+									<span
+										css={[
+											tw`text-sm leading-5 text-gray-500`,
+											crawlInProgress || (crawlInProgress && scanData.finished_at == null)
+												? tw`text-yellow-500`
+												: !crawlInProgress && !scanData.count
+												? tw`text-red-500`
+												: tw`text-green-500`
+										]}
+									>
+										{crawlInProgress && scanData.count > 1 ? (
 											DataTableLabel[19].label
 										) : !crawlInProgress && scanData.count > 1 ? (
 											DataTableLabel[20].label
@@ -633,12 +647,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 											DataTableLabel[21].label
 										) : (
 											<Skeleton duration={2} width={100} />
-										)
-									) : (
-										DataTableLabel[2].label
-									)}
-								</span>
-							</>
+										)}
+									</span>
+								) : (
+									DataTableLabel[25].label
+								)
+							) : (
+								DataTableLabel[2].label
+							)
 						) : (
 							<Skeleton duration={2} width={100} />
 						)}
@@ -657,7 +673,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										</a>
 									</Link>
 								) : (
-									<Skeleton duration={2} width={45} />
+									0
 								)
 							) : (
 								0
@@ -673,14 +689,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					>
 						{componentReady ? (
 							site.verified ? (
-								statsData.num_links > 0 ? (
+								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
 									<Link href="/site/[siteId]/links" as={`/site/${site.id}/links`} passHref>
 										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 											{statsData.num_links}
 										</a>
 									</Link>
 								) : (
-									<Skeleton duration={2} width={45} />
+									0
 								)
 							) : (
 								0
@@ -696,14 +712,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					>
 						{componentReady ? (
 							site.verified ? (
-								statsData.num_pages > 0 ? (
+								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
 									<Link href="/site/[siteId]/pages" as={`/site/${site.id}/pages`} passHref>
 										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 											{statsData.num_pages}
 										</a>
 									</Link>
 								) : (
-									<Skeleton duration={2} width={45} />
+									0
 								)
 							) : (
 								0
@@ -719,14 +735,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					>
 						{componentReady ? (
 							site.verified ? (
-								statsData.num_images > 0 ? (
+								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
 									<Link href="/site/[siteId]/images" as={`/site/${site.id}/images`} passHref>
 										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 											{statsData.num_images}
 										</a>
 									</Link>
 								) : (
-									<Skeleton duration={2} width={45} />
+									0
 								)
 							) : (
 								0

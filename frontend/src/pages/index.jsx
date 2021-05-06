@@ -287,12 +287,16 @@ const Dashboard = ({ width, result }) => {
 																})}
 															</tr>
 														</thead>
-														{siteData.results &&
+														{userData &&
+															userData !== undefined &&
+															userData !== [] &&
+															siteData.results &&
 															siteData.results.map((val, key) => {
 																return (
 																	<DataTable
 																		key={key}
 																		site={val}
+																		user={userData}
 																		disableLocalTime={disableLocalTime}
 																		mutateSite={mutateSite}
 																		router={router}
