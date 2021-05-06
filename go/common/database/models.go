@@ -59,7 +59,7 @@ var Columns = struct {
 		Entry string
 	}
 	CrawlGroupsetting struct {
-		ID, MaxSites, GroupID, RecrawlSchedule, UptimeSchedule string
+		ID, MaxSites, GroupID, RecrawlSchedule, UptimeSchedule, RecrawlFrequency string
 
 		Group string
 	}
@@ -310,15 +310,16 @@ var Columns = struct {
 		Entry: "Entry",
 	},
 	CrawlGroupsetting: struct {
-		ID, MaxSites, GroupID, RecrawlSchedule, UptimeSchedule string
+		ID, MaxSites, GroupID, RecrawlSchedule, UptimeSchedule, RecrawlFrequency string
 
 		Group string
 	}{
-		ID:              "id",
-		MaxSites:        "max_sites",
-		GroupID:         "group_id",
-		RecrawlSchedule: "recrawl_schedule",
-		UptimeSchedule:  "uptime_schedule",
+		ID:               "id",
+		MaxSites:         "max_sites",
+		GroupID:          "group_id",
+		RecrawlSchedule:  "recrawl_schedule",
+		UptimeSchedule:   "uptime_schedule",
+		RecrawlFrequency: "recrawl_frequency",
 
 		Group: "Group",
 	},
@@ -1152,11 +1153,12 @@ type CrawlFiforelation struct {
 type CrawlGroupsetting struct {
 	tableName struct{} `pg:"crawl_groupsettings,alias:t,,discard_unknown_columns"`
 
-	ID              int    `pg:"id,pk"`
-	MaxSites        int    `pg:"max_sites,use_zero"`
-	GroupID         int    `pg:"group_id,use_zero"`
-	RecrawlSchedule string `pg:"recrawl_schedule,use_zero"`
-	UptimeSchedule  string `pg:"uptime_schedule,use_zero"`
+	ID               int    `pg:"id,pk"`
+	MaxSites         int    `pg:"max_sites,use_zero"`
+	GroupID          int    `pg:"group_id,use_zero"`
+	RecrawlSchedule  string `pg:"recrawl_schedule,use_zero"`
+	UptimeSchedule   string `pg:"uptime_schedule,use_zero"`
+	RecrawlFrequency int    `pg:"recrawl_frequency,use_zero"`
 
 	Group *AuthGroup `pg:"fk:group_id"`
 }

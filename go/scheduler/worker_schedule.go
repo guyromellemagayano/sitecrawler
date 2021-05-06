@@ -54,7 +54,7 @@ func ScheduleWorker(logger *zap.SugaredLogger, db *database.Database, scanServic
 				if time.Now().After(nextScan) {
 					log.Infof("Scheduling scan for %v", site.Url)
 					if err := scanService.Start(site.ID); err != nil {
-						log.Errorf("could not start scan for site %v", site.Url)
+						log.Errorf("could not start scan for site %v: %v", site.Url, err)
 					}
 				}
 			}
