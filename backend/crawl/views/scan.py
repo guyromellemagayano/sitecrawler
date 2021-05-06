@@ -51,33 +51,11 @@ class ScanViewSet(
             .details(user_large_page_size_threshold=request.user.userprofile.large_page_size_threshold)
             .get(pk=pk)
         )
-        if scan.email_sent:
-            return Response()
 
-        # Send initial scan email on first scan
+        # Only send initial emails here, others will be handled by cron
         if Scan.objects.filter(site_id=scan.site_id).count() == 1:
             self._send_initial_email(scan.site.user, scan)
-            scan.email_sent = True
-            scan.save()
             return Response()
-
-        # If there are other scans for user in progress, wait
-        if Scan.objects.filter(site__user_id=scan.site.user_id, finished_at__isnull=True).count() > 0:
-            return Response()
-
-        all_scans = (
-            Scan.objects.filter(site__user_id=scan.site.user_id, email_sent=False)
-            .select_related("site")
-            .details(user_large_page_size_threshold=request.user.userprofile.large_page_size_threshold)
-        )
-        latest_scans_per_site = all_scans.order_by("site_id", "-finished_at").distinct("site_id")
-
-        self._send_email(
-            scan.site.user,
-            list(latest_scans_per_site),
-        )
-
-        all_scans.update(email_sent=True)
 
         return Response()
 
@@ -86,11 +64,4 @@ class ScanViewSet(
         context = {"user": user, "scan": scan, "site": site}
         subject = render_to_string("crawl_initial_email_subject.txt", context).strip()
         message = render_to_string("crawl_initial_email_message.txt", context)
-        send_mail(settings.EMAIL_SUBJECT_PREFIX + subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
-
-    def _send_email(self, user, scans):
-        site = models.Site.objects.get_current()
-        context = {"user": user, "scans": scans, "site": site}
-        subject = render_to_string("crawl_email_subject.txt", context).strip()
-        message = render_to_string("crawl_email_message.txt", context)
         send_mail(settings.EMAIL_SUBJECT_PREFIX + subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])

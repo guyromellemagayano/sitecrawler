@@ -16,6 +16,7 @@ import (
 const (
 	timeout   = 5 * time.Second
 	sizeLimit = 10 * 1024 * 1024
+	userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"
 )
 
 type LoadService struct {
@@ -56,6 +57,7 @@ func (l *LoadService) Load(log *zap.SugaredLogger, url string) (*LoadResponse, e
 	req.Header.Add("Cache-Control", "no-cache")
 	req.Header.Add("Accept-Encoding", "gzip")
 	req.Header.Add("Accept", "text/html,*/*;q=0.9")
+	req.Header.Set("User-Agent", userAgent)
 	resp, err := client.Do(req)
 	if err != nil {
 		return lr, err
