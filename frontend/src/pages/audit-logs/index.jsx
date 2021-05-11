@@ -5,11 +5,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
+import "twin.macro";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
 
 // Hooks
 import { useSite } from "src/hooks/useSite";
