@@ -34,7 +34,6 @@ const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 const Profile = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [siteData, setSiteData] = useState([]);
 	const [userData, setUserData] = useState([]);
 	const [pageLoaded, setPageLoaded] = useState(false);
 
@@ -65,7 +64,6 @@ const Profile = ({ width }) => {
 				setPageLoaded(true);
 			}, 500);
 
-			setSiteData(site);
 			setUserData(user);
 		}
 	}, [user, site]);
