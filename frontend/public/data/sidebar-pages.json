@@ -16,7 +16,7 @@
 			{
 				"label": "Billing Settings",
 				"slug": "billing-settings",
-				"url": "/settings/billing-settings"
+				"url": "/settings/billing"
 			}
 		]
 	},
