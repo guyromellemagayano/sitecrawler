@@ -1,27 +1,44 @@
 [
 	{
-		"label": "Profile Settings",
-		"slug": "profile-settings",
-		"url": "/settings/profile"
+		"category": "Account Settings",
+		"slug": "account-settings",
+		"links": [
+			{
+				"label": "Profile Settings",
+				"slug": "profile-settings",
+				"url": "/settings/profile"
+			},
+			{
+				"label": "Subscription Plans",
+				"slug": "subscription-plans",
+				"url": "/settings/subscription-plans"
+			},
+			{
+				"label": "Billing Settings",
+				"slug": "billing-settings",
+				"url": "/settings/billing-settings"
+			}
+		]
 	},
 	{
-		"label": "Subscription Plans",
-		"slug": "subscription-plans",
-		"url": "/settings/subscription-plans"
-	},
-	{
-		"label": "Global Settings",
+		"category": "Global Settings",
 		"slug": "global-settings",
-		"url": "/settings/global"
-	},
-	{
-		"label": "Help and Support",
-		"slug": "help-support",
-		"url": "/settings/support"
-	},
-	{
-		"label": "Logout",
-		"slug": "logout",
-		"url": "/logout"
+		"links": [
+			{
+				"label": "Global Settings",
+				"slug": "global-settings",
+				"url": "/settings/global"
+			},
+			{
+				"label": "Help and Support",
+				"slug": "help-support",
+				"url": "/settings/support"
+			},
+			{
+				"label": "Logout",
+				"slug": "logout",
+				"url": "/logout"
+			}
+		]
 	}
 ]

@@ -84,8 +84,8 @@ const ProfileMenu = () => {
 												user.group.name === "Basic"
 													? tw`text-green-800`
 													: user.group.name === "Pro"
-													? tw`text-blue-800`
-													: tw`text-red-800`
+														? tw`text-blue-800`
+														: tw`text-red-800`
 											]}
 										>
 											{user.group.name} {SidebarLabel[0].label}
@@ -107,24 +107,26 @@ const ProfileMenu = () => {
 									</span>
 								</div>
 								<div tw="border-t border-gray-300"></div>
-								<div tw="py-1">
-									{SidebarPages.filter((page) => page.slug !== "logout").map((val, key) => {
-										return (
-											<Link key={key} href={val.url} passHref>
-												<a
-													tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-													role="menuitem"
-												>
-													{val.label}
-												</a>
-											</Link>
-										);
-									})}
-								</div>
-								<div tw="border-t border-gray-300"></div>
-								<div tw="py-1">
-									{SidebarPages.filter((page) => page.slug === "logout").map((val, key) => {
-										return (
+								{SidebarPages.map((val) => (
+									<>
+										<div tw="py-1">
+											{val.links.filter((page) => page.slug !== "logout").map((val, key) => (
+												<Link key={key} href={val.url} passHref>
+													<a
+														tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+														role="menuitem"
+													>
+														{val.label}
+													</a>
+												</Link>
+											))}
+										</div>
+										<div tw="border-t border-gray-300"></div>
+									</>
+								))}
+								{SidebarPages.filter((page) => page.slug === "global-settings").map((val) => (
+									<div tw="py-1">
+										{val.links.filter((page) => page.slug === "logout").map((val, key) => (
 											<Link key={key} href={val.url}>
 												<a
 													tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
@@ -133,17 +135,18 @@ const ProfileMenu = () => {
 													{val.label}
 												</a>
 											</Link>
-										);
-									})}
-								</div>
+										))}
+									</div>
+								))}
 							</div>
 						</div>
 					</Transition>
 				</>
 			) : (
 				<ProfileSidebarSkeleton />
-			)}
-		</div>
+			)
+			}
+		</div >
 	);
 };
 
