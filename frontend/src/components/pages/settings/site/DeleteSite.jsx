@@ -1,9 +1,8 @@
 // React
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // NextJS
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 // External
 import "twin.macro";
@@ -14,36 +13,49 @@ import PropTypes from "prop-types";
 // Hooks
 import useDeleteMethod from "src/hooks/useDeleteMethod";
 
-const DeleteSite = ({ user, siteId, settingsLabel }) => {
+const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
+	const [componentReady, setComponentReady] = useState(false);
 	const [showModal, setShowModal] = useState(false);
+	const [updateSite, setUpdateSite] = useState(false);
+
+	const siteIdApiEndpoint = "/api/site/" + siteId.id;
 
 	const router = useRouter();
 
-	const deleteSiteSettings = async (endpoint) => {
-		const redirectTo = "/";
+	useEffect(() => {
+		if (user && user !== undefined && Object.keys(user).length > 0) {
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [user]);
 
-		try {
-			const response = await useDeleteMethod(endpoint);
-			const data = await response.data;
+	const handleSiteDeletion = async (e) => {
+		e.preventDefault();
 
-			if (Math.floor(response.status / 200) === 1) {
-				if (data) {
-					router.push(redirectTo);
-				}
-			} else {
-				return null;
-			}
-		} catch (error) {
-			return null;
+		const response = await useDeleteMethod(siteIdApiEndpoint);
+
+		if (Math.floor(response.status / 200) === 1) {
+			setTimeout(() => {
+				setShowModal(!showModal);
+			}, 500);
+
+			setUpdateSite(true);
 		}
 	};
 
-	const handleSiteDeletion = async () => {
-		return await deleteSiteSettings(`/api/site/${siteId.id}/`);
-	};
+	useEffect(() => {
+		if (updateSite) {
+			mutateSite;
 
-	return (
-		<>
+			setTimeout(() => {
+				router.push("/");
+			}, 1000);
+		}
+	}, [updateSite]);
+
+	return componentReady ? (
+		<div>
 			<Transition
 				show={showModal}
 				className="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"
@@ -96,7 +108,7 @@ const DeleteSite = ({ user, siteId, settingsLabel }) => {
 									type="button"
 									tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
 									aria-label="Delete Site"
-									onClick={handleSiteDeletion}
+									onClick={(e) => handleSiteDeletion(e)}
 								>
 									{settingsLabel[9].label}
 								</button>
@@ -104,7 +116,7 @@ const DeleteSite = ({ user, siteId, settingsLabel }) => {
 							<span tw="mt-3 flex w-full rounded-md shadow-sm sm:ml-3 sm:mt-0 sm:w-auto">
 								<button
 									type="button"
-									tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+									tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 									onClick={() => setShowModal(!showModal)}
 								>
 									{settingsLabel[13].label}
@@ -141,7 +153,9 @@ const DeleteSite = ({ user, siteId, settingsLabel }) => {
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
+	) : (
+		<p>Loading...</p>
 	);
 };
 
