@@ -22,7 +22,6 @@ import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 
 const SiteMenu = ({ user, crawlFinished, site }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [previousScanDataActive, setPreviousScanDataActive] = useState(true);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [selectedSite, setSelectedSite] = useState("");
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
@@ -62,7 +61,6 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 					} else {
 						if (previousScanResults !== undefined) {
 							setScanObjId(previousScanResults.id);
-							setPreviousScanDataActive(false);
 						} else {
 							setScanObjId(currentScanResults.id);
 						}
@@ -110,7 +108,7 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 
 	useEffect(() => {
 		if (site && site !== undefined && Object.keys(site).length > 0) {
-			if (site.results && site.results !== undefined && site.results !== [] && Object.keys(site.results).length > 0) {
+			if (site.results && site.results !== undefined && Object.keys(site.results).length > 0) {
 				site.results
 					.filter((result) => result.name === selectedSite)
 					.map((val) => {
@@ -119,18 +117,18 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 			}
 		}
 
-		if (selectedSite == []) {
+		if (selectedSite === "" && sid !== 0) {
 			if (site && site !== undefined && Object.keys(site).length > 0) {
-				if (site.results && site.results !== undefined && site.results !== [] && Object.keys(site.results).length > 0) {
-					site.results
-						.filter((result) => result.id == sid)
-						.map((val) => {
-							setSelectedSite(val.name);
-						});
+				if (site.results && site.results !== undefined && Object.keys(site.results).length > 0) {
+					let currentSite = site.results.find((result) => result.id === parseInt(sid));
+
+					if (currentSite !== undefined) {
+						setSelectedSite(currentSite.name);
+					}
 				}
 			}
 		}
-	}, [selectedSite, site]);
+	}, [selectedSite, site, sid]);
 
 	const handleSiteSelectOnLoad = (siteId) => {
 		if (site && site.results !== undefined && Object.keys(site.results).length > 0) {
@@ -338,33 +336,25 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 																		>
 																			<div tw="flex items-center space-x-3">
 																				{sitesLoaded ? (
-																					<>
-																						<span
-																							aria-label="Verified"
-																							css={[
-																								tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																								value.verified ? tw`bg-green-400` : tw`bg-red-400`
-																							]}
-																						></span>
-																						<span
-																							css={[
-																								tw`font-medium block truncate`,
-																								value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
-																							]}
-																						>
-																							{value.name}
-																						</span>
-																					</>
+																					<span
+																						aria-label="Verified"
+																						css={[
+																							tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+																							value.verified ? tw`bg-green-400` : tw`bg-red-400`
+																						]}
+																					/>
 																				) : (
-																					<div tw="flex items-center space-x-3 my-1">
-																						<div>
-																							<Skeleton circle={true} duration={2} width={20} height={20} />
-																						</div>
-																						<div tw="ml-3">
-																							<Skeleton duration={2} width={145} />
-																						</div>
-																					</div>
+																					<Skeleton circle={true} duration={2} width={10} height={10} />
 																				)}
+
+																				<span
+																					css={[
+																						tw`font-medium block truncate`,
+																						value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
+																					]}
+																				>
+																					{sitesLoaded ? value.name : <Skeleton duration={2} width={150} />}
+																				</span>
 																			</div>
 																		</li>
 																	);
