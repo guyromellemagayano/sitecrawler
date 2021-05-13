@@ -19,6 +19,12 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 import stripe
 
+try:
+    AWS_REGION = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document", timeout=1).json()[
+        "region"
+    ]
+except:
+    AWS_REGION = "us-east-1"
 
 
 def secret(*keys, default=None):
@@ -29,7 +35,7 @@ def secret(*keys, default=None):
 
     for key in keys:
         try:
-            secretmanager = boto3.client("secretsmanager")
+            secretmanager = boto3.client("secretsmanager", region_name=AWS_REGION)
             return secretmanager.get_secret_value(SecretId=f"{ENV}/{key}")["SecretString"]
         except Exception:
             pass
