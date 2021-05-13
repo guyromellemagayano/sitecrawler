@@ -53,7 +53,7 @@ const LinkTableDiv = styled.tr`
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		max-width: 7rem;
+		max-width: 20rem;
 	}
 
 	.btn-detail {
@@ -94,6 +94,7 @@ const LinkTable = (props) => {
 								href={props.val.url}
 								target="_blank"
 								title={props.val.url}
+								className="truncate-link"
 								tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
 							>
 								{props.val.url}
@@ -112,7 +113,7 @@ const LinkTable = (props) => {
 								>
 									<a
 										className="btn-detail"
-										tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+										tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 									>
 										View Details
 									</a>
@@ -197,10 +198,10 @@ const LinkTable = (props) => {
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								<span className="truncate-link">
-									{linkDetail.pages[0] && Url(linkDetail.pages[0].url).pathname !== "" ? (
-										Url(linkDetail.pages[0].url).pathname
+									{linkDetail.pages && Url(linkDetail.pages.url).pathname !== "" ? (
+										Url(linkDetail.pages.url).pathname
 									) : (
-										<em>_domain</em>
+										<em>{linkDetail.pages.url}</em>
 									)}
 								</span>
 								&nbsp;

@@ -48,7 +48,7 @@ const ImagesTableDiv = styled.tr`
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		max-width: 30rem;
+		max-width: 20rem;
 	}
 
 	.icon-status {
@@ -94,7 +94,8 @@ const ImagesTable = (props) => {
 									href={props.val.url}
 									target="_blank"
 									title={props.val.url}
-									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
+									className="truncate-link"
+									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
 								>
 									{props.val.url}
 								</a>
@@ -113,7 +114,7 @@ const ImagesTable = (props) => {
 										>
 											<a
 												className="btn-detail"
-												tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+												tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 											>
 												View Details
 											</a>
@@ -197,10 +198,10 @@ const ImagesTable = (props) => {
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								<span className="truncate-link">
-									{props.val[0] && Url(props.val[0].url).pathname !== "" ? (
-										Url(props.val[0].url).pathname
+									{props.val && Url(props.val.url).pathname !== "" ? (
+										Url(props.val.url).pathname
 									) : (
-										<em>_domain</em>
+										<em>{props.val.url}</em>
 									)}
 								</span>
 								&nbsp;
