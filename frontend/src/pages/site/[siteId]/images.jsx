@@ -58,6 +58,7 @@ const initialOrder = {
 	imageSize: "default",
 	status: "default",
 	httpCode: "default",
+	missingAlts: "default",
 	occurrences: "default"
 };
 
@@ -206,8 +207,6 @@ const Images = ({ width, result }) => {
 
 		scanApiEndpoint += queryString;
 	}
-
-	console.log(result, scanApiEndpoint);
 
 	({ images: images, mutateImages: mutateImages } = useImages({
 		endpoint: scanApiEndpoint,
@@ -410,7 +409,7 @@ const Images = ({ width, result }) => {
 				newPath = removeURLParameter(newPath, "missing_alts__gt");
 			}
 
-			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(false);
 		}
 
 		if (filterType == "all" && filterStatus == true) {

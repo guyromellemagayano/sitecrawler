@@ -45,6 +45,13 @@ const ImageSorting = (props) => {
 							onSortHandler={props.onSortHandler}
 							slug={props.slug}
 						/>
+					) : props.slug == "missing-alts" ? (
+						<Sorting
+							enabled={true}
+							direction={props.sortOrder.missingAlts}
+							onSortHandler={props.onSortHandler}
+							slug={props.slug}
+						/>
 					) : props.slug == "occurrences" ? (
 						<Sorting
 							enabled={true}
