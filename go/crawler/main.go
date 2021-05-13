@@ -27,7 +27,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	backendService := &common.BackendService{Env: env, Token: common.Secret(log, awsSession, env, "BACKEND_TOKEN", "")}
+	backendService := &common.BackendService{Env: env, Token: common.Secret(log, awsSession, env, "BACKEND_TOKEN_CRAWLER", "")}
 	loadService := &common.LoadService{}
 	verifyService := &common.VerifyService{Database: db, LoadService: loadService}
 	scanService := &ScanService{

@@ -20,18 +20,19 @@ from sentry_sdk.integrations.django import DjangoIntegration
 import stripe
 
 
-def secret(environment, default, secretname=None):
-    v = os.getenv(environment)
-    if v is not None:
-        return v
-    if secretname is None:
-        secretname = environment
 
-    try:
-        secretmanager = boto3.client("secretsmanager")
-        return secretmanager.get_secret_value(SecretId=f"{ENV}/{secretname}")["SecretString"]
-    except Exception:
-        pass
+def secret(*keys, default=None):
+    for key in keys:
+        v = os.getenv(key)
+        if v is not None:
+            return v
+
+    for key in keys:
+        try:
+            secretmanager = boto3.client("secretsmanager")
+            return secretmanager.get_secret_value(SecretId=f"{ENV}/{key}")["SecretString"]
+        except Exception:
+            pass
 
     return default
 
@@ -43,7 +44,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0")
+SECRET_KEY = secret("BACKEND_SECRET_KEY", default="3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0")
 
 TESTING = sys.argv[1:2] == ["test"]
 IS_CRON = len(sys.argv) >= 2 and sys.argv[1].startswith("cron_")
@@ -61,13 +62,13 @@ AWS_REGION = "us-east-1"
 
 DB_NAME = os.environ.get("DB_NAME", "postgres")
 DB_USER = os.environ.get("DB_USER", "postgres")
-DB_PASS = secret("DB_PASS", "crawldev", "DB_PASS_BACKEND")
+DB_PASS = secret("DB_PASS_BACKEND", "DB_PASS", default="crawldev")
 DB_HOST = os.environ.get("DB_HOST", "db")
 DB_PORT = os.environ.get("DB_PORT", "5432")
 DB_SUPERUSER_USER = DB_USER
-DB_SUPERUSER_PASS = secret("DB_SUPERUSER_PASS", DB_PASS, "DB_PASS")
+DB_SUPERUSER_PASS = secret("DB_PASS_PRODUCTION", "DB_SUPERUSER_PASS", default=DB_PASS)
 
-STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "123")
+STRIPE_WEBHOOK_SECRET = secret("STRIPE_WEBHOOK_SECRET", default="123")
 
 
 if ENV == "dev":
@@ -91,7 +92,7 @@ elif ENV == "staging":
     EMAIL_PORT = 587
     EMAIL_HOST_USER = "postmaster@mg.epicsandbox.com"
     EMAIL_USE_TLS = True
-    EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
+    EMAIL_HOST_PASSWORD = secret("MAILGUN_PASSWORD")
     DEFAULT_FROM_EMAIL = "linkapp@epicsandbox.com"
     EMAIL_SUBJECT_PREFIX = "SiteCrawlerSandbox - "
 elif ENV == "production":
@@ -104,7 +105,7 @@ elif ENV == "production":
     EMAIL_PORT = 587
     EMAIL_HOST_USER = "app@mg.sitecrawler.com"
     EMAIL_USE_TLS = True
-    EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
+    EMAIL_HOST_PASSWORD = secret("MAILGUN_PASSWORD")
     DEFAULT_FROM_EMAIL = "noreply@sitecrawler.com"
     DB_NAME = "production"
     DB_USER = "backend"
@@ -138,14 +139,14 @@ except requests.exceptions.RequestException:
     pass
 
 
-stripe.api_key = os.environ.get(
+stripe.api_key = secret(
     "STRIPE_SECRET_KEY",
-    "sk_test_51HIVFqBQhL0pYs2DCd5btngeCNpFsYM6dhjnN52P6pQTAYL6bPc9NT6DAgdy61ieo9DTrcCTEgGTCqeoCnINImVX005V3rKSoF",
+    default="sk_test_51HIVFqBQhL0pYs2DCd5btngeCNpFsYM6dhjnN52P6pQTAYL6bPc9NT6DAgdy61ieo9DTrcCTEgGTCqeoCnINImVX005V3rKSoF",
 )
 stripe.api_version = "2020-03-02"
-STRIPE_PUBLISHABLE_KEY = os.environ.get(
+STRIPE_PUBLISHABLE_KEY = secret(
     "STRIPE_PUBLISHABLE_KEY",
-    "pk_test_51HIVFqBQhL0pYs2DVDldVquI8cWSn4zpmkPG5NOC7fR06i2HfvChSGs1geC30H5OAIrYbTEkj9s8Sei3etUr6FhD00iH8BAzac",
+    default="pk_test_51HIVFqBQhL0pYs2DVDldVquI8cWSn4zpmkPG5NOC7fR06i2HfvChSGs1geC30H5OAIrYbTEkj9s8Sei3etUr6FhD00iH8BAzac",
 )
 
 # pk of group that new users are auto added to

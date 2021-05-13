@@ -32,6 +32,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	backendToken := common.Secret(log, awsSession, env, "BACKEND_TOKEN_UPTIMER", "")
+
 	db := common.ConfigureDatabase(log, awsSession, "uptimer", env)
 	defer db.Close()
 
@@ -106,7 +108,7 @@ func main() {
 			}
 			log.Infof("Verifying site: %v, scan: %v", site.ID, scan.ID)
 			err = db.LinkDao.ForEach(func(l *database.CrawlLink) error {
-				return VerifyRelCounts(site, scan, l)
+				return VerifyRelCounts(backendToken, site, scan, l)
 			}, database.Where("scan_id = ?", scan.ID))
 			if err != nil {
 				log.Errorf("Verification error: %v", err)
@@ -355,7 +357,7 @@ func main() {
 //     return nil
 // }
 
-func VerifyRelCounts(site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
+func VerifyRelCounts(backendToken string, site *database.CrawlSite, scan *database.CrawlScan, link *database.CrawlLink) error {
 	if link.Type != common.TYPE_PAGE {
 		if link.CachedSizeImages != nil ||
 			link.CachedSizeScripts != nil ||
@@ -381,7 +383,7 @@ func VerifyRelCounts(site *database.CrawlSite, scan *database.CrawlScan, link *d
 		NumNonOkStylesheets int `json:"num_non_ok_stylesheets"`
 	}{}
 	path := fmt.Sprintf("site/%v/scan/%v/page/%v/", site.ID, scan.ID, link.ID)
-	if err := backendRequest(path, &data); err != nil {
+	if err := backendRequest(backendToken, path, &data); err != nil {
 		return err
 	}
 
@@ -403,7 +405,7 @@ func VerifyRelCounts(site *database.CrawlSite, scan *database.CrawlScan, link *d
 	return nil
 }
 
-func backendRequest(url string, result interface{}) error {
+func backendRequest(token, url string, result interface{}) error {
 	urlPrefix := "http://backend:8000/api/"
 	if !strings.HasPrefix(url, urlPrefix) {
 		url = urlPrefix + url
@@ -412,7 +414,7 @@ func backendRequest(url string, result interface{}) error {
 	if err != nil {
 		return err
 	}
-	r.Header.Add("Authorization", fmt.Sprintf("Token %v", common.Env("BACKEND_TOKEN", "")))
+	r.Header.Add("Authorization", fmt.Sprintf("Token %v", token))
 	resp, err := http.DefaultClient.Do(r)
 	if err != nil {
 		return err

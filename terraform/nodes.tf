@@ -8,7 +8,7 @@ resource "aws_instance" "staging" {
   instance_type = "t2.small"
 	security_groups = ["${aws_security_group.node_security_group.name}"]
 	key_name = aws_key_pair.deployer.key_name
-	iam_instance_profile = aws_iam_instance_profile.node_profile.name
+	iam_instance_profile = aws_iam_instance_profile.staging.name
 
 	root_block_device {
 		volume_size = 20
@@ -29,7 +29,7 @@ resource "aws_instance" "production" {
   instance_type = "t3.micro"
 	security_groups = ["${aws_security_group.production.name}"]
 	key_name = aws_key_pair.deployer.key_name
-	iam_instance_profile = aws_iam_instance_profile.node_profile.name
+	iam_instance_profile = aws_iam_instance_profile.production.name
 
 	root_block_device {
 		volume_size = 20

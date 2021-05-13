@@ -21,7 +21,7 @@ resource "aws_db_instance" "production" {
 }
 
 resource "aws_secretsmanager_secret" "prod_db_password" {
-  name = "production/DB_PASS"
+  name = "production/DB_PASS_PRODUCTION"
 }
 
 resource "aws_secretsmanager_secret_version" "prod_db_password" {

@@ -137,8 +137,6 @@ def docker_compose(i, c, name):
     else:
         c.put(f"deploy/docker-compose.{name}.yml", f"{name}/docker-compose.yml")
 
-    c.run(f"aws s3 cp s3://{secrets_bucket}/secrets.{name}.yml {name}/docker-compose.override.yml")
-
     c.run(f"cd {name} && docker-compose pull")
     c.run(f"cd {name} && docker-compose up -d")
 

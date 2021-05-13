@@ -89,6 +89,8 @@ resource "aws_security_group" "production_db" {
       aws_security_group.prod_ecs_crawler.id,
       module.reverifier.security_group_id,
       module.cron_delete_old_scans.security_group_id,
+      module.cron_send_crawl_emails_daily.security_group_id,
+      module.cron_send_crawl_emails_weekly.security_group_id,
     ]
 	}
 
