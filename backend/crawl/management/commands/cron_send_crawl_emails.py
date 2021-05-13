@@ -16,11 +16,15 @@ class Command(BaseCommand):
         parser.add_argument("frequency", type=str, choices=[c[1].lower() for c in GroupSettings.RECRAWL_CHOICES])
 
     def handle(self, *args, **options):
+        print("Starting email job", flush=True)
+
         frequency = {c[1].lower(): c[0] for c in GroupSettings.RECRAWL_CHOICES}[options["frequency"]]
 
         # get unique set of users that are in group with given recrawl frequency
         users = auth_models.User.objects.filter(groups__groupsettings__recrawl_frequency=frequency).distinct("id")
         for user in users:
+            print(f"Sending emails for {user}", flush=True)
+
             if not user.email or not user.is_active:
                 continue
             latest_finished_scans = (
@@ -34,6 +38,8 @@ class Command(BaseCommand):
                 continue
 
             self._send_email(user, scans_with_details)
+
+        print("Delete job finished", flush=True)
 
     def _send_email(self, user, scans):
         site = django_sites_models.Site.objects.get_current()

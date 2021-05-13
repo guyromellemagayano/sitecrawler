@@ -3,8 +3,9 @@ module "cron_send_crawl_emails_daily" {
 
   name = "send_crawl_emails_daily"
   image = "400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend"
+  // Both daily and weekly crawl emails are actually send weekly on mondays
   command = ["./manage.py", "cron_send_crawl_emails", "daily"]
-  schedule = "cron(00 10 * * ? *)"
+  schedule = "cron(00 10 ? * MON *)"
   // must have public ip for now because otherwise ecr and secretmanager don't work in vpc
   // eventually we should set up endpoints for that, but it's somewhat complicated
   assign_public_ip = true
@@ -22,7 +23,7 @@ module "cron_send_crawl_emails_weekly" {
   name = "send_crawl_emails_weekly"
   image = "400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend"
   command = ["./manage.py", "cron_send_crawl_emails", "weekly"]
-  schedule = "cron(30 10 * * MON *)"
+  schedule = "cron(30 10 ? * MON *)"
   // must have public ip for now because otherwise ecr and secretmanager don't work in vpc
   // eventually we should set up endpoints for that, but it's somewhat complicated
   assign_public_ip = true

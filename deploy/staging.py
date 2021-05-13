@@ -8,6 +8,10 @@ groups = ["node_security_group"]
 def deploy(i, c):
     common.docker_compose(i, c, "staging")
 
+    # deploy crontab only  on staging
+    c.put("deploy/crontab.staging", "staging/crontab")
+    c.run("cd staging && crontab crontab")
+
 
 common.authorize_ingress(groups)
 

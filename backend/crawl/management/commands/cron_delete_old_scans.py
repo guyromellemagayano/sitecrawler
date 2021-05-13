@@ -10,6 +10,8 @@ class Command(BaseCommand):
     help = "Deletes old scans, keep first and last 3, archive stats"
 
     def handle(self, *args, **options):
+        print("Starting delete job", flush=True)
+
         scan_ids_to_be_deleted = []
         for site in Site.objects.all():
             scans = site.scan_set.filter(finished_at__isnull=False).order_by("started_at")
