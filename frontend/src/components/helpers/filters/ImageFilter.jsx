@@ -5,8 +5,9 @@ const ImageFilter = ({
 	onFilterChange,
 	allFilter,
 	noIssueFilter,
+	imageNotWorkingFilter,
 	imageBrokenSecurityFilter,
-	imageNotWorkingFilter
+	imageMissingAltsFilter
 }) => {
 	const filterHandler = (e) => {
 		onFilterChange(e);
@@ -56,6 +57,20 @@ const ImageFilter = ({
 									value="brokenSecurity"
 								/>
 								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Broken Security</span>
+							</label>
+						</div>
+					</div>
+					<div tw="ml-4 mt-2 mr-2">
+						<div>
+							<label tw="flex items-center">
+								<input
+									type="checkbox"
+									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+									onChange={filterHandler}
+									checked={imageMissingAltsFilter}
+									value="missingAlts"
+								/>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Missing Alts</span>
 							</label>
 						</div>
 					</div>
