@@ -6,7 +6,15 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
-import { PlusIcon, SelectorIcon } from "@heroicons/react/solid";
+import {
+	ArrowLeftIcon,
+	UserCircleIcon,
+	PlusIcon,
+	SelectorIcon,
+	ViewBoardsIcon,
+	CreditCardIcon,
+	SupportIcon
+} from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
@@ -18,6 +26,7 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 
 // Hooks
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
+import { GlobeIcon } from "@heroicons/react/outline";
 
 const SettingsMenu = ({ user, site }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -120,9 +129,19 @@ const SettingsMenu = ({ user, site }) => {
 																: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150`
 														]}
 													>
-														<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
-														</svg>
+														{value2.slug === "profile-settings" ? (
+															<UserCircleIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "subscription-plans" ? (
+															<ViewBoardsIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "billing-settings" ? (
+															<CreditCardIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "global-settings" ? (
+															<GlobeIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "subscription-plans" ? (
+															<ViewBoardsIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "help-support" ? (
+															<SupportIcon tw="mr-3 h-6 w-5" />
+														) : null}
 														<span>{value2.title}</span>
 													</a>
 												</Link>
@@ -132,12 +151,7 @@ const SettingsMenu = ({ user, site }) => {
 														className="group"
 														tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
 													>
-														<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
-															{value2.icon2 ? (
-																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
-															) : null}
-														</svg>
+														<ArrowLeftIcon tw="mr-3 h-6 w-5" />
 														<span>{value2.title ? value2.title : null}</span>
 													</a>
 												</Link>

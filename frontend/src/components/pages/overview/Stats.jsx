@@ -10,77 +10,50 @@ import Skeleton from "react-loading-skeleton";
 // JSON
 import StatsLabel from "public/labels/components/sites/Stats.json";
 
-// Hooks
-import { useScan, useStats } from "src/hooks/useSite";
-
-const SitesStats = ({ crawlableHandler, sid, user }) => {
+const SitesStats = ({ crawlableHandler, user, stats, previousScanDataActive, setPreviousScanDataActive }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [scanData, setScanData] = useState([]);
-	const [scanObjId, setScanObjId] = useState(0);
-	const [statsData, setStatsData] = useState([]);
-
-	const { scan: scan } = useScan({
-		querySid: sid
-	});
 
 	useEffect(() => {
-		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
-
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
-						.map((e) => {
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				);
-			}
-		}
-	});
-
-	const { stats: stats } = useStats({
-		querySid: sid,
-		scanObjId: scanObjId
-	});
-
-	useEffect(() => {
-		if (statsData && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-	}, [stats]);
-
-	useEffect(() => {
-		if (user && statsData) {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			stats &&
+			stats !== undefined &&
+			Object.keys(stats).length > 0
+		) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [user, statsData]);
+	}, [user, stats]);
 
 	useEffect(() => {
-		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
-			if (statsData.finished_at) crawlableHandler(true);
-			else if (statsData.started_at && statsData.finished_at == null) crawlableHandler(false);
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			if (stats.started_at && stats.finished_at && !previousScanDataActive) {
+				crawlableHandler(true);
+				setPreviousScanDataActive(true);
+			} else if (stats.started_at && stats.finished_at == null) {
+				crawlableHandler(false);
+			} else crawlableHandler(true);
 		}
-	}, [statsData]);
+	}, [stats]);
 
 	const setSeoErrors = () => {
 		let valLength = 0;
 
-		if (statsData) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			if (
-				(statsData.num_pages_without_title !== 0 && statsData.num_pages_without_title !== undefined) ||
-				(statsData.num_pages_without_description !== 0 && statsData.num_pages_without_description !== undefined) ||
-				(statsData.num_pages_without_h1_first !== 0 && statsData.num_pages_without_h1_first !== undefined) ||
-				(statsData.num_pages_without_h2_first !== 0 && statsData.num_pages_without_h2_first !== undefined)
+				(stats.num_pages_without_title !== 0 && stats.num_pages_without_title !== undefined) ||
+				(stats.num_pages_without_description !== 0 && stats.num_pages_without_description !== undefined) ||
+				(stats.num_pages_without_h1_first !== 0 && stats.num_pages_without_h1_first !== undefined) ||
+				(stats.num_pages_without_h2_first !== 0 && stats.num_pages_without_h2_first !== undefined)
 			) {
 				valLength =
-					(statsData ? statsData.num_pages_without_title : 0) +
-					(statsData ? statsData.num_pages_without_description : 0) +
-					(statsData ? statsData.num_pages_without_h1_first : 0) +
-					(statsData ? statsData.num_pages_without_h2_first : 0);
+					(stats ? stats.num_pages_without_title : 0) +
+					(stats ? stats.num_pages_without_description : 0) +
+					(stats ? stats.num_pages_without_h1_first : 0) +
+					(stats ? stats.num_pages_without_h2_first : 0);
 			}
 		}
 
@@ -90,12 +63,12 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 	const setPageErrors = () => {
 		let valLength = 0;
 
-		if (statsData) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			if (
-				(statsData.num_pages_big !== 0 && statsData.num_pages_big !== undefined) ||
-				(statsData.num_pages_tls_non_ok !== 0 && statsData.num_pages_tls_non_ok !== undefined)
+				(stats.num_pages_big !== 0 && stats.num_pages_big !== undefined) ||
+				(stats.num_pages_tls_non_ok !== 0 && stats.num_pages_tls_non_ok !== undefined)
 			) {
-				valLength = (statsData ? statsData.num_pages_big : 0) + (statsData ? statsData.num_pages_tls_non_ok : 0);
+				valLength = (stats ? stats.num_pages_big : 0) + (stats ? stats.num_pages_tls_non_ok : 0);
 			}
 		}
 
@@ -105,9 +78,9 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 	const setImageErrors = () => {
 		let valLength = 0;
 
-		if (statsData) {
-			if (statsData.num_non_ok_images !== 0 && statsData.num_non_ok_images !== undefined) {
-				valLength = statsData ? statsData.num_non_ok_images : 0;
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			if (stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined) {
+				valLength = stats ? stats.num_non_ok_images : 0;
 			}
 		}
 
@@ -118,22 +91,22 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 		{
 			title: "Total Issues",
 			count:
-				statsData &&
-				statsData !== undefined &&
-				Object.keys(statsData).length > 0 &&
-				statsData.num_non_ok_links + setSeoErrors() + setPageErrors() + setImageErrors()
+				stats &&
+				stats !== undefined &&
+				Object.keys(stats).length > 0 &&
+				stats.num_non_ok_links + setSeoErrors() + setPageErrors() + setImageErrors()
 		},
 		{
 			title: "Total Pages",
-			count: statsData && statsData !== undefined && Object.keys(statsData).length > 0 && statsData.num_pages
+			count: stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages
 		},
 		{
 			title: "Total Links",
-			count: statsData && statsData !== undefined && Object.keys(statsData).length > 0 && statsData.num_links
+			count: stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_links
 		},
 		{
 			title: "Total Images",
-			count: statsData && statsData !== undefined && Object.keys(statsData).length > 0 && statsData.num_images
+			count: stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images
 		}
 	];
 
@@ -151,7 +124,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 									<dt>
 										{val.title === "Total Pages" ? (
 											componentReady ? (
-												<DocumentIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
+												<DocumentIcon tw="mr-3 h-6 w-6 text-gray-500" />
 											) : (
 												<span tw="flex -mt-1">
 													<Skeleton duration={2} width={20} height={20} />
@@ -159,7 +132,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 											)
 										) : val.title === "Total Links" ? (
 											componentReady ? (
-												<LinkIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
+												<LinkIcon tw="mr-3 h-6 w-6 text-gray-500" />
 											) : (
 												<span tw="flex -mt-1">
 													<Skeleton duration={2} width={20} height={20} />
@@ -167,14 +140,14 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 											)
 										) : val.title === "Total Images" ? (
 											componentReady ? (
-												<PhotographIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
+												<PhotographIcon tw="mr-3 h-6 w-6 text-gray-500" />
 											) : (
 												<span tw="flex -mt-1">
 													<Skeleton duration={2} width={20} height={20} />
 												</span>
 											)
 										) : componentReady ? (
-											<InformationCircleIcon tw="mr-3 mr-1 h-9 h-7 w-8 h-6 text-gray-500" />
+											<InformationCircleIcon tw="mr-3 h-6 w-6 text-gray-500" />
 										) : (
 											<span tw="flex -mt-1">
 												<Skeleton duration={2} width={20} height={20} />
@@ -183,7 +156,7 @@ const SitesStats = ({ crawlableHandler, sid, user }) => {
 									</dt>
 								</dl>
 								<dl>
-									<dt tw="text-sm text-xs lg:text-sm leading-5 font-medium text-gray-500 truncate">{val.title}</dt>
+									<dt tw="text-sm lg:text-sm leading-5 font-medium text-gray-500 truncate">{val.title}</dt>
 
 									{val.title === "Total Issues" ? (
 										<dd tw="mt-1 text-3xl leading-9 font-semibold text-red-700">

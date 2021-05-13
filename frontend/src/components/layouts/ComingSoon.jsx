@@ -3,21 +3,19 @@ import Link from "next/link";
 
 // External
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
-import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import tw from "twin.macro";
 
 // JSON
 import ComingSoonLabel from "public/labels/components/layout/ComingSoon.json";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const ComingSoonSkeleton = loadable(() => import("src/components/skeletons/ComingSoonSkeleton"));
-const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
+import AppLogo from "src/components/logos/AppLogo";
+import ComingSoonSkeleton from "src/components/skeletons/ComingSoonSkeleton";
+import MainSidebar from "src/components/sidebar/MainSidebar";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
+import SiteFooter from "src/components/layouts/Footer";
 
-const ComingSoon = ({ width, user, site, pageTitle, pageLoaded, openMobileSidebar, setOpenMobileSidebar }) => {
+const ComingSoon = ({ width, user, pageTitle, pageLoaded, openMobileSidebar, setOpenMobileSidebar }) => {
 	const homeLabel = "Home";
 	const homePageLink = "/";
 
@@ -91,4 +89,4 @@ const ComingSoon = ({ width, user, site, pageTitle, pageLoaded, openMobileSideba
 
 ComingSoon.propTypes = {};
 
-export default withResizeDetector(ComingSoon);
+export default ComingSoon;

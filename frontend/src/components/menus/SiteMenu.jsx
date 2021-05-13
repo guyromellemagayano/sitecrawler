@@ -20,17 +20,17 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 import { useScan, useStats } from "src/hooks/useSite";
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 
-const SiteMenu = ({ user, site }) => {
+const SiteMenu = ({ user, crawlFinished, site }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [selectedSite, setSelectedSite] = useState("");
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
 	const [sid, setSid] = useState(0);
-	const [siteData, setSiteData] = useState([]);
 	const [sitesLoaded, setSitesLoaded] = useState(false);
-	const [statsData, setStatsData] = useState([]);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
+
+	let currentScanResults = [];
+	let previousScanResults = [];
 
 	const { query, asPath } = useRouter();
 	const router = useRouter();
@@ -43,56 +43,58 @@ const SiteMenu = ({ user, site }) => {
 		if (query.siteId && query.siteId !== undefined && query.siteId !== "") {
 			setSid(query.siteId);
 		}
+	}, []);
 
+	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
+				currentScanResults = scan.results.find((e) => e.finished_at === null);
+				previousScanResults = scan.results.find((e) => e.finished_at !== null);
 
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
-						.map((e) => {
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				);
+				if (currentScanResults !== [] || currentScanResults !== undefined) {
+					if (!crawlFinished) {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					} else {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					}
+				}
 			}
 		}
-	});
+	}, [crawlFinished, scan, scanObjId]);
 
 	const { stats: stats } = useStats({
 		querySid: sid,
-		scanObjId: scanObjId
+		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId,
+		refreshInterval: crawlFinished ? 0 : 1000
 	});
 
 	useEffect(() => {
 		if (site && site !== undefined && Object.keys(site).length > 0 && sid && sid !== undefined && sid !== "") {
-			setSiteData(site);
 			handleSiteSelectOnLoad(site, sid);
 		}
 
-		if (stats && stats !== undefined && Object.keys(stats).length > 0 && scanObjId && scanObjId !== 0) {
-			setStatsData(stats);
-		}
-	}, [stats, scanObjId, site, sid]);
-
-	useEffect(() => {
 		if (
 			user &&
-			siteData &&
-			siteData !== undefined &&
-			siteData !== [] &&
-			Object.keys(siteData).length > 0 &&
-			statsData &&
-			statsData !== undefined &&
-			statsData !== [] &&
-			Object.keys(statsData).length > 0
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0 &&
+			stats &&
+			stats !== undefined &&
+			Object.keys(stats).length > 0
 		) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [user, siteData, statsData]);
+	}, [user, site, stats, sid]);
 
 	useEffect(() => {
 		if (isComponentVisible) {
@@ -105,9 +107,9 @@ const SiteMenu = ({ user, site }) => {
 	}, [isComponentVisible]);
 
 	useEffect(() => {
-		if ((siteData && siteData !== undefined && siteData !== [], Object.keys(siteData).length > 0)) {
-			if (siteData.results && siteData.results !== undefined && Object.keys(siteData.results).length > 0) {
-				siteData.results
+		if (site && site !== undefined && Object.keys(site).length > 0) {
+			if (site.results && site.results !== undefined && Object.keys(site.results).length > 0) {
+				site.results
 					.filter((result) => result.name === selectedSite)
 					.map((val) => {
 						setSelectedSiteDetails(val);
@@ -115,24 +117,24 @@ const SiteMenu = ({ user, site }) => {
 			}
 		}
 
-		if (selectedSite == []) {
-			if ((siteData && siteData !== undefined && siteData !== [], Object.keys(siteData).length > 0)) {
-				if (siteData.results && siteData.results !== undefined && Object.keys(siteData.results).length > 0) {
-					siteData.results
-						.filter((result) => result.id == sid)
-						.map((val) => {
-							setSelectedSite(val.name);
-						});
+		if (selectedSite === "" && sid !== 0) {
+			if (site && site !== undefined && Object.keys(site).length > 0) {
+				if (site.results && site.results !== undefined && Object.keys(site.results).length > 0) {
+					let currentSite = site.results.find((result) => result.id === parseInt(sid));
+
+					if (currentSite !== undefined) {
+						setSelectedSite(currentSite.name);
+					}
 				}
 			}
 		}
-	}, [selectedSite, siteData]);
+	}, [selectedSite, site, sid]);
 
 	const handleSiteSelectOnLoad = (siteId) => {
-		if (siteData && siteData.results !== undefined && Object.keys(siteData.results).length > 0) {
-			for (let i = 0; i < siteData.results.length; i++) {
-				if (siteData.results[i].id == siteId) {
-					setSelectedSite(siteData.results[i].name);
+		if (site && site.results !== undefined && Object.keys(site.results).length > 0) {
+			for (let i = 0; i < site.results.length; i++) {
+				if (site.results[i].id == siteId) {
+					setSelectedSite(site.results[i].name);
 
 					setTimeout(() => {
 						router.replace(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
@@ -185,51 +187,48 @@ const SiteMenu = ({ user, site }) => {
 														</svg>
 														<span>{value2.title ? value2.title : null}</span>
 														{value2.url === "/links" &&
-															statsData &&
-															statsData !== undefined &&
-															Object.keys(statsData).length > 0 && (
+															stats &&
+															stats !== undefined &&
+															Object.keys(stats).length > 0 && (
 																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{statsData.num_links ? statsData.num_links : null}
+																	{stats.num_links ? stats.num_links : null}
 																</span>
 															)}
 														{value2.url === "/pages" &&
-															statsData &&
-															statsData !== undefined &&
-															Object.keys(statsData).length > 0 && (
+															stats &&
+															stats !== undefined &&
+															Object.keys(stats).length > 0 && (
 																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{statsData.num_pages ? statsData.num_pages : null}
+																	{stats.num_pages ? stats.num_pages : null}
 																</span>
 															)}
-														{value2.url === "/seo" &&
-															statsData &&
-															statsData !== undefined &&
-															Object.keys(statsData).length > 0 && (
-																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{statsData.num_pages ? statsData.num_pages : null}
-																</span>
-															)}
+														{value2.url === "/seo" && stats && stats !== undefined && Object.keys(stats).length > 0 && (
+															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																{stats.num_pages ? stats.num_pages : null}
+															</span>
+														)}
 														{value2.url === "/images" &&
-															statsData &&
-															statsData !== undefined &&
-															Object.keys(statsData).length > 0 && (
+															stats &&
+															stats !== undefined &&
+															Object.keys(stats).length > 0 && (
 																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{statsData.num_images ? statsData.num_images : null}
+																	{stats.num_images ? stats.num_images : null}
 																</span>
 															)}
 														{value2.url === "/stylesheets" &&
-															statsData &&
-															statsData !== undefined &&
-															Object.keys(statsData).length > 0 && (
+															stats &&
+															stats !== undefined &&
+															Object.keys(stats).length > 0 && (
 																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{statsData.num_stylesheets ? statsData.num_stylesheets : null}
+																	{stats.num_stylesheets ? stats.num_stylesheets : null}
 																</span>
 															)}
 														{value2.url === "/scripts" &&
-															statsData &&
-															statsData !== undefined &&
-															Object.keys(statsData).length > 0 && (
+															stats &&
+															stats !== undefined &&
+															Object.keys(stats).length > 0 && (
 																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{statsData.num_scripts ? statsData.num_scripts : null}
+																	{stats.num_scripts ? stats.num_scripts : null}
 																</span>
 															)}
 													</a>
@@ -315,15 +314,15 @@ const SiteMenu = ({ user, site }) => {
 													leaveTo="transform opacity-0 scale-95"
 													className="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 												>
-													{siteData && siteData.results !== undefined ? (
-														siteData.results.length > 0 ? (
+													{site && site.results !== undefined ? (
+														site.results.length > 0 ? (
 															<ul
 																tabIndex="-1"
 																role="listbox"
 																aria-labelledby="listbox-label"
 																tw="max-h-60 pt-2 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
 															>
-																{siteData.results.map((value, index) => {
+																{site.results.map((value, index) => {
 																	return (
 																		<li
 																			key={index}
@@ -337,33 +336,25 @@ const SiteMenu = ({ user, site }) => {
 																		>
 																			<div tw="flex items-center space-x-3">
 																				{sitesLoaded ? (
-																					<>
-																						<span
-																							aria-label="Verified"
-																							css={[
-																								tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																								value.verified ? tw`bg-green-400` : tw`bg-red-400`
-																							]}
-																						></span>
-																						<span
-																							css={[
-																								tw`font-medium block truncate`,
-																								value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
-																							]}
-																						>
-																							{value.name}
-																						</span>
-																					</>
+																					<span
+																						aria-label="Verified"
+																						css={[
+																							tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+																							value.verified ? tw`bg-green-400` : tw`bg-red-400`
+																						]}
+																					/>
 																				) : (
-																					<div tw="flex items-center space-x-3 my-1">
-																						<div>
-																							<Skeleton circle={true} duration={2} width={20} height={20} />
-																						</div>
-																						<div tw="ml-3">
-																							<Skeleton duration={2} width={145} />
-																						</div>
-																					</div>
+																					<Skeleton circle={true} duration={2} width={10} height={10} />
 																				)}
+
+																				<span
+																					css={[
+																						tw`font-medium block truncate`,
+																						value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
+																					]}
+																				>
+																					{sitesLoaded ? value.name : <Skeleton duration={2} width={150} />}
+																				</span>
 																			</div>
 																		</li>
 																	);

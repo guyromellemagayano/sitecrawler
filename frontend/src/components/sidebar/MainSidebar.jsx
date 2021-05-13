@@ -25,9 +25,8 @@ const ProfileMenu = loadable(() => import("src/components/menus/ProfileMenu"));
 const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"));
 const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
 
-const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) => {
+const MainSidebar = ({ width, user, crawlFinished, openMobileSidebar, setOpenMobileSidebar }) => {
 	const [selectedMenu, setSelectedMenu] = useState("");
-	const [siteData, setSiteData] = useState([]);
 
 	let lgScreenBreakpoint = 1024;
 	let siteApiEndpoint = "/api/site/?ordering=name";
@@ -41,35 +40,27 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 	});
 
 	useEffect(() => {
-		if (site && site !== undefined && Object.keys(site).length > 0) {
-			setSiteData(site);
-		}
-	}, [site]);
-
-	useEffect(() => {
 		if (
 			user &&
 			user !== undefined &&
 			Object.keys(user).length > 0 &&
-			siteData &&
-			siteData !== undefined &&
-			siteData !== [] &&
-			Object.keys(siteData).length > 0
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0
 		) {
 			switch (true) {
 				case router.pathname.includes("/site"):
-					setSelectedMenu(<SiteMenu user={user} site={siteData} />);
+					setSelectedMenu(<SiteMenu user={user} crawlFinished={crawlFinished} site={site} />);
 					break;
 				case router.pathname.includes("/settings"):
-					setSelectedMenu(<SettingsMenu user={user} site={siteData} />);
+					setSelectedMenu(<SettingsMenu user={user} site={site} />);
 					break;
 				default:
-					setSelectedMenu(<PrimaryMenu user={user} site={siteData} />);
+					setSelectedMenu(<PrimaryMenu user={user} site={site} />);
 					break;
 			}
 		}
-		1;
-	}, [router, user, siteData]);
+	}, [router, user, site]);
 
 	const handleHideSidebarMenu = (event) => {
 		if (event.key === "Escape") {

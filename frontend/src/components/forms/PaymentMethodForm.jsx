@@ -284,15 +284,15 @@ const PaymentMethodForm = ({
 										placeholder={PaymentMethodFormLabel[16].label}
 										value={
 											currentPaymentMethod &&
-											currentPaymentMethod !== undefined &&
-											Object.keys(currentPaymentMethod).length > 0
+												currentPaymentMethod !== undefined &&
+												Object.keys(currentPaymentMethod).length > 0
 												? currentPaymentMethod.card.brand.charAt(0).toUpperCase() +
-												  currentPaymentMethod.card.brand.slice(1) +
-												  " - " +
-												  " " +
-												  "****" +
-												  " " +
-												  currentPaymentMethod.card.last4
+												currentPaymentMethod.card.brand.slice(1) +
+												" - " +
+												" " +
+												"****" +
+												" " +
+												currentPaymentMethod.card.last4
 												: ""
 										}
 										aria-describedby="cardinformation"
