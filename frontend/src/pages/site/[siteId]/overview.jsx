@@ -44,22 +44,17 @@ const SiteOverview = ({ width, result }) => {
 	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
+	const [previousScanDataActive, setPreviousScanDataActive] = useState(true);
 	const [recrawlable, setRecrawlable] = useState(false);
-	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
-	const [siteData, setSiteData] = useState([]);
-	const [siteIdData, setSiteIdData] = useState([]);
-	const [statsData, setStatsData] = useState([]);
-	const [userData, setUserData] = useState([]);
 
-	const pageTitle =
-		siteIdData.name && siteIdData.name !== undefined
-			? OverviewLabel[0].label + " - " + siteIdData.name
-			: OverviewLabel[0].label;
-	const homeLabel = "Home";
-	const homePageLink = "/";
-	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-	const sitesApiEndpoint = "/api/site/?ordering=name";
+	let currentScanResults = [];
+	let homeLabel = "Home";
+	let homePageLink = "/";
+	let pageTitle = "";
+	let previousScanResults = [];
+	let reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
+	let sitesApiEndpoint = "/api/site/?ordering=name";
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -67,8 +62,7 @@ const SiteOverview = ({ width, result }) => {
 	});
 
 	const { scan: scan } = useScan({
-		querySid: result.siteId,
-		refreshInterval: crawlFinished ? 0 : 1000
+		querySid: result.siteId
 	});
 
 	const { site: site } = useSite({
@@ -79,13 +73,16 @@ const SiteOverview = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	useEffect(() => {
-		if (userData && user !== undefined && Object.keys(user).length > 0) {
-			setUserData(user);
+	if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+		pageTitle =
+			siteId.name && siteId.name !== undefined ? OverviewLabel[0].label + " - " + siteId.name : OverviewLabel[0].label;
+	}
 
-			if (userData && userData !== undefined && userData !== [] && Object.keys(userData).length > 0) {
-				if (userData.settings && userData.settings !== []) {
-					if (userData.settings.disableLocalTime) {
+	useEffect(() => {
+		if (user && user !== undefined && Object.keys(user).length > 0) {
+			if (user && user !== undefined && user !== [] && Object.keys(user).length > 0) {
+				if (user.settings && user.settings !== []) {
+					if (user.settings.disableLocalTime) {
 						setDisableLocalTime(true);
 					} else {
 						setDisableLocalTime(false);
@@ -94,66 +91,54 @@ const SiteOverview = ({ width, result }) => {
 			}
 		}
 
-		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0 &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0
+		) {
+			setTimeout(() => {
+				setPageLoaded(true);
+			}, 500);
+		}
+	}, [user, site, siteId]);
 
-			if (scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0) {
-				if (
-					scanData.count > 1 &&
-					scanData.results &&
-					scanData.results !== undefined &&
-					scanData.results !== [] &&
-					Object.keys(scanData.results).length > 0
-				) {
-					scanData.results.find((e, key) => {
-						if (e.finished_at !== null && e.force_https !== null) {
-							if (key === 0) {
-								setScanObjId(e.id);
-								return;
-							}
+	useEffect(() => {
+		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
+				currentScanResults = scan.results.find((e) => e.finished_at === null);
+				previousScanResults = scan.results.find((e) => e.finished_at !== null);
+
+				if (currentScanResults !== [] || currentScanResults !== undefined) {
+					if (!crawlFinished) {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
 						}
-					});
-				} else {
-					scanData.results.find((e, key) => {
-						if (e.finished_at === null && e.force_https === null) {
-							if (key === 0) {
-								setScanObjId(e.id);
-								return;
-							}
+					} else {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+							setPreviousScanDataActive(false);
+						} else {
+							setScanObjId(currentScanResults.id);
 						}
-					});
+					}
 				}
 			}
 		}
-
-		if (site && site !== undefined && Object.keys(site).length > 0) {
-			setSiteData(site);
-		}
-
-		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
-			setSiteIdData(siteId);
-		}
-	}, [user, scan, site, siteId]);
+	}, [crawlFinished, scan, scanObjId]);
 
 	const { stats: stats } = useStats({
 		querySid: result.siteId,
 		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId,
 		refreshInterval: crawlFinished ? 0 : 1000
 	});
-
-	useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-	}, [stats]);
-
-	useEffect(() => {
-		if (userData && statsData && siteData && siteIdData) {
-			setTimeout(() => {
-				setPageLoaded(true);
-			}, 500);
-		}
-	}, [statsData, userData, siteData, siteIdData]);
 
 	const onCrawlHandler = async () => {
 		setCrawlFinished(false);
@@ -178,26 +163,32 @@ const SiteOverview = ({ width, result }) => {
 		if (finished) setCrawlFinished(true);
 
 		if (
-			userData &&
-			userData.permissions !== undefined &&
-			userData.permissions !== [] &&
-			userData.permissions.includes("can_start_scan") &&
-			siteIdData &&
-			siteIdData.verified &&
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			user &&
+			user.permissions !== undefined &&
+			user.permissions !== [] &&
+			user.permissions.includes("can_start_scan") &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0 &&
+			siteId.verified &&
 			finished
 		)
 			setRecrawlable(true);
 		else setRecrawlable(false);
 	};
 
-	return pageLoaded ? (
-		<Layout user={userData}>
+	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
+		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={userData}
+					user={user}
+					crawlFinished={crawlFinished}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -243,7 +234,6 @@ const SiteOverview = ({ width, result }) => {
 										</ol>
 									</nav>
 
-									{/* TODO: <Heading title={pageTitle} */}
 									<div className="pt-4 m-auto">
 										<h1 className="text-2xl leading-6 font-medium text-gray-900">{pageTitle}</h1>
 									</div>
@@ -251,50 +241,80 @@ const SiteOverview = ({ width, result }) => {
 							) : (
 								<ProfileSkeleton />
 							)}
+
 							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 								<div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
-									<SitesStats crawlableHandler={crawlableHandler} sid={result.siteId} user={userData} />
-									<SitesOverview
-										id={siteIdData.id}
-										verified={siteIdData.verified}
-										finishedAt={
-											scanData &&
-											scanData !== undefined &&
-											scanData !== [] &&
-											Object.keys(scanData).length > 0 &&
-											scanData.results
-												.map((e) => {
-													return e.finished_at;
-												})
-												.sort()
-												.reverse()[0]
-										}
-										forceHttps={
-											scanData &&
-											scanData !== undefined &&
-											Object.keys(scanData).length > 0 &&
-											scanData.results
-												.map((e) => {
-													return e.force_https;
-												})
-												.sort()
-												.reverse()[0]
-										}
-										onCrawl={onCrawlHandler}
-										crawlable={recrawlable}
-										crawlFinished={crawlFinished}
-										user={userData}
-										disableLocalTime={disableLocalTime}
-									/>
+									{user &&
+										user !== undefined &&
+										Object.keys(user).length > 0 &&
+										stats &&
+										stats !== undefined &&
+										Object.keys(stats).length > 0 && (
+											<SitesStats
+												crawlableHandler={crawlableHandler}
+												user={user}
+												stats={stats}
+												previousScanDataActive={previousScanDataActive}
+												setPreviousScanDataActive={setPreviousScanDataActive}
+											/>
+										)}
 
-									<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-										<SitesLinksStats sid={result.siteId} stats={statsData} />
-										<SitesPagesStats sid={result.siteId} stats={statsData} />
-									</div>
-									<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-										<SitesImagesStats sid={result.siteId} stats={statsData} />
-										<SitesSeoStats sid={result.siteId} stats={statsData} />
-									</div>
+									{user &&
+										user !== undefined &&
+										Object.keys(user).length > 0 &&
+										siteId &&
+										siteId !== undefined &&
+										Object.keys(siteId).length > 0 &&
+										scan &&
+										scan !== undefined &&
+										Object.keys(scan).length > 0 &&
+										stats &&
+										stats !== undefined &&
+										Object.keys(stats).length > 0 &&
+										scan &&
+										scan !== undefined &&
+										Object.keys(scan).length > 0 && (
+											<SitesOverview
+												id={siteId.id}
+												verified={siteId.verified}
+												finishedAt={
+													scan &&
+													scan !== undefined &&
+													Object.keys(scan).length > 0 &&
+													scan.results.find((e) => e.finished_at !== null) !== undefined
+														? scan.results.find((e) => e.finished_at !== null).finished_at
+														: null
+												}
+												forceHttps={
+													scan &&
+													scan !== undefined &&
+													Object.keys(scan).length > 0 &&
+													scan.results.find((e) => e.force_https !== null) !== undefined
+														? scan.results.find((e) => e.force_https !== null).force_https
+														: null
+												}
+												onCrawl={onCrawlHandler}
+												crawlable={recrawlable}
+												crawlFinished={crawlFinished}
+												user={user}
+												stats={stats}
+												scanCount={scan.count}
+												disableLocalTime={disableLocalTime}
+											/>
+										)}
+
+									{stats && stats !== undefined && Object.keys(stats).length > 0 && (
+										<>
+											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+												<SitesLinksStats sid={result.siteId} stats={stats} />
+												<SitesPagesStats sid={result.siteId} stats={stats} />
+											</div>
+											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+												<SitesImagesStats sid={result.siteId} stats={stats} />
+												<SitesSeoStats sid={result.siteId} stats={stats} />
+											</div>
+										</>
+									)}
 								</div>
 							</div>
 

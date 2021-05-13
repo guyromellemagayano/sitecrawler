@@ -10,15 +10,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import loadable from "@loadable/component";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
-import ReactTooltip from "react-tooltip";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
 // JSON
 import OverviewLabel from "public/labels/components/sites/Overview.json";
-
-// Hooks
-import { useScan, useStats } from "src/hooks/useSite";
 
 // Components
 const SiteDangerStatus = loadable(() => import("src/components/status/SiteDangerStatus"));
@@ -35,14 +31,12 @@ const SitesOverview = ({
 	crawlable,
 	crawlFinished,
 	user,
+	stats,
+	scanCount,
 	disableLocalTime
 }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [scanData, setScanData] = useState([]);
 	const [showErrorModal, setShowErrorModal] = useState(false);
-	const [statsData, setStatsData] = useState([]);
-
-	let scanObjId = "";
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -51,49 +45,13 @@ const SitesOverview = ({
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	const { scan: scan } = useScan({
-		querySid: id
-	});
-
 	useEffect(() => {
-		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
-
-			if (scanData.results && scanData.results !== undefined) {
-				let scanObj = [];
-
-				scanData.results.map((val) => {
-					scanObj.push(val);
-					return scanObj;
-				});
-
-				scanObj.map((val, index) => {
-					if (index == 0) scanObjId = val.id;
-
-					return scanObjId;
-				});
-			}
-		}
-	}, [scan]);
-
-	const { stats: stats } = useStats({
-		querySid: id,
-		scanObjId: scanObjId
-	});
-
-	useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-	}, [scan, stats]);
-
-	useEffect(() => {
-		if (user && statsData) {
+		if (user && stats) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [user, statsData]);
+	}, [user, stats]);
 
 	const handleOnCrawlPermissions = (e) => {
 		e.preventDefault();
@@ -152,7 +110,7 @@ const SitesOverview = ({
 											<span>
 												{crawlFinished
 													? OverviewLabel[0].label
-													: scanData.count == 1
+													: scanCount == 1
 													? OverviewLabel[8].label
 													: OverviewLabel[6].label}
 											</span>
@@ -194,7 +152,7 @@ const SitesOverview = ({
 							</dd>
 						)}
 					</dl>
-					<dl tw="grid grid-cols-1 grid-cols-2 col-gap-4 row-gap-8 sm:grid-cols-2">
+					<dl tw="grid grid-cols-1 col-gap-4 row-gap-8 sm:grid-cols-2">
 						<div tw="sm:col-span-1">
 							<dt tw="text-sm leading-5 font-medium text-gray-500">
 								{componentReady ? OverviewLabel[1].label : <Skeleton duration={2} width={100} height={15} />}
@@ -222,9 +180,13 @@ const SitesOverview = ({
 								<dd tw="mt-1 text-sm leading-5 text-gray-900">
 									{componentReady ? (
 										verified && verified !== undefined ? (
-											statsData && statsData !== undefined && statsData.num_pages_tls_non_ok == 0 ? (
+											stats &&
+											stats !== undefined &&
+											Object.keys(stats).length > 0 &&
+											crawlFinished &&
+											stats.num_pages_tls_non_ok === 0 ? (
 												<SiteSuccessStatus text="Valid" />
-											) : (
+											) : crawlFinished && stats.num_pages_tls_non_ok !== 0 ? (
 												<>
 													<span tw="flex items-center justify-start">
 														<SiteDangerStatus text="Not Valid" />
@@ -240,7 +202,7 @@ const SitesOverview = ({
 																<InformationCircleIcon tw="text-red-400" />
 															</span>
 														</a>
-														<ReactTooltip
+														{/* <ReactTooltip
 															id="pages-tls-not-ok"
 															className="ssl-valid-tooltip w-64"
 															type="dark"
@@ -254,8 +216,12 @@ const SitesOverview = ({
 															<span tw="text-left text-xs leading-4 font-normal text-white normal-case tracking-wider">
 																<p>
 																	<strong tw="block mb-3">Here are our findings:</strong>
-																	Apparently you have {statsData && statsData.num_pages_tls_non_ok} pages that have some
-																	TLS issues. You can check this
+																	Apparently you have{" "}
+																	{stats &&
+																		stats !== undefined &&
+																		Object.keys(stats).length > 0 &&
+																		stats.num_pages_tls_non_ok}{" "}
+																	pages that have some TLS issues. You can check this
 																	<strong tw="ml-1">
 																		{
 																			<Link
@@ -270,9 +236,11 @@ const SitesOverview = ({
 																	for more information.
 																</p>
 															</span>
-														</ReactTooltip>
+														</ReactTooltip> */}
 													</span>
 												</>
+											) : (
+												<SiteWarningStatus text="Checking" />
 											)
 										) : (
 											<SiteDangerStatus text="Unverified" />
@@ -293,10 +261,12 @@ const SitesOverview = ({
 							</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
 								{componentReady ? (
-									forceHttps && forceHttps !== undefined ? (
+									forceHttps === true ? (
 										<SiteSuccessStatus text="Yes" />
-									) : (
+									) : forceHttps === false ? (
 										<SiteDangerStatus text="No" />
+									) : (
+										<SiteWarningStatus text="Checking" />
 									)
 								) : (
 									<span tw="flex space-x-3">

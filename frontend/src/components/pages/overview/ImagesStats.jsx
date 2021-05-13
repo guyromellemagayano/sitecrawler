@@ -100,10 +100,12 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 	const router = useRouter();
 
 	useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
-	}, []);
+		if (stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0) {
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [stats]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/images`;
