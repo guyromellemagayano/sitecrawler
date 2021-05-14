@@ -69,8 +69,13 @@ export const imagesChartContents = [
 		color: "#e53e3e"
 	},
 	{
+		label: "Missing Alts",
+		filter: "missing_alts__gt=0",
+		color: "#c53030"
+	},
+	{
 		label: "No Issues",
-		filter: "status=OK&tls_status=OK",
+		filter: "status=OK&tls_status=OK&missing_alts__iszero=true",
 		color: "#48bb78"
 	}
 ];

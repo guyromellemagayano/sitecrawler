@@ -119,22 +119,21 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 	};
 
 	const chartSeries = [
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_non_ok_images !== undefined
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_non_ok_images !== undefined
 			? stats.num_non_ok_images
 			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_images_tls_non_ok !== undefined
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images_tls_non_ok !== undefined
 			? stats.num_images_tls_non_ok
 			: 0,
-		stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0 && stats.num_ok_images !== undefined
-			? stats.num_ok_images
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images_with_missing_alts !== undefined
+			? stats.num_images_with_missing_alts
+			: 0,
+		stats &&
+		stats !== undefined &&
+		Object.keys(stats).length > 0 &&
+		stats.num_ok_images !== undefined &&
+		stats.num_images_with_missing_alts !== undefined
+			? stats.num_ok_images - stats.num_images_with_missing_alts
 			: 0
 	];
 
@@ -265,7 +264,7 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 						<div tw="flex flex-col items-start h-530">
 							<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
 							<div tw="flex flex-col space-y-3 mt-16">
-								{[...Array(3)].map((value, key) => (
+								{[...Array(4)].map((value, key) => (
 									<span key={key} tw="space-x-3">
 										<Skeleton circle={true} width={20} height={20} />
 										<Skeleton width={150} height={20} />

@@ -215,6 +215,9 @@ const ImagesTable = (props) => {
 				)}
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+				{componentReady ? props.val.missing_alts : <Skeleton duration={2} width={45} />}
+			</td>
+			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? props.val.occurences : <Skeleton duration={2} width={45} />}
 			</td>
 		</ImagesTableDiv>

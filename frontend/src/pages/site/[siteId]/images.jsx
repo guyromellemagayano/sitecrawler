@@ -58,6 +58,7 @@ const initialOrder = {
 	imageSize: "default",
 	status: "default",
 	httpCode: "default",
+	missingAlts: "default",
 	occurrences: "default"
 };
 
@@ -65,6 +66,7 @@ const Images = ({ width, result }) => {
 	const [allFilter, setAllFilter] = useState(false);
 	const [crawlFinished, setCrawlFinished] = useState(false);
 	const [imageBrokenSecurityFilter, setImageBrokenSecurityFilter] = useState(false);
+	const [imageMissingAltsFilter, setImageMissingAltsFilter] = useState(false);
 	const [imageNotWorkingFilter, setImageNotWorkingFilter] = useState(false);
 	const [imagesData, setImagesData] = useState([]);
 	const [linksPerPage, setLinksPerPage] = useState(20);
@@ -80,7 +82,6 @@ const Images = ({ width, result }) => {
 	const [siteData, setSiteData] = useState([]);
 	const [siteIdData, setSiteIdData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
-	const [statsData, setStatsData] = useState([]);
 	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
@@ -96,11 +97,11 @@ const Images = ({ width, result }) => {
 
 	let images = [];
 	let mutateImages = [];
-	let mutatePages = [];
-	let pages = [];
 	let queryString = "";
 	let scanApiEndpoint = "";
 	let statusString = "";
+	let tlsStatusString = "";
+	let missingAltsString = "";
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -163,15 +164,24 @@ const Images = ({ width, result }) => {
 					: `?status=${statusString}`
 				: "";
 
-		const tlsStatusString = Array.isArray(result.tls_status)
-			? result.tls_status.join("&tls_status=")
-			: result.tls_status;
+		tlsStatusString = Array.isArray(result.tls_status) ? result.tls_status.join("&tls_status=") : result.tls_status;
 
 		queryString +=
 			result.tls_status !== undefined
 				? scanApiEndpoint.includes("?")
 					? `&tls_status=${tlsStatusString}`
 					: `?tls_status=${tlsStatusString}`
+				: "";
+
+		missingAltsString = Array.isArray(result.missing_alts__gt)
+			? result.missing_alts__gt.join("&missing_alts__gt=")
+			: result.missing_alts__gt;
+
+		queryString +=
+			result.missing_alts__gt !== undefined
+				? scanApiEndpoint.includes("?")
+					? `&missing_alts__gt=${result.missing_alts__gt}`
+					: `?missing_alts__gt=${result.missing_alts__gt}`
 				: "";
 
 		queryString +=
@@ -298,16 +308,19 @@ const Images = ({ width, result }) => {
 		if (filterType == "notWorking" && filterStatus == true) {
 			setImageNotWorkingFilter(true);
 			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(false);
 			setNoIssueFilter(false);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "status");
 			newPath = removeURLParameter(newPath, "tls_status");
+			newPath = removeURLParameter(newPath, "missing_alts__gt");
 
 			if (newPath.includes("?")) newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
 		} else if (filterType == "notWorking" && filterStatus == false) {
 			loadQueryString && loadQueryString.delete("status");
+			loadQueryString && loadQueryString.delete("missing_alts__gt");
 			loadQueryString && loadQueryString.delete("page");
 
 			if (newPath.includes("status")) {
@@ -320,21 +333,31 @@ const Images = ({ width, result }) => {
 		if (filterType == "no-issues" && filterStatus == true) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(false);
 			setNoIssueFilter(true);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "status");
 			newPath = removeURLParameter(newPath, "tls_status");
+			newPath = removeURLParameter(newPath, "missing_alts__gt");
 
-			if (newPath.includes("?")) newPath += `&status=OK&tls_status=OK`;
-			else newPath += `?status=OK&tls_status=OK`;
+			if (newPath.includes("?")) newPath += `&status=OK&tls_status=OK&missing_alts__iszero=true`;
+			else newPath += `?status=OK&tls_status=OK&missing_alts__iszero=true`;
 		} else if (filterType == "no-issues" && filterStatus == false) {
 			loadQueryString && loadQueryString.delete("status");
+			loadQueryString && loadQueryString.delete("missing_alts__iszero");
 			loadQueryString && loadQueryString.delete("tls_status");
 			loadQueryString && loadQueryString.delete("page");
 
-			if (newPath.includes("status") && newPath.includes("tls_status")) {
+			if (newPath.includes("status")) {
 				newPath = removeURLParameter(newPath, "status");
+			}
+
+			if (newPath.includes("missing_alts__iszero")) {
+				newPath = removeURLParameter(newPath, "missing_alts__iszero");
+			}
+
+			if (newPath.includes("tls_status")) {
 				newPath = removeURLParameter(newPath, "tls_status");
 			}
 
@@ -344,16 +367,19 @@ const Images = ({ width, result }) => {
 		if (filterType == "brokenSecurity" && filterStatus == true) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(true);
+			setImageMissingAltsFilter(false);
 			setNoIssueFilter(false);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "status");
 			newPath = removeURLParameter(newPath, "tls_status");
+			newPath = removeURLParameter(newPath, "missing_alts__gt");
 
 			if (newPath.includes("?")) newPath += `&tls_status=ERROR&tls_status=NONE`;
 			else newPath += `?tls_status=ERROR&tls_status=NONE`;
 		} else if (filterType == "brokenSecurity" && filterStatus == false) {
 			loadQueryString && loadQueryString.delete("tls_status");
+			loadQueryString && loadQueryString.delete("missing_alts__gt");
 			loadQueryString && loadQueryString.delete("page");
 
 			if (newPath.includes("tls_status")) {
@@ -363,14 +389,40 @@ const Images = ({ width, result }) => {
 			setImageBrokenSecurityFilter(false);
 		}
 
+		if (filterType == "missingAlts" && filterStatus == true) {
+			setImageNotWorkingFilter(false);
+			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(true);
+			setNoIssueFilter(false);
+			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, "status");
+			newPath = removeURLParameter(newPath, "tls_status");
+
+			if (newPath.includes("?")) newPath += `&missing_alts__gt=0`;
+			else newPath += `?missing_alts__gt=0`;
+		} else if (filterType == "missingAlts" && filterStatus == false) {
+			loadQueryString && loadQueryString.delete("missing_alts__gt");
+			loadQueryString && loadQueryString.delete("page");
+
+			if (newPath.includes("missing_alts__gt")) {
+				newPath = removeURLParameter(newPath, "missing_alts__gt");
+			}
+
+			setImageMissingAltsFilter(false);
+		}
+
 		if (filterType == "all" && filterStatus == true) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(false);
 			setNoIssueFilter(false);
 			setAllFilter(true);
 
 			newPath = removeURLParameter(newPath, "status");
 			newPath = removeURLParameter(newPath, "tls_status");
+			newPath = removeURLParameter(newPath, "missing_alts__gt");
+			newPath = removeURLParameter(newPath, "missing_alts__iszero");
 
 			// if (!newPath.includes("search") && !newPath.includes("status"))
 			//   newPath = newPath.replace("?", "");
@@ -437,13 +489,19 @@ const Images = ({ width, result }) => {
 		) {
 			setImageNotWorkingFilter(true);
 			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(false);
 			setAllFilter(false);
 			setNoIssueFilter(false);
 		}
 
-		if (loadQueryStringValue.get("status") === "OK" && loadQueryStringValue.get("tls_status") === "OK") {
+		if (
+			loadQueryStringValue.get("status") === "OK" &&
+			loadQueryStringValue.get("tls_status") === "OK" &&
+			loadQueryStringValue.get("missing_alts__iszero") === "true"
+		) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(false);
 			setAllFilter(false);
 			setNoIssueFilter(true);
 		}
@@ -454,13 +512,28 @@ const Images = ({ width, result }) => {
 		) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(true);
+			setImageMissingAltsFilter(false);
 			setAllFilter(false);
 			setNoIssueFilter(false);
 		}
 
-		if (!loadQueryStringValue.has("status") && !loadQueryStringValue.has("tls_status")) {
+		if (loadQueryStringValue.getAll("missing_alts__gt").includes("0")) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(true);
+			setAllFilter(false);
+			setNoIssueFilter(false);
+		}
+
+		if (
+			!loadQueryStringValue.has("status") &&
+			!loadQueryStringValue.has("tls_status") &&
+			!loadQueryStringValue.has("missing_alts__gt") &&
+			!loadQueryStringValue.has("missing_alts__iszero")
+		) {
+			setImageNotWorkingFilter(false);
+			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(false);
 			setAllFilter(true);
 			setNoIssueFilter(false);
 		}
@@ -476,6 +549,7 @@ const Images = ({ width, result }) => {
 		) {
 			setImageNotWorkingFilter(true);
 			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(false);
 			setNoIssueFilter(false);
 			setAllFilter(false);
 		}
@@ -488,6 +562,15 @@ const Images = ({ width, result }) => {
 		) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(true);
+			setImageMissingAltsFilter(false);
+			setNoIssueFilter(false);
+			setAllFilter(false);
+		}
+
+		if (result.missing_alts__gt !== undefined && result.missing_alts__gt.includes("0")) {
+			setImageNotWorkingFilter(false);
+			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(true);
 			setNoIssueFilter(false);
 			setAllFilter(false);
 		}
@@ -495,20 +578,29 @@ const Images = ({ width, result }) => {
 		if (
 			result.status !== undefined &&
 			result.tls_status !== undefined &&
+			result.missing_alts__iszero !== undefined &&
 			result.status.includes("OK") &&
-			result.tls_status.includes("OK")
+			result.tls_status.includes("OK") &&
+			result.missing_alts__iszero.includes("true")
 		) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
+			setImageMissingAltsFilter(false);
 			setNoIssueFilter(true);
 			setAllFilter(false);
 		}
 
 		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
-			if (result.status == undefined && result.tls_status == undefined) {
+			if (
+				result.status == undefined &&
+				result.tls_status == undefined &&
+				result.missing_alts__gt == undefined &&
+				result.missing_alts__iszero == undefined
+			) {
 				setImageNotWorkingFilter(false);
-				setNoIssueFilter(false);
 				setImageBrokenSecurityFilter(false);
+				setImageMissingAltsFilter(false);
+				setNoIssueFilter(false);
 				setAllFilter(true);
 			}
 		}
@@ -646,6 +738,7 @@ const Images = ({ width, result }) => {
 									noIssueFilter={noIssueFilter}
 									imageNotWorkingFilter={imageNotWorkingFilter}
 									imageBrokenSecurityFilter={imageBrokenSecurityFilter}
+									imageMissingAltsFilter={imageMissingAltsFilter}
 								/>
 							) : null}
 

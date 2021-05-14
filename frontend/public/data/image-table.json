@@ -18,6 +18,11 @@
 		"label": "Image Location"
 	},
 	{
+		"label": "Missing Alts",
+		"slug": "missing-alts",
+		"key": "missing_alts"
+	},
+	{
 		"label": "Occurrences",
 		"slug": "occurrences",
 		"key": "occurences"
