@@ -217,7 +217,10 @@ const PageDetail = ({ width, result }) => {
 												<div tw="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
 													<dt tw="text-sm leading-5 font-medium text-gray-500">Created at</dt>
 													<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-														{!user.settings.disableLocalTime ? (
+														{user &&
+														user !== undefined &&
+														Object.keys(user).length > 0 &&
+														!user.settings.disableLocalTime ? (
 															<>
 																<Moment calendar={calendarStrings} date={pageDetailData.created_at} local />
 																&nbsp;
