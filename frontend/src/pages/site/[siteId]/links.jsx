@@ -20,8 +20,8 @@ import LinksLabel from "public/labels/pages/site/links.json";
 import LinksUrlContent from "public/data/links-url.json";
 
 // Hooks
-import usePostMethod from "src/hooks/usePostMethod";
 import { useScan, useSite, useLinks, useSiteId } from "src/hooks/useSite";
+import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -105,14 +105,13 @@ const Links = ({ width, result }) => {
 
 	const { asPath } = useRouter();
 
-	const pageTitle =
-		siteIdData.name && siteIdData.name !== undefined
-			? LinksLabel[1].label + " - " + siteIdData.name
-			: LinksLabel[1].label;
-	const homeLabel = "Home";
-	const homePageLink = `/site/${result.siteId}/overview`;
-	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-	const sitesApiEndpoint = `/api/site/?ordering=name`;
+	let currentScanResults = [];
+	let homeLabel = "Home";
+	let homePageLink = `/site/${result.siteId}/overview`;
+	let pageTitle = "";
+	let previousScanResults = [];
+	let reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
+	let sitesApiEndpoint = `/api/site/?ordering=name`;
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -130,6 +129,11 @@ const Links = ({ width, result }) => {
 	const { siteId: siteId } = useSiteId({
 		querySid: result.siteId
 	});
+
+	if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+		pageTitle =
+			siteId.name && siteId.name !== undefined ? LinksLabel[1].label + " - " + siteId.name : LinksLabel[1].label;
+	}
 
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
