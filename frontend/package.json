@@ -6,9 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development NODE_OPTIONS='--inspect' next dev",
     "build": "NODE_ENV=production next build",
-    "start": "next start",
-    "storybook": "start-storybook -p 6006 -c ./.storybook/ -s ./",
-    "build-storybook": "build-storybook -c ./.storybook/ -s ./"
+    "start": "next start"
   },
   "browser": {
     "child_process": false
@@ -80,13 +78,6 @@
   "devDependencies": {
     "@babel/core": "^7.13.16",
     "@babel/preset-react": "^7.12.13",
-    "@storybook/addon-actions": "^6.2.9",
-    "@storybook/addon-essentials": "^6.2.9",
-    "@storybook/addon-links": "^6.2.9",
-    "@storybook/cli": "^6.2.9",
-    "@storybook/node-logger": "^6.2.9",
-    "@storybook/preset-create-react-app": "^3.1.7",
-    "@storybook/react": "^6.2.9",
     "@tailwindcss/jit": "^0.1.18",
     "autoprefixer": "^10.2.4",
     "babel-eslint": "^10.1.0",
