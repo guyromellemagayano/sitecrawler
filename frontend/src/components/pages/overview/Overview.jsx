@@ -23,7 +23,6 @@ const SiteWarningStatus = loadable(() => import("src/components/status/SiteWarni
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
 const SitesOverview = ({
-	id,
 	verified,
 	finishedAt,
 	forceHttps,
