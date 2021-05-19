@@ -26,8 +26,14 @@ class HumanReadableMultipleChoiceFilter(filters.MultipleChoiceFilter):
 
 class LinkFilter(filters.FilterSet):
     type = HumanReadableMultipleChoiceFilter(choices=Link.TYPE_CHOICES)
+    type__neq = HumanReadableMultipleChoiceFilter(field_name="type", choices=Link.TYPE_CHOICES, exclude=True)
     status = HumanReadableMultipleChoiceFilter(choices=Link.STATUS_CHOICES)
+    status__neq = HumanReadableMultipleChoiceFilter(field_name="status", choices=Link.STATUS_CHOICES, exclude=True)
     tls_status = HumanReadableMultipleChoiceFilter(choices=Link.TLS_STATUS_CHOICES)
+    tls_status__neq = HumanReadableMultipleChoiceFilter(
+        field_name="tls_status", choices=Link.TLS_STATUS_CHOICES, exclude=True
+    )
+    http_status__neq = filters.NumberFilter(field_name="http_status", exclude=True)
 
     class Meta:
         model = Link
