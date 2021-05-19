@@ -48,6 +48,16 @@ class ScanQuerySet(QuerySet):
             .annotate(num_pages_tls_non_ok=SubQueryCount(pages.annotate_tls().exclude(tls_total=1)))
             .annotate(num_images_tls_non_ok=SubQueryCount(images.exclude(tls_status=Link.TLS_OK)))
             .annotate(num_images_with_missing_alts=SubQueryCount(images.filter(cached_image_missing_alts__gt=0)))
+            .annotate(
+                num_images_fully_ok=SubQueryCount(
+                    images.images().filter(missing_alts=0, tls_status=Link.TLS_OK, status=Link.STATUS_OK)
+                )
+            )
+            .annotate(
+                num_pages_small_tls_ok=SubQueryCount(
+                    pages.annotate_size().annotate_tls().filter(size_total__lte=large_page_size_threshold, tls_total=1)
+                )
+            )
         )
 
 
