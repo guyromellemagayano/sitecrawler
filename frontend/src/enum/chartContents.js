@@ -75,7 +75,7 @@ export const imagesChartContents = [
 	},
 	{
 		label: "No Issues",
-		filter: "status=OK&tls_status=OK&missing_alts__iszero=true",
+		filter: "tls_status=OK&status=OK&missing_alts__iszero=true",
 		color: "#48bb78"
 	}
 ];

@@ -126,14 +126,10 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 			? stats.num_images_tls_non_ok
 			: 0,
 		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images_with_missing_alts !== undefined
-			? stats.num_images_with_missing_alts
+			? stats.num_images_fully_ok
 			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_ok_images !== undefined &&
-		stats.num_images_with_missing_alts !== undefined
-			? stats.num_ok_images - stats.num_images_with_missing_alts
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images_fully_ok !== undefined
+			? stats.num_images_fully_ok
 			: 0
 	];
 
