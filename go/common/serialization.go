@@ -23,6 +23,8 @@ func SerializeLoadError(log *zap.SugaredLogger, url string, err error) (int, str
 		status = STATUS_TOO_MANY_REDIRECTS
 	} else if strings.HasSuffix(err.Error(), "INTERNAL_ERROR") && strings.HasPrefix(err.Error(), "stream error:") {
 		return STATUS_OTHER_ERROR, "http2 internal error"
+	} else if strings.HasPrefix(err.Error(), "stream error:") {
+		return STATUS_OTHER_ERROR, "http2 other error"
 	} else if strings.Contains(err.Error(), ": x509: ") {
 		return STATUS_TLS_ERROR, LenLimit(
 			err.Error()[strings.Index(err.Error(), ": x509: ")+len(": x509: "):], 255,
