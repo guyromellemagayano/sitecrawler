@@ -23,8 +23,15 @@ try:
     AWS_REGION = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document", timeout=1).json()[
         "region"
     ]
-except:
+except Exception:
     AWS_REGION = "us-east-1"
+
+TESTING = sys.argv[1:2] == ["test"]
+IS_CRON = len(sys.argv) >= 2 and sys.argv[1].startswith("cron_")
+
+ENV = os.environ.get("ENV", "dev")
+if TESTING:
+    ENV = "test"
 
 
 def secret(*keys, default=None):
@@ -51,13 +58,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = secret("BACKEND_SECRET_KEY", default="3eqkw*0c+_*yw_syv8l1)b+i+8k=w^)3^j(0-89g)6&^(9bsv0")
-
-TESTING = sys.argv[1:2] == ["test"]
-IS_CRON = len(sys.argv) >= 2 and sys.argv[1].startswith("cron_")
-
-ENV = os.environ.get("ENV", "dev")
-if TESTING:
-    ENV = "test"
 
 AWS_SCAN_QUEUE_NAME = f"linkapp-{ENV}-scan"
 AWS_ACCESS_KEY_ID = None
