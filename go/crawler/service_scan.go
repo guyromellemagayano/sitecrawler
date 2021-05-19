@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -446,6 +447,15 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, urlStr 
 
 	statusCode := resp.StatusCode
 	crawlLink.HttpStatus = &statusCode
+
+	if handled, err := s.handleCloudflare(resp, crawlLink); handled {
+		if err != nil {
+			handleError(err)
+			return crawlLink, nil
+		}
+		return crawlLink, nil
+	}
+
 	if statusCode/100 != 2 {
 		crawlLink.Status = common.STATUS_HTTP_ERROR
 		statusStr := resp.Status
@@ -453,8 +463,7 @@ func (s *scanner) loadURL(log *zap.SugaredLogger, db *database.Database, urlStr 
 		return crawlLink, nil
 	}
 
-	contentType := strings.SplitN(resp.Header.Get("Content-Type"), ";", 2)
-	if contentType[0] == "text/html" {
+	if s.isHtmlContent(resp) {
 		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
 			handleError(err)
@@ -629,7 +638,37 @@ func (s *scanner) normalizeURL(parent string, child string) (string, error) {
 	return u.String(), nil
 }
 
+func (s *scanner) handleCloudflare(resp *common.LoadResponse, crawlLink *database.CrawlLink) (bool, error) {
+	if !(s.isHtmlContent(resp) && resp.StatusCode == http.StatusForbidden) {
+		return false, nil
+	}
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return true, err
+	}
+
+	isCloudflare := strings.Contains(
+		strings.ToLower(doc.Find("title").First().Text()),
+		"cloudflare",
+	)
+	if !isCloudflare {
+		return false, nil
+	}
+
+	crawlLink.Type = common.TYPE_EXTERNAL
+	blockedByCloudflare := "Blocked by Cloudflare"
+	crawlLink.Error = &blockedByCloudflare
+
+	return true, nil
+}
+
 func (s *scanner) isWebScheme(u *url.URL) bool {
 	scheme := strings.ToLower(u.Scheme)
 	return scheme == "http" || scheme == "https"
+}
+
+func (s *scanner) isHtmlContent(resp *common.LoadResponse) bool {
+	contentType := strings.SplitN(resp.Header.Get("Content-Type"), ";", 2)
+	return contentType[0] == "text/html"
 }
