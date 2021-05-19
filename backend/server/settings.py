@@ -20,7 +20,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 import stripe
 
 try:
-    AWS_REGION = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document", timeout=1).json()[
+    AWS_REGION = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document", timeout=0.2).json()[
         "region"
     ]
 except Exception:
@@ -33,6 +33,8 @@ ENV = os.environ.get("ENV", "dev")
 if TESTING:
     ENV = "test"
 
+secretmanager = boto3.client("secretsmanager", region_name=AWS_REGION)
+
 
 def secret(*keys, default=None):
     for key in keys:
@@ -42,7 +44,6 @@ def secret(*keys, default=None):
 
     for key in keys:
         try:
-            secretmanager = boto3.client("secretsmanager", region_name=AWS_REGION)
             return secretmanager.get_secret_value(SecretId=f"{ENV}/{key}")["SecretString"]
         except Exception:
             pass
@@ -139,7 +140,7 @@ if ENV != "dev" and ENV != "test":
 
 # add ec2 ip to allowed hosts for alb healthchecks
 try:
-    EC2_IP = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4").text
+    EC2_IP = requests.get("http://169.254.169.254/latest/meta-data/local-ipv4", timeout=0.2).text
     ALLOWED_HOSTS.append(EC2_IP)
 except requests.exceptions.RequestException:
     pass
