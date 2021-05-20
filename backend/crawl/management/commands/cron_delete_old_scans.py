@@ -21,7 +21,7 @@ class Command(BaseCommand):
                     self._archive_scan(scan)
                     scan_ids_to_be_deleted.append(scan.id)
 
-        self._delete_scans(scan_ids_to_be_deleted)
+        Scan.objects.raw_bulk_delete(scan_ids_to_be_deleted)
 
         self._vacuum()
 
@@ -50,46 +50,6 @@ class Command(BaseCommand):
             )
         except IntegrityError:
             pass
-
-    def _delete_scans(self, scan_ids):
-        scan_ids = tuple(scan_ids)
-        with connections["superuser"].cursor() as cursor:
-            print("Deleting link links", flush=True)
-            cursor.execute(
-                "DELETE FROM crawl_link_links WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
-                [scan_ids],
-            )
-            print("Deleting link images", flush=True)
-            cursor.execute(
-                "DELETE FROM crawl_link_images WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
-                [scan_ids],
-            )
-            print("Deleting link scripts", flush=True)
-            cursor.execute(
-                "DELETE FROM crawl_link_scripts WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
-                [scan_ids],
-            )
-            print("Deleting link stylesheets", flush=True)
-            cursor.execute(
-                "DELETE FROM crawl_link_stylesheets WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
-                [scan_ids],
-            )
-            print("Deleting pagedata", flush=True)
-            cursor.execute(
-                "DELETE FROM crawl_pagedata WHERE link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
-                [scan_ids],
-            )
-            print("Deleting links", flush=True)
-            cursor.execute("DELETE FROM crawl_link WHERE scan_id IN %s", [scan_ids])
-            print("Deleting fifo relations", flush=True)
-            cursor.execute(
-                "DELETE FROM crawl_fiforelation WHERE entry_id IN (SELECT id FROM crawl_fifoentry WHERE scan_id IN %s)",
-                [scan_ids],
-            )
-            print("Deleting fifo entries", flush=True)
-            cursor.execute("DELETE FROM crawl_fifoentry WHERE scan_id IN %s", [scan_ids])
-            print("Deleting scans", flush=True)
-            cursor.execute("DELETE FROM crawl_scan WHERE id IN %s", [scan_ids])
 
     def _vacuum(self):
         tables = ["crawl_link", "crawl_link_images", "crawl_link_scripts", "crawl_link_stylesheets", "crawl_link_links"]

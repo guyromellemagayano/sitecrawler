@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, connections
 from django.db.models import F, OuterRef, Q, Value
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
@@ -59,6 +59,51 @@ class ScanQuerySet(QuerySet):
                 )
             )
         )
+
+    def raw_bulk_delete(self, ids):
+        if not ids:
+            return
+        ids = tuple(ids)
+        print("Bulk scan delete", flush=True)
+        with connections["superuser"].cursor() as cursor:
+            print("Deleting link links", flush=True)
+            cursor.execute(
+                "DELETE FROM crawl_link_links WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
+                [ids],
+            )
+            print("Deleting link images", flush=True)
+            cursor.execute(
+                "DELETE FROM crawl_link_images WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
+                [ids],
+            )
+            print("Deleting link scripts", flush=True)
+            cursor.execute(
+                "DELETE FROM crawl_link_scripts WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
+                [ids],
+            )
+            print("Deleting link stylesheets", flush=True)
+            cursor.execute(
+                "DELETE FROM crawl_link_stylesheets WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
+                [ids],
+            )
+            print("Deleting pagedata", flush=True)
+            cursor.execute(
+                "DELETE FROM crawl_pagedata WHERE link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
+                [ids],
+            )
+            print("Deleting links", flush=True)
+            cursor.execute("DELETE FROM crawl_link WHERE scan_id IN (SELECT id FROM crawl_scan WHERE id IN %s)", [ids])
+            print("Deleting fifo relations", flush=True)
+            cursor.execute(
+                "DELETE FROM crawl_fiforelation WHERE entry_id IN (SELECT id FROM crawl_fifoentry WHERE scan_id IN %s)",
+                [ids],
+            )
+            print("Deleting fifo entries", flush=True)
+            cursor.execute(
+                "DELETE FROM crawl_fifoentry WHERE scan_id IN (SELECT id FROM crawl_scan WHERE id IN %s)", [ids]
+            )
+            print("Deleting scans", flush=True)
+            cursor.execute("DELETE FROM crawl_scan WHERE id IN %s", [ids])
 
 
 class Scan(models.Model):
