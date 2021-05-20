@@ -8,9 +8,11 @@ groups = ["node_security_group"]
 def deploy(i, c):
     common.docker_compose(i, c, "staging")
 
-    # deploy crontab only  on staging
+    # deploy crontab only on staging
     c.put("deploy/crontab.staging", "staging/crontab")
     c.run("cd staging && crontab crontab")
+    # pull images for crons
+    c.run("docker pull 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-reverifier")
 
 
 common.authorize_ingress(groups)

@@ -1,10 +1,10 @@
-module "cron_delete_old_scans" {
+module "cron_delete_expired_scans" {
   source = "./modules/ecs_cron"
 
-  name = "delete_old_scans"
+  name = "cron_delete_expired_scans"
   image = "400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend"
-  command = ["./manage.py", "cron_delete_old_scans"]
-  schedule = "cron(30 11 * * ? *)"
+  command = ["./manage.py", "cron_delete_expired_scans"]
+  schedule = "cron(00 11 * * ? *)"
   // must have public ip for now because otherwise ecr and secretmanager don't work in vpc
   // eventually we should set up endpoints for that, but it's somewhat complicated
   assign_public_ip = true
