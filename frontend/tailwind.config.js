@@ -23,7 +23,7 @@ module.exports = {
 				530: "530px"
 			},
 			spacing: {
-				42: "10.3rem"
+				16: "16rem"
 			}
 		},
 		screens: {

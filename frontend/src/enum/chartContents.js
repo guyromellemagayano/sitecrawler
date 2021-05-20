@@ -60,12 +60,12 @@ export const pagesChartContents = [
 export const imagesChartContents = [
 	{
 		label: "Broken Images",
-		filter: "status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR",
+		filter: "status__neq=OK",
 		color: "#f56565"
 	},
 	{
 		label: "Broken Security",
-		filter: "tls_status=ERROR&tls_status=NONE",
+		filter: "tls_status__neq=OK",
 		color: "#e53e3e"
 	},
 	{

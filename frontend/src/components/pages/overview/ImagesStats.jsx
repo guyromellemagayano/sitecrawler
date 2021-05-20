@@ -61,6 +61,9 @@ const SitesImagesStatsDiv = styled.div`
 		align-items: center;
 		border-bottom: 1px solid #e7efef;
 		padding-bottom: 10px;
+		outline: none;
+		-webkit-tap-highlight-color: transparent;
+		cursor: pointer;
 	}
 
 	.apexcharts-legend-series:last-child {
@@ -126,7 +129,7 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 			? stats.num_images_tls_non_ok
 			: 0,
 		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images_with_missing_alts !== undefined
-			? stats.num_images_fully_ok
+			? stats.num_images_with_missing_alts
 			: 0,
 		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images_fully_ok !== undefined
 			? stats.num_images_fully_ok

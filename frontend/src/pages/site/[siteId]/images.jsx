@@ -10,9 +10,8 @@ import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { PhotographIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw, { styled } from "twin.macro";
+import { styled } from "twin.macro";
 
 // JSON
 import ImagesLabel from "public/labels/pages/site/images.json";
@@ -28,19 +27,16 @@ import Layout from "src/components/Layout";
 
 // Components
 import ImageFilter from "src/components/helpers/filters/ImageFilter";
-import LinkOptions from "src/components/pages/overview/LinkOptions";
 import ImageSorting from "src/components/helpers/sorting/ImageSorting";
 import ImageTable from "src/components/tables/ImageTable";
-import MainSidebar from "src/components/sidebar/MainSidebar";
 import ImageTableSkeleton from "src/components/skeletons/ImageTableSkeleton";
-import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
+import LinkOptions from "src/components/pages/overview/LinkOptions";
+import Loader from "src/components/layouts/Loader";
+import MainSidebar from "src/components/sidebar/MainSidebar";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import MyPagination from "src/components/pagination/Pagination";
-
-// Loadable
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
+import SiteFooter from "src/components/layouts/Footer";
+import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
 
 // Helpers
 import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
@@ -63,42 +59,32 @@ const initialOrder = {
 };
 
 const Images = ({ width, result }) => {
-	const [allFilter, setAllFilter] = useState(false);
 	const [crawlFinished, setCrawlFinished] = useState(false);
-	const [imageBrokenSecurityFilter, setImageBrokenSecurityFilter] = useState(false);
-	const [imageMissingAltsFilter, setImageMissingAltsFilter] = useState(false);
-	const [imageNotWorkingFilter, setImageNotWorkingFilter] = useState(false);
-	const [imagesData, setImagesData] = useState([]);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [loadQueryString, setLoadQueryString] = useState("");
-	const [noIssueFilter, setNoIssueFilter] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [pagePath, setPagePath] = useState("");
 	const [recrawlable, setRecrawlable] = useState(false);
-	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [searchKey, setSearchKey] = useState("");
-	const [siteData, setSiteData] = useState([]);
-	const [siteIdData, setSiteIdData] = useState([]);
 	const [sortOrder, setSortOrder] = useState(initialOrder);
-	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
 
-	const pageTitle =
-		siteIdData.name && siteIdData.name !== undefined
-			? ImagesLabel[1].label + " - " + siteIdData.name
-			: ImagesLabel[1].label;
-	const homeLabel = "Home";
-	const homePageLink = `/site/${result.siteId}/overview`;
-	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-	const sitesApiEndpoint = `/api/site/?ordering=name`;
+	let pageTitle = "";
+	let homeLabel = "Home";
+	let homePageLink = `/site/${result.siteId}/overview`;
 
-	let images = [];
-	let mutateImages = [];
-	let queryString = "";
+	let reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
+	let sitesApiEndpoint = `/api/site/?ordering=name`;
+
 	let scanApiEndpoint = "";
+
+	let previousScanResults = [];
+	let currentScanResults = [];
+
+	let queryString = "";
 	let statusString = "";
 	let tlsStatusString = "";
 	let missingAltsString = "";
@@ -120,68 +106,74 @@ const Images = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
+	if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+		pageTitle =
+			siteId.name && siteId.name !== undefined ? ImagesLabel[1].label + " - " + siteId.name : ImagesLabel[1].label;
+	}
+
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
+				currentScanResults = scan.results.find((e) => e.finished_at === null);
+				previousScanResults = scan.results.find((e) => e.finished_at !== null);
 
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
-						.map((e) => {
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				);
+				if (currentScanResults !== [] || currentScanResults !== undefined) {
+					if (!crawlFinished) {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					} else {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					}
+				}
 			}
 		}
-	});
+	}, [crawlFinished, scan, scanObjId]);
 
 	if (
 		user &&
 		user !== undefined &&
-		user !== [] &&
-		Object.keys(user).length > 0 &&
 		user.permissions &&
 		user.permissions !== undefined &&
-		user.permissions.includes("can_see_images") &&
-		user.permissions.includes("can_see_pages") &&
-		user.permissions.includes("can_see_scripts") &&
-		user.permissions.includes("can_see_stylesheets") &&
-		user.permissions.includes("can_start_scan")
+		Object.keys(user.permissions).length > 0 &&
+		user.permissions.includes("can_see_images")
 	) {
 		scanApiEndpoint =
 			result.page !== undefined
 				? `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage + `&page=` + result.page
 				: `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
 
-		statusString = Array.isArray(result.status) ? result.status.join("&status=") : result.status;
+		statusString = result.status__neq;
 
 		queryString +=
-			result.status !== undefined
+			result.status__neq !== undefined
 				? scanApiEndpoint.includes("?")
-					? `&status=${statusString}`
-					: `?status=${statusString}`
+					? `&status__neq=${statusString}`
+					: `?status__neq=${statusString}`
 				: "";
 
-		tlsStatusString = Array.isArray(result.tls_status) ? result.tls_status.join("&tls_status=") : result.tls_status;
+		tlsStatusString = result.tls_status__neq;
 
 		queryString +=
-			result.tls_status !== undefined
+			result.tls_status__neq !== undefined
 				? scanApiEndpoint.includes("?")
-					? `&tls_status=${tlsStatusString}`
-					: `?tls_status=${tlsStatusString}`
+					? `&tls_status__neq=${tlsStatusString}`
+					: `?tls_status__neq=${tlsStatusString}`
 				: "";
 
-		missingAltsString = Array.isArray(result.missing_alts__gt)
-			? result.missing_alts__gt.join("&missing_alts__gt=")
-			: result.missing_alts__gt;
+		missingAltsString = result.missing_alts__gt;
 
 		queryString +=
 			result.missing_alts__gt !== undefined
 				? scanApiEndpoint.includes("?")
-					? `&missing_alts__gt=${result.missing_alts__gt}`
-					: `?missing_alts__gt=${result.missing_alts__gt}`
+					? `&missing_alts__gt=${missingAltsString}`
+					: `?missing_alts__gt=${missingAltsString}`
 				: "";
 
 		queryString +=
@@ -206,39 +198,35 @@ const Images = ({ width, result }) => {
 				: "";
 
 		scanApiEndpoint += queryString;
+
+		console.log(scanApiEndpoint);
 	}
 
-	({ images: images, mutateImages: mutateImages } = useImages({
+	const { images: images, mutateImages: mutateImages } = useImages({
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
-		scanObjId: scanObjId
-	}));
+		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId
+	});
 
 	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0) {
-			setUserData(user);
-		}
-
-		if (site && site !== undefined && Object.keys(site).length > 0) {
-			setSiteData(site);
-		}
-
-		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
-			setSiteIdData(siteId);
-		}
-
-		if (images && images !== undefined && Object.keys(images).length > 0) {
-			setImagesData(images);
-		}
-
-		if (userData && siteData && siteIdData && imagesData) {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0 &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0
+		) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [user, site, siteId, images]);
+	}, [user, site, siteId]);
 
-	const searchEventHandler = async (e) => {
+	const handleSearch = async (e) => {
 		const searchTargetValue = e.target.value;
 
 		if (e.keyCode !== 13) return false;
@@ -263,7 +251,7 @@ const Images = ({ width, result }) => {
 		mutateImages();
 	};
 
-	const SortHandler = (slug, dir) => {
+	const handleSort = (slug, dir) => {
 		setSortOrder({ ...initialOrder });
 
 		let newPath = removeURLParameter(asPath, "ordering");
@@ -290,151 +278,11 @@ const Images = ({ width, result }) => {
 			else newPath += `?ordering=${sortKey}`;
 		}
 
-		// console.log('[pagePath]', newPath)
 		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
 		Router.push(newPath);
 		mutateImages();
-	};
-
-	const filterChangeHandler = async (e) => {
-		const filterType = e.target.value;
-		const filterStatus = e.target.checked;
-
-		let newPath = asPath;
-		newPath = removeURLParameter(newPath, "page");
-
-		if (filterType == "notWorking" && filterStatus == true) {
-			setImageNotWorkingFilter(true);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "status");
-			newPath = removeURLParameter(newPath, "tls_status");
-			newPath = removeURLParameter(newPath, "missing_alts__gt");
-
-			if (newPath.includes("?")) newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
-			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
-		} else if (filterType == "notWorking" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("status");
-			loadQueryString && loadQueryString.delete("missing_alts__gt");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("status")) {
-				newPath = removeURLParameter(newPath, "status");
-			}
-
-			setImageNotWorkingFilter(false);
-		}
-
-		if (filterType == "no-issues" && filterStatus == true) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(true);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "status");
-			newPath = removeURLParameter(newPath, "tls_status");
-			newPath = removeURLParameter(newPath, "missing_alts__gt");
-
-			if (newPath.includes("?")) newPath += `&status=OK&tls_status=OK&missing_alts__iszero=true`;
-			else newPath += `?status=OK&tls_status=OK&missing_alts__iszero=true`;
-		} else if (filterType == "no-issues" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("status");
-			loadQueryString && loadQueryString.delete("missing_alts__iszero");
-			loadQueryString && loadQueryString.delete("tls_status");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("status")) {
-				newPath = removeURLParameter(newPath, "status");
-			}
-
-			if (newPath.includes("missing_alts__iszero")) {
-				newPath = removeURLParameter(newPath, "missing_alts__iszero");
-			}
-
-			if (newPath.includes("tls_status")) {
-				newPath = removeURLParameter(newPath, "tls_status");
-			}
-
-			setNoIssueFilter(false);
-		}
-
-		if (filterType == "brokenSecurity" && filterStatus == true) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(true);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "status");
-			newPath = removeURLParameter(newPath, "tls_status");
-			newPath = removeURLParameter(newPath, "missing_alts__gt");
-
-			if (newPath.includes("?")) newPath += `&tls_status=ERROR&tls_status=NONE`;
-			else newPath += `?tls_status=ERROR&tls_status=NONE`;
-		} else if (filterType == "brokenSecurity" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("tls_status");
-			loadQueryString && loadQueryString.delete("missing_alts__gt");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("tls_status")) {
-				newPath = removeURLParameter(newPath, "tls_status");
-			}
-
-			setImageBrokenSecurityFilter(false);
-		}
-
-		if (filterType == "missingAlts" && filterStatus == true) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(true);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "status");
-			newPath = removeURLParameter(newPath, "tls_status");
-
-			if (newPath.includes("?")) newPath += `&missing_alts__gt=0`;
-			else newPath += `?missing_alts__gt=0`;
-		} else if (filterType == "missingAlts" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("missing_alts__gt");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("missing_alts__gt")) {
-				newPath = removeURLParameter(newPath, "missing_alts__gt");
-			}
-
-			setImageMissingAltsFilter(false);
-		}
-
-		if (filterType == "all" && filterStatus == true) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(false);
-			setAllFilter(true);
-
-			newPath = removeURLParameter(newPath, "status");
-			newPath = removeURLParameter(newPath, "tls_status");
-			newPath = removeURLParameter(newPath, "missing_alts__gt");
-			newPath = removeURLParameter(newPath, "missing_alts__iszero");
-
-			// if (!newPath.includes("search") && !newPath.includes("status"))
-			//   newPath = newPath.replace("?", "");
-		}
-
-		if (newPath.includes("?")) setPagePath(`${newPath}&`);
-		else setPagePath(`${newPath}?`);
-
-		Router.push(newPath);
-		mutateImages();
-
-		return true;
 	};
 
 	const onItemsPerPageChange = (count) => {
@@ -462,151 +310,7 @@ const Images = ({ width, result }) => {
 		}
 	};
 
-	useEffect(() => {
-		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
-		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
-
-		if (result.search !== undefined) setSearchKey(result.search);
-
-		if (result.ordering !== undefined) {
-			const slug = getSlugFromSortKey(ImageTableContent, result.ordering.replace("-", ""));
-			const orderItem = slugToCamelcase(slug);
-
-			if (result.ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
-			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
-		}
-
-		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
-
-		setLoadQueryString(new URLSearchParams(window.location.search));
-
-		let loadQueryStringValue = new URLSearchParams(window.location.search);
-
-		if (
-			loadQueryStringValue.getAll("status").includes("TIMEOUT") &&
-			loadQueryStringValue.getAll("status").includes("HTTP_ERROR") &&
-			loadQueryStringValue.getAll("status").includes("OTHER_ERROR")
-		) {
-			setImageNotWorkingFilter(true);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setAllFilter(false);
-			setNoIssueFilter(false);
-		}
-
-		if (
-			loadQueryStringValue.get("status") === "OK" &&
-			loadQueryStringValue.get("tls_status") === "OK" &&
-			loadQueryStringValue.get("missing_alts__iszero") === "true"
-		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setAllFilter(false);
-			setNoIssueFilter(true);
-		}
-
-		if (
-			loadQueryStringValue.getAll("tls_status").includes("ERROR") &&
-			loadQueryStringValue.getAll("tls_status").includes("NONE")
-		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(true);
-			setImageMissingAltsFilter(false);
-			setAllFilter(false);
-			setNoIssueFilter(false);
-		}
-
-		if (loadQueryStringValue.getAll("missing_alts__gt").includes("0")) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(true);
-			setAllFilter(false);
-			setNoIssueFilter(false);
-		}
-
-		if (
-			!loadQueryStringValue.has("status") &&
-			!loadQueryStringValue.has("tls_status") &&
-			!loadQueryStringValue.has("missing_alts__gt") &&
-			!loadQueryStringValue.has("missing_alts__iszero")
-		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setAllFilter(true);
-			setNoIssueFilter(false);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (
-			result.status !== undefined &&
-			result.tls_status == undefined &&
-			result.status.includes("HTTP_ERROR") &&
-			result.status.includes("OTHER_ERROR") &&
-			result.status.includes("TIMEOUT")
-		) {
-			setImageNotWorkingFilter(true);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-		}
-
-		if (
-			result.status == undefined &&
-			result.tls_status !== undefined &&
-			result.tls_status.includes("ERROR") &&
-			result.tls_status.includes("NONE")
-		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(true);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-		}
-
-		if (result.missing_alts__gt !== undefined && result.missing_alts__gt.includes("0")) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(true);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-		}
-
-		if (
-			result.status !== undefined &&
-			result.tls_status !== undefined &&
-			result.missing_alts__iszero !== undefined &&
-			result.status.includes("OK") &&
-			result.tls_status.includes("OK") &&
-			result.missing_alts__iszero.includes("true")
-		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(true);
-			setAllFilter(false);
-		}
-
-		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
-			if (
-				result.status == undefined &&
-				result.tls_status == undefined &&
-				result.missing_alts__gt == undefined &&
-				result.missing_alts__iszero == undefined
-			) {
-				setImageNotWorkingFilter(false);
-				setImageBrokenSecurityFilter(false);
-				setImageMissingAltsFilter(false);
-				setNoIssueFilter(false);
-				setAllFilter(true);
-			}
-		}
-	}, [filterChangeHandler, loadQueryString]);
-
-	const onCrawlHandler = async () => {
+	const handleOnCrawl = async () => {
 		setCrawlFinished(false);
 
 		try {
@@ -626,119 +330,123 @@ const Images = ({ width, result }) => {
 		}
 	};
 
-	const crawlableHandler = (finished) => {
+	const handleCrawl = (finished) => {
 		if (finished) setCrawlFinished(true);
 
 		if (
 			user &&
 			user.permissions !== undefined &&
 			user.permissions.includes("can_start_scan") &&
-			siteIdData &&
-			siteIdData.verified &&
+			siteId &&
+			siteId.verified &&
 			finished
 		)
 			setRecrawlable(true);
 		else setRecrawlable(false);
 	};
 
-	return pageLoaded ? (
-		<Layout user={userData}>
+	useEffect(() => {
+		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
+		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
+
+		if (result.search !== undefined) setSearchKey(result.search);
+
+		if (result.ordering !== undefined) {
+			const slug = getSlugFromSortKey(ImageTableContent, result.ordering.replace("-", ""));
+			const orderItem = slugToCamelcase(slug);
+
+			if (result.ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
+		}
+
+		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
+	}, []);
+
+	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
+		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<ImagesDiv tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={userData}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<LinkOptions
 							sid={result.siteId}
-							user={userData}
+							user={user}
 							searchKey={searchKey}
-							onSearchEvent={searchEventHandler}
-							onCrawl={onCrawlHandler}
+							onSearchEvent={handleSearch}
+							onCrawl={handleOnCrawl}
 							crawlable={recrawlable}
 							crawlFinished={crawlFinished}
-							crawlableHandler={crawlableHandler}
+							crawlableHandler={handleCrawl}
 						/>
 					</div>
 
 					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto">
-							{pageLoaded ? (
-								<div className="max-w-full py-4 px-8">
-									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-										<ol tw="flex items-center space-x-4">
-											<li>
-												<div>
-													<Link href={homePageLink} passHref>
-														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-															<span tw="sr-only">{homeLabel}</span>
-														</a>
-													</Link>
-												</div>
-											</li>
-											<li>
-												<div tw="flex items-center">
-													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-														{pageTitle}
-													</p>
-												</div>
-											</li>
-										</ol>
-									</nav>
-									<div className="pt-4 m-auto">
-										<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-											{pageTitle}
-											{imagesData &&
-											imagesData !== undefined &&
-											imagesData !== [] &&
-											Object.keys(imagesData).length > 0 ? (
-												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-														<PhotographIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-														{imagesData.count > 1
-															? imagesData.count + " " + ImagesLabel[2].label
-															: imagesData.count == 1
-															? imagesData.count + " " + ImagesLabel[6].label
-															: ImagesLabel[3].label}
-													</dd>
-												</dl>
-											) : null}
-										</h4>
-									</div>
+							<div className="max-w-full py-4 px-8">
+								<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+									<ol tw="flex items-center space-x-4">
+										<li>
+											<div>
+												<Link href={homePageLink} passHref>
+													<a tw="text-gray-400 hover:text-gray-500">
+														<HomeIcon tw="flex-shrink-0 h-5 w-5" />
+														<span tw="sr-only">{homeLabel}</span>
+													</a>
+												</Link>
+											</div>
+										</li>
+										<li>
+											<div tw="flex items-center">
+												<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+												<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+													{pageTitle}
+												</p>
+											</div>
+										</li>
+									</ol>
+								</nav>
+								<div className="pt-4 m-auto">
+									<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
+										{pageTitle}
+										{images && images !== undefined && images !== [] && Object.keys(images).length > 0 ? (
+											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+													<PhotographIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+													{images.count > 1
+														? images.count + " " + ImagesLabel[2].label
+														: images.count == 1
+														? images.count + " " + ImagesLabel[6].label
+														: ImagesLabel[3].label}
+												</dd>
+											</dl>
+										) : null}
+									</h4>
 								</div>
-							) : (
-								<ProfileSkeleton />
-							)}
+							</div>
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-							{userData &&
-							userData !== undefined &&
-							userData !== [] &&
-							Object.keys(userData).length > 0 &&
-							userData.permissions &&
-							userData.permissions !== undefined &&
-							userData.permissions.includes("can_see_images") &&
-							userData.permissions.includes("can_see_pages") &&
-							userData.permissions.includes("can_see_scripts") &&
-							userData.permissions.includes("can_see_stylesheets") &&
-							userData.permissions.includes("can_start_scan") ? (
+							{user &&
+							user.permissions &&
+							Object.keys(user.permissions).length > 0 &&
+							user.permissions.includes("can_see_images") ? (
 								<ImageFilter
-									user={userData}
-									onFilterChange={filterChangeHandler}
-									allFilter={allFilter}
-									noIssueFilter={noIssueFilter}
-									imageNotWorkingFilter={imageNotWorkingFilter}
-									imageBrokenSecurityFilter={imageBrokenSecurityFilter}
-									imageMissingAltsFilter={imageMissingAltsFilter}
+									result={result}
+									loadQueryString={loadQueryString}
+									setLoadQueryString={setLoadQueryString}
+									mutateImages={mutateImages}
+									setPagePath={setPagePath}
 								/>
 							) : null}
 
@@ -753,27 +461,28 @@ const Images = ({ width, result }) => {
 															return (
 																<Fragment key={key}>
 																	<th
-																		css={[
-																			tw`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`,
-																			site.slug === "url-type" || site.slug === "occurrences"
-																				? "min-width-adjust"
-																				: "min-w-full"
-																		]}
+																		className="min-width-adjust"
+																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																	>
-																		<div tw="flex items-center justify-start">
-																			{site.slug !== undefined ? (
+																		<span tw="flex items-center justify-start">
+																			{user &&
+																			user.permissions &&
+																			Object.keys(user.permissions).length > 0 &&
+																			user.permissions.includes("can_see_images") &&
+																			site &&
+																			site !== undefined &&
+																			site.slug &&
+																			site.slug !== undefined ? (
 																				<ImageSorting
 																					sortOrder={sortOrder}
-																					onSortHandler={SortHandler}
-																					key={key}
+																					onSortHandler={handleSort}
 																					slug={site.slug}
-																					user={userData}
 																				/>
 																			) : null}
 																			<span className="label" tw="flex items-center">
 																				{site.label}
 																			</span>
-																		</div>
+																		</span>
 																	</th>
 																</Fragment>
 															);
@@ -781,47 +490,43 @@ const Images = ({ width, result }) => {
 													</tr>
 												</thead>
 												<tbody tw="relative">
-													{userData &&
-													userData !== undefined &&
-													userData !== [] &&
-													Object.keys(userData).length > 0 &&
-													userData.permissions &&
-													userData.permissions !== undefined &&
-													userData.permissions.includes("can_see_images") &&
-													userData.permissions.includes("can_see_pages") &&
-													userData.permissions.includes("can_see_scripts") &&
-													userData.permissions.includes("can_see_stylesheets") &&
-													userData.permissions.includes("can_start_scan") &&
-													imagesData &&
-													imagesData !== undefined &&
-													imagesData !== [] &&
-													Object.keys(imagesData).length > 0 &&
-													imagesData.results ? (
-														imagesData.results.map((val, key) => <ImageTable key={key} val={val} user={userData} />)
-													) : (
-														<>
-															<ImageTableSkeleton />
-															<UpgradeErrorAlert link="/settings/subscription-plans" />
-														</>
-													)}
+													{user &&
+													user.permissions &&
+													Object.keys(user.permissions).length > 0 &&
+													user.permissions.includes("can_see_images") &&
+													images &&
+													images !== undefined &&
+													Object.keys(images).length > 0 &&
+													images.results &&
+													images.results !== undefined
+														? images.results.map((val, key) => <ImageTable key={key} val={val} user={user} />)
+														: null}
+
+													{user && user.permissions && Object.keys(user.permissions).length === 0 ? (
+														<ImageTableSkeleton />
+													) : null}
 												</tbody>
 											</table>
+
+											{user && user.permissions && Object.keys(user.permissions).length === 0 ? (
+												<UpgradeErrorAlert link="/settings/subscription-plans" />
+											) : null}
 										</div>
 									</div>
 								</div>
 							</div>
 
-							{userData &&
-							userData !== undefined &&
-							userData !== [] &&
-							Object.keys(userData).length > 0 &&
-							userData.permissions &&
-							userData.permissions !== undefined &&
-							userData.permissions.includes("can_see_images") &&
-							userData.permissions.includes("can_see_pages") &&
-							userData.permissions.includes("can_see_scripts") &&
-							userData.permissions.includes("can_see_stylesheets") &&
-							userData.permissions.includes("can_start_scan") ? (
+							{user &&
+							user !== undefined &&
+							user !== [] &&
+							Object.keys(user).length > 0 &&
+							user.permissions &&
+							user.permissions !== undefined &&
+							user.permissions.includes("can_see_images") &&
+							user.permissions.includes("can_see_pages") &&
+							user.permissions.includes("can_see_scripts") &&
+							user.permissions.includes("can_see_stylesheets") &&
+							user.permissions.includes("can_start_scan") ? (
 								<MyPagination
 									href="/site/[siteId]/images/"
 									pathName={pagePath}

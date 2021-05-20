@@ -209,60 +209,48 @@ const SiteOverview = ({ width, result }) => {
 
 					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto min-h-screen">
-							{pageLoaded ? (
-								<div className="max-w-full py-4 px-8">
-									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-										<ol tw="flex items-center space-x-4">
-											<li>
-												<div>
-													<Link href={homePageLink} passHref>
-														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-															<span tw="sr-only">{homeLabel}</span>
-														</a>
-													</Link>
-												</div>
-											</li>
-											<li>
-												<div tw="flex items-center">
-													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-														{pageTitle}
-													</p>
-												</div>
-											</li>
-										</ol>
-									</nav>
+							<div className="max-w-full py-4 px-8">
+								<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+									<ol tw="flex items-center space-x-4">
+										<li>
+											<div>
+												<Link href={homePageLink} passHref>
+													<a tw="text-gray-400 hover:text-gray-500">
+														<HomeIcon tw="flex-shrink-0 h-5 w-5" />
+														<span tw="sr-only">{homeLabel}</span>
+													</a>
+												</Link>
+											</div>
+										</li>
+										<li>
+											<div tw="flex items-center">
+												<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+												<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+													{pageTitle}
+												</p>
+											</div>
+										</li>
+									</ol>
+								</nav>
 
-									<div className="pt-4 m-auto">
-										<h1 className="text-2xl leading-6 font-medium text-gray-900">{pageTitle}</h1>
-									</div>
+								<div className="pt-4 m-auto">
+									<h1 className="text-2xl leading-6 font-medium text-gray-900">{pageTitle}</h1>
 								</div>
-							) : (
-								<ProfileSkeleton />
-							)}
+							</div>
 
 							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 								<div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
-									{user &&
-										user !== undefined &&
-										Object.keys(user).length > 0 &&
-										stats &&
-										stats !== undefined &&
-										Object.keys(stats).length > 0 && (
-											<SitesStats
-												crawlableHandler={crawlableHandler}
-												user={user}
-												stats={stats}
-												previousScanDataActive={previousScanDataActive}
-												setPreviousScanDataActive={setPreviousScanDataActive}
-											/>
-										)}
+									{stats && stats !== undefined && Object.keys(stats).length > 0 && (
+										<SitesStats
+											crawlableHandler={crawlableHandler}
+											user={user}
+											stats={stats}
+											previousScanDataActive={previousScanDataActive}
+											setPreviousScanDataActive={setPreviousScanDataActive}
+										/>
+									)}
 
-									{user &&
-										user !== undefined &&
-										Object.keys(user).length > 0 &&
-										siteId &&
+									{siteId &&
 										siteId !== undefined &&
 										Object.keys(siteId).length > 0 &&
 										scan &&
