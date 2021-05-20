@@ -1,3 +1,5 @@
+// if you're adding a new cron that needs access to db,
+// be sure to make it's security group to allowed in `security_groups.tf`
 module "reverifier" {
   source = "./modules/ecs_cron"
 

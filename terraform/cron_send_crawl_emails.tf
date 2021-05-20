@@ -1,3 +1,5 @@
+// if you're adding a new cron that needs access to db,
+// be sure to make it's security group to allowed in `security_groups.tf`
 module "cron_send_crawl_emails_daily" {
   source = "./modules/ecs_cron"
 
