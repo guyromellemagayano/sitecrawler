@@ -560,8 +560,11 @@ const Pages = ({ width, result }) => {
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<LinkOptions
 							sid={result.siteId}
 							user={userData}

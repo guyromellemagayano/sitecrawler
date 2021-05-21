@@ -53,7 +53,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 			/>
 
 			<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-				<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
+				<div tw="relative z-10 flex-shrink-0 flex  bg-white border-b border-gray-200">
 					<div tw="flex-1 p-4 flex justify-between">
 						<div tw="flex-1 flex">
 							<div tw="w-full flex lg:ml-0">
