@@ -6,7 +6,7 @@ import tw from "twin.macro";
 import PropTypes from "prop-types";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 
-const AscSorting = React.forwardRef(({ selectedSort, handleClickEvent, isAscClicked, setIsAscClicked }, ref) => {
+const AscSorting = React.forwardRef(({ handleClickEvent, isAscClicked, setIsAscClicked }, ref) => {
 	React.useEffect(() => {
 		document.addEventListener("click", handleClickEvent, true);
 
@@ -21,5 +21,7 @@ const AscSorting = React.forwardRef(({ selectedSort, handleClickEvent, isAscClic
 		</button>
 	);
 });
+
+AscSorting.propTypes = {};
 
 export default AscSorting;

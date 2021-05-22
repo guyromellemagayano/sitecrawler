@@ -52,7 +52,7 @@ export const pagesChartContents = [
 	},
 	{
 		label: "No Issues",
-		filter: "tls_total=true",
+		filter: "tls_total=true&size_total_max=1048575",
 		color: "#48bb78"
 	}
 ];

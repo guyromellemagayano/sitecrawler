@@ -10,9 +10,8 @@ import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { DocumentIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw, { styled } from "twin.macro";
+import { styled } from "twin.macro";
 
 // JSON
 import LinksPagesContent from "public/data/links-pages.json";
@@ -28,19 +27,17 @@ import Layout from "src/components/Layout";
 
 // Components
 import LinkOptions from "src/components/pages/overview/LinkOptions";
+import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import MyPagination from "src/components/pagination/Pagination";
 import PageFilter from "src/components/helpers/filters/PageFilter";
 import PageSorting from "src/components/helpers/sorting/PageSorting";
 import PageTable from "src/components/tables/PageTable";
 import PageTableSkeleton from "src/components/skeletons/PageTableSkeleton";
 import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
-
-// Loadable
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
+import SiteFooter from "src/components/layouts/Footer";
+import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
 
 // Helpers
 import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
@@ -48,24 +45,15 @@ import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSor
 const PagesDiv = styled.section`
 	@media only screen and (max-width: 960px) {
 		.min-width-adjust {
-			min-width: 12rem;
+			min-width: 15rem;
 		}
 	}
 `;
 
-const initialOrder = {
-	pageLargePages: "default",
-	pageBrokenSecurity: "default"
-};
-
 const Pages = ({ width, result }) => {
-	const [allFilter, setAllFilter] = useState(false);
-	const [brokenSecurityFilter, setBrokenSecurityFilter] = useState(false);
 	const [crawlFinished, setCrawlFinished] = useState(false);
-	const [largePageSizeFilter, setLargePageSizeFilter] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [loadQueryString, setLoadQueryString] = useState("");
-	const [noIssueFilter, setNoIssueFilter] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [pagePath, setPagePath] = useState("");
@@ -76,10 +64,10 @@ const Pages = ({ width, result }) => {
 	const [searchKey, setSearchKey] = useState("");
 	const [siteData, setSiteData] = useState([]);
 	const [siteIdData, setSiteIdData] = useState([]);
-	const [sortOrder, setSortOrder] = useState(initialOrder);
 	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
+	const router = useRouter();
 
 	const pageTitle =
 		siteIdData.name && siteIdData.name !== undefined
@@ -247,119 +235,8 @@ const Pages = ({ width, result }) => {
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push(newPath);
-		mutatePages();
-	};
-
-	const filterChangeHandler = async (e) => {
-		const filterType = e.target.value;
-		const filterStatus = e.target.checked;
-
-		let newPath = asPath;
-		newPath = removeURLParameter(newPath, "page");
-
-		if (filterType == "no-issues" && filterStatus == true) {
-			setNoIssueFilter(true);
-			setLargePageSizeFilter(false);
-			setBrokenSecurityFilter(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "size_total_max");
-			newPath = removeURLParameter(newPath, "size_total_min");
-			newPath = removeURLParameter(newPath, "tls_total");
-
-			if (newPath.includes("?")) newPath += `&size_total_max=1048575&tls_total=true`;
-			else newPath += `?size_total_max=1048575&tls_total=true`;
-		} else if (filterType == "no-issues" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("size_total_max");
-			// loadQueryString && loadQueryString.delete('size_total_min');
-			loadQueryString && loadQueryString.delete("tls_total");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (
-				newPath.includes("size_total_max") &&
-				newPath.includes("tls_total")
-				// newPath.includes('size_total_min')
-			) {
-				newPath = removeURLParameter(newPath, "size_total_max");
-				// newPath = removeURLParameter(newPath, 'size_total_min');
-				newPath = removeURLParameter(newPath, "tls_total");
-			}
-
-			setNoIssueFilter(false);
-		}
-
-		if (filterType == "pageLargePages" && filterStatus == true) {
-			setLargePageSizeFilter(true);
-			setNoIssueFilter(false);
-			setBrokenSecurityFilter(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "size_total_max");
-			newPath = removeURLParameter(newPath, "size_total_min");
-			newPath = removeURLParameter(newPath, "tls_total");
-
-			if (newPath.includes("?")) newPath += `&size_total_min=1048576`;
-			else newPath += `?size_total_min=1048576`;
-		} else if (filterType == "pageLargePages" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("size_total_min");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("size_total_min")) {
-				newPath = removeURLParameter(newPath, "size_total_min");
-			}
-
-			setLargePageSizeFilter(false);
-		}
-
-		if (filterType == "pageBrokenSecurity" && filterStatus == true) {
-			setBrokenSecurityFilter(true);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "size_total_min");
-			newPath = removeURLParameter(newPath, "size_total_max");
-			newPath = removeURLParameter(newPath, "tls_total");
-
-			if (newPath.includes("?")) newPath += `&tls_total=false`;
-			else newPath += `?tls_total=false`;
-		} else if (filterType == "pageBrokenSecurity" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("tls_total");
-			loadQueryString && loadQueryString.delete("size_total_min");
-			loadQueryString && loadQueryString.delete("size_total_max");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("tls_total")) {
-				newPath = removeURLParameter(newPath, "size_total_max");
-				newPath = removeURLParameter(newPath, "size_total_min");
-				newPath = removeURLParameter(newPath, "tls_total");
-			}
-
-			setBrokenSecurityFilter(false);
-		}
-
-		if (filterType == "all" && filterStatus == true) {
-			setNoIssueFilter(false);
-			setLargePageSizeFilter(false);
-			setBrokenSecurityFilter(false);
-			setAllFilter(true);
-
-			newPath = removeURLParameter(newPath, "size_total_min");
-			newPath = removeURLParameter(newPath, "size_total_max");
-			newPath = removeURLParameter(newPath, "tls_total");
-
-			// if (!newPath.includes("search") && !newPath.includes("size_total_min"))
-			//   newPath = newPath.replace("?", "");
-		}
-
-		if (newPath.includes("?")) setPagePath(`${newPath}&`);
-		else setPagePath(`${newPath}?`);
-
-		// console.log(newPath);
-
-		Router.push(newPath);
-		mutatePages();
-
-		return true;
+		router.push(newPath);
+		mutatePages;
 	};
 
 	const onItemsPerPageChange = (count) => {
@@ -393,124 +270,8 @@ const Pages = ({ width, result }) => {
 
 		if (result.search !== undefined) setSearchKey(result.search);
 
-		if (result.ordering !== undefined) {
-			const slug = getSlugFromSortKey(LinksPagesContent, result.ordering.replace("-", ""));
-			const orderItem = slugToCamelcase(slug);
-
-			if (result.ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
-			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
-		}
-
 		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
-
-		setLoadQueryString(new URLSearchParams(window.location.search));
-
-		let loadQueryStringValue = new URLSearchParams(window.location.search);
-
-		if (loadQueryStringValue.has("size_total_min")) {
-			setLargePageSizeFilter(true);
-			setAllFilter(false);
-			setNoIssueFilter(false);
-			setBrokenSecurityFilter(false);
-		}
-
-		if (loadQueryStringValue.get("tls_total") === "false") {
-			setBrokenSecurityFilter(true);
-			setLargePageSizeFilter(false);
-			setAllFilter(false);
-			setNoIssueFilter(false);
-		}
-
-		if (loadQueryStringValue.has("size_total_max") && loadQueryStringValue.get("tls_total") === "true") {
-			setBrokenSecurityFilter(false);
-			setLargePageSizeFilter(false);
-			setAllFilter(false);
-			setNoIssueFilter(true);
-		}
-
-		if (
-			!loadQueryStringValue.has("size_total_max") &&
-			!loadQueryStringValue.has("size_total_min") &&
-			!loadQueryStringValue.has("tls_total")
-		) {
-			setLargePageSizeFilter(false);
-			setBrokenSecurityFilter(false);
-			setNoIssueFilter(false);
-			setAllFilter(true);
-		}
 	}, []);
-
-	useEffect(() => {
-		if (result.size_total_max !== undefined && result.tls_total !== undefined && result.tls_total == "true") {
-			loadQueryString && loadQueryString.delete("size_total_min");
-
-			setNoIssueFilter(true);
-			setBrokenSecurityFilter(false);
-			setLargePageSizeFilter(false);
-			setAllFilter(false);
-		}
-
-		if (result.size_total_min !== undefined) {
-			loadQueryString && loadQueryString.delete("size_total_max");
-			loadQueryString && loadQueryString.delete("tls_total");
-
-			setNoIssueFilter(false);
-			setBrokenSecurityFilter(false);
-			setLargePageSizeFilter(true);
-			setAllFilter(false);
-		}
-
-		if (result.tls_total !== undefined && result.tls_total == "false") {
-			setNoIssueFilter(false);
-			setBrokenSecurityFilter(true);
-			setLargePageSizeFilter(false);
-			setAllFilter(false);
-		}
-
-		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
-			if (result.size_total_max == undefined && result.size_total_min == undefined && result.tls_total == undefined) {
-				setLargePageSizeFilter(false);
-				setNoIssueFilter(false);
-				setBrokenSecurityFilter(false);
-				setAllFilter(true);
-			}
-		}
-	}, [filterChangeHandler, loadQueryString]);
-
-	const SortHandler = (slug, dir) => {
-		setSortOrder({ ...initialOrder });
-
-		let newPath = removeURLParameter(asPath, "ordering");
-
-		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(LinksPagesContent, slug);
-
-		if (sortOrder[sortItem] == "default") {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
-			if (dir == "asc") {
-				if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-				else newPath += `?ordering=${sortKey}`;
-			} else {
-				if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-				else newPath += `?ordering=-${sortKey}`;
-			}
-		} else if (sortOrder[sortItem] == "asc") {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }));
-			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-			else newPath += `?ordering=-${sortKey}`;
-		} else {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }));
-			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-			else newPath += `?ordering=${sortKey}`;
-		}
-
-		// console.log('[pagePath]', newPath)
-		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
-		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
-
-		Router.push(newPath);
-		mutatePages();
-	};
 
 	const onCrawlHandler = async () => {
 		setCrawlFinished(false);
@@ -626,23 +387,16 @@ const Pages = ({ width, result }) => {
 							)}
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-							{userData &&
-							userData !== undefined &&
-							userData !== [] &&
-							Object.keys(userData).length > 0 &&
-							userData.permissions &&
-							userData.permissions !== undefined &&
-							userData.permissions.includes("can_see_images") &&
-							userData.permissions.includes("can_see_pages") &&
-							userData.permissions.includes("can_see_scripts") &&
-							userData.permissions.includes("can_see_stylesheets") &&
-							userData.permissions.includes("can_start_scan") ? (
+							{user &&
+							user.permissions &&
+							Object.keys(user.permissions).length > 0 &&
+							user.permissions.includes("can_see_pages") ? (
 								<PageFilter
-									onFilterChange={filterChangeHandler}
-									allFilter={allFilter}
-									noIssueFilter={noIssueFilter}
-									largePageSizeFilter={largePageSizeFilter}
-									brokenSecurityFilter={brokenSecurityFilter}
+									result={result}
+									loadQueryString={loadQueryString}
+									setLoadQueryString={setLoadQueryString}
+									mutatePages={mutatePages}
+									setPagePath={setPagePath}
 								/>
 							) : null}
 
@@ -657,27 +411,30 @@ const Pages = ({ width, result }) => {
 															return (
 																<Fragment key={key}>
 																	<th
-																		css={[
-																			tw`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`,
-																			site.slug === "url-type" || site.slug === "occurrences"
-																				? "min-width-adjust"
-																				: "min-w-full"
-																		]}
+																		className="min-width-adjust"
+																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																	>
-																		<div tw="flex items-center justify-start">
-																			{site.slug !== undefined ? (
+																		<span tw="flex items-center justify-start">
+																			{user &&
+																			user.permissions &&
+																			Object.keys(user.permissions).length > 0 &&
+																			user.permissions.includes("can_see_pages") &&
+																			site &&
+																			site !== undefined &&
+																			site.slug &&
+																			site.slug !== undefined ? (
 																				<PageSorting
-																					sortOrder={sortOrder}
-																					onSortHandler={SortHandler}
-																					key={key}
+																					result={result}
 																					slug={site.slug}
-																					user={userData}
+																					mutatePages={mutatePages}
+																					linksPagesContent={LinksPagesContent}
+																					setPagePath={setPagePath}
 																				/>
 																			) : null}
-																			<div tw="flex items-center space-x-2">
-																				<span className="label">{site.label}</span>
-																			</div>
-																		</div>
+																			<span className="label" tw="flex items-center">
+																				{site.label}
+																			</span>
+																		</span>
 																	</th>
 																</Fragment>
 															);
@@ -685,31 +442,27 @@ const Pages = ({ width, result }) => {
 													</tr>
 												</thead>
 												<tbody tw="relative">
-													{userData &&
-													userData !== undefined &&
-													userData !== [] &&
-													Object.keys(userData).length > 0 &&
-													userData.permissions &&
-													userData.permissions !== undefined &&
-													userData.permissions.includes("can_see_images") &&
-													userData.permissions.includes("can_see_pages") &&
-													userData.permissions.includes("can_see_scripts") &&
-													userData.permissions.includes("can_see_stylesheets") &&
-													userData.permissions.includes("can_start_scan") &&
-													pagesData &&
-													pagesData !== undefined &&
-													pagesData !== [] &&
-													Object.keys(pagesData).length > 0 &&
-													pagesData.results ? (
-														pagesData.results.map((val, key) => <PageTable key={key} val={val} user={userData} />)
-													) : (
-														<>
-															<PageTableSkeleton />
-															<UpgradeErrorAlert link="/settings/subscription-plans" />
-														</>
-													)}
+													{user &&
+													user.permissions &&
+													Object.keys(user.permissions).length > 0 &&
+													user.permissions.includes("can_see_pages") &&
+													pages &&
+													pages !== undefined &&
+													Object.keys(pages).length > 0 &&
+													pages.results &&
+													pages.results !== undefined
+														? pages.results.map((val, key) => <PageTable key={key} val={val} user={user} />)
+														: null}
+
+													{user && user.permissions && Object.keys(user.permissions).length === 0 ? (
+														<PageTableSkeleton />
+													) : null}
 												</tbody>
 											</table>
+
+											{user && user.permissions && Object.keys(user.permissions).length === 0 ? (
+												<UpgradeErrorAlert link="/settings/subscription-plans" />
+											) : null}
 										</div>
 									</div>
 								</div>

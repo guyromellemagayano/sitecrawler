@@ -100,7 +100,7 @@ const SitesPagesStats = ({ width, sid, stats }) => {
 	const router = useRouter();
 
 	useEffect(() => {
-		if (stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
@@ -119,13 +119,17 @@ const SitesPagesStats = ({ width, sid, stats }) => {
 	};
 
 	const chartSeries = [
-		stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0 && stats.num_pages_big !== undefined
+		stats &&
+		stats !== undefined &&
+		Object.keys(stats).length > 0 &&
+		stats.num_pages_big &&
+		stats.num_pages_big !== undefined
 			? stats.num_pages_big
 			: 0,
 		stats &&
 		stats !== undefined &&
-		stats !== [] &&
 		Object.keys(stats).length > 0 &&
+		stats.num_pages_tls_non_ok &&
 		stats.num_pages_tls_non_ok !== undefined
 			? stats.num_pages_tls_non_ok
 			: 0,
@@ -133,8 +137,9 @@ const SitesPagesStats = ({ width, sid, stats }) => {
 		stats !== undefined &&
 		stats !== [] &&
 		Object.keys(stats).length > 0 &&
-		stats.num_pages_tls_ok !== undefined
-			? stats.num_pages_tls_ok
+		stats.num_pages_small_tls_ok &&
+		stats.num_pages_small_tls_ok !== undefined
+			? stats.num_pages_small_tls_ok
 			: 0
 	];
 

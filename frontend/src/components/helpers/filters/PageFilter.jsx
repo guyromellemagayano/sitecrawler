@@ -1,10 +1,202 @@
-import "twin.macro";
-import PropTypes from "prop-types";
+// React
+import * as React from "react";
 
-const PageFilter = ({ onFilterChange, allFilter, noIssueFilter, largePageSizeFilter, brokenSecurityFilter }) => {
-	const filterHandler = (e) => {
-		onFilterChange(e);
+// NextJS
+import { useRouter } from "next/router";
+
+// External
+import "twin.macro";
+
+// Helpers
+import { removeURLParameter } from "src/helpers/functions";
+
+const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, setPagePath }) => {
+	const [allFilter, setAllFilter] = React.useState(false);
+	const [brokenSecurityFilter, setBrokenSecurityFilter] = React.useState(false);
+	const [largePageSizeFilter, setLargePageSizeFilter] = React.useState(false);
+	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
+
+	const { asPath } = useRouter();
+	const router = useRouter();
+
+	const handleFilter = async (e) => {
+		const filterType = e.target.value;
+		const filterStatus = e.target.checked;
+
+		let newPath = asPath;
+		newPath = removeURLParameter(newPath, "page");
+
+		if (filterType == "no-issues" && filterStatus == true) {
+			setNoIssueFilter(true);
+			setLargePageSizeFilter(false);
+			setBrokenSecurityFilter(false);
+			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, "size_total_max");
+			newPath = removeURLParameter(newPath, "size_total_min");
+			newPath = removeURLParameter(newPath, "tls_total");
+
+			if (newPath.includes("?")) newPath += `&size_total_max=1048575&tls_total=true`;
+			else newPath += `?size_total_max=1048575&tls_total=true`;
+		} else if (filterType == "no-issues" && filterStatus == false) {
+			loadQueryString && loadQueryString.delete("size_total_max");
+			// loadQueryString && loadQueryString.delete('size_total_min');
+			loadQueryString && loadQueryString.delete("tls_total");
+			loadQueryString && loadQueryString.delete("page");
+
+			if (
+				newPath.includes("size_total_max") &&
+				newPath.includes("tls_total")
+				// newPath.includes('size_total_min')
+			) {
+				newPath = removeURLParameter(newPath, "size_total_max");
+				// newPath = removeURLParameter(newPath, 'size_total_min');
+				newPath = removeURLParameter(newPath, "tls_total");
+			}
+
+			setNoIssueFilter(false);
+		}
+
+		if (filterType == "pageLargePages" && filterStatus == true) {
+			setLargePageSizeFilter(true);
+			setNoIssueFilter(false);
+			setBrokenSecurityFilter(false);
+			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, "size_total_max");
+			newPath = removeURLParameter(newPath, "size_total_min");
+			newPath = removeURLParameter(newPath, "tls_total");
+
+			if (newPath.includes("?")) newPath += `&size_total_min=1048576`;
+			else newPath += `?size_total_min=1048576`;
+		} else if (filterType == "pageLargePages" && filterStatus == false) {
+			loadQueryString && loadQueryString.delete("size_total_min");
+			loadQueryString && loadQueryString.delete("page");
+
+			if (newPath.includes("size_total_min")) {
+				newPath = removeURLParameter(newPath, "size_total_min");
+			}
+
+			setLargePageSizeFilter(false);
+		}
+
+		if (filterType == "pageBrokenSecurity" && filterStatus == true) {
+			setBrokenSecurityFilter(true);
+			setAllFilter(false);
+
+			newPath = removeURLParameter(newPath, "size_total_min");
+			newPath = removeURLParameter(newPath, "size_total_max");
+			newPath = removeURLParameter(newPath, "tls_total");
+
+			if (newPath.includes("?")) newPath += `&tls_total=false`;
+			else newPath += `?tls_total=false`;
+		} else if (filterType == "pageBrokenSecurity" && filterStatus == false) {
+			loadQueryString && loadQueryString.delete("tls_total");
+			loadQueryString && loadQueryString.delete("size_total_min");
+			loadQueryString && loadQueryString.delete("size_total_max");
+			loadQueryString && loadQueryString.delete("page");
+
+			if (newPath.includes("tls_total")) {
+				newPath = removeURLParameter(newPath, "size_total_max");
+				newPath = removeURLParameter(newPath, "size_total_min");
+				newPath = removeURLParameter(newPath, "tls_total");
+			}
+
+			setBrokenSecurityFilter(false);
+		}
+
+		if (filterType == "all" && filterStatus == true) {
+			setNoIssueFilter(false);
+			setLargePageSizeFilter(false);
+			setBrokenSecurityFilter(false);
+			setAllFilter(true);
+
+			newPath = removeURLParameter(newPath, "size_total_min");
+			newPath = removeURLParameter(newPath, "size_total_max");
+			newPath = removeURLParameter(newPath, "tls_total");
+		}
+
+		if (newPath.includes("?")) setPagePath(`${newPath}&`);
+		else setPagePath(`${newPath}?`);
+
+		router.push(newPath);
+		mutatePages();
 	};
+
+	React.useEffect(() => {
+		setLoadQueryString(new URLSearchParams(window.location.search));
+
+		let loadQueryStringValue = new URLSearchParams(window.location.search);
+
+		if (loadQueryStringValue.has("size_total_min")) {
+			setLargePageSizeFilter(true);
+			setAllFilter(false);
+			setNoIssueFilter(false);
+			setBrokenSecurityFilter(false);
+		}
+
+		if (loadQueryStringValue.get("tls_total") === "false") {
+			setBrokenSecurityFilter(true);
+			setLargePageSizeFilter(false);
+			setAllFilter(false);
+			setNoIssueFilter(false);
+		}
+
+		if (loadQueryStringValue.has("size_total_max") && loadQueryStringValue.get("tls_total") === "true") {
+			setBrokenSecurityFilter(false);
+			setLargePageSizeFilter(false);
+			setAllFilter(false);
+			setNoIssueFilter(true);
+		}
+
+		if (
+			!loadQueryStringValue.has("size_total_max") &&
+			!loadQueryStringValue.has("size_total_min") &&
+			!loadQueryStringValue.has("tls_total")
+		) {
+			setLargePageSizeFilter(false);
+			setBrokenSecurityFilter(false);
+			setNoIssueFilter(false);
+			setAllFilter(true);
+		}
+	}, []);
+
+	React.useEffect(() => {
+		if (result.size_total_max !== undefined && result.tls_total !== undefined && result.tls_total == "true") {
+			loadQueryString && loadQueryString.delete("size_total_min");
+
+			setNoIssueFilter(true);
+			setBrokenSecurityFilter(false);
+			setLargePageSizeFilter(false);
+			setAllFilter(false);
+		}
+
+		if (result.size_total_min !== undefined) {
+			loadQueryString && loadQueryString.delete("size_total_max");
+			loadQueryString && loadQueryString.delete("tls_total");
+
+			setNoIssueFilter(false);
+			setBrokenSecurityFilter(false);
+			setLargePageSizeFilter(true);
+			setAllFilter(false);
+		}
+
+		if (result.tls_total !== undefined && result.tls_total == "false") {
+			setNoIssueFilter(false);
+			setBrokenSecurityFilter(true);
+			setLargePageSizeFilter(false);
+			setAllFilter(false);
+		}
+
+		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
+			if (result.size_total_max == undefined && result.size_total_min == undefined && result.tls_total == undefined) {
+				setLargePageSizeFilter(false);
+				setNoIssueFilter(false);
+				setBrokenSecurityFilter(false);
+				setAllFilter(true);
+			}
+		}
+	}, [handleFilter, loadQueryString]);
 
 	return (
 		<div tw="sticky z-10 top-0 pb-4 bg-white">
@@ -17,7 +209,7 @@ const PageFilter = ({ onFilterChange, allFilter, noIssueFilter, largePageSizeFil
 								<input
 									type="checkbox"
 									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={filterHandler}
+									onChange={handleFilter}
 									checked={allFilter}
 									value="all"
 								/>
@@ -31,7 +223,7 @@ const PageFilter = ({ onFilterChange, allFilter, noIssueFilter, largePageSizeFil
 								<input
 									type="checkbox"
 									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={filterHandler}
+									onChange={handleFilter}
 									checked={largePageSizeFilter}
 									value="pageLargePages"
 								/>
@@ -45,7 +237,7 @@ const PageFilter = ({ onFilterChange, allFilter, noIssueFilter, largePageSizeFil
 								<input
 									type="checkbox"
 									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={filterHandler}
+									onChange={handleFilter}
 									checked={brokenSecurityFilter}
 									value="pageBrokenSecurity"
 								/>
@@ -61,7 +253,7 @@ const PageFilter = ({ onFilterChange, allFilter, noIssueFilter, largePageSizeFil
 								<input
 									type="checkbox"
 									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={filterHandler}
+									onChange={handleFilter}
 									checked={noIssueFilter}
 									value="no-issues"
 								/>

@@ -42,9 +42,11 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 		if (dir == "asc") {
 			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
 			else newPath += `?ordering=${sortKey}`;
-		} else {
+		} else if (dir == "desc") {
 			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
 			else newPath += `?ordering=-${sortKey}`;
+		} else {
+			newPath = removeURLParameter(newPath, "ordering");
 		}
 
 		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);

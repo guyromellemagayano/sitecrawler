@@ -22,4 +22,6 @@ const DescSorting = React.forwardRef(({ handleClickEvent, isDescClicked, setIsDe
 	);
 });
 
+DescSorting.propTypes = {};
+
 export default DescSorting;

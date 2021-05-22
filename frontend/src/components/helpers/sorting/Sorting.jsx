@@ -51,14 +51,22 @@ const Sorting = ({ setSortOrder, tableContent, ordering, direction, onSortHandle
 	const handleClickEvent = (event) => {
 		if (sortAscRef.current && sortAscRef.current.contains(event.target)) {
 			setIsDescClicked(false);
-			onSortHandler(slug, "asc");
-		} else if (sortDescRef.current && sortDescRef.current.contains(event.target)) {
+
+			if (!isAscClicked) {
+				onSortHandler(slug, "asc");
+			} else {
+				onSortHandler(slug, "default");
+			}
+		}
+
+		if (sortDescRef.current && sortDescRef.current.contains(event.target)) {
 			setIsAscClicked(false);
-			onSortHandler(slug, "desc");
-		} else if (sortAscRef.current && !sortAscRef.current.contains(event.target)) {
-			setIsAscClicked(false);
-		} else if (sortDescRef.current && !sortDescRef.current.contains(event.target)) {
-			setIsDescClicked(false);
+
+			if (!isDescClicked) {
+				onSortHandler(slug, "desc");
+			} else {
+				onSortHandler(slug, "default");
+			}
 		}
 	};
 

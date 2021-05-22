@@ -39,6 +39,13 @@ const PageTableDiv = styled.tr`
 		}
 	}
 
+	.truncate-link {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 20rem;
+	}
+
 	.btn-detail {
 		display: inline-block;
 		padding: 8px 10px;
@@ -77,6 +84,7 @@ const PageTable = (props) => {
 								href={props.val.url}
 								target="_blank"
 								title={props.val.url}
+								className="truncate-link"
 								tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
 							>
 								{props.val.url}
