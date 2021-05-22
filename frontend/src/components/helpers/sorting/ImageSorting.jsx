@@ -1,28 +1,117 @@
+// React
+import * as React from "react";
+
+// NextJS
+import { useRouter } from "next/router";
+
 // External
-import loadable from "@loadable/component";
-import PropTypes from "prop-types";
 import "twin.macro";
+import PropTypes from "prop-types";
 
 // Components
-const Sorting = loadable(() => import("src/components/helpers/sorting/Sorting"));
+import Sorting from "src/components/helpers/sorting/Sorting";
 
-const ImageSorting = ({ sortOrder, onSortHandler, slug }) => {
+// Helpers
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/helpers/functions";
+
+const initialOrder = {
+	imageUrl: "default",
+	imageSize: "default",
+	status: "default",
+	httpCode: "default",
+	missingAlts: "default",
+	occurrences: "default"
+};
+
+const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePath }) => {
+	const [sortOrder, setSortOrder] = React.useState(initialOrder);
+
+	const { asPath } = useRouter();
+	const router = useRouter();
+
+	const handleSort = (slug, dir) => {
+		setSortOrder({ ...initialOrder });
+
+		let newPath = removeURLParameter(asPath, "ordering");
+
+		const sortItem = slugToCamelcase(slug);
+		const sortKey = getSortKeyFromSlug(imageTableContent, slug);
+
+		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
+
+		if (dir == "asc") {
+			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
+			else newPath += `?ordering=${sortKey}`;
+		} else {
+			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
+			else newPath += `?ordering=-${sortKey}`;
+		}
+
+		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
+		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
+
+		router.push(newPath);
+		mutateImages;
+	};
+
 	return (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
 					{slug == "image-url" ? (
-						<Sorting enabled={true} direction={sortOrder.imageUrl} onSortHandler={onSortHandler} slug={slug} />
+						<Sorting
+							setSortOrder={setSortOrder}
+							tableContent={imageTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.imageUrl}
+							onSortHandler={handleSort}
+							slug={slug}
+						/>
 					) : slug == "image-size" ? (
-						<Sorting enabled={true} direction={sortOrder.imageSize} onSortHandler={onSortHandler} slug={slug} />
+						<Sorting
+							setSortOrder={setSortOrder}
+							tableContent={imageTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.imageSize}
+							onSortHandler={handleSort}
+							slug={slug}
+						/>
 					) : slug == "status" ? (
-						<Sorting enabled={true} direction={sortOrder.status} onSortHandler={onSortHandler} slug={slug} />
+						<Sorting
+							setSortOrder={setSortOrder}
+							tableContent={imageTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.status}
+							onSortHandler={handleSort}
+							slug={slug}
+						/>
 					) : slug == "http-code" ? (
-						<Sorting enabled={true} direction={sortOrder.httpCode} onSortHandler={onSortHandler} slug={slug} />
+						<Sorting
+							setSortOrder={setSortOrder}
+							tableContent={imageTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.httpCode}
+							onSortHandler={handleSort}
+							slug={slug}
+						/>
 					) : slug == "missing-alts" ? (
-						<Sorting enabled={true} direction={sortOrder.missingAlts} onSortHandler={onSortHandler} slug={slug} />
+						<Sorting
+							setSortOrder={setSortOrder}
+							tableContent={imageTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.missingAlts}
+							onSortHandler={handleSort}
+							slug={slug}
+						/>
 					) : slug == "occurrences" ? (
-						<Sorting enabled={true} direction={sortOrder.occurrences} onSortHandler={onSortHandler} slug={slug} />
+						<Sorting
+							setSortOrder={setSortOrder}
+							tableContent={imageTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.occurrences}
+							onSortHandler={handleSort}
+							slug={slug}
+						/>
 					) : null}
 				</span>
 			</div>

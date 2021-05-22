@@ -39,24 +39,15 @@ import SiteFooter from "src/components/layouts/Footer";
 import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
+import { removeURLParameter } from "src/helpers/functions";
 
 const ImagesDiv = styled.section`
 	@media only screen and (max-width: 1600px) {
 		.min-width-adjust {
-			min-width: 12rem;
+			min-width: 15rem;
 		}
 	}
 `;
-
-const initialOrder = {
-	imageUrl: "default",
-	imageSize: "default",
-	status: "default",
-	httpCode: "default",
-	missingAlts: "default",
-	occurrences: "default"
-};
 
 const Images = ({ width, result }) => {
 	const [crawlFinished, setCrawlFinished] = useState(false);
@@ -68,7 +59,6 @@ const Images = ({ width, result }) => {
 	const [recrawlable, setRecrawlable] = useState(false);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [searchKey, setSearchKey] = useState("");
-	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	const { asPath } = useRouter();
 
@@ -198,8 +188,6 @@ const Images = ({ width, result }) => {
 				: "";
 
 		scanApiEndpoint += queryString;
-
-		console.log(scanApiEndpoint);
 	}
 
 	const { images: images, mutateImages: mutateImages } = useImages({
@@ -248,41 +236,7 @@ const Images = ({ width, result }) => {
 		else setPagePath(`${newPath}?`);
 
 		Router.push(newPath);
-		mutateImages();
-	};
-
-	const handleSort = (slug, dir) => {
-		setSortOrder({ ...initialOrder });
-
-		let newPath = removeURLParameter(asPath, "ordering");
-
-		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(ImageTableContent, slug);
-
-		if (sortOrder[sortItem] == "default") {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
-			if (dir == "asc") {
-				if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-				else newPath += `?ordering=${sortKey}`;
-			} else {
-				if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-				else newPath += `?ordering=-${sortKey}`;
-			}
-		} else if (sortOrder[sortItem] == "asc") {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }));
-			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-			else newPath += `?ordering=-${sortKey}`;
-		} else {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }));
-			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-			else newPath += `?ordering=${sortKey}`;
-		}
-
-		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
-		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
-
-		Router.push(newPath);
-		mutateImages();
+		mutateImages;
 	};
 
 	const onItemsPerPageChange = (count) => {
@@ -304,7 +258,7 @@ const Images = ({ width, result }) => {
 			else setPagePath(`${newPath}?`);
 
 			Router.push(newPath);
-			mutateImages();
+			mutateImages;
 
 			return true;
 		}
@@ -350,14 +304,6 @@ const Images = ({ width, result }) => {
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
 		if (result.search !== undefined) setSearchKey(result.search);
-
-		if (result.ordering !== undefined) {
-			const slug = getSlugFromSortKey(ImageTableContent, result.ordering.replace("-", ""));
-			const orderItem = slugToCamelcase(slug);
-
-			if (result.ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
-			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
-		}
 
 		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
 	}, []);
@@ -474,9 +420,11 @@ const Images = ({ width, result }) => {
 																			site.slug &&
 																			site.slug !== undefined ? (
 																				<ImageSorting
-																					sortOrder={sortOrder}
-																					onSortHandler={handleSort}
+																					result={result}
 																					slug={site.slug}
+																					mutateImages={mutateImages}
+																					imageTableContent={ImageTableContent}
+																					setPagePath={setPagePath}
 																				/>
 																			) : null}
 																			<span className="label" tw="flex items-center">

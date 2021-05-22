@@ -1,81 +1,81 @@
+// React
+import * as React from "react";
+
 // External
-import tw from "twin.macro";
 import PropTypes from "prop-types";
 
-const Sorting = ({ enabled, direction, onSortHandler, slug }) => {
-	return enabled ? (
+// Components
+import AscSorting from "./AscSorting";
+import DescSorting from "./DescSorting";
+
+// Helpers
+import { slugToCamelcase, getSlugFromSortKey } from "src/helpers/functions";
+
+const Sorting = ({ setSortOrder, tableContent, ordering, direction, onSortHandler, slug }) => {
+	const [isAscClicked, setIsAscClicked] = React.useState(false);
+	const [isDescClicked, setIsDescClicked] = React.useState(false);
+
+	const sortAscRef = React.useRef(null);
+	const sortDescRef = React.useRef(null);
+
+	let resultSlug = "";
+	let orderItem = "";
+
+	React.useEffect(() => {
+		if (ordering !== undefined) {
+			resultSlug = getSlugFromSortKey(tableContent, ordering.replace("-", ""));
+			orderItem = slugToCamelcase(resultSlug);
+
+			if (ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
+		}
+	}, [ordering]);
+
+	React.useEffect(() => {
+		if (ordering !== undefined) {
+			if (resultSlug == slug) {
+				if (ordering.includes("-")) {
+					setIsDescClicked(true);
+					setIsAscClicked(false);
+				} else {
+					setIsAscClicked(true);
+					setIsDescClicked(false);
+				}
+			} else {
+				setIsDescClicked(false);
+				setIsAscClicked(false);
+			}
+		}
+	}, [ordering]);
+
+	const handleClickEvent = (event) => {
+		if (sortAscRef.current && sortAscRef.current.contains(event.target)) {
+			setIsDescClicked(false);
+			onSortHandler(slug, "asc");
+		} else if (sortDescRef.current && sortDescRef.current.contains(event.target)) {
+			setIsAscClicked(false);
+			onSortHandler(slug, "desc");
+		} else if (sortAscRef.current && !sortAscRef.current.contains(event.target)) {
+			setIsAscClicked(false);
+		} else if (sortDescRef.current && !sortDescRef.current.contains(event.target)) {
+			setIsDescClicked(false);
+		}
+	};
+
+	return (
 		<>
-			<button tw="focus:outline-none" disabled={false} onClick={(e) => onSortHandler(slug, "asc")}>
-				<span
-					className="asc"
-					css={[tw`w-4 h-4 inline-block`, direction == "asc" ? tw`text-gray-500` : tw`text-gray-300`]}
-				>
-					<svg
-						fill="none"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth="2"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path d="M5 15l7-7 7 7"></path>
-					</svg>
-				</span>
-			</button>
-			<button tw="focus:outline-none" disabled={false} onClick={(e) => onSortHandler(slug, "desc")}>
-				<span
-					className="desc"
-					css={[tw`w-4 h-4 inline-block`, direction == "desc" ? tw`text-gray-500` : tw`text-gray-300`]}
-				>
-					<svg
-						fill="none"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth="2"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path d="M19 9l-7 7-7-7"></path>
-					</svg>
-				</span>
-			</button>
-		</>
-	) : (
-		<>
-			<button tw="focus:outline-none" disabled={true} tw="cursor-default">
-				<span
-					className="asc"
-					css={[tw`w-4 h-4 inline-block`, direction == "asc" ? tw`text-gray-500` : tw`text-gray-300`]}
-				>
-					<svg
-						fill="none"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth="2"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path d="M5 15l7-7 7 7"></path>
-					</svg>
-				</span>
-			</button>
-			<button tw="focus:outline-none" disabled={true} tw="cursor-default">
-				<span
-					className="desc"
-					css={[tw`w-4 h-4 inline-block`, direction == "desc" ? tw`text-gray-500` : tw`text-gray-300`]}
-				>
-					<svg
-						fill="none"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth="2"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path d="M19 9l-7 7-7-7"></path>
-					</svg>
-				</span>
-			</button>
+			<AscSorting
+				ref={sortAscRef}
+				handleClickEvent={handleClickEvent}
+				isAscClicked={isAscClicked}
+				setIsAscClicked={setIsAscClicked}
+			/>
+			<DescSorting
+				ref={sortDescRef}
+				handleClickEvent={handleClickEvent}
+				isDescClicked={isDescClicked}
+				setIsDescClicked={setIsDescClicked}
+			/>
 		</>
 	);
 };
