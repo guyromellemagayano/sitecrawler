@@ -61,6 +61,7 @@ const Images = ({ width, result }) => {
 	const [searchKey, setSearchKey] = useState("");
 
 	const { asPath } = useRouter();
+	const router = useRouter();
 
 	let pageTitle = "";
 	let homeLabel = "Home";
@@ -235,7 +236,7 @@ const Images = ({ width, result }) => {
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push(newPath);
+		router.push(newPath);
 		mutateImages;
 	};
 
