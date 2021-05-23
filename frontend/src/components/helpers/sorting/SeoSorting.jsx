@@ -1,62 +1,122 @@
+// React
+import * as React from "react";
+
+// NextJS
+import { useRouter } from "next/router";
+
 // External
-import loadable from "@loadable/component";
-import PropTypes from "prop-types";
 import "twin.macro";
+import PropTypes from "prop-types";
 
 // Components
-const Sorting = loadable(() => import("src/components/helpers/sorting/Sorting"));
+import Sorting from "src/components/helpers/sorting/Sorting";
 
-const SeoSorting = (props) => {
-	return props.user.permissions &&
-		props.user.permissions !== undefined &&
-		props.user.permissions.includes("can_see_images") &&
-		props.user.permissions.includes("can_see_pages") &&
-		props.user.permissions.includes("can_see_scripts") &&
-		props.user.permissions.includes("can_see_stylesheets") &&
-		props.user.permissions.includes("can_start_scan") ? (
+// Helpers
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/helpers/functions";
+
+const initialOrder = {
+	pageUrl: "default",
+	createdAt: "default",
+	totalLinks: "default",
+	totalOkLinks: "default",
+	totalNonOkLinks: "default"
+};
+
+const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath }) => {
+	const [sortOrder, setSortOrder] = React.useState(initialOrder);
+
+	const { asPath } = useRouter();
+	const router = useRouter();
+
+	const handleSort = (slug, dir) => {
+		setSortOrder({ ...initialOrder });
+
+		let newPath = removeURLParameter(asPath, "ordering");
+
+		const sortItem = slugToCamelcase(slug);
+		const sortKey = getSortKeyFromSlug(seoTableContent, slug);
+
+		if (sortOrder[sortItem] == "default") {
+			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
+			if (dir == "asc") {
+				if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
+				else newPath += `?ordering=${sortKey}`;
+			} else {
+				if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
+				else newPath += `?ordering=-${sortKey}`;
+			}
+		} else if (sortOrder[sortItem] == "asc") {
+			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }));
+			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
+			else newPath += `?ordering=-${sortKey}`;
+		} else {
+			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }));
+			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
+			else newPath += `?ordering=${sortKey}`;
+		}
+
+		// console.log('[pagePath]', newPath)
+		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
+		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
+
+		router.push(newPath);
+		mutatePages;
+	};
+
+	return (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
-					{props.slug == "page-url" ? (
+					{slug == "page-url" ? (
 						<Sorting
-							enabled={true}
-							direction={props.sortOrder.pageUrl}
-							onSortHandler={props.onSortHandler}
-							slug={props.slug}
+							setSortOrder={setSortOrder}
+							tableContent={seoTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.pageUrl}
+							onSortHandler={handleSort}
+							slug={slug}
 						/>
-					) : props.slug == "created-at" ? (
+					) : slug == "created-at" ? (
 						<Sorting
-							enabled={true}
-							direction={props.sortOrder.createdAt}
-							onSortHandler={props.onSortHandler}
-							slug={props.slug}
+							setSortOrder={setSortOrder}
+							tableContent={seoTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.createdAt}
+							onSortHandler={handleSort}
+							slug={slug}
 						/>
-					) : props.slug == "total-links" ? (
+					) : slug == "total-links" ? (
 						<Sorting
-							enabled={true}
-							direction={props.sortOrder.totalLinks}
-							onSortHandler={props.onSortHandler}
-							slug={props.slug}
+							setSortOrder={setSortOrder}
+							tableContent={seoTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.totalLinks}
+							onSortHandler={handleSort}
+							slug={slug}
 						/>
-					) : props.slug == "total-ok-links" ? (
+					) : slug == "total-ok-links" ? (
 						<Sorting
-							enabled={true}
-							direction={props.sortOrder.totalOkLinks}
-							onSortHandler={props.onSortHandler}
-							slug={props.slug}
+							setSortOrder={setSortOrder}
+							tableContent={seoTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.totalOkLinks}
+							onSortHandler={handleSort}
+							slug={slug}
 						/>
-					) : props.slug == "total-non-ok-links" ? (
+					) : slug == "total-non-ok-links" ? (
 						<Sorting
-							enabled={true}
-							direction={props.sortOrder.totalNonOkLinks}
-							onSortHandler={props.onSortHandler}
-							slug={props.slug}
+							setSortOrder={setSortOrder}
+							tableContent={seoTableContent}
+							ordering={result.ordering}
+							direction={sortOrder.totalNonOkLinks}
+							onSortHandler={handleSort}
+							slug={slug}
 						/>
 					) : null}
 				</span>
 			</div>
 		</div>
-	) : null;
+	);
 };
 
 SeoSorting.propTypes = {};

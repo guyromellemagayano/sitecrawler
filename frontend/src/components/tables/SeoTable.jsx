@@ -52,6 +52,13 @@ const SeoTableDiv = styled.tr`
 		}
 	}
 
+	.truncate-link {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 20rem;
+	}
+
 	.btn-detail {
 		display: inline-block;
 		padding: 8px 10px;
@@ -116,6 +123,7 @@ const SeoTable = (props) => {
 									href={props.val.url}
 									target="_blank"
 									title={props.val.url}
+									className="truncate-link"
 									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
 								>
 									{props.val.url}
@@ -134,7 +142,7 @@ const SeoTable = (props) => {
 									>
 										<a
 											className="btn-detail"
-											tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+											tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 										>
 											View Details
 										</a>
@@ -183,16 +191,10 @@ const SeoTable = (props) => {
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td
-				className="icon-status "
-				tw="pl-16 pr-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-green-500"
-			>
+			<td className="icon-status" tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-green-500">
 				{componentReady ? pageDetailData.num_ok_links : <Skeleton duration={2} width={45} />}
 			</td>
-			<td
-				className="icon-status "
-				tw="pl-16 pr-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-red-500"
-			>
+			<td className="icon-status" tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-red-500">
 				{componentReady ? pageDetailData.num_non_ok_links : <Skeleton duration={2} width={45} />}
 			</td>
 		</SeoTableDiv>
