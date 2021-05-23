@@ -40,7 +40,7 @@ import SiteFooter from "src/components/layouts/Footer";
 import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
+import { removeURLParameter } from "src/helpers/functions";
 
 const PagesDiv = styled.section`
 	@media only screen and (max-width: 960px) {
@@ -124,7 +124,6 @@ const Pages = ({ width, result }) => {
 		Object.keys(user).length > 0 &&
 		user.permissions &&
 		user.permissions !== undefined &&
-		user.permissions.includes("can_see_images") &&
 		user.permissions.includes("can_see_pages") &&
 		user.permissions.includes("can_see_scripts") &&
 		user.permissions.includes("can_see_stylesheets") &&
@@ -340,57 +339,55 @@ const Pages = ({ width, result }) => {
 
 					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto">
-							{pageLoaded ? (
-								<div className="max-w-full py-4 px-8">
-									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-										<ol tw="flex items-center space-x-4">
-											<li>
-												<div>
-													<Link href={homePageLink} passHref>
-														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-															<span tw="sr-only">{homeLabel}</span>
-														</a>
-													</Link>
-												</div>
-											</li>
-											<li>
-												<div tw="flex items-center">
-													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-														{pageTitle}
-													</p>
-												</div>
-											</li>
-										</ol>
-									</nav>
-									<div className="pt-4 m-auto">
-										<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-											{pageTitle}
-											{pagesData && pagesData !== undefined && pagesData !== [] && Object.keys(pagesData).length > 0 ? (
-												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-														<DocumentIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-														{pagesData.count > 1
-															? pagesData.count + " " + PagesLabel[2].label
-															: pagesData.count == 1
-															? pagesData.count + " " + PagesLabel[6].label
-															: PagesLabel[3].label}
-													</dd>
-												</dl>
-											) : null}
-										</h4>
-									</div>
+							<div className="max-w-full py-4 px-8">
+								<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+									<ol tw="flex items-center space-x-4">
+										<li>
+											<div>
+												<Link href={homePageLink} passHref>
+													<a tw="text-gray-400 hover:text-gray-500">
+														<HomeIcon tw="flex-shrink-0 h-5 w-5" />
+														<span tw="sr-only">{homeLabel}</span>
+													</a>
+												</Link>
+											</div>
+										</li>
+										<li>
+											<div tw="flex items-center">
+												<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+												<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+													{pageTitle}
+												</p>
+											</div>
+										</li>
+									</ol>
+								</nav>
+								<div className="pt-4 m-auto">
+									<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
+										{pageTitle}
+										{pagesData && pagesData !== undefined && pagesData !== [] && Object.keys(pagesData).length > 0 ? (
+											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+													<DocumentIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+													{pagesData.count > 1
+														? pagesData.count + " " + PagesLabel[2].label
+														: pagesData.count == 1
+														? pagesData.count + " " + PagesLabel[6].label
+														: PagesLabel[3].label}
+												</dd>
+											</dl>
+										) : null}
+									</h4>
 								</div>
-							) : (
-								<ProfileSkeleton />
-							)}
+							</div>
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 							{user &&
 							user.permissions &&
 							Object.keys(user.permissions).length > 0 &&
-							user.permissions.includes("can_see_pages") ? (
+							user.permissions.includes("can_see_pages") &&
+							user.permissions.includes("can_see_scripts") &&
+							user.permissions.includes("can_see_stylesheets") ? (
 								<PageFilter
 									result={result}
 									loadQueryString={loadQueryString}
@@ -419,6 +416,8 @@ const Pages = ({ width, result }) => {
 																			user.permissions &&
 																			Object.keys(user.permissions).length > 0 &&
 																			user.permissions.includes("can_see_pages") &&
+																			user.permissions.includes("can_see_scripts") &&
+																			user.permissions.includes("can_see_stylesheets") &&
 																			site &&
 																			site !== undefined &&
 																			site.slug &&
@@ -473,11 +472,9 @@ const Pages = ({ width, result }) => {
 							Object.keys(userData).length > 0 &&
 							userData.permissions &&
 							userData.permissions !== undefined &&
-							userData.permissions.includes("can_see_images") &&
 							userData.permissions.includes("can_see_pages") &&
 							userData.permissions.includes("can_see_scripts") &&
-							userData.permissions.includes("can_see_stylesheets") &&
-							userData.permissions.includes("can_start_scan") ? (
+							userData.permissions.includes("can_see_stylesheets") ? (
 								<MyPagination
 									href="/site/[siteId]/pages"
 									pathName={pagePath}

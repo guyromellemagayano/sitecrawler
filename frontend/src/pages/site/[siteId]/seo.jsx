@@ -38,7 +38,7 @@ import SiteFooter from "src/components/layouts/Footer";
 import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
+import { removeURLParameter } from "src/helpers/functions";
 
 const SeoDiv = styled.section`
 	@media only screen and (max-width: 1600px) {
@@ -256,9 +256,6 @@ const Seo = ({ width, result }) => {
 			siteId &&
 			siteId !== undefined &&
 			Object.keys(siteId).length > 0 &&
-			pages &&
-			pages !== undefined &&
-			Object.keys(pages).length > 0 &&
 			stats &&
 			stats !== undefined &&
 			Object.keys(stats).length > 0
