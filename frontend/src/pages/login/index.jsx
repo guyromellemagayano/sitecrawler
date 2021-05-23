@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 
 // NextJS
 import Link from "next/link";
-import { useRouter } from "next/router";
+import Router from "next/router";
 
 // External
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -47,7 +47,6 @@ const Login = () => {
 	//   redirectTo: "/",
 	// });
 
-	const router = useRouter();
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
 	const usernameRef = useRef();
 
@@ -68,7 +67,7 @@ const Login = () => {
 									<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
 										<div>
 											<AppLogo
-												className={tw`h-12 w-auto mx-auto mb-16 md:mx-auto lg:mx-0`}
+												className={tw`flex justify-start h-12 w-auto mx-auto mb-8 md:mx-auto lg:mx-0`}
 												src="/images/logos/site-logo-dark.svg"
 												alt="app-logo"
 											/>
@@ -131,7 +130,7 @@ const Login = () => {
 																	setSuccessMsg((successMsg) => [...successMsg, LoginLabel[12].label]);
 
 																	setTimeout(() => {
-																		router.replace("/");
+																		Router.replace("/");
 																	}, 1500);
 																}
 															} else {
