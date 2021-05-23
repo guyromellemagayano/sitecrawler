@@ -133,7 +133,8 @@ const Images = ({ width, result }) => {
 		user.permissions &&
 		user.permissions !== undefined &&
 		Object.keys(user.permissions).length > 0 &&
-		user.permissions.includes("can_see_images")
+		user.permissions.includes("can_see_images") &&
+		user.permissions.includes("can_start_scan")
 	) {
 		scanApiEndpoint =
 			result.page !== undefined
@@ -293,6 +294,8 @@ const Images = ({ width, result }) => {
 			user.permissions !== undefined &&
 			user.permissions.includes("can_start_scan") &&
 			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0 &&
 			siteId.verified &&
 			finished
 		)
@@ -471,11 +474,7 @@ const Images = ({ width, result }) => {
 							Object.keys(user).length > 0 &&
 							user.permissions &&
 							user.permissions !== undefined &&
-							user.permissions.includes("can_see_images") &&
-							user.permissions.includes("can_see_pages") &&
-							user.permissions.includes("can_see_scripts") &&
-							user.permissions.includes("can_see_stylesheets") &&
-							user.permissions.includes("can_start_scan") ? (
+							user.permissions.includes("can_see_images") ? (
 								<MyPagination
 									href="/site/[siteId]/images/"
 									pathName={pagePath}
