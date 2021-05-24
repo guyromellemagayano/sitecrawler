@@ -129,7 +129,7 @@ const Seo = ({ width, result }) => {
 
 	const { stats: stats } = useStats({
 		querySid: result.siteId,
-		scanObjId: scanObjId
+		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId
 	});
 
 	if (

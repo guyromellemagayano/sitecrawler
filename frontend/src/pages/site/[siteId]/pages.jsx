@@ -193,7 +193,7 @@ const Pages = ({ width, result }) => {
 	const { pages: pages, mutatePages: mutatePages } = usePages({
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
-		scanObjId: scanObjId
+		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId
 	});
 
 	useEffect(() => {

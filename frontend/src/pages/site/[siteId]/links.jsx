@@ -191,7 +191,7 @@ const Links = ({ width, result }) => {
 	const { links: links, mutateLinks: mutateLinks } = useLinks({
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
-		scanObjId: scanObjId
+		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId
 	});
 
 	useEffect(() => {
