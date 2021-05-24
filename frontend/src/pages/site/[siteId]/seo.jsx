@@ -3,15 +3,14 @@ import { Fragment, useState, useEffect } from "react";
 
 // NextJS
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // External
 import { ChevronRightIcon, HomeIcon, SearchIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw, { styled } from "twin.macro";
+import { styled } from "twin.macro";
 
 // JSON
 import SeoLabel from "public/labels/pages/site/seo.json";
@@ -29,76 +28,53 @@ import Layout from "src/components/Layout";
 import LinkOptions from "src/components/pages/overview/LinkOptions";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MyPagination from "src/components/pagination/Pagination";
-import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
 import SeoFilter from "src/components/helpers/filters/SeoFilter";
 import SeoSorting from "src/components/helpers/sorting/SeoSorting";
 import SeoTable from "src/components/tables/SeoTable";
 import SeoTableSkeleton from "src/components/skeletons/SeoTableSkeleton";
-
-// Loadable
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
+import Loader from "src/components/layouts/Loader";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
+import SiteFooter from "src/components/layouts/Footer";
+import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
+import { removeURLParameter } from "src/helpers/functions";
 
 const SeoDiv = styled.section`
 	@media only screen and (max-width: 1600px) {
 		.min-width-adjust {
-			min-width: 12rem;
+			min-width: 15rem;
 		}
 	}
 `;
 
-const initialOrder = {
-	pageUrl: "default",
-	createdAt: "default",
-	totalLinks: "default",
-	totalOkLinks: "default",
-	totalNonOkLinks: "default"
-};
-
 const Seo = ({ width, result }) => {
-	const [allFilter, setAllFilter] = useState(false);
 	const [crawlFinished, setCrawlFinished] = useState(false);
 	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [loadQueryString, setLoadQueryString] = useState("");
-	const [noDescription, setNoDescription] = useState(false);
-	const [noH1First, setNoH1First] = useState(false);
-	const [noH1Second, setNoH1Second] = useState(false);
-	const [noH2First, setNoH2First] = useState(false);
-	const [noH2Second, setNoH2Second] = useState(false);
-	const [noIssueFilter, setNoIssueFilter] = useState(false);
-	const [noTitle, setNoTitle] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [pagePath, setPagePath] = useState("");
-	const [pagesData, setPagesData] = useState([]);
 	const [recrawlable, setRecrawlable] = useState(false);
-	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [searchKey, setSearchKey] = useState("");
-	const [siteData, setSiteData] = useState([]);
-	const [siteIdData, setSiteIdData] = useState([]);
-	const [sortOrder, setSortOrder] = useState(initialOrder);
-	const [statsData, setStatsData] = useState([]);
-	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
+	const router = useRouter();
 
-	const pageTitle =
-		siteIdData.name && siteIdData.name !== undefined ? SeoLabel[1].label + " - " + siteIdData.name : SeoLabel[1].label;
-	const homeLabel = "Home";
-	const homePageLink = `/site/${result.siteId}/overview`;
-	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-	const sitesApiEndpoint = `/api/site/?ordering=name`;
+	let pageTitle = "";
+	let homeLabel = "Home";
+	let homePageLink = `/site/${result.siteId}/overview`;
 
-	let pages = [];
-	let mutatePages = [];
+	let reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
+	let sitesApiEndpoint = `/api/site/?ordering=name`;
+
 	let scanApiEndpoint = "";
+
+	let previousScanResults = [];
+	let currentScanResults = [];
+
 	let queryString = "";
 	let hasTitleString = "";
 	let hasDescriptionString = "";
@@ -122,22 +98,34 @@ const Seo = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
+	if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+		pageTitle = siteId.name && siteId.name !== undefined ? SeoLabel[1].label + " - " + siteId.name : SeoLabel[1].label;
+	}
+
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
+				currentScanResults = scan.results.find((e) => e.finished_at === null);
+				previousScanResults = scan.results.find((e) => e.finished_at !== null);
 
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
-						.map((e) => {
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				);
+				if (currentScanResults !== [] || currentScanResults !== undefined) {
+					if (!crawlFinished) {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					} else {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					}
+				}
 			}
 		}
-	});
+	}, [crawlFinished, scan, scanObjId]);
 
 	const { stats: stats } = useStats({
 		querySid: result.siteId,
@@ -151,7 +139,6 @@ const Seo = ({ width, result }) => {
 		Object.keys(user).length > 0 &&
 		user.permissions &&
 		user.permissions !== undefined &&
-		user.permissions.includes("can_see_images") &&
 		user.permissions.includes("can_see_pages") &&
 		user.permissions.includes("can_see_scripts") &&
 		user.permissions.includes("can_see_stylesheets") &&
@@ -242,18 +229,16 @@ const Seo = ({ width, result }) => {
 		scanApiEndpoint += queryString;
 	}
 
-	({ pages: pages, mutatePages: mutatePages } = usePages({
+	const { pages: pages, mutatePages: mutatePages } = usePages({
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
-		scanObjId: scanObjId
-	}));
+		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId
+	});
 
 	useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {
-			setUserData(user);
-
-			if (userData && userData !== undefined && userData !== [] && userData.settings && userData.settings !== []) {
-				if (userData.settings.disableLocalTime) {
+			if (user.settings && user.settings !== undefined && user.settings !== []) {
+				if (user.settings.disableLocalTime) {
 					setDisableLocalTime(true);
 				} else {
 					setDisableLocalTime(false);
@@ -261,30 +246,27 @@ const Seo = ({ width, result }) => {
 			}
 		}
 
-		if (site && site !== undefined && Object.keys(site).length > 0) {
-			setSiteData(site);
-		}
-
-		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
-			setSiteIdData(siteId);
-		}
-
-		if (pages && pages !== undefined && Object.keys(pages).length > 0) {
-			setPagesData(pages);
-		}
-
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-
-		if (userData && siteData && siteIdData && pagesData && statsData) {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0 &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0 &&
+			stats &&
+			stats !== undefined &&
+			Object.keys(stats).length > 0
+		) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
 	}, [user, site, siteId, pages, stats]);
 
-	const searchEventHandler = async (e) => {
+	const handleSearch = async (e) => {
 		const searchTargetValue = e.target.value;
 
 		if (e.keyCode !== 13) return false;
@@ -305,260 +287,8 @@ const Seo = ({ width, result }) => {
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push(newPath);
-		mutatePages();
-	};
-
-	const filterChangeHandler = async (e) => {
-		const filterType = e.target.value;
-		const filterStatus = e.target.checked;
-
-		let newPath = asPath;
-		newPath = removeURLParameter(newPath, "page");
-
-		if (filterType == "no-issues" && filterStatus == true) {
-			setNoTitle(false);
-			setNoIssueFilter(true);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "has_title");
-			newPath = removeURLParameter(newPath, "has_description");
-			newPath = removeURLParameter(newPath, "has_h1_first");
-			newPath = removeURLParameter(newPath, "has_h1_second");
-			newPath = removeURLParameter(newPath, "has_h2_first");
-			newPath = removeURLParameter(newPath, "has_h2_second");
-
-			if (newPath.includes("?")) newPath += `&has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
-			else newPath += `?has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
-		} else if (filterType == "no-issues" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (
-				newPath.includes("has_title") &&
-				newPath.includes("has_description") &&
-				newPath.includes("has_h1_first") &&
-				newPath.includes("has_h2_first")
-			) {
-				newPath = removeURLParameter(newPath, "has_title");
-				newPath = removeURLParameter(newPath, "has_description");
-				newPath = removeURLParameter(newPath, "has_h1_first");
-				newPath = removeURLParameter(newPath, "has_h2_first");
-			}
-
-			setNoIssueFilter(false);
-		}
-
-		if (filterType == "noTitle" && filterStatus == true) {
-			setNoTitle(true);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "has_description");
-			newPath = removeURLParameter(newPath, "has_h1_first");
-			newPath = removeURLParameter(newPath, "has_h1_second");
-			newPath = removeURLParameter(newPath, "has_h2_first");
-			newPath = removeURLParameter(newPath, "has_h2_second");
-
-			if (newPath.includes("?")) newPath += `&has_title=false`;
-			else newPath += `?has_title=false`;
-		} else if (filterType == "noTitle" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("has_title")) {
-				newPath = removeURLParameter(newPath, "has_title");
-			}
-
-			setNoTitle(false);
-		}
-
-		if (filterType == "noDescription" && filterStatus == true) {
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(true);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "has_title");
-			newPath = removeURLParameter(newPath, "has_h1_first");
-			newPath = removeURLParameter(newPath, "has_h1_second");
-			newPath = removeURLParameter(newPath, "has_h2_first");
-			newPath = removeURLParameter(newPath, "has_h2_second");
-
-			if (newPath.includes("?")) newPath += `&has_description=false`;
-			else newPath += `?has_description=false`;
-		} else if (filterType == "noDescription" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("has_description")) {
-				newPath = removeURLParameter(newPath, "has_description");
-			}
-
-			setNoDescription(false);
-		}
-
-		if (filterType == "noH1First" && filterStatus == true) {
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(true);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "has_title");
-			newPath = removeURLParameter(newPath, "has_description");
-			newPath = removeURLParameter(newPath, "has_h1_second");
-			newPath = removeURLParameter(newPath, "has_h2_first");
-			newPath = removeURLParameter(newPath, "has_h2_second");
-
-			if (newPath.includes("?")) newPath += `&has_h1_first=false`;
-			else newPath += `?has_h1_first=false`;
-		} else if (filterType == "noH1First" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("has_h1_first")) {
-				newPath = removeURLParameter(newPath, "has_h1_first");
-			}
-
-			setNoH1First(false);
-		}
-
-		if (filterType == "noH1Second" && filterStatus == true) {
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(true);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "has_title");
-			newPath = removeURLParameter(newPath, "has_description");
-			newPath = removeURLParameter(newPath, "has_h1_first");
-			newPath = removeURLParameter(newPath, "has_h2_first");
-			newPath = removeURLParameter(newPath, "has_h2_second");
-
-			if (newPath.includes("?")) newPath += `&has_h1_second=false`;
-			else newPath += `?has_h1_second=false`;
-		} else if (filterType == "noH1Second" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("has_h1_second")) {
-				newPath = removeURLParameter(newPath, "has_h1_second");
-			}
-
-			setNoH1Second(false);
-		}
-
-		if (filterType == "noH2First" && filterStatus == true) {
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(true);
-			setNoH2Second(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "has_title");
-			newPath = removeURLParameter(newPath, "has_description");
-			newPath = removeURLParameter(newPath, "has_h1_first");
-			newPath = removeURLParameter(newPath, "has_h1_second");
-			newPath = removeURLParameter(newPath, "has_h2_second");
-
-			if (newPath.includes("?")) newPath += `&has_h2_first=false`;
-			else newPath += `?has_h2_first=false`;
-		} else if (filterType == "noH2First" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("has_h2_first")) {
-				newPath = removeURLParameter(newPath, "has_h2_first");
-			}
-
-			setNoH2First(false);
-		}
-
-		if (filterType == "noH2Second" && filterStatus == true) {
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(true);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "has_title");
-			newPath = removeURLParameter(newPath, "has_description");
-			newPath = removeURLParameter(newPath, "has_h1_first");
-			newPath = removeURLParameter(newPath, "has_h1_second");
-			newPath = removeURLParameter(newPath, "has_h2_first");
-
-			if (newPath.includes("?")) newPath += `&has_h2_second=false`;
-			else newPath += `?has_h2_second=false`;
-		} else if (filterType == "noH2Second" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("has_h2_second");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("has_h2_second")) {
-				newPath = removeURLParameter(newPath, "has_h2_second");
-			}
-
-			setNoH2Second(false);
-		}
-
-		if (filterType == "all" && filterStatus == true) {
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(true);
-
-			newPath = removeURLParameter(newPath, "has_title");
-			newPath = removeURLParameter(newPath, "has_description");
-			newPath = removeURLParameter(newPath, "has_h1_first");
-			newPath = removeURLParameter(newPath, "has_h1_second");
-			newPath = removeURLParameter(newPath, "has_h2_first");
-			newPath = removeURLParameter(newPath, "has_h2_second");
-
-			// if (!newPath.includes("search") && !newPath.includes("ordering"))
-			//   newPath = newPath.replace("?", "");
-		}
-
-		if (newPath.includes("?")) setPagePath(`${newPath}&`);
-		else setPagePath(`${newPath}?`);
-
-		Router.push(newPath);
-		mutatePages();
-
-		return true;
+		router.push(newPath);
+		mutatePages;
 	};
 
 	const onItemsPerPageChange = (count) => {
@@ -579,10 +309,8 @@ const Seo = ({ width, result }) => {
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			Router.push(newPath);
-			mutatePages();
-
-			return true;
+			router.push(newPath);
+			mutatePages;
 		}
 	};
 
@@ -592,312 +320,10 @@ const Seo = ({ width, result }) => {
 
 		if (result.search !== undefined) setSearchKey(result.search);
 
-		if (result.ordering !== undefined) {
-			const slug = getSlugFromSortKey(SeoTableContent, result.ordering.replace("-", ""));
-			const orderItem = slugToCamelcase(slug);
-
-			if (result.ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
-			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
-		}
-
 		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
-
-		setLoadQueryString(new URLSearchParams(window.location.search));
-
-		let loadQueryStringValue = new URLSearchParams(window.location.search);
-
-		if (
-			loadQueryStringValue.has("has_title") &&
-			loadQueryStringValue.get("has_title") === "true" &&
-			loadQueryStringValue.has("has_description") &&
-			loadQueryStringValue.get("has_description") === "true" &&
-			loadQueryStringValue.has("has_h1_first") &&
-			loadQueryStringValue.get("has_h1_first") === "true" &&
-			loadQueryStringValue.has("has_h2_first") &&
-			loadQueryStringValue.get("has_h2_first") === "true"
-		) {
-			setNoIssueFilter(true);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (loadQueryStringValue.has("has_title") && loadQueryStringValue.get("has_title") === "false") {
-			setNoIssueFilter(false);
-			setNoTitle(true);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (loadQueryStringValue.has("has_description") && loadQueryStringValue.get("has_description") === "false") {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(true);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (loadQueryStringValue.has("has_h1_first") && loadQueryStringValue.get("has_h1_first") === "false") {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(true);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (loadQueryStringValue.has("has_h1_second") && loadQueryStringValue.get("has_h1_second") === "false") {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(true);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (loadQueryStringValue.has("has_h2_first") && loadQueryStringValue.get("has_h2_first") === "false") {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(true);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (loadQueryStringValue.has("has_h2_second") && loadQueryStringValue.get("has_h2_second") === "false") {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(true);
-			setAllFilter(false);
-		}
-
-		if (
-			!loadQueryStringValue.has("has_title") &&
-			!loadQueryStringValue.has("has_description") &&
-			!loadQueryStringValue.has("has_h1_first") &&
-			!loadQueryStringValue.has("has_h1_second") &&
-			!loadQueryStringValue.has("has_h2_first") &&
-			!loadQueryStringValue.has("has_h2_second")
-		) {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(true);
-		}
 	}, []);
 
-	useEffect(() => {
-		if (
-			result.has_title !== undefined &&
-			result.has_title.includes("true") &&
-			result.has_description !== undefined &&
-			result.has_description.includes("true") &&
-			result.has_h1_first !== undefined &&
-			result.has_h1_first.includes("true") &&
-			result.has_h2_first !== undefined &&
-			result.has_h2_first.includes("true")
-		) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(true);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_title !== undefined && result.has_title.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(true);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_description !== undefined && result.has_description.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(true);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_h1_first !== undefined && result.has_h1_first.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(true);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_h1_second !== undefined && result.has_h1_second.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(true);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_h2_first !== undefined && result.has_h2_first.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(true);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_h2_second !== undefined && result.has_h2_second.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(true);
-			setAllFilter(false);
-		}
-
-		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
-			if (
-				result.has_title == undefined &&
-				result.has_description == undefined &&
-				result.has_h1_first == undefined &&
-				result.has_h1_second == undefined &&
-				result.has_h2_first == undefined &&
-				result.has_h2_second == undefined
-			) {
-				setNoTitle(false);
-				setNoIssueFilter(false);
-				setNoDescription(false);
-				setNoH1First(false);
-				setNoH1Second(false);
-				setNoH2First(false);
-				setNoH2Second(false);
-				setAllFilter(true);
-			}
-		}
-	}, [filterChangeHandler, loadQueryString]);
-
-	const SortHandler = (slug, dir) => {
-		setSortOrder({ ...initialOrder });
-
-		let newPath = removeURLParameter(asPath, "ordering");
-
-		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(SeoTableContent, slug);
-
-		if (sortOrder[sortItem] == "default") {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
-			if (dir == "asc") {
-				if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-				else newPath += `?ordering=${sortKey}`;
-			} else {
-				if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-				else newPath += `?ordering=-${sortKey}`;
-			}
-		} else if (sortOrder[sortItem] == "asc") {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }));
-			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-			else newPath += `?ordering=-${sortKey}`;
-		} else {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }));
-			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-			else newPath += `?ordering=${sortKey}`;
-		}
-
-		// console.log('[pagePath]', newPath)
-		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
-		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
-
-		Router.push(newPath);
-		mutatePages();
-	};
-
-	const onCrawlHandler = async () => {
+	const handleOnCrawl = async () => {
 		setCrawlFinished(false);
 
 		try {
@@ -917,118 +343,110 @@ const Seo = ({ width, result }) => {
 		}
 	};
 
-	const crawlableHandler = (finished) => {
+	const handleCrawl = (finished) => {
 		if (finished) setCrawlFinished(true);
 
 		if (
 			user &&
 			user.permissions !== undefined &&
 			user.permissions.includes("can_start_scan") &&
-			siteIdData &&
-			siteIdData.verified &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0 &&
+			siteId.verified &&
 			finished
 		)
 			setRecrawlable(true);
 		else setRecrawlable(false);
 	};
 
-	return pageLoaded ? (
-		<Layout user={userData}>
+	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
+		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<SeoDiv tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={userData}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<LinkOptions
 							sid={result.siteId}
-							user={userData}
+							user={user}
 							searchKey={searchKey}
-							onSearchEvent={searchEventHandler}
-							onCrawl={onCrawlHandler}
+							onSearchEvent={handleSearch}
+							onCrawl={handleOnCrawl}
 							crawlable={recrawlable}
 							crawlFinished={crawlFinished}
-							crawlableHandler={crawlableHandler}
+							crawlableHandler={handleCrawl}
 						/>
 					</div>
 
 					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto">
-							{pageLoaded ? (
-								<div className="max-w-full py-4 px-8">
-									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-										<ol tw="flex items-center space-x-4">
-											<li>
-												<div>
-													<Link href={homePageLink} passHref>
-														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-															<span tw="sr-only">{homeLabel}</span>
-														</a>
-													</Link>
-												</div>
-											</li>
-											<li>
-												<div tw="flex items-center">
-													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-														{pageTitle}
-													</p>
-												</div>
-											</li>
-										</ol>
-									</nav>
-									<div className="pt-4 m-auto">
-										<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-											{pageTitle}
-											{pagesData && pagesData !== undefined && pagesData !== [] && Object.keys(pagesData).length > 0 ? (
-												<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-													<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-														<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-														{pagesData.count > 1
-															? pagesData.count + " " + SeoLabel[2].label
-															: pagesData.count == 1
-															? pagesData.count + " " + SeoLabel[6].label
-															: SeoLabel[3].label}
-													</dd>
-												</dl>
-											) : null}
-										</h4>
-									</div>
+							<div className="max-w-full py-4 px-8">
+								<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+									<ol tw="flex items-center space-x-4">
+										<li>
+											<div>
+												<Link href={homePageLink} passHref>
+													<a tw="text-gray-400 hover:text-gray-500">
+														<HomeIcon tw="flex-shrink-0 h-5 w-5" />
+														<span tw="sr-only">{homeLabel}</span>
+													</a>
+												</Link>
+											</div>
+										</li>
+										<li>
+											<div tw="flex items-center">
+												<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+												<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+													{pageTitle}
+												</p>
+											</div>
+										</li>
+									</ol>
+								</nav>
+								<div className="pt-4 m-auto">
+									<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
+										{pageTitle}
+										{pages && pages !== undefined && pages !== [] && Object.keys(pages).length > 0 ? (
+											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+													<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+													{pages.count > 1
+														? pages.count + " " + SeoLabel[2].label
+														: pages.count == 1
+														? pages.count + " " + SeoLabel[6].label
+														: SeoLabel[3].label}
+												</dd>
+											</dl>
+										) : null}
+									</h4>
 								</div>
-							) : (
-								<ProfileSkeleton />
-							)}
+							</div>
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-							{userData &&
-							userData !== undefined &&
-							userData !== [] &&
-							Object.keys(userData).length > 0 &&
-							userData.permissions &&
-							userData.permissions !== undefined &&
-							userData.permissions.includes("can_see_images") &&
-							userData.permissions.includes("can_see_pages") &&
-							userData.permissions.includes("can_see_scripts") &&
-							userData.permissions.includes("can_see_stylesheets") &&
-							userData.permissions.includes("can_start_scan") ? (
+							{user &&
+							user.permissions &&
+							Object.keys(user.permissions).length > 0 &&
+							user.permissions.includes("can_see_pages") &&
+							user.permissions.includes("can_see_scripts") &&
+							user.permissions.includes("can_see_stylesheets") ? (
 								<SeoFilter
-									onFilterChange={filterChangeHandler}
-									allFilter={allFilter}
-									noIssueFilter={noIssueFilter}
-									noTitle={noTitle}
-									noDescription={noDescription}
-									noH1First={noH1First}
-									noH1Second={noH1Second}
-									noH2First={noH2First}
-									noH2Second={noH2Second}
+									result={result}
+									loadQueryString={loadQueryString}
+									setLoadQueryString={setLoadQueryString}
+									mutatePages={mutatePages}
+									setPagePath={setPagePath}
 								/>
 							) : null}
 
@@ -1043,27 +461,30 @@ const Seo = ({ width, result }) => {
 															return (
 																<Fragment key={key}>
 																	<th
-																		css={[
-																			tw`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`,
-																			site.slug === "url-type" || site.slug === "occurrences"
-																				? "min-width-adjust"
-																				: "min-w-full"
-																		]}
+																		className="min-width-adjust"
+																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																	>
-																		<div tw="flex items-center justify-start">
-																			{site.slug !== undefined ? (
+																		<span tw="flex items-center justify-start">
+																			{user &&
+																			user.permissions &&
+																			Object.keys(user.permissions).length > 0 &&
+																			user.permissions.includes("can_see_pages") &&
+																			site &&
+																			site !== undefined &&
+																			site.slug &&
+																			site.slug !== undefined ? (
 																				<SeoSorting
-																					sortOrder={sortOrder}
-																					onSortHandler={SortHandler}
-																					key={key}
+																					result={result}
 																					slug={site.slug}
-																					user={userData}
+																					mutatePages={mutatePages}
+																					seoTableContent={SeoTableContent}
+																					setPagePath={setPagePath}
 																				/>
 																			) : null}
 																			<span className="label" tw="flex items-center">
 																				{site.label}
 																			</span>
-																		</div>
+																		</span>
 																	</th>
 																</Fragment>
 															);
@@ -1071,58 +492,55 @@ const Seo = ({ width, result }) => {
 													</tr>
 												</thead>
 												<tbody tw="relative">
-													{userData &&
-													userData !== undefined &&
-													userData !== [] &&
-													Object.keys(userData).length > 0 &&
-													userData.permissions &&
-													userData.permissions !== undefined &&
-													userData.permissions.includes("can_see_images") &&
-													userData.permissions.includes("can_see_pages") &&
-													userData.permissions.includes("can_see_scripts") &&
-													userData.permissions.includes("can_see_stylesheets") &&
-													userData.permissions.includes("can_start_scan") &&
-													pagesData &&
-													pagesData !== undefined &&
-													pagesData !== [] &&
-													Object.keys(pagesData).length > 0 &&
-													pagesData.results ? (
-														pagesData.results.map((val, key) => (
-															<SeoTable
-																key={key}
-																val={val}
-																disableLocalTime={disableLocalTime}
-																user={userData}
-																label={SeoLabel}
-															/>
-														))
-													) : (
-														<>
-															<SeoTableSkeleton />
-															<UpgradeErrorAlert link="/settings/subscription-plans" />
-														</>
-													)}
+													{user &&
+													user.permissions &&
+													Object.keys(user.permissions).length > 0 &&
+													user.permissions.includes("can_see_pages") &&
+													user.permissions.includes("can_see_scripts") &&
+													user.permissions.includes("can_see_stylesheets") &&
+													pages &&
+													pages !== undefined &&
+													Object.keys(pages).length > 0 &&
+													pages.results &&
+													pages.results !== undefined
+														? pages.results.map((val, key) => (
+																<SeoTable
+																	key={key}
+																	val={val}
+																	user={user}
+																	disableLocalTime={disableLocalTime}
+																	label={SeoLabel}
+																/>
+														  ))
+														: null}
+
+													{user && user.permissions && Object.keys(user.permissions).length === 0 ? (
+														<SeoTableSkeleton />
+													) : null}
 												</tbody>
 											</table>
+
+											{user && user.permissions && Object.keys(user.permissions).length === 0 ? (
+												<UpgradeErrorAlert link="/settings/subscription-plans" />
+											) : null}
 										</div>
 									</div>
 								</div>
 							</div>
-							{userData &&
-							userData !== undefined &&
-							userData !== [] &&
-							Object.keys(userData).length > 0 &&
-							userData.permissions &&
-							userData.permissions !== undefined &&
-							userData.permissions.includes("can_see_images") &&
-							userData.permissions.includes("can_see_pages") &&
-							userData.permissions.includes("can_see_scripts") &&
-							userData.permissions.includes("can_see_stylesheets") &&
-							userData.permissions.includes("can_start_scan") &&
-							pagesData &&
-							pagesData !== undefined &&
-							pagesData !== [] &&
-							Object.keys(pagesData).length > 0 ? (
+
+							{user &&
+							user !== undefined &&
+							user !== [] &&
+							Object.keys(user).length > 0 &&
+							user.permissions &&
+							user.permissions !== undefined &&
+							user.permissions.includes("can_see_pages") &&
+							user.permissions.includes("can_see_scripts") &&
+							user.permissions.includes("can_see_stylesheets") &&
+							pages &&
+							pages !== undefined &&
+							pages !== [] &&
+							Object.keys(pages).length > 0 ? (
 								<MyPagination
 									href="/site/[siteId]/seo"
 									pathName={pagePath}

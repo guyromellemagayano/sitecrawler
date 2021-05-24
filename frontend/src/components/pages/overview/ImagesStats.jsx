@@ -61,6 +61,9 @@ const SitesImagesStatsDiv = styled.div`
 		align-items: center;
 		border-bottom: 1px solid #e7efef;
 		padding-bottom: 10px;
+		outline: none;
+		-webkit-tap-highlight-color: transparent;
+		cursor: pointer;
 	}
 
 	.apexcharts-legend-series:last-child {
@@ -100,7 +103,7 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 	const router = useRouter();
 
 	useEffect(() => {
-		if (stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
@@ -119,21 +122,33 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 	};
 
 	const chartSeries = [
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_non_ok_images !== undefined
+		stats &&
+		stats !== undefined &&
+		Object.keys(stats).length > 0 &&
+		stats.num_non_ok_images &&
+		stats.num_non_ok_images !== undefined
 			? stats.num_non_ok_images
 			: 0,
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images_tls_non_ok !== undefined
+		stats &&
+		stats !== undefined &&
+		Object.keys(stats).length > 0 &&
+		stats.num_images_tls_non_ok &&
+		stats.num_images_tls_non_ok !== undefined
 			? stats.num_images_tls_non_ok
 			: 0,
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images_with_missing_alts !== undefined
+		stats &&
+		stats !== undefined &&
+		Object.keys(stats).length > 0 &&
+		stats.num_images_with_missing_alts &&
+		stats.num_images_with_missing_alts !== undefined
 			? stats.num_images_with_missing_alts
 			: 0,
 		stats &&
 		stats !== undefined &&
 		Object.keys(stats).length > 0 &&
-		stats.num_ok_images !== undefined &&
-		stats.num_images_with_missing_alts !== undefined
-			? stats.num_ok_images - stats.num_images_with_missing_alts
+		stats.num_images_fully_ok &&
+		stats.num_images_fully_ok !== undefined
+			? stats.num_images_fully_ok
 			: 0
 	];
 

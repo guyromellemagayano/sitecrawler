@@ -92,7 +92,7 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 			/>
 
 			<div tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
-				<div tw="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
+				<div tw="relative z-10 flex-shrink-0 flex bg-white border-b border-gray-200">
 					<div tw="flex-1 p-4 flex justify-end">
 						{router.pathname.includes("/links") ||
 						(user.permissions &&

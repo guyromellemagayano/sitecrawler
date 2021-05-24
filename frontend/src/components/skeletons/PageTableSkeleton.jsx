@@ -11,14 +11,14 @@ const PageTableSkeleton = () => {
 	const skeletonEntry = (
 		<>
 			<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
-				<div tw="flex flex-col justify-start">
-					<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
+				<span tw="flex flex-col justify-start">
+					<span className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
 						<Skeleton duration={2} width={300} />
-					</div>
-					<div tw="flex justify-start leading-5 text-gray-500">
+					</span>
+					<span tw="flex justify-start leading-5 text-gray-500">
 						<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
-					</div>
-				</div>
+					</span>
+				</span>
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				<Skeleton duration={2} width={100} />
@@ -36,17 +36,17 @@ const PageTableSkeleton = () => {
 		<>
 			<style jsx>{`
 				a,
-				div {
+				span {
 					max-width: 100%;
 					display: inline-block;
 					clear: both;
 				}
 				td {
-					& > div {
+					& > span {
 						max-width: 100%;
 						display: block;
 
-						& > div {
+						& > span {
 							max-width: 100%;
 							display: block;
 						}

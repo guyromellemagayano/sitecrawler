@@ -256,9 +256,6 @@ dist
 # Stylesheets
 *.css
 
-# Storybook
-.storybook-static
-
 # sql dumps
 *.sql
 

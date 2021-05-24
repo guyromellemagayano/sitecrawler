@@ -52,7 +52,7 @@ export const pagesChartContents = [
 	},
 	{
 		label: "No Issues",
-		filter: "tls_total=true",
+		filter: "tls_total=true&size_total_max=1048575",
 		color: "#48bb78"
 	}
 ];
@@ -60,12 +60,12 @@ export const pagesChartContents = [
 export const imagesChartContents = [
 	{
 		label: "Broken Images",
-		filter: "status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR",
+		filter: "status__neq=OK",
 		color: "#f56565"
 	},
 	{
 		label: "Broken Security",
-		filter: "tls_status=ERROR&tls_status=NONE",
+		filter: "tls_status__neq=OK",
 		color: "#e53e3e"
 	},
 	{
@@ -75,7 +75,7 @@ export const imagesChartContents = [
 	},
 	{
 		label: "No Issues",
-		filter: "status=OK&tls_status=OK&missing_alts__iszero=true",
+		filter: "tls_status=OK&status=OK&missing_alts__iszero=true",
 		color: "#48bb78"
 	}
 ];

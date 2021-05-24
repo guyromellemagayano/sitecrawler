@@ -43,13 +43,13 @@ const UpgradeErrorAlert = ({ message = "", link = "#" }) => {
 				leave="transition-opacity duration-150"
 				leaveFrom="opacity-100"
 				leaveTo="opacity-0"
-				css={tw`max-w-2xl z-10 origin-top transform -translate-y-42 absolute right-0 left-0 bottom-0 rounded-md bg-yellow-100 shadow-lg p-4 my-1 mx-auto`}
+				css={tw`max-w-2xl z-10 origin-top transform -translate-y-16 relative right-0 left-0 bottom-0 rounded-md bg-yellow-100 shadow-lg p-4 my-1 mx-auto`}
 			>
-				<div tw="flex">
-					<div tw="flex-shrink-0">
+				<span tw="flex">
+					<span tw="flex-shrink-0">
 						<ExclamationIcon tw="h-5 w-5 text-yellow-400" aria-hidden="true" />
-					</div>
-					<div tw="ml-3 flex-1 md:flex md:justify-between">
+					</span>
+					<span tw="ml-3 flex-1 md:flex md:justify-between">
 						<p tw="text-sm text-yellow-700">
 							{message !== "" && message !== undefined ? message : ReactHtmlParser(upgradeMessage)}
 						</p>
@@ -60,8 +60,8 @@ const UpgradeErrorAlert = ({ message = "", link = "#" }) => {
 								</a>
 							</Link>
 						</p>
-					</div>
-				</div>
+					</span>
+				</span>
 			</Transition>
 		</>
 	);

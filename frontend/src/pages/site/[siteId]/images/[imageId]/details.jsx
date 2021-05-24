@@ -157,7 +157,7 @@ const ImagesDetail = ({ width, result }) => {
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex h-16 lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
+					<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
 						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
 						<Link href={homePageLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
@@ -219,7 +219,10 @@ const ImagesDetail = ({ width, result }) => {
 												<div tw="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
 													<dt tw="text-sm leading-5 font-medium text-gray-500">Created at</dt>
 													<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-														{user && user !== undefined && !user.settings.disableLocalTime ? (
+														{user &&
+														user !== undefined &&
+														Object.keys(user).length > 0 &&
+														!user.settings.disableLocalTime ? (
 															<>
 																<Moment calendar={calendarStrings} date={imageDetailData.created_at} local />
 																&nbsp;

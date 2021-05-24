@@ -1,25 +1,109 @@
+// React
+import * as React from "react";
+
+// NextJS
+import { useRouter } from "next/router";
+
 // External
-import loadable from "@loadable/component";
-import PropTypes from "prop-types";
 import "twin.macro";
+import PropTypes from "prop-types";
 
 // Components
-const Sorting = loadable(() => import("src/components/helpers/sorting/Sorting"));
+import Sorting from "src/components/helpers/sorting/Sorting";
 
-const LinkSorting = (props) => {
+// Helpers
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/helpers/functions";
+
+const initialOrder = {
+	linkUrl: "default",
+	urlType: "default",
+	status: "default",
+	httpCode: "default",
+	linkLocation: "default",
+	occurrences: "default"
+};
+
+const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }) => {
+	const [sortOrder, setSortOrder] = React.useState(initialOrder);
+
+	const { asPath } = useRouter();
+	const router = useRouter();
+
+	const handleSort = (slug, dir) => {
+		setSortOrder({ ...initialOrder });
+
+		let newPath = removeURLParameter(asPath, "ordering");
+
+		const sortItem = slugToCamelcase(slug);
+		const sortKey = getSortKeyFromSlug(linksUrlContent, slug);
+
+		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
+
+		if (dir == "asc") {
+			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
+			else newPath += `?ordering=${sortKey}`;
+		} else if (dir == "desc") {
+			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
+			else newPath += `?ordering=-${sortKey}`;
+		} else {
+			newPath = removeURLParameter(newPath, "ordering");
+		}
+
+		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
+		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
+
+		router.push(newPath);
+		mutateLinks;
+	};
+
 	return (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
-				{props.slug == "link-url" ? (
-					<Sorting direction={props.sortOrder.linkUrl} onSortHandler={props.onSortHandler} slug={props.slug} />
-				) : props.slug == "url-type" ? (
-					<Sorting direction={props.sortOrder.urlType} onSortHandler={props.onSortHandler} slug={props.slug} />
-				) : props.slug == "status" ? (
-					<Sorting direction={props.sortOrder.status} onSortHandler={props.onSortHandler} slug={props.slug} />
-				) : props.slug == "http-code" ? (
-					<Sorting direction={props.sortOrder.httpCode} onSortHandler={props.onSortHandler} slug={props.slug} />
-				) : props.slug == "occurrences" ? (
-					<Sorting direction={props.sortOrder.occurrences} onSortHandler={props.onSortHandler} slug={props.slug} />
+				{slug == "link-url" ? (
+					<Sorting
+						setSortOrder={setSortOrder}
+						tableContent={linksUrlContent}
+						ordering={result.ordering}
+						direction={sortOrder.linkUrl}
+						onSortHandler={handleSort}
+						slug={slug}
+					/>
+				) : slug == "url-type" ? (
+					<Sorting
+						setSortOrder={setSortOrder}
+						tableContent={linksUrlContent}
+						ordering={result.ordering}
+						direction={sortOrder.urlType}
+						onSortHandler={handleSort}
+						slug={slug}
+					/>
+				) : slug == "status" ? (
+					<Sorting
+						setSortOrder={setSortOrder}
+						tableContent={linksUrlContent}
+						ordering={result.ordering}
+						direction={sortOrder.status}
+						onSortHandler={handleSort}
+						slug={slug}
+					/>
+				) : slug == "http-code" ? (
+					<Sorting
+						setSortOrder={setSortOrder}
+						tableContent={linksUrlContent}
+						ordering={result.ordering}
+						direction={sortOrder.httpCode}
+						onSortHandler={handleSort}
+						slug={slug}
+					/>
+				) : slug == "occurrences" ? (
+					<Sorting
+						setSortOrder={setSortOrder}
+						tableContent={linksUrlContent}
+						ordering={result.ordering}
+						direction={sortOrder.occurrences}
+						onSortHandler={handleSort}
+						slug={slug}
+					/>
 				) : null}
 			</div>
 		</div>
