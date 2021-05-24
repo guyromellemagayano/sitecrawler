@@ -66,6 +66,8 @@ class ScanQuerySet(QuerySet):
         ids = tuple(ids)
         print("Bulk scan delete", flush=True)
         with connections["superuser"].cursor() as cursor:
+            print("Disabling triggers", flush=True)
+            cursor.execute("SET session_replication_role = 'replica'")
             print("Deleting link links", flush=True)
             cursor.execute(
                 "DELETE FROM crawl_link_links WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
@@ -104,6 +106,8 @@ class ScanQuerySet(QuerySet):
             )
             print("Deleting scans", flush=True)
             cursor.execute("DELETE FROM crawl_scan WHERE id IN %s", [ids])
+            print("Enabling triggers", flush=True)
+            cursor.execute("SET session_replication_role = 'origin'")
 
 
 class Scan(models.Model):
