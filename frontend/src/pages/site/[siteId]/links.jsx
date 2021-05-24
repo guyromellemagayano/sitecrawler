@@ -3,14 +3,13 @@ import { Fragment, useState, useEffect } from "react";
 
 // NextJS
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // External
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { LinkIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import ReactTooltip from "react-tooltip";
 import tw, { styled } from "twin.macro";
@@ -32,16 +31,14 @@ import LinkFilter from "src/components/helpers/filters/LinkFilter";
 import LinkOptions from "src/components/pages/overview/LinkOptions";
 import LinkSorting from "src/components/helpers/sorting/LinkSorting";
 import LinkTable from "src/components/tables/LinkTable";
+import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import MyPagination from "src/components/pagination/Pagination";
-
-// Loadable
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
+import SiteFooter from "src/components/layouts/Footer";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug, getSlugFromSortKey } from "src/helpers/functions";
+import { removeURLParameter } from "src/helpers/functions";
 
 const LinksDiv = styled.section`
 	.url-type-tooltip,
@@ -50,11 +47,13 @@ const LinksDiv = styled.section`
 		margin-left: 5px !important;
 		padding: 1rem 1.5rem;
 	}
+
 	@media only screen and (max-width: 1400px) {
 		td:first-child {
 			max-width: 15rem;
 		}
 	}
+
 	@media only screen and (min-width: 1600px) {
 		td {
 			min-width: 10rem;
@@ -63,55 +62,42 @@ const LinksDiv = styled.section`
 				max-width: 20rem;
 			}
 		}
-	}
 
-	@media only screen and (max-width: 960px) {
 		.min-width-adjust {
-			min-width: 12rem;
+			min-width: 15rem;
 		}
 	}
 `;
 
-const initialOrder = {
-	linkUrl: "default",
-	urlType: "default",
-	status: "default",
-	httpCode: "default",
-	linkLocation: "default",
-	occurrences: "default"
-};
-
 const Links = ({ width, result }) => {
-	const [allFilter, setAllFilter] = useState(false);
 	const [crawlFinished, setCrawlFinished] = useState(false);
-	const [externalFilter, setExternalFilter] = useState(false);
-	const [internalFilter, setInternalFilter] = useState(false);
-	const [issueFilter, setIssueFilter] = useState(false);
-	const [linksData, setLinksData] = useState([]);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [loadQueryString, setLoadQueryString] = useState("");
-	const [noIssueFilter, setNoIssueFilter] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [pagePath, setPagePath] = useState("");
 	const [recrawlable, setRecrawlable] = useState(false);
-	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [searchKey, setSearchKey] = useState("");
-	const [siteData, setSiteData] = useState([]);
-	const [siteIdData, setSiteIdData] = useState([]);
-	const [sortOrder, setSortOrder] = useState(initialOrder);
-	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
+	const router = useRouter();
 
-	let currentScanResults = [];
+	let pageTitle = "";
 	let homeLabel = "Home";
 	let homePageLink = `/site/${result.siteId}/overview`;
-	let pageTitle = "";
-	let previousScanResults = [];
+
 	let reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
 	let sitesApiEndpoint = `/api/site/?ordering=name`;
+
+	let scanApiEndpoint = "";
+
+	let currentScanResults = [];
+	let previousScanResults = [];
+
+	let queryString = "";
+	let statusString = "";
+	let typeString = "";
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -137,29 +123,35 @@ const Links = ({ width, result }) => {
 
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
+				currentScanResults = scan.results.find((e) => e.finished_at === null);
+				previousScanResults = scan.results.find((e) => e.finished_at !== null);
 
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
-						.map((e) => {
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				);
+				if (currentScanResults !== [] || currentScanResults !== undefined) {
+					if (!crawlFinished) {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					} else {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					}
+				}
 			}
 		}
-	});
+	}, [crawlFinished, scan, scanObjId]);
 
-	let scanApiEndpoint =
+	scanApiEndpoint =
 		result.page !== undefined
 			? `/api/site/${result.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage + `&page=` + result.page
 			: `/api/site/${result.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
 
-	let queryString = "";
-
-	const statusString = Array.isArray(result.status) ? result.status.join("&status=") : result.status;
+	statusString = Array.isArray(result.status) ? result.status.join("&status=") : result.status;
 
 	queryString +=
 		result.status !== undefined
@@ -168,7 +160,7 @@ const Links = ({ width, result }) => {
 				: `?status=${statusString}`
 			: "";
 
-	const typeString = Array.isArray(result.type) ? result.type.join("&type=") : result.type;
+	typeString = Array.isArray(result.type) ? result.type.join("&type=") : result.type;
 
 	queryString +=
 		result.type !== undefined ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
@@ -203,30 +195,27 @@ const Links = ({ width, result }) => {
 	});
 
 	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0) {
-			setUserData(user);
-		}
-
-		if (site && site !== undefined && Object.keys(site).length > 0) {
-			setSiteData(site);
-		}
-
-		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
-			setSiteIdData(siteId);
-		}
-
-		if (links && links !== undefined && Object.keys(links).length > 0) {
-			setLinksData(links);
-		}
-
-		if (userData && siteData && siteIdData && linksData) {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0 &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0 &&
+			links &&
+			links !== undefined &&
+			Object.keys(links).length > 0
+		) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
 	}, [user, site, siteId, links]);
 
-	const searchEventHandler = async (e) => {
+	const handleSearch = async (e) => {
 		const searchTargetValue = e.target.value;
 
 		if (e.keyCode !== 13) return false;
@@ -247,113 +236,8 @@ const Links = ({ width, result }) => {
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		Router.push(newPath);
-		mutateLinks();
-	};
-
-	const filterChangeHandler = async (e) => {
-		const filterType = e.target.value;
-		const filterStatus = e.target.checked;
-
-		let newPath = asPath;
-		newPath = removeURLParameter(newPath, "page");
-
-		if (filterType == "issues" && filterStatus == true) {
-			setIssueFilter(true);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "status");
-
-			if (newPath.includes("?")) newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
-			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
-		} else if (filterType == "issues" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("status");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("status")) newPath = removeURLParameter(newPath, "status");
-
-			setIssueFilter(false);
-		}
-
-		if (filterType == "no-issues" && filterStatus == true) {
-			setIssueFilter(false);
-			setNoIssueFilter(true);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "status");
-
-			if (newPath.includes("?")) newPath += `&status=OK`;
-			else newPath += `?status=OK`;
-		} else if (filterType == "no-issues" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("status");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("status")) newPath = removeURLParameter(newPath, "status");
-
-			setNoIssueFilter(false);
-		}
-
-		if (filterType == "internal" && filterStatus == true) {
-			setInternalFilter(true);
-			setExternalFilter(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "type");
-			newPath = removeURLParameter(newPath, "page");
-
-			if (newPath.includes("?")) newPath += `&type=PAGE`;
-			else newPath += `?type=PAGE`;
-		} else if (filterType == "internal" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("type");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("type=PAGE")) newPath = removeURLParameter(newPath, "type");
-
-			setInternalFilter(false);
-		}
-
-		if (filterType == "external" && filterStatus == true) {
-			setExternalFilter(true);
-			setInternalFilter(false);
-			setAllFilter(false);
-
-			newPath = removeURLParameter(newPath, "page");
-			newPath = removeURLParameter(newPath, "type");
-
-			if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
-			else newPath += `?type=EXTERNAL`;
-		} else if (filterType == "external" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("type");
-			loadQueryString && loadQueryString.delete("page");
-
-			if (newPath.includes("type=EXTERNAL")) newPath = removeURLParameter(newPath, "type");
-
-			setExternalFilter(false);
-		}
-
-		if (filterType == "all" && filterStatus == true) {
-			setAllFilter(true);
-			setIssueFilter(false);
-			setNoIssueFilter(false);
-			setExternalFilter(false);
-			setInternalFilter(false);
-
-			newPath = removeURLParameter(newPath, "status");
-			newPath = removeURLParameter(newPath, "type");
-			newPath = removeURLParameter(newPath, "page");
-
-			// if (!newPath.includes("search") && !newPath.includes("ordering"))
-			//   newPath = newPath.replace("?", "");
-		}
-
-		if (newPath.includes("?")) setPagePath(`${newPath}&`);
-		else setPagePath(`${newPath}?`);
-
-		Router.push(newPath);
-		mutateLinks();
-
-		return true;
+		router.push(newPath);
+		mutateLinks;
 	};
 
 	const onItemsPerPageChange = (count) => {
@@ -374,10 +258,8 @@ const Links = ({ width, result }) => {
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			Router.push(newPath);
-			mutateLinks();
-
-			return true;
+			router.push(newPath);
+			mutateLinks;
 		}
 	};
 
@@ -387,168 +269,10 @@ const Links = ({ width, result }) => {
 
 		if (result.search !== undefined) setSearchKey(result.search);
 
-		if (result.ordering !== undefined) {
-			const slug = getSlugFromSortKey(LinksUrlContent, result.ordering.replace("-", ""));
-			const orderItem = slugToCamelcase(slug);
-
-			if (result.ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
-			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
-		}
-
 		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
-
-		setLoadQueryString(new URLSearchParams(window.location.search));
-
-		let loadQueryStringValue = new URLSearchParams(window.location.search);
-
-		if (loadQueryStringValue.has("status")) {
-			if (
-				loadQueryStringValue.getAll("status").includes("TIMEOUT") &&
-				loadQueryStringValue.getAll("status").includes("HTTP_ERROR") &&
-				loadQueryStringValue.getAll("status").includes("OTHER_ERROR")
-			) {
-				setIssueFilter(true);
-				setNoIssueFilter(false);
-				setAllFilter(false);
-				setInternalFilter(false);
-				setExternalFilter(false);
-			}
-
-			if (loadQueryStringValue.get("status") === "OK") {
-				setNoIssueFilter(true);
-				setIssueFilter(false);
-				setAllFilter(false);
-				setInternalFilter(false);
-				setExternalFilter(false);
-			}
-		}
-
-		if (loadQueryStringValue.has("type")) {
-			if (loadQueryStringValue.get("type") === "PAGE") {
-				setInternalFilter(true);
-				setExternalFilter(false);
-				setAllFilter(false);
-			} else if (loadQueryStringValue.get("type") === "EXTERNAL") {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
-			} else if (loadQueryStringValue.get("type") === "EXTERNALOTHER") {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
-			}
-		}
-
-		if (!loadQueryStringValue.has("type") && !loadQueryStringValue.has("status")) {
-			setNoIssueFilter(false);
-			setIssueFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(false);
-			setAllFilter(true);
-		}
 	}, []);
 
-	useEffect(() => {
-		if (result.status !== undefined && result.status === "OK") {
-			setNoIssueFilter(true);
-			setIssueFilter(false);
-			setAllFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(false);
-		}
-
-		if (
-			result.status !== undefined &&
-			result.status.includes("TIMEOUT") &&
-			result.status.includes("HTTP_ERROR") &&
-			result.status.includes("OTHER_ERROR")
-		) {
-			setIssueFilter(true);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(false);
-		}
-
-		if (
-			result.status == undefined &&
-			result.type !== undefined &&
-			(result.type === "EXTERNAL" || result.type === "PAGE")
-		) {
-			setIssueFilter(false);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(false);
-		}
-
-		if (result.type !== undefined && result.type == "PAGE") {
-			setInternalFilter(true);
-			setExternalFilter(false);
-			setAllFilter(false);
-		}
-
-		if (Array.isArray(result.type)) {
-			if (result.type !== undefined && result.type.join("") == "EXTERNALOTHER") {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
-			}
-		} else {
-			if (result.type !== undefined && result.type == "EXTERNAL") {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
-			}
-		}
-
-		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
-			if (result.type == undefined && result.status == undefined) {
-				setIssueFilter(false);
-				setNoIssueFilter(false);
-				setInternalFilter(false);
-				setExternalFilter(false);
-				setAllFilter(true);
-			}
-		}
-	}, [filterChangeHandler, loadQueryString]);
-
-	const SortHandler = (slug, dir) => {
-		setSortOrder({ ...initialOrder });
-
-		let newPath = removeURLParameter(asPath, "ordering");
-
-		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(LinksUrlContent, slug);
-
-		if (sortOrder[sortItem] == "default") {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
-			if (dir == "asc") {
-				if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-				else newPath += `?ordering=${sortKey}`;
-			} else {
-				if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-				else newPath += `?ordering=-${sortKey}`;
-			}
-		} else if (sortOrder[sortItem] == "asc") {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "desc" }));
-			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-			else newPath += `?ordering=-${sortKey}`;
-		} else {
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: "asc" }));
-			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-			else newPath += `?ordering=${sortKey}`;
-		}
-
-		// console.log('[pagePath]', newPath)
-		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
-		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
-
-		Router.push(newPath);
-		mutateLinks();
-	};
-
-	const onCrawlHandler = async () => {
+	const handleOnCrawl = async () => {
 		setCrawlFinished(false);
 
 		try {
@@ -568,45 +292,48 @@ const Links = ({ width, result }) => {
 		}
 	};
 
-	const crawlableHandler = (finished) => {
+	const handleCrawl = (finished) => {
 		if (finished) setCrawlFinished(true);
 
 		if (
 			user &&
 			user.permissions !== undefined &&
 			user.permissions.includes("can_start_scan") &&
-			siteIdData &&
-			siteIdData.verified &&
+			siteId &&
+			siteId.verified &&
 			finished
 		)
 			setRecrawlable(true);
 		else setRecrawlable(false);
 	};
 
-	return pageLoaded ? (
-		<Layout user={userData}>
+	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
+		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<LinksDiv tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={userData}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative flex-shrink-0 flex  bg-white border-b border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<LinkOptions
 							sid={result.siteId}
-							user={userData}
+							user={user}
 							searchKey={searchKey}
-							onSearchEvent={searchEventHandler}
-							onCrawl={onCrawlHandler}
+							onSearchEvent={handleSearch}
+							onCrawl={handleOnCrawl}
 							crawlable={recrawlable}
 							crawlFinished={crawlFinished}
-							crawlableHandler={crawlableHandler}
+							crawlableHandler={handleCrawl}
 						/>
 					</div>
 
@@ -638,29 +365,31 @@ const Links = ({ width, result }) => {
 								<div className="pt-4 m-auto">
 									<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
 										{pageTitle}
-										<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-											<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-												<LinkIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-												{linksData.count > 1
-													? linksData.count + " " + LinksLabel[2].label
-													: linksData.count == 1
-													? linksData.count + " " + LinksLabel[11].label
-													: LinksLabel[3].label}
-											</dd>
-										</dl>
+										{links && links !== undefined && links !== [] && Object.keys(links).length > 0 ? (
+											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+													<LinkIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+													{links.count > 1
+														? links.count + " " + LinksLabel[2].label
+														: links.count == 1
+														? links.count + " " + LinksLabel[11].label
+														: LinksLabel[3].label}
+												</dd>
+											</dl>
+										) : null}
 									</h4>
 								</div>
 							</div>
 						</div>
 						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 							<LinkFilter
-								onFilterChange={filterChangeHandler}
-								allFilter={allFilter}
-								noIssueFilter={noIssueFilter}
-								issueFilter={issueFilter}
-								internalFilter={internalFilter}
-								externalFilter={externalFilter}
+								result={result}
+								loadQueryString={loadQueryString}
+								setLoadQueryString={setLoadQueryString}
+								mutateLinks={mutateLinks}
+								setPagePath={setPagePath}
 							/>
+
 							<div tw="pb-4">
 								<div tw="flex flex-col">
 									<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -672,27 +401,25 @@ const Links = ({ width, result }) => {
 															return (
 																<Fragment key={key}>
 																	<th
-																		css={[
-																			tw`px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`,
-																			site.slug === "url-type" || site.slug === "occurrences"
-																				? "min-width-adjust"
-																				: "min-w-full"
-																		]}
+																		className="min-width-adjust"
+																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																	>
 																		<div tw="flex items-center justify-start">
-																			{site.slug !== undefined ? (
+																			{site.slug && site.slug !== undefined ? (
 																				<LinkSorting
-																					sortOrder={sortOrder}
-																					onSortHandler={SortHandler}
-																					key={key}
+																					result={result}
 																					slug={site.slug}
+																					mutateLinks={mutateLinks}
+																					linksUrlContent={LinksUrlContent}
+																					setPagePath={setPagePath}
 																				/>
 																			) : null}
 																			<span className="label" tw="flex items-center">
 																				{site.label}
-																				{site.slug === "url-type" ||
-																				site.slug === "status" ||
-																				site.slug === "http-code" ? (
+																				{site.slug &&
+																				(site.slug === "url-type" ||
+																					site.slug === "status" ||
+																					site.slug === "http-code") ? (
 																					<>
 																						<a
 																							data-tip
@@ -756,16 +483,12 @@ const Links = ({ width, result }) => {
 													</tr>
 												</thead>
 												<tbody tw="relative">
-													{userData &&
-														userData !== undefined &&
-														userData !== [] &&
-														Object.keys(userData).length > 0 &&
-														linksData &&
-														linksData !== undefined &&
-														linksData !== [] &&
-														Object.keys(linksData).length > 0 &&
-														linksData.results &&
-														linksData.results.map((val, key) => <LinkTable key={key} val={val} user={userData} />)}
+													{links &&
+														links !== undefined &&
+														links !== [] &&
+														Object.keys(links).length > 0 &&
+														links.results &&
+														links.results.map((val, key) => <LinkTable key={key} val={val} user={user} />)}
 												</tbody>
 											</table>
 										</div>
