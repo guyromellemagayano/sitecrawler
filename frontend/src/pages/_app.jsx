@@ -7,7 +7,7 @@ import { Integrations } from "@sentry/tracing";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import * as Sentry from "@sentry/react";
 import App from "next/app";
-import LogRocket, { sessionURL } from "logrocket";
+import LogRocket from "logrocket";
 import PropTypes from "prop-types";
 import setupLogRocketReact from "logrocket-react";
 
