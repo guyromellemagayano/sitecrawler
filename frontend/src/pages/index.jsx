@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // External
-import "twin.macro";
+import { styled } from "twin.macro";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import PropTypes from "prop-types";
@@ -34,13 +34,21 @@ import SiteFooter from "src/components/layouts/Footer";
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
+const DashboardDiv = styled.section`
+	@media only screen and (max-width: 1600px) {
+		.min-width-adjust {
+			min-width: 15rem;
+		}
+	}
+`;
+
 const Dashboard = ({ width, result }) => {
 	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
-	const [pagePath, setPagePath] = useState(null);
-	const [searchKey, setSearchKey] = useState(null);
+	const [pagePath, setPagePath] = useState("");
+	const [searchKey, setSearchKey] = useState("");
 
 	const pageTitle = DashboardLabel[0].label;
 
@@ -164,7 +172,7 @@ const Dashboard = ({ width, result }) => {
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
-			<section tw="h-screen flex overflow-hidden bg-white">
+			<DashboardDiv tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}
@@ -201,7 +209,8 @@ const Dashboard = ({ width, result }) => {
 																	return (
 																		<th
 																			key={key}
-																			tw="sm:w-48 lg:w-auto px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																			className="min-width-adjust"
+																			tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																		>
 																			<span tw="flex items-center justify-start">
 																				{site &&
@@ -262,7 +271,7 @@ const Dashboard = ({ width, result }) => {
 						<SiteFooter />
 					</div>
 				</div>
-			</section>
+			</DashboardDiv>
 		</Layout>
 	) : (
 		<Loader />
