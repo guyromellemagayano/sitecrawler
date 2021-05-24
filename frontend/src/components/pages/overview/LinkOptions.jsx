@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -20,11 +20,11 @@ import { useScan, useStats } from "src/hooks/useSite";
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
 const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, crawlFinished, crawlableHandler }) => {
-	const [componentReady, setComponentReady] = useState(false);
-	const [scanData, setScanData] = useState([]);
-	const [scanObjId, setScanObjId] = useState(0);
-	const [showErrorModal, setShowErrorModal] = useState(false);
-	const [statsData, setStatsData] = useState([]);
+	const [componentReady, setComponentReady] = React.useState(false);
+	const [scanData, setScanData] = React.useState([]);
+	const [scanObjId, setScanObjId] = React.useState(0);
+	const [showErrorModal, setShowErrorModal] = React.useState(false);
+	const [statsData, setStatsData] = React.useState([]);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -33,7 +33,7 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 		querySid: sid
 	});
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
 			setScanData(scan);
 
@@ -55,13 +55,13 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 		scanObjId: scanObjId
 	});
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setStatsData(stats);
 		}
 	}, [stats]);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (user && user !== undefined && user !== [] && Object.keys(user).length > 0 && statsData) {
 			setTimeout(() => {
 				setComponentReady(true);
@@ -69,7 +69,7 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 		}
 	}, [user, statsData]);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
 			if (statsData.finished_at) crawlableHandler(true);
 			else if (statsData.started_at && statsData.finished_at == null) crawlableHandler(false);
@@ -94,14 +94,13 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 			<div tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
 				<div tw="relative z-10 flex-shrink-0 flex bg-white border-b border-gray-200">
 					<div tw="flex-1 p-4 flex justify-end">
-						{router.pathname.includes("/links") ||
-						(user.permissions &&
-							user.permissions !== undefined &&
-							user.permissions.includes("can_see_images") &&
-							user.permissions.includes("can_see_pages") &&
-							user.permissions.includes("can_see_scripts") &&
-							user.permissions.includes("can_see_stylesheets") &&
-							user.permissions.includes("can_start_scan")) ? (
+						{user.permissions &&
+						user.permissions !== undefined &&
+						user.permissions.includes("can_see_images") &&
+						user.permissions.includes("can_see_pages") &&
+						user.permissions.includes("can_see_scripts") &&
+						user.permissions.includes("can_see_stylesheets") &&
+						user.permissions.includes("can_start_scan") ? (
 							<div tw="flex-1 flex">
 								<div tw="w-full flex lg:ml-0">
 									<label htmlFor="searchSites" tw="sr-only">
