@@ -1,7 +1,7 @@
 export const linksChartContents = [
 	{
 		label: "Broken Links",
-		filter: "status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR",
+		filter: "status__neq=OK",
 		color: "#f56565"
 	},
 	{

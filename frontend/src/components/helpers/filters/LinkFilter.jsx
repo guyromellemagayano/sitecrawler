@@ -34,13 +34,13 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 
 			newPath = removeURLParameter(newPath, "status");
 
-			if (newPath.includes("?")) newPath += `&status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
-			else newPath += `?status=TIMEOUT&status=HTTP_ERROR&status=OTHER_ERROR`;
+			if (newPath.includes("?")) newPath += `&status__neq=OK`;
+			else newPath += `?status__neq=OK`;
 		} else if (filterType == "issues" && filterStatus == false) {
-			loadQueryString && loadQueryString.delete("status");
+			loadQueryString && loadQueryString.delete("status__neq");
 			loadQueryString && loadQueryString.delete("page");
 
-			if (newPath.includes("status")) newPath = removeURLParameter(newPath, "status");
+			if (newPath.includes("status__neq")) newPath = removeURLParameter(newPath, "status__neq");
 
 			setIssueFilter(false);
 		}
@@ -50,7 +50,8 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 			setNoIssueFilter(true);
 			setAllFilter(false);
 
-			newPath = removeURLParameter(newPath, "status");
+			newPath = removeURLParameter(newPath, "type");
+			newPath = removeURLParameter(newPath, "status__neq");
 
 			if (newPath.includes("?")) newPath += `&status=OK`;
 			else newPath += `?status=OK`;
@@ -69,7 +70,6 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "type");
-			newPath = removeURLParameter(newPath, "page");
 
 			if (newPath.includes("?")) newPath += `&type=PAGE`;
 			else newPath += `?type=PAGE`;
@@ -87,7 +87,6 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 			setInternalFilter(false);
 			setAllFilter(false);
 
-			newPath = removeURLParameter(newPath, "page");
 			newPath = removeURLParameter(newPath, "type");
 
 			if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
@@ -109,6 +108,7 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 			setInternalFilter(false);
 
 			newPath = removeURLParameter(newPath, "status");
+			newPath = removeURLParameter(newPath, "status__neq");
 			newPath = removeURLParameter(newPath, "type");
 			newPath = removeURLParameter(newPath, "page");
 		}
@@ -118,8 +118,6 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 
 		router.push(newPath);
 		mutateLinks;
-
-		return true;
 	};
 
 	React.useEffect(() => {
@@ -127,19 +125,17 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 
 		let loadQueryStringValue = new URLSearchParams(window.location.search);
 
-		if (loadQueryStringValue.has("status")) {
-			if (
-				loadQueryStringValue.getAll("status").includes("TIMEOUT") &&
-				loadQueryStringValue.getAll("status").includes("HTTP_ERROR") &&
-				loadQueryStringValue.getAll("status").includes("OTHER_ERROR")
-			) {
+		if (loadQueryStringValue.has("status__neq")) {
+			if (loadQueryStringValue.get("status__neq") === "OK") {
 				setIssueFilter(true);
 				setNoIssueFilter(false);
 				setAllFilter(false);
 				setInternalFilter(false);
 				setExternalFilter(false);
 			}
+		}
 
+		if (loadQueryStringValue.has("status")) {
 			if (loadQueryStringValue.get("status") === "OK") {
 				setNoIssueFilter(true);
 				setIssueFilter(false);
@@ -165,7 +161,11 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 			}
 		}
 
-		if (!loadQueryStringValue.has("type") && !loadQueryStringValue.has("status")) {
+		if (
+			!loadQueryStringValue.has("type") &&
+			!loadQueryStringValue.has("status") &&
+			!loadQueryStringValue.has("status__neq")
+		) {
 			setNoIssueFilter(false);
 			setIssueFilter(false);
 			setInternalFilter(false);
@@ -183,12 +183,7 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 			setExternalFilter(false);
 		}
 
-		if (
-			result.status !== undefined &&
-			result.status.includes("TIMEOUT") &&
-			result.status.includes("HTTP_ERROR") &&
-			result.status.includes("OTHER_ERROR")
-		) {
+		if (result.status__neq !== undefined && result.status__neq === "OK") {
 			setIssueFilter(true);
 			setNoIssueFilter(false);
 			setAllFilter(false);
@@ -196,15 +191,19 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 			setExternalFilter(false);
 		}
 
-		if (
-			result.status == undefined &&
-			result.type !== undefined &&
-			(result.type === "EXTERNAL" || result.type === "PAGE")
-		) {
-			setIssueFilter(false);
+		if (result.status__neq !== undefined && result.type !== undefined && result.type === "EXTERNAL") {
+			setIssueFilter(true);
 			setNoIssueFilter(false);
 			setAllFilter(false);
 			setInternalFilter(false);
+			setExternalFilter(true);
+		}
+
+		if (result.status__neq !== undefined && result.type !== undefined && result.type === "PAGE") {
+			setIssueFilter(true);
+			setNoIssueFilter(false);
+			setAllFilter(false);
+			setInternalFilter(true);
 			setExternalFilter(false);
 		}
 
@@ -229,7 +228,7 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 		}
 
 		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
-			if (result.type == undefined && result.status == undefined) {
+			if (result.type == undefined && result.status == undefined && result.status__neq == undefined) {
 				setIssueFilter(false);
 				setNoIssueFilter(false);
 				setInternalFilter(false);
