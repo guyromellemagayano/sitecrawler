@@ -46,7 +46,7 @@ const DataTableDiv = styled.tbody`
 	}
 `;
 
-const DataTable = ({ user, site, disableLocalTime, mutateSite, router }) => {
+const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${site.verification_id}" />`);
