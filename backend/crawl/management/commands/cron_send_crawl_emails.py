@@ -32,7 +32,12 @@ class Command(BaseCommand):
                 .order_by("site_id", "-finished_at")
                 .distinct("site_id")
             )
-            scans_with_details = [Scan.objects.details().get(pk=scan.id) for scan in latest_finished_scans]
+            scans_with_details = [
+                Scan.objects.details(user_large_page_size_threshold=user.userprofile.large_page_size_threshold).get(
+                    pk=scan.id
+                )
+                for scan in latest_finished_scans
+            ]
 
             if len(scans_with_details) < 1:
                 continue

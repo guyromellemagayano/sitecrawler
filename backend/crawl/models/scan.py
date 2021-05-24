@@ -8,7 +8,12 @@ from crawl.models import Link
 
 
 class ScanQuerySet(QuerySet):
-    def details(self, user_large_page_size_threshold=1024 * 1024, large_page_size_threshold=None):
+    def details(self, user_large_page_size_threshold=None, large_page_size_threshold=None):
+        if user_large_page_size_threshold is None and large_page_size_threshold is None:
+            raise Exception(
+                "Either `user_large_page_size_threshold` or `large_page_size_threshold` must be provided "
+                "for `.details()` query method."
+            )
         # threshold is passed directly in view,
         # but when queried in bulk only user threshold is supplied and we need to do a join
         if not large_page_size_threshold:
