@@ -5,6 +5,7 @@ on:
   push:
     branches: [ master ]
 
+concurrency: deploy
 jobs:
   build_backend:
     runs-on: ubuntu-latest

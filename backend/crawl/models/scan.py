@@ -8,7 +8,12 @@ from crawl.models import Link
 
 
 class ScanQuerySet(QuerySet):
-    def details(self, user_large_page_size_threshold=1024 * 1024, large_page_size_threshold=None):
+    def details(self, user_large_page_size_threshold=None, large_page_size_threshold=None):
+        if user_large_page_size_threshold is None and large_page_size_threshold is None:
+            raise Exception(
+                "Either `user_large_page_size_threshold` or `large_page_size_threshold` must be provided "
+                "for `.details()` query method."
+            )
         # threshold is passed directly in view,
         # but when queried in bulk only user threshold is supplied and we need to do a join
         if not large_page_size_threshold:
@@ -66,6 +71,8 @@ class ScanQuerySet(QuerySet):
         ids = tuple(ids)
         print("Bulk scan delete", flush=True)
         with connections["superuser"].cursor() as cursor:
+            print("Disabling triggers", flush=True)
+            cursor.execute("SET session_replication_role = 'replica'")
             print("Deleting link links", flush=True)
             cursor.execute(
                 "DELETE FROM crawl_link_links WHERE from_link_id IN (SELECT id FROM crawl_link WHERE scan_id IN %s)",
@@ -104,6 +111,8 @@ class ScanQuerySet(QuerySet):
             )
             print("Deleting scans", flush=True)
             cursor.execute("DELETE FROM crawl_scan WHERE id IN %s", [ids])
+            print("Enabling triggers", flush=True)
+            cursor.execute("SET session_replication_role = 'origin'")
 
 
 class Scan(models.Model):

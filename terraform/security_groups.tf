@@ -91,6 +91,7 @@ resource "aws_security_group" "production_db" {
       module.cron_delete_old_scans.security_group_id,
       module.cron_send_crawl_emails_daily.security_group_id,
       module.cron_send_crawl_emails_weekly.security_group_id,
+      module.cron_delete_expired_scans.security_group_id,
     ]
 	}
 
