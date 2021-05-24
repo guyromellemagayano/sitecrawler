@@ -139,7 +139,7 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 			setImageMissingAltsFilter(false);
 		}
 
-		if (filterType === "all" && filterStatus == true) {
+		if (filterType == "all" && filterStatus == true) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
 			setImageMissingAltsFilter(false);
