@@ -72,4 +72,4 @@ MyApp.getInitialProps = async (appContext) => {
 	return { ...appProps };
 };
 
-export default MyApp;
+export default Sentry.withProfiler(MyApp);
