@@ -57,30 +57,25 @@ const Pages = ({ width, result }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [pagePath, setPagePath] = useState("");
-	const [pagesData, setPagesData] = useState([]);
 	const [recrawlable, setRecrawlable] = useState(false);
-	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [searchKey, setSearchKey] = useState("");
-	const [siteData, setSiteData] = useState([]);
-	const [siteIdData, setSiteIdData] = useState([]);
-	const [userData, setUserData] = useState([]);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
 
-	const pageTitle =
-		siteIdData.name && siteIdData.name !== undefined
-			? PagesLabel[1].label + " - " + siteIdData.name
-			: PagesLabel[1].label;
-	const homeLabel = "Home";
-	const homePageLink = `/site/${result.siteId}/overview`;
-	const reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-	const sitesApiEndpoint = `/api/site/?ordering=name`;
+	let pageTitle = "";
+	let homeLabel = "Home";
+	let homePageLink = `/site/${result.siteId}/overview`;
 
-	let pages = [];
-	let mutatePages = [];
+	let reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
+	let sitesApiEndpoint = `/api/site/?ordering=name`;
+
 	let scanApiEndpoint = "";
+
+	let previousScanResults = [];
+	let currentScanResults = [];
+
 	let queryString = "";
 
 	const { user: user } = useUser({
@@ -100,27 +95,39 @@ const Pages = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
+	if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+		pageTitle =
+			siteId.name && siteId.name !== undefined ? PagesLabel[1].label + " - " + siteId.name : PagesLabel[1].label;
+	}
+
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
+				currentScanResults = scan.results.find((e) => e.finished_at === null);
+				previousScanResults = scan.results.find((e) => e.finished_at !== null);
 
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
-						.map((e) => {
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				);
+				if (currentScanResults !== [] || currentScanResults !== undefined) {
+					if (!crawlFinished) {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					} else {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					}
+				}
 			}
 		}
-	});
+	}, [crawlFinished, scan, scanObjId]);
 
 	if (
 		user &&
 		user !== undefined &&
-		user !== [] &&
 		Object.keys(user).length > 0 &&
 		user.permissions &&
 		user.permissions !== undefined &&
@@ -183,37 +190,34 @@ const Pages = ({ width, result }) => {
 		scanApiEndpoint += queryString;
 	}
 
-	({ pages: pages, mutatePages: mutatePages } = usePages({
+	const { pages: pages, mutatePages: mutatePages } = usePages({
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
 		scanObjId: scanObjId
-	}));
+	});
 
 	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0) {
-			setUserData(user);
-		}
-
-		if (site && site !== undefined && Object.keys(site).length > 0) {
-			setSiteData(site);
-		}
-
-		if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
-			setSiteIdData(siteId);
-		}
-
-		if (pages && pages !== undefined && Object.keys(pages).length > 0) {
-			setPagesData(pages);
-		}
-
-		if (userData && siteData && siteIdData && pagesData) {
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			site &&
+			site !== undefined &&
+			Object.keys(site).length > 0 &&
+			siteId &&
+			siteId !== undefined &&
+			Object.keys(siteId).length > 0 &&
+			pages &&
+			pages !== undefined &&
+			Object.keys(pages).length > 0
+		) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
 	}, [user, site, siteId, pages]);
 
-	const searchEventHandler = async (e) => {
+	const handleSearch = async (e) => {
 		const searchTargetValue = e.target.value;
 
 		if (e.keyCode !== 13) return false;
@@ -297,22 +301,22 @@ const Pages = ({ width, result }) => {
 			user &&
 			user.permissions !== undefined &&
 			user.permissions.includes("can_start_scan") &&
-			siteIdData &&
-			siteIdData.verified &&
+			siteId &&
+			siteId.verified &&
 			finished
 		)
 			setRecrawlable(true);
 		else setRecrawlable(false);
 	};
 
-	return pageLoaded ? (
-		<Layout user={userData}>
+	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
+		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<PagesDiv tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={userData}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -325,9 +329,9 @@ const Pages = ({ width, result }) => {
 
 						<LinkOptions
 							sid={result.siteId}
-							user={userData}
+							user={user}
 							searchKey={searchKey}
-							onSearchEvent={searchEventHandler}
+							onSearchEvent={handleSearch}
 							onCrawl={onCrawlHandler}
 							crawlable={recrawlable}
 							crawlFinished={crawlFinished}
@@ -363,14 +367,14 @@ const Pages = ({ width, result }) => {
 								<div className="pt-4 m-auto">
 									<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
 										{pageTitle}
-										{pagesData && pagesData !== undefined && pagesData !== [] && Object.keys(pagesData).length > 0 ? (
+										{pages && pages !== undefined && pages !== [] && Object.keys(pages).length > 0 ? (
 											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
 													<DocumentIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-													{pagesData.count > 1
-														? pagesData.count + " " + PagesLabel[2].label
-														: pagesData.count == 1
-														? pagesData.count + " " + PagesLabel[6].label
+													{pages.count > 1
+														? pages.count + " " + PagesLabel[2].label
+														: pages.count == 1
+														? pages.count + " " + PagesLabel[6].label
 														: PagesLabel[3].label}
 												</dd>
 											</dl>
@@ -464,15 +468,14 @@ const Pages = ({ width, result }) => {
 									</div>
 								</div>
 							</div>
-							{userData &&
-							userData !== undefined &&
-							userData !== [] &&
-							Object.keys(userData).length > 0 &&
-							userData.permissions &&
-							userData.permissions !== undefined &&
-							userData.permissions.includes("can_see_pages") &&
-							userData.permissions.includes("can_see_scripts") &&
-							userData.permissions.includes("can_see_stylesheets") ? (
+							{user &&
+							user !== undefined &&
+							Object.keys(user).length > 0 &&
+							user.permissions &&
+							user.permissions !== undefined &&
+							user.permissions.includes("can_see_pages") &&
+							user.permissions.includes("can_see_scripts") &&
+							user.permissions.includes("can_see_stylesheets") ? (
 								<MyPagination
 									href="/site/[siteId]/pages"
 									pathName={pagePath}
