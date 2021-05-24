@@ -43,7 +43,7 @@ const PageTableDiv = styled.tr`
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		max-width: 20rem;
+		max-width: 32rem;
 	}
 
 	.btn-detail {
