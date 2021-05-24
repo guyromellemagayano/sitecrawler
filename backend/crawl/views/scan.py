@@ -46,20 +46,22 @@ class ScanViewSet(
 
     @action(detail=True, methods=["post"])
     def send_finished_email(self, request, pk=None, parent_lookup_site=None):
-        scan = (
-            Scan.objects.select_related("site", "site__user")
-            .details(user_large_page_size_threshold=request.user.userprofile.large_page_size_threshold)
-            .get(pk=pk)
-        )
+        scan = Scan.objects.select_related("site", "site__user").get(pk=pk)
 
         # Only send initial emails here, others will be handled by cron
         if Scan.objects.filter(site_id=scan.site_id).count() == 1:
             self._send_initial_email(scan.site.user, scan)
+
             return Response()
 
         return Response()
 
-    def _send_initial_email(self, user, scan):
+    def _send_initial_email(self, user, scan_id):
+        scan = (
+            Scan.objects.select_related("site", "site__user")
+            .details(user_large_page_size_threshold=user.userprofile.large_page_size_threshold)
+            .get(pk=scan_id)
+        )
         site = models.Site.objects.get_current()
         context = {"user": user, "scan": scan, "site": site}
         subject = render_to_string("crawl_initial_email_subject.txt", context).strip()
