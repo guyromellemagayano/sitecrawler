@@ -3,7 +3,7 @@ import { Fragment, useState, useEffect } from "react";
 
 // NextJS
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // External
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
@@ -259,10 +259,8 @@ const Images = ({ width, result }) => {
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			Router.push(newPath);
+			router.push(newPath);
 			mutateImages;
-
-			return true;
 		}
 	};
 
@@ -278,7 +276,6 @@ const Images = ({ width, result }) => {
 					return data;
 				}
 			} else {
-				// FIXME: report issues from here to Sentry
 				return null;
 			}
 		} catch (error) {
@@ -419,8 +416,6 @@ const Images = ({ width, result }) => {
 																			user.permissions &&
 																			Object.keys(user.permissions).length > 0 &&
 																			user.permissions.includes("can_see_images") &&
-																			site &&
-																			site !== undefined &&
 																			site.slug &&
 																			site.slug !== undefined ? (
 																				<ImageSorting

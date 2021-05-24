@@ -3,7 +3,7 @@ import { Fragment, useState, useEffect } from "react";
 
 // NextJS
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // External
 import { ChevronRightIcon, HomeIcon, SearchIcon } from "@heroicons/react/solid";
@@ -309,10 +309,8 @@ const Seo = ({ width, result }) => {
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			Router.push(newPath);
-			mutatePages();
-
-			return true;
+			router.push(newPath);
+			mutatePages;
 		}
 	};
 
