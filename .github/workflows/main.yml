@@ -43,6 +43,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: us-east-1
   deploy:
+    concurrency: deploy
     runs-on: ubuntu-latest
     needs: [build_backend, build_frontend, build_go]
     steps:
@@ -65,6 +66,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: us-east-1
   deploy_ecs:
+    concurrency: deploy_ecs
     runs-on: ubuntu-latest
     needs: [build_backend, build_frontend, build_go]
     steps:
