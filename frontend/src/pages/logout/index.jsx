@@ -32,7 +32,7 @@ const Logout = () => {
 				if (Math.floor(response.status / 200) === 1) {
 					if (response.data.detail) {
 						setLogoutDetail(response.data.detail);
-						mutateUser();
+						mutateUser;
 
 						if (response.data.detail !== undefined) {
 							window.location.href = "/login";
