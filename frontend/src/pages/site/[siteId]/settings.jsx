@@ -9,7 +9,6 @@ import Link from "next/link";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
@@ -24,30 +23,25 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const DeleteSiteSettings = loadable(() => import("src/components/pages/settings/site/DeleteSite"));
-const LargePageSizeSettings = loadable(() => import("src/components/pages/settings/site/LargePageSize"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-const SiteInformationSettings = loadable(() => import("src/components/pages/settings/site/SiteInformation"));
+import AppLogo from "src/components/logos/AppLogo";
+import DeleteSiteSettings from "src/components/pages/settings/site/DeleteSite";
+import LargePageSizeSettings from "src/components/pages/settings/site/LargePageSize";
+import Loader from "src/components/layouts/Loader";
+import MainSidebar from "src/components/sidebar/MainSidebar";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
+import ProfileSkeleton from "src/components/skeletons/ProfileSkeleton";
+import SiteFooter from "src/components/layouts/Footer";
+import SiteInformationSettings from "src/components/pages/settings/site/SiteInformation";
 
 const SiteSettings = ({ width, result }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
-	const [siteData, setSiteData] = useState([]);
-	const [siteIdData, setSiteIdData] = useState([]);
-	const [userData, setUserData] = useState([]);
 
-	const pageTitle =
-		siteIdData.name && siteIdData.name !== undefined
-			? SettingsLabel[1].label + " - " + siteIdData.name
-			: SettingsLabel[1].label;
-	const homeLabel = "Home";
-	const homePageLink = `/site/${result.siteId}/overview`;
-	const sitesApiEndpoint = `/api/site/?ordering=name`;
+	let pageTitle = "";
+	let homeLabel = "Home";
+	let homePageLink = `/site/${result.siteId}/overview`;
+
+	let sitesApiEndpoint = `/api/site/?ordering=name`;
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -62,6 +56,11 @@ const SiteSettings = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
+	if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+		pageTitle =
+			siteId.name && siteId.name !== undefined ? SettingsLabel[1].label + " - " + siteId.name : SettingsLabel[1].label;
+	}
+
 	useEffect(() => {
 		if (
 			user &&
@@ -74,31 +73,30 @@ const SiteSettings = ({ width, result }) => {
 			siteId !== undefined &&
 			Object.keys(siteId).length > 0
 		) {
-			setSiteData(site);
-			setUserData(user);
-			setSiteIdData(siteId);
-
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
 	}, [user, site, siteId]);
 
-	return pageLoaded ? (
+	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={userData}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<Link href={homePageLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
@@ -111,7 +109,7 @@ const SiteSettings = ({ width, result }) => {
 					</div>
 
 					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
-						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
+						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 								{pageLoaded ? (
 									<div className="max-w-full py-4 px-8">
@@ -146,14 +144,23 @@ const SiteSettings = ({ width, result }) => {
 								)}
 
 								<div tw="space-y-12 divide-y divide-gray-200">
-									<SiteInformationSettings user={userData} siteId={siteIdData} settingsLabel={SettingsLabel} />
-									<LargePageSizeSettings user={userData} siteId={siteIdData} querySiteId={result.siteId} />
-									<DeleteSiteSettings
-										user={userData}
-										siteId={siteIdData}
-										settingsLabel={SettingsLabel}
-										mutateSite={mutateSite}
-									/>
+									{user &&
+									user !== undefined &&
+									Object.keys(user).length > 0 &&
+									siteId &&
+									siteId !== undefined &&
+									Object.keys(siteId).length > 0 ? (
+										<>
+											<SiteInformationSettings user={user} siteId={siteId} settingsLabel={SettingsLabel} />
+											<LargePageSizeSettings user={user} siteId={siteId} querySiteId={result.siteId} />
+											<DeleteSiteSettings
+												user={user}
+												siteId={siteId}
+												settingsLabel={SettingsLabel}
+												mutateSite={mutateSite}
+											/>
+										</>
+									) : null}
 								</div>
 							</div>
 						</div>
