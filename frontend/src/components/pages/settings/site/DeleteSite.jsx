@@ -13,6 +13,9 @@ import PropTypes from "prop-types";
 // Hooks
 import useDeleteMethod from "src/hooks/useDeleteMethod";
 
+// Components
+import DeleteSiteSkeleton from "src/components/skeletons/DeleteSiteSkeleton";
+
 const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [showModal, setShowModal] = useState(false);
@@ -155,7 +158,7 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 			</div>
 		</div>
 	) : (
-		<p>Loading...</p>
+		<DeleteSiteSkeleton />
 	);
 };
 
