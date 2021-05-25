@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
@@ -18,14 +18,14 @@ import AddSiteLabel from "public/labels/components/sites/AddSite.json";
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
 const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
-	const [siteLimitCounter, setSiteLimitCounter] = useState(0);
-	const [maxSiteLimit, setMaxSiteLimit] = useState(0);
-	const [showErrorModal, setShowErrorModal] = useState(false);
-	const [componentReady, setComponentReady] = useState(false);
+	const [siteLimitCounter, setSiteLimitCounter] = React.useState(0);
+	const [maxSiteLimit, setMaxSiteLimit] = React.useState(0);
+	const [showErrorModal, setShowErrorModal] = React.useState(false);
+	const [componentReady, setComponentReady] = React.useState(false);
 
 	const informationPageLink = "/add-site/information";
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (
 			user &&
 			user !== undefined &&
