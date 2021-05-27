@@ -9,11 +9,17 @@ updates:
     directory: "/backend"
     schedule:
       interval: "daily"
+    reviewers:
+      - "domenipavec"
   - package-ecosystem: "pip"
     directory: "/deploy"
     schedule:
-      interval: "daily"      
+      interval: "daily"
+    reviewers:
+      - "domenipavec"
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
       interval: "daily"
+    reviewers:
+      - "guy-epicdesignlabs"
