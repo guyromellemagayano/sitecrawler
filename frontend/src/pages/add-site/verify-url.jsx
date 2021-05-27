@@ -303,7 +303,7 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 					</div>
 
 					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
-						<div tw="w-full p-6 mx-auto grid gap-16 xl:grid-cols-1 2xl:grid-cols-3 lg:col-gap-5 lg:row-gap-12">
+						<div tw="w-full p-6 mx-auto grid gap-16 xl:grid-cols-1 2xl:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 								{pageLoaded ? (
 									<>

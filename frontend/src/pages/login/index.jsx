@@ -21,7 +21,6 @@ import LoginLabel from "public/labels/pages/login.json";
 // Hooks
 import usePostMethod from "src/hooks/usePostMethod";
 import useShowPassword from "src/hooks/useShowPassword";
-import useUser from "src/hooks/useUser";
 
 // Layout
 import Layout from "src/components/Layout";
@@ -41,11 +40,6 @@ const Login = () => {
 	const pageTitle = "Login";
 	const loginApiEndpoint = "/api/auth/login/";
 	const googleLoginApiEndpoint = "/auth/google/login/";
-
-	// const { user: user, userError: userError } = useUser({
-	//   redirectIfFound: true,
-	//   redirectTo: "/",
-	// });
 
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
 	const usernameRef = useRef();

@@ -21,13 +21,13 @@ const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeEr
 
 const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, crawlFinished, crawlableHandler }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
-	const [scanData, setScanData] = React.useState([]);
 	const [scanObjId, setScanObjId] = React.useState(0);
 	const [showErrorModal, setShowErrorModal] = React.useState(false);
-	const [statsData, setStatsData] = React.useState([]);
+
+	let previousScanResults = [];
+	let currentScanResults = [];
 
 	const { asPath } = useRouter();
-	const router = useRouter();
 
 	const { scan: scan } = useScan({
 		querySid: sid
@@ -35,46 +35,57 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 
 	React.useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
+				currentScanResults = scan.results.find((e) => e.finished_at === null);
+				previousScanResults = scan.results.find((e) => e.finished_at !== null);
 
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
-						.map((e) => {
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				);
+				if (currentScanResults !== [] || currentScanResults !== undefined) {
+					if (!crawlFinished) {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					} else {
+						if (previousScanResults !== undefined) {
+							setScanObjId(previousScanResults.id);
+						} else {
+							setScanObjId(currentScanResults.id);
+						}
+					}
+				}
 			}
 		}
-	});
+	}, [crawlFinished, scan, scanObjId]);
 
 	const { stats: stats } = useStats({
 		querySid: sid,
-		scanObjId: scanObjId
+		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId
 	});
 
 	React.useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-	}, [stats]);
-
-	React.useEffect(() => {
-		if (user && user !== undefined && user !== [] && Object.keys(user).length > 0 && statsData) {
+		if (
+			user &&
+			user !== undefined &&
+			user !== [] &&
+			Object.keys(user).length > 0 &&
+			stats &&
+			stats !== undefined &&
+			stats !== [] &&
+			Object.keys(stats).length > 0
+		) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, [500]);
 		}
-	}, [user, statsData]);
+	}, [user, stats]);
 
 	React.useEffect(() => {
-		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
-			if (statsData.finished_at) crawlableHandler(true);
-			else if (statsData.started_at && statsData.finished_at == null) crawlableHandler(false);
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			if (stats.finished_at) crawlableHandler(true);
+			else if (stats.started_at && stats.finished_at == null) crawlableHandler(false);
 		}
-	}, [statsData]);
+	}, [stats]);
 
 	const handleOnCrawlPermissions = (e) => {
 		e.preventDefault();
@@ -166,7 +177,7 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 												<span>
 													{crawlFinished
 														? LinkOptionsLabel[4].label
-														: scanData.count == 1
+														: scan.count == 1
 														? LinkOptionsLabel[8].label
 														: LinkOptionsLabel[5].label}
 												</span>
