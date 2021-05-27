@@ -36,8 +36,6 @@ const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 
 const GlobalSettings = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [siteData, setSiteData] = useState([]);
-	const [userData, setUserData] = useState([]);
 	const [pageLoaded, setPageLoaded] = useState(false);
 
 	const pageTitle = "Global Settings";
@@ -63,30 +61,30 @@ const GlobalSettings = ({ width }) => {
 			site !== undefined &&
 			Object.keys(site).length > 0
 		) {
-			setSiteData(site);
-			setUserData(user);
-
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
 	}, [user, site]);
 
-	return pageLoaded ? (
+	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={userData}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<Link href={homePageLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
@@ -134,8 +132,8 @@ const GlobalSettings = ({ width }) => {
 								)}
 
 								<div tw="space-y-12 divide-y divide-gray-200">
-									<TimestampSettings user={userData} />
-									<LargePageSizeSettings user={userData} site={siteData} />
+									<TimestampSettings user={user} />
+									{/* <LargePageSizeSettings user={user} /> */}
 								</div>
 							</div>
 						</div>

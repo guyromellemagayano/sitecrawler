@@ -152,7 +152,7 @@ const SiteSettings = ({ width, result }) => {
 									Object.keys(siteId).length > 0 ? (
 										<>
 											<SiteInformationSettings user={user} siteId={siteId} settingsLabel={SettingsLabel} />
-											<LargePageSizeSettings user={user} siteId={siteId} querySiteId={result.siteId} />
+											{/* <LargePageSizeSettings user={user} siteId={siteId} querySiteId={result.siteId} /> */}
 											<DeleteSiteSettings
 												user={user}
 												siteId={siteId}
