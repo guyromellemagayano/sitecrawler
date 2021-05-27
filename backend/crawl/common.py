@@ -1,5 +1,7 @@
 from django.db.models import Count, Subquery, IntegerField
 from rest_framework import permissions, serializers
+from rest_framework.settings import api_settings
+from rest_framework_csv.renderers import PaginatedCSVRenderer
 
 
 class SubQueryCount(Subquery):
@@ -44,3 +46,13 @@ def HasPermission(perm):
             return request.user.has_perm(perm)
 
     return HasPermissionClass
+
+
+class CsvMixin:
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (PaginatedCSVRenderer,)
+
+    def paginate_queryset(self, queryset):
+        # disable pagination for csv
+        if self.request.query_params.get("format") == "csv":
+            return None
+        return super().paginate_queryset(queryset)

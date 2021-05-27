@@ -2,7 +2,7 @@ from django_filters import rest_framework as filters
 from rest_framework import viewsets, mixins
 from rest_framework_extensions.mixins import DetailSerializerMixin, NestedViewSetMixin
 
-from crawl.common import HasPermission
+from crawl.common import CsvMixin, HasPermission
 from crawl.models import Link
 from crawl.serializers import (
     LinkSerializer,
@@ -47,7 +47,12 @@ class LinkFilter(filters.FilterSet):
 
 
 class PageChildViewSet(
-    DetailSerializerMixin, NestedViewSetMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+    CsvMixin,
+    DetailSerializerMixin,
+    NestedViewSetMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = Link.objects.all()
     serializer_class = LinkSerializer
