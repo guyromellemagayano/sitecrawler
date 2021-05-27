@@ -1,6 +1,6 @@
 django==3.0.14
 djangorestframework==3.12.4
-psycopg2==2.8.5
+psycopg2==2.8.6
 django-rest-auth[with_social]==0.9.5
 drf-extensions==0.7.0
 requests==2.25.1
