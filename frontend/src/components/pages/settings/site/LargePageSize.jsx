@@ -1,6 +1,9 @@
 // React
 import { useState, useEffect } from "react";
 
+// NextJS
+import { useRouter } from "next/router";
+
 // External
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -19,47 +22,27 @@ const ErrorNotification = loadable(() => import("src/components/notifications/Er
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SettingsLargePageSizeSkeleton = loadable(() => import("src/components/skeletons/SettingsLargePageSizeSkeleton"));
 
-const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
+const LargePageSizeSettings = (props) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [disableForm, setDisableForm] = useState(true);
 	const [errorMsg, setErrorMsg] = useState("");
 	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
 	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState("");
-	const [siteIdData, setSiteIdData] = useState([]);
 	const [successMsg, setSuccessMsg] = useState("");
 	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
 
 	const userApiEndpoint = `/api/auth/user/`;
-	const siteIdApiEndpoint = `/api/site/${siteIdData.id}/`;
+	const siteIdApiEndpoint = `/api/site/${props.querySiteId}/`;
+
+	const router = useRouter();
 
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			((site && site !== undefined && site !== [] && Object.keys(site).length > 0) ||
-				(siteId && siteId !== undefined && siteId !== [] && Object.keys(siteId).length > 0))
-		) {
-			// if (siteId) {
-			// 	setSiteIdData(siteId);
-			// }
+		setLargePageSizeThreshold(props.user.large_page_size_threshold);
 
-			// if (
-			// 	(siteIdData && siteIdData.large_page_size_threshold == undefined) ||
-			// 	siteIdData.large_page_size_threshold == null
-			// ) {
-			// 	setLargePageSizeThreshold(user.large_page_size_threshold);
-			// } else {
-			// 	setLargePageSizeThreshold(siteIdData.large_page_size_threshold);
-			// }
-
-			setLargePageSizeThreshold(user.large_page_size_threshold);
-
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [user, site, siteId]);
+		setTimeout(() => {
+			setComponentReady(true);
+		}, 500);
+	}, [props]);
 
 	const handleLargePageSizeInputChange = (e) => {
 		setLargePageSizeThreshold(e.target.value);
@@ -79,6 +62,7 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 				setErrorMsgLoaded={setErrorMsgLoaded}
 				errorMsgTitle={GlobalLabel[7].label}
 			/>
+
 			<div tw="max-w-full py-4 px-8">
 				<div tw="pt-4 m-auto">
 					<h5 tw="text-xl leading-6 font-medium text-gray-900">{GlobalLabel[2].label}</h5>
@@ -88,7 +72,7 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
 				<Formik
 					enableReinitialize={
-						siteIdData && siteIdData !== undefined && siteIdData !== [] && Object.keys(siteIdData).length > 0
+						props.querySiteId && props.querySiteId !== undefined && Object.keys(props.querySiteId).length > 0
 							? false
 							: true
 					}
@@ -103,7 +87,10 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 
 						try {
 							const response = await usePatchMethod(
-								siteIdData && siteIdData !== undefined && siteIdData !== [] && Object.keys(siteIdData).length > 0
+								props.querySiteId &&
+									props.querySiteId !== undefined &&
+									props.querySiteId !== [] &&
+									Object.keys(siteId).length > 0
 									? userApiEndpoint
 									: siteIdApiEndpoint,
 								body
@@ -122,9 +109,6 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 								}
 							} else {
 								if (response) {
-									// FIXME: fix error handling
-									console.log(response);
-
 									setDisableForm(false);
 									setErrorMsg(GlobalLabel[11].label);
 									setErrorMsgLoaded(true);
@@ -146,7 +130,7 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 										<input
 											type="number"
 											id="largepagesizethreshold"
-											value={values.largePageSizeThreshold}
+											value={values.largepagesizethreshold}
 											name="largepagesizethreshold"
 											disabled={isSubmitting || disableForm}
 											css={[
