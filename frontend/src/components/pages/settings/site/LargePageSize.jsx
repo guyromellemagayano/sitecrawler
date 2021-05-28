@@ -19,47 +19,52 @@ const ErrorNotification = loadable(() => import("src/components/notifications/Er
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SettingsLargePageSizeSkeleton = loadable(() => import("src/components/skeletons/SettingsLargePageSizeSkeleton"));
 
-const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
+const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [disableForm, setDisableForm] = useState(true);
+	const [endpoint, setEndpoint] = useState("");
 	const [errorMsg, setErrorMsg] = useState("");
 	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
-	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState("");
-	const [siteIdData, setSiteIdData] = useState([]);
+	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState(0);
 	const [successMsg, setSuccessMsg] = useState("");
 	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
 
+	let siteIdApiEndpoint = "";
 	const userApiEndpoint = `/api/auth/user/`;
-	const siteIdApiEndpoint = `/api/site/${siteIdData.id}/`;
 
 	useEffect(() => {
 		if (
 			user &&
 			user !== undefined &&
 			Object.keys(user).length > 0 &&
-			((site && site !== undefined && site !== [] && Object.keys(site).length > 0) ||
-				(siteId && siteId !== undefined && siteId !== [] && Object.keys(siteId).length > 0))
+			user.large_page_size_threshold &&
+			user.large_page_size_threshold !== null
 		) {
-			// if (siteId) {
-			// 	setSiteIdData(siteId);
-			// }
+			if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+				siteIdApiEndpoint = `/api/site/${siteId.id}/`;
 
-			// if (
-			// 	(siteIdData && siteIdData.large_page_size_threshold == undefined) ||
-			// 	siteIdData.large_page_size_threshold == null
-			// ) {
-			// 	setLargePageSizeThreshold(user.large_page_size_threshold);
-			// } else {
-			// 	setLargePageSizeThreshold(siteIdData.large_page_size_threshold);
-			// }
+				if (siteId.large_page_size_threshold && siteId.large_page_size_threshold !== null) {
+					setLargePageSizeThreshold(siteId.large_page_size_threshold);
+					setEndpoint(siteIdApiEndpoint);
+				} else {
+					setLargePageSizeThreshold(user.large_page_size_threshold);
+					setEndpoint(siteIdApiEndpoint);
+				}
+			} else {
+				setLargePageSizeThreshold(user.large_page_size_threshold);
+				setEndpoint(userApiEndpoint);
+			}
+		}
 
-			setLargePageSizeThreshold(user.large_page_size_threshold);
-
+		if (
+			(user && user !== undefined && Object.keys(user).length > 0) ||
+			(siteId && siteId !== undefined && Object.keys(siteId).length > 0)
+		) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [user, site, siteId]);
+	}, [user, siteId]);
 
 	const handleLargePageSizeInputChange = (e) => {
 		setLargePageSizeThreshold(e.target.value);
@@ -79,6 +84,7 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 				setErrorMsgLoaded={setErrorMsgLoaded}
 				errorMsgTitle={GlobalLabel[7].label}
 			/>
+
 			<div tw="max-w-full py-4 px-8">
 				<div tw="pt-4 m-auto">
 					<h5 tw="text-xl leading-6 font-medium text-gray-900">{GlobalLabel[2].label}</h5>
@@ -87,11 +93,7 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 			</div>
 			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
 				<Formik
-					enableReinitialize={
-						siteIdData && siteIdData !== undefined && siteIdData !== [] && Object.keys(siteIdData).length > 0
-							? false
-							: true
-					}
+					enableReinitialize={true}
 					initialValues={{ largepagesizethreshold: largePageSizeThreshold }}
 					validationSchema={Yup.object().shape({
 						largepagesizethreshold: Yup.number().required(GlobalLabel[12].label)
@@ -102,12 +104,7 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 						};
 
 						try {
-							const response = await usePatchMethod(
-								siteIdData && siteIdData !== undefined && siteIdData !== [] && Object.keys(siteIdData).length > 0
-									? userApiEndpoint
-									: siteIdApiEndpoint,
-								body
-							);
+							const response = await usePatchMethod(endpoint, body);
 							const data = await response.data;
 
 							if (Math.floor(response.status / 200) === 1) {
@@ -119,12 +116,23 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 									setDisableForm(true);
 									setSuccessMsg(GlobalLabel[13].label);
 									setSuccessMsgLoaded(true);
+
+									if (
+										user &&
+										user !== undefined &&
+										Object.keys(user).length > 0 &&
+										user.large_page_size_threshold &&
+										user.large_page_size_threshold !== null
+									) {
+										if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+											mutateSiteId;
+										} else {
+											mutateUser;
+										}
+									}
 								}
 							} else {
 								if (response) {
-									// FIXME: fix error handling
-									console.log(response);
-
 									setDisableForm(false);
 									setErrorMsg(GlobalLabel[11].label);
 									setErrorMsgLoaded(true);
@@ -146,7 +154,7 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 										<input
 											type="number"
 											id="largepagesizethreshold"
-											value={values.largePageSizeThreshold}
+											value={values.largepagesizethreshold}
 											name="largepagesizethreshold"
 											disabled={isSubmitting || disableForm}
 											css={[
@@ -218,5 +226,9 @@ const LargePageSizeSettings = ({ user, site = [], siteId = [] }) => {
 };
 
 LargePageSizeSettings.propTypes = {};
+
+LargePageSizeSettings.defaultProps = {
+	site: []
+};
 
 export default LargePageSizeSettings;

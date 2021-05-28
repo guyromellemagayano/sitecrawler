@@ -52,7 +52,7 @@ const SiteSettings = ({ width, result }) => {
 		endpoint: sitesApiEndpoint
 	});
 
-	const { siteId: siteId } = useSiteId({
+	const { siteId: siteId, mutateSiteId: mutateSiteId } = useSiteId({
 		querySid: result.siteId
 	});
 
@@ -152,7 +152,7 @@ const SiteSettings = ({ width, result }) => {
 									Object.keys(siteId).length > 0 ? (
 										<>
 											<SiteInformationSettings user={user} siteId={siteId} settingsLabel={SettingsLabel} />
-											<LargePageSizeSettings user={user} siteId={siteId} querySiteId={result.siteId} />
+											<LargePageSizeSettings user={user} siteId={siteId} mutateSiteId={mutateSiteId} />
 											<DeleteSiteSettings
 												user={user}
 												siteId={siteId}
