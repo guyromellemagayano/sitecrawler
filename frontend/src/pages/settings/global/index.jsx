@@ -41,31 +41,19 @@ const GlobalSettings = ({ width }) => {
 	const pageTitle = "Global Settings";
 	const homeLabel = "Home";
 	const homePageLink = "/";
-	const sitesApiEndpoint = "/api/site/?ordering=name";
 
-	const { user: user } = useUser({
+	const { user: user, mutateUser: mutateUser } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
 
-	const { site: site } = useSite({
-		endpoint: sitesApiEndpoint
-	});
-
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0
-		) {
+		if (user && user !== undefined && Object.keys(user).length > 0) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
 		}
-	}, [user, site]);
+	}, [user]);
 
 	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
 		<Layout user={user}>
@@ -133,7 +121,7 @@ const GlobalSettings = ({ width }) => {
 
 								<div tw="space-y-12 divide-y divide-gray-200">
 									<TimestampSettings user={user} />
-									{/* <LargePageSizeSettings user={user} /> */}
+									<LargePageSizeSettings user={user} mutateUser={mutateUser} />
 								</div>
 							</div>
 						</div>

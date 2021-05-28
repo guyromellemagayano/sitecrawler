@@ -1,9 +1,6 @@
 // React
 import { useState, useEffect } from "react";
 
-// NextJS
-import { useRouter } from "next/router";
-
 // External
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -22,27 +19,52 @@ const ErrorNotification = loadable(() => import("src/components/notifications/Er
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SettingsLargePageSizeSkeleton = loadable(() => import("src/components/skeletons/SettingsLargePageSizeSkeleton"));
 
-const LargePageSizeSettings = (props) => {
+const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [disableForm, setDisableForm] = useState(true);
+	const [endpoint, setEndpoint] = useState("");
 	const [errorMsg, setErrorMsg] = useState("");
 	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
-	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState("");
+	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState(0);
 	const [successMsg, setSuccessMsg] = useState("");
 	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
 
+	let siteIdApiEndpoint = "";
 	const userApiEndpoint = `/api/auth/user/`;
-	const siteIdApiEndpoint = `/api/site/${props.querySiteId}/`;
-
-	const router = useRouter();
 
 	useEffect(() => {
-		setLargePageSizeThreshold(props.user.large_page_size_threshold);
+		if (
+			user &&
+			user !== undefined &&
+			Object.keys(user).length > 0 &&
+			user.large_page_size_threshold &&
+			user.large_page_size_threshold !== null
+		) {
+			if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+				siteIdApiEndpoint = `/api/site/${siteId.id}/`;
 
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
-	}, [props]);
+				if (siteId.large_page_size_threshold && siteId.large_page_size_threshold !== null) {
+					setLargePageSizeThreshold(siteId.large_page_size_threshold);
+					setEndpoint(siteIdApiEndpoint);
+				} else {
+					setLargePageSizeThreshold(user.large_page_size_threshold);
+					setEndpoint(siteIdApiEndpoint);
+				}
+			} else {
+				setLargePageSizeThreshold(user.large_page_size_threshold);
+				setEndpoint(userApiEndpoint);
+			}
+		}
+
+		if (
+			(user && user !== undefined && Object.keys(user).length > 0) ||
+			(siteId && siteId !== undefined && Object.keys(siteId).length > 0)
+		) {
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [user, siteId]);
 
 	const handleLargePageSizeInputChange = (e) => {
 		setLargePageSizeThreshold(e.target.value);
@@ -71,11 +93,7 @@ const LargePageSizeSettings = (props) => {
 			</div>
 			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
 				<Formik
-					enableReinitialize={
-						props.querySiteId && props.querySiteId !== undefined && Object.keys(props.querySiteId).length > 0
-							? false
-							: true
-					}
+					enableReinitialize={true}
 					initialValues={{ largepagesizethreshold: largePageSizeThreshold }}
 					validationSchema={Yup.object().shape({
 						largepagesizethreshold: Yup.number().required(GlobalLabel[12].label)
@@ -86,15 +104,7 @@ const LargePageSizeSettings = (props) => {
 						};
 
 						try {
-							const response = await usePatchMethod(
-								props.querySiteId &&
-									props.querySiteId !== undefined &&
-									props.querySiteId !== [] &&
-									Object.keys(siteId).length > 0
-									? userApiEndpoint
-									: siteIdApiEndpoint,
-								body
-							);
+							const response = await usePatchMethod(endpoint, body);
 							const data = await response.data;
 
 							if (Math.floor(response.status / 200) === 1) {
@@ -106,6 +116,20 @@ const LargePageSizeSettings = (props) => {
 									setDisableForm(true);
 									setSuccessMsg(GlobalLabel[13].label);
 									setSuccessMsgLoaded(true);
+
+									if (
+										user &&
+										user !== undefined &&
+										Object.keys(user).length > 0 &&
+										user.large_page_size_threshold &&
+										user.large_page_size_threshold !== null
+									) {
+										if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
+											mutateSiteId;
+										} else {
+											mutateUser;
+										}
+									}
 								}
 							} else {
 								if (response) {
@@ -202,5 +226,9 @@ const LargePageSizeSettings = (props) => {
 };
 
 LargePageSizeSettings.propTypes = {};
+
+LargePageSizeSettings.defaultProps = {
+	site: []
+};
 
 export default LargePageSizeSettings;
