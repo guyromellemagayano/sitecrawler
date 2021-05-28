@@ -10,13 +10,12 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import bytes from "bytes";
-import loadable from "@loadable/component";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
 import tw, { styled } from "twin.macro";
 
 // JSON
-import ImagesLabel from "public/labels/pages/site/links.json";
+import ImagesLabel from "public/labels/pages/site/images.json";
 
 // Hooks
 import { useScan, useSite, useSiteId, useImageDetail } from "src/hooks/useSite";
@@ -26,14 +25,14 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
-const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
+import AppLogo from "src/components/logos/AppLogo";
+import Loader from "src/components/layouts/Loader";
+import MainSidebar from "src/components/sidebar/MainSidebar";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
+import SiteDangerBadge from "src/components/badges/SiteDangerBadge";
+import SiteFooter from "src/components/layouts/Footer";
+import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
+import SiteWarningBadge from "src/components/badges/SiteWarningBadge";
 
 const ImagesDetailDiv = styled.section`
 	.url-heading {
@@ -46,30 +45,25 @@ const ImagesDetail = ({ width, result }) => {
 	const [copyValue, setCopyValue] = useState(null);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
-	const [scanData, setScanData] = useState([]);
 	const [scanObjId, setScanObjId] = useState(0);
-	const [siteData, setSiteData] = useState([]);
-	const [siteIdData, setSiteIdData] = useState([]);
-	const [userData, setUserData] = useState([]);
-	const [imageDetailData, setImageDetailData] = useState([]);
 
-	const imagesPageTitle =
-		siteIdData.name && siteIdData.name !== undefined
-			? ImagesLabel[1].label + " - " + siteIdData.name
-			: ImagesLabel[1].label;
-	const imagesDetailPageTitle =
-		imageDetailData.url && imageDetailData.url !== undefined && siteIdData.name && siteIdData.name !== undefined
-			? imageDetailData.url + " | " + siteIdData.name
-			: "Images Detail";
-	const homeLabel = "Home";
+	let pageTitle = "";
+	let detailPageTitle = "";
+
+	let homeLabel = "Home";
 	const homePageLink = `/site/${result.siteId}/overview`;
+
+	const sitesApiEndpoint = "/api/site/?ordering=name";
+
+	let previousScanResults = [];
+	let currentScanResults = [];
+
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
 		sameDay: "[Today], dddd",
 		lastWeek: "MMMM DD, YYYY",
 		sameElse: "MMMM DD, YYYY"
 	};
-	const sitesApiEndpoint = "/api/site/?ordering=name";
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -82,20 +76,20 @@ const ImagesDetail = ({ width, result }) => {
 
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
+				currentScanResults = scan.results.find((e) => e.finished_at === null);
+				previousScanResults = scan.results.find((e) => e.finished_at !== null);
 
-			if (scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				setScanObjId(
-					scanData.results
-						.map((e) => {
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				);
+				if (currentScanResults !== [] || currentScanResults !== undefined) {
+					if (previousScanResults !== undefined) {
+						setScanObjId(previousScanResults.id);
+					} else {
+						setScanObjId(currentScanResults.id);
+					}
+				}
 			}
 		}
-	});
+	}, [scan, scanObjId]);
 
 	const { imageDetail: imageDetail } = useImageDetail({
 		querySid: result.siteId,
@@ -110,6 +104,23 @@ const ImagesDetail = ({ width, result }) => {
 	const { siteId: siteId } = useSiteId({
 		querySid: result.siteId
 	});
+
+	if (
+		siteId &&
+		siteId !== undefined &&
+		Object.keys(siteId).length > 0 &&
+		imageDetail &&
+		imageDetail !== undefined &&
+		Object.keys(imageDetail).length > 0
+	) {
+		pageTitle =
+			siteId.name && siteId.name !== undefined ? ImagesLabel[1].label + " - " + siteId.name : ImagesLabel[1].label;
+
+		detailPageTitle =
+			imageDetail.url && imageDetail.url !== undefined && siteId.name && siteId.name !== undefined
+				? imageDetail.url + " | " + siteId.name
+				: "Images Detail";
+	}
 
 	useEffect(() => {
 		if (
@@ -126,13 +137,6 @@ const ImagesDetail = ({ width, result }) => {
 			imageDetail !== undefined &&
 			Object.keys(imageDetail).length > 0
 		) {
-			setUserData(user);
-			setSiteData(site);
-			setSiteIdData(siteId);
-			setImageDetailData(imageDetail);
-		}
-
-		if (userData && siteData && siteIdData && imageDetailData) {
 			setTimeout(() => {
 				setPageLoaded(true);
 			}, 500);
@@ -144,14 +148,14 @@ const ImagesDetail = ({ width, result }) => {
 		setCopied(true);
 	};
 
-	return pageLoaded ? (
-		<Layout user={userData}>
-			<NextSeo title={imagesDetailPageTitle} />
+	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
+		<Layout user={user}>
+			<NextSeo title={detailPageTitle} />
 
 			<ImagesDetailDiv tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={userData}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -191,150 +195,183 @@ const ImagesDetail = ({ width, result }) => {
 													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 													<Link href={`/site/${result.siteId}/images`} passHref>
 														<a aria-current="page" tw="cursor-pointer ml-4 text-sm text-gray-700">
-															{imagesPageTitle}
+															{pageTitle}
 														</a>
 													</Link>
 												</div>
 											</li>
-											<li>
-												<div tw="flex items-center">
-													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-														{imageDetailData.url}
-													</p>
-												</div>
-											</li>
+											{imageDetail && imageDetail !== undefined && Object.keys(imageDetail).length > 0 && (
+												<li>
+													<div tw="flex items-center">
+														<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+														<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+															{imageDetail.url}
+														</p>
+													</div>
+												</li>
+											)}
 										</ol>
 									</nav>
-									<div tw="pt-4 m-auto">
-										<h4 tw="flex items-center text-2xl leading-8 font-medium text-gray-900 leading-8 break-all">
-											{imageDetailData.url} - {siteIdData.name}
-										</h4>
-									</div>
+
+									{imageDetail &&
+										imageDetail !== undefined &&
+										Object.keys(imageDetail).length > 0 &&
+										siteId &&
+										siteId !== undefined &&
+										Object.keys(siteId).length > 0 && (
+											<div tw="pt-4 m-auto">
+												<h4 tw="flex items-center text-2xl leading-8 font-medium text-gray-900 break-all">
+													{imageDetail.url} - {siteId.name}
+												</h4>
+											</div>
+										)}
 								</div>
 								<div tw="max-w-4xl py-6 px-8">
 									<div tw="bg-white border border-gray-300 overflow-hidden sm:rounded-lg py-2 px-1">
 										<div tw="px-4 py-5 sm:p-0">
 											<dl>
 												<div tw="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-													<dt tw="text-sm leading-5 font-medium text-gray-500">Created at</dt>
+													<dt tw="text-sm leading-5 font-medium text-gray-500">{ImagesLabel[6].label}</dt>
 													<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-														{user &&
-														user !== undefined &&
-														Object.keys(user).length > 0 &&
-														!user.settings.disableLocalTime ? (
-															<>
-																<Moment calendar={calendarStrings} date={imageDetailData.created_at} local />
-																&nbsp;
-																<Moment date={imageDetailData.created_at} format="hh:mm:ss A" local />
-															</>
-														) : (
-															<>
-																<Moment calendar={calendarStrings} date={imageDetailData.created_at} utc />
-																&nbsp;
-																<Moment date={imageDetailData.created_at} format="hh:mm:ss A" utc />
-															</>
-														)}
+														{imageDetail &&
+															imageDetail !== undefined &&
+															Object.keys(imageDetail).length > 0 &&
+															(user &&
+															user !== undefined &&
+															Object.keys(user).length > 0 &&
+															!user.settings.disableLocalTime ? (
+																<>
+																	<Moment calendar={calendarStrings} date={imageDetail.created_at} local />
+																	&nbsp;
+																	<Moment date={imageDetail.created_at} format="hh:mm:ss A" local />
+																</>
+															) : (
+																<>
+																	<Moment calendar={calendarStrings} date={imageDetail.created_at} utc />
+																	&nbsp;
+																	<Moment date={imageDetail.created_at} format="hh:mm:ss A" utc />
+																</>
+															))}
 													</dd>
 												</div>
 												<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-													<dt tw="text-sm leading-5 font-medium text-gray-500">Type</dt>
+													<dt tw="text-sm leading-5 font-medium text-gray-500">{ImagesLabel[7].label}</dt>
 													<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-														{imageDetailData.type === "PAGE"
-															? "Page"
-															: imageDetailData.type === "EXTERNAL"
-															? "External"
-															: imageDetailData.type === "NON_WEB"
-															? "Non-Web"
-															: "Other"}
+														{imageDetail &&
+															imageDetail !== undefined &&
+															Object.keys(imageDetail).length > 0 &&
+															(imageDetail.type === "PAGE"
+																? "Page"
+																: imageDetail.type === "EXTERNAL"
+																? "External"
+																: imageDetail.type === "NON_WEB"
+																? "Non-Web"
+																: "Other")}
 													</dd>
 												</div>
 												<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-													<dt tw="text-sm leading-5 font-medium text-gray-500">Status</dt>
+													<dt tw="text-sm leading-5 font-medium text-gray-500">{ImagesLabel[8].label}</dt>
 													<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-														{imageDetailData.status === "OK" ? (
-															<SiteSuccessBadge text={"OK"} />
-														) : imageDetailData.status === "TIMEOUT" ? (
-															<SiteWarningBadge text={"TIMEOUT"} />
-														) : imageDetailData.status === "HTTP_ERROR" ? (
-															<SiteDangerBadge text={"HTTP ERROR"} />
-														) : (
-															<SiteDangerBadge text={"OTHER ERROR"} />
-														)}
+														{imageDetail &&
+															imageDetail !== undefined &&
+															Object.keys(imageDetail).length > 0 &&
+															(imageDetail.status === "OK" ? (
+																<SiteSuccessBadge text={"OK"} />
+															) : imageDetail.status === "TIMEOUT" ? (
+																<SiteWarningBadge text={"TIMEOUT"} />
+															) : imageDetail.status === "HTTP_ERROR" ? (
+																<SiteDangerBadge text={"HTTP ERROR"} />
+															) : (
+																<SiteDangerBadge text={"OTHER ERROR"} />
+															))}
 													</dd>
 												</div>
-												{imageDetailData.error !== null && imageDetailData.error !== undefined ? (
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">Error</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															<SiteDangerBadge text={imageDetailData.error} />
-														</dd>
-													</div>
-												) : null}
+												{imageDetail &&
+													imageDetail !== undefined &&
+													Object.keys(imageDetail).length > 0 &&
+													(imageDetail.error !== null && imageDetail.error !== undefined ? (
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{ImagesLabel[9].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																<SiteDangerBadge text={imageDetail.error} />
+															</dd>
+														</div>
+													) : null)}
 												<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-													<dt className="text-sm leading-5 font-medium text-gray-500">Image Size</dt>
+													<dt className="text-sm leading-5 font-medium text-gray-500">{ImagesLabel[10].label}</dt>
 													<dd className="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-														{imageDetailData.size !== null &&
-														imageDetailData.size !== undefined &&
-														imageDetailData.size !== "" ? (
-															bytes(imageDetailData.size, {
-																thousandsSeparator: " ",
-																unitSeparator: " "
-															})
-														) : (
-															<span tw="text-gray-500">None</span>
-														)}
+														{imageDetail &&
+															imageDetail !== undefined &&
+															Object.keys(imageDetail).length > 0 &&
+															(imageDetail.size !== null &&
+															imageDetail.size !== undefined &&
+															imageDetail.size !== "" ? (
+																bytes(imageDetail.size, {
+																	thousandsSeparator: " ",
+																	unitSeparator: " "
+																})
+															) : (
+																<span tw="text-gray-500">None</span>
+															))}
 													</dd>
 												</div>
 												<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-													<dt tw="text-sm leading-5 font-medium text-gray-500">Page Links</dt>
+													<dt tw="text-sm leading-5 font-medium text-gray-500">{ImagesLabel[11].label}</dt>
 													<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-														<ul>
-															{imageDetailData &&
-																imageDetailData !== undefined &&
-																imageDetailData !== [] &&
-																Object.keys(imageDetailData).length > 0 &&
-																imageDetailData.pages.map((val, key) => {
-																	return (
-																		<li key={key} tw="pb-3 flex items-center justify-between text-sm leading-5">
-																			<div tw="w-0 flex-1 flex items-center">
-																				<svg
-																					tw="flex-shrink-0 h-5 w-5 text-gray-400"
-																					fill="none"
-																					strokeLinecap="round"
-																					strokeLinejoin="round"
-																					strokeWidth="2"
-																					viewBox="0 0 24 24"
-																					stroke="currentColor"
-																				>
-																					<path
-																						fillRule="evenodd"
-																						d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-																						clipRule="evenodd"
-																					/>
-																				</svg>
-																				<span tw="ml-2 flex-1 w-0">
-																					<a
-																						href={val.url}
-																						target="_blank"
-																						title={val.url}
-																						tw="break-words block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out"
+														{imageDetail && imageDetail !== undefined && Object.keys(imageDetail).length > 0 && (
+															<ul>
+																{imageDetail.pages &&
+																	imageDetail.pages !== undefined &&
+																	imageDetail.pages.map((val, key) => {
+																		return (
+																			<li key={key} tw="pb-3 flex items-center justify-between text-sm leading-5">
+																				<div tw="w-0 flex-1 flex items-center">
+																					<svg
+																						tw="flex-shrink-0 h-5 w-5 text-gray-400"
+																						fill="none"
+																						strokeLinecap="round"
+																						strokeLinejoin="round"
+																						strokeWidth="2"
+																						viewBox="0 0 24 24"
+																						stroke="currentColor"
 																					>
-																						{val.url}
-																					</a>
-																				</span>
-																			</div>
-																			<div tw="ml-4 flex-shrink-0">
-																				<CopyToClipboard onCopy={handleUrlCopy} text={val.url}>
-																					<button tw="font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out">
-																						{copied && copyValue === val.url ? "Copied!" : "Copy URL"}
-																					</button>
-																				</CopyToClipboard>
-																			</div>
-																		</li>
-																	);
-																})}
-														</ul>
+																						<path
+																							fillRule="evenodd"
+																							d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+																							clipRule="evenodd"
+																						/>
+																					</svg>
+																					<span tw="ml-2 flex-1 w-0">
+																						<a
+																							href={val.url}
+																							target="_blank"
+																							title={val.url}
+																							tw="break-words block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out"
+																						>
+																							{val.url}
+																						</a>
+																						{val.alt_text && val.alt_text !== null && (
+																							<span tw="block px-2 text-sm leading-5 font-medium text-gray-500">
+																								{ImagesLabel[12].label} <span tw="text-gray-400">{val.alt_text}</span>
+																							</span>
+																						)}
+																						<span tw="block px-2 text-sm leading-5 font-medium text-gray-500">
+																							Alt Text: Hello World
+																						</span>
+																					</span>
+																				</div>
+																				<div tw="ml-4 flex-shrink-0">
+																					<CopyToClipboard onCopy={handleUrlCopy} text={val.url}>
+																						<button tw="font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out">
+																							{copied && copyValue === val.url ? "Copied!" : "Copy URL"}
+																						</button>
+																					</CopyToClipboard>
+																				</div>
+																			</li>
+																		);
+																	})}
+															</ul>
+														)}
 													</dd>
 												</div>
 											</dl>

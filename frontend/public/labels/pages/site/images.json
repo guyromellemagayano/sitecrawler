@@ -12,12 +12,30 @@
 		"label": "No images found"
 	},
 	{
-		"label": "Recrawl"
+		"label": "Start Site Recrawl"
 	},
 	{
 		"label": "An unexpected error occurred. Please try again."
 	},
 	{
-		"label": "page found"
+		"label": "Created at"
+	},
+	{
+		"label": "Type"
+	},
+	{
+		"label": "Status"
+	},
+	{
+		"label": "Error"
+	},
+	{
+		"label": "Image Size"
+	},
+	{
+		"label": "Page Links (with image alts)"
+	},
+	{
+		"label": "Alt Text:"
 	}
 ]

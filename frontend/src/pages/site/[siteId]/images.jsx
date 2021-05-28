@@ -64,11 +64,11 @@ const Images = ({ width, result }) => {
 	const router = useRouter();
 
 	let pageTitle = "";
-	let homeLabel = "Home";
+	const homeLabel = "Home";
 	let homePageLink = `/site/${result.siteId}/overview`;
 
 	let reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-	let sitesApiEndpoint = `/api/site/?ordering=name`;
+	const sitesApiEndpoint = `/api/site/?ordering=name`;
 
 	let scanApiEndpoint = "";
 
