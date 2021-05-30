@@ -50,7 +50,7 @@ const ImagesDetail = ({ width, result }) => {
 	let pageTitle = "";
 	let detailPageTitle = "";
 
-	let homeLabel = "Home";
+	const homeLabel = "Home";
 	const homePageLink = `/site/${result.siteId}/overview`;
 
 	const sitesApiEndpoint = "/api/site/?ordering=name";
@@ -161,8 +161,11 @@ const ImagesDetail = ({ width, result }) => {
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<Link href={homePageLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
