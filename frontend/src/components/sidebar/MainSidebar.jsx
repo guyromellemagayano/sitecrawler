@@ -19,46 +19,39 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 import { useSite } from "src/hooks/useSite";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
+import AppLogo from "src/components/logos/AppLogo";
+import ProfileMenu from "src/components/menus/ProfileMenu";
+
+// Loadable
 const PrimaryMenu = loadable(() => import("src/components/menus/PrimaryMenu"));
-const ProfileMenu = loadable(() => import("src/components/menus/ProfileMenu"));
 const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"));
 const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
 
 const MainSidebar = ({ width, user, crawlFinished, openMobileSidebar, setOpenMobileSidebar }) => {
 	const [selectedMenu, setSelectedMenu] = useState("");
 
-	let lgScreenBreakpoint = 1024;
-	let siteApiEndpoint = "/api/site/?ordering=name";
-	let siteDashboardLink = "/";
+	const lgScreenBreakpoint = 1024;
+	const siteApiEndpoint = "/api/site/?ordering=name";
+	const siteDashboardLink = "/";
 
 	const router = useRouter();
 	const ref = useRef(null);
 
-	const { site: site } = useSite({
+	const { site } = useSite({
 		endpoint: siteApiEndpoint
 	});
 
 	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0
-		) {
-			switch (true) {
-				case router.pathname.includes("/site"):
-					setSelectedMenu(<SiteMenu user={user} crawlFinished={crawlFinished} site={site} />);
-					break;
-				case router.pathname.includes("/settings"):
-					setSelectedMenu(<SettingsMenu user={user} site={site} />);
-					break;
-				default:
-					setSelectedMenu(<PrimaryMenu user={user} site={site} />);
-					break;
-			}
+		switch (true) {
+			case router.pathname.includes("/site"):
+				setSelectedMenu(<SiteMenu user={user} crawlFinished={crawlFinished} site={site} />);
+				break;
+			case router.pathname.includes("/settings"):
+				setSelectedMenu(<SettingsMenu user={user} site={site} />);
+				break;
+			default:
+				setSelectedMenu(<PrimaryMenu user={user} site={site} />);
+				break;
 		}
 	}, [router, user, site]);
 
@@ -86,7 +79,7 @@ const MainSidebar = ({ width, user, crawlFinished, openMobileSidebar, setOpenMob
 
 	return width < lgScreenBreakpoint ? (
 		<Transition show={openMobileSidebar}>
-			<div tw="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true">
+			<div tw="fixed inset-0.5 flex z-40 lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
 					enter="transition-opacity ease-linear duration-300"
 					enterFrom="opacity-0"
@@ -95,7 +88,7 @@ const MainSidebar = ({ width, user, crawlFinished, openMobileSidebar, setOpenMob
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
 				>
-					<div tw="fixed inset-0 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
+					<div tw="fixed inset-0.5 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
 				</Transition.Child>
 
 				<Transition.Child
@@ -137,7 +130,7 @@ const MainSidebar = ({ width, user, crawlFinished, openMobileSidebar, setOpenMob
 									{selectedMenu}
 								</div>
 
-								<ProfileMenu />
+								<ProfileMenu user={user} />
 							</div>
 						</Transition.Child>
 					</div>
@@ -158,7 +151,7 @@ const MainSidebar = ({ width, user, crawlFinished, openMobileSidebar, setOpenMob
 					{selectedMenu}
 				</div>
 
-				<ProfileMenu />
+				<ProfileMenu user={user} />
 			</div>
 		</aside>
 	);

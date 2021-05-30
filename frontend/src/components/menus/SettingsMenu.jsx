@@ -25,39 +25,57 @@ import SettingsPages from "public/data/settings-pages.json";
 import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json";
 
 // Hooks
-import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 import { GlobeIcon } from "@heroicons/react/outline";
+import { useScan } from "src/hooks/useSite";
+import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 
 const SettingsMenu = ({ user, site }) => {
 	const [componentReady, setComponentReady] = useState(false);
+	const [scanObjId, setScanObjId] = useState(0);
 	const [selectedSite, setSelectedSite] = useState("");
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
-	const [siteData, setSiteData] = useState([]);
+	const [sid, setSid] = useState(0);
 	const [sitesLoaded, setSitesLoaded] = useState(false);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
+
+	let currentScanResults = [];
+	let previousScanResults = [];
 
 	const { query } = useRouter();
 	const router = useRouter();
 
+	const { scan: scan } = useScan({
+		querySid: sid
+	});
+
 	useEffect(() => {
-		if (
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			query &&
-			query !== undefined &&
-			query.siteId !== ""
-		) {
-			setSiteData(site);
-			handleSiteSelectOnLoad(query.siteId);
+		if (query && query !== undefined && query.siteId && query.siteId !== undefined && query.siteId !== "") {
+			setSid(query.siteId);
 		}
-	}, [site, query]);
+	}, [query]);
+
+	useEffect(() => {
+		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
+			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
+				currentScanResults = scan.results.find((e) => e.finished_at === null);
+				previousScanResults = scan.results.find((e) => e.finished_at !== null);
+
+				if (currentScanResults !== [] || currentScanResults !== undefined) {
+					if (previousScanResults !== undefined) {
+						setScanObjId(previousScanResults.id);
+					} else {
+						setScanObjId(currentScanResults.id);
+					}
+				}
+			}
+		}
+	}, [scan, scanObjId]);
 
 	const handleSiteSelectOnLoad = (siteId) => {
-		if (siteData && siteData.results !== undefined && Object.keys(siteData.results).length > 0) {
-			for (let i = 0; i < siteData.results.length; i++) {
-				if (siteData.results[i].id == siteId) {
-					setSelectedSite(siteData.results[i].name);
+		if (site && site.results !== undefined && Object.keys(site.results).length > 0) {
+			for (let i = 0; i < site.results.length; i++) {
+				if (site.results[i].id == siteId) {
+					setSelectedSite(site.results[i].name);
 
 					setTimeout(() => {
 						router.replace(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
@@ -75,12 +93,16 @@ const SettingsMenu = ({ user, site }) => {
 	};
 
 	useEffect(() => {
-		if (user && siteData && siteData !== undefined && Object.keys(siteData).length > 0) {
+		if (site && site !== undefined && Object.keys(site).length > 0 && sid && sid !== undefined && sid !== "") {
+			handleSiteSelectOnLoad(site, sid);
+		}
+
+		if (user && site && site !== undefined && Object.keys(site).length > 0) {
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [user, siteData]);
+	}, [user, site, sid]);
 
 	useEffect(() => {
 		if (isComponentVisible) {
@@ -93,16 +115,28 @@ const SettingsMenu = ({ user, site }) => {
 	}, [isComponentVisible]);
 
 	useEffect(() => {
-		if (siteData && siteData !== undefined && Object.keys(siteData).length > 0) {
-			if (Object.keys(siteData.results).length > 0) {
-				siteData.results
+		if (site && site !== undefined && Object.keys(site).length > 0) {
+			if (site.results && site.results !== undefined && Object.keys(site.results).length > 0) {
+				site.results
 					.filter((result) => result.name === selectedSite)
 					.map((val) => {
 						setSelectedSiteDetails(val);
 					});
 			}
 		}
-	}, [selectedSite, siteData]);
+
+		if (selectedSite === "" && sid !== 0) {
+			if (site && site !== undefined && Object.keys(site).length > 0) {
+				if (site.results && site.results !== undefined && Object.keys(site.results).length > 0) {
+					let currentSite = site.results.find((result) => result.id === parseInt(sid));
+
+					if (currentSite !== undefined) {
+						setSelectedSite(currentSite.name);
+					}
+				}
+			}
+		}
+	}, [selectedSite, site, sid]);
 
 	return (
 		<div tw="flex-1 flex flex-col overflow-y-auto">
@@ -142,7 +176,7 @@ const SettingsMenu = ({ user, site }) => {
 														) : value2.slug === "help-support" ? (
 															<SupportIcon tw="mr-3 h-6 w-5" />
 														) : null}
-														<span>{value2.title}</span>
+														{value2.title ? <span>{value2.title}</span> : null}
 													</a>
 												</Link>
 											) : (
@@ -152,7 +186,7 @@ const SettingsMenu = ({ user, site }) => {
 														tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
 													>
 														<ArrowLeftIcon tw="mr-3 h-6 w-5" />
-														<span>{value2.title ? value2.title : null}</span>
+														{value2.title ? <span>{value2.title}</span> : null}
 													</a>
 												</Link>
 											)
@@ -182,7 +216,7 @@ const SettingsMenu = ({ user, site }) => {
 																	selectedSiteDetails ? (
 																		<div tw="flex items-center space-x-3">
 																			<span
-																				aria-label="Verified"
+																				aria-label={value.verified ? "Verified" : "Not Verified"}
 																				css={[
 																					tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
 																					selectedSiteDetails.verified ? tw`bg-green-400` : tw`bg-red-400`
@@ -221,15 +255,15 @@ const SettingsMenu = ({ user, site }) => {
 													leaveTo="transform opacity-0 scale-95"
 													className="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 												>
-													{siteData && siteData.results !== undefined ? (
-														siteData.results.length > 0 ? (
+													{site && site.results !== undefined ? (
+														site.results.length > 0 ? (
 															<ul
 																tabIndex="-1"
 																role="listbox"
 																aria-labelledby="listbox-label"
 																tw="max-h-60 pt-2 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
 															>
-																{siteData.results.map((value, index) => {
+																{site.results.map((value, index) => {
 																	return (
 																		<li
 																			key={index}
@@ -243,33 +277,31 @@ const SettingsMenu = ({ user, site }) => {
 																		>
 																			<div tw="flex items-center space-x-3">
 																				{sitesLoaded ? (
-																					<>
-																						<span
-																							aria-label="Verified"
-																							css={[
-																								tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																								value.verified ? tw`bg-green-400` : tw`bg-red-400`
-																							]}
-																						></span>
-																						<span
-																							css={[
-																								tw`font-medium block truncate`,
-																								value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
-																							]}
-																						>
-																							{value.name}
-																						</span>
-																					</>
+																					<span
+																						aria-label={value.verified ? "Verified" : "Not Verified"}
+																						css={[
+																							tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+																							value.verified ? tw`bg-green-400` : tw`bg-red-400`
+																						]}
+																					/>
 																				) : (
-																					<div tw="flex items-center space-x-3 my-1">
-																						<div>
-																							<Skeleton circle={true} duration={2} width={20} height={20} />
-																						</div>
-																						<div tw="ml-3">
-																							<Skeleton duration={2} width={145} />
-																						</div>
-																					</div>
+																					<Skeleton
+																						circle={true}
+																						duration={2}
+																						width={10}
+																						height={10}
+																						className="relative top-0.5"
+																					/>
 																				)}
+
+																				<span
+																					css={[
+																						tw`font-medium block truncate`,
+																						value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
+																					]}
+																				>
+																					{sitesLoaded ? value.name : <Skeleton duration={2} width={145} />}
+																				</span>
 																			</div>
 																		</li>
 																	);
@@ -280,7 +312,7 @@ const SettingsMenu = ({ user, site }) => {
 
 													<span tw="flex m-2 justify-center shadow-sm rounded-md">
 														<Link href="/add-site/information">
-															<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer transition ease-in-out duration-150 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+															<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 																<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
 																{PrimaryMenuLabel[2].label}
 															</a>

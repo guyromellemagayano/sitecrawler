@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
-import { PlusIcon, SelectorIcon } from "@heroicons/react/solid";
+import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
+import { ArrowLeftIcon, LinkIcon, PlusIcon, SearchIcon, SelectorIcon, ViewGridIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
@@ -40,10 +41,10 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 	});
 
 	useEffect(() => {
-		if (query.siteId && query.siteId !== undefined && query.siteId !== "") {
+		if (query && query !== undefined && query.siteId && query.siteId !== undefined && query.siteId !== "") {
 			setSid(query.siteId);
 		}
-	}, []);
+	}, [query]);
 
 	useEffect(() => {
 		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
@@ -71,10 +72,31 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 	}, [crawlFinished, scan, scanObjId]);
 
 	const { stats: stats } = useStats({
-		querySid: sid,
+		querySid: sid && sid !== undefined && sid !== 0 && sid,
 		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId,
 		refreshInterval: crawlFinished ? 0 : 1000
 	});
+
+	const handleSiteSelectOnLoad = (siteId) => {
+		if (site && site.results !== undefined && Object.keys(site.results).length > 0) {
+			for (let i = 0; i < site.results.length; i++) {
+				if (site.results[i].id == siteId) {
+					setSelectedSite(site.results[i].name);
+
+					setTimeout(() => {
+						router.replace(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
+					}, 500);
+				}
+			}
+		}
+	};
+
+	const handleDropdownHandler = (siteId, verified) => {
+		if (!verified) return false;
+
+		handleSiteSelectOnLoad(siteId);
+		setIsComponentVisible(!isComponentVisible);
+	};
 
 	useEffect(() => {
 		if (site && site !== undefined && Object.keys(site).length > 0 && sid && sid !== undefined && sid !== "") {
@@ -130,27 +152,6 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 		}
 	}, [selectedSite, site, sid]);
 
-	const handleSiteSelectOnLoad = (siteId) => {
-		if (site && site.results !== undefined && Object.keys(site.results).length > 0) {
-			for (let i = 0; i < site.results.length; i++) {
-				if (site.results[i].id == siteId) {
-					setSelectedSite(site.results[i].name);
-
-					setTimeout(() => {
-						router.replace(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
-					}, 500);
-				}
-			}
-		}
-	};
-
-	const handleDropdownHandler = (siteId, verified) => {
-		if (!verified) return false;
-
-		handleSiteSelectOnLoad(siteId);
-		setIsComponentVisible(!isComponentVisible);
-	};
-
 	return (
 		<div tw="flex-1 flex flex-col overflow-y-auto">
 			<nav tw="flex-1 px-4">
@@ -179,13 +180,20 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 																: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100`
 														]}
 													>
-														<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
-															{value2.icon2 ? (
-																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
-															) : null}
-														</svg>
-														<span>{value2.title ? value2.title : null}</span>
+														{value2.slug === "overview" ? (
+															<ViewGridIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "links" ? (
+															<LinkIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "pages" ? (
+															<DocumentTextIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "images" ? (
+															<PhotographIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "seo" ? (
+															<SearchIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "site-settings" ? (
+															<CogIcon tw="mr-3 h-6 w-5" />
+														) : null}
+														{value2.title ? <span>{value2.title}</span> : null}
 														{value2.url === "/links" &&
 															stats &&
 															stats !== undefined &&
@@ -239,13 +247,8 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 														className="group"
 														tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
 													>
-														<svg tw="mr-3 h-6 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon} />
-															{value2.icon2 ? (
-																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={value2.icon2} />
-															) : null}
-														</svg>
-														<span>{value2.title ? value2.title : null}</span>
+														<ArrowLeftIcon tw="mr-3 h-6 w-5" />
+														{value2.title ? <span>{value2.title}</span> : null}
 													</a>
 												</Link>
 											)
@@ -275,7 +278,7 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 																	selectedSiteDetails ? (
 																		<div tw="flex items-center space-x-3">
 																			<span
-																				aria-label="Verified"
+																				aria-label={value.verified ? "Verified" : "Not Verified"}
 																				css={[
 																					tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
 																					selectedSiteDetails.verified ? tw`bg-green-400` : tw`bg-red-400`
@@ -337,14 +340,20 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 																			<div tw="flex items-center space-x-3">
 																				{sitesLoaded ? (
 																					<span
-																						aria-label="Verified"
+																						aria-label={value.verified ? "Verified" : "Not Verified"}
 																						css={[
 																							tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
 																							value.verified ? tw`bg-green-400` : tw`bg-red-400`
 																						]}
 																					/>
 																				) : (
-																					<Skeleton circle={true} duration={2} width={10} height={10} />
+																					<Skeleton
+																						circle={true}
+																						duration={2}
+																						width={10}
+																						height={10}
+																						className="relative top-0.5"
+																					/>
 																				)}
 
 																				<span
@@ -353,7 +362,7 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 																						value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
 																					]}
 																				>
-																					{sitesLoaded ? value.name : <Skeleton duration={2} width={150} />}
+																					{sitesLoaded ? value.name : <Skeleton duration={2} width={145} />}
 																				</span>
 																			</div>
 																		</li>
