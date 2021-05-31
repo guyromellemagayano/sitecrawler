@@ -27,7 +27,7 @@ const PrimaryMenu = loadable(() => import("src/components/menus/PrimaryMenu"));
 const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"));
 const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
 
-const MainSidebar = ({ width, user, crawlFinished, openMobileSidebar, setOpenMobileSidebar }) => {
+const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) => {
 	const [selectedMenu, setSelectedMenu] = useState("");
 
 	const lgScreenBreakpoint = 1024;
@@ -44,7 +44,7 @@ const MainSidebar = ({ width, user, crawlFinished, openMobileSidebar, setOpenMob
 	useEffect(() => {
 		switch (true) {
 			case router.pathname.includes("/site"):
-				setSelectedMenu(<SiteMenu user={user} crawlFinished={crawlFinished} site={site} />);
+				setSelectedMenu(<SiteMenu user={user} site={site} />);
 				break;
 			case router.pathname.includes("/settings"):
 				setSelectedMenu(<SettingsMenu user={user} site={site} />);
