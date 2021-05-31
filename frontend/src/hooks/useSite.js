@@ -48,7 +48,7 @@ export const useSiteId = ({ querySid = 0, refreshInterval = 0 }) => {
 	return { siteId, mutateSiteId, siteIdError };
 };
 
-export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
+export const useScan = ({ addQuery = "", querySid = 0, refreshInterval = 0 }) => {
 	const {
 		data: scan,
 		mutate: mutateScan,
@@ -56,13 +56,19 @@ export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
 	} = useSWR(
 		() =>
 			querySid && querySid !== 0 && querySid !== undefined
-				? siteApiEndpoint + querySid + "/scan/?ordering=-finished_at"
+				? siteApiEndpoint + querySid + "/scan/?ordering=-finished_at" + addQuery
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/?ordering=-finished_at") return;
+				if (
+					key === siteApiEndpoint + querySid + "/scan/?ordering=-finished_at" + addQuery &&
+					addQuery !== undefined &&
+					addQuery !== "" &&
+					addQuery
+				)
+					return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
@@ -244,7 +250,7 @@ export const usePageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 	return { pageDetail, mutatePageDetail, pageDetailError };
 };
 
-export const usePageDetailLink = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
+export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, linkId = 0 }) => {
 	const {
 		data: pageDetailLink,
 		mutate: mutatePageDetailLink,
@@ -260,13 +266,13 @@ export const usePageDetailLink = ({ querySid = 0, scanObjId = 0, linkId = 0 }) =
 			linkId &&
 			linkId !== 0 &&
 			linkId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/link/"
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/link/" + addQuery
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/link/") return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/link/" + addQuery) return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
