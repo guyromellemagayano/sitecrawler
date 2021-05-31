@@ -118,7 +118,7 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.replace("/site/[siteId]/images", path);
+		router.push("/site/[siteId]/images", path);
 	};
 
 	const chartSeries = [
@@ -278,7 +278,7 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 					) : (
 						<div tw="flex flex-col items-start h-530">
 							<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
-							<div tw="flex flex-col space-y-3 mt-16">
+							<div tw="flex flex-col space-y-3 mt-8">
 								{[...Array(4)].map((value, key) => (
 									<span key={key} tw="space-x-3">
 										<Skeleton circle={true} width={20} height={20} />

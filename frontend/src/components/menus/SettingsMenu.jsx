@@ -78,7 +78,7 @@ const SettingsMenu = ({ user, site }) => {
 					setSelectedSite(site.results[i].name);
 
 					setTimeout(() => {
-						router.replace(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
+						router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
 					}, 500);
 				}
 			}

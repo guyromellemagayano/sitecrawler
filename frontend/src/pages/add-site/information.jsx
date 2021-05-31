@@ -248,7 +248,7 @@ const Information = ({ width, sid, edit }) => {
 																	if (Math.floor(siteResponse.status / 200) === 1) {
 																		setSubmitting(false);
 
-																		router.replace({
+																		router.push({
 																			pathname: verifyUrlLink,
 																			query: {
 																				sid: siteResponse.data.id,
@@ -306,7 +306,7 @@ const Information = ({ width, sid, edit }) => {
 																			setSubmitting(false);
 																			resetForm({ values: "" });
 
-																			router.replace({
+																			router.push({
 																				pathname: verifyUrlLink,
 																				query: {
 																					sid: siteResponse.data.id,

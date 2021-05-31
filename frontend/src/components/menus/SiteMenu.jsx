@@ -21,7 +21,7 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 import { useScan, useStats } from "src/hooks/useSite";
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 
-const SiteMenu = ({ user, crawlFinished, site }) => {
+const SiteMenu = ({ user, site }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [scanObjId, setScanObjId] = useState(0);
 	const [selectedSite, setSelectedSite] = useState("");
@@ -53,28 +53,20 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 				previousScanResults = scan.results.find((e) => e.finished_at !== null);
 
 				if (currentScanResults !== [] || currentScanResults !== undefined) {
-					if (!crawlFinished) {
-						if (previousScanResults !== undefined) {
-							setScanObjId(previousScanResults.id);
-						} else {
-							setScanObjId(currentScanResults.id);
-						}
+					if (previousScanResults !== undefined) {
+						setScanObjId(previousScanResults.id);
 					} else {
-						if (previousScanResults !== undefined) {
-							setScanObjId(previousScanResults.id);
-						} else {
-							setScanObjId(currentScanResults.id);
-						}
+						setScanObjId(currentScanResults.id);
 					}
 				}
 			}
 		}
-	}, [crawlFinished, scan, scanObjId]);
+	}, [scan, scanObjId]);
 
 	const { stats: stats } = useStats({
 		querySid: sid && sid !== undefined && sid !== 0 && sid,
 		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId,
-		refreshInterval: crawlFinished ? 0 : 1000
+		refreshInterval: 0
 	});
 
 	const handleSiteSelectOnLoad = (siteId) => {
@@ -84,7 +76,7 @@ const SiteMenu = ({ user, crawlFinished, site }) => {
 					setSelectedSite(site.results[i].name);
 
 					setTimeout(() => {
-						router.replace(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
+						router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
 					}, 500);
 				}
 			}
