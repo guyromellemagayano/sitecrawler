@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
-import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
+import { ChevronRightIcon, HomeIcon, LinkIcon } from "@heroicons/react/solid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
@@ -329,21 +329,7 @@ const ImagesDetail = ({ width, result }) => {
 																		return (
 																			<li key={key} tw="pb-3 flex items-center justify-between text-sm leading-5">
 																				<div tw="w-0 flex-1 flex items-center">
-																					<svg
-																						tw="flex-shrink-0 h-5 w-5 text-gray-400"
-																						fill="none"
-																						strokeLinecap="round"
-																						strokeLinejoin="round"
-																						strokeWidth="2"
-																						viewBox="0 0 24 24"
-																						stroke="currentColor"
-																					>
-																						<path
-																							fillRule="evenodd"
-																							d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-																							clipRule="evenodd"
-																						/>
-																					</svg>
+																					<LinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 																					<span tw="ml-2 flex-1 w-0">
 																						<a
 																							href={val.url}
@@ -358,9 +344,6 @@ const ImagesDetail = ({ width, result }) => {
 																								{ImagesLabel[12].label} <span tw="text-gray-400">{val.alt_text}</span>
 																							</span>
 																						)}
-																						<span tw="block px-2 text-sm leading-5 font-medium text-gray-500">
-																							Alt Text: Hello World
-																						</span>
 																					</span>
 																				</div>
 																				<div tw="ml-4 flex-shrink-0">
