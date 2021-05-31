@@ -8,7 +8,6 @@ import Link from "next/link";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
@@ -16,15 +15,19 @@ import tw from "twin.macro";
 import OverviewLabel from "public/labels/pages/site/overview.json";
 
 // Hooks
+import { useScan, useStats, useSite, useSiteId } from "src/hooks/useSite";
 import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
-import { useScan, useStats, useSite, useSiteId } from "src/hooks/useSite";
 
 // Layout
 import Layout from "src/components/Layout";
 
 // Components
+import AppLogo from "src/components/logos/AppLogo";
+import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
+import SiteFooter from "src/components/layouts/Footer";
 import SitesImagesStats from "src/components/pages/overview/ImagesStats";
 import SitesLinksStats from "src/components/pages/overview/LinksStats";
 import SitesOverview from "src/components/pages/overview/Overview";
@@ -32,36 +35,39 @@ import SitesPagesStats from "src/components/pages/overview/PagesStats";
 import SitesSeoStats from "src/components/pages/overview/SeoStats";
 import SitesStats from "src/components/pages/overview/Stats";
 
-// Loadable
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-
 const SiteOverview = ({ width, result }) => {
-	const [crawlFinished, setCrawlFinished] = useState(false);
 	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 	const [pageLoaded, setPageLoaded] = useState(false);
-	const [previousScanDataActive, setPreviousScanDataActive] = useState(true);
-	const [recrawlable, setRecrawlable] = useState(false);
-	const [scanObjId, setScanObjId] = useState(0);
+	const [currentScanResultId, setCurrentScanResultId] = useState(0);
+	const [previousScanResultId, setPreviousScanResultId] = useState(0);
+	const [finishedAt, setFinishedAt] = useState("");
+	const [forceHttps, setForceHttps] = useState("");
+	const [previousStatsData, usePreviousStatsData] = useState(false);
+	const [enableCrawl, setEnableCrawl] = useState(false);
 
-	let currentScanResults = [];
-	let homeLabel = "Home";
-	let homePageLink = "/";
 	let pageTitle = "";
-	let previousScanResults = [];
+	const homeLabel = "Home";
+	let homePageLink = "/";
+
+	const sitesApiEndpoint = "/api/site/?ordering=name";
 	let reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-	let sitesApiEndpoint = "/api/site/?ordering=name";
+
+	let previousScanResults = [];
+	let currentScanResults = [];
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
 
-	const { scan: scan } = useScan({
+	const { scan: previousScan } = useScan({
+		addQuery: `&finished_at__isnull=false&force_https__isnull=false`,
+		querySid: result.siteId
+	});
+
+	const { scan: currentScan } = useScan({
+		addQuery: `&finished_at__isnull=true&force_https__isnull=true`,
 		querySid: result.siteId
 	});
 
@@ -77,6 +83,110 @@ const SiteOverview = ({ width, result }) => {
 		pageTitle =
 			siteId.name && siteId.name !== undefined ? OverviewLabel[0].label + " - " + siteId.name : OverviewLabel[0].label;
 	}
+
+	useEffect(() => {
+		if (
+			currentScan &&
+			currentScan !== undefined &&
+			Object.keys(currentScan).length > 0 &&
+			currentScan.count &&
+			currentScan.count > 0
+		) {
+			if (
+				currentScan.results &&
+				currentScan.results !== undefined &&
+				currentScan.results !== [] &&
+				Object.keys(currentScan.results).length > 0
+			) {
+				currentScanResults = currentScan.results.find((e) => e.finished_at == null && e.force_https == null);
+
+				setCurrentScanResultId(currentScanResults.id);
+
+				if (currentScan.results.find((e) => e.finished_at == null) !== undefined) {
+					setFinishedAt(currentScan.results.find((e) => e.finished_at == null).finished_at);
+				}
+
+				if (currentScan.results.find((e) => e.force_https == null) !== undefined) {
+					setForceHttps(currentScan.results.find((e) => e.force_https == null).force_https);
+				}
+
+				usePreviousStatsData(false);
+			}
+		} else {
+			if (
+				previousScan &&
+				previousScan !== undefined &&
+				Object.keys(previousScan).length > 0 &&
+				previousScan.count &&
+				previousScan.count > 0
+			) {
+				if (
+					previousScan.results &&
+					previousScan.results !== undefined &&
+					previousScan.results !== [] &&
+					Object.keys(previousScan.results).length > 0
+				) {
+					previousScanResults = previousScan.results.find((e) => e.finished_at !== null && e.force_https !== null);
+
+					setPreviousScanResultId(previousScanResults.id);
+
+					if (previousScan.results.find((e) => e.finished_at !== null) !== undefined) {
+						setFinishedAt(previousScan.results.find((e) => e.finished_at !== null).finished_at);
+					}
+
+					if (previousScan.results.find((e) => e.force_https == null) !== undefined) {
+						setForceHttps(previousScan.results.find((e) => e.force_https == null).force_https);
+					}
+
+					usePreviousStatsData(true);
+				}
+			}
+		}
+	}, [previousScan, currentScan, previousScanResultId, currentScanResultId]);
+
+	const { stats: currentStats } = useStats({
+		querySid: result.siteId,
+		scanObjId:
+			currentScanResultId && currentScanResultId !== undefined && currentScanResultId !== 0
+				? currentScanResultId
+				: null,
+		refreshInterval: enableCrawl ? 1000 : 0
+	});
+
+	const { stats: previousStats } = useStats({
+		querySid: result.siteId,
+		scanObjId:
+			previousScanResultId && previousScanResultId !== undefined && previousScanResultId !== 0
+				? previousScanResultId
+				: null
+	});
+
+	const handleCrawl = async () => {
+		try {
+			const response = await usePostMethod(reCrawlEndpoint);
+			const data = await response.data;
+
+			if (Math.floor(response.status / 200) === 1) {
+				if (data) {
+					return data;
+				}
+			} else {
+				return null;
+			}
+		} catch (error) {
+			return null;
+		}
+	};
+
+	useEffect(() => {
+		console.log(previousStatsData);
+
+		if (previousStatsData) {
+			setEnableCrawl(false);
+		} else {
+			setEnableCrawl(true);
+		}
+	}, [previousStatsData]);
 
 	useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {
@@ -108,78 +218,6 @@ const SiteOverview = ({ width, result }) => {
 		}
 	}, [user, site, siteId]);
 
-	useEffect(() => {
-		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
-				currentScanResults = scan.results.find((e) => e.finished_at === null);
-				previousScanResults = scan.results.find((e) => e.finished_at !== null);
-
-				if (currentScanResults !== [] || currentScanResults !== undefined) {
-					if (!crawlFinished) {
-						if (previousScanResults !== undefined) {
-							setScanObjId(previousScanResults.id);
-						} else {
-							setScanObjId(currentScanResults.id);
-						}
-					} else {
-						if (previousScanResults !== undefined) {
-							setScanObjId(previousScanResults.id);
-							setPreviousScanDataActive(false);
-						} else {
-							setScanObjId(currentScanResults.id);
-						}
-					}
-				}
-			}
-		}
-	}, [crawlFinished, scan, scanObjId]);
-
-	const { stats: stats } = useStats({
-		querySid: result.siteId,
-		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId,
-		refreshInterval: crawlFinished ? 0 : 1000
-	});
-
-	const onCrawlHandler = async () => {
-		setCrawlFinished(false);
-
-		try {
-			const response = await usePostMethod(reCrawlEndpoint);
-			const data = await response.data;
-
-			if (Math.floor(response.status / 200) === 1) {
-				if (data) {
-					return data;
-				}
-			} else {
-				return null;
-			}
-		} catch (error) {
-			return null;
-		}
-	};
-
-	const crawlableHandler = (finished) => {
-		if (finished) setCrawlFinished(true);
-
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			user &&
-			user.permissions !== undefined &&
-			user.permissions !== [] &&
-			user.permissions.includes("can_start_scan") &&
-			siteId &&
-			siteId !== undefined &&
-			Object.keys(siteId).length > 0 &&
-			siteId.verified &&
-			finished
-		)
-			setRecrawlable(true);
-		else setRecrawlable(false);
-	};
-
 	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
@@ -188,14 +226,16 @@ const SiteOverview = ({ width, result }) => {
 				<MainSidebar
 					width={width}
 					user={user}
-					crawlFinished={crawlFinished}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<Link href={homePageLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
@@ -240,69 +280,52 @@ const SiteOverview = ({ width, result }) => {
 
 							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 								<div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
-									{stats && stats !== undefined && Object.keys(stats).length > 0 && (
-										<SitesStats
-											crawlableHandler={crawlableHandler}
-											user={user}
-											stats={stats}
-											previousScanDataActive={previousScanDataActive}
-											setPreviousScanDataActive={setPreviousScanDataActive}
-										/>
-									)}
+									<SitesStats user={user} stats={previousStatsData ? previousStats : currentStats} />
 
-									{siteId &&
-										siteId !== undefined &&
-										Object.keys(siteId).length > 0 &&
-										scan &&
-										scan !== undefined &&
-										Object.keys(scan).length > 0 &&
-										stats &&
-										stats !== undefined &&
-										Object.keys(stats).length > 0 &&
-										scan &&
-										scan !== undefined &&
-										Object.keys(scan).length > 0 && (
-											<SitesOverview
-												id={siteId.id}
-												verified={siteId.verified}
-												finishedAt={
-													scan &&
-													scan !== undefined &&
-													Object.keys(scan).length > 0 &&
-													scan.results.find((e) => e.finished_at !== null) !== undefined
-														? scan.results.find((e) => e.finished_at !== null).finished_at
-														: null
-												}
-												forceHttps={
-													scan &&
-													scan !== undefined &&
-													Object.keys(scan).length > 0 &&
-													scan.results.find((e) => e.force_https !== null) !== undefined
-														? scan.results.find((e) => e.force_https !== null).force_https
-														: null
-												}
-												onCrawl={onCrawlHandler}
-												crawlable={recrawlable}
-												crawlFinished={crawlFinished}
-												user={user}
-												stats={stats}
-												scanCount={scan.count}
-												disableLocalTime={disableLocalTime}
-											/>
-										)}
+									<SitesOverview
+										id={
+											siteId &&
+											siteId !== undefined &&
+											Object.keys(siteId).length > 0 &&
+											siteId.id &&
+											siteId.id !== null &&
+											siteId.id
+										}
+										verified={
+											siteId &&
+											siteId !== undefined &&
+											Object.keys(siteId).length > 0 &&
+											siteId.verified &&
+											siteId.verified !== null &&
+											siteId.verified &&
+											siteId.verified
+										}
+										finishedAt={finishedAt}
+										forceHttps={forceHttps}
+										handleCrawl={handleCrawl}
+										scan={
+											currentScan &&
+											currentScan !== undefined &&
+											Object.keys(currentScan).length > 0 &&
+											currentScan.count &&
+											currentScan.count > 0
+												? currentScan
+												: previousScan
+										}
+										user={user}
+										stats={previousStatsData ? previousStats : currentStats}
+										disableLocalTime={disableLocalTime}
+										previousStatsData={previousStatsData}
+									/>
 
-									{stats && stats !== undefined && Object.keys(stats).length > 0 && (
-										<>
-											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesLinksStats sid={result.siteId} stats={stats} />
-												<SitesPagesStats sid={result.siteId} stats={stats} />
-											</div>
-											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesImagesStats sid={result.siteId} stats={stats} />
-												<SitesSeoStats sid={result.siteId} stats={stats} />
-											</div>
-										</>
-									)}
+									<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+										<SitesLinksStats sid={result.siteId} stats={previousStatsData ? previousStats : currentStats} />
+										<SitesPagesStats sid={result.siteId} stats={previousStatsData ? previousStats : currentStats} />
+									</div>
+									<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
+										<SitesImagesStats sid={result.siteId} stats={previousStatsData ? previousStats : currentStats} />
+										<SitesSeoStats sid={result.siteId} stats={previousStatsData ? previousStats : currentStats} />
+									</div>
 								</div>
 							</div>
 

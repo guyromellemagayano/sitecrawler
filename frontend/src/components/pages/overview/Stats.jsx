@@ -10,7 +10,7 @@ import Skeleton from "react-loading-skeleton";
 // JSON
 import StatsLabel from "public/labels/components/sites/Stats.json";
 
-const SitesStats = ({ crawlableHandler, user, stats, previousScanDataActive, setPreviousScanDataActive }) => {
+const SitesStats = ({ user, stats }) => {
 	const [componentReady, setComponentReady] = useState(false);
 
 	useEffect(() => {
@@ -27,17 +27,6 @@ const SitesStats = ({ crawlableHandler, user, stats, previousScanDataActive, set
 			}, 500);
 		}
 	}, [user, stats]);
-
-	useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			if (stats.started_at && stats.finished_at && !previousScanDataActive) {
-				crawlableHandler(true);
-				setPreviousScanDataActive(true);
-			} else if (stats.started_at && stats.finished_at == null) {
-				crawlableHandler(false);
-			} else crawlableHandler(true);
-		}
-	}, [stats]);
 
 	const setSeoErrors = () => {
 		let valLength = 0;
