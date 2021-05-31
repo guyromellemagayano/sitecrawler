@@ -6,19 +6,18 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
-import loadable from "@loadable/component";
+import bytes from "bytes";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
-import bytes from "bytes";
+import { styled } from "twin.macro";
 
 // Hooks
 import { usePageDetail } from "src/hooks/useSite";
 
 // Components
-const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
-const SiteSuccessIcon = loadable(() => import("src/components/icons/SiteSuccessIcon"));
-const SiteDangerIcon = loadable(() => import("src/components/icons/SiteDangerIcon"));
+import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
+import SiteSuccessIcon from "src/components/icons/SiteSuccessIcon";
+import SiteDangerIcon from "src/components/icons/SiteDangerIcon";
 
 const PageTableDiv = styled.tr`
 	a,
@@ -103,7 +102,7 @@ const PageTable = (props) => {
 								>
 									<a
 										className="btn-detail"
-										tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+										tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 									>
 										View Details
 									</a>
