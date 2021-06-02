@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // External
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,17 +24,14 @@ const SitesOverview = ({
 	verified,
 	finishedAt,
 	forceHttps,
-	handleCrawl,
-	scan,
 	user,
 	stats,
 	disableLocalTime,
-	previousStatsData
+	setTriggerCrawl,
+	isCrawlStarted,
+	isCrawlFinished
 }) => {
-	const [componentReady, setComponentReady] = useState(false);
-	const [showErrorModal, setShowErrorModal] = useState(false);
-
-	// console.log(scan);
+	const [showErrorModal, setShowErrorModal] = React.useState(false);
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -42,24 +39,6 @@ const SitesOverview = ({
 		lastWeek: "MMMM DD, YYYY",
 		sameElse: "MMMM DD, YYYY"
 	};
-
-	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			stats &&
-			stats !== undefined &&
-			Object.keys(stats).length > 0 &&
-			scan &&
-			scan !== undefined &&
-			Object.keys(scan).length > 0
-		) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [user, stats, scan]);
 
 	const handleCrawlPermissions = (e) => {
 		e.preventDefault();
@@ -79,20 +58,20 @@ const SitesOverview = ({
 			<div tw="bg-white overflow-hidden rounded-lg h-full border">
 				<div tw="px-4 py-5 sm:p-6">
 					<div tw="flex items-center justify-between mb-5">
-						<h2 tw="text-lg font-bold leading-7 text-gray-900">
-							{componentReady ? OverviewLabel[1].label : <Skeleton duration={2} width={120} height={20} />}
-						</h2>
+						<h2 tw="text-lg font-bold leading-7 text-gray-900">{OverviewLabel[1].label}</h2>
 						<div className="btn-crawler">
-							{componentReady ? (
+							{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
 								user && user !== undefined && Object.keys(user).length > 0 ? (
 									<button
 										type="button"
-										disabled={user && user.permissions.includes("can_start_scan") && !previousStatsData}
-										onClick={user && user.permissions.includes("can_start_scan") ? handleCrawl : handleCrawlPermissions}
+										disabled={isCrawlStarted && !isCrawlFinished}
+										onClick={
+											user && user.permissions.includes("can_start_scan") ? setTriggerCrawl : handleCrawlPermissions
+										}
 										css={[
 											tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
 											user && user.permissions.includes("can_start_scan")
-												? !previousStatsData
+												? isCrawlStarted && !isCrawlFinished
 													? tw`bg-green-600 opacity-50 cursor-not-allowed`
 													: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 												: tw`bg-yellow-600 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
@@ -107,7 +86,9 @@ const SitesOverview = ({
 											user.permissions.includes("can_start_scan") ? null : (
 												<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 											)}
-											<span>{previousStatsData ? OverviewLabel[0].label : OverviewLabel[6].label}</span>
+											<span>
+												{!isCrawlStarted && isCrawlFinished ? OverviewLabel[0].label : OverviewLabel[6].label}
+											</span>
 										</span>
 									</button>
 								) : null
@@ -117,12 +98,10 @@ const SitesOverview = ({
 						</div>
 					</div>
 					<dl tw="mb-8 max-w-xl text-sm leading-5">
-						<dt tw="text-sm leading-5 font-medium text-gray-500">
-							{componentReady ? OverviewLabel[2].label : <Skeleton duration={2} width={100} height={15} />}
-						</dt>
+						<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[2].label}</dt>
 						{user && user !== undefined && Object.keys(user).length > 0 && !user.settings.disableLocalTime ? (
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{componentReady ? (
+								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
 									<>
 										<Moment calendar={calendarStrings} date={finishedAt} local />
 										&nbsp;
@@ -134,7 +113,7 @@ const SitesOverview = ({
 							</dd>
 						) : (
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{componentReady ? (
+								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
 									<span tw="space-x-2">
 										<Moment calendar={calendarStrings} date={finishedAt} utc />
 										<Moment date={finishedAt} format="hh:mm:ss A" utc />
@@ -148,11 +127,9 @@ const SitesOverview = ({
 					</dl>
 					<dl tw="grid grid-cols-1 col-span-4 sm:grid-cols-2">
 						<div tw="py-3 sm:col-span-1">
-							<dt tw="text-sm leading-5 font-medium text-gray-500">
-								{componentReady ? OverviewLabel[1].label : <Skeleton duration={2} width={100} height={15} />}
-							</dt>
+							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[1].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{componentReady ? (
+								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
 									verified && verified !== undefined ? (
 										<SiteSuccessStatus text="Verified" />
 									) : (
@@ -168,25 +145,21 @@ const SitesOverview = ({
 						</div>
 						{user && user !== undefined && Object.keys(user).length > 0 && user.permissions.includes("can_see_pages") && (
 							<div tw="py-3 sm:col-span-1">
-								<dt tw="text-sm leading-5 font-medium text-gray-500">
-									{componentReady ? OverviewLabel[3].label : <Skeleton duration={2} width={100} height={15} />}
-								</dt>
+								<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[3].label}</dt>
 								<dd tw="mt-1 text-sm leading-5 text-gray-900">
-									{componentReady ? (
+									{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
 										verified && verified !== undefined ? (
-											stats &&
-											stats !== undefined &&
-											Object.keys(stats).length > 0 &&
-											previousStatsData &&
-											(stats.num_pages_tls_non_ok === 0 ? (
-												<SiteSuccessStatus text="Valid" />
-											) : stats.num_pages_tls_non_ok !== 0 ? (
-												<span tw="flex items-center justify-start">
-													<SiteDangerStatus text="Not Valid" />
-												</span>
+											!isCrawlStarted && isCrawlFinished ? (
+												stats.num_pages_tls_non_ok === 0 ? (
+													<SiteSuccessStatus text="Valid" />
+												) : (
+													<span tw="flex items-center justify-start">
+														<SiteDangerStatus text="Not Valid" />
+													</span>
+												)
 											) : (
 												<SiteWarningStatus text="Checking" />
-											))
+											)
 										) : (
 											<SiteDangerStatus text="Unverified" />
 										)
@@ -200,12 +173,10 @@ const SitesOverview = ({
 							</div>
 						)}
 						<div tw="py-3 sm:col-span-1">
-							<dt tw="text-sm leading-5 font-medium text-gray-500">
-								{componentReady ? OverviewLabel[4].label : <Skeleton duration={2} width={100} height={15} />}
-							</dt>
+							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[4].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{componentReady ? (
-									previousStatsData ? (
+								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+									!isCrawlStarted && isCrawlFinished ? (
 										forceHttps ? (
 											<SiteSuccessStatus text="Yes" />
 										) : (
@@ -223,12 +194,10 @@ const SitesOverview = ({
 							</dd>
 						</div>
 						<div tw="py-3 sm:col-span-1">
-							<dt tw="text-sm leading-5 font-medium text-gray-500">
-								{componentReady ? OverviewLabel[5].label : <Skeleton duration={2} width={100} height={15} />}
-							</dt>
+							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[5].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{componentReady ? (
-									previousStatsData ? (
+								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+									!isCrawlStarted && isCrawlFinished ? (
 										<SiteSuccessStatus text="Finished" />
 									) : (
 										<SiteWarningStatus text="In Process" />

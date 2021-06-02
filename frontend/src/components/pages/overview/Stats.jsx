@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // External
 import "twin.macro";
@@ -10,24 +10,7 @@ import Skeleton from "react-loading-skeleton";
 // JSON
 import StatsLabel from "public/labels/components/sites/Stats.json";
 
-const SitesStats = ({ user, stats }) => {
-	const [componentReady, setComponentReady] = useState(false);
-
-	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			stats &&
-			stats !== undefined &&
-			Object.keys(stats).length > 0
-		) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [user, stats]);
-
+const SitesStats = ({ stats }) => {
 	const setSeoErrors = () => {
 		let valLength = 0;
 
@@ -80,30 +63,44 @@ const SitesStats = ({ user, stats }) => {
 		{
 			title: "Total Issues",
 			count:
-				stats &&
-				stats !== undefined &&
-				Object.keys(stats).length > 0 &&
-				stats.num_non_ok_links + setSeoErrors() + setPageErrors() + setImageErrors()
+				stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+					stats.num_non_ok_links + setSeoErrors() + setPageErrors() + setImageErrors()
+				) : (
+					<Skeleton duration={2} width={50} height={50} />
+				)
 		},
 		{
 			title: "Total Pages",
-			count: stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages
+			count:
+				stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+					stats.num_pages
+				) : (
+					<Skeleton duration={2} width={50} height={50} />
+				)
 		},
 		{
 			title: "Total Links",
-			count: stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_links
+			count:
+				stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+					stats.num_links
+				) : (
+					<Skeleton duration={2} width={50} height={50} />
+				)
 		},
 		{
 			title: "Total Images",
-			count: stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images
+			count:
+				stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+					stats.num_images
+				) : (
+					<Skeleton duration={2} width={50} height={50} />
+				)
 		}
 	];
 
 	return (
 		<div tw="px-6 py-5 sm:p-6 bg-white overflow-hidden rounded-lg border">
-			<h2 tw="text-lg font-bold leading-7 text-gray-900">
-				{componentReady ? StatsLabel[0].label : <Skeleton duration={2} width={120} height={20} />}
-			</h2>
+			<h2 tw="text-lg font-bold leading-7 text-gray-900">{StatsLabel[0].label}</h2>
 			<div tw="grid grid-cols-2 h-full overflow-hidden py-6">
 				{PageTabs.map((val, key) => {
 					return (
@@ -112,35 +109,13 @@ const SitesStats = ({ user, stats }) => {
 								<dl tw="mr-2">
 									<dt>
 										{val.title === "Total Pages" ? (
-											componentReady ? (
-												<DocumentIcon tw="mr-3 h-6 w-6 text-gray-500" />
-											) : (
-												<span tw="flex -mt-1">
-													<Skeleton duration={2} width={20} height={20} />
-												</span>
-											)
+											<DocumentIcon tw="mr-3 h-6 w-6 text-gray-500" />
 										) : val.title === "Total Links" ? (
-											componentReady ? (
-												<LinkIcon tw="mr-3 h-6 w-6 text-gray-500" />
-											) : (
-												<span tw="flex -mt-1">
-													<Skeleton duration={2} width={20} height={20} />
-												</span>
-											)
+											<LinkIcon tw="mr-3 h-6 w-6 text-gray-500" />
 										) : val.title === "Total Images" ? (
-											componentReady ? (
-												<PhotographIcon tw="mr-3 h-6 w-6 text-gray-500" />
-											) : (
-												<span tw="flex -mt-1">
-													<Skeleton duration={2} width={20} height={20} />
-												</span>
-											)
-										) : componentReady ? (
-											<InformationCircleIcon tw="mr-3 h-6 w-6 text-gray-500" />
+											<PhotographIcon tw="mr-3 h-6 w-6 text-gray-500" />
 										) : (
-											<span tw="flex -mt-1">
-												<Skeleton duration={2} width={20} height={20} />
-											</span>
+											<InformationCircleIcon tw="mr-3 h-6 w-6 text-gray-500" />
 										)}
 									</dt>
 								</dl>
@@ -148,13 +123,9 @@ const SitesStats = ({ user, stats }) => {
 									<dt tw="text-sm lg:text-sm leading-5 font-medium text-gray-500 truncate">{val.title}</dt>
 
 									{val.title === "Total Issues" ? (
-										<dd tw="mt-1 text-3xl leading-9 font-semibold text-red-700">
-											{componentReady ? val.count : <Skeleton duration={2} width={50} height={50} />}
-										</dd>
+										<dd tw="mt-1 text-3xl leading-9 font-semibold text-red-700">{val.count}</dd>
 									) : (
-										<dd tw="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-											{componentReady ? val.count : <Skeleton duration={2} width={50} height={50} />}
-										</dd>
+										<dd tw="mt-1 text-3xl leading-9 font-semibold text-gray-900">{val.count}</dd>
 									)}
 								</dl>
 							</div>

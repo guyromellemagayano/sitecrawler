@@ -48,7 +48,7 @@ export const useSiteId = ({ querySid = 0, refreshInterval = 0 }) => {
 	return { siteId, mutateSiteId, siteIdError };
 };
 
-export const useScan = ({ addQuery = "", querySid = 0, refreshInterval = 0 }) => {
+export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
 	const {
 		data: scan,
 		mutate: mutateScan,
@@ -56,19 +56,13 @@ export const useScan = ({ addQuery = "", querySid = 0, refreshInterval = 0 }) =>
 	} = useSWR(
 		() =>
 			querySid && querySid !== 0 && querySid !== undefined
-				? siteApiEndpoint + querySid + "/scan/?ordering=-finished_at" + addQuery
+				? siteApiEndpoint + querySid + "/scan/?ordering=-finished_at"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error && error !== undefined && error.status === 404) return;
-				if (
-					key === siteApiEndpoint + querySid + "/scan/?ordering=-finished_at" + addQuery &&
-					addQuery !== undefined &&
-					addQuery !== "" &&
-					addQuery
-				)
-					return;
+				if (key === siteApiEndpoint + querySid + "/scan/?ordering=-finished_at") return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
