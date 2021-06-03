@@ -202,11 +202,6 @@ const SiteMenu = ({ user, site }) => {
 																	{stats.num_pages ? stats.num_pages : null}
 																</span>
 															)}
-														{value2.url === "/seo" && stats && stats !== undefined && Object.keys(stats).length > 0 && (
-															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																{stats.num_pages ? stats.num_pages : null}
-															</span>
-														)}
 														{value2.url === "/images" &&
 															stats &&
 															stats !== undefined &&
