@@ -1,10 +1,11 @@
 FROM node:14 AS dev
 
+RUN mkdir /app
 WORKDIR /app
 
 COPY package.json .
 COPY yarn.lock .
-RUN yarn install --install-lockfile
+RUN yarn
 
 COPY . .
 
