@@ -2,7 +2,7 @@ from django_filters import rest_framework as filters
 from rest_framework import viewsets, mixins
 from rest_framework_extensions.mixins import DetailSerializerMixin, NestedViewSetMixin
 
-from crawl.common import HasPermission
+from crawl.common import CsvMixin, HasPermission
 from crawl.models import Link
 from crawl.serializers import PageSerializer, PageDetailSerializer
 
@@ -67,7 +67,12 @@ class PageFilter(filters.FilterSet):
 
 
 class PageViewSet(
-    DetailSerializerMixin, NestedViewSetMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+    CsvMixin,
+    DetailSerializerMixin,
+    NestedViewSetMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
 ):
     permission_classes = [HasPermission("crawl.can_see_pages")]
 
