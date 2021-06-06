@@ -9,6 +9,8 @@ RUN yarn install --install-lockfile
 
 COPY . /app
 
+EXPOSE 3000
+
 FROM dev AS prod
 
 RUN yarn build
