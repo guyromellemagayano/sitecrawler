@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import setupLogRocketReact from "logrocket-react";
 
 // Enums
-import appSeo from "src/enum/nextSeo";
+import appSeo from "src/enums/nextSeo";
 
 // Components
 import GlobalStyles from "src/components/GlobalStyles";

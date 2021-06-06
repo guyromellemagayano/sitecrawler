@@ -17,7 +17,7 @@ import Skeleton from "react-loading-skeleton";
 import LinksStatsLabel from "public/labels/components/sites/LinksStats.json";
 
 // Enums
-import { linksChartContents } from "src/enum/chartContents";
+import { linksChartContents } from "src/enums/chartContents";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
