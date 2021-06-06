@@ -3,11 +3,11 @@ FROM node:14 AS dev
 RUN mkdir /app
 WORKDIR /app
 
-COPY package.json .
-COPY yarn.lock .
-RUN yarn
+COPY package.json /app
+COPY yarn.lock /app
+RUN yarn install --install-lockfile
 
-COPY . .
+COPY . /app
 
 FROM dev AS prod
 
