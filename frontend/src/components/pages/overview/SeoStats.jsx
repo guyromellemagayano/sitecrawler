@@ -121,39 +121,19 @@ const SitesSeoStats = ({ width, sid, stats }) => {
 	};
 
 	const chartSeries = [
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_without_title !== undefined
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_without_title !== undefined
 			? stats.num_pages_without_title
 			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_without_description !== undefined
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_without_description !== undefined
 			? stats.num_pages_without_description
 			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_without_h1_first !== undefined
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_without_h1_first !== undefined
 			? stats.num_pages_without_h1_first
 			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_without_h2_first !== undefined
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_without_h2_first !== undefined
 			? stats.num_pages_without_h2_first
 			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_seo_ok !== undefined
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_seo_ok !== undefined
 			? stats.num_pages_seo_ok
 			: 0
 	];

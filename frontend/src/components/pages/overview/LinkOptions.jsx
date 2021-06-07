@@ -71,7 +71,6 @@ const LinkOptions = ({ sid, user, searchKey, onSearchEvent, onCrawl, crawlable, 
 			Object.keys(user).length > 0 &&
 			stats &&
 			stats !== undefined &&
-			stats !== [] &&
 			Object.keys(stats).length > 0
 		) {
 			setTimeout(() => {

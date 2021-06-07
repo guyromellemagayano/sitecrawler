@@ -100,7 +100,7 @@ const SitesLinksStats = ({ width, sid, stats }) => {
 	const router = useRouter();
 
 	useEffect(() => {
-		if (stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setComponentReady(false);
 
 			setTimeout(() => {
@@ -121,14 +121,10 @@ const SitesLinksStats = ({ width, sid, stats }) => {
 	};
 
 	const chartSeries = [
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_non_ok_links !== undefined
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_non_ok_links !== undefined
 			? stats.num_non_ok_links
 			: 0,
-		stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0 && stats.num_ok_links !== undefined
+		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_ok_links !== undefined
 			? stats.num_ok_links
 			: 0
 	];

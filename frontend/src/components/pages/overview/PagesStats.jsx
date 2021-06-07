@@ -137,7 +137,6 @@ const SitesPagesStats = ({ width, sid, stats }) => {
 			: 0,
 		stats &&
 		stats !== undefined &&
-		stats !== [] &&
 		Object.keys(stats).length > 0 &&
 		stats.num_pages_small_tls_ok &&
 		stats.num_pages_small_tls_ok !== undefined
