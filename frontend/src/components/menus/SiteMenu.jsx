@@ -21,8 +21,7 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 import { useScan, useStats } from "src/hooks/useSite";
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 
-const SiteMenu = ({ user, site }) => {
-	const [componentReady, setComponentReady] = useState(false);
+const SiteMenu = ({ site, useCrawl }) => {
 	const [scanObjId, setScanObjId] = useState(0);
 	const [selectedSite, setSelectedSite] = useState("");
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
@@ -94,21 +93,7 @@ const SiteMenu = ({ user, site }) => {
 		if (site && site !== undefined && Object.keys(site).length > 0 && sid && sid !== undefined && sid !== "") {
 			handleSiteSelectOnLoad(site, sid);
 		}
-
-		if (
-			user &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			stats &&
-			stats !== undefined &&
-			Object.keys(stats).length > 0
-		) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [user, site, stats, sid]);
+	}, [site, sid]);
 
 	useEffect(() => {
 		if (isComponentVisible) {
@@ -150,9 +135,7 @@ const SiteMenu = ({ user, site }) => {
 				{SitePages.map((value, index) => {
 					return (
 						<div key={index} tw="mb-8">
-							<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
-								{componentReady ? value.category : <Skeleton duration={2} width={125} height={20} />}
-							</h3>
+							<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">{value.category}</h3>
 
 							<div tw="my-3" role="group">
 								{value.links && value.links !== undefined && Object.keys(value.links).length > 0 ? (
@@ -160,93 +143,80 @@ const SiteMenu = ({ user, site }) => {
 										const hrefVal = "/site/[siteId]" + value2.url;
 										const asVal = "/site/" + sid + value2.url;
 
-										return componentReady ? (
-											value2.slug !== "go-back-to-sites" ? (
-												<Link key={index} href={hrefVal} as={asVal} passHref>
-													<a
-														className="group"
-														css={[
-															tw`cursor-pointer`,
-															asPath.includes("/site/" + sid + value2.url)
-																? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
-																: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100`
-														]}
-													>
-														{value2.slug === "overview" ? (
-															<ViewGridIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "links" ? (
-															<LinkIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "pages" ? (
-															<DocumentTextIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "images" ? (
-															<PhotographIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "seo" ? (
-															<SearchIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "site-settings" ? (
-															<CogIcon tw="mr-3 h-6 w-5" />
-														) : null}
-														{value2.title ? <span>{value2.title}</span> : null}
-														{value2.url === "/links" &&
-															stats &&
-															stats !== undefined &&
-															Object.keys(stats).length > 0 && (
-																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{stats.num_links ? stats.num_links : null}
-																</span>
-															)}
-														{value2.url === "/pages" &&
-															stats &&
-															stats !== undefined &&
-															Object.keys(stats).length > 0 && (
-																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{stats.num_pages ? stats.num_pages : null}
-																</span>
-															)}
-														{value2.url === "/images" &&
-															stats &&
-															stats !== undefined &&
-															Object.keys(stats).length > 0 && (
-																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{stats.num_images ? stats.num_images : null}
-																</span>
-															)}
-														{value2.url === "/stylesheets" &&
-															stats &&
-															stats !== undefined &&
-															Object.keys(stats).length > 0 && (
-																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{stats.num_stylesheets ? stats.num_stylesheets : null}
-																</span>
-															)}
-														{value2.url === "/scripts" &&
-															stats &&
-															stats !== undefined &&
-															Object.keys(stats).length > 0 && (
-																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																	{stats.num_scripts ? stats.num_scripts : null}
-																</span>
-															)}
-													</a>
-												</Link>
-											) : (
-												<Link key={index} href={value2.url} passHref>
-													<a
-														className="group"
-														tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
-													>
-														<ArrowLeftIcon tw="mr-3 h-6 w-5" />
-														{value2.title ? <span>{value2.title}</span> : null}
-													</a>
-												</Link>
-											)
+										return value2.slug !== "go-back-to-sites" ? (
+											<Link key={index} href={hrefVal} as={asVal} replace>
+												<a
+													className="group"
+													css={[
+														tw`cursor-pointer`,
+														asPath.includes("/site/" + sid + value2.url)
+															? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
+															: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100`
+													]}
+												>
+													{value2.slug === "overview" ? (
+														<ViewGridIcon tw="mr-3 h-6 w-5" />
+													) : value2.slug === "links" ? (
+														<LinkIcon tw="mr-3 h-6 w-5" />
+													) : value2.slug === "pages" ? (
+														<DocumentTextIcon tw="mr-3 h-6 w-5" />
+													) : value2.slug === "images" ? (
+														<PhotographIcon tw="mr-3 h-6 w-5" />
+													) : value2.slug === "seo" ? (
+														<SearchIcon tw="mr-3 h-6 w-5" />
+													) : value2.slug === "site-settings" ? (
+														<CogIcon tw="mr-3 h-6 w-5" />
+													) : null}
+													{value2.title ? <span>{value2.title}</span> : null}
+													{value2.url === "/links" && stats && stats !== undefined && Object.keys(stats).length > 0 && (
+														<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+															{stats.num_links ? stats.num_links : null}
+														</span>
+													)}
+													{value2.url === "/pages" && stats && stats !== undefined && Object.keys(stats).length > 0 && (
+														<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+															{stats.num_pages ? stats.num_pages : null}
+														</span>
+													)}
+													{value2.url === "/images" &&
+														stats &&
+														stats !== undefined &&
+														Object.keys(stats).length > 0 && (
+															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																{stats.num_images ? stats.num_images : null}
+															</span>
+														)}
+													{value2.url === "/stylesheets" &&
+														stats &&
+														stats !== undefined &&
+														Object.keys(stats).length > 0 && (
+															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																{stats.num_stylesheets ? stats.num_stylesheets : null}
+															</span>
+														)}
+													{value2.url === "/scripts" &&
+														stats &&
+														stats !== undefined &&
+														Object.keys(stats).length > 0 && (
+															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																{stats.num_scripts ? stats.num_scripts : null}
+															</span>
+														)}
+												</a>
+											</Link>
 										) : (
-											<span key={index} tw="mt-1 flex items-center px-3 py-2 space-x-3">
-												<Skeleton circle={true} duration={2} width={20} height={20} />
-												<Skeleton duration={2} width={150} height={20} />
-											</span>
+											<Link key={index} href={value2.url} replace>
+												<a
+													className="group"
+													tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
+												>
+													<ArrowLeftIcon tw="mr-3 h-6 w-5" />
+													{value2.title ? <span>{value2.title}</span> : null}
+												</a>
+											</Link>
 										);
 									})
-								) : componentReady ? (
+								) : (
 									<div tw="space-y-1">
 										<div ref={ref} tw="relative">
 											<div tw="relative">
@@ -370,12 +340,6 @@ const SiteMenu = ({ user, site }) => {
 												</Transition>
 											</div>
 										</div>
-									</div>
-								) : (
-									<div tw="space-y-1">
-										<span tw="mt-1 flex items-center py-2">
-											<Skeleton duration={2} width={220} height={35} />
-										</span>
 									</div>
 								)}
 							</div>

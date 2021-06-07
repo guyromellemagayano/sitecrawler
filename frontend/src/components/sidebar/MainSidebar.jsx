@@ -17,6 +17,7 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 
 // Hooks
 import { useSite } from "src/hooks/useSite";
+import useCrawl from "src/hooks/useCrawl";
 
 // Components
 import AppLogo from "src/components/logos/AppLogo";
@@ -28,7 +29,7 @@ const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"))
 const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
 
 const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) => {
-	const [selectedMenu, setSelectedMenu] = useState("");
+	const [selectedMenu, setSelectedMenu] = useState(null);
 
 	const lgScreenBreakpoint = 1024;
 	const siteApiEndpoint = "/api/site/?ordering=name";
@@ -44,15 +45,17 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 	useEffect(() => {
 		switch (true) {
 			case router.pathname.includes("/site"):
-				setSelectedMenu(<SiteMenu user={user} site={site} />);
+				setSelectedMenu(<SiteMenu site={site ?? null} useCrawl={useCrawl} />);
 				break;
 			case router.pathname.includes("/settings"):
-				setSelectedMenu(<SettingsMenu user={user} site={site} />);
+				setSelectedMenu(<SettingsMenu user={user ?? null} site={site ?? null} useCrawl={useCrawl} />);
 				break;
 			default:
-				setSelectedMenu(<PrimaryMenu user={user} site={site} />);
+				setSelectedMenu(<PrimaryMenu site={site ?? null} useCrawl={useCrawl} />);
 				break;
 		}
+
+		return selectedMenu;
 	}, [router, user, site]);
 
 	const handleHideSidebarMenu = (event) => {
@@ -151,7 +154,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 					{selectedMenu}
 				</div>
 
-				<ProfileMenu user={user} />
+				<ProfileMenu user={user ?? null} />
 			</div>
 		</aside>
 	);
