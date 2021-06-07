@@ -20,18 +20,9 @@ import SiteWarningStatus from "src/components/status/SiteWarningStatus";
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
-const SitesOverview = ({
-	verified,
-	finishedAt,
-	forceHttps,
-	user,
-	stats,
-	disableLocalTime,
-	setTriggerCrawl,
-	isCrawlStarted,
-	isCrawlFinished
-}) => {
+const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, isCrawlStarted, isCrawlFinished }) => {
 	const [showErrorModal, setShowErrorModal] = React.useState(false);
+	const [componentReady, setComponentReady] = React.useState(false);
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -45,6 +36,16 @@ const SitesOverview = ({
 
 		setShowErrorModal(!showErrorModal);
 	};
+
+	React.useEffect(() => {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setComponentReady(false);
+
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 500);
+		}
+	}, [stats]);
 
 	return (
 		<>
@@ -60,14 +61,12 @@ const SitesOverview = ({
 					<div tw="flex items-center justify-between mb-5">
 						<h2 tw="text-lg font-bold leading-7 text-gray-900">{OverviewLabel[1].label}</h2>
 						<div className="btn-crawler">
-							{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+							{componentReady ? (
 								user && user !== undefined && Object.keys(user).length > 0 ? (
 									<button
 										type="button"
 										disabled={isCrawlStarted && !isCrawlFinished}
-										onClick={
-											user && user.permissions.includes("can_start_scan") ? setTriggerCrawl : handleCrawlPermissions
-										}
+										onClick={user && user.permissions.includes("can_start_scan") ? handleCrawl : handleCrawlPermissions}
 										css={[
 											tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
 											user && user.permissions.includes("can_start_scan")
@@ -101,24 +100,28 @@ const SitesOverview = ({
 						<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[2].label}</dt>
 						{user && user !== undefined && Object.keys(user).length > 0 && !user.settings.disableLocalTime ? (
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
-									<>
-										<Moment calendar={calendarStrings} date={finishedAt} local />
-										&nbsp;
-										<Moment date={finishedAt} format="hh:mm:ss A" local />
-									</>
+								{componentReady ? (
+									stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+										<>
+											<Moment calendar={calendarStrings} date={stats.finished_at} local />
+											&nbsp;
+											<Moment date={stats.finished_at} format="hh:mm:ss A" local />
+										</>
+									) : null
 								) : (
 									<Skeleton duration={2} width={240} height={15} />
 								)}
 							</dd>
 						) : (
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
-									<span tw="space-x-2">
-										<Moment calendar={calendarStrings} date={finishedAt} utc />
-										<Moment date={finishedAt} format="hh:mm:ss A" utc />
-										{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
-									</span>
+								{componentReady ? (
+									stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+										<span tw="space-x-2">
+											<Moment calendar={calendarStrings} date={stats.finished_at} utc />
+											<Moment date={stats.finished_at} format="hh:mm:ss A" utc />
+											{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
+										</span>
+									) : null
 								) : (
 									<Skeleton duration={2} width={240} height={15} />
 								)}
@@ -129,7 +132,7 @@ const SitesOverview = ({
 						<div tw="py-3 sm:col-span-1">
 							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[1].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+								{componentReady ? (
 									verified && verified !== undefined ? (
 										<SiteSuccessStatus text="Verified" />
 									) : (
@@ -147,16 +150,18 @@ const SitesOverview = ({
 							<div tw="py-3 sm:col-span-1">
 								<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[3].label}</dt>
 								<dd tw="mt-1 text-sm leading-5 text-gray-900">
-									{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+									{componentReady ? (
 										verified && verified !== undefined ? (
 											!isCrawlStarted && isCrawlFinished ? (
-												stats.num_pages_tls_non_ok === 0 ? (
-													<SiteSuccessStatus text="Valid" />
-												) : (
-													<span tw="flex items-center justify-start">
-														<SiteDangerStatus text="Not Valid" />
-													</span>
-												)
+												stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+													stats.num_pages_tls_non_ok === 0 ? (
+														<SiteSuccessStatus text="Valid" />
+													) : (
+														<span tw="flex items-center justify-start">
+															<SiteDangerStatus text="Not Valid" />
+														</span>
+													)
+												) : null
 											) : (
 												<SiteWarningStatus text="Checking" />
 											)
@@ -175,13 +180,15 @@ const SitesOverview = ({
 						<div tw="py-3 sm:col-span-1">
 							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[4].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+								{componentReady ? (
 									!isCrawlStarted && isCrawlFinished ? (
-										forceHttps ? (
-											<SiteSuccessStatus text="Yes" />
-										) : (
-											<SiteDangerStatus text="No" />
-										)
+										stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+											stats.force_https ? (
+												<SiteSuccessStatus text="Yes" />
+											) : (
+												<SiteDangerStatus text="No" />
+											)
+										) : null
 									) : (
 										<SiteWarningStatus text="Checking" />
 									)
@@ -196,7 +203,7 @@ const SitesOverview = ({
 						<div tw="py-3 sm:col-span-1">
 							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[5].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{stats && stats !== undefined && Object.keys(stats).length > 0 ? (
+								{componentReady ? (
 									!isCrawlStarted && isCrawlFinished ? (
 										<SiteSuccessStatus text="Finished" />
 									) : (

@@ -15,8 +15,8 @@ import tw from "twin.macro";
 import OverviewLabel from "public/labels/pages/site/overview.json";
 
 // Hooks
-import useCrawl from "src/hooks/useCrawl";
 import { useSiteId } from "src/hooks/useSite";
+import useCrawl from "src/hooks/useCrawl";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -43,18 +43,10 @@ const SiteOverview = ({ width, result }) => {
 	const homeLabel = "Home";
 	let homePageLink = "/";
 
-	const {
-		triggerCrawl,
-		setTriggerCrawl,
-		finishedAt,
-		forceHttps,
-		currentStats,
-		previousStats,
-		isCrawlStarted,
-		isCrawlFinished
-	} = useCrawl({
-		siteId: result.siteId
-	});
+	const { selectedSiteRef, handleCrawl, currentScan, currentStats, previousStats, isCrawlStarted, isCrawlFinished } =
+		useCrawl({
+			siteId: result.siteId
+		});
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -98,7 +90,7 @@ const SiteOverview = ({ width, result }) => {
 
 				{siteId && siteId !== undefined && Object.keys(siteId).length > 0 ? (
 					<>
-						<div tw="flex flex-col w-0 flex-1 overflow-hidden">
+						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
 								<div tw="border-b flex-shrink-0 flex">
 									<MobileSidebarButton
@@ -153,12 +145,10 @@ const SiteOverview = ({ width, result }) => {
 										<div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
 											<SitesStats
 												stats={
-													finishedAt &&
-													finishedAt !== undefined &&
-													finishedAt !== null &&
-													forceHttps &&
-													forceHttps !== undefined &&
-													forceHttps !== null
+													currentScan &&
+													currentScan !== undefined &&
+													Object.keys(currentScan).length > 0 &&
+													currentScan.count > 1
 														? previousStats
 														: currentStats
 												}
@@ -166,35 +156,23 @@ const SiteOverview = ({ width, result }) => {
 
 											<SitesOverview
 												verified={siteId && siteId !== undefined && Object.keys(siteId).length > 0 && siteId.verified}
-												finishedAt={finishedAt}
-												forceHttps={forceHttps}
+												stats={isCrawlStarted && !isCrawlFinished ? currentStats : previousStats}
 												user={user}
-												stats={
-													finishedAt &&
-													finishedAt !== undefined &&
-													finishedAt == null &&
-													forceHttps &&
-													forceHttps !== undefined &&
-													forceHttps == null
-														? currentStats
-														: previousStats
-												}
+												stats={isCrawlStarted && !isCrawlFinished ? currentStats : previousStats}
 												disableLocalTime={disableLocalTime}
+												handleCrawl={handleCrawl}
 												isCrawlStarted={isCrawlStarted}
 												isCrawlFinished={isCrawlFinished}
-												setTriggerCrawl={() => setTriggerCrawl(!triggerCrawl)}
 											/>
 
 											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
 												<SitesLinksStats
 													sid={result.siteId}
 													stats={
-														finishedAt &&
-														finishedAt !== undefined &&
-														finishedAt !== null &&
-														forceHttps &&
-														forceHttps !== undefined &&
-														forceHttps !== null
+														currentScan &&
+														currentScan !== undefined &&
+														Object.keys(currentScan).length > 0 &&
+														currentScan.count > 1
 															? previousStats
 															: currentStats
 													}
@@ -202,12 +180,10 @@ const SiteOverview = ({ width, result }) => {
 												<SitesPagesStats
 													sid={result.siteId}
 													stats={
-														finishedAt &&
-														finishedAt !== undefined &&
-														finishedAt !== null &&
-														forceHttps &&
-														forceHttps !== undefined &&
-														forceHttps !== null
+														currentScan &&
+														currentScan !== undefined &&
+														Object.keys(currentScan).length > 0 &&
+														currentScan.count > 1
 															? previousStats
 															: currentStats
 													}
@@ -217,12 +193,10 @@ const SiteOverview = ({ width, result }) => {
 												<SitesImagesStats
 													sid={result.siteId}
 													stats={
-														finishedAt &&
-														finishedAt !== undefined &&
-														finishedAt !== null &&
-														forceHttps &&
-														forceHttps !== undefined &&
-														forceHttps !== null
+														currentScan &&
+														currentScan !== undefined &&
+														Object.keys(currentScan).length > 0 &&
+														currentScan.count > 1
 															? previousStats
 															: currentStats
 													}
@@ -230,12 +204,10 @@ const SiteOverview = ({ width, result }) => {
 												<SitesSeoStats
 													sid={result.siteId}
 													stats={
-														finishedAt &&
-														finishedAt !== undefined &&
-														finishedAt !== null &&
-														forceHttps &&
-														forceHttps !== undefined &&
-														forceHttps !== null
+														currentScan &&
+														currentScan !== undefined &&
+														Object.keys(currentScan).length > 0 &&
+														currentScan.count > 1
 															? previousStats
 															: currentStats
 													}

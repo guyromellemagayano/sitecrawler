@@ -100,7 +100,9 @@ const SitesSeoStats = ({ width, sid, stats }) => {
 	const router = useRouter();
 
 	useEffect(() => {
-		if (stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0) {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setComponentReady(false);
+
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);

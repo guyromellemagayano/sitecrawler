@@ -104,6 +104,8 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 
 	useEffect(() => {
 		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setComponentReady(false);
+
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);

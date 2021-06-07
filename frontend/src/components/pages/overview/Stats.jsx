@@ -11,6 +11,18 @@ import Skeleton from "react-loading-skeleton";
 import StatsLabel from "public/labels/components/sites/Stats.json";
 
 const SitesStats = ({ stats }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
+
+	React.useEffect(() => {
+		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
+			setComponentReady(false);
+
+			setTimeout(() => {
+				setComponentReady(true);
+			}, 1000);
+		}
+	}, [stats]);
+
 	const setSeoErrors = () => {
 		let valLength = 0;
 
@@ -62,39 +74,38 @@ const SitesStats = ({ stats }) => {
 	const PageTabs = [
 		{
 			title: "Total Issues",
-			count:
-				stats && stats !== undefined && Object.keys(stats).length > 0 ? (
-					stats.num_non_ok_links + setSeoErrors() + setPageErrors() + setImageErrors()
-				) : (
-					<Skeleton duration={2} width={50} height={50} />
-				)
+			count: componentReady ? (
+				stats &&
+				stats !== undefined &&
+				Object.keys(stats).length > 0 &&
+				stats.num_non_ok_links + setSeoErrors() + setPageErrors() + setImageErrors()
+			) : (
+				<Skeleton duration={2} width={50} height={50} />
+			)
 		},
 		{
 			title: "Total Pages",
-			count:
-				stats && stats !== undefined && Object.keys(stats).length > 0 ? (
-					stats.num_pages
-				) : (
-					<Skeleton duration={2} width={50} height={50} />
-				)
+			count: componentReady ? (
+				stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages
+			) : (
+				<Skeleton duration={2} width={50} height={50} />
+			)
 		},
 		{
 			title: "Total Links",
-			count:
-				stats && stats !== undefined && Object.keys(stats).length > 0 ? (
-					stats.num_links
-				) : (
-					<Skeleton duration={2} width={50} height={50} />
-				)
+			count: componentReady ? (
+				stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_links
+			) : (
+				<Skeleton duration={2} width={50} height={50} />
+			)
 		},
 		{
 			title: "Total Images",
-			count:
-				stats && stats !== undefined && Object.keys(stats).length > 0 ? (
-					stats.num_images
-				) : (
-					<Skeleton duration={2} width={50} height={50} />
-				)
+			count: componentReady ? (
+				stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images
+			) : (
+				<Skeleton duration={2} width={50} height={50} />
+			)
 		}
 	];
 
