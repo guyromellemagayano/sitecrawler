@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
@@ -9,13 +9,13 @@ import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // JSON
 import OverviewLabel from "public/labels/pages/site/overview.json";
 
 // Hooks
-import { useSiteId } from "src/hooks/useSite";
+import { useStats, useSiteId } from "src/hooks/useSite";
 import useCrawl from "src/hooks/useCrawl";
 import useUser from "src/hooks/useUser";
 
@@ -65,17 +65,16 @@ const OverviewSection = styled.section`
 `;
 
 const SiteOverview = ({ width, result }) => {
-	const [disableLocalTime, setDisableLocalTime] = useState(false);
-	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
+	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
 	let pageTitle = "";
 	const homeLabel = "Home";
 	let homePageLink = "/";
 
-	const { selectedSiteRef, handleCrawl, currentScan, currentStats, previousStats, isCrawlStarted, isCrawlFinished } =
-		useCrawl({
-			siteId: result.siteId
-		});
+	const { selectedSiteRef, handleCrawl, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
+		siteId: result.siteId
+	});
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
@@ -91,7 +90,12 @@ const SiteOverview = ({ width, result }) => {
 			siteId.name && siteId.name !== undefined ? OverviewLabel[0].label + " - " + siteId.name : OverviewLabel[0].label;
 	}
 
-	useEffect(() => {
+	const { stats } = useStats({
+		querySid: result.siteId,
+		scanObjId: scanObjId
+	});
+
+	React.useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {
 			if (user && user !== undefined && user !== [] && Object.keys(user).length > 0) {
 				if (user.settings && user.settings !== []) {
@@ -103,7 +107,7 @@ const SiteOverview = ({ width, result }) => {
 				}
 			}
 		}
-	}, [user, siteId]);
+	}, [user]);
 
 	return user && user !== undefined && Object.keys(user).length > 0 ? (
 		<Layout user={user}>
@@ -172,22 +176,13 @@ const SiteOverview = ({ width, result }) => {
 
 									<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 										<div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
-											<SitesStats
-												stats={
-													currentScan &&
-													currentScan !== undefined &&
-													Object.keys(currentScan).length > 0 &&
-													currentScan.count > 1
-														? previousStats
-														: currentStats
-												}
-											/>
+											<SitesStats stats={stats} scanResult={scanResult} />
 
 											<SitesOverview
 												verified={siteId && siteId !== undefined && Object.keys(siteId).length > 0 && siteId.verified}
-												stats={isCrawlStarted && !isCrawlFinished ? currentStats : previousStats}
+												stats={stats}
+												scanResult={scanResult}
 												user={user}
-												stats={isCrawlStarted && !isCrawlFinished ? currentStats : previousStats}
 												disableLocalTime={disableLocalTime}
 												handleCrawl={handleCrawl}
 												isCrawlStarted={isCrawlStarted}
@@ -195,52 +190,12 @@ const SiteOverview = ({ width, result }) => {
 											/>
 
 											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesLinksStats
-													sid={result.siteId}
-													stats={
-														currentScan &&
-														currentScan !== undefined &&
-														Object.keys(currentScan).length > 0 &&
-														currentScan.count > 1
-															? previousStats
-															: currentStats
-													}
-												/>
-												<SitesPagesStats
-													sid={result.siteId}
-													stats={
-														currentScan &&
-														currentScan !== undefined &&
-														Object.keys(currentScan).length > 0 &&
-														currentScan.count > 1
-															? previousStats
-															: currentStats
-													}
-												/>
+												<SitesLinksStats sid={result.siteId} stats={stats} scanResult={scanResult} />
+												<SitesPagesStats sid={result.siteId} stats={stats} scanResult={scanResult} />
 											</div>
 											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesImagesStats
-													sid={result.siteId}
-													stats={
-														currentScan &&
-														currentScan !== undefined &&
-														Object.keys(currentScan).length > 0 &&
-														currentScan.count > 1
-															? previousStats
-															: currentStats
-													}
-												/>
-												<SitesSeoStats
-													sid={result.siteId}
-													stats={
-														currentScan &&
-														currentScan !== undefined &&
-														Object.keys(currentScan).length > 0 &&
-														currentScan.count > 1
-															? previousStats
-															: currentStats
-													}
-												/>
+												<SitesImagesStats sid={result.siteId} stats={stats} scanResult={scanResult} />
+												<SitesSeoStats sid={result.siteId} stats={stats} scanResult={scanResult} />
 											</div>
 										</div>
 									</div>

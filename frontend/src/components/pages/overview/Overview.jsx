@@ -20,7 +20,16 @@ import SiteWarningStatus from "src/components/status/SiteWarningStatus";
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
-const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, isCrawlStarted, isCrawlFinished }) => {
+const SitesOverview = ({
+	verified,
+	stats,
+	scanResult,
+	user,
+	disableLocalTime,
+	handleCrawl,
+	isCrawlStarted,
+	isCrawlFinished
+}) => {
 	const [showErrorModal, setShowErrorModal] = React.useState(false);
 	const [componentReady, setComponentReady] = React.useState(false);
 
@@ -45,7 +54,7 @@ const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, i
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [stats]);
+	}, [stats, scanResult]);
 
 	return (
 		<>

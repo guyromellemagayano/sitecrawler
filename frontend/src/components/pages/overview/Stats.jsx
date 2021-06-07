@@ -10,7 +10,7 @@ import Skeleton from "react-loading-skeleton";
 // JSON
 import StatsLabel from "public/labels/components/sites/Stats.json";
 
-const SitesStats = ({ stats }) => {
+const SitesStats = ({ stats, scanResult }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 
 	React.useEffect(() => {
@@ -19,9 +19,9 @@ const SitesStats = ({ stats }) => {
 
 			setTimeout(() => {
 				setComponentReady(true);
-			}, 1000);
+			}, 500);
 		}
-	}, [stats]);
+	}, [stats, scanResult]);
 
 	const setSeoErrors = () => {
 		let valLength = 0;

@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -92,14 +92,14 @@ const SitesLinksStatsDiv = styled.div`
 	}
 `;
 
-const SitesLinksStats = ({ width, sid, stats }) => {
-	const [componentReady, setComponentReady] = useState(false);
+const SitesLinksStats = ({ width, sid, stats, scanResult }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 
 	let lgScreenBreakpoint = 1024;
 
 	const router = useRouter();
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
 			setComponentReady(false);
 
@@ -107,7 +107,7 @@ const SitesLinksStats = ({ width, sid, stats }) => {
 				setComponentReady(true);
 			}, 500);
 		}
-	}, [stats]);
+	}, [stats, scanResult]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/links`;
