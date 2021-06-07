@@ -103,14 +103,16 @@ const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
 	const router = useRouter();
 
 	React.useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setComponentReady(false);
+		stats
+			? (async () => {
+					setComponentReady(false);
 
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [stats, scanResult]);
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+	}, [stats]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/images`;
@@ -120,38 +122,14 @@ const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.push("/site/[siteId]/images", path);
+		router.push("/site/[siteId]/images", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_non_ok_images &&
-		stats.num_non_ok_images !== undefined
-			? stats.num_non_ok_images
-			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_images_tls_non_ok &&
-		stats.num_images_tls_non_ok !== undefined
-			? stats.num_images_tls_non_ok
-			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_images_with_missing_alts &&
-		stats.num_images_with_missing_alts !== undefined
-			? stats.num_images_with_missing_alts
-			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_images_fully_ok &&
-		stats.num_images_fully_ok !== undefined
-			? stats.num_images_fully_ok
-			: 0
+		stats?.num_non_ok_images ? stats.num_non_ok_images : 0,
+		stats?.num_images_tls_non_ok ? stats.num_images_tls_non_ok : 0,
+		stats?.num_images_with_missing_alts ? stats.num_images_with_missing_alts : 0,
+		stats?.num_images_fully_ok ? stats.num_images_fully_ok : 0
 	];
 
 	const chartOptions = {
@@ -258,7 +236,7 @@ const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/images" as={`/site/${sid}/images`} passHref>
+							<Link href="/site/[siteId]/images" as={`/site/${sid}/images`} replace>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{ImagesStatsLabel[1].label}</a>
 							</Link>
 						) : (

@@ -85,10 +85,12 @@ const SiteOverview = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
-		pageTitle =
-			siteId.name && siteId.name !== undefined ? OverviewLabel[0].label + " - " + siteId.name : OverviewLabel[0].label;
-	}
+	siteId
+		? (pageTitle =
+				siteId.name && siteId.name !== undefined
+					? OverviewLabel[0].label + " - " + siteId.name
+					: OverviewLabel[0].label)
+		: null;
 
 	const { stats } = useStats({
 		querySid: result.siteId,
@@ -96,20 +98,10 @@ const SiteOverview = ({ width, result }) => {
 	});
 
 	React.useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0) {
-			if (user && user !== undefined && user !== [] && Object.keys(user).length > 0) {
-				if (user.settings && user.settings !== []) {
-					if (user.settings.disableLocalTime) {
-						setDisableLocalTime(true);
-					} else {
-						setDisableLocalTime(false);
-					}
-				}
-			}
-		}
+		user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
 	}, [user]);
 
-	return user && user !== undefined && Object.keys(user).length > 0 ? (
+	return user ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
@@ -176,13 +168,13 @@ const SiteOverview = ({ width, result }) => {
 
 									<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 										<div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
-											<SitesStats stats={stats} scanResult={scanResult} />
+											<SitesStats stats={stats ?? null} scanResult={scanResult} />
 
 											<SitesOverview
-												verified={siteId && siteId !== undefined && Object.keys(siteId).length > 0 && siteId.verified}
-												stats={stats}
+												verified={siteId?.verified}
+												stats={stats ?? null}
 												scanResult={scanResult}
-												user={user}
+												user={user ?? null}
 												disableLocalTime={disableLocalTime}
 												handleCrawl={handleCrawl}
 												isCrawlStarted={isCrawlStarted}
@@ -190,12 +182,12 @@ const SiteOverview = ({ width, result }) => {
 											/>
 
 											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesLinksStats sid={result.siteId} stats={stats} scanResult={scanResult} />
-												<SitesPagesStats sid={result.siteId} stats={stats} scanResult={scanResult} />
+												<SitesLinksStats sid={result.siteId} stats={stats ?? null} scanResult={scanResult} />
+												<SitesPagesStats sid={result.siteId} stats={stats ?? null} scanResult={scanResult} />
 											</div>
 											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesImagesStats sid={result.siteId} stats={stats} scanResult={scanResult} />
-												<SitesSeoStats sid={result.siteId} stats={stats} scanResult={scanResult} />
+												<SitesImagesStats sid={result.siteId} stats={stats ?? null} scanResult={scanResult} />
+												<SitesSeoStats sid={result.siteId} stats={stats ?? null} scanResult={scanResult} />
 											</div>
 										</div>
 									</div>

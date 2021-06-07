@@ -100,14 +100,16 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 	const router = useRouter();
 
 	React.useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setComponentReady(false);
+		stats
+			? (async () => {
+					setComponentReady(false);
 
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [stats, scanResult]);
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+	}, [stats]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/pages`;
@@ -117,31 +119,13 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.push("/site/[siteId]/pages", path);
+		router.push("/site/[siteId]/pages", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_big &&
-		stats.num_pages_big !== undefined
-			? stats.num_pages_big
-			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_tls_non_ok &&
-		stats.num_pages_tls_non_ok !== undefined
-			? stats.num_pages_tls_non_ok
-			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_small_tls_ok &&
-		stats.num_pages_small_tls_ok !== undefined
-			? stats.num_pages_small_tls_ok
-			: 0
+		stats?.num_pages_big ? stats.num_pages_big : 0,
+		stats?.num_pages_tls_non_ok ? stats.num_pages_tls_non_ok : 0,
+		stats?.num_pages_small_tls_ok ? stats.num_pages_small_tls_ok : 0
 	];
 
 	const chartOptions = {
@@ -248,7 +232,7 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/pages" as={`/site/${sid}/pages`} passHref>
+							<Link href="/site/[siteId]/pages" as={`/site/${sid}/pages`} replace>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{PagesStatsLabel[1].label}</a>
 							</Link>
 						) : (

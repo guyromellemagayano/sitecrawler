@@ -100,14 +100,16 @@ const SitesSeoStats = ({ width, sid, stats, scanResult }) => {
 	const router = useRouter();
 
 	React.useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setComponentReady(false);
+		stats
+			? (async () => {
+					setComponentReady(false);
 
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [stats, scanResult]);
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+	}, [stats]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/seo`;
@@ -117,25 +119,15 @@ const SitesSeoStats = ({ width, sid, stats, scanResult }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.push("/site/[siteId]/seo", path);
+		router.push("/site/[siteId]/seo", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_without_title !== undefined
-			? stats.num_pages_without_title
-			: 0,
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_without_description !== undefined
-			? stats.num_pages_without_description
-			: 0,
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_without_h1_first !== undefined
-			? stats.num_pages_without_h1_first
-			: 0,
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_without_h2_first !== undefined
-			? stats.num_pages_without_h2_first
-			: 0,
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages_seo_ok !== undefined
-			? stats.num_pages_seo_ok
-			: 0
+		stats?.num_pages_without_title ? stats.num_pages_without_title : 0,
+		stats?.num_pages_without_description ? stats.num_pages_without_description : 0,
+		stats?.num_pages_without_h1_first ? stats.num_pages_without_h1_first : 0,
+		stats?.num_pages_without_h2_first ? stats.num_pages_without_h2_first : 0,
+		stats?.num_pages_seo_ok ? stats.num_pages_seo_ok : 0
 	];
 
 	const chartOptions = {
@@ -242,7 +234,7 @@ const SitesSeoStats = ({ width, sid, stats, scanResult }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/seo" as={`/site/${sid}/seo`} passHref>
+							<Link href="/site/[siteId]/seo" as={`/site/${sid}/seo`} replace>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{SeoStatsLabel[1].label}</a>
 							</Link>
 						) : (

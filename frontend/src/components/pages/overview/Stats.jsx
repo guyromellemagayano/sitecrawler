@@ -14,32 +14,42 @@ const SitesStats = ({ stats, scanResult }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 
 	React.useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setComponentReady(false);
+		stats
+			? (async () => {
+					setComponentReady(false);
 
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [stats, scanResult]);
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+	}, [stats]);
+
+	const setLinkErrors = () => {
+		let valLength = 0;
+
+		stats
+			? (async () => {
+					valLength = stats?.num_non_ok_links ?? 0;
+			  })()
+			: null;
+
+		return valLength;
+	};
 
 	const setSeoErrors = () => {
 		let valLength = 0;
 
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			if (
-				(stats.num_pages_without_title !== 0 && stats.num_pages_without_title !== undefined) ||
-				(stats.num_pages_without_description !== 0 && stats.num_pages_without_description !== undefined) ||
-				(stats.num_pages_without_h1_first !== 0 && stats.num_pages_without_h1_first !== undefined) ||
-				(stats.num_pages_without_h2_first !== 0 && stats.num_pages_without_h2_first !== undefined)
-			) {
-				valLength =
-					(stats ? stats.num_pages_without_title : 0) +
-					(stats ? stats.num_pages_without_description : 0) +
-					(stats ? stats.num_pages_without_h1_first : 0) +
-					(stats ? stats.num_pages_without_h2_first : 0);
-			}
-		}
+		stats
+			? (async () => {
+					valLength =
+						stats?.num_pages_without_title ??
+						0 + stats?.num_pages_without_description ??
+						0 + stats?.num_pages_without_h1_first ??
+						0 + stats?.num_pages_without_h2_first ??
+						0;
+			  })()
+			: null;
 
 		return valLength;
 	};
@@ -47,14 +57,11 @@ const SitesStats = ({ stats, scanResult }) => {
 	const setPageErrors = () => {
 		let valLength = 0;
 
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			if (
-				(stats.num_pages_big !== 0 && stats.num_pages_big !== undefined) ||
-				(stats.num_pages_tls_non_ok !== 0 && stats.num_pages_tls_non_ok !== undefined)
-			) {
-				valLength = (stats ? stats.num_pages_big : 0) + (stats ? stats.num_pages_tls_non_ok : 0);
-			}
-		}
+		stats
+			? (async () => {
+					valLength = stats?.num_pages_big ?? 0 + stats?.num_pages_tls_non_ok ?? 0;
+			  })()
+			: null;
 
 		return valLength;
 	};
@@ -62,11 +69,11 @@ const SitesStats = ({ stats, scanResult }) => {
 	const setImageErrors = () => {
 		let valLength = 0;
 
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			if (stats.num_non_ok_images !== 0 && stats.num_non_ok_images !== undefined) {
-				valLength = stats ? stats.num_non_ok_images : 0;
-			}
-		}
+		stats
+			? (async () => {
+					valLength = stats?.num_non_ok_images ?? 0;
+			  })()
+			: null;
 
 		return valLength;
 	};
@@ -75,37 +82,24 @@ const SitesStats = ({ stats, scanResult }) => {
 		{
 			title: "Total Issues",
 			count: componentReady ? (
-				stats &&
-				stats !== undefined &&
-				Object.keys(stats).length > 0 &&
-				stats.num_non_ok_links + setSeoErrors() + setPageErrors() + setImageErrors()
+				stats ? (
+					setLinkErrors() + setSeoErrors() + setPageErrors() + setImageErrors()
+				) : null
 			) : (
 				<Skeleton duration={2} width={50} height={50} />
 			)
 		},
 		{
 			title: "Total Pages",
-			count: componentReady ? (
-				stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_pages
-			) : (
-				<Skeleton duration={2} width={50} height={50} />
-			)
+			count: componentReady ? stats ? stats.num_pages : null : <Skeleton duration={2} width={50} height={50} />
 		},
 		{
 			title: "Total Links",
-			count: componentReady ? (
-				stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_links
-			) : (
-				<Skeleton duration={2} width={50} height={50} />
-			)
+			count: componentReady ? stats ? stats.num_links : null : <Skeleton duration={2} width={50} height={50} />
 		},
 		{
 			title: "Total Images",
-			count: componentReady ? (
-				stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_images
-			) : (
-				<Skeleton duration={2} width={50} height={50} />
-			)
+			count: componentReady ? stats ? stats.num_images : null : <Skeleton duration={2} width={50} height={50} />
 		}
 	];
 

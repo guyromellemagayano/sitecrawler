@@ -100,14 +100,16 @@ const SitesLinksStats = ({ width, sid, stats, scanResult }) => {
 	const router = useRouter();
 
 	React.useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setComponentReady(false);
+		stats
+			? (async () => {
+					setComponentReady(false);
 
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [stats, scanResult]);
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+	}, [stats]);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/links`;
@@ -117,16 +119,12 @@ const SitesLinksStats = ({ width, sid, stats, scanResult }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.push("/site/[siteId]/links", path);
+		router.push("/site/[siteId]/links", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_non_ok_links !== undefined
-			? stats.num_non_ok_links
-			: 0,
-		stats && stats !== undefined && Object.keys(stats).length > 0 && stats.num_ok_links !== undefined
-			? stats.num_ok_links
-			: 0
+		stats?.num_non_ok_links ? stats.num_non_ok_links : 0,
+		stats?.num_ok_links ? stats.num_ok_links : 0
 	];
 
 	const chartOptions = {
@@ -233,7 +231,7 @@ const SitesLinksStats = ({ width, sid, stats, scanResult }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/links" as={`/site/${sid}/links`} passHref>
+							<Link href="/site/[siteId]/links" as={`/site/${sid}/links`} replace>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{LinksStatsLabel[1].label}</a>
 							</Link>
 						) : (
