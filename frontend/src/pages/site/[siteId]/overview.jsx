@@ -35,6 +35,35 @@ import SitesPagesStats from "src/components/pages/overview/PagesStats";
 import SitesSeoStats from "src/components/pages/overview/SeoStats";
 import SitesStats from "src/components/pages/overview/Stats";
 
+const OverviewSection = styled.section`
+	.url-type-tooltip,
+	.status-tooltip {
+		max-width: 15rem;
+		margin-left: 5px !important;
+		padding: 1rem 1.5rem;
+	}
+
+	@media only screen and (max-width: 1400px) {
+		td:first-child {
+			max-width: 15rem;
+		}
+	}
+
+	@media only screen and (min-width: 1600px) {
+		td {
+			min-width: 10rem;
+
+			&:first-child {
+				max-width: 20rem;
+			}
+		}
+
+		.min-width-adjust {
+			min-width: 15rem;
+		}
+	}
+`;
+
 const SiteOverview = ({ width, result }) => {
 	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
@@ -80,7 +109,7 @@ const SiteOverview = ({ width, result }) => {
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
-			<section tw="h-screen flex overflow-hidden bg-white">
+			<OverviewSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}
@@ -228,7 +257,7 @@ const SiteOverview = ({ width, result }) => {
 						<Loader />
 					</div>
 				)}
-			</section>
+			</OverviewSection>
 		</Layout>
 	) : (
 		<Loader />
