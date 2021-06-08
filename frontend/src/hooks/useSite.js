@@ -244,7 +244,7 @@ export const usePageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 	return { pageDetail, mutatePageDetail, pageDetailError };
 };
 
-export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, linkId = 0 }) => {
+export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, pageId = 0 }) => {
 	const {
 		data: pageDetailLink,
 		mutate: mutatePageDetailLink,
@@ -257,16 +257,17 @@ export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, 
 			scanObjId &&
 			scanObjId !== 0 &&
 			scanObjId !== undefined &&
-			linkId &&
-			linkId !== 0 &&
-			linkId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/link/" + addQuery
+			pageId &&
+			pageId !== 0 &&
+			pageId !== undefined
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + pageId + "/link/" + "?" + addQuery
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/link/" + addQuery) return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + pageId + "/link/" + "?" + addQuery)
+					return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
