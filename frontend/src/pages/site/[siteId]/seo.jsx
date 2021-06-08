@@ -8,9 +8,9 @@ import { useRouter } from "next/router";
 // External
 import { ChevronRightIcon, HomeIcon, SearchIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
+import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
 import PropTypes from "prop-types";
-import { styled } from "twin.macro";
 
 // JSON
 import SeoLabel from "public/labels/pages/site/seo.json";
@@ -40,7 +40,7 @@ import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
-const SeoDiv = styled.section`
+const SeoSection = styled.section`
 	@media only screen and (max-width: 1600px) {
 		.min-width-adjust {
 			min-width: 15rem;
@@ -247,7 +247,7 @@ const Seo = ({ width, result }) => {
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
-			<SeoDiv tw="h-screen flex overflow-hidden bg-white">
+			<SeoSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}
@@ -256,7 +256,7 @@ const Seo = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					<>
+					siteId.verified ? (
 						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
 								<div tw="border-b flex-shrink-0 flex">
@@ -310,26 +310,27 @@ const Seo = ({ width, result }) => {
 												{user?.permissions.includes("can_see_pages") &&
 												user?.permissions.includes("can_see_scripts") &&
 												user?.permissions.includes("can_see_stylesheets") &&
-												user?.permissions.includes("can_start_scan") &&
-												pages ? (
-													<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-														<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-															<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-															{pages?.count > 1
-																? pages?.count + " " + SeoLabel[2].label
-																: pages?.count == 1
-																? pages?.count + " " + SeoLabel[6].label
-																: SeoLabel[3].label}
-														</dd>
-													</dl>
-												) : (
-													<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-														<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-															<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-															{SeoLabel[7].label}
-														</dd>
-													</dl>
-												)}
+												user?.permissions.includes("can_start_scan") ? (
+													pages ? (
+														<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+															<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+																<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+																{pages?.count > 1
+																	? pages?.count + " " + SeoLabel[2].label
+																	: pages?.count == 1
+																	? pages?.count + " " + SeoLabel[6].label
+																	: SeoLabel[3].label}
+															</dd>
+														</dl>
+													) : (
+														<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+															<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+																<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+																{SeoLabel[7].label}
+															</dd>
+														</dl>
+													)
+												) : null}
 											</h4>
 										</div>
 									</div>
@@ -362,14 +363,16 @@ const Seo = ({ width, result }) => {
 																				tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																			>
 																				<span tw="flex items-center justify-start">
-																					{user?.permissions.includes("can_see_pages") && site.slug ? (
-																						<SeoSorting
-																							result={result}
-																							slug={site.slug}
-																							mutatePages={mutatePages}
-																							seoTableContent={SeoTableContent}
-																							setPagePath={setPagePath}
-																						/>
+																					{user?.permissions.includes("can_see_pages") ? (
+																						site?.slug ? (
+																							<SeoSorting
+																								result={result}
+																								slug={site.slug}
+																								mutatePages={mutatePages}
+																								seoTableContent={SeoTableContent}
+																								setPagePath={setPagePath}
+																							/>
+																						) : null
 																					) : null}
 																					<span className="label" tw="flex items-center">
 																						{site.label}
@@ -385,16 +388,17 @@ const Seo = ({ width, result }) => {
 															{user?.permissions.includes("can_see_pages") &&
 															user?.permissions.includes("can_see_scripts") &&
 															user?.permissions.includes("can_see_stylesheets") &&
-															user?.permissions.includes("can_start_scan") &&
-															pages
-																? pages?.results.map((val, key) => (
-																		<SeoTable
-																			key={key}
-																			siteId={result.siteId}
-																			val={val}
-																			disableLocalTime={disableLocalTime}
-																		/>
-																  ))
+															user?.permissions.includes("can_start_scan")
+																? pages
+																	? pages?.results.map((val, key) => (
+																			<SeoTable
+																				key={key}
+																				siteId={result.siteId}
+																				val={val}
+																				disableLocalTime={disableLocalTime}
+																			/>
+																	  ))
+																	: null
 																: null}
 														</tbody>
 													</table>
@@ -414,16 +418,17 @@ const Seo = ({ width, result }) => {
 
 									{user?.permissions.includes("can_see_pages") &&
 									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") &&
-									pages ? (
-										<MyPagination
-											href="/site/[siteId]/seo"
-											pathName={pagePath}
-											apiEndpoint={scanApiEndpoint}
-											page={result.page ? result.page : 0}
-											linksPerPage={linksPerPage}
-											onItemsPerPageChange={onItemsPerPageChange}
-										/>
+									user?.permissions.includes("can_see_stylesheets") ? (
+										pages ? (
+											<MyPagination
+												href="/site/[siteId]/seo"
+												pathName={pagePath}
+												apiEndpoint={scanApiEndpoint}
+												page={result.page ? result.page : 0}
+												linksPerPage={linksPerPage}
+												onItemsPerPageChange={onItemsPerPageChange}
+											/>
+										) : null
 									) : null}
 								</div>
 
@@ -432,13 +437,21 @@ const Seo = ({ width, result }) => {
 								</div>
 							</main>
 						</div>
-					</>
+					) : (
+						<div tw="mx-auto">
+							<section tw="flex flex-col justify-center min-h-screen">
+								<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
+									<h3 tw="text-lg leading-6 font-medium text-gray-500">{SeoLabel[19].label}</h3>
+								</div>
+							</section>
+						</div>
+					)
 				) : (
 					<div tw="mx-auto">
 						<Loader />
 					</div>
 				)}
-			</SeoDiv>
+			</SeoSection>
 		</Layout>
 	) : (
 		<Loader />

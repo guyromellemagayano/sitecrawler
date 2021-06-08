@@ -73,7 +73,7 @@ const SeoDetail = ({ width, result }) => {
 	});
 
 	siteId ? (seoPageTitle = siteId?.name ? SeoLabel[1].label + " - " + siteId.name : SeoLabel[1].label) : null;
-	siteId ? (seoDetailPageTitle = pageDetail?.url ? pageDetail.url + " | " + siteId?.name : SeoLabel[8].label) : null;
+	siteId ? (seoDetailPageTitle = pageDetail?.url ? pageDetail?.url + " | " + siteId?.name : SeoLabel[8].label) : null;
 
 	React.useEffect(() => {
 		pageDetail
@@ -171,16 +171,16 @@ const SeoDetail = ({ width, result }) => {
 																	<span tw="space-x-2">
 																		<span>
 																			{!user?.settings?.disableLocalTime ? (
-																				<Moment calendar={calendarStrings} date={pageDetail.created_at} local />
+																				<Moment calendar={calendarStrings} date={pageDetail?.created_at} local />
 																			) : (
-																				<Moment calendar={calendarStrings} date={pageDetail.created_at} utc />
+																				<Moment calendar={calendarStrings} date={pageDetail?.created_at} utc />
 																			)}
 																		</span>
 																		<span>
 																			{!user?.settings?.disableLocalTime ? (
-																				<Moment date={pageDetail.created_at} format="hh:mm:ss A" local />
+																				<Moment date={pageDetail?.created_at} format="hh:mm:ss A" local />
 																			) : (
-																				<Moment date={pageDetail.created_at} format="hh:mm:ss A" utc />
+																				<Moment date={pageDetail?.created_at} format="hh:mm:ss A" utc />
 																			)}
 																		</span>
 																		{user?.settings?.disableLocalTime && <span tw="font-medium">(UTC)</span>}
