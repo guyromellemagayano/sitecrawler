@@ -47,5 +47,23 @@
 	},
 	{
 		"label": "Links Detail"
+	},
+	{
+		"label": "Created at"
+	},
+	{
+		"label": "Type"
+	},
+	{
+		"label": "Status"
+	},
+	{
+		"label": "Response Time"
+	},
+	{
+		"label": "Error"
+	},
+	{
+		"label": "Page Links"
 	}
 ]

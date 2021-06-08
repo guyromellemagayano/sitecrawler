@@ -178,7 +178,7 @@ const LinkDetail = ({ width, result }) => {
 												<div tw="px-4 py-5 sm:p-0">
 													<dl>
 														<div tw="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">Created at</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabel[15].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	<span tw="space-x-2">
@@ -204,7 +204,7 @@ const LinkDetail = ({ width, result }) => {
 															</dd>
 														</div>
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">Type</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabel[16].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	linkDetail?.type === "PAGE" ? (
@@ -220,7 +220,7 @@ const LinkDetail = ({ width, result }) => {
 															</dd>
 														</div>
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">Status</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabel[17].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	linkDetail?.status === "OK" ? (
@@ -238,7 +238,7 @@ const LinkDetail = ({ width, result }) => {
 															</dd>
 														</div>
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">Response Time</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabel[18].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	linkDetail?.response_time + "ms"
@@ -249,7 +249,7 @@ const LinkDetail = ({ width, result }) => {
 														</div>
 														{linkDetail?.error !== null && linkDetail?.error !== undefined ? (
 															<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-																<dt tw="text-sm leading-5 font-medium text-gray-500">Error</dt>
+																<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabel[19].label}</dt>
 																<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																	{componentReady ? (
 																		<SiteDangerBadge text={linkDetail?.error} />
@@ -260,7 +260,7 @@ const LinkDetail = ({ width, result }) => {
 															</div>
 														) : null}
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">Page Links</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabel[20].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																<ul>
 																	{linkDetail?.pages.map((val, key) => {
