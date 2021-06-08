@@ -29,6 +29,7 @@ const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"))
 const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
 
 const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) => {
+	const [componentReady, setComponentReady] = useState(false);
 	const [selectedMenu, setSelectedMenu] = useState(null);
 
 	const lgScreenBreakpoint = 1024;
@@ -43,15 +44,25 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 	});
 
 	useEffect(() => {
+		user
+			? (() => {
+					setComponentReady(false);
+
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+
 		switch (true) {
 			case router.pathname.includes("/site"):
-				setSelectedMenu(<SiteMenu site={site ?? null} useCrawl={useCrawl} />);
+				setSelectedMenu(<SiteMenu site={site ? site : null} useCrawl={useCrawl} />);
 				break;
 			case router.pathname.includes("/settings"):
-				setSelectedMenu(<SettingsMenu user={user ?? null} site={site ?? null} useCrawl={useCrawl} />);
+				setSelectedMenu(<SettingsMenu user={user ? site : null} site={site ? site : null} useCrawl={useCrawl} />);
 				break;
 			default:
-				setSelectedMenu(<PrimaryMenu site={site ?? null} useCrawl={useCrawl} />);
+				setSelectedMenu(<PrimaryMenu site={site ? site : null} useCrawl={useCrawl} />);
 				break;
 		}
 
@@ -133,7 +144,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 									{selectedMenu}
 								</div>
 
-								<ProfileMenu user={user} />
+								{componentReady ? <ProfileMenu user={user} /> : null}
 							</div>
 						</Transition.Child>
 					</div>
@@ -154,7 +165,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 					{selectedMenu}
 				</div>
 
-				<ProfileMenu user={user ?? null} />
+				{componentReady ? <ProfileMenu user={user} /> : null}
 			</div>
 		</aside>
 	);

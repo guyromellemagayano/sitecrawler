@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
@@ -38,9 +38,9 @@ const ProfileMenu = ({ user }) => {
 					>
 						<div tw="flex items-center">
 							<div tw="flex flex-col flex-wrap text-left">
-								<p tw="text-sm leading-tight mb-1 font-medium text-white">{user.first_name}</p>
+								<p tw="text-sm leading-tight mb-1 font-medium text-white">{user?.first_name}</p>
 								<p tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150">
-									@{user.username}
+									@{user?.username}
 								</p>
 							</div>
 						</div>
@@ -65,21 +65,21 @@ const ProfileMenu = ({ user }) => {
 										<span
 											css={[
 												tw`text-sm leading-5 font-medium`,
-												user.group.name === "Basic"
+												user?.group?.name === "Basic"
 													? tw`text-green-800`
-													: user.group.name === "Pro"
+													: user?.group?.name === "Pro"
 													? tw`text-blue-800`
 													: tw`text-red-800`
 											]}
 										>
-											{user.group.name} {SidebarLabel[0].label}
+											{user?.group?.name} {SidebarLabel[0].label}
 										</span>
-										{(user.group.name === "Basic" || user.group.name === "Pro") && (
+										{(user?.group?.name === "Basic" || user?.group?.name === "Pro") && (
 											<Link href="/settings/subscription-plans" passHref>
 												<a
 													css={[
 														tw`text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded hover:text-white cursor-pointer transition ease-in-out duration-150`,
-														user.group.name === "Basic"
+														user?.group?.name === "Basic"
 															? tw`bg-green-200 text-green-800 hover:bg-green-600`
 															: tw`bg-blue-200 text-blue-800 hover:bg-blue-600`
 													]}
