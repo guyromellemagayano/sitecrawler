@@ -256,7 +256,7 @@ const Seo = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					siteId.verified ? (
+					siteId?.verified ? (
 						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
 								<div tw="border-b flex-shrink-0 flex">
