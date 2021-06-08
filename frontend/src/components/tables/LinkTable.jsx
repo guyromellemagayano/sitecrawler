@@ -1,15 +1,12 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
-import { InformationCircleIcon } from "@heroicons/react/outline";
 import { styled } from "twin.macro";
 import PropTypes from "prop-types";
-import ReactTooltip from "react-tooltip";
 import Skeleton from "react-loading-skeleton";
 import Url from "url-parse";
 
@@ -22,11 +19,6 @@ import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
 import SiteWarningBadge from "src/components/badges/SiteWarningBadge";
 
 const LinkTableDiv = styled.tr`
-	.HTTP_ERROR-tooltip {
-		max-width: 20rem;
-		margin-left: 5px !important;
-		padding: 1rem 1.5rem;
-	}
 	td {
 		& > div {
 			max-width: 100%;
@@ -38,6 +30,7 @@ const LinkTableDiv = styled.tr`
 			}
 		}
 	}
+
 	.link-item {
 		max-width: 100%;
 		display: block;
@@ -65,50 +58,52 @@ const LinkTableDiv = styled.tr`
 	}
 `;
 
-const LinkTable = (props) => {
-	const [componentReady, setComponentReady] = useState(false);
+const LinkTable = ({ siteId, val }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 
-	const { query } = useRouter();
-
-	const { linkDetail: linkDetail } = useLinkDetail({
-		querySid: query.siteId,
-		scanObjId: props.val.scan_id,
-		linkId: props.val.id
+	const { linkDetail } = useLinkDetail({
+		querySid: siteId,
+		scanObjId: val.scan_id,
+		linkId: val.id
 	});
 
-	useEffect(() => {
-		if (linkDetail && linkDetail !== undefined && linkDetail !== [] && Object.keys(linkDetail).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
+	React.useEffect(() => {
+		linkDetail
+			? (() => {
+					setComponentReady(false);
+
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
 	}, [linkDetail]);
 
 	return (
 		<LinkTableDiv tw="bg-white">
 			<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
 				<div tw="flex flex-col items-center">
-					<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
-						{componentReady ? (
-							<a
-								href={props.val.url}
-								target="_blank"
-								title={props.val.url}
-								className="truncate-link"
-								tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
-							>
-								{props.val.url}
-							</a>
-						) : (
-							<Skeleton duration={2} width={300} />
-						)}
-					</div>
-					<div tw="flex justify-start leading-5 text-gray-500">
-						{componentReady ? (
-							linkDetail && linkDetail !== undefined && linkDetail !== [] && Object.keys(linkDetail).length > 0 ? (
+					<div>
+						<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
+							{componentReady ? (
+								<a
+									href={val.url}
+									target="_blank"
+									title={val.url}
+									className="truncate-link"
+									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
+								>
+									{val.url}
+								</a>
+							) : (
+								<Skeleton duration={2} width={300} />
+							)}
+						</div>
+						<div tw="flex justify-start leading-5 text-gray-500">
+							{componentReady ? (
 								<Link
 									href="/site/[siteId]/links/[linkId]/details"
-									as={`/site/${query.siteId}/links/${linkDetail.id}/details`}
+									as={`/site/${siteId}/links/${linkDetail?.id}/details`}
 									passHref
 								>
 									<a
@@ -120,18 +115,16 @@ const LinkTable = (props) => {
 								</Link>
 							) : (
 								<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
-							)
-						) : (
-							<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
-						)}
+							)}
+						</div>
 					</div>
 				</div>
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					props.val.type === "PAGE" ? (
+					val.type === "PAGE" ? (
 						"Internal"
-					) : props.val.type === "EXTERNAL" ? (
+					) : val.type === "EXTERNAL" ? (
 						"External"
 					) : (
 						"Other"
@@ -142,41 +135,12 @@ const LinkTable = (props) => {
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					props.val.status === "OK" ? (
+					val.status === "OK" ? (
 						<SiteSuccessBadge text={"OK"} />
-					) : props.val.status === "TIMEOUT" ? (
+					) : val.status === "TIMEOUT" ? (
 						<SiteWarningBadge text={"TIMEOUT"} />
-					) : props.val.status === "HTTP_ERROR" ? (
-						<>
-							<span tw="flex items-center justify-start">
-								<SiteDangerBadge text={`${props.val.http_status} HTTP ERROR`} />
-								<a
-									data-tip=""
-									data-for={props.val.url}
-									data-background-color={"#E53E3E"}
-									data-iscapture={true}
-									data-scroll-hide={false}
-									tw="flex cursor-pointer"
-								>
-									<InformationCircleIcon tw="ml-2 text-red-400 inline-block w-4 h-4 overflow-hidden" />
-								</a>
-								<ReactTooltip
-									id={props.val.url}
-									className={`${props.val.status + "-tooltip"} w-36`}
-									type="dark"
-									effect="solid"
-									place="bottom"
-									clickable={true}
-									multiline={true}
-								>
-									<span tw="text-left text-xs leading-4 font-normal text-white normal-case tracking-wider">
-										<p>
-											<strong>{props.val.error}</strong>
-										</p>
-									</span>
-								</ReactTooltip>
-							</span>
-						</>
+					) : val.status === "HTTP_ERROR" ? (
+						<SiteDangerBadge text={`${val.http_status} HTTP ERROR`} />
 					) : (
 						<SiteDangerBadge text={"OTHER ERROR"} />
 					)
@@ -186,36 +150,32 @@ const LinkTable = (props) => {
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					linkDetail &&
-					linkDetail !== undefined &&
-					linkDetail !== [] &&
-					Object.keys(linkDetail).length > 0 &&
-					linkDetail.pages.length > 0 && (
+					linkDetail?.pages?.length > 0 ? (
 						<Link
 							href="/site/[siteId]/links/[linkId]/details"
-							as={`/site/${query.siteId}/links/${linkDetail.id}/details`}
+							as={`/site/${siteId}/links/${linkDetail?.id}/details`}
 							passHref
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								<span className="truncate-link">
-									{linkDetail.pages && Url(linkDetail.pages.url).pathname !== "" ? (
-										Url(linkDetail.pages.url).pathname
+									{linkDetail?.pages && Url(linkDetail?.pages?.url).pathname !== "" ? (
+										Url(linkDetail?.pages?.url).pathname
 									) : (
-										<em>{linkDetail.pages.url}</em>
+										<em>{linkDetail?.pages?.url}</em>
 									)}
 								</span>
 								&nbsp;
-								{linkDetail.pages.length - 1 > 0 ? "+" + parseInt(linkDetail.pages.length - 1) : null}{" "}
-								{linkDetail.pages.length - 1 > 1 ? "others" : linkDetail.pages.length - 1 === 1 ? "other" : null}
+								{linkDetail?.pages?.length - 1 > 0 ? "+" + parseInt(linkDetail?.pages?.length - 1) : null}{" "}
+								{linkDetail?.pages?.length - 1 > 1 ? "others" : linkDetail?.pages?.length - 1 === 1 ? "other" : null}
 							</a>
 						</Link>
-					)
+					) : null
 				) : (
 					<Skeleton duration={2} width={120} />
 				)}
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
-				{componentReady ? props.val.occurences : <Skeleton duration={2} width={45} />}
+				{componentReady ? val.occurences : <Skeleton duration={2} width={45} />}
 			</td>
 		</LinkTableDiv>
 	);

@@ -1,17 +1,17 @@
 // React
-import { Fragment, useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
-import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
+import { ChevronRightIcon, HomeIcon, SearchIcon } from "@heroicons/react/solid";
 import { LinkIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
+import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
 import PropTypes from "prop-types";
-import { styled } from "twin.macro";
 
 // JSON
 import LinksLabel from "public/labels/pages/site/links.json";
@@ -40,13 +40,6 @@ import SiteFooter from "src/components/layouts/Footer";
 import { removeURLParameter } from "src/helpers/functions";
 
 const LinksSection = styled.section`
-	.url-type-tooltip,
-	.status-tooltip {
-		max-width: 15rem;
-		margin-left: 5px !important;
-		padding: 1rem 1.5rem;
-	}
-
 	@media only screen and (max-width: 1400px) {
 		td:first-child {
 			max-width: 15rem;
@@ -58,7 +51,7 @@ const LinksSection = styled.section`
 			min-width: 10rem;
 
 			&:first-child {
-				max-width: 20rem;
+				max-width: 25rem;
 			}
 		}
 
@@ -69,11 +62,11 @@ const LinksSection = styled.section`
 `;
 
 const Links = ({ width, result }) => {
-	const [linksPerPage, setLinksPerPage] = useState(20);
-	const [loadQueryString, setLoadQueryString] = useState("");
-	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [pagePath, setPagePath] = useState("");
-	const [searchKey, setSearchKey] = useState("");
+	const [linksPerPage, setLinksPerPage] = React.useState(20);
+	const [loadQueryString, setLoadQueryString] = React.useState("");
+	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
+	const [pagePath, setPagePath] = React.useState("");
+	const [searchKey, setSearchKey] = React.useState("");
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -82,20 +75,7 @@ const Links = ({ width, result }) => {
 	let homeLabel = "Home";
 	let homePageLink = `/site/${result.siteId}/overview`;
 
-	const {
-		selectedSiteRef,
-		handleCrawl,
-		currentScan,
-		currentScanObjId,
-		previousScanObjId,
-		isCrawlStarted,
-		isCrawlFinished
-	} = useCrawl({
-		siteId: result.siteId
-	});
-
 	let scanApiEndpoint = "";
-
 	let queryString = "";
 	let statusString = "";
 	let typeString = "";
@@ -105,14 +85,15 @@ const Links = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
+	const { selectedSiteRef, handleCrawl, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
+		siteId: result.siteId
+	});
+
 	const { siteId: siteId } = useSiteId({
 		querySid: result.siteId
 	});
 
-	if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
-		pageTitle =
-			siteId.name && siteId.name !== undefined ? LinksLabel[1].label + " - " + siteId.name : LinksLabel[1].label;
-	}
+	siteId ? (pageTitle = siteId?.name ? LinksLabel[1].label + " - " + siteId?.name : LinksLabel[1].label) : null;
 
 	scanApiEndpoint =
 		result.page !== undefined
@@ -156,25 +137,10 @@ const Links = ({ width, result }) => {
 
 	scanApiEndpoint += queryString;
 
-	const { links: previousLinks, mutateLinks: mutatePreviousLinks } = useLinks({
-		endpoint: endpoint && endpoint !== undefined && endpoint !== "" ? endpoint : null,
-		querySid: siteId,
-		scanObjId:
-			previousScanObjId && previousScanObjId !== undefined && previousScanObjId !== 0 ? previousScanObjId : null
-	});
-
-	const { links: currentLinks, mutateLinks: mutateCurrentLinks } = useLinks({
-		endpoint: endpoint && endpoint !== undefined && endpoint !== "" ? endpoint : null,
-		querySid: siteId,
-		scanObjId: currentScanObjId && currentScanObjId !== undefined && currentScanObjId !== 0 ? currentScanObjId : null,
-		refreshInterval:
-			currentScanResults &&
-			currentScanResults !== undefined &&
-			Object.keys(currentScanResults).length > 0 &&
-			currentScanResults.finished_at == null &&
-			currentScanResults.force_https == null
-				? 1000
-				: 0
+	const { links, mutateLinks } = useLinks({
+		endpoint: scanApiEndpoint,
+		querySid: result.siteId,
+		scanObjId: scanObjId
 	});
 
 	const handleSearch = async (e) => {
@@ -225,7 +191,7 @@ const Links = ({ width, result }) => {
 		}
 	};
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
@@ -234,7 +200,7 @@ const Links = ({ width, result }) => {
 		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
 	}, []);
 
-	return user && user !== undefined && Object.keys(user).length > 0 ? (
+	return user ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
@@ -246,9 +212,9 @@ const Links = ({ width, result }) => {
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				{siteId && siteId !== undefined && Object.keys(siteId).length > 0 ? (
-					!siteId.verified ? (
-						<div tw="flex flex-col w-0 flex-1 overflow-hidden">
+				{siteId ? (
+					siteId.verified ? (
+						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
 								<div tw="border-b flex-shrink-0 flex">
 									<MobileSidebarButton
@@ -258,8 +224,10 @@ const Links = ({ width, result }) => {
 								</div>
 
 								<LinkOptions
+									verified={siteId?.verified}
 									sid={result.siteId}
 									user={user}
+									scanResult={scanResult}
 									searchKey={searchKey}
 									onSearchEvent={handleSearch}
 									handleCrawl={handleCrawl}
@@ -296,18 +264,25 @@ const Links = ({ width, result }) => {
 										<div className="pt-4 m-auto">
 											<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
 												{pageTitle}
-												{links && links !== undefined && links !== [] && Object.keys(links).length > 0 ? (
+												{links ? (
 													<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
 														<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
 															<LinkIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-															{links.count > 1
-																? links.count + " " + LinksLabel[2].label
-																: links.count == 1
-																? links.count + " " + LinksLabel[11].label
+															{links?.count > 1
+																? links?.count + " " + LinksLabel[2].label
+																: links?.count == 1
+																? links?.count + " " + LinksLabel[11].label
 																: LinksLabel[3].label}
 														</dd>
 													</dl>
-												) : null}
+												) : (
+													<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+														<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+															<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+															{LinksLabel[12].label}
+														</dd>
+													</dl>
+												)}
 											</h4>
 										</div>
 									</div>
@@ -330,13 +305,13 @@ const Links = ({ width, result }) => {
 															<tr>
 																{LinksUrlContent.map((site, key) => {
 																	return (
-																		<Fragment key={key}>
+																		<React.Fragment key={key}>
 																			<th
 																				className="min-width-adjust"
 																				tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																			>
 																				<div tw="flex items-center justify-start">
-																					{site.slug && site.slug !== undefined ? (
+																					{site?.slug ? (
 																						<LinkSorting
 																							result={result}
 																							slug={site.slug}
@@ -350,18 +325,17 @@ const Links = ({ width, result }) => {
 																					</span>
 																				</div>
 																			</th>
-																		</Fragment>
+																		</React.Fragment>
 																	);
 																})}
 															</tr>
 														</thead>
 														<tbody tw="relative">
-															{links &&
-																links !== undefined &&
-																links !== [] &&
-																Object.keys(links).length > 0 &&
-																links.results &&
-																links.results.map((val, key) => <LinkTable key={key} val={val} user={user} />)}
+															{links
+																? links?.results.map((val, key) => (
+																		<LinkTable key={key} siteId={result.siteId} val={val} />
+																  ))
+																: null}
 														</tbody>
 													</table>
 												</div>
@@ -388,9 +362,7 @@ const Links = ({ width, result }) => {
 						<div tw="mx-auto">
 							<section tw="flex flex-col justify-center min-h-screen">
 								<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-									<h3 tw="text-lg leading-6 font-medium text-gray-500">
-										Site is not verified. Please reverify to proceed
-									</h3>
+									<h3 tw="text-lg leading-6 font-medium text-gray-500">{LinksLabel[13].label}</h3>
 								</div>
 							</section>
 						</div>
