@@ -72,25 +72,20 @@ const SiteOverview = ({ width, result }) => {
 	const homeLabel = "Home";
 	let homePageLink = "/";
 
-	const { selectedSiteRef, handleCrawl, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
-		siteId: result.siteId
-	});
-
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
+	});
+
+	const { selectedSiteRef, handleCrawl, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
+		siteId: result.siteId
 	});
 
 	const { siteId: siteId } = useSiteId({
 		querySid: result.siteId
 	});
 
-	siteId
-		? (pageTitle =
-				siteId.name && siteId.name !== undefined
-					? OverviewLabel[0].label + " - " + siteId.name
-					: OverviewLabel[0].label)
-		: null;
+	siteId ? (pageTitle = siteId?.name ? OverviewLabel[0].label + " - " + siteId.name : OverviewLabel[0].label) : null;
 
 	const { stats } = useStats({
 		querySid: result.siteId,
@@ -113,7 +108,7 @@ const SiteOverview = ({ width, result }) => {
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				{siteId && siteId !== undefined && Object.keys(siteId).length > 0 ? (
+				{siteId ? (
 					<>
 						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
@@ -168,13 +163,13 @@ const SiteOverview = ({ width, result }) => {
 
 									<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 										<div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
-											<SitesStats stats={stats ?? null} scanResult={scanResult} />
+											<SitesStats stats={stats} scanResult={scanResult} />
 
 											<SitesOverview
 												verified={siteId?.verified}
-												stats={stats ?? null}
+												stats={stats}
 												scanResult={scanResult}
-												user={user ?? null}
+												user={user}
 												disableLocalTime={disableLocalTime}
 												handleCrawl={handleCrawl}
 												isCrawlStarted={isCrawlStarted}
@@ -182,12 +177,12 @@ const SiteOverview = ({ width, result }) => {
 											/>
 
 											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesLinksStats sid={result.siteId} stats={stats ?? null} scanResult={scanResult} />
-												<SitesPagesStats sid={result.siteId} stats={stats ?? null} scanResult={scanResult} />
+												<SitesLinksStats sid={result.siteId} stats={stats} scanResult={scanResult} />
+												<SitesPagesStats sid={result.siteId} stats={stats} scanResult={scanResult} />
 											</div>
 											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesImagesStats sid={result.siteId} stats={stats ?? null} scanResult={scanResult} />
-												<SitesSeoStats sid={result.siteId} stats={stats ?? null} scanResult={scanResult} />
+												<SitesImagesStats sid={result.siteId} stats={stats} scanResult={scanResult} />
+												<SitesSeoStats sid={result.siteId} stats={stats} scanResult={scanResult} />
 											</div>
 										</div>
 									</div>
