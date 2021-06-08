@@ -30,8 +30,8 @@ const SitesOverview = ({
 	isCrawlStarted,
 	isCrawlFinished
 }) => {
-	const [showErrorModal, setShowErrorModal] = React.useState(false);
 	const [componentReady, setComponentReady] = React.useState(false);
+	const [showErrorModal, setShowErrorModal] = React.useState(false);
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -48,7 +48,7 @@ const SitesOverview = ({
 
 	React.useEffect(() => {
 		stats
-			? (async () => {
+			? (() => {
 					setComponentReady(false);
 
 					setTimeout(() => {

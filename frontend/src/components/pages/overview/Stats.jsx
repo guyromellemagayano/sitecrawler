@@ -15,7 +15,7 @@ const SitesStats = ({ stats, scanResult }) => {
 
 	React.useEffect(() => {
 		stats
-			? (async () => {
+			? (() => {
 					setComponentReady(false);
 
 					setTimeout(() => {
@@ -29,7 +29,7 @@ const SitesStats = ({ stats, scanResult }) => {
 		let valLength = 0;
 
 		stats
-			? (async () => {
+			? (() => {
 					valLength = stats?.num_non_ok_links ?? 0;
 			  })()
 			: null;
@@ -41,7 +41,7 @@ const SitesStats = ({ stats, scanResult }) => {
 		let valLength = 0;
 
 		stats
-			? (async () => {
+			? (() => {
 					valLength =
 						stats?.num_pages_without_title ??
 						0 + stats?.num_pages_without_description ??
@@ -58,7 +58,7 @@ const SitesStats = ({ stats, scanResult }) => {
 		let valLength = 0;
 
 		stats
-			? (async () => {
+			? (() => {
 					valLength = stats?.num_pages_big ?? 0 + stats?.num_pages_tls_non_ok ?? 0;
 			  })()
 			: null;
@@ -70,7 +70,7 @@ const SitesStats = ({ stats, scanResult }) => {
 		let valLength = 0;
 
 		stats
-			? (async () => {
+			? (() => {
 					valLength = stats?.num_non_ok_images ?? 0;
 			  })()
 			: null;

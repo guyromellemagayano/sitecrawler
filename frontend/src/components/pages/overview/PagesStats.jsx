@@ -101,7 +101,7 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 
 	React.useEffect(() => {
 		stats
-			? (async () => {
+			? (() => {
 					setComponentReady(false);
 
 					setTimeout(() => {

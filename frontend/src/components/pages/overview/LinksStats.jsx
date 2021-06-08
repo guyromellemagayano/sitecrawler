@@ -101,7 +101,7 @@ const SitesLinksStats = ({ width, sid, stats, scanResult }) => {
 
 	React.useEffect(() => {
 		stats
-			? (async () => {
+			? (() => {
 					setComponentReady(false);
 
 					setTimeout(() => {

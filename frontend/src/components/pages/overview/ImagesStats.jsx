@@ -104,7 +104,7 @@ const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
 
 	React.useEffect(() => {
 		stats
-			? (async () => {
+			? (() => {
 					setComponentReady(false);
 
 					setTimeout(() => {
