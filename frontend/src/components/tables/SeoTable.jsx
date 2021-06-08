@@ -92,6 +92,10 @@ const SeoTable = ({ siteId, val, disableLocalTime }) => {
 					}, 500);
 			  })()
 			: null;
+
+		return () => {
+			setComponentReady(false);
+		};
 	}, [pageDetail]);
 
 	return (
