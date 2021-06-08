@@ -47,11 +47,11 @@ const SiteSettings = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { mutateSite: mutateSite } = useSite({
+	const { mutateSite } = useSite({
 		endpoint: sitesApiEndpoint
 	});
 
-	const { siteId: siteId, mutateSiteId: mutateSiteId } = useSiteId({
+	const { siteId, mutateSiteId } = useSiteId({
 		querySid: result.siteId
 	});
 
