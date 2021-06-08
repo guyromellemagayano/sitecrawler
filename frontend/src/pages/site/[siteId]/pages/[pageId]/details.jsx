@@ -255,7 +255,7 @@ const PageDetail = ({ width, result }) => {
 															</dd>
 														</div>
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">Total Size of Stylesheets</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabel[19].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	bytes(pageDetail?.size_stylesheets, {
@@ -305,9 +305,7 @@ const PageDetail = ({ width, result }) => {
 
 														{pageDetail?.num_non_tls_images > 0 && (
 															<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-																<dt tw="text-sm leading-5 font-medium text-gray-500">
-																	Total Number of Non-Secured Images
-																</dt>
+																<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabel[20].label}</dt>
 																<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																	{componentReady ? (
 																		pageDetail?.num_non_tls_images
@@ -320,9 +318,7 @@ const PageDetail = ({ width, result }) => {
 
 														{pageDetail?.num_non_tls_scripts > 0 && (
 															<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-																<dt tw="text-sm leading-5 font-medium text-gray-500">
-																	Total Number of Non-Secured Scripts
-																</dt>
+																<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabel[21].label}</dt>
 																<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																	{componentReady ? (
 																		pageDetail?.num_non_tls_scripts
@@ -335,9 +331,7 @@ const PageDetail = ({ width, result }) => {
 
 														{pageDetail?.num_non_tls_stylesheets > 0 && (
 															<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-																<dt tw="text-sm leading-5 font-medium text-gray-500">
-																	Total Number of Non-Secured Stylesheets
-																</dt>
+																<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabel[22].label}</dt>
 																<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																	{componentReady ? (
 																		pageDetail?.num_non_tls_stylesheets

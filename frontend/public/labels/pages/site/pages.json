@@ -55,5 +55,17 @@
 	},
 	{
 		"label": "Page Detail"
+	},
+	{
+		"label": "Total Size of Stylesheets"
+	},
+	{
+		"label": "Total Number of Non-Secured Images"
+	},
+	{
+		"label": "Total Number of Non-Secured Scripts"
+	},
+	{
+		"label": "Total Number of Non-Secured Stylesheets"
 	}
 ]
