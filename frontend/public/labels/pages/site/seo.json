@@ -19,5 +19,41 @@
 	},
 	{
 		"label": "page found"
+	},
+	{
+		"label": "Loading..."
+	},
+	{
+		"label": "Seo Detail"
+	},
+	{
+		"label": "Created at"
+	},
+	{
+		"label": "Total Number of Links"
+	},
+	{
+		"label": "Total Number of Working Links"
+	},
+	{
+		"label": "Total Number of Non-Working Links"
+	},
+	{
+		"label": "Title"
+	},
+	{
+		"label": "Description"
+	},
+	{
+		"label": "First H1 Text"
+	},
+	{
+		"label": "Second H1 Text"
+	},
+	{
+		"label": "First H2 Text"
+	},
+	{
+		"label": "Second H2 Text"
 	}
 ]
