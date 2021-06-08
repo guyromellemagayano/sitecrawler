@@ -53,7 +53,7 @@ const SeoDetail = ({ width, result }) => {
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	const { user: user } = useUser({
+	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
@@ -100,13 +100,14 @@ const SeoDetail = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					<>
+					siteId?.verified ? (
 						<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 							<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
 								<MobileSidebarButton
 									openMobileSidebar={openMobileSidebar}
 									setOpenMobileSidebar={setOpenMobileSidebar}
 								/>
+
 								<Link href={homePageLink} passHref>
 									<a tw="p-1 block w-full cursor-pointer lg:hidden">
 										<AppLogo
@@ -303,7 +304,15 @@ const SeoDetail = ({ width, result }) => {
 								</div>
 							</main>
 						</div>
-					</>
+					) : (
+						<div tw="mx-auto">
+							<section tw="flex flex-col justify-center min-h-screen">
+								<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
+									<h3 tw="text-lg leading-6 font-medium text-gray-500">{SeoLabel[19].label}</h3>
+								</div>
+							</section>
+						</div>
+					)
 				) : (
 					<div tw="mx-auto">
 						<Loader />
