@@ -224,7 +224,7 @@ const PageDetail = ({ width, result }) => {
 																		unitSeparator: " "
 																	})
 																) : (
-																	<Skeleton duration={2} width={150} />
+																	<Skeleton duration={2} width={75} />
 																)}
 															</dd>
 														</div>
@@ -237,7 +237,7 @@ const PageDetail = ({ width, result }) => {
 																		unitSeparator: " "
 																	})
 																) : (
-																	<Skeleton duration={2} width={150} />
+																	<Skeleton duration={2} width={75} />
 																)}
 															</dd>
 														</div>
@@ -250,7 +250,7 @@ const PageDetail = ({ width, result }) => {
 																		unitSeparator: " "
 																	})
 																) : (
-																	<Skeleton duration={2} width={150} />
+																	<Skeleton duration={2} width={75} />
 																)}
 															</dd>
 														</div>
@@ -263,7 +263,7 @@ const PageDetail = ({ width, result }) => {
 																		unitSeparator: " "
 																	})
 																) : (
-																	<Skeleton duration={2} width={150} />
+																	<Skeleton duration={2} width={75} />
 																)}
 															</dd>
 														</div>
