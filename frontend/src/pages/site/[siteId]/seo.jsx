@@ -26,14 +26,14 @@ import Layout from "src/components/Layout";
 
 // Components
 import LinkOptions from "src/components/pages/overview/LinkOptions";
+import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import MyPagination from "src/components/pagination/Pagination";
 import SeoFilter from "src/components/helpers/filters/SeoFilter";
 import SeoSorting from "src/components/helpers/sorting/SeoSorting";
 import SeoTable from "src/components/tables/SeoTable";
 import SeoTableSkeleton from "src/components/skeletons/SeoTableSkeleton";
-import Loader from "src/components/layouts/Loader";
-import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
 
