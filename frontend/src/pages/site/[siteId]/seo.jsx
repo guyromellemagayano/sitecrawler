@@ -70,7 +70,7 @@ const Seo = ({ width, result }) => {
 	let hasH1FirstString = "";
 	let hasH2FirstString = "";
 
-	const { user: user } = useUser({
+	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
@@ -338,7 +338,8 @@ const Seo = ({ width, result }) => {
 								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 									{user?.permissions.includes("can_see_pages") &&
 									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") ? (
+									user?.permissions.includes("can_see_stylesheets") &&
+									user?.permissions.includes("can_start_scan") ? (
 										<SeoFilter
 											result={result}
 											loadQueryString={loadQueryString}
@@ -363,8 +364,11 @@ const Seo = ({ width, result }) => {
 																				tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																			>
 																				<span tw="flex items-center justify-start">
-																					{user?.permissions.includes("can_see_pages") ? (
-																						site?.slug ? (
+																					{user?.permissions.includes("can_see_pages") &&
+																					user?.permissions.includes("can_see_scripts") &&
+																					user?.permissions.includes("can_see_stylesheets") &&
+																					user?.permissions.includes("can_start_scan") ? (
+																						site.slug ? (
 																							<SeoSorting
 																								result={result}
 																								slug={site.slug}
@@ -418,7 +422,8 @@ const Seo = ({ width, result }) => {
 
 									{user?.permissions.includes("can_see_pages") &&
 									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") ? (
+									user?.permissions.includes("can_see_stylesheets") &&
+									user?.permissions.includes("can_start_scan") ? (
 										pages ? (
 											<MyPagination
 												href="/site/[siteId]/seo"
