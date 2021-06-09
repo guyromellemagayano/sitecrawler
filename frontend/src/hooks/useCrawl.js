@@ -23,14 +23,14 @@ const useCrawl = ({ siteId }) => {
 	const handleCrawl = async (e) => {
 		let endpoint = `/api/site/${siteId}/start_scan/`;
 
-		e.preventDefault();
+		e?.preventDefault();
 
-		if (selectedSiteRef.current && selectedSiteRef.current.contains(e.target)) {
+		if (selectedSiteRef?.current && selectedSiteRef?.current.contains(e?.target)) {
 			try {
 				const response = await usePostMethod(endpoint);
-				const data = await response.data;
+				const data = await response?.data;
 
-				if (Math.floor(response.status / 200) === 1) {
+				if (Math.floor(response?.status / 200) === 1) {
 					if (data) {
 						mutateCurrentScan;
 						return true;
@@ -45,9 +45,10 @@ const useCrawl = ({ siteId }) => {
 	};
 
 	React.useEffect(() => {
-		let previousScanResult = currentScan?.results.find((e) => e.finished_at !== null && e.force_https !== null) ?? null;
+		let previousScanResult =
+			currentScan?.results.find((e) => e?.finished_at !== null && e?.force_https !== null) ?? null;
 		let currentScanResult =
-			currentScan?.results.find((e) => e.finished_at == null && e.force_https == null) ?? previousScanResult;
+			currentScan?.results.find((e) => e?.finished_at == null && e?.force_https == null) ?? previousScanResult;
 
 		setScanResult(currentScanResult);
 
