@@ -170,7 +170,11 @@ const PageDetail = ({ width, result }) => {
 														<div tw="flex items-center">
 															<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 															<Link href={`/site/${result.siteId}/pages`} passHref>
-																<a aria-current="page" className="truncate-breadcrumbs" tw="cursor-pointer ml-4 text-sm text-gray-700">
+																<a
+																	aria-current="page"
+																	className="truncate-breadcrumbs"
+																	tw="cursor-pointer ml-4 text-sm text-gray-700"
+																>
 																	{pagePageTitle}
 																</a>
 															</Link>
@@ -179,7 +183,11 @@ const PageDetail = ({ width, result }) => {
 													<li>
 														<div tw="flex items-center">
 															<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-															<p aria-current="page" className="truncate-breadcrumbs" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+															<p
+																aria-current="page"
+																className="truncate-breadcrumbs"
+																tw="cursor-default ml-4 text-sm font-medium text-gray-700"
+															>
 																{pageDetail?.url}
 															</p>
 														</div>
@@ -310,6 +318,21 @@ const PageDetail = ({ width, result }) => {
 															</dd>
 														</div>
 
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabel[13].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? (
+																	pageDetail?.tls_status ? (
+																		<SiteSuccessBadge text={"OK"} />
+																	) : (
+																		<SiteDangerBadge text={"ERROR"} />
+																	)
+																) : (
+																	<Skeleton duration={2} width={150} />
+																)}
+															</dd>
+														</div>
+
 														{pageDetail?.num_non_tls_images > 0 && (
 															<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
 																<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabel[20].label}</dt>
@@ -357,21 +380,6 @@ const PageDetail = ({ width, result }) => {
 											<div tw="bg-white border border-gray-300 overflow-hidden sm:rounded-lg py-2 px-1">
 												<div tw="px-4 py-5 sm:p-0">
 													<dl>
-														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabel[13].label}</dt>
-															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-																{componentReady ? (
-																	pageDetail?.tls_status ? (
-																		<SiteSuccessBadge text={"OK"} />
-																	) : (
-																		<SiteDangerBadge text={"ERROR"} />
-																	)
-																) : (
-																	<Skeleton duration={2} width={150} />
-																)}
-															</dd>
-														</div>
-
 														{pageDetailLink?.count > 0 && (
 															<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
 																<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabel[14].label}</dt>
