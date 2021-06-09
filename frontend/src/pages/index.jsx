@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -34,7 +34,7 @@ import SiteFooter from "src/components/layouts/Footer";
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
-const DashboardDiv = styled.section`
+const DashboardSection = styled.section`
 	@media only screen and (max-width: 1600px) {
 		.min-width-adjust {
 			min-width: 15rem;
@@ -43,12 +43,12 @@ const DashboardDiv = styled.section`
 `;
 
 const Dashboard = ({ width, result }) => {
-	const [disableLocalTime, setDisableLocalTime] = useState(false);
-	const [linksPerPage, setLinksPerPage] = useState(20);
-	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [pageLoaded, setPageLoaded] = useState(false);
-	const [pagePath, setPagePath] = useState("");
-	const [searchKey, setSearchKey] = useState("");
+	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
+	const [linksPerPage, setLinksPerPage] = React.useState(20);
+	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
+	const [pageLoaded, setPageLoaded] = React.useState(false);
+	const [pagePath, setPagePath] = React.useState("");
+	const [searchKey, setSearchKey] = React.useState("");
 
 	const pageTitle = DashboardLabel[0].label;
 
@@ -58,7 +58,7 @@ const Dashboard = ({ width, result }) => {
 	let scanApiEndpoint = "";
 	let queryString = "";
 
-	const { user: user } = useUser({
+	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
@@ -84,32 +84,13 @@ const Dashboard = ({ width, result }) => {
 
 	scanApiEndpoint += queryString;
 
-	const { site: site, mutateSite: mutateSite } = useSite({
+	const { site, mutateSite } = useSite({
 		endpoint: scanApiEndpoint
 	});
 
-	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0
-		) {
-			if (user.settings !== []) {
-				if (user.settings.disableLocalTime) {
-					setDisableLocalTime(true);
-				} else {
-					setDisableLocalTime(false);
-				}
-			}
-
-			setTimeout(() => {
-				setPageLoaded(true);
-			}, 500);
-		}
-	}, [user, site]);
+	React.useEffect(() => {
+		user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
+	}, [user]);
 
 	const handleSearch = async (e) => {
 		const searchTargetValue = e.target.value;
@@ -159,7 +140,7 @@ const Dashboard = ({ width, result }) => {
 		}
 	};
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
@@ -168,11 +149,11 @@ const Dashboard = ({ width, result }) => {
 		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
 	}, []);
 
-	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
+	return user ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
-			<DashboardDiv tw="h-screen flex overflow-hidden bg-white">
+			<DashboardSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}
@@ -180,22 +161,20 @@ const Dashboard = ({ width, result }) => {
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
-						<div tw="border-b flex-shrink-0 flex">
-							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+				{site ? (
+					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
+						<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+							<div tw="border-b flex-shrink-0 flex">
+								<MobileSidebarButton
+									openMobileSidebar={openMobileSidebar}
+									setOpenMobileSidebar={setOpenMobileSidebar}
+								/>
+							</div>
+
+							<AddSite user={user} site={site} searchKey={searchKey} onSearchEvent={handleSearch} />
 						</div>
 
-						<AddSite
-							user={user}
-							site={site && Object.keys(site).length > 0 && site}
-							searchKey={searchKey}
-							onSearchEvent={handleSearch}
-						/>
-					</div>
-
-					{user && user !== undefined && Object.keys(user).length > 0 && site && Object.keys(site).length > 0 ? (
-						site.count > 0 ? (
+						{site?.count > 0 ? (
 							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="max-w-full mx-12">
 									<div tw="py-4">
@@ -213,19 +192,13 @@ const Dashboard = ({ width, result }) => {
 																			tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																		>
 																			<span tw="flex items-center justify-start">
-																				{site &&
-																				site !== undefined &&
-																				Object.keys(site).length > 0 &&
-																				site.slug &&
-																				site.slug !== undefined ? (
-																					<SiteSorting
-																						result={result}
-																						slug={site.slug}
-																						mutateSite={mutateSite}
-																						dataTableHeadsContent={DataTableHeadsContent}
-																						setPagePath={setPagePath}
-																					/>
-																				) : null}
+																				<SiteSorting
+																					result={result}
+																					slug={site.slug}
+																					mutateSite={mutateSite}
+																					dataTableHeadsContent={DataTableHeadsContent}
+																					setPagePath={setPagePath}
+																				/>
 																				<span tw="flex items-center">{site.label}</span>
 																			</span>
 																		</th>
@@ -233,22 +206,17 @@ const Dashboard = ({ width, result }) => {
 																})}
 															</tr>
 														</thead>
-														{user &&
-															user !== undefined &&
-															site &&
-															Object.keys(site).length > 0 &&
-															site.results &&
-															site.results.map((val, key) => {
-																return (
-																	<DataTable
-																		key={key}
-																		site={val}
-																		disableLocalTime={disableLocalTime}
-																		mutateSite={mutateSite}
-																		router={router}
-																	/>
-																);
-															})}
+														{site?.results.map((val, key) => {
+															return (
+																<DataTable
+																	key={key}
+																	site={val}
+																	disableLocalTime={disableLocalTime}
+																	mutateSite={mutateSite}
+																	router={router}
+																/>
+															);
+														})}
 													</table>
 												</div>
 											</div>
@@ -264,14 +232,18 @@ const Dashboard = ({ width, result }) => {
 									/>
 								</div>
 							</main>
-						) : null
-					) : null}
+						) : null}
 
-					<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-						<SiteFooter />
+						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
+							<SiteFooter />
+						</div>
 					</div>
-				</div>
-			</DashboardDiv>
+				) : (
+					<div tw="mx-auto">
+						<Loader />
+					</div>
+				)}
+			</DashboardSection>
 		</Layout>
 	) : (
 		<Loader />

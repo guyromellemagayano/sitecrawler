@@ -18,7 +18,8 @@ import tw, { styled } from "twin.macro";
 import DataTableLabel from "public/labels/components/sites/DataTable.json";
 
 // Hooks
-import { useScan, useStats } from "src/hooks/useSite";
+import { useStats } from "src/hooks/useSite";
+import useCrawl from "src/hooks/useCrawl";
 import useDeleteMethod from "src/hooks/useDeleteMethod";
 import usePostMethod from "src/hooks/usePostMethod";
 
@@ -47,23 +48,23 @@ const DataTableDiv = styled.tbody`
 `;
 
 const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
+	// const [crawlInProgress, setCrawlInProgress] = useState(false);
+	// const [scanData, setScanData] = useState([]);
+	// const [scanObjId, setScanObjId] = useState(0);
+	// const [statsData, setStatsData] = useState([]);
 	const [componentReady, setComponentReady] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${site.verification_id}" />`);
-	const [crawlInProgress, setCrawlInProgress] = useState(false);
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [enableNextStep, setEnableNextStep] = useState(false);
 	const [errorMsg, setErrorMsg] = useState(null);
-	const [scanData, setScanData] = useState([]);
-	const [scanObjId, setScanObjId] = useState(0);
 	const [showDeleteSiteModal, setShowDeleteSiteModal] = useState(false);
 	const [showVerifySiteModal, setShowVerifySiteModal] = useState(false);
 	const [siteVerifyId, setSiteVerifyId] = useState(site.id);
-	const [statsData, setStatsData] = useState([]);
 	const [successMsg, setSuccessMsg] = useState(null);
 
-	const siteIdApiEndpoint = "/api/site/" + site.id;
 	const siteVerifyApiEndpoint = "/api/site/" + site.id + "/verify/";
+
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
 		sameDay: "[Today], dddd",
@@ -71,60 +72,97 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	const { scan: scan } = useScan({
-		querySid: site.id
+	const { selectedSiteRef, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
+		siteId: site.id
 	});
 
-	useEffect(() => {
-		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			setScanData(scan);
+	const { stats: stats } = useStats({
+		querySid: site.id,
+		scanObjId: scanObjId
+	});
+
+	React.useEffect(() => {
+		if (!showDeleteSiteModal) {
+			router.push("/");
 		}
-	}, [scan]);
+	}, [showDeleteSiteModal]);
 
-	useEffect(() => {
-		if (scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0) {
-			if (
-				scanData.results &&
-				scanData.results !== undefined &&
-				scanData.results !== [] &&
-				Object.keys(scanData.results).length > 0
-			) {
-				setScanObjId((prevState) => ({
-					...prevState,
-					id: scanData.results
-						.map((e) => {
-							let result = prevState;
+	React.useEffect(() => {
+		stats
+			? (() => {
+					setComponentReady(false);
 
-							if (e !== undefined && e.finished_at == null) {
-								result = e.id;
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+	}, [stats]);
 
-								setCrawlInProgress(true);
+	const setLinkErrors = () => {
+		let valLength = 0;
 
-								return result;
-							}
+		stats
+			? (() => {
+					valLength = stats?.num_non_ok_links ?? 0;
+			  })()
+			: null;
 
-							return e.id;
-						})
-						.sort()
-						.reverse()[0]
-				}));
-			}
-		}
-	}, [scanData]);
+		return valLength;
+	};
 
-	useEffect(() => {
-		if (crawlInProgress) {
-			if (scanObjId && scanData.results && scanData.results !== undefined && Object.keys(scanData.results).length > 0) {
-				scanData.results
-					.filter((result) => result.id == scanObjId.id)
-					.map((e) => {
-						if (e !== undefined && e.finished_at !== null) {
-							setCrawlInProgress(false);
-						}
-					});
-			}
-		}
-	}, [crawlInProgress, scanObjId]);
+	const setPageErrors = () => {
+		let valLength = 0;
+
+		stats
+			? (() => {
+					valLength = stats?.num_pages_big ?? 0 + stats?.num_pages_tls_non_ok ?? 0;
+			  })()
+			: null;
+
+		return valLength;
+	};
+
+	const setImageErrors = () => {
+		let valLength = 0;
+
+		stats
+			? (() => {
+					valLength = stats?.num_non_ok_images ?? 0;
+			  })()
+			: null;
+
+		return valLength;
+	};
+
+	const setSeoErrors = () => {
+		let valLength = 0;
+
+		stats
+			? (() => {
+					valLength =
+						stats?.num_pages_without_title ??
+						0 + stats?.num_pages_without_description ??
+						0 + stats?.num_pages_without_h1_first ??
+						0 + stats?.num_pages_without_h2_first ??
+						0;
+			  })()
+			: null;
+
+		return valLength;
+	};
+
+	const setTotalIssues = () => {
+		let valLength = 0;
+
+		stats
+			? (() => {
+					valLength = setLinkErrors() + setPageErrors() + setImageErrors() + setSeoErrors();
+			  })()
+			: null;
+
+		return valLength;
+	};
 
 	const handleInputChange = ({ copyValue }) => {
 		setCopyValue({ copyValue, copied });
@@ -139,24 +177,28 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 	};
 
 	const handleSiteDeletion = async (e) => {
+		let siteIdApiEndpoint = "/api/site/" + site.id;
+
 		e.preventDefault();
 
-		const response = await useDeleteMethod(siteIdApiEndpoint);
+		try {
+			const response = await useDeleteMethod(siteIdApiEndpoint);
+			const data = await response.data;
 
-		if (Math.floor(response.status / 200) === 1) {
-			setTimeout(() => {
-				setShowDeleteSiteModal(false);
-			}, 500);
+			if (Math.floor(response.status / 200) === 1) {
+				if (data) {
+					setTimeout(() => {
+						setShowDeleteSiteModal(false);
+					}, 500);
 
-			mutateSite();
+					mutateSite;
+					return true;
+				}
+			}
+		} catch (error) {
+			return null;
 		}
 	};
-
-	useEffect(() => {
-		if (!showDeleteSiteModal) {
-			router.push("/");
-		}
-	}, [showDeleteSiteModal]);
 
 	const handleSiteVerification = async (e) => {
 		e.preventDefault();
@@ -202,83 +244,6 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 
 			return null;
 		}
-	};
-
-	const { stats: stats } = useStats({
-		querySid: site.id,
-		scanObjId: scanObjId.id
-	});
-
-	useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setStatsData(stats);
-		}
-	}, [stats]);
-
-	useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
-	}, []);
-
-	const setSeoErrors = () => {
-		let valLength = 0;
-
-		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
-			if (
-				(statsData.num_pages_without_title !== 0 && statsData.num_pages_without_title !== undefined) ||
-				(statsData.num_pages_without_description !== 0 && statsData.num_pages_without_description !== undefined) ||
-				(statsData.num_pages_without_h1_first !== 0 && statsData.num_pages_without_h1_first !== undefined) ||
-				(statsData.num_pages_without_h2_first !== 0 && statsData.num_pages_without_h2_first !== undefined)
-			) {
-				valLength =
-					(statsData ? statsData.num_pages_without_title : 0) +
-					(statsData ? statsData.num_pages_without_description : 0) +
-					(statsData ? statsData.num_pages_without_h1_first : 0) +
-					(statsData ? statsData.num_pages_without_h2_first : 0);
-			}
-		}
-
-		return valLength;
-	};
-
-	const setPageErrors = () => {
-		let valLength = 0;
-
-		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
-			if (
-				(statsData.num_pages_big !== 0 && statsData.num_pages_big !== undefined) ||
-				(statsData.num_pages_tls_non_ok !== 0 && statsData.num_pages_tls_non_ok !== undefined)
-			) {
-				valLength = (statsData ? statsData.num_pages_big : 0) + (statsData ? statsData.num_pages_tls_non_ok : 0);
-			}
-		}
-
-		return valLength;
-	};
-
-	const setImageErrors = () => {
-		let valLength = 0;
-
-		if (statsData && statsData !== undefined && Object.keys(statsData).length > 0) {
-			if (statsData.num_non_ok_images !== 0 && statsData.num_non_ok_images !== undefined) {
-				valLength = statsData ? statsData.num_non_ok_images : 0;
-			}
-		}
-
-		return valLength;
-	};
-
-	const setTotalIssues = () => {
-		let valLength = 0;
-
-		valLength =
-			statsData &&
-			statsData !== undefined &&
-			Object.keys(statsData).length > 0 &&
-			statsData.num_non_ok_links + setSeoErrors() + setPageErrors() + setImageErrors();
-
-		return valLength;
 	};
 
 	return (
@@ -517,67 +482,65 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 				</div>
 			</Transition>
 
-			<DataTableDiv tw="bg-white">
+			<DataTableDiv ref={selectedSiteRef} tw="bg-white">
 				<tr>
 					<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
 						<span tw="flex items-center">
 							<span>
 								{componentReady ? (
-									<>
-										{!site.verified ? (
-											<div>
-												<span
-													aria-label="Verified"
-													tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-red-400"
-												></span>
-												<span tw="max-w-sm truncate text-sm leading-5 font-semibold text-gray-500">{site.name}</span>
-												<span tw="ml-2 flex justify-start text-sm leading-5 text-gray-500">
-													<button
-														type="button"
-														id="siteVerifySiteModalButton"
-														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150"
-														onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
-													>
-														{DataTableLabel[0].label}
-													</button>
-													<button
-														type="button"
-														id="siteVerifySiteModalButton"
-														tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
-														onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
-													>
-														{DataTableLabel[1].label}
-													</button>
-												</span>
-											</div>
-										) : (
-											<div>
-												<span
-													aria-label="Verified"
-													tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-green-400"
-												></span>
-												<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
+									!site?.verified ? (
+										<div>
+											<span
+												aria-label="Not Verified"
+												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-red-400"
+											></span>
+											<span tw="max-w-sm truncate text-sm leading-5 font-semibold text-gray-500">{site?.name}</span>
+											<span tw="ml-2 flex justify-start text-sm leading-5 text-gray-500">
+												<button
+													type="button"
+													id="siteVerifySiteModalButton"
+													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150"
+													onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
+												>
+													{DataTableLabel[0].label}
+												</button>
+												<button
+													type="button"
+													id="siteVerifySiteModalButton"
+													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+													onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
+												>
+													{DataTableLabel[1].label}
+												</button>
+											</span>
+										</div>
+									) : (
+										<div>
+											<span
+												aria-label="Verified"
+												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-green-400"
+											></span>
+											<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
+												<a
+													tw="max-w-sm truncate cursor-pointer text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500"
+													title={site?.name}
+												>
+													{site?.name}
+												</a>
+											</Link>
+											<span tw="ml-2 flex justify-start text-sm leading-5">
+												<Link href={site?.url} passHref>
 													<a
-														tw="max-w-sm truncate cursor-pointer text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500"
-														title={site.name}
+														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+														title={DataTableLabel[26].label}
+														target="_blank"
 													>
-														{site.name}
+														{DataTableLabel[26].label}
 													</a>
 												</Link>
-												<span tw="ml-2 flex justify-start text-sm leading-5">
-													<Link href={site.url} passHref>
-														<a
-															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
-															title={DataTableLabel[26].label}
-															target="_blank"
-														>
-															{DataTableLabel[26].label}
-														</a>
-													</Link>
-												</span>
-											</div>
-										)}
-									</>
+											</span>
+										</div>
+									)
 								) : (
 									<>
 										<span tw="flex flex-row items-center py-2 space-x-3">
@@ -594,28 +557,24 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							site.verified ? (
-								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
-									<span tw="space-x-2">
-										<span tw="text-sm leading-5 text-gray-500">
-											{!disableLocalTime ? (
-												<Moment calendar={calendarStrings} date={statsData.finished_at} local />
-											) : (
-												<Moment calendar={calendarStrings} date={statsData.finished_at} utc />
-											)}
-										</span>
-										<span tw="text-sm leading-5 text-gray-500">
-											{!disableLocalTime ? (
-												<Moment date={statsData.finished_at} format="hh:mm:ss A" local />
-											) : (
-												<Moment date={statsData.finished_at} format="hh:mm:ss A" utc />
-											)}
-										</span>
-										{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
+							site?.verified ? (
+								<span tw="space-x-2">
+									<span tw="text-sm leading-5 text-gray-500">
+										{!disableLocalTime ? (
+											<Moment calendar={calendarStrings} date={stats?.finished_at} local />
+										) : (
+											<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
+										)}
 									</span>
-								) : (
-									DataTableLabel[25].label
-								)
+									<span tw="text-sm leading-5 text-gray-500">
+										{!disableLocalTime ? (
+											<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
+										) : (
+											<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
+										)}
+									</span>
+									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
+								</span>
 							) : (
 								DataTableLabel[22].label
 							)
@@ -625,33 +584,23 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							site.verified ? (
-								scanData && scanData !== undefined && scanData !== [] && Object.keys(scanData).length > 0 ? (
-									<span
-										css={[
-											tw`text-sm leading-5 text-gray-500`,
-											crawlInProgress || (crawlInProgress && scanData.finished_at == null)
-												? tw`text-yellow-500`
-												: !crawlInProgress && !scanData.count
-												? tw`text-red-500`
-												: tw`text-green-500`
-										]}
-									>
-										{crawlInProgress && scanData.count > 1 ? (
-											DataTableLabel[19].label
-										) : !crawlInProgress && scanData.count > 1 ? (
-											DataTableLabel[20].label
-										) : crawlInProgress && scanData.finished_at == null && scanData.count == 1 ? (
-											DataTableLabel[24].label
-										) : !crawlInProgress && scanData.count == 1 ? (
-											DataTableLabel[21].label
-										) : (
-											<Skeleton duration={2} width={100} />
-										)}
-									</span>
-								) : (
-									DataTableLabel[25].label
-								)
+							site?.verified ? (
+								<span
+									css={[
+										tw`text-sm leading-5 text-gray-500`,
+										scanResult?.finished_at == null && scanResult?.force_https == null
+											? tw`text-yellow-500`
+											: tw`text-green-500`
+									]}
+								>
+									{scanResult?.finished_at == null && scanResult?.force_https == null ? (
+										DataTableLabel[19].label
+									) : scanResult?.finished_at !== null && scanResult?.force_https !== null ? (
+										DataTableLabel[20].label
+									) : (
+										<Skeleton duration={2} width={100} />
+									)}
+								</span>
 							) : (
 								DataTableLabel[2].label
 							)
@@ -665,16 +614,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 						]}
 					>
 						{componentReady ? (
-							site.verified ? (
-								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
-									<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
+							site?.verified ? (
+								stats ? (
+									<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
 										<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
 											{setTotalIssues()}
 										</a>
 									</Link>
-								) : (
-									0
-								)
+								) : null
 							) : (
 								0
 							)
@@ -688,16 +635,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 						]}
 					>
 						{componentReady ? (
-							site.verified ? (
-								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
-									<Link href="/site/[siteId]/links" as={`/site/${site.id}/links`} passHref>
+							site?.verified ? (
+								stats ? (
+									<Link href="/site/[siteId]/links" as={`/site/${site?.id}/links`} passHref>
 										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-											{statsData.num_links}
+											{stats?.num_links}
 										</a>
 									</Link>
-								) : (
-									0
-								)
+								) : null
 							) : (
 								0
 							)
@@ -711,16 +656,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 						]}
 					>
 						{componentReady ? (
-							site.verified ? (
-								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
-									<Link href="/site/[siteId]/pages" as={`/site/${site.id}/pages`} passHref>
+							site?.verified ? (
+								stats ? (
+									<Link href="/site/[siteId]/pages" as={`/site/${site?.id}/pages`} passHref>
 										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-											{statsData.num_pages}
+											{stats?.num_pages}
 										</a>
 									</Link>
-								) : (
-									0
-								)
+								) : null
 							) : (
 								0
 							)
@@ -734,16 +677,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 						]}
 					>
 						{componentReady ? (
-							site.verified ? (
-								statsData && statsData !== undefined && statsData !== [] && Object.keys(statsData).length > 0 ? (
-									<Link href="/site/[siteId]/images" as={`/site/${site.id}/images`} passHref>
+							site?.verified ? (
+								stats ? (
+									<Link href="/site/[siteId]/images" as={`/site/${site?.id}/images`} passHref>
 										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-											{statsData.num_images}
+											{stats?.num_images}
 										</a>
 									</Link>
-								) : (
-									0
-								)
+								) : null
 							) : (
 								0
 							)
