@@ -37,5 +37,14 @@
 	},
 	{
 		"label": "Alt Text:"
+	},
+	{
+		"label": "Loading..."
+	},
+	{
+		"label": "image found"
+	},
+	{
+		"label": "Image Detail"
 	}
 ]
