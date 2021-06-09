@@ -1,16 +1,16 @@
-version: "2.4"
+version: '2.4'
 services:
   traefik:
     image: traefik
     command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:8000"
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:8000'
     ports:
       - 8000:8000
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
   backend:
     build:
       context: ./backend
@@ -27,8 +27,8 @@ services:
       db:
         condition: service_healthy
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)'
   frontend:
     build:
       context: ./frontend
@@ -37,9 +37,11 @@ services:
     command: ./docker.dev.sh
     volumes:
       - ./frontend:/app
+      - node-data:/app/node_modules
+      - next-data:/app/.next
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.frontend.rule=PathPrefix(`/`)'
   crawler:
     build:
       context: ./go
@@ -105,9 +107,9 @@ services:
     environment:
       POSTGRES_PASSWORD: crawldev
     command:
-      - "postgres"
-      - "-c"
-      - "listen_addresses=*"
+      - 'postgres'
+      - '-c'
+      - 'listen_addresses=*'
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
@@ -119,10 +121,14 @@ services:
     healthcheck:
       test: curl -f http://localhost:4566/health
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.localstack.rule=PathPrefix(`/localstack/`)"
-      - "traefik.port=49501"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.localstack.rule=PathPrefix(`/localstack/`)'
+      - 'traefik.port=49501'
 
 volumes:
   db-data:
+    driver: local
+  node-data:
+    driver: local
+  next-data:
     driver: local
