@@ -39,6 +39,13 @@ const PageDetailDiv = styled.div`
 	.url-heading {
 		font-size: 1.4rem;
 	}
+
+	.truncate-breadcrumbs {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 30rem;
+	}
 `;
 
 const PageDetail = ({ width, result }) => {
@@ -163,7 +170,7 @@ const PageDetail = ({ width, result }) => {
 														<div tw="flex items-center">
 															<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 															<Link href={`/site/${result.siteId}/pages`} passHref>
-																<a aria-current="page" tw="cursor-pointer ml-4 text-sm text-gray-700">
+																<a aria-current="page" className="truncate-breadcrumbs" tw="cursor-pointer ml-4 text-sm text-gray-700">
 																	{pagePageTitle}
 																</a>
 															</Link>
@@ -172,7 +179,7 @@ const PageDetail = ({ width, result }) => {
 													<li>
 														<div tw="flex items-center">
 															<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-															<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+															<p aria-current="page" className="truncate-breadcrumbs" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
 																{pageDetail?.url}
 															</p>
 														</div>
