@@ -171,7 +171,11 @@ const LinkDetail = ({ width, result }) => {
 													<li>
 														<div tw="flex items-center">
 															<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-															<p aria-current="page" className="truncate-breadcrumbs" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+															<p
+																aria-current="page"
+																className="truncate-breadcrumbs"
+																tw="cursor-default ml-4 text-sm font-medium text-gray-700"
+															>
 																{linkDetail?.url}
 															</p>
 														</div>
@@ -299,7 +303,7 @@ const LinkDetail = ({ width, result }) => {
 																				</div>
 																			</li>
 																		) : (
-																			<li tw="pb-3 flex items-center justify-between">
+																			<li key={key} tw="pb-3 flex items-center justify-between">
 																				<div tw="w-0 flex-1 flex items-center">
 																					<Skeleton duration={2} width={20} height={20} />
 																					<span tw="ml-2 flex-1 w-0">
