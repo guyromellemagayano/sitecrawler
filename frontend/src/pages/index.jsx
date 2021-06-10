@@ -46,7 +46,6 @@ const Dashboard = ({ width, result }) => {
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
-	const [pageLoaded, setPageLoaded] = React.useState(false);
 	const [pagePath, setPagePath] = React.useState("");
 	const [searchKey, setSearchKey] = React.useState("");
 
