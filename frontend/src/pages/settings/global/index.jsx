@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
@@ -16,7 +16,6 @@ import tw from "twin.macro";
 import GlobalLabel from "public/labels/components/global/Global.json";
 
 // Hooks
-import { useSite } from "src/hooks/useSite";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -24,38 +23,28 @@ import Layout from "src/components/Layout";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 
 // Components
-import LargePageSizeSettings from "src/components/pages/settings/site/LargePageSize";
-import TimestampSettings from "src/components/pages/settings/profile/Timestamp";
+import AppLogo from "src/components/logos/AppLogo";
+import Loader from "src/components/layouts/Loader";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
+import SiteFooter from "src/components/layouts/Footer";
 
 // Loadable
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const ProfileSkeleton = loadable(() => import("src/components/skeletons/ProfileSkeleton"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
+const LargePageSizeSettings = loadable(() => import("src/components/pages/settings/site/LargePageSize"));
+const TimestampSettings = loadable(() => import("src/components/pages/settings/profile/Timestamp"));
 
 const GlobalSettings = ({ width }) => {
-	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [pageLoaded, setPageLoaded] = useState(false);
+	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
-	const pageTitle = "Global Settings";
+	const pageTitle = GlobalLabel[0].label;
 	const homeLabel = "Home";
 	const homePageLink = "/";
 
-	const { user: user, mutateUser: mutateUser } = useUser({
+	const { user, mutateUser } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
 
-	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0) {
-			setTimeout(() => {
-				setPageLoaded(true);
-			}, 500);
-		}
-	}, [user]);
-
-	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
+	return user ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
@@ -87,37 +76,33 @@ const GlobalSettings = ({ width }) => {
 					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-								{pageLoaded ? (
-									<div className="max-w-full py-4 px-8">
-										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-											<ol tw="flex items-center space-x-4">
-												<li>
-													<div>
-														<Link href={homePageLink} passHref>
-															<a tw="text-gray-400 hover:text-gray-500">
-																<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-																<span tw="sr-only">{homeLabel}</span>
-															</a>
-														</Link>
-													</div>
-												</li>
-												<li>
-													<div tw="flex items-center">
-														<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-														<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-															{pageTitle}
-														</p>
-													</div>
-												</li>
-											</ol>
-										</nav>
-										<div className="pt-4 m-auto">
-											<h4 className="text-2xl leading-6 font-medium text-gray-900">{GlobalLabel[0].label}</h4>
-										</div>
+								<div className="max-w-full py-4 px-8">
+									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+										<ol tw="flex items-center space-x-4">
+											<li>
+												<div>
+													<Link href={homePageLink} passHref>
+														<a tw="text-gray-400 hover:text-gray-500">
+															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
+															<span tw="sr-only">{homeLabel}</span>
+														</a>
+													</Link>
+												</div>
+											</li>
+											<li>
+												<div tw="flex items-center">
+													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+														{pageTitle}
+													</p>
+												</div>
+											</li>
+										</ol>
+									</nav>
+									<div className="pt-4 m-auto">
+										<h4 className="text-2xl leading-6 font-medium text-gray-900">{GlobalLabel[0].label}</h4>
 									</div>
-								) : (
-									<ProfileSkeleton />
-								)}
+								</div>
 
 								<div tw="space-y-12 divide-y divide-gray-200">
 									<TimestampSettings user={user} />
