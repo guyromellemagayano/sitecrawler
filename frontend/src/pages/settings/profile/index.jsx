@@ -39,7 +39,7 @@ const Profile = ({ width }) => {
 	const homeLabel = "Home";
 	const homePageLink = "/";
 
-	const { user: user } = useUser({
+	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
