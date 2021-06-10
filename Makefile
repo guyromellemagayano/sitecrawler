@@ -45,6 +45,7 @@ build-push-go: ## Build and push production go images
 	docker build \
 		--pull \
 		--cache-from 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		-t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) \
 		$(*F)/
 
@@ -54,6 +55,7 @@ build-push-go: ## Build and push production go images
 	docker build \
 		--pull \
 		--cache-from 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		-t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) \
 		--build-arg SERVICE=$(*F) \
 		go/
