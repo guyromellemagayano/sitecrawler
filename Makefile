@@ -40,6 +40,7 @@ build-push-go: ## Build and push production go images
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):$(VERSION)
 
 %-build:
+	deploy/ecr-login.sh
 	DOCKER_BUILDKIT=1 \
 	docker build \
 		--pull \
@@ -48,6 +49,7 @@ build-push-go: ## Build and push production go images
 		$(*F)/
 
 %-build-go:
+	deploy/ecr-login.sh
 	DOCKER_BUILDKIT=1 \
 	docker build \
 		--pull \
