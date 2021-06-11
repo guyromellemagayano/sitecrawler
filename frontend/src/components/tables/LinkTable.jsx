@@ -8,7 +8,6 @@ import Link from "next/link";
 import { styled } from "twin.macro";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import Url from "url-parse";
 
 // Hooks
 import { useLinkDetail } from "src/hooks/useSite";
@@ -63,8 +62,8 @@ const LinkTable = ({ siteId, val }) => {
 
 	const { linkDetail } = useLinkDetail({
 		querySid: siteId,
-		scanObjId: val.scan_id,
-		linkId: val.id
+		scanObjId: val?.scan_id,
+		linkId: val?.id
 	});
 
 	React.useEffect(() => {
@@ -91,13 +90,13 @@ const LinkTable = ({ siteId, val }) => {
 						<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
 							{componentReady ? (
 								<a
-									href={val.url}
+									href={val?.url}
 									target="_blank"
-									title={val.url}
+									title={val?.url}
 									className="truncate-link"
 									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
 								>
-									{val.url}
+									{val?.url}
 								</a>
 							) : (
 								<Skeleton duration={2} width={300} />
@@ -126,9 +125,9 @@ const LinkTable = ({ siteId, val }) => {
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					val.type === "PAGE" ? (
+					val?.type === "PAGE" ? (
 						"Internal"
-					) : val.type === "EXTERNAL" ? (
+					) : val?.type === "EXTERNAL" ? (
 						"External"
 					) : (
 						"Other"
@@ -139,12 +138,12 @@ const LinkTable = ({ siteId, val }) => {
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					val.status === "OK" ? (
+					val?.status === "OK" ? (
 						<SiteSuccessBadge text={"OK"} />
-					) : val.status === "TIMEOUT" ? (
+					) : val?.status === "TIMEOUT" ? (
 						<SiteWarningBadge text={"TIMEOUT"} />
-					) : val.status === "HTTP_ERROR" ? (
-						<SiteDangerBadge text={`${val.http_status} HTTP ERROR`} />
+					) : val?.status === "HTTP_ERROR" ? (
+						<SiteDangerBadge text={`${val?.http_status} HTTP ERROR`} />
 					) : (
 						<SiteDangerBadge text={"OTHER ERROR"} />
 					)
@@ -162,11 +161,7 @@ const LinkTable = ({ siteId, val }) => {
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								<span className="truncate-link">
-									{linkDetail?.pages && Url(linkDetail?.pages?.url).pathname !== "" ? (
-										Url(linkDetail?.pages?.url).pathname
-									) : (
-										<em>{linkDetail?.pages?.url}</em>
-									)}
+									{linkDetail?.pages[0]?.url == val?.url ? "/" : linkDetail?.pages[0]?.url}
 								</span>
 								&nbsp;
 								{linkDetail?.pages?.length - 1 > 0 ? "+" + parseInt(linkDetail?.pages?.length - 1) : null}{" "}
@@ -179,7 +174,7 @@ const LinkTable = ({ siteId, val }) => {
 				)}
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
-				{componentReady ? val.occurences : <Skeleton duration={2} width={45} />}
+				{componentReady ? val?.occurences : <Skeleton duration={2} width={45} />}
 			</td>
 		</LinkTableDiv>
 	);

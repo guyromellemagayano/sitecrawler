@@ -232,7 +232,7 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/pages" as={`/site/${sid}/pages`} replace>
+							<Link href="/site/[siteId]/pages" as={`/site/${sid}/pages`} passHref>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{PagesStatsLabel[1].label}</a>
 							</Link>
 						) : (
