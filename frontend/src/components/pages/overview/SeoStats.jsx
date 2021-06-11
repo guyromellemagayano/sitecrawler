@@ -234,7 +234,7 @@ const SitesSeoStats = ({ width, sid, stats, scanResult }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/seo" as={`/site/${sid}/seo`} replace>
+							<Link href="/site/[siteId]/seo" as={`/site/${sid}/seo`} passHref>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{SeoStatsLabel[1].label}</a>
 							</Link>
 						) : (
