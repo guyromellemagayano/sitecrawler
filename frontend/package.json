@@ -75,8 +75,8 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.16",
-    "@babel/preset-react": "^7.12.13",
+    "@babel/core": "^7.14.5",
+    "@babel/preset-react": "^7.14.5",
     "@tailwindcss/jit": "^0.1.18",
     "autoprefixer": "^10.2.6",
     "babel-eslint": "^10.1.0",
