@@ -15,7 +15,7 @@ import MainSidebar from "src/components/sidebar/MainSidebar";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 
-const ComingSoon = ({ width, user, pageTitle, pageLoaded, openMobileSidebar, setOpenMobileSidebar }) => {
+const ComingSoon = ({ width, user, pageTitle, openMobileSidebar, setOpenMobileSidebar }) => {
 	const homeLabel = "Home";
 	const homePageLink = "/";
 
@@ -41,7 +41,7 @@ const ComingSoon = ({ width, user, pageTitle, pageLoaded, openMobileSidebar, set
 				<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
 					<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 						<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-							{pageLoaded ? (
+							{user ? (
 								<>
 									<div tw="max-w-full py-4 px-8">
 										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">

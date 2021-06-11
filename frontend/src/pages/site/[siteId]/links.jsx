@@ -1,26 +1,25 @@
 // React
-import { Fragment, useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
-import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
+import { ChevronRightIcon, HomeIcon, SearchIcon } from "@heroicons/react/solid";
 import { LinkIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
+import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
 import PropTypes from "prop-types";
-import ReactTooltip from "react-tooltip";
-import tw, { styled } from "twin.macro";
 
 // JSON
 import LinksLabel from "public/labels/pages/site/links.json";
 import LinksUrlContent from "public/data/links-url.json";
 
 // Hooks
-import { useScan, useSite, useLinks, useSiteId } from "src/hooks/useSite";
-import usePostMethod from "src/hooks/usePostMethod";
+import { useLinks, useSiteId } from "src/hooks/useSite";
+import useCrawl from "src/hooks/useCrawl";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -40,14 +39,7 @@ import SiteFooter from "src/components/layouts/Footer";
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
-const LinksDiv = styled.section`
-	.url-type-tooltip,
-	.status-tooltip {
-		max-width: 15rem;
-		margin-left: 5px !important;
-		padding: 1rem 1.5rem;
-	}
-
+const LinksSection = styled.section`
 	@media only screen and (max-width: 1400px) {
 		td:first-child {
 			max-width: 15rem;
@@ -59,7 +51,7 @@ const LinksDiv = styled.section`
 			min-width: 10rem;
 
 			&:first-child {
-				max-width: 20rem;
+				max-width: 25rem;
 			}
 		}
 
@@ -70,15 +62,11 @@ const LinksDiv = styled.section`
 `;
 
 const Links = ({ width, result }) => {
-	const [crawlFinished, setCrawlFinished] = useState(false);
-	const [linksPerPage, setLinksPerPage] = useState(20);
-	const [loadQueryString, setLoadQueryString] = useState("");
-	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [pageLoaded, setPageLoaded] = useState(false);
-	const [pagePath, setPagePath] = useState("");
-	const [recrawlable, setRecrawlable] = useState(false);
-	const [scanObjId, setScanObjId] = useState(0);
-	const [searchKey, setSearchKey] = useState("");
+	const [linksPerPage, setLinksPerPage] = React.useState(20);
+	const [loadQueryString, setLoadQueryString] = React.useState("");
+	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
+	const [pagePath, setPagePath] = React.useState("");
+	const [searchKey, setSearchKey] = React.useState("");
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -87,14 +75,7 @@ const Links = ({ width, result }) => {
 	let homeLabel = "Home";
 	let homePageLink = `/site/${result.siteId}/overview`;
 
-	let reCrawlEndpoint = `/api/site/${result.siteId}/start_scan/`;
-	let sitesApiEndpoint = `/api/site/?ordering=name`;
-
 	let scanApiEndpoint = "";
-
-	let currentScanResults = [];
-	let previousScanResults = [];
-
 	let queryString = "";
 	let statusString = "";
 	let typeString = "";
@@ -104,47 +85,15 @@ const Links = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { scan: scan } = useScan({
-		querySid: result.siteId
-	});
-
-	const { site: site } = useSite({
-		endpoint: sitesApiEndpoint
+	const { selectedSiteRef, handleCrawl, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
+		siteId: result.siteId
 	});
 
 	const { siteId: siteId } = useSiteId({
 		querySid: result.siteId
 	});
 
-	if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
-		pageTitle =
-			siteId.name && siteId.name !== undefined ? LinksLabel[1].label + " - " + siteId.name : LinksLabel[1].label;
-	}
-
-	useEffect(() => {
-		if (scan && scan !== undefined && Object.keys(scan).length > 0) {
-			if (scan.results && scan.results !== undefined && Object.keys(scan.results).length > 0) {
-				currentScanResults = scan.results.find((e) => e.finished_at === null);
-				previousScanResults = scan.results.find((e) => e.finished_at !== null);
-
-				if (currentScanResults !== [] || currentScanResults !== undefined) {
-					if (!crawlFinished) {
-						if (previousScanResults !== undefined) {
-							setScanObjId(previousScanResults.id);
-						} else {
-							setScanObjId(currentScanResults.id);
-						}
-					} else {
-						if (previousScanResults !== undefined) {
-							setScanObjId(previousScanResults.id);
-						} else {
-							setScanObjId(currentScanResults.id);
-						}
-					}
-				}
-			}
-		}
-	}, [crawlFinished, scan, scanObjId]);
+	siteId ? (pageTitle = siteId?.name ? LinksLabel[1].label + " - " + siteId?.name : LinksLabel[1].label) : null;
 
 	scanApiEndpoint =
 		result.page !== undefined
@@ -188,32 +137,11 @@ const Links = ({ width, result }) => {
 
 	scanApiEndpoint += queryString;
 
-	const { links: links, mutateLinks: mutateLinks } = useLinks({
+	const { links, mutateLinks } = useLinks({
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,
-		scanObjId: scanObjId && scanObjId !== undefined && scanObjId !== 0 && scanObjId
+		scanObjId: scanObjId
 	});
-
-	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			siteId &&
-			siteId !== undefined &&
-			Object.keys(siteId).length > 0 &&
-			links &&
-			links !== undefined &&
-			Object.keys(links).length > 0
-		) {
-			setTimeout(() => {
-				setPageLoaded(true);
-			}, 500);
-		}
-	}, [user, site, siteId, links]);
 
 	const handleSearch = async (e) => {
 		const searchTargetValue = e.target.value;
@@ -263,7 +191,7 @@ const Links = ({ width, result }) => {
 		}
 	};
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
@@ -272,46 +200,11 @@ const Links = ({ width, result }) => {
 		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
 	}, []);
 
-	const handleOnCrawl = async () => {
-		setCrawlFinished(false);
-
-		try {
-			const response = await usePostMethod(reCrawlEndpoint);
-			const data = await response.data;
-
-			if (Math.floor(response.status / 200) === 1) {
-				if (data) {
-					return data;
-				}
-			} else {
-				// FIXME: report issues from here to Sentry
-				return null;
-			}
-		} catch (error) {
-			throw error.message;
-		}
-	};
-
-	const handleCrawl = (finished) => {
-		if (finished) setCrawlFinished(true);
-
-		if (
-			user &&
-			user.permissions !== undefined &&
-			user.permissions.includes("can_start_scan") &&
-			siteId &&
-			siteId.verified &&
-			finished
-		)
-			setRecrawlable(true);
-		else setRecrawlable(false);
-	};
-
-	return user && user !== undefined && Object.keys(user).length > 0 && pageLoaded ? (
+	return user ? (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
-			<LinksDiv tw="h-screen flex overflow-hidden bg-white">
+			<LinksSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}
@@ -319,199 +212,167 @@ const Links = ({ width, result }) => {
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
-						<div tw="border-b flex-shrink-0 flex">
-							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
-						</div>
-
-						<LinkOptions
-							sid={result.siteId}
-							user={user}
-							searchKey={searchKey}
-							onSearchEvent={handleSearch}
-							onCrawl={handleOnCrawl}
-							crawlable={recrawlable}
-							crawlFinished={crawlFinished}
-							crawlableHandler={handleCrawl}
-						/>
-					</div>
-
-					<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-						<div tw="w-full p-6 mx-auto">
-							<div className="max-w-full py-4 px-8">
-								<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-									<ol tw="flex items-center space-x-4">
-										<li>
-											<div>
-												<Link href={homePageLink} passHref>
-													<a tw="text-gray-400 hover:text-gray-500">
-														<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-														<span tw="sr-only">{homeLabel}</span>
-													</a>
-												</Link>
-											</div>
-										</li>
-										<li>
-											<div tw="flex items-center">
-												<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-												<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-													{pageTitle}
-												</p>
-											</div>
-										</li>
-									</ol>
-								</nav>
-								<div className="pt-4 m-auto">
-									<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-										{pageTitle}
-										{links && links !== undefined && links !== [] && Object.keys(links).length > 0 ? (
-											<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-												<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-													<LinkIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-													{links.count > 1
-														? links.count + " " + LinksLabel[2].label
-														: links.count == 1
-														? links.count + " " + LinksLabel[11].label
-														: LinksLabel[3].label}
-												</dd>
-											</dl>
-										) : null}
-									</h4>
+				{siteId ? (
+					siteId.verified ? (
+						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
+							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+								<div tw="border-b flex-shrink-0 flex">
+									<MobileSidebarButton
+										openMobileSidebar={openMobileSidebar}
+										setOpenMobileSidebar={setOpenMobileSidebar}
+									/>
 								</div>
-							</div>
-						</div>
-						<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-							<LinkFilter
-								result={result}
-								loadQueryString={loadQueryString}
-								setLoadQueryString={setLoadQueryString}
-								mutateLinks={mutateLinks}
-								setPagePath={setPagePath}
-							/>
 
-							<div tw="pb-4">
-								<div tw="flex flex-col">
-									<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-										<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
-											<table tw="relative min-w-full">
-												<thead>
-													<tr>
-														{LinksUrlContent.map((site, key) => {
-															return (
-																<Fragment key={key}>
-																	<th
-																		className="min-width-adjust"
-																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																	>
-																		<div tw="flex items-center justify-start">
-																			{site.slug && site.slug !== undefined ? (
-																				<LinkSorting
-																					result={result}
-																					slug={site.slug}
-																					mutateLinks={mutateLinks}
-																					linksUrlContent={LinksUrlContent}
-																					setPagePath={setPagePath}
-																				/>
-																			) : null}
-																			<span className="label" tw="flex items-center">
-																				{site.label}
-																				{site.slug &&
-																				(site.slug === "url-type" ||
-																					site.slug === "status" ||
-																					site.slug === "http-code") ? (
-																					<>
-																						<a
-																							data-tip
-																							data-for={site.slug}
-																							data-background-color={"#4A5568"}
-																							data-iscapture="true"
-																							tw="flex items-center"
-																						>
-																							<span tw="ml-2 inline-block w-4 h-4 overflow-hidden">
-																								<svg fill="currentColor" viewBox="0 0 20 20">
-																									<path
-																										fillRule="evenodd"
-																										d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-																										clipRule="evenodd"
-																									></path>
-																								</svg>
-																							</span>
-																						</a>
-																						<ReactTooltip
-																							id={site.slug}
-																							tw="w-36"
-																							className={site.slug + "-tooltip"}
-																							type="dark"
-																							effect="solid"
-																							place="bottom"
-																							multiline={true}
-																						>
-																							<span tw="text-left text-xs leading-4 font-normal text-white normal-case tracking-wider">
-																								{site.slug === "status" ? (
-																									<ul>
-																										<li tw="mb-2">
-																											<strong>{LinksLabel[5].label}</strong> -{" "}
-																											{LinksLabel[5].description}
-																										</li>
-																										<li tw="mb-2">
-																											<strong>{LinksLabel[6].label}</strong> -{" "}
-																											{LinksLabel[6].description}
-																										</li>
-																										<li tw="mb-2">
-																											<strong>{LinksLabel[7].label}</strong> -{" "}
-																											{LinksLabel[7].description}
-																										</li>
-																										<li tw="mb-2">
-																											<strong>{LinksLabel[8].label}</strong> -{" "}
-																											{LinksLabel[8].description}
-																										</li>
-																									</ul>
-																								) : (
-																									<p>{LinksLabel[9].label}</p>
-																								)}
-																							</span>
-																						</ReactTooltip>
-																					</>
-																				) : null}
-																			</span>
-																		</div>
-																	</th>
-																</Fragment>
-															);
-														})}
-													</tr>
-												</thead>
-												<tbody tw="relative">
-													{links &&
-														links !== undefined &&
-														links !== [] &&
-														Object.keys(links).length > 0 &&
-														links.results &&
-														links.results.map((val, key) => <LinkTable key={key} val={val} user={user} />)}
-												</tbody>
-											</table>
+								<LinkOptions
+									verified={siteId?.verified}
+									sid={result.siteId}
+									user={user}
+									scanResult={scanResult}
+									searchKey={searchKey}
+									onSearchEvent={handleSearch}
+									handleCrawl={handleCrawl}
+									isCrawlStarted={isCrawlStarted}
+									isCrawlFinished={isCrawlFinished}
+								/>
+							</div>
+
+							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+								<div tw="w-full p-6 mx-auto">
+									<div className="max-w-full py-4 px-8">
+										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+											<ol tw="flex items-center space-x-4">
+												<li>
+													<div>
+														<Link href={homePageLink} passHref>
+															<a tw="text-gray-400 hover:text-gray-500">
+																<HomeIcon tw="flex-shrink-0 h-5 w-5" />
+																<span tw="sr-only">{homeLabel}</span>
+															</a>
+														</Link>
+													</div>
+												</li>
+												<li>
+													<div tw="flex items-center">
+														<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+														<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+															{pageTitle}
+														</p>
+													</div>
+												</li>
+											</ol>
+										</nav>
+										<div className="pt-4 m-auto">
+											<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
+												{pageTitle}
+												{links ? (
+													<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+														<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+															<LinkIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+															{links?.count > 1
+																? links?.count + " " + LinksLabel[2].label
+																: links?.count == 1
+																? links?.count + " " + LinksLabel[11].label
+																: LinksLabel[3].label}
+														</dd>
+													</dl>
+												) : (
+													<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
+														<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
+															<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
+															{LinksLabel[12].label}
+														</dd>
+													</dl>
+												)}
+											</h4>
 										</div>
 									</div>
 								</div>
-							</div>
+								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+									<LinkFilter
+										result={result}
+										loadQueryString={loadQueryString}
+										setLoadQueryString={setLoadQueryString}
+										mutateLinks={mutateLinks}
+										setPagePath={setPagePath}
+									/>
 
-							<MyPagination
-								href="/site/[siteId]/links/"
-								pathName={pagePath}
-								apiEndpoint={scanApiEndpoint}
-								page={result.page ? result.page : 0}
-								linksPerPage={linksPerPage}
-								onItemsPerPageChange={onItemsPerPageChange}
-							/>
-						</div>
+									<div tw="pb-4">
+										<div tw="flex flex-col">
+											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+												<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
+													<table tw="relative min-w-full">
+														<thead>
+															<tr>
+																{LinksUrlContent.map((site, key) => {
+																	return (
+																		<React.Fragment key={key}>
+																			<th
+																				className="min-width-adjust"
+																				tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																			>
+																				<div tw="flex items-center justify-start">
+																					{site?.slug ? (
+																						<LinkSorting
+																							result={result}
+																							slug={site.slug}
+																							mutateLinks={mutateLinks}
+																							linksUrlContent={LinksUrlContent}
+																							setPagePath={setPagePath}
+																						/>
+																					) : null}
+																					<span className="label" tw="flex items-center">
+																						{site.label}
+																					</span>
+																				</div>
+																			</th>
+																		</React.Fragment>
+																	);
+																})}
+															</tr>
+														</thead>
+														<tbody tw="relative">
+															{links
+																? links?.results.map((val, key) => (
+																		<LinkTable key={key} siteId={result.siteId} val={val} />
+																  ))
+																: null}
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
 
-						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-							<SiteFooter />
+									<MyPagination
+										href="/site/[siteId]/links/"
+										pathName={pagePath}
+										apiEndpoint={scanApiEndpoint}
+										page={result.page ? result.page : 0}
+										linksPerPage={linksPerPage}
+										onItemsPerPageChange={onItemsPerPageChange}
+									/>
+								</div>
+
+								<div tw="static bottom-0 w-full mx-auto px-12 py-4">
+									<SiteFooter />
+								</div>
+							</main>
 						</div>
-					</main>
-				</div>
-			</LinksDiv>
+					) : (
+						<div tw="mx-auto">
+							<section tw="flex flex-col justify-center min-h-screen">
+								<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
+									<h3 tw="text-lg leading-6 font-medium text-gray-500">{LinksLabel[13].label}</h3>
+								</div>
+							</section>
+						</div>
+					)
+				) : (
+					<div tw="mx-auto">
+						<Loader />
+					</div>
+				)}
+			</LinksSection>
 		</Layout>
 	) : (
 		<Loader />

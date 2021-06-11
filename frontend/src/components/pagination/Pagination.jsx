@@ -98,7 +98,7 @@ const MyPagination = (props) => {
 
 	const handlePageChange = (pageNum) => {
 		const newPath = removeURLParameter(props.pathName, "page");
-		router.replace(`${newPath}page=${pageNum}`);
+		router.push(`${newPath}page=${pageNum}`);
 	};
 
 	useEffect(() => {

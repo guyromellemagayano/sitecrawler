@@ -38,5 +38,32 @@
 	},
 	{
 		"label": "link found"
+	},
+	{
+		"label": "Loading..."
+	},
+	{
+		"label": "Site is not verified. Please reverify to proceed"
+	},
+	{
+		"label": "Links Detail"
+	},
+	{
+		"label": "Created at"
+	},
+	{
+		"label": "Type"
+	},
+	{
+		"label": "Status"
+	},
+	{
+		"label": "Response Time"
+	},
+	{
+		"label": "Error"
+	},
+	{
+		"label": "Page Links"
 	}
 ]

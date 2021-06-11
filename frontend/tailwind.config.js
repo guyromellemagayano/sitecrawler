@@ -10,6 +10,10 @@ module.exports = {
 	presets: [],
 	darkMode: false, // or 'media' or 'class'
 	theme: {
+		inset: {
+			0: "0",
+			0.5: "0.15rem"
+		},
 		extend: {
 			accessibility: ["hover", "active"],
 			colors: {

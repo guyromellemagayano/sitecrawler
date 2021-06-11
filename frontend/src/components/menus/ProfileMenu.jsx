@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
@@ -9,7 +9,6 @@ import { ChevronUpIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
-import useSWR from "swr";
 
 // JSON
 import SidebarLabel from "public/labels/components/profile/Sidebar.json";
@@ -17,31 +16,16 @@ import SidebarPages from "public/data/sidebar-pages.json";
 
 // Hooks
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
-import useFetcher from "src/hooks/useFetcher";
 
 // Components
 import ProfileSidebarSkeleton from "src/components/skeletons/ProfileSidebarSkeleton";
 
-const ProfileMenu = () => {
-	const [profileLoaded, setProfileLoaded] = useState(false);
+const ProfileMenu = ({ user }) => {
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
-
-	const userApiEndpoint = "/api/auth/user/";
-
-	// FIXME: Update this React hook into useUser
-	const { data: user } = useSWR(userApiEndpoint, useFetcher, {});
-
-	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0) {
-			setTimeout(() => {
-				setProfileLoaded(true);
-			}, 500);
-		}
-	}, [user]);
 
 	return (
 		<div ref={ref} tw="flex-shrink-0 flex flex-col relative">
-			{profileLoaded ? (
+			{user ? (
 				<>
 					<button
 						type="button"
@@ -54,9 +38,9 @@ const ProfileMenu = () => {
 					>
 						<div tw="flex items-center">
 							<div tw="flex flex-col flex-wrap text-left">
-								<p tw="text-sm leading-tight mb-1 font-medium text-white">{user.first_name}</p>
+								<p tw="text-sm leading-tight mb-1 font-medium text-white">{user?.first_name}</p>
 								<p tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150">
-									@{user.username}
+									@{user?.username}
 								</p>
 							</div>
 						</div>
@@ -81,21 +65,21 @@ const ProfileMenu = () => {
 										<span
 											css={[
 												tw`text-sm leading-5 font-medium`,
-												user.group.name === "Basic"
+												user?.group?.name === "Basic"
 													? tw`text-green-800`
-													: user.group.name === "Pro"
-														? tw`text-blue-800`
-														: tw`text-red-800`
+													: user?.group?.name === "Pro"
+													? tw`text-blue-800`
+													: tw`text-red-800`
 											]}
 										>
-											{user.group.name} {SidebarLabel[0].label}
+											{user?.group?.name} {SidebarLabel[0].label}
 										</span>
-										{(user.group.name === "Basic" || user.group.name === "Pro") && (
+										{(user?.group?.name === "Basic" || user?.group?.name === "Pro") && (
 											<Link href="/settings/subscription-plans" passHref>
 												<a
 													css={[
 														tw`text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded hover:text-white cursor-pointer transition ease-in-out duration-150`,
-														user.group.name === "Basic"
+														user?.group?.name === "Basic"
 															? tw`bg-green-200 text-green-800 hover:bg-green-600`
 															: tw`bg-blue-200 text-blue-800 hover:bg-blue-600`
 													]}
@@ -107,11 +91,31 @@ const ProfileMenu = () => {
 									</span>
 								</div>
 								<div tw="border-t border-gray-300"></div>
-								{SidebarPages.map((val) => (
-									<>
+								{SidebarPages.map((val, key) => (
+									<div key={key}>
 										<div tw="py-1">
-											{val.links.filter((page) => page.slug !== "logout").map((val, key) => (
-												<Link key={key} href={val.url} passHref>
+											{val.links
+												.filter((page) => page.slug !== "logout")
+												.map((val, key) => (
+													<Link key={key} href={val.url} passHref>
+														<a
+															tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+															role="menuitem"
+														>
+															{val.label}
+														</a>
+													</Link>
+												))}
+										</div>
+										<div tw="border-t border-gray-300"></div>
+									</div>
+								))}
+								{SidebarPages.filter((page) => page.slug === "global-settings").map((val, key) => (
+									<div key={key} tw="py-1">
+										{val.links
+											.filter((page) => page.slug === "logout")
+											.map((val, key) => (
+												<Link key={key} href={val.url}>
 													<a
 														tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
 														role="menuitem"
@@ -120,22 +124,6 @@ const ProfileMenu = () => {
 													</a>
 												</Link>
 											))}
-										</div>
-										<div tw="border-t border-gray-300"></div>
-									</>
-								))}
-								{SidebarPages.filter((page) => page.slug === "global-settings").map((val) => (
-									<div tw="py-1">
-										{val.links.filter((page) => page.slug === "logout").map((val, key) => (
-											<Link key={key} href={val.url}>
-												<a
-													tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-													role="menuitem"
-												>
-													{val.label}
-												</a>
-											</Link>
-										))}
 									</div>
 								))}
 							</div>
@@ -144,9 +132,8 @@ const ProfileMenu = () => {
 				</>
 			) : (
 				<ProfileSidebarSkeleton />
-			)
-			}
-		</div >
+			)}
+		</div>
 	);
 };
 

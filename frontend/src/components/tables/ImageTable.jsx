@@ -1,8 +1,7 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
@@ -64,23 +63,29 @@ const ImagesTableDiv = styled.tr`
 	}
 `;
 
-const ImagesTable = (props) => {
-	const [componentReady, setComponentReady] = useState(false);
+const ImagesTable = ({ siteId, val }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 
-	const { query } = useRouter();
-
-	const { imageDetail: imageDetail } = useImageDetail({
-		querySid: query.siteId,
-		scanObjId: props.val.scan_id,
-		linkId: props.val.id
+	const { imageDetail } = useImageDetail({
+		querySid: siteId,
+		scanObjId: val.scan_id,
+		linkId: val.id
 	});
 
-	useEffect(() => {
-		if (imageDetail && imageDetail !== undefined && imageDetail !== [] && Object.keys(imageDetail).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
+	React.useEffect(() => {
+		imageDetail
+			? (() => {
+					setComponentReady(false);
+
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+
+		return () => {
+			setComponentReady(false);
+		};
 	}, [imageDetail]);
 
 	return (
@@ -91,13 +96,13 @@ const ImagesTable = (props) => {
 						<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
 							{componentReady ? (
 								<a
-									href={props.val.url}
+									href={val.url}
 									target="_blank"
-									title={props.val.url}
+									title={val.url}
 									className="truncate-link"
 									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
 								>
-									{props.val.url}
+									{val.url}
 								</a>
 							) : (
 								<Skeleton duration={2} width={300} />
@@ -105,24 +110,18 @@ const ImagesTable = (props) => {
 						</div>
 						<div tw="flex justify-start leading-5 text-gray-500">
 							{componentReady ? (
-								imageDetail && imageDetail !== undefined && imageDetail !== [] ? (
-									Object.keys(imageDetail).length > 0 && (
-										<Link
-											href="/site/[siteId]/images/[imageId]/details"
-											as={`/site/${query.siteId}/images/${imageDetail.id}/details`}
-											passHref
-										>
-											<a
-												className="btn-detail"
-												tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-											>
-												View Details
-											</a>
-										</Link>
-									)
-								) : (
-									<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
-								)
+								<Link
+									href="/site/[siteId]/images/[imageId]/details"
+									as={`/site/${siteId}/images/${imageDetail?.id}/details`}
+									passHref
+								>
+									<a
+										className="btn-detail"
+										tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+									>
+										View Details
+									</a>
+								</Link>
 							) : (
 								<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
 							)}
@@ -132,7 +131,7 @@ const ImagesTable = (props) => {
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					bytes(props.val.size, {
+					bytes(val.size, {
 						thousandsSeparator: " ",
 						unitSeparator: " "
 					})
@@ -142,41 +141,12 @@ const ImagesTable = (props) => {
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					props.val.status === "OK" ? (
+					val.status === "OK" ? (
 						<SiteSuccessBadge text={"OK"} />
-					) : props.val.status === "TIMEOUT" ? (
+					) : val.status === "TIMEOUT" ? (
 						<SiteWarningBadge text={"TIMEOUT"} />
-					) : props.val.status === "HTTP_ERROR" ? (
-						<>
-							<span tw="flex items-center justify-start">
-								<SiteDangerBadge text={`${props.val.http_status} HTTP ERROR`} />
-								<a
-									data-tip=""
-									data-for={props.val.url}
-									data-background-color={"#E53E3E"}
-									data-iscapture={true}
-									data-scroll-hide={false}
-									tw="flex cursor-pointer"
-								>
-									<InformationCircleIcon tw="ml-2 text-red-400 inline-block w-4 h-4 overflow-hidden" />
-								</a>
-								<ReactTooltip
-									id={props.val.url}
-									className={`${props.val.status + "-tooltip"} w-36`}
-									type="dark"
-									effect="solid"
-									place="bottom"
-									clickable={true}
-									multiline={true}
-								>
-									<span tw="text-left text-xs leading-4 font-normal text-white normal-case tracking-wider">
-										<p>
-											<strong>{props.val.error}</strong>
-										</p>
-									</span>
-								</ReactTooltip>
-							</span>
-						</>
+					) : val.status === "HTTP_ERROR" ? (
+						<SiteDangerBadge text={`${val.http_status} HTTP ERROR`} />
 					) : (
 						<SiteDangerBadge text={"OTHER ERROR"} />
 					)
@@ -186,27 +156,19 @@ const ImagesTable = (props) => {
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					imageDetail &&
-					imageDetail !== undefined &&
-					imageDetail !== [] &&
-					Object.keys(imageDetail).length > 0 &&
-					props.val.length !== 0 && (
+					val.length !== 0 && (
 						<Link
 							href="/site/[siteId]/images/[imageId]/details"
-							as={`/site/${query.siteId}/images/${imageDetail.id}/details`}
+							as={`/site/${siteId}/images/${imageDetail?.id}/details`}
 							passHref
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								<span className="truncate-link">
-									{props.val && Url(props.val.url).pathname !== "" ? (
-										Url(props.val.url).pathname
-									) : (
-										<em>{props.val.url}</em>
-									)}
+									{val && Url(val.url).pathname !== "" ? Url(val.url).pathname : <em>{val.url}</em>}
 								</span>
 								&nbsp;
-								{props.val.length - 1 > 0 ? "+" + parseInt(props.val.length - 1) : null}{" "}
-								{props.val.length - 1 > 1 ? "others" : props.val.length - 1 === 1 ? "other" : null}
+								{val.length - 1 > 0 ? "+" + parseInt(val.length - 1) : null}{" "}
+								{val.length - 1 > 1 ? "others" : val.length - 1 === 1 ? "other" : null}
 							</a>
 						</Link>
 					)
@@ -215,10 +177,10 @@ const ImagesTable = (props) => {
 				)}
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
-				{componentReady ? props.val.missing_alts : <Skeleton duration={2} width={45} />}
+				{componentReady ? val.missing_alts : <Skeleton duration={2} width={45} />}
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
-				{componentReady ? props.val.occurences : <Skeleton duration={2} width={45} />}
+				{componentReady ? val.occurences : <Skeleton duration={2} width={45} />}
 			</td>
 		</ImagesTableDiv>
 	);

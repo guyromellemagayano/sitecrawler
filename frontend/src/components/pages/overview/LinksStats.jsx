@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -17,7 +17,7 @@ import Skeleton from "react-loading-skeleton";
 import LinksStatsLabel from "public/labels/components/sites/LinksStats.json";
 
 // Enums
-import { linksChartContents } from "src/enum/chartContents";
+import { linksChartContents } from "src/enums/chartContents";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
@@ -92,19 +92,23 @@ const SitesLinksStatsDiv = styled.div`
 	}
 `;
 
-const SitesLinksStats = ({ width, sid, stats }) => {
-	const [componentReady, setComponentReady] = useState(false);
+const SitesLinksStats = ({ width, sid, stats, scanResult }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 
 	let lgScreenBreakpoint = 1024;
 
 	const router = useRouter();
 
-	useEffect(() => {
-		if (stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
+	React.useEffect(() => {
+		stats
+			? (() => {
+					setComponentReady(false);
+
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
 	}, [stats]);
 
 	const legendClickHandler = (label) => {
@@ -115,20 +119,12 @@ const SitesLinksStats = ({ width, sid, stats }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.replace("/site/[siteId]/links", path);
+		router.push("/site/[siteId]/links", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_non_ok_links !== undefined
-			? stats.num_non_ok_links
-			: 0,
-		stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0 && stats.num_ok_links !== undefined
-			? stats.num_ok_links
-			: 0
+		stats?.num_non_ok_links ? stats.num_non_ok_links : 0,
+		stats?.num_ok_links ? stats.num_ok_links : 0
 	];
 
 	const chartOptions = {
@@ -235,7 +231,7 @@ const SitesLinksStats = ({ width, sid, stats }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/links" as={`/site/${sid}/links`} passHref>
+							<Link href="/site/[siteId]/links" as={`/site/${sid}/links`} replace>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{LinksStatsLabel[1].label}</a>
 							</Link>
 						) : (
@@ -257,7 +253,7 @@ const SitesLinksStats = ({ width, sid, stats }) => {
 					) : (
 						<div tw="flex flex-col items-start h-530">
 							<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
-							<div tw="flex flex-col space-y-3 mt-16">
+							<div tw="flex flex-col space-y-3 mt-8">
 								{[...Array(2)].map((value, key) => (
 									<span key={key} tw="space-x-3">
 										<Skeleton circle={true} width={20} height={20} />

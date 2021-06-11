@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
@@ -10,7 +10,6 @@ import { Formik } from "formik";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import * as Yup from "yup";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
@@ -26,88 +25,74 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MainSidebar = loadable(() => import("src/components/sidebar/MainSidebar"));
-const MobileSidebarButton = loadable(() => import("src/components/buttons/MobileSidebarButton"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
-const SupportSkeleton = loadable(() => import("src/components/skeletons/SupportSkeleton"));
+import AppLogo from "src/components/logos/AppLogo";
+import ErrorNotification from "src/components/notifications/ErrorNotification";
+import Loader from "src/components/layouts/Loader";
+import MainSidebar from "src/components/sidebar/MainSidebar";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
+import SiteFooter from "src/components/layouts/Footer";
+import SuccessNotification from "src/components/notifications/SuccessNotification";
+import SupportSkeleton from "src/components/skeletons/SupportSkeleton";
 
-const Support = ({ width, token }) => {
-	const [disableSupportForm, setDisableSupportForm] = useState(false);
-	const [errorMsg, setErrorMsg] = useState("");
-	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
-	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [pageLoaded, setPageLoaded] = useState(false);
-	const [siteData, setSiteData] = useState([]);
-	const [successMsg, setSuccessMsg] = useState("");
-	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
-	const [userData, setUserData] = useState([]);
+const Support = ({ width }) => {
+	// const [pageLoaded, setPageLoaded] = React.useState(false);
+	// const [siteData, setSiteData] = React.useState([]);
+	// const [userData, setUserData] = React.useState([]);
+	const [componentReady, setComponentReady] = React.useState(false);
+	const [disableSupportForm, setDisableSupportForm] = React.useState(false);
+	const [errorMsg, setErrorMsg] = React.useState("");
+	const [errorMsgLoaded, setErrorMsgLoaded] = React.useState(false);
+	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
+	const [successMsg, setSuccessMsg] = React.useState("");
+	const [successMsgLoaded, setSuccessMsgLoaded] = React.useState(false);
 
 	const pageTitle = "Support";
 	const homeLabel = "Home";
 	const homePageLink = "/";
 	const contactApiEndpoint = "/api/support/contact/";
-	const sitesApiEndpoint = "/api/site/?ordering=name";
 
-	const { user: user } = useUser({
+	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
 
-	const { site: site } = useSite({
-		endpoint: sitesApiEndpoint
-	});
+	React.useEffect(() => {
+		setComponentReady(false);
 
-	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0
-		) {
-			setTimeout(() => {
-				setPageLoaded(true);
-			}, 500);
+		setTimeout(() => {
+			setComponentReady(true);
+		}, 500);
+	}, []);
 
-			setSiteData(site);
-			setUserData(user);
-		}
-	}, [user, site]);
+	React.useEffect(() => {
+		successMsg && successMsg !== ""
+			? setTimeout(() => {
+					setSuccessMsgLoaded(true);
+			  }, 500)
+			: null;
 
-	useEffect(() => {
-		if (successMsg && successMsg !== "") {
-			setTimeout(() => {
-				setSuccessMsgLoaded(true);
-			}, 500);
-		}
-
-		if (errorMsg && errorMsg !== "") {
-			setTimeout(() => {
-				setErrorMsgLoaded(true);
-			}, 500);
-		}
+		errorMsg && errorMsg !== ""
+			? setTimeout(() => {
+					setErrorMsgLoaded(true);
+			  }, 500)
+			: null;
 	}, [successMsg, errorMsg]);
 
-	useEffect(() => {
-		if (successMsgLoaded) {
-			setTimeout(() => {
-				setSuccessMsgLoaded(false);
-			}, 3500);
-		}
+	React.useEffect(() => {
+		successMsgLoaded
+			? setTimeout(() => {
+					setSuccessMsgLoaded(false);
+			  }, 3500)
+			: null;
 
-		if (errorMsgLoaded) {
-			setTimeout(() => {
-				setErrorMsgLoaded(false);
-			}, 3500);
-		}
+		errorMsgLoaded
+			? setTimeout(() => {
+					setErrorMsgLoaded(false);
+			  }, 3500)
+			: null;
 	}, [successMsgLoaded, errorMsgLoaded]);
 
-	return pageLoaded ? (
+	return user ? (
 		<Layout>
 			<NextSeo title={pageTitle} />
 
@@ -128,7 +113,7 @@ const Support = ({ width, token }) => {
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={userData}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -150,131 +135,130 @@ const Support = ({ width, token }) => {
 					<main tw="flex-1 h-screen relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-								{pageLoaded ? (
-									<>
-										<div className="max-w-full py-4 px-8">
-											<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-												<ol tw="flex items-center space-x-4">
-													<li>
-														<div>
-															<Link href={homePageLink} passHref>
-																<a tw="text-gray-400 hover:text-gray-500">
-																	<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-																	<span tw="sr-only">{homeLabel}</span>
-																</a>
-															</Link>
-														</div>
-													</li>
-													<li>
-														<div tw="flex items-center">
-															<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-															<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-																{pageTitle}
-															</p>
-														</div>
-													</li>
-												</ol>
-											</nav>
-											<div className="pt-4 m-auto">
-												<h4 className="text-2xl leading-6 font-medium text-gray-900">{SupportLabel[6].label}</h4>
-												<p className="max-w-full mt-2 text-sm leading-5 text-gray-500">{SupportLabel[7].label}</p>
-											</div>
-										</div>
-										<div tw="max-w-full lg:max-w-4xl p-8 pt-0 pb-2">
-											<Formik
-												initialValues={{
-													message: ""
-												}}
-												validationSchema={Yup.object({
-													message: Yup.string().required(SupportLabel[2].label)
-												})}
-												onSubmit={async (values, { setSubmitting, resetForm }) => {
-													const body = {
-														message: values.message
-													};
+								<div className="max-w-full py-4 px-8">
+									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+										<ol tw="flex items-center space-x-4">
+											<li>
+												<div>
+													<Link href={homePageLink} passHref>
+														<a tw="text-gray-400 hover:text-gray-500">
+															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
+															<span tw="sr-only">{homeLabel}</span>
+														</a>
+													</Link>
+												</div>
+											</li>
+											<li>
+												<div tw="flex items-center">
+													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+														{pageTitle}
+													</p>
+												</div>
+											</li>
+										</ol>
+									</nav>
+									<div className="pt-4 m-auto">
+										<h4 className="text-2xl leading-6 font-medium text-gray-900">{SupportLabel[6].label}</h4>
+										<p className="max-w-full mt-2 text-sm leading-5 text-gray-500">{SupportLabel[7].label}</p>
+									</div>
+								</div>
 
-													const response = await usePostMethod(contactApiEndpoint, body);
+								{componentReady ? (
+									<div tw="max-w-full lg:max-w-4xl p-8 pt-0 pb-2">
+										<Formik
+											initialValues={{
+												message: ""
+											}}
+											validationSchema={Yup.object({
+												message: Yup.string().required(SupportLabel[2].label)
+											})}
+											onSubmit={async (values, { setSubmitting, resetForm }) => {
+												const body = {
+													message: values.message
+												};
 
-													if (Math.floor(response.status / 200) === 1) {
-														setSuccessMsg(SupportLabel[3].label);
-														setSuccessMsgLoaded(!successMsgLoaded);
-														setSubmitting(false);
-														resetForm({ values: "" });
-														setDisableSupportForm(!disableSupportForm);
-													} else {
-														if (response.data) {
-															if (response.data.message) {
-																setErrorMsg(response.data.message[0]);
-																setErrorMsgLoaded(!errorMsgLoaded);
-															}
+												const response = await usePostMethod(contactApiEndpoint, body);
 
-															if (!response.data.message) {
-																setErrorMsg(SupportLabel[5].label);
-																setErrorMsgLoaded(!errorMsgLoaded);
-															}
-														} else {
+												if (Math.floor(response.status / 200) === 1) {
+													setSuccessMsg(SupportLabel[3].label);
+													setSuccessMsgLoaded(!successMsgLoaded);
+													setSubmitting(false);
+													resetForm({ values: "" });
+													setDisableSupportForm(!disableSupportForm);
+												} else {
+													if (response.data) {
+														if (response.data.message) {
+															setErrorMsg(response.data.message[0]);
+															setErrorMsgLoaded(!errorMsgLoaded);
+														}
+
+														if (!response.data.message) {
 															setErrorMsg(SupportLabel[5].label);
 															setErrorMsgLoaded(!errorMsgLoaded);
-															setSubmitting(false);
-															resetForm({ values: "" });
 														}
+													} else {
+														setErrorMsg(SupportLabel[5].label);
+														setErrorMsgLoaded(!errorMsgLoaded);
+														setSubmitting(false);
+														resetForm({ values: "" });
 													}
-												}}
-											>
-												{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-													<form tw="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
-														<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-															<div tw="sm:col-span-4">
-																<label htmlFor="about" tw="block text-sm font-medium text-gray-700">
-																	{SupportLabel[8].label}
-																</label>
-																<div tw="my-1">
-																	<textarea
-																		id="message"
-																		name="message"
-																		rows="8"
-																		disabled={isSubmitting}
-																		css={[
-																			tw`resize-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md`,
-																			isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-																			errors.message || errorMsg ? tw`border-red-300` : tw`border-gray-300`
-																		]}
-																		placeholder={SupportLabel[9].label}
-																		onChange={handleChange}
-																		onBlur={handleBlur}
-																		value={values.message}
-																	/>
+												}
+											}}
+										>
+											{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+												<form tw="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
+													<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+														<div tw="sm:col-span-4">
+															<label htmlFor="about" tw="block text-sm font-medium text-gray-700">
+																{SupportLabel[8].label}
+															</label>
+															<div tw="my-1">
+																<textarea
+																	id="message"
+																	name="message"
+																	rows="8"
+																	disabled={isSubmitting}
+																	css={[
+																		tw`resize-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md`,
+																		isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+																		errors.message || errorMsg ? tw`border-red-300` : tw`border-gray-300`
+																	]}
+																	placeholder={SupportLabel[9].label}
+																	onChange={handleChange}
+																	onBlur={handleBlur}
+																	value={values.message}
+																/>
 
-																	{errors.message && touched.message && (
-																		<span tw="block mt-2 text-xs leading-5 text-red-700">
-																			{errors.message && touched.message && errors.message}
-																		</span>
-																	)}
-																</div>
-															</div>
-
-															<div tw="sm:col-span-4">
-																<div tw="flex justify-start">
-																	<button
-																		type="submit"
-																		disabled={isSubmitting}
-																		css={[
-																			tw`cursor-pointer inline-flex sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
-																			isSubmitting
-																				? tw`opacity-50 bg-green-400 cursor-not-allowed`
-																				: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
-																		]}
-																	>
-																		{isSubmitting ? SupportLabel[11].label : SupportLabel[10].label}
-																	</button>
-																</div>
+																{errors.message && touched.message && (
+																	<span tw="block mt-2 text-xs leading-5 text-red-700">
+																		{errors.message && touched.message && errors.message}
+																	</span>
+																)}
 															</div>
 														</div>
-													</form>
-												)}
-											</Formik>
-										</div>
-									</>
+
+														<div tw="sm:col-span-4">
+															<div tw="flex justify-start">
+																<button
+																	type="submit"
+																	disabled={isSubmitting}
+																	css={[
+																		tw`cursor-pointer inline-flex sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
+																		isSubmitting
+																			? tw`opacity-50 bg-green-400 cursor-not-allowed`
+																			: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
+																	]}
+																>
+																	{isSubmitting ? SupportLabel[11].label : SupportLabel[10].label}
+																</button>
+															</div>
+														</div>
+													</div>
+												</form>
+											)}
+										</Formik>
+									</div>
 								) : (
 									<SupportSkeleton />
 								)}

@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -17,7 +17,7 @@ import Skeleton from "react-loading-skeleton";
 import ImagesStatsLabel from "public/labels/components/sites/ImagesStats.json";
 
 // Enums
-import { imagesChartContents } from "src/enum/chartContents";
+import { imagesChartContents } from "src/enums/chartContents";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
@@ -95,19 +95,23 @@ const SitesImagesStatsDiv = styled.div`
 	}
 `;
 
-const SitesImagesStats = ({ width, sid, stats }) => {
-	const [componentReady, setComponentReady] = useState(false);
+const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 
 	let lgScreenBreakpoint = 1024;
 
 	const router = useRouter();
 
-	useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
+	React.useEffect(() => {
+		stats
+			? (() => {
+					setComponentReady(false);
+
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
 	}, [stats]);
 
 	const legendClickHandler = (label) => {
@@ -118,38 +122,14 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.replace("/site/[siteId]/images", path);
+		router.push("/site/[siteId]/images", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_non_ok_images &&
-		stats.num_non_ok_images !== undefined
-			? stats.num_non_ok_images
-			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_images_tls_non_ok &&
-		stats.num_images_tls_non_ok !== undefined
-			? stats.num_images_tls_non_ok
-			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_images_with_missing_alts &&
-		stats.num_images_with_missing_alts !== undefined
-			? stats.num_images_with_missing_alts
-			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_images_fully_ok &&
-		stats.num_images_fully_ok !== undefined
-			? stats.num_images_fully_ok
-			: 0
+		stats?.num_non_ok_images ? stats.num_non_ok_images : 0,
+		stats?.num_images_tls_non_ok ? stats.num_images_tls_non_ok : 0,
+		stats?.num_images_with_missing_alts ? stats.num_images_with_missing_alts : 0,
+		stats?.num_images_fully_ok ? stats.num_images_fully_ok : 0
 	];
 
 	const chartOptions = {
@@ -256,7 +236,7 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/images" as={`/site/${sid}/images`} passHref>
+							<Link href="/site/[siteId]/images" as={`/site/${sid}/images`} replace>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{ImagesStatsLabel[1].label}</a>
 							</Link>
 						) : (
@@ -278,7 +258,7 @@ const SitesImagesStats = ({ width, sid, stats }) => {
 					) : (
 						<div tw="flex flex-col items-start h-530">
 							<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
-							<div tw="flex flex-col space-y-3 mt-16">
+							<div tw="flex flex-col space-y-3 mt-8">
 								{[...Array(4)].map((value, key) => (
 									<span key={key} tw="space-x-3">
 										<Skeleton circle={true} width={20} height={20} />

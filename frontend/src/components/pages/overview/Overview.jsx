@@ -1,11 +1,7 @@
 // React
-import { useState, useEffect } from "react";
-
-// NextJS
-import Link from "next/link";
+import * as React from "react";
 
 // External
-import { InformationCircleIcon } from "@heroicons/react/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import loadable from "@loadable/component";
 import Moment from "react-moment";
@@ -17,25 +13,25 @@ import tw from "twin.macro";
 import OverviewLabel from "public/labels/components/sites/Overview.json";
 
 // Components
-const SiteDangerStatus = loadable(() => import("src/components/status/SiteDangerStatus"));
-const SiteSuccessStatus = loadable(() => import("src/components/status/SiteSuccessStatus"));
-const SiteWarningStatus = loadable(() => import("src/components/status/SiteWarningStatus"));
+import SiteDangerStatus from "src/components/status/SiteDangerStatus";
+import SiteSuccessStatus from "src/components/status/SiteSuccessStatus";
+import SiteWarningStatus from "src/components/status/SiteWarningStatus";
+
+// Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
 const SitesOverview = ({
 	verified,
-	finishedAt,
-	forceHttps,
-	onCrawl,
-	crawlable,
-	crawlFinished,
-	user,
 	stats,
-	scanCount,
-	disableLocalTime
+	scanResult,
+	user,
+	disableLocalTime,
+	handleCrawl,
+	isCrawlStarted,
+	isCrawlFinished
 }) => {
-	const [componentReady, setComponentReady] = useState(false);
-	const [showErrorModal, setShowErrorModal] = useState(false);
+	const [componentReady, setComponentReady] = React.useState(false);
+	const [showErrorModal, setShowErrorModal] = React.useState(false);
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -44,19 +40,23 @@ const SitesOverview = ({
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	useEffect(() => {
-		if (user && stats) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [user, stats]);
-
-	const handleOnCrawlPermissions = (e) => {
+	const handleCrawlPermissions = (e) => {
 		e.preventDefault();
 
 		setShowErrorModal(!showErrorModal);
 	};
+
+	React.useEffect(() => {
+		stats
+			? (() => {
+					setComponentReady(false);
+
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+	}, [stats]);
 
 	return (
 		<>
@@ -70,49 +70,33 @@ const SitesOverview = ({
 			<div tw="bg-white overflow-hidden rounded-lg h-full border">
 				<div tw="px-4 py-5 sm:p-6">
 					<div tw="flex items-center justify-between mb-5">
-						<h2 tw="text-lg font-bold leading-7 text-gray-900">
-							{componentReady ? OverviewLabel[1].label : <Skeleton duration={2} width={120} height={20} />}
-						</h2>
+						<h2 tw="text-lg font-bold leading-7 text-gray-900">{OverviewLabel[1].label}</h2>
 						<div className="btn-crawler">
 							{componentReady ? (
-								user && user !== undefined && Object.keys(user).length > 0 ? (
+								user ? (
 									<button
 										type="button"
-										disabled={user.permissions.includes("can_start_scan") && !crawlable}
-										onClick={user && user.permissions.includes("can_start_scan") ? onCrawl : handleOnCrawlPermissions}
+										disabled={isCrawlStarted && !isCrawlFinished}
+										onClick={user?.permissions.includes("can_start_scan") ? handleCrawl : handleCrawlPermissions}
 										css={[
 											tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
-											user.permissions.includes("can_start_scan") ? tw`bg-green-600` : tw`bg-yellow-600`,
-											user.permissions.includes("can_start_scan")
-												? !crawlFinished
-													? tw`opacity-50 cursor-not-allowed`
-													: tw`hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
-												: !crawlFinished
-												? tw`opacity-50 cursor-not-allowed`
-												: tw`hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
+											user?.permissions.includes("can_start_scan")
+												? isCrawlStarted && !isCrawlFinished
+													? tw`bg-green-600 opacity-50 cursor-not-allowed`
+													: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
+												: tw`bg-yellow-600 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
 										]}
 									>
 										<span tw="flex items-center space-x-2">
-											{user &&
-											user !== undefined &&
-											user !== [] &&
-											Object.keys(user).length > 0 &&
-											user.permissions &&
-											user.permissions !== undefined &&
-											user.permissions.includes("can_see_images") &&
-											user.permissions.includes("can_see_pages") &&
-											user.permissions.includes("can_see_scripts") &&
-											user.permissions.includes("can_see_stylesheets") &&
-											user.permissions.includes("can_start_scan") ? null : (
+											{user?.permissions?.includes("can_start_scan") ? null : (
 												<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 											)}
-											<span>
-												{crawlFinished
-													? OverviewLabel[0].label
-													: scanCount == 1
-													? OverviewLabel[8].label
-													: OverviewLabel[6].label}
-											</span>
+
+											{!isCrawlStarted && isCrawlFinished ? (
+												<span>{OverviewLabel[0].label}</span>
+											) : (
+												<span>{OverviewLabel[6].label}</span>
+											)}
 										</span>
 									</button>
 								) : null
@@ -122,43 +106,38 @@ const SitesOverview = ({
 						</div>
 					</div>
 					<dl tw="mb-8 max-w-xl text-sm leading-5">
-						<dt tw="text-sm leading-5 font-medium text-gray-500">
-							{componentReady ? OverviewLabel[2].label : <Skeleton duration={2} width={100} height={15} />}
-						</dt>
-						{user && user !== undefined && Object.keys(user).length > 0 && !user.settings.disableLocalTime ? (
-							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{componentReady ? (
-									<>
-										<Moment calendar={calendarStrings} date={finishedAt} local />
-										&nbsp;
-										<Moment date={finishedAt} format="hh:mm:ss A" local />
-									</>
-								) : (
-									<Skeleton duration={2} width={240} height={15} />
-								)}
-							</dd>
+						<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[2].label}</dt>
+						{componentReady ? (
+							user?.settings.disableLocalTime && disableLocalTime ? (
+								<dd tw="mt-1 text-sm leading-5 text-gray-900">
+									{stats ? (
+										<span tw="space-x-2">
+											<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
+											<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
+											<span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>
+										</span>
+									) : null}
+								</dd>
+							) : (
+								<dd tw="mt-1 text-sm leading-5 text-gray-900">
+									{stats ? (
+										<span tw="space-x-2">
+											<Moment calendar={calendarStrings} date={stats?.finished_at} local />
+											<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
+										</span>
+									) : null}
+								</dd>
+							)
 						) : (
-							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{componentReady ? (
-									<span tw="space-x-2">
-										<Moment calendar={calendarStrings} date={finishedAt} utc />
-										<Moment date={finishedAt} format="hh:mm:ss A" utc />
-										{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
-									</span>
-								) : (
-									<Skeleton duration={2} width={240} height={15} />
-								)}
-							</dd>
+							<Skeleton duration={2} width={240} height={15} />
 						)}
 					</dl>
-					<dl tw="grid grid-cols-1 col-gap-4 row-gap-8 sm:grid-cols-2">
-						<div tw="sm:col-span-1">
-							<dt tw="text-sm leading-5 font-medium text-gray-500">
-								{componentReady ? OverviewLabel[1].label : <Skeleton duration={2} width={100} height={15} />}
-							</dt>
+					<dl tw="grid grid-cols-1 col-span-4 sm:grid-cols-2">
+						<div tw="py-3 sm:col-span-1">
+							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[1].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
 								{componentReady ? (
-									verified && verified !== undefined ? (
+									verified ? (
 										<SiteSuccessStatus text="Verified" />
 									) : (
 										<SiteDangerStatus text="Unverified" />
@@ -171,73 +150,22 @@ const SitesOverview = ({
 								)}
 							</dd>
 						</div>
-						{user && user !== undefined && Object.keys(user).length > 0 && user.permissions.includes("can_see_pages") && (
-							<div tw="sm:col-span-1">
-								<dt tw="text-sm leading-5 font-medium text-gray-500">
-									{componentReady ? OverviewLabel[3].label : <Skeleton duration={2} width={100} height={15} />}
-								</dt>
+						{user?.permissions?.includes("can_see_pages") && (
+							<div tw="py-3 sm:col-span-1">
+								<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[3].label}</dt>
 								<dd tw="mt-1 text-sm leading-5 text-gray-900">
 									{componentReady ? (
-										verified && verified !== undefined ? (
-											stats &&
-											stats !== undefined &&
-											Object.keys(stats).length > 0 &&
-											crawlFinished &&
-											stats.num_pages_tls_non_ok === 0 ? (
-												<SiteSuccessStatus text="Valid" />
-											) : crawlFinished && stats.num_pages_tls_non_ok !== 0 ? (
-												<>
-													<span tw="flex items-center justify-start">
-														<SiteDangerStatus text="Not Valid" />
-
-														<a
-															data-for="pages-tls-not-ok"
-															data-background-color="#E53E3E"
-															data-iscapture={true}
-															data-scroll-hide={false}
-															tw="inline-flex items-center ml-3 focus:outline-none"
-														>
-															<span tw="w-5 h-5">
-																<InformationCircleIcon tw="text-red-400" />
-															</span>
-														</a>
-														{/* <ReactTooltip
-															id="pages-tls-not-ok"
-															className="ssl-valid-tooltip w-64"
-															type="dark"
-															effect="solid"
-															place="bottom"
-															clickable={true}
-															multiline={true}
-															delayHide={500}
-															delayShow={500}
-														>
-															<span tw="text-left text-xs leading-4 font-normal text-white normal-case tracking-wider">
-																<p>
-																	<strong tw="block mb-3">Here are our findings:</strong>
-																	Apparently you have{" "}
-																	{stats &&
-																		stats !== undefined &&
-																		Object.keys(stats).length > 0 &&
-																		stats.num_pages_tls_non_ok}{" "}
-																	pages that have some TLS issues. You can check this
-																	<strong tw="ml-1">
-																		{
-																			<Link
-																				href="/site/[siteId]/pages/?tls_total=false"
-																				as={`/site/${id}/pages/?tls_total=false`}
-																				passHref
-																			>
-																				<a tw="hover:text-red-300">link</a>
-																			</Link>
-																		}
-																	</strong>{" "}
-																	for more information.
-																</p>
-															</span>
-														</ReactTooltip> */}
-													</span>
-												</>
+										verified ? (
+											!isCrawlStarted && isCrawlFinished ? (
+												stats ? (
+													stats.num_pages_tls_non_ok === 0 ? (
+														<SiteSuccessStatus text="Valid" />
+													) : (
+														<span tw="flex items-center justify-start">
+															<SiteDangerStatus text="Not Valid" />
+														</span>
+													)
+												) : null
 											) : (
 												<SiteWarningStatus text="Checking" />
 											)
@@ -248,22 +176,23 @@ const SitesOverview = ({
 										<span tw="flex space-x-3">
 											<Skeleton circle={true} duration={2} width={15} height={15} />
 											<Skeleton duration={2} width={100} height={15} />
-											<Skeleton circle={true} duration={2} width={15} height={15} />
 										</span>
 									)}
 								</dd>
 							</div>
 						)}
-						<div tw="sm:col-span-1">
-							<dt tw="text-sm leading-5 font-medium text-gray-500">
-								{componentReady ? OverviewLabel[4].label : <Skeleton duration={2} width={100} height={15} />}
-							</dt>
+						<div tw="py-3 sm:col-span-1">
+							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[4].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
 								{componentReady ? (
-									forceHttps === true ? (
-										<SiteSuccessStatus text="Yes" />
-									) : forceHttps === false ? (
-										<SiteDangerStatus text="No" />
+									!isCrawlStarted && isCrawlFinished ? (
+										stats ? (
+											stats.force_https ? (
+												<SiteSuccessStatus text="Yes" />
+											) : (
+												<SiteDangerStatus text="No" />
+											)
+										) : null
 									) : (
 										<SiteWarningStatus text="Checking" />
 									)
@@ -275,13 +204,11 @@ const SitesOverview = ({
 								)}
 							</dd>
 						</div>
-						<div tw="sm:col-span-1">
-							<dt tw="text-sm leading-5 font-medium text-gray-500">
-								{componentReady ? OverviewLabel[5].label : <Skeleton duration={2} width={100} height={15} />}
-							</dt>
+						<div tw="py-3 sm:col-span-1">
+							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[5].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
 								{componentReady ? (
-									crawlFinished ? (
+									!isCrawlStarted && isCrawlFinished ? (
 										<SiteSuccessStatus text="Finished" />
 									) : (
 										<SiteWarningStatus text="In Process" />

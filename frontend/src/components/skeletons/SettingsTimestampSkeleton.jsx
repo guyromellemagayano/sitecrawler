@@ -24,7 +24,7 @@ const SettingsTimestampSkeleton = () => {
 				<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
 					<div tw="sm:col-span-4">
 						<div tw="inline-flex space-x-3 my-1 max-w-sm">
-							<Skeleton duration={2} width={100} height={40} />
+							<Skeleton duration={2} width={50} height={40} />
 							<span tw="space-y-3">
 								<Skeleton duration={2} width={125} height={15} />
 								<Skeleton duration={2} width={250} height={15} />

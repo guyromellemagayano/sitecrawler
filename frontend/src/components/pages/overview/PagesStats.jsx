@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -17,7 +17,7 @@ import Skeleton from "react-loading-skeleton";
 import PagesStatsLabel from "public/labels/components/sites/PagesStats.json";
 
 // Enums
-import { pagesChartContents } from "src/enum/chartContents";
+import { pagesChartContents } from "src/enums/chartContents";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
@@ -92,19 +92,23 @@ const SitesPagesStatsDiv = styled.div`
 	}
 `;
 
-const SitesPagesStats = ({ width, sid, stats }) => {
-	const [componentReady, setComponentReady] = useState(false);
+const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 
 	let lgScreenBreakpoint = 1024;
 
 	const router = useRouter();
 
-	useEffect(() => {
-		if (stats && stats !== undefined && Object.keys(stats).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
+	React.useEffect(() => {
+		stats
+			? (() => {
+					setComponentReady(false);
+
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
 	}, [stats]);
 
 	const legendClickHandler = (label) => {
@@ -115,32 +119,13 @@ const SitesPagesStats = ({ width, sid, stats }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.replace("/site/[siteId]/pages", path);
+		router.push("/site/[siteId]/pages", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_big &&
-		stats.num_pages_big !== undefined
-			? stats.num_pages_big
-			: 0,
-		stats &&
-		stats !== undefined &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_tls_non_ok &&
-		stats.num_pages_tls_non_ok !== undefined
-			? stats.num_pages_tls_non_ok
-			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_small_tls_ok &&
-		stats.num_pages_small_tls_ok !== undefined
-			? stats.num_pages_small_tls_ok
-			: 0
+		stats?.num_pages_big ? stats.num_pages_big : 0,
+		stats?.num_pages_tls_non_ok ? stats.num_pages_tls_non_ok : 0,
+		stats?.num_pages_small_tls_ok ? stats.num_pages_small_tls_ok : 0
 	];
 
 	const chartOptions = {
@@ -247,7 +232,7 @@ const SitesPagesStats = ({ width, sid, stats }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/pages" as={`/site/${sid}/pages`} passHref>
+							<Link href="/site/[siteId]/pages" as={`/site/${sid}/pages`} replace>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{PagesStatsLabel[1].label}</a>
 							</Link>
 						) : (
@@ -269,7 +254,7 @@ const SitesPagesStats = ({ width, sid, stats }) => {
 					) : (
 						<div tw="flex flex-col items-start h-530">
 							<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
-							<div tw="flex flex-col space-y-3 mt-16">
+							<div tw="flex flex-col space-y-3 mt-8">
 								{[...Array(3)].map((value, key) => (
 									<span key={key} tw="space-x-3">
 										<Skeleton circle={true} width={20} height={20} />

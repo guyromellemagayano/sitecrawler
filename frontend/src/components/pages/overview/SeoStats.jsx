@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -17,7 +17,7 @@ import Skeleton from "react-loading-skeleton";
 import SeoStatsLabel from "public/labels/components/sites/SeoStats.json";
 
 // Enums
-import { seoChartContents } from "src/enum/chartContents";
+import { seoChartContents } from "src/enums/chartContents";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
@@ -92,19 +92,23 @@ const SitesSeoStatsDiv = styled.div`
 	}
 `;
 
-const SitesSeoStats = ({ width, sid, stats }) => {
-	const [componentReady, setComponentReady] = useState(false);
+const SitesSeoStats = ({ width, sid, stats, scanResult }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 
 	let lgScreenBreakpoint = 1024;
 
 	const router = useRouter();
 
-	useEffect(() => {
-		if (stats && stats !== undefined && stats !== [] && Object.keys(stats).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
+	React.useEffect(() => {
+		stats
+			? (() => {
+					setComponentReady(false);
+
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
 	}, [stats]);
 
 	const legendClickHandler = (label) => {
@@ -115,45 +119,15 @@ const SitesSeoStats = ({ width, sid, stats }) => {
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.replace("/site/[siteId]/seo", path);
+		router.push("/site/[siteId]/seo", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_without_title !== undefined
-			? stats.num_pages_without_title
-			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_without_description !== undefined
-			? stats.num_pages_without_description
-			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_without_h1_first !== undefined
-			? stats.num_pages_without_h1_first
-			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_without_h2_first !== undefined
-			? stats.num_pages_without_h2_first
-			: 0,
-		stats &&
-		stats !== undefined &&
-		stats !== [] &&
-		Object.keys(stats).length > 0 &&
-		stats.num_pages_seo_ok !== undefined
-			? stats.num_pages_seo_ok
-			: 0
+		stats?.num_pages_without_title ? stats.num_pages_without_title : 0,
+		stats?.num_pages_without_description ? stats.num_pages_without_description : 0,
+		stats?.num_pages_without_h1_first ? stats.num_pages_without_h1_first : 0,
+		stats?.num_pages_without_h2_first ? stats.num_pages_without_h2_first : 0,
+		stats?.num_pages_seo_ok ? stats.num_pages_seo_ok : 0
 	];
 
 	const chartOptions = {
@@ -260,7 +234,7 @@ const SitesSeoStats = ({ width, sid, stats }) => {
 					</div>
 					<div>
 						{componentReady ? (
-							<Link href="/site/[siteId]/seo" as={`/site/${sid}/seo`} passHref>
+							<Link href="/site/[siteId]/seo" as={`/site/${sid}/seo`} replace>
 								<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{SeoStatsLabel[1].label}</a>
 							</Link>
 						) : (
@@ -282,7 +256,7 @@ const SitesSeoStats = ({ width, sid, stats }) => {
 					) : (
 						<div tw="flex flex-col items-start h-530">
 							<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
-							<div tw="flex flex-col space-y-3 mt-16">
+							<div tw="flex flex-col space-y-3 mt-8">
 								{[...Array(5)].map((value, key) => (
 									<span key={key} tw="space-x-3">
 										<Skeleton circle={true} width={20} height={20} />

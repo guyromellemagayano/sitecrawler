@@ -10,9 +10,6 @@
 		"key": "size_total"
 	},
 	{
-		"label": "Status"
-	},
-	{
 		"label": "SSL",
 		"slug": "page-ssl",
 		"key": "tls_total"

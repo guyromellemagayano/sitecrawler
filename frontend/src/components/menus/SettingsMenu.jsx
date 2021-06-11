@@ -1,11 +1,12 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
+import { GlobeIcon } from "@heroicons/react/outline";
 import {
 	ArrowLeftIcon,
 	UserCircleIcon,
@@ -26,45 +27,29 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 
 // Hooks
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
-import { GlobeIcon } from "@heroicons/react/outline";
 
-const SettingsMenu = ({ user, site }) => {
-	const [componentReady, setComponentReady] = useState(false);
-	const [selectedSite, setSelectedSite] = useState("");
-	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
-	const [siteData, setSiteData] = useState([]);
-	const [sitesLoaded, setSitesLoaded] = useState(false);
+const SettingsMenu = ({ site }) => {
+	const [selectedSite, setSelectedSite] = React.useState("");
+	const [selectedSiteDetails, setSelectedSiteDetails] = React.useState([]);
+	const [sitesLoaded, setSitesLoaded] = React.useState(false);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
-	const { query } = useRouter();
 	const router = useRouter();
 
-	useEffect(() => {
-		if (
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0 &&
-			query &&
-			query !== undefined &&
-			query.siteId !== ""
-		) {
-			setSiteData(site);
-			handleSiteSelectOnLoad(query.siteId);
-		}
-	}, [site, query]);
-
 	const handleSiteSelectOnLoad = (siteId) => {
-		if (siteData && siteData.results !== undefined && Object.keys(siteData.results).length > 0) {
-			for (let i = 0; i < siteData.results.length; i++) {
-				if (siteData.results[i].id == siteId) {
-					setSelectedSite(siteData.results[i].name);
+		site?.results
+			? (() => {
+					for (let i = 0; i < site?.results.length; i++) {
+						if (site?.results[i]?.id == siteId) {
+							setSelectedSite(site?.results[i]?.name);
 
-					setTimeout(() => {
-						router.replace(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
-					}, 500);
-				}
-			}
-		}
+							setTimeout(() => {
+								router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
+							}, 500);
+						}
+					}
+			  })()
+			: null;
 	};
 
 	const handleDropdownHandler = (siteId, verified) => {
@@ -74,35 +59,25 @@ const SettingsMenu = ({ user, site }) => {
 		setIsComponentVisible(!isComponentVisible);
 	};
 
-	useEffect(() => {
-		if (user && siteData && siteData !== undefined && Object.keys(siteData).length > 0) {
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		}
-	}, [user, siteData]);
-
-	useEffect(() => {
-		if (isComponentVisible) {
-			setTimeout(() => {
-				setSitesLoaded(true);
-			}, 500);
-		} else {
-			setSitesLoaded(false);
-		}
+	React.useEffect(() => {
+		isComponentVisible
+			? (() => {
+					setTimeout(() => {
+						setSitesLoaded(true);
+					}, 500);
+			  })()
+			: setSitesLoaded(false);
 	}, [isComponentVisible]);
 
-	useEffect(() => {
-		if (siteData && siteData !== undefined && Object.keys(siteData).length > 0) {
-			if (Object.keys(siteData.results).length > 0) {
-				siteData.results
+	React.useEffect(() => {
+		site?.results
+			? site?.results
 					.filter((result) => result.name === selectedSite)
 					.map((val) => {
 						setSelectedSiteDetails(val);
-					});
-			}
-		}
-	}, [selectedSite, siteData]);
+					})
+			: null;
+	}, [selectedSite, site]);
 
 	return (
 		<div tw="flex-1 flex flex-col overflow-y-auto">
@@ -111,59 +86,52 @@ const SettingsMenu = ({ user, site }) => {
 					return (
 						<div key={index} tw="mb-8">
 							<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
-								{componentReady ? value.category : <Skeleton duration={2} width={125} height={20} />}
+								{value?.category}
 							</h3>
 
 							<div tw="my-3" role="group">
-								{value.links && value.links !== undefined && Object.keys(value.links).length > 0 ? (
-									value.links.map((value2, index) => {
-										return componentReady ? (
-											value2.slug !== "go-back-to-sites" ? (
-												<Link key={index} href={value2.url} passHref>
-													<a
-														className="group"
-														css={[
-															tw`cursor-pointer`,
-															router.pathname == value2.url
-																? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
-																: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150`
-														]}
-													>
-														{value2.slug === "profile-settings" ? (
-															<UserCircleIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "subscription-plans" ? (
-															<ViewBoardsIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "billing-settings" ? (
-															<CreditCardIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "global-settings" ? (
-															<GlobeIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "subscription-plans" ? (
-															<ViewBoardsIcon tw="mr-3 h-6 w-5" />
-														) : value2.slug === "help-support" ? (
-															<SupportIcon tw="mr-3 h-6 w-5" />
-														) : null}
-														<span>{value2.title}</span>
-													</a>
-												</Link>
-											) : (
-												<Link key={index} href={value2.url} passHref>
-													<a
-														className="group"
-														tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
-													>
-														<ArrowLeftIcon tw="mr-3 h-6 w-5" />
-														<span>{value2.title ? value2.title : null}</span>
-													</a>
-												</Link>
-											)
+								{value?.links ? (
+									value?.links.map((value, index) => {
+										return value?.slug !== "go-back-to-sites" ? (
+											<Link key={index} href={value?.url} passHref>
+												<a
+													className="group"
+													css={[
+														tw`cursor-pointer`,
+														router.pathname == value?.url
+															? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
+															: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150`
+													]}
+												>
+													{value?.slug === "profile-settings" ? (
+														<UserCircleIcon tw="mr-3 h-6 w-5" />
+													) : value?.slug === "subscription-plans" ? (
+														<ViewBoardsIcon tw="mr-3 h-6 w-5" />
+													) : value?.slug === "billing-settings" ? (
+														<CreditCardIcon tw="mr-3 h-6 w-5" />
+													) : value?.slug === "global-settings" ? (
+														<GlobeIcon tw="mr-3 h-6 w-5" />
+													) : value?.slug === "subscription-plans" ? (
+														<ViewBoardsIcon tw="mr-3 h-6 w-5" />
+													) : value?.slug === "help-support" ? (
+														<SupportIcon tw="mr-3 h-6 w-5" />
+													) : null}
+													{value?.title ? <span>{value?.title}</span> : null}
+												</a>
+											</Link>
 										) : (
-											<span key={index} tw="mt-1 flex items-center px-3 py-2 space-x-3">
-												<Skeleton circle={true} duration={2} width={20} height={20} />
-												<Skeleton duration={2} width={150} height={20} />
-											</span>
+											<Link key={index} href={value?.url} passHref>
+												<a
+													className="group"
+													tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
+												>
+													<ArrowLeftIcon tw="mr-3 h-6 w-5" />
+													{value?.title ? <span>{value?.title}</span> : null}
+												</a>
+											</Link>
 										);
 									})
-								) : componentReady ? (
+								) : (
 									<div tw="space-y-1">
 										<div ref={ref} tw="relative">
 											<div tw="relative">
@@ -182,16 +150,16 @@ const SettingsMenu = ({ user, site }) => {
 																	selectedSiteDetails ? (
 																		<div tw="flex items-center space-x-3">
 																			<span
-																				aria-label="Verified"
+																				aria-label={value?.verified ? "Verified" : "Not Verified"}
 																				css={[
 																					tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																					selectedSiteDetails.verified ? tw`bg-green-400` : tw`bg-red-400`
+																					selectedSiteDetails?.verified ? tw`bg-green-400` : tw`bg-red-400`
 																				]}
 																			></span>
 																			<span
 																				css={[
 																					tw`font-medium block truncate`,
-																					selectedSiteDetails.verified
+																					selectedSiteDetails?.verified
 																						? tw`text-gray-500`
 																						: tw`text-gray-600 opacity-25`
 																				]}
@@ -221,55 +189,53 @@ const SettingsMenu = ({ user, site }) => {
 													leaveTo="transform opacity-0 scale-95"
 													className="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 												>
-													{siteData && siteData.results !== undefined ? (
-														siteData.results.length > 0 ? (
+													{site?.results ? (
+														site?.results.length > 0 ? (
 															<ul
 																tabIndex="-1"
 																role="listbox"
 																aria-labelledby="listbox-label"
 																tw="max-h-60 pt-2 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
 															>
-																{siteData.results.map((value, index) => {
+																{site?.results.map((value, index) => {
 																	return (
 																		<li
 																			key={index}
-																			onClick={() => handleDropdownHandler(value.id, value.verified)}
+																			onClick={() => handleDropdownHandler(value?.id, value?.verified)}
 																			id={`listbox-item-${index + 1}`}
 																			role="option"
 																			css={[
 																				tw`select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`,
-																				value.verified ? tw`cursor-pointer` : tw`cursor-not-allowed`
+																				value?.verified ? tw`cursor-pointer` : tw`cursor-not-allowed`
 																			]}
 																		>
 																			<div tw="flex items-center space-x-3">
 																				{sitesLoaded ? (
-																					<>
-																						<span
-																							aria-label="Verified"
-																							css={[
-																								tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																								value.verified ? tw`bg-green-400` : tw`bg-red-400`
-																							]}
-																						></span>
-																						<span
-																							css={[
-																								tw`font-medium block truncate`,
-																								value.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
-																							]}
-																						>
-																							{value.name}
-																						</span>
-																					</>
+																					<span
+																						aria-label={value?.verified ? "Verified" : "Not Verified"}
+																						css={[
+																							tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+																							value?.verified ? tw`bg-green-400` : tw`bg-red-400`
+																						]}
+																					/>
 																				) : (
-																					<div tw="flex items-center space-x-3 my-1">
-																						<div>
-																							<Skeleton circle={true} duration={2} width={20} height={20} />
-																						</div>
-																						<div tw="ml-3">
-																							<Skeleton duration={2} width={145} />
-																						</div>
-																					</div>
+																					<Skeleton
+																						circle={true}
+																						duration={2}
+																						width={10}
+																						height={10}
+																						className="relative top-0.5"
+																					/>
 																				)}
+
+																				<span
+																					css={[
+																						tw`font-medium block truncate`,
+																						value?.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
+																					]}
+																				>
+																					{sitesLoaded ? value?.name : <Skeleton duration={2} width={145} />}
+																				</span>
 																			</div>
 																		</li>
 																	);
@@ -280,7 +246,7 @@ const SettingsMenu = ({ user, site }) => {
 
 													<span tw="flex m-2 justify-center shadow-sm rounded-md">
 														<Link href="/add-site/information">
-															<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer transition ease-in-out duration-150 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+															<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 																<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
 																{PrimaryMenuLabel[2].label}
 															</a>
@@ -289,12 +255,6 @@ const SettingsMenu = ({ user, site }) => {
 												</Transition>
 											</div>
 										</div>
-									</div>
-								) : (
-									<div tw="space-y-1">
-										<span tw="mt-1 flex items-center py-2">
-											<Skeleton duration={2} width={220} height={35} />
-										</span>
 									</div>
 								)}
 							</div>

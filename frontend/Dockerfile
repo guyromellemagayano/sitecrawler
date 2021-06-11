@@ -3,18 +3,16 @@ FROM node:14 AS dev
 RUN mkdir /app
 WORKDIR /app
 
-COPY package*.json ./
-COPY yarn.lock ./
-RUN yarn install
+COPY package.json /app
+COPY yarn.lock /app
+RUN yarn install --install-lockfile
 
-COPY . .
+COPY . /app
 
-EXPOSE 3000 3030
+EXPOSE 3000
 
-
-# build prod assets
 FROM dev AS prod
 
-RUN yarn run build
+RUN yarn build
 
 CMD yarn start
