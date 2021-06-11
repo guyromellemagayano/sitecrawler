@@ -25,7 +25,7 @@ const Logout = () => {
 	});
 
 	useEffect(() => {
-		(() => {
+		(async () => {
 			try {
 				const response = await usePostMethod(logoutApiEndpoint);
 
