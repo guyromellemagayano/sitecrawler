@@ -2,11 +2,9 @@
 import * as React from "react";
 
 // NextJS
-// import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
-// import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
