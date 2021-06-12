@@ -2,14 +2,13 @@
 import Link from "next/link";
 
 // External
+import "twin.macro";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
-import tw from "twin.macro";
 
-const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) => {
+const RecrawlSiteErrorModal = ({ show, setShowErrorModal, label }) => {
 	const settingsSubscriptionsLink = "/settings/subscription-plans";
 	const defaultModalHeadlineLabel = "Site Feature Not Available";
 	const defaultModalDescriptionLabel =
@@ -57,15 +56,11 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) =>
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-								{component === "AddSite"
-									? label[1].label
-									: component === "LinkOptions"
-									? label[6].label
-									: defaultModalHeadlineLabel}
+								{label?.[0] ?? defaultModalHeadlineLabel}
 							</h3>
 							<div tw="mt-2">
 								<p tw="text-sm leading-5 text-gray-500">
-									{component === "AddSite" ? label[2].label : ReactHtmlParser(defaultModalDescriptionLabel)}
+									{label?.[1] ?? ReactHtmlParser(defaultModalDescriptionLabel)}
 								</p>
 							</div>
 						</div>
@@ -81,7 +76,7 @@ const RecrawlSiteErrorModal = ({ show, setShowErrorModal, component, label }) =>
 						<span tw="mt-3 flex w-full rounded-md shadow-sm sm:ml-3 sm:mt-0 sm:w-auto">
 							<button
 								type="button"
-								tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+								tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 								onClick={() => setTimeout(() => setShowErrorModal(!show), 150)}
 							>
 								{defaultModalCancelLabel}

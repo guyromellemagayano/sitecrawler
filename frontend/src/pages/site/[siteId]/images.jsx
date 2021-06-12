@@ -2,16 +2,14 @@
 import * as React from "react";
 
 // NextJS
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
-import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
-import { PhotographIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
-import { withResizeDetector } from "react-resize-detector";
-import PropTypes from "prop-types";
 import { styled } from "twin.macro";
+import { withResizeDetector } from "react-resize-detector";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
 
 // JSON
 import ImagesLabel from "public/labels/pages/site/images.json";
@@ -26,22 +24,27 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-import ImageFilter from "src/components/helpers/filters/ImageFilter";
-import ImageSorting from "src/components/helpers/sorting/ImageSorting";
-import ImageTable from "src/components/tables/ImageTable";
-import ImageTableSkeleton from "src/components/skeletons/ImageTableSkeleton";
-import LinkOptions from "src/components/pages/overview/LinkOptions";
-import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
-import MyPagination from "src/components/pagination/Pagination";
 import SiteFooter from "src/components/layouts/Footer";
-import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
+
+// Loadable
+// const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
+const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
+const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
+const ImageFilter = loadable(() => import("src/components/helpers/filters/ImageFilter"));
+const ImageSorting = loadable(() => import("src/components/helpers/sorting/ImageSorting"));
+const ImageTable = loadable(() => import("src/components/tables/ImageTable"));
+const ImageTableSkeleton = loadable(() => import("src/components/skeletons/ImageTableSkeleton"));
+const LinkOptions = loadable(() => import("src/components/pages/overview/LinkOptions"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
+const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
+const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
-const ImagesSection = styled.section`
+const ImageSection = styled.section`
 	@media only screen and (max-width: 1600px) {
 		.min-width-adjust {
 			min-width: 15rem;
@@ -59,16 +62,6 @@ const Images = ({ width, result }) => {
 	const { asPath } = useRouter();
 	const router = useRouter();
 
-	let pageTitle = "";
-	const homeLabel = "Home";
-	let homePageLink = `/site/${result.siteId}/overview`;
-
-	let scanApiEndpoint = "";
-	let queryString = "";
-	let statusString = "";
-	let tlsStatusString = "";
-	let missingAltsString = "";
-
 	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
@@ -82,9 +75,15 @@ const Images = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	siteId ? (pageTitle = siteId?.name ? ImagesLabel[1].label + " - " + siteId?.name : ImagesLabel[1].label) : null;
+	const pageTitle = ImagesLabel[1].label + " - " + siteId?.name;
 
-	user?.permissions.includes("can_see_images") && user?.permissions.includes("can_start_scan")
+	let scanApiEndpoint = "";
+	let queryString = "";
+	let statusString = "";
+	let tlsStatusString = "";
+	let missingAltsString = "";
+
+	user?.permissions.includes("can_see_images")
 		? (() => {
 				scanApiEndpoint =
 					result.page !== undefined
@@ -210,7 +209,7 @@ const Images = ({ width, result }) => {
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
-			<ImagesSection tw="h-screen flex overflow-hidden bg-white">
+			<ImageSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}
@@ -219,190 +218,147 @@ const Images = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					siteId?.verified ? (
-						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
-							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
-								<div tw="border-b flex-shrink-0 flex">
-									<MobileSidebarButton
-										openMobileSidebar={openMobileSidebar}
-										setOpenMobileSidebar={setOpenMobileSidebar}
-									/>
-								</div>
-
-								<LinkOptions
-									verified={siteId?.verified}
-									sid={result.siteId}
-									user={user}
-									scanResult={scanResult}
-									searchKey={searchKey}
-									onSearchEvent={handleSearch}
-									handleCrawl={handleCrawl}
-									isCrawlStarted={isCrawlStarted}
-									isCrawlFinished={isCrawlFinished}
+					// siteId?.verified ? (
+					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
+						<div tw="relative flex-shrink-0 flex bg-white">
+							<div tw="border-b flex-shrink-0 flex">
+								<MobileSidebarButton
+									openMobileSidebar={openMobileSidebar}
+									setOpenMobileSidebar={setOpenMobileSidebar}
 								/>
 							</div>
 
-							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-								<div tw="w-full p-6 mx-auto">
-									<div className="max-w-full py-4 px-8">
-										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-											<ol tw="flex items-center space-x-4">
-												<li>
-													<div>
-														<Link href={homePageLink} passHref>
-															<a tw="text-gray-400 hover:text-gray-500">
-																<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-																<span tw="sr-only">{homeLabel}</span>
-															</a>
-														</Link>
-													</div>
-												</li>
-												<li>
-													<div tw="flex items-center">
-														<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-														<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-															{pageTitle}
-														</p>
-													</div>
-												</li>
-											</ol>
-										</nav>
-										<div className="pt-4 m-auto">
-											<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-												{pageTitle}
-												{user?.permissions.includes("can_see_images") &&
-												user?.permissions.includes("can_start_scan") ? (
-													images ? (
-														<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-															<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-																<PhotographIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-																{images?.count > 1
-																	? images?.count + " " + ImagesLabel[2].label
-																	: images?.count == 1
-																	? images?.count + " " + ImagesLabel[14].label
-																	: ImagesLabel[3].label}
-															</dd>
-														</dl>
-													) : (
-														<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-															<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-																<PhotographIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-																{ImagesLabel[13].label}
-															</dd>
-														</dl>
-													)
-												) : null}
-											</h4>
-										</div>
-									</div>
+							<LinkOptions
+								permissions={user?.permissions}
+								scanResult={scanResult}
+								searchKey={searchKey}
+								onSearchEvent={handleSearch}
+								handleCrawl={handleCrawl}
+								isCrawlStarted={isCrawlStarted}
+								isCrawlFinished={isCrawlFinished}
+							/>
+						</div>
+
+						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+							<div tw="w-full p-6 mx-auto">
+								<div className="max-w-full p-4">
+									<Breadcrumbs siteId={result.siteId} pageTitle={ImagesLabel[1].label} />
+
+									<HeadingOptions
+										isImages
+										siteId={result.siteId}
+										siteName={siteId?.name}
+										siteUrl={siteId?.url}
+										scanObjId={scanObjId}
+										permissions={user?.permissions}
+										pageTitle={ImagesLabel[1].label}
+										count={images?.count}
+										dataLabel={[
+											ImagesLabel[2].label,
+											ImagesLabel[14].label,
+											ImagesLabel[3].label,
+											ImagesLabel[13].label
+										]}
+									/>
 								</div>
-								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-									{user?.permissions.includes("can_see_images") && user?.permissions.includes("can_start_scan") ? (
-										<ImageFilter
-											result={result}
-											loadQueryString={loadQueryString}
-											setLoadQueryString={setLoadQueryString}
-											mutateImages={mutateImages}
-											setPagePath={setPagePath}
-										/>
-									) : null}
+							</div>
+							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+								{user?.permissions.includes("can_see_images") ? (
+									<ImageFilter
+										result={result}
+										loadQueryString={loadQueryString}
+										setLoadQueryString={setLoadQueryString}
+										mutateImages={mutateImages}
+										setPagePath={setPagePath}
+									/>
+								) : null}
 
-									<div tw="pb-4">
-										<div tw="flex flex-col">
-											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-												<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
-													<table tw="relative min-w-full">
-														<thead>
-															<tr>
-																{ImageTableContent.map((site, key) => {
-																	return (
-																		<React.Fragment key={key}>
-																			<th
-																				className="min-width-adjust"
-																				tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																			>
-																				<span tw="flex items-center justify-start">
-																					{user?.permissions.includes("can_see_images") &&
-																					user?.permissions.includes("can_start_scan") ? (
-																						site.slug ? (
-																							<ImageSorting
-																								result={result}
-																								slug={site.slug}
-																								mutateImages={mutateImages}
-																								imageTableContent={ImageTableContent}
-																								setPagePath={setPagePath}
-																							/>
-																						) : null
-																					) : null}
-																					<span className="label" tw="flex items-center">
-																						{site.label}
-																					</span>
-																				</span>
-																			</th>
-																		</React.Fragment>
-																	);
-																})}
-															</tr>
-														</thead>
-														<tbody tw="relative">
-															{user?.permissions.includes("can_see_images") &&
-															user?.permissions.includes("can_start_scan")
-																? images
-																	? images?.results.map((val, key) => (
-																			<ImageTable key={key} siteId={result.siteId} val={val} />
-																	  ))
-																	: null
-																: null}
-														</tbody>
-													</table>
+								<div tw="pb-4">
+									<div tw="flex flex-col">
+										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+											<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
+												<table tw="relative min-w-full">
+													<thead>
+														<tr>
+															{ImageTableContent.map((site, key) => {
+																return (
+																	<th
+																		key={key}
+																		className="min-width-adjust"
+																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																	>
+																		<span tw="flex items-center justify-start">
+																			{user?.permissions.includes("can_see_images") ? (
+																				site?.slug ? (
+																					<ImageSorting
+																						result={result}
+																						slug={site?.slug}
+																						mutateImages={mutateImages}
+																						imageTableContent={ImageTableContent}
+																						setPagePath={setPagePath}
+																					/>
+																				) : null
+																			) : null}
+																			<span className="label" tw="flex items-center">
+																				{site?.label}
+																			</span>
+																		</span>
+																	</th>
+																);
+															})}
+														</tr>
+													</thead>
+													<tbody tw="relative">
+														{user?.permissions.includes("can_see_images") ? (
+															images ? (
+																images?.results.map((val, key) => (
+																	<ImageTable key={key} siteId={result.siteId} val={val} />
+																))
+															) : null
+														) : (
+															<ImageTableSkeleton />
+														)}
+													</tbody>
+												</table>
 
-													{!user?.permissions
-														? (() => {
-																<>
-																	<ImageTableSkeleton />
-																	<UpgradeErrorAlert link="/settings/subscription-plans" />
-																</>;
-														  })()
-														: null}
-												</div>
+												{user?.permissions.length == 0 ? (
+													<div tw="relative top-2.5">
+														<UpgradeErrorAlert link="/settings/subscription-plans" />
+													</div>
+												) : null}
 											</div>
 										</div>
 									</div>
-
-									{user?.permissions.includes("can_see_images") && user?.permissions.includes("can_start_scan") ? (
-										images ? (
-											<MyPagination
-												href="/site/[siteId]/images/"
-												pathName={pagePath}
-												apiEndpoint={scanApiEndpoint}
-												page={result.page ? result.page : 0}
-												linksPerPage={linksPerPage}
-												onItemsPerPageChange={onItemsPerPageChange}
-											/>
-										) : null
-									) : null}
 								</div>
 
-								<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-									<SiteFooter />
-								</div>
-							</main>
-						</div>
-					) : (
-						<div tw="mx-auto">
-							<section tw="flex flex-col justify-center min-h-screen">
-								<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-									<h3 tw="text-lg leading-6 font-medium text-gray-500">{SeoLabel[19].label}</h3>
-								</div>
-							</section>
-						</div>
-					)
+								{user?.permissions.includes("can_see_images") ? (
+									images ? (
+										<MyPagination
+											href="/site/[siteId]/images/"
+											pathName={pagePath}
+											apiEndpoint={scanApiEndpoint}
+											page={result.page ? result.page : 0}
+											linksPerPage={linksPerPage}
+											onItemsPerPageChange={onItemsPerPageChange}
+										/>
+									) : null
+								) : null}
+							</div>
+
+							<div tw="static bottom-0 w-full mx-auto px-12 py-4">
+								<SiteFooter />
+							</div>
+						</main>
+					</div>
 				) : (
+					// ) : (
+					// 	<SiteReverifyMessage />
+					// )
 					<div tw="mx-auto">
 						<Loader />
 					</div>
 				)}
-			</ImagesSection>
+			</ImageSection>
 		</Layout>
 	) : (
 		<Loader />

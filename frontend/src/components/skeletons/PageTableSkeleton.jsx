@@ -24,9 +24,6 @@ const PageTableSkeleton = () => {
 				<Skeleton duration={2} width={100} />
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
-				<Skeleton duration={2} width={50} />
-			</td>
-			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				<Skeleton duration={2} width={30} />
 			</td>
 		</>

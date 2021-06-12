@@ -5,13 +5,10 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { InformationCircleIcon } from "@heroicons/react/outline";
 import { styled } from "twin.macro";
 import bytes from "bytes";
 import PropTypes from "prop-types";
-import ReactTooltip from "react-tooltip";
 import Skeleton from "react-loading-skeleton";
-import Url from "url-parse";
 
 // Hooks
 import { useImageDetail } from "src/hooks/useSite";
@@ -164,7 +161,7 @@ const ImagesTable = ({ siteId, val }) => {
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								<span className="truncate-link">
-									{val && Url(val.url).pathname !== "" ? Url(val.url).pathname : <em>{val.url}</em>}
+									{imageDetail?.pages[0]?.url == val?.url ? "/" : imageDetail?.pages[0]?.url}
 								</span>
 								&nbsp;
 								{val.length - 1 > 0 ? "+" + parseInt(val.length - 1) : null}{" "}

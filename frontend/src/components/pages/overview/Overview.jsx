@@ -7,10 +7,13 @@ import loadable from "@loadable/component";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // JSON
 import OverviewLabel from "public/labels/components/sites/Overview.json";
+
+// Hooks
+import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 
 // Components
 import SiteDangerStatus from "src/components/status/SiteDangerStatus";
@@ -19,6 +22,8 @@ import SiteWarningStatus from "src/components/status/SiteWarningStatus";
 
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
+
+const SitesOverviewDiv = styled.div``;
 
 const SitesOverview = ({
 	verified,
@@ -32,18 +37,13 @@ const SitesOverview = ({
 }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [showErrorModal, setShowErrorModal] = React.useState(false);
+	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
 		sameDay: "[Today], dddd",
 		lastWeek: "MMMM DD, YYYY",
 		sameElse: "MMMM DD, YYYY"
-	};
-
-	const handleCrawlPermissions = (e) => {
-		e.preventDefault();
-
-		setShowErrorModal(!showErrorModal);
 	};
 
 	React.useEffect(() => {
@@ -60,14 +60,9 @@ const SitesOverview = ({
 
 	return (
 		<>
-			<UpgradeErrorModal
-				show={showErrorModal}
-				setShowErrorModal={setShowErrorModal}
-				component="Overview"
-				label={OverviewLabel}
-			/>
+			<SitesOverviewDiv ref={ref} tw="bg-white overflow-hidden rounded-lg h-full border">
+				<UpgradeErrorModal show={isComponentVisible} setShowErrorModal={setIsComponentVisible} />
 
-			<div tw="bg-white overflow-hidden rounded-lg h-full border">
 				<div tw="px-4 py-5 sm:p-6">
 					<div tw="flex items-center justify-between mb-5">
 						<h2 tw="text-lg font-bold leading-7 text-gray-900">{OverviewLabel[1].label}</h2>
@@ -77,7 +72,11 @@ const SitesOverview = ({
 									<button
 										type="button"
 										disabled={isCrawlStarted && !isCrawlFinished}
-										onClick={user?.permissions.includes("can_start_scan") ? handleCrawl : handleCrawlPermissions}
+										onClick={
+											user?.permissions.includes("can_start_scan")
+												? handleCrawl
+												: () => setIsComponentVisible(!isComponentVisible)
+										}
 										css={[
 											tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
 											user?.permissions.includes("can_start_scan")
@@ -223,7 +222,7 @@ const SitesOverview = ({
 						</div>
 					</dl>
 				</div>
-			</div>
+			</SitesOverviewDiv>
 		</>
 	);
 };

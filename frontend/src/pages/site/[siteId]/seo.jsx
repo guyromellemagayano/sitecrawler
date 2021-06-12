@@ -2,14 +2,13 @@
 import * as React from "react";
 
 // NextJS
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
-import { ChevronRightIcon, HomeIcon, SearchIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
+import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // JSON
@@ -25,17 +24,22 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-import LinkOptions from "src/components/pages/overview/LinkOptions";
-import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
-import MyPagination from "src/components/pagination/Pagination";
-import SeoFilter from "src/components/helpers/filters/SeoFilter";
-import SeoSorting from "src/components/helpers/sorting/SeoSorting";
-import SeoTable from "src/components/tables/SeoTable";
-import SeoTableSkeleton from "src/components/skeletons/SeoTableSkeleton";
 import SiteFooter from "src/components/layouts/Footer";
-import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
+
+// Loadable
+const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
+const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
+const LinkOptions = loadable(() => import("src/components/pages/overview/LinkOptions"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
+const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
+const SeoFilter = loadable(() => import("src/components/helpers/filters/SeoFilter"));
+const SeoSorting = loadable(() => import("src/components/helpers/sorting/SeoSorting"));
+const SeoTable = loadable(() => import("src/components/tables/SeoTable"));
+const SeoTableSkeleton = loadable(() => import("src/components/skeletons/SeoTableSkeleton"));
+const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
+const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
@@ -59,17 +63,6 @@ const Seo = ({ width, result }) => {
 	const { asPath } = useRouter();
 	const router = useRouter();
 
-	let pageTitle = "";
-	let homeLabel = "Home";
-	let homePageLink = `/site/${result.siteId}/overview`;
-
-	let scanApiEndpoint = "";
-	let queryString = "";
-	let hasTitleString = "";
-	let hasDescriptionString = "";
-	let hasH1FirstString = "";
-	let hasH2FirstString = "";
-
 	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
@@ -83,12 +76,18 @@ const Seo = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	siteId ? (pageTitle = siteId?.name ? SeoLabel[1].label + " - " + siteId?.name : SeoLabel[1].label) : null;
+	const pageTitle = SeoLabel[1].label + " - " + siteId?.name;
+
+	let scanApiEndpoint = "";
+	let queryString = "";
+	let hasTitleString = "";
+	let hasDescriptionString = "";
+	let hasH1FirstString = "";
+	let hasH2FirstString = "";
 
 	user?.permissions.includes("can_see_pages") &&
 	user?.permissions.includes("can_see_scripts") &&
-	user?.permissions.includes("can_see_stylesheets") &&
-	user?.permissions.includes("can_start_scan")
+	user?.permissions.includes("can_see_stylesheets")
 		? (() => {
 				scanApiEndpoint =
 					result.page !== undefined
@@ -258,7 +257,7 @@ const Seo = ({ width, result }) => {
 				{siteId ? (
 					siteId?.verified ? (
 						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
-							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+							<div tw="relative flex-shrink-0 flex bg-white">
 								<div tw="border-b flex-shrink-0 flex">
 									<MobileSidebarButton
 										openMobileSidebar={openMobileSidebar}
@@ -267,9 +266,7 @@ const Seo = ({ width, result }) => {
 								</div>
 
 								<LinkOptions
-									verified={siteId?.verified}
-									sid={result.siteId}
-									user={user}
+									permissions={user?.permissions}
 									scanResult={scanResult}
 									searchKey={searchKey}
 									onSearchEvent={handleSearch}
@@ -281,65 +278,26 @@ const Seo = ({ width, result }) => {
 
 							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
-									<div className="max-w-full py-4 px-8">
-										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-											<ol tw="flex items-center space-x-4">
-												<li>
-													<div>
-														<Link href={homePageLink} passHref>
-															<a tw="text-gray-400 hover:text-gray-500">
-																<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-																<span tw="sr-only">{homeLabel}</span>
-															</a>
-														</Link>
-													</div>
-												</li>
-												<li>
-													<div tw="flex items-center">
-														<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-														<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-															{pageTitle}
-														</p>
-													</div>
-												</li>
-											</ol>
-										</nav>
-										<div className="pt-4 m-auto">
-											<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-												{pageTitle}
-												{user?.permissions.includes("can_see_pages") &&
-												user?.permissions.includes("can_see_scripts") &&
-												user?.permissions.includes("can_see_stylesheets") &&
-												user?.permissions.includes("can_start_scan") ? (
-													pages ? (
-														<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-															<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-																<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-																{pages?.count > 1
-																	? pages?.count + " " + SeoLabel[2].label
-																	: pages?.count == 1
-																	? pages?.count + " " + SeoLabel[6].label
-																	: SeoLabel[3].label}
-															</dd>
-														</dl>
-													) : (
-														<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-															<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-																<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-																{SeoLabel[7].label}
-															</dd>
-														</dl>
-													)
-												) : null}
-											</h4>
-										</div>
+									<div className="max-w-full p-4">
+										<Breadcrumbs siteId={result.siteId} pageTitle={SeoLabel[1].label} />
+
+										<HeadingOptions
+											isSeo
+											siteId={result.siteId}
+											siteName={siteId?.name}
+											siteUrl={siteId?.url}
+											scanObjId={scanObjId}
+											permissions={user?.permissions}
+											pageTitle={SeoLabel[1].label}
+											count={pages?.count}
+											dataLabel={[SeoLabel[2].label, SeoLabel[6].label, SeoLabel[3].label, SeoLabel[7].label]}
+										/>
 									</div>
 								</div>
 								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 									{user?.permissions.includes("can_see_pages") &&
 									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") &&
-									user?.permissions.includes("can_start_scan") ? (
+									user?.permissions.includes("can_see_stylesheets") ? (
 										<SeoFilter
 											result={result}
 											loadQueryString={loadQueryString}
@@ -358,32 +316,30 @@ const Seo = ({ width, result }) => {
 															<tr>
 																{SeoTableContent.map((site, key) => {
 																	return (
-																		<React.Fragment key={key}>
-																			<th
-																				className="min-width-adjust"
-																				tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																			>
-																				<span tw="flex items-center justify-start">
-																					{user?.permissions.includes("can_see_pages") &&
-																					user?.permissions.includes("can_see_scripts") &&
-																					user?.permissions.includes("can_see_stylesheets") &&
-																					user?.permissions.includes("can_start_scan") ? (
-																						site.slug ? (
-																							<SeoSorting
-																								result={result}
-																								slug={site.slug}
-																								mutatePages={mutatePages}
-																								seoTableContent={SeoTableContent}
-																								setPagePath={setPagePath}
-																							/>
-																						) : null
-																					) : null}
-																					<span className="label" tw="flex items-center">
-																						{site.label}
-																					</span>
+																		<th
+																			key={key}
+																			className="min-width-adjust"
+																			tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																		>
+																			<span tw="flex items-center justify-start">
+																				{user?.permissions.includes("can_see_pages") &&
+																				user?.permissions.includes("can_see_scripts") &&
+																				user?.permissions.includes("can_see_stylesheets") ? (
+																					site?.slug ? (
+																						<SeoSorting
+																							result={result}
+																							slug={site?.slug}
+																							mutatePages={mutatePages}
+																							seoTableContent={SeoTableContent}
+																							setPagePath={setPagePath}
+																						/>
+																					) : null
+																				) : null}
+																				<span className="label" tw="flex items-center">
+																					{site?.label}
 																				</span>
-																			</th>
-																		</React.Fragment>
+																			</span>
+																		</th>
 																	);
 																})}
 															</tr>
@@ -391,30 +347,28 @@ const Seo = ({ width, result }) => {
 														<tbody tw="relative">
 															{user?.permissions.includes("can_see_pages") &&
 															user?.permissions.includes("can_see_scripts") &&
-															user?.permissions.includes("can_see_stylesheets") &&
-															user?.permissions.includes("can_start_scan")
-																? pages
-																	? pages?.results.map((val, key) => (
-																			<SeoTable
-																				key={key}
-																				siteId={result.siteId}
-																				val={val}
-																				disableLocalTime={disableLocalTime}
-																			/>
-																	  ))
-																	: null
-																: null}
+															user?.permissions.includes("can_see_stylesheets") ? (
+																pages ? (
+																	pages?.results.map((val, key) => (
+																		<SeoTable
+																			key={key}
+																			siteId={result.siteId}
+																			val={val}
+																			disableLocalTime={disableLocalTime}
+																		/>
+																	))
+																) : null
+															) : (
+																<SeoTableSkeleton />
+															)}
 														</tbody>
 													</table>
 
-													{!user?.permissions
-														? (() => {
-																<>
-																	<SeoTableSkeleton />
-																	<UpgradeErrorAlert link="/settings/subscription-plans" />
-																</>;
-														  })()
-														: null}
+													{user?.permissions.length == 0 ? (
+														<div tw="relative top-2.5">
+															<UpgradeErrorAlert link="/settings/subscription-plans" />
+														</div>
+													) : null}
 												</div>
 											</div>
 										</div>
@@ -422,11 +376,10 @@ const Seo = ({ width, result }) => {
 
 									{user?.permissions.includes("can_see_pages") &&
 									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") &&
-									user?.permissions.includes("can_start_scan") ? (
+									user?.permissions.includes("can_see_stylesheets") ? (
 										pages ? (
 											<MyPagination
-												href="/site/[siteId]/seo"
+												href="/site/[siteId]/seo/"
 												pathName={pagePath}
 												apiEndpoint={scanApiEndpoint}
 												page={result.page ? result.page : 0}
@@ -443,13 +396,7 @@ const Seo = ({ width, result }) => {
 							</main>
 						</div>
 					) : (
-						<div tw="mx-auto">
-							<section tw="flex flex-col justify-center min-h-screen">
-								<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-									<h3 tw="text-lg leading-6 font-medium text-gray-500">{SeoLabel[19].label}</h3>
-								</div>
-							</section>
-						</div>
+						<SiteReverifyMessage />
 					)
 				) : (
 					<div tw="mx-auto">
