@@ -29,6 +29,7 @@ import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 
 // Loadable
+// const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
 const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
 const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
 const LinkOptions = loadable(() => import("src/components/pages/overview/LinkOptions"));
@@ -38,7 +39,6 @@ const PageFilter = loadable(() => import("src/components/helpers/filters/PageFil
 const PageSorting = loadable(() => import("src/components/helpers/sorting/PageSorting"));
 const PageTable = loadable(() => import("src/components/tables/PageTable"));
 const PageTableSkeleton = loadable(() => import("src/components/skeletons/PageTableSkeleton"));
-const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
@@ -215,145 +215,145 @@ const Pages = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					siteId?.verified ? (
-						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
-							<div tw="relative flex-shrink-0 flex bg-white">
-								<div tw="border-b flex-shrink-0 flex">
-									<MobileSidebarButton
-										openMobileSidebar={openMobileSidebar}
-										setOpenMobileSidebar={setOpenMobileSidebar}
-									/>
-								</div>
-
-								<LinkOptions
-									permissions={user?.permissions}
-									scanResult={scanResult}
-									searchKey={searchKey}
-									onSearchEvent={handleSearch}
-									handleCrawl={handleCrawl}
-									isCrawlStarted={isCrawlStarted}
-									isCrawlFinished={isCrawlFinished}
+					// siteId?.verified ? (
+					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
+						<div tw="relative flex-shrink-0 flex bg-white">
+							<div tw="border-b flex-shrink-0 flex">
+								<MobileSidebarButton
+									openMobileSidebar={openMobileSidebar}
+									setOpenMobileSidebar={setOpenMobileSidebar}
 								/>
 							</div>
 
-							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-								<div tw="w-full p-6 mx-auto">
-									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={result.siteId} pageTitle={PagesLabel[1].label} />
+							<LinkOptions
+								permissions={user?.permissions}
+								scanResult={scanResult}
+								searchKey={searchKey}
+								onSearchEvent={handleSearch}
+								handleCrawl={handleCrawl}
+								isCrawlStarted={isCrawlStarted}
+								isCrawlFinished={isCrawlFinished}
+							/>
+						</div>
 
-										<HeadingOptions
-											isPages
-											siteId={result.siteId}
-											siteName={siteId?.name}
-											siteUrl={siteId?.url}
-											scanObjId={scanObjId}
-											permissions={user?.permissions}
-											pageTitle={PagesLabel[1].label}
-											count={pages?.count}
-											dataLabel={[PagesLabel[2].label, PagesLabel[6].label, PagesLabel[3].label, PagesLabel[16].label]}
-										/>
-									</div>
+						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+							<div tw="w-full p-6 mx-auto">
+								<div className="max-w-full p-4">
+									<Breadcrumbs siteId={result.siteId} pageTitle={PagesLabel[1].label} />
+
+									<HeadingOptions
+										isPages
+										siteId={result.siteId}
+										siteName={siteId?.name}
+										siteUrl={siteId?.url}
+										scanObjId={scanObjId}
+										permissions={user?.permissions}
+										pageTitle={PagesLabel[1].label}
+										count={pages?.count}
+										dataLabel={[PagesLabel[2].label, PagesLabel[6].label, PagesLabel[3].label, PagesLabel[16].label]}
+									/>
 								</div>
-								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-									{user?.permissions.includes("can_see_pages") &&
-									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") ? (
-										<PageFilter
-											result={result}
-											loadQueryString={loadQueryString}
-											setLoadQueryString={setLoadQueryString}
-											mutatePages={mutatePages}
-											setPagePath={setPagePath}
-										/>
-									) : null}
+							</div>
+							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+								{user?.permissions.includes("can_see_pages") &&
+								user?.permissions.includes("can_see_scripts") &&
+								user?.permissions.includes("can_see_stylesheets") ? (
+									<PageFilter
+										result={result}
+										loadQueryString={loadQueryString}
+										setLoadQueryString={setLoadQueryString}
+										mutatePages={mutatePages}
+										setPagePath={setPagePath}
+									/>
+								) : null}
 
-									<div tw="pb-4">
-										<div tw="flex flex-col">
-											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-												<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
-													<table tw="relative min-w-full">
-														<thead>
-															<tr>
-																{LinksPagesContent.map((site, key) => {
-																	return (
-																		<th
-																			key={key}
-																			className="min-width-adjust"
-																			tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																		>
-																			<span tw="flex items-center justify-start">
-																				{user?.permissions.includes("can_see_pages") &&
-																				user?.permissions.includes("can_see_scripts") &&
-																				user?.permissions.includes("can_see_stylesheets") ? (
-																					site?.slug ? (
-																						<PageSorting
-																							result={result}
-																							slug={site?.slug}
-																							mutatePages={mutatePages}
-																							linksPagesContent={LinksPagesContent}
-																							setPagePath={setPagePath}
-																						/>
-																					) : null
-																				) : null}
-																				<span className="label" tw="flex items-center">
-																					{site?.label}
-																				</span>
+								<div tw="pb-4">
+									<div tw="flex flex-col">
+										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+											<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
+												<table tw="relative min-w-full">
+													<thead>
+														<tr>
+															{LinksPagesContent.map((site, key) => {
+																return (
+																	<th
+																		key={key}
+																		className="min-width-adjust"
+																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																	>
+																		<span tw="flex items-center justify-start">
+																			{user?.permissions.includes("can_see_pages") &&
+																			user?.permissions.includes("can_see_scripts") &&
+																			user?.permissions.includes("can_see_stylesheets") ? (
+																				site?.slug ? (
+																					<PageSorting
+																						result={result}
+																						slug={site?.slug}
+																						mutatePages={mutatePages}
+																						linksPagesContent={LinksPagesContent}
+																						setPagePath={setPagePath}
+																					/>
+																				) : null
+																			) : null}
+																			<span className="label" tw="flex items-center">
+																				{site?.label}
 																			</span>
-																		</th>
-																	);
-																})}
-															</tr>
-														</thead>
-														<tbody tw="relative">
-															{user?.permissions.includes("can_see_pages") &&
-															user?.permissions.includes("can_see_scripts") &&
-															user?.permissions.includes("can_see_stylesheets") ? (
-																pages ? (
-																	pages?.results.map((val, key) => (
-																		<PageTable key={key} siteId={result.siteId} val={val} />
-																	))
-																) : null
-															) : (
-																<PageTableSkeleton />
-															)}
-														</tbody>
-													</table>
+																		</span>
+																	</th>
+																);
+															})}
+														</tr>
+													</thead>
+													<tbody tw="relative">
+														{user?.permissions.includes("can_see_pages") &&
+														user?.permissions.includes("can_see_scripts") &&
+														user?.permissions.includes("can_see_stylesheets") ? (
+															pages ? (
+																pages?.results.map((val, key) => (
+																	<PageTable key={key} siteId={result.siteId} val={val} />
+																))
+															) : null
+														) : (
+															<PageTableSkeleton />
+														)}
+													</tbody>
+												</table>
 
-													{user?.permissions.length == 0 ? (
-														<div tw="relative top-2.5">
-															<UpgradeErrorAlert link="/settings/subscription-plans" />
-														</div>
-													) : null}
-												</div>
+												{user?.permissions.length == 0 ? (
+													<div tw="relative top-2.5">
+														<UpgradeErrorAlert link="/settings/subscription-plans" />
+													</div>
+												) : null}
 											</div>
 										</div>
 									</div>
-
-									{user?.permissions.includes("can_see_pages") &&
-									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") ? (
-										pages ? (
-											<MyPagination
-												href="/site/[siteId]/seo"
-												pathName={pagePath}
-												apiEndpoint={scanApiEndpoint}
-												page={result.page ? result.page : 0}
-												linksPerPage={linksPerPage}
-												onItemsPerPageChange={onItemsPerPageChange}
-											/>
-										) : null
-									) : null}
 								</div>
 
-								<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-									<SiteFooter />
-								</div>
-							</main>
-						</div>
-					) : (
-						<SiteReverifyMessage />
-					)
+								{user?.permissions.includes("can_see_pages") &&
+								user?.permissions.includes("can_see_scripts") &&
+								user?.permissions.includes("can_see_stylesheets") ? (
+									pages ? (
+										<MyPagination
+											href="/site/[siteId]/pages/"
+											pathName={pagePath}
+											apiEndpoint={scanApiEndpoint}
+											page={result.page ? result.page : 0}
+											linksPerPage={linksPerPage}
+											onItemsPerPageChange={onItemsPerPageChange}
+										/>
+									) : null
+								) : null}
+							</div>
+
+							<div tw="static bottom-0 w-full mx-auto px-12 py-4">
+								<SiteFooter />
+							</div>
+						</main>
+					</div>
 				) : (
+					// ) : (
+					// 	<SiteReverifyMessage />
+					// )
 					<div tw="mx-auto">
 						<Loader />
 					</div>

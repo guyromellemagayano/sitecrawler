@@ -198,119 +198,119 @@ const Links = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					siteId.verified ? (
-						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
-							<div tw="relative flex-shrink-0 flex bg-white">
-								<div tw="border-b flex-shrink-0 flex">
-									<MobileSidebarButton
-										openMobileSidebar={openMobileSidebar}
-										setOpenMobileSidebar={setOpenMobileSidebar}
-									/>
-								</div>
-
-								<LinkOptions
-									permissions={user?.permissions}
-									scanResult={scanResult}
-									searchKey={searchKey}
-									onSearchEvent={handleSearch}
-									handleCrawl={handleCrawl}
-									isCrawlStarted={isCrawlStarted}
-									isCrawlFinished={isCrawlFinished}
+					// siteId.verified ? (
+					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
+						<div tw="relative flex-shrink-0 flex bg-white">
+							<div tw="border-b flex-shrink-0 flex">
+								<MobileSidebarButton
+									openMobileSidebar={openMobileSidebar}
+									setOpenMobileSidebar={setOpenMobileSidebar}
 								/>
 							</div>
 
-							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-								<div tw="w-full p-6 mx-auto">
-									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={result.siteId} pageTitle={LinksLabel[1].label} />
+							<LinkOptions
+								permissions={user?.permissions}
+								scanResult={scanResult}
+								searchKey={searchKey}
+								onSearchEvent={handleSearch}
+								handleCrawl={handleCrawl}
+								isCrawlStarted={isCrawlStarted}
+								isCrawlFinished={isCrawlFinished}
+							/>
+						</div>
 
-										<HeadingOptions
-											isLinks
-											siteId={result.siteId}
-											siteName={siteId?.name}
-											siteUrl={siteId?.url}
-											scanObjId={scanObjId}
-											permissions={user?.permissions}
-											pageTitle={LinksLabel[1].label}
-											count={links?.count}
-											dataLabel={[LinksLabel[2].label, LinksLabel[11].label, LinksLabel[3].label, LinksLabel[12].label]}
-										/>
-									</div>
-								</div>
-								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-									<LinkFilter
-										result={result}
-										loadQueryString={loadQueryString}
-										setLoadQueryString={setLoadQueryString}
-										mutateLinks={mutateLinks}
-										setPagePath={setPagePath}
+						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+							<div tw="w-full p-6 mx-auto">
+								<div className="max-w-full p-4">
+									<Breadcrumbs siteId={result.siteId} pageTitle={LinksLabel[1].label} />
+
+									<HeadingOptions
+										isLinks
+										siteId={result.siteId}
+										siteName={siteId?.name}
+										siteUrl={siteId?.url}
+										scanObjId={scanObjId}
+										permissions={user?.permissions}
+										pageTitle={LinksLabel[1].label}
+										count={links?.count}
+										dataLabel={[LinksLabel[2].label, LinksLabel[11].label, LinksLabel[3].label, LinksLabel[12].label]}
 									/>
+								</div>
+							</div>
+							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+								<LinkFilter
+									result={result}
+									loadQueryString={loadQueryString}
+									setLoadQueryString={setLoadQueryString}
+									mutateLinks={mutateLinks}
+									setPagePath={setPagePath}
+								/>
 
-									<div tw="pb-4">
-										<div tw="flex flex-col">
-											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-												<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
-													<table tw="relative min-w-full">
-														<thead>
-															<tr>
-																{LinksUrlContent.map((site, key) => {
-																	return (
-																		<th
-																			key={key}
-																			className="min-width-adjust"
-																			tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																		>
-																			<div tw="flex items-center justify-start">
-																				{site?.slug ? (
-																					<LinkSorting
-																						result={result}
-																						slug={site?.slug}
-																						mutateLinks={mutateLinks}
-																						linksUrlContent={LinksUrlContent}
-																						setPagePath={setPagePath}
-																					/>
-																				) : null}
-																				<span className="label" tw="flex items-center">
-																					{site?.label}
-																				</span>
-																			</div>
-																		</th>
-																	);
-																})}
-															</tr>
-														</thead>
-														<tbody tw="relative">
-															{links
-																? links?.results.map((val, key) => (
-																		<LinkTable key={key} siteId={result.siteId} val={val} />
-																  ))
-																: null}
-														</tbody>
-													</table>
-												</div>
+								<div tw="pb-4">
+									<div tw="flex flex-col">
+										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+											<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
+												<table tw="relative min-w-full">
+													<thead>
+														<tr>
+															{LinksUrlContent.map((site, key) => {
+																return (
+																	<th
+																		key={key}
+																		className="min-width-adjust"
+																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																	>
+																		<div tw="flex items-center justify-start">
+																			{site?.slug ? (
+																				<LinkSorting
+																					result={result}
+																					slug={site?.slug}
+																					mutateLinks={mutateLinks}
+																					linksUrlContent={LinksUrlContent}
+																					setPagePath={setPagePath}
+																				/>
+																			) : null}
+																			<span className="label" tw="flex items-center">
+																				{site?.label}
+																			</span>
+																		</div>
+																	</th>
+																);
+															})}
+														</tr>
+													</thead>
+													<tbody tw="relative">
+														{links
+															? links?.results.map((val, key) => (
+																	<LinkTable key={key} siteId={result.siteId} val={val} />
+															  ))
+															: null}
+													</tbody>
+												</table>
 											</div>
 										</div>
 									</div>
-
-									<MyPagination
-										href="/site/[siteId]/links/"
-										pathName={pagePath}
-										apiEndpoint={scanApiEndpoint}
-										page={result.page ? result.page : 0}
-										linksPerPage={linksPerPage}
-										onItemsPerPageChange={onItemsPerPageChange}
-									/>
 								</div>
 
-								<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-									<SiteFooter />
-								</div>
-							</main>
-						</div>
-					) : (
-						<SiteReverifyMessage />
-					)
+								<MyPagination
+									href="/site/[siteId]/links/"
+									pathName={pagePath}
+									apiEndpoint={scanApiEndpoint}
+									page={result.page ? result.page : 0}
+									linksPerPage={linksPerPage}
+									onItemsPerPageChange={onItemsPerPageChange}
+								/>
+							</div>
+
+							<div tw="static bottom-0 w-full mx-auto px-12 py-4">
+								<SiteFooter />
+							</div>
+						</main>
+					</div>
 				) : (
+					// ) : (
+					// 	<SiteReverifyMessage />
+					// )
 					<div tw="mx-auto">
 						<Loader />
 					</div>
