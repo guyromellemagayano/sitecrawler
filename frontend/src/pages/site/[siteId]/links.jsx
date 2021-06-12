@@ -2,15 +2,13 @@
 import * as React from "react";
 
 // NextJS
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
-import { ChevronRightIcon, HomeIcon, SearchIcon } from "@heroicons/react/solid";
-import { LinkIcon } from "@heroicons/react/outline";
 import { NextSeo } from "next-seo";
 import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
+import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // JSON
@@ -26,15 +24,19 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-import LinkFilter from "src/components/helpers/filters/LinkFilter";
-import LinkOptions from "src/components/pages/overview/LinkOptions";
-import LinkSorting from "src/components/helpers/sorting/LinkSorting";
-import LinkTable from "src/components/tables/LinkTable";
-import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
-import MyPagination from "src/components/pagination/Pagination";
 import SiteFooter from "src/components/layouts/Footer";
+
+// Loadable
+const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
+const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
+const LinkFilter = loadable(() => import("src/components/helpers/filters/LinkFilter"));
+const LinkOptions = loadable(() => import("src/components/pages/overview/LinkOptions"));
+const LinkSorting = loadable(() => import("src/components/helpers/sorting/LinkSorting"));
+const LinkTable = loadable(() => import("src/components/tables/LinkTable"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
+const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
@@ -71,16 +73,7 @@ const Links = ({ width, result }) => {
 	const { asPath } = useRouter();
 	const router = useRouter();
 
-	let pageTitle = "";
-	let homeLabel = "Home";
-	let homePageLink = `/site/${result.siteId}/overview`;
-
-	let scanApiEndpoint = "";
-	let queryString = "";
-	let statusString = "";
-	let typeString = "";
-
-	const { user: user } = useUser({
+	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
@@ -93,7 +86,12 @@ const Links = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	siteId ? (pageTitle = siteId?.name ? LinksLabel[1].label + " - " + siteId?.name : LinksLabel[1].label) : null;
+	const pageTitle = LinksLabel[1].label + " - " + siteId?.name;
+
+	let scanApiEndpoint = "";
+	let queryString = "";
+	let statusString = "";
+	let typeString = "";
 
 	scanApiEndpoint =
 		result.page !== undefined
@@ -215,7 +213,7 @@ const Links = ({ width, result }) => {
 				{siteId ? (
 					siteId.verified ? (
 						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
-							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+							<div tw="relative flex-shrink-0 flex bg-white">
 								<div tw="border-b flex-shrink-0 flex">
 									<MobileSidebarButton
 										openMobileSidebar={openMobileSidebar}
@@ -224,9 +222,7 @@ const Links = ({ width, result }) => {
 								</div>
 
 								<LinkOptions
-									verified={siteId?.verified}
-									sid={result.siteId}
-									user={user}
+									permissions={user?.permissions}
 									scanResult={scanResult}
 									searchKey={searchKey}
 									onSearchEvent={handleSearch}
@@ -238,53 +234,20 @@ const Links = ({ width, result }) => {
 
 							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
-									<div className="max-w-full py-4 px-8">
-										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-											<ol tw="flex items-center space-x-4">
-												<li>
-													<div>
-														<Link href={homePageLink} passHref>
-															<a tw="text-gray-400 hover:text-gray-500">
-																<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-																<span tw="sr-only">{homeLabel}</span>
-															</a>
-														</Link>
-													</div>
-												</li>
-												<li>
-													<div tw="flex items-center">
-														<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-														<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-															{pageTitle}
-														</p>
-													</div>
-												</li>
-											</ol>
-										</nav>
-										<div className="pt-4 m-auto">
-											<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-												{pageTitle}
-												{links ? (
-													<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-														<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-															<LinkIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-															{links?.count > 1
-																? links?.count + " " + LinksLabel[2].label
-																: links?.count == 1
-																? links?.count + " " + LinksLabel[11].label
-																: LinksLabel[3].label}
-														</dd>
-													</dl>
-												) : (
-													<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-														<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-															<SearchIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-															{LinksLabel[12].label}
-														</dd>
-													</dl>
-												)}
-											</h4>
-										</div>
+									<div className="max-w-full p-4">
+										<Breadcrumbs siteId={result.siteId} pageTitle={LinksLabel[1].label} />
+
+										<HeadingOptions
+											isLinks
+											siteId={result.siteId}
+											siteName={siteId?.name}
+											siteUrl={siteId?.url}
+											scanObjId={scanObjId}
+											permissions={user?.permissions}
+											pageTitle={LinksLabel[1].label}
+											count={links?.count}
+											dataLabel={[LinksLabel[2].label, LinksLabel[11].label, LinksLabel[3].label, LinksLabel[12].label]}
+										/>
 									</div>
 								</div>
 								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
@@ -305,27 +268,26 @@ const Links = ({ width, result }) => {
 															<tr>
 																{LinksUrlContent.map((site, key) => {
 																	return (
-																		<React.Fragment key={key}>
-																			<th
-																				className="min-width-adjust"
-																				tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																			>
-																				<div tw="flex items-center justify-start">
-																					{site?.slug ? (
-																						<LinkSorting
-																							result={result}
-																							slug={site.slug}
-																							mutateLinks={mutateLinks}
-																							linksUrlContent={LinksUrlContent}
-																							setPagePath={setPagePath}
-																						/>
-																					) : null}
-																					<span className="label" tw="flex items-center">
-																						{site.label}
-																					</span>
-																				</div>
-																			</th>
-																		</React.Fragment>
+																		<th
+																			key={key}
+																			className="min-width-adjust"
+																			tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																		>
+																			<div tw="flex items-center justify-start">
+																				{site?.slug ? (
+																					<LinkSorting
+																						result={result}
+																						slug={site.slug}
+																						mutateLinks={mutateLinks}
+																						linksUrlContent={LinksUrlContent}
+																						setPagePath={setPagePath}
+																					/>
+																				) : null}
+																				<span className="label" tw="flex items-center">
+																					{site.label}
+																				</span>
+																			</div>
+																		</th>
 																	);
 																})}
 															</tr>
