@@ -62,8 +62,8 @@ const PageTable = ({ siteId, val }) => {
 
 	const { pageDetail } = usePageDetail({
 		querySid: siteId,
-		scanObjId: val.scan_id,
-		linkId: val.id
+		scanObjId: val?.scan_id,
+		linkId: val?.id
 	});
 
 	React.useEffect(() => {
@@ -89,13 +89,13 @@ const PageTable = ({ siteId, val }) => {
 					<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
 						{componentReady ? (
 							<a
-								href={val.url}
+								href={val?.url}
 								target="_blank"
-								title={val.url}
+								title={val?.url}
 								className="truncate-link"
 								tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
 							>
-								{val.url}
+								{val?.url}
 							</a>
 						) : (
 							<Skeleton duration={2} width={300} />
@@ -105,7 +105,7 @@ const PageTable = ({ siteId, val }) => {
 						{componentReady ? (
 							<Link
 								href="/site/[siteId]/pages/[pageId]/details"
-								as={`/site/${query.siteId}/pages/${pageDetail.id}/details`}
+								as={`/site/${query.siteId}/pages/${pageDetail?.id}/details`}
 								passHref
 							>
 								<a
@@ -123,7 +123,7 @@ const PageTable = ({ siteId, val }) => {
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					bytes(val.size_total, {
+					bytes(val?.size_total, {
 						thousandsSeparator: " ",
 						unitSeparator: " "
 					})
@@ -133,7 +133,7 @@ const PageTable = ({ siteId, val }) => {
 			</td>
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? (
-					val.tls_total == true ? (
+					val?.tls_total == true ? (
 						<SiteSuccessIcon />
 					) : (
 						<SiteDangerIcon />

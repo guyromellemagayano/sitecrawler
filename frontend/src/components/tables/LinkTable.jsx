@@ -17,7 +17,7 @@ import SiteDangerBadge from "src/components/badges/SiteDangerBadge";
 import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
 import SiteWarningBadge from "src/components/badges/SiteWarningBadge";
 
-const LinkTableDiv = styled.tr`
+const LinkTableTr = styled.tr`
 	td {
 		& > div {
 			max-width: 100%;
@@ -35,7 +35,6 @@ const LinkTableDiv = styled.tr`
 		display: block;
 
 		a {
-			max-width: 100%;
 			display: inline-block;
 			clear: both;
 		}
@@ -83,7 +82,7 @@ const LinkTable = ({ siteId, val }) => {
 	}, [linkDetail]);
 
 	return (
-		<LinkTableDiv tw="bg-white">
+		<LinkTableTr tw="bg-white">
 			<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
 				<div tw="flex flex-col items-center">
 					<div>
@@ -94,7 +93,7 @@ const LinkTable = ({ siteId, val }) => {
 									target="_blank"
 									title={val?.url}
 									className="truncate-link"
-									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900 truncate"
+									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
 								>
 									{val?.url}
 								</a>
@@ -176,7 +175,7 @@ const LinkTable = ({ siteId, val }) => {
 			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
 				{componentReady ? val?.occurences : <Skeleton duration={2} width={45} />}
 			</td>
-		</LinkTableDiv>
+		</LinkTableTr>
 	);
 };
 
