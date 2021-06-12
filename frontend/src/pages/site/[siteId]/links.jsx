@@ -264,14 +264,14 @@ const Links = ({ width, result }) => {
 																				{site?.slug ? (
 																					<LinkSorting
 																						result={result}
-																						slug={site.slug}
+																						slug={site?.slug}
 																						mutateLinks={mutateLinks}
 																						linksUrlContent={LinksUrlContent}
 																						setPagePath={setPagePath}
 																					/>
 																				) : null}
 																				<span className="label" tw="flex items-center">
-																					{site.label}
+																					{site?.label}
 																				</span>
 																			</div>
 																		</th>
