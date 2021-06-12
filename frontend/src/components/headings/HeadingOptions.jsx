@@ -71,6 +71,7 @@ const HeadingOptions = ({
 							{siteName}
 						</a>
 					</div>
+
 					<div tw="mt-2 flex items-center text-sm text-gray-500">
 						{isLinks ? (
 							<LinkIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
@@ -81,13 +82,19 @@ const HeadingOptions = ({
 						) : isImages ? (
 							<PhotographIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
 						) : null}
-						{count
-							? count > 1
+						{(permissions?.includes("can_see_images") &&
+							permissions?.includes("can_see_pages") &&
+							permissions?.includes("can_see_scripts") &&
+							permissions?.includes("can_see_stylesheets")) ||
+						asPath.includes("links")
+							? count > 1 && componentReady
 								? count + " " + dataLabel[0]
-								: count == 1
+								: count == 1 && componentReady
 								? count + " " + dataLabel[1]
-								: dataLabel[2]
-							: dataLabel[3]}
+								: count == 0 && componentReady
+								? dataLabel[2]
+								: dataLabel[3]
+							: HeadingOptionsLabel[1].label}
 					</div>
 				</div>
 			</div>
