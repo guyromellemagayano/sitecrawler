@@ -37,26 +37,13 @@ const LinkSorting = loadable(() => import("src/components/helpers/sorting/LinkSo
 const LinkTable = loadable(() => import("src/components/tables/LinkTable"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
+const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
 const LinksSection = styled.section`
-	@media only screen and (max-width: 1400px) {
-		td:first-child {
-			max-width: 15rem;
-		}
-	}
-
-	@media only screen and (min-width: 1600px) {
-		td {
-			min-width: 10rem;
-
-			&:first-child {
-				max-width: 25rem;
-			}
-		}
-
+	@media only screen and (max-width: 1600px) {
 		.min-width-adjust {
 			min-width: 15rem;
 		}
@@ -82,7 +69,7 @@ const Links = ({ width, result }) => {
 		siteId: result.siteId
 	});
 
-	const { siteId: siteId } = useSiteId({
+	const { siteId } = useSiteId({
 		querySid: result.siteId
 	});
 
@@ -321,13 +308,7 @@ const Links = ({ width, result }) => {
 							</main>
 						</div>
 					) : (
-						<div tw="mx-auto">
-							<section tw="flex flex-col justify-center min-h-screen">
-								<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-									<h3 tw="text-lg leading-6 font-medium text-gray-500">{LinksLabel[13].label}</h3>
-								</div>
-							</section>
-						</div>
+						<SiteReverifyMessage />
 					)
 				) : (
 					<div tw="mx-auto">

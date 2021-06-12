@@ -2,15 +2,15 @@
 import * as React from "react";
 
 // NextJS
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 
 // External
-import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
-import { DocumentTextIcon } from "@heroicons/react/outline";
+// import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
+import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // JSON
@@ -26,17 +26,21 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-import LinkOptions from "src/components/pages/overview/LinkOptions";
-import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
-import MyPagination from "src/components/pagination/Pagination";
-import PageFilter from "src/components/helpers/filters/PageFilter";
-import PageSorting from "src/components/helpers/sorting/PageSorting";
-import PageTable from "src/components/tables/PageTable";
-import PageTableSkeleton from "src/components/skeletons/PageTableSkeleton";
 import SiteFooter from "src/components/layouts/Footer";
-import UpgradeErrorAlert from "src/components/alerts/UpgradeErrorAlert";
+
+// Loadable
+const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
+const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
+const LinkOptions = loadable(() => import("src/components/pages/overview/LinkOptions"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
+const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
+const PageFilter = loadable(() => import("src/components/helpers/filters/PageFilter"));
+const PageSorting = loadable(() => import("src/components/helpers/sorting/PageSorting"));
+const PageTable = loadable(() => import("src/components/tables/PageTable"));
+const PageTableSkeleton = loadable(() => import("src/components/skeletons/PageTableSkeleton"));
+const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
@@ -59,13 +63,6 @@ const Pages = ({ width, result }) => {
 	const { asPath } = useRouter();
 	const router = useRouter();
 
-	let pageTitle = "";
-	let homeLabel = "Home";
-	let homePageLink = `/site/${result.siteId}/overview`;
-
-	let scanApiEndpoint = "";
-	let queryString = "";
-
 	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
@@ -79,12 +76,14 @@ const Pages = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	siteId ? (pageTitle = siteId?.name ? PagesLabel[1].label + " - " + siteId?.name : PagesLabel[1].label) : null;
+	const pageTitle = PagesLabel[1].label + " - " + siteId?.name;
+
+	let scanApiEndpoint = "";
+	let queryString = "";
 
 	user?.permissions.includes("can_see_pages") &&
 	user?.permissions.includes("can_see_scripts") &&
-	user?.permissions.includes("can_see_stylesheets") &&
-	user?.permissions.includes("can_start_scan")
+	user?.permissions.includes("can_see_stylesheets")
 		? (() => {
 				scanApiEndpoint =
 					result.page !== undefined
@@ -219,7 +218,7 @@ const Pages = ({ width, result }) => {
 				{siteId ? (
 					siteId?.verified ? (
 						<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
-							<div tw="relative flex-shrink-0 flex bg-white lg:mb-4">
+							<div tw="relative flex-shrink-0 flex bg-white">
 								<div tw="border-b flex-shrink-0 flex">
 									<MobileSidebarButton
 										openMobileSidebar={openMobileSidebar}
@@ -228,9 +227,7 @@ const Pages = ({ width, result }) => {
 								</div>
 
 								<LinkOptions
-									verified={siteId?.verified}
-									sid={result.siteId}
-									user={user}
+									permissions={user?.permissions}
 									scanResult={scanResult}
 									searchKey={searchKey}
 									onSearchEvent={handleSearch}
@@ -242,65 +239,26 @@ const Pages = ({ width, result }) => {
 
 							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
-									<div className="max-w-full py-4 px-8">
-										<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-											<ol tw="flex items-center space-x-4">
-												<li>
-													<div>
-														<Link href={homePageLink} passHref>
-															<a tw="text-gray-400 hover:text-gray-500">
-																<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-																<span tw="sr-only">{homeLabel}</span>
-															</a>
-														</Link>
-													</div>
-												</li>
-												<li>
-													<div tw="flex items-center">
-														<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-														<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-															{pageTitle}
-														</p>
-													</div>
-												</li>
-											</ol>
-										</nav>
-										<div className="pt-4 m-auto">
-											<h4 className="flex items-center text-2xl leading-6 font-medium text-gray-900">
-												{pageTitle}
-												{user?.permissions.includes("can_see_pages") &&
-												user?.permissions.includes("can_see_scripts") &&
-												user?.permissions.includes("can_see_stylesheets") &&
-												user?.permissions.includes("can_start_scan") ? (
-													pages ? (
-														<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-															<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-																<DocumentTextIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-																{pages?.count > 1
-																	? pages?.count + " " + PagesLabel[2].label
-																	: pages?.count == 1
-																	? pages?.count + " " + PagesLabel[6].label
-																	: PagesLabel[3].label}
-															</dd>
-														</dl>
-													) : (
-														<dl tw="inline-flex flex-col mb-2 lg:mb-0 lg:ml-5 sm:flex-row sm:flex-wrap">
-															<dd tw="flex items-center text-base leading-5 text-gray-500 font-medium sm:mr-6">
-																<DocumentTextIcon tw="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-																{PagesLabel[17].label}
-															</dd>
-														</dl>
-													)
-												) : null}
-											</h4>
-										</div>
+									<div className="max-w-full p-4">
+										<Breadcrumbs siteId={result.siteId} pageTitle={PagesLabel[1].label} />
+
+										<HeadingOptions
+											isPages
+											siteId={result.siteId}
+											siteName={siteId?.name}
+											siteUrl={siteId?.url}
+											scanObjId={scanObjId}
+											permissions={user?.permissions}
+											pageTitle={PagesLabel[1].label}
+											count={pages?.count}
+											dataLabel={[PagesLabel[2].label, PagesLabel[6].label, PagesLabel[3].label, PagesLabel[16].label]}
+										/>
 									</div>
 								</div>
 								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 									{user?.permissions.includes("can_see_pages") &&
 									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") &&
-									user?.permissions.includes("can_start_scan") ? (
+									user?.permissions.includes("can_see_stylesheets") ? (
 										<PageFilter
 											result={result}
 											loadQueryString={loadQueryString}
@@ -327,8 +285,7 @@ const Pages = ({ width, result }) => {
 																				<span tw="flex items-center justify-start">
 																					{user?.permissions.includes("can_see_pages") &&
 																					user?.permissions.includes("can_see_scripts") &&
-																					user?.permissions.includes("can_see_stylesheets") &&
-																					user?.permissions.includes("can_start_scan") ? (
+																					user?.permissions.includes("can_see_stylesheets") ? (
 																						site.slug ? (
 																							<PageSorting
 																								result={result}
@@ -352,25 +309,23 @@ const Pages = ({ width, result }) => {
 														<tbody tw="relative">
 															{user?.permissions.includes("can_see_pages") &&
 															user?.permissions.includes("can_see_scripts") &&
-															user?.permissions.includes("can_see_stylesheets") &&
-															user?.permissions.includes("can_start_scan")
-																? pages
-																	? pages?.results.map((val, key) => (
-																			<PageTable key={key} siteId={result.siteId} val={val} />
-																	  ))
-																	: null
-																: null}
+															user?.permissions.includes("can_see_stylesheets") ? (
+																pages ? (
+																	pages?.results.map((val, key) => (
+																		<PageTable key={key} siteId={result.siteId} val={val} />
+																	))
+																) : null
+															) : (
+																<PageTableSkeleton />
+															)}
 														</tbody>
 													</table>
 
-													{!user?.permissions
-														? (() => {
-																<>
-																	<PageTableSkeleton />
-																	<UpgradeErrorAlert link="/settings/subscription-plans" />
-																</>;
-														  })()
-														: null}
+													{user?.permissions.length == 0 ? (
+														<div tw="relative top-2.5">
+															<UpgradeErrorAlert link="/settings/subscription-plans" />
+														</div>
+													) : null}
 												</div>
 											</div>
 										</div>
@@ -378,8 +333,7 @@ const Pages = ({ width, result }) => {
 
 									{user?.permissions.includes("can_see_pages") &&
 									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") &&
-									user?.permissions.includes("can_start_scan") ? (
+									user?.permissions.includes("can_see_stylesheets") ? (
 										pages ? (
 											<MyPagination
 												href="/site/[siteId]/seo"
