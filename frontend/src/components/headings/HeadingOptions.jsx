@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 
 // External
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { LinkIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
-import { SearchIcon, DownloadIcon, GlobeIcon } from "@heroicons/react/solid";
+import { DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
+import { SearchIcon, DownloadIcon, GlobeIcon, LinkIcon } from "@heroicons/react/solid";
 import { styled } from "twin.macro";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
