@@ -19,10 +19,10 @@ import useUser from "src/hooks/useUser";
 
 // Layout
 import Layout from "src/components/Layout";
-import MainSidebar from "src/components/sidebar/MainSidebar";
 
 // Components
 import AppLogo from "src/components/logos/AppLogo";
+import MainSidebar from "src/components/sidebar/MainSidebar";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 
