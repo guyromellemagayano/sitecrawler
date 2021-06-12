@@ -5,7 +5,7 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { ChevronRightIcon, HomeIcon, LinkIcon } from "@heroicons/react/solid";
+import { LinkIcon } from "@heroicons/react/solid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
@@ -151,7 +151,7 @@ const PageDetail = ({ width, result }) => {
 
 											<div tw="pt-4 m-auto">
 												{pageDetail?.url ? (
-													<h2 tw="flex items-center text-2xl leading-7 font-bold text-gray-900 break-all sm:text-3xl sm:truncate">
+													<h2 tw="flex items-center text-2xl leading-7 font-bold text-gray-900 break-all sm:text-3xl">
 														{pageDetail?.url}
 													</h2>
 												) : (

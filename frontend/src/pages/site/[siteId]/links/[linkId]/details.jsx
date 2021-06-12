@@ -138,7 +138,7 @@ const LinkDetail = ({ width, result }) => {
 
 											<div tw="pt-4 m-auto">
 												{linkDetail?.url ? (
-													<h2 tw="flex items-center text-2xl leading-7 font-bold text-gray-900 break-all sm:text-3xl sm:truncate">
+													<h2 tw="flex items-center text-2xl leading-7 font-bold text-gray-900 break-all sm:text-3xl">
 														{linkDetail?.url}
 													</h2>
 												) : (
