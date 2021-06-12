@@ -5,11 +5,9 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { InformationCircleIcon } from "@heroicons/react/outline";
 import { styled } from "twin.macro";
 import bytes from "bytes";
 import PropTypes from "prop-types";
-import ReactTooltip from "react-tooltip";
 import Skeleton from "react-loading-skeleton";
 
 // Hooks
