@@ -73,7 +73,7 @@ const LinkDetail = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	let homePageLink = `/`;
+	const homePageLink = `/`;
 	let linksDetailPageTitle = LinksLabel[1].label + " - " + siteId?.name + " - " + linkDetail?.url;
 
 	const handleUrlCopy = (e) => {

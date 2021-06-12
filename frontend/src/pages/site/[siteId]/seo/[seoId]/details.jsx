@@ -66,7 +66,7 @@ const SeoDetail = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	let homePageLink = "/";
+	const homePageLink = "/";
 	let seoDetailPageTitle = SeoLabel[1].label + " - " + siteId?.name + " - " + pageDetail?.url;
 
 	React.useEffect(() => {

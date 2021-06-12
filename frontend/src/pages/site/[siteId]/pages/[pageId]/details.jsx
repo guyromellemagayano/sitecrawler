@@ -82,7 +82,7 @@ const PageDetail = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	let homePageLink = "/";
+	const homePageLink = "/";
 	let pageDetailPageTitle = PagesLabel[1].label + " - " + siteId?.name + " - " + pageDetail?.url;
 
 	React.useEffect(() => {
