@@ -5,12 +5,11 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // JSON
 import ProfileLabel from "public/labels/components/profile/Profile.json";
@@ -23,21 +22,23 @@ import Layout from "src/components/Layout";
 
 // Components
 import AppLogo from "src/components/logos/AppLogo";
-import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 
 // Loadable
+const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
 const SettingsPassword = loadable(() => import("src/components/pages/settings/profile/Password"));
 const SettingsPersonal = loadable(() => import("src/components/pages/settings/profile/Personal"));
+
+const ProfileSection = styled.section``;
 
 const Profile = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
-	const pageTitle = ProfileLabel[0].label;
-	const homeLabel = "Home";
 	const homePageLink = "/";
+	const pageTitle = ProfileLabel[0].label;
 
 	const { user } = useUser({
 		redirectIfFound: false,
@@ -48,7 +49,7 @@ const Profile = ({ width }) => {
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
-			<section className="h-screen flex overflow-hidden bg-white">
+			<ProfileSection className="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}
@@ -57,8 +58,11 @@ const Profile = ({ width }) => {
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<Link href={homePageLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
@@ -74,30 +78,10 @@ const Profile = ({ width }) => {
 						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 min-h-screen">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 								<div className="max-w-full py-4 px-8">
-									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-										<ol tw="flex items-center space-x-4">
-											<li>
-												<div>
-													<Link href={homePageLink} passHref>
-														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-															<span tw="sr-only">{homeLabel}</span>
-														</a>
-													</Link>
-												</div>
-											</li>
-											<li>
-												<div tw="flex items-center">
-													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-														{pageTitle}
-													</p>
-												</div>
-											</li>
-										</ol>
-									</nav>
+									<Breadcrumbs isSidebar pageTitle={pageTitle} />
+
 									<div className="pt-4 m-auto">
-										<h4 className="text-2xl leading-6 font-medium text-gray-900">{ProfileLabel[0].label}</h4>
+										<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
 									</div>
 								</div>
 
@@ -107,12 +91,13 @@ const Profile = ({ width }) => {
 								</div>
 							</div>
 						</div>
+
 						<div tw="static bottom-0 w-full mx-auto px-12 py-4 bg-white border-t border-gray-200">
 							<SiteFooter />
 						</div>
 					</main>
 				</div>
-			</section>
+			</ProfileSection>
 		</Layout>
 	) : (
 		<Loader />
