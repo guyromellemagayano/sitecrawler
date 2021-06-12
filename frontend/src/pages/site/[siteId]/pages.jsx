@@ -38,6 +38,7 @@ const PageFilter = loadable(() => import("src/components/helpers/filters/PageFil
 const PageSorting = loadable(() => import("src/components/helpers/sorting/PageSorting"));
 const PageTable = loadable(() => import("src/components/tables/PageTable"));
 const PageTableSkeleton = loadable(() => import("src/components/skeletons/PageTableSkeleton"));
+const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
@@ -275,31 +276,30 @@ const Pages = ({ width, result }) => {
 															<tr>
 																{LinksPagesContent.map((site, key) => {
 																	return (
-																		<React.Fragment key={key}>
-																			<th
-																				className="min-width-adjust"
-																				tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																			>
-																				<span tw="flex items-center justify-start">
-																					{user?.permissions.includes("can_see_pages") &&
-																					user?.permissions.includes("can_see_scripts") &&
-																					user?.permissions.includes("can_see_stylesheets") ? (
-																						site.slug ? (
-																							<PageSorting
-																								result={result}
-																								slug={site.slug}
-																								mutatePages={mutatePages}
-																								linksPagesContent={LinksPagesContent}
-																								setPagePath={setPagePath}
-																							/>
-																						) : null
-																					) : null}
-																					<span className="label" tw="flex items-center">
-																						{site.label}
-																					</span>
+																		<th
+																			key={key}
+																			className="min-width-adjust"
+																			tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																		>
+																			<span tw="flex items-center justify-start">
+																				{user?.permissions.includes("can_see_pages") &&
+																				user?.permissions.includes("can_see_scripts") &&
+																				user?.permissions.includes("can_see_stylesheets") ? (
+																					site?.slug ? (
+																						<PageSorting
+																							result={result}
+																							slug={site?.slug}
+																							mutatePages={mutatePages}
+																							linksPagesContent={LinksPagesContent}
+																							setPagePath={setPagePath}
+																						/>
+																					) : null
+																				) : null}
+																				<span className="label" tw="flex items-center">
+																					{site?.label}
 																				</span>
-																			</th>
-																		</React.Fragment>
+																			</span>
+																		</th>
 																	);
 																})}
 															</tr>
@@ -351,13 +351,7 @@ const Pages = ({ width, result }) => {
 							</main>
 						</div>
 					) : (
-						<div tw="mx-auto">
-							<section tw="flex flex-col justify-center min-h-screen">
-								<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-									<h3 tw="text-lg leading-6 font-medium text-gray-500">{PagesLabel[16].label}</h3>
-								</div>
-							</section>
-						</div>
+						<SiteReverifyMessage />
 					)
 				) : (
 					<div tw="mx-auto">
