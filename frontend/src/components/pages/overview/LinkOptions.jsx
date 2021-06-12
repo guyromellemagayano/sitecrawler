@@ -13,7 +13,7 @@ import Skeleton from "react-loading-skeleton";
 import tw, { styled } from "twin.macro";
 
 // JSON
-import LinkOptionsLabel from "public/labels/components/sites/LinkOptions.json";
+import LinkOptionsLabel from "./labels/LinkOptions.json";
 
 // Hooks
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
@@ -34,7 +34,6 @@ const LinkOptions = ({
 }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
-
 	const { asPath } = useRouter();
 
 	React.useEffect(() => {
@@ -58,28 +57,36 @@ const LinkOptions = ({
 							<label htmlFor="searchSites" tw="sr-only">
 								{LinkOptionsLabel[1].label}
 							</label>
-							<div tw="relative w-full text-gray-400 focus-within:text-gray-600">
+							<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center">
 								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
 									<SearchIcon tw="h-5 w-5 text-gray-400" />
 								</div>
-								<input
-									type="search"
-									name="search-links"
-									id="searchlinks"
-									tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-									placeholder={
-										asPath.includes("pages")
-											? LinkOptionsLabel[0].label
-											: asPath.includes("links")
-											? LinkOptionsLabel[1].label
-											: asPath.includes("images")
-											? LinkOptionsLabel[2].label
-											: LinkOptionsLabel[3].label
-									}
-									onKeyUp={onSearchEvent}
-									defaultValue={searchKey}
-									autoFocus
-								/>
+								{(permissions.includes("can_see_pages") &&
+									permissions.includes("can_see_scripts") &&
+									permissions.includes("can_see_stylesheets") &&
+									permissions.includes("can_see_images")) ||
+								asPath.includes("links") ? (
+									<input
+										type="search"
+										name="search-links"
+										id="searchlinks"
+										tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+										placeholder={
+											asPath.includes("pages")
+												? LinkOptionsLabel[0].label
+												: asPath.includes("links")
+												? LinkOptionsLabel[1].label
+												: asPath.includes("images")
+												? LinkOptionsLabel[2].label
+												: LinkOptionsLabel[3].label
+										}
+										onKeyUp={onSearchEvent}
+										defaultValue={searchKey}
+										autoFocus
+									/>
+								) : (
+									<p tw="sm:text-sm placeholder-gray-500 pl-8">{LinkOptionsLabel[9].label}</p>
+								)}
 							</div>
 						</div>
 					</div>
