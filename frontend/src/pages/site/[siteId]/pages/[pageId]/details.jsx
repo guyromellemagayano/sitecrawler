@@ -34,7 +34,6 @@ import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 
 // Loadable
-// const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
 const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
@@ -116,7 +115,6 @@ const PageDetail = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					// siteId?.verified ? (
 					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -394,9 +392,6 @@ const PageDetail = ({ width, result }) => {
 						</main>
 					</div>
 				) : (
-					// ) : (
-					// 	<SiteReverifyMessage />
-					// )
 					<div tw="mx-auto">
 						<Loader />
 					</div>

@@ -37,7 +37,6 @@ const LinkSorting = loadable(() => import("src/components/helpers/sorting/LinkSo
 const LinkTable = loadable(() => import("src/components/tables/LinkTable"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
-const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
@@ -198,7 +197,6 @@ const Links = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					// siteId.verified ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -308,9 +306,6 @@ const Links = ({ width, result }) => {
 						</main>
 					</div>
 				) : (
-					// ) : (
-					// 	<SiteReverifyMessage />
-					// )
 					<div tw="mx-auto">
 						<Loader />
 					</div>
