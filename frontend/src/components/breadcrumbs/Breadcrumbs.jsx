@@ -21,16 +21,17 @@ const BreadcrumbNav = styled.nav`
 	}
 `;
 
-const Breadcrumbs = ({ isLinks, isPages, isImages, isSeo, siteId, dataId, pageTitle, pageDetailTitle }) => {
+const Breadcrumbs = ({ isSidebar, isLinks, isPages, isImages, isSeo, siteId, dataId, pageTitle, pageDetailTitle }) => {
 	const homeLabel = BreadcrumbsLabel[0].label;
-	const homePageLink = `/site/${siteId}/overview`;
+	const sitesDashboardPageLink = `/`;
+	const siteIdOverviewPageLink = `/site/${siteId}/overview`;
 
 	return (
 		<BreadcrumbNav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
 			<ol tw="flex items-center space-x-4">
 				<li>
 					<div>
-						<Link href={homePageLink} passHref>
+						<Link href={isSidebar && siteId == null ? sitesDashboardPageLink : siteIdOverviewPageLink} passHref>
 							<a tw="text-gray-400 hover:text-gray-500">
 								<HomeIcon tw="flex-shrink-0 h-5 w-5" />
 								<span tw="sr-only">{homeLabel}</span>
@@ -81,6 +82,7 @@ const Breadcrumbs = ({ isLinks, isPages, isImages, isSeo, siteId, dataId, pageTi
 };
 
 Breadcrumbs.defaultProps = {
+	siteId: null,
 	dataId: null,
 	pageDetailTitle: null
 };
