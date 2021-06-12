@@ -129,6 +129,7 @@ const LinkDetail = ({ width, result }) => {
 									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 										<div tw="max-w-full py-4 px-8">
 											<Breadcrumbs
+												isLinks
 												siteId={result.siteId}
 												dataId={result.linkId}
 												pageTitle={LinksLabel[1].label}

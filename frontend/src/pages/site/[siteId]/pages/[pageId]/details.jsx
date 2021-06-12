@@ -142,6 +142,7 @@ const PageDetail = ({ width, result }) => {
 									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 										<div tw="max-w-full py-4 px-8">
 											<Breadcrumbs
+												isPages
 												siteId={result.siteId}
 												dataId={result.pageId}
 												pageTitle={PagesLabel[1].label}
