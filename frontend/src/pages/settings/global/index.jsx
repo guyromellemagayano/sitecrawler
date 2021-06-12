@@ -91,6 +91,7 @@ const GlobalSettings = ({ width }) => {
 								</div>
 							</div>
 						</div>
+
 						<div tw="static bottom-0 w-full mx-auto px-12 py-4 bg-white border-t border-gray-200">
 							<SiteFooter />
 						</div>
