@@ -497,9 +497,15 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
 											></span>
 											<div tw="inline-flex flex-col justify-start items-start">
-												<span className="truncate-link" tw="text-sm leading-5 font-semibold text-gray-500">
-													{site?.name}
-												</span>
+												<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
+													<a
+														className="truncate-link"
+														tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+														title={site?.name}
+													>
+														{site?.name}
+													</a>
+												</Link>
 												<span tw="flex justify-start text-sm leading-5 text-gray-500">
 													<button
 														type="button"
@@ -521,32 +527,34 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 											</div>
 										</>
 									) : (
-										<div>
+										<>
 											<span
 												aria-label="Verified"
 												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-green-400"
 											></span>
-											<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
-												<a
-													className="truncate-link"
-													tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-													title={site?.name}
-												>
-													{site?.name}
-												</a>
-											</Link>
-											<span tw="ml-2 flex justify-start text-sm leading-5">
-												<Link href={site?.url} passHref>
+											<div tw="inline-flex flex-col justify-start items-start">
+												<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
 													<a
-														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
-														title={DataTableLabel[26].label}
-														target="_blank"
+														className="truncate-link"
+														tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+														title={site?.name}
 													>
-														{DataTableLabel[26].label}
+														{site?.name}
 													</a>
 												</Link>
-											</span>
-										</div>
+												<span tw="flex justify-start text-sm leading-5">
+													<Link href={site?.url} passHref>
+														<a
+															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+															title={DataTableLabel[26].label}
+															target="_blank"
+														>
+															{DataTableLabel[26].label}
+														</a>
+													</Link>
+												</span>
+											</div>
+										</>
 									)
 								) : (
 									<>
