@@ -13,6 +13,7 @@ const useCrawl = ({ siteId }) => {
 	const [isCrawlFinished, setIsCrawlFinished] = React.useState(null);
 	const [isCrawlStarted, setIsCrawlStarted] = React.useState(null);
 	const [scanResult, setScanResult] = React.useState(null);
+	const [scanCount, setScanCount] = React.useState(0);
 
 	const selectedSiteRef = React.useRef(null);
 
@@ -51,6 +52,7 @@ const useCrawl = ({ siteId }) => {
 			currentScan?.results.find((e) => e?.finished_at == null && e?.force_https == null) ?? previousScanResult;
 
 		setScanResult(currentScanResult);
+		setScanCount(currentScan?.count);
 
 		currentScan?.count > 1 ? setScanObjId(previousScanResult?.id) : setScanObjId(currentScanResult?.id);
 	}, [currentScan, scanResult, scanObjId]);
@@ -68,6 +70,7 @@ const useCrawl = ({ siteId }) => {
 	return {
 		selectedSiteRef,
 		handleCrawl,
+		scanCount,
 		scanResult,
 		scanObjId,
 		isCrawlStarted,

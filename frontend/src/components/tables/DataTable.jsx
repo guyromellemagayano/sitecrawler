@@ -75,7 +75,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	const { selectedSiteRef, scanResult, scanObjId } = useCrawl({
+	const { selectedSiteRef, scanResult, scanObjId, scanCount } = useCrawl({
 		siteId: site?.id
 	});
 
@@ -497,9 +497,15 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
 											></span>
 											<div tw="inline-flex flex-col justify-start items-start">
-												<span className="truncate-link" tw="text-sm leading-5 font-semibold text-gray-500">
-													{site?.name}
-												</span>
+												<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
+													<a
+														className="truncate-link"
+														tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+														title={site?.name}
+													>
+														{site?.name}
+													</a>
+												</Link>
 												<span tw="flex justify-start text-sm leading-5 text-gray-500">
 													<button
 														type="button"
@@ -521,32 +527,34 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 											</div>
 										</>
 									) : (
-										<div>
+										<>
 											<span
 												aria-label="Verified"
 												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-green-400"
 											></span>
-											<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
-												<a
-													className="truncate-link"
-													tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-													title={site?.name}
-												>
-													{site?.name}
-												</a>
-											</Link>
-											<span tw="ml-2 flex justify-start text-sm leading-5">
-												<Link href={site?.url} passHref>
+											<div tw="inline-flex flex-col justify-start items-start">
+												<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
 													<a
-														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
-														title={DataTableLabel[26].label}
-														target="_blank"
+														className="truncate-link"
+														tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+														title={site?.name}
 													>
-														{DataTableLabel[26].label}
+														{site?.name}
 													</a>
 												</Link>
-											</span>
-										</div>
+												<span tw="flex justify-start text-sm leading-5">
+													<Link href={site?.url} passHref>
+														<a
+															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+															title={DataTableLabel[26].label}
+															target="_blank"
+														>
+															{DataTableLabel[26].label}
+														</a>
+													</Link>
+												</span>
+											</div>
+										</>
 									)
 								) : (
 									<>
@@ -564,23 +572,29 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							<span tw="space-x-2">
-								<span tw="text-sm leading-5 text-gray-500">
-									{!disableLocalTime ? (
-										<Moment calendar={calendarStrings} date={stats?.finished_at} local />
-									) : (
-										<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
-									)}
+							stats?.finished_at !== null ? (
+								<span tw="space-x-2">
+									<span tw="text-sm leading-5 text-gray-500">
+										{!disableLocalTime ? (
+											<Moment calendar={calendarStrings} date={stats?.finished_at} local />
+										) : (
+											<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
+										)}
+									</span>
+									<span tw="text-sm leading-5 text-gray-500">
+										{!disableLocalTime ? (
+											<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
+										) : (
+											<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
+										)}
+									</span>
+									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
 								</span>
-								<span tw="text-sm leading-5 text-gray-500">
-									{!disableLocalTime ? (
-										<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
-									) : (
-										<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
-									)}
+							) : (
+								<span tw="space-x-2">
+									<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
 								</span>
-								{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
-							</span>
+							)
 						) : (
 							<Skeleton duration={2} width={176.7} />
 						)}
@@ -595,10 +609,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										: tw`text-green-500`
 								]}
 							>
-								{scanResult?.finished_at == null && scanResult?.force_https == null ? (
+								{scanResult?.finished_at == null && scanResult?.force_https == null && scanCount > 1 ? (
 									DataTableLabel[19].label
-								) : scanResult?.finished_at !== null && scanResult?.force_https !== null ? (
+								) : scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount > 1 ? (
 									DataTableLabel[20].label
+								) : scanResult?.finished_at == null && scanResult?.force_https == null && scanCount == 1 ? (
+									DataTableLabel[24].label
+								) : scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount == 1 ? (
+									DataTableLabel[21].label
 								) : (
 									<Skeleton duration={2} width={100} />
 								)}
