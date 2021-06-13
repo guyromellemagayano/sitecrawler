@@ -75,7 +75,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	const { selectedSiteRef, scanResult, scanObjId } = useCrawl({
+	const { selectedSiteRef, scanResult, scanObjId, scanCount } = useCrawl({
 		siteId: site?.id
 	});
 
@@ -572,23 +572,29 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							<span tw="space-x-2">
-								<span tw="text-sm leading-5 text-gray-500">
-									{!disableLocalTime ? (
-										<Moment calendar={calendarStrings} date={stats?.finished_at} local />
-									) : (
-										<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
-									)}
+							stats?.finished_at !== null ? (
+								<span tw="space-x-2">
+									<span tw="text-sm leading-5 text-gray-500">
+										{!disableLocalTime ? (
+											<Moment calendar={calendarStrings} date={stats?.finished_at} local />
+										) : (
+											<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
+										)}
+									</span>
+									<span tw="text-sm leading-5 text-gray-500">
+										{!disableLocalTime ? (
+											<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
+										) : (
+											<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
+										)}
+									</span>
+									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
 								</span>
-								<span tw="text-sm leading-5 text-gray-500">
-									{!disableLocalTime ? (
-										<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
-									) : (
-										<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
-									)}
+							) : (
+								<span tw="space-x-2">
+									<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
 								</span>
-								{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
-							</span>
+							)
 						) : (
 							<Skeleton duration={2} width={176.7} />
 						)}
@@ -603,10 +609,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										: tw`text-green-500`
 								]}
 							>
-								{scanResult?.finished_at == null && scanResult?.force_https == null ? (
+								{scanResult?.finished_at == null && scanResult?.force_https == null && scanCount > 1 ? (
 									DataTableLabel[19].label
-								) : scanResult?.finished_at !== null && scanResult?.force_https !== null ? (
+								) : scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount > 1 ? (
 									DataTableLabel[20].label
+								) : scanResult?.finished_at == null && scanResult?.force_https == null && scanCount == 1 ? (
+									DataTableLabel[24].label
+								) : scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount == 1 ? (
+									DataTableLabel[21].label
 								) : (
 									<Skeleton duration={2} width={100} />
 								)}
