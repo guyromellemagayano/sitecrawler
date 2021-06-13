@@ -52,9 +52,7 @@ const SettingsMenu = ({ site }) => {
 			: null;
 	};
 
-	const handleDropdownHandler = (siteId, verified) => {
-		if (!verified) return false;
-
+	const handleDropdownHandler = (siteId) => {
 		handleSiteSelectOnLoad(siteId);
 		setIsComponentVisible(!isComponentVisible);
 	};
@@ -156,16 +154,7 @@ const SettingsMenu = ({ site }) => {
 																					selectedSiteDetails?.verified ? tw`bg-green-400` : tw`bg-red-400`
 																				]}
 																			></span>
-																			<span
-																				css={[
-																					tw`font-medium block truncate`,
-																					selectedSiteDetails?.verified
-																						? tw`text-gray-500`
-																						: tw`text-gray-600 opacity-25`
-																				]}
-																			>
-																				{selectedSite}
-																			</span>
+																			<span tw="font-medium block truncate text-gray-500">{selectedSite}</span>
 																		</div>
 																	) : null
 																) : (
@@ -201,13 +190,10 @@ const SettingsMenu = ({ site }) => {
 																	return (
 																		<li
 																			key={index}
-																			onClick={() => handleDropdownHandler(value?.id, value?.verified)}
+																			onClick={() => handleDropdownHandler(value?.id)}
 																			id={`listbox-item-${index + 1}`}
 																			role="option"
-																			css={[
-																				tw`select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`,
-																				value?.verified ? tw`cursor-pointer` : tw`cursor-not-allowed`
-																			]}
+																			tw="select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
 																		>
 																			<div tw="flex items-center space-x-3">
 																				{sitesLoaded ? (
@@ -228,12 +214,7 @@ const SettingsMenu = ({ site }) => {
 																					/>
 																				)}
 
-																				<span
-																					css={[
-																						tw`font-medium block truncate`,
-																						value?.verified ? tw`text-gray-500` : tw`text-gray-600 opacity-25`
-																					]}
-																				>
+																				<span tw="font-medium block truncate text-gray-500">
 																					{sitesLoaded ? value?.name : <Skeleton duration={2} width={145} />}
 																				</span>
 																			</div>
