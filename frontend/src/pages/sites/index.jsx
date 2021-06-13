@@ -230,12 +230,12 @@ const Sites = ({ width, result }) => {
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
 								</div>
+
+								<div tw="static bottom-0 w-full mx-auto px-12 py-4">
+									<SiteFooter />
+								</div>
 							</main>
 						) : null}
-
-						<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-							<SiteFooter />
-						</div>
 					</div>
 				) : (
 					<div tw="mx-auto">
