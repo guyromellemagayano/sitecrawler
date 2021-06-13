@@ -56,7 +56,7 @@ const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }
 		mutateLinks;
 	};
 
-	return (
+	return slug !== undefined ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				{slug == "link-url" ? (
@@ -107,7 +107,7 @@ const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }
 				) : null}
 			</div>
 		</div>
-	);
+	) : null;
 };
 
 LinkSorting.propTypes = {};

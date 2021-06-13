@@ -54,7 +54,7 @@ const SiteSorting = ({ result, slug, mutateSite, dataTableHeadsContent, setPageP
 		mutateSite;
 	};
 
-	return (
+	return slug !== undefined ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				{slug === "site-name" ? (
@@ -87,7 +87,7 @@ const SiteSorting = ({ result, slug, mutateSite, dataTableHeadsContent, setPageP
 				) : null}
 			</div>
 		</div>
-	);
+	) : null;
 };
 
 SiteSorting.propTypes = {};

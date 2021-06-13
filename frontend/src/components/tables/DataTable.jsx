@@ -57,16 +57,16 @@ const DataTableDiv = styled.tbody`
 const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [copied, setCopied] = React.useState(false);
-	const [copyValue, setCopyValue] = React.useState(`<meta name="epic-crawl-id" content="${site.verification_id}" />`);
+	const [copyValue, setCopyValue] = React.useState(`<meta name="epic-crawl-id" content="${site?.verification_id}" />`);
 	const [disableSiteVerify, setDisableSiteVerify] = React.useState(false);
 	const [enableNextStep, setEnableNextStep] = React.useState(false);
 	const [errorMsg, setErrorMsg] = React.useState(null);
 	const [showDeleteSiteModal, setShowDeleteSiteModal] = React.useState(false);
 	const [showVerifySiteModal, setShowVerifySiteModal] = React.useState(false);
-	const [siteVerifyId, setSiteVerifyId] = React.useState(site.id);
+	const [siteVerifyId, setSiteVerifyId] = React.useState(site?.id);
 	const [successMsg, setSuccessMsg] = React.useState(null);
 
-	const siteVerifyApiEndpoint = "/api/site/" + site.id + "/verify/";
+	const siteVerifyApiEndpoint = "/api/site/" + site?.id + "/verify/";
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -75,12 +75,12 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	const { selectedSiteRef, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
-		siteId: site.id
+	const { selectedSiteRef, scanResult, scanObjId } = useCrawl({
+		siteId: site?.id
 	});
 
 	const { stats: stats } = useStats({
-		querySid: site.id,
+		querySid: site?.id,
 		scanObjId: scanObjId
 	});
 
@@ -180,7 +180,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 	};
 
 	const handleSiteDeletion = async (e) => {
-		let siteIdApiEndpoint = "/api/site/" + site.id;
+		let siteIdApiEndpoint = "/api/site/" + site?.id;
 
 		e.preventDefault();
 
@@ -285,21 +285,20 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<h3 tw="text-lg leading-6 font-medium text-gray-800" id="modal-headline">
-										{DataTableLabel[3].label}: {site.name} (
+										{DataTableLabel[0].label}: {site?.name} (
 										<a
-											href={site.url}
+											href={site?.url}
 											target="_blank"
-											title={site.url}
+											title={site?.url}
 											tw="cursor-pointer break-all text-base leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
 										>
-											{site.url}
+											{site?.url}
 										</a>
 										)
 									</h3>
 									<div tw="mt-2">
-										<p tw="text-sm leading-5 text-gray-600">{DataTableLabel[0].label}</p>
 										<p tw="text-base font-medium leading-6 text-gray-700 mt-4 mb-3">{DataTableLabel[5].label}</p>
-										<ol tw="space-y-2">
+										<ol tw="space-y-2 list-decimal ml-4">
 											<li tw="text-sm leading-6 text-gray-600">{DataTableLabel[6].label}</li>
 											<li tw="text-sm leading-6 text-gray-600">
 												{ReactHtmlParser(DataTableLabel[7].label)}
@@ -390,7 +389,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 									</span>
 								) : (
 									<span tw="mt-3 sm:ml-3 flex w-full sm:mt-0 sm:w-auto">
-										<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
+										<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
 											<a tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
 												Go to Site Overview
 											</a>

@@ -63,7 +63,7 @@ const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath })
 		mutatePages;
 	};
 
-	return (
+	return slug !== undefined ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
@@ -116,7 +116,7 @@ const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath })
 				</span>
 			</div>
 		</div>
-	);
+	) : null;
 };
 
 SeoSorting.propTypes = {};

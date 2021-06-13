@@ -52,7 +52,7 @@ const PageSorting = ({ result, slug, mutatePages, linksPagesContent, setPagePath
 		mutatePages;
 	};
 
-	return (
+	return slug !== undefined ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
@@ -87,7 +87,7 @@ const PageSorting = ({ result, slug, mutatePages, linksPagesContent, setPagePath
 				</span>
 			</div>
 		</div>
-	);
+	) : null;
 };
 
 PageSorting.propTypes = {};
