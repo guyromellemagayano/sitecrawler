@@ -31,7 +31,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 	const [selectedMenu, setSelectedMenu] = useState(null);
 
 	const lgScreenBreakpoint = 1024;
-	const siteApiEndpoint = "/api/site/?ordering=name";
+	const siteApiEndpoint = "/api/site/?ordering=name&per_page=100";
 	const siteDashboardLink = "/sites";
 
 	const router = useRouter();
