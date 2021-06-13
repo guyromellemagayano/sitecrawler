@@ -161,7 +161,7 @@ const ImagesTable = ({ siteId, val }) => {
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								<span className="truncate-link">
-									{imageDetail?.pages[0]?.url == val?.url ? "/" : imageDetail?.pages[0]?.url}
+									{imageDetail?.pages[0]?.url == val?.url ? "/sites" : imageDetail?.pages[0]?.url}
 								</span>
 								&nbsp;
 								{val.length - 1 > 0 ? "+" + parseInt(val.length - 1) : null}{" "}

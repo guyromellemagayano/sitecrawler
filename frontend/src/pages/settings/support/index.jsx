@@ -36,7 +36,7 @@ const SupportSection = styled.section``;
 const Support = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
-	const homePageLink = "/";
+	const homePageLink = "/sites";
 	const pageTitle = SupportLabel[1].label;
 
 	const { user } = useUser({

@@ -70,7 +70,7 @@ const SiteOverview = ({ width, result }) => {
 
 	let pageTitle = "";
 	const homeLabel = "Home";
-	const homePageLink = "/";
+	const homePageLink = "/sites";
 
 	const { user: user } = useUser({
 		redirectIfFound: false,

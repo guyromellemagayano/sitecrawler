@@ -14,22 +14,22 @@ import Custom500Label from "public/labels/pages/custom-404.json";
 import Layout from "src/components/Layout";
 
 const Custom500 = () => {
-  const pageTitle = Custom500Label[0].label;
+	const pageTitle = Custom500Label[0].label;
 
-  return (
-    <Layout>
-      <NextSeo title={pageTitle} />
+	return (
+		<Layout>
+			<NextSeo title={pageTitle} />
 
-      <div tw="absolute inset-0 flex flex-col items-center justify-center w-full min-h-screen bg-gray-50">
-        <div tw="flex flex-col items-start justify-center max-w-4xl space-y-4">
-          <h1>{Custom500Label[0].label}</h1>
-          <Link href="/" passHref>
-            <a>{Custom500Label[1].label}</a>
-          </Link>
-        </div>
-      </div>
-    </Layout>
-  );
+			<div tw="absolute inset-0 flex flex-col items-center justify-center w-full min-h-screen bg-gray-50">
+				<div tw="flex flex-col items-start justify-center max-w-4xl space-y-4">
+					<h1>{Custom500Label[0].label}</h1>
+					<Link href="/sites" passHref>
+						<a>{Custom500Label[1].label}</a>
+					</Link>
+				</div>
+			</div>
+		</Layout>
+	);
 };
 
 export default Custom500;

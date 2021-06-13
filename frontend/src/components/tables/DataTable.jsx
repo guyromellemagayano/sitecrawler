@@ -86,7 +86,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 
 	React.useEffect(() => {
 		if (!showDeleteSiteModal) {
-			router.push("/");
+			router.push("/sites");
 		}
 	}, [showDeleteSiteModal]);
 

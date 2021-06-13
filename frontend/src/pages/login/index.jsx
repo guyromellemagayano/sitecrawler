@@ -124,7 +124,7 @@ const Login = () => {
 																	setSuccessMsg((successMsg) => [...successMsg, LoginLabel[12].label]);
 
 																	setTimeout(() => {
-																		Router.replace("/");
+																		Router.replace("/sites");
 																	}, 1500);
 																}
 															} else {

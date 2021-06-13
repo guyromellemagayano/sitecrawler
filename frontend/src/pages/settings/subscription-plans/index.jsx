@@ -89,7 +89,7 @@ const Subscriptions = ({ width }) => {
 	const currentSubscriptionApiEndpoint = "/api/stripe/subscription/current/";
 	const currentPaymentMethodApiEndpoint = "/api/stripe/payment-method/";
 	const homeLabel = "Home";
-	const homePageLink = "/";
+	const homePageLink = "/sites";
 	const pageTitle = "Subscriptions";
 	const siteApiEndpoint = "/api/site/?ordering=name";
 

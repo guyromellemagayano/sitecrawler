@@ -74,7 +74,7 @@ const ImagesDetail = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	const homePageLink = "/";
+	const homePageLink = "/sites";
 	let imageDetailPageTitle = ImagesLabel[1].label + " - " + siteId?.name + " - " + imageDetail?.url;
 
 	React.useEffect(() => {

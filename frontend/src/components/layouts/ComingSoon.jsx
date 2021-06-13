@@ -17,7 +17,7 @@ import SiteFooter from "src/components/layouts/Footer";
 
 const ComingSoon = ({ width, user, pageTitle, openMobileSidebar, setOpenMobileSidebar }) => {
 	const homeLabel = "Home";
-	const homePageLink = "/";
+	const homePageLink = "/sites";
 
 	return (
 		<>

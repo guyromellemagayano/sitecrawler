@@ -52,7 +52,7 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 			mutateSite;
 
 			setTimeout(() => {
-				router.push("/");
+				router.push("/sites");
 			}, 1000);
 		}
 	}, [updateSite]);

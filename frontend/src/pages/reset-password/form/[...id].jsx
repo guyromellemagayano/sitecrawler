@@ -192,7 +192,7 @@ const ResetPasswordForm = ({ result }) => {
 					<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 						<span tw="px-2 py-5 text-gray-500">
 							{ReactHtmlParser(ResetPasswordLabel[7].label)}
-							<Link href="/">
+							<Link href="/sites">
 								<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 									{ResetPasswordLabel[8].label}
 								</a>
