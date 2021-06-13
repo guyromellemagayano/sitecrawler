@@ -43,14 +43,14 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 
 	useEffect(() => {
 		switch (true) {
-			case router.pathname.includes("/site"):
-				setSelectedMenu(<SiteMenu site={site ? site : null} />);
+			case router.pathname.includes("/sites"):
+				setSelectedMenu(<PrimaryMenu user={user ? site : null} site={site ? site : null} />);
 				break;
 			case router.pathname.includes("/settings"):
 				setSelectedMenu(<SettingsMenu site={site ? site : null} />);
 				break;
 			default:
-				setSelectedMenu(<PrimaryMenu user={user ? site : null} site={site ? site : null} />);
+				setSelectedMenu(<SiteMenu site={site ? site : null} />);
 				break;
 		}
 
