@@ -79,7 +79,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		siteId: site?.id
 	});
 
-	const { stats: stats } = useStats({
+	const { stats } = useStats({
 		querySid: site?.id,
 		scanObjId: scanObjId
 	});
