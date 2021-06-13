@@ -56,7 +56,7 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 		mutateImages;
 	};
 
-	return (
+	return slug !== undefined ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
@@ -118,7 +118,7 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 				</span>
 			</div>
 		</div>
-	);
+	) : null;
 };
 
 ImageSorting.propTypes = {};

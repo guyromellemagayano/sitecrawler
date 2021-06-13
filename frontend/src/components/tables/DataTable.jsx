@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
@@ -40,30 +40,33 @@ const DataTableDiv = styled.tbody`
 		max-width: 100%;
 		display: block;
 
-		a,
-		span:first-child {
-			display: block;
+		a {
+			display: inline-block;
+			clear: both;
 		}
+	}
+
+	.truncate-link {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 20rem;
 	}
 `;
 
 const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
-	// const [crawlInProgress, setCrawlInProgress] = useState(false);
-	// const [scanData, setScanData] = useState([]);
-	// const [scanObjId, setScanObjId] = useState(0);
-	// const [statsData, setStatsData] = useState([]);
-	const [componentReady, setComponentReady] = useState(false);
-	const [copied, setCopied] = useState(false);
-	const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${site.verification_id}" />`);
-	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
-	const [enableNextStep, setEnableNextStep] = useState(false);
-	const [errorMsg, setErrorMsg] = useState(null);
-	const [showDeleteSiteModal, setShowDeleteSiteModal] = useState(false);
-	const [showVerifySiteModal, setShowVerifySiteModal] = useState(false);
-	const [siteVerifyId, setSiteVerifyId] = useState(site.id);
-	const [successMsg, setSuccessMsg] = useState(null);
+	const [componentReady, setComponentReady] = React.useState(false);
+	const [copied, setCopied] = React.useState(false);
+	const [copyValue, setCopyValue] = React.useState(`<meta name="epic-crawl-id" content="${site?.verification_id}" />`);
+	const [disableSiteVerify, setDisableSiteVerify] = React.useState(false);
+	const [enableNextStep, setEnableNextStep] = React.useState(false);
+	const [errorMsg, setErrorMsg] = React.useState(null);
+	const [showDeleteSiteModal, setShowDeleteSiteModal] = React.useState(false);
+	const [showVerifySiteModal, setShowVerifySiteModal] = React.useState(false);
+	const [siteVerifyId, setSiteVerifyId] = React.useState(site?.id);
+	const [successMsg, setSuccessMsg] = React.useState(null);
 
-	const siteVerifyApiEndpoint = "/api/site/" + site.id + "/verify/";
+	const siteVerifyApiEndpoint = "/api/site/" + site?.id + "/verify/";
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -72,12 +75,12 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	const { selectedSiteRef, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
-		siteId: site.id
+	const { selectedSiteRef, scanResult, scanObjId } = useCrawl({
+		siteId: site?.id
 	});
 
 	const { stats: stats } = useStats({
-		querySid: site.id,
+		querySid: site?.id,
 		scanObjId: scanObjId
 	});
 
@@ -177,7 +180,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 	};
 
 	const handleSiteDeletion = async (e) => {
-		let siteIdApiEndpoint = "/api/site/" + site.id;
+		let siteIdApiEndpoint = "/api/site/" + site?.id;
 
 		e.preventDefault();
 
@@ -282,21 +285,20 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<h3 tw="text-lg leading-6 font-medium text-gray-800" id="modal-headline">
-										{DataTableLabel[3].label}: {site.name} (
+										{DataTableLabel[0].label}: {site?.name} (
 										<a
-											href={site.url}
+											href={site?.url}
 											target="_blank"
-											title={site.url}
+											title={site?.url}
 											tw="cursor-pointer break-all text-base leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
 										>
-											{site.url}
+											{site?.url}
 										</a>
 										)
 									</h3>
 									<div tw="mt-2">
-										<p tw="text-sm leading-5 text-gray-600">{DataTableLabel[0].label}</p>
 										<p tw="text-base font-medium leading-6 text-gray-700 mt-4 mb-3">{DataTableLabel[5].label}</p>
-										<ol tw="space-y-2">
+										<ol tw="space-y-2 list-decimal ml-4">
 											<li tw="text-sm leading-6 text-gray-600">{DataTableLabel[6].label}</li>
 											<li tw="text-sm leading-6 text-gray-600">
 												{ReactHtmlParser(DataTableLabel[7].label)}
@@ -387,7 +389,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 									</span>
 								) : (
 									<span tw="mt-3 sm:ml-3 flex w-full sm:mt-0 sm:w-auto">
-										<Link href="/site/[siteId]/overview" as={`/site/${site.id}/overview`} passHref>
+										<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
 											<a tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
 												Go to Site Overview
 											</a>
@@ -489,31 +491,35 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 							<span>
 								{componentReady ? (
 									!site?.verified ? (
-										<div>
+										<>
 											<span
 												aria-label="Not Verified"
-												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-red-400"
+												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
 											></span>
-											<span tw="max-w-sm truncate text-sm leading-5 font-semibold text-gray-500">{site?.name}</span>
-											<span tw="ml-2 flex justify-start text-sm leading-5 text-gray-500">
-												<button
-													type="button"
-													id="siteVerifySiteModalButton"
-													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150"
-													onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
-												>
-													{DataTableLabel[0].label}
-												</button>
-												<button
-													type="button"
-													id="siteVerifySiteModalButton"
-													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
-													onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
-												>
-													{DataTableLabel[1].label}
-												</button>
-											</span>
-										</div>
+											<div tw="inline-flex flex-col justify-start items-start">
+												<span className="truncate-link" tw="text-sm leading-5 font-semibold text-gray-500">
+													{site?.name}
+												</span>
+												<span tw="flex justify-start text-sm leading-5 text-gray-500">
+													<button
+														type="button"
+														id="siteVerifySiteModalButton"
+														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150"
+														onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
+													>
+														{DataTableLabel[0].label}
+													</button>
+													<button
+														type="button"
+														id="siteVerifySiteModalButton"
+														tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+														onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
+													>
+														{DataTableLabel[1].label}
+													</button>
+												</span>
+											</div>
+										</>
 									) : (
 										<div>
 											<span
@@ -522,7 +528,8 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 											></span>
 											<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
 												<a
-													tw="max-w-sm truncate cursor-pointer text-sm leading-6 font-semibold transition ease-in-out duration-150 text-indigo-600 hover:text-indigo-500"
+													className="truncate-link"
+													tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
 													title={site?.name}
 												>
 													{site?.name}
@@ -557,74 +564,58 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							site?.verified ? (
-								<span tw="space-x-2">
-									<span tw="text-sm leading-5 text-gray-500">
-										{!disableLocalTime ? (
-											<Moment calendar={calendarStrings} date={stats?.finished_at} local />
-										) : (
-											<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
-										)}
-									</span>
-									<span tw="text-sm leading-5 text-gray-500">
-										{!disableLocalTime ? (
-											<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
-										) : (
-											<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
-										)}
-									</span>
-									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
+							<span tw="space-x-2">
+								<span tw="text-sm leading-5 text-gray-500">
+									{!disableLocalTime ? (
+										<Moment calendar={calendarStrings} date={stats?.finished_at} local />
+									) : (
+										<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
+									)}
 								</span>
-							) : (
-								DataTableLabel[22].label
-							)
+								<span tw="text-sm leading-5 text-gray-500">
+									{!disableLocalTime ? (
+										<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
+									) : (
+										<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
+									)}
+								</span>
+								{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
+							</span>
 						) : (
 							<Skeleton duration={2} width={176.7} />
 						)}
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							site?.verified ? (
-								<span
-									css={[
-										tw`text-sm leading-5 text-gray-500`,
-										scanResult?.finished_at == null && scanResult?.force_https == null
-											? tw`text-yellow-500`
-											: tw`text-green-500`
-									]}
-								>
-									{scanResult?.finished_at == null && scanResult?.force_https == null ? (
-										DataTableLabel[19].label
-									) : scanResult?.finished_at !== null && scanResult?.force_https !== null ? (
-										DataTableLabel[20].label
-									) : (
-										<Skeleton duration={2} width={100} />
-									)}
-								</span>
-							) : (
-								DataTableLabel[2].label
-							)
+							<span
+								css={[
+									tw`text-sm leading-5 text-gray-500`,
+									scanResult?.finished_at == null && scanResult?.force_https == null
+										? tw`text-yellow-500`
+										: tw`text-green-500`
+								]}
+							>
+								{scanResult?.finished_at == null && scanResult?.force_https == null ? (
+									DataTableLabel[19].label
+								) : scanResult?.finished_at !== null && scanResult?.force_https !== null ? (
+									DataTableLabel[20].label
+								) : (
+									<Skeleton duration={2} width={100} />
+								)}
+							</span>
 						) : (
 							<Skeleton duration={2} width={100} />
 						)}
 					</td>
-					<td
-						css={[
-							tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold`
-						]}
-					>
+					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
 						{componentReady ? (
-							site?.verified ? (
-								stats ? (
-									<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
-										<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
-											{setTotalIssues()}
-										</a>
-									</Link>
-								) : null
-							) : (
-								0
-							)
+							stats ? (
+								<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
+									<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
+										{setTotalIssues()}
+									</a>
+								</Link>
+							) : null
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
@@ -635,59 +626,39 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 						]}
 					>
 						{componentReady ? (
-							site?.verified ? (
-								stats ? (
-									<Link href="/site/[siteId]/links" as={`/site/${site?.id}/links`} passHref>
-										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-											{stats?.num_links}
-										</a>
-									</Link>
-								) : null
-							) : (
-								0
-							)
+							stats ? (
+								<Link href="/site/[siteId]/links" as={`/site/${site?.id}/links`} passHref>
+									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+										{stats?.num_links}
+									</a>
+								</Link>
+							) : null
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
 					</td>
-					<td
-						css={[
-							tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold`
-						]}
-					>
+					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
 						{componentReady ? (
-							site?.verified ? (
-								stats ? (
-									<Link href="/site/[siteId]/pages" as={`/site/${site?.id}/pages`} passHref>
-										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-											{stats?.num_pages}
-										</a>
-									</Link>
-								) : null
-							) : (
-								0
-							)
+							stats ? (
+								<Link href="/site/[siteId]/pages" as={`/site/${site?.id}/pages`} passHref>
+									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+										{stats?.num_pages}
+									</a>
+								</Link>
+							) : null
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
 					</td>
-					<td
-						css={[
-							tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold`
-						]}
-					>
+					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
 						{componentReady ? (
-							site?.verified ? (
-								stats ? (
-									<Link href="/site/[siteId]/images" as={`/site/${site?.id}/images`} passHref>
-										<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-											{stats?.num_images}
-										</a>
-									</Link>
-								) : null
-							) : (
-								0
-							)
+							stats ? (
+								<Link href="/site/[siteId]/images" as={`/site/${site?.id}/images`} passHref>
+									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+										{stats?.num_images}
+									</a>
+								</Link>
+							) : null
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}

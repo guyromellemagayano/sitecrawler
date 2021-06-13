@@ -29,7 +29,6 @@ import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 
 // Loadable
-// const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
 const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
 const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
 const ImageFilter = loadable(() => import("src/components/helpers/filters/ImageFilter"));
@@ -218,7 +217,6 @@ const Images = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					// siteId?.verified ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -351,9 +349,6 @@ const Images = ({ width, result }) => {
 						</main>
 					</div>
 				) : (
-					// ) : (
-					// 	<SiteReverifyMessage />
-					// )
 					<div tw="mx-auto">
 						<Loader />
 					</div>

@@ -31,7 +31,6 @@ import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 
 // Loadable
-// const SiteReverifyMessage = loadable(() => import("src/components/messages/SiteReverifyMessage"));
 const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 
@@ -67,7 +66,7 @@ const SeoDetail = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	let homePageLink = "/";
+	const homePageLink = "/";
 	let seoDetailPageTitle = SeoLabel[1].label + " - " + siteId?.name + " - " + pageDetail?.url;
 
 	React.useEffect(() => {
@@ -95,7 +94,6 @@ const SeoDetail = ({ width, result }) => {
 				/>
 
 				{siteId ? (
-					// siteId?.verified ? (
 					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
 							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
@@ -277,9 +275,6 @@ const SeoDetail = ({ width, result }) => {
 						</main>
 					</div>
 				) : (
-					// ) : (
-					// 	<SiteReverifyMessage />
-					// )
 					<div tw="mx-auto">
 						<Loader />
 					</div>

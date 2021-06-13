@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 // External
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // JSON
 import GlobalLabel from "public/labels/pages/settings/global.json";
@@ -16,6 +16,8 @@ import useUser from "src/hooks/useUser";
 // Components
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SettingsTimestampSkeleton = loadable(() => import("src/components/skeletons/SettingsTimestampSkeleton"));
+
+const TimestampSettingsDiv = styled.div``;
 
 const TimestampSettings = ({ user }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -54,31 +56,35 @@ const TimestampSettings = ({ user }) => {
 	const handleToggleTimestamp = async (e) => {
 		e.preventDefault();
 
-		await updateTimestampSettings(userApiEndpoint, !user.settings.disableLocalTime);
+		await updateTimestampSettings(userApiEndpoint, !user?.settings?.disableLocalTime);
 	};
 
 	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0) {
+		(() => {
+			setComponentReady(false);
+
 			setTimeout(() => {
 				setComponentReady(true);
 			}, 500);
-		}
-	}, [user]);
+		})();
+	}, []);
 
 	return componentReady ? (
-		<div>
+		<TimestampSettingsDiv>
 			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
 				setSuccessMsgLoaded={setSuccessMsgLoaded}
 				successMsgTitle={GlobalLabel[8].label}
 			/>
+
 			<div tw="max-w-full py-4 px-8">
 				<div tw="pt-4 m-auto">
 					<h5 tw="text-xl leading-6 font-medium text-gray-900">{GlobalLabel[0].label}</h5>
 					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{GlobalLabel[0].description}</p>
 				</div>
 			</div>
+
 			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
 				<div tw="space-y-8 divide-y divide-gray-200">
 					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
@@ -88,10 +94,10 @@ const TimestampSettings = ({ user }) => {
 									<span
 										role="checkbox"
 										tabIndex="0"
-										aria-checked={!user.settings.disableLocalTime}
+										aria-checked={!user?.settings?.disableLocalTime}
 										css={[
 											tw`relative inline-flex flex-shrink-0 h-6 w-10 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring`,
-											!user.settings.disableLocalTime ? tw`bg-indigo-600` : tw`bg-gray-200`
+											!user?.settings?.disableLocalTime ? tw`bg-indigo-600` : tw`bg-gray-200`
 										]}
 										onClick={handleToggleTimestamp}
 									>
@@ -99,13 +105,13 @@ const TimestampSettings = ({ user }) => {
 											aria-hidden="true"
 											css={[
 												tw`relative inline-block h-5 w-5 rounded-full bg-white transform transition ease-in-out duration-200`,
-												!user.settings.disableLocalTime ? tw`translate-x-4` : tw`translate-x-0`
+												!user?.settings?.disableLocalTime ? tw`translate-x-4` : tw`translate-x-0`
 											]}
 										>
 											<span
 												css={[
 													tw`absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`,
-													!user.settings.disableLocalTime
+													!user?.settings?.disableLocalTime
 														? tw`opacity-0 ease-out duration-100`
 														: tw`opacity-100 ease-in duration-200`
 												]}
@@ -124,7 +130,7 @@ const TimestampSettings = ({ user }) => {
 											<span
 												css={[
 													tw`absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`,
-													!user.settings.disableLocalTime
+													!user?.settings?.disableLocalTime
 														? tw`opacity-100 ease-in duration-200`
 														: tw`opacity-0 ease-out duration-100`
 												]}
@@ -148,7 +154,7 @@ const TimestampSettings = ({ user }) => {
 					</div>
 				</div>
 			</div>
-		</div>
+		</TimestampSettingsDiv>
 	) : (
 		<SettingsTimestampSkeleton />
 	);

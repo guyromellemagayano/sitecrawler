@@ -5,20 +5,16 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
-import { Formik } from "formik";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
-import * as Yup from "yup";
+import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // JSON
 import SupportLabel from "public/labels/pages/settings/support.json";
 
 // Hooks
-import { useSite } from "src/hooks/useSite";
-import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -26,91 +22,33 @@ import Layout from "src/components/Layout";
 
 // Components
 import AppLogo from "src/components/logos/AppLogo";
-import ErrorNotification from "src/components/notifications/ErrorNotification";
-import Loader from "src/components/layouts/Loader";
 import MainSidebar from "src/components/sidebar/MainSidebar";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
-import SuccessNotification from "src/components/notifications/SuccessNotification";
-import SupportSkeleton from "src/components/skeletons/SupportSkeleton";
+
+// Loadable
+const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
+const SupportForm = loadable(() => import("src/components/forms/SupportForm"));
+
+const SupportSection = styled.section``;
 
 const Support = ({ width }) => {
-	// const [pageLoaded, setPageLoaded] = React.useState(false);
-	// const [siteData, setSiteData] = React.useState([]);
-	// const [userData, setUserData] = React.useState([]);
-	const [componentReady, setComponentReady] = React.useState(false);
-	const [disableSupportForm, setDisableSupportForm] = React.useState(false);
-	const [errorMsg, setErrorMsg] = React.useState("");
-	const [errorMsgLoaded, setErrorMsgLoaded] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
-	const [successMsg, setSuccessMsg] = React.useState("");
-	const [successMsgLoaded, setSuccessMsgLoaded] = React.useState(false);
 
-	const pageTitle = "Support";
-	const homeLabel = "Home";
 	const homePageLink = "/";
-	const contactApiEndpoint = "/api/support/contact/";
+	const pageTitle = SupportLabel[1].label;
 
 	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
 
-	React.useEffect(() => {
-		setComponentReady(false);
-
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
-	}, []);
-
-	React.useEffect(() => {
-		successMsg && successMsg !== ""
-			? setTimeout(() => {
-					setSuccessMsgLoaded(true);
-			  }, 500)
-			: null;
-
-		errorMsg && errorMsg !== ""
-			? setTimeout(() => {
-					setErrorMsgLoaded(true);
-			  }, 500)
-			: null;
-	}, [successMsg, errorMsg]);
-
-	React.useEffect(() => {
-		successMsgLoaded
-			? setTimeout(() => {
-					setSuccessMsgLoaded(false);
-			  }, 3500)
-			: null;
-
-		errorMsgLoaded
-			? setTimeout(() => {
-					setErrorMsgLoaded(false);
-			  }, 3500)
-			: null;
-	}, [successMsgLoaded, errorMsgLoaded]);
-
 	return user ? (
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<SuccessNotification
-				successMsg={successMsg}
-				successMsgLoaded={successMsgLoaded}
-				setSuccessMsgLoaded={setSuccessMsgLoaded}
-				successMsgTitle={SupportLabel[13].label}
-			/>
-
-			<ErrorNotification
-				errorMsg={errorMsg}
-				errorMsgLoaded={errorMsgLoaded}
-				setErrorMsgLoaded={setErrorMsgLoaded}
-				errorMsgTitle={SupportLabel[12].label}
-			/>
-
-			<section tw="h-screen flex overflow-hidden bg-white">
+			<SupportSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}
@@ -119,8 +57,11 @@ const Support = ({ width }) => {
 				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-					<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
-						<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+					<div tw="relative flex-shrink-0 flex bg-white">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						</div>
+
 						<Link href={homePageLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
@@ -136,140 +77,25 @@ const Support = ({ width }) => {
 						<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 							<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 								<div className="max-w-full py-4 px-8">
-									<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
-										<ol tw="flex items-center space-x-4">
-											<li>
-												<div>
-													<Link href={homePageLink} passHref>
-														<a tw="text-gray-400 hover:text-gray-500">
-															<HomeIcon tw="flex-shrink-0 h-5 w-5" />
-															<span tw="sr-only">{homeLabel}</span>
-														</a>
-													</Link>
-												</div>
-											</li>
-											<li>
-												<div tw="flex items-center">
-													<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-													<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-														{pageTitle}
-													</p>
-												</div>
-											</li>
-										</ol>
-									</nav>
+									<Breadcrumbs isSidebar pageTitle={pageTitle} />
+
 									<div className="pt-4 m-auto">
-										<h4 className="text-2xl leading-6 font-medium text-gray-900">{SupportLabel[6].label}</h4>
-										<p className="max-w-full mt-2 text-sm leading-5 text-gray-500">{SupportLabel[7].label}</p>
+										<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
 									</div>
 								</div>
 
-								{componentReady ? (
-									<div tw="max-w-full lg:max-w-4xl p-8 pt-0 pb-2">
-										<Formik
-											initialValues={{
-												message: ""
-											}}
-											validationSchema={Yup.object({
-												message: Yup.string().required(SupportLabel[2].label)
-											})}
-											onSubmit={async (values, { setSubmitting, resetForm }) => {
-												const body = {
-													message: values.message
-												};
-
-												const response = await usePostMethod(contactApiEndpoint, body);
-
-												if (Math.floor(response.status / 200) === 1) {
-													setSuccessMsg(SupportLabel[3].label);
-													setSuccessMsgLoaded(!successMsgLoaded);
-													setSubmitting(false);
-													resetForm({ values: "" });
-													setDisableSupportForm(!disableSupportForm);
-												} else {
-													if (response.data) {
-														if (response.data.message) {
-															setErrorMsg(response.data.message[0]);
-															setErrorMsgLoaded(!errorMsgLoaded);
-														}
-
-														if (!response.data.message) {
-															setErrorMsg(SupportLabel[5].label);
-															setErrorMsgLoaded(!errorMsgLoaded);
-														}
-													} else {
-														setErrorMsg(SupportLabel[5].label);
-														setErrorMsgLoaded(!errorMsgLoaded);
-														setSubmitting(false);
-														resetForm({ values: "" });
-													}
-												}
-											}}
-										>
-											{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-												<form tw="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
-													<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-														<div tw="sm:col-span-4">
-															<label htmlFor="about" tw="block text-sm font-medium text-gray-700">
-																{SupportLabel[8].label}
-															</label>
-															<div tw="my-1">
-																<textarea
-																	id="message"
-																	name="message"
-																	rows="8"
-																	disabled={isSubmitting}
-																	css={[
-																		tw`resize-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md`,
-																		isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-																		errors.message || errorMsg ? tw`border-red-300` : tw`border-gray-300`
-																	]}
-																	placeholder={SupportLabel[9].label}
-																	onChange={handleChange}
-																	onBlur={handleBlur}
-																	value={values.message}
-																/>
-
-																{errors.message && touched.message && (
-																	<span tw="block mt-2 text-xs leading-5 text-red-700">
-																		{errors.message && touched.message && errors.message}
-																	</span>
-																)}
-															</div>
-														</div>
-
-														<div tw="sm:col-span-4">
-															<div tw="flex justify-start">
-																<button
-																	type="submit"
-																	disabled={isSubmitting}
-																	css={[
-																		tw`cursor-pointer inline-flex sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
-																		isSubmitting
-																			? tw`opacity-50 bg-green-400 cursor-not-allowed`
-																			: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
-																	]}
-																>
-																	{isSubmitting ? SupportLabel[11].label : SupportLabel[10].label}
-																</button>
-															</div>
-														</div>
-													</div>
-												</form>
-											)}
-										</Formik>
-									</div>
-								) : (
-									<SupportSkeleton />
-								)}
+								<div tw="space-y-12 divide-y divide-gray-200">
+									<SupportForm />
+								</div>
 							</div>
 						</div>
+
 						<div tw="static bottom-0 w-full mx-auto px-12 py-4 bg-white border-t border-gray-200">
 							<SiteFooter />
 						</div>
 					</main>
 				</div>
-			</section>
+			</SupportSection>
 		</Layout>
 	) : (
 		<Loader />

@@ -6,7 +6,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // JSON
 import GlobalLabel from "public/labels/pages/settings/global.json";
@@ -18,6 +18,8 @@ import usePatchMethod from "src/hooks/usePatchMethod";
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SettingsLargePageSizeSkeleton = loadable(() => import("src/components/skeletons/SettingsLargePageSizeSkeleton"));
+
+const LargePageSizeSettingsDiv = styled.div``;
 
 const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -71,13 +73,14 @@ const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 	};
 
 	return componentReady ? (
-		<div>
+		<LargePageSizeSettingsDiv>
 			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
 				setSuccessMsgLoaded={setSuccessMsgLoaded}
 				successMsgTitle={GlobalLabel[8].label}
 			/>
+
 			<ErrorNotification
 				errorMsg={errorMsg}
 				errorMsgLoaded={errorMsgLoaded}
@@ -91,6 +94,7 @@ const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{GlobalLabel[2].description}</p>
 				</div>
 			</div>
+
 			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
 				<Formik
 					enableReinitialize={true}
@@ -219,7 +223,7 @@ const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 					)}
 				</Formik>
 			</div>
-		</div>
+		</LargePageSizeSettingsDiv>
 	) : (
 		<SettingsLargePageSizeSkeleton />
 	);
