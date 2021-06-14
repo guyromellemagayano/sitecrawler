@@ -136,8 +136,6 @@ const Links = ({ width, result }) => {
 
 	scanApiEndpoint += queryString;
 
-	console.log(scanApiEndpoint);
-
 	const { links, mutateLinks } = useLinks({
 		endpoint: scanApiEndpoint,
 		querySid: result.siteId,

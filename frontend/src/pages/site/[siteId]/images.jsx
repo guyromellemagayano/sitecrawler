@@ -131,7 +131,13 @@ const Images = ({ width, result }) => {
 						: "";
 
 				queryString +=
-					typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
+					typeof window !== "undefined" &&
+					loadQueryString.toString() !== "" &&
+					loadQueryString.toString() !== undefined &&
+					result.status__neq == undefined &&
+					result.tls_status__neq == undefined &&
+					result.missing_alts__gt == undefined &&
+					result.type == undefined
 						? scanApiEndpoint.includes("?")
 							? window.location.search.replace("?", "&")
 							: window.location.search
