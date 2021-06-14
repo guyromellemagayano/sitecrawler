@@ -219,7 +219,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 			const response = await usePostMethod(siteVerifyApiEndpoint, body);
 
 			if (Math.floor(response.status / 200) === 1) {
-				mutateSite();
+				mutateSite;
 
 				if (response.data.verified === true) {
 					setTimeout(() => {
