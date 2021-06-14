@@ -5,9 +5,10 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
-import { styled } from "twin.macro";
 import { NextSeo } from "next-seo";
+import { styled } from "twin.macro";
 import { withResizeDetector } from "react-resize-detector";
+import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // JSON
@@ -22,14 +23,16 @@ import useUser from "src/hooks/useUser";
 import Layout from "src/components/Layout";
 
 // Components
-import AddSite from "src/components/pages/dashboard/AddSite";
-import DataTable from "src/components/tables/DataTable";
 import MainSidebar from "src/components/sidebar/MainSidebar";
-import MyPagination from "src/components/pagination/Pagination";
-import SiteSorting from "src/components/helpers/sorting/SiteSorting";
-import Loader from "src/components/layouts/Loader";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
+
+// Loadable
+const AddSite = loadable(() => import("src/components/pages/dashboard/AddSite"));
+const DataTable = loadable(() => import("src/components/tables/DataTable"));
+const Loader = loadable(() => import("src/components/layouts/Loader"));
+const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
+const SiteSorting = loadable(() => import("src/components/helpers/sorting/SiteSorting"));
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
@@ -44,7 +47,7 @@ const SitesSection = styled.section`
 
 const Sites = ({ width, result }) => {
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
-	const [linksPerPage, setLinksPerPage] = React.useState(20);
+	const [linksPerPage, setLinksPerPage] = React.useState(3);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [pagePath, setPagePath] = React.useState("");
 	const [searchKey, setSearchKey] = React.useState("");
@@ -54,42 +57,42 @@ const Sites = ({ width, result }) => {
 	const { asPath } = useRouter();
 	const router = useRouter();
 
-	let scanApiEndpoint = "";
-	let queryString = "";
-
 	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
 
-	scanApiEndpoint =
-		result.page !== undefined
-			? "/api/site/?per_page=" + linksPerPage + `&ordering=name` + `&page=` + result.page
-			: "/api/site/?per_page=" + linksPerPage + `&ordering=name`;
+	React.useEffect(() => {
+		user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
+	}, [user]);
+
+	let scanApiEndpoint = "";
+	let queryString = "";
+
+	scanApiEndpoint = `/api/site/?per_page=` + linksPerPage + `&ordering=name`;
 
 	queryString +=
-		result.search !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&search=${result.search}`
-				: `?search=${result.search}`
-			: "";
+		result.page !== undefined ? (scanApiEndpoint.includes("?") ? `&page=${result.page}` : `?page=${result.page}`) : "";
 
-	queryString +=
-		result.ordering !== undefined
-			? scanApiEndpoint.includes("?")
-				? `&ordering=${result.ordering}`
-				: `?ordering=${result.ordering}`
-			: "";
+	queryString += result.search
+		? scanApiEndpoint.includes("?")
+			? `&search=${result.search}`
+			: `?search=${result.search}`
+		: "";
+
+	queryString += result.ordering
+		? scanApiEndpoint.includes("?")
+			? `&ordering=${result.ordering}`
+			: `?ordering=${result.ordering}`
+		: "";
 
 	scanApiEndpoint += queryString;
+
+	console.log(scanApiEndpoint, result);
 
 	const { site, mutateSite } = useSite({
 		endpoint: scanApiEndpoint
 	});
-
-	React.useEffect(() => {
-		user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
-	}, [user]);
 
 	const handleSearch = async (e) => {
 		const searchTargetValue = e.target.value;
@@ -126,6 +129,7 @@ const Sites = ({ width, result }) => {
 			if (newPath.includes("per_page")) {
 				newPath = removeURLParameter(newPath, "per_page");
 			}
+
 			if (newPath.includes("?")) newPath += `&per_page=${countValue}`;
 			else newPath += `?per_page=${countValue}`;
 
@@ -205,17 +209,17 @@ const Sites = ({ width, result }) => {
 																})}
 															</tr>
 														</thead>
-														{site?.results.map((val, key) => {
-															return (
-																<DataTable
-																	key={key}
-																	site={val}
-																	disableLocalTime={disableLocalTime}
-																	mutateSite={mutateSite}
-																	router={router}
-																/>
-															);
-														})}
+														{site
+															? site?.results.map((val, key) => (
+																	<DataTable
+																		key={key}
+																		site={val}
+																		disableLocalTime={disableLocalTime}
+																		mutateSite={mutateSite}
+																		router={router}
+																	/>
+															  ))
+															: null}
 													</table>
 												</div>
 											</div>
@@ -223,6 +227,7 @@ const Sites = ({ width, result }) => {
 									</div>
 
 									<MyPagination
+										href="/sites/"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
 										page={result.page ? result.page : 0}
