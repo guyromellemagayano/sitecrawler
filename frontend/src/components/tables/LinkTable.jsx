@@ -75,10 +75,6 @@ const LinkTable = ({ siteId, val }) => {
 					}, 500);
 			  })()
 			: null;
-
-		return () => {
-			setComponentReady(false);
-		};
 	}, [linkDetail]);
 
 	return (

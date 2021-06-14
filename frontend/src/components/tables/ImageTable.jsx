@@ -79,10 +79,6 @@ const ImagesTable = ({ siteId, val }) => {
 					}, 500);
 			  })()
 			: null;
-
-		return () => {
-			setComponentReady(false);
-		};
 	}, [imageDetail]);
 
 	return (
