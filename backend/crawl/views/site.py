@@ -25,9 +25,10 @@ class SiteViewSet(
     ordering_fields = ["name", "url", "verified", "id", "created_at", "updated_at", "user_id", "verification_id"]
 
     def get_queryset(self):
+        query = Site.objects.all().annotate_last_finished_scan_id()
         if self.detail and self.request.user.is_superuser:
-            return Site.objects.all()
-        return Site.objects.filter(user=self.request.user)
+            return query
+        return query.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, verification_id=uuid.uuid4())

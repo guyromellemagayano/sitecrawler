@@ -5,6 +5,7 @@ from crawl.models import Site
 
 class SiteSerializer(serializers.ModelSerializer):
     url = serializers.URLField()
+    last_finished_scan_id = serializers.IntegerField()
 
     class Meta:
         model = Site
@@ -18,6 +19,7 @@ class SiteSerializer(serializers.ModelSerializer):
             "verification_id",
             "verified",
             "large_page_size_threshold",
+            "last_finished_scan_id",
         ]
         read_only_fields = ["id", "created_at", "updated_at", "user_id", "verification_id", "verified"]
 
