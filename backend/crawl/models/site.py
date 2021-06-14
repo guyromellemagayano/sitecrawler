@@ -1,8 +1,24 @@
 from django.conf import settings
 from django.db import models
+from django.db.models.query import QuerySet
+
+from crawl.models import Scan
+
+
+class SiteQuerySet(QuerySet):
+    def annotate_last_finished_scan_id(self):
+        return self.annotate(
+            last_finished_scan_id=models.Subquery(
+                Scan.objects.filter(site_id=models.OuterRef("pk"), finished_at__isnull=False)
+                .values("id")
+                .order_by("-finished_at")[:1]
+            )
+        )
 
 
 class Site(models.Model):
+    objects = SiteQuerySet.as_manager()
+
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
