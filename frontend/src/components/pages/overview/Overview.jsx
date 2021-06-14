@@ -36,7 +36,6 @@ const SitesOverview = ({
 	isCrawlFinished
 }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
-	const [showErrorModal, setShowErrorModal] = React.useState(false);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
 	const calendarStrings = {
