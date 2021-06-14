@@ -151,8 +151,6 @@ const SiteOverview = ({ width, result }) => {
 
 								<div tw="max-w-full p-4 sm:px-6 md:px-4">
 									<div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
-										<SitesStats stats={stats} scanResult={scanResult} />
-
 										<SitesOverview
 											verified={siteId?.verified}
 											stats={stats}
@@ -163,6 +161,8 @@ const SiteOverview = ({ width, result }) => {
 											isCrawlStarted={isCrawlStarted}
 											isCrawlFinished={isCrawlFinished}
 										/>
+
+										<SitesStats stats={stats} scanResult={scanResult} />
 
 										<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
 											<SitesLinksStats sid={result.siteId} stats={stats} scanResult={scanResult} />
