@@ -84,10 +84,14 @@ const Images = ({ width, result }) => {
 
 	user?.permissions.includes("can_see_images")
 		? (() => {
-				scanApiEndpoint =
+				scanApiEndpoint = `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
+
+				queryString +=
 					result.page !== undefined
-						? `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage + `&page=` + result.page
-						: `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
+						? scanApiEndpoint.includes("?")
+							? `&page=${result.page}`
+							: `?page=${result.page}`
+						: "";
 
 				statusString = result.status__neq;
 
