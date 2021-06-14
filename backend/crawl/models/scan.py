@@ -1,5 +1,5 @@
 from django.db import models, connections
-from django.db.models import F, OuterRef, Q, Value
+from django.db.models import F, OuterRef, Q, Value, Count, Subquery, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 
@@ -29,6 +29,20 @@ class ScanQuerySet(QuerySet):
         seo_ok_pages = pages.exclude(
             Q(pagedata__title="") | Q(pagedata__description="") | Q(pagedata__h1_first="") | Q(pagedata__h2_first="")
         )
+
+        def duplicated_count(field):
+            return Subquery(
+                pages.values(field)  # group by
+                .annotate(cnt=models.Count("id", distinct=True))  # count pages pery field
+                .filter(cnt__gt=1)  # only count duplicates
+                .annotate(
+                    total=models.Func(models.F("cnt"), function="SUM", template="%(function)s(%(expressions)s) OVER ()")
+                )[
+                    :1
+                ]  # window sum over counts that are > 1, limit to 1 result
+                .values("total")
+            )
+
         return (
             self.annotate(num_pages=SubQueryCount(pages))
             .annotate(num_external_links=SubQueryCount(external_links))
@@ -63,6 +77,8 @@ class ScanQuerySet(QuerySet):
                     pages.annotate_size().annotate_tls().filter(size_total__lte=large_page_size_threshold, tls_total=1)
                 )
             )
+            .annotate(num_pages_duplicated_title=duplicated_count("pagedata__title"))
+            .annotate(num_pages_duplicated_description=duplicated_count("pagedata__description"))
         )
 
     def raw_bulk_delete(self, ids):

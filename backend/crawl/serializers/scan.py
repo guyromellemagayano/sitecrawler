@@ -40,6 +40,8 @@ class ScanDetailSerializer(serializers.ModelSerializer):
     num_images_tls_ok = serializers.IntegerField(read_only=True)
     num_images_tls_non_ok = serializers.IntegerField(read_only=True)
     num_images_fully_ok = serializers.IntegerField(read_only=True)
+    num_pages_duplicated_title = serializers.IntegerField(read_only=True)
+    num_pages_duplicated_description = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Scan
@@ -73,5 +75,7 @@ class ScanDetailSerializer(serializers.ModelSerializer):
             "num_images_tls_ok",
             "num_images_tls_non_ok",
             "num_images_fully_ok",
+            "num_pages_duplicated_title",
+            "num_pages_duplicated_description",
         ]
         read_only_fields = fields
