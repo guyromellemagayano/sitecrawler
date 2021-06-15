@@ -81,7 +81,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 
 	return width < lgScreenBreakpoint ? (
 		<Transition show={openMobileSidebar}>
-			<div tw="fixed inset-0.5 flex z-40 lg:hidden" role="dialog" aria-modal="true">
+			<div tw="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
 					enter="transition-opacity ease-linear duration-300"
 					enterFrom="opacity-0"
@@ -90,7 +90,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
 				>
-					<div tw="fixed inset-0.5 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
+					<div tw="fixed inset-0 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
 				</Transition.Child>
 
 				<Transition.Child
