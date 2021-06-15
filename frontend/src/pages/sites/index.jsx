@@ -47,7 +47,7 @@ const SitesSection = styled.section`
 
 const Sites = ({ width, result }) => {
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
-	const [linksPerPage, setLinksPerPage] = React.useState(3);
+	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [pagePath, setPagePath] = React.useState("");
 	const [searchKey, setSearchKey] = React.useState("");
