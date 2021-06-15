@@ -183,7 +183,7 @@ const Sites = ({ width, result }) => {
 									<div tw="py-4">
 										<div tw="flex flex-col">
 											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-												<div tw="min-w-full overflow-hidden border-gray-300">
+												<div tw="min-w-full border-gray-300">
 													<table tw="relative min-w-full">
 														<thead>
 															<tr>
