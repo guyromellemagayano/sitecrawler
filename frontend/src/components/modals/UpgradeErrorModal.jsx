@@ -17,6 +17,18 @@ import UpgradeErrorModalLabel from "./labels/UpgradeErrorModal.json";
 const UpgradeErrorModal = ({ show, setShowErrorModal, label }) => {
 	const settingsSubscriptionsLink = "/settings/subscription-plans";
 
+	const handleHideUpgradeErrorModal = (e) => {
+		return e?.key === "Escape" ? setShowErrorModal(false) : null;
+	};
+
+	React.useEffect(() => {
+		document.addEventListener("keydown", handleHideUpgradeErrorModal, true);
+
+		return () => {
+			document.removeEventListener("keydown", handleHideUpgradeErrorModal, true);
+		};
+	});
+
 	return (
 		<Transition
 			show={show}

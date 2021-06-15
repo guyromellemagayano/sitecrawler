@@ -43,6 +43,12 @@ const ImageTableSkeleton = () => {
 	return (
 		<>
 			<style jsx>{`
+				a,
+				span {
+					max-width: 100%;
+					display: inline-block;
+					clear: both;
+				}
 				td {
 					& > span {
 						max-width: 100%;
@@ -53,25 +59,6 @@ const ImageTableSkeleton = () => {
 							display: block;
 						}
 					}
-				}
-				.link-item {
-					max-width: 100%;
-					display: block;
-
-					a {
-						display: inline-block;
-					}
-				}
-
-				.truncate-link {
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					max-width: 30rem;
-				}
-
-				.icon-status {
-					text-align: left;
 				}
 
 				.btn-detail {

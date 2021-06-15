@@ -43,6 +43,18 @@ const TlsErrorModal = ({ show, setShowErrorModal, siteId, scanObjId }) => {
 			: null;
 	}, [pages, show]);
 
+	const handleHideTlsErrorModal = (e) => {
+		return e?.key === "Escape" ? setShowErrorModal(false) : null;
+	};
+
+	React.useEffect(() => {
+		document.addEventListener("keydown", handleHideTlsErrorModal, true);
+
+		return () => {
+			document.removeEventListener("keydown", handleHideTlsErrorModal, true);
+		};
+	});
+
 	return (
 		<>
 			<style jsx>{`
