@@ -16,9 +16,6 @@ import Skeleton from "react-loading-skeleton";
 // JSON
 import HeadingOptionsLabel from "./labels/HeadingOptions.json";
 
-// Hooks
-import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
-
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
@@ -39,7 +36,7 @@ const HeadingOptions = ({
 	dataLabel
 }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
-	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
+	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 	const { asPath } = useRouter();
 
 	React.useEffect(() => {
@@ -53,8 +50,8 @@ const HeadingOptions = ({
 	}, []);
 
 	return (
-		<HeadingOptionsDiv ref={ref} tw="pt-4 m-auto md:flex md:items-center md:justify-between">
-			<UpgradeErrorModal show={isComponentVisible} setShowErrorModal={setIsComponentVisible} />
+		<HeadingOptionsDiv tw="pt-4 m-auto md:flex md:items-center md:justify-between">
+			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
 
 			<div tw="flex-1 min-w-0">
 				<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
@@ -119,7 +116,7 @@ const HeadingOptions = ({
 					) : (
 						<button
 							type="button"
-							onClick={() => setIsComponentVisible(!isComponentVisible)}
+							onClick={() => setShowUpgradeErrorModal(!showUpgradeErrorModal)}
 							tw="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none bg-yellow-600 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
 						>
 							<span tw="flex items-center space-x-2">

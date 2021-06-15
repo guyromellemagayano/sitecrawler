@@ -15,9 +15,6 @@ import tw, { styled } from "twin.macro";
 // JSON
 import LinkOptionsLabel from "./labels/LinkOptions.json";
 
-// Hooks
-import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
-
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
@@ -33,7 +30,7 @@ const LinkOptions = ({
 	isCrawlFinished
 }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
-	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
+	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 	const { asPath } = useRouter();
 
 	React.useEffect(() => {
@@ -47,8 +44,8 @@ const LinkOptions = ({
 	}, []);
 
 	return (
-		<LinkOptionsDiv ref={ref} tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
-			<UpgradeErrorModal show={isComponentVisible} setShowErrorModal={setIsComponentVisible} />
+		<LinkOptionsDiv tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
+			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
 
 			<div tw="relative z-10 flex-shrink-0 flex bg-white border-b border-gray-200">
 				<div tw="flex-1 p-4 flex justify-end">
@@ -99,7 +96,7 @@ const LinkOptions = ({
 								onClick={
 									permissions?.includes("can_start_scan")
 										? handleCrawl
-										: () => setIsComponentVisible(!isComponentVisible)
+										: () => setShowUpgradeErrorModal(!showUpgradeErrorModal)
 								}
 								css={[
 									tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,

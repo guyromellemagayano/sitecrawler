@@ -37,7 +37,7 @@ const SitesOverview = ({
 }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [showTlsErrorModal, setShowTlsErrorModal] = React.useState(false);
-	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
+	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -58,25 +58,9 @@ const SitesOverview = ({
 			: null;
 	}, [stats]);
 
-	const handleTlsErrorModal = () => {
-		setShowTlsErrorModal(!showTlsErrorModal);
-	};
-
-	const handleHideTlsErrorModal = (e) => {
-		return e?.key === "Escape" ? setShowTlsErrorModal(!showTlsErrorModal) : null;
-	};
-
-	React.useEffect(() => {
-		document.addEventListener("keydown", handleHideTlsErrorModal, true);
-
-		return () => {
-			document.removeEventListener("keydown", handleHideTlsErrorModal, true);
-		};
-	});
-
 	return (
-		<SitesOverviewDiv ref={ref} tw="bg-white overflow-hidden rounded-lg h-full border">
-			<UpgradeErrorModal show={isComponentVisible} setShowErrorModal={setIsComponentVisible} />
+		<SitesOverviewDiv tw="bg-white overflow-hidden rounded-lg h-full border">
+			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
 			<TlsErrorModal
 				show={showTlsErrorModal}
 				setShowErrorModal={setShowTlsErrorModal}
@@ -96,7 +80,7 @@ const SitesOverview = ({
 									onClick={
 										user?.permissions.includes("can_start_scan")
 											? handleCrawl
-											: () => setIsComponentVisible(!isComponentVisible)
+											: () => setShowUpgradeErrorModal(!showUpgradeErrorModal)
 									}
 									css={[
 										tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
@@ -186,7 +170,7 @@ const SitesOverview = ({
 
 														<button
 															type="button"
-															onClick={handleTlsErrorModal}
+															onClick={() => setShowTlsErrorModal(true)}
 															tw="focus:outline-none hover:text-gray-50"
 														>
 															<span tw="flex items-center">

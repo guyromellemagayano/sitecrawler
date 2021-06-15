@@ -14,9 +14,6 @@ import PropTypes from "prop-types";
 // JSON
 import AddSiteLabel from "public/labels/components/sites/AddSite.json";
 
-// Hooks
-import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
-
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
@@ -25,7 +22,7 @@ const AddSiteDiv = styled.div``;
 const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [siteLimitCounter, setSiteLimitCounter] = React.useState(0);
 	const [maxSiteLimit, setMaxSiteLimit] = React.useState(0);
-	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
+	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 
 	const informationPageLink = "/add-site/information";
 
@@ -41,10 +38,10 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	}, [user, site]);
 
 	return (
-		<AddSiteDiv ref={ref} tw="flex flex-col w-0 flex-1 overflow-hidden">
+		<AddSiteDiv tw="flex flex-col w-0 flex-1 overflow-hidden">
 			<UpgradeErrorModal
-				show={isComponentVisible}
-				setShowErrorModal={setIsComponentVisible}
+				show={showUpgradeErrorModal}
+				setShowErrorModal={setShowUpgradeErrorModal}
 				label={[AddSiteLabel[1].label, AddSiteLabel[2].label]}
 			/>
 
@@ -77,7 +74,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 							<button
 								type="button"
 								tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"
-								onClick={() => setIsComponentVisible(!isComponentVisible)}
+								onClick={() => setShowUpgradeErrorModal(!showUpgradeErrorModal)}
 							>
 								<span tw="flex items-center space-x-2">
 									{user.permissions &&
