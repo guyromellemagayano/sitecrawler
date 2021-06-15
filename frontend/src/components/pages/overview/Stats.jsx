@@ -26,54 +26,29 @@ const SitesStats = ({ stats, scanResult }) => {
 	}, [stats]);
 
 	const setLinkErrors = () => {
-		let valLength = 0;
-
-		stats
-			? (() => {
-					valLength = stats?.num_non_ok_links ?? 0;
-			  })()
-			: null;
+		let valLength = stats?.num_non_ok_links;
 
 		return valLength;
 	};
 
 	const setSeoErrors = () => {
-		let valLength = 0;
-
-		stats
-			? (() => {
-					valLength =
-						stats?.num_pages_without_title ??
-						0 + stats?.num_pages_without_description ??
-						0 + stats?.num_pages_without_h1_first ??
-						0 + stats?.num_pages_without_h2_first ??
-						0;
-			  })()
-			: null;
+		let valLength =
+			stats?.num_pages_without_title +
+			stats?.num_pages_without_description +
+			stats?.num_pages_without_h1_first +
+			stats?.num_pages_without_h2_first;
 
 		return valLength;
 	};
 
 	const setPageErrors = () => {
-		let valLength = 0;
-
-		stats
-			? (() => {
-					valLength = stats?.num_pages_big ?? 0 + stats?.num_pages_tls_non_ok ?? 0;
-			  })()
-			: null;
+		let valLength = stats?.num_pages_big + stats?.num_pages_tls_non_ok;
 
 		return valLength;
 	};
 
 	const setImageErrors = () => {
-		let valLength = 0;
-
-		stats
-			? (() => {
-					valLength = stats?.num_non_ok_images ?? 0;
-			  })()
-			: null;
+		let valLength = stats?.num_non_ok_images + stats?.num_images_with_missing_alts + stats?.num_images_tls_non_ok;
 
 		return valLength;
 	};
