@@ -308,7 +308,7 @@ const Seo = ({ width, result }) => {
 								<div tw="pb-4">
 									<div tw="flex flex-col">
 										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-											<div tw="align-middle inline-block min-w-full overflow-hidden rounded-lg border-gray-300">
+											<div tw="relative min-w-full overflow-hidden rounded-lg border-gray-300">
 												<table tw="relative min-w-full">
 													<thead>
 														<tr>
@@ -363,7 +363,7 @@ const Seo = ({ width, result }) => {
 												</table>
 
 												{user?.permissions.length == 0 ? (
-													<div tw="relative top-2.5">
+													<div tw="absolute left-0 right-0">
 														<UpgradeErrorAlert link="/settings/subscription-plans" />
 													</div>
 												) : null}

@@ -11,12 +11,14 @@ const PageTableSkeleton = () => {
 	const skeletonEntry = (
 		<>
 			<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
-				<span tw="flex flex-col justify-start">
-					<span className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
-						<Skeleton duration={2} width={300} />
-					</span>
-					<span tw="flex justify-start leading-5 text-gray-500">
-						<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
+				<span tw="flex items-center">
+					<span>
+						<span className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
+							<Skeleton width={300} duration={2} />
+						</span>
+						<span tw="flex justify-start leading-5 text-gray-500">
+							<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
+						</span>
 					</span>
 				</span>
 			</td>

@@ -42,6 +42,12 @@ const SeoTableSkeleton = () => {
 	return (
 		<>
 			<style jsx>{`
+			a,
+				span {
+					max-width: 100%;
+					display: inline-block;
+					clear: both;
+				}
 				td {
 					& > span {
 						max-width: 100%;
@@ -51,30 +57,6 @@ const SeoTableSkeleton = () => {
 							max-width: 100%;
 							display: block;
 						}
-					}
-				}
-				.link-item {
-					max-width: 100%;
-					display: block;
-
-					a {
-						display: inline-block;
-					}
-				}
-
-				.truncate-link {
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					max-width: 7rem;
-				}
-
-				.icon-status {
-					text-align: left;
-					span {
-						margin-left: auto;
-						margin-right: auto;
-						display: inline-block;
 					}
 				}
 
