@@ -88,7 +88,7 @@ const Sites = ({ width, result }) => {
 
 	scanApiEndpoint += queryString;
 
-	console.log(scanApiEndpoint, result);
+	// console.log(scanApiEndpoint, result);
 
 	const { site, mutateSite } = useSite({
 		endpoint: scanApiEndpoint
