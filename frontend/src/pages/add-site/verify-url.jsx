@@ -57,7 +57,7 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 
 	const pageTitle = "Verify URL";
 	const homeLabel = "Home";
-	const homePageLink = "/";
+	const homePageLink = "/sites";
 	const sitesApiEndpoint = "/api/site/?ordering=name";
 
 	let htmlText = "1. Sign in to the administrator account of the following website: " + surl + "\n\n";
@@ -480,7 +480,7 @@ const VerifyUrl = ({ width, sid, sname, surl, vid, v }) => {
 																		</span>
 
 																		<span tw="inline-flex">
-																			<Link href="/" passHref>
+																			<Link href="/sites" passHref>
 																				<a
 																					disabled={disableSiteVerify}
 																					css={[

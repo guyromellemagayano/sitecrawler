@@ -53,7 +53,7 @@ const Information = ({ width, sid, edit }) => {
 
 	const pageTitle = "Information";
 	const homeLabel = "Home";
-	const homePageLink = "/";
+	const homePageLink = "/sites";
 	const verifyUrlLink = "/add-site/verify-url";
 	const siteApiEndpoint = "/api/site/?ordering=name";
 	const urlRegex =
@@ -232,7 +232,7 @@ const Information = ({ width, sid, edit }) => {
 													onSubmit={async (values, { setSubmitting, resetForm }) => {
 														if (sid && sid !== undefined && edit) {
 															try {
-																const response = await useGetMethod("/api/site/" + router.query.sid + "/");
+																const response = await useGetMethod("/api/site/" + router.query.sid + "/sites");
 																const data = data;
 
 																if (Math.floor(response.status / 200) === 1) {
@@ -241,7 +241,7 @@ const Information = ({ width, sid, edit }) => {
 																	};
 
 																	const siteResponse = await usePatchMethod(
-																		"/api/site/" + router.query.sid + "/",
+																		"/api/site/" + router.query.sid + "/sites",
 																		body
 																	);
 

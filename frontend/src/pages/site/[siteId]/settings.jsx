@@ -93,7 +93,7 @@ const SiteSettings = ({ width, result }) => {
 						<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="w-full p-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 								<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-									<div className="max-w-full py-4 px-8">
+									<div className="max-w-full p-4">
 										<Breadcrumbs siteId={result.siteId} pageTitle={SettingsLabel[1].label} />
 
 										<div className="pt-4 m-auto">
@@ -104,18 +104,14 @@ const SiteSettings = ({ width, result }) => {
 									</div>
 
 									<div tw="space-y-12 divide-y divide-gray-200">
-										{user && siteId ? (
-											<>
-												<SiteInformationSettings user={user} siteId={siteId} settingsLabel={SettingsLabel} />
-												<LargePageSizeSettings user={user} siteId={siteId} mutateSiteId={mutateSiteId} />
-												<DeleteSiteSettings
-													user={user}
-													siteId={siteId}
-													settingsLabel={SettingsLabel}
-													mutateSite={mutateSite}
-												/>
-											</>
-										) : null}
+										<SiteInformationSettings user={user} siteId={siteId} settingsLabel={SettingsLabel} />
+										<LargePageSizeSettings user={user} siteId={siteId} mutateSiteId={mutateSiteId} />
+										<DeleteSiteSettings
+											user={user}
+											siteId={siteId}
+											settingsLabel={SettingsLabel}
+											mutateSite={mutateSite}
+										/>
 									</div>
 								</div>
 							</div>

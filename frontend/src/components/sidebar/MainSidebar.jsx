@@ -31,8 +31,8 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 	const [selectedMenu, setSelectedMenu] = useState(null);
 
 	const lgScreenBreakpoint = 1024;
-	const siteApiEndpoint = "/api/site/?ordering=name";
-	const siteDashboardLink = "/";
+	const siteApiEndpoint = "/api/site/?ordering=name&per_page=100";
+	const siteDashboardLink = "/sites";
 
 	const router = useRouter();
 	const ref = useRef(null);
@@ -43,14 +43,14 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 
 	useEffect(() => {
 		switch (true) {
-			case router.pathname.includes("/site"):
-				setSelectedMenu(<SiteMenu site={site ? site : null} />);
+			case router.pathname.includes("/sites"):
+				setSelectedMenu(<PrimaryMenu user={user ? site : null} site={site ? site : null} />);
 				break;
 			case router.pathname.includes("/settings"):
 				setSelectedMenu(<SettingsMenu site={site ? site : null} />);
 				break;
 			default:
-				setSelectedMenu(<PrimaryMenu user={user ? site : null} site={site ? site : null} />);
+				setSelectedMenu(<SiteMenu site={site ? site : null} />);
 				break;
 		}
 

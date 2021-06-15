@@ -61,7 +61,7 @@ const ConfirmEmail = () => {
 	};
 
 	useEffect(() => {
-		let pathArray = window.location.pathname.split("/");
+		let pathArray = window.location.pathname.split("/sites");
 		let secondLevelLocation = pathArray[2];
 
 		if (errorMsg) setErrorMsg("");
@@ -99,7 +99,7 @@ const ConfirmEmail = () => {
 									<p>{successMsg}</p>
 								</div>
 								<div tw="mt-5">
-									<Link href="/">
+									<Link href="/sites">
 										<a tw="relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 											{ConfirmEmailLabel[3].label}
 										</a>

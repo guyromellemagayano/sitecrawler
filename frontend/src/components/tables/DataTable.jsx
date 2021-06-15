@@ -79,14 +79,14 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		siteId: site?.id
 	});
 
-	const { stats: stats } = useStats({
+	const { stats } = useStats({
 		querySid: site?.id,
 		scanObjId: scanObjId
 	});
 
 	React.useEffect(() => {
 		if (!showDeleteSiteModal) {
-			router.push("/");
+			router.push("/sites");
 		}
 	}, [showDeleteSiteModal]);
 
@@ -219,7 +219,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 			const response = await usePostMethod(siteVerifyApiEndpoint, body);
 
 			if (Math.floor(response.status / 200) === 1) {
-				mutateSite();
+				mutateSite;
 
 				if (response.data.verified === true) {
 					setTimeout(() => {

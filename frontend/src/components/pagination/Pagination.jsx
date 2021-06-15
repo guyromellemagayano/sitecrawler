@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 // NextJS
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 
 // External
 import { styled } from "twin.macro";
@@ -20,49 +20,58 @@ import { removeURLParameter } from "src/helpers/functions";
 const PaginationSkeleton = loadable(() => import("src/components/skeletons/PaginationSkeleton"));
 
 const PaginationDiv = styled.nav`
-.rc-pagination li {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  --text-opacity: 1;
-  color: #a0aec0;
-  color: rgba(160, 174, 192, var(--text-opacity));
-  outline: none;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  margin-top: -1rem;
-  padding-top: 1rem;
-  font-weight: 500;
-}
-.rc-pagination li:hover {
-  color: rgba(74, 85, 104, var(--text-opacity));
-}
-.rc-pagination-item {
-  width: 40px;
-  height: 40px;
-}
-.rc-pagination-item-active {
-  border-top: 2px solid #667eea;
-  color: #667eea !important;
-}
-.rc-pagination-item a {
-  outline: none;
-}
-.rc-pagination-jump-next button:before, .rc-pagination-jump-prev button:before {
-  content: '...';
-  display: block;
-}
-.rc-pagination-prev {
-  margin-right: 0.75rem;
-}
-.rc-pagination-prev button:before {
-  content: 'Previous',
-  display: block;
-}
-.rc-pagination-next {
-  margin-left: 0.75rem;
-}
+	.rc-pagination li {
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		--text-opacity: 1;
+		color: #a0aec0;
+		color: rgba(160, 174, 192, var(--text-opacity));
+		outline: none;
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+		margin-top: -1rem;
+		padding-top: 1rem;
+		font-weight: 500;
+	}
+
+	.rc-pagination li:hover {
+		color: rgba(74, 85, 104, var(--text-opacity));
+	}
+
+	.rc-pagination-item {
+		width: 40px;
+		height: 40px;
+	}
+
+	.rc-pagination-item-active {
+		border-top: 2px solid #667eea;
+		color: #667eea !important;
+	}
+
+	.rc-pagination-item a {
+		outline: none;
+	}
+
+	.rc-pagination-jump-next button:before,
+	.rc-pagination-jump-prev button:before {
+		content: "...";
+		display: block;
+	}
+
+	.rc-pagination-prev {
+		margin-right: 0.75rem;
+	}
+
+	.rc-pagination-prev button:before {
+		content: "Previous";
+		display: block;
+	}
+
+	.rc-pagination-next {
+		margin-left: 0.75rem;
+	}
 `;
 
 const PaginationLocale = {
@@ -98,6 +107,7 @@ const MyPagination = (props) => {
 
 	const handlePageChange = (pageNum) => {
 		const newPath = removeURLParameter(props.pathName, "page");
+
 		router.push(`${newPath}page=${pageNum}`);
 	};
 

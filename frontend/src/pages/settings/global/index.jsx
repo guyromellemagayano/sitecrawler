@@ -37,7 +37,7 @@ const GlobalSettingsSection = styled.section``;
 const GlobalSettings = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
-	const homePageLink = "/";
+	const homePageLink = "/sites";
 	const pageTitle = GlobalLabel[0].label;
 
 	const { user, mutateUser } = useUser({

@@ -6,7 +6,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // Hooks
 import usePatchMethod from "src/hooks/usePatchMethod";
@@ -15,6 +15,8 @@ import usePatchMethod from "src/hooks/usePatchMethod";
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SettingsPersonalSkeleton = loadable(() => import("src/components/skeletons/SettingsPersonalSkeleton"));
+
+const SiteInformationDiv = styled.div``;
 
 const SiteInformation = ({ user, siteId, settingsLabel }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -55,26 +57,29 @@ const SiteInformation = ({ user, siteId, settingsLabel }) => {
 	}, [user, siteId]);
 
 	return componentReady ? (
-		<div>
+		<SiteInformationDiv>
 			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
 				setSuccessMsgLoaded={setSuccessMsgLoaded}
 				successMsgTitle={settingsLabel[18].label}
 			/>
+
 			<ErrorNotification
 				errorMsg={errorMsg}
 				errorMsgLoaded={errorMsgLoaded}
 				setErrorMsgLoaded={setErrorMsgLoaded}
 				errorMsgTitle={settingsLabel[17].label}
 			/>
-			<div tw="max-w-full py-4 px-8">
+
+			<div tw="max-w-full p-4">
 				<div tw="pt-4 m-auto">
 					<h5 tw="text-xl leading-6 font-medium text-gray-900">{settingsLabel[2].label}</h5>
 					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{settingsLabel[2].description}</p>
 				</div>
 			</div>
-			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
+
+			<div tw="max-w-full lg:max-w-3xl p-4 pt-0 pb-2">
 				<Formik
 					enableReinitialize={true}
 					initialValues={{
@@ -211,7 +216,7 @@ const SiteInformation = ({ user, siteId, settingsLabel }) => {
 					)}
 				</Formik>
 			</div>
-		</div>
+		</SiteInformationDiv>
 	) : (
 		// FIXME: update this skeleton
 		<SettingsPersonalSkeleton />

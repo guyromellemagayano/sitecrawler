@@ -77,12 +77,13 @@ const Links = ({ width, result }) => {
 	let scanApiEndpoint = "";
 	let queryString = "";
 	let statusString = "";
+	let statusNeqString = "";
 	let typeString = "";
 
-	scanApiEndpoint =
-		result.page !== undefined
-			? `/api/site/${result.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage + `&page=` + result.page
-			: `/api/site/${result.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
+	scanApiEndpoint = `/api/site/${result.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
+
+	queryString +=
+		result.page !== undefined ? (scanApiEndpoint.includes("?") ? `&page=${result.page}` : `?page=${result.page}`) : "";
 
 	statusString = Array.isArray(result.status) ? result.status.join("&status=") : result.status;
 
@@ -91,6 +92,15 @@ const Links = ({ width, result }) => {
 			? scanApiEndpoint.includes("?")
 				? `&status=${statusString}`
 				: `?status=${statusString}`
+			: "";
+
+	statusNeqString = Array.isArray(result.status__neq) ? result.status__neq.join("&status__neq=") : result.status__neq;
+
+	queryString +=
+		result.status__neq !== undefined
+			? scanApiEndpoint.includes("?")
+				? `&status__neq=${statusNeqString}`
+				: `?status__neq=${statusNeqString}`
 			: "";
 
 	typeString = Array.isArray(result.type) ? result.type.join("&type=") : result.type;
@@ -113,7 +123,12 @@ const Links = ({ width, result }) => {
 			: "";
 
 	queryString +=
-		typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
+		typeof window !== "undefined" &&
+		loadQueryString.toString() !== "" &&
+		loadQueryString.toString() !== undefined &&
+		result.status == undefined &&
+		result.status__neq == undefined &&
+		result.type == undefined
 			? scanApiEndpoint.includes("?")
 				? window.location.search.replace("?", "&")
 				: window.location.search

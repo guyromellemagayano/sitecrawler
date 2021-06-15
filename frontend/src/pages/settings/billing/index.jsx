@@ -38,7 +38,7 @@ const Billing = ({ width }) => {
 
 	const pageTitle = BillingLabel[0].label;
 	// const homeLabel = "Home";
-	// const homePageLink = "/";
+	// const homePageLink = "/sites";
 	// const paymentMethodApiEndpoint = '/api/stripe/payment-method/'
 
 	const { user } = useUser({

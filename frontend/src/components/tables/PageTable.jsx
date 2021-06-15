@@ -76,10 +76,6 @@ const PageTable = ({ siteId, val }) => {
 					}, 500);
 			  })()
 			: null;
-
-		return () => {
-			setComponentReady(false);
-		};
 	}, [pageDetail]);
 
 	return (

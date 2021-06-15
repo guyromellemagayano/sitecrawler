@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // External
-import "twin.macro";
+import { styled } from "twin.macro";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
@@ -15,6 +15,8 @@ import useDeleteMethod from "src/hooks/useDeleteMethod";
 
 // Components
 import DeleteSiteSkeleton from "src/components/skeletons/DeleteSiteSkeleton";
+
+const DeleteSiteDiv = styled.div``;
 
 const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -52,13 +54,13 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 			mutateSite;
 
 			setTimeout(() => {
-				router.push("/");
+				router.push("/sites");
 			}, 1000);
 		}
 	}, [updateSite]);
 
 	return componentReady ? (
-		<div>
+		<DeleteSiteDiv>
 			<Transition
 				show={showModal}
 				className="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"
@@ -130,33 +132,30 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 				</Transition.Child>
 			</Transition>
 
-			<div>
-				<div tw="px-4 py-5 sm:p-6">
+			<div tw="max-w-full p-4">
+				<div>
 					<div>
-						<div>
-							<div>
-								<h3 tw="text-lg leading-6 font-medium text-gray-900">{settingsLabel[9].label}</h3>
-								<p tw="mt-1 text-sm leading-5 text-gray-500">{settingsLabel[10].label}</p>
-							</div>
-						</div>
-					</div>
-					<div tw="pt-5 flex justify-between">
-						<div tw="flex justify-start">
-							<span tw="inline-flex rounded-md shadow-sm">
-								<button
-									type="button"
-									id="siteDeleteModalButton"
-									tw="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-									onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
-								>
-									{settingsLabel[12].label}
-								</button>
-							</span>
-						</div>
+						<h5 tw="text-xl leading-6 font-medium text-gray-900">{settingsLabel[9].label}</h5>
+						<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{settingsLabel[10].label}</p>
 					</div>
 				</div>
 			</div>
-		</div>
+
+			<div tw="max-w-full lg:max-w-3xl p-4 pt-0 pb-2">
+				<div tw="flex justify-start">
+					<span tw="inline-flex rounded-md shadow-sm">
+						<button
+							type="button"
+							id="siteDeleteModalButton"
+							tw="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+							onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
+						>
+							{settingsLabel[12].label}
+						</button>
+					</span>
+				</div>
+			</div>
+		</DeleteSiteDiv>
 	) : (
 		<DeleteSiteSkeleton />
 	);

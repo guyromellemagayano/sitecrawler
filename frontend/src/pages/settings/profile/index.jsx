@@ -37,7 +37,7 @@ const ProfileSection = styled.section``;
 const Profile = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
-	const homePageLink = "/";
+	const homePageLink = "/sites";
 	const pageTitle = ProfileLabel[0].label;
 
 	const { user } = useUser({

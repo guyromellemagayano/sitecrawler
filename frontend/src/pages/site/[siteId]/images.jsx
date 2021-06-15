@@ -84,10 +84,14 @@ const Images = ({ width, result }) => {
 
 	user?.permissions.includes("can_see_images")
 		? (() => {
-				scanApiEndpoint =
+				scanApiEndpoint = `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
+
+				queryString +=
 					result.page !== undefined
-						? `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage + `&page=` + result.page
-						: `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
+						? scanApiEndpoint.includes("?")
+							? `&page=${result.page}`
+							: `?page=${result.page}`
+						: "";
 
 				statusString = result.status__neq;
 
@@ -131,7 +135,13 @@ const Images = ({ width, result }) => {
 						: "";
 
 				queryString +=
-					typeof window !== "undefined" && loadQueryString.toString() !== "" && loadQueryString.toString() !== undefined
+					typeof window !== "undefined" &&
+					loadQueryString.toString() !== "" &&
+					loadQueryString.toString() !== undefined &&
+					result.status__neq == undefined &&
+					result.tls_status__neq == undefined &&
+					result.missing_alts__gt == undefined &&
+					result.type == undefined
 						? scanApiEndpoint.includes("?")
 							? window.location.search.replace("?", "&")
 							: window.location.search

@@ -39,8 +39,8 @@ const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 			user &&
 			user !== undefined &&
 			Object.keys(user).length > 0 &&
-			user.large_page_size_threshold &&
-			user.large_page_size_threshold !== null
+			user?.large_page_size_threshold &&
+			user?.large_page_size_threshold !== null
 		) {
 			if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
 				siteIdApiEndpoint = `/api/site/${siteId.id}/`;
@@ -49,11 +49,11 @@ const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 					setLargePageSizeThreshold(siteId.large_page_size_threshold);
 					setEndpoint(siteIdApiEndpoint);
 				} else {
-					setLargePageSizeThreshold(user.large_page_size_threshold);
+					setLargePageSizeThreshold(user?.large_page_size_threshold);
 					setEndpoint(siteIdApiEndpoint);
 				}
 			} else {
-				setLargePageSizeThreshold(user.large_page_size_threshold);
+				setLargePageSizeThreshold(user?.large_page_size_threshold);
 				setEndpoint(userApiEndpoint);
 			}
 		}
@@ -88,14 +88,14 @@ const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 				errorMsgTitle={GlobalLabel[7].label}
 			/>
 
-			<div tw="max-w-full py-4 px-8">
+			<div tw="max-w-full p-4">
 				<div tw="pt-4 m-auto">
 					<h5 tw="text-xl leading-6 font-medium text-gray-900">{GlobalLabel[2].label}</h5>
 					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{GlobalLabel[2].description}</p>
 				</div>
 			</div>
 
-			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
+			<div tw="max-w-full lg:max-w-3xl p-4 pt-0 pb-2">
 				<Formik
 					enableReinitialize={true}
 					initialValues={{ largepagesizethreshold: largePageSizeThreshold }}
@@ -125,8 +125,8 @@ const LargePageSizeSettings = ({ user, mutateUser, siteId, mutateSiteId }) => {
 										user &&
 										user !== undefined &&
 										Object.keys(user).length > 0 &&
-										user.large_page_size_threshold &&
-										user.large_page_size_threshold !== null
+										user?.large_page_size_threshold &&
+										user?.large_page_size_threshold !== null
 									) {
 										if (siteId && siteId !== undefined && Object.keys(siteId).length > 0) {
 											mutateSiteId;
