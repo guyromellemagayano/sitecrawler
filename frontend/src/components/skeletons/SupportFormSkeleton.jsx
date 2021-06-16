@@ -10,7 +10,7 @@ const SupportFormSkeleton = () => {
 	const skeletonLimit = 1;
 	const skeletonEntry = (
 		<>
-			<div tw="max-w-full py-4 px-8">
+			<div tw="max-w-full p-4">
 				<div tw="pt-4 flex flex-col space-y-3 m-auto">
 					<span>
 						<Skeleton width={250} height={24} />
@@ -21,7 +21,7 @@ const SupportFormSkeleton = () => {
 				</div>
 			</div>
 
-			<div tw="max-w-full lg:max-w-4xl p-8 pt-0 pb-2">
+			<div tw="max-w-full lg:max-w-4xl p-4 pt-0 pb-2">
 				<div tw="max-w-full pb-4 m-auto">
 					<div tw="my-6 max-w-sm">
 						<div tw="mt-1 mb-1">

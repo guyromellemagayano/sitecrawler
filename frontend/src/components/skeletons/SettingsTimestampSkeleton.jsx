@@ -10,7 +10,7 @@ const SettingsTimestampSkeleton = () => {
 	const skeletonLimit = 1;
 	const skeletonEntry = (
 		<>
-			<div tw="max-w-full py-4 px-8">
+			<div tw="max-w-full p-4">
 				<div tw="pt-4 flex flex-col space-y-3 m-auto">
 					<span>
 						<Skeleton width={250} height={24} />
@@ -20,7 +20,7 @@ const SettingsTimestampSkeleton = () => {
 					</span>
 				</div>
 			</div>
-			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
+			<div tw="max-w-full lg:max-w-3xl p-4 pt-0 pb-2">
 				<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
 					<div tw="sm:col-span-4">
 						<div tw="inline-flex space-x-3 my-1 max-w-sm">
