@@ -10,8 +10,8 @@ const moduleExports = {
 	devIndicators: {
 		autoPrerender: false
 	},
-	future: {
-		webpack5: true
+	eslint: {
+		dirs: ["pages", "utils", "components"]
 	}
 };
 
