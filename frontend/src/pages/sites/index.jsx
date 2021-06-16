@@ -46,6 +46,7 @@ const SitesSection = styled.section`
 `;
 
 const Sites = ({ width, result }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
@@ -150,6 +151,12 @@ const Sites = ({ width, result }) => {
 		if (result.search !== undefined) setSearchKey(result.search);
 
 		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
+
+		setComponentReady(false);
+
+		setTimeout(() => {
+			setComponentReady(true);
+		}, 500);
 	}, []);
 
 	return user ? (
@@ -164,7 +171,7 @@ const Sites = ({ width, result }) => {
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				{site ? (
+				{componentReady ? (
 					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -174,73 +181,69 @@ const Sites = ({ width, result }) => {
 								/>
 							</div>
 
-							<AddSite user={user} site={site} searchKey={searchKey} onSearchEvent={handleSearch} />
+							<AddSite user={user} site={site ? site : null} searchKey={searchKey} onSearchEvent={handleSearch} />
 						</div>
 
-						{site?.count > 0 ? (
-							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-								<div tw="max-w-full mx-12">
-									<div tw="py-4">
-										<div tw="flex flex-col">
-											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-												<div tw="min-w-full border-gray-300">
-													<table tw="relative min-w-full">
-														<thead>
-															<tr>
-																{DataTableHeadsContent.map((site, key) => {
-																	return (
-																		<th
-																			key={key}
-																			className="min-width-adjust"
-																			tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																		>
-																			<span tw="flex items-center justify-start">
-																				<SiteSorting
-																					result={result}
-																					slug={site.slug}
-																					mutateSite={mutateSite}
-																					dataTableHeadsContent={DataTableHeadsContent}
-																					setPagePath={setPagePath}
-																				/>
-																				<span tw="flex items-center">{site.label}</span>
-																			</span>
-																		</th>
-																	);
-																})}
-															</tr>
-														</thead>
-														{site
-															? site?.results.map((val, key) => (
-																	<DataTable
+						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+								<div className="pb-4">
+									<div tw="flex flex-col">
+										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+											<div tw="relative min-w-full rounded-lg border-gray-300">
+												<table tw="relative min-w-full">
+													<thead>
+														<tr>
+															{DataTableHeadsContent.map((site, key) => {
+																return (
+																	<th
 																		key={key}
-																		site={val}
-																		disableLocalTime={disableLocalTime}
-																		mutateSite={mutateSite}
-																		router={router}
-																	/>
-															  ))
-															: null}
-													</table>
-												</div>
+																		className="min-width-adjust"
+																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																	>
+																		<span tw="flex items-center justify-start">
+																			<SiteSorting
+																				result={result}
+																				slug={site.slug}
+																				mutateSite={mutateSite}
+																				dataTableHeadsContent={DataTableHeadsContent}
+																				setPagePath={setPagePath}
+																			/>
+																			<span tw="flex items-center">{site.label}</span>
+																		</span>
+																	</th>
+																);
+															})}
+														</tr>
+													</thead>
+													{site?.results.map((val, key) => (
+														<DataTable
+															key={key}
+															site={val}
+															disableLocalTime={disableLocalTime}
+															mutateSite={mutateSite}
+															router={router}
+														/>
+													)) ?? null}
+												</table>
 											</div>
 										</div>
 									</div>
-
-									<MyPagination
-										href="/sites/"
-										pathName={pagePath}
-										apiEndpoint={scanApiEndpoint}
-										page={result.page ? result.page : 0}
-										linksPerPage={linksPerPage}
-										onItemsPerPageChange={onItemsPerPageChange}
-									/>
 								</div>
 
-								<div tw="static bottom-0 w-full mx-auto px-12 py-4">
+								<MyPagination
+									href="/sites/"
+									pathName={pagePath}
+									apiEndpoint={scanApiEndpoint}
+									page={result.page ? result.page : 0}
+									linksPerPage={linksPerPage}
+									onItemsPerPageChange={onItemsPerPageChange}
+								/>
+
+								<div tw="static bottom-0 w-full mx-auto p-4">
 									<SiteFooter />
 								</div>
-							</main>
-						) : null}
+							</div>
+						</main>
 					</div>
 				) : (
 					<div tw="mx-auto">
