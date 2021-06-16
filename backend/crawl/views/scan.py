@@ -37,12 +37,7 @@ class ScanViewSet(
         if not self.request.user.is_superuser:
             queryset = queryset.filter(site__user=self.request.user)
         if self._is_request_to_detail_endpoint():
-            # use threshold from site if not null, otherwise from user
-            site = Site.objects.get(pk=self.kwargs["parent_lookup_site"])
-            large_page_size_threshold = site.large_page_size_threshold
-            if not large_page_size_threshold:
-                large_page_size_threshold = self.request.user.userprofile.large_page_size_threshold
-            queryset = queryset.details(large_page_size_threshold=large_page_size_threshold)
+            queryset = queryset.with_details()
         return queryset
 
     @action(detail=True, methods=["post"])
@@ -58,16 +53,10 @@ class ScanViewSet(
         return Response()
 
     def _send_initial_email(self, scan_id):
-        user = auth_models.User.objects.select_related("userprofile").get(site__scan__id=scan_id)
-
-        scan = (
-            Scan.objects.select_related("site", "site__user")
-            .details(user_large_page_size_threshold=user.userprofile.large_page_size_threshold)
-            .get(pk=scan_id)
-        )
+        scan = Scan.objects.select_related("site", "site__user__userprofile").with_details().get(pk=scan_id)
 
         site = models.Site.objects.get_current()
-        context = {"user": user, "scan": scan, "site": site}
+        context = {"user": scan.site.user, "scan": scan, "site": site}
         subject = render_to_string("crawl_initial_email_subject.txt", context).strip()
         message = render_to_string("crawl_initial_email_message.txt", context)
-        send_mail(settings.EMAIL_SUBJECT_PREFIX + subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+        send_mail(settings.EMAIL_SUBJECT_PREFIX + subject, message, settings.DEFAULT_FROM_EMAIL, [scan.site.user.email])

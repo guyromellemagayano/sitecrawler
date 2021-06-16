@@ -5,7 +5,7 @@ from crawl.models import Site
 
 class SiteSerializer(serializers.ModelSerializer):
     url = serializers.URLField()
-    last_finished_scan_id = serializers.IntegerField()
+    last_finished_scan_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Site
@@ -21,7 +21,15 @@ class SiteSerializer(serializers.ModelSerializer):
             "large_page_size_threshold",
             "last_finished_scan_id",
         ]
-        read_only_fields = ["id", "created_at", "updated_at", "user_id", "verification_id", "verified"]
+        read_only_fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "user_id",
+            "verification_id",
+            "verified",
+            "last_finished_scan_id",
+        ]
 
     def update(self, instance, validated_data):
         if "url" in validated_data:
