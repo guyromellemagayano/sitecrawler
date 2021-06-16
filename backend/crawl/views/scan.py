@@ -59,4 +59,4 @@ class ScanViewSet(
         context = {"user": scan.site.user, "scan": scan, "site": site}
         subject = render_to_string("crawl_initial_email_subject.txt", context).strip()
         message = render_to_string("crawl_initial_email_message.txt", context)
-        send_mail(settings.EMAIL_SUBJECT_PREFIX + subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+        send_mail(settings.EMAIL_SUBJECT_PREFIX + subject, message, settings.DEFAULT_FROM_EMAIL, [scan.site.user.email])
