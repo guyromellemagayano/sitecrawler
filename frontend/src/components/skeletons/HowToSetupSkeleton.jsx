@@ -9,7 +9,7 @@ const SkeletonEntries = loadable(() => import("src/components/skeletons/Skeleton
 const PaginationSkeleton = () => {
 	const skeletonLimit = 1;
 	const skeletonEntry = (
-		<div tw="pt-12 pb-16 px-4 sm:px-6 lg:pt-16 lg:pb-20 lg:px-8">
+		<div tw="relative py-6 px-4 sm:px-6 lg:px-8">
 			<div tw="max-w-7xl mx-auto">
 				<div tw="flex flex-col justify-center mb-10 space-y-3">
 					<span tw="flex justify-center">
