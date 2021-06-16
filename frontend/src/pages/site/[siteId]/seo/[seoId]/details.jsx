@@ -66,7 +66,7 @@ const SeoDetail = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	const homePageLink = "/sites";
+	const homePageLink = "/sites/";
 	let seoDetailPageTitle = SeoLabel[1].label + " - " + siteId?.name + " - " + pageDetail?.url;
 
 	React.useEffect(() => {
@@ -112,7 +112,7 @@ const SeoDetail = ({ width, result }) => {
 						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="w-full p-6 mx-auto grid gap-16 xl:grid-cols-1 2xl:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 								<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-									<div tw="max-w-full py-4 px-8">
+									<div tw="max-w-full p-4">
 										<Breadcrumbs
 											isSeo
 											siteId={result.siteId}
@@ -269,7 +269,7 @@ const SeoDetail = ({ width, result }) => {
 									</div>
 								</div>
 							</div>
-							<div tw="static bottom-0 w-full mx-auto px-12 py-4 bg-white border-t border-gray-200">
+							<div tw="static bottom-0 w-full mx-auto p-4 bg-white border-t border-gray-200">
 								<SiteFooter />
 							</div>
 						</main>

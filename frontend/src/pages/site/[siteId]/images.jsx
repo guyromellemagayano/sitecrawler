@@ -351,10 +351,10 @@ const Images = ({ width, result }) => {
 										/>
 									) : null
 								) : null}
-							</div>
 
-							<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-								<SiteFooter />
+								<div tw="static bottom-0 w-full mx-auto p-4">
+									<SiteFooter />
+								</div>
 							</div>
 						</main>
 					</div>

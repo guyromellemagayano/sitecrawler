@@ -78,7 +78,7 @@ const SiteOverview = ({ width, result }) => {
 		querySid: result.siteId
 	});
 
-	const homePageLink = "/sites";
+	const homePageLink = "/sites/";
 	const pageTitle = OverviewLabel[0].label;
 
 	const { stats } = useStats({
@@ -175,7 +175,7 @@ const SiteOverview = ({ width, result }) => {
 									</div>
 								</div>
 
-								<div tw="static bottom-0 w-full mx-auto px-8 py-4">
+								<div tw="static bottom-0 w-full mx-auto p-4">
 									<SiteFooter />
 								</div>
 							</div>
