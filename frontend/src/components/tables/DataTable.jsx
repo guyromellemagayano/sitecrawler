@@ -484,7 +484,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 				</div>
 			</Transition>
 
-			<DataTableDiv ref={selectedSiteRef} tw="bg-white">
+			<DataTableDiv ref={selectedSiteRef} tw="relative">
 				<tr>
 					<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
 						<span tw="flex items-center">

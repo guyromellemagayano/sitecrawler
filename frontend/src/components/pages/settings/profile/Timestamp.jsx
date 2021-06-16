@@ -78,14 +78,14 @@ const TimestampSettings = ({ user }) => {
 				successMsgTitle={GlobalLabel[8].label}
 			/>
 
-			<div tw="max-w-full py-4 px-8">
+			<div tw="max-w-full p-4">
 				<div tw="pt-4 m-auto">
 					<h5 tw="text-xl leading-6 font-medium text-gray-900">{GlobalLabel[0].label}</h5>
 					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{GlobalLabel[0].description}</p>
 				</div>
 			</div>
 
-			<div tw="max-w-full lg:max-w-3xl p-8 pt-0 pb-2">
+			<div tw="max-w-full lg:max-w-3xl p-4 pt-0 pb-2">
 				<div tw="space-y-8 divide-y divide-gray-200">
 					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
 						<div tw="sm:col-span-4">

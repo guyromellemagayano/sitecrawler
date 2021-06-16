@@ -85,14 +85,14 @@ const SupportForm = () => {
 				errorMsgTitle={SupportLabel[12].label}
 			/>
 
-			<div tw="max-w-full py-4 px-8">
+			<div tw="max-w-full p-4">
 				<div tw="pt-4 m-auto">
 					<h5 tw="text-xl leading-6 font-medium text-gray-900">{SupportLabel[6].label}</h5>
 					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{SupportLabel[7].label}</p>
 				</div>
 			</div>
 
-			<div tw="max-w-full lg:max-w-4xl p-8 pt-0 pb-2">
+			<div tw="max-w-full lg:max-w-4xl p-4 pt-0 pb-2">
 				<Formik
 					initialValues={{
 						message: ""
