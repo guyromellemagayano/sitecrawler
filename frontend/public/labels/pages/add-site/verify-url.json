@@ -1,7 +1,6 @@
 [
 	{
-		"label": "Add a new site",
-		"description": "Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment."
+		"label": "Add a New Site"
 	},
 	{
 		"label": "Fill in site information"
@@ -86,5 +85,8 @@
 	},
 	{
 		"label": "Dismiss"
+	},
+	{
+		"label": "Site Addition Progress"
 	}
 ]
