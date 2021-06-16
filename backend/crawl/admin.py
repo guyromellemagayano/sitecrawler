@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models.functions import Now
 
-from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData, Tls, LinkImage, ScanArchive
+from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData, Tls, LinkImage, ScanArchive, ScanCache
 
 
 class PageChildInline(admin.TabularInline):
@@ -200,3 +200,8 @@ class ScanArchiveAdmin(admin.ModelAdmin):
 
     def url(self, obj):
         return obj.site.url
+
+
+@admin.register(ScanCache)
+class ScanCacheAdmin(admin.ModelAdmin):
+    list_display = ("scan", "created_at")

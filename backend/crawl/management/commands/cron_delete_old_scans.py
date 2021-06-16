@@ -33,12 +33,7 @@ class Command(BaseCommand):
 
         print(f"Archiving {scan.id} for {scan.site.url}", flush=True)
 
-        large_page_size_threshold = scan.site.large_page_size_threshold
-        if not large_page_size_threshold:
-            large_page_size_threshold = scan.site.user.userprofile.large_page_size_threshold
-        data = ScanDetailSerializer(
-            Scan.objects.details(large_page_size_threshold=large_page_size_threshold).get(pk=scan.id)
-        ).data
+        data = ScanDetailSerializer(Scan.objects.with_details().get(pk=scan.id)).data
 
         try:
             ScanArchive.objects.create(

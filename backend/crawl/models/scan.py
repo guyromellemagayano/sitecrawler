@@ -1,25 +1,40 @@
 from django.db import models, connections
-from django.db.models import F, OuterRef, Q, Value
-from django.db.models.functions import Coalesce
+from django.db.models import OuterRef, Q, Subquery
 from django.db.models.query import QuerySet
 
 from crawl.common import CalculatedField, SubQueryCount
-from crawl.models import Link
+from crawl.models import Link, ScanCache
 
 
 class ScanQuerySet(QuerySet):
-    def details(self, user_large_page_size_threshold=None, large_page_size_threshold=None):
-        if user_large_page_size_threshold is None and large_page_size_threshold is None:
-            raise Exception(
-                "Either `user_large_page_size_threshold` or `large_page_size_threshold` must be provided "
-                "for `.details()` query method."
-            )
-        # threshold is passed directly in view,
-        # but when queried in bulk only user threshold is supplied and we need to do a join
+    def with_details(self):
+        return self.select_related("scancache")
+
+    def get(self, *args, **kwargs):
+        scan = super().get(*args, **kwargs)
+        if not self.query.select_related or "scancache" not in self.query.select_related:
+            return scan
+
+        if hasattr(scan, "scancache"):
+            if scan.scancache.is_valid(scan):
+                scan.scancache.apply(scan)
+                return scan
+            else:
+                scan.scancache.delete()
+
+        # use threshold from site if not null, otherwise from user
+        large_page_size_threshold = scan.site.large_page_size_threshold
         if not large_page_size_threshold:
-            large_page_size_threshold = Coalesce(
-                F("scan__site__large_page_size_threshold"), Value(user_large_page_size_threshold)
-            )
+            large_page_size_threshold = scan.site.user.userprofile.large_page_size_threshold
+
+        scan_with_details = Scan.objects.all()._details(large_page_size_threshold).get(*args, **kwargs)
+        cache = ScanCache.objects.create_from_scan(scan_with_details)
+        cache.apply(scan)
+
+        return scan
+
+    def _details(self, large_page_size_threshold):
+        # annotate with details, all should start with `num_`, because that prefix is cached in ScanCache
         pages = Link.objects.filter(type=Link.TYPE_PAGE, scan_id=OuterRef("pk"))
         external_links = Link.objects.filter(type=Link.TYPE_EXTERNAL, scan_id=OuterRef("pk"))
         links = Link.objects.filter(cached_link_occurences__gt=0, scan_id=OuterRef("pk"))
@@ -29,6 +44,20 @@ class ScanQuerySet(QuerySet):
         seo_ok_pages = pages.exclude(
             Q(pagedata__title="") | Q(pagedata__description="") | Q(pagedata__h1_first="") | Q(pagedata__h2_first="")
         )
+
+        def duplicated_count(field):
+            return Subquery(
+                pages.values(field)  # group by
+                .annotate(cnt=models.Count("id", distinct=True))  # count pages pery field
+                .filter(cnt__gt=1)  # only count duplicates
+                .annotate(
+                    total=models.Func(models.F("cnt"), function="SUM", template="%(function)s(%(expressions)s) OVER ()")
+                )[
+                    :1
+                ]  # window sum over counts that are > 1, limit to 1 result
+                .values("total")
+            )
+
         return (
             self.annotate(num_pages=SubQueryCount(pages))
             .annotate(num_external_links=SubQueryCount(external_links))
@@ -63,6 +92,8 @@ class ScanQuerySet(QuerySet):
                     pages.annotate_size().annotate_tls().filter(size_total__lte=large_page_size_threshold, tls_total=1)
                 )
             )
+            .annotate(num_pages_duplicated_title=duplicated_count("pagedata__title"))
+            .annotate(num_pages_duplicated_description=duplicated_count("pagedata__description"))
         )
 
     def raw_bulk_delete(self, ids):
