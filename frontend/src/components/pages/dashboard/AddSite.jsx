@@ -24,7 +24,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [maxSiteLimit, setMaxSiteLimit] = React.useState(0);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 
-	const informationPageLink = "/add-site/information";
+	const informationPageLink = "/add-new-site/";
 
 	const handleSiteLimit = (user, site) => {
 		if (site !== undefined && user !== undefined) {

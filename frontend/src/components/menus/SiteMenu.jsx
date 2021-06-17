@@ -282,7 +282,7 @@ const SiteMenu = ({ site }) => {
 													) : null}
 
 													<span tw="flex m-2 justify-center shadow-sm rounded-md">
-														<Link href="/add-site/information" passHref>
+														<Link href="/add-new-site/" passHref>
 															<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 																<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
 																{PrimaryMenuLabel[2].label}
