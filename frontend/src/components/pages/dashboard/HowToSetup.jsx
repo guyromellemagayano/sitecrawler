@@ -10,6 +10,7 @@ import ReactPlayer from "react-player/lazy";
 import HowToSetupLabel from "public/labels/components/sites/HowToSetup.json";
 
 // Loadable
+const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 
 const tabItems = [
@@ -38,11 +39,11 @@ const HowToSetup = () => {
 	const [tabActive, setTabActive] = React.useState(1);
 
 	React.useEffect(() => {
-		setComponentReady(false);
-
 		setTimeout(() => {
 			setComponentReady(true);
 		}, 500);
+
+		return setComponentReady(false);
 	}, []);
 
 	return componentReady ? (
@@ -96,9 +97,7 @@ const HowToSetup = () => {
 			</div>
 		</HowToSetupDiv>
 	) : (
-		<div tw="mx-auto">
-			<Loader />
-		</div>
+		<HowToSetupSkeleton />
 	);
 };
 
