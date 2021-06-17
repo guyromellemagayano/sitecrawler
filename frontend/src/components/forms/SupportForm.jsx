@@ -17,12 +17,10 @@ import usePostMethod from "src/hooks/usePostMethod";
 // Components
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
-const SupportFormSkeleton = loadable(() => import("src/components/skeletons/SupportFormSkeleton"));
 
 const SupportFormDiv = styled.div``;
 
 const SupportForm = () => {
-	const [componentReady, setComponentReady] = React.useState(false);
 	const [disableSupportForm, setDisableSupportForm] = React.useState(false);
 	const [errorMsg, setErrorMsg] = React.useState("");
 	const [errorMsgLoaded, setErrorMsgLoaded] = React.useState(false);
@@ -30,16 +28,6 @@ const SupportForm = () => {
 	const [successMsgLoaded, setSuccessMsgLoaded] = React.useState(false);
 
 	const contactApiEndpoint = "/api/support/contact/";
-
-	React.useEffect(() => {
-		(() => {
-			setComponentReady(false);
-
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		})();
-	}, []);
 
 	React.useEffect(() => {
 		successMsg && successMsg !== ""
@@ -69,7 +57,7 @@ const SupportForm = () => {
 			: null;
 	}, [successMsgLoaded, errorMsgLoaded]);
 
-	return componentReady ? (
+	return (
 		<SupportFormDiv>
 			<SuccessNotification
 				successMsg={successMsg}
@@ -190,8 +178,6 @@ const SupportForm = () => {
 				</Formik>
 			</div>
 		</SupportFormDiv>
-	) : (
-		<SupportFormSkeleton />
 	);
 };
 
