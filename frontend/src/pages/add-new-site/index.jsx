@@ -26,12 +26,12 @@ import SiteFooter from "src/components/layouts/Footer";
 // Loadable
 const AddSiteSteps = loadable(() => import("src/components/steps/AddSiteSteps"));
 const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
-const HowToSetup = loadable(() => import("src/components/pages/dashboard/HowToSetup"));
+const HowToSetup = loadable(() => import("src/components/pages/sites/HowToSetup"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 
 const AddSiteSection = styled.section``;
 
-const AddSite = ({ width, sid, edit, sname, surl, vid, v }) => {
+const AddSite = ({ width }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
