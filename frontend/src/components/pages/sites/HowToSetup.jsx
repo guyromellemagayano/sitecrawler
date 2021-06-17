@@ -11,7 +11,6 @@ import HowToSetupLabel from "public/labels/components/sites/HowToSetup.json";
 
 // Loadable
 const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
 
 const tabItems = [
 	{
