@@ -88,19 +88,15 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		if (!showDeleteSiteModal) {
 			router.push("/sites");
 		}
-	}, [showDeleteSiteModal]);
+	}, [showDeleteSiteModal, router]);
 
 	React.useEffect(() => {
-		stats
-			? (() => {
-					setComponentReady(false);
+		setTimeout(() => {
+			setComponentReady(true);
+		}, 500);
 
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
-	}, [stats]);
+		return setComponentReady(false);
+	}, []);
 
 	const setLinkErrors = () => {
 		let valLength = 0;
@@ -251,6 +247,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 
 	return (
 		<>
+			{/* TODO: Convert this to a single component */}
 			<Transition show={showVerifySiteModal}>
 				<div tw="fixed z-20 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
 					<Transition.Child
@@ -291,6 +288,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 											target="_blank"
 											title={site?.url}
 											tw="cursor-pointer break-all text-base leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+											rel="noreferrer"
 										>
 											{site?.url}
 										</a>
@@ -418,6 +416,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 				</div>
 			</Transition>
 
+			{/* TODO: Convert this to a single component */}
 			<Transition show={showDeleteSiteModal}>
 				<div tw="fixed z-20 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
 					<Transition.Child
@@ -572,6 +571,30 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
+							<span
+								css={[
+									tw`text-sm leading-5 text-gray-500`,
+									scanResult?.finished_at == null && scanResult?.force_https == null
+										? tw`text-yellow-500`
+										: tw`text-green-500`
+								]}
+							>
+								{scanResult?.finished_at == null && scanResult?.force_https == null && scanCount > 1
+									? DataTableLabel[19].label
+									: scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount > 1
+									? DataTableLabel[20].label
+									: scanResult?.finished_at == null && scanResult?.force_https == null && scanCount == 1
+									? DataTableLabel[24].label
+									: scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount == 1
+									? DataTableLabel[21].label
+									: DataTableLabel[2].label}
+							</span>
+						) : (
+							<Skeleton duration={2} width={100} />
+						)}
+					</td>
+					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
+						{componentReady ? (
 							stats?.finished_at !== null ? (
 								<span tw="space-x-2">
 									<span tw="text-sm leading-5 text-gray-500">
@@ -599,32 +622,6 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 							<Skeleton duration={2} width={176.7} />
 						)}
 					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
-						{componentReady ? (
-							<span
-								css={[
-									tw`text-sm leading-5 text-gray-500`,
-									scanResult?.finished_at == null && scanResult?.force_https == null
-										? tw`text-yellow-500`
-										: tw`text-green-500`
-								]}
-							>
-								{scanResult?.finished_at == null && scanResult?.force_https == null && scanCount > 1 ? (
-									DataTableLabel[19].label
-								) : scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount > 1 ? (
-									DataTableLabel[20].label
-								) : scanResult?.finished_at == null && scanResult?.force_https == null && scanCount == 1 ? (
-									DataTableLabel[24].label
-								) : scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount == 1 ? (
-									DataTableLabel[21].label
-								) : (
-									<Skeleton duration={2} width={100} />
-								)}
-							</span>
-						) : (
-							<Skeleton duration={2} width={100} />
-						)}
-					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
 						{componentReady ? (
 							stats ? (
@@ -633,7 +630,9 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										{setTotalIssues()}
 									</a>
 								</Link>
-							) : null
+							) : (
+								0
+							)
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
@@ -650,7 +649,9 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										{stats?.num_links}
 									</a>
 								</Link>
-							) : null
+							) : (
+								0
+							)
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
@@ -663,7 +664,9 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										{stats?.num_pages}
 									</a>
 								</Link>
-							) : null
+							) : (
+								0
+							)
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
@@ -676,7 +679,9 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										{stats?.num_images}
 									</a>
 								</Link>
-							) : null
+							) : (
+								0
+							)
 						) : (
 							<Skeleton duration={2} width={45} />
 						)}
