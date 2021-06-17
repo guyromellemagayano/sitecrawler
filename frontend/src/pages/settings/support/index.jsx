@@ -46,11 +46,11 @@ const Support = ({ width }) => {
 	});
 
 	React.useEffect(() => {
-		setComponentReady(false);
-
 		setTimeout(() => {
 			setComponentReady(true);
 		}, 500);
+
+		return setComponentReady(false);
 	}, []);
 
 	return user ? (

@@ -59,11 +59,11 @@ const SiteSettings = ({ width, result }) => {
 	const pageTitle = SettingsLabel[1].label + " - " + siteId?.name;
 
 	React.useEffect(() => {
-		setComponentReady(false);
-
 		setTimeout(() => {
 			setComponentReady(true);
 		}, 500);
+
+		return setComponentReady(false);
 	}, []);
 
 	return user ? (
