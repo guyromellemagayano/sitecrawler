@@ -101,12 +101,12 @@ const DataTable = ({
 	React.useEffect(() => {
 		let currentScanObjId = scan?.results[0]?.id;
 		let currentScanCount = scan?.count;
-		let currentScanStartedAt = scan?.results[0]?.started_at ?? null;
+		let currentScanFinishedAt = scan?.results[0]?.finished_at ?? null;
 		let currentScanForcehttps = scan?.results[0]?.force_https ?? null;
 
 		setScanObjId(currentScanObjId);
 		setScanCount(currentScanCount);
-		setScanStartedAt(currentScanStartedAt);
+		setScanStartedAt(currentScanFinishedAt);
 		setScanForceHttps(currentScanForcehttps);
 
 		scanStartedAt == null && scanForceHttps == null ? () => {
