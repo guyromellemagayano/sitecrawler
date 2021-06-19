@@ -56,6 +56,7 @@ const Images = ({ width, result }) => {
 	const [loadQueryString, setLoadQueryString] = React.useState("");
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [pagePath, setPagePath] = React.useState("");
+	const [scanObjId, setScanObjId] = React.useState(null);
 	const [searchKey, setSearchKey] = React.useState("");
 
 	const { asPath } = useRouter();
@@ -66,13 +67,21 @@ const Images = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { selectedSiteRef, handleCrawl, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
+	const { selectedSiteRef, handleCrawl, currentScan, isCrawlStarted, isCrawlFinished } = useCrawl({
 		siteId: result.siteId
 	});
 
 	const { siteId } = useSiteId({
 		querySid: result.siteId
 	});
+
+	React.useEffect(() => {
+		currentScan
+			? (() => {
+					setScanObjId(currentScan?.id);
+			  })()
+			: null;
+	}, [currentScan]);
 
 	const pageTitle = ImagesLabel[1].label + " - " + siteId?.name;
 
@@ -238,7 +247,7 @@ const Images = ({ width, result }) => {
 
 							<LinkOptions
 								permissions={user?.permissions}
-								scanResult={scanResult}
+								scanResult={currentScan}
 								searchKey={searchKey}
 								onSearchEvent={handleSearch}
 								handleCrawl={handleCrawl}
