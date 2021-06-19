@@ -2,22 +2,28 @@
 import * as React from "react";
 
 // External
+import axios from "axios";
+import Cookies from "js-cookie";
 import PropTypes from "prop-types";
 
 // Hooks
 import { useScan } from "src/hooks/useSite";
-import usePostMethod from "src/hooks/usePostMethod";
+
+// Global axios defaults
+axios.defaults.headers.common["Accept"] = "application/json";
+axios.defaults.headers.common["Content-Type"] = "application/json";
+axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
 
 const useCrawl = ({ siteId }) => {
-	const [scanObjId, setScanObjId] = React.useState(null);
 	const [isCrawlFinished, setIsCrawlFinished] = React.useState(null);
 	const [isCrawlStarted, setIsCrawlStarted] = React.useState(null);
-	const [scanResult, setScanResult] = React.useState(null);
 	const [scanCount, setScanCount] = React.useState(0);
+	const [scanFinishedAt, setScanFinishedAt] = React.useState(null);
+	const [scanForceHttps, setScanForceHttps] = React.useState(null);
 
 	const selectedSiteRef = React.useRef(null);
 
-	const { scan: currentScan, mutateScan: mutateCurrentScan } = useScan({
+	const { scan } = useScan({
 		querySid: siteId
 	});
 
@@ -26,53 +32,58 @@ const useCrawl = ({ siteId }) => {
 
 		e?.preventDefault();
 
-		if (selectedSiteRef?.current && selectedSiteRef?.current.contains(e?.target)) {
-			try {
-				const response = await usePostMethod(endpoint);
-				const data = await response?.data;
+		const handleMutateCurrentSite = async (endpoint) => {
+			const response = await axios
+				.post(endpoint)
+				.then((response) => {
+					return response;
+				})
+				.catch((error) => {
+					return error.response;
+				});
+			const data = await response?.data;
 
-				if (Math.floor(response?.status / 200) === 1) {
-					if (data) {
-						mutateCurrentScan;
-						return true;
-					}
-				} else {
-					return null;
-				}
-			} catch (error) {
-				return null;
-			}
-		}
+			Math.floor(response?.status / 200) === 1
+				? () => {
+						data
+							? () => {
+									mutateSite;
+									return true;
+							  }
+							: null;
+				  }
+				: null;
+		};
+
+		selectedSiteRef.current && selectedSiteRef.current.contains(e?.target) ? handleMutateCurrentSite(endpoint) : null;
 	};
 
 	React.useEffect(() => {
-		let previousScanResult =
-			currentScan?.results.find((e) => e?.finished_at !== null && e?.force_https !== null) ?? null;
-		let currentScanResult =
-			currentScan?.results.find((e) => e?.finished_at == null && e?.force_https == null) ?? previousScanResult;
-
-		setScanResult(currentScanResult);
-		setScanCount(currentScan?.count);
-
-		currentScan?.count > 1 ? setScanObjId(previousScanResult?.id) : setScanObjId(currentScanResult?.id);
-	}, [currentScan, scanResult, scanObjId]);
+		scan && scan !== undefined
+			? () => {
+					setScanFinishedAt(scan?.results[0]?.finished_at);
+					setScanForceHttps(scan?.results[0]?.force_https);
+					setScanCount(scan.count);
+			  }
+			: null;
+	}, [scan, scanFinishedAt, scanForceHttps, scanCount]);
 
 	React.useEffect(() => {
-		if (scanResult?.finished_at == null && scanResult?.force_https == null) {
+		if (scanFinishedAt == null && scanForceHttps == null) {
 			setIsCrawlStarted(true);
 			setIsCrawlFinished(false);
 		} else {
 			setIsCrawlStarted(false);
 			setIsCrawlFinished(true);
 		}
-	}, [isCrawlStarted, isCrawlFinished, scanResult]);
+	}, [isCrawlStarted, isCrawlFinished, scanFinishedAt, scanForceHttps]);
 
 	return {
 		selectedSiteRef,
 		handleCrawl,
 		scanCount,
-		scanResult,
-		scanObjId,
+		scanFinishedAt,
+		scanForceHttps,
 		isCrawlStarted,
 		isCrawlFinished
 	};
