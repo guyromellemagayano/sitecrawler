@@ -13,7 +13,7 @@ export const useSite = ({ endpoint, refreshInterval = 0 }) => {
 		error: siteError
 	} = useSWR(endpoint ? endpoint : null, useFetcher, {
 		onErrorRetry: (error, key, revalidate, { retryCount }) => {
-			if (error && error !== undefined && error.status === 404) return;
+			if (error !== undefined && error.status === 404) return;
 			if (key === endpoint) return;
 			if (retryCount >= 10) return;
 
@@ -31,12 +31,12 @@ export const useSiteId = ({ querySid = 0, refreshInterval = 0 }) => {
 		mutate: mutateSiteId,
 		error: siteIdError
 	} = useSWR(
-		() => (querySid && querySid !== 0 && querySid !== undefined ? siteApiEndpoint + querySid + "/" : null),
+		() => (querySid && querySid !== 0 && querySid !== undefined ? siteApiEndpoint + querySid + "/?format=json" : null),
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/") return;
+				if (error !== undefined && error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/?format=json") return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
@@ -56,13 +56,13 @@ export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
 	} = useSWR(
 		() =>
 			querySid && querySid !== 0 && querySid !== undefined
-				? siteApiEndpoint + querySid + "/scan/?ordering=-finished_at"
+				? siteApiEndpoint + querySid + "/scan/?ordering=-finished_at&format=json"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/?ordering=-finished_at") return;
+				if (error !== undefined && error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/scan/?ordering=-finished_at&format=json") return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
@@ -82,13 +82,13 @@ export const useStats = ({ querySid = 0, scanObjId = 0, refreshInterval = 0 }) =
 	} = useSWR(
 		() =>
 			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/"
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/?format=json"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/") return;
+				if (error !== undefined && error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/?format=json") return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
@@ -113,7 +113,7 @@ export const useLinks = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterva
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
+				if (error !== undefined && error.status === 404) return;
 				if (key === endpoint) return;
 				if (retryCount >= 10) return;
 
@@ -139,7 +139,7 @@ export const useImages = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterv
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
+				if (error !== undefined && error.status === 404) return;
 				if (key === endpoint) return;
 				if (retryCount >= 10) return;
 
@@ -165,7 +165,7 @@ export const usePages = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterva
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
+				if (error !== undefined && error.status === 404) return;
 				if (key === endpoint) return;
 				if (retryCount >= 10) return;
 
@@ -194,13 +194,13 @@ export const useLinkDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 			linkId &&
 			linkId !== 0 &&
 			linkId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/" + linkId
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/" + linkId + "/?format=json"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/" + linkId) return;
+				if (error !== undefined && error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/" + linkId + "/?format=json") return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
@@ -227,13 +227,13 @@ export const usePageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 			linkId &&
 			linkId !== 0 &&
 			linkId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/?format=json"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId) return;
+				if (error !== undefined && error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/?format=json") return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
@@ -260,13 +260,34 @@ export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, 
 			pageId &&
 			pageId !== 0 &&
 			pageId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + pageId + "/link/" + "?" + addQuery
+				? siteApiEndpoint +
+				  querySid +
+				  "/scan/" +
+				  scanObjId +
+				  "/page/" +
+				  pageId +
+				  "/link/" +
+				  "?" +
+				  addQuery +
+				  "&format=json"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + pageId + "/link/" + "?" + addQuery)
+				if (error !== undefined && error.status === 404) return;
+				if (
+					key ===
+					siteApiEndpoint +
+						querySid +
+						"/scan/" +
+						scanObjId +
+						"/page/" +
+						pageId +
+						"/link/" +
+						"?" +
+						addQuery +
+						"&format=json"
+				)
 					return;
 				if (retryCount >= 10) return;
 
@@ -294,13 +315,13 @@ export const useImageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 			linkId &&
 			linkId !== 0 &&
 			linkId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/" + linkId
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/" + linkId + "/?format=json"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
-				if (error && error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/" + linkId) return;
+				if (error !== undefined && error.status === 404) return;
+				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/" + linkId + "/?format=json") return;
 				if (retryCount >= 10) return;
 
 				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
