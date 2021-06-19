@@ -25,16 +25,7 @@ const TlsErrorModal = loadable(() => import("src/components/modals/TlsErrorModal
 
 const SitesOverviewDiv = styled.div``;
 
-const SitesOverview = ({
-	verified,
-	stats,
-	scanResult,
-	user,
-	disableLocalTime,
-	handleCrawl,
-	isCrawlStarted,
-	isCrawlFinished
-}) => {
+const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, isCrawlStarted, isCrawlFinished }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [showTlsErrorModal, setShowTlsErrorModal] = React.useState(false);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
@@ -64,8 +55,8 @@ const SitesOverview = ({
 			<TlsErrorModal
 				show={showTlsErrorModal}
 				setShowErrorModal={setShowTlsErrorModal}
-				siteId={scanResult?.site_id}
-				scanObjId={scanResult?.id}
+				siteId={stats?.site_id}
+				scanObjId={stats?.id}
 			/>
 
 			<div tw="px-4 py-5 sm:p-6">
