@@ -8,6 +8,8 @@ import Link from "next/link";
 import { ClipboardIcon, ExclamationIcon, InformationCircleIcon } from "@heroicons/react/solid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Transition } from "@headlessui/react";
+import axios from "axios";
+import Cookies from "js-cookie";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
@@ -18,10 +20,12 @@ import tw, { styled } from "twin.macro";
 import DataTableLabel from "public/labels/components/sites/DataTable.json";
 
 // Hooks
-import { useStats } from "src/hooks/useSite";
-import useCrawl from "src/hooks/useCrawl";
-import useDeleteMethod from "src/hooks/useDeleteMethod";
-import usePostMethod from "src/hooks/usePostMethod";
+import { useScan, useStats } from "src/hooks/useSite";
+
+// Global axios defaults
+axios.defaults.headers.common["Accept"] = "application/json";
+axios.defaults.headers.common["Content-Type"] = "application/json";
+axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
 
 const DataTableDiv = styled.tbody`
 	td {
@@ -54,19 +58,34 @@ const DataTableDiv = styled.tbody`
 	}
 `;
 
-const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
+const DataTable = ({
+	siteId,
+	siteName,
+	siteUrl,
+	siteVerified,
+	siteVerificationId,
+	siteUpdatedAt,
+	disableLocalTime,
+	mutateSite
+}) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [copied, setCopied] = React.useState(false);
-	const [copyValue, setCopyValue] = React.useState(`<meta name="epic-crawl-id" content="${site?.verification_id}" />`);
+	const [copyValue, setCopyValue] = React.useState(`<meta name="epic-crawl-id" content="${siteVerificationId}" />`);
 	const [disableSiteVerify, setDisableSiteVerify] = React.useState(false);
 	const [enableNextStep, setEnableNextStep] = React.useState(false);
 	const [errorMsg, setErrorMsg] = React.useState(null);
+	const [isCrawlFinished, setIsCrawlFinished] = React.useState(null);
+	const [isCrawlStarted, setIsCrawlStarted] = React.useState(null);
+	const [scanCount, setScanCount] = React.useState(null);
+	const [scanForceHttps, setScanForceHttps] = React.useState(null);
+	const [scanObjId, setScanObjId] = React.useState(null);
+	const [scanStartedAt, setScanStartedAt] = React.useState(null);
 	const [showDeleteSiteModal, setShowDeleteSiteModal] = React.useState(false);
 	const [showVerifySiteModal, setShowVerifySiteModal] = React.useState(false);
-	const [siteVerifyId, setSiteVerifyId] = React.useState(site?.id);
+	const [siteVerifyId, setSiteVerifyId] = React.useState(siteId);
 	const [successMsg, setSuccessMsg] = React.useState(null);
 
-	const siteVerifyApiEndpoint = "/api/site/" + site?.id + "/verify/";
+	const siteVerifyApiEndpoint = "/api/site/" + siteId + "/verify/";
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -75,20 +94,40 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	const { selectedSiteRef, scanResult, scanObjId, scanCount } = useCrawl({
-		siteId: site?.id
+	const { scan } = useScan({
+		querySid: siteId
 	});
 
+	React.useEffect(() => {
+		let currentScanObjId = scan?.results[0]?.id;
+		let currentScanCount = scan?.count;
+		let currentScanStartedAt = scan?.results[0]?.started_at ?? null;
+		let currentScanForcehttps = scan?.results[0]?.force_https ?? null;
+
+		setScanObjId(currentScanObjId);
+		setScanCount(currentScanCount);
+		setScanStartedAt(currentScanStartedAt);
+		setScanForceHttps(currentScanForcehttps);
+
+		scanStartedAt == null && scanForceHttps == null ? () => {
+			setIsCrawlStarted(true)
+			setIsCrawlFinished(false)
+		} : () => {
+			setIsCrawlStarted(false)
+			setIsCrawlFinished(true)
+		}
+	}, [scan]);
+
 	const { stats } = useStats({
-		querySid: site?.id,
+		querySid: siteId,
 		scanObjId: scanObjId
 	});
 
 	React.useEffect(() => {
 		if (!showDeleteSiteModal) {
-			router.push("/sites");
+			mutateSite;
 		}
-	}, [showDeleteSiteModal, router]);
+	}, [showDeleteSiteModal, mutateSite]);
 
 	React.useEffect(() => {
 		setTimeout(() => {
@@ -103,7 +142,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 
 		stats
 			? (() => {
-					valLength = stats?.num_non_ok_links ?? 0;
+					valLength = stats.num_non_ok_links ?? 0;
 			  })()
 			: null;
 
@@ -115,7 +154,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 
 		stats
 			? (() => {
-					valLength = stats?.num_pages_big ?? 0 + stats?.num_pages_tls_non_ok ?? 0;
+					valLength = stats.num_pages_big ?? 0 + stats.num_pages_tls_non_ok ?? 0;
 			  })()
 			: null;
 
@@ -127,7 +166,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 
 		stats
 			? (() => {
-					valLength = stats?.num_non_ok_images ?? 0;
+					valLength = stats.num_non_ok_images ?? 0;
 			  })()
 			: null;
 
@@ -140,10 +179,10 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 		stats
 			? (() => {
 					valLength =
-						stats?.num_pages_without_title ??
-						0 + stats?.num_pages_without_description ??
-						0 + stats?.num_pages_without_h1_first ??
-						0 + stats?.num_pages_without_h2_first ??
+						stats.num_pages_without_title ??
+						0 + stats.num_pages_without_description ??
+						0 + stats.num_pages_without_h1_first ??
+						0 + stats.num_pages_without_h2_first ??
 						0;
 			  })()
 			: null;
@@ -176,27 +215,34 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 	};
 
 	const handleSiteDeletion = async (e) => {
-		let siteIdApiEndpoint = "/api/site/" + site?.id;
+		let siteIdApiEndpoint = "/api/site/" + siteId;
 
 		e.preventDefault();
 
-		try {
-			const response = await useDeleteMethod(siteIdApiEndpoint);
-			const data = await response.data;
+		const response = await axios
+			.delete(siteIdApiEndpoint)
+			.then((response) => {
+				return response;
+			})
+			.catch((error) => {
+				return error.response;
+			});
+		const data = await response.data;
 
-			if (Math.floor(response.status / 200) === 1) {
-				if (data) {
-					setTimeout(() => {
-						setShowDeleteSiteModal(false);
-					}, 500);
+		Math.floor(response.status / 200) === 1
+			? () => {
+					data
+						? (() => {
+								setTimeout(() => {
+									setShowDeleteSiteModal(false);
+								}, 500);
 
-					mutateSite;
-					return true;
-				}
-			}
-		} catch (error) {
-			return null;
-		}
+								mutateSite;
+								return true;
+						  })()
+						: null;
+			  }
+			: null;
 	};
 
 	const handleSiteVerification = async (e) => {
@@ -211,38 +257,39 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 			sid: e.currentTarget.site_verify_id.value
 		};
 
-		try {
-			const response = await usePostMethod(siteVerifyApiEndpoint, body);
+		const response = await axios
+			.post(siteVerifyApiEndpoint, body)
+			.then((response) => {
+				return response;
+			})
+			.catch((error) => {
+				return error.response;
+			});
 
-			if (Math.floor(response.status / 200) === 1) {
-				mutateSite;
+		Math.floor(response.status / 200) === 1
+			? (() => {
+					mutateSite;
 
-				if (response.data.verified === true) {
-					setTimeout(() => {
-						setEnableNextStep(!enableNextStep);
-						setSuccessMsg(DataTableLabel[13].label);
-						setDisableSiteVerify(false);
-					}, 500);
-				} else {
-					setErrorMsg(DataTableLabel[14].label);
-					setTimeout(() => {
-						setDisableSiteVerify(false);
-					}, 500);
-				}
-			} else {
-				setSubmitting(false);
-				resetForm({ values: "" });
-				setErrorMsg(DataTableLabel[15]);
-
-				return null;
-			}
-		} catch (error) {
-			setSubmitting(false);
-			resetForm({ values: "" });
-			setErrorMsg(DataTableLabel[15]);
-
-			return null;
-		}
+					response.data.verified
+						? (() => {
+								setTimeout(() => {
+									setEnableNextStep(!enableNextStep);
+									setSuccessMsg(DataTableLabel[13].label);
+									setDisableSiteVerify(false);
+								}, 500);
+						  })()
+						: (() => {
+								setErrorMsg(DataTableLabel[14].label);
+								setTimeout(() => {
+									setDisableSiteVerify(false);
+								}, 500);
+						  })();
+			  })()
+			: (() => {
+					setSubmitting(false);
+					resetForm({ values: "" });
+					setErrorMsg(DataTableLabel[15]);
+			  })();
 	};
 
 	return (
@@ -282,15 +329,15 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<h3 tw="text-lg leading-6 font-medium text-gray-800" id="modal-headline">
-										{DataTableLabel[0].label}: {site?.name} (
+										{DataTableLabel[0].label}: {siteName} (
 										<a
-											href={site?.url}
+											href={siteUrl}
 											target="_blank"
-											title={site?.url}
+											title={siteUrl}
 											tw="cursor-pointer break-all text-base leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
 											rel="noreferrer"
 										>
-											{site?.url}
+											{siteUrl}
 										</a>
 										)
 									</h3>
@@ -387,7 +434,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 									</span>
 								) : (
 									<span tw="mt-3 sm:ml-3 flex w-full sm:mt-0 sm:w-auto">
-										<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
+										<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
 											<a tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
 												Go to Site Overview
 											</a>
@@ -483,26 +530,26 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 				</div>
 			</Transition>
 
-			<DataTableDiv ref={selectedSiteRef} tw="relative">
+			<DataTableDiv tw="relative">
 				<tr>
 					<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
 						<span tw="flex items-center">
 							<span>
 								{componentReady ? (
-									!site?.verified ? (
+									!siteVerified ? (
 										<>
 											<span
 												aria-label="Not Verified"
 												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
 											></span>
 											<div tw="inline-flex flex-col justify-start items-start">
-												<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
+												<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
 													<a
 														className="truncate-link"
 														tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-														title={site?.name}
+														title={siteName}
 													>
-														{site?.name}
+														{siteName}
 													</a>
 												</Link>
 												<span tw="flex justify-start text-sm leading-5 text-gray-500">
@@ -529,20 +576,23 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 										<>
 											<span
 												aria-label="Verified"
-												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full bg-green-400"
+												css={[
+													tw`relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+													isCrawlStarted && !isCrawlFinished ? tw`bg-yellow-400` : tw`bg-green-400`
+												]}
 											></span>
 											<div tw="inline-flex flex-col justify-start items-start">
-												<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
+												<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
 													<a
 														className="truncate-link"
 														tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-														title={site?.name}
+														title={siteName}
 													>
-														{site?.name}
+														{siteName}
 													</a>
 												</Link>
 												<span tw="flex justify-start text-sm leading-5">
-													<Link href={site?.url} passHref>
+													<Link href={siteUrl} passHref>
 														<a
 															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
 															title={DataTableLabel[26].label}
@@ -574,18 +624,16 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 							<span
 								css={[
 									tw`text-sm leading-5 text-gray-500`,
-									scanResult?.finished_at == null && scanResult?.force_https == null
-										? tw`text-yellow-500`
-										: tw`text-green-500`
+									scanStartedAt == null && scanForceHttps == null ? tw`text-yellow-500` : tw`text-green-500`
 								]}
 							>
-								{scanResult?.finished_at == null && scanResult?.force_https == null && scanCount > 1
+								{scanStartedAt == null && scanForceHttps == null && scanCount > 1
 									? DataTableLabel[19].label
-									: scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount > 1
+									: scanStartedAt !== null && scanForceHttps !== null && scanCount > 1
 									? DataTableLabel[20].label
-									: scanResult?.finished_at == null && scanResult?.force_https == null && scanCount == 1
+									: scanStartedAt == null && scanForceHttps == null && scanCount == 1
 									? DataTableLabel[24].label
-									: scanResult?.finished_at !== null && scanResult?.force_https !== null && scanCount == 1
+									: scanStartedAt !== null && scanForceHttps !== null && scanCount == 1
 									? DataTableLabel[21].label
 									: DataTableLabel[2].label}
 							</span>
@@ -595,20 +643,20 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							stats?.finished_at !== null ? (
+							scanStartedAt !== null ? (
 								<span tw="space-x-2">
 									<span tw="text-sm leading-5 text-gray-500">
 										{!disableLocalTime ? (
-											<Moment calendar={calendarStrings} date={stats?.finished_at} local />
+											<Moment calendar={calendarStrings} date={scanStartedAt} local />
 										) : (
-											<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
+											<Moment calendar={calendarStrings} date={scanStartedAt} utc />
 										)}
 									</span>
 									<span tw="text-sm leading-5 text-gray-500">
 										{!disableLocalTime ? (
-											<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
+											<Moment date={scanStartedAt} format="hh:mm:ss A" local />
 										) : (
-											<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
+											<Moment date={scanStartedAt} format="hh:mm:ss A" utc />
 										)}
 									</span>
 									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
@@ -625,7 +673,7 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
 						{componentReady ? (
 							stats ? (
-								<Link href="/site/[siteId]/overview" as={`/site/${site?.id}/overview`} passHref>
+								<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
 									<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
 										{setTotalIssues()}
 									</a>
@@ -644,9 +692,9 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					>
 						{componentReady ? (
 							stats ? (
-								<Link href="/site/[siteId]/links" as={`/site/${site?.id}/links`} passHref>
+								<Link href="/site/[siteId]/links" as={`/site/${siteId}/links`} passHref>
 									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-										{stats?.num_links}
+										{stats.num_links}
 									</a>
 								</Link>
 							) : (
@@ -659,9 +707,9 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
 						{componentReady ? (
 							stats ? (
-								<Link href="/site/[siteId]/pages" as={`/site/${site?.id}/pages`} passHref>
+								<Link href="/site/[siteId]/pages" as={`/site/${siteId}/pages`} passHref>
 									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-										{stats?.num_pages}
+										{stats.num_pages}
 									</a>
 								</Link>
 							) : (
@@ -674,9 +722,9 @@ const DataTable = ({ site, disableLocalTime, mutateSite, router }) => {
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
 						{componentReady ? (
 							stats ? (
-								<Link href="/site/[siteId]/images" as={`/site/${site?.id}/images`} passHref>
+								<Link href="/site/[siteId]/images" as={`/site/${siteId}/images`} passHref>
 									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-										{stats?.num_images}
+										{stats.num_images}
 									</a>
 								</Link>
 							) : (
