@@ -3,6 +3,7 @@ import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
+import Script from "next/script";
 
 // External
 import "tailwindcss/tailwind.css";
@@ -103,6 +104,8 @@ const MyApp = ({ Component, pageProps }) => {
 	return (
 		<>
 			<DefaultSeo {...appSeo} />
+			<Script src="/scripts/beacon.js" strategy="lazyOnload" />
+			<Script src="/scripts/usetiful.js" strategy="lazyOnload" />
 			<GlobalStyles />
 			<TopProgressBar key={state.loadingKey} isRouteChanging={state.isRouteChanging} />
 			<Component {...pageProps} />
