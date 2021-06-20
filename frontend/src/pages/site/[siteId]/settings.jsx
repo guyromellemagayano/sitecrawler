@@ -153,6 +153,10 @@ SiteSettings.propTypes = {};
 export default withResizeDetector(SiteSettings);
 
 export async function getServerSideProps(ctx) {
+	await new Promise((resolve) => {
+		setTimeout(resolve, 500);
+	});
+
 	return {
 		props: {
 			result: ctx.query
