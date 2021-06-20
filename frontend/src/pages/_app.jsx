@@ -5,6 +5,7 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
+import "tailwindcss/tailwind.css";
 import { DefaultSeo } from "next-seo";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";

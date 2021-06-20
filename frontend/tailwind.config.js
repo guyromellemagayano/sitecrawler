@@ -3,9 +3,8 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
 	mode: "jit",
-	purge: ["./src/**/*.{js,jsx,ts,tsx}"],
-	presets: [],
-	darkMode: false, // or 'media' or 'class'
+	purge: ["./src/**/*.{js,jsx}"],
+	darkMode: false,
 	theme: {
 		inset: {
 			0: "0",
