@@ -3,6 +3,7 @@ import * as React from "react";
 
 // NextJS
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // External
 import { ClipboardIcon, ExclamationIcon, InformationCircleIcon } from "@heroicons/react/solid";
@@ -58,16 +59,7 @@ const DataTableDiv = styled.tbody`
 	}
 `;
 
-const DataTable = ({
-	siteId,
-	siteName,
-	siteUrl,
-	siteVerified,
-	siteVerificationId,
-	siteUpdatedAt,
-	disableLocalTime,
-	mutateSite
-}) => {
+const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId, disableLocalTime, mutateSite }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [copied, setCopied] = React.useState(false);
 	const [copyValue, setCopyValue] = React.useState(`<meta name="epic-crawl-id" content="${siteVerificationId}" />`);
@@ -79,13 +71,15 @@ const DataTable = ({
 	const [scanCount, setScanCount] = React.useState(null);
 	const [scanForceHttps, setScanForceHttps] = React.useState(null);
 	const [scanObjId, setScanObjId] = React.useState(null);
-	const [scanStartedAt, setScanStartedAt] = React.useState(null);
+	const [scanFinishedAt, setScanFinishedAt] = React.useState(null);
 	const [showDeleteSiteModal, setShowDeleteSiteModal] = React.useState(false);
 	const [showVerifySiteModal, setShowVerifySiteModal] = React.useState(false);
 	const [siteVerifyId, setSiteVerifyId] = React.useState(siteId);
 	const [successMsg, setSuccessMsg] = React.useState(null);
+	const [disableDeleteSite, setDisableDeleteSite] = React.useState(false);
 
 	const siteVerifyApiEndpoint = "/api/site/" + siteId + "/verify/";
+	const sitesPage = "/sites";
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -93,6 +87,8 @@ const DataTable = ({
 		lastWeek: "MMMM DD, YYYY",
 		sameElse: "MMMM DD, YYYY"
 	};
+
+	const router = useRouter();
 
 	const { scan } = useScan({
 		querySid: siteId
@@ -106,28 +102,24 @@ const DataTable = ({
 
 		setScanObjId(currentScanObjId);
 		setScanCount(currentScanCount);
-		setScanStartedAt(currentScanFinishedAt);
+		setScanFinishedAt(currentScanFinishedAt);
 		setScanForceHttps(currentScanForcehttps);
 
-		scanStartedAt == null && scanForceHttps == null ? () => {
-			setIsCrawlStarted(true)
-			setIsCrawlFinished(false)
-		} : () => {
-			setIsCrawlStarted(false)
-			setIsCrawlFinished(true)
-		}
+		scanFinishedAt == null && scanForceHttps == null
+			? () => {
+					setIsCrawlStarted(true);
+					setIsCrawlFinished(false);
+			  }
+			: () => {
+					setIsCrawlStarted(false);
+					setIsCrawlFinished(true);
+			  };
 	}, [scan]);
 
 	const { stats } = useStats({
 		querySid: siteId,
 		scanObjId: scanObjId
 	});
-
-	React.useEffect(() => {
-		if (!showDeleteSiteModal) {
-			mutateSite;
-		}
-	}, [showDeleteSiteModal, mutateSite]);
 
 	React.useEffect(() => {
 		setTimeout(() => {
@@ -138,54 +130,29 @@ const DataTable = ({
 	}, []);
 
 	const setLinkErrors = () => {
-		let valLength = 0;
-
-		stats
-			? (() => {
-					valLength = stats.num_non_ok_links ?? 0;
-			  })()
-			: null;
+		let valLength = stats?.num_non_ok_links;
 
 		return valLength;
 	};
 
 	const setPageErrors = () => {
-		let valLength = 0;
-
-		stats
-			? (() => {
-					valLength = stats.num_pages_big ?? 0 + stats.num_pages_tls_non_ok ?? 0;
-			  })()
-			: null;
+		let valLength = stats?.num_pages_big + stats?.num_pages_tls_non_ok;
 
 		return valLength;
 	};
 
 	const setImageErrors = () => {
-		let valLength = 0;
-
-		stats
-			? (() => {
-					valLength = stats.num_non_ok_images ?? 0;
-			  })()
-			: null;
+		let valLength = stats?.num_non_ok_images + stats?.num_images_with_missing_alts + stats?.num_images_tls_non_ok;
 
 		return valLength;
 	};
 
 	const setSeoErrors = () => {
-		let valLength = 0;
-
-		stats
-			? (() => {
-					valLength =
-						stats.num_pages_without_title ??
-						0 + stats.num_pages_without_description ??
-						0 + stats.num_pages_without_h1_first ??
-						0 + stats.num_pages_without_h2_first ??
-						0;
-			  })()
-			: null;
+		let valLength =
+			stats?.num_pages_without_title +
+			stats?.num_pages_without_description +
+			stats?.num_pages_without_h1_first +
+			stats?.num_pages_without_h2_first;
 
 		return valLength;
 	};
@@ -214,10 +181,10 @@ const DataTable = ({
 		setCopied(true);
 	};
 
-	const handleSiteDeletion = async (e) => {
-		let siteIdApiEndpoint = "/api/site/" + siteId;
+	const handleSiteDeletion = async () => {
+		let siteIdApiEndpoint = "/api/site/" + siteId + "/";
 
-		e.preventDefault();
+		setDisableDeleteSite(!disableDeleteSite);
 
 		const response = await axios
 			.delete(siteIdApiEndpoint)
@@ -225,24 +192,18 @@ const DataTable = ({
 				return response;
 			})
 			.catch((error) => {
-				return error.response;
+				return error?.response;
 			});
-		const data = await response.data;
 
-		Math.floor(response.status / 200) === 1
-			? () => {
-					data
-						? (() => {
-								setTimeout(() => {
-									setShowDeleteSiteModal(false);
-								}, 500);
-
-								mutateSite;
-								return true;
-						  })()
-						: null;
-			  }
+		Math.floor(response?.status / 200) === 1
+			? (() => {
+					setShowDeleteSiteModal(!showDeleteSiteModal);
+					setDisableDeleteSite(!disableDeleteSite);
+			  })()
 			: null;
+
+		mutateSite;
+		router.push(sitesPage);
 	};
 
 	const handleSiteVerification = async (e) => {
@@ -263,14 +224,12 @@ const DataTable = ({
 				return response;
 			})
 			.catch((error) => {
-				return error.response;
+				return error?.response;
 			});
 
-		Math.floor(response.status / 200) === 1
+		Math.floor(response?.status / 200) === 1
 			? (() => {
-					mutateSite;
-
-					response.data.verified
+					response?.data.verified
 						? (() => {
 								setTimeout(() => {
 									setEnableNextStep(!enableNextStep);
@@ -422,7 +381,7 @@ const DataTable = ({
 												type="submit"
 												disabled={disableSiteVerify}
 												css={[
-													tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600`,
+													tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-green-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`,
 													disableSiteVerify
 														? tw`opacity-50 cursor-not-allowed`
 														: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700`
@@ -452,7 +411,9 @@ const DataTable = ({
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 										]}
-										onClick={() => setTimeout(() => setShowVerifySiteModal(!showVerifySiteModal), 150)}
+										onClick={() => {
+											setTimeout(() => setShowVerifySiteModal(!showVerifySiteModal), 500);
+										}}
 									>
 										Close
 									</button>
@@ -509,17 +470,31 @@ const DataTable = ({
 								<span tw="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
 									<button
 										type="button"
-										tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-red-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
-										onClick={(e) => handleSiteDeletion(e)}
+										disabled={disableDeleteSite}
+										css={[
+											tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`,
+											disableDeleteSite
+												? tw`opacity-50 cursor-not-allowed`
+												: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
+										]}
+										onClick={handleSiteDeletion}
 									>
-										{DataTableLabel[10].label}
+										{disableDeleteSite ? DataTableLabel[23].label : DataTableLabel[10].label}
 									</button>
 								</span>
 								<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
 									<button
 										type="button"
-										tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150"
-										onClick={() => setTimeout(() => setShowDeleteSiteModal(!showDeleteSiteModal), 150)}
+										disabled={disableDeleteSite}
+										css={[
+											tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
+											disableDeleteSite
+												? tw`opacity-50 cursor-not-allowed`
+												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
+										]}
+										onClick={() => {
+											setTimeout(() => setShowDeleteSiteModal(!showDeleteSiteModal), 150);
+										}}
 									>
 										{DataTableLabel[16].label}
 									</button>
@@ -543,15 +518,22 @@ const DataTable = ({
 												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
 											></span>
 											<div tw="inline-flex flex-col justify-start items-start">
-												<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
-													<a
-														className="truncate-link"
-														tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-														title={siteName}
-													>
+												{scanCount > 0 ? (
+													<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
+														<a
+															className="truncate-link"
+															tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+															title={siteName}
+														>
+															{siteName}
+														</a>
+													</Link>
+												) : (
+													<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-600">
 														{siteName}
-													</a>
-												</Link>
+													</span>
+												)}
+
 												<span tw="flex justify-start text-sm leading-5 text-gray-500">
 													<button
 														type="button"
@@ -624,16 +606,16 @@ const DataTable = ({
 							<span
 								css={[
 									tw`text-sm leading-5 text-gray-500`,
-									scanStartedAt == null && scanForceHttps == null ? tw`text-yellow-500` : tw`text-green-500`
+									scanFinishedAt == null && scanForceHttps == null ? tw`text-yellow-500` : tw`text-green-500`
 								]}
 							>
-								{scanStartedAt == null && scanForceHttps == null && scanCount > 1
+								{scanFinishedAt == null && scanForceHttps == null && scanCount > 1
 									? DataTableLabel[19].label
-									: scanStartedAt !== null && scanForceHttps !== null && scanCount > 1
+									: scanFinishedAt !== null && scanForceHttps !== null && scanCount > 1
 									? DataTableLabel[20].label
-									: scanStartedAt == null && scanForceHttps == null && scanCount == 1
+									: scanFinishedAt == null && scanForceHttps == null && scanCount == 1
 									? DataTableLabel[24].label
-									: scanStartedAt !== null && scanForceHttps !== null && scanCount == 1
+									: scanFinishedAt !== null && scanForceHttps !== null && scanCount == 1
 									? DataTableLabel[21].label
 									: DataTableLabel[2].label}
 							</span>
@@ -643,20 +625,20 @@ const DataTable = ({
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							scanStartedAt !== null ? (
+							scanFinishedAt !== null ? (
 								<span tw="space-x-2">
 									<span tw="text-sm leading-5 text-gray-500">
 										{!disableLocalTime ? (
-											<Moment calendar={calendarStrings} date={scanStartedAt} local />
+											<Moment calendar={calendarStrings} date={scanFinishedAt} local />
 										) : (
-											<Moment calendar={calendarStrings} date={scanStartedAt} utc />
+											<Moment calendar={calendarStrings} date={scanFinishedAt} utc />
 										)}
 									</span>
 									<span tw="text-sm leading-5 text-gray-500">
 										{!disableLocalTime ? (
-											<Moment date={scanStartedAt} format="hh:mm:ss A" local />
+											<Moment date={scanFinishedAt} format="hh:mm:ss A" local />
 										) : (
-											<Moment date={scanStartedAt} format="hh:mm:ss A" utc />
+											<Moment date={scanFinishedAt} format="hh:mm:ss A" utc />
 										)}
 									</span>
 									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}

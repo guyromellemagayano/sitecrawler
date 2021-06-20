@@ -72,7 +72,7 @@ const Sites = ({ width, result }) => {
 	let scanApiEndpoint = "";
 	let queryString = "";
 
-	scanApiEndpoint = `/api/site/?per_page=` + linksPerPage + `&ordering=name`;
+	scanApiEndpoint = `/api/site/?per_page=` + linksPerPage + `&ordering=name&format=json`;
 
 	queryString +=
 		result?.page !== undefined
@@ -96,7 +96,8 @@ const Sites = ({ width, result }) => {
 	scanApiEndpoint += queryString;
 
 	const { site, mutateSite } = useSite({
-		endpoint: scanApiEndpoint
+		endpoint: scanApiEndpoint,
+		refreshInterval: 7500
 	});
 
 	const handleSearch = async (e) => {
@@ -231,7 +232,6 @@ const Sites = ({ width, result }) => {
 																siteUrl={val.url}
 																siteVerified={val.verified}
 																siteVerificationId={val.verification_id}
-																siteUpdatedAt={val.updated_at}
 																disableLocalTime={disableLocalTime}
 																mutateSite={mutateSite}
 															/>
