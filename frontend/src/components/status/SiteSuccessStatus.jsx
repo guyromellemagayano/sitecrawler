@@ -1,18 +1,19 @@
-import styled from 'styled-components'
+// React
+import * as React from "react";
 
-const SiteSuccessStatusDiv = styled.span``
+// External
+import { CheckCircleIcon } from "@heroicons/react/solid";
+import { styled } from "twin.macro";
 
-const SiteSuccessStatus = props => {
+const SiteSuccessStatusSpan = styled.span``;
+
+const SiteSuccessStatus = (props) => {
 	return (
-		<SiteSuccessStatusDiv
-      className={`inline-flex items-center text-sm leading-5 font-semibold rounded-full text-green-800`}
-    >
-			<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className={`check-circle w-6 h-6 mr-2`}>
-				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-			</svg>
-      {props.text}
-    </SiteSuccessStatusDiv>
-	)
-}
+		<SiteSuccessStatusSpan tw="inline-flex items-center text-sm leading-5 font-semibold rounded-full text-green-800">
+			<CheckCircleIcon tw="w-6 h-6 mr-2" />
+			{props.text}
+		</SiteSuccessStatusSpan>
+	);
+};
 
-export default SiteSuccessStatus
+export default SiteSuccessStatus;
