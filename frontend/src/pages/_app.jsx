@@ -34,6 +34,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const MyApp = ({ Component, pageProps }) => {
+	let activeRequests = 0;
+
 	const router = useRouter();
 
 	const [state, setState] = React.useState({
@@ -51,6 +53,10 @@ const MyApp = ({ Component, pageProps }) => {
 		};
 
 		const handleRouteChangeEnd = () => {
+			if (activeRequests > 0) {
+				return;
+			}
+
 			setState((prevState) => ({
 				...prevState,
 				isRouteChanging: false
@@ -60,6 +66,31 @@ const MyApp = ({ Component, pageProps }) => {
 		router.events.on("routeChangeStart", handleRouteChangeStart);
 		router.events.on("routeChangeComplete", handleRouteChangeEnd);
 		router.events.on("routeChangeError", handleRouteChangeEnd);
+
+		typeof window !== "undefined" &&
+			(() => {
+				const originalFetch = window.fetch;
+
+				window.fetch = async function (...args) {
+					if (activeRequests === 0) {
+						handleRouteChangeStart();
+					}
+
+					activeRequests++;
+
+					try {
+						const response = await originalFetch(...args);
+						return response;
+					} catch (error) {
+						return Promise.reject(error);
+					} finally {
+						activeRequests -= 1;
+						if (activeRequests === 0) {
+							handleRouteChangeEnd();
+						}
+					}
+				};
+			})();
 
 		return () => {
 			router.events.off("routeChangeStart", handleRouteChangeStart);
