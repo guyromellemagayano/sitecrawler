@@ -37,7 +37,7 @@ services:
     command: ./docker.dev.sh
     volumes:
       - ./frontend:/app
-      - node-data:/app/node_modules
+      # - node-data:/app/node_modules
       # - next-data:/app/.next
     labels:
       - 'traefik.enable=true'
@@ -128,7 +128,7 @@ services:
 volumes:
   db-data:
     driver: local
-  node-data:
-    driver: local
+  # node-data:
+  #   driver: local
   # next-data:
   #   driver: local
