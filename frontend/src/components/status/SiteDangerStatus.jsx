@@ -2,7 +2,7 @@
 import * as React from "react";
 
 // External
-import { XCircleIcon } from "@heroicons/react/solid";
+import { XCircleIcon } from "@heroicons/react/outline";
 import { styled } from "twin.macro";
 
 const SiteDangerStatusSpan = styled.span``;

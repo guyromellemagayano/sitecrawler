@@ -2,7 +2,7 @@
 import * as React from "react";
 
 // External
-import { CheckCircleIcon } from "@heroicons/react/solid";
+import { CheckCircleIcon } from "@heroicons/react/outline";
 import { styled } from "twin.macro";
 
 const SiteSuccessStatusSpan = styled.span``;

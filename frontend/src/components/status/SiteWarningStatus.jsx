@@ -2,7 +2,7 @@
 import * as React from "react";
 
 // External
-import { ExclamationIcon } from "@heroicons/react/solid";
+import { ExclamationIcon } from "@heroicons/react/outline";
 import { styled } from "twin.macro";
 
 const SiteWarningStatusSpan = styled.span``;
