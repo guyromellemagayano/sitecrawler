@@ -44,11 +44,11 @@ const UrlInformationStep = (props) => {
 
 			data
 				? (() => {
-						props?.setSiteData({
-							...props?.siteData,
+						props.setSiteData({
+							...props.siteData,
 							...data
 						});
-						props?.setCurrentStep(props?.currentStep + 1);
+						props.setCurrentStep(props.currentStep + 1);
 				  })()
 				: null;
 		} else {
@@ -76,6 +76,8 @@ const UrlInformationStep = (props) => {
 			const siteResult = data?.results.find((site) => site?.url === body?.url);
 
 			if (siteResult !== undefined && siteResult !== null) {
+				setSubmitting(false);
+				resetForm({ values: "" });
 				setErrorMsg(InformationLabel[11].label);
 				setErrorMsgLoaded(!errorMsgLoaded);
 			} else {
@@ -107,12 +109,12 @@ const UrlInformationStep = (props) => {
 
 			data
 				? (() => {
-						props?.setSiteData({
-							...props?.siteData,
+						props.setSiteData({
+							...props.siteData,
 							...data
 						});
-						props?.setCurrentStep(props?.currentStep + 1);
-						props?.setEditMode(false);
+						props.setCurrentStep(props.currentStep + 1);
+						props.setEditMode(false);
 				  })()
 				: null;
 		} else {
@@ -175,7 +177,7 @@ const UrlInformationStep = (props) => {
 			: null;
 	}, [errorMsgLoaded]);
 
-	return props?.currentStep == 1 ? (
+	return props.currentStep == 1 ? (
 		<>
 			<ErrorNotification
 				errorMsg={errorMsg}
@@ -194,19 +196,19 @@ const UrlInformationStep = (props) => {
 					</div>
 
 					<Formik
-						enableReinitialize={props?.editMode ? true : false}
+						enableReinitialize={props.editMode ? true : false}
 						initialValues={{
 							siteurlprotocol: "https://",
-							siteurl: props?.editMode ? props?.siteData?.url.replace(/^\/\/|^.*?:(\/\/)?/, "") : "",
-							sitename: props?.editMode ? props?.siteData?.name : ""
+							siteurl: props.editMode ? props.siteData?.url.replace(/^\/\/|^.*?:(\/\/)?/, "") : "",
+							sitename: props.editMode ? props.siteData?.name : ""
 						}}
 						validationSchema={Yup.object({
 							siteurl: Yup.string().matches(urlRegex, InformationLabel[8].label).required(InformationLabel[7].label),
 							sitename: Yup.string().required(InformationLabel[7].label)
 						})}
-						onSubmit={async (values, { setSubmitting, resetForm }) => {
-							if (props?.editMode) {
-								handleSiteInformationUpdate("/api/site/" + props?.siteData?.id + "/", values, setSubmitting, resetForm);
+						onSubmit={(values, { setSubmitting, resetForm }) => {
+							if (props.editMode) {
+								handleSiteInformationUpdate("/api/site/" + props.siteData?.id + "/", values, setSubmitting, resetForm);
 							} else {
 								const body = {
 									url: values?.siteurlprotocol + values?.siteurl,
@@ -264,9 +266,9 @@ const UrlInformationStep = (props) => {
 													name="siteurlprotocol"
 													css={[
 														tw`focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-3 pr-7 border-transparent bg-transparent sm:text-sm rounded-md`,
-														props?.editMode && tw`opacity-50 bg-gray-200 cursor-not-allowed`
+														props.editMode && tw`opacity-50 bg-gray-200 cursor-not-allowed`
 													]}
-													disabled={isSubmitting || props?.editMode ? true : false}
+													disabled={isSubmitting || props.editMode ? true : false}
 													onChange={handleChange}
 													onBlur={handleBlur}
 													value={values?.siteurlprotocol}
@@ -279,10 +281,10 @@ const UrlInformationStep = (props) => {
 												id="siteurl"
 												type="text"
 												name="siteurl"
-												disabled={isSubmitting || props?.editMode ? true : false}
+												disabled={isSubmitting || props.editMode ? true : false}
 												css={[
 													tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-24 sm:text-sm border-gray-300 rounded-md`,
-													props?.editMode
+													props.editMode
 														? tw`opacity-50 bg-gray-200 cursor-not-allowed`
 														: isSubmitting && tw`text-gray-500 opacity-50 bg-gray-200 cursor-not-allowed`,
 													(errors.siteurl && touched.siteurl) || errorMsg ? tw`border-red-300` : tw`border-gray-300`
@@ -291,9 +293,7 @@ const UrlInformationStep = (props) => {
 												aria-describedby="siteurl"
 												onChange={handleChange}
 												onBlur={handleBlur}
-												value={
-													props?.editMode ? props?.siteData?.url.replace(/^\/\/|^.*?:(\/\/)?/, "") : values?.siteurl
-												}
+												value={props.editMode ? props.siteData?.url.replace(/^\/\/|^.*?:(\/\/)?/, "") : values?.siteurl}
 											/>
 										</div>
 
@@ -328,7 +328,7 @@ const UrlInformationStep = (props) => {
 											>
 												{isSubmitting
 													? InformationLabel[10].label
-													: props?.siteData?.id === undefined && !props?.editMode
+													: props.siteData?.id === undefined && !props.editMode
 													? InformationLabel[6].label
 													: InformationLabel[9].label}
 											</button>
