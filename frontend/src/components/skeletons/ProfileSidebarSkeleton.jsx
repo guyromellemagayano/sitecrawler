@@ -15,8 +15,8 @@ const ProfileSidebarSkeleton = () => {
 					<Skeleton circle={true} duration={2} width={40} height={40} />
 				</div>
 				<div tw="ml-3">
-					<Skeleton duration={2} width={145} />
-					<Skeleton duration={2} width={145} />
+					<Skeleton duration={2} width={130} />
+					<Skeleton duration={2} width={130} />
 				</div>
 			</div>
 		</div>

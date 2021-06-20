@@ -1,75 +1,54 @@
 // React
 import * as React from "react";
 
-// NextJS
-import { useRouter } from "next/router";
-
 // External
-import "nprogress/nprogress.css";
-import NProgress from "nprogress";
+import { useNProgress } from "@tanem/react-nprogress";
 
-const TopProgressBar = () => {
-	let state;
-	let activeRequests = 0;
+const TopProgressBar = ({ isRouteChanging }) => {
+	const { animationDuration, isFinished, progress } = useNProgress({
+		isAnimating: isRouteChanging
+	});
 
-	const router = useRouter();
-	NProgress.configure({ showSpinner: false });
-
-	React.useEffect(() => {
-		const load = () => {
-			if (state === "loading") {
-				return;
-			}
-
-			state = "loading";
-
-			NProgress.start();
-		};
-
-		const stop = () => {
-			if (activeRequests > 0) {
-				return;
-			}
-
-			state = "stop";
-
-			NProgress.done();
-		};
-
-		router.events.on("routeChangeStart", load);
-		router.events.on("routeChangeComplete", stop);
-		router.events.on("routeChangeError", stop);
-
-		if (typeof window !== "undefined") {
-			const originalFetch = window.fetch;
-
-			window.fetch = async function (...args) {
-				if (activeRequests === 0) {
-					load();
+	return (
+		<>
+			<style jsx>{`
+				.container {
+					opacity: ${isFinished ? 0 : 1};
+					pointerevents: none;
+					transition: opacity ${animationDuration}ms linear;
 				}
 
-				activeRequests++;
-
-				try {
-					const response = await originalFetch(...args);
-					return response;
-				} catch (error) {
-					return Promise.reject(error);
-				} finally {
-					activeRequests -= 1;
-					if (activeRequests === 0) {
-						stop();
-					}
+				.bar {
+					background: #29d;
+					height: 2px;
+					left: 0;
+					margin-left: ${(-1 + progress) * 100} + "%";
+					position: fixed;
+					top: 0;
+					transition: margin-left ${animationDuration}ms linear;
+					width: 100%;
+					z-index: 1031;
 				}
-			};
-		}
 
-		return () => {
-			router.events.off("routeChangeStart", load);
-		};
-	}, []);
+				.spinner {
+					box-shadow: 0 0 10px #29d, 0 0 5px #29d;
+					display: block;
+					height: 100%;
+					opacity: 1;
+					position: absolute;
+					right: 0;
+					transform: rotate(3deg) translate(0px, -4px);
+					width: 100px;
+				}
+			`}</style>
 
-	return null;
+			<div className="container">
+				<div className="bar">
+					<div className="spinner" />
+				</div>
+			</div>
+		</>
+	);
 };
 
 export default TopProgressBar;

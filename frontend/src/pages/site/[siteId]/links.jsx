@@ -346,6 +346,10 @@ Links.propTypes = {};
 export default withResizeDetector(Links);
 
 export async function getServerSideProps(ctx) {
+	await new Promise((resolve) => {
+		setTimeout(resolve, 500);
+	});
+
 	return {
 		props: {
 			result: ctx.query

@@ -58,7 +58,7 @@ const Profile = ({ width }) => {
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
-			<ProfileSection className="h-screen flex overflow-hidden bg-white">
+			<ProfileSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}

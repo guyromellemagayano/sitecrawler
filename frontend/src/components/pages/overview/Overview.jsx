@@ -13,9 +13,6 @@ import tw, { styled } from "twin.macro";
 // JSON
 import OverviewLabel from "public/labels/components/sites/Overview.json";
 
-// Hooks
-import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
-
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 const SiteDangerStatus = loadable(() => import("src/components/status/SiteDangerStatus"));

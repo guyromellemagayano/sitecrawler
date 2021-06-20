@@ -36,7 +36,7 @@ const UpgradeErrorAlert = ({ message = "", link = "#" }) => {
 			leave="transition-opacity duration-150"
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
-			css={tw`max-w-2xl z-0 origin-top transform -translate-y-16 relative right-0 left-0 bottom-0 rounded-md bg-yellow-100 shadow-lg p-4 my-1 mx-auto`}
+			tw="max-w-2xl z-0 origin-top transform -translate-y-16 relative right-0 left-0 bottom-0 rounded-md bg-yellow-100 shadow-lg p-4 my-1 mx-auto"
 		>
 			<span tw="flex">
 				<span tw="flex-shrink-0">

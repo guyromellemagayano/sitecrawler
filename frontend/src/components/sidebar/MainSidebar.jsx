@@ -102,7 +102,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 					leaveFrom="translate-x-0"
 					leaveTo="-translate-x-full"
 				>
-					<div tw="relative flex-1 flex flex-col w-64 bg-gray-1000">
+					<div className="bg-gray-1000" tw="relative flex-1 flex flex-col w-64">
 						<Transition.Child
 							enter="ease-in-out duration-300"
 							enterFrom="opacity-0"

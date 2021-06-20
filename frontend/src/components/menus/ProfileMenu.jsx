@@ -29,8 +29,8 @@ const ProfileMenu = ({ user }) => {
 				<>
 					<button
 						type="button"
-						className="group"
-						tw="p-4 flex items-center justify-between flex-shrink-0 w-full focus:outline-none transition ease-in-out duration-150 bg-gray-900 hover:bg-gray-1100"
+						className="group hover:bg-gray-1100"
+						tw="p-4 flex items-center justify-between flex-shrink-0 w-full focus:outline-none transition ease-in-out duration-150 bg-gray-900 "
 						id="options-menu"
 						aria-haspopup="true"
 						aria-expanded={isComponentVisible ? "true" : "false"}

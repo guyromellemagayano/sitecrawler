@@ -1,7 +1,9 @@
-import { GlobalStyles } from 'twin.macro';
+// React
+import * as React from "react";
 
-const GlobalStylesComponent = () => {
-	return <GlobalStyles />;
-};
+// External
+import { GlobalStyles as BaseStyles } from "twin.macro";
 
-export default GlobalStylesComponent;
+const GlobalStyles = () => <BaseStyles />;
+
+export default GlobalStyles;

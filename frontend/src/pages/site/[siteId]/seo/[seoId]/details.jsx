@@ -291,6 +291,10 @@ SeoDetail.propTypes = {};
 export default withResizeDetector(SeoDetail);
 
 export async function getServerSideProps(context) {
+	await new Promise((resolve) => {
+		setTimeout(resolve, 500);
+	});
+
 	return {
 		props: {
 			result: context.query
