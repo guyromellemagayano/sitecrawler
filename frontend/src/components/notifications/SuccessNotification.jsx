@@ -29,7 +29,7 @@ const SuccessNotificationOverlay = ({ successMsg, successMsgLoaded, setSuccessMs
 					leave="transition ease-in duration-100"
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
-					className="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto overflow-hidden"
+					tw="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto overflow-hidden"
 				>
 					<div tw="p-4">
 						<div tw="flex items-start">

@@ -85,12 +85,14 @@ const PrimaryMenu = ({ user, site }) => {
 										return (
 											<Link key={index} href={value?.url} passHref>
 												<a
-													className="group"
+													className={`group bg-gray-1100 ${
+														router?.pathname !== value?.url && "hover:bg-gray-1100 focus:bg-gray-1100"
+													}`}
 													css={[
 														tw`cursor-pointer`,
 														router?.pathname == value?.url
-															? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
-															: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100 transition ease-in-out duration-150`
+															? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md `
+															: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none  transition ease-in-out duration-150`
 													]}
 												>
 													{value?.slug === "sites" ? (
@@ -113,7 +115,8 @@ const PrimaryMenu = ({ user, site }) => {
 														aria-haspopup="listbox"
 														aria-expanded="true"
 														aria-labelledby="listbox-label"
-														tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 focus:ring-gray-1100  transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+														className="focus:ring-gray-1100"
+														tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1  transition ease-in-out duration-150 sm:text-sm sm:leading-5"
 														onClick={() => setIsComponentVisible(!isComponentVisible)}
 													>
 														<div tw="flex items-center space-x-3">

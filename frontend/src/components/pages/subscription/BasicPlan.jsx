@@ -46,7 +46,7 @@ const BasicPlan = ({
 				setErrorMsgLoaded={setErrorMsgLoaded}
 				errorMsgTitle={paymentMethodFormLabel[7].label}
 			/>
-			<Transition show={showChangeToBasicModal} className="fixed z-50 inset-0 overflow-y-auto">
+			<Transition show={showChangeToBasicModal} tw="fixed z-50 inset-0 overflow-y-auto">
 				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						enter="ease-out duration-300"
@@ -55,7 +55,7 @@ const BasicPlan = ({
 						leave="ease-in duration-200"
 						leaveFrom="opacity-100"
 						leaveTo="opacity-0"
-						className="fixed inset-0 transition-opacity"
+						tw="fixed inset-0 transition-opacity"
 					>
 						<div aria-hidden="true">
 							<div tw="absolute inset-0 bg-gray-500 opacity-75"></div>

@@ -197,7 +197,7 @@ const VerifyUrl = (props) => {
 							leave="ease-in duration-200"
 							leaveFrom="opacity-100"
 							leaveTo="opacity-0"
-							className="fixed inset-0 transition-opacity"
+							tw="fixed inset-0 transition-opacity"
 						>
 							<div aria-hidden="true">
 								<div tw="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -213,7 +213,7 @@ const VerifyUrl = (props) => {
 							leave="ease-in duration-200"
 							leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 							leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-							className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-6"
+							tw="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-6"
 						>
 							<div role="dialog" aria-modal="true" aria-labelledby="modal-headline">
 								<div>

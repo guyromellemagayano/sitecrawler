@@ -164,7 +164,7 @@ const TlsErrorModal = ({ show, setShowErrorModal, siteId, scanObjId }) => {
 									</a>
 								</Link>
 							</span>
-							<span tw="mt-3 flex w-full rounded-md shadow-sm sm:ml-3 sm:mt-0 sm:w-auto">
+							<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
 								<button
 									type="button"
 									tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
