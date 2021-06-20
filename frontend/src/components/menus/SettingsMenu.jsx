@@ -176,7 +176,7 @@ const SettingsMenu = ({ site }) => {
 													leave="transition ease-in duration-75"
 													leaveFrom="transform opacity-100 scale-100"
 													leaveTo="transform opacity-0 scale-95"
-													className="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
+													tw="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 												>
 													{site?.results ? (
 														site?.results.length > 0 ? (
