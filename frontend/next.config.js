@@ -12,6 +12,10 @@ const moduleExports = {
 	},
 	eslint: {
 		dirs: ["pages", "enums", "components", "hooks", "helpers"]
+	},
+	webpack: (config) => {
+		config.resolve.fallback = { fs: false, module: false };
+		return config;
 	}
 };
 
