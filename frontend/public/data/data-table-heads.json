@@ -5,12 +5,12 @@
 		"key": "name"
 	},
 	{
+		"label": "Crawl Status"
+	},
+	{
 		"label": "Last Crawled",
 		"slug": "last-crawled",
 		"key": "updated_at"
-	},
-	{
-		"label": "Crawl Status"
 	},
 	{
 		"label": "Total Issues"

@@ -56,6 +56,7 @@ const Pages = ({ width, result }) => {
 	const [loadQueryString, setLoadQueryString] = React.useState("");
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [pagePath, setPagePath] = React.useState("");
+	const [scanObjId, setScanObjId] = React.useState(null);
 	const [searchKey, setSearchKey] = React.useState("");
 
 	const { asPath } = useRouter();
@@ -66,13 +67,21 @@ const Pages = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { selectedSiteRef, handleCrawl, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
+	const { selectedSiteRef, handleCrawl, currentScan, isCrawlStarted, isCrawlFinished } = useCrawl({
 		siteId: result.siteId
 	});
 
 	const { siteId } = useSiteId({
 		querySid: result.siteId
 	});
+
+	React.useEffect(() => {
+		currentScan
+			? (() => {
+					setScanObjId(currentScan?.id);
+			  })()
+			: null;
+	}, [currentScan]);
 
 	const pageTitle = PagesLabel[1].label + " - " + siteId?.name;
 
@@ -225,7 +234,7 @@ const Pages = ({ width, result }) => {
 
 							<LinkOptions
 								permissions={user?.permissions}
-								scanResult={scanResult}
+								scanResult={currentScan}
 								searchKey={searchKey}
 								onSearchEvent={handleSearch}
 								handleCrawl={handleCrawl}
@@ -268,7 +277,7 @@ const Pages = ({ width, result }) => {
 								<div tw="pb-4">
 									<div tw="flex flex-col">
 										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-											<div tw="relative min-w-full overflow-hidden rounded-lg border-gray-300">
+											<div tw="relative min-w-full rounded-lg border-gray-300">
 												<table tw="relative min-w-full">
 													<thead>
 														<tr>
@@ -341,10 +350,10 @@ const Pages = ({ width, result }) => {
 										/>
 									) : null
 								) : null}
-							</div>
 
-							<div tw="static bottom-0 w-full mx-auto px-12 py-4">
-								<SiteFooter />
+								<div tw="static bottom-0 w-full mx-auto p-4">
+									<SiteFooter />
+								</div>
 							</div>
 						</main>
 					</div>

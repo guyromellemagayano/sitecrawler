@@ -102,17 +102,19 @@ const HeadingOptions = ({
 						permissions?.includes("can_see_scripts") &&
 						permissions?.includes("can_see_stylesheets")) ||
 					asPath.includes("links") ? (
-						<a
-							href={`/api/site/${siteId}/scan/${scanObjId}/${
-								isLinks ? "link" : isPages || isSeo ? "page" : isImages ? "image" : null
-							}/?format=csv`}
-							tw="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-						>
-							<span tw="flex items-center space-x-2">
-								<DownloadIcon tw="w-4 h-4 text-gray-700 mr-1" />
-								{HeadingOptionsLabel[0].label}
-							</span>
-						</a>
+						!asPath.includes("seo") ? (
+							<a
+								href={`/api/site/${siteId}/scan/${scanObjId}/${
+									isLinks ? "link" : isPages || isSeo ? "page" : isImages ? "image" : null
+								}/?format=csv`}
+								tw="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							>
+								<span tw="flex items-center space-x-2">
+									<DownloadIcon tw="w-4 h-4 text-gray-700 mr-1" />
+									{HeadingOptionsLabel[0].label}
+								</span>
+							</a>
+						) : null
 					) : (
 						<button
 							type="button"

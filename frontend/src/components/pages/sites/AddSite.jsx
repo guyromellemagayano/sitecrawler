@@ -24,13 +24,11 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [maxSiteLimit, setMaxSiteLimit] = React.useState(0);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 
-	const informationPageLink = "/add-site/information";
+	const informationPageLink = "/add-new-site/";
 
 	const handleSiteLimit = (user, site) => {
-		if (site !== undefined && user !== undefined) {
-			setSiteLimitCounter(site?.count);
-			setMaxSiteLimit(user?.group?.max_sites);
-		}
+		setSiteLimitCounter(site?.count);
+		setMaxSiteLimit(user?.group?.max_sites);
 	};
 
 	React.useEffect(() => {
@@ -52,20 +50,24 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 							<label htmlFor="searchSites" tw="sr-only">
 								{AddSiteLabel[3].label}
 							</label>
-							<div tw="relative w-full text-gray-400 focus-within:text-gray-600">
+							<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center">
 								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
 									<SearchIcon tw="h-5 w-5 text-gray-400" />
 								</div>
-								<input
-									type="search"
-									name="search-sites"
-									id="searchSites"
-									tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-									placeholder={AddSiteLabel[3].label}
-									onKeyUp={onSearchEvent}
-									defaultValue={searchKey}
-									autoFocus
-								/>
+								{site?.count > 0 ? (
+									<input
+										type="search"
+										name="search-sites"
+										id="searchSites"
+										tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+										placeholder={AddSiteLabel[3].label}
+										onKeyUp={onSearchEvent}
+										defaultValue={searchKey}
+										autoFocus
+									/>
+								) : (
+									<p tw="sm:text-sm placeholder-gray-500 pl-8">{AddSiteLabel[4].label}</p>
+								)}
 							</div>
 						</div>
 					</div>

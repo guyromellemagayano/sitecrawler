@@ -38,19 +38,20 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 	const ref = useRef(null);
 
 	const { site } = useSite({
-		endpoint: siteApiEndpoint
+		endpoint: siteApiEndpoint,
+		refreshInterval: 7500
 	});
 
 	useEffect(() => {
 		switch (true) {
 			case router.pathname.includes("/site/"):
-				setSelectedMenu(<SiteMenu site={site ? site : null} />);
+				setSelectedMenu(<SiteMenu site={site} />);
 				break;
 			case router.pathname.includes("/settings/"):
-				setSelectedMenu(<SettingsMenu site={site ? site : null} />);
+				setSelectedMenu(<SettingsMenu site={site} />);
 				break;
 			default:
-				setSelectedMenu(<PrimaryMenu user={user ? site : null} site={site ? site : null} />);
+				setSelectedMenu(<PrimaryMenu user={user} site={site} />);
 				break;
 		}
 
@@ -81,7 +82,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 
 	return width < lgScreenBreakpoint ? (
 		<Transition show={openMobileSidebar}>
-			<div tw="fixed inset-0.5 flex z-40 lg:hidden" role="dialog" aria-modal="true">
+			<div tw="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
 					enter="transition-opacity ease-linear duration-300"
 					enterFrom="opacity-0"
@@ -90,7 +91,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
 				>
-					<div tw="fixed inset-0.5 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
+					<div tw="fixed inset-0 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
 				</Transition.Child>
 
 				<Transition.Child

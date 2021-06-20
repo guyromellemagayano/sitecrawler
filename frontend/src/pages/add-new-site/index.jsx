@@ -5,14 +5,11 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
+import { NextSeo } from "next-seo";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw, { styled } from "twin.macro";
-
-// JSON
-import ProfileLabel from "public/labels/components/profile/Profile.json";
 
 // Hooks
 import useUser from "src/hooks/useUser";
@@ -27,19 +24,19 @@ import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 
 // Loadable
+const AddSiteSteps = loadable(() => import("src/components/steps/AddSiteSteps"));
 const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
+const HowToSetup = loadable(() => import("src/components/pages/sites/HowToSetup"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
-const SettingsPassword = loadable(() => import("src/components/pages/settings/profile/Password"));
-const SettingsPersonal = loadable(() => import("src/components/pages/settings/profile/Personal"));
 
-const ProfileSection = styled.section``;
+const AddSiteSection = styled.section``;
 
-const Profile = ({ width }) => {
+const AddSite = ({ width }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
+	const pageTitle = "Add New Site";
 	const homePageLink = "/sites/";
-	const pageTitle = ProfileLabel[0].label;
 
 	const { user } = useUser({
 		redirectIfFound: false,
@@ -58,7 +55,7 @@ const Profile = ({ width }) => {
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
-			<ProfileSection className="h-screen flex overflow-hidden bg-white">
+			<AddSiteSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={user}
@@ -93,16 +90,13 @@ const Profile = ({ width }) => {
 									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 										<div tw="max-w-full p-4">
 											<Breadcrumbs isOther pageTitle={pageTitle} />
-
-											<div tw="pt-4 m-auto">
-												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
-											</div>
 										</div>
 
-										<div tw="space-y-12 divide-y divide-gray-200">
-											<SettingsPersonal user={user} />
-											<SettingsPassword user={user} />
-										</div>
+										<AddSiteSteps />
+									</div>
+
+									<div tw="lg:col-span-1">
+										<HowToSetup />
 									</div>
 								</div>
 
@@ -117,13 +111,13 @@ const Profile = ({ width }) => {
 						<Loader />
 					</div>
 				)}
-			</ProfileSection>
+			</AddSiteSection>
 		</Layout>
 	) : (
 		<Loader />
 	);
 };
 
-Profile.propTypes = {};
+AddSite.propTypes = {};
 
-export default withResizeDetector(Profile);
+export default withResizeDetector(AddSite);

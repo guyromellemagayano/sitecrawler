@@ -3,7 +3,7 @@ import * as React from "react";
 
 // External
 import "twin.macro";
-import { DocumentIcon, LinkIcon, PhotographIcon, InformationCircleIcon } from "@heroicons/react/outline";
+import { DocumentTextIcon, LinkIcon, PhotographIcon, InformationCircleIcon } from "@heroicons/react/outline";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
@@ -89,7 +89,7 @@ const SitesStats = ({ stats, scanResult }) => {
 								<dl tw="mr-2">
 									<dt>
 										{val.title === "Total Pages" ? (
-											<DocumentIcon tw="mr-3 h-6 w-6 text-gray-500" />
+											<DocumentTextIcon tw="mr-3 h-6 w-6 text-gray-500" />
 										) : val.title === "Total Links" ? (
 											<LinkIcon tw="mr-3 h-6 w-6 text-gray-500" />
 										) : val.title === "Total Images" ? (

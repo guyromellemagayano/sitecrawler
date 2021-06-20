@@ -66,7 +66,7 @@ const LinkOptions = ({
 									<input
 										type="search"
 										name="search-links"
-										id="searchlinks"
+										id="searchLinks"
 										tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
 										placeholder={
 											asPath.includes("pages")

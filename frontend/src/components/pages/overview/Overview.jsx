@@ -25,16 +25,7 @@ const TlsErrorModal = loadable(() => import("src/components/modals/TlsErrorModal
 
 const SitesOverviewDiv = styled.div``;
 
-const SitesOverview = ({
-	verified,
-	stats,
-	scanResult,
-	user,
-	disableLocalTime,
-	handleCrawl,
-	isCrawlStarted,
-	isCrawlFinished
-}) => {
+const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, isCrawlStarted, isCrawlFinished }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [showTlsErrorModal, setShowTlsErrorModal] = React.useState(false);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
@@ -64,8 +55,8 @@ const SitesOverview = ({
 			<TlsErrorModal
 				show={showTlsErrorModal}
 				setShowErrorModal={setShowTlsErrorModal}
-				siteId={scanResult?.site_id}
-				scanObjId={scanResult?.id}
+				siteId={stats?.site_id}
+				scanObjId={stats?.id}
 			/>
 
 			<div tw="px-4 py-5 sm:p-6">
@@ -159,33 +150,29 @@ const SitesOverview = ({
 							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[3].label}</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
 								{componentReady ? (
-									verified ? (
-										!isCrawlStarted && isCrawlFinished ? (
-											stats ? (
-												stats.num_pages_tls_non_ok === 0 ? (
-													<SiteSuccessStatus text="Valid" />
-												) : (
-													<span tw="flex items-center justify-start space-x-1">
-														<SiteDangerStatus text="Not Valid" />
+									!isCrawlStarted && isCrawlFinished ? (
+										stats ? (
+											stats.num_pages_tls_non_ok === 0 ? (
+												<SiteSuccessStatus text="Valid" />
+											) : (
+												<span tw="flex items-center justify-start space-x-1">
+													<SiteDangerStatus text="Not Valid" />
 
-														<button
-															type="button"
-															onClick={() => setShowTlsErrorModal(true)}
-															tw="focus:outline-none hover:text-gray-50"
-														>
-															<span tw="flex items-center">
-																<ExclamationIcon tw="w-5 h-5 ml-2 mr-1 text-gray-400" />
-																<small tw="text-gray-400">{OverviewLabel[9].label}</small>
-															</span>
-														</button>
-													</span>
-												)
-											) : null
-										) : (
-											<SiteWarningStatus text="Checking" />
-										)
+													<button
+														type="button"
+														onClick={() => setShowTlsErrorModal(true)}
+														tw="focus:outline-none hover:text-gray-50"
+													>
+														<span tw="flex items-center">
+															<ExclamationIcon tw="w-5 h-5 ml-2 mr-1 text-gray-400" />
+															<small tw="text-gray-400">{OverviewLabel[9].label}</small>
+														</span>
+													</button>
+												</span>
+											)
+										) : null
 									) : (
-										<SiteDangerStatus text="Unverified" />
+										<SiteWarningStatus text="Checking" />
 									)
 								) : (
 									<span tw="flex space-x-3">

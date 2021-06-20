@@ -64,22 +64,31 @@ const OverviewSection = styled.section`
 const SiteOverview = ({ width, result }) => {
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
+	const [scanObjId, setScanObjId] = React.useState(null);
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
 
-	const { selectedSiteRef, handleCrawl, scanResult, scanObjId, isCrawlStarted, isCrawlFinished } = useCrawl({
+	const { selectedSiteRef, handleCrawl, currentScan, isCrawlStarted, isCrawlFinished } = useCrawl({
 		siteId: result.siteId
 	});
 
-	const { siteId: siteId } = useSiteId({
+	const { siteId } = useSiteId({
 		querySid: result.siteId
 	});
 
-	const homePageLink = "/sites";
+	const homePageLink = "/sites/";
 	const pageTitle = OverviewLabel[0].label;
+
+	React.useEffect(() => {
+		currentScan
+			? (() => {
+					setScanObjId(currentScan?.id);
+			  })()
+			: null;
+	}, [currentScan]);
 
 	const { stats } = useStats({
 		querySid: result.siteId,
@@ -154,7 +163,7 @@ const SiteOverview = ({ width, result }) => {
 										<SitesOverview
 											verified={siteId?.verified}
 											stats={stats}
-											scanResult={scanResult}
+											scanResult={currentScan}
 											user={user}
 											disableLocalTime={disableLocalTime}
 											handleCrawl={handleCrawl}
@@ -162,20 +171,20 @@ const SiteOverview = ({ width, result }) => {
 											isCrawlFinished={isCrawlFinished}
 										/>
 
-										<SitesStats stats={stats} scanResult={scanResult} />
+										<SitesStats stats={stats} scanResult={currentScan} />
 
 										<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-											<SitesLinksStats sid={result.siteId} stats={stats} scanResult={scanResult} />
-											<SitesPagesStats sid={result.siteId} stats={stats} scanResult={scanResult} />
+											<SitesLinksStats sid={result.siteId} stats={stats} scanResult={currentScan} />
+											<SitesPagesStats sid={result.siteId} stats={stats} scanResult={currentScan} />
 										</div>
 										<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-											<SitesImagesStats sid={result.siteId} stats={stats} scanResult={scanResult} />
-											<SitesSeoStats sid={result.siteId} stats={stats} scanResult={scanResult} />
+											<SitesImagesStats sid={result.siteId} stats={stats} scanResult={currentScan} />
+											<SitesSeoStats sid={result.siteId} stats={stats} scanResult={currentScan} />
 										</div>
 									</div>
 								</div>
 
-								<div tw="static bottom-0 w-full mx-auto px-8 py-4">
+								<div tw="static bottom-0 w-full mx-auto p-4">
 									<SiteFooter />
 								</div>
 							</div>

@@ -17,12 +17,10 @@ import usePostMethod from "src/hooks/usePostMethod";
 // Components
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
-const SupportFormSkeleton = loadable(() => import("src/components/skeletons/SupportFormSkeleton"));
 
 const SupportFormDiv = styled.div``;
 
 const SupportForm = () => {
-	const [componentReady, setComponentReady] = React.useState(false);
 	const [disableSupportForm, setDisableSupportForm] = React.useState(false);
 	const [errorMsg, setErrorMsg] = React.useState("");
 	const [errorMsgLoaded, setErrorMsgLoaded] = React.useState(false);
@@ -30,16 +28,6 @@ const SupportForm = () => {
 	const [successMsgLoaded, setSuccessMsgLoaded] = React.useState(false);
 
 	const contactApiEndpoint = "/api/support/contact/";
-
-	React.useEffect(() => {
-		(() => {
-			setComponentReady(false);
-
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		})();
-	}, []);
 
 	React.useEffect(() => {
 		successMsg && successMsg !== ""
@@ -69,7 +57,7 @@ const SupportForm = () => {
 			: null;
 	}, [successMsgLoaded, errorMsgLoaded]);
 
-	return componentReady ? (
+	return (
 		<SupportFormDiv>
 			<SuccessNotification
 				successMsg={successMsg}
@@ -85,14 +73,14 @@ const SupportForm = () => {
 				errorMsgTitle={SupportLabel[12].label}
 			/>
 
-			<div tw="max-w-full py-4 px-8">
+			<div tw="max-w-full p-4">
 				<div tw="pt-4 m-auto">
 					<h5 tw="text-xl leading-6 font-medium text-gray-900">{SupportLabel[6].label}</h5>
 					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{SupportLabel[7].label}</p>
 				</div>
 			</div>
 
-			<div tw="max-w-full lg:max-w-4xl p-8 pt-0 pb-2">
+			<div tw="max-w-full lg:max-w-4xl p-4 pt-0 pb-2">
 				<Formik
 					initialValues={{
 						message: ""
@@ -190,8 +178,6 @@ const SupportForm = () => {
 				</Formik>
 			</div>
 		</SupportFormDiv>
-	) : (
-		<SupportFormSkeleton />
 	);
 };
 

@@ -11,7 +11,7 @@ import useSWR from "swr";
 import useFetcher from "src/hooks/useFetcher";
 
 const useUser = ({ redirectIfFound = false, redirectTo = "", refreshInterval = 0 }) => {
-	const userApiEndpoint = "/api/auth/user/";
+	const userApiEndpoint = "/api/auth/user/?format=json";
 
 	const router = useRouter();
 
