@@ -192,7 +192,7 @@ const PrimaryMenu = ({ user, site }) => {
 																				)}
 
 																				<span tw="font-medium block truncate text-gray-500">
-																					{sitesLoaded ? value?.name : <Skeleton duration={2} width={145} />}
+																					{sitesLoaded ? value?.name : <Skeleton duration={2} width={130} />}
 																				</span>
 																			</div>
 																		</li>
