@@ -38,7 +38,8 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 	const ref = useRef(null);
 
 	const { site } = useSite({
-		endpoint: siteApiEndpoint
+		endpoint: siteApiEndpoint,
+		refreshInterval: 7500
 	});
 
 	useEffect(() => {
