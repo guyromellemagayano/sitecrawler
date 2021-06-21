@@ -58,5 +58,11 @@
 	},
 	{
 		"label": "Site Addition Progress"
+	},
+	{
+		"label": "Too short!"
+	},
+	{
+		"label": "Too long!"
 	}
 ]

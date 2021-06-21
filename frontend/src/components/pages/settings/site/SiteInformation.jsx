@@ -88,7 +88,7 @@ const SiteInformation = ({ user, siteId, settingsLabel }) => {
 					validationSchema={Yup.object().shape({
 						sitename: Yup.string()
 							.min(3, settingsLabel[21].label)
-							.max(60, settingsLabel[22].label)
+							.max(63, settingsLabel[22].label)
 							.required(settingsLabel[20].label)
 					})}
 					onSubmit={async (values, { setSubmitting }) => {

@@ -204,7 +204,10 @@ const UrlInformationStep = (props) => {
 						}}
 						validationSchema={Yup.object({
 							siteurl: Yup.string().matches(urlRegex, InformationLabel[8].label).required(InformationLabel[7].label),
-							sitename: Yup.string().required(InformationLabel[7].label)
+							sitename: Yup.string()
+								.min(2, InformationLabel[19].label)
+								.max(63, InformationLabel[20].label)
+								.required(InformationLabel[7].label)
 						})}
 						onSubmit={(values, { setSubmitting, resetForm }) => {
 							if (props.editMode) {
