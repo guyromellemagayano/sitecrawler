@@ -70,7 +70,7 @@ const useCrawl = ({ siteId }) => {
 	}, [scan]);
 
 	React.useEffect(() => {
-		currentScan?.finished_at == null && currentScan?.force_https == null
+		currentScan !== null
 			? (() => {
 					setIsCrawlStarted(true);
 					setIsCrawlFinished(false);

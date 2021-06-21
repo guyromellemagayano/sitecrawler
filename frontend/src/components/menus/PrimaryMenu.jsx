@@ -75,32 +75,30 @@ const PrimaryMenu = ({ user, site }) => {
 				{DashboardPages.map((value, index) => {
 					return user?.group?.name === "Agency" || (user?.group?.name !== "Agency" && value.slug !== "reports") ? (
 						<div key={index} tw="mb-8">
-							<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
-								{value?.category}
-							</h3>
+							<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">{value.category}</h3>
 
 							<div tw="my-3" role="group">
-								{value?.links ? (
-									value?.links.map((value, index) => {
+								{value.links ? (
+									value.links.map((value2, index) => {
 										return (
-											<Link key={index} href={value?.url} passHref>
+											<Link key={index} href={value2.url} passHref>
 												<a
-													className={`group bg-gray-1100 ${
-														router?.pathname !== value?.url && "hover:bg-gray-1100 focus:bg-gray-1100"
+													className={`group  ${
+														router.pathname !== value2.url ? "hover:bg-gray-1100 focus:bg-gray-1100" : "bg-gray-1100"
 													}`}
 													css={[
 														tw`cursor-pointer`,
-														router?.pathname == value?.url
+														router.pathname == value2.url
 															? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md `
 															: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none  transition ease-in-out duration-150`
 													]}
 												>
-													{value?.slug === "sites" ? (
+													{value2.slug === "sites" ? (
 														<ExternalLinkIcon tw="mr-3 h-6 w-5" />
-													) : value?.slug === "audit-logs" ? (
+													) : value2.slug === "audit-logs" ? (
 														<DocumentReportIcon tw="mr-3 h-6 w-5" />
 													) : null}
-													{value?.title ? <span>{value?.title}</span> : null}
+													{value2.title ? <span>{value2.title}</span> : null}
 												</a>
 											</Link>
 										);
@@ -167,7 +165,7 @@ const PrimaryMenu = ({ user, site }) => {
 																	return (
 																		<li
 																			key={index}
-																			onClick={() => handleDropdownHandler(value?.id)}
+																			onClick={() => handleDropdownHandler(value.id)}
 																			id={`listbox-item-${index + 1}`}
 																			role="option"
 																			tw="select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
@@ -178,7 +176,7 @@ const PrimaryMenu = ({ user, site }) => {
 																						aria-label={value.verified ? "Verified" : "Not Verified"}
 																						css={[
 																							tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																							value?.verified ? tw`bg-green-400` : tw`bg-red-400`
+																							value.verified ? tw`bg-green-400` : tw`bg-red-400`
 																						]}
 																					/>
 																				) : (
@@ -192,7 +190,7 @@ const PrimaryMenu = ({ user, site }) => {
 																				)}
 
 																				<span tw="font-medium block truncate text-gray-500">
-																					{sitesLoaded ? value?.name : <Skeleton duration={2} width={130} />}
+																					{sitesLoaded ? value.name : <Skeleton duration={2} width={130} />}
 																				</span>
 																			</div>
 																		</li>

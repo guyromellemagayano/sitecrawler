@@ -168,7 +168,7 @@ const SiteOverview = ({ width, result }) => {
 										<SitesOverview
 											verified={siteId?.verified}
 											stats={stats}
-											scanResult={currentScan}
+											scanResult={currentScan !== null ? currentScan : previousScan}
 											user={user}
 											disableLocalTime={disableLocalTime}
 											handleCrawl={handleCrawl}
