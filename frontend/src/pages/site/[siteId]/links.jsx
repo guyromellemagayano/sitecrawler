@@ -65,21 +65,26 @@ const Links = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { selectedSiteRef, handleCrawl, currentScan, isCrawlStarted, isCrawlFinished } = useCrawl({
-		siteId: result.siteId
-	});
+	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
+		useCrawl({
+			siteId: result.siteId
+		});
 
 	const { siteId } = useSiteId({
 		querySid: result.siteId
 	});
 
 	React.useEffect(() => {
-		currentScan
+		currentScan !== null && scanCount <= 1
 			? (() => {
 					setScanObjId(currentScan?.id);
 			  })()
+			: previousScan !== null
+			? (() => {
+					setScanObjId(previousScan?.id);
+			  })()
 			: null;
-	}, [currentScan]);
+	}, [currentScan, previousScan]);
 
 	const pageTitle = LinksLabel[1].label + " - " + siteId?.name;
 
