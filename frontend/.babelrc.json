@@ -4,12 +4,7 @@
 			"next/babel",
 			{
 				"styled-jsx": {
-					"plugins": [
-						"styled-jsx-plugin-sass"
-					]
-				},
-				"preset-react": {
-					"runtime": "automatic"
+					"plugins": ["styled-jsx-plugin-sass"]
 				}
 			}
 		]
@@ -32,9 +27,7 @@
 		[
 			"module-resolver",
 			{
-				"root": [
-					"./"
-				]
+				"root": ["./"]
 			}
 		]
 	]
