@@ -16,6 +16,9 @@ const moduleExports = {
 	webpack: (config) => {
 		config.resolve.fallback = { fs: false, module: false };
 		return config;
+	},
+	eslint: {
+		ignoreDuringBuilds: true
 	}
 };
 

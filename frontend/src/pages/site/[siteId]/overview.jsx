@@ -71,9 +71,10 @@ const SiteOverview = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { selectedSiteRef, handleCrawl, currentScan, isCrawlStarted, isCrawlFinished } = useCrawl({
-		siteId: result.siteId
-	});
+	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
+		useCrawl({
+			siteId: result.siteId
+		});
 
 	const { siteId } = useSiteId({
 		querySid: result.siteId
@@ -83,12 +84,16 @@ const SiteOverview = ({ width, result }) => {
 	const pageTitle = OverviewLabel[0].label;
 
 	React.useEffect(() => {
-		currentScan
+		currentScan !== null && scanCount <= 1
 			? (() => {
 					setScanObjId(currentScan?.id);
 			  })()
+			: previousScan !== null
+			? (() => {
+					setScanObjId(previousScan?.id);
+			  })()
 			: null;
-	}, [currentScan]);
+	}, [currentScan, previousScan]);
 
 	const { stats } = useStats({
 		querySid: result.siteId,
@@ -171,15 +176,15 @@ const SiteOverview = ({ width, result }) => {
 											isCrawlFinished={isCrawlFinished}
 										/>
 
-										<SitesStats stats={stats} scanResult={currentScan} />
+										<SitesStats stats={stats} scanResult={previousScan} />
 
 										<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-											<SitesLinksStats sid={result.siteId} stats={stats} scanResult={currentScan} />
-											<SitesPagesStats sid={result.siteId} stats={stats} scanResult={currentScan} />
+											<SitesLinksStats sid={result.siteId} stats={stats} scanResult={previousScan} />
+											<SitesPagesStats sid={result.siteId} stats={stats} scanResult={previousScan} />
 										</div>
 										<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-											<SitesImagesStats sid={result.siteId} stats={stats} scanResult={currentScan} />
-											<SitesSeoStats sid={result.siteId} stats={stats} scanResult={currentScan} />
+											<SitesImagesStats sid={result.siteId} stats={stats} scanResult={previousScan} />
+											<SitesSeoStats sid={result.siteId} stats={stats} scanResult={previousScan} />
 										</div>
 									</div>
 								</div>

@@ -32,17 +32,21 @@ const SiteMenu = ({ site }) => {
 	const { query, asPath } = useRouter();
 	const router = useRouter();
 
-	const { currentScan, isCrawlStarted, isCrawlFinished } = useCrawl({
+	const { currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } = useCrawl({
 		siteId: query.siteId
 	});
 
 	React.useEffect(() => {
-		currentScan
+		currentScan !== null && scanCount <= 1
 			? (() => {
 					setScanObjId(currentScan?.id);
 			  })()
+			: previousScan !== null
+			? (() => {
+					setScanObjId(previousScan?.id);
+			  })()
 			: null;
-	}, [currentScan]);
+	}, [currentScan, previousScan]);
 
 	const { stats } = useStats({
 		querySid: query.siteId,

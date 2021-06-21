@@ -133,11 +133,9 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 			</Transition>
 
 			<div tw="max-w-full p-4">
-				<div>
-					<div>
-						<h5 tw="text-xl leading-6 font-medium text-gray-900">{settingsLabel[9].label}</h5>
-						<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{settingsLabel[10].label}</p>
-					</div>
+				<div tw="pt-4 m-auto">
+					<h5 tw="text-xl leading-6 font-medium text-gray-900">{settingsLabel[9].label}</h5>
+					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{settingsLabel[10].label}</p>
 				</div>
 			</div>
 
