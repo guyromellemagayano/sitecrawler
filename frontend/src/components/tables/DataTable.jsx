@@ -95,8 +95,8 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 	});
 
 	React.useEffect(() => {
-		let currentScanObjId = scan?.results[0]?.id;
 		let currentScanCount = scan?.count;
+		let currentScanObjId = currentScanCount > 1 ? scan?.results[1]?.id : scan?.results[0]?.id;
 		let currentScanFinishedAt = scan?.results[0]?.finished_at ?? null;
 		let currentScanForcehttps = scan?.results[0]?.force_https ?? null;
 
@@ -625,20 +625,52 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 					</td>
 					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
 						{componentReady ? (
-							scanFinishedAt !== null ? (
+							scanCount > 0 ? (
 								<span tw="space-x-2">
 									<span tw="text-sm leading-5 text-gray-500">
 										{!disableLocalTime ? (
-											<Moment calendar={calendarStrings} date={scanFinishedAt} local />
+											<Moment
+												calendar={calendarStrings}
+												date={
+													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+														? scan?.results[1]?.finished_at
+														: scan?.results[0]?.finished_at
+												}
+												local
+											/>
 										) : (
-											<Moment calendar={calendarStrings} date={scanFinishedAt} utc />
+											<Moment
+												calendar={calendarStrings}
+												date={
+													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+														? scan?.results[1]?.finished_at
+														: scan?.results[0]?.finished_at
+												}
+												utc
+											/>
 										)}
 									</span>
 									<span tw="text-sm leading-5 text-gray-500">
 										{!disableLocalTime ? (
-											<Moment date={scanFinishedAt} format="hh:mm:ss A" local />
+											<Moment
+												date={
+													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+														? scan?.results[1]?.finished_at
+														: scan?.results[0]?.finished_at
+												}
+												format="hh:mm:ss A"
+												local
+											/>
 										) : (
-											<Moment date={scanFinishedAt} format="hh:mm:ss A" utc />
+											<Moment
+												date={
+													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+														? scan?.results[1]?.finished_at
+														: scan?.results[0]?.finished_at
+												}
+												format="hh:mm:ss A"
+												utc
+											/>
 										)}
 									</span>
 									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}

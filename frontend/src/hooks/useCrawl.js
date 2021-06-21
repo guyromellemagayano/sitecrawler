@@ -40,7 +40,6 @@ const useCrawl = ({ siteId }) => {
 			? () => {
 					data
 						? () => {
-								mutateSite;
 								return true;
 						  }
 						: null;
@@ -61,10 +60,9 @@ const useCrawl = ({ siteId }) => {
 
 	React.useEffect(() => {
 		let previousScanResult = scan?.results.find((e) => e.finished_at !== null && e.force_https !== null);
-		let currentScanResult =
-			scan?.results.find((e) => e.finished_at == null && e.force_https == null) ?? previousScanResult;
+		let currentScanResult = scan?.results.find((e) => e.finished_at == null && e.force_https == null);
 
-		setCurrentScan(currentScanResult);
+		setCurrentScan(scan?.count <= 1 && currentScanResult !== undefined ? currentScanResult : previousScanResult);
 	}, [scan]);
 
 	React.useEffect(() => {
