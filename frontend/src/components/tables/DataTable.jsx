@@ -529,11 +529,8 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 														</a>
 													</Link>
 												) : (
-													<span
-														className="truncate-link"
-														tw="flex items-center justify-start max-w-2xl text-sm leading-6 font-semibold text-gray-600"
-													>
-														{siteName}
+													<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-600">
+														<p className="truncate-link">{siteName}</p>
 													</span>
 												)}
 
