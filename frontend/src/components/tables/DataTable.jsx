@@ -590,11 +590,22 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 								) : (
 									<>
 										<span tw="flex flex-row items-center py-2 space-x-3">
-											<Skeleton circle={true} duration={2} width={9} height={9} className="relative top-1" />
-											<Skeleton duration={2} width={150} />
+											<Skeleton
+												circle={true}
+												duration={2}
+												width={9}
+												height={9}
+												className="relative -left-3 flex-shrink-0 inline-block"
+											/>
+											<Skeleton
+												duration={2}
+												width={150}
+												className="relative -left-3 inline-flex flex-col justify-start items-start"
+											/>
 										</span>
-										<span tw="ml-5 flex justify-start text-sm leading-5 text-gray-500">
-											<Skeleton duration={2} width={75} />
+										<span tw="ml-3 flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
+											<Skeleton duration={2} width={70} />
+											<Skeleton duration={2} width={73} />
 										</span>
 									</>
 								)}
