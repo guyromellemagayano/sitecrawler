@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.conf import settings
 from django.contrib.auth import models as auth_models
 from django.contrib.sites import models as django_sites_models
@@ -32,14 +33,19 @@ class Command(BaseCommand):
                 .order_by("site_id", "-finished_at")
                 .distinct("site_id")
             )
-            scans_with_details = [Scan.objects.with_details().get(pk=scan.id) for scan in latest_finished_scans]
+
+            scans_with_details = []
+            for scan in latest_finished_scans:
+                with transaction.atomic():
+                    swd = Scan.objects.with_details().get(pk=scan.id)
+                scans_with_details.append(swd)
 
             if len(scans_with_details) < 1:
                 continue
 
             self._send_email(user, scans_with_details)
 
-        print("Delete job finished", flush=True)
+        print("Email job finished", flush=True)
 
     def _send_email(self, user, scans):
         site = django_sites_models.Site.objects.get_current()
