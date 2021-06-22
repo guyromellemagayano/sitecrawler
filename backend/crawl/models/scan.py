@@ -8,19 +8,30 @@ from crawl.models import Link, ScanCache
 
 class ScanQuerySet(QuerySet):
     def with_details(self):
-        return self.select_related("scancache")
+        obj = self._chain()
+        obj.query.with_details = True
+        return obj
 
-    def get(self, *args, **kwargs):
-        scan = super().get(*args, **kwargs)
-        if not self.query.select_related or "scancache" not in self.query.select_related:
-            return scan
+    def get(self, *args, recursive=False, **kwargs):
+        if not getattr(self.query, "with_details", False):
+            return super().get(*args, **kwargs)
 
+        scan = super(ScanQuerySet, self.select_related("scancache")).get(*args, **kwargs)
         if hasattr(scan, "scancache"):
             if scan.scancache.is_valid(scan):
                 scan.scancache.apply(scan)
                 return scan
             else:
                 scan.scancache.delete()
+
+        # if there's currently no cache, we do this:
+        # - get scan with select_for_update to lock the row
+        # - use a recursive call to this get method to recheck cache after we have lock
+        # - we set recursive=True to skip this lock in locked call to get and continue to creating scan cache
+        # this method is optimized to do single query when cache is available
+        if not recursive:
+            super(ScanQuerySet, self.select_for_update(of=("self",))).get(*args, **kwargs)
+            return self.select_related("site__user__userprofile").get(*args, recursive=True, **kwargs)
 
         # use threshold from site if not null, otherwise from user
         large_page_size_threshold = scan.site.large_page_size_threshold
