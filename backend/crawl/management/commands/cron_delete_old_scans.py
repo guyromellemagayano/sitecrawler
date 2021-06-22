@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from django.db import connections
+from django.db import connections, transaction
 
 from crawl.models import Site, Scan, ScanArchive
 from crawl.serializers import ScanDetailSerializer
@@ -27,6 +27,7 @@ class Command(BaseCommand):
 
         print("Delete job done", flush=True)
 
+    @transaction.atomic()
     def _archive_scan(self, scan):
         if ScanArchive.objects.filter(site=scan.site, scan_id=scan.id).exists():
             return
