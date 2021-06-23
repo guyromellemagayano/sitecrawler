@@ -12,7 +12,7 @@ import loadable from "@loadable/component";
 import PasswordStrengthBar from "react-password-strength-bar";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // JSON
 import RegistrationLabel from "public/labels/pages/registration.json";
@@ -30,6 +30,8 @@ const LogoLabel = loadable(() => import("src/components/labels/LogoLabel"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
 
+const RegistrationDiv = styled.div``;
+
 const Registration = () => {
 	const [errorEmail, setErrorEmail] = useState(false);
 	const [errorMsg, setErrorMsg] = useState([]);
@@ -43,7 +45,7 @@ const Registration = () => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<div tw="bg-gray-50 min-h-screen">
+			<RegistrationDiv tw="bg-gray-50 min-h-screen">
 				<div tw="relative overflow-auto">
 					<div tw="relative pt-6 pb-12 md:pb-6">
 						<main tw="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
@@ -382,7 +384,7 @@ const Registration = () => {
 						</main>
 					</div>
 				</div>
-			</div>
+			</RegistrationDiv>
 		</Layout>
 	);
 };
