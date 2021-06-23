@@ -318,7 +318,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 																id="verifyidmetatag"
 																css={[
 																	tw`text-gray-400 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300`,
-																	disableSiteVerify && tw`opacity-50 bg-gray-200 cursor-not-allowed`
+																	disableSiteVerify && tw`opacity-50 bg-gray-300 cursor-not-allowed`
 																]}
 																value={copyValue}
 																onChange={handleInputChange}
@@ -329,7 +329,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 																	css={[
 																		tw`-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50`,
 																		disableSiteVerify
-																			? tw`opacity-50 bg-gray-200 cursor-not-allowed`
+																			? tw`opacity-50 bg-gray-300 cursor-not-allowed`
 																			: tw`hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500`
 																	]}
 																>

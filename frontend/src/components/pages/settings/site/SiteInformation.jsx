@@ -180,7 +180,7 @@ const SiteInformation = (props) => {
 													type="url"
 													value={siteurl}
 													disabled={true}
-													tw="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300 opacity-50 bg-gray-200 cursor-not-allowed"
+													tw="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300 opacity-50 bg-gray-300 cursor-not-allowed"
 													aria-describedby="email"
 													onChange={handleSiteUrlInputChange}
 												/>
