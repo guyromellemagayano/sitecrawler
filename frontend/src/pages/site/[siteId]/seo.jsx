@@ -52,6 +52,7 @@ const SeoSection = styled.section`
 `;
 
 const Seo = ({ width, result }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [loadQueryString, setLoadQueryString] = React.useState("");
@@ -70,11 +71,11 @@ const Seo = ({ width, result }) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result.siteId
+			siteId: result?.siteId
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId
+		querySid: result?.siteId
 	});
 
 	React.useEffect(() => {
@@ -103,78 +104,78 @@ const Seo = ({ width, result }) => {
 	user?.permissions.includes("can_see_stylesheets")
 		? (() => {
 				scanApiEndpoint =
-					result.page !== undefined
-						? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result.page
-						: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+					result?.page !== undefined
+						? `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result?.page
+						: `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
-				hasTitleString = Array.isArray(result.has_title) ? result.has_title.join("&has_title=") : result.has_title;
+				hasTitleString = Array.isArray(result?.has_title) ? result?.has_title.join("&has_title=") : result?.has_title;
 
 				queryString +=
-					result.has_title !== undefined
+					result?.has_title !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_title=${hasTitleString}`
 							: `?has_title=${hasTitleString}`
 						: "";
 
-				hasDescriptionString = Array.isArray(result.has_description)
-					? result.has_description.join("&has_description=")
-					: result.has_description;
+				hasDescriptionString = Array.isArray(result?.has_description)
+					? result?.has_description.join("&has_description=")
+					: result?.has_description;
 
 				queryString +=
-					result.has_description !== undefined
+					result?.has_description !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_description=${hasDescriptionString}`
 							: `?has_description=${hasDescriptionString}`
 						: "";
 
-				hasH1FirstString = Array.isArray(result.has_h1_first)
-					? result.has_h1_first.join("&has_h1_first=")
-					: result.has_h1_first;
+				hasH1FirstString = Array.isArray(result?.has_h1_first)
+					? result?.has_h1_first.join("&has_h1_first=")
+					: result?.has_h1_first;
 
 				queryString +=
-					result.has_h1_first !== undefined
+					result?.has_h1_first !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_h1_first=${hasH1FirstString}`
 							: `?has_h1_first=${hasH1FirstString}`
 						: "";
 
 				queryString +=
-					result.has_h1_second !== undefined
+					result?.has_h1_second !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_h1_second=false`
 							: `?has_h1_second=false`
 						: "";
 
-				hasH2FirstString = Array.isArray(result.has_h2_first)
-					? result.has_h2_first.join("&has_h2_first=")
-					: result.has_h2_first;
+				hasH2FirstString = Array.isArray(result?.has_h2_first)
+					? result?.has_h2_first.join("&has_h2_first=")
+					: result?.has_h2_first;
 
 				queryString +=
-					result.has_h2_first !== undefined
+					result?.has_h2_first !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_h2_first=${hasH2FirstString}`
 							: `?has_h2_first=${hasH2FirstString}`
 						: "";
 
 				queryString +=
-					result.has_h2_second !== undefined
+					result?.has_h2_second !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_h2_second=false`
 							: `?has_h2_second=false`
 						: "";
 
 				queryString +=
-					result.search !== undefined
+					result?.search !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&search=${result.search}`
-							: `?search=${result.search}`
+							? `&search=${result?.search}`
+							: `?search=${result?.search}`
 						: "";
 
 				queryString +=
-					result.ordering !== undefined
+					result?.ordering !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&ordering=${result.ordering}`
-							: `?ordering=${result.ordering}`
+							? `&ordering=${result?.ordering}`
+							: `?ordering=${result?.ordering}`
 						: "";
 
 				queryString +=
@@ -194,7 +195,7 @@ const Seo = ({ width, result }) => {
 
 	const { pages, mutatePages } = usePages({
 		endpoint: scanApiEndpoint,
-		querySid: result.siteId,
+		querySid: result?.siteId,
 		scanObjId: scanObjId
 	});
 
@@ -250,24 +251,36 @@ const Seo = ({ width, result }) => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-		if (result.search !== undefined) setSearchKey(result.search);
+		if (result?.search !== undefined) setSearchKey(result?.search);
 
-		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
-	}, []);
+		if (result?.per_page !== undefined) setLinksPerPage(result?.per_page);
+	}, [result]);
 
-	return user ? (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
+	React.useEffect(() => {
+		user !== undefined && siteId !== undefined
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+
+		return setComponentReady(false);
+	}, [user, siteId]);
+
+	return (
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<SeoSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				{siteId ? (
+				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -291,11 +304,11 @@ const Seo = ({ width, result }) => {
 						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="w-full p-6 mx-auto">
 								<div className="max-w-full p-4">
-									<Breadcrumbs siteId={result.siteId} pageTitle={SeoLabel[1].label} />
+									<Breadcrumbs siteId={result?.siteId} pageTitle={SeoLabel[1].label} />
 
 									<HeadingOptions
 										isSeo
-										siteId={result.siteId}
+										siteId={result?.siteId}
 										siteName={siteId?.name}
 										siteUrl={siteId?.url}
 										scanObjId={scanObjId}
@@ -364,7 +377,7 @@ const Seo = ({ width, result }) => {
 																pages?.results.map((val, key) => (
 																	<SeoTable
 																		key={key}
-																		siteId={result.siteId}
+																		siteId={result?.siteId}
 																		val={val}
 																		disableLocalTime={disableLocalTime}
 																	/>
@@ -394,7 +407,7 @@ const Seo = ({ width, result }) => {
 											href="/site/[siteId]/seo/"
 											pathName={pagePath}
 											apiEndpoint={scanApiEndpoint}
-											page={result.page ? result.page : 0}
+											page={result?.page ? result?.page : 0}
 											linksPerPage={linksPerPage}
 											onItemsPerPageChange={onItemsPerPageChange}
 										/>
@@ -414,8 +427,6 @@ const Seo = ({ width, result }) => {
 				)}
 			</SeoSection>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 
@@ -424,10 +435,6 @@ Seo.propTypes = {};
 export default withResizeDetector(Seo);
 
 export async function getServerSideProps(ctx) {
-	await new Promise((resolve) => {
-		setTimeout(resolve, 500);
-	});
-
 	return {
 		props: {
 			result: ctx.query

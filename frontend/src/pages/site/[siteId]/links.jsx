@@ -50,6 +50,7 @@ const LinksSection = styled.section`
 `;
 
 const Links = ({ width, result }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [loadQueryString, setLoadQueryString] = React.useState("");
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
@@ -67,11 +68,11 @@ const Links = ({ width, result }) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result.siteId
+			siteId: result?.siteId
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId
+		querySid: result?.siteId
 	});
 
 	React.useEffect(() => {
@@ -94,55 +95,61 @@ const Links = ({ width, result }) => {
 	let statusNeqString = "";
 	let typeString = "";
 
-	scanApiEndpoint = `/api/site/${result.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
+	scanApiEndpoint = `/api/site/${result?.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
 
 	queryString +=
-		result.page !== undefined ? (scanApiEndpoint.includes("?") ? `&page=${result.page}` : `?page=${result.page}`) : "";
+		result?.page !== undefined
+			? scanApiEndpoint.includes("?")
+				? `&page=${result?.page}`
+				: `?page=${result?.page}`
+			: "";
 
-	statusString = Array.isArray(result.status) ? result.status.join("&status=") : result.status;
+	statusString = Array.isArray(result?.status) ? result?.status.join("&status=") : result?.status;
 
 	queryString +=
-		result.status !== undefined
+		result?.status !== undefined
 			? scanApiEndpoint.includes("?")
 				? `&status=${statusString}`
 				: `?status=${statusString}`
 			: "";
 
-	statusNeqString = Array.isArray(result.status__neq) ? result.status__neq.join("&status__neq=") : result.status__neq;
+	statusNeqString = Array.isArray(result?.status__neq)
+		? result?.status__neq.join("&status__neq=")
+		: result?.status__neq;
 
 	queryString +=
-		result.status__neq !== undefined
+		result?.status__neq !== undefined
 			? scanApiEndpoint.includes("?")
 				? `&status__neq=${statusNeqString}`
 				: `?status__neq=${statusNeqString}`
 			: "";
 
-	typeString = Array.isArray(result.type) ? result.type.join("&type=") : result.type;
+	typeString = Array.isArray(result?.type) ? result?.type.join("&type=") : result?.type;
 
 	queryString +=
-		result.type !== undefined ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
+		result?.type !== undefined ? (scanApiEndpoint.includes("?") ? `&type=${typeString}` : `?type=${typeString}`) : "";
 
 	queryString +=
-		result.search !== undefined
+		result?.search !== undefined
 			? scanApiEndpoint.includes("?")
-				? `&search=${result.search}`
-				: `?search=${result.search}`
+				? `&search=${result?.search}`
+				: `?search=${result?.search}`
 			: "";
 
 	queryString +=
-		result.ordering !== undefined
+		result?.ordering !== undefined
 			? scanApiEndpoint.includes("?")
-				? `&ordering=${result.ordering}`
-				: `?ordering=${result.ordering}`
+				? `&ordering=${result?.ordering}`
+				: `?ordering=${result?.ordering}`
 			: "";
 
 	queryString +=
 		typeof window !== "undefined" &&
 		loadQueryString.toString() !== "" &&
 		loadQueryString.toString() !== undefined &&
-		result.status == undefined &&
-		result.status__neq == undefined &&
-		result.type == undefined
+		result?.status == undefined &&
+		result?.status__neq == undefined &&
+		result?.type == undefined
 			? scanApiEndpoint.includes("?")
 				? window.location.search.replace("?", "&")
 				: window.location.search
@@ -152,7 +159,7 @@ const Links = ({ width, result }) => {
 
 	const { links, mutateLinks } = useLinks({
 		endpoint: scanApiEndpoint,
-		querySid: result.siteId,
+		querySid: result?.siteId,
 		scanObjId: scanObjId
 	});
 
@@ -208,24 +215,36 @@ const Links = ({ width, result }) => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-		if (result.search !== undefined) setSearchKey(result.search);
+		if (result?.search !== undefined) setSearchKey(result?.search);
 
-		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
-	}, []);
+		if (result?.per_page !== undefined) setLinksPerPage(result?.per_page);
+	}, [result]);
 
-	return user ? (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
+	React.useEffect(() => {
+		user !== undefined && siteId !== undefined
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+
+		return setComponentReady(false);
+	}, [user, siteId]);
+
+	return (
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<LinksSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				{siteId ? (
+				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -249,11 +268,11 @@ const Links = ({ width, result }) => {
 						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="w-full p-6 mx-auto">
 								<div className="max-w-full p-4">
-									<Breadcrumbs siteId={result.siteId} pageTitle={LinksLabel[1].label} />
+									<Breadcrumbs siteId={result?.siteId} pageTitle={LinksLabel[1].label} />
 
 									<HeadingOptions
 										isLinks
-										siteId={result.siteId}
+										siteId={result?.siteId}
 										siteName={siteId?.name}
 										siteUrl={siteId?.url}
 										scanObjId={scanObjId}
@@ -309,7 +328,7 @@ const Links = ({ width, result }) => {
 													<tbody tw="relative">
 														{links
 															? links?.results.map((val, key) => (
-																	<LinkTable key={key} siteId={result.siteId} val={val} />
+																	<LinkTable key={key} siteId={result?.siteId} val={val} />
 															  ))
 															: null}
 													</tbody>
@@ -323,7 +342,7 @@ const Links = ({ width, result }) => {
 									href="/site/[siteId]/links/"
 									pathName={pagePath}
 									apiEndpoint={scanApiEndpoint}
-									page={result.page ? result.page : 0}
+									page={result?.page ? result?.page : 0}
 									linksPerPage={linksPerPage}
 									onItemsPerPageChange={onItemsPerPageChange}
 								/>
@@ -341,8 +360,6 @@ const Links = ({ width, result }) => {
 				)}
 			</LinksSection>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 
@@ -351,10 +368,6 @@ Links.propTypes = {};
 export default withResizeDetector(Links);
 
 export async function getServerSideProps(ctx) {
-	await new Promise((resolve) => {
-		setTimeout(resolve, 500);
-	});
-
 	return {
 		props: {
 			result: ctx.query

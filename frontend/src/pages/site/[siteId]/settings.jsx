@@ -52,28 +52,32 @@ const SiteSettings = ({ width, result }) => {
 	});
 
 	const { siteId, mutateSiteId } = useSiteId({
-		querySid: result.siteId
+		querySid: result?.siteId
 	});
 
-	const homePageLink = `/site/${result.siteId}/overview`;
+	const homePageLink = `/site/${result?.siteId}/overview`;
 	const pageTitle = SettingsLabel[1].label + " - " + siteId?.name;
 
 	React.useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
+		user !== undefined && siteId !== undefined
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
 
 		return setComponentReady(false);
-	}, []);
+	}, [user, siteId]);
 
-	return user ? (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
+	return (
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<SiteSettingsSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -103,8 +107,8 @@ const SiteSettings = ({ width, result }) => {
 							<div tw="max-w-full p-4 sm:px-6 md:px-8">
 								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-										<div className="max-w-full p-4">
-											<Breadcrumbs siteId={result.siteId} pageTitle={SettingsLabel[1].label} />
+										<div tw="max-w-full p-4">
+											<Breadcrumbs siteId={result?.siteId} pageTitle={SettingsLabel[1].label} />
 
 											<div className="pt-4 m-auto">
 												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
@@ -115,14 +119,18 @@ const SiteSettings = ({ width, result }) => {
 
 										<div tw="space-y-12 divide-y divide-gray-200">
 											<SiteInformationSettings
-												user={user}
-												siteId={siteId ? siteId : null}
+												user={componentReady ? user : null}
+												siteId={componentReady ? siteId : null}
 												settingsLabel={SettingsLabel}
 											/>
-											<LargePageSizeSettings user={user} siteId={siteId ? siteId : null} mutateSiteId={mutateSiteId} />
+											<LargePageSizeSettings
+												user={componentReady ? user : null}
+												siteId={componentReady ? siteId : null}
+												mutateSiteId={mutateSiteId}
+											/>
 											<DeleteSiteSettings
-												user={user}
-												siteId={siteId ? siteId : null}
+												user={componentReady ? user : null}
+												siteId={componentReady ? siteId : null}
 												settingsLabel={SettingsLabel}
 												mutateSite={mutateSite}
 											/>
@@ -143,8 +151,6 @@ const SiteSettings = ({ width, result }) => {
 				)}
 			</SiteSettingsSection>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 
@@ -153,10 +159,6 @@ SiteSettings.propTypes = {};
 export default withResizeDetector(SiteSettings);
 
 export async function getServerSideProps(ctx) {
-	await new Promise((resolve) => {
-		setTimeout(resolve, 500);
-	});
-
 	return {
 		props: {
 			result: ctx.query

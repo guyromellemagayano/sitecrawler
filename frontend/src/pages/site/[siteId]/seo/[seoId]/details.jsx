@@ -39,6 +39,7 @@ const SeoDetailDiv = styled.div``;
 const SeoDetail = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
+	const [scanObjId, setScanObjId] = React.useState(null);
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -52,18 +53,30 @@ const SeoDetail = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { scanResult, scanObjId } = useCrawl({
+	const { currentScan, previousScan, scanCount } = useCrawl({
 		siteId: result.siteId
 	});
+
+	const { siteId } = useSiteId({
+		querySid: result.siteId
+	});
+
+	React.useEffect(() => {
+		currentScan !== null && scanCount <= 1
+			? (() => {
+					setScanObjId(currentScan?.id);
+			  })()
+			: previousScan !== null
+			? (() => {
+					setScanObjId(previousScan?.id);
+			  })()
+			: null;
+	}, [currentScan, previousScan]);
 
 	const { pageDetail } = usePageDetail({
 		querySid: result.siteId,
 		scanObjId: scanObjId,
 		linkId: result.seoId
-	});
-
-	const { siteId } = useSiteId({
-		querySid: result.siteId
 	});
 
 	const homePageLink = "/sites/";
@@ -81,22 +94,39 @@ const SeoDetail = ({ width, result }) => {
 			: null;
 	}, [pageDetail]);
 
-	return user ? (
-		<Layout user={user}>
-			<NextSeo title={seoDetailPageTitle} />
+	React.useEffect(() => {
+		user !== undefined && siteId !== undefined && pageDetail !== undefined
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+
+		return setComponentReady(false);
+	}, [user, siteId, pageDetail]);
+
+	return (
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? seoDetailPageTitle : null} />
 
 			<SeoDetailDiv tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				{siteId ? (
+				{componentReady ? (
 					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-						<div tw="relative z-10 flex-shrink-0 flex  lg:h-0 bg-white border-b lg:border-0 border-gray-200 lg:mb-4">
-							<MobileSidebarButton openMobileSidebar={openMobileSidebar} setOpenMobileSidebar={setOpenMobileSidebar} />
+						<div tw="relative flex-shrink-0 flex bg-white">
+							<div tw="border-b flex-shrink-0 flex">
+								<MobileSidebarButton
+									openMobileSidebar={openMobileSidebar}
+									setOpenMobileSidebar={setOpenMobileSidebar}
+								/>
+							</div>
 
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
@@ -109,168 +139,172 @@ const SeoDetail = ({ width, result }) => {
 							</Link>
 						</div>
 
-						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-							<div tw="w-full p-6 mx-auto grid gap-16 xl:grid-cols-1 2xl:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
-								<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-									<div tw="max-w-full p-4">
-										<Breadcrumbs
-											isSeo
-											siteId={result.siteId}
-											dataId={result.seoId}
-											pageTitle={SeoLabel[1].label}
-											pageDetailTitle={pageDetail?.url}
-										/>
+						<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
+							<div tw="max-w-full p-4 sm:px-6 md:px-8">
+								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
+									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
+										<div tw="max-w-full p-4">
+											<Breadcrumbs
+												isSeo
+												siteId={result.siteId}
+												dataId={result.seoId}
+												pageTitle={SeoLabel[1].label}
+												pageDetailTitle={pageDetail?.url}
+											/>
 
-										<div tw="pt-4 m-auto">
-											{pageDetail?.url ? (
-												<h2 tw="flex items-center text-2xl leading-7 font-bold text-gray-900 break-all sm:text-3xl">
-													{pageDetail?.url}
-												</h2>
-											) : (
-												<Skeleton duration={2} width={300} />
-											)}
+											<div tw="pt-4 m-auto">
+												{pageDetail?.url ? (
+													<h2 tw="flex items-center text-2xl leading-7 font-bold text-gray-900 break-all sm:text-3xl">
+														{pageDetail?.url}
+													</h2>
+												) : (
+													<Skeleton duration={2} width={300} />
+												)}
+											</div>
 										</div>
-									</div>
-									<div tw="max-w-4xl py-6 px-8">
-										<div tw="bg-white border border-gray-300 overflow-hidden sm:rounded-lg py-2 px-1">
-											<div tw="px-4 py-5 sm:p-0">
-												<dl>
-													<div tw="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[9].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? (
-																<span tw="space-x-2">
-																	<span>
-																		{!user?.settings?.disableLocalTime ? (
-																			<Moment calendar={calendarStrings} date={pageDetail?.created_at} local />
-																		) : (
-																			<Moment calendar={calendarStrings} date={pageDetail?.created_at} utc />
-																		)}
+
+										<div tw="max-w-4xl py-6 px-4">
+											<div tw="bg-white border border-gray-300 overflow-hidden sm:rounded-lg py-2 px-1">
+												<div tw="px-4 py-5 sm:p-0">
+													<dl>
+														<div tw="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[9].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? (
+																	<span tw="space-x-2">
+																		<span>
+																			{!user?.settings?.disableLocalTime ? (
+																				<Moment calendar={calendarStrings} date={pageDetail?.created_at} local />
+																			) : (
+																				<Moment calendar={calendarStrings} date={pageDetail?.created_at} utc />
+																			)}
+																		</span>
+																		<span>
+																			{!user?.settings?.disableLocalTime ? (
+																				<Moment date={pageDetail?.created_at} format="hh:mm:ss A" local />
+																			) : (
+																				<Moment date={pageDetail?.created_at} format="hh:mm:ss A" utc />
+																			)}
+																		</span>
+																		{user?.settings?.disableLocalTime && <span tw="font-medium">(UTC)</span>}
 																	</span>
-																	<span>
-																		{!user?.settings?.disableLocalTime ? (
-																			<Moment date={pageDetail?.created_at} format="hh:mm:ss A" local />
-																		) : (
-																			<Moment date={pageDetail?.created_at} format="hh:mm:ss A" utc />
-																		)}
-																	</span>
-																	{user?.settings?.disableLocalTime && <span tw="font-medium">(UTC)</span>}
-																</span>
-															) : (
-																<Skeleton duration={2} width={176.7} />
-															)}
-														</dd>
-													</div>
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[10].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? pageDetail?.num_links : <Skeleton duration={2} width={45} />}
-														</dd>
-													</div>
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[11].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? pageDetail?.num_ok_links : <Skeleton duration={2} width={45} />}
-														</dd>
-													</div>
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[12].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? pageDetail?.num_non_ok_links : <Skeleton duration={2} width={45} />}
-														</dd>
-													</div>
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[13].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? (
-																pageDetail?.pagedata?.title ? (
-																	pageDetail?.pagedata?.title
 																) : (
-																	<span tw="text-gray-500">None</span>
-																)
-															) : (
-																<Skeleton duration={2} width={200} />
-															)}
-														</dd>
-													</div>
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[14].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? (
-																pageDetail?.pagedata?.description ? (
-																	pageDetail?.pagedata?.description
+																	<Skeleton duration={2} width={176.7} />
+																)}
+															</dd>
+														</div>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[10].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? pageDetail?.num_links : <Skeleton duration={2} width={45} />}
+															</dd>
+														</div>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[11].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? pageDetail?.num_ok_links : <Skeleton duration={2} width={45} />}
+															</dd>
+														</div>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[12].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? pageDetail?.num_non_ok_links : <Skeleton duration={2} width={45} />}
+															</dd>
+														</div>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[13].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? (
+																	pageDetail?.pagedata?.title ? (
+																		pageDetail?.pagedata?.title
+																	) : (
+																		<span tw="text-gray-500">None</span>
+																	)
 																) : (
-																	<span tw="text-gray-500">None</span>
-																)
-															) : (
-																<Skeleton duration={2} width={200} />
-															)}
-														</dd>
-													</div>
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[15].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? (
-																pageDetail?.pagedata?.h1_first ? (
-																	pageDetail?.pagedata?.h1_first
+																	<Skeleton duration={2} width={200} />
+																)}
+															</dd>
+														</div>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[14].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? (
+																	pageDetail?.pagedata?.description ? (
+																		pageDetail?.pagedata?.description
+																	) : (
+																		<span tw="text-gray-500">None</span>
+																	)
 																) : (
-																	<span tw="text-gray-500">None</span>
-																)
-															) : (
-																<Skeleton duration={2} width={200} />
-															)}
-														</dd>
-													</div>
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[16].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? (
-																pageDetail?.pagedata?.h1_second ? (
-																	pageDetail?.pagedata?.h1_second
+																	<Skeleton duration={2} width={200} />
+																)}
+															</dd>
+														</div>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[15].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? (
+																	pageDetail?.pagedata?.h1_first ? (
+																		pageDetail?.pagedata?.h1_first
+																	) : (
+																		<span tw="text-gray-500">None</span>
+																	)
 																) : (
-																	<span tw="text-gray-500">None</span>
-																)
-															) : (
-																<Skeleton duration={2} width={200} />
-															)}
-														</dd>
-													</div>
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[17].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? (
-																pageDetail?.pagedata?.h2_first ? (
-																	pageDetail?.pagedata?.h2_first
+																	<Skeleton duration={2} width={200} />
+																)}
+															</dd>
+														</div>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[16].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? (
+																	pageDetail?.pagedata?.h1_second ? (
+																		pageDetail?.pagedata?.h1_second
+																	) : (
+																		<span tw="text-gray-500">None</span>
+																	)
 																) : (
-																	<span tw="text-gray-500">None</span>
-																)
-															) : (
-																<Skeleton duration={2} width={200} />
-															)}
-														</dd>
-													</div>
-													<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-														<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[18].label}</dt>
-														<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-															{componentReady ? (
-																pageDetail?.pagedata?.h2_second ? (
-																	pageDetail?.pagedata?.h2_second
+																	<Skeleton duration={2} width={200} />
+																)}
+															</dd>
+														</div>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[17].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? (
+																	pageDetail?.pagedata?.h2_first ? (
+																		pageDetail?.pagedata?.h2_first
+																	) : (
+																		<span tw="text-gray-500">None</span>
+																	)
 																) : (
-																	<span tw="text-gray-500">None</span>
-																)
-															) : (
-																<Skeleton duration={2} width={200} />
-															)}
-														</dd>
-													</div>
-												</dl>
+																	<Skeleton duration={2} width={200} />
+																)}
+															</dd>
+														</div>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{SeoLabel[18].label}</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{componentReady ? (
+																	pageDetail?.pagedata?.h2_second ? (
+																		pageDetail?.pagedata?.h2_second
+																	) : (
+																		<span tw="text-gray-500">None</span>
+																	)
+																) : (
+																	<Skeleton duration={2} width={200} />
+																)}
+															</dd>
+														</div>
+													</dl>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<div tw="static bottom-0 w-full mx-auto p-4 bg-white border-t border-gray-200">
-								<SiteFooter />
+
+								<div tw="static bottom-0 w-full mx-auto p-4 bg-white border-t border-gray-200">
+									<SiteFooter />
+								</div>
 							</div>
 						</main>
 					</div>
@@ -281,8 +315,6 @@ const SeoDetail = ({ width, result }) => {
 				)}
 			</SeoDetailDiv>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 
@@ -291,10 +323,6 @@ SeoDetail.propTypes = {};
 export default withResizeDetector(SeoDetail);
 
 export async function getServerSideProps(context) {
-	await new Promise((resolve) => {
-		setTimeout(resolve, 500);
-	});
-
 	return {
 		props: {
 			result: context.query
