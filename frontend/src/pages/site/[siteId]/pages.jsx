@@ -52,6 +52,7 @@ const PageSection = styled.section`
 `;
 
 const Pages = ({ width, result }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [loadQueryString, setLoadQueryString] = React.useState("");
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
@@ -69,11 +70,11 @@ const Pages = ({ width, result }) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result.siteId
+			siteId: result?.siteId
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId
+		querySid: result?.siteId
 	});
 
 	React.useEffect(() => {
@@ -98,27 +99,27 @@ const Pages = ({ width, result }) => {
 	user?.permissions.includes("can_see_stylesheets")
 		? (() => {
 				scanApiEndpoint =
-					result.page !== undefined
-						? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result.page
-						: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+					result?.page !== undefined
+						? `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result?.page
+						: `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
 				queryString +=
-					result.size_total_min !== undefined
+					result?.size_total_min !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&size_total_min=1048576`
 							: `?size_total_min=1048576`
 						: "";
 
 				queryString +=
-					result.size_total_max !== undefined
+					result?.size_total_max !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&size_total_max=1048575`
 							: `?size_total_max=1048575`
 						: "";
 
 				queryString +=
-					result.tls_total !== undefined
-						? result.tls_total === "true"
+					result?.tls_total !== undefined
+						? result?.tls_total === "true"
 							? scanApiEndpoint.includes("?")
 								? `&tls_total=true`
 								: `?tls_total=true`
@@ -128,17 +129,17 @@ const Pages = ({ width, result }) => {
 						: "";
 
 				queryString +=
-					result.search !== undefined
+					result?.search !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&search=${result.search}`
-							: `?search=${result.search}`
+							? `&search=${result?.search}`
+							: `?search=${result?.search}`
 						: "";
 
 				queryString +=
-					result.ordering !== undefined
+					result?.ordering !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&ordering=${result.ordering}`
-							: `?ordering=${result.ordering}`
+							? `&ordering=${result?.ordering}`
+							: `?ordering=${result?.ordering}`
 						: "";
 
 				queryString +=
@@ -154,7 +155,7 @@ const Pages = ({ width, result }) => {
 
 	const { pages, mutatePages } = usePages({
 		endpoint: scanApiEndpoint,
-		querySid: result.siteId,
+		querySid: result?.siteId,
 		scanObjId: scanObjId
 	});
 
@@ -210,24 +211,36 @@ const Pages = ({ width, result }) => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-		if (result.search !== undefined) setSearchKey(result.search);
+		if (result?.search !== undefined) setSearchKey(result?.search);
 
-		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
-	}, []);
+		if (result?.per_page !== undefined) setLinksPerPage(result?.per_page);
+	}, [result]);
 
-	return user ? (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
+	React.useEffect(() => {
+		user !== undefined && siteId !== undefined
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+
+		return setComponentReady(false);
+	}, [user, siteId]);
+
+	return (
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<PageSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				{siteId ? (
+				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -251,11 +264,11 @@ const Pages = ({ width, result }) => {
 						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="w-full p-6 mx-auto">
 								<div className="max-w-full p-4">
-									<Breadcrumbs siteId={result.siteId} pageTitle={PagesLabel[1].label} />
+									<Breadcrumbs siteId={result?.siteId} pageTitle={PagesLabel[1].label} />
 
 									<HeadingOptions
 										isPages
-										siteId={result.siteId}
+										siteId={result?.siteId}
 										siteName={siteId?.name}
 										siteUrl={siteId?.url}
 										scanObjId={scanObjId}
@@ -322,7 +335,7 @@ const Pages = ({ width, result }) => {
 														user?.permissions.includes("can_see_stylesheets") ? (
 															pages ? (
 																pages?.results.map((val, key) => (
-																	<PageTable key={key} siteId={result.siteId} val={val} />
+																	<PageTable key={key} siteId={result?.siteId} val={val} />
 																))
 															) : null
 														) : (
@@ -349,7 +362,7 @@ const Pages = ({ width, result }) => {
 											href="/site/[siteId]/pages/"
 											pathName={pagePath}
 											apiEndpoint={scanApiEndpoint}
-											page={result.page ? result.page : 0}
+											page={result?.page ? result?.page : 0}
 											linksPerPage={linksPerPage}
 											onItemsPerPageChange={onItemsPerPageChange}
 										/>
@@ -369,8 +382,6 @@ const Pages = ({ width, result }) => {
 				)}
 			</PageSection>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 
@@ -379,10 +390,6 @@ Pages.propTypes = {};
 export default withResizeDetector(Pages);
 
 export async function getServerSideProps(ctx) {
-	await new Promise((resolve) => {
-		setTimeout(resolve, 500);
-	});
-
 	return {
 		props: {
 			result: ctx.query

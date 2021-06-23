@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect, useRef } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -28,27 +28,27 @@ const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"))
 const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
 
 const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) => {
-	const [selectedMenu, setSelectedMenu] = useState(null);
+	const [selectedMenu, setSelectedMenu] = React.useState(null);
 
 	const lgScreenBreakpoint = 1024;
 	const siteApiEndpoint = "/api/site/?ordering=name&per_page=100";
 	const siteDashboardLink = "/sites";
 
 	const router = useRouter();
-	const ref = useRef(null);
+	const ref = React.useRef(null);
 
 	const { site } = useSite({
 		endpoint: siteApiEndpoint,
 		refreshInterval: 7500
 	});
 
-	useEffect(() => {
+	React.useEffect(() => {
 		switch (true) {
 			case router.pathname.includes("/site/"):
-				setSelectedMenu(<SiteMenu site={site} />);
+				setSelectedMenu(<SiteMenu user={user} site={site} />);
 				break;
 			case router.pathname.includes("/settings/"):
-				setSelectedMenu(<SettingsMenu site={site} />);
+				setSelectedMenu(<SettingsMenu user={user} site={site} />);
 				break;
 			default:
 				setSelectedMenu(<PrimaryMenu user={user} site={site} />);
@@ -56,7 +56,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 		}
 
 		return selectedMenu;
-	}, [router, site]);
+	}, [router, site, user]);
 
 	const handleHideSidebarMenu = (event) => {
 		if (event.key === "Escape") {
@@ -70,7 +70,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 		}
 	};
 
-	useEffect(() => {
+	React.useEffect(() => {
 		document.addEventListener("keydown", handleHideSidebarMenu, true);
 		document.addEventListener("click", handleClickOutsideSidebarMenu, true);
 

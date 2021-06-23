@@ -62,6 +62,7 @@ const OverviewSection = styled.section`
 `;
 
 const SiteOverview = ({ width, result }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
@@ -84,6 +85,18 @@ const SiteOverview = ({ width, result }) => {
 	const pageTitle = OverviewLabel[0].label;
 
 	React.useEffect(() => {
+		user !== undefined && siteId !== undefined
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+
+		return setComponentReady(false);
+	}, [user, siteId]);
+
+	React.useEffect(() => {
 		currentScan !== null && scanCount <= 1
 			? (() => {
 					setScanObjId(currentScan?.id);
@@ -104,19 +117,19 @@ const SiteOverview = ({ width, result }) => {
 		user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
 	}, [user]);
 
-	return user ? (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
+	return (
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<OverviewSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				{siteId ? (
+				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -202,8 +215,6 @@ const SiteOverview = ({ width, result }) => {
 				)}
 			</OverviewSection>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 
@@ -212,10 +223,6 @@ SiteOverview.propTypes = {};
 export default withResizeDetector(SiteOverview);
 
 export async function getServerSideProps(ctx) {
-	await new Promise((resolve) => {
-		setTimeout(resolve, 500);
-	});
-
 	return {
 		props: {
 			result: ctx.query

@@ -25,5 +25,14 @@
 	},
 	{
 		"label": "Submit Form"
+	},
+	{
+		"label": "Submitting..."
+	},
+	{
+		"label": "Too short!"
+	},
+	{
+		"label": "Too long!"
 	}
 ]

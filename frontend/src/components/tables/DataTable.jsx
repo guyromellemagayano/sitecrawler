@@ -95,10 +95,10 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 	});
 
 	React.useEffect(() => {
-		let currentScanCount = scan?.count;
-		let currentScanObjId = currentScanCount > 1 ? scan?.results[1]?.id : scan?.results[0]?.id;
-		let currentScanFinishedAt = scan?.results[0]?.finished_at ?? null;
-		let currentScanForcehttps = scan?.results[0]?.force_https ?? null;
+		const currentScanCount = scan?.count;
+		const currentScanObjId = currentScanCount > 1 ? scan?.results[1]?.id : scan?.results[0]?.id;
+		const currentScanFinishedAt = scan?.results[0]?.finished_at ?? null;
+		const currentScanForcehttps = scan?.results[0]?.force_https ?? null;
 
 		setScanObjId(currentScanObjId);
 		setScanCount(currentScanCount);
@@ -411,9 +411,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 										]}
-										onClick={() => {
-											setTimeout(() => setShowVerifySiteModal(!showVerifySiteModal), 500);
-										}}
+										onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
 									>
 										Close
 									</button>

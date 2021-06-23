@@ -8,9 +8,7 @@
 		"label": "Crawl Status"
 	},
 	{
-		"label": "Last Crawled",
-		"slug": "last-crawled",
-		"key": "updated_at"
+		"label": "Last Crawled"
 	},
 	{
 		"label": "Total Issues"

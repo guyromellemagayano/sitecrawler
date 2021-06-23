@@ -58,10 +58,10 @@ const LinkOptions = ({
 								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
 									<SearchIcon tw="h-5 w-5 text-gray-400" />
 								</div>
-								{(permissions.includes("can_see_pages") &&
-									permissions.includes("can_see_scripts") &&
-									permissions.includes("can_see_stylesheets") &&
-									permissions.includes("can_see_images")) ||
+								{(permissions?.includes("can_see_pages") &&
+									permissions?.includes("can_see_scripts") &&
+									permissions?.includes("can_see_stylesheets") &&
+									permissions?.includes("can_see_images")) ||
 								asPath.includes("links") ? (
 									<input
 										type="search"

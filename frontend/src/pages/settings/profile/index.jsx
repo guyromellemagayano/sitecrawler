@@ -32,7 +32,7 @@ const Loader = loadable(() => import("src/components/layouts/Loader"));
 const SettingsPassword = loadable(() => import("src/components/pages/settings/profile/Password"));
 const SettingsPersonal = loadable(() => import("src/components/pages/settings/profile/Personal"));
 
-const ProfileSection = styled.section``;
+const ProfileSettingsSection = styled.section``;
 
 const Profile = ({ width }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -47,21 +47,25 @@ const Profile = ({ width }) => {
 	});
 
 	React.useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
+		user !== undefined
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
 
 		return setComponentReady(false);
-	}, []);
+	}, [user]);
 
-	return user ? (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
+	return (
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<ProfileSection tw="h-screen flex overflow-hidden bg-white">
+			<ProfileSettingsSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -100,8 +104,8 @@ const Profile = ({ width }) => {
 										</div>
 
 										<div tw="space-y-12 divide-y divide-gray-200">
-											<SettingsPersonal user={user} />
-											<SettingsPassword user={user} />
+											<SettingsPersonal user={componentReady ? user : null} />
+											<SettingsPassword user={componentReady ? user : null} />
 										</div>
 									</div>
 								</div>
@@ -117,10 +121,8 @@ const Profile = ({ width }) => {
 						<Loader />
 					</div>
 				)}
-			</ProfileSection>
+			</ProfileSettingsSection>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 

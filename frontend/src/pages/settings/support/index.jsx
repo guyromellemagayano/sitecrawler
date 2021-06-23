@@ -46,21 +46,25 @@ const Support = ({ width }) => {
 	});
 
 	React.useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
+		user !== undefined
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
 
 		return setComponentReady(false);
-	}, []);
+	}, [user]);
 
-	return user ? (
-		<Layout>
+	return (
+		<Layout user={componentReady ? user : null}>
 			<NextSeo title={pageTitle} />
 
 			<SupportSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -90,10 +94,10 @@ const Support = ({ width }) => {
 							<div tw="max-w-full p-4 sm:px-6 md:px-8">
 								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-										<div className="max-w-full p-4">
+										<div tw="max-w-full p-4">
 											<Breadcrumbs isOther pageTitle={pageTitle} />
 
-											<div className="pt-4 m-auto">
+											<div tw="pt-4 m-auto">
 												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
 											</div>
 										</div>
@@ -117,8 +121,6 @@ const Support = ({ width }) => {
 				)}
 			</SupportSection>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 

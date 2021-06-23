@@ -52,6 +52,7 @@ const ImageSection = styled.section`
 `;
 
 const Images = ({ width, result }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [loadQueryString, setLoadQueryString] = React.useState("");
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
@@ -69,11 +70,11 @@ const Images = ({ width, result }) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result.siteId
+			siteId: result?.siteId
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId
+		querySid: result?.siteId
 	});
 
 	React.useEffect(() => {
@@ -98,64 +99,64 @@ const Images = ({ width, result }) => {
 
 	user?.permissions.includes("can_see_images")
 		? (() => {
-				scanApiEndpoint = `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
+				scanApiEndpoint = `/api/site/${result?.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
 
 				queryString +=
-					result.page !== undefined
+					result?.page !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&page=${result.page}`
-							: `?page=${result.page}`
+							? `&page=${result?.page}`
+							: `?page=${result?.page}`
 						: "";
 
-				statusString = result.status__neq;
+				statusString = result?.status__neq;
 
 				queryString +=
-					result.status__neq !== undefined
+					result?.status__neq !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&status__neq=${statusString}`
 							: `?status__neq=${statusString}`
 						: "";
 
-				tlsStatusString = result.tls_status__neq;
+				tlsStatusString = result?.tls_status__neq;
 
 				queryString +=
-					result.tls_status__neq !== undefined
+					result?.tls_status__neq !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&tls_status__neq=${tlsStatusString}`
 							: `?tls_status__neq=${tlsStatusString}`
 						: "";
 
-				missingAltsString = result.missing_alts__gt;
+				missingAltsString = result?.missing_alts__gt;
 
 				queryString +=
-					result.missing_alts__gt !== undefined
+					result?.missing_alts__gt !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&missing_alts__gt=${missingAltsString}`
 							: `?missing_alts__gt=${missingAltsString}`
 						: "";
 
 				queryString +=
-					result.search !== undefined
+					result?.search !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&search=${result.search}`
-							: `?search=${result.search}`
+							? `&search=${result?.search}`
+							: `?search=${result?.search}`
 						: "";
 
 				queryString +=
-					result.ordering !== undefined
+					result?.ordering !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&ordering=${result.ordering}`
-							: `?ordering=${result.ordering}`
+							? `&ordering=${result?.ordering}`
+							: `?ordering=${result?.ordering}`
 						: "";
 
 				queryString +=
 					typeof window !== "undefined" &&
 					loadQueryString.toString() !== "" &&
 					loadQueryString.toString() !== undefined &&
-					result.status__neq == undefined &&
-					result.tls_status__neq == undefined &&
-					result.missing_alts__gt == undefined &&
-					result.type == undefined
+					result?.status__neq == undefined &&
+					result?.tls_status__neq == undefined &&
+					result?.missing_alts__gt == undefined &&
+					result?.type == undefined
 						? scanApiEndpoint.includes("?")
 							? window.location.search.replace("?", "&")
 							: window.location.search
@@ -167,7 +168,7 @@ const Images = ({ width, result }) => {
 
 	const { images, mutateImages } = useImages({
 		endpoint: scanApiEndpoint,
-		querySid: result.siteId,
+		querySid: result?.siteId,
 		scanObjId: scanObjId
 	});
 
@@ -223,24 +224,36 @@ const Images = ({ width, result }) => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-		if (result.search !== undefined) setSearchKey(result.search);
+		if (result?.search !== undefined) setSearchKey(result?.search);
 
-		if (result.per_page !== undefined) setLinksPerPage(result.per_page);
-	}, []);
+		if (result?.per_page !== undefined) setLinksPerPage(result?.per_page);
+	}, [result]);
 
-	return user ? (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
+	React.useEffect(() => {
+		user !== undefined && siteId !== undefined
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+
+		return setComponentReady(false);
+	}, [user, siteId]);
+
+	return (
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<ImageSection tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 
-				{siteId ? (
+				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -264,11 +277,11 @@ const Images = ({ width, result }) => {
 						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="w-full p-6 mx-auto">
 								<div className="max-w-full p-4">
-									<Breadcrumbs siteId={result.siteId} pageTitle={ImagesLabel[1].label} />
+									<Breadcrumbs siteId={result?.siteId} pageTitle={ImagesLabel[1].label} />
 
 									<HeadingOptions
 										isImages
-										siteId={result.siteId}
+										siteId={result?.siteId}
 										siteName={siteId?.name}
 										siteUrl={siteId?.url}
 										scanObjId={scanObjId}
@@ -334,7 +347,7 @@ const Images = ({ width, result }) => {
 														{user?.permissions.includes("can_see_images") ? (
 															images ? (
 																images?.results.map((val, key) => (
-																	<ImageTable key={key} siteId={result.siteId} val={val} />
+																	<ImageTable key={key} siteId={result?.siteId} val={val} />
 																))
 															) : null
 														) : (
@@ -359,7 +372,7 @@ const Images = ({ width, result }) => {
 											href="/site/[siteId]/images/"
 											pathName={pagePath}
 											apiEndpoint={scanApiEndpoint}
-											page={result.page ? result.page : 0}
+											page={result?.page ? result?.page : 0}
 											linksPerPage={linksPerPage}
 											onItemsPerPageChange={onItemsPerPageChange}
 										/>
@@ -379,8 +392,6 @@ const Images = ({ width, result }) => {
 				)}
 			</ImageSection>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 
@@ -389,10 +400,6 @@ Images.propTypes = {};
 export default withResizeDetector(Images);
 
 export async function getServerSideProps(ctx) {
-	await new Promise((resolve) => {
-		setTimeout(resolve, 500);
-	});
-
 	return {
 		props: {
 			result: ctx.query

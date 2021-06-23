@@ -13,7 +13,7 @@ import * as Yup from "yup";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // JSON
 import LoginLabel from "public/labels/pages/login.json";
@@ -31,6 +31,8 @@ const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMess
 const LogoLabel = loadable(() => import("src/components/labels/LogoLabel"));
 const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
 const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
+
+const LoginDiv = styled.div``;
 
 const Login = () => {
 	const [errorMsg, setErrorMsg] = useState([]);
@@ -52,9 +54,9 @@ const Login = () => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<div tw="bg-gray-50 min-h-screen">
+			<LoginDiv tw="bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 				<div tw="relative overflow-auto">
-					<div tw="relative pt-6 pb-12 md:pb-6">
+					<div tw="relative">
 						<main tw="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
 							<div tw="mx-auto max-w-screen-xl">
 								<div tw="lg:grid lg:grid-cols-12 lg:gap-8">
@@ -124,8 +126,8 @@ const Login = () => {
 																	setSuccessMsg((successMsg) => [...successMsg, LoginLabel[12].label]);
 
 																	setTimeout(() => {
-																		Router.push("/sites");
-																	}, 1500);
+																		Router.push("/sites/");
+																	}, 500);
 																}
 															} else {
 																if (data) {
@@ -358,7 +360,7 @@ const Login = () => {
 						</main>
 					</div>
 				</div>
-			</div>
+			</LoginDiv>
 		</Layout>
 	);
 };

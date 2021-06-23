@@ -67,7 +67,7 @@ const ComingSoon = ({ width, user, pageTitle, openMobileSidebar, setOpenMobileSi
 								<div tw="max-w-full p-4">
 									<Breadcrumbs isOther pageTitle={pageTitle} />
 
-									<div className="pt-4 m-auto">
+									<div tw="pt-4 m-auto">
 										<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
 											{ComingSoonLabel[0].label}
 										</h2>

@@ -28,7 +28,7 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 // Hooks
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 
-const SettingsMenu = ({ site }) => {
+const SettingsMenu = ({ site, user }) => {
 	const [selectedSite, setSelectedSite] = React.useState("");
 	const [selectedSiteDetails, setSelectedSiteDetails] = React.useState([]);
 	const [sitesLoaded, setSitesLoaded] = React.useState(false);
@@ -77,7 +77,7 @@ const SettingsMenu = ({ site }) => {
 			: null;
 	}, [selectedSite, site]);
 
-	return (
+	return user ? (
 		<div tw="flex-1 flex flex-col overflow-y-auto">
 			<nav tw="flex-1 px-4">
 				{SettingsPages.map((value, index) => {
@@ -244,7 +244,7 @@ const SettingsMenu = ({ site }) => {
 				})}
 			</nav>
 		</div>
-	);
+	) : null;
 };
 
 SettingsMenu.propTypes = {};

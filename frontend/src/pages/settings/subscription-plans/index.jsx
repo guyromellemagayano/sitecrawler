@@ -575,7 +575,7 @@ const Subscriptions = ({ width }) => {
 												</li>
 											</ol>
 										</nav>
-										<div className="pt-4 m-auto">
+										<div tw="pt-4 m-auto">
 											<h4 className="text-2xl leading-6 font-medium text-gray-900">
 												{pageLoaded ? SubscriptionLabel[20].label : <Skeleton duration={2} width={150} height={35} />}
 											</h4>
