@@ -11,7 +11,7 @@ import { ArrowLeftIcon, LinkIcon, PlusIcon, SearchIcon, SelectorIcon, ViewGridIc
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
+import tw, { styled } from "twin.macro";
 
 // JSON
 import SitePages from "public/data/site-pages.json";
@@ -22,7 +22,9 @@ import { useStats } from "src/hooks/useSite";
 import useCrawl from "src/hooks/useCrawl";
 import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
 
-const SiteMenu = ({ site }) => {
+const SiteMenuDiv = styled.div``;
+
+const SiteMenu = ({ site, user }) => {
 	const [scanObjId, setScanObjId] = React.useState(null);
 	const [selectedSite, setSelectedSite] = React.useState("");
 	const [selectedSiteDetails, setSelectedSiteDetails] = React.useState([]);
@@ -119,16 +121,22 @@ const SiteMenu = ({ site }) => {
 	}, [selectedSite, site]);
 
 	return (
-		<div tw="flex-1 flex flex-col overflow-y-auto">
+		<SiteMenuDiv tw="flex-1 flex flex-col overflow-y-auto">
 			<nav tw="flex-1 px-4">
 				{SitePages.map((value, index) => {
 					return (
-						<div key={index} tw="mb-8">
-							<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">{value.category}</h3>
+						<div key={index} css={[user ? tw`mb-8` : tw`mb-6`]}>
+							{user ? (
+								<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
+									{value?.category}
+								</h3>
+							) : (
+								<Skeleton duration={2} width={150} tw="mt-6" />
+							)}
 
 							<div tw="my-3" role="group">
-								{value.links ? (
-									value.links.map((value2, index) => {
+								{value?.links ? (
+									value?.links.map((value2, index) => {
 										const hrefVal = "/site/[siteId]" + value2.url;
 										const asVal = "/site/" + query.siteId + value2.url;
 
@@ -143,45 +151,49 @@ const SiteMenu = ({ site }) => {
 															: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 hover:bg-gray-1100 focus:outline-none focus:bg-gray-1100`
 													]}
 												>
-													{value2.slug === "overview" ? (
-														<ViewGridIcon tw="mr-3 h-6 w-5" />
-													) : value2.slug === "links" ? (
-														<LinkIcon tw="mr-3 h-6 w-5" />
-													) : value2.slug === "pages" ? (
-														<DocumentTextIcon tw="mr-3 h-6 w-5" />
-													) : value2.slug === "images" ? (
-														<PhotographIcon tw="mr-3 h-6 w-5" />
-													) : value2.slug === "seo" ? (
-														<SearchIcon tw="mr-3 h-6 w-5" />
-													) : value2.slug === "site-settings" ? (
-														<CogIcon tw="mr-3 h-6 w-5" />
-													) : null}
-													{value2.title ? <span>{value2.title}</span> : null}
-													{value2.url === "/links" && stats ? (
-														<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-															{stats?.num_links ? stats?.num_links : null}
+													{user ? (
+														value2.slug === "overview" ? (
+															<ViewGridIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "links" ? (
+															<LinkIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "pages" ? (
+															<DocumentTextIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "images" ? (
+															<PhotographIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "seo" ? (
+															<SearchIcon tw="mr-3 h-6 w-5" />
+														) : value2.slug === "site-settings" ? (
+															<CogIcon tw="mr-3 h-6 w-5" />
+														) : null
+													) : (
+														<Skeleton duration={2} tw="mr-3" width={20} height={20} />
+													)}
+													{user ? (
+														value2.title ? (
+															<span>{value2.title}</span>
+														) : null
+													) : (
+														<Skeleton duration={2} width={80} />
+													)}
+													{user ? (
+														value2.url === "/links" && stats ? (
+															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																{stats?.num_links ? stats?.num_links : null}
+															</span>
+														) : value2.url === "/pages" && stats ? (
+															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																{stats?.num_pages ? stats?.num_pages : null}
+															</span>
+														) : value2.url === "/images" && stats ? (
+															<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																{stats?.num_images ? stats?.num_images : null}
+															</span>
+														) : null
+													) : (
+														<span tw="ml-auto inline-block px-3">
+															<Skeleton duration={2} width={40} />
 														</span>
-													) : null}
-													{value2.url === "/pages" && stats ? (
-														<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-															{stats?.num_pages ? stats?.num_pages : null}
-														</span>
-													) : null}
-													{value2.url === "/images" && stats ? (
-														<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-															{stats?.num_images ? stats?.num_images : null}
-														</span>
-													) : null}
-													{value2.url === "/stylesheets" && stats ? (
-														<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-															{stats?.num_stylesheets ? stats?.num_stylesheets : null}
-														</span>
-													) : null}
-													{value2.url === "/scripts" && stats ? (
-														<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-															{stats?.num_scripts ? stats?.num_scripts : null}
-														</span>
-													) : null}
+													)}
 												</a>
 											</Link>
 										) : (
@@ -190,8 +202,17 @@ const SiteMenu = ({ site }) => {
 													className="group"
 													tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
 												>
-													<ArrowLeftIcon tw="mr-3 h-6 w-5" />
-													{value2.title ? <span>{value2.title}</span> : null}
+													{user ? (
+														<>
+															<ArrowLeftIcon tw="mr-3 h-6 w-5" />
+															{value2.title ? <span>{value2.title}</span> : null}
+														</>
+													) : (
+														<>
+															<Skeleton duration={2} tw="mr-3" width={20} height={20} />
+															<Skeleton duration={2} width={100} />
+														</>
+													)}
 												</a>
 											</Link>
 										);
@@ -201,38 +222,42 @@ const SiteMenu = ({ site }) => {
 										<div ref={ref} tw="relative">
 											<div tw="relative">
 												<span tw="inline-block w-full rounded-md shadow-sm">
-													<button
-														type="button"
-														aria-haspopup="listbox"
-														aria-expanded="true"
-														aria-labelledby="listbox-label"
-														tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 focus:ring-gray-1100  sm:text-sm sm:leading-5"
-														onClick={() => setIsComponentVisible(!isComponentVisible)}
-													>
-														<div tw="flex items-center space-x-3">
-															<span tw="block truncate text-gray-600">
-																{selectedSite !== "" ? (
-																	selectedSiteDetails ? (
-																		<div tw="flex items-center space-x-3">
-																			<span
-																				aria-label={value.verified ? "Verified" : "Not Verified"}
-																				css={[
-																					tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																					selectedSiteDetails.verified ? tw`bg-green-400` : tw`bg-red-400`
-																				]}
-																			></span>
-																			<span tw="font-medium block truncate text-gray-500">{selectedSite}</span>
-																		</div>
-																	) : null
-																) : (
-																	PrimaryMenuLabel[0].label
-																)}
+													{user ? (
+														<button
+															type="button"
+															aria-haspopup="listbox"
+															aria-expanded="true"
+															aria-labelledby="listbox-label"
+															tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 focus:ring-gray-1100  sm:text-sm sm:leading-5"
+															onClick={() => setIsComponentVisible(!isComponentVisible)}
+														>
+															<div tw="flex items-center space-x-3">
+																<span tw="block truncate text-gray-600">
+																	{selectedSite !== "" ? (
+																		selectedSiteDetails ? (
+																			<div tw="flex items-center space-x-3">
+																				<span
+																					aria-label={value?.verified ? "Verified" : "Not Verified"}
+																					css={[
+																						tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+																						selectedSiteDetails.verified ? tw`bg-green-400` : tw`bg-red-400`
+																					]}
+																				></span>
+																				<span tw="font-medium block truncate text-gray-500">{selectedSite}</span>
+																			</div>
+																		) : null
+																	) : (
+																		PrimaryMenuLabel[0].label
+																	)}
+																</span>
+															</div>
+															<span tw="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+																<SelectorIcon tw="w-4 h-4 text-gray-400" />
 															</span>
-														</div>
-														<span tw="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-															<SelectorIcon tw="w-4 h-4 text-gray-400" />
-														</span>
-													</button>
+														</button>
+													) : (
+														<Skeleton duration={2} width={209} height={38} tw="relative w-full pl-3 pr-10 py-2" />
+													)}
 												</span>
 
 												<Transition
@@ -257,7 +282,7 @@ const SiteMenu = ({ site }) => {
 																	return (
 																		<li
 																			key={index}
-																			onClick={() => handleDropdownHandler(value.id)}
+																			onClick={() => handleDropdownHandler(value?.id)}
 																			id={`listbox-item-${index + 1}`}
 																			role="option"
 																			tw="select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
@@ -265,10 +290,10 @@ const SiteMenu = ({ site }) => {
 																			<div tw="flex items-center space-x-3">
 																				{sitesLoaded ? (
 																					<span
-																						aria-label={value.verified ? "Verified" : "Not Verified"}
+																						aria-label={value?.verified ? "Verified" : "Not Verified"}
 																						css={[
 																							tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-																							value.verified ? tw`bg-green-400` : tw`bg-red-400`
+																							value?.verified ? tw`bg-green-400` : tw`bg-red-400`
 																						]}
 																					/>
 																				) : (
@@ -282,7 +307,7 @@ const SiteMenu = ({ site }) => {
 																				)}
 
 																				<span tw="font-medium block truncate text-gray-500">
-																					{sitesLoaded ? value.name : <Skeleton duration={2} width={130} />}
+																					{sitesLoaded ? value?.name : <Skeleton duration={2} width={130} />}
 																				</span>
 																			</div>
 																		</li>
@@ -310,7 +335,7 @@ const SiteMenu = ({ site }) => {
 					);
 				})}
 			</nav>
-		</div>
+		</SiteMenuDiv>
 	);
 };
 
