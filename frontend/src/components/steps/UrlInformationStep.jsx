@@ -241,7 +241,7 @@ const UrlInformationStep = (props) => {
 												placeholder={InformationLabel[4].placeholder}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-													isSubmitting && tw`opacity-50 bg-gray-200 cursor-not-allowed`,
+													isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
 													(errors.sitename && touched.sitename) || errorMsg ? tw`border-red-300` : tw`border-gray-300`
 												]}
 												aria-describedby="sitename"
@@ -272,7 +272,7 @@ const UrlInformationStep = (props) => {
 													name="siteurlprotocol"
 													css={[
 														tw`focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-3 pr-7 border-transparent bg-transparent sm:text-sm rounded-md`,
-														props.editMode && tw`opacity-50 bg-gray-200 cursor-not-allowed`
+														props.editMode && tw`opacity-50 bg-gray-300 cursor-not-allowed`
 													]}
 													disabled={isSubmitting || props.editMode ? true : false}
 													onChange={handleChange}
@@ -291,8 +291,8 @@ const UrlInformationStep = (props) => {
 												css={[
 													tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-24 sm:text-sm border-gray-300 rounded-md`,
 													props.editMode
-														? tw`opacity-50 bg-gray-200 cursor-not-allowed`
-														: isSubmitting && tw`text-gray-500 opacity-50 bg-gray-200 cursor-not-allowed`,
+														? tw`opacity-50 bg-gray-300 cursor-not-allowed`
+														: isSubmitting && tw`text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed`,
 													(errors.siteurl && touched.siteurl) || errorMsg ? tw`border-red-300` : tw`border-gray-300`
 												]}
 												placeholder={InformationLabel[5].placeholder}

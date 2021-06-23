@@ -20,7 +20,8 @@ import setupLogRocketReact from "logrocket-react";
 import appSeo from "src/enums/nextSeo";
 
 // Components
-import GlobalStyles from "src/components/GlobalStyles";
+// import GlobalStyles from "styles/components/GlobalStyles";
+import GlobalStyles from "src/styles/GlobalStyles";
 import TopProgressBar from "src/components/TopProgressBar";
 
 // Font Awesome
