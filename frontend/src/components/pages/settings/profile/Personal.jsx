@@ -172,48 +172,6 @@ const SettingsPersonal = (props) => {
 								<div tw="sm:col-span-3">
 									{componentReady ? (
 										<>
-											<label htmlFor="username" tw="block text-sm font-medium leading-5 text-gray-700">
-												{PersonalLabel[1].label}
-											</label>
-											<div tw="mt-1 relative flex rounded-md shadow-sm">
-												<input
-													type="text"
-													id="username"
-													value={values.username}
-													name="username"
-													disabled={
-														isSubmitting ? isSubmitting : disableForm && hasUsernameError ? !disableForm : disableForm
-													}
-													css={[
-														tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-														(isSubmitting
-															? isSubmitting
-															: disableForm && hasUsernameError
-															? !disableForm
-															: disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-														errors.username || hasUsernameError ? tw`border-red-300` : tw`border-gray-300`
-													]}
-													aria-describedby="username"
-													onChange={handleUserNameInputChange}
-													onBlur={handleBlur}
-												/>
-											</div>
-										</>
-									) : (
-										<>
-											<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-											<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
-										</>
-									)}
-
-									{errors.username && touched.username && (
-										<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.username && errors.username}</span>
-									)}
-								</div>
-
-								<div tw="sm:col-span-3">
-									{componentReady ? (
-										<>
 											<label htmlFor="firstname" tw="block text-sm font-medium leading-5 text-gray-700">
 												{PersonalLabel[2].label}
 											</label>
@@ -292,6 +250,48 @@ const SettingsPersonal = (props) => {
 
 									{errors.lastname && touched.lastname && (
 										<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.lastname && errors.lastname}</span>
+									)}
+								</div>
+
+								<div tw="sm:col-span-3">
+									{componentReady ? (
+										<>
+											<label htmlFor="username" tw="block text-sm font-medium leading-5 text-gray-700">
+												{PersonalLabel[1].label}
+											</label>
+											<div tw="mt-1 relative flex rounded-md shadow-sm">
+												<input
+													type="text"
+													id="username"
+													value={values.username}
+													name="username"
+													disabled={
+														isSubmitting ? isSubmitting : disableForm && hasUsernameError ? !disableForm : disableForm
+													}
+													css={[
+														tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
+														(isSubmitting
+															? isSubmitting
+															: disableForm && hasUsernameError
+															? !disableForm
+															: disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+														errors.username || hasUsernameError ? tw`border-red-300` : tw`border-gray-300`
+													]}
+													aria-describedby="username"
+													onChange={handleUserNameInputChange}
+													onBlur={handleBlur}
+												/>
+											</div>
+										</>
+									) : (
+										<>
+											<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
+											<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+										</>
+									)}
+
+									{errors.username && touched.username && (
+										<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.username && errors.username}</span>
 									)}
 								</div>
 
