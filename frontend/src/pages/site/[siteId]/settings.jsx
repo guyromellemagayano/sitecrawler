@@ -110,7 +110,7 @@ const SiteSettings = ({ width, result }) => {
 										<div tw="max-w-full p-4">
 											<Breadcrumbs siteId={result?.siteId} pageTitle={SettingsLabel[1].label} />
 
-											<div className="pt-4 m-auto">
+											<div tw="pt-4 m-auto">
 												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
 													{SettingsLabel[1].label}
 												</h2>
