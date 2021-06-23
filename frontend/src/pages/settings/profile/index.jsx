@@ -38,13 +38,13 @@ const Profile = ({ width }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
+	const homePageLink = "/sites/";
+	const pageTitle = ProfileLabel[0].label;
+
 	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
-
-	const homePageLink = "/sites/";
-	const pageTitle = ProfileLabel[0].label;
 
 	React.useEffect(() => {
 		user !== undefined
