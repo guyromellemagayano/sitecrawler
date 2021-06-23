@@ -1,5 +1,6 @@
 // NextJS
-import Document from "next/document";
+import Document, { Html, Head, Main, NextScript } from "next/document";
+import Script from "next/script";
 
 // External
 import { ServerStyleSheet } from "styled-components";
@@ -27,5 +28,20 @@ export default class MyDocument extends Document {
 		} finally {
 			sheet.seal();
 		}
+	}
+
+	render() {
+		return (
+			<Html lang="en">
+				<Head>
+					<Script src="/scripts/beacon.js" strategy="lazyOnload" />
+					<Script src="/scripts/usetiful.js" strategy="lazyOnload" />
+				</Head>
+				<body>
+					<Main />
+					<NextScript />
+				</body>
+			</Html>
+		);
 	}
 }
