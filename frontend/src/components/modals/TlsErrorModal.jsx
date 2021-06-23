@@ -57,15 +57,6 @@ const TlsErrorModal = ({ show, setShowErrorModal, siteId, scanObjId }) => {
 
 	return (
 		<>
-			<style jsx>{`
-				.truncate-link {
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					max-width: 18rem;
-				}
-			`}</style>
-
 			<Transition
 				show={show}
 				className="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"

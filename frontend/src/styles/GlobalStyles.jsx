@@ -10,11 +10,45 @@ const CustomStyles = createGlobalStyle`
 		${tw`antialiased`}
 	}
 
-	.truncate-profile-text {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 12rem;
+	tr {
+		a,
+		div {
+			max-width: 100%;
+			display: inline-block;
+			clear: both;
+		}
+
+		td {
+			& > div {
+				max-width: 100%;
+				display: block;
+
+				& > div {
+					max-width: 100%;
+					display: block;
+				}
+			}
+		}
+	}
+
+	.truncate {
+		&-link,
+		&-profile-text,
+		&-breadcrumbs {
+			${tw`truncate`}
+		}
+
+		&-link {
+			max-width: 18rem;
+		}
+
+		&-profile-text {
+			max-width: 12rem;
+		}
+
+		&-breadcrumbs {
+			max-width: 30rem;
+		}
 	}
 `;
 

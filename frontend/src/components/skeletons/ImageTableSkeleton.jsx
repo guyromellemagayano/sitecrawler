@@ -40,39 +40,7 @@ const ImageTableSkeleton = () => {
 		</>
 	);
 
-	return (
-		<>
-			<style jsx>{`
-				a,
-				span {
-					max-width: 100%;
-					display: inline-block;
-					clear: both;
-				}
-				td {
-					& > span {
-						max-width: 100%;
-						display: block;
-
-						& > span {
-							max-width: 100%;
-							display: block;
-						}
-					}
-				}
-
-				.btn-detail {
-					display: inline-block;
-					padding: 8px 10px;
-					line-height: 1;
-					font-size: 0.7rem;
-					margin-top: 5px;
-				}
-			`}</style>
-
-			<TableSkeletonEntries str={skeletonEntry} limit={skeletonLimit} />
-		</>
-	);
+	return <TableSkeletonEntries str={skeletonEntry} limit={skeletonLimit} />;
 };
 
 export default ImageTableSkeleton;

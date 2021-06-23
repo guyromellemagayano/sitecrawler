@@ -50,13 +50,6 @@ const DataTableDiv = styled.tbody`
 			clear: both;
 		}
 	}
-
-	.truncate-link {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 20rem;
-	}
 `;
 
 const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId, disableLocalTime, mutateSite }) => {

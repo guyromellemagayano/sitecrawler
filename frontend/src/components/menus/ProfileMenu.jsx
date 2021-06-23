@@ -38,9 +38,14 @@ const ProfileMenu = ({ user }) => {
 					>
 						<div tw="flex items-center">
 							<div tw="flex flex-col flex-wrap text-left">
-								<p tw="text-sm leading-tight mb-1 font-medium text-white">{user?.first_name}</p>
-								<p tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150">
-									@{user?.username}
+								<p className="truncate-profile-text" tw="text-sm leading-tight mb-1 font-medium text-white">
+									{user?.first_name}
+								</p>
+								<p
+									className="truncate-profile-text"
+									tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150"
+								>
+									{user?.email}
 								</p>
 							</div>
 						</div>

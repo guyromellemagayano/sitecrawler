@@ -15,37 +15,10 @@ import Skeleton from "react-loading-skeleton";
 import { usePageDetail } from "src/hooks/useSite";
 
 // Components
-import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
 import SiteSuccessIcon from "src/components/icons/SiteSuccessIcon";
 import SiteDangerIcon from "src/components/icons/SiteDangerIcon";
 
 const PageTableDiv = styled.tr`
-	a,
-	div {
-		max-width: 100%;
-		display: inline-block;
-		clear: both;
-	}
-
-	td {
-		& > div {
-			max-width: 100%;
-			display: block;
-
-			& > div {
-				max-width: 100%;
-				display: block;
-			}
-		}
-	}
-
-	.truncate-link {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 50rem;
-	}
-
 	.btn-detail {
 		display: inline-block;
 		padding: 8px 10px;
@@ -81,7 +54,7 @@ const PageTable = ({ siteId, val }) => {
 	return (
 		<PageTableDiv tw="bg-white">
 			<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
-				<div tw="flex flex-col items-center">
+				<div tw="flex flex-col items-start">
 					<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
 						{componentReady ? (
 							<a

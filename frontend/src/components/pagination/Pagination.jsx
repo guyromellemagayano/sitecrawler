@@ -79,8 +79,6 @@ const PaginationLocale = {
 	jump_to: "Goto",
 	jump_to_confirm: "Goto",
 	page: "Page",
-
-	// Pagination.jsx
 	prev_page: "Previous",
 	next_page: "Next",
 	prev_5: "Prev 5",

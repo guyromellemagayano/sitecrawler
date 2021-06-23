@@ -40,13 +40,6 @@ const LinkTableTr = styled.tr`
 		}
 	}
 
-	.truncate-link {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 20rem;
-	}
-
 	.btn-detail {
 		display: inline-block;
 		padding: 8px 10px;

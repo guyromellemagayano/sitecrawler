@@ -5,21 +5,12 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
+import "twin.macro";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
-import { styled } from "twin.macro";
 import PropTypes from "prop-types";
 
 // JSON
 import BreadcrumbsLabel from "./labels/Breadcrumbs.json";
-
-const BreadcrumbNav = styled.nav`
-	.truncate-breadcrumbs {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 30rem;
-	}
-`;
 
 const Breadcrumbs = ({ isOther, isLinks, isPages, isImages, isSeo, siteId, dataId, pageTitle, pageDetailTitle }) => {
 	const homeLabel = BreadcrumbsLabel[0].label;
@@ -27,7 +18,7 @@ const Breadcrumbs = ({ isOther, isLinks, isPages, isImages, isSeo, siteId, dataI
 	const siteIdOverviewPageLink = `/site/${siteId}/overview/`;
 
 	return (
-		<BreadcrumbNav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
+		<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">
 			<ol tw="flex items-center space-x-4">
 				<li>
 					<div>
@@ -77,7 +68,7 @@ const Breadcrumbs = ({ isOther, isLinks, isPages, isImages, isSeo, siteId, dataI
 					</li>
 				) : null}
 			</ol>
-		</BreadcrumbNav>
+		</nav>
 	);
 };
 

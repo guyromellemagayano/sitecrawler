@@ -17,7 +17,7 @@ const PageTableSkeleton = () => {
 							<Skeleton width={300} duration={2} />
 						</span>
 						<span tw="flex justify-start leading-5 text-gray-500">
-							<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
+							<Skeleton duration={2} width={82.2} />
 						</span>
 					</span>
 				</span>
@@ -31,39 +31,7 @@ const PageTableSkeleton = () => {
 		</>
 	);
 
-	return (
-		<>
-			<style jsx>{`
-				a,
-				span {
-					max-width: 100%;
-					display: inline-block;
-					clear: both;
-				}
-				td {
-					& > span {
-						max-width: 100%;
-						display: block;
-
-						& > span {
-							max-width: 100%;
-							display: block;
-						}
-					}
-				}
-
-				.btn-detail {
-					display: inline-block;
-					padding: 8px 10px;
-					line-height: 1;
-					font-size: 0.7rem;
-					margin-top: 5px;
-				}
-			`}</style>
-
-			<TableSkeletonEntries str={skeletonEntry} limit={skeletonLimit} />
-		</>
-	);
+	return <TableSkeletonEntries str={skeletonEntry} limit={skeletonLimit} />;
 };
 
 export default PageTableSkeleton;

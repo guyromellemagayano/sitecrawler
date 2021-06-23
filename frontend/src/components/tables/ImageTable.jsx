@@ -40,13 +40,6 @@ const ImagesTableDiv = styled.tr`
 		}
 	}
 
-	.truncate-link {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 20rem;
-	}
-
 	.icon-status {
 		text-align: left;
 	}

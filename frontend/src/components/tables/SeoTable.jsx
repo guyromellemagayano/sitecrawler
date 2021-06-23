@@ -35,9 +35,6 @@ const SeoTableDiv = styled.tr`
 	}
 
 	.truncate-link {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 		max-width: 7rem;
 	}
 
@@ -48,13 +45,6 @@ const SeoTableDiv = styled.tr`
 			margin-right: auto;
 			display: inline-block;
 		}
-	}
-
-	.truncate-link {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 20rem;
 	}
 
 	.btn-detail {
