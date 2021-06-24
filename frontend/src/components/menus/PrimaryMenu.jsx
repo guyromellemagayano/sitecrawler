@@ -30,6 +30,7 @@ const PrimaryMenu = ({ user, site }) => {
 
 	const siteDashboardLink = "/sites/";
 
+	const { asPath } = useRouter();
 	const router = useRouter();
 
 	const handleSiteSelectOnLoad = (siteId) => {
@@ -103,13 +104,15 @@ const PrimaryMenu = ({ user, site }) => {
 													<Link key={index} href={value2?.url} passHref>
 														<a
 															className={`group ${
-																router.pathname !== value2?.url
-																	? "hover:bg-gray-1100 focus:bg-gray-1100"
-																	: "bg-gray-1100"
+																router.pathname == value2?.url ||
+																(asPath.includes("/sites") && value2?.url.includes("/sites"))
+																	? "bg-gray-1100"
+																	: "hover:bg-gray-1100 focus:bg-gray-1100"
 															}`}
 															css={[
 																tw`cursor-pointer`,
-																router.pathname == value2?.url
+																router.pathname == value2?.url ||
+																(asPath.includes("/sites") && value2?.url.includes("/sites"))
 																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md `
 																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none  transition ease-in-out duration-150`
 															]}
