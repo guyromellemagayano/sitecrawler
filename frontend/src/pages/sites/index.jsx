@@ -5,7 +5,8 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
-import "twin.macro";
+import tw from "twin.macro";
+import { ExternalLinkIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
@@ -161,7 +162,7 @@ const Sites = ({ width, result }) => {
 		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<section tw="h-screen flex overflow-hidden bg-white">
+			<section tw="flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={componentReady ? user : null}
@@ -170,7 +171,7 @@ const Sites = ({ width, result }) => {
 				/>
 
 				{componentReady ? (
-					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
+					<div tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
 								<MobileSidebarButton
@@ -188,82 +189,108 @@ const Sites = ({ width, result }) => {
 						</div>
 
 						<Scrollbars universal>
-							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-									<div className="pb-4">
-										<div tw="flex flex-col">
-											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-												<div tw="relative min-w-full rounded-lg border-gray-300">
-													{site?.count > 0 && (
-														<table tw="relative min-w-full">
-															<thead>
-																<tr>
-																	{DataTableHeadsContent.map((site, key) => {
-																		return (
-																			<th
-																				key={key}
-																				className="min-width-adjust"
-																				tw="px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																			>
-																				<span tw="flex items-center justify-start">
-																					<SiteSorting
-																						result={result}
-																						slug={site.slug}
-																						mutateSite={mutateSite}
-																						dataTableHeadsContent={DataTableHeadsContent}
-																						setPagePath={setPagePath}
-																					/>
-																					<span tw="flex items-center">{site.label}</span>
-																				</span>
-																			</th>
-																		);
-																	})}
-																</tr>
-															</thead>
-
-															<tbody tw="relative">
-																{site?.results.map((val, key) => (
-																	<DataTable
-																		key={key}
-																		siteId={val.id}
-																		siteName={val.name}
-																		siteUrl={val.url}
-																		siteVerified={val.verified}
-																		siteVerificationId={val.verification_id}
-																		disableLocalTime={disableLocalTime}
-																		mutateSite={mutateSite}
-																	/>
-																))}
-															</tbody>
-														</table>
-													)}
-
-													{site?.count == 0 && result?.search == undefined && result?.ordering == undefined && (
-														<section tw="flex flex-col justify-center h-80">
-															<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-																<h3 tw="text-lg leading-6 font-medium text-gray-500">{SitesLabel[1].label}</h3>
-															</div>
-														</section>
-													)}
-												</div>
+							{site?.count > 0 && (
+								<div tw="px-4 pt-12 sm:px-6 md:px-8 m-auto md:flex md:items-center md:justify-between">
+									<div tw="flex-1 min-w-0">
+										<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
+										<div tw="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
+											<div tw="mt-2 flex items-center text-sm text-gray-500">
+												<ExternalLinkIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+												<span tw="text-sm leading-6 font-semibold text-gray-500">
+													{site?.count + " "}
+													{site?.count > 1 ? SitesLabel[3].label : SitesLabel[2].label}
+												</span>
 											</div>
 										</div>
 									</div>
+								</div>
+							)}
 
-									<MyPagination
-										href="/sites/"
-										pathName={pagePath}
-										apiEndpoint={scanApiEndpoint}
-										page={result?.page ? result?.page : 0}
-										linksPerPage={linksPerPage}
-										onItemsPerPageChange={onItemsPerPageChange}
-									/>
+							<div
+								css={[
+									tw`pb-4 h-full focus:outline-none px-4 pt-8 sm:px-6 md:px-8`,
+									site?.count < 1 && tw`flex flex-col flex-auto items-center justify-center`
+								]}
+								tabIndex="0"
+							>
+								<div css={[tw`pb-4`, site?.count < 1 && tw`flex flex-auto`]}>
+									<div css={[site?.count < 1 && tw`flex flex-initial`]}>
+										<div
+											css={[
+												tw`-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8`,
+												site?.count < 1 && tw`flex items-center`
+											]}
+										>
+											<div tw="relative min-w-full rounded-lg border-gray-300">
+												{site?.count > 0 && (
+													<table tw="relative min-w-full">
+														<thead>
+															<tr>
+																{DataTableHeadsContent.map((site, key) => {
+																	return (
+																		<th
+																			key={key}
+																			className="min-width-adjust"
+																			tw="px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																		>
+																			<span tw="flex items-center justify-start">
+																				<SiteSorting
+																					result={result}
+																					slug={site.slug}
+																					mutateSite={mutateSite}
+																					dataTableHeadsContent={DataTableHeadsContent}
+																					setPagePath={setPagePath}
+																				/>
+																				<span tw="flex items-center">{site.label}</span>
+																			</span>
+																		</th>
+																	);
+																})}
+															</tr>
+														</thead>
 
-									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-										<SiteFooter />
+														<tbody tw="relative">
+															{site?.results.map((val, key) => (
+																<DataTable
+																	key={key}
+																	siteId={val.id}
+																	siteName={val.name}
+																	siteUrl={val.url}
+																	siteVerified={val.verified}
+																	siteVerificationId={val.verification_id}
+																	disableLocalTime={disableLocalTime}
+																	mutateSite={mutateSite}
+																/>
+															))}
+														</tbody>
+													</table>
+												)}
+
+												{site?.count == 0 && result?.search == undefined && result?.ordering == undefined && (
+													<section tw="flex flex-col justify-center h-80">
+														<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
+															<h3 tw="text-lg leading-6 font-medium text-gray-500">{SitesLabel[1].label}</h3>
+														</div>
+													</section>
+												)}
+											</div>
+										</div>
 									</div>
 								</div>
-							</main>
+
+								<MyPagination
+									href="/sites/"
+									pathName={pagePath}
+									apiEndpoint={scanApiEndpoint}
+									page={result?.page ? result?.page : 0}
+									linksPerPage={linksPerPage}
+									onItemsPerPageChange={onItemsPerPageChange}
+								/>
+
+								<div tw="w-full p-4 border-t border-gray-200">
+									<SiteFooter />
+								</div>
+							</div>
 						</Scrollbars>
 					</div>
 				) : (

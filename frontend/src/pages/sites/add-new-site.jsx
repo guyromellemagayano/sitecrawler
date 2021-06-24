@@ -34,7 +34,8 @@ const AddSite = ({ width }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
-	const pageTitle = "Add New Site";
+	const pageTitle = "Sites";
+	const pageDetailTitle = "Add New Site";
 	const homePageLink = "/sites/";
 
 	const { user } = useUser({
@@ -52,7 +53,7 @@ const AddSite = ({ width }) => {
 
 	return (
 		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageTitle : null} />
+			<NextSeo title={componentReady ? pageDetailTitle : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
@@ -89,7 +90,7 @@ const AddSite = ({ width }) => {
 									<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 										<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 											<div tw="max-w-full p-4">
-												<Breadcrumbs isOther pageTitle={pageTitle} />
+												<Breadcrumbs isSites pageTitle={pageTitle} pageDetailTitle={pageDetailTitle} />
 											</div>
 
 											<AddSiteSteps />

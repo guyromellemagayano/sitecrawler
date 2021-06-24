@@ -43,7 +43,7 @@ const VerifyUrl = (props) => {
 
 	const pageTitle = "Verify URL";
 
-	let htmlText = "1. Sign in to the administrator account of the following website: " + props?.siteData?.url + "\n\n";
+	let htmlText = "1. Sign in to the administrator account of the following website: " + props.siteData?.url + "\n\n";
 	htmlText +=
 		"2. Copy the following meta tag and add it within your website's <head> tag: " + "\n" + copyValue + "\n\n";
 	htmlText += "3. Save the changes you made in that file." + "\n\n";
@@ -118,14 +118,14 @@ const VerifyUrl = (props) => {
 	const handleEditMode = (e) => {
 		e.preventDefault();
 
-		props?.setSiteId(props?.siteData?.id);
-		props?.setEditMode(true);
-		props?.setCurrentStep(props?.currentStep - 1);
+		props.setSiteId(props.siteData?.id);
+		props.setEditMode(true);
+		props.setCurrentStep(props.currentStep - 1);
 	};
 
 	React.useEffect(() => {
-		setCopyValue('<meta name="epic-crawl-id" content="' + props?.siteData?.verification_id + '" />');
-		setSiteVerifyId(props?.siteData?.id);
+		setCopyValue('<meta name="epic-crawl-id" content="' + props.siteData?.verification_id + '" />');
+		setSiteVerifyId(props.siteData?.id);
 	}, [props]);
 
 	React.useEffect(() => {
@@ -166,7 +166,7 @@ const VerifyUrl = (props) => {
 			: null;
 	}, [successMsgLoaded, errorMsgLoaded]);
 
-	return props?.currentStep == 2 ? (
+	return props.currentStep == 2 ? (
 		<>
 			<NextSeo title={pageTitle} />
 
@@ -263,15 +263,15 @@ const VerifyUrl = (props) => {
 				<div tw="max-w-full py-4 m-auto">
 					<div tw="block mb-12">
 						<h4 tw="text-lg leading-7 font-medium text-gray-900 mb-5">
-							{VerifyUrlLabel[3].label}: {props?.siteData?.name} (
+							{VerifyUrlLabel[3].label}: {props.siteData?.name} (
 							<a
-								href={props?.siteData?.url}
+								href={props.siteData?.url}
 								target="_blank"
-								title={props?.siteData?.url}
+								title={props.siteData?.url}
 								tw="break-all text-base leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
 								rel="noreferrer"
 							>
-								{props?.siteData?.url}
+								{props.siteData?.url}
 							</a>
 							)
 						</h4>
@@ -340,7 +340,7 @@ const VerifyUrl = (props) => {
 							<div tw="flex lg:justify-between w-full">
 								{enableNextStep ? (
 									<span tw="inline-flex">
-										<Link href="/site/[id]/overview" as={`/site/${props?.siteData?.id}/overview`} passHref>
+										<Link href="/site/[id]/overview" as={`/site/${props.siteData?.id}/overview`} passHref>
 											<a
 												css={[
 													tw`cursor-pointer inline-flex sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,

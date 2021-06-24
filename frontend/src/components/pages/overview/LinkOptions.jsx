@@ -16,19 +16,14 @@ import tw from "twin.macro";
 import LinkOptionsLabel from "./labels/LinkOptions.json";
 
 // Loadable
+const SiteVerifyErrorModal = loadable(() => import("src/components/modals/SiteVerifyErrorModal"));
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
-const LinkOptions = ({
-	permissions,
-	scanResult,
-	searchKey,
-	onSearchEvent,
-	handleCrawl,
-	isCrawlStarted,
-	isCrawlFinished
-}) => {
+const LinkOptions = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
+	const [showSiteVerifyErrorModal, setShowSiteVerifyErrorModal] = React.useState(false);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
+
 	const { asPath } = useRouter();
 
 	React.useEffect(() => {
@@ -43,6 +38,7 @@ const LinkOptions = ({
 
 	return (
 		<div tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
+			<SiteVerifyErrorModal show={showSiteVerifyErrorModal} setShowErrorModal={setShowSiteVerifyErrorModal} />
 			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
 
 			<div tw="relative z-10 flex-shrink-0 flex bg-white border-b border-gray-200">
@@ -56,10 +52,10 @@ const LinkOptions = ({
 								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
 									<SearchIcon tw="h-5 w-5 text-gray-400" />
 								</div>
-								{(permissions?.includes("can_see_pages") &&
-									permissions?.includes("can_see_scripts") &&
-									permissions?.includes("can_see_stylesheets") &&
-									permissions?.includes("can_see_images")) ||
+								{(props.permissions?.includes("can_see_pages") &&
+									props.permissions?.includes("can_see_scripts") &&
+									props.permissions?.includes("can_see_stylesheets") &&
+									props.permissions?.includes("can_see_images")) ||
 								asPath.includes("links") ? (
 									<input
 										type="search"
@@ -75,8 +71,8 @@ const LinkOptions = ({
 												? LinkOptionsLabel[2].label
 												: LinkOptionsLabel[3].label
 										}
-										onKeyUp={onSearchEvent}
-										defaultValue={searchKey}
+										onKeyUp={props.onSearchEvent}
+										defaultValue={props.searchKey}
 										autoFocus
 									/>
 								) : (
@@ -90,30 +86,38 @@ const LinkOptions = ({
 						{componentReady ? (
 							<button
 								type="button"
-								disabled={isCrawlStarted && !isCrawlFinished}
+								disabled={props.isCrawlStarted && !props.isCrawlFinished}
 								onClick={
-									permissions?.includes("can_start_scan")
-										? handleCrawl
+									props.permissions?.includes("can_start_scan")
+										? props.verified
+											? props.handleCrawl
+											: () => setShowSiteVerifyErrorModal(!showSiteVerifyErrorModal)
 										: () => setShowUpgradeErrorModal(!showUpgradeErrorModal)
 								}
 								css={[
 									tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
-									permissions?.includes("can_start_scan")
-										? isCrawlStarted && !isCrawlFinished
-											? tw`bg-green-600 opacity-50 cursor-not-allowed`
-											: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
+									props.permissions?.includes("can_start_scan")
+										? props.verified
+											? props.isCrawlStarted && !props.isCrawlFinished
+												? tw`bg-green-600 opacity-50 cursor-not-allowed`
+												: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
+											: tw`bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-red-500`
 										: tw`bg-yellow-600 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
 								]}
 							>
 								<span tw="flex items-center space-x-2">
-									{permissions?.includes("can_start_scan") ? null : (
+									{props.permissions?.includes("can_start_scan") ? null : (
 										<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 									)}
 
-									{!isCrawlStarted && isCrawlFinished ? (
-										<span>{LinkOptionsLabel[4].label}</span>
+									{props.verified ? (
+										!props.isCrawlStarted && props.isCrawlFinished ? (
+											<span>{LinkOptionsLabel[4].label}</span>
+										) : (
+											<span>{LinkOptionsLabel[5].label}</span>
+										)
 									) : (
-										<span>{LinkOptionsLabel[5].label}</span>
+										<span>{LinkOptionsLabel[6].label}</span>
 									)}
 								</span>
 							</button>
