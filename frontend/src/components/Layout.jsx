@@ -3,7 +3,6 @@ import { useEffect } from "react";
 
 // External
 import "twin.macro";
-import { Scrollbars } from "react-custom-scrollbars-2";
 import LogRocket from "logrocket";
 
 const Layout = ({ user, children }) => {
@@ -20,9 +19,7 @@ const Layout = ({ user, children }) => {
 
 	return (
 		<div id="root-auth">
-			<main tw="h-screen">
-				<Scrollbars universal>{children}</Scrollbars>
-			</main>
+			<main tw="h-screen">{children}</main>
 		</div>
 	);
 };
