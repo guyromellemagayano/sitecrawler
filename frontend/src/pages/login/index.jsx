@@ -54,7 +54,7 @@ const Login = () => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<div tw="bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+			<div tw="h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 				<div tw="relative overflow-auto">
 					<div tw="relative">
 						<main tw="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
