@@ -4,5 +4,11 @@
 	},
 	{
 		"label": "No Available Sites"
+	},
+	{
+		"label": "Site"
+	},
+	{
+		"label": "Sites"
 	}
 ]

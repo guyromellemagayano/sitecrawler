@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 // External
 import tw from "twin.macro";
+import { ExternalLinkIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
@@ -188,6 +189,23 @@ const Sites = ({ width, result }) => {
 						</div>
 
 						<Scrollbars universal>
+							{site?.count > 0 && (
+								<div tw="px-4 pt-12 sm:px-6 md:px-8 m-auto md:flex md:items-center md:justify-between">
+									<div tw="flex-1 min-w-0">
+										<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
+										<div tw="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
+											<div tw="mt-2 flex items-center text-sm text-gray-500">
+												<ExternalLinkIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+												<span tw="text-sm leading-6 font-semibold text-gray-500">
+													{site?.count + " "}
+													{site?.count > 1 ? SitesLabel[3].label : SitesLabel[2].label}
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							)}
+
 							<div
 								css={[
 									tw`pb-4 h-full focus:outline-none px-4 pt-8 sm:px-6 md:px-8`,
