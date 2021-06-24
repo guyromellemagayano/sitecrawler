@@ -5,7 +5,6 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import "twin.macro";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
@@ -51,14 +50,14 @@ const AddSite = ({ width }) => {
 		return setComponentReady(false);
 	}, []);
 
-	return user ? (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
+	return (
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
-					user={user}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -101,7 +100,7 @@ const AddSite = ({ width }) => {
 										</div>
 									</div>
 
-									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white border-t border-gray-200">
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white">
 										<SiteFooter />
 									</div>
 								</div>
@@ -115,8 +114,6 @@ const AddSite = ({ width }) => {
 				)}
 			</section>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 

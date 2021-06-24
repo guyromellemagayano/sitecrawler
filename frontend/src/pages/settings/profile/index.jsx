@@ -110,7 +110,7 @@ const Profile = ({ width }) => {
 										</div>
 									</div>
 
-									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white border-t border-gray-200">
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white">
 										<SiteFooter />
 									</div>
 								</div>

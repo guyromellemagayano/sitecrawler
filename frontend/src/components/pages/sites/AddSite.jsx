@@ -22,7 +22,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [maxSiteLimit, setMaxSiteLimit] = React.useState(0);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 
-	const informationPageLink = "/add-new-site/";
+	const informationPageLink = "/sites/add-new-site/";
 
 	const handleSiteLimit = (user, site) => {
 		setSiteLimitCounter(site?.count);
