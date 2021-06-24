@@ -14,14 +14,16 @@ import tw from "twin.macro";
 import OverviewLabel from "public/labels/components/sites/Overview.json";
 
 // Loadable
-const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 const SiteDangerStatus = loadable(() => import("src/components/status/SiteDangerStatus"));
 const SiteSuccessStatus = loadable(() => import("src/components/status/SiteSuccessStatus"));
+const SiteVerifyErrorModal = loadable(() => import("src/components/modals/SiteVerifyErrorModal"));
 const SiteWarningStatus = loadable(() => import("src/components/status/SiteWarningStatus"));
 const TlsErrorModal = loadable(() => import("src/components/modals/TlsErrorModal"));
+const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
 const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, isCrawlStarted, isCrawlFinished }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
+	const [showSiteVerifyErrorModal, setShowSiteVerifyErrorModal] = React.useState(false);
 	const [showTlsErrorModal, setShowTlsErrorModal] = React.useState(false);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 
@@ -47,6 +49,7 @@ const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, i
 	return (
 		<div tw="bg-white overflow-hidden rounded-lg h-full border">
 			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
+			<SiteVerifyErrorModal show={showSiteVerifyErrorModal} setShowErrorModal={setShowSiteVerifyErrorModal} />
 			<TlsErrorModal
 				show={showTlsErrorModal}
 				setShowErrorModal={setShowTlsErrorModal}
@@ -65,27 +68,35 @@ const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, i
 									disabled={isCrawlStarted && !isCrawlFinished}
 									onClick={
 										user?.permissions.includes("can_start_scan")
-											? handleCrawl
+											? verified
+												? handleCrawl
+												: () => setShowSiteVerifyErrorModal(!showSiteVerifyErrorModal)
 											: () => setShowUpgradeErrorModal(!showUpgradeErrorModal)
 									}
 									css={[
 										tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
 										user?.permissions.includes("can_start_scan")
-											? isCrawlStarted && !isCrawlFinished
-												? tw`bg-green-600 opacity-50 cursor-not-allowed`
-												: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
+											? verified
+												? isCrawlStarted && !isCrawlFinished
+													? tw`bg-green-600 opacity-50 cursor-not-allowed`
+													: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
+												: tw`bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-red-500`
 											: tw`bg-yellow-600 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
 									]}
 								>
 									<span tw="flex items-center space-x-2">
-										{user?.permissions?.includes("can_start_scan") ? null : (
+										{user?.permissions.includes("can_start_scan") ? null : (
 											<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 										)}
 
-										{!isCrawlStarted && isCrawlFinished ? (
-											<span>{OverviewLabel[0].label}</span>
+										{verified ? (
+											!isCrawlStarted && isCrawlFinished ? (
+												<span>{OverviewLabel[0].label}</span>
+											) : (
+												<span>{OverviewLabel[6].label}</span>
+											)
 										) : (
-											<span>{OverviewLabel[6].label}</span>
+											<span>{OverviewLabel[7].label}</span>
 										)}
 									</span>
 								</button>

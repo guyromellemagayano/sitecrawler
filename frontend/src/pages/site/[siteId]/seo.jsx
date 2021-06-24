@@ -284,6 +284,7 @@ const Seo = ({ width, result }) => {
 							</div>
 
 							<LinkOptions
+								verified={siteId?.verified}
 								permissions={user?.permissions}
 								scanResult={currentScan}
 								searchKey={searchKey}

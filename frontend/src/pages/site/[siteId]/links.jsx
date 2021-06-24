@@ -248,6 +248,7 @@ const Links = ({ width, result }) => {
 							</div>
 
 							<LinkOptions
+								verified={siteId?.verified}
 								permissions={user?.permissions}
 								scanResult={currentScan}
 								searchKey={searchKey}
@@ -266,6 +267,7 @@ const Links = ({ width, result }) => {
 
 										<HeadingOptions
 											isLinks
+											verified={siteId?.verified}
 											siteId={result?.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
