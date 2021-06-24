@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // External
-import { styled } from "twin.macro";
+import "twin.macro";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
@@ -15,8 +15,6 @@ import useDeleteMethod from "src/hooks/useDeleteMethod";
 
 // Components
 import DeleteSiteSkeleton from "src/components/skeletons/DeleteSiteSkeleton";
-
-const DeleteSiteDiv = styled.div``;
 
 const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -60,7 +58,7 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 	}, [updateSite]);
 
 	return componentReady ? (
-		<DeleteSiteDiv>
+		<div>
 			<Transition
 				show={showModal}
 				tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"
@@ -153,7 +151,7 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 					</span>
 				</div>
 			</div>
-		</DeleteSiteDiv>
+		</div>
 	) : (
 		<DeleteSiteSkeleton />
 	);

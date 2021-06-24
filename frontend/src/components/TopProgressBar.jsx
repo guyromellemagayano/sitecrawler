@@ -14,7 +14,7 @@ const TopProgressBar = ({ isRouteChanging }) => {
 			<style jsx>{`
 				.container {
 					opacity: ${isFinished ? 0 : 1};
-					pointerevents: none;
+					pointer-events: none;
 					transition: opacity ${animationDuration}ms linear;
 				}
 

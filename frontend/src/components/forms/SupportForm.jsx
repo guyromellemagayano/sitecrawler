@@ -6,7 +6,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import SupportLabel from "public/labels/pages/settings/support.json";
@@ -17,8 +17,6 @@ import usePostMethod from "src/hooks/usePostMethod";
 // Components
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
-
-const SupportFormDiv = styled.div``;
 
 const SupportForm = () => {
 	const [disableSupportForm, setDisableSupportForm] = React.useState(false);
@@ -58,7 +56,7 @@ const SupportForm = () => {
 	}, [successMsgLoaded, errorMsgLoaded]);
 
 	return (
-		<SupportFormDiv>
+		<div>
 			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
@@ -177,7 +175,7 @@ const SupportForm = () => {
 					)}
 				</Formik>
 			</div>
-		</SupportFormDiv>
+		</div>
 	);
 };
 

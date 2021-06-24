@@ -23,8 +23,10 @@ import usePostMethod from "src/hooks/usePostMethod";
 import Layout from "src/components/Layout";
 
 // Components
+import LogoLabel from "src/components/labels/LogoLabel";
+
+// Loadable
 const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
-const LogoLabel = loadable(() => import("src/components/labels/LogoLabel"));
 const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
 
 const ResetPassword = () => {
@@ -32,6 +34,7 @@ const ResetPassword = () => {
 	const [successMsg, setSuccessMsg] = useState("");
 
 	const pageTitle = "Reset Password";
+	const loginLink = "/login/";
 	const resetPasswordApiEndpoint = "/api/auth/password/reset/";
 
 	return (
@@ -97,8 +100,7 @@ const ResetPassword = () => {
 												disabled={isSubmitting}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-													isSubmitting &&
-														tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none pointer-events-none`,
+													isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 													errors.email || errorMsg ? tw`border-red-300` : tw`border-gray-300`
 												]}
 												aria-describedby="email"
@@ -138,7 +140,7 @@ const ResetPassword = () => {
 					<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 						<span tw="px-2 py-5 text-gray-500">
 							{ReactHtmlParser(ResetPasswordLabel[7].label)}
-							<Link href="/sites">
+							<Link href={loginLink}>
 								<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 									{ResetPasswordLabel[8].label}
 								</a>

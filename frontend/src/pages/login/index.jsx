@@ -13,7 +13,7 @@ import * as Yup from "yup";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import LoginLabel from "public/labels/pages/login.json";
@@ -25,14 +25,14 @@ import useShowPassword from "src/hooks/useShowPassword";
 // Layout
 import Layout from "src/components/Layout";
 
-// Components
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
-const LogoLabel = loadable(() => import("src/components/labels/LogoLabel"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
+// Component
+import AppLogo from "src/components/logos/AppLogo";
+import SiteFooter from "src/components/layouts/Footer";
+import LogoLabel from "src/components/labels/LogoLabel";
 
-const LoginDiv = styled.div``;
+// Loadable
+const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
+const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
 
 const Login = () => {
 	const [errorMsg, setErrorMsg] = useState([]);
@@ -54,7 +54,7 @@ const Login = () => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<LoginDiv tw="bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+			<div tw="bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 				<div tw="relative overflow-auto">
 					<div tw="relative">
 						<main tw="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
@@ -312,7 +312,7 @@ const Login = () => {
 																			<a
 																				href="#"
 																				disabled={true}
-																				tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
+																				tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
 																			>
 																				<span tw="sr-only">{LoginLabel[17].label}</span>
 																				<FontAwesomeIcon icon={["fab", "facebook-f"]} tw="w-4 h-4" />
@@ -325,7 +325,7 @@ const Login = () => {
 																			<a
 																				href="#"
 																				disabled={true}
-																				tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
+																				tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
 																			>
 																				<span tw="sr-only">{LoginLabel[18].label}</span>
 																				<FontAwesomeIcon icon={["fab", "linkedin-in"]} tw="w-4 h-4" />
@@ -360,7 +360,7 @@ const Login = () => {
 						</main>
 					</div>
 				</div>
-			</LoginDiv>
+			</div>
 		</Layout>
 	);
 };

@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import PersonalLabel from "public/labels/components/profile/Personal.json";
@@ -22,8 +22,6 @@ const SuccessNotification = loadable(() => import("src/components/notifications/
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
-
-const SettingsPersonalDiv = styled.div``;
 
 const SettingsPersonal = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -74,7 +72,7 @@ const SettingsPersonal = (props) => {
 	}, [props.user]);
 
 	return (
-		<SettingsPersonalDiv>
+		<div>
 			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
@@ -392,7 +390,7 @@ const SettingsPersonal = (props) => {
 					)}
 				</Formik>
 			</div>
-		</SettingsPersonalDiv>
+		</div>
 	);
 };
 

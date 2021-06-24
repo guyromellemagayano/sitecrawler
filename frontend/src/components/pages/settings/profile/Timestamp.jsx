@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 // External
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import GlobalLabel from "public/labels/pages/settings/global.json";
@@ -16,8 +16,6 @@ import useUser from "src/hooks/useUser";
 // Components
 const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
 const SettingsTimestampSkeleton = loadable(() => import("src/components/skeletons/SettingsTimestampSkeleton"));
-
-const TimestampSettingsDiv = styled.div``;
 
 const TimestampSettings = ({ user }) => {
 	const [componentReady, setComponentReady] = useState(false);
@@ -70,7 +68,7 @@ const TimestampSettings = ({ user }) => {
 	}, []);
 
 	return componentReady ? (
-		<TimestampSettingsDiv>
+		<div>
 			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
@@ -154,7 +152,7 @@ const TimestampSettings = ({ user }) => {
 					</div>
 				</div>
 			</div>
-		</TimestampSettingsDiv>
+		</div>
 	) : (
 		<SettingsTimestampSkeleton />
 	);

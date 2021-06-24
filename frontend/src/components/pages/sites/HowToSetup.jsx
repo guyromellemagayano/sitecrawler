@@ -2,7 +2,7 @@
 import * as React from "react";
 
 // External
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 import loadable from "@loadable/component";
 import ReactPlayer from "react-player/lazy";
 
@@ -31,8 +31,6 @@ const tabItems = [
 	}
 ];
 
-const HowToSetupDiv = styled.div``;
-
 const HowToSetup = () => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [tabActive, setTabActive] = React.useState(1);
@@ -46,7 +44,7 @@ const HowToSetup = () => {
 	}, []);
 
 	return componentReady ? (
-		<HowToSetupDiv tw="relative py-6 px-4 sm:px-6 lg:px-8">
+		<div tw="relative py-6 px-4 sm:px-6 lg:px-8">
 			<div tw="max-w-7xl mx-auto">
 				<div tw="text-center mb-10">
 					<h3 tw="text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10">
@@ -94,7 +92,7 @@ const HowToSetup = () => {
 					</div>
 				</div>
 			</div>
-		</HowToSetupDiv>
+		</div>
 	) : (
 		<HowToSetupSkeleton />
 	);

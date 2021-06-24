@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // Components
 const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
@@ -19,8 +19,6 @@ const SuccessNotification = loadable(() => import("src/components/notifications/
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
-
-const SiteInformationDiv = styled.div``;
 
 const SiteInformation = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -58,7 +56,7 @@ const SiteInformation = (props) => {
 	}, [props.user, props.siteId]);
 
 	return (
-		<SiteInformationDiv>
+		<div>
 			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
@@ -248,7 +246,7 @@ const SiteInformation = (props) => {
 					)}
 				</Formik>
 			</div>
-		</SiteInformationDiv>
+		</div>
 	);
 };
 

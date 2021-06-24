@@ -4,7 +4,7 @@ import * as React from "react";
 // External
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import InformationLabel from "public/labels/pages/add-new-site/information.json";
@@ -12,8 +12,6 @@ import InformationLabel from "public/labels/pages/add-new-site/information.json"
 // Loadable
 const UrlInformationStep = loadable(() => import("src/components/steps/UrlInformationStep"));
 const VerifyUrlStep = loadable(() => import("src/components/steps/VerifyUrlStep"));
-
-const AddSiteStepsNav = styled.nav``;
 
 const AddSiteSteps = () => {
 	const [currentStep, setCurrentStep] = React.useState(1);
@@ -34,7 +32,7 @@ const AddSiteSteps = () => {
 
 	return (
 		<>
-			<AddSiteStepsNav aria-label={InformationLabel[18].label} tw="max-w-full p-4">
+			<nav aria-label={InformationLabel[18].label} tw="max-w-full p-4">
 				<ol tw="space-y-4 md:flex md:space-y-0 md:space-x-8">
 					{stepsData.map((value, key) => {
 						return (
@@ -53,7 +51,7 @@ const AddSiteSteps = () => {
 						);
 					})}
 				</ol>
-			</AddSiteStepsNav>
+			</nav>
 
 			<UrlInformationStep
 				currentStep={currentStep}

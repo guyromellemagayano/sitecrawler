@@ -14,7 +14,7 @@ import loadable from "@loadable/component";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import ImagesLabel from "public/labels/pages/site/images.json";
@@ -39,8 +39,6 @@ const Loader = loadable(() => import("src/components/layouts/Loader"));
 const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
 const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
 const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
-
-const ImagesDetailDiv = styled.div``;
 
 const ImagesDetail = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -111,7 +109,7 @@ const ImagesDetail = ({ width, result }) => {
 		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? imageDetailPageTitle : null} />
 
-			<ImagesDetailDiv tw="h-screen flex overflow-hidden bg-white">
+			<div tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={componentReady ? user : null}
@@ -315,7 +313,7 @@ const ImagesDetail = ({ width, result }) => {
 									</div>
 								</div>
 
-								<div tw="static bottom-0 w-full mx-auto p-4 bg-white border-t border-gray-200">
+								<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white border-t border-gray-200">
 									<SiteFooter />
 								</div>
 							</div>
@@ -326,7 +324,7 @@ const ImagesDetail = ({ width, result }) => {
 						<Loader />
 					</div>
 				)}
-			</ImagesDetailDiv>
+			</div>
 		</Layout>
 	);
 };

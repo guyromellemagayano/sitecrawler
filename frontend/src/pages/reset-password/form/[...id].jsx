@@ -24,8 +24,10 @@ import usePostMethod from "src/hooks/usePostMethod";
 import Layout from "src/components/Layout";
 
 // Components
+import LogoLabel from "src/components/labels/LogoLabel";
+
+// Loadable
 const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
-const LogoLabel = loadable(() => import("src/components/labels/LogoLabel"));
 const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
 
 const ResetPasswordForm = ({ result }) => {

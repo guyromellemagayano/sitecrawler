@@ -1,13 +1,9 @@
-// NextJS
-import Link from "next/link";
-
 // External
 import tw from "twin.macro";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
+import AppLogo from "src/components/logos/AppLogo";
 
 const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 	const siteLogoDarkSvg = "/images/logos/site-logo-dark.svg";

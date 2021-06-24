@@ -6,11 +6,11 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
-import { XIcon } from "@heroicons/react/solid";
+import "twin.macro";
 import { Transition } from "@headlessui/react";
+import { XIcon } from "@heroicons/react/solid";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
 
 // JSON
 import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json";
@@ -19,7 +19,6 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 import { useSite } from "src/hooks/useSite";
 
 // Components
-import AppLogo from "src/components/logos/AppLogo";
 import ProfileMenu from "src/components/menus/ProfileMenu";
 
 // Loadable
@@ -32,7 +31,6 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 
 	const lgScreenBreakpoint = 1024;
 	const siteApiEndpoint = "/api/site/?ordering=name&per_page=100";
-	const siteDashboardLink = "/sites";
 
 	const router = useRouter();
 	const ref = React.useRef(null);
@@ -122,16 +120,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 							</div>
 
 							<div ref={ref} tw="flex flex-col w-64 h-screen">
-								<div tw="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
-									<div tw="flex items-center flex-shrink-0 flex-row px-3 ">
-										<Link href={siteDashboardLink} passHref>
-											<a tw="p-1 block w-full cursor-pointer">
-												<AppLogo className={tw`h-8 w-auto`} src="/images/logos/site-logo-white.svg" alt="app-logo" />
-											</a>
-										</Link>
-									</div>
-									{selectedMenu}
-								</div>
+								<div tw="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">{selectedMenu}</div>
 
 								<ProfileMenu user={user ? user : null} />
 							</div>
@@ -141,18 +130,9 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 			</div>
 		</Transition>
 	) : (
-		<aside tw="hidden lg:flex lg:flex-shrink-0 bg-gray-1000">
+		<aside className="bg-gray-1000" tw="hidden lg:flex lg:flex-shrink-0">
 			<div tw="flex flex-col w-64">
-				<div tw="flex flex-col h-0 flex-1 pt-8 pb-4 overflow-y-auto">
-					<div tw="flex items-center flex-shrink-0 flex-row px-3 ">
-						<Link href={siteDashboardLink} passHref>
-							<a tw="p-1 block w-full cursor-pointer">
-								<AppLogo className={tw`h-8 w-auto`} src="/images/logos/site-logo-white.svg" alt="app-logo" />
-							</a>
-						</Link>
-					</div>
-					{selectedMenu}
-				</div>
+				<div tw="h-0 flex-1 overflow-y-auto">{selectedMenu}</div>
 
 				<ProfileMenu user={user ? user : null} />
 			</div>

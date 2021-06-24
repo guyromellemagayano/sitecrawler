@@ -14,7 +14,7 @@ import Cookies from "js-cookie";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import VerifyUrlLabel from "public/labels/pages/add-new-site/verify-url.json";
@@ -27,8 +27,6 @@ const SuccessNotification = loadable(() => import("src/components/notifications/
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
-
-const VerifyUrlDiv = styled.div``;
 
 const VerifyUrl = (props) => {
 	const [copied, setCopied] = React.useState(false);
@@ -261,7 +259,7 @@ const VerifyUrl = (props) => {
 				</div>
 			</Transition>
 
-			<VerifyUrlDiv tw="block pt-8 pb-12 px-4">
+			<div tw="block pt-8 pb-12 px-4">
 				<div tw="max-w-full py-4 m-auto">
 					<div tw="block mb-12">
 						<h4 tw="text-lg leading-7 font-medium text-gray-900 mb-5">
@@ -412,7 +410,7 @@ const VerifyUrl = (props) => {
 						</form>
 					</div>
 				</div>
-			</VerifyUrlDiv>
+			</div>
 		</>
 	) : null;
 };

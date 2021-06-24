@@ -6,10 +6,11 @@ import Link from "next/link";
 
 // External
 import { NextSeo } from "next-seo";
+import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import GlobalLabel from "public/labels/components/global/Global.json";
@@ -31,8 +32,6 @@ const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumb
 const LargePageSizeSettings = loadable(() => import("src/components/pages/settings/site/LargePageSize"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const TimestampSettings = loadable(() => import("src/components/pages/settings/profile/Timestamp"));
-
-const GlobalSettingsSection = styled.section``;
 
 const GlobalSettings = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
@@ -62,7 +61,7 @@ const GlobalSettings = ({ width }) => {
 		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<GlobalSettingsSection tw="h-screen flex overflow-hidden bg-white">
+			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={componentReady ? user : null}
@@ -91,43 +90,45 @@ const GlobalSettings = ({ width }) => {
 							</Link>
 						</div>
 
-						<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
-							<div tw="max-w-full p-4 sm:px-6 md:px-8">
-								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
-									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-										<div tw="max-w-full p-4">
-											<Breadcrumbs isOther pageTitle={pageTitle} />
+						<Scrollbars universal>
+							<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
+								<div tw="max-w-full p-4 sm:px-6 md:px-8">
+									<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
+										<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
+											<div tw="max-w-full p-4">
+												<Breadcrumbs isOther pageTitle={pageTitle} />
 
-											<div tw="pt-4 m-auto">
-												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
+												<div tw="pt-4 m-auto">
+													<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
+												</div>
+											</div>
+
+											<div tw="space-y-12 divide-y divide-gray-200">
+												<TimestampSettings
+													user={componentReady ? user : null}
+													mutateUser={componentReady ? mutateUser : null}
+												/>
+												<LargePageSizeSettings
+													user={componentReady ? user : null}
+													mutateUser={componentReady ? mutateUser : null}
+												/>
 											</div>
 										</div>
+									</div>
 
-										<div tw="space-y-12 divide-y divide-gray-200">
-											<TimestampSettings
-												user={componentReady ? user : null}
-												mutateUser={componentReady ? mutateUser : null}
-											/>
-											<LargePageSizeSettings
-												user={componentReady ? user : null}
-												mutateUser={componentReady ? mutateUser : null}
-											/>
-										</div>
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white border-t border-gray-200">
+										<SiteFooter />
 									</div>
 								</div>
-
-								<div tw="static bottom-0 w-full mx-auto p-4 bg-white border-t border-gray-200">
-									<SiteFooter />
-								</div>
-							</div>
-						</main>
+							</main>
+						</Scrollbars>
 					</div>
 				) : (
 					<div tw="mx-auto">
 						<Loader />
 					</div>
 				)}
-			</GlobalSettingsSection>
+			</section>
 		</Layout>
 	);
 };

@@ -8,7 +8,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import InformationLabel from "public/labels/pages/add-new-site/information.json";
@@ -20,8 +20,6 @@ const ErrorNotification = loadable(() => import("src/components/notifications/Er
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
-
-const UrlInformationStepDiv = styled.div``;
 
 const UrlInformationStep = (props) => {
 	const [errorMsg, setErrorMsg] = React.useState("");
@@ -186,7 +184,7 @@ const UrlInformationStep = (props) => {
 				errorMsgTitle={InformationLabel[16].label}
 			/>
 
-			<UrlInformationStepDiv tw="block pt-8 pb-12 px-4">
+			<div tw="block pt-8 pb-12 px-4">
 				<div tw="py-4 m-auto">
 					<div tw="block mb-12">
 						<span tw="inline-flex flex-col">
@@ -345,7 +343,7 @@ const UrlInformationStep = (props) => {
 						)}
 					</Formik>
 				</div>
-			</UrlInformationStepDiv>
+			</div>
 		</>
 	) : null;
 };

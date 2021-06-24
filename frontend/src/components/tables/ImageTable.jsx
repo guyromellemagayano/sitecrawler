@@ -5,10 +5,13 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { styled } from "twin.macro";
+import "twin.macro";
 import bytes from "bytes";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
+
+// JSON
+import ImageTableLabel from "./labels/ImageTable.json";
 
 // Hooks
 import { useImageDetail } from "src/hooks/useSite";
@@ -17,41 +20,6 @@ import { useImageDetail } from "src/hooks/useSite";
 import SiteDangerBadge from "src/components/badges/SiteDangerBadge";
 import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
 import SiteWarningBadge from "src/components/badges/SiteWarningBadge";
-
-const ImagesTableDiv = styled.tr`
-	td {
-		& > div {
-			max-width: 100%;
-			display: block;
-
-			& > div {
-				max-width: 100%;
-				display: block;
-			}
-		}
-	}
-
-	.link-item {
-		max-width: 100%;
-		display: block;
-
-		a {
-			display: inline-block;
-		}
-	}
-
-	.icon-status {
-		text-align: left;
-	}
-
-	.btn-detail {
-		display: inline-block;
-		padding: 8px 10px;
-		line-height: 1;
-		font-size: 0.7rem;
-		margin-top: 5px;
-	}
-`;
 
 const ImagesTable = ({ siteId, val }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -75,26 +43,11 @@ const ImagesTable = ({ siteId, val }) => {
 	}, [imageDetail]);
 
 	return (
-		<ImagesTableDiv tw="bg-white">
-			<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
+		<tr>
+			<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-200">
 				<div tw="flex items-center">
 					<div>
 						<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
-							{componentReady ? (
-								<a
-									href={val.url}
-									target="_blank"
-									title={val.url}
-									className="truncate-link"
-									tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-								>
-									{val.url}
-								</a>
-							) : (
-								<Skeleton duration={2} width={300} />
-							)}
-						</div>
-						<div tw="flex justify-start leading-5 text-gray-500">
 							{componentReady ? (
 								<Link
 									href="/site/[siteId]/images/[imageId]/details"
@@ -102,20 +55,35 @@ const ImagesTable = ({ siteId, val }) => {
 									passHref
 								>
 									<a
-										className="btn-detail"
-										tw="mr-3 outline-none focus:outline-none text-sm leading-6 font-semibold rounded text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+										className="truncate-link"
+										tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+										title={val?.url}
 									>
-										View Details
+										{val?.url}
 									</a>
 								</Link>
 							) : (
-								<Skeleton duration={2} className="btn-detail" width={82.2} height={27} />
+								<Skeleton duration={2} width={300} />
+							)}
+						</div>
+						<div tw="flex justify-start leading-5 text-gray-500">
+							{componentReady ? (
+								<a
+									href={val.url}
+									target="_blank"
+									title={ImageTableLabel[0].label}
+									tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+								>
+									{ImageTableLabel[0].label}
+								</a>
+							) : (
+								<Skeleton duration={2} width={59.73} height={24} />
 							)}
 						</div>
 					</div>
 				</div>
 			</td>
-			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				{componentReady ? (
 					bytes(val.size, {
 						thousandsSeparator: " ",
@@ -125,7 +93,7 @@ const ImagesTable = ({ siteId, val }) => {
 					<Skeleton duration={2} width={100} />
 				)}
 			</td>
-			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				{componentReady ? (
 					val.status === "OK" ? (
 						<SiteSuccessBadge text={"OK"} />
@@ -140,7 +108,7 @@ const ImagesTable = ({ siteId, val }) => {
 					<Skeleton duration={2} width={150} />
 				)}
 			</td>
-			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				{componentReady ? (
 					val.length !== 0 && (
 						<Link
@@ -162,13 +130,13 @@ const ImagesTable = ({ siteId, val }) => {
 					<Skeleton duration={2} width={120} />
 				)}
 			</td>
-			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				{componentReady ? val.missing_alts : <Skeleton duration={2} width={45} />}
 			</td>
-			<td tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-gray-500">
+			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				{componentReady ? val.occurences : <Skeleton duration={2} width={45} />}
 			</td>
-		</ImagesTableDiv>
+		</tr>
 	);
 };
 
