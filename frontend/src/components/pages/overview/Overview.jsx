@@ -8,7 +8,7 @@ import loadable from "@loadable/component";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import OverviewLabel from "public/labels/components/sites/Overview.json";
@@ -19,8 +19,6 @@ const SiteDangerStatus = loadable(() => import("src/components/status/SiteDanger
 const SiteSuccessStatus = loadable(() => import("src/components/status/SiteSuccessStatus"));
 const SiteWarningStatus = loadable(() => import("src/components/status/SiteWarningStatus"));
 const TlsErrorModal = loadable(() => import("src/components/modals/TlsErrorModal"));
-
-const SitesOverviewDiv = styled.div``;
 
 const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, isCrawlStarted, isCrawlFinished }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -47,7 +45,7 @@ const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, i
 	}, [stats]);
 
 	return (
-		<SitesOverviewDiv tw="bg-white overflow-hidden rounded-lg h-full border">
+		<div tw="bg-white overflow-hidden rounded-lg h-full border">
 			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
 			<TlsErrorModal
 				show={showTlsErrorModal}
@@ -222,7 +220,7 @@ const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, i
 					</div>
 				</dl>
 			</div>
-		</SitesOverviewDiv>
+		</div>
 	);
 };
 

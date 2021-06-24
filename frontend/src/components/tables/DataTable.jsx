@@ -15,7 +15,7 @@ import Moment from "react-moment";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import DataTableLabel from "public/labels/components/sites/DataTable.json";
@@ -27,37 +27,6 @@ import { useScan, useStats } from "src/hooks/useSite";
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
-
-const DataTableDiv = styled.tbody`
-	td {
-		& > div {
-			max-width: 100%;
-			display: block;
-
-			& > div {
-				max-width: 100%;
-				display: block;
-			}
-		}
-	}
-
-	.link-item {
-		max-width: 100%;
-		display: block;
-
-		a {
-			display: inline-block;
-			clear: both;
-		}
-	}
-
-	.truncate-link {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 20rem;
-	}
-`;
 
 const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId, disableLocalTime, mutateSite }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -503,262 +472,257 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 				</div>
 			</Transition>
 
-			<DataTableDiv tw="relative">
-				<tr>
-					<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-300">
-						<span tw="flex items-center">
-							<span>
-								{componentReady ? (
-									!siteVerified ? (
-										<>
-											<span
-												aria-label="Not Verified"
-												tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
-											></span>
-											<div tw="inline-flex flex-col justify-start items-start">
-												{scanCount > 0 ? (
-													<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
-														<a
-															className="truncate-link"
-															tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-															title={siteName}
-														>
-															{siteName}
-														</a>
-													</Link>
-												) : (
-													<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-600">
-														<p className="truncate-link">{siteName}</p>
-													</span>
-												)}
-
-												<span tw="flex justify-start text-sm leading-5 text-gray-500">
-													<button
-														type="button"
-														id="siteVerifySiteModalButton"
-														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150"
-														onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
-													>
-														{DataTableLabel[0].label}
-													</button>
-													<button
-														type="button"
-														id="siteVerifySiteModalButton"
-														tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
-														onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
-													>
-														{DataTableLabel[1].label}
-													</button>
-												</span>
-											</div>
-										</>
-									) : (
-										<>
-											<span
-												aria-label="Verified"
-												css={[
-													tw`relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-													isCrawlStarted && !isCrawlFinished ? tw`bg-yellow-400` : tw`bg-green-400`
-												]}
-											></span>
-											<div tw="inline-flex flex-col justify-start items-start">
+			<tr>
+				<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-200">
+					<span tw="flex flex-col items-start">
+						<span>
+							{componentReady ? (
+								!siteVerified ? (
+									<>
+										<span
+											aria-label="Not Verified"
+											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
+										></span>
+										<div tw="inline-flex flex-col justify-start items-start">
+											{scanCount > 0 ? (
 												<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
 													<a
 														className="truncate-link"
-														tw="max-w-2xl text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+														tw="max-w-xs text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
 														title={siteName}
 													>
 														{siteName}
 													</a>
 												</Link>
-												<span tw="flex justify-start text-sm leading-5">
-													<Link href={siteUrl} passHref>
-														<a
-															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
-															title={DataTableLabel[26].label}
-															target="_blank"
-														>
-															{DataTableLabel[26].label}
-														</a>
-													</Link>
+											) : (
+												<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-600">
+													<p className="truncate-link">{siteName}</p>
 												</span>
-											</div>
-										</>
-									)
+											)}
+
+											<span tw="flex justify-start text-sm leading-5 text-gray-500">
+												<button
+													type="button"
+													id="siteVerifySiteModalButton"
+													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150"
+													onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
+												>
+													{DataTableLabel[0].label}
+												</button>
+												<button
+													type="button"
+													id="siteVerifySiteModalButton"
+													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+													onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
+												>
+													{DataTableLabel[1].label}
+												</button>
+											</span>
+										</div>
+									</>
 								) : (
 									<>
-										<span tw="flex flex-row items-center py-2 space-x-3">
-											<Skeleton
-												circle={true}
-												duration={2}
-												width={9}
-												height={9}
-												className="relative -left-3 flex-shrink-0 inline-block"
-											/>
-											<Skeleton
-												duration={2}
-												width={150}
-												className="relative -left-3 inline-flex flex-col justify-start items-start"
-											/>
-										</span>
-										<span tw="ml-3 flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
-											<Skeleton duration={2} width={70} />
-											<Skeleton duration={2} width={73} />
-										</span>
+										<span
+											aria-label="Verified"
+											css={[
+												tw`relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+												isCrawlStarted && !isCrawlFinished ? tw`bg-yellow-400` : tw`bg-green-400`
+											]}
+										></span>
+										<div tw="inline-flex flex-col justify-start items-start">
+											<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
+												<a
+													className="truncate-link"
+													tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+													title={siteName}
+												>
+													{siteName}
+												</a>
+											</Link>
+											<span tw="flex justify-start text-sm leading-5">
+												<a
+													href={siteUrl}
+													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+													title={DataTableLabel[3].label}
+													target="_blank"
+												>
+													{DataTableLabel[3].label}
+												</a>
+											</span>
+										</div>
 									</>
-								)}
-							</span>
+								)
+							) : (
+								<>
+									<span tw="flex flex-row items-center py-2 space-x-3">
+										<Skeleton
+											circle={true}
+											duration={2}
+											width={9}
+											height={9}
+											className="relative -left-3 flex-shrink-0 inline-block"
+										/>
+										<Skeleton
+											duration={2}
+											width={150}
+											className="relative -left-3 inline-flex flex-col justify-start items-start"
+										/>
+									</span>
+									<span tw="ml-2 flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
+										<Skeleton duration={2} width={70} />
+										<Skeleton duration={2} width={73} />
+									</span>
+								</>
+							)}
 						</span>
-					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
-						{componentReady ? (
-							<span
-								css={[
-									tw`text-sm leading-5 text-gray-500`,
-									scanFinishedAt == null && scanForceHttps == null ? tw`text-yellow-500` : tw`text-green-500`
-								]}
-							>
-								{scanFinishedAt == null && scanForceHttps == null && scanCount > 1
-									? DataTableLabel[19].label
-									: scanFinishedAt !== null && scanForceHttps !== null && scanCount > 1
-									? DataTableLabel[20].label
-									: scanFinishedAt == null && scanForceHttps == null && scanCount == 1
-									? DataTableLabel[24].label
-									: scanFinishedAt !== null && scanForceHttps !== null && scanCount == 1
-									? DataTableLabel[21].label
-									: DataTableLabel[2].label}
+					</span>
+				</td>
+				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
+					{componentReady ? (
+						<span
+							css={[
+								tw`text-sm leading-5 text-gray-500`,
+								scanFinishedAt == null && scanForceHttps == null ? tw`text-yellow-500` : tw`text-green-500`
+							]}
+						>
+							{scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+								? DataTableLabel[19].label
+								: scanFinishedAt !== null && scanForceHttps !== null && scanCount > 1
+								? DataTableLabel[20].label
+								: scanFinishedAt == null && scanForceHttps == null && scanCount == 1
+								? DataTableLabel[24].label
+								: scanFinishedAt !== null && scanForceHttps !== null && scanCount == 1
+								? DataTableLabel[21].label
+								: DataTableLabel[2].label}
+						</span>
+					) : (
+						<Skeleton duration={2} width={100} />
+					)}
+				</td>
+				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
+					{componentReady ? (
+						scanCount > 0 ? (
+							<span tw="space-x-2">
+								<span tw="text-sm leading-5 text-gray-500">
+									{!disableLocalTime ? (
+										<Moment
+											calendar={calendarStrings}
+											date={
+												scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+													? scan?.results[1]?.finished_at
+													: scan?.results[0]?.finished_at
+											}
+											local
+										/>
+									) : (
+										<Moment
+											calendar={calendarStrings}
+											date={
+												scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+													? scan?.results[1]?.finished_at
+													: scan?.results[0]?.finished_at
+											}
+											utc
+										/>
+									)}
+								</span>
+								<span tw="text-sm leading-5 text-gray-500">
+									{!disableLocalTime ? (
+										<Moment
+											date={
+												scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+													? scan?.results[1]?.finished_at
+													: scan?.results[0]?.finished_at
+											}
+											format="hh:mm:ss A"
+											local
+										/>
+									) : (
+										<Moment
+											date={
+												scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+													? scan?.results[1]?.finished_at
+													: scan?.results[0]?.finished_at
+											}
+											format="hh:mm:ss A"
+											utc
+										/>
+									)}
+								</span>
+								{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
 							</span>
 						) : (
-							<Skeleton duration={2} width={100} />
-						)}
-					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5">
-						{componentReady ? (
-							scanCount > 0 ? (
-								<span tw="space-x-2">
-									<span tw="text-sm leading-5 text-gray-500">
-										{!disableLocalTime ? (
-											<Moment
-												calendar={calendarStrings}
-												date={
-													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
-														? scan?.results[1]?.finished_at
-														: scan?.results[0]?.finished_at
-												}
-												local
-											/>
-										) : (
-											<Moment
-												calendar={calendarStrings}
-												date={
-													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
-														? scan?.results[1]?.finished_at
-														: scan?.results[0]?.finished_at
-												}
-												utc
-											/>
-										)}
-									</span>
-									<span tw="text-sm leading-5 text-gray-500">
-										{!disableLocalTime ? (
-											<Moment
-												date={
-													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
-														? scan?.results[1]?.finished_at
-														: scan?.results[0]?.finished_at
-												}
-												format="hh:mm:ss A"
-												local
-											/>
-										) : (
-											<Moment
-												date={
-													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
-														? scan?.results[1]?.finished_at
-														: scan?.results[0]?.finished_at
-												}
-												format="hh:mm:ss A"
-												utc
-											/>
-										)}
-									</span>
-									{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
-								</span>
-							) : (
-								<span tw="space-x-2">
-									<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
-								</span>
-							)
+							<span tw="space-x-2">
+								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
+							</span>
+						)
+					) : (
+						<Skeleton duration={2} width={176.7} />
+					)}
+				</td>
+				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5 font-semibold">
+					{componentReady ? (
+						stats ? (
+							<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
+								<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
+									{setTotalIssues()}
+								</a>
+							</Link>
 						) : (
-							<Skeleton duration={2} width={176.7} />
-						)}
-					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
-						{componentReady ? (
-							stats ? (
-								<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
-									<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
-										{setTotalIssues()}
-									</a>
-								</Link>
-							) : (
-								0
-							)
+							0
+						)
+					) : (
+						<Skeleton duration={2} width={45} />
+					)}
+				</td>
+				<td
+					css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5 font-semibold`]}
+				>
+					{componentReady ? (
+						stats ? (
+							<Link href="/site/[siteId]/links" as={`/site/${siteId}/links`} passHref>
+								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									{stats.num_links}
+								</a>
+							</Link>
 						) : (
-							<Skeleton duration={2} width={45} />
-						)}
-					</td>
-					<td
-						css={[
-							tw`px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold`
-						]}
-					>
-						{componentReady ? (
-							stats ? (
-								<Link href="/site/[siteId]/links" as={`/site/${siteId}/links`} passHref>
-									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-										{stats.num_links}
-									</a>
-								</Link>
-							) : (
-								0
-							)
+							0
+						)
+					) : (
+						<Skeleton duration={2} width={45} />
+					)}
+				</td>
+				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5 font-semibold">
+					{componentReady ? (
+						stats ? (
+							<Link href="/site/[siteId]/pages" as={`/site/${siteId}/pages`} passHref>
+								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									{stats.num_pages}
+								</a>
+							</Link>
 						) : (
-							<Skeleton duration={2} width={45} />
-						)}
-					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
-						{componentReady ? (
-							stats ? (
-								<Link href="/site/[siteId]/pages" as={`/site/${siteId}/pages`} passHref>
-									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-										{stats.num_pages}
-									</a>
-								</Link>
-							) : (
-								0
-							)
+							0
+						)
+					) : (
+						<Skeleton duration={2} width={45} />
+					)}
+				</td>
+				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5 font-semibold">
+					{componentReady ? (
+						stats ? (
+							<Link href="/site/[siteId]/images" as={`/site/${siteId}/images`} passHref>
+								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									{stats.num_images}
+								</a>
+							</Link>
 						) : (
-							<Skeleton duration={2} width={45} />
-						)}
-					</td>
-					<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-300 text-sm text-gray-500 leading-5 font-semibold">
-						{componentReady ? (
-							stats ? (
-								<Link href="/site/[siteId]/images" as={`/site/${siteId}/images`} passHref>
-									<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-										{stats.num_images}
-									</a>
-								</Link>
-							) : (
-								0
-							)
-						) : (
-							<Skeleton duration={2} width={45} />
-						)}
-					</td>
-				</tr>
-			</DataTableDiv>
+							0
+						)
+					) : (
+						<Skeleton duration={2} width={45} />
+					)}
+				</td>
+			</tr>
 		</>
 	);
 };

@@ -5,8 +5,9 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
+import "twin.macro";
 import { NextSeo } from "next-seo";
-import { styled } from "twin.macro";
+import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
@@ -42,14 +43,6 @@ const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeEr
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
-
-const PageSection = styled.section`
-	@media only screen and (max-width: 1600px) {
-		.min-width-adjust {
-			min-width: 15rem;
-		}
-	}
-`;
 
 const Pages = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -232,7 +225,7 @@ const Pages = ({ width, result }) => {
 		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<PageSection tw="h-screen flex overflow-hidden bg-white">
+			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={componentReady ? user : null}
@@ -261,126 +254,128 @@ const Pages = ({ width, result }) => {
 							/>
 						</div>
 
-						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-							<div tw="w-full p-6 mx-auto">
-								<div className="max-w-full p-4">
-									<Breadcrumbs siteId={result?.siteId} pageTitle={PagesLabel[1].label} />
+						<Scrollbars universal>
+							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+								<div tw="w-full p-6 mx-auto">
+									<div className="max-w-full p-4">
+										<Breadcrumbs siteId={result?.siteId} pageTitle={PagesLabel[1].label} />
 
-									<HeadingOptions
-										isPages
-										siteId={result?.siteId}
-										siteName={siteId?.name}
-										siteUrl={siteId?.url}
-										scanObjId={scanObjId}
-										permissions={user?.permissions}
-										pageTitle={PagesLabel[1].label}
-										count={pages?.count}
-										dataLabel={[PagesLabel[2].label, PagesLabel[6].label, PagesLabel[3].label, PagesLabel[16].label]}
-									/>
+										<HeadingOptions
+											isPages
+											siteId={result?.siteId}
+											siteName={siteId?.name}
+											siteUrl={siteId?.url}
+											scanObjId={scanObjId}
+											permissions={user?.permissions}
+											pageTitle={PagesLabel[1].label}
+											count={pages?.count}
+											dataLabel={[PagesLabel[2].label, PagesLabel[6].label, PagesLabel[3].label, PagesLabel[16].label]}
+										/>
+									</div>
 								</div>
-							</div>
-							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-								{user?.permissions.includes("can_see_pages") &&
-								user?.permissions.includes("can_see_scripts") &&
-								user?.permissions.includes("can_see_stylesheets") ? (
-									<PageFilter
-										result={result}
-										loadQueryString={loadQueryString}
-										setLoadQueryString={setLoadQueryString}
-										mutatePages={mutatePages}
-										setPagePath={setPagePath}
-									/>
-								) : null}
+								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+									{user?.permissions.includes("can_see_pages") &&
+									user?.permissions.includes("can_see_scripts") &&
+									user?.permissions.includes("can_see_stylesheets") ? (
+										<PageFilter
+											result={result}
+											loadQueryString={loadQueryString}
+											setLoadQueryString={setLoadQueryString}
+											mutatePages={mutatePages}
+											setPagePath={setPagePath}
+										/>
+									) : null}
 
-								<div tw="pb-4">
-									<div tw="flex flex-col">
-										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-											<div tw="relative min-w-full rounded-lg border-gray-300">
-												<table tw="relative min-w-full">
-													<thead>
-														<tr>
-															{LinksPagesContent.map((site, key) => {
-																return (
-																	<th
-																		key={key}
-																		className="min-width-adjust"
-																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																	>
-																		<span tw="flex items-center justify-start">
-																			{user?.permissions.includes("can_see_pages") &&
-																			user?.permissions.includes("can_see_scripts") &&
-																			user?.permissions.includes("can_see_stylesheets") ? (
-																				site?.slug ? (
-																					<PageSorting
-																						result={result}
-																						slug={site?.slug}
-																						mutatePages={mutatePages}
-																						linksPagesContent={LinksPagesContent}
-																						setPagePath={setPagePath}
-																					/>
-																				) : null
-																			) : null}
-																			<span className="label" tw="flex items-center">
-																				{site?.label}
+									<div tw="pb-4">
+										<div tw="flex flex-col">
+											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+												<div tw="relative min-w-full rounded-lg border-gray-300">
+													<table tw="relative min-w-full">
+														<thead>
+															<tr>
+																{LinksPagesContent.map((site, key) => {
+																	return (
+																		<th
+																			key={key}
+																			className="min-width-adjust"
+																			tw="px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																		>
+																			<span tw="flex items-center justify-start">
+																				{user?.permissions.includes("can_see_pages") &&
+																				user?.permissions.includes("can_see_scripts") &&
+																				user?.permissions.includes("can_see_stylesheets") ? (
+																					site?.slug ? (
+																						<PageSorting
+																							result={result}
+																							slug={site?.slug}
+																							mutatePages={mutatePages}
+																							linksPagesContent={LinksPagesContent}
+																							setPagePath={setPagePath}
+																						/>
+																					) : null
+																				) : null}
+																				<span className="label" tw="flex items-center">
+																					{site?.label}
+																				</span>
 																			</span>
-																		</span>
-																	</th>
-																);
-															})}
-														</tr>
-													</thead>
-													<tbody tw="relative">
-														{user?.permissions.includes("can_see_pages") &&
-														user?.permissions.includes("can_see_scripts") &&
-														user?.permissions.includes("can_see_stylesheets") ? (
-															pages ? (
-																pages?.results.map((val, key) => (
-																	<PageTable key={key} siteId={result?.siteId} val={val} />
-																))
-															) : null
-														) : (
-															<PageTableSkeleton />
-														)}
-													</tbody>
-												</table>
+																		</th>
+																	);
+																})}
+															</tr>
+														</thead>
+														<tbody tw="relative">
+															{user?.permissions.includes("can_see_pages") &&
+															user?.permissions.includes("can_see_scripts") &&
+															user?.permissions.includes("can_see_stylesheets") ? (
+																pages ? (
+																	pages?.results.map((val, key) => (
+																		<PageTable key={key} siteId={result?.siteId} val={val} />
+																	))
+																) : null
+															) : (
+																<PageTableSkeleton />
+															)}
+														</tbody>
+													</table>
 
-												{user?.permissions.length == 0 ? (
-													<div tw="absolute left-0 right-0">
-														<UpgradeErrorAlert link="/settings/subscription-plans" />
-													</div>
-												) : null}
+													{user?.permissions.length == 0 ? (
+														<div tw="absolute left-0 right-0">
+															<UpgradeErrorAlert link="/settings/subscription-plans" />
+														</div>
+													) : null}
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
 
-								{user?.permissions.includes("can_see_pages") &&
-								user?.permissions.includes("can_see_scripts") &&
-								user?.permissions.includes("can_see_stylesheets") ? (
-									pages ? (
-										<MyPagination
-											href="/site/[siteId]/pages/"
-											pathName={pagePath}
-											apiEndpoint={scanApiEndpoint}
-											page={result?.page ? result?.page : 0}
-											linksPerPage={linksPerPage}
-											onItemsPerPageChange={onItemsPerPageChange}
-										/>
-									) : null
-								) : null}
+									{user?.permissions.includes("can_see_pages") &&
+									user?.permissions.includes("can_see_scripts") &&
+									user?.permissions.includes("can_see_stylesheets") ? (
+										pages ? (
+											<MyPagination
+												href="/site/[siteId]/pages/"
+												pathName={pagePath}
+												apiEndpoint={scanApiEndpoint}
+												page={result?.page ? result?.page : 0}
+												linksPerPage={linksPerPage}
+												onItemsPerPageChange={onItemsPerPageChange}
+											/>
+										) : null
+									) : null}
 
-								<div tw="static bottom-0 w-full mx-auto p-4">
-									<SiteFooter />
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
+										<SiteFooter />
+									</div>
 								</div>
-							</div>
-						</main>
+							</main>
+						</Scrollbars>
 					</div>
 				) : (
 					<div tw="mx-auto">
 						<Loader />
 					</div>
 				)}
-			</PageSection>
+			</section>
 		</Layout>
 	);
 };

@@ -10,7 +10,7 @@ import loadable from "@loadable/component";
 import PasswordStrengthBar from "react-password-strength-bar";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import PasswordLabel from "public/labels/components/profile/Password.json";
@@ -23,8 +23,6 @@ const SuccessNotification = loadable(() => import("src/components/notifications/
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
-
-const SettingsPasswordDiv = styled.div``;
 
 const SettingsPassword = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -51,7 +49,7 @@ const SettingsPassword = (props) => {
 	}, [props.user]);
 
 	return (
-		<SettingsPasswordDiv>
+		<div>
 			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
@@ -290,7 +288,7 @@ const SettingsPassword = (props) => {
 					)}
 				</Formik>
 			</div>
-		</SettingsPasswordDiv>
+		</div>
 	);
 };
 

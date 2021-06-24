@@ -3,7 +3,6 @@ import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
-import Script from "next/script";
 
 // External
 import "tailwindcss/tailwind.css";
@@ -20,7 +19,6 @@ import setupLogRocketReact from "logrocket-react";
 import appSeo from "src/enums/nextSeo";
 
 // Components
-// import GlobalStyles from "styles/components/GlobalStyles";
 import GlobalStyles from "src/styles/GlobalStyles";
 import TopProgressBar from "src/components/TopProgressBar";
 
@@ -105,8 +103,6 @@ const MyApp = ({ Component, pageProps }) => {
 	return (
 		<>
 			<DefaultSeo {...appSeo} />
-			<Script src="/scripts/beacon.js" strategy="lazyOnload" />
-			<Script src="/scripts/usetiful.js" strategy="lazyOnload" />
 			<GlobalStyles />
 			<TopProgressBar key={state.loadingKey} isRouteChanging={state.isRouteChanging} />
 			<Component {...pageProps} />

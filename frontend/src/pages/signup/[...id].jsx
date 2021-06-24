@@ -12,7 +12,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import loadable from "@loadable/component";
 import PasswordStrengthBar from "react-password-strength-bar";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // Hooks
 import SignupLabel from "public/labels/pages/signup.json";
@@ -21,12 +21,12 @@ import SignupLabel from "public/labels/pages/signup.json";
 import Layout from "src/components/Layout";
 
 // Components
-const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
-const LogoLabel = loadable(() => import("src/components/labels/LogoLabel"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
+import SiteFooter from "src/components/layouts/Footer";
+import LogoLabel from "src/components/labels/LogoLabel";
 
-const SignupFormDiv = styled.div``;
+// Loadable
+const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
+const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
 
 const SignupForm = (props) => {
 	const [errorMsg, setErrorMsg] = React.useState(null);
@@ -42,7 +42,7 @@ const SignupForm = (props) => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<SignupFormDiv tw="bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+			<div tw="bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 				<div tw="relative overflow-auto">
 					<div tw="relative">
 						<main tw="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
@@ -200,7 +200,7 @@ const SignupForm = (props) => {
 						</main>
 					</div>
 				</div>
-			</SignupFormDiv>
+			</div>
 		</Layout>
 	);
 };

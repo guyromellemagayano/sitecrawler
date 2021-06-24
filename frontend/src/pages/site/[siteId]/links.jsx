@@ -5,8 +5,9 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
+import "twin.macro";
 import { NextSeo } from "next-seo";
-import { styled } from "twin.macro";
+import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
@@ -40,14 +41,6 @@ const MyPagination = loadable(() => import("src/components/pagination/Pagination
 
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
-
-const LinksSection = styled.section`
-	@media only screen and (max-width: 1600px) {
-		.min-width-adjust {
-			min-width: 15rem;
-		}
-	}
-`;
 
 const Links = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -236,7 +229,7 @@ const Links = ({ width, result }) => {
 		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<LinksSection tw="h-screen flex overflow-hidden bg-white">
+			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={componentReady ? user : null}
@@ -265,100 +258,102 @@ const Links = ({ width, result }) => {
 							/>
 						</div>
 
-						<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
-							<div tw="w-full p-6 mx-auto">
-								<div className="max-w-full p-4">
-									<Breadcrumbs siteId={result?.siteId} pageTitle={LinksLabel[1].label} />
+						<Scrollbars universal>
+							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+								<div tw="w-full p-6 mx-auto">
+									<div className="max-w-full p-4">
+										<Breadcrumbs siteId={result?.siteId} pageTitle={LinksLabel[1].label} />
 
-									<HeadingOptions
-										isLinks
-										siteId={result?.siteId}
-										siteName={siteId?.name}
-										siteUrl={siteId?.url}
-										scanObjId={scanObjId}
-										permissions={user?.permissions}
-										pageTitle={LinksLabel[1].label}
-										count={links?.count}
-										dataLabel={[LinksLabel[2].label, LinksLabel[11].label, LinksLabel[3].label, LinksLabel[12].label]}
-									/>
+										<HeadingOptions
+											isLinks
+											siteId={result?.siteId}
+											siteName={siteId?.name}
+											siteUrl={siteId?.url}
+											scanObjId={scanObjId}
+											permissions={user?.permissions}
+											pageTitle={LinksLabel[1].label}
+											count={links?.count}
+											dataLabel={[LinksLabel[2].label, LinksLabel[11].label, LinksLabel[3].label, LinksLabel[12].label]}
+										/>
+									</div>
 								</div>
-							</div>
-							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-								<LinkFilter
-									result={result}
-									loadQueryString={loadQueryString}
-									setLoadQueryString={setLoadQueryString}
-									mutateLinks={mutateLinks}
-									setPagePath={setPagePath}
-								/>
+								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
+									<LinkFilter
+										result={result}
+										loadQueryString={loadQueryString}
+										setLoadQueryString={setLoadQueryString}
+										mutateLinks={mutateLinks}
+										setPagePath={setPagePath}
+									/>
 
-								<div tw="pb-4">
-									<div tw="flex flex-col">
-										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-											<div tw="relative min-w-full rounded-lg border-gray-300">
-												<table tw="relative min-w-full">
-													<thead>
-														<tr>
-															{LinksUrlContent.map((site, key) => {
-																return (
-																	<th
-																		key={key}
-																		className="min-width-adjust"
-																		tw="px-6 py-3 border-b border-gray-300 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																	>
-																		<div tw="flex items-center justify-start">
-																			{site?.slug ? (
-																				<LinkSorting
-																					result={result}
-																					slug={site?.slug}
-																					mutateLinks={mutateLinks}
-																					linksUrlContent={LinksUrlContent}
-																					setPagePath={setPagePath}
-																				/>
-																			) : null}
-																			<span className="label" tw="flex items-center">
-																				{site?.label}
-																			</span>
-																		</div>
-																	</th>
-																);
-															})}
-														</tr>
-													</thead>
-													<tbody tw="relative">
-														{links
-															? links?.results.map((val, key) => (
-																	<LinkTable key={key} siteId={result?.siteId} val={val} />
-															  ))
-															: null}
-													</tbody>
-												</table>
+									<div tw="pb-4">
+										<div tw="flex flex-col">
+											<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+												<div tw="relative min-w-full rounded-lg border-gray-300">
+													<table tw="relative min-w-full">
+														<thead>
+															<tr>
+																{LinksUrlContent.map((site, key) => {
+																	return (
+																		<th
+																			key={key}
+																			className="min-width-adjust"
+																			tw="px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																		>
+																			<div tw="flex items-center justify-start">
+																				{site?.slug ? (
+																					<LinkSorting
+																						result={result}
+																						slug={site?.slug}
+																						mutateLinks={mutateLinks}
+																						linksUrlContent={LinksUrlContent}
+																						setPagePath={setPagePath}
+																					/>
+																				) : null}
+																				<span className="label" tw="flex items-center">
+																					{site?.label}
+																				</span>
+																			</div>
+																		</th>
+																	);
+																})}
+															</tr>
+														</thead>
+														<tbody tw="relative">
+															{links
+																? links?.results.map((val, key) => (
+																		<LinkTable key={key} siteId={result?.siteId} val={val} />
+																  ))
+																: null}
+														</tbody>
+													</table>
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
 
-								<MyPagination
-									href="/site/[siteId]/links/"
-									pathName={pagePath}
-									apiEndpoint={scanApiEndpoint}
-									page={result?.page ? result?.page : 0}
-									linksPerPage={linksPerPage}
-									onItemsPerPageChange={onItemsPerPageChange}
-								/>
+									<MyPagination
+										href="/site/[siteId]/links/"
+										pathName={pagePath}
+										apiEndpoint={scanApiEndpoint}
+										page={result?.page ? result?.page : 0}
+										linksPerPage={linksPerPage}
+										onItemsPerPageChange={onItemsPerPageChange}
+									/>
 
-								<div tw="static bottom-0 w-full mx-auto p-4">
-									<SiteFooter />
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
+										<SiteFooter />
+									</div>
 								</div>
-							</div>
-						</main>
+							</main>
+						</Scrollbars>
 					</div>
 				) : (
 					<div tw="mx-auto">
 						<Loader />
 					</div>
 				)}
-			</LinksSection>
+			</section>
 		</Layout>
 	);
 };

@@ -1,9 +1,6 @@
 // React
 import { useState, useEffect } from "react";
 
-// NextJS
-import Link from "next/link";
-
 // External
 import "twin.macro";
 import { NextSeo } from "next-seo";
@@ -23,75 +20,43 @@ const ComingSoon = loadable(() => import("src/components/layouts/ComingSoon"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 
 const Reports = ({ width }) => {
+	const [componentReady, setComponentReady] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
-	const [pageLoaded, setPageLoaded] = useState(false);
-	const [siteData, setSiteData] = useState([]);
-	const [userData, setUserData] = useState([]);
 
 	const pageTitle = "Audit Logs";
 	const sitesApiEndpoint = "/api/site/?ordering=name";
 
-	const { user: user } = useUser({
+	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
 
-	const { site: site } = useSite({
+	const { site } = useSite({
 		endpoint: sitesApiEndpoint
 	});
 
-	useEffect(() => {
-		if (
-			user &&
-			user !== undefined &&
-			Object.keys(user).length > 0 &&
-			site &&
-			site !== undefined &&
-			Object.keys(site).length > 0
-		) {
-			setTimeout(() => {
-				setPageLoaded(true);
-			}, 500);
+	React.useEffect(() => {
+		setTimeout(() => {
+			setComponentReady(true);
+		}, 500);
 
-			setUserData(user);
-			setSiteData(site);
-		}
-	}, [user, site]);
+		return setComponentReady(false);
+	}, []);
 
-	useEffect(() => {
-		if (
-			userData &&
-			userData !== undefined &&
-			userData !== [] &&
-			Object.keys(userData).length > 0 &&
-			siteData &&
-			siteData !== undefined &&
-			siteData !== [] &&
-			Object.keys(siteData).length > 0
-		) {
-			setTimeout(() => {
-				setPageLoaded(true);
-			}, 500);
-		}
-	}, [userData, siteData]);
-
-	return pageLoaded ? (
+	return (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<ComingSoon
 					width={width}
-					user={userData}
+					user={user}
 					pageTitle={pageTitle}
-					pageLoaded={pageLoaded}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
 			</section>
 		</Layout>
-	) : (
-		<Loader />
 	);
 };
 

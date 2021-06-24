@@ -5,10 +5,10 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
+import "twin.macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
 import { SearchIcon, DownloadIcon, GlobeIcon, LinkIcon } from "@heroicons/react/solid";
-import { styled } from "twin.macro";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
@@ -18,8 +18,6 @@ import HeadingOptionsLabel from "./labels/HeadingOptions.json";
 
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
-
-const HeadingOptionsDiv = styled.div``;
 
 const HeadingOptions = ({
 	isLinks,
@@ -50,7 +48,7 @@ const HeadingOptions = ({
 	}, []);
 
 	return (
-		<HeadingOptionsDiv tw="pt-4 m-auto md:flex md:items-center md:justify-between">
+		<div tw="pt-4 m-auto md:flex md:items-center md:justify-between">
 			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
 
 			<div tw="flex-1 min-w-0">
@@ -63,7 +61,7 @@ const HeadingOptions = ({
 							target="_blank"
 							title={siteName}
 							className="truncate-link"
-							tw="max-w-2xl text-sm leading-6 font-semibold text-gray-500 hover:text-gray-900 truncate"
+							tw="max-w-lg text-sm leading-6 font-semibold text-gray-500 hover:text-gray-900 truncate"
 						>
 							{siteName}
 						</a>
@@ -131,7 +129,7 @@ const HeadingOptions = ({
 					<Skeleton duration={2} width={150} height={40} />
 				)}
 			</div>
-		</HeadingOptionsDiv>
+		</div>
 	);
 };
 

@@ -24,8 +24,10 @@ import usePostMethod from "src/hooks/usePostMethod";
 import Layout from "src/components/Layout";
 
 // Components
+import LogoLabel from "src/components/labels/LogoLabel";
+
+// Loadable
 const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
-const LogoLabel = loadable(() => import("src/components/labels/LogoLabel"));
 const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
 
 const ResetPasswordForm = ({ result }) => {
@@ -122,8 +124,7 @@ const ResetPasswordForm = ({ result }) => {
 												disabled={isSubmitting}
 												css={[
 													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-													isSubmitting &&
-														tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none pointer-events-none`,
+													isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 													errors.password1 || errorMsg ? tw`border-red-300` : tw`border-gray-300`
 												]}
 												aria-describedby="password1"
@@ -151,7 +152,7 @@ const ResetPasswordForm = ({ result }) => {
 												name="password2"
 												disabled={isSubmitting}
 												css={[
-													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:text-sm sm:leading-5`,
+													tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:leading-5`,
 													isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 													errors.password2 ? tw`border-red-300` : tw`border-gray-300`
 												]}

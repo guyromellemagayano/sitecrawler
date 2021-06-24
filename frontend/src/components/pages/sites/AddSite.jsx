@@ -5,7 +5,7 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { styled } from "twin.macro";
+import "twin.macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SearchIcon } from "@heroicons/react/solid";
 import loadable from "@loadable/component";
@@ -17,14 +17,12 @@ import AddSiteLabel from "public/labels/components/sites/AddSite.json";
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
-const AddSiteDiv = styled.div``;
-
 const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [siteLimitCounter, setSiteLimitCounter] = React.useState(0);
 	const [maxSiteLimit, setMaxSiteLimit] = React.useState(0);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 
-	const informationPageLink = "/add-new-site/";
+	const informationPageLink = "/sites/add-new-site/";
 
 	const handleSiteLimit = (user, site) => {
 		setSiteLimitCounter(site?.count);
@@ -36,7 +34,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	}, [user, site]);
 
 	return (
-		<AddSiteDiv tw="flex flex-col w-0 flex-1 overflow-hidden">
+		<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 			<UpgradeErrorModal
 				show={showUpgradeErrorModal}
 				setShowErrorModal={setShowUpgradeErrorModal}
@@ -79,13 +77,13 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 								onClick={() => setShowUpgradeErrorModal(!showUpgradeErrorModal)}
 							>
 								<span tw="flex items-center space-x-2">
-									{user.permissions &&
-									user.permissions !== undefined &&
-									user.permissions.includes("can_see_images") &&
-									user.permissions.includes("can_see_pages") &&
-									user.permissions.includes("can_see_scripts") &&
-									user.permissions.includes("can_see_stylesheets") &&
-									user.permissions.includes("can_start_scan") ? null : (
+									{user?.permissions &&
+									user?.permissions !== undefined &&
+									user?.permissions.includes("can_see_images") &&
+									user?.permissions.includes("can_see_pages") &&
+									user?.permissions.includes("can_see_scripts") &&
+									user?.permissions.includes("can_see_stylesheets") &&
+									user?.permissions.includes("can_start_scan") ? null : (
 										<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 									)}
 									<span>{AddSiteLabel[0].label}</span>
@@ -101,7 +99,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 					</div>
 				</div>
 			</div>
-		</AddSiteDiv>
+		</div>
 	);
 };
 

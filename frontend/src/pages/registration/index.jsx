@@ -12,7 +12,7 @@ import loadable from "@loadable/component";
 import PasswordStrengthBar from "react-password-strength-bar";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import RegistrationLabel from "public/labels/pages/registration.json";
@@ -24,13 +24,13 @@ import usePostMethod from "src/hooks/usePostMethod";
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
-const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
-const LogoLabel = loadable(() => import("src/components/labels/LogoLabel"));
-const SiteFooter = loadable(() => import("src/components/layouts/Footer"));
-const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
+import AppLogo from "src/components/logos/AppLogo";
+import SiteFooter from "src/components/layouts/Footer";
+import LogoLabel from "src/components/labels/LogoLabel";
 
-const RegistrationDiv = styled.div``;
+// Loadable
+const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
+const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
 
 const Registration = () => {
 	const [errorEmail, setErrorEmail] = useState(false);
@@ -45,7 +45,7 @@ const Registration = () => {
 		<Layout>
 			<NextSeo title={pageTitle} />
 
-			<RegistrationDiv tw="bg-gray-50 min-h-screen">
+			<div tw="bg-gray-50 min-h-screen">
 				<div tw="relative overflow-auto">
 					<div tw="relative pt-6 pb-12 md:pb-6">
 						<main tw="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
@@ -248,7 +248,7 @@ const Registration = () => {
 																		css={[
 																			tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 																			isSubmitting &&
-																				tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none pointer-events-none`,
+																				tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none `,
 																			errors.email || errorEmail ? tw`border-red-300` : tw`border-gray-300`
 																		]}
 																		aria-describedby="email"
@@ -304,7 +304,7 @@ const Registration = () => {
 																		name="password2"
 																		disabled={isSubmitting}
 																		css={[
-																			tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:text-sm sm:leading-5`,
+																			tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:leading-5`,
 																			isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 																			errors.password2 ? tw`border-red-300` : tw`border-gray-300`
 																		]}
@@ -384,7 +384,7 @@ const Registration = () => {
 						</main>
 					</div>
 				</div>
-			</RegistrationDiv>
+			</div>
 		</Layout>
 	);
 };

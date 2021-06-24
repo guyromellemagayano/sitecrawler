@@ -10,15 +10,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
-import tw, { styled } from "twin.macro";
+import tw from "twin.macro";
 
 // JSON
 import LinkOptionsLabel from "./labels/LinkOptions.json";
 
 // Loadable
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
-
-const LinkOptionsDiv = styled.div``;
 
 const LinkOptions = ({
 	permissions,
@@ -44,7 +42,7 @@ const LinkOptions = ({
 	}, []);
 
 	return (
-		<LinkOptionsDiv tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
+		<div tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
 			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
 
 			<div tw="relative z-10 flex-shrink-0 flex bg-white border-b border-gray-200">
@@ -125,7 +123,7 @@ const LinkOptions = ({
 					</div>
 				</div>
 			</div>
-		</LinkOptionsDiv>
+		</div>
 	);
 };
 

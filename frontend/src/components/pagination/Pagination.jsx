@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Router, { useRouter } from "next/router";
 
 // External
-import { styled } from "twin.macro";
+import "twin.macro";
 import loadable from "@loadable/component";
 import Pagination from "rc-pagination";
 import PropTypes from "prop-types";
@@ -19,68 +19,11 @@ import { removeURLParameter } from "src/helpers/functions";
 // Components
 const PaginationSkeleton = loadable(() => import("src/components/skeletons/PaginationSkeleton"));
 
-const PaginationDiv = styled.nav`
-	.rc-pagination li {
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		--text-opacity: 1;
-		color: #a0aec0;
-		color: rgba(160, 174, 192, var(--text-opacity));
-		outline: none;
-		font-size: 0.875rem;
-		line-height: 1.25rem;
-		margin-top: -1rem;
-		padding-top: 1rem;
-		font-weight: 500;
-	}
-
-	.rc-pagination li:hover {
-		color: rgba(74, 85, 104, var(--text-opacity));
-	}
-
-	.rc-pagination-item {
-		width: 40px;
-		height: 40px;
-	}
-
-	.rc-pagination-item-active {
-		border-top: 2px solid #667eea;
-		color: #667eea !important;
-	}
-
-	.rc-pagination-item a {
-		outline: none;
-	}
-
-	.rc-pagination-jump-next button:before,
-	.rc-pagination-jump-prev button:before {
-		content: "...";
-		display: block;
-	}
-
-	.rc-pagination-prev {
-		margin-right: 0.75rem;
-	}
-
-	.rc-pagination-prev button:before {
-		content: "Previous";
-		display: block;
-	}
-
-	.rc-pagination-next {
-		margin-left: 0.75rem;
-	}
-`;
-
 const PaginationLocale = {
 	items_per_page: "Rows per Page",
 	jump_to: "Goto",
 	jump_to_confirm: "Goto",
 	page: "Page",
-
-	// Pagination.jsx
 	prev_page: "Previous",
 	next_page: "Next",
 	prev_5: "Prev 5",
@@ -136,7 +79,7 @@ const MyPagination = (props) => {
 	const paginatedItems = linkNumbers.slice(offset).slice(0, props.linksPerPage);
 
 	return paginationLoaded ? (
-		<PaginationDiv tw="bg-white px-4 mb-4 py-2 lg:flex items-center justify-between sm:px-6 align-middle">
+		<div tw="bg-white px-4 mb-4 py-2 lg:flex items-center justify-between sm:px-6 align-middle">
 			<div tw="flex items-center mb-8 lg:m-0">
 				<div tw="mt-2 lg:my-0">
 					<p tw="text-center lg:text-left text-sm leading-5 text-gray-700">
@@ -173,7 +116,7 @@ const MyPagination = (props) => {
 					<select
 						onChange={props.onItemsPerPageChange}
 						value={props.linksPerPage}
-						tw="block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md sm:text-sm sm:leading-5"
+						tw="block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md sm:leading-5"
 					>
 						{values.map((val, key) => {
 							return (
@@ -185,7 +128,7 @@ const MyPagination = (props) => {
 					</select>
 				</div>
 			</div>
-		</PaginationDiv>
+		</div>
 	) : (
 		<PaginationSkeleton />
 	);
