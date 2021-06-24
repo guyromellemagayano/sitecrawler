@@ -182,7 +182,7 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 							height={lgScreenBreakpoint > width ? "530" : "530"}
 						/>
 					) : (
-						<div tw="flex flex-col items-start h-530">
+						<div tw="flex flex-col items-start" className="h-530">
 							<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
 							<div tw="flex flex-col space-y-3 mt-8">
 								{[...Array(3)].map((value, key) => (
