@@ -1,31 +1,31 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
 
 // External
-import "twin.macro";
+import tw from "twin.macro";
+import axios from "axios";
+import Cookies from "js-cookie";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
-
-// Hooks
-import useDeleteMethod from "src/hooks/useDeleteMethod";
 
 // Components
 import DeleteSiteSkeleton from "src/components/skeletons/DeleteSiteSkeleton";
 
 const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
-	const [componentReady, setComponentReady] = useState(false);
-	const [showModal, setShowModal] = useState(false);
-	const [updateSite, setUpdateSite] = useState(false);
+	const [componentReady, setComponentReady] = React.useState(false);
+	const [disableDeleteSite, setDisableDeleteSite] = React.useState(false);
+	const [showModal, setShowModal] = React.useState(false);
 
-	const siteIdApiEndpoint = "/api/site/" + siteId.id;
+	const siteIdApiEndpoint = "/api/site/" + siteId.id + "/";
+	const sitesPage = "/sites";
 
 	const router = useRouter();
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (user && user !== undefined && Object.keys(user).length > 0) {
 			setTimeout(() => {
 				setComponentReady(true);
@@ -36,29 +36,35 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 	const handleSiteDeletion = async (e) => {
 		e.preventDefault();
 
-		const response = await useDeleteMethod(siteIdApiEndpoint);
+		setDisableDeleteSite(!disableDeleteSite);
 
-		if (Math.floor(response.status / 200) === 1) {
-			setTimeout(() => {
-				setShowModal(!showModal);
-			}, 500);
+		return await axios
+			.delete(siteIdApiEndpoint, {
+				headers: {
+					"Accept": "application/json",
+					"Content-Type": "application/json",
+					"X-CSRFToken": Cookies.get("csrftoken")
+				}
+			})
+			.then((response) => {
+				Math.floor(response?.status / 200) === 1
+					? (() => {
+							setShowModal(!showModal);
+							setDisableDeleteSite(!disableDeleteSite);
 
-			setUpdateSite(true);
-		}
+							mutateSite;
+							router.push(sitesPage);
+					  })()
+					: null;
+			})
+			.catch((error) => {
+				return error?.response;
+			});
 	};
-
-	useEffect(() => {
-		if (updateSite) {
-			mutateSite;
-
-			setTimeout(() => {
-				router.push("/sites");
-			}, 1000);
-		}
-	}, [updateSite]);
 
 	return componentReady ? (
 		<div>
+			{/* TODO: Turn this into a single component */}
 			<Transition
 				show={showModal}
 				tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"
@@ -106,20 +112,32 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 							</div>
 						</div>
 						<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-							<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
+							<span tw="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
 								<button
 									type="button"
-									tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+									disabled={disableDeleteSite}
+									css={[
+										tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`,
+										disableDeleteSite
+											? tw`opacity-50 cursor-not-allowed`
+											: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
+									]}
 									aria-label="Delete Site"
-									onClick={(e) => handleSiteDeletion(e)}
+									onClick={handleSiteDeletion}
 								>
-									{settingsLabel[9].label}
+									{disableDeleteSite ? settingsLabel[23].label : settingsLabel[9].label}
 								</button>
 							</span>
 							<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
 								<button
 									type="button"
-									tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+									disabled={disableDeleteSite}
+									css={[
+										tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
+										disableDeleteSite
+											? tw`opacity-50 cursor-not-allowed`
+											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
+									]}
 									onClick={() => setShowModal(!showModal)}
 								>
 									{settingsLabel[13].label}
@@ -144,7 +162,7 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 							type="button"
 							id="siteDeleteModalButton"
 							tw="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-							onClick={() => setTimeout(() => setShowModal(!showModal), 150)}
+							onClick={() => setShowModal(!showModal)}
 						>
 							{settingsLabel[12].label}
 						</button>

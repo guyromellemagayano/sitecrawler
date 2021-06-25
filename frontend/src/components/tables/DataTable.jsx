@@ -32,20 +32,20 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [copied, setCopied] = React.useState(false);
 	const [copyValue, setCopyValue] = React.useState(`<meta name="epic-crawl-id" content="${siteVerificationId}" />`);
+	const [disableDeleteSite, setDisableDeleteSite] = React.useState(false);
 	const [disableSiteVerify, setDisableSiteVerify] = React.useState(false);
 	const [enableNextStep, setEnableNextStep] = React.useState(false);
 	const [errorMsg, setErrorMsg] = React.useState(null);
 	const [isCrawlFinished, setIsCrawlFinished] = React.useState(null);
 	const [isCrawlStarted, setIsCrawlStarted] = React.useState(null);
 	const [scanCount, setScanCount] = React.useState(null);
+	const [scanFinishedAt, setScanFinishedAt] = React.useState(null);
 	const [scanForceHttps, setScanForceHttps] = React.useState(null);
 	const [scanObjId, setScanObjId] = React.useState(null);
-	const [scanFinishedAt, setScanFinishedAt] = React.useState(null);
 	const [showDeleteSiteModal, setShowDeleteSiteModal] = React.useState(false);
 	const [showVerifySiteModal, setShowVerifySiteModal] = React.useState(false);
 	const [siteVerifyId, setSiteVerifyId] = React.useState(siteId);
 	const [successMsg, setSuccessMsg] = React.useState(null);
-	const [disableDeleteSite, setDisableDeleteSite] = React.useState(false);
 
 	const siteVerifyApiEndpoint = "/api/site/" + siteId + "/verify/";
 	const sitesPage = "/sites";
@@ -150,8 +150,10 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 		setCopied(true);
 	};
 
-	const handleSiteDeletion = async () => {
+	const handleSiteDeletion = async (e) => {
 		let siteIdApiEndpoint = "/api/site/" + siteId + "/";
+
+		e.preventDefault();
 
 		setDisableDeleteSite(!disableDeleteSite);
 
@@ -459,9 +461,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 										]}
-										onClick={() => {
-											setTimeout(() => setShowDeleteSiteModal(!showDeleteSiteModal), 150);
-										}}
+										onClick={() => setShowDeleteSiteModal(!showDeleteSiteModal)}
 									>
 										{DataTableLabel[16].label}
 									</button>
