@@ -263,6 +263,7 @@ const Pages = ({ width, result }) => {
 
 										<HeadingOptions
 											isPages
+											queryString={queryString}
 											siteId={result?.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
