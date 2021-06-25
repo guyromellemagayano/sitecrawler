@@ -276,6 +276,7 @@ const Images = ({ width, result }) => {
 
 										<HeadingOptions
 											isImages
+											queryString={queryString}
 											siteId={result?.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}

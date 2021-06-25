@@ -303,6 +303,7 @@ const Seo = ({ width, result }) => {
 
 										<HeadingOptions
 											isSeo
+											queryString={queryString}
 											siteId={result?.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}

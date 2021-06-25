@@ -267,6 +267,7 @@ const Links = ({ width, result }) => {
 
 										<HeadingOptions
 											isLinks
+											queryString={queryString}
 											verified={siteId?.verified}
 											siteId={result?.siteId}
 											siteName={siteId?.name}
