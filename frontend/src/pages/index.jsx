@@ -19,7 +19,7 @@ const Home = () => {
 	});
 
 	React.useEffect(() => {
-		user ? router.push("/sites") : router.push("/login");
+		user !== undefined ? router.push("/sites") : router.push("/login");
 	}, [user]);
 
 	return null;

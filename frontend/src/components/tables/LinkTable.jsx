@@ -120,7 +120,7 @@ const LinkTable = ({ siteId, val }) => {
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								<span className="truncate-link">
-									{linkDetail?.pages[0]?.url == val?.url ? "/sites" : linkDetail?.pages[0]?.url}
+									{linkDetail?.pages[0]?.url == val?.url ? "/" : linkDetail?.pages[0]?.url}
 								</span>
 								&nbsp;
 								{linkDetail?.pages?.length - 1 > 0 ? "+" + parseInt(linkDetail?.pages?.length - 1) : null}{" "}
