@@ -30,19 +30,23 @@ const SitesList = (props) => {
 		return { scanFinishedAt, scanForceHttps, scanCount };
 	}, [scan]);
 
-	React.useEffect(() => {
-		scanCount > 0 ? props.setHasScanResults(!props.hasScanResults) : props.setHasScanResults(props.hasScanResults);
-	}, [scanCount]);
+	const handleSiteSelection = (siteId, verified, scanCount) => {
+		return verified
+			? props.handleDropdownHandler(siteId)
+			: (() => {
+					scanCount > 0 ? props.handleDropdownHandler(siteId) : false;
+			  })();
+	};
 
 	return (
 		<li
-			id={`listbox-item-${props.key + 1}`}
+			id={`listbox-item-${props.id}`}
 			role="option"
 			css={[
 				tw`select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`,
 				props.verified || scanCount > 0 ? tw`cursor-pointer` : tw`cursor-not-allowed`
 			]}
-			onClick={props.handleDropdownHandler}
+			onClick={() => handleSiteSelection(props.id, props.verified, scanCount)}
 		>
 			<div tw="flex items-center space-x-3">
 				{props.sitesLoaded ? (
@@ -70,7 +74,7 @@ const SitesList = (props) => {
 				<span
 					css={[
 						tw`font-medium block truncate`,
-						props.verified || scanCount > 0 ? tw`text-gray-500` : tw`text-gray-300`
+						props.verified || scanCount > 0 ? tw`text-gray-500` : tw`text-gray-400`
 					]}
 				>
 					{props.sitesLoaded ? props.name : <Skeleton duration={2} width={130} />}

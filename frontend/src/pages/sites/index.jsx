@@ -88,8 +88,7 @@ const Sites = ({ width, result }) => {
 	scanApiEndpoint += queryString;
 
 	const { site, mutateSite } = useSite({
-		endpoint: scanApiEndpoint,
-		refreshInterval: 7500
+		endpoint: scanApiEndpoint
 	});
 
 	const handleSearch = async (e) => {
@@ -114,7 +113,6 @@ const Sites = ({ width, result }) => {
 		else setPagePath(`${newPath}?`);
 
 		router.push(newPath);
-		mutateSite;
 	};
 
 	const onItemsPerPageChange = (count) => {
@@ -137,7 +135,6 @@ const Sites = ({ width, result }) => {
 			else setPagePath(`${newPath}?`);
 
 			router.push(newPath);
-			mutateSite;
 		}
 	};
 

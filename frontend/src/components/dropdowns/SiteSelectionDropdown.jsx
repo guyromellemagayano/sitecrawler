@@ -18,7 +18,6 @@ const SitesList = loadable(() => import("src/components/lists/SitesList"));
 
 const SiteSelectionDropdown = (props) => {
 	const [sitesLoaded, setSitesLoaded] = React.useState(false);
-	const [hasScanResults, setHasScanResults] = React.useState(false);
 
 	const AddNewSiteLink = `/sites/add-new-site/`;
 
@@ -41,10 +40,8 @@ const SiteSelectionDropdown = (props) => {
 			: null;
 	};
 
-	const handleDropdownHandler = (siteId, verified) => {
-		if (!verified) return false;
-
-		handleSiteSelectOnLoad(siteId);
+	const handleDropdownHandler = (siteId) => {
+		return handleSiteSelectOnLoad(siteId);
 	};
 
 	React.useEffect(() => {
@@ -118,9 +115,7 @@ const SiteSelectionDropdown = (props) => {
 										id={value?.id}
 										name={value?.name}
 										verified={value?.verified}
-										handleDropdownHandler={() => handleDropdownHandler(value?.id, value?.verified)}
-										hasScanResults={hasScanResults}
-										setHasScanResults={setHasScanResults}
+										handleDropdownHandler={handleDropdownHandler}
 										sitesLoaded={sitesLoaded}
 									/>
 								);

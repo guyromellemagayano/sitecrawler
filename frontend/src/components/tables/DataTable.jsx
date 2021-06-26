@@ -3,7 +3,6 @@ import * as React from "react";
 
 // NextJS
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 // External
 import { ClipboardIcon, ExclamationIcon, InformationCircleIcon } from "@heroicons/react/solid";
@@ -36,8 +35,6 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 	const [disableSiteVerify, setDisableSiteVerify] = React.useState(false);
 	const [enableNextStep, setEnableNextStep] = React.useState(false);
 	const [errorMsg, setErrorMsg] = React.useState(null);
-	const [isCrawlFinished, setIsCrawlFinished] = React.useState(null);
-	const [isCrawlStarted, setIsCrawlStarted] = React.useState(null);
 	const [scanCount, setScanCount] = React.useState(null);
 	const [scanFinishedAt, setScanFinishedAt] = React.useState(null);
 	const [scanForceHttps, setScanForceHttps] = React.useState(null);
@@ -48,7 +45,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 	const [successMsg, setSuccessMsg] = React.useState(null);
 
 	const siteVerifyApiEndpoint = "/api/site/" + siteId + "/verify/";
-	const sitesPage = "/sites";
+	const siteApiEndpoint = "/api/site/";
 
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
@@ -57,33 +54,24 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 		sameElse: "MMMM DD, YYYY"
 	};
 
-	const router = useRouter();
-
 	const { scan } = useScan({
 		querySid: siteId
 	});
 
 	React.useEffect(() => {
 		const currentScanCount = scan?.count;
-		const currentScanObjId = currentScanCount > 1 ? scan?.results[1]?.id : scan?.results[0]?.id;
 		const currentScanFinishedAt = scan?.results[0]?.finished_at ?? null;
 		const currentScanForcehttps = scan?.results[0]?.force_https ?? null;
+		const currentScanObjId =
+			currentScanFinishedAt !== undefined && currentScanForcehttps !== undefined && currentScanCount > 1
+				? scan?.results[1]?.id
+				: scan?.results[0]?.id;
 
-		setScanObjId(currentScanObjId);
 		setScanCount(currentScanCount);
 		setScanFinishedAt(currentScanFinishedAt);
 		setScanForceHttps(currentScanForcehttps);
-
-		scanFinishedAt == null && scanForceHttps == null
-			? () => {
-					setIsCrawlStarted(true);
-					setIsCrawlFinished(false);
-			  }
-			: () => {
-					setIsCrawlStarted(false);
-					setIsCrawlFinished(true);
-			  };
-	}, [scan]);
+		setScanObjId(currentScanObjId);
+	}, [scan, siteId]);
 
 	const { stats } = useStats({
 		querySid: siteId,
@@ -170,11 +158,9 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 			? (() => {
 					setShowDeleteSiteModal(!showDeleteSiteModal);
 					setDisableDeleteSite(!disableDeleteSite);
+					mutateSite(siteApiEndpoint);
 			  })()
 			: null;
-
-		mutateSite;
-		router.push(sitesPage);
 	};
 
 	const handleSiteVerification = async (e) => {
@@ -216,9 +202,10 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 						  })();
 			  })()
 			: (() => {
-					setSubmitting(false);
-					resetForm({ values: "" });
-					setErrorMsg(DataTableLabel[15]);
+					setErrorMsg(DataTableLabel[15].label);
+					setTimeout(() => {
+						setDisableSiteVerify(false);
+					}, 500);
 			  })();
 	};
 
@@ -382,7 +369,10 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 										]}
-										onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
+										onClick={() => {
+											setShowVerifySiteModal(!showVerifySiteModal);
+											mutateSite(siteApiEndpoint);
+										}}
 									>
 										Close
 									</button>
@@ -448,7 +438,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 										]}
 										onClick={handleSiteDeletion}
 									>
-										{disableDeleteSite ? DataTableLabel[23].label : DataTableLabel[10].label}
+										{disableDeleteSite ? DataTableLabel[22].label : DataTableLabel[10].label}
 									</button>
 								</span>
 								<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
@@ -461,7 +451,10 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 										]}
-										onClick={() => setShowDeleteSiteModal(!showDeleteSiteModal)}
+										onClick={() => {
+											setShowDeleteSiteModal(!showDeleteSiteModal);
+											mutateSite(siteApiEndpoint);
+										}}
 									>
 										{DataTableLabel[16].label}
 									</button>
@@ -484,34 +477,33 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
 										></span>
 										<div tw="inline-flex flex-col justify-start items-start">
-											{scanCount > 0 ? (
-												<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
-													<a
-														className="truncate-link"
-														tw="max-w-xs text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-														title={siteName}
-													>
-														{siteName}
-													</a>
-												</Link>
-											) : (
-												<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-600">
-													<p className="truncate-link">{siteName}</p>
-												</span>
-											)}
-
+											<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-400">
+												<p className="truncate-link">{siteName}</p>
+											</span>
 											<span tw="flex justify-start text-sm leading-5 text-gray-500">
+												{scanCount > 0 ? (
+													<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
+														<a
+															type="button"
+															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-900 hover:text-indigo-900 transition ease-in-out duration-150"
+														>
+															{DataTableLabel[21].label}
+														</a>
+													</Link>
+												) : null}
+
 												<button
 													type="button"
-													id="siteVerifySiteModalButton"
-													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150"
+													css={[
+														tw`cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150`,
+														scanCount > 0 && tw`ml-3`
+													]}
 													onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
 												>
 													{DataTableLabel[0].label}
 												</button>
 												<button
 													type="button"
-													id="siteVerifySiteModalButton"
 													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
 													onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
 												>
@@ -526,14 +518,14 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 											aria-label="Verified"
 											css={[
 												tw`relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-												isCrawlStarted && !isCrawlFinished ? tw`bg-yellow-400` : tw`bg-green-400`
+												scanFinishedAt == null && scanForceHttps == null ? tw`bg-yellow-400` : tw`bg-green-400`
 											]}
 										></span>
 										<div tw="inline-flex flex-col justify-start items-start">
 											<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
 												<a
 													className="truncate-link"
-													tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+													tw="text-sm leading-6 font-semibold text-indigo-900 hover:text-indigo-900"
 													title={siteName}
 												>
 													{siteName}
@@ -576,28 +568,6 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 							)}
 						</span>
 					</span>
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
-					{componentReady ? (
-						<span
-							css={[
-								tw`text-sm leading-5 text-gray-500`,
-								scanFinishedAt == null && scanForceHttps == null ? tw`text-yellow-500` : tw`text-green-500`
-							]}
-						>
-							{scanFinishedAt == null && scanForceHttps == null && scanCount > 1
-								? DataTableLabel[19].label
-								: scanFinishedAt !== null && scanForceHttps !== null && scanCount > 1
-								? DataTableLabel[20].label
-								: scanFinishedAt == null && scanForceHttps == null && scanCount == 1
-								? DataTableLabel[24].label
-								: scanFinishedAt !== null && scanForceHttps !== null && scanCount == 1
-								? DataTableLabel[21].label
-								: DataTableLabel[2].label}
-						</span>
-					) : (
-						<Skeleton duration={2} width={100} />
-					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 					{componentReady ? (
@@ -653,7 +623,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 							</span>
 						) : (
 							<span tw="space-x-2">
-								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[22].label}</span>
+								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[19].label}</span>
 							</span>
 						)
 					) : (
@@ -661,16 +631,12 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5 font-semibold">
-					{componentReady ? (
-						stats ? (
-							<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
-								<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
-									{setTotalIssues()}
-								</a>
-							</Link>
-						) : (
-							0
-						)
+					{stats ? (
+						<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
+							<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
+								{setTotalIssues()}
+							</a>
+						</Link>
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}
@@ -678,46 +644,34 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 				<td
 					css={[tw`px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5 font-semibold`]}
 				>
-					{componentReady ? (
-						stats ? (
-							<Link href="/site/[siteId]/links" as={`/site/${siteId}/links`} passHref>
-								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-									{stats.num_links}
-								</a>
-							</Link>
-						) : (
-							0
-						)
+					{stats ? (
+						<Link href="/site/[siteId]/links" as={`/site/${siteId}/links`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats.num_links}
+							</a>
+						</Link>
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5 font-semibold">
-					{componentReady ? (
-						stats ? (
-							<Link href="/site/[siteId]/pages" as={`/site/${siteId}/pages`} passHref>
-								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-									{stats.num_pages}
-								</a>
-							</Link>
-						) : (
-							0
-						)
+					{stats ? (
+						<Link href="/site/[siteId]/pages" as={`/site/${siteId}/pages`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats.num_pages}
+							</a>
+						</Link>
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5 font-semibold">
-					{componentReady ? (
-						stats ? (
-							<Link href="/site/[siteId]/images" as={`/site/${siteId}/images`} passHref>
-								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-									{stats.num_images}
-								</a>
-							</Link>
-						) : (
-							0
-						)
+					{stats ? (
+						<Link href="/site/[siteId]/images" as={`/site/${siteId}/images`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats.num_images}
+							</a>
+						</Link>
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}

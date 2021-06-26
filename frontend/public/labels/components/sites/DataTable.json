@@ -57,24 +57,15 @@
 		"label": "Copy"
 	},
 	{
-		"label": "Recrawling..."
-	},
-	{
-		"label": "Recrawled"
-	},
-	{
-		"label": "Crawled"
-	},
-	{
 		"label": "No Available Data"
 	},
 	{
-		"label": "Deleting Site..."
-	},
-	{
-		"label": "Crawling..."
-	},
-	{
 		"label": "Loading..."
+	},
+	{
+		"label": "View Site"
+	},
+	{
+		"label": "Deleting Site..."
 	}
 ]
