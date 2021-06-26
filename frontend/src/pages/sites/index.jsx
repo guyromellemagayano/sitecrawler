@@ -250,14 +250,14 @@ const Sites = ({ width, result }) => {
 														</thead>
 
 														<tbody tw="relative">
-															{site?.results.map((val, key) => (
+															{site?.results.map((value, index) => (
 																<DataTable
-																	key={key}
-																	siteId={val.id}
-																	siteName={val.name}
-																	siteUrl={val.url}
-																	siteVerified={val.verified}
-																	siteVerificationId={val.verification_id}
+																	key={index}
+																	siteId={value.id}
+																	siteName={value.name}
+																	siteUrl={value.url}
+																	siteVerified={value.verified}
+																	siteVerificationId={value.verification_id}
 																	disableLocalTime={disableLocalTime}
 																	mutateSite={mutateSite}
 																/>
