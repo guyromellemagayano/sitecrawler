@@ -8,6 +8,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
+import { mutate } from "swr";
 import tw from "twin.macro";
 
 // JSON
@@ -39,6 +40,7 @@ const UrlInformationStep = (props) => {
 		if (Math.floor(response?.status / 200) === 1) {
 			setSubmitting(false);
 			resetForm({ values: "" });
+			mutate(endpoint);
 
 			data
 				? (() => {

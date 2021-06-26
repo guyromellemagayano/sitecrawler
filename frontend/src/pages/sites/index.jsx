@@ -88,8 +88,7 @@ const Sites = ({ width, result }) => {
 	scanApiEndpoint += queryString;
 
 	const { site, mutateSite } = useSite({
-		endpoint: scanApiEndpoint,
-		refreshInterval: 7500
+		endpoint: scanApiEndpoint
 	});
 
 	const handleSearch = async (e) => {
@@ -114,7 +113,6 @@ const Sites = ({ width, result }) => {
 		else setPagePath(`${newPath}?`);
 
 		router.push(newPath);
-		mutateSite;
 	};
 
 	const onItemsPerPageChange = (count) => {
@@ -137,7 +135,6 @@ const Sites = ({ width, result }) => {
 			else setPagePath(`${newPath}?`);
 
 			router.push(newPath);
-			mutateSite;
 		}
 	};
 
@@ -250,14 +247,14 @@ const Sites = ({ width, result }) => {
 														</thead>
 
 														<tbody tw="relative">
-															{site?.results.map((val, key) => (
+															{site?.results.map((value, index) => (
 																<DataTable
-																	key={key}
-																	siteId={val.id}
-																	siteName={val.name}
-																	siteUrl={val.url}
-																	siteVerified={val.verified}
-																	siteVerificationId={val.verification_id}
+																	key={index}
+																	siteId={value.id}
+																	siteName={value.name}
+																	siteUrl={value.url}
+																	siteVerified={value.verified}
+																	siteVerificationId={value.verification_id}
 																	disableLocalTime={disableLocalTime}
 																	mutateSite={mutateSite}
 																/>

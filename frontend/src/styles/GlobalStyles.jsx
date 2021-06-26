@@ -210,14 +210,14 @@ const CustomStyles = createGlobalStyle`
 		}
 
 		.min-width-adjust {
-			min-width: 15rem;
+			min-width: 20rem;
 		}
 	}
 
 	@media only screen and (max-width: 1400px) {
 		td {
 			&:first-child {
-				max-width: 15rem;
+				max-width: 20rem;
 			}
 		}
 	}
