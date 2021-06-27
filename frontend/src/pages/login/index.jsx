@@ -59,7 +59,7 @@ const Login = () => {
 				<Scrollbars universal>
 					<div tw="relative overflow-auto py-12 sm:px-6 lg:px-8">
 						<div tw="relative">
-							<main tw="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
+							<div tw="mt-8 sm:mt-16 md:mt-20 lg:mt-24">
 								<div tw="mx-auto max-w-screen-xl">
 									<div tw="lg:grid lg:grid-cols-12 lg:gap-8">
 										<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
@@ -359,7 +359,7 @@ const Login = () => {
 										<SiteFooter />
 									</div>
 								</div>
-							</main>
+							</div>
 						</div>
 					</div>
 				</Scrollbars>
