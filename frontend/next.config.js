@@ -27,8 +27,7 @@ const SentryWebpackPluginOptions = {
 	url: SENTRY_URL || "https://sentry.io/organizations/epic-design-labs/",
 	org: SENTRY_ORG || "epic-design-labs",
 	authToken: SENTRY_AUTH_TOKEN || "21024702c44e4bf3a4ac704e27d82a5e7cb2be29340046dc8d9c6d0b06a92ff1",
-	project: SENTRY_PROJECT || "sitecrawler-frontend",
-	silent: true
+	project: SENTRY_PROJECT || "sitecrawler-frontend"
 };
 
 module.exports = withSentryConfig(moduleExports, SentryWebpackPluginOptions);
