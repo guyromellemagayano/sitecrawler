@@ -4,6 +4,7 @@ import { Integrations as TracingIntegrations } from "@sentry/tracing";
 const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 Sentry.init({
+	environment: "production",
 	sampleRate: 0.25,
 	integrations: [new TracingIntegrations.BrowserTracing()],
 	tracesSampleRate: 1,
