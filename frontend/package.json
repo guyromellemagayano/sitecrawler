@@ -27,6 +27,7 @@
     "@loadable/component": "^5.14.1",
     "@next/eslint-plugin-next": "^11.0.1",
     "@sentry/nextjs": "^6.7.2",
+    "@sentry/tracing": "^6.7.2",
     "@stripe/react-stripe-js": "^1.4.0",
     "@stripe/stripe-js": "^1.15.1",
     "@tailwindcss/aspect-ratio": "^0.2.1",
