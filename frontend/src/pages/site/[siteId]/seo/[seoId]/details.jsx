@@ -39,6 +39,7 @@ const SeoDetail = ({ width, result }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
+	const appLogoAltText = "app-logo";
 	const calendarStrings = {
 		lastDay: "[Yesterday], dddd",
 		sameDay: "[Today], dddd",
@@ -129,9 +130,11 @@ const SeoDetail = ({ width, result }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`mt-4 mx-auto h-8 w-auto`}
+										className={tw`w-48 mt-4 h-auto`}
 										src="/images/logos/site-logo-dark.svg"
-										alt="app-logo"
+										alt={appLogoAltText}
+										width={230}
+										height={40}
 									/>
 								</a>
 							</Link>

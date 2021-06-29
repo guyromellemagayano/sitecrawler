@@ -86,6 +86,7 @@ const Subscriptions = ({ width }) => {
 	const [updatedPlanName, setUpdatedPlanName] = useState("");
 	const [userData, setUserData] = useState([]);
 
+	const appLogoAltText = "app-logo";
 	const currentSubscriptionApiEndpoint = "/api/stripe/subscription/current/";
 	const currentPaymentMethodApiEndpoint = "/api/stripe/payment-method/";
 	const homeLabel = "Home";
@@ -531,9 +532,11 @@ const Subscriptions = ({ width }) => {
 						<Link href={homePageLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
-									className={tw`mt-4 mx-auto h-8 w-auto`}
+									className={tw`w-48 mt-4 h-auto`}
 									src="/images/logos/site-logo-dark.svg"
-									alt="app-logo"
+									alt={appLogoAltText}
+									width={230}
+									height={40}
 								/>
 							</a>
 						</Link>

@@ -39,6 +39,7 @@ const SiteSettings = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
+	const appLogoAltText = "app-logo";
 	const sitesApiEndpoint = `/api/site/?ordering=name`;
 
 	const { user } = useUser({
@@ -94,9 +95,11 @@ const SiteSettings = ({ width, result }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`mt-4 mx-auto h-8 w-auto`}
+										className={tw`w-48 mt-4 h-auto`}
 										src="/images/logos/site-logo-dark.svg"
-										alt="app-logo"
+										alt={appLogoAltText}
+										width={230}
+										height={40}
 									/>
 								</a>
 							</Link>

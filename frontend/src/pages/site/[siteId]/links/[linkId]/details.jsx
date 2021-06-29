@@ -128,11 +128,7 @@ const LinkDetail = ({ width, result }) => {
 
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
-									<AppLogo
-										className={tw`mt-4 mx-auto h-8 w-auto`}
-										src="/images/logos/site-logo-dark.svg"
-										alt="app-logo"
-									/>
+									<AppLogo className={tw`w-48 mt-4 h-auto`} src="/images/logos/site-logo-dark.svg" alt="app-logo" />
 								</a>
 							</Link>
 						</div>

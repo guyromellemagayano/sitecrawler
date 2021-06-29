@@ -1,17 +1,18 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // External
 import "twin.macro";
 import { Transition } from "@headlessui/react";
 import { XCircleIcon, XIcon } from "@heroicons/react/solid";
+import PropTypes from "prop-types";
 
-const ErrorMessageAlert = ({ message = "" }) => {
-	const [isOpen, setIsOpen] = useState(true);
+const ErrorMessageAlert = (props) => {
+	const [isOpen, setIsOpen] = React.useState(true);
 
 	const dismissMessage = "Dismiss";
 
-	useEffect(() => {
+	React.useEffect(() => {
 		setTimeout(() => {
 			setIsOpen(false);
 		}, 3000);
@@ -30,14 +31,15 @@ const ErrorMessageAlert = ({ message = "" }) => {
 			leave="transition-opacity duration-150"
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
-			tw="max-w-2xl z-10 origin-top fixed right-0 left-0 bottom-0 rounded-md bg-red-100 shadow-lg p-4 mt-1 mx-auto mb-10"
+			className={props.className}
+			tw="max-w-2xl z-10 origin-top fixed right-0 left-0 rounded-md bg-red-100 shadow-lg p-4 mt-1 mx-auto mb-10"
 		>
 			<div tw="flex items-center">
 				<div tw="flex-shrink-0">
 					<XCircleIcon tw="h-5 w-5 text-red-400" />
 				</div>
 				<div tw="ml-3">
-					<h3 tw="text-sm leading-5 font-medium text-red-800 break-words">{message}</h3>
+					<h3 tw="text-sm leading-5 font-medium text-red-800 break-words">{props.message}</h3>
 				</div>
 				<div tw="ml-auto pl-3">
 					<div tw="flex items-center -mx-1.5">
@@ -54,6 +56,13 @@ const ErrorMessageAlert = ({ message = "" }) => {
 			</div>
 		</Transition>
 	);
+};
+
+ErrorMessageAlert.propTypes = {};
+
+ErrorMessageAlert.defaultProps = {
+	message: "",
+	className: "bottom-0"
 };
 
 export default ErrorMessageAlert;
