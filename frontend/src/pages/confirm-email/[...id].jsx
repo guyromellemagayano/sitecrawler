@@ -28,6 +28,7 @@ const ConfirmEmail = () => {
 	const [errorMsg, setErrorMsg] = React.useState("");
 	const [successMsg, setSuccessMsg] = React.useState("");
 
+	const appLogoAltText = "app-logo";
 	const pageTitle = "Confirm Email";
 	const confirmEmailApiEndpoint = "/api/auth/registration/verify-email/";
 	const loginPageLink = "/login/";
@@ -106,7 +107,9 @@ const ConfirmEmail = () => {
 					<AppLogo
 						className={tw`h-12 w-auto mx-auto mb-8 md:mx-auto`}
 						src="/images/logos/site-logo-dark.svg"
-						alt="app-logo"
+						alt={appLogoAltText}
+						width={230}
+						height={40}
 					/>
 
 					{!success && !failure ? (

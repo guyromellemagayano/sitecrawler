@@ -40,6 +40,7 @@ const Login = () => {
 	const [successMsg, setSuccessMsg] = useState([]);
 	const [disableLoginForm, setDisableLoginForm] = useState(false);
 
+	const appLogoAltText = "app-logo";
 	const pageTitle = "Login";
 	const loginApiEndpoint = "/api/auth/login/";
 	const googleLoginApiEndpoint = "/auth/google/login/";
@@ -65,9 +66,11 @@ const Login = () => {
 										<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
 											<div>
 												<AppLogo
-													className={tw`flex justify-start h-12 w-auto mx-auto mb-8 md:mx-auto`}
+													className={tw`flex justify-start w-60 h-12 mb-8`}
 													src="/images/logos/site-logo-dark.svg"
-													alt="app-logo"
+													alt={appLogoAltText}
+													width={320}
+													height={60}
 												/>
 												<h4 tw="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none">
 													{LoginLabel[0].label}

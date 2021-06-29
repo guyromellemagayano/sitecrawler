@@ -3,19 +3,21 @@ import Image from "next/image";
 import Link from "next/link";
 
 // External
-import "twin.macro";
+import tw, { styled } from "twin.macro";
 import PropTypes from "prop-types";
+
+const AppLogoLink = styled.a`
+	${tw`flex items-center justify-center max-w-full`}
+`;
 
 const AppLogo = (props) => {
 	const homePageLink = "/sites/";
-	const appLogoWidth = 300;
-	const appLogoHeight = 51;
 
 	return (
 		<Link href={homePageLink} passHref>
-			<a css={props.className} title="">
-				<Image src={props.src} alt={props.alt} width={appLogoWidth} height={appLogoHeight} />
-			</a>
+			<AppLogoLink css={props.className}>
+				<Image src={props.src} alt={props.alt} width={props.width} height={props.height} />
+			</AppLogoLink>
 		</Link>
 	);
 };

@@ -32,6 +32,7 @@ const PrimaryMenu = ({ user, site }) => {
 	const [selectedSiteDetails, setSelectedSiteDetails] = React.useState([]);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
+	const appLogoAltText = "app-logo";
 	const siteDashboardLink = "/sites/";
 
 	const { asPath } = useRouter();
@@ -43,7 +44,13 @@ const PrimaryMenu = ({ user, site }) => {
 				<div css={[tw`flex items-center flex-shrink-0 flex-row px-3`, user ? tw`mb-0` : tw`mb-8`]}>
 					<Link href={siteDashboardLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
-							<AppLogo className={tw`h-8 w-auto`} src="/images/logos/site-logo-white.svg" alt="app-logo" />
+							<AppLogo
+								className={tw`w-48 mt-4 h-auto`}
+								src="/images/logos/site-logo-white.svg"
+								alt={appLogoAltText}
+								width={230}
+								height={40}
+							/>
 						</a>
 					</Link>
 				</div>

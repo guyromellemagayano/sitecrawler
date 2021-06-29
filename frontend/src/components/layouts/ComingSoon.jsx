@@ -24,6 +24,7 @@ const Loader = loadable(() => import("src/components/layouts/Loader"));
 const ComingSoon = ({ width, user, pageTitle, openMobileSidebar, setOpenMobileSidebar }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 
+	const appLogoAltText = "app-logo";
 	const homePageLink = "/sites/";
 
 	React.useEffect(() => {
@@ -53,9 +54,11 @@ const ComingSoon = ({ width, user, pageTitle, openMobileSidebar, setOpenMobileSi
 						<Link href={homePageLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
-									className={tw`mt-4 mx-auto h-8 w-auto`}
+									className={tw`w-48 mt-4 h-auto`}
 									src="/images/logos/site-logo-dark.svg"
-									alt="app-logo"
+									alt={appLogoAltText}
+									width={230}
+									height={40}
 								/>
 							</a>
 						</Link>
