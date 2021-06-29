@@ -87,7 +87,7 @@ const RegistrationForm = (props) => {
 					setErrorUsername(false);
 					setErrorEmail(false);
 
-					await axios
+					return await axios
 						.post(registrationApiEndpoint, body, {
 							headers: {
 								"Accept": "application/json",
