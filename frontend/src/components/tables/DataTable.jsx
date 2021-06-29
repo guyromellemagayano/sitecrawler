@@ -63,7 +63,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 		const currentScanFinishedAt = scan?.results[0]?.finished_at ?? null;
 		const currentScanForcehttps = scan?.results[0]?.force_https ?? null;
 		const currentScanObjId =
-			currentScanFinishedAt !== undefined && currentScanForcehttps !== undefined && currentScanCount > 1
+			currentScanFinishedAt !== null && currentScanForcehttps !== null && currentScanCount > 1
 				? scan?.results[1]?.id
 				: scan?.results[0]?.id;
 
@@ -87,29 +87,29 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 	}, []);
 
 	const setLinkErrors = () => {
-		let valLength = stats?.num_non_ok_links;
+		let valLength = stats.num_non_ok_links;
 
 		return valLength;
 	};
 
 	const setPageErrors = () => {
-		let valLength = stats?.num_pages_big + stats?.num_pages_tls_non_ok;
+		let valLength = stats.num_pages_big + stats.num_pages_tls_non_ok;
 
 		return valLength;
 	};
 
 	const setImageErrors = () => {
-		let valLength = stats?.num_non_ok_images + stats?.num_images_with_missing_alts + stats?.num_images_tls_non_ok;
+		let valLength = stats.num_non_ok_images + stats.num_images_with_missing_alts + stats.num_images_tls_non_ok;
 
 		return valLength;
 	};
 
 	const setSeoErrors = () => {
 		let valLength =
-			stats?.num_pages_without_title +
-			stats?.num_pages_without_description +
-			stats?.num_pages_without_h1_first +
-			stats?.num_pages_without_h2_first;
+			stats.num_pages_without_title +
+			stats.num_pages_without_description +
+			stats.num_pages_without_h1_first +
+			stats.num_pages_without_h2_first;
 
 		return valLength;
 	};
