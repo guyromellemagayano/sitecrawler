@@ -65,7 +65,7 @@ const Login = () => {
 										<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
 											<div>
 												<AppLogo
-													className={tw`flex justify-start h-12 w-auto mx-auto mb-8 md:mx-auto lg:mx-0`}
+													className={tw`flex justify-start h-12 w-auto mx-auto mb-8 md:mx-auto`}
 													src="/images/logos/site-logo-dark.svg"
 													alt="app-logo"
 												/>

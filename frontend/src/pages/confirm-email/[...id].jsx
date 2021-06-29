@@ -1,35 +1,38 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // External
 import { NextSeo } from "next-seo";
-import loadable from "@loadable/component";
+import { Scrollbars } from "react-custom-scrollbars-2";
+import axios from "axios";
+import Cookies from "js-cookie";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // JSON
 import ConfirmEmailLabel from "public/labels/pages/confirm-email.json";
 
-// Hooks
-import usePostMethod from "src/hooks/usePostMethod";
-
 // Layout
 import Layout from "src/components/Layout";
 
 // Components
-const AppLogo = loadable(() => import("src/components/logos/AppLogo"));
+import AppLogo from "src/components/logos/AppLogo";
 
 const ConfirmEmail = () => {
-	const [success, setSuccess] = useState(false);
-	const [failure, setFailure] = useState(false);
-	const [errorMsg, setErrorMsg] = useState("");
-	const [successMsg, setSuccessMsg] = useState("");
+	const [success, setSuccess] = React.useState(false);
+	const [failure, setFailure] = React.useState(false);
+	const [errorMsg, setErrorMsg] = React.useState("");
+	const [successMsg, setSuccessMsg] = React.useState("");
 
 	const pageTitle = "Confirm Email";
 	const confirmEmailApiEndpoint = "/api/auth/registration/verify-email/";
+	const loginPageLink = "/login/";
+
+	const { query } = useRouter();
 
 	const handlePageRefresh = (e) => {
 		e.preventDefault();
@@ -38,38 +41,58 @@ const ConfirmEmail = () => {
 	};
 
 	const handleSendPostRequest = async (data) => {
-		try {
-			const response = await usePostMethod(confirmEmailApiEndpoint, data);
-
-			if (Math.floor(response.status / 200) === 1) {
-				setErrorMsg("");
-				setSuccess(!success);
-				setSuccessMsg(ConfirmEmailLabel[0].label);
-			} else {
-				if (response.data) {
-					setSuccessMsg("");
-					setFailure(!failure);
-					setErrorMsg(response.data.detail);
-				} else {
-					setErrorMsg(ConfirmEmailLabel[1].label);
+		return await axios
+			.post(confirmEmailApiEndpoint, data, {
+				headers: {
+					"Accept": "application/json",
+					"Content-Type": "application/json",
+					"X-CSRFToken": Cookies.get("csrftoken")
 				}
-			}
-		} catch (error) {
-			// FIXME: add logging solution here
-			return null;
-		}
+			})
+			.then((response) => {
+				Math.floor(response.status / 200) === 1
+					? (() => {
+							setSuccess(true);
+							setSuccessMsg(ConfirmEmailLabel[0].label);
+					  })()
+					: (() => {
+							Sentry.captureException(response);
+
+							setSuccess(false);
+							setFailure(true);
+							setSuccessMsg(ConfirmEmailLabel[1].label);
+					  })();
+			})
+			.catch((error) => {
+				error.response.data
+					? (() => {
+							error.response.data.detail
+								? (() => {
+										Sentry.captureException(error.response.data.detail);
+
+										setFailure(true);
+										setErrorMsg(error.response.data.detail);
+								  })()
+								: null;
+					  })()
+					: (() => {
+							Sentry.captureException(error.response);
+
+							setFailure(true);
+							setErrorMsg(ConfirmEmailLabel[1].label);
+					  })();
+			});
 	};
 
-	useEffect(() => {
-		let pathArray = window.location.pathname.split("/sites");
-		let secondLevelLocation = pathArray[2];
-
-		if (errorMsg) setErrorMsg("");
-		if (successMsg) setSuccessMsg("");
+	React.useEffect(() => {
+		const secondLevelLocation = query.id[0];
 
 		const body = {
 			key: secondLevelLocation
 		};
+
+		setErrorMsg("");
+		setSuccessMsg("");
 
 		handleSendPostRequest(body);
 	}, []);
@@ -81,17 +104,18 @@ const ConfirmEmail = () => {
 			<div tw="bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 				<div tw="flex flex-col justify-center sm:mx-auto sm:w-full sm:max-w-md">
 					<AppLogo
-						className={tw`h-12 w-auto mx-auto mb-8 md:mx-auto lg:mx-0`}
+						className={tw`h-12 w-auto mx-auto mb-8 md:mx-auto`}
 						src="/images/logos/site-logo-dark.svg"
 						alt="app-logo"
 					/>
+
 					{!success && !failure ? (
 						<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
 							<h3 tw="text-lg leading-6 font-medium text-gray-500">{ConfirmEmailLabel[5].label}</h3>
 						</div>
 					) : success ? (
 						<div tw="bg-white shadow rounded-lg">
-							<div tw="px-4 py-5 sm:p-6">
+							<div tw="text-center px-4 py-5 sm:p-6">
 								<h3 tw="text-lg leading-6 font-medium text-gray-900">
 									{ConfirmEmailLabel[2].label} {ConfirmEmailLabel[6].label}
 								</h3>
@@ -99,8 +123,8 @@ const ConfirmEmail = () => {
 									<p>{successMsg}</p>
 								</div>
 								<div tw="mt-5">
-									<Link href="/sites">
-										<a tw="relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white cursor-pointer bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+									<Link href={loginPageLink} passHref>
+										<a tw="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:text-sm">
 											{ConfirmEmailLabel[3].label}
 										</a>
 									</Link>
@@ -109,7 +133,7 @@ const ConfirmEmail = () => {
 						</div>
 					) : (
 						<div tw="bg-white shadow rounded-lg">
-							<div tw="px-4 py-5 sm:p-6">
+							<div tw="text-center px-4 py-5 sm:p-6">
 								<h3 tw="text-lg leading-6 font-medium text-gray-900">
 									{ConfirmEmailLabel[2].label} {ConfirmEmailLabel[7].label}
 								</h3>
@@ -119,7 +143,7 @@ const ConfirmEmail = () => {
 								<div tw="mt-5">
 									<button
 										type="button"
-										tw="relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white cursor-pointer bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+										tw="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm"
 										onClick={handlePageRefresh}
 									>
 										{ConfirmEmailLabel[4].label}
