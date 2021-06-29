@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // External
 import "twin.macro";
@@ -7,12 +7,12 @@ import { CheckCircleIcon, XIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 
-const SuccessMessageAlert = ({ message = "" }) => {
-	const [isOpen, setIsOpen] = useState(true);
+const SuccessMessageAlert = (props) => {
+	const [isOpen, setIsOpen] = React.useState(true);
 
 	const dismissMessage = "Dismiss";
 
-	useEffect(() => {
+	React.useEffect(() => {
 		setTimeout(() => {
 			setIsOpen(false);
 		}, 3000);
@@ -38,7 +38,7 @@ const SuccessMessageAlert = ({ message = "" }) => {
 					<CheckCircleIcon tw="h-5 w-5 text-green-400" />
 				</div>
 				<div tw="ml-3">
-					<h3 tw="text-sm leading-5 font-medium text-green-800 break-words">{message}</h3>
+					<h3 tw="text-sm leading-5 font-medium text-green-800 break-words">{props.message}</h3>
 				</div>
 				<div tw="ml-auto pl-3">
 					<div tw="flex items-center -mx-1.5">
@@ -58,5 +58,10 @@ const SuccessMessageAlert = ({ message = "" }) => {
 };
 
 SuccessMessageAlert.propTypes = {};
+
+SuccessMessageAlert.defaultProps = {
+	message: "",
+	className: "bottom-0"
+};
 
 export default SuccessMessageAlert;
