@@ -18,7 +18,6 @@ import RegistrationLabel from "public/labels/pages/registration.json";
 import Layout from "src/components/Layout";
 
 // Components
-import AppLogo from "src/components/logos/AppLogo";
 import SiteFooter from "src/components/layouts/Footer";
 import LogoLabel from "src/components/labels/LogoLabel";
 import RegistrationForm from "src/components/forms/RegistrationForm";
