@@ -1,9 +1,6 @@
 // React
 import * as React from "react";
 
-// NextJS
-import { useRouter } from "next/router";
-
 // External
 import "twin.macro";
 import loadable from "@loadable/component";
@@ -15,9 +12,7 @@ const DeleteSiteModal = loadable(() => import("src/components/modals/DeleteSiteM
 
 const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
-	const [showModal, setShowModal] = React.useState(false);
-
-	const router = useRouter();
+	const [showDeleteSiteModal, setShowDeleteSiteModal] = React.useState(false);
 
 	React.useEffect(() => {
 		user && siteId
@@ -34,10 +29,9 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 	return (
 		<div>
 			<DeleteSiteModal
-				showModal={showModal}
-				setShowModal={setShowModal}
+				show={showDeleteSiteModal}
+				setShowModal={setShowDeleteSiteModal}
 				mutateSite={mutateSite}
-				router={router}
 				siteId={siteId?.id}
 			/>
 
@@ -54,9 +48,9 @@ const DeleteSite = ({ user, siteId, settingsLabel, mutateSite }) => {
 						{componentReady ? (
 							<button
 								type="button"
-								id="siteDeleteModalButton"
+								id="sitedeletemodalbutton"
 								tw="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-								onClick={() => setShowModal(!showModal)}
+								onClick={() => setShowDeleteSiteModal(!showDeleteSiteModal)}
 							>
 								{settingsLabel[12].label}
 							</button>
