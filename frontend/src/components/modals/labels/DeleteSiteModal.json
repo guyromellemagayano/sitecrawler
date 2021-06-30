@@ -1,0 +1,10 @@
+[
+	{
+		"label": "Website deleted successfully!",
+		"description": "Redirecting you to Sites page..."
+	},
+	{
+		"label": "Website not deleted successfully!",
+		"description": "Please try again."
+	}
+]

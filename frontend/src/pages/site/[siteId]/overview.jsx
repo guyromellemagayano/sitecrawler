@@ -66,7 +66,7 @@ const SiteOverview = ({ width, result }) => {
 	const pageTitle = OverviewLabel[0].label;
 
 	React.useEffect(() => {
-		user !== undefined && siteId !== undefined
+		user && siteId
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
@@ -78,11 +78,11 @@ const SiteOverview = ({ width, result }) => {
 	}, [user, siteId]);
 
 	React.useEffect(() => {
-		currentScan !== null && scanCount <= 1
+		currentScan == null && scanCount <= 1
 			? (() => {
 					setScanObjId(currentScan?.id);
 			  })()
-			: previousScan !== null
+			: previousScan !== null && scanCount > 1
 			? (() => {
 					setScanObjId(previousScan?.id);
 			  })()
@@ -123,7 +123,7 @@ const SiteOverview = ({ width, result }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`w-48 mt-4 h-auto`}
+										className={tw`w-48 h-auto`}
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
 										width={230}

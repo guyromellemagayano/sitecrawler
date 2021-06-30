@@ -26,29 +26,29 @@ const SitesStats = ({ stats, scanResult }) => {
 	}, [stats]);
 
 	const setLinkErrors = () => {
-		let valLength = stats?.num_non_ok_links;
+		let valLength = stats.num_non_ok_links;
 
 		return valLength;
 	};
 
 	const setSeoErrors = () => {
 		let valLength =
-			stats?.num_pages_without_title +
-			stats?.num_pages_without_description +
-			stats?.num_pages_without_h1_first +
-			stats?.num_pages_without_h2_first;
+			stats.num_pages_without_title +
+			stats.num_pages_without_description +
+			stats.num_pages_without_h1_first +
+			stats.num_pages_without_h2_first;
 
 		return valLength;
 	};
 
 	const setPageErrors = () => {
-		let valLength = stats?.num_pages_big + stats?.num_pages_tls_non_ok;
+		let valLength = stats.num_pages_big + stats.num_pages_tls_non_ok;
 
 		return valLength;
 	};
 
 	const setImageErrors = () => {
-		let valLength = stats?.num_non_ok_images + stats?.num_images_with_missing_alts + stats?.num_images_tls_non_ok;
+		let valLength = stats.num_non_ok_images + stats.num_images_with_missing_alts + stats.num_images_tls_non_ok;
 
 		return valLength;
 	};
