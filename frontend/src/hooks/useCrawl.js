@@ -64,8 +64,8 @@ const useCrawl = ({ siteId }) => {
 		let previousScanResult = scan?.results.find((e) => e.finished_at !== null && e.force_https !== null);
 		let currentScanResult = scan?.results.find((e) => e.finished_at == null && e.force_https == null);
 
-		setCurrentScan(currentScanResult ?? null);
-		setPreviousScan(previousScanResult ?? null);
+		setCurrentScan(currentScanResult);
+		setPreviousScan(previousScanResult);
 		setScanCount(scan?.count);
 	}, [scan]);
 
