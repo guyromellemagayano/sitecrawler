@@ -62,7 +62,7 @@ const DeleteSiteModal = (props) => {
 					  })();
 			})
 			.catch((error) => {
-				Sentry.captureException(error.response);
+				Sentry.captureException(error.message);
 
 				setDisableDeleteSite(false);
 				setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabel[1].description]);

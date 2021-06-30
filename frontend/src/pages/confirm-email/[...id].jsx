@@ -77,7 +77,7 @@ const ConfirmEmail = () => {
 								: null;
 					  })()
 					: (() => {
-							Sentry.captureException(error.response);
+							Sentry.captureException(error.message);
 
 							setFailure(true);
 							setErrorMsg(ConfirmEmailLabel[1].label);
