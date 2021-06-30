@@ -59,7 +59,7 @@ const SiteSettings = ({ width, result }) => {
 	const pageTitle = SettingsLabel[1].label + " - " + siteId?.name;
 
 	React.useEffect(() => {
-		user !== undefined && siteId !== undefined
+		user && siteId
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
