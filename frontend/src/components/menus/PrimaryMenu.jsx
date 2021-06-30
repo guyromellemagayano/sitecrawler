@@ -54,7 +54,7 @@ const PrimaryMenu = ({ user, site }) => {
 						</a>
 					</Link>
 				</div>
-				<div tw="flex-1 flex flex-col overflow-y-auto">
+				<div tw="flex-1 flex flex-col">
 					<nav tw="flex-1 px-4">
 						{DashboardPages.map((value, index) => {
 							return (
