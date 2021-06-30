@@ -82,7 +82,7 @@ export const useStats = ({ querySid = 0, scanObjId = 0, refreshInterval = 0 }) =
 	} = useSWR(
 		() =>
 			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/?ordering=-finished_at&format=json"
+				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/?format=json"
 				: null,
 		useFetcher,
 		{
