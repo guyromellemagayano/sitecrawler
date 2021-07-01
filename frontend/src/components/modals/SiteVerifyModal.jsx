@@ -258,7 +258,7 @@ export const SiteVerifyModal = (props) => {
 									]}
 									onClick={() => {
 										props.setShowModal(!props.show);
-										props.mutateSite(siteApiEndpoint);
+										props.mutateSite(siteApiEndpoint, false);
 									}}
 								>
 									Close

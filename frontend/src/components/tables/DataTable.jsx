@@ -56,6 +56,8 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 		setScanFinishedAt(currentScanFinishedAt);
 		setScanForceHttps(currentScanForcehttps);
 		setScanObjId(currentScanObjId);
+
+		return { scanFinishedAt, scanForceHttps, scanCount, scanObjId };
 	}, [scan, siteId]);
 
 	const { stats } = useStats({
@@ -149,7 +151,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 													<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
 														<a
 															type="button"
-															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-900 hover:text-indigo-900 transition ease-in-out duration-150"
+															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
 														>
 															{DataTableLabel[21].label}
 														</a>
@@ -190,7 +192,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 												<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
 													<a
 														className="truncate-link"
-														tw="text-sm leading-6 font-semibold text-indigo-900 hover:text-indigo-900"
+														tw="text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500"
 														title={siteName}
 													>
 														{siteName}
