@@ -2,10 +2,10 @@
 import * as React from "react";
 
 // External
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ExclamationIcon } from "@heroicons/react/outline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import dayjs from "dayjs";
 import loadable from "@loadable/component";
-import Moment from "react-moment";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
@@ -29,11 +29,19 @@ const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, i
 	const [showTlsErrorModal, setShowTlsErrorModal] = React.useState(false);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 
+	const calendar = require("dayjs/plugin/calendar");
+	const timezone = require("dayjs/plugin/timezone");
+	const utc = require("dayjs/plugin/utc");
+
+	dayjs.extend(calendar);
+	dayjs.extend(utc);
+	dayjs.extend(timezone);
+
 	const calendarStrings = {
-		lastDay: "[Yesterday], dddd",
-		sameDay: "[Today], dddd",
-		lastWeek: "MMMM DD, YYYY",
-		sameElse: "MMMM DD, YYYY"
+		lastDay: "[Yesterday], dddd [at] hh:mm:ss A",
+		lastWeek: "MMMM DD, YYYY [at] hh:mm:ss A",
+		sameDay: "[Today], dddd [at] hh:mm:ss A",
+		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
 
 	React.useEffect(() => {
@@ -111,26 +119,16 @@ const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, i
 				<dl tw="mb-8 max-w-xl text-sm leading-5">
 					<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[2].label}</dt>
 					{componentReady ? (
-						user?.settings.disableLocalTime && disableLocalTime ? (
-							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{stats ? (
-									<span tw="space-x-2">
-										<Moment calendar={calendarStrings} date={stats?.finished_at} utc />
-										<Moment date={stats?.finished_at} format="hh:mm:ss A" utc />
-										<span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>
-									</span>
-								) : null}
-							</dd>
-						) : (
-							<dd tw="mt-1 text-sm leading-5 text-gray-900">
-								{stats ? (
-									<span tw="space-x-2">
-										<Moment calendar={calendarStrings} date={stats?.finished_at} local />
-										<Moment date={stats?.finished_at} format="hh:mm:ss A" local />
-									</span>
-								) : null}
-							</dd>
-						)
+						<dd tw="mt-1 text-sm leading-5 text-gray-900">
+							{stats ? (
+								<span tw="text-sm leading-5 text-gray-500">
+									{!disableLocalTime
+										? dayjs(stats?.finished_at).calendar(null, calendarStrings)
+										: dayjs.utc(stats?.finished_at).calendar(null, calendarStrings)}
+									<span tw="ml-2 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
+								</span>
+							) : null}
+						</dd>
 					) : (
 						<Skeleton duration={2} width={240} height={15} />
 					)}

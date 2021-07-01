@@ -10,8 +10,8 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
 import bytes from "bytes";
+import dayjs from "dayjs";
 import loadable from "@loadable/component";
-import Moment from "react-moment";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
@@ -47,13 +47,22 @@ const ImagesDetail = ({ width, result }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
+	const calendar = require("dayjs/plugin/calendar");
+	const timezone = require("dayjs/plugin/timezone");
+	const utc = require("dayjs/plugin/utc");
+
+	dayjs.extend(calendar);
+	dayjs.extend(utc);
+	dayjs.extend(timezone);
+
 	const appLogoAltText = "app-logo";
+	const homePageLink = "/sites/";
 
 	const calendarStrings = {
-		lastDay: "[Yesterday], dddd",
-		sameDay: "[Today], dddd",
-		lastWeek: "MMMM DD, YYYY",
-		sameElse: "MMMM DD, YYYY"
+		lastDay: "[Yesterday], dddd [at] hh:mm:ss A",
+		lastWeek: "MMMM DD, YYYY [at] hh:mm:ss A",
+		sameDay: "[Today], dddd [at] hh:mm:ss A",
+		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
 
 	const { user } = useUser({
@@ -70,7 +79,7 @@ const ImagesDetail = ({ width, result }) => {
 	});
 
 	React.useEffect(() => {
-		currentScan !== undefined ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
+		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 	}, [currentScan, previousScan]);
 
 	const { imageDetail } = useImageDetail({
@@ -79,11 +88,10 @@ const ImagesDetail = ({ width, result }) => {
 		linkId: result.imageId
 	});
 
-	const homePageLink = "/sites/";
-	let imageDetailPageTitle = ImagesLabel[1].label + " - " + siteId?.name + " - " + imageDetail?.url;
+	const imageDetailPageTitle = ImagesLabel[1].label + " - " + siteId?.name + " - " + imageDetail?.url;
 
 	React.useEffect(() => {
-		user !== undefined && siteId !== undefined && imageDetail !== undefined
+		user && siteId && imageDetail
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
@@ -121,14 +129,15 @@ const ImagesDetail = ({ width, result }) => {
 								/>
 							</div>
 
+							{/* TODO: Turn this into a single component */}
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`w-48 h-auto`}
+										className={tw`flex justify-start w-60 h-12 mb-8`}
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
-										width={230}
-										height={40}
+										width={320}
+										height={60}
 									/>
 								</a>
 							</Link>
@@ -167,21 +176,14 @@ const ImagesDetail = ({ width, result }) => {
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	<span tw="space-x-2">
-																		<span>
-																			{!user?.settings?.disableLocalTime ? (
-																				<Moment calendar={calendarStrings} date={imageDetail?.created_at} local />
-																			) : (
-																				<Moment calendar={calendarStrings} date={imageDetail?.created_at} utc />
-																			)}
+																		<span tw="text-sm">
+																			{!user?.settings?.disableLocalTime
+																				? dayjs(imageDetail?.created_at).calendar(null, calendarStrings)
+																				: dayjs.utc(imageDetail?.created_at).calendar(null, calendarStrings)}
 																		</span>
-																		<span>
-																			{!user?.settings?.disableLocalTime ? (
-																				<Moment date={imageDetail?.created_at} format="hh:mm:ss A" local />
-																			) : (
-																				<Moment date={imageDetail?.created_at} format="hh:mm:ss A" utc />
-																			)}
+																		<span tw="font-medium">
+																			({!user?.settings?.disableLocalTime ? dayjs.tz.guess() : "UTC"})
 																		</span>
-																		{user?.settings?.disableLocalTime && <span tw="font-medium">(UTC)</span>}
 																	</span>
 																) : (
 																	<Skeleton duration={2} width={176.7} />
@@ -252,7 +254,7 @@ const ImagesDetail = ({ width, result }) => {
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
 															<dt tw="text-sm leading-5 font-medium text-gray-500">{ImagesLabel[11].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-																{imageDetail && imageDetail !== undefined && Object.keys(imageDetail).length > 0 && (
+																{imageDetail && imageDetail && Object.keys(imageDetail).length > 0 && (
 																	<ul>
 																		{imageDetail?.pages.map((val, key) => {
 																			return componentReady ? (

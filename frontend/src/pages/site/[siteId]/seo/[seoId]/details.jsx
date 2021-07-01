@@ -7,8 +7,8 @@ import Link from "next/link";
 // External
 import { NextSeo } from "next-seo";
 import { withResizeDetector } from "react-resize-detector";
+import dayjs from "dayjs";
 import loadable from "@loadable/component";
-import Moment from "react-moment";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
@@ -39,12 +39,22 @@ const SeoDetail = ({ width, result }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
+	const calendar = require("dayjs/plugin/calendar");
+	const timezone = require("dayjs/plugin/timezone");
+	const utc = require("dayjs/plugin/utc");
+
+	dayjs.extend(calendar);
+	dayjs.extend(utc);
+	dayjs.extend(timezone);
+
 	const appLogoAltText = "app-logo";
+	const homePageLink = "/sites/";
+
 	const calendarStrings = {
-		lastDay: "[Yesterday], dddd",
-		sameDay: "[Today], dddd",
-		lastWeek: "MMMM DD, YYYY",
-		sameElse: "MMMM DD, YYYY"
+		lastDay: "[Yesterday], dddd [at] hh:mm:ss A",
+		lastWeek: "MMMM DD, YYYY [at] hh:mm:ss A",
+		sameDay: "[Today], dddd [at] hh:mm:ss A",
+		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
 
 	const { user } = useUser({
@@ -61,7 +71,7 @@ const SeoDetail = ({ width, result }) => {
 	});
 
 	React.useEffect(() => {
-		currentScan !== undefined ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
+		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 	}, [currentScan, previousScan]);
 
 	const { pageDetail } = usePageDetail({
@@ -70,8 +80,7 @@ const SeoDetail = ({ width, result }) => {
 		linkId: result.seoId
 	});
 
-	const homePageLink = "/sites/";
-	let seoDetailPageTitle = SeoLabel[1].label + " - " + siteId?.name + " - " + pageDetail?.url;
+	const seoDetailPageTitle = SeoLabel[1].label + " - " + siteId?.name + " - " + pageDetail?.url;
 
 	React.useEffect(() => {
 		pageDetail
@@ -86,7 +95,7 @@ const SeoDetail = ({ width, result }) => {
 	}, [pageDetail]);
 
 	React.useEffect(() => {
-		user !== undefined && siteId !== undefined && pageDetail !== undefined
+		user && siteId && pageDetail
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
@@ -119,14 +128,15 @@ const SeoDetail = ({ width, result }) => {
 								/>
 							</div>
 
+							{/* TODO: Turn this into a single component */}
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`w-48 h-auto`}
+										className={tw`flex justify-start w-60 h-12 mb-8`}
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
-										width={230}
-										height={40}
+										width={320}
+										height={60}
 									/>
 								</a>
 							</Link>
@@ -165,21 +175,14 @@ const SeoDetail = ({ width, result }) => {
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	<span tw="space-x-2">
-																		<span>
-																			{!user?.settings?.disableLocalTime ? (
-																				<Moment calendar={calendarStrings} date={pageDetail?.created_at} local />
-																			) : (
-																				<Moment calendar={calendarStrings} date={pageDetail?.created_at} utc />
-																			)}
+																		<span tw="text-sm">
+																			{!user?.settings?.disableLocalTime
+																				? dayjs(pageDetail?.created_at).calendar(null, calendarStrings)
+																				: dayjs.utc(pageDetail?.created_at).calendar(null, calendarStrings)}
 																		</span>
-																		<span>
-																			{!user?.settings?.disableLocalTime ? (
-																				<Moment date={pageDetail?.created_at} format="hh:mm:ss A" local />
-																			) : (
-																				<Moment date={pageDetail?.created_at} format="hh:mm:ss A" utc />
-																			)}
+																		<span tw="font-medium">
+																			({!user?.settings?.disableLocalTime ? dayjs.tz.guess() : "UTC"})
 																		</span>
-																		{user?.settings?.disableLocalTime && <span tw="font-medium">(UTC)</span>}
 																	</span>
 																) : (
 																	<Skeleton duration={2} width={176.7} />

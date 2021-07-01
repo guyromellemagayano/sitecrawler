@@ -5,8 +5,8 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
+import dayjs from "dayjs";
 import loadable from "@loadable/component";
-import Moment from "react-moment";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
@@ -32,11 +32,19 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 	const [showDeleteSiteModal, setShowDeleteSiteModal] = React.useState(false);
 	const [showVerifySiteModal, setShowVerifySiteModal] = React.useState(false);
 
+	const calendar = require("dayjs/plugin/calendar");
+	const timezone = require("dayjs/plugin/timezone");
+	const utc = require("dayjs/plugin/utc");
+
+	dayjs.extend(calendar);
+	dayjs.extend(utc);
+	dayjs.extend(timezone);
+
 	const calendarStrings = {
-		lastDay: "[Yesterday], dddd",
-		sameDay: "[Today], dddd",
-		lastWeek: "MMMM DD, YYYY",
-		sameElse: "MMMM DD, YYYY"
+		lastDay: "[Yesterday], dddd [at] hh:mm:ss A",
+		lastWeek: "MMMM DD, YYYY [at] hh:mm:ss A",
+		sameDay: "[Today], dddd [at] hh:mm:ss A",
+		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
 
 	const { scan } = useScan({
@@ -247,52 +255,23 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 						scanCount > 0 ? (
 							<span tw="space-x-2">
 								<span tw="text-sm leading-5 text-gray-500">
-									{!disableLocalTime ? (
-										<Moment
-											calendar={calendarStrings}
-											date={
+									{!disableLocalTime
+										? dayjs(
 												scanFinishedAt == null && scanForceHttps == null && scanCount > 1
 													? scan?.results[1]?.finished_at
 													: scan?.results[0]?.finished_at
-											}
-											local
-										/>
-									) : (
-										<Moment
-											calendar={calendarStrings}
-											date={
-												scanFinishedAt == null && scanForceHttps == null && scanCount > 1
-													? scan?.results[1]?.finished_at
-													: scan?.results[0]?.finished_at
-											}
-											utc
-										/>
-									)}
+										  ).calendar(null, calendarStrings)
+										: dayjs
+												.utc(
+													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+														? scan?.results[1]?.finished_at
+														: scan?.results[0]?.finished_at
+												)
+												.calendar(null, calendarStrings)}
 								</span>
-								<span tw="text-sm leading-5 text-gray-500">
-									{!disableLocalTime ? (
-										<Moment
-											date={
-												scanFinishedAt == null && scanForceHttps == null && scanCount > 1
-													? scan?.results[1]?.finished_at
-													: scan?.results[0]?.finished_at
-											}
-											format="hh:mm:ss A"
-											local
-										/>
-									) : (
-										<Moment
-											date={
-												scanFinishedAt == null && scanForceHttps == null && scanCount > 1
-													? scan?.results[1]?.finished_at
-													: scan?.results[0]?.finished_at
-											}
-											format="hh:mm:ss A"
-											utc
-										/>
-									)}
+								<span tw="text-sm leading-5 font-medium text-gray-500">
+									({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
 								</span>
-								{disableLocalTime && <span tw="text-sm leading-5 font-medium text-gray-500">(UTC)</span>}
 							</span>
 						) : (
 							<span tw="space-x-2">
