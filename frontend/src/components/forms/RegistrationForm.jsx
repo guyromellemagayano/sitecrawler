@@ -134,7 +134,7 @@ const RegistrationForm = (props) => {
 											: null;
 								  })()
 								: (() => {
-										Sentry.captureException(error.response);
+										Sentry.captureException(error.message);
 
 										setSubmitting(false);
 										resetForm({ values: "" });

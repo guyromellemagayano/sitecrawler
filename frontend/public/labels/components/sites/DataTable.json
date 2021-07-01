@@ -39,7 +39,7 @@
 		"label": "Verifying..."
 	},
 	{
-		"label": "Site verification success. Proceed to the next step."
+		"label": "Site verification success."
 	},
 	{
 		"label": "Site verification failed. You have not verify the site yet."

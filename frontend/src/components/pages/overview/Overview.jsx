@@ -16,7 +16,9 @@ import OverviewLabel from "public/labels/components/sites/Overview.json";
 // Loadable
 const SiteDangerStatus = loadable(() => import("src/components/status/SiteDangerStatus"));
 const SiteSuccessStatus = loadable(() => import("src/components/status/SiteSuccessStatus"));
-const SiteVerifyErrorModal = loadable(() => import("src/components/modals/SiteVerifyErrorModal"));
+const SiteVerifyErrorModal = loadable(() => import("src/components/modals/SiteVerifyModal"), {
+	resolveComponent: (components) => components.SiteVerifyErrorModal
+});
 const SiteWarningStatus = loadable(() => import("src/components/status/SiteWarningStatus"));
 const TlsErrorModal = loadable(() => import("src/components/modals/TlsErrorModal"));
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));

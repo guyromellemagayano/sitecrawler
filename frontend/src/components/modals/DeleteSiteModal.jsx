@@ -1,8 +1,11 @@
 // React
 import * as React from "react";
 
+// NextJS
+import { useRouter } from "next/router";
+
 // External
-import { XCircleIcon, CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/solid";
+import { XCircleIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
 import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
@@ -16,17 +19,18 @@ import SettingsLabel from "public/labels/pages/settings/settings.json";
 
 const DeleteSiteModal = (props) => {
 	const [disableDeleteSite, setDisableDeleteSite] = React.useState(false);
-	const [successMsg, setSuccessMsg] = React.useState([]);
 	const [errorMsg, setErrorMsg] = React.useState([]);
 
 	const siteIdApiEndpoint = `/api/site/${props.siteId}/`;
 	const siteApiEndpoint = `/api/site/`;
 	const sitesPage = "/sites";
 
+	const { asPath } = useRouter();
+	const router = useRouter();
+
 	React.useEffect(() => {
 		setErrorMsg([]);
-		setSuccessMsg([]);
-	}, [props.showModal]);
+	}, [props.show]);
 
 	const handleSiteDeletion = async (e) => {
 		e.preventDefault();
@@ -42,36 +46,32 @@ const DeleteSiteModal = (props) => {
 				}
 			})
 			.then((response) => {
-				Math.floor(response?.status / 200) === 1
+				Math.floor(response?.status / 204) === 1
 					? (() => {
-							mutateSite(siteApiEndpoint, false);
-							setSuccessMsg((successMsg) => [...successMsg, DeleteSiteModalLabel[0].description]);
+							setDisableDeleteSite(false);
 
-							successMsg &&
-								setTimeout(() => {
-									setShowModal(!props.showModal);
-									setDisableDeleteSite(false);
-									props.router.push(sitesPage);
-								}, 1500);
+							props.setShowModal(!props.show);
+
+							asPath.includes("settings")
+								? (() => {
+										setTimeout(() => {
+											router.push(sitesPage);
+										}, 1000);
+								  })()
+								: props.mutateSite(siteApiEndpoint);
 					  })()
 					: (() => {
-							Sentry.captureException(response);
+							Sentry.captureException(response.data);
 
 							setDisableDeleteSite(false);
 							setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabel[1].description]);
 					  })();
-			})
-			.catch((error) => {
-				Sentry.captureException(error.response);
-
-				setDisableDeleteSite(false);
-				setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabel[1].description]);
 			});
 	};
 
 	return (
 		<Transition
-			show={props.showModal}
+			show={props.show}
 			tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"
 		>
 			<Transition.Child
@@ -104,50 +104,27 @@ const DeleteSiteModal = (props) => {
 					aria-labelledby="modal-headline"
 				>
 					<div tw="sm:flex sm:items-start">
-						<div
-							css={[
-								tw`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10`,
-								Object.keys(successMsg).length > 0
-									? tw`bg-green-100`
-									: Object.keys(errorMsg).length > 0
-									? tw`bg-yellow-100`
-									: tw`bg-red-100`
-							]}
-						>
-							{Object.keys(successMsg).length > 0 ? (
-								<CheckCircleIcon tw="h-6 w-6 text-green-600" />
-							) : Object.keys(errorMsg).length > 0 ? (
-								<ExclamationCircleIcon tw="h-6 w-6 text-yellow-600" />
-							) : (
-								<XCircleIcon tw="h-6 w-6 text-red-600" />
-							)}
+						<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10 bg-red-100">
+							<XCircleIcon tw="h-6 w-6 text-red-600" />
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-								{Object.keys(successMsg).length > 0
-									? DeleteSiteModalLabel[0].label
-									: Object.keys(errorMsg).length > 0
-									? DeleteSiteModalLabel[1].label
-									: SettingsLabel[11].label}
+								{Object.keys(errorMsg).length > 0 ? DeleteSiteModalLabel[1].label : SettingsLabel[11].label}
 							</h3>
 							<div tw="mt-2">
 								<p tw="text-sm leading-5 text-gray-500">
-									{Object.keys(successMsg).length > 0
-										? successMsg[0]
-										: Object.keys(errorMsg).length > 0
-										? errorMsg[0]
-										: SettingsLabel[11].description}
+									{Object.keys(errorMsg).length > 0 ? errorMsg[0] : SettingsLabel[11].description}
 								</p>
 							</div>
 						</div>
 					</div>
-					<div css={[Object.keys(successMsg).length > 0 ? tw`hidden` : tw`mt-5 sm:mt-4 sm:flex sm:flex-row-reverse`]}>
+					<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 						<span tw="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
 							<button
 								type="button"
-								disabled={disableDeleteSite}
+								disabled={props.disableDeleteSite}
 								css={[
-									tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`,
+									tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150`,
 									disableDeleteSite
 										? tw`opacity-50 cursor-not-allowed`
 										: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
@@ -161,14 +138,14 @@ const DeleteSiteModal = (props) => {
 						<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
 							<button
 								type="button"
-								disabled={disableDeleteSite}
+								disabled={props.disableDeleteSite}
 								css={[
 									tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
 									disableDeleteSite
 										? tw`opacity-50 cursor-not-allowed`
 										: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 								]}
-								onClick={() => props.setShowModal(!props.showModal)}
+								onClick={() => props.setShowModal(!props.show)}
 							>
 								{SettingsLabel[13].label}
 							</button>

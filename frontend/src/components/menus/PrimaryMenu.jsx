@@ -40,7 +40,7 @@ const PrimaryMenu = ({ user, site }) => {
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
-			<div tw="flex flex-col pt-8 pb-4 h-full">
+			<div tw="flex flex-col pt-8 pb-4">
 				<div css={[tw`flex items-center flex-shrink-0 flex-row px-3`, user ? tw`mb-0` : tw`mb-8`]}>
 					<Link href={siteDashboardLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
@@ -54,7 +54,7 @@ const PrimaryMenu = ({ user, site }) => {
 						</a>
 					</Link>
 				</div>
-				<div tw="flex-1 flex flex-col overflow-y-auto">
+				<div tw="flex-1 flex flex-col">
 					<nav tw="flex-1 px-4">
 						{DashboardPages.map((value, index) => {
 							return (

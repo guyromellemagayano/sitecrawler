@@ -16,7 +16,9 @@ import tw from "twin.macro";
 import LinkOptionsLabel from "./labels/LinkOptions.json";
 
 // Loadable
-const SiteVerifyErrorModal = loadable(() => import("src/components/modals/SiteVerifyErrorModal"));
+const SiteVerifyErrorModal = loadable(() => import("src/components/modals/SiteVerifyModal"), {
+	resolveComponent: (components) => components.SiteVerifyErrorModal
+});
 const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
 
 const LinkOptions = (props) => {
