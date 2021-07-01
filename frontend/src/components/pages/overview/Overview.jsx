@@ -58,11 +58,11 @@ const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, i
 
 	return (
 		<div tw="bg-white overflow-hidden rounded-lg h-full border">
-			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
-			<SiteVerifyErrorModal show={showSiteVerifyErrorModal} setShowErrorModal={setShowSiteVerifyErrorModal} />
+			<UpgradeErrorModal show={showUpgradeErrorModal} setShowModal={setShowUpgradeErrorModal} />
+			<SiteVerifyErrorModal show={showSiteVerifyErrorModal} setShowModal={setShowSiteVerifyErrorModal} />
 			<TlsErrorModal
 				show={showTlsErrorModal}
-				setShowErrorModal={setShowTlsErrorModal}
+				setShowModal={setShowTlsErrorModal}
 				siteId={stats?.site_id}
 				scanObjId={stats?.id}
 			/>
@@ -121,7 +121,7 @@ const SitesOverview = ({ verified, stats, user, disableLocalTime, handleCrawl, i
 					{componentReady ? (
 						<dd tw="mt-1 text-sm leading-5 text-gray-900">
 							{stats ? (
-								<span tw="text-sm leading-5 text-gray-500">
+								<span>
 									{!disableLocalTime
 										? dayjs(stats?.finished_at).calendar(null, calendarStrings)
 										: dayjs.utc(stats?.finished_at).calendar(null, calendarStrings)}

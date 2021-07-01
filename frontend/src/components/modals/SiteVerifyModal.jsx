@@ -33,6 +33,18 @@ export const SiteVerifyModal = (props) => {
 	const siteVerifyApiEndpoint = `/api/site/${props.siteId}/verify/`;
 	const siteApiEndpoint = `/api/site/`;
 
+	const handleHideSiteVerifyModal = (e) => {
+		return e?.key === "Escape" ? props.setShowModal(false) : null;
+	};
+
+	React.useEffect(() => {
+		document.addEventListener("keydown", handleHideSiteVerifyModal, true);
+
+		return () => {
+			document.removeEventListener("keydown", handleHideSiteVerifyModal, true);
+		};
+	});
+
 	const handleInputChange = ({ copyValue }) => {
 		setCopyValue({ copyValue, copied });
 	};
@@ -240,7 +252,7 @@ export const SiteVerifyModal = (props) => {
 								<span tw="mt-3 sm:ml-3 flex w-full sm:mt-0 sm:w-auto">
 									<Link href="/site/[siteId]/overview" as={`/site/${props.siteId}/overview`} passHref>
 										<a tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
-											Go to Site Overview
+											{SiteVerifyModalLabel[5].label}
 										</a>
 									</Link>
 								</span>
@@ -256,12 +268,9 @@ export const SiteVerifyModal = (props) => {
 											? tw`opacity-50 cursor-not-allowed`
 											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 									]}
-									onClick={() => {
-										props.setShowModal(!props.show);
-										props.mutateSite(siteApiEndpoint, false);
-									}}
+									onClick={() => props.setShowModal(!props.show)}
 								>
-									Close
+									{SiteVerifyModalLabel[3].label}
 								</button>
 							</span>
 						</div>
@@ -278,7 +287,7 @@ export const SiteVerifyErrorModal = (props) => {
 	const sitesLink = "/sites";
 
 	const handleHideSiteVerifyErrorModal = (e) => {
-		return e?.key === "Escape" ? props.setShowErrorModal(false) : null;
+		return e?.key === "Escape" ? props.setShowModal(false) : null;
 	};
 
 	React.useEffect(() => {
@@ -348,7 +357,7 @@ export const SiteVerifyErrorModal = (props) => {
 							<button
 								type="button"
 								tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-								onClick={() => props.setShowErrorModal(!props.show)}
+								onClick={() => props.setShowModal(!props.show)}
 							>
 								{SiteVerifyModalLabel[3].label}
 							</button>

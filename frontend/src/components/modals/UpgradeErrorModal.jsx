@@ -14,11 +14,11 @@ import ReactHtmlParser from "react-html-parser";
 // JSON
 import UpgradeErrorModalLabel from "./labels/UpgradeErrorModal.json";
 
-const UpgradeErrorModal = ({ show, setShowErrorModal, label }) => {
+const UpgradeErrorModal = ({ show, setShowModal, label }) => {
 	const settingsSubscriptionsLink = "/settings/subscription-plans";
 
 	const handleHideUpgradeErrorModal = (e) => {
-		return e?.key === "Escape" ? setShowErrorModal(false) : null;
+		return e?.key === "Escape" ? setShowModal(false) : null;
 	};
 
 	React.useEffect(() => {
@@ -90,7 +90,7 @@ const UpgradeErrorModal = ({ show, setShowErrorModal, label }) => {
 							<button
 								type="button"
 								tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-								onClick={() => setShowErrorModal(!show)}
+								onClick={() => setShowModal(!show)}
 							>
 								{UpgradeErrorModalLabel[2].label}
 							</button>
