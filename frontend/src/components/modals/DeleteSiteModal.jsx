@@ -32,6 +32,18 @@ const DeleteSiteModal = (props) => {
 		setErrorMsg([]);
 	}, [props.show]);
 
+	const handleHideSiteDeleteModal = (e) => {
+		return e?.key === "Escape" ? props.setShowModal(false) : null;
+	};
+
+	React.useEffect(() => {
+		document.addEventListener("keydown", handleHideSiteDeleteModal, true);
+
+		return () => {
+			document.removeEventListener("keydown", handleHideSiteDeleteModal, true);
+		};
+	});
+
 	const handleSiteDeletion = async (e) => {
 		e.preventDefault();
 

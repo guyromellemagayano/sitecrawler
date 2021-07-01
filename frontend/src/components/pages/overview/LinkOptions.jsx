@@ -40,8 +40,8 @@ const LinkOptions = (props) => {
 
 	return (
 		<div tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
-			<SiteVerifyErrorModal show={showSiteVerifyErrorModal} setShowErrorModal={setShowSiteVerifyErrorModal} />
-			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
+			<SiteVerifyErrorModal show={showSiteVerifyErrorModal} setShowModal={setShowSiteVerifyErrorModal} />
+			<UpgradeErrorModal show={showUpgradeErrorModal} setShowModal={setShowUpgradeErrorModal} />
 
 			<div tw="relative z-10 flex-shrink-0 flex bg-white border-b border-gray-200">
 				<div tw="flex-1 p-4 flex justify-end">

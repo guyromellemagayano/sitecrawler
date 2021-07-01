@@ -37,7 +37,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 		<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 			<UpgradeErrorModal
 				show={showUpgradeErrorModal}
-				setShowErrorModal={setShowUpgradeErrorModal}
+				setShowModal={setShowUpgradeErrorModal}
 				label={[AddSiteLabel[1].label, AddSiteLabel[2].label]}
 			/>
 

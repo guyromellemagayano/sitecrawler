@@ -252,18 +252,18 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
 					{componentReady ? (
-						scanCount > 0 ? (
+						scanCount > 1 ? (
 							<span tw="space-x-2">
 								<span tw="text-sm leading-5 text-gray-500">
 									{!disableLocalTime
 										? dayjs(
-												scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+												scanFinishedAt == null && scanForceHttps == null
 													? scan?.results[1]?.finished_at
 													: scan?.results[0]?.finished_at
 										  ).calendar(null, calendarStrings)
 										: dayjs
 												.utc(
-													scanFinishedAt == null && scanForceHttps == null && scanCount > 1
+													scanFinishedAt == null && scanForceHttps == null
 														? scan?.results[1]?.finished_at
 														: scan?.results[0]?.finished_at
 												)

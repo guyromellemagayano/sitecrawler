@@ -70,7 +70,7 @@ const useCrawl = ({ siteId }) => {
 	}, [scan]);
 
 	React.useEffect(() => {
-		currentScan !== null
+		currentScan !== undefined
 			? (() => {
 					setIsCrawlStarted(true);
 					setIsCrawlFinished(false);

@@ -50,7 +50,7 @@ const HeadingOptions = ({
 
 	return (
 		<div tw="pt-4 m-auto md:flex md:items-center md:justify-between">
-			<UpgradeErrorModal show={showUpgradeErrorModal} setShowErrorModal={setShowUpgradeErrorModal} />
+			<UpgradeErrorModal show={showUpgradeErrorModal} setShowModal={setShowUpgradeErrorModal} />
 
 			<div tw="flex-1 min-w-0">
 				<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
