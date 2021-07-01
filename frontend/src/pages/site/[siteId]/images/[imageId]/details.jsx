@@ -70,15 +70,7 @@ const ImagesDetail = ({ width, result }) => {
 	});
 
 	React.useEffect(() => {
-		currentScan !== null && scanCount <= 1
-			? (() => {
-					setScanObjId(currentScan?.id);
-			  })()
-			: previousScan !== null
-			? (() => {
-					setScanObjId(previousScan?.id);
-			  })()
-			: null;
+		currentScan !== undefined ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 	}, [currentScan, previousScan]);
 
 	const { imageDetail } = useImageDetail({
