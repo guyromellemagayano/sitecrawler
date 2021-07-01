@@ -78,7 +78,7 @@ const SiteOverview = ({ width, result }) => {
 	}, [user, siteId]);
 
 	React.useEffect(() => {
-		currentScan !== undefined ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
+		currentScan !== undefined && scanCount > 1 ? setScanObjId(previousScan?.id) : setScanObjId(currentScan?.id);
 	}, [currentScan, previousScan]);
 
 	const { stats } = useStats({
