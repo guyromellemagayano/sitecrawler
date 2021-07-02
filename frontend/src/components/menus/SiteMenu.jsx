@@ -46,8 +46,20 @@ const SiteMenu = ({ site, user }) => {
 	});
 
 	React.useEffect(() => {
-		currentScan !== undefined ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
-	}, [currentScan, previousScan]);
+		const handleScanObjId = (scanCount, currentScan, previousScan) => {
+			scanCount > 1
+				? previousScan !== undefined
+					? setScanObjId(previousScan?.id)
+					: false
+				: currentScan !== undefined
+				? setScanObjId(currentScan?.id)
+				: setScanObjId(previousScan?.id);
+
+			return scanObjId;
+		};
+
+		return handleScanObjId(scanCount, currentScan, previousScan);
+	}, [scanCount, currentScan, previousScan]);
 
 	const { stats } = useStats({
 		querySid: query.siteId,
@@ -181,7 +193,8 @@ const SiteMenu = ({ site, user }) => {
 																	currentScan={currentScan}
 																	selectedSite={selectedSite}
 																	selectedSiteDetails={selectedSiteDetails}
-																	setIsComponentVisible={() => setIsComponentVisible(!isComponentVisible)}
+																	isComponentVisible={isComponentVisible}
+																	setIsComponentVisible={setIsComponentVisible}
 																/>
 															) : (
 																<Skeleton duration={2} width={209} height={38} tw="relative w-full pl-3 pr-10 py-2" />

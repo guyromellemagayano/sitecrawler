@@ -142,7 +142,8 @@ const SettingsMenu = ({ user, site }) => {
 																	label={[PrimaryMenuLabel[0].label]}
 																	selectedSite={selectedSite}
 																	selectedSiteDetails={selectedSiteDetails}
-																	setIsComponentVisible={() => setIsComponentVisible(!isComponentVisible)}
+																	isComponentVisible={isComponentVisible}
+																	setIsComponentVisible={setIsComponentVisible}
 																/>
 															) : (
 																<Skeleton duration={2} width={209} height={38} tw="relative w-full pl-3 pr-10 py-2" />

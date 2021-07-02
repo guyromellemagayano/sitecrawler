@@ -55,12 +55,12 @@ const SitesList = (props) => {
 			role="option"
 			css={[
 				tw`select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900`,
-				(props.verified || scanCount > 0) && (stats?.num_links == 0 || stats?.num_pages == 0 || stats?.num_images == 0)
-					? tw`cursor-not-allowed`
-					: tw`cursor-pointer`
+				scanCount > 0 && (stats?.num_links > 0 || stats?.num_pages > 0 || stats?.num_images > 0)
+					? tw`cursor-pointer`
+					: tw`cursor-not-allowed`
 			]}
 			onClick={() => {
-				stats?.num_links > 0 || stats?.num_pages > 0 || stats?.num_images > 0
+				scanCount > 0 && (stats?.num_links > 0 || stats?.num_pages > 0 || stats?.num_images > 0)
 					? handleSiteSelection(props.id, props.verified, scanCount)
 					: null;
 			}}

@@ -48,7 +48,7 @@ const Sites = ({ width, result }) => {
 	const [searchKey, setSearchKey] = React.useState("");
 
 	const pageTitle = SitesLabel[0].label;
-	const siteRefreshInterval = 30000;
+	const siteRefreshInterval = 3000;
 
 	const { asPath } = useRouter();
 	const router = useRouter();

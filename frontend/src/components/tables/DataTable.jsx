@@ -252,7 +252,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
 					{componentReady ? (
-						scanCount > 1 ? (
+						scanCount > 0 ? (
 							<span tw="space-x-2">
 								<span tw="text-sm leading-5 text-gray-500">
 									{!disableLocalTime
@@ -284,44 +284,52 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 					{stats ? (
-						<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
-							<a css={[tw`cursor-pointer`, setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
-								{setTotalIssues()}
-							</a>
-						</Link>
+						<span css={[setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>{setTotalIssues()}</span>
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 					{stats ? (
-						<Link href="/site/[siteId]/links" as={`/site/${siteId}/links`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.num_links}
-							</a>
-						</Link>
+						stats?.num_links > 0 ? (
+							<Link href="/site/[siteId]/links" as={`/site/${siteId}/links`} passHref>
+								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									{stats?.num_links}
+								</a>
+							</Link>
+						) : (
+							stats?.num_links
+						)
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 					{stats ? (
-						<Link href="/site/[siteId]/pages" as={`/site/${siteId}/pages`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.num_pages}
-							</a>
-						</Link>
+						stats?.num_pages > 0 ? (
+							<Link href="/site/[siteId]/pages" as={`/site/${siteId}/pages`} passHref>
+								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									{stats?.num_pages}
+								</a>
+							</Link>
+						) : (
+							stats?.num_pages
+						)
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 					{stats ? (
-						<Link href="/site/[siteId]/images" as={`/site/${siteId}/images`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.num_images}
-							</a>
-						</Link>
+						stats?.num_images > 0 ? (
+							<Link href="/site/[siteId]/images" as={`/site/${siteId}/images`} passHref>
+								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									{stats?.num_images}
+								</a>
+							</Link>
+						) : (
+							stats?.num_images
+						)
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}

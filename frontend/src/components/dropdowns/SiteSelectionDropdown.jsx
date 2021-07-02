@@ -13,15 +13,40 @@ import { Transition } from "@headlessui/react";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
+// Hooks
+import useCrawl from "src/hooks/useCrawl";
+
 // Loadable
 const SitesList = loadable(() => import("src/components/lists/SitesList"));
 
 const SiteSelectionDropdown = (props) => {
 	const [sitesLoaded, setSitesLoaded] = React.useState(false);
+	const [selectedSiteId, setSelectedSiteId] = React.useState(null);
+	const [scanObjId, setScanObjId] = React.useState(null);
 
 	const AddNewSiteLink = `/sites/add-new-site/`;
 
 	const router = useRouter();
+
+	const { currentScan, previousScan, scanCount } = useCrawl({
+		siteId: selectedSiteId
+	});
+
+	React.useEffect(() => {
+		const handleScanObjId = (scanCount, currentScan, previousScan) => {
+			scanCount > 1
+				? previousScan !== undefined
+					? setScanObjId(previousScan?.id)
+					: false
+				: currentScan !== undefined
+				? setScanObjId(currentScan?.id)
+				: setScanObjId(previousScan?.id);
+
+			return scanObjId;
+		};
+
+		return handleScanObjId(scanCount, currentScan, previousScan);
+	}, [scanCount, currentScan, previousScan, scanObjId, selectedSiteId]);
 
 	const handleSiteSelectOnLoad = (siteId) => {
 		props.site?.results
@@ -31,9 +56,7 @@ const SiteSelectionDropdown = (props) => {
 							props.setSelectedSite(props.site?.results[i]?.name);
 							props.setIsComponentVisible(!props.isComponentVisible);
 
-							setTimeout(() => {
-								router.push(`/site/[siteId]/overview`, `/site/${siteId}/overview`);
-							}, 500);
+							setSelectedSiteId(siteId);
 						}
 					}
 			  })()
@@ -43,6 +66,22 @@ const SiteSelectionDropdown = (props) => {
 	const handleDropdownHandler = (siteId) => {
 		return handleSiteSelectOnLoad(siteId);
 	};
+
+	React.useEffect(() => {
+		if (scanObjId && selectedSiteId) {
+			setTimeout(() => {
+				router.push({
+					pathname: `/site/[siteId]/overview/`,
+					query: {
+						siteId: selectedSiteId,
+						scanObjId: scanObjId
+					}
+				});
+			}, 500);
+		} else {
+			return false;
+		}
+	}, [scanObjId, selectedSiteId]);
 
 	React.useEffect(() => {
 		props.isComponentVisible
@@ -101,13 +140,13 @@ const SiteSelectionDropdown = (props) => {
 		>
 			{props.site?.results ? (
 				props.site?.results?.length > 0 ? (
-					<Scrollbars style={{ height: 180 }} universal>
-						<ul
-							tabIndex="-1"
-							role="listbox"
-							aria-labelledby="listbox-label"
-							tw="pt-2 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
-						>
+					<ul
+						tabIndex="-1"
+						role="listbox"
+						aria-labelledby="listbox-label"
+						tw="pt-2 h-48 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
+					>
+						<Scrollbars universal>
 							{props.site?.results.map((value, index) => {
 								return (
 									<SitesList
@@ -120,12 +159,12 @@ const SiteSelectionDropdown = (props) => {
 									/>
 								);
 							})}
-						</ul>
-					</Scrollbars>
+						</Scrollbars>
+					</ul>
 				) : null
 			) : null}
 
-			<span tw="flex m-2 justify-center shadow-sm rounded-md">
+			<span tw="relative flex m-2 justify-center shadow-sm rounded-md">
 				<Link href={AddNewSiteLink} passHref>
 					<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 						<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
