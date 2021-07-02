@@ -268,7 +268,10 @@ export const SiteVerifyModal = (props) => {
 											? tw`opacity-50 cursor-not-allowed`
 											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 									]}
-									onClick={() => props.setShowModal(!props.show)}
+									onClick={() => {
+										enableNextStep && props.mutateSite(siteApiEndpoint);
+										props.setShowModal(!props.show);
+									}}
 								>
 									{SiteVerifyModalLabel[3].label}
 								</button>
