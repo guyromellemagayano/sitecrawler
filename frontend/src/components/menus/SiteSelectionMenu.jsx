@@ -15,7 +15,7 @@ const SiteSelectionMenu = (props) => {
 			aria-labelledby="listbox-label"
 			className="focus:ring-gray-1100"
 			tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 sm:text-sm sm:leading-5"
-			onClick={props.setIsComponentVisible}
+			onClick={() => props.setIsComponentVisible(!props.isComponentVisible)}
 		>
 			<div tw="flex items-center space-x-3">
 				<span tw="block truncate text-gray-600">
@@ -25,7 +25,7 @@ const SiteSelectionMenu = (props) => {
 								<span
 									aria-label={
 										props.selectedSiteDetails?.verified
-											? props.currentScan !== null
+											? props.currentScan !== undefined
 												? "Recrawling in Process"
 												: "Verified"
 											: "Not Verified"
@@ -33,7 +33,7 @@ const SiteSelectionMenu = (props) => {
 									css={[
 										tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
 										props.selectedSiteDetails?.verified
-											? props.currentScan !== null
+											? props.currentScan !== undefined
 												? tw`bg-yellow-400`
 												: tw`bg-green-400`
 											: tw`bg-red-400`

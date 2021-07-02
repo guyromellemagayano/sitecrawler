@@ -78,8 +78,20 @@ const SiteOverview = ({ width, result }) => {
 	}, [user, siteId]);
 
 	React.useEffect(() => {
-		currentScan !== undefined && scanCount > 1 ? setScanObjId(previousScan?.id) : setScanObjId(currentScan?.id);
-	}, [currentScan, previousScan]);
+		const handleScanObjId = (scanCount, currentScan, previousScan) => {
+			scanCount > 1
+				? previousScan !== undefined
+					? setScanObjId(previousScan?.id)
+					: false
+				: currentScan !== undefined
+				? setScanObjId(currentScan?.id)
+				: setScanObjId(previousScan?.id);
+
+			return scanObjId;
+		};
+
+		return handleScanObjId(scanCount, currentScan, previousScan);
+	}, [scanCount, currentScan, previousScan]);
 
 	const { stats } = useStats({
 		querySid: result.siteId,

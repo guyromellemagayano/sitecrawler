@@ -23,8 +23,11 @@ const useCrawl = ({ siteId }) => {
 
 	const selectedSiteRef = React.useRef(null);
 
+	const scanRefreshInterval = 15000;
+
 	const { scan } = useScan({
-		querySid: siteId
+		querySid: siteId,
+		refreshInterval: scanRefreshInterval
 	});
 
 	const handleMutateCurrentSite = async (endpoint) => {
@@ -61,12 +64,18 @@ const useCrawl = ({ siteId }) => {
 	};
 
 	React.useEffect(() => {
-		let previousScanResult = scan?.results.find((e) => e.finished_at !== null && e.force_https !== null);
-		let currentScanResult = scan?.results.find((e) => e.finished_at == null && e.force_https == null);
+		const handleScan = (scan) => {
+			let previousScanResult = scan?.results.find((e) => e.finished_at !== null && e.force_https !== null);
+			let currentScanResult = scan?.results.find((e) => e.finished_at == null && e.force_https == null);
 
-		setCurrentScan(currentScanResult);
-		setPreviousScan(previousScanResult);
-		setScanCount(scan?.count);
+			setCurrentScan(currentScanResult);
+			setPreviousScan(previousScanResult);
+			setScanCount(scan?.count);
+
+			return { currentScan, previousScan, scanCount };
+		};
+
+		return scan ? handleScan(scan) : null;
 	}, [scan]);
 
 	React.useEffect(() => {
