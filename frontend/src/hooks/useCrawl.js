@@ -23,7 +23,7 @@ const useCrawl = ({ siteId }) => {
 
 	const selectedSiteRef = React.useRef(null);
 
-	const scanRefreshInterval = 15000;
+	const scanRefreshInterval = 3000;
 
 	const { scan } = useScan({
 		querySid: siteId,
