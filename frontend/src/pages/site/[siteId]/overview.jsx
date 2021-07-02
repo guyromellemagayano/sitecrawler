@@ -95,7 +95,7 @@ const SiteOverview = ({ width, result }) => {
 
 	const { stats } = useStats({
 		querySid: result.siteId,
-		scanObjId: scanObjId
+		scanObjId: result.scanObjId ?? scanObjId
 	});
 
 	React.useEffect(() => {
