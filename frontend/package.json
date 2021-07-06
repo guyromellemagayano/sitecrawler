@@ -39,7 +39,7 @@
     "axios": "^0.21.1",
     "bytes": "^3.1.0",
     "concurrently": "^6.0.2",
-    "dayjs": "^1.10.5",
+    "dayjs": "^1.10.6",
     "formik": "^2.2.9",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
@@ -97,6 +97,6 @@
     "react-is": "^17.0.1",
     "styled-jsx-plugin-sass": "^1.0.0",
     "tailwindcss": "^2.2.4",
-    "twin.macro": "^2.5.0"
+    "twin.macro": "^2.6.1"
   }
 }
