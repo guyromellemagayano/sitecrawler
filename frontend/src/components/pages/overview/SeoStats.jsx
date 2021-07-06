@@ -32,13 +32,13 @@ const SitesSeoStats = ({ width, sid, stats, scanResult }) => {
 	React.useEffect(() => {
 		stats
 			? (() => {
-					setComponentReady(false);
-
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
 			  })()
 			: null;
+
+		return setComponentReady(false);
 	}, [stats]);
 
 	const legendClickHandler = (label) => {

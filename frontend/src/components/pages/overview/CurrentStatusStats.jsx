@@ -16,13 +16,13 @@ const SitesCurrentStatusStats = (props) => {
 	React.useEffect(() => {
 		props.uptimeSummary
 			? (() => {
-					setComponentReady(false);
-
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
 			  })()
 			: null;
+
+		return setComponentReady(false);
 	}, [props.uptimeSummary]);
 
 	return (

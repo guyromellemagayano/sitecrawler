@@ -32,13 +32,13 @@ const SitesLinksStats = (props) => {
 	React.useEffect(() => {
 		props.stats
 			? (() => {
-					setComponentReady(false);
-
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
 			  })()
 			: null;
+
+		return setComponentReady(false);
 	}, [props.stats]);
 
 	const legendClickHandler = (label) => {
