@@ -33,13 +33,13 @@ const ImagesTable = ({ siteId, val }) => {
 	React.useEffect(() => {
 		imageDetail
 			? (() => {
-					setComponentReady(false);
-
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
 			  })()
 			: null;
+
+		return setComponentReady(false);
 	}, [imageDetail]);
 
 	return (

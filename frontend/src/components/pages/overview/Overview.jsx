@@ -24,13 +24,13 @@ const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished 
 	React.useEffect(() => {
 		stats
 			? (() => {
-					setComponentReady(false);
-
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
 			  })()
 			: null;
+
+		return setComponentReady(false);
 	}, [stats]);
 
 	return (
@@ -85,17 +85,14 @@ const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished 
 												stats.num_pages_tls_non_ok === 0 ? (
 													<SiteSuccessStatus text="Valid" />
 												) : (
-													<span tw="flex items-center justify-start space-x-1">
-														<SiteDangerStatus text="Not Valid" />
-
+													<span tw="flex flex-col items-start justify-start space-x-1">
 														<button
 															type="button"
 															onClick={() => setShowTlsErrorModal(true)}
 															tw="focus:outline-none hover:text-gray-50"
 														>
 															<span tw="flex items-center">
-																<ExclamationIcon tw="w-5 h-5 ml-2 mr-1 text-gray-400" />
-																<small tw="text-gray-400">{OverviewLabel[6].label}</small>
+																<SiteDangerStatus text="Not Valid" />
 															</span>
 														</button>
 													</span>

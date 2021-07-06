@@ -35,13 +35,13 @@ const PageTable = ({ siteId, val }) => {
 	React.useEffect(() => {
 		pageDetail
 			? (() => {
-					setComponentReady(false);
-
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
 			  })()
 			: null;
+
+		return setComponentReady(false);
 	}, [pageDetail]);
 
 	return (

@@ -32,13 +32,13 @@ const LinkTable = ({ siteId, val }) => {
 	React.useEffect(() => {
 		linkDetail
 			? (() => {
-					setComponentReady(false);
-
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
 			  })()
 			: null;
+
+		return setComponentReady(false);
 	}, [linkDetail]);
 
 	return (
