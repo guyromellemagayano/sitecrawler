@@ -59,7 +59,7 @@ const CustomStyles = createGlobalStyle`
 		}
 
 		&-link {
-			max-width: 18rem;
+			max-width: 15rem;
 		}
 
 		&-profile-text {
