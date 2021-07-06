@@ -64,7 +64,7 @@ const ComingSoon = ({ width, user, pageTitle, openMobileSidebar, setOpenMobileSi
 						</Link>
 					</div>
 
-					<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
+					<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 						<div tw="max-w-full p-4 sm:px-6 md:px-8">
 							<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 								<div tw="max-w-full p-4">

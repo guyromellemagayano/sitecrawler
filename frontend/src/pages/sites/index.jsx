@@ -65,7 +65,7 @@ const Sites = ({ width, result }) => {
 	let scanApiEndpoint = "";
 	let queryString = "";
 
-	scanApiEndpoint = `/api/site/?per_page=` + linksPerPage + `&ordering=name&format=json`;
+	scanApiEndpoint = `/api/site/?per_page=` + linksPerPage + `&ordering=name`;
 
 	queryString +=
 		result?.page !== undefined
@@ -188,7 +188,7 @@ const Sites = ({ width, result }) => {
 						</div>
 
 						<Scrollbars universal>
-							<div tw="absolute w-full h-full">
+							<div tw="absolute w-full h-full max-w-screen-2xl mx-auto left-0 right-0">
 								<div tw="flex flex-col h-full">
 									{site?.count > 0 && (
 										<div tw="flex-none px-4 pt-12 sm:px-6 md:px-8 md:flex md:items-start md:justify-between">
@@ -292,9 +292,11 @@ const Sites = ({ width, result }) => {
 											/>
 										</div>
 
-										<div tw="w-full p-4 border-t border-gray-200">
-											<SiteFooter />
-										</div>
+										{componentReady ? (
+											<div tw="w-full p-4 border-t border-gray-200">
+												<SiteFooter />
+											</div>
+										) : null}
 									</div>
 								</div>
 							</div>

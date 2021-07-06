@@ -135,7 +135,7 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 			<DeleteSiteModal
 				siteId={siteId}
 				mutateSite={mutateSite}
-				show={showDeleteSiteModal}
+				showModal={showDeleteSiteModal}
 				setShowModal={setShowDeleteSiteModal}
 			/>
 

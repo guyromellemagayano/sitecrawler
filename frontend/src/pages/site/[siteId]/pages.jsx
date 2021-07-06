@@ -67,12 +67,26 @@ const Pages = ({ width, result }) => {
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result?.siteId
+		querySid: result?.siteId,
+		redirectIfFound: false,
+		redirectTo: "/sites"
 	});
 
 	React.useEffect(() => {
-		currentScan !== undefined ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
-	}, [currentScan, previousScan]);
+		const handleScanObjId = (scanCount, currentScan, previousScan) => {
+			scanCount > 1
+				? previousScan !== undefined
+					? setScanObjId(previousScan?.id)
+					: false
+				: currentScan !== undefined
+				? setScanObjId(currentScan?.id)
+				: setScanObjId(previousScan?.id);
+
+			return scanObjId;
+		};
+
+		return handleScanObjId(scanCount, currentScan, previousScan);
+	}, [scanCount, currentScan, previousScan]);
 
 	const pageTitle = PagesLabel[1].label + " - " + siteId?.name;
 
@@ -248,14 +262,14 @@ const Pages = ({ width, result }) => {
 						</div>
 
 						<Scrollbars universal>
-							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div className="max-w-full p-4">
 										<Breadcrumbs siteId={result?.siteId} pageTitle={PagesLabel[1].label} />
-
 										<HeadingOptions
 											isPages
 											queryString={queryString}
+											verified={siteId?.verified}
 											siteId={result?.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
@@ -263,7 +277,11 @@ const Pages = ({ width, result }) => {
 											permissions={user?.permissions}
 											pageTitle={PagesLabel[1].label}
 											count={pages?.count}
-											dataLabel={[PagesLabel[2].label, PagesLabel[6].label, PagesLabel[3].label, PagesLabel[16].label]}
+											dataLabel={[PagesLabel[2].label, PagesLabel[6].label, PagesLabel[3].label]}
+											isCrawlStarted={isCrawlStarted}
+											isCrawlFinished={isCrawlFinished}
+											handleCrawl={handleCrawl}
+											scanResult={currentScan}
 										/>
 									</div>
 								</div>
@@ -342,24 +360,20 @@ const Pages = ({ width, result }) => {
 										</div>
 									</div>
 
-									{user?.permissions.includes("can_see_pages") &&
-									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") ? (
-										pages ? (
-											<MyPagination
-												href="/site/[siteId]/pages/"
-												pathName={pagePath}
-												apiEndpoint={scanApiEndpoint}
-												page={result?.page ? result?.page : 0}
-												linksPerPage={linksPerPage}
-												onItemsPerPageChange={onItemsPerPageChange}
-											/>
-										) : null
-									) : null}
+									<MyPagination
+										href="/site/[siteId]/pages/"
+										pathName={pagePath}
+										apiEndpoint={scanApiEndpoint}
+										page={result?.page ? result?.page : 0}
+										linksPerPage={linksPerPage}
+										onItemsPerPageChange={onItemsPerPageChange}
+									/>
 
-									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-										<SiteFooter />
-									</div>
+									{componentReady ? (
+										<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
+											<SiteFooter />
+										</div>
+									) : null}
 								</div>
 							</main>
 						</Scrollbars>

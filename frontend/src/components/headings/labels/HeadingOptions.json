@@ -1,8 +1,17 @@
 [
 	{
-		"label": "Download as CSV"
+		"label": "CSV Download"
 	},
 	{
 		"label": "Data Not Available"
+	},
+	{
+		"label": "Crawl Site"
+	},
+	{
+		"label": "Crawling Site..."
+	},
+	{
+		"label": "Loading..."
 	}
 ]

@@ -5,7 +5,7 @@ import useSWR from "swr";
 import useFetcher from "src/hooks/useFetcher";
 
 export const useStripePromise = () => {
-	const stripePromiseApiEndpoint = "/api/stripe/config/?format=json";
+	const stripePromiseApiEndpoint = "/api/stripe/config/";
 
 	const {
 		data: stripePromise,

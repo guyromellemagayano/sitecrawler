@@ -3,13 +3,13 @@
 		"label": "Start Site Recrawl"
 	},
 	{
-		"label": "Site Status"
+		"label": "Verification Status"
 	},
 	{
 		"label": "Last Crawled"
 	},
 	{
-		"label": "SSL Valid"
+		"label": "SSL Status"
 	},
 	{
 		"label": "Forced HTTPS"
@@ -18,15 +18,9 @@
 		"label": "Crawl Status"
 	},
 	{
-		"label": "Site Recrawling In Process..."
-	},
-	{
-		"label": "Site Recrawling Not Available"
-	},
-	{
-		"label": "Site Crawling In Process..."
-	},
-	{
 		"label": "More Info"
+	},
+	{
+		"label": "Information"
 	}
 ]

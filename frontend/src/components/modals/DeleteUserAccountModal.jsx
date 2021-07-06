@@ -14,19 +14,17 @@ import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // JSON
-import DeleteSiteModalLabel from "./labels/DeleteSiteModal.json";
+import DeleteUserAccountModalLabel from "./labels/DeleteUserAccountModal.json";
 
-const DeleteSiteModal = (props) => {
-	const [disableDeleteSite, setDisableDeleteSite] = React.useState(false);
+const DeleteUserAccountModal = (props) => {
+	const [disableDeleteUser, setDisableDeleteUser] = React.useState(false);
 	const [errorMsg, setErrorMsg] = React.useState([]);
 	const [successMsg, setSuccessMsg] = React.useState([]);
 	const [hideButtons, setHideButtons] = React.useState(false);
 
-	const siteIdApiEndpoint = `/api/site/${props.siteId}/`;
-	const siteApiEndpoint = `/api/site/`;
-	const sitesPage = "/sites";
+	const userApiEndpoint = `/api/auth/user/`;
+	const loginPage = "/login";
 
-	const { asPath } = useRouter();
 	const router = useRouter();
 
 	const handleHideSiteDeleteModal = (e) => {
@@ -34,27 +32,27 @@ const DeleteSiteModal = (props) => {
 	};
 
 	React.useEffect(() => {
-		document.addEventListener("keydown", disableDeleteSite ? null : handleHideSiteDeleteModal, true);
+		document.addEventListener("keydown", disableDeleteUser ? null : handleHideSiteDeleteModal, true);
 
 		return () => {
-			document.removeEventListener("keydown", disableDeleteSite ? null : handleHideSiteDeleteModal, true);
+			document.removeEventListener("keydown", disableDeleteUser ? null : handleHideSiteDeleteModal, true);
 		};
-	}, [disableDeleteSite]);
+	}, [disableDeleteUser]);
 
-	// FIXME: Fix delete site
-	const handleSiteDeletion = async (e) => {
+	// FIXME: Fix delete user account
+	const handleUserDeletion = async (e) => {
 		e.preventDefault();
 
-		setDisableDeleteSite(true);
+		setDisableDeleteUser(true);
 
 		setTimeout(() => {
-			setDisableDeleteSite(false);
-			setSuccessMsg((successMsg) => [...successMsg, DeleteSiteModalLabel[7]]);
-			// setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabel[3]]);
+			setDisableDeleteUser(false);
+			// setSuccessMsg((successMsg) => [...successMsg, DeleteUserAccountModalLabel[7]]);
+			setErrorMsg((errorMsg) => [...errorMsg, DeleteUserAccountModalLabel[3]]);
 		}, 3000);
 
 		// return await axios
-		// 	.delete(siteIdApiEndpoint, {
+		// 	.delete(userApiEndpoint, {
 		// 		headers: {
 		// 			"Accept": "application/json",
 		// 			"Content-Type": "application/json",
@@ -64,24 +62,27 @@ const DeleteSiteModal = (props) => {
 		// 	.then((response) => {
 		// 		Math.floor(response?.status / 204) === 1
 		// 			? (() => {
-		// 					setDisableDeleteSite(false);
+		// 					setDisableDeleteUser(false);
 
 		// 					props.setShowModal(!props.showModal);
+		// 					props.mutateUser(userApiEndpoint);
 
-		// 					asPath.includes("settings")
-		// 						? (() => {
-		// 								setTimeout(() => {
-		// 									router.push(sitesPage);
-		// 								}, 1000);
-		// 						  })()
-		// 						: props.mutateSite(siteApiEndpoint);
+		// 					setTimeout(() => {
+		// 						router.push(loginPage);
+		// 					}, 1000);
 		// 			  })()
 		// 			: (() => {
-		// 					Sentry.captureException(response.data);
+		// 					Sentry.captureException(response);
 
-		// 					setDisableDeleteSite(false);
-		// 					setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabel[1].description]);
+		// 					setDisableDeleteUser(false);
+		// 					setErrorMsg((errorMsg) => [...errorMsg, DeleteUserAccountModalLabel[3].label]);
 		// 			  })();
+		// 	})
+		// 	.catch((error) => {
+		// 		Sentry.captureException(error);
+
+		// 		setDisableDeleteUser(false);
+		// 		setErrorMsg((errorMsg) => [...errorMsg, DeleteUserAccountModalLabel[3].label]);
 		// 	});
 	};
 
@@ -168,7 +169,7 @@ const DeleteSiteModal = (props) => {
 								})
 							) : (
 								<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-									{DeleteSiteModalLabel[0].label}
+									{DeleteUserAccountModalLabel[0].label}
 								</h3>
 							)}
 
@@ -190,7 +191,7 @@ const DeleteSiteModal = (props) => {
 								})
 							) : (
 								<div tw="mt-2">
-									<p tw="text-sm leading-5 text-gray-500">{DeleteSiteModalLabel[0].description}</p>
+									<p tw="text-sm leading-5 text-gray-500">{DeleteUserAccountModalLabel[0].description}</p>
 								</div>
 							)}
 						</div>
@@ -202,32 +203,34 @@ const DeleteSiteModal = (props) => {
 								{Object.keys(errorMsg).length > 0 ? null : (
 									<button
 										type="button"
-										disabled={props.disableDeleteSite}
+										disabled={props.disableDeleteUser}
 										css={[
 											tw`sm:ml-3 cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150`,
-											disableDeleteSite
+											disableDeleteUser
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
 										]}
-										aria-label="Delete Site"
-										onClick={handleSiteDeletion}
+										aria-label="Delete User"
+										onClick={handleUserDeletion}
 									>
-										{disableDeleteSite ? DeleteSiteModalLabel[4].label : DeleteSiteModalLabel[6].label}
+										{disableDeleteUser ? DeleteUserAccountModalLabel[4].label : DeleteUserAccountModalLabel[6].label}
 									</button>
 								)}
 
 								<button
 									type="button"
-									disabled={disableDeleteSite}
+									disabled={disableDeleteUser}
 									css={[
 										tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
-										disableDeleteSite
+										disableDeleteUser
 											? tw`opacity-50 cursor-not-allowed`
 											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 									]}
-									onClick={disableDeleteSite ? null : () => props.setShowModal(!props.showModal)}
+									onClick={disableDeleteUser ? null : () => props.setShowModal(!props.showModal)}
 								>
-									{Object.keys(errorMsg).length > 0 ? DeleteSiteModalLabel[5].label : DeleteSiteModalLabel[2].label}
+									{Object.keys(errorMsg).length > 0
+										? DeleteUserAccountModalLabel[5].label
+										: DeleteUserAccountModalLabel[2].label}
 								</button>
 							</span>
 						</div>
@@ -238,6 +241,6 @@ const DeleteSiteModal = (props) => {
 	);
 };
 
-DeleteSiteModal.propTypes = {};
+DeleteUserAccountModal.propTypes = {};
 
-export default DeleteSiteModal;
+export default DeleteUserAccountModal;
