@@ -29,20 +29,22 @@ import MainSidebar from "src/components/sidebar/MainSidebar";
 import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
 import SiteFooter from "src/components/layouts/Footer";
 
+// Components
+import SitesCurrentStatusStats from "src/components/pages/overview/CurrentStatusStats";
+import SitesDowntimeStats from "src/components/pages/overview/DowntimeStats";
+import SitesImagesStats from "src/components/pages/overview/ImagesStats";
+import SitesLinksStats from "src/components/pages/overview/LinksStats";
+import SitesOverview from "src/components/pages/overview/Overview";
+import SitesPagesStats from "src/components/pages/overview/PagesStats";
+import SitesResponseTimeStats from "src/components/pages/overview/ResponseTimeStats";
+import SitesSeoStats from "src/components/pages/overview/SeoStats";
+import SitesStats from "src/components/pages/overview/Stats";
+import SitesUptimeStats from "src/components/pages/overview/UptimeStats";
+
 // Loadable
 const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
 const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
-const SitesCurrentStatusStats = loadable(() => import("src/components/pages/overview/CurrentStatusStats"));
-const SitesDowntimeStats = loadable(() => import("src/components/pages/overview/DowntimeStats"));
-const SitesImagesStats = loadable(() => import("src/components/pages/overview/ImagesStats"));
-const SitesLinksStats = loadable(() => import("src/components/pages/overview/LinksStats"));
-const SitesOverview = loadable(() => import("src/components/pages/overview/Overview"));
-const SitesPagesStats = loadable(() => import("src/components/pages/overview/PagesStats"));
-const SitesResponseTimeStats = loadable(() => import("src/components/pages/overview/ResponseTimeStats"));
-const SitesSeoStats = loadable(() => import("src/components/pages/overview/SeoStats"));
-const SitesStats = loadable(() => import("src/components/pages/overview/Stats"));
-const SitesUptimeStats = loadable(() => import("src/components/pages/overview/UptimeStats"));
 
 const SiteOverview = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);

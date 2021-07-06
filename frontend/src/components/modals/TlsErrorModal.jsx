@@ -34,13 +34,13 @@ const TlsErrorModal = ({ show, setShowModal, siteId, scanObjId }) => {
 	React.useEffect(() => {
 		pages && show
 			? (() => {
-					setComponentReady(false);
-
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
 			  })()
 			: null;
+
+		return setComponentReady(false);
 	}, [pages, show]);
 
 	const handleHideTlsErrorModal = (e) => {

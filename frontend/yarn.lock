@@ -5062,10 +5062,10 @@ date-fns@^2.16.1:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.22.1.tgz#1e5af959831ebb1d82992bf67b765052d8f0efc4"
   integrity sha512-yUFPQjrxEmIsMqlHhAhmxkuH769baF21Kk+nZwZGyrMoyLA+LugaQtC0+Tqf9CBUUULWwUJt6Q5ySI3LJDDCGg==
 
-dayjs@^1.10.5:
-  version "1.10.5"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.5.tgz#5600df4548fc2453b3f163ebb2abbe965ccfb986"
-  integrity sha512-BUFis41ikLz+65iH6LHQCDm4YPMj5r1YFLdupPIyM4SGcXMmtiLQ7U37i+hGS8urIuqe7I/ou3IS1jVc4nbN4g==
+dayjs@^1.10.6:
+  version "1.10.6"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.6.tgz#288b2aa82f2d8418a6c9d4df5898c0737ad02a63"
+  integrity sha512-AztC/IOW4L1Q41A86phW5Thhcrco3xuAA+YX/BLpLWWjRcTj5TOt/QImBLmCKlrF7u7k47arTnOyL6GnbG8Hvw==
 
 debug@2, debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.9:
   version "2.6.9"
@@ -13623,12 +13623,13 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
   integrity sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=
 
-twin.macro@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/twin.macro/-/twin.macro-2.5.0.tgz#bd0575cc7680a8da4209f997aff26f5b8223f7dc"
-  integrity sha512-yDkwwJpjlGRk/QGOaZeCKAECUuo2tQJk6Xh1vyyEdzInOQe2IKF461eFay2MZiDcC4Y+Xaz+5iIM5+VHVtRDtA==
+twin.macro@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/twin.macro/-/twin.macro-2.6.1.tgz#d9bc03c7edd9c869cde66e4a9f0874c76acf9836"
+  integrity sha512-GDneAn95SKAfnyZyCAsgvoi4q33vOQnS5B34T3jHK1qUhNjv7ZXbbDYKx0yU450TOmzcPng9oq7bzTFlnHt4zw==
   dependencies:
     "@babel/parser" "^7.12.5"
+    "@babel/template" "^7.14.5"
     autoprefixer "^10.2.5"
     babel-plugin-macros "^2.8.0"
     chalk "^4.1.0"

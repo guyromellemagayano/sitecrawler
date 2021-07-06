@@ -21,13 +21,13 @@ const SitesResponseTimeStats = (props) => {
 	React.useEffect(() => {
 		props.uptime
 			? (() => {
-					setComponentReady(false);
-
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
 			  })()
 			: null;
+
+		return setComponentReady(false);
 	}, [props.uptime]);
 
 	return (
