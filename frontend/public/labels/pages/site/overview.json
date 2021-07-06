@@ -3,9 +3,12 @@
 		"label": "Overview"
 	},
 	{
-		"label": "Sites"
+		"label": "Start Site Recrawl"
 	},
 	{
-		"label": "An unexpected error occurred. Please try again."
+		"label": "Site Recrawling In Process..."
+	},
+	{
+		"label": "Site Recrawling Not Available"
 	}
 ]

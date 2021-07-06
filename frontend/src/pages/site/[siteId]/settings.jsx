@@ -52,7 +52,9 @@ const SiteSettings = ({ width, result }) => {
 	});
 
 	const { siteId, mutateSiteId } = useSiteId({
-		querySid: result?.siteId
+		querySid: result?.siteId,
+		redirectIfFound: false,
+		redirectTo: "/sites"
 	});
 
 	const homePageLink = `/site/${result?.siteId}/overview`;
@@ -106,7 +108,7 @@ const SiteSettings = ({ width, result }) => {
 						</div>
 
 						<Scrollbars universal>
-							<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
+							<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="max-w-full p-4 sm:px-6 md:px-8">
 									<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 										<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
@@ -129,13 +131,12 @@ const SiteSettings = ({ width, result }) => {
 												<LargePageSizeSettings
 													user={componentReady ? user : null}
 													siteId={componentReady ? siteId : null}
-													mutateSiteId={mutateSiteId}
+													mutateSiteId={componentReady ? mutateSiteId : null}
 												/>
 												<DeleteSiteSettings
 													user={componentReady ? user : null}
 													siteId={componentReady ? siteId : null}
-													settingsLabel={SettingsLabel}
-													mutateSite={mutateSite}
+													mutateSite={componentReady ? mutateSite : null}
 												/>
 											</div>
 										</div>

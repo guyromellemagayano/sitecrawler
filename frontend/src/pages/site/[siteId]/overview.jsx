@@ -5,7 +5,6 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { GlobeIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
@@ -17,7 +16,7 @@ import tw from "twin.macro";
 import OverviewLabel from "public/labels/pages/site/overview.json";
 
 // Hooks
-import { useStats, useSiteId } from "src/hooks/useSite";
+import { useStats, useSiteId, useUptime, useUptimeSummary } from "src/hooks/useSite";
 import useCrawl from "src/hooks/useCrawl";
 import useUser from "src/hooks/useUser";
 
@@ -32,13 +31,18 @@ import SiteFooter from "src/components/layouts/Footer";
 
 // Loadable
 const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
+const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
+const SitesCurrentStatusStats = loadable(() => import("src/components/pages/overview/CurrentStatusStats"));
+const SitesDowntimeStats = loadable(() => import("src/components/pages/overview/DowntimeStats"));
 const SitesImagesStats = loadable(() => import("src/components/pages/overview/ImagesStats"));
 const SitesLinksStats = loadable(() => import("src/components/pages/overview/LinksStats"));
 const SitesOverview = loadable(() => import("src/components/pages/overview/Overview"));
 const SitesPagesStats = loadable(() => import("src/components/pages/overview/PagesStats"));
+const SitesResponseTimeStats = loadable(() => import("src/components/pages/overview/ResponseTimeStats"));
 const SitesSeoStats = loadable(() => import("src/components/pages/overview/SeoStats"));
 const SitesStats = loadable(() => import("src/components/pages/overview/Stats"));
+const SitesUptimeStats = loadable(() => import("src/components/pages/overview/UptimeStats"));
 
 const SiteOverview = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -55,27 +59,17 @@ const SiteOverview = ({ width, result }) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result.siteId
+			siteId: result?.siteId
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId
+		querySid: result?.siteId,
+		redirectIfFound: false,
+		redirectTo: "/sites"
 	});
 
 	const homePageLink = "/sites/";
 	const pageTitle = OverviewLabel[0].label;
-
-	React.useEffect(() => {
-		user && siteId
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
-
-		return setComponentReady(false);
-	}, [user, siteId]);
 
 	React.useEffect(() => {
 		const handleScanObjId = (scanCount, currentScan, previousScan) => {
@@ -94,9 +88,29 @@ const SiteOverview = ({ width, result }) => {
 	}, [scanCount, currentScan, previousScan]);
 
 	const { stats } = useStats({
-		querySid: result.siteId,
-		scanObjId: result.scanObjId ?? scanObjId
+		querySid: result?.siteId,
+		scanObjId: result?.scanObjId ?? scanObjId
 	});
+
+	const { uptime } = useUptime({
+		querySid: result?.siteId
+	});
+
+	const { uptimeSummary } = useUptimeSummary({
+		querySid: result?.siteId
+	});
+
+	React.useEffect(() => {
+		user && siteId && uptime && uptimeSummary
+			? (() => {
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
+
+		return setComponentReady(false);
+	}, [user, siteId, uptime, uptimeSummary]);
 
 	React.useEffect(() => {
 		user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
@@ -138,61 +152,86 @@ const SiteOverview = ({ width, result }) => {
 						</div>
 
 						<Scrollbars universal>
-							<main tw="flex-1 relative overflow-y-auto focus:outline-none" tabIndex="0">
+							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div tw="max-w-full p-4">
-										<Breadcrumbs siteId={result.siteId} pageTitle={pageTitle} />
+										<Breadcrumbs siteId={result?.siteId} pageTitle={pageTitle} />
+										<HeadingOptions
+											isOverview
+											verified={siteId?.verified}
+											siteId={result?.siteId}
+											siteName={siteId?.name}
+											siteUrl={siteId?.url}
+											scanObjId={scanObjId}
+											permissions={user?.permissions}
+											pageTitle={OverviewLabel[0].label}
+											handleCrawl={handleCrawl}
+											isCrawlStarted={isCrawlStarted}
+											isCrawlFinished={isCrawlFinished}
+											disableLocalTime={disableLocalTime}
+											scanFinishedAt={stats?.finished_at}
+										/>
+									</div>
 
-										<div tw="pt-4 m-auto md:flex md:items-center md:justify-between">
-											<div tw="flex-1 min-w-0">
-												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
-												<div tw="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
-													<div tw="mt-2 flex items-center text-sm text-gray-500">
-														<GlobeIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-														<a
-															href={siteId?.url}
-															target="_blank"
-															title={siteId?.name}
-															className="truncate-link"
-															tw="max-w-lg text-sm leading-6 font-semibold text-gray-500 hover:text-gray-900 truncate"
-														>
-															{siteId?.name}
-														</a>
+									<div tw="max-w-full p-4 sm:px-6 md:px-4">
+										<div tw="grid grid-cols-1 md:grid-cols-4 gap-8">
+											<div tw="col-span-1 md:col-span-2">
+												<SitesOverview
+													verified={siteId?.verified}
+													stats={stats}
+													user={user}
+													isCrawlStarted={isCrawlStarted}
+													isCrawlFinished={isCrawlFinished}
+												/>
+											</div>
+
+											<div tw="col-span-1 md:col-span-2">
+												<SitesStats stats={stats} />
+											</div>
+
+											<div tw="col-span-1 lg:col-span-2 xl:col-span-1">
+												<SitesLinksStats sid={result?.siteId} stats={stats} />
+											</div>
+
+											<div tw="col-span-1 lg:col-span-2 xl:col-span-1">
+												<SitesPagesStats sid={result?.siteId} stats={stats} />
+											</div>
+
+											<div tw="col-span-1 lg:col-span-2 xl:col-span-1">
+												<SitesImagesStats sid={result?.siteId} stats={stats} />
+											</div>
+
+											<div tw="col-span-1 lg:col-span-2 xl:col-span-1">
+												<SitesSeoStats sid={result?.siteId} stats={stats} />
+											</div>
+
+											<div tw="col-span-1 md:col-span-4 xl:col-span-2">
+												<SitesResponseTimeStats sid={result?.siteId} uptime={uptime} />
+											</div>
+
+											<div tw="flex col-span-1 md:col-span-4 xl:col-span-2">
+												<div tw="flex-1 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-2 gap-8">
+													<div tw="col-span-1 md:col-span-1 xl:col-span-2">
+														<SitesCurrentStatusStats sid={result?.siteId} uptimeSummary={uptimeSummary} />
+													</div>
+
+													<div tw="col-span-1 md:col-span-1">
+														<SitesUptimeStats sid={result?.sid} uptimeSummary={uptimeSummary} />
+													</div>
+
+													<div tw="col-span-1 md:col-span-1">
+														<SitesDowntimeStats sid={result?.siteId} uptimeSummary={uptimeSummary} />
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 
-									<div tw="max-w-full p-4 sm:px-6 md:px-4">
-										<div tw="grid grid-cols-1 xl:grid-cols-2 gap-8">
-											<SitesOverview
-												verified={siteId?.verified}
-												stats={stats}
-												scanResult={currentScan !== null ? currentScan : previousScan}
-												user={user}
-												disableLocalTime={disableLocalTime}
-												handleCrawl={handleCrawl}
-												isCrawlStarted={isCrawlStarted}
-												isCrawlFinished={isCrawlFinished}
-											/>
-
-											<SitesStats stats={stats} scanResult={previousScan} />
-
-											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesLinksStats sid={result.siteId} stats={stats} scanResult={previousScan} />
-												<SitesPagesStats sid={result.siteId} stats={stats} scanResult={previousScan} />
-											</div>
-											<div tw="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-8">
-												<SitesImagesStats sid={result.siteId} stats={stats} scanResult={previousScan} />
-												<SitesSeoStats sid={result.siteId} stats={stats} scanResult={previousScan} />
-											</div>
+									{componentReady ? (
+										<div tw="static bottom-0 w-full mx-auto p-4">
+											<SiteFooter />
 										</div>
-									</div>
-
-									<div tw="static bottom-0 w-full mx-auto p-4">
-										<SiteFooter />
-									</div>
+									) : null}
 								</div>
 							</main>
 						</Scrollbars>

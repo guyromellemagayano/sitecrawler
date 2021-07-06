@@ -32,6 +32,7 @@ const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumb
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const SettingsPassword = loadable(() => import("src/components/pages/settings/profile/Password"));
 const SettingsPersonal = loadable(() => import("src/components/pages/settings/profile/Personal"));
+const SettingsDeleteUserAccount = loadable(() => import("src/components/pages/settings/profile/DeleteUserAccount"));
 
 const Profile = ({ width }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -41,13 +42,13 @@ const Profile = ({ width }) => {
 	const homePageLink = "/sites/";
 	const pageTitle = ProfileLabel[0].label;
 
-	const { user } = useUser({
+	const { user, mutateUser } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
 	});
 
 	React.useEffect(() => {
-		user !== undefined
+		user
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
@@ -94,7 +95,7 @@ const Profile = ({ width }) => {
 						</div>
 
 						<Scrollbars universal>
-							<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
+							<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="max-w-full p-4 sm:px-6 md:px-8">
 									<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 										<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
@@ -107,15 +108,27 @@ const Profile = ({ width }) => {
 											</div>
 
 											<div tw="space-y-12 divide-y divide-gray-200">
-												<SettingsPersonal user={componentReady ? user : null} />
-												<SettingsPassword user={componentReady ? user : null} />
+												<SettingsPersonal
+													user={componentReady ? user : null}
+													mutateUser={componentReady ? mutateUser : null}
+												/>
+												<SettingsPassword
+													user={componentReady ? user : null}
+													mutateUser={componentReady ? mutateUser : null}
+												/>
+												<SettingsDeleteUserAccount
+													user={componentReady ? user : null}
+													mutateUser={componentReady ? mutateUser : null}
+												/>
 											</div>
 										</div>
 									</div>
 
-									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white">
-										<SiteFooter />
-									</div>
+									{componentReady ? (
+										<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white">
+											<SiteFooter />
+										</div>
+									) : null}
 								</div>
 							</main>
 						</Scrollbars>

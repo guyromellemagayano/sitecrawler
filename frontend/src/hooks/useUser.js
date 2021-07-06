@@ -1,5 +1,5 @@
 // React
-import { useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -11,7 +11,7 @@ import useSWR from "swr";
 import useFetcher from "src/hooks/useFetcher";
 
 const useUser = ({ redirectIfFound = false, redirectTo = "", refreshInterval = 0 }) => {
-	const userApiEndpoint = "/api/auth/user/?format=json";
+	const userApiEndpoint = "/api/auth/user/";
 
 	const router = useRouter();
 
@@ -31,14 +31,14 @@ const useUser = ({ redirectIfFound = false, redirectTo = "", refreshInterval = 0
 		dedupingInterval: 0
 	});
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (userError && !redirectIfFound) {
 			if (userError.status === 403) {
 				router.push({ pathname: redirectTo });
 			}
 		}
 
-		if (user && user !== undefined && Object.keys(user).length > 0 && redirectIfFound) {
+		if (user !== undefined && Object.keys(user).length > 0 && redirectIfFound) {
 			if ("key" in user) {
 				router.push(redirectTo);
 			}

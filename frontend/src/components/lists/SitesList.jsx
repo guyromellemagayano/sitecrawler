@@ -87,6 +87,7 @@ const SitesList = (props) => {
 				) : (
 					<Skeleton circle={true} duration={2} width={10} height={10} tw="relative top-0.5" />
 				)}
+
 				<span
 					css={[
 						tw`font-medium block truncate`,

@@ -83,50 +83,6 @@ const LinkOptions = (props) => {
 							</div>
 						</div>
 					</div>
-
-					<div tw="ml-4 flex items-center lg:ml-6">
-						{componentReady ? (
-							<button
-								type="button"
-								disabled={props.isCrawlStarted && !props.isCrawlFinished}
-								onClick={
-									props.permissions?.includes("can_start_scan")
-										? props.verified
-											? props.handleCrawl
-											: () => setShowSiteVerifyErrorModal(!showSiteVerifyErrorModal)
-										: () => setShowUpgradeErrorModal(!showUpgradeErrorModal)
-								}
-								css={[
-									tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
-									props.permissions?.includes("can_start_scan")
-										? props.verified
-											? props.isCrawlStarted && !props.isCrawlFinished
-												? tw`bg-green-600 opacity-50 cursor-not-allowed`
-												: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
-											: tw`bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-red-500`
-										: tw`bg-yellow-600 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
-								]}
-							>
-								<span tw="flex items-center space-x-2">
-									{props.permissions?.includes("can_start_scan") ? null : (
-										<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
-									)}
-
-									{props.verified ? (
-										!props.isCrawlStarted && props.isCrawlFinished ? (
-											<span>{LinkOptionsLabel[4].label}</span>
-										) : (
-											<span>{LinkOptionsLabel[5].label}</span>
-										)
-									) : (
-										<span>{LinkOptionsLabel[6].label}</span>
-									)}
-								</span>
-							</button>
-						) : (
-							<Skeleton duration={2} width={150} height={40} />
-						)}
-					</div>
 				</div>
 			</div>
 		</div>
