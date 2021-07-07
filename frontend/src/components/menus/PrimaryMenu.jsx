@@ -27,7 +27,7 @@ import SiteSelectionMenu from "src/components/menus/SiteSelectionMenu";
 // Loadable
 const SiteSelectionDropdown = loadable(() => import("src/components/dropdowns/SiteSelectionDropdown"));
 
-const PrimaryMenu = ({ user, site }) => {
+const PrimaryMenu = (props) => {
 	const [selectedSite, setSelectedSite] = React.useState(null);
 	const [selectedSiteDetails, setSelectedSiteDetails] = React.useState([]);
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
@@ -41,7 +41,7 @@ const PrimaryMenu = ({ user, site }) => {
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
 			<div tw="flex flex-col pt-8 pb-4">
-				<div css={[tw`flex items-center flex-shrink-0 flex-row px-3`, user ? tw`mb-0` : tw`mb-8`]}>
+				<div css={[tw`flex items-center flex-shrink-0 flex-row px-3`, props.user ? tw`mb-0` : tw`mb-8`]}>
 					<Link href={siteDashboardLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
 							<AppLogo
@@ -58,8 +58,8 @@ const PrimaryMenu = ({ user, site }) => {
 					<nav tw="flex-1 px-4">
 						{DashboardPages.map((value, index) => {
 							return (
-								<div key={index} css={[user ? tw`mb-8` : tw`mb-4`]}>
-									{user ? (
+								<div key={index} css={[props.user ? tw`mb-8` : tw`mb-4`]}>
+									{props.user ? (
 										<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
 											{value?.category}
 										</h3>
@@ -87,7 +87,7 @@ const PrimaryMenu = ({ user, site }) => {
 																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none  transition ease-in-out duration-150`
 															]}
 														>
-															{user ? (
+															{props.user ? (
 																value2?.slug === "sites" ? (
 																	<ExternalLinkIcon tw="mr-3 h-6 w-5" />
 																) : value2?.slug === "audit-logs" ? (
@@ -96,7 +96,7 @@ const PrimaryMenu = ({ user, site }) => {
 															) : (
 																<Skeleton duration={2} tw="mr-3" width={20} height={20} />
 															)}
-															{user ? (
+															{props.user ? (
 																value2?.title ? (
 																	<span>{value2?.title}</span>
 																) : null
@@ -112,7 +112,7 @@ const PrimaryMenu = ({ user, site }) => {
 												<div ref={ref} tw="relative">
 													<div tw="relative">
 														<span tw="inline-block w-full rounded-md shadow-sm">
-															{user ? (
+															{props.user ? (
 																<SiteSelectionMenu
 																	label={[PrimaryMenuLabel[0].label]}
 																	selectedSite={selectedSite}
@@ -126,7 +126,7 @@ const PrimaryMenu = ({ user, site }) => {
 														</span>
 
 														<SiteSelectionDropdown
-															site={site}
+															site={props.site}
 															label={[PrimaryMenuLabel[2].label]}
 															isComponentVisible={isComponentVisible}
 															selectedSite={selectedSite}
