@@ -52,12 +52,12 @@ const SiteSettings = ({ width, result }) => {
 	});
 
 	const { siteId, mutateSiteId } = useSiteId({
-		querySid: result?.siteId,
+		querySid: result.siteId,
 		redirectIfFound: false,
 		redirectTo: "/sites"
 	});
 
-	const homePageLink = `/site/${result?.siteId}/overview`;
+	const homePageLink = `/site/${result.siteId}/overview`;
 	const pageTitle = SettingsLabel[1].label + " - " + siteId?.name;
 
 	React.useEffect(() => {
@@ -97,7 +97,7 @@ const SiteSettings = ({ width, result }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`w-48 h-auto`}
+										tw="w-48 h-auto"
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
 										width={230}
@@ -113,7 +113,7 @@ const SiteSettings = ({ width, result }) => {
 									<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 										<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 											<div tw="max-w-full p-4">
-												<Breadcrumbs siteId={result?.siteId} pageTitle={SettingsLabel[1].label} />
+												<Breadcrumbs siteId={result.siteId} pageTitle={SettingsLabel[1].label} />
 
 												<div tw="pt-4 m-auto">
 													<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">

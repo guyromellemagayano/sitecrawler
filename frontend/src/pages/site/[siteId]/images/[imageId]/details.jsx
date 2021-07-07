@@ -5,8 +5,8 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import { LinkIcon } from "@heroicons/react/solid";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { LinkIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
@@ -41,10 +41,11 @@ const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerB
 const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
 const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
 
-const ImagesDetail = ({ width, result }) => {
+const ImagesDetail = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [copied, setCopied] = React.useState(false);
 	const [copyValue, setCopyValue] = React.useState(null);
+	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
@@ -71,12 +72,22 @@ const ImagesDetail = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { currentScan, previousScan, scanCount } = useCrawl({
-		siteId: result.siteId
+	React.useEffect(() => {
+		return user
+			? (() => {
+					setEnableSiteIdHook(true);
+			  })()
+			: null;
+	}, [user, enableSiteIdHook]);
+
+	const { currentScan, previousScan } = useCrawl({
+		siteId: enableSiteIdHook ? props.result.siteId : null
 	});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		redirectIfFound: false,
+		redirectTo: enableSiteIdHook ? homePageLink : null
 	});
 
 	React.useEffect(() => {
@@ -84,9 +95,9 @@ const ImagesDetail = ({ width, result }) => {
 	}, [currentScan, previousScan]);
 
 	const { imageDetail } = useImageDetail({
-		querySid: result.siteId,
-		scanObjId: scanObjId,
-		linkId: result.imageId
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		scanObjId: enableSiteIdHook ? scanObjId : null,
+		linkId: enableSiteIdHook ? props.result.imageId : null
 	});
 
 	const imageDetailPageTitle = ImagesLabel[1].label + " - " + siteId?.name + " - " + imageDetail?.url;
@@ -109,13 +120,13 @@ const ImagesDetail = ({ width, result }) => {
 	};
 
 	return (
-		<Layout user={componentReady ? user : null}>
+		<Layout user={user}>
 			<NextSeo title={componentReady ? imageDetailPageTitle : null} />
 
-			<div tw="h-screen flex overflow-hidden bg-white">
+			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
-					width={width}
-					user={componentReady ? user : null}
+					width={props.width}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -134,7 +145,7 @@ const ImagesDetail = ({ width, result }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`flex justify-start w-60 h-12 mb-8`}
+										tw="flex justify-start w-60 h-12 mb-8"
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
 										width={320}
@@ -152,8 +163,8 @@ const ImagesDetail = ({ width, result }) => {
 											<div tw="max-w-full p-4">
 												<Breadcrumbs
 													isImages
-													siteId={result.siteId}
-													dataId={result.imageId}
+													siteId={props.result.siteId}
+													dataId={props.result.imageId}
 													pageTitle={ImagesLabel[1].label}
 													pageDetailTitle={imageDetail?.url}
 												/>
@@ -314,11 +325,9 @@ const ImagesDetail = ({ width, result }) => {
 										</div>
 									</div>
 
-									{componentReady ? (
-										<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-											<SiteFooter />
-										</div>
-									) : null}
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
+										<SiteFooter />
+									</div>
 								</div>
 							</main>
 						</Scrollbars>
@@ -328,7 +337,7 @@ const ImagesDetail = ({ width, result }) => {
 						<Loader />
 					</div>
 				)}
-			</div>
+			</section>
 		</Layout>
 	);
 };

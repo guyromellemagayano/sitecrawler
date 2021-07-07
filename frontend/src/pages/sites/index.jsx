@@ -58,10 +58,6 @@ const Sites = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	React.useEffect(() => {
-		user?.settings.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
-	}, [user]);
-
 	let scanApiEndpoint = "";
 	let queryString = "";
 
@@ -141,12 +137,18 @@ const Sites = ({ width, result }) => {
 	};
 
 	React.useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
+		user && site
+			? (() => {
+					user?.settings.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
+
+					setTimeout(() => {
+						setComponentReady(true);
+					}, 500);
+			  })()
+			: null;
 
 		return setComponentReady(false);
-	}, []);
+	}, [user, site]);
 
 	React.useEffect(() => {
 		removeURLParameter(asPath, "page").includes("?")

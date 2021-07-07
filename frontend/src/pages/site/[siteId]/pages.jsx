@@ -44,8 +44,9 @@ const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeEr
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
-const Pages = ({ width, result }) => {
+const Pages = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
+	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [loadQueryString, setLoadQueryString] = React.useState("");
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
@@ -61,15 +62,23 @@ const Pages = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
+	React.useEffect(() => {
+		return user
+			? (() => {
+					setEnableSiteIdHook(true);
+			  })()
+			: null;
+	}, [user, enableSiteIdHook]);
+
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result?.siteId
+			siteId: enableSiteIdHook ? props.result.siteId : null
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result?.siteId,
+		querySid: enableSiteIdHook ? props.result.siteId : null,
 		redirectIfFound: false,
-		redirectTo: "/sites"
+		redirectTo: enableSiteIdHook ? "/sites" : null
 	});
 
 	React.useEffect(() => {
@@ -98,27 +107,30 @@ const Pages = ({ width, result }) => {
 	user?.permissions.includes("can_see_stylesheets")
 		? (() => {
 				scanApiEndpoint =
-					result?.page !== undefined
-						? `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result?.page
-						: `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+					props.result?.page !== undefined
+						? `/api/site/${props.result.siteId}/scan/${scanObjId}/page/?per_page=` +
+						  linksPerPage +
+						  `&page=` +
+						  props.result?.page
+						: `/api/site/${props.result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
 				queryString +=
-					result?.size_total_min !== undefined
+					props.result?.size_total_min !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&size_total_min=1048576`
 							: `?size_total_min=1048576`
 						: "";
 
 				queryString +=
-					result?.size_total_max !== undefined
+					props.result?.size_total_max !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&size_total_max=1048575`
 							: `?size_total_max=1048575`
 						: "";
 
 				queryString +=
-					result?.tls_total !== undefined
-						? result?.tls_total === "true"
+					props.result?.tls_total !== undefined
+						? props.result?.tls_total === "true"
 							? scanApiEndpoint.includes("?")
 								? `&tls_total=true`
 								: `?tls_total=true`
@@ -128,17 +140,17 @@ const Pages = ({ width, result }) => {
 						: "";
 
 				queryString +=
-					result?.search !== undefined
+					props.result?.search !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&search=${result?.search}`
-							: `?search=${result?.search}`
+							? `&search=${props.result?.search}`
+							: `?search=${props.result?.search}`
 						: "";
 
 				queryString +=
-					result?.ordering !== undefined
+					props.result?.ordering !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&ordering=${result?.ordering}`
-							: `?ordering=${result?.ordering}`
+							? `&ordering=${props.result?.ordering}`
+							: `?ordering=${props.result?.ordering}`
 						: "";
 
 				queryString +=
@@ -153,9 +165,9 @@ const Pages = ({ width, result }) => {
 		: null;
 
 	const { pages, mutatePages } = usePages({
-		endpoint: scanApiEndpoint,
-		querySid: result?.siteId,
-		scanObjId: scanObjId
+		endpoint: enableSiteIdHook ? scanApiEndpoint : null,
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		scanObjId: enableSiteIdHook ? scanObjId : null
 	});
 
 	const handleSearch = async (e) => {
@@ -210,13 +222,13 @@ const Pages = ({ width, result }) => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-		if (result?.search !== undefined) setSearchKey(result?.search);
+		if (props.result?.search !== undefined) setSearchKey(props.result?.search);
 
-		if (result?.per_page !== undefined) setLinksPerPage(result?.per_page);
-	}, [result]);
+		if (props.result?.per_page !== undefined) setLinksPerPage(props.result?.per_page);
+	}, [props.result]);
 
 	React.useEffect(() => {
-		user !== undefined && siteId !== undefined
+		user && siteId && pages
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
@@ -225,21 +237,21 @@ const Pages = ({ width, result }) => {
 			: null;
 
 		return setComponentReady(false);
-	}, [user, siteId]);
+	}, [user, siteId, pages]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
+		<Layout user={user}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<section tw="h-screen flex overflow-hidden bg-white">
-				<MainSidebar
-					width={width}
-					user={componentReady ? user : null}
-					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
-				/>
+			{componentReady ? (
+				<section tw="h-screen flex overflow-hidden bg-white">
+					<MainSidebar
+						width={props.width}
+						user={user}
+						openMobileSidebar={openMobileSidebar}
+						setOpenMobileSidebar={setOpenMobileSidebar}
+					/>
 
-				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -265,12 +277,12 @@ const Pages = ({ width, result }) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={result?.siteId} pageTitle={PagesLabel[1].label} />
+										<Breadcrumbs siteId={props.result.siteId} pageTitle={PagesLabel[1].label} />
 										<HeadingOptions
 											isPages
 											queryString={queryString}
 											verified={siteId?.verified}
-											siteId={result?.siteId}
+											siteId={props.result.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -290,7 +302,7 @@ const Pages = ({ width, result }) => {
 									user?.permissions.includes("can_see_scripts") &&
 									user?.permissions.includes("can_see_stylesheets") ? (
 										<PageFilter
-											result={result}
+											result={props.result}
 											loadQueryString={loadQueryString}
 											setLoadQueryString={setLoadQueryString}
 											mutatePages={mutatePages}
@@ -318,7 +330,7 @@ const Pages = ({ width, result }) => {
 																				user?.permissions.includes("can_see_stylesheets") ? (
 																					site?.slug ? (
 																						<PageSorting
-																							result={result}
+																							result={props.result}
 																							slug={site?.slug}
 																							mutatePages={mutatePages}
 																							linksPagesContent={LinksPagesContent}
@@ -341,7 +353,7 @@ const Pages = ({ width, result }) => {
 															user?.permissions.includes("can_see_stylesheets") ? (
 																pages ? (
 																	pages?.results.map((val, key) => (
-																		<PageTable key={key} siteId={result?.siteId} val={val} />
+																		<PageTable key={key} siteId={props.result.siteId} val={val} />
 																	))
 																) : null
 															) : (
@@ -364,26 +376,26 @@ const Pages = ({ width, result }) => {
 										href="/site/[siteId]/pages/"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
-										page={result?.page ? result?.page : 0}
+										page={props.result?.page ? props.result?.page : 0}
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
 
-									{componentReady ? (
-										<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-											<SiteFooter />
-										</div>
-									) : null}
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
+										<SiteFooter />
+									</div>
 								</div>
 							</main>
 						</Scrollbars>
 					</div>
-				) : (
+				</section>
+			) : (
+				<section tw="h-screen flex overflow-hidden bg-white">
 					<div tw="mx-auto">
 						<Loader />
 					</div>
-				)}
-			</section>
+				</section>
+			)}
 		</Layout>
 	);
 };

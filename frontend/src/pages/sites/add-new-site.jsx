@@ -77,7 +77,7 @@ const AddSite = ({ width }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`w-48 h-auto`}
+										tw="w-48 h-auto"
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
 										width={230}
@@ -88,10 +88,7 @@ const AddSite = ({ width }) => {
 						</div>
 
 						<Scrollbars universal>
-							<main
-								tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none max-w-screen-2xl mx-auto"
-								tabIndex="0"
-							>
+							<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="max-w-full p-4 sm:px-6 md:px-8">
 									<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 										<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">

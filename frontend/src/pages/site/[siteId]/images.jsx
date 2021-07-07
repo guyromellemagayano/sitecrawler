@@ -44,8 +44,9 @@ const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeEr
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
-const Images = ({ width, result }) => {
+const Images = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
+	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [loadQueryString, setLoadQueryString] = React.useState("");
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
@@ -61,15 +62,23 @@ const Images = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
+	React.useEffect(() => {
+		return user
+			? (() => {
+					setEnableSiteIdHook(true);
+			  })()
+			: null;
+	}, [user, enableSiteIdHook]);
+
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result?.siteId
+			siteId: enableSiteIdHook ? props.result.siteId : null
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result?.siteId,
+		querySid: enableSiteIdHook ? props.result.siteId : null,
 		redirectIfFound: false,
-		redirectTo: "/sites"
+		redirectTo: enableSiteIdHook ? "/sites" : null
 	});
 
 	React.useEffect(() => {
@@ -98,64 +107,64 @@ const Images = ({ width, result }) => {
 
 	user?.permissions.includes("can_see_images")
 		? (() => {
-				scanApiEndpoint = `/api/site/${result?.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
+				scanApiEndpoint = `/api/site/${props.result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
 
 				queryString +=
-					result?.page !== undefined
+					props.result?.page !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&page=${result?.page}`
-							: `?page=${result?.page}`
+							? `&page=${props.result?.page}`
+							: `?page=${props.result?.page}`
 						: "";
 
-				statusString = result?.status__neq;
+				statusString = props.result?.status__neq;
 
 				queryString +=
-					result?.status__neq !== undefined
+					props.result?.status__neq !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&status__neq=${statusString}`
 							: `?status__neq=${statusString}`
 						: "";
 
-				tlsStatusString = result?.tls_status__neq;
+				tlsStatusString = props.result?.tls_status__neq;
 
 				queryString +=
-					result?.tls_status__neq !== undefined
+					props.result?.tls_status__neq !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&tls_status__neq=${tlsStatusString}`
 							: `?tls_status__neq=${tlsStatusString}`
 						: "";
 
-				missingAltsString = result?.missing_alts__gt;
+				missingAltsString = props.result?.missing_alts__gt;
 
 				queryString +=
-					result?.missing_alts__gt !== undefined
+					props.result?.missing_alts__gt !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&missing_alts__gt=${missingAltsString}`
 							: `?missing_alts__gt=${missingAltsString}`
 						: "";
 
 				queryString +=
-					result?.search !== undefined
+					props.result?.search !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&search=${result?.search}`
-							: `?search=${result?.search}`
+							? `&search=${props.result?.search}`
+							: `?search=${props.result?.search}`
 						: "";
 
 				queryString +=
-					result?.ordering !== undefined
+					props.result?.ordering !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&ordering=${result?.ordering}`
-							: `?ordering=${result?.ordering}`
+							? `&ordering=${props.result?.ordering}`
+							: `?ordering=${props.result?.ordering}`
 						: "";
 
 				queryString +=
 					typeof window !== "undefined" &&
 					loadQueryString.toString() !== "" &&
 					loadQueryString.toString() !== undefined &&
-					result?.status__neq == undefined &&
-					result?.tls_status__neq == undefined &&
-					result?.missing_alts__gt == undefined &&
-					result?.type == undefined
+					props.result?.status__neq == undefined &&
+					props.result?.tls_status__neq == undefined &&
+					props.result?.missing_alts__gt == undefined &&
+					props.result?.type == undefined
 						? scanApiEndpoint.includes("?")
 							? window.location.search.replace("?", "&")
 							: window.location.search
@@ -166,9 +175,9 @@ const Images = ({ width, result }) => {
 		: null;
 
 	const { images, mutateImages } = useImages({
-		endpoint: scanApiEndpoint,
-		querySid: result?.siteId,
-		scanObjId: scanObjId
+		endpoint: enableSiteIdHook ? scanApiEndpoint : null,
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		scanObjId: enableSiteIdHook ? scanObjId : null
 	});
 
 	const handleSearch = async (e) => {
@@ -223,13 +232,13 @@ const Images = ({ width, result }) => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-		if (result?.search !== undefined) setSearchKey(result?.search);
+		if (props.result?.search !== undefined) setSearchKey(props.result?.search);
 
-		if (result?.per_page !== undefined) setLinksPerPage(result?.per_page);
-	}, [result]);
+		if (props.result?.per_page !== undefined) setLinksPerPage(props.result?.per_page);
+	}, [props.result]);
 
 	React.useEffect(() => {
-		user !== undefined && siteId !== undefined
+		user && siteId && images
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
@@ -238,21 +247,21 @@ const Images = ({ width, result }) => {
 			: null;
 
 		return setComponentReady(false);
-	}, [user, siteId]);
+	}, [user, siteId, images]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
+		<Layout user={user}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<section tw="h-screen flex overflow-hidden bg-white">
-				<MainSidebar
-					width={width}
-					user={componentReady ? user : null}
-					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
-				/>
+			{componentReady ? (
+				<section tw="h-screen flex overflow-hidden bg-white">
+					<MainSidebar
+						width={props.width}
+						user={user}
+						openMobileSidebar={openMobileSidebar}
+						setOpenMobileSidebar={setOpenMobileSidebar}
+					/>
 
-				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -278,12 +287,12 @@ const Images = ({ width, result }) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={result?.siteId} pageTitle={ImagesLabel[1].label} />
+										<Breadcrumbs siteId={props.result.siteId} pageTitle={ImagesLabel[1].label} />
 										<HeadingOptions
 											isImages
 											queryString={queryString}
 											verified={siteId?.verified}
-											siteId={result?.siteId}
+											siteId={props.result.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -301,7 +310,7 @@ const Images = ({ width, result }) => {
 								<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
 									{user?.permissions.includes("can_see_images") ? (
 										<ImageFilter
-											result={result}
+											result={props.result}
 											loadQueryString={loadQueryString}
 											setLoadQueryString={setLoadQueryString}
 											mutateImages={mutateImages}
@@ -327,7 +336,7 @@ const Images = ({ width, result }) => {
 																				{user?.permissions.includes("can_see_images") ? (
 																					site?.slug ? (
 																						<ImageSorting
-																							result={result}
+																							result={props.result}
 																							slug={site?.slug}
 																							mutateImages={mutateImages}
 																							imageTableContent={ImageTableContent}
@@ -348,7 +357,7 @@ const Images = ({ width, result }) => {
 															{user?.permissions.includes("can_see_images") ? (
 																images ? (
 																	images?.results.map((val, key) => (
-																		<ImageTable key={key} siteId={result?.siteId} val={val} />
+																		<ImageTable key={key} siteId={props.result.siteId} val={val} />
 																	))
 																) : null
 															) : (
@@ -371,26 +380,26 @@ const Images = ({ width, result }) => {
 										href="/site/[siteId]/images/"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
-										page={result?.page ? result?.page : 0}
+										page={props.result?.page ? props.result?.page : 0}
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
 
-									{componentReady ? (
-										<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-											<SiteFooter />
-										</div>
-									) : null}
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
+										<SiteFooter />
+									</div>
 								</div>
 							</main>
 						</Scrollbars>
 					</div>
-				) : (
+				</section>
+			) : (
+				<section tw="h-screen flex overflow-hidden bg-white">
 					<div tw="mx-auto">
 						<Loader />
 					</div>
-				)}
-			</section>
+				</section>
+			)}
 		</Layout>
 	);
 };

@@ -40,10 +40,11 @@ const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerB
 const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
 const SiteWarningBadge = loadable(() => import("src/components/badges/SiteWarningBadge"));
 
-const LinkDetail = ({ width, result }) => {
+const LinkDetail = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [copied, setCopied] = React.useState(false);
 	const [copyValue, setCopyValue] = React.useState(null);
+	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
@@ -70,12 +71,22 @@ const LinkDetail = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { currentScan, previousScan, scanCount } = useCrawl({
-		siteId: result.siteId
+	React.useEffect(() => {
+		return user
+			? (() => {
+					setEnableSiteIdHook(true);
+			  })()
+			: null;
+	}, [user, enableSiteIdHook]);
+
+	const { currentScan, previousScan } = useCrawl({
+		siteId: enableSiteIdHook ? props.result.siteId : null
 	});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		redirectIfFound: false,
+		redirectTo: enableSiteIdHook ? homePageLink : null
 	});
 
 	React.useEffect(() => {
@@ -83,9 +94,9 @@ const LinkDetail = ({ width, result }) => {
 	}, [currentScan, previousScan]);
 
 	const { linkDetail } = useLinkDetail({
-		querySid: result.siteId,
-		scanObjId: scanObjId,
-		linkId: result.linkId
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		scanObjId: enableSiteIdHook ? scanObjId : null,
+		linkId: enableSiteIdHook ? props.result.linkId : null
 	});
 
 	const linksDetailPageTitle = LinksLabel[1].label + " - " + siteId?.name + " - " + linkDetail?.url;
@@ -108,13 +119,13 @@ const LinkDetail = ({ width, result }) => {
 	};
 
 	return (
-		<Layout user={componentReady ? user : null}>
+		<Layout user={user}>
 			<NextSeo title={componentReady ? linksDetailPageTitle : null} />
 
-			<div tw="h-screen flex overflow-hidden bg-white">
+			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
-					width={width}
-					user={componentReady ? user : null}
+					width={props.width}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -133,7 +144,7 @@ const LinkDetail = ({ width, result }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`flex justify-start w-60 h-12 mb-8`}
+										tw="flex justify-start w-60 h-12 mb-8"
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
 										width={320}
@@ -151,8 +162,8 @@ const LinkDetail = ({ width, result }) => {
 											<div tw="max-w-full p-4">
 												<Breadcrumbs
 													isLinks
-													siteId={result.siteId}
-													dataId={result.linkId}
+													siteId={props.result.siteId}
+													dataId={props.result.linkId}
 													pageTitle={LinksLabel[1].label}
 													pageDetailTitle={linkDetail?.url}
 												/>
@@ -299,11 +310,9 @@ const LinkDetail = ({ width, result }) => {
 										</div>
 									</div>
 
-									{componentReady ? (
-										<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-											<SiteFooter />
-										</div>
-									) : null}
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
+										<SiteFooter />
+									</div>
 								</div>
 							</main>
 						</Scrollbars>
@@ -313,7 +322,7 @@ const LinkDetail = ({ width, result }) => {
 						<Loader />
 					</div>
 				)}
-			</div>
+			</section>
 		</Layout>
 	);
 };

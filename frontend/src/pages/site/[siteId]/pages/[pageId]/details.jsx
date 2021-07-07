@@ -40,10 +40,11 @@ const Loader = loadable(() => import("src/components/layouts/Loader"));
 const SiteDangerBadge = loadable(() => import("src/components/badges/SiteDangerBadge"));
 const SiteSuccessBadge = loadable(() => import("src/components/badges/SiteSuccessBadge"));
 
-const PageDetail = ({ width, result }) => {
+const PageDetail = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [copied, setCopied] = React.useState(false);
 	const [copyValue, setCopyValue] = React.useState(null);
+	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
@@ -71,12 +72,22 @@ const PageDetail = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { currentScan, previousScan, scanCount } = useCrawl({
-		siteId: result.siteId
+	React.useEffect(() => {
+		return user
+			? (() => {
+					setEnableSiteIdHook(true);
+			  })()
+			: null;
+	}, [user, enableSiteIdHook]);
+
+	const { currentScan, previousScan } = useCrawl({
+		siteId: enableSiteIdHook ? props.result.siteId : null
 	});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		redirectIfFound: false,
+		redirectTo: enableSiteIdHook ? homePageLink : null
 	});
 
 	React.useEffect(() => {
@@ -84,18 +95,18 @@ const PageDetail = ({ width, result }) => {
 	}, [currentScan, previousScan]);
 
 	const { pageDetail } = usePageDetail({
-		querySid: result.siteId,
-		scanObjId: scanObjId,
-		linkId: result.pageId
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		scanObjId: enableSiteIdHook ? scanObjId : null,
+		linkId: enableSiteIdHook ? props.result.pageId : null
 	});
 
 	const pageDetailPageTitle = PagesLabel[1].label + " - " + siteId?.name + " - " + pageDetail?.url;
 
 	const { pageDetailLink } = usePageDetailLink({
-		addQuery: brokenLinksQuery,
-		querySid: result.siteId,
-		scanObjId: scanObjId,
-		pageId: result.pageId
+		addQuery: enableSiteIdHook ? brokenLinksQuery : null,
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		scanObjId: enableSiteIdHook ? scanObjId : null,
+		pageId: enableSiteIdHook ? props.result.pageId : null
 	});
 
 	React.useEffect(() => {
@@ -116,13 +127,13 @@ const PageDetail = ({ width, result }) => {
 	};
 
 	return (
-		<Layout user={componentReady ? user : null}>
+		<Layout user={user}>
 			<NextSeo title={componentReady ? pageDetailPageTitle : null} />
 
-			<div tw="h-screen flex overflow-hidden bg-white">
+			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
-					width={width}
-					user={componentReady ? user : null}
+					width={props.width}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -141,7 +152,7 @@ const PageDetail = ({ width, result }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`flex justify-start w-60 h-12 mb-8`}
+										tw="flex justify-start w-60 h-12 mb-8"
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
 										width={320}
@@ -159,8 +170,8 @@ const PageDetail = ({ width, result }) => {
 											<div tw="max-w-full p-4">
 												<Breadcrumbs
 													isPages
-													siteId={result.siteId}
-													dataId={result.pageId}
+													siteId={props.result.siteId}
+													dataId={props.result.pageId}
 													pageTitle={PagesLabel[1].label}
 													pageDetailTitle={pageDetail?.url}
 												/>
@@ -406,11 +417,9 @@ const PageDetail = ({ width, result }) => {
 										</div>
 									</div>
 
-									{componentReady ? (
-										<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-											<SiteFooter />
-										</div>
-									) : null}
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
+										<SiteFooter />
+									</div>
 								</div>
 							</main>
 						</Scrollbars>
@@ -420,7 +429,7 @@ const PageDetail = ({ width, result }) => {
 						<Loader />
 					</div>
 				)}
-			</div>
+			</section>
 		</Layout>
 	);
 };

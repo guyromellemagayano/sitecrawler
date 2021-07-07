@@ -105,7 +105,7 @@ const ConfirmEmail = () => {
 			<div tw="bg-gray-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 				<div tw="flex flex-col justify-center sm:mx-auto sm:w-full sm:max-w-md">
 					<AppLogo
-						className={tw`h-12 w-auto mx-auto mb-8 md:mx-auto`}
+						tw="h-12 w-auto mx-auto mb-8 md:mx-auto"
 						src="/images/logos/site-logo-dark.svg"
 						alt={appLogoAltText}
 						width={230}

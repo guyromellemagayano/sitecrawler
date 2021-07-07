@@ -46,9 +46,10 @@ const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumb
 const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 
-const SiteOverview = ({ width, result }) => {
+const SiteOverview = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
+	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
@@ -59,16 +60,20 @@ const SiteOverview = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
+	React.useEffect(() => {
+		return user
+			? (() => {
+					user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
+
+					setEnableSiteIdHook(true);
+			  })()
+			: null;
+	}, [user, enableSiteIdHook]);
+
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result?.siteId
+			siteId: enableSiteIdHook ? props.result.siteId : null
 		});
-
-	const { siteId } = useSiteId({
-		querySid: result?.siteId,
-		redirectIfFound: false,
-		redirectTo: "/sites"
-	});
 
 	const homePageLink = "/sites/";
 	const pageTitle = OverviewLabel[0].label;
@@ -89,21 +94,27 @@ const SiteOverview = ({ width, result }) => {
 		return handleScanObjId(scanCount, currentScan, previousScan);
 	}, [scanCount, currentScan, previousScan]);
 
+	const { siteId } = useSiteId({
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		redirectIfFound: false,
+		redirectTo: enableSiteIdHook ? "/sites" : null
+	});
+
 	const { stats } = useStats({
-		querySid: result?.siteId,
-		scanObjId: result?.scanObjId ?? scanObjId
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		scanObjId: props.result?.scanObjId ?? scanObjId
 	});
 
 	const { uptime } = useUptime({
-		querySid: result?.siteId
+		querySid: enableSiteIdHook ? props.result.siteId : null
 	});
 
 	const { uptimeSummary } = useUptimeSummary({
-		querySid: result?.siteId
+		querySid: enableSiteIdHook ? props.result.siteId : null
 	});
 
 	React.useEffect(() => {
-		user && siteId && uptime && uptimeSummary
+		siteId && stats && uptime && uptimeSummary
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
@@ -112,27 +123,23 @@ const SiteOverview = ({ width, result }) => {
 			: null;
 
 		return setComponentReady(false);
-	}, [user, siteId, uptime, uptimeSummary]);
-
-	React.useEffect(() => {
-		user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
-	}, [user]);
+	}, [siteId, stats, uptime, uptimeSummary]);
 
 	return (
 		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<section tw="h-screen flex overflow-hidden bg-white">
-				<MainSidebar
-					width={width}
-					user={componentReady ? user : null}
-					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
-				/>
+			{componentReady ? (
+				<section tw="h-screen flex overflow-hidden bg-white">
+					<MainSidebar
+						width={props.width}
+						user={componentReady ? user : null}
+						openMobileSidebar={openMobileSidebar}
+						setOpenMobileSidebar={setOpenMobileSidebar}
+					/>
 
-				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
-						<div tw="relative flex-shrink-0 flex bg-white">
+						<div tw="relative flex-shrink-0 flex">
 							<div tw="border-b flex-shrink-0 flex">
 								<MobileSidebarButton
 									openMobileSidebar={openMobileSidebar}
@@ -143,7 +150,7 @@ const SiteOverview = ({ width, result }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`w-48 h-auto`}
+										tw="w-48 h-auto"
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
 										width={230}
@@ -157,11 +164,11 @@ const SiteOverview = ({ width, result }) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div tw="max-w-full p-4">
-										<Breadcrumbs siteId={result?.siteId} pageTitle={pageTitle} />
+										<Breadcrumbs siteId={props.result.siteId} pageTitle={pageTitle} />
 										<HeadingOptions
 											isOverview
 											verified={siteId?.verified}
-											siteId={result?.siteId}
+											siteId={props.result.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -191,38 +198,38 @@ const SiteOverview = ({ width, result }) => {
 												<SitesStats stats={stats} />
 											</div>
 
-											<div tw="col-span-1 lg:col-span-2 xl:col-span-1">
-												<SitesLinksStats sid={result?.siteId} stats={stats} />
+											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
+												<SitesLinksStats sid={props.result.siteId} stats={stats} />
 											</div>
 
-											<div tw="col-span-1 lg:col-span-2 xl:col-span-1">
-												<SitesPagesStats sid={result?.siteId} stats={stats} />
+											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
+												<SitesPagesStats sid={props.result.siteId} stats={stats} />
 											</div>
 
-											<div tw="col-span-1 lg:col-span-2 xl:col-span-1">
-												<SitesImagesStats sid={result?.siteId} stats={stats} />
+											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
+												<SitesImagesStats sid={props.result.siteId} stats={stats} />
 											</div>
 
-											<div tw="col-span-1 lg:col-span-2 xl:col-span-1">
-												<SitesSeoStats sid={result?.siteId} stats={stats} />
+											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
+												<SitesSeoStats sid={props.result.siteId} stats={stats} />
 											</div>
 
 											<div tw="col-span-1 md:col-span-4 xl:col-span-2">
-												<SitesResponseTimeStats sid={result?.siteId} uptime={uptime} />
+												<SitesResponseTimeStats sid={props.result.siteId} uptime={uptime} />
 											</div>
 
 											<div tw="flex col-span-1 md:col-span-4 xl:col-span-2">
 												<div tw="flex-1 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-2 gap-8">
 													<div tw="col-span-1 md:col-span-1 xl:col-span-2">
-														<SitesCurrentStatusStats sid={result?.siteId} uptimeSummary={uptimeSummary} />
+														<SitesCurrentStatusStats sid={props.result.siteId} uptimeSummary={uptimeSummary} />
 													</div>
 
 													<div tw="col-span-1 md:col-span-1">
-														<SitesUptimeStats sid={result?.sid} uptimeSummary={uptimeSummary} />
+														<SitesUptimeStats sid={props.result?.sid} uptimeSummary={uptimeSummary} />
 													</div>
 
 													<div tw="col-span-1 md:col-span-1">
-														<SitesDowntimeStats sid={result?.siteId} uptimeSummary={uptimeSummary} />
+														<SitesDowntimeStats sid={props.result.siteId} uptimeSummary={uptimeSummary} />
 													</div>
 												</div>
 											</div>
@@ -238,12 +245,14 @@ const SiteOverview = ({ width, result }) => {
 							</main>
 						</Scrollbars>
 					</div>
-				) : (
+				</section>
+			) : (
+				<section tw="h-screen flex overflow-hidden bg-white">
 					<div tw="mx-auto">
 						<Loader />
 					</div>
-				)}
-			</section>
+				</section>
+			)}
 		</Layout>
 	);
 };

@@ -36,7 +36,7 @@ const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished 
 	return (
 		<>
 			<TlsErrorModal
-				show={showTlsErrorModal}
+				showModal={showTlsErrorModal}
 				setShowModal={setShowTlsErrorModal}
 				siteId={stats?.site_id}
 				scanObjId={stats?.id}
