@@ -43,6 +43,7 @@ func (j *UptimeJob) run() error {
 		database.Join("JOIN auth_user_groups as ug ON ug.user_id = u.id"),
 		database.Where("ug.group_id = ?", j.Group.GroupID),
 		database.Where("t.verified = true"),
+		database.Where("t.deleted_at IS NULL"),
 	)
 	if err != nil {
 		return errors.Wrapf(err, "could not get sites for group %v", j.Group.GroupID)

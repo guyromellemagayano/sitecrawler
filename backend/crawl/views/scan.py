@@ -34,6 +34,7 @@ class ScanViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.filter(site__deleted_at__isnull=True)
         if not self.request.user.is_superuser:
             queryset = queryset.filter(site__user=self.request.user)
         if self._is_request_to_detail_endpoint():
@@ -42,7 +43,7 @@ class ScanViewSet(
 
     @action(detail=True, methods=["post"])
     def send_finished_email(self, request, pk=None, parent_lookup_site=None):
-        scan = Scan.objects.get(pk=pk)
+        scan = Scan.objects.filter(site__deleted_at__isnull=True).get(pk=pk)
 
         # Only send initial emails here, others will be handled by cron
         if Scan.objects.filter(site_id=scan.site_id).count() == 1:

@@ -74,7 +74,7 @@ class PageChildViewSet(
     ]
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
         if not self.request.user.is_superuser:
             queryset = queryset.filter(scan__site__user=self.request.user)
         return queryset

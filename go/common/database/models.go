@@ -103,8 +103,13 @@ var Columns = struct {
 
 		Site string
 	}
+	CrawlScancache struct {
+		ID, CreatedAt, Data string
+
+		Scan string
+	}
 	CrawlSite struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt string
 
 		User string
 	}
@@ -463,8 +468,19 @@ var Columns = struct {
 
 		Site: "Site",
 	},
+	CrawlScancache: struct {
+		ID, CreatedAt, Data string
+
+		Scan string
+	}{
+		ID:        "scan_id",
+		CreatedAt: "created_at",
+		Data:      "data",
+
+		Scan: "Scan",
+	},
 	CrawlSite: struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt string
 
 		User string
 	}{
@@ -478,6 +494,7 @@ var Columns = struct {
 		LastVerifyError:        "last_verify_error",
 		Name:                   "name",
 		LargePageSizeThreshold: "large_page_size_threshold",
+		DeletedAt:              "deleted_at",
 
 		User: "User",
 	},
@@ -741,6 +758,9 @@ var Tables = struct {
 	CrawlScanarchive struct {
 		Name, Alias string
 	}
+	CrawlScancache struct {
+		Name, Alias string
+	}
 	CrawlSite struct {
 		Name, Alias string
 	}
@@ -914,6 +934,12 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "crawl_scanarchive",
+		Alias: "t",
+	},
+	CrawlScancache: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_scancache",
 		Alias: "t",
 	},
 	CrawlSite: struct {
@@ -1295,19 +1321,30 @@ type CrawlScanarchive struct {
 	Site *CrawlSite `pg:"fk:site_id"`
 }
 
+type CrawlScancache struct {
+	tableName struct{} `pg:"crawl_scancache,alias:t,,discard_unknown_columns"`
+
+	ID        int                    `pg:"scan_id,pk"`
+	CreatedAt time.Time              `pg:"created_at,use_zero"`
+	Data      map[string]interface{} `pg:"data,use_zero"`
+
+	Scan *CrawlScan `pg:"fk:scan_id"`
+}
+
 type CrawlSite struct {
 	tableName struct{} `pg:"crawl_site,alias:t,,discard_unknown_columns"`
 
-	ID                     int       `pg:"id,pk"`
-	CreatedAt              time.Time `pg:"created_at,use_zero"`
-	UpdatedAt              time.Time `pg:"updated_at,use_zero"`
-	Url                    string    `pg:"url,use_zero"`
-	VerificationID         string    `pg:"verification_id,use_zero"`
-	Verified               bool      `pg:"verified,use_zero"`
-	UserID                 int       `pg:"user_id,use_zero"`
-	LastVerifyError        *string   `pg:"last_verify_error"`
-	Name                   string    `pg:"name,use_zero"`
-	LargePageSizeThreshold *int      `pg:"large_page_size_threshold"`
+	ID                     int        `pg:"id,pk"`
+	CreatedAt              time.Time  `pg:"created_at,use_zero"`
+	UpdatedAt              time.Time  `pg:"updated_at,use_zero"`
+	Url                    string     `pg:"url,use_zero"`
+	VerificationID         string     `pg:"verification_id,use_zero"`
+	Verified               bool       `pg:"verified,use_zero"`
+	UserID                 int        `pg:"user_id,use_zero"`
+	LastVerifyError        *string    `pg:"last_verify_error"`
+	Name                   string     `pg:"name,use_zero"`
+	LargePageSizeThreshold *int       `pg:"large_page_size_threshold"`
+	DeletedAt              *time.Time `pg:"deleted_at"`
 
 	User *AuthUser `pg:"fk:user_id"`
 }
