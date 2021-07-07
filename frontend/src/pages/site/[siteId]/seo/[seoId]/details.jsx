@@ -35,7 +35,7 @@ import SiteFooter from "src/components/layouts/Footer";
 const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 
-const SeoDetail = ({ width, result }) => {
+const SeoDetail = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
@@ -63,12 +63,14 @@ const SeoDetail = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
-	const { currentScan, previousScan, scanCount } = useCrawl({
-		siteId: result.siteId
+	const { currentScan, previousScan } = useCrawl({
+		siteId: props.result.siteId
 	});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId
+		querySid: enableSiteIdHook ? props.props.result.siteId : null,
+		redirectIfFound: false,
+		redirectTo: enableSiteIdHook ? homePageLink : null
 	});
 
 	React.useEffect(() => {
@@ -76,24 +78,12 @@ const SeoDetail = ({ width, result }) => {
 	}, [currentScan, previousScan]);
 
 	const { pageDetail } = usePageDetail({
-		querySid: result.siteId,
-		scanObjId: scanObjId,
-		linkId: result.seoId
+		querySid: enableSiteIdHook ? props.props.result.siteId : null,
+		scanObjId: enableSiteIdHook ? scanObjId : null,
+		linkId: enableSiteIdHook ? props.props.result.seoId : null
 	});
 
 	const seoDetailPageTitle = SeoLabel[1].label + " - " + siteId?.name + " - " + pageDetail?.url;
-
-	React.useEffect(() => {
-		pageDetail
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
-
-		return setComponentReady(false);
-	}, [pageDetail]);
 
 	React.useEffect(() => {
 		user && siteId && pageDetail
@@ -108,13 +98,13 @@ const SeoDetail = ({ width, result }) => {
 	}, [user, siteId, pageDetail]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
+		<Layout user={user}>
 			<NextSeo title={componentReady ? seoDetailPageTitle : null} />
 
 			<div tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
-					width={width}
-					user={componentReady ? user : null}
+					width={props.width}
+					user={user}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
@@ -133,7 +123,7 @@ const SeoDetail = ({ width, result }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`flex justify-start w-60 h-12 mb-8`}
+										tw="flex justify-start w-60 h-12 mb-8"
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
 										width={320}
@@ -151,8 +141,8 @@ const SeoDetail = ({ width, result }) => {
 											<div tw="max-w-full p-4">
 												<Breadcrumbs
 													isSeo
-													siteId={result.siteId}
-													dataId={result.seoId}
+													siteId={props.result.siteId}
+													dataId={props.result.seoId}
 													pageTitle={SeoLabel[1].label}
 													pageDetailTitle={pageDetail?.url}
 												/>

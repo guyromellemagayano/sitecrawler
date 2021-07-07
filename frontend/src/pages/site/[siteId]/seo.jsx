@@ -44,9 +44,10 @@ const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeEr
 // Helpers
 import { removeURLParameter } from "src/helpers/functions";
 
-const Seo = ({ width, result }) => {
+const Seo = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
+	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
 	const [loadQueryString, setLoadQueryString] = React.useState("");
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
@@ -62,15 +63,23 @@ const Seo = ({ width, result }) => {
 		redirectTo: "/login"
 	});
 
+	React.useEffect(() => {
+		return user
+			? (() => {
+					setEnableSiteIdHook(true);
+			  })()
+			: null;
+	}, [user, enableSiteIdHook]);
+
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result.siteId
+			siteId: enableSiteIdHook ? props.result.siteId : null
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result.siteId,
+		querySid: enableSiteIdHook ? props.result.siteId : null,
 		redirectIfFound: false,
-		redirectTo: "/sites"
+		redirectTo: enableSiteIdHook ? "/sites" : null
 	});
 
 	React.useEffect(() => {
@@ -103,78 +112,83 @@ const Seo = ({ width, result }) => {
 	user?.permissions.includes("can_see_stylesheets")
 		? (() => {
 				scanApiEndpoint =
-					result?.page !== undefined
-						? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result?.page
-						: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+					props.result?.page !== undefined
+						? `/api/site/${props.result.siteId}/scan/${scanObjId}/page/?per_page=` +
+						  linksPerPage +
+						  `&page=` +
+						  props.result?.page
+						: `/api/site/${props.result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
-				hasTitleString = Array.isArray(result?.has_title) ? result?.has_title.join("&has_title=") : result?.has_title;
+				hasTitleString = Array.isArray(props.result?.has_title)
+					? props.result?.has_title.join("&has_title=")
+					: props.result?.has_title;
 
 				queryString +=
-					result?.has_title !== undefined
+					props.result?.has_title !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_title=${hasTitleString}`
 							: `?has_title=${hasTitleString}`
 						: "";
 
-				hasDescriptionString = Array.isArray(result?.has_description)
-					? result?.has_description.join("&has_description=")
-					: result?.has_description;
+				hasDescriptionString = Array.isArray(props.result?.has_description)
+					? props.result?.has_description.join("&has_description=")
+					: props.result?.has_description;
 
 				queryString +=
-					result?.has_description !== undefined
+					props.result?.has_description !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_description=${hasDescriptionString}`
 							: `?has_description=${hasDescriptionString}`
 						: "";
 
-				hasH1FirstString = Array.isArray(result?.has_h1_first)
-					? result?.has_h1_first.join("&has_h1_first=")
-					: result?.has_h1_first;
+				hasH1FirstString = Array.isArray(props.result?.has_h1_first)
+					? props.result?.has_h1_first.join("&has_h1_first=")
+					: props.result?.has_h1_first;
 
 				queryString +=
-					result?.has_h1_first !== undefined
+					props.result?.has_h1_first !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_h1_first=${hasH1FirstString}`
 							: `?has_h1_first=${hasH1FirstString}`
 						: "";
 
 				queryString +=
-					result?.has_h1_second !== undefined
+					props.result?.has_h1_second !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_h1_second=false`
 							: `?has_h1_second=false`
 						: "";
 
-				hasH2FirstString = Array.isArray(result?.has_h2_first)
-					? result?.has_h2_first.join("&has_h2_first=")
-					: result?.has_h2_first;
+				hasH2FirstString = Array.isArray(props.result?.has_h2_first)
+					? props.result?.has_h2_first.join("&has_h2_first=")
+					: props.result?.has_h2_first;
 
 				queryString +=
-					result?.has_h2_first !== undefined
+					props.result?.has_h2_first !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_h2_first=${hasH2FirstString}`
 							: `?has_h2_first=${hasH2FirstString}`
 						: "";
 
 				queryString +=
-					result?.has_h2_second !== undefined
+					props.result?.has_h2_second !== undefined
 						? scanApiEndpoint.includes("?")
 							? `&has_h2_second=false`
 							: `?has_h2_second=false`
 						: "";
 
 				queryString +=
-					result?.search !== undefined
+					props.result?.search !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&search=${result?.search}`
-							: `?search=${result?.search}`
+							? `&search=${props.result?.search}`
+							: `?search=${props.result?.search}`
 						: "";
 
 				queryString +=
-					result?.ordering !== undefined
+					props.result?.ordering !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&ordering=${result?.ordering}`
-							: `?ordering=${result?.ordering}`
+							? `&ordering=${props.result?.ordering}`
+							: `?ordering=${props.result?.ordering}`
 						: "";
 
 				queryString +=
@@ -188,14 +202,10 @@ const Seo = ({ width, result }) => {
 		  })()
 		: null;
 
-	React.useEffect(() => {
-		user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
-	}, [user]);
-
 	const { pages, mutatePages } = usePages({
-		endpoint: scanApiEndpoint,
-		querySid: result.siteId,
-		scanObjId: scanObjId
+		endpoint: enableSiteIdHook ? scanApiEndpoint : null,
+		querySid: enableSiteIdHook ? props.result.siteId : null,
+		scanObjId: enableSiteIdHook ? scanObjId : null
 	});
 
 	const handleSearch = async (e) => {
@@ -250,14 +260,16 @@ const Seo = ({ width, result }) => {
 		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
-		if (result?.search !== undefined) setSearchKey(result?.search);
+		if (props.result?.search !== undefined) setSearchKey(props.result?.search);
 
-		if (result?.per_page !== undefined) setLinksPerPage(result?.per_page);
-	}, [result]);
+		if (props.result?.per_page !== undefined) setLinksPerPage(props.result?.per_page);
+	}, [props.result]);
 
 	React.useEffect(() => {
-		user !== undefined && siteId !== undefined
+		user && siteId && pages
 			? (() => {
+					user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
+
 					setTimeout(() => {
 						setComponentReady(true);
 					}, 500);
@@ -265,21 +277,20 @@ const Seo = ({ width, result }) => {
 			: null;
 
 		return setComponentReady(false);
-	}, [user, siteId]);
+	}, [user, siteId, pages]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
+		<Layout user={user}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<section tw="h-screen flex overflow-hidden bg-white">
-				<MainSidebar
-					width={width}
-					user={componentReady ? user : null}
-					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
-				/>
-
-				{componentReady ? (
+			{componentReady ? (
+				<section tw="h-screen flex overflow-hidden bg-white">
+					<MainSidebar
+						width={props.width}
+						user={user}
+						openMobileSidebar={openMobileSidebar}
+						setOpenMobileSidebar={setOpenMobileSidebar}
+					/>
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
@@ -305,12 +316,12 @@ const Seo = ({ width, result }) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={result.siteId} pageTitle={SeoLabel[1].label} />
+										<Breadcrumbs siteId={props.result.siteId} pageTitle={SeoLabel[1].label} />
 										<HeadingOptions
 											isSeo
 											queryString={queryString}
 											verified={siteId?.verified}
-											siteId={result.siteId}
+											siteId={props.result.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -330,7 +341,7 @@ const Seo = ({ width, result }) => {
 									user?.permissions.includes("can_see_scripts") &&
 									user?.permissions.includes("can_see_stylesheets") ? (
 										<SeoFilter
-											result={result}
+											result={props.result}
 											loadQueryString={loadQueryString}
 											setLoadQueryString={setLoadQueryString}
 											mutatePages={mutatePages}
@@ -358,7 +369,7 @@ const Seo = ({ width, result }) => {
 																				user?.permissions.includes("can_see_stylesheets") ? (
 																					site?.slug ? (
 																						<SeoSorting
-																							result={result}
+																							result={props.result}
 																							slug={site?.slug}
 																							mutatePages={mutatePages}
 																							seoTableContent={SeoTableContent}
@@ -383,7 +394,7 @@ const Seo = ({ width, result }) => {
 																	pages?.results.map((val, key) => (
 																		<SeoTable
 																			key={key}
-																			siteId={result.siteId}
+																			siteId={props.result.siteId}
 																			val={val}
 																			disableLocalTime={disableLocalTime}
 																		/>
@@ -409,26 +420,26 @@ const Seo = ({ width, result }) => {
 										href="/site/[siteId]/seo/"
 										pathName={pagePath}
 										apiEndpoint={scanApiEndpoint}
-										page={result?.page ? result?.page : 0}
+										page={props.result?.page ? props.result?.page : 0}
 										linksPerPage={linksPerPage}
 										onItemsPerPageChange={onItemsPerPageChange}
 									/>
 
-									{componentReady ? (
-										<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-											<SiteFooter />
-										</div>
-									) : null}
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
+										<SiteFooter />
+									</div>
 								</div>
 							</main>
 						</Scrollbars>
 					</div>
-				) : (
+				</section>
+			) : (
+				<section tw="h-screen flex overflow-hidden bg-white">
 					<div tw="mx-auto">
 						<Loader />
 					</div>
-				)}
-			</section>
+				</section>
+			)}
 		</Layout>
 	);
 };
