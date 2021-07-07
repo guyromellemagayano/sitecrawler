@@ -5,44 +5,18 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
+import "twin.macro";
 import { SearchIcon } from "@heroicons/react/solid";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
 
 // JSON
 import LinkOptionsLabel from "./labels/LinkOptions.json";
 
-// Loadable
-const SiteVerifyErrorModal = loadable(() => import("src/components/modals/SiteVerifyModal"), {
-	resolveComponent: (components) => components.SiteVerifyErrorModal
-});
-const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
-
 const LinkOptions = (props) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-	const [showSiteVerifyErrorModal, setShowSiteVerifyErrorModal] = React.useState(false);
-	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
-
 	const { asPath } = useRouter();
-
-	React.useEffect(() => {
-		(() => {
-			setComponentReady(false);
-
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		})();
-	}, []);
 
 	return (
 		<div tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
-			<SiteVerifyErrorModal show={showSiteVerifyErrorModal} setShowModal={setShowSiteVerifyErrorModal} />
-			<UpgradeErrorModal show={showUpgradeErrorModal} setShowModal={setShowUpgradeErrorModal} />
-
 			<div tw="relative z-10 flex-shrink-0 flex bg-white border-b border-gray-200">
 				<div tw="flex-1 p-4 flex justify-end">
 					<div tw="flex-1 flex">
