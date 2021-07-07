@@ -57,6 +57,9 @@ func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scan
 	if scan.FinishedAt != nil {
 		return nil
 	}
+	if scan.Site.DeletedAt != nil {
+		return nil
+	}
 
 	log.Infof("Starting scan for %v", scan.Site.Url)
 

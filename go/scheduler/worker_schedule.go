@@ -32,7 +32,9 @@ func ScheduleWorker(logger *zap.SugaredLogger, db *database.Database, scanServic
 				database.Join("JOIN auth_user_groups as ug ON ug.user_id = u.id"),
 				database.Where("ug.group_id = ?", groupSetting.GroupID),
 				database.Where("t.verified = true"),
+				database.Where("t.deleted_at IS NULL"),
 			)
+			logger.Infof("Got %v sites for group id %v", len(sites), groupSetting.GroupID)
 			if err != nil {
 				return errors.Wrapf(err, "could not get sites for group %v", groupSetting.GroupID)
 			}
@@ -58,6 +60,7 @@ func ScheduleWorker(logger *zap.SugaredLogger, db *database.Database, scanServic
 					}
 				}
 			}
+			logger.Infof("Done for group id %v", groupSetting.GroupID)
 		}
 		return nil
 	}

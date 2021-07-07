@@ -66,6 +66,9 @@ class UptimeStatViewSet(
     ordering_fields = ["created_at"]
     ordering = ["created_at"]
 
+    def get_queryset(self):
+        return super().get_queryset().filter(site__deleted_at__isnull=True)
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 

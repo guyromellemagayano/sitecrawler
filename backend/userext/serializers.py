@@ -13,6 +13,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(UserDetailsSerializer):
+    id = serializers.IntegerField()
 
     settings = serializers.JSONField(source="userprofile.settings")
     permissions = serializers.SerializerMethodField()
@@ -20,7 +21,16 @@ class UserSerializer(UserDetailsSerializer):
     large_page_size_threshold = serializers.IntegerField(source="userprofile.large_page_size_threshold")
 
     class Meta(UserDetailsSerializer.Meta):
-        fields = UserDetailsSerializer.Meta.fields + ("settings", "permissions", "group", "large_page_size_threshold")
+        fields = (
+            ("id",)
+            + tuple(f for f in UserDetailsSerializer.Meta.fields if f != "pk")
+            + (
+                "settings",
+                "permissions",
+                "group",
+                "large_page_size_threshold",
+            )
+        )
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop("userprofile", {})

@@ -13,5 +13,7 @@ func ReverifyWorker(logger *zap.SugaredLogger, db *database.Database, verifyServ
 		log := logger.With("site_id", site.ID)
 
 		return verifyService.VerifySite(log, site.ID)
-	})
+	},
+		database.Where("t.deleted_at IS NULL"),
+	)
 }

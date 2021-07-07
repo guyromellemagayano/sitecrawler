@@ -117,7 +117,10 @@ func main() {
 			log.Infof("Done site: %v, scan: %v", site.ID, scan.ID)
 			return nil
 		}, database.Where("site_id = ?", site.ID), database.Order("id"))
-	}, database.Order("id"))
+	},
+		database.Where("t.deleted_at IS NULL"),
+		database.Order("id"),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}

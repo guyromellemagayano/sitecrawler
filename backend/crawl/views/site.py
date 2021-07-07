@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from rest_framework import viewsets, mixins
@@ -25,13 +26,17 @@ class SiteViewSet(
     ordering_fields = ["name", "url", "verified", "id", "created_at", "updated_at", "user_id", "verification_id"]
 
     def get_queryset(self):
-        query = Site.objects.all().annotate_last_finished_scan_id()
+        query = Site.objects.filter(deleted_at__isnull=True).annotate_last_finished_scan_id()
         if self.detail and self.request.user.is_superuser:
             return query
         return query.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, verification_id=uuid.uuid4())
+
+    def perform_destroy(self, instance):
+        instance.deleted_at = datetime.datetime.now()
+        instance.save()
 
     @action(detail=True, methods=["post"])
     def verify(self, request, pk=None):

@@ -23,6 +23,9 @@ func (v *VerifyService) VerifySite(log *zap.SugaredLogger, siteID int) error {
 	if err != nil {
 		return errors.Wrapf(err, "could not get site id %v", siteID)
 	}
+	if site.DeletedAt != nil {
+		return nil
+	}
 	log.Infof("Verifying %v", site.Url)
 
 	err = v.VerifyURL(log, site.Url, site.VerificationID)
