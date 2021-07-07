@@ -61,11 +61,11 @@ const Links = ({ width, result }) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result?.siteId
+			siteId: result.siteId
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result?.siteId,
+		querySid: result.siteId,
 		redirectIfFound: false,
 		redirectTo: "/sites"
 	});
@@ -94,7 +94,7 @@ const Links = ({ width, result }) => {
 	let statusNeqString = "";
 	let typeString = "";
 
-	scanApiEndpoint = `/api/site/${result?.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
+	scanApiEndpoint = `/api/site/${result.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
 
 	queryString +=
 		result?.page !== undefined
@@ -158,7 +158,7 @@ const Links = ({ width, result }) => {
 
 	const { links, mutateLinks } = useLinks({
 		endpoint: scanApiEndpoint,
-		querySid: result?.siteId,
+		querySid: result.siteId,
 		scanObjId: scanObjId
 	});
 
@@ -269,12 +269,12 @@ const Links = ({ width, result }) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={result?.siteId} pageTitle={LinksLabel[1].label} />
+										<Breadcrumbs siteId={result.siteId} pageTitle={LinksLabel[1].label} />
 										<HeadingOptions
 											isLinks
 											queryString={queryString}
 											verified={siteId?.verified}
-											siteId={result?.siteId}
+											siteId={result.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -334,7 +334,7 @@ const Links = ({ width, result }) => {
 														<tbody tw="relative">
 															{links
 																? links?.results.map((val, key) => (
-																		<LinkTable key={key} siteId={result?.siteId} val={val} />
+																		<LinkTable key={key} siteId={result.siteId} val={val} />
 																  ))
 																: null}
 														</tbody>

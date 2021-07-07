@@ -63,11 +63,11 @@ const Images = ({ width, result }) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result?.siteId
+			siteId: result.siteId
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result?.siteId,
+		querySid: result.siteId,
 		redirectIfFound: false,
 		redirectTo: "/sites"
 	});
@@ -98,7 +98,7 @@ const Images = ({ width, result }) => {
 
 	user?.permissions.includes("can_see_images")
 		? (() => {
-				scanApiEndpoint = `/api/site/${result?.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
+				scanApiEndpoint = `/api/site/${result.siteId}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
 
 				queryString +=
 					result?.page !== undefined
@@ -167,7 +167,7 @@ const Images = ({ width, result }) => {
 
 	const { images, mutateImages } = useImages({
 		endpoint: scanApiEndpoint,
-		querySid: result?.siteId,
+		querySid: result.siteId,
 		scanObjId: scanObjId
 	});
 
@@ -278,12 +278,12 @@ const Images = ({ width, result }) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={result?.siteId} pageTitle={ImagesLabel[1].label} />
+										<Breadcrumbs siteId={result.siteId} pageTitle={ImagesLabel[1].label} />
 										<HeadingOptions
 											isImages
 											queryString={queryString}
 											verified={siteId?.verified}
-											siteId={result?.siteId}
+											siteId={result.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -348,7 +348,7 @@ const Images = ({ width, result }) => {
 															{user?.permissions.includes("can_see_images") ? (
 																images ? (
 																	images?.results.map((val, key) => (
-																		<ImageTable key={key} siteId={result?.siteId} val={val} />
+																		<ImageTable key={key} siteId={result.siteId} val={val} />
 																	))
 																) : null
 															) : (

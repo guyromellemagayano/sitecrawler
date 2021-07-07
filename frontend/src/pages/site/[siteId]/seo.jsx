@@ -64,11 +64,11 @@ const Seo = ({ width, result }) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result?.siteId
+			siteId: result.siteId
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result?.siteId,
+		querySid: result.siteId,
 		redirectIfFound: false,
 		redirectTo: "/sites"
 	});
@@ -104,8 +104,8 @@ const Seo = ({ width, result }) => {
 		? (() => {
 				scanApiEndpoint =
 					result?.page !== undefined
-						? `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result?.page
-						: `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+						? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result?.page
+						: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
 				hasTitleString = Array.isArray(result?.has_title) ? result?.has_title.join("&has_title=") : result?.has_title;
 
@@ -194,7 +194,7 @@ const Seo = ({ width, result }) => {
 
 	const { pages, mutatePages } = usePages({
 		endpoint: scanApiEndpoint,
-		querySid: result?.siteId,
+		querySid: result.siteId,
 		scanObjId: scanObjId
 	});
 
@@ -305,12 +305,12 @@ const Seo = ({ width, result }) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={result?.siteId} pageTitle={SeoLabel[1].label} />
+										<Breadcrumbs siteId={result.siteId} pageTitle={SeoLabel[1].label} />
 										<HeadingOptions
 											isSeo
 											queryString={queryString}
 											verified={siteId?.verified}
-											siteId={result?.siteId}
+											siteId={result.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -383,7 +383,7 @@ const Seo = ({ width, result }) => {
 																	pages?.results.map((val, key) => (
 																		<SeoTable
 																			key={key}
-																			siteId={result?.siteId}
+																			siteId={result.siteId}
 																			val={val}
 																			disableLocalTime={disableLocalTime}
 																		/>

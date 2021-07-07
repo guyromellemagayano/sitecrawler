@@ -63,11 +63,11 @@ const Pages = ({ width, result }) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: result?.siteId
+			siteId: result.siteId
 		});
 
 	const { siteId } = useSiteId({
-		querySid: result?.siteId,
+		querySid: result.siteId,
 		redirectIfFound: false,
 		redirectTo: "/sites"
 	});
@@ -99,8 +99,8 @@ const Pages = ({ width, result }) => {
 		? (() => {
 				scanApiEndpoint =
 					result?.page !== undefined
-						? `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result?.page
-						: `/api/site/${result?.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
+						? `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage + `&page=` + result?.page
+						: `/api/site/${result.siteId}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
 				queryString +=
 					result?.size_total_min !== undefined
@@ -154,7 +154,7 @@ const Pages = ({ width, result }) => {
 
 	const { pages, mutatePages } = usePages({
 		endpoint: scanApiEndpoint,
-		querySid: result?.siteId,
+		querySid: result.siteId,
 		scanObjId: scanObjId
 	});
 
@@ -265,12 +265,12 @@ const Pages = ({ width, result }) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={result?.siteId} pageTitle={PagesLabel[1].label} />
+										<Breadcrumbs siteId={result.siteId} pageTitle={PagesLabel[1].label} />
 										<HeadingOptions
 											isPages
 											queryString={queryString}
 											verified={siteId?.verified}
-											siteId={result?.siteId}
+											siteId={result.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -341,7 +341,7 @@ const Pages = ({ width, result }) => {
 															user?.permissions.includes("can_see_stylesheets") ? (
 																pages ? (
 																	pages?.results.map((val, key) => (
-																		<PageTable key={key} siteId={result?.siteId} val={val} />
+																		<PageTable key={key} siteId={result.siteId} val={val} />
 																	))
 																) : null
 															) : (
