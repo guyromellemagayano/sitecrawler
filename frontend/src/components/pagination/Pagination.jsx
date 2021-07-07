@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // NextJS
 import Router, { useRouter } from "next/router";
@@ -33,8 +33,8 @@ const PaginationLocale = {
 };
 
 const MyPagination = (props) => {
-	const [paginationLoaded, setPaginationLoaded] = useState(false);
-	const [pageData, setPageData] = useState([]);
+	const [paginationLoaded, setPaginationLoaded] = React.useState(false);
+	const [pageData, setPageData] = React.useState([]);
 
 	const currentPage = parseInt(props.page) || 1;
 	const linkNumbers = [];
@@ -54,7 +54,7 @@ const MyPagination = (props) => {
 		router.push(`${newPath}page=${pageNum}`);
 	};
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (page && page !== undefined && Object.keys(page).length > 0) {
 			setTimeout(() => {
 				setPaginationLoaded(true);
@@ -62,6 +62,8 @@ const MyPagination = (props) => {
 
 			setPageData(page);
 		}
+
+		return setPaginationLoaded(false);
 	}, [page]);
 
 	const totalPages = Math.ceil(pageData.count / props.linksPerPage);
