@@ -2,18 +2,16 @@
 import Image from "next/image";
 
 // External
-import tw, { styled } from "twin.macro";
+import "twin.macro";
 import PropTypes from "prop-types";
 
-const AppLogoLink = styled.span`
-	${tw`flex items-center justify-center max-w-full`}
-`;
-
-const AppLogo = (props) => {
+const AppLogo = ({ "data-tw": dataTw, src, alt, width, height }) => {
 	return (
-		<AppLogoLink css={props.className}>
-			<Image src={props.src} alt={props.alt} width={props.width} height={props.height} />
-		</AppLogoLink>
+		<div tw="flex max-w-full">
+			<span className={dataTw}>
+				<Image src={src} alt={alt} width={width} height={height} />
+			</span>
+		</div>
 	);
 };
 

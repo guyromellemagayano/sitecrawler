@@ -73,7 +73,7 @@ const SiteMenu = ({ site, user }) => {
 					<Link href={siteDashboardLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
 							<AppLogo
-								className={tw`w-48 h-auto`}
+								tw="w-48 h-auto"
 								src="/images/logos/site-logo-white.svg"
 								alt={appLogoAltText}
 								width={230}

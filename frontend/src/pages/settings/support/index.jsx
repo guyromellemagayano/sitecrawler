@@ -82,7 +82,7 @@ const Support = ({ width }) => {
 							<Link href={homePageLink} passHref>
 								<a tw="p-1 block w-full cursor-pointer lg:hidden">
 									<AppLogo
-										className={tw`w-48 h-auto`}
+										tw="w-48 h-auto"
 										src="/images/logos/site-logo-dark.svg"
 										alt={appLogoAltText}
 										width={230}
