@@ -19,20 +19,20 @@ import { usePages } from "src/hooks/useSite";
 // JSON
 import TlsErrorModalLabel from "./labels/TlsErrorModal.json";
 
-const TlsErrorModal = ({ show, setShowModal, siteId, scanObjId }) => {
+const TlsErrorModal = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 
-	const brokenSecurityPageLink = `/site/${siteId}/pages/?tls_total=false`;
-	const pageApiEndpoint = `/api/site/${siteId}/scan/${scanObjId}/page/?tls_total=false`;
+	const brokenSecurityPageLink = `/site/${props.siteId}/pages/?tls_total=false`;
+	const pageApiEndpoint = `/api/site/${props.siteId}/scan/${props.scanObjId}/page/?tls_total=false`;
 
 	const { pages } = usePages({
 		endpoint: pageApiEndpoint,
-		querySid: siteId,
-		scanObjId: scanObjId
+		querySid: props.siteId,
+		scanObjId: props.scanObjId
 	});
 
 	React.useEffect(() => {
-		pages && show
+		pages && props.showModal
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
@@ -41,10 +41,10 @@ const TlsErrorModal = ({ show, setShowModal, siteId, scanObjId }) => {
 			: null;
 
 		return setComponentReady(false);
-	}, [pages, show]);
+	}, [pages, props.showModal]);
 
 	const handleHideTlsErrorModal = (e) => {
-		return e?.key === "Escape" ? setShowModal(false) : null;
+		return e?.key === "Escape" ? props.setShowModal(false) : null;
 	};
 
 	React.useEffect(() => {
@@ -57,7 +57,7 @@ const TlsErrorModal = ({ show, setShowModal, siteId, scanObjId }) => {
 
 	return (
 		<Transition
-			show={show}
+			show={props.showModal}
 			className="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"
 		>
 			<Transition.Child
@@ -109,7 +109,7 @@ const TlsErrorModal = ({ show, setShowModal, siteId, scanObjId }) => {
 													<span tw="ml-2 flex-1 w-0">
 														<Link
 															href="/site/[siteId]/pages/[pageId]/details"
-															as={`/site/${siteId}/pages/${val?.id}/details`}
+															as={`/site/${props.siteId}/pages/${val?.id}/details`}
 															passHref
 														>
 															<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -158,7 +158,7 @@ const TlsErrorModal = ({ show, setShowModal, siteId, scanObjId }) => {
 							<button
 								type="button"
 								tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-								onClick={() => setShowModal(!show)}
+								onClick={() => props.setShowModal(!props.showModal)}
 							>
 								{TlsErrorModalLabel[2].label}
 							</button>
