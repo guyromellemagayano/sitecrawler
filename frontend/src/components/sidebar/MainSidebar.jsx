@@ -26,7 +26,7 @@ const PrimaryMenu = loadable(() => import("src/components/menus/PrimaryMenu"));
 const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"));
 const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
 
-const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) => {
+const MainSidebar = (props) => {
 	const [selectedMenu, setSelectedMenu] = React.useState(null);
 
 	const lgScreenBreakpoint = 1024;
@@ -43,28 +43,28 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 	React.useEffect(() => {
 		switch (true) {
 			case router.pathname.includes("/site/"):
-				setSelectedMenu(<SiteMenu user={user} site={site} />);
+				setSelectedMenu(<SiteMenu user={props.user} site={site} />);
 				break;
 			case router.pathname.includes("/settings/"):
-				setSelectedMenu(<SettingsMenu user={user} site={site} />);
+				setSelectedMenu(<SettingsMenu user={props.user} site={site} />);
 				break;
 			default:
-				setSelectedMenu(<PrimaryMenu user={user} site={site} />);
+				setSelectedMenu(<PrimaryMenu user={props.user} site={site} />);
 				break;
 		}
 
 		return selectedMenu;
-	}, [router, site, user]);
+	}, [router, site, props.user]);
 
 	const handleHideSidebarMenu = (event) => {
 		if (event.key === "Escape") {
-			setOpenMobileSidebar(false);
+			props.setOpenMobileSidebar(false);
 		}
 	};
 
 	const handleClickOutsideSidebarMenu = (event) => {
 		if (ref.current && !ref.current.contains(event.target)) {
-			setOpenMobileSidebar(false);
+			props.setOpenMobileSidebar(false);
 		}
 	};
 
@@ -78,8 +78,8 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 		};
 	});
 
-	return width < lgScreenBreakpoint ? (
-		<Transition show={openMobileSidebar}>
+	return props.width < lgScreenBreakpoint ? (
+		<Transition show={props.openMobileSidebar}>
 			<div tw="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
 					enter="transition-opacity ease-linear duration-300"
@@ -112,7 +112,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 							<div tw="absolute top-0 right-0 -mr-12 pt-2">
 								<button
 									tw="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-									onClick={() => setOpenMobileSidebar(false)}
+									onClick={() => props.setOpenMobileSidebar(false)}
 								>
 									<span tw="sr-only">{PrimaryMenuLabel[4].label}</span>
 									<XIcon tw="h-6 w-6 text-white" />
@@ -122,7 +122,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 							<div ref={ref} tw="flex flex-col w-64 h-screen">
 								<div tw="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">{selectedMenu}</div>
 
-								<ProfileMenu user={user ? user : null} />
+								<ProfileMenu user={props.user} />
 							</div>
 						</Transition.Child>
 					</div>
@@ -134,7 +134,7 @@ const MainSidebar = ({ width, user, openMobileSidebar, setOpenMobileSidebar }) =
 			<div tw="flex flex-col w-64">
 				<div tw="h-0 flex-1 overflow-y-auto">{selectedMenu}</div>
 
-				<ProfileMenu user={user ? user : null} />
+				<ProfileMenu user={props.user} />
 			</div>
 		</aside>
 	);
