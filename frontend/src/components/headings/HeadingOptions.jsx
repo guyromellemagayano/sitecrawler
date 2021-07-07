@@ -192,21 +192,18 @@ const HeadingOptions = (props) => {
 
 				{asPath.includes("links") ? (
 					componentReady ? (
-						<>
-							{console.log("hello")}
-							<a
-								href={`/api/site/${props.siteId}/scan/${props.scanObjId}/${
-									props.isLinks ? "link" : props.isPages || props.isSeo ? "page" : props.isImages ? "image" : null
-								}/?format=csv${props.queryString}`}
-								tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-							>
-								<span tw="flex items-center space-x-2">
-									<DownloadIcon tw="w-4 h-4 text-white" />
+						<a
+							href={`/api/site/${props.siteId}/scan/${props.scanObjId}/${
+								props.isLinks ? "link" : props.isPages || props.isSeo ? "page" : props.isImages ? "image" : null
+							}/?format=csv${props.queryString}`}
+							tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+						>
+							<span tw="flex items-center space-x-2">
+								<DownloadIcon tw="w-4 h-4 text-white" />
 
-									<span>{HeadingOptionsLabel[0].label}</span>
-								</span>
-							</a>
-						</>
+								<span>{HeadingOptionsLabel[0].label}</span>
+							</span>
+						</a>
 					) : (
 						<Skeleton duration={2} width={150} height={40} tw="ml-2" />
 					)
