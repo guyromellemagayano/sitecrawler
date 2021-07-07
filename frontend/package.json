@@ -97,6 +97,6 @@
     "react-is": "^17.0.1",
     "styled-jsx-plugin-sass": "^1.0.0",
     "tailwindcss": "^2.2.4",
-    "twin.macro": "^2.6.1"
+    "twin.macro": "2.5.0"
   }
 }
