@@ -4,7 +4,6 @@ import * as React from "react";
 // External
 import "twin.macro";
 import { PresentationChartLineIcon } from "@heroicons/react/solid";
-import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
@@ -19,16 +18,20 @@ const SitesResponseTimeStats = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 
 	React.useEffect(() => {
-		props.uptime
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
+		const delay = 500;
 
-		return setComponentReady(false);
-	}, [props.uptime]);
+		let timer = setTimeout(() => setComponentReady(true), delay);
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, []);
+
+	// console.log([...new Set([].concat(...props.uptime))]);
+
+	// const chartSeries = [{}];
+
+	// const chartOptions = {};
 
 	return (
 		<div tw="overflow-hidden rounded-lg h-full border">
@@ -46,10 +49,16 @@ const SitesResponseTimeStats = (props) => {
 					</h2>
 				</div>
 			</div>
+
+			<div tw="flex justify-center mx-auto px-5">
+				<div tw="w-full flow-root mt-4 mb-8">
+					<div id="chart-line">{/* <Chart options={chartOptions} series={chartSeries} type="line" height={} /> */}</div>
+				</div>
+			</div>
 		</div>
 	);
 };
 
 SitesResponseTimeStats.propTypes = {};
 
-export default withResizeDetector(SitesResponseTimeStats);
+export default SitesResponseTimeStats;

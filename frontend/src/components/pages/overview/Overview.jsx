@@ -3,7 +3,7 @@ import * as React from "react";
 
 // External
 import "twin.macro";
-import { ExclamationIcon, InformationCircleIcon } from "@heroicons/react/outline";
+import { InformationCircleIcon } from "@heroicons/react/outline";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";

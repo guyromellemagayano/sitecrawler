@@ -70,11 +70,11 @@ const Links = (props) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: enableSiteIdHook ? props.result.siteId : null
+			siteId: enableSiteIdHook ? props.result?.siteId : null
 		});
 
 	const { siteId } = useSiteId({
-		querySid: enableSiteIdHook ? props.result.siteId : null,
+		querySid: enableSiteIdHook ? props.result?.siteId : null,
 		redirectIfFound: false,
 		redirectTo: enableSiteIdHook ? "/sites" : null
 	});
@@ -103,7 +103,7 @@ const Links = (props) => {
 	let statusNeqString = "";
 	let typeString = "";
 
-	scanApiEndpoint = `/api/site/${props.result.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
+	scanApiEndpoint = `/api/site/${props.result?.siteId}/scan/${scanObjId}/link/?per_page=` + linksPerPage;
 
 	queryString +=
 		props.result?.page !== undefined
@@ -171,7 +171,7 @@ const Links = (props) => {
 
 	const { links, mutateLinks } = useLinks({
 		endpoint: enableSiteIdHook ? scanApiEndpoint : null,
-		querySid: enableSiteIdHook ? props.result.siteId : null,
+		querySid: enableSiteIdHook ? props.result?.siteId : null,
 		scanObjId: enableSiteIdHook ? scanObjId : null
 	});
 
@@ -233,32 +233,26 @@ const Links = (props) => {
 	}, [props.result]);
 
 	React.useEffect(() => {
-		user && siteId && links
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
+		user && siteId && links ? setComponentReady(true) : setComponentReady(false);
 
-		return setComponentReady(false);
+		return { user, siteId, links };
 	}, [user, siteId, links]);
 
 	return (
-		<Layout user={user}>
+		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			{componentReady ? (
-				<section tw="h-screen flex overflow-hidden bg-white">
-					<MainSidebar
-						width={props.width}
-						user={user}
-						openMobileSidebar={openMobileSidebar}
-						setOpenMobileSidebar={setOpenMobileSidebar}
-					/>
+			<section tw="h-screen flex overflow-hidden bg-white">
+				<MainSidebar
+					width={props.width}
+					user={componentReady ? user : null}
+					openMobileSidebar={openMobileSidebar}
+					setOpenMobileSidebar={setOpenMobileSidebar}
+				/>
 
+				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
-						<div tw="relative flex-shrink-0 flex bg-white">
+						<div tw="relative flex-shrink-0 flex">
 							<div tw="border-b flex-shrink-0 flex">
 								<MobileSidebarButton
 									openMobileSidebar={openMobileSidebar}
@@ -282,12 +276,12 @@ const Links = (props) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div className="max-w-full p-4">
-										<Breadcrumbs siteId={props.result.siteId} pageTitle={LinksLabel[1].label} />
+										<Breadcrumbs siteId={props.result?.siteId} pageTitle={LinksLabel[1].label} />
 										<HeadingOptions
 											isLinks
 											queryString={queryString}
 											verified={siteId?.verified}
-											siteId={props.result.siteId}
+											siteId={props.result?.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -323,7 +317,7 @@ const Links = (props) => {
 																		<th
 																			key={key}
 																			className="min-width-adjust"
-																			tw="px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																			tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																		>
 																			<div tw="flex items-center justify-start">
 																				{site?.slug ? (
@@ -347,7 +341,7 @@ const Links = (props) => {
 														<tbody tw="relative">
 															{links
 																? links?.results.map((val, key) => (
-																		<LinkTable key={key} siteId={props.result.siteId} val={val} />
+																		<LinkTable key={key} siteId={props.result?.siteId} val={val} />
 																  ))
 																: null}
 														</tbody>
@@ -373,14 +367,12 @@ const Links = (props) => {
 							</main>
 						</Scrollbars>
 					</div>
-				</section>
-			) : (
-				<section tw="h-screen flex overflow-hidden bg-white">
+				) : (
 					<div tw="mx-auto">
 						<Loader />
 					</div>
-				</section>
-			)}
+				)}
+			</section>
 		</Layout>
 	);
 };

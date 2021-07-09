@@ -24,6 +24,6 @@
 	},
 	{
 		"label": "Request Success",
-		"description": "This site is now currently being deleted in our servers and might take a few hours to a few days to complete. Redirecting you to Sites page..."
+		"description": "This site is now currently being deleted in our servers and might take a few minutes to complete. Redirecting you to <strong>Sites</strong> page..."
 	}
 ]

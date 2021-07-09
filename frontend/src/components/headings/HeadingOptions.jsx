@@ -46,13 +46,11 @@ const HeadingOptions = (props) => {
 	const { asPath } = useRouter();
 
 	React.useEffect(() => {
-		(() => {
-			setComponentReady(false);
+		setTimeout(() => {
+			setComponentReady(true);
+		}, 500);
 
-			setTimeout(() => {
-				setComponentReady(true);
-			}, 500);
-		})();
+		return setComponentReady(false);
 	}, []);
 
 	return (

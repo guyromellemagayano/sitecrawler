@@ -11,6 +11,7 @@ import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 import PropTypes from "prop-types";
+import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 
 // JSON
@@ -23,6 +24,7 @@ const DeleteUserAccountModal = (props) => {
 	const [hideButtons, setHideButtons] = React.useState(false);
 
 	const userApiEndpoint = `/api/auth/user/`;
+	const userIdApiEndpoint = `/api/auth/user/${props.user?.id}`;
 	const loginPage = "/login";
 
 	const router = useRouter();
@@ -39,51 +41,44 @@ const DeleteUserAccountModal = (props) => {
 		};
 	}, [disableDeleteUser]);
 
-	// FIXME: Fix delete user account
 	const handleUserDeletion = async (e) => {
 		e.preventDefault();
 
 		setDisableDeleteUser(true);
 
-		setTimeout(() => {
-			setDisableDeleteUser(false);
-			// setSuccessMsg((successMsg) => [...successMsg, DeleteUserAccountModalLabel[7]]);
-			setErrorMsg((errorMsg) => [...errorMsg, DeleteUserAccountModalLabel[3]]);
-		}, 3000);
+		return await axios
+			.delete(userIdApiEndpoint, {
+				headers: {
+					"Accept": "application/json",
+					"Content-Type": "application/json",
+					"X-CSRFToken": Cookies.get("csrftoken")
+				}
+			})
+			.then((response) => {
+				Math.floor(response?.status / 204) === 1
+					? (() => {
+							setDisableDeleteUser(false);
+							setSuccessMsg((successMsg) => [...successMsg, DeleteUserAccountModalLabel[7]]);
 
-		// return await axios
-		// 	.delete(userApiEndpoint, {
-		// 		headers: {
-		// 			"Accept": "application/json",
-		// 			"Content-Type": "application/json",
-		// 			"X-CSRFToken": Cookies.get("csrftoken")
-		// 		}
-		// 	})
-		// 	.then((response) => {
-		// 		Math.floor(response?.status / 204) === 1
-		// 			? (() => {
-		// 					setDisableDeleteUser(false);
+							setTimeout(() => {
+								props.setShowModal(!props.showModal);
+								props.mutateUser(userApiEndpoint);
+								router.push(loginPage);
+							}, 3000);
+					  })()
+					: (() => {
+							Sentry.captureException(response);
 
-		// 					props.setShowModal(!props.showModal);
-		// 					props.mutateUser(userApiEndpoint);
+							setDisableDeleteUser(false);
+							setErrorMsg((errorMsg) => [...errorMsg, DeleteUserAccountModalLabel[3]]);
+					  })();
+			})
+			.catch((error) => {
+				Sentry.captureException(error);
 
-		// 					setTimeout(() => {
-		// 						router.push(loginPage);
-		// 					}, 1000);
-		// 			  })()
-		// 			: (() => {
-		// 					Sentry.captureException(response);
-
-		// 					setDisableDeleteUser(false);
-		// 					setErrorMsg((errorMsg) => [...errorMsg, DeleteUserAccountModalLabel[3].label]);
-		// 			  })();
-		// 	})
-		// 	.catch((error) => {
-		// 		Sentry.captureException(error);
-
-		// 		setDisableDeleteUser(false);
-		// 		setErrorMsg((errorMsg) => [...errorMsg, DeleteUserAccountModalLabel[3].label]);
-		// 	});
+				setDisableDeleteUser(false);
+				setErrorMsg((errorMsg) => [...errorMsg, DeleteUserAccountModalLabel[3]]);
+			});
 	};
 
 	React.useEffect(() => {
@@ -185,7 +180,7 @@ const DeleteUserAccountModal = (props) => {
 								successMsg?.map((value, index) => {
 									return (
 										<div key={index} tw="mt-2">
-											<p tw="text-sm leading-5 text-gray-500">{value.description}</p>
+											<p tw="text-sm leading-5 text-gray-500">{ReactHtmlParser(value.description)}</p>
 										</div>
 									);
 								})

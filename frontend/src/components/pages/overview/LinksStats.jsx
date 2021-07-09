@@ -30,16 +30,14 @@ const SitesLinksStats = (props) => {
 	const router = useRouter();
 
 	React.useEffect(() => {
-		props.stats
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
+		const delay = 500;
 
-		return setComponentReady(false);
-	}, [props.stats]);
+		let timer = setTimeout(() => setComponentReady(true), delay);
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, []);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${props.sid}/links`;

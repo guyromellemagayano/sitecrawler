@@ -30,16 +30,14 @@ const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
 	const router = useRouter();
 
 	React.useEffect(() => {
-		stats
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
+		const delay = 500;
 
-		return setComponentReady(false);
-	}, [stats]);
+		let timer = setTimeout(() => setComponentReady(true), delay);
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, []);
 
 	const legendClickHandler = (label) => {
 		let path = `/site/${sid}/images`;

@@ -43,13 +43,13 @@ const MainSidebar = (props) => {
 	React.useEffect(() => {
 		switch (true) {
 			case router.pathname.includes("/site/"):
-				setSelectedMenu(<SiteMenu user={props.user} site={site} />);
+				setSelectedMenu(<SiteMenu site={site} />);
 				break;
 			case router.pathname.includes("/settings/"):
 				setSelectedMenu(<SettingsMenu user={props.user} site={site} />);
 				break;
 			default:
-				setSelectedMenu(<PrimaryMenu user={props.user} site={site} />);
+				setSelectedMenu(<PrimaryMenu site={site} />);
 				break;
 		}
 
