@@ -51,8 +51,8 @@ resource "aws_cloudwatch_metric_alarm" "alert_db_read" {
   period              = "3600"
   extended_statistic  = "p90"
   threshold           = "0.1"
-  evaluation_periods  = "2"
-  datapoints_to_alarm = "2"
+  evaluation_periods  = "4"
+  datapoints_to_alarm = "4"
   treat_missing_data  = "notBreaching"
 
   dimensions = {
@@ -71,8 +71,8 @@ resource "aws_cloudwatch_metric_alarm" "alert_db_write" {
   period              = "3600"
   extended_statistic  = "p90"
   threshold           = "0.1"
-  evaluation_periods  = "2"
-  datapoints_to_alarm = "2"
+  evaluation_periods  = "4"
+  datapoints_to_alarm = "4"
   treat_missing_data  = "notBreaching"
 
   dimensions = {

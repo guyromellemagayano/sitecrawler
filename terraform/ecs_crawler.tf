@@ -156,24 +156,3 @@ resource "aws_cloudwatch_metric_alarm" "alert_ecs_prod_crawler_high_memory" {
   alarm_description = "Memory utilization for prod crawler is high"
   alarm_actions     = [aws_sns_topic.production_alerts.arn]
 }
-
-resource "aws_cloudwatch_metric_alarm" "alert_ecs_prod_crawler_high_cpu" {
-  alarm_name          = "alert_ecs_prod_crawler_high_cpu"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  metric_name         = "CPUUtilization"
-  namespace           = "AWS/ECS"
-  period              = "3600"
-  statistic           = "Maximum"
-  threshold           = 90
-  evaluation_periods  = "4"
-  datapoints_to_alarm = "4"
-  treat_missing_data  = "notBreaching"
-
-  dimensions = {
-    ClusterName = aws_ecs_cluster.prod_fargate.name
-    ServiceName = aws_ecs_service.prod_crawler.name
-  }
-
-  alarm_description = "Memory utilization for prod crawler is high"
-  alarm_actions     = [aws_sns_topic.production_alerts.arn]
-}
