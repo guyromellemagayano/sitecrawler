@@ -11,6 +11,7 @@ import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 import PropTypes from "prop-types";
+import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 
 // JSON
@@ -41,48 +42,52 @@ const DeleteSiteModal = (props) => {
 		};
 	}, [disableDeleteSite]);
 
-	// FIXME: Fix delete site
 	const handleSiteDeletion = async (e) => {
 		e.preventDefault();
 
 		setDisableDeleteSite(true);
 
-		setTimeout(() => {
-			setDisableDeleteSite(false);
-			setSuccessMsg((successMsg) => [...successMsg, DeleteSiteModalLabel[7]]);
-			// setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabel[3]]);
-		}, 3000);
+		return await axios
+			.delete(siteIdApiEndpoint, {
+				headers: {
+					"Accept": "application/json",
+					"Content-Type": "application/json",
+					"X-CSRFToken": Cookies.get("csrftoken")
+				}
+			})
+			.then((response) => {
+				Math.floor(response?.status / 204) === 1
+					? (() => {
+							setDisableDeleteSite(false);
+							setSuccessMsg((successMsg) => [...successMsg, DeleteSiteModalLabel[7]]);
 
-		// return await axios
-		// 	.delete(siteIdApiEndpoint, {
-		// 		headers: {
-		// 			"Accept": "application/json",
-		// 			"Content-Type": "application/json",
-		// 			"X-CSRFToken": Cookies.get("csrftoken")
-		// 		}
-		// 	})
-		// 	.then((response) => {
-		// 		Math.floor(response?.status / 204) === 1
-		// 			? (() => {
-		// 					setDisableDeleteSite(false);
+							asPath.includes("settings")
+								? (() => {
+										setTimeout(() => {
+											props.setShowModal(!props.showModal);
+											router.push(sitesPage);
+										}, 3000);
+								  })()
+								: (() => {
+										setTimeout(() => {
+											props.setShowModal(!props.showModal);
+											props.mutateSite(siteApiEndpoint);
+										}, 3000);
+								  })();
+					  })()
+					: (() => {
+							Sentry.captureException(response);
 
-		// 					props.setShowModal(!props.showModal);
+							setDisableDeleteSite(false);
+							setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabel[3]]);
+					  })();
+			})
+			.catch((error) => {
+				Sentry.captureException(error);
 
-		// 					asPath.includes("settings")
-		// 						? (() => {
-		// 								setTimeout(() => {
-		// 									router.push(sitesPage);
-		// 								}, 1000);
-		// 						  })()
-		// 						: props.mutateSite(siteApiEndpoint);
-		// 			  })()
-		// 			: (() => {
-		// 					Sentry.captureException(response.data);
-
-		// 					setDisableDeleteSite(false);
-		// 					setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabel[1].description]);
-		// 			  })();
-		// 	});
+				setDisableDeleteSite(false);
+				setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabel[3]]);
+			});
 	};
 
 	React.useEffect(() => {
@@ -175,7 +180,7 @@ const DeleteSiteModal = (props) => {
 							{Object.keys(errorMsg).length > 0 ? (
 								errorMsg?.map((value, index) => {
 									return (
-										<div key={index} tw="mt-2">
+										<div key={index} tw="my-2">
 											<p tw="text-sm leading-5 text-gray-500">{value.description}</p>
 										</div>
 									);
@@ -183,13 +188,13 @@ const DeleteSiteModal = (props) => {
 							) : Object.keys(successMsg).length > 0 ? (
 								successMsg?.map((value, index) => {
 									return (
-										<div key={index} tw="mt-2">
-											<p tw="text-sm leading-5 text-gray-500">{value.description}</p>
+										<div key={index} tw="my-2">
+											<p tw="text-sm leading-5 text-gray-500">{ReactHtmlParser(value.description)}</p>
 										</div>
 									);
 								})
 							) : (
-								<div tw="mt-2">
+								<div tw="my-2">
 									<p tw="text-sm leading-5 text-gray-500">{DeleteSiteModalLabel[0].description}</p>
 								</div>
 							)}

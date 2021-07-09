@@ -23,7 +23,6 @@ const DeleteUserAccount = (props) => {
 			? (() => {
 					setTimeout(() => {
 						setComponentReady(true);
-						setDisableDeleteUserAccountButton(true);
 					}, 500);
 			  })()
 			: null;
@@ -63,7 +62,7 @@ const DeleteUserAccount = (props) => {
 								]}
 								onClick={() => setShowDeleteUserAccountModal(!showDeleteUserAccountModal)}
 							>
-								{disableDeleteUserAccountButton ? DeleteUserAccountLabel[3].label : DeleteUserAccountLabel[2].label}
+								{disableDeleteUserAccountButton ? DeleteUserAccountLabel[2].label : DeleteUserAccountLabel[0].label}
 							</button>
 						) : (
 							<Skeleton duration={2} width={150} height={40} />

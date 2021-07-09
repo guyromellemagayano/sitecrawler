@@ -163,7 +163,7 @@ const Sites = ({ width, result }) => {
 		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			<section tw="flex overflow-hidden bg-white">
+			<section tw="h-screen flex overflow-hidden bg-white">
 				<MainSidebar
 					width={width}
 					user={componentReady ? user : null}
@@ -173,7 +173,7 @@ const Sites = ({ width, result }) => {
 
 				{componentReady ? (
 					<div tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
-						<div tw="relative flex-shrink-0 flex bg-white">
+						<div tw="relative flex-shrink-0 flex">
 							<div tw="border-b flex-shrink-0 flex">
 								<MobileSidebarButton
 									openMobileSidebar={openMobileSidebar}
@@ -234,7 +234,7 @@ const Sites = ({ width, result }) => {
 																				<th
 																					key={key}
 																					className="min-width-adjust"
-																					tw="px-6 py-3 border-b border-gray-200 bg-white text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																					tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																				>
 																					<span tw="flex items-center justify-start">
 																						<SiteSorting

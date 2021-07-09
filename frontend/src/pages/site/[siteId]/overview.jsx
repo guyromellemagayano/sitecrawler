@@ -72,7 +72,7 @@ const SiteOverview = (props) => {
 
 	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
 		useCrawl({
-			siteId: enableSiteIdHook ? props.result.siteId : null
+			siteId: enableSiteIdHook ? props.result?.siteId : null
 		});
 
 	const homePageLink = "/sites/";
@@ -95,49 +95,43 @@ const SiteOverview = (props) => {
 	}, [scanCount, currentScan, previousScan]);
 
 	const { siteId } = useSiteId({
-		querySid: enableSiteIdHook ? props.result.siteId : null,
+		querySid: enableSiteIdHook ? props.result?.siteId : null,
 		redirectIfFound: false,
 		redirectTo: enableSiteIdHook ? "/sites" : null
 	});
 
 	const { stats } = useStats({
-		querySid: enableSiteIdHook ? props.result.siteId : null,
+		querySid: enableSiteIdHook ? props.result?.siteId : null,
 		scanObjId: props.result?.scanObjId ?? scanObjId
 	});
 
 	const { uptime } = useUptime({
-		querySid: enableSiteIdHook ? props.result.siteId : null
+		querySid: enableSiteIdHook ? props.result?.siteId : null
 	});
 
 	const { uptimeSummary } = useUptimeSummary({
-		querySid: enableSiteIdHook ? props.result.siteId : null
+		querySid: enableSiteIdHook ? props.result?.siteId : null
 	});
 
 	React.useEffect(() => {
-		siteId && stats && uptime && uptimeSummary
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
+		siteId && stats && uptime && uptimeSummary ? setComponentReady(true) : setComponentReady(false);
 
-		return setComponentReady(false);
+		return { siteId, stats, uptime, uptimeSummary };
 	}, [siteId, stats, uptime, uptimeSummary]);
 
 	return (
 		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? pageTitle : null} />
 
-			{componentReady ? (
-				<section tw="h-screen flex overflow-hidden bg-white">
-					<MainSidebar
-						width={props.width}
-						user={componentReady ? user : null}
-						openMobileSidebar={openMobileSidebar}
-						setOpenMobileSidebar={setOpenMobileSidebar}
-					/>
+			<section tw="h-screen flex overflow-hidden bg-white">
+				<MainSidebar
+					width={props.width}
+					user={componentReady ? user : null}
+					openMobileSidebar={openMobileSidebar}
+					setOpenMobileSidebar={setOpenMobileSidebar}
+				/>
 
+				{componentReady ? (
 					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex">
 							<div tw="border-b flex-shrink-0 flex">
@@ -164,11 +158,11 @@ const SiteOverview = (props) => {
 							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="w-full p-6 mx-auto">
 									<div tw="max-w-full p-4">
-										<Breadcrumbs siteId={props.result.siteId} pageTitle={pageTitle} />
+										<Breadcrumbs siteId={props.result?.siteId} pageTitle={pageTitle} />
 										<HeadingOptions
 											isOverview
 											verified={siteId?.verified}
-											siteId={props.result.siteId}
+											siteId={props.result?.siteId}
 											siteName={siteId?.name}
 											siteUrl={siteId?.url}
 											scanObjId={scanObjId}
@@ -199,29 +193,29 @@ const SiteOverview = (props) => {
 											</div>
 
 											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
-												<SitesLinksStats sid={props.result.siteId} stats={stats} />
+												<SitesLinksStats sid={props.result?.siteId} stats={stats} />
 											</div>
 
 											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
-												<SitesPagesStats sid={props.result.siteId} stats={stats} />
+												<SitesPagesStats sid={props.result?.siteId} stats={stats} />
 											</div>
 
 											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
-												<SitesImagesStats sid={props.result.siteId} stats={stats} />
+												<SitesImagesStats sid={props.result?.siteId} stats={stats} />
 											</div>
 
 											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
-												<SitesSeoStats sid={props.result.siteId} stats={stats} />
+												<SitesSeoStats sid={props.result?.siteId} stats={stats} />
 											</div>
 
-											<div tw="col-span-1 md:col-span-4 xl:col-span-2">
-												<SitesResponseTimeStats sid={props.result.siteId} uptime={uptime} />
+											<div tw="col-span-1 md:col-span-4 xl:col-span-4">
+												<SitesResponseTimeStats sid={props.result?.siteId} uptime={uptime} />
 											</div>
 
-											<div tw="flex col-span-1 md:col-span-4 xl:col-span-2">
-												<div tw="flex-1 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-2 gap-8">
-													<div tw="col-span-1 md:col-span-1 xl:col-span-2">
-														<SitesCurrentStatusStats sid={props.result.siteId} uptimeSummary={uptimeSummary} />
+											<div tw="flex col-span-1 md:col-span-4 xl:col-span-4">
+												<div tw="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8">
+													<div tw="col-span-1 md:col-span-1">
+														<SitesCurrentStatusStats sid={props.result?.siteId} uptimeSummary={uptimeSummary} />
 													</div>
 
 													<div tw="col-span-1 md:col-span-1">
@@ -229,30 +223,26 @@ const SiteOverview = (props) => {
 													</div>
 
 													<div tw="col-span-1 md:col-span-1">
-														<SitesDowntimeStats sid={props.result.siteId} uptimeSummary={uptimeSummary} />
+														<SitesDowntimeStats sid={props.result?.siteId} uptimeSummary={uptimeSummary} />
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 
-									{componentReady ? (
-										<div tw="static bottom-0 w-full mx-auto p-4">
-											<SiteFooter />
-										</div>
-									) : null}
+									<div tw="static bottom-0 w-full mx-auto p-4">
+										<SiteFooter />
+									</div>
 								</div>
 							</main>
 						</Scrollbars>
 					</div>
-				</section>
-			) : (
-				<section tw="h-screen flex overflow-hidden bg-white">
+				) : (
 					<div tw="mx-auto">
 						<Loader />
 					</div>
-				</section>
-			)}
+				)}
+			</section>
 		</Layout>
 	);
 };

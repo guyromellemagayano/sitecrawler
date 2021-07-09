@@ -14,18 +14,14 @@ const SitesUptimeStats = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 
 	React.useEffect(() => {
-		props.uptimeSummary
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
+		const delay = 500;
 
-		return setComponentReady(false);
-	}, [props.uptimeSummary]);
+		let timer = setTimeout(() => setComponentReady(true), delay);
 
-	const uptimePercentage = Object.entries(props.uptimeSummary.uptime_percentage);
+		return () => {
+			clearTimeout(timer);
+		};
+	}, []);
 
 	return (
 		<div tw="overflow-hidden rounded-lg h-full border">
@@ -46,49 +42,57 @@ const SitesUptimeStats = (props) => {
 			<div tw="flex justify-center mx-auto px-5">
 				<div tw="w-full flow-root mt-4 mb-8">
 					<ul tw="-my-5 divide-y divide-gray-200">
-						{uptimePercentage.map((value, index) => (
-							<li key={index} tw="py-4">
+						{props.uptimeSummary ? (
+							Object.entries(props.uptimeSummary?.uptime_percentage).map((value, index) => (
+								<li key={index} tw="py-4">
+									<div tw="flex items-center justify-between">
+										<div tw="flex-1 flex items-start space-x-4">
+											<dl tw="relative -top-1">
+												<dt tw="inline-flex w-2 h-2 bg-green-400 rounded-full" aria-label="uptime-percentage" />
+											</dl>
+
+											<dl>
+												<dt tw="min-w-0">
+													<p tw="text-sm font-bold text-green-700">
+														{value[1] !== null ? value[1].toFixed(3) + "%" : null}
+													</p>
+													<p tw="text-sm text-gray-500 truncate">
+														{value[0] !== null
+															? value[0] == "24h"
+																? "last 24 hours"
+																: value[0] == "7d"
+																? "last 7 days"
+																: value[0] == "30d"
+																? "last 30 days"
+																: null
+															: null}
+													</p>
+												</dt>
+											</dl>
+										</div>
+									</div>
+								</li>
+							))
+						) : (
+							<li tw="py-4">
 								<div tw="flex items-center justify-between">
 									<div tw="flex-1 flex items-start space-x-4">
 										<dl tw="relative -top-1">
-											{value[0] !== null && value[1] !== null ? (
-												<dt tw="inline-flex w-2 h-2 bg-green-400 rounded-full" aria-label="uptime-percentage" />
-											) : (
-												<Skeleton duration={2} width={10} height={10} circle={true} tw="relative top-1.5" />
-											)}
+											<Skeleton duration={2} width={10} height={10} circle={true} tw="relative top-1.5" />
 										</dl>
 
 										<dl>
 											<dt tw="min-w-0">
-												{value[0] !== null && value[1] !== null ? (
-													<>
-														<p tw="text-sm font-bold text-green-900">
-															{value[1] !== null ? value[1].toFixed(3) + "%" : null}
-														</p>
-														<p tw="text-sm text-gray-500 truncate">
-															{value[0] !== null
-																? value[0] == "24h"
-																	? "last 24 hours"
-																	: value[0] == "7d"
-																	? "last 7 days"
-																	: value[0] == "30d"
-																	? "last 30 days"
-																	: null
-																: null}
-														</p>
-													</>
-												) : (
-													<div tw="flex flex-col">
-														<Skeleton duration={2} width={80} height={20} />
-														<Skeleton duration={2} width={85} height={20} />
-													</div>
-												)}
+												<div tw="flex flex-col">
+													<Skeleton duration={2} width={80} height={20} />
+													<Skeleton duration={2} width={85} height={20} />
+												</div>
 											</dt>
 										</dl>
 									</div>
 								</div>
 							</li>
-						))}
+						)}
 					</ul>
 				</div>
 			</div>

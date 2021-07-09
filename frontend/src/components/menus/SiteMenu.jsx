@@ -11,7 +11,6 @@ import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outl
 import { Scrollbars } from "react-custom-scrollbars-2";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
 // JSON
@@ -30,7 +29,7 @@ import SiteSelectionMenu from "src/components/menus/SiteSelectionMenu";
 // Loadable
 const SiteSelectionDropdown = loadable(() => import("src/components/dropdowns/SiteSelectionDropdown"));
 
-const SiteMenu = ({ site, user }) => {
+const SiteMenu = ({ site }) => {
 	const [scanObjId, setScanObjId] = React.useState(null);
 	const [selectedSite, setSelectedSite] = React.useState(null);
 	const [selectedSiteDetails, setSelectedSiteDetails] = React.useState([]);
@@ -69,7 +68,7 @@ const SiteMenu = ({ site, user }) => {
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
 			<div tw="flex flex-col pt-8 pb-4">
-				<div css={[tw`flex items-center flex-shrink-0 flex-row px-3`, user ? tw`mb-0` : tw`mb-8`]}>
+				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
 					<Link href={siteDashboardLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
 							<AppLogo
@@ -82,18 +81,15 @@ const SiteMenu = ({ site, user }) => {
 						</a>
 					</Link>
 				</div>
+
 				<div tw="flex-1 flex flex-col overflow-y-auto">
 					<nav tw="flex-1 px-4">
 						{SitePages.map((value, index) => {
 							return (
-								<div key={index} css={[user ? tw`mb-8` : tw`mb-4`]}>
-									{user ? (
-										<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
-											{value?.category}
-										</h3>
-									) : (
-										<Skeleton duration={2} width={100} height={16} />
-									)}
+								<div key={index} tw="mb-4">
+									<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
+										{value?.category}
+									</h3>
 
 									<div tw="my-3" role="group">
 										{value?.links ? (
@@ -116,49 +112,33 @@ const SiteMenu = ({ site, user }) => {
 																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none transition ease-in-out duration-150`
 															]}
 														>
-															{user ? (
-																value2?.slug === "overview" ? (
-																	<ViewGridIcon tw="mr-3 h-6 w-5" />
-																) : value2?.slug === "links" ? (
-																	<LinkIcon tw="mr-3 h-6 w-5" />
-																) : value2?.slug === "pages" ? (
-																	<DocumentTextIcon tw="mr-3 h-6 w-5" />
-																) : value2?.slug === "images" ? (
-																	<PhotographIcon tw="mr-3 h-6 w-5" />
-																) : value2?.slug === "seo" ? (
-																	<SearchIcon tw="mr-3 h-6 w-5" />
-																) : value2?.slug === "site-settings" ? (
-																	<CogIcon tw="mr-3 h-6 w-5" />
-																) : null
-															) : (
-																<Skeleton duration={2} tw="mr-3" width={20} height={20} />
-															)}
-															{user ? (
-																value2?.title ? (
-																	<span>{value2?.title}</span>
-																) : null
-															) : (
-																<Skeleton duration={2} width={100} height={16} />
-															)}
-															{user ? (
-																value2?.url === "/links" && stats ? (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																		{stats?.num_links ? stats?.num_links : null}
-																	</span>
-																) : value2?.url === "/pages" && stats ? (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																		{stats?.num_pages ? stats?.num_pages : null}
-																	</span>
-																) : value2?.url === "/images" && stats ? (
-																	<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
-																		{stats?.num_images ? stats?.num_images : null}
-																	</span>
-																) : null
-															) : (
-																<span tw="ml-auto inline-block px-3">
-																	<Skeleton duration={2} width={40} height={16} />
+															{value2?.slug === "overview" ? (
+																<ViewGridIcon tw="mr-3 h-6 w-5" />
+															) : value2?.slug === "links" ? (
+																<LinkIcon tw="mr-3 h-6 w-5" />
+															) : value2?.slug === "pages" ? (
+																<DocumentTextIcon tw="mr-3 h-6 w-5" />
+															) : value2?.slug === "images" ? (
+																<PhotographIcon tw="mr-3 h-6 w-5" />
+															) : value2?.slug === "seo" ? (
+																<SearchIcon tw="mr-3 h-6 w-5" />
+															) : value2?.slug === "site-settings" ? (
+																<CogIcon tw="mr-3 h-6 w-5" />
+															) : null}
+															{value2?.title ? <span>{value2?.title}</span> : null}
+															{value2?.url === "/links" && stats ? (
+																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																	{stats?.num_links ? stats?.num_links : null}
 																</span>
-															)}
+															) : value2?.url === "/pages" && stats ? (
+																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																	{stats?.num_pages ? stats?.num_pages : null}
+																</span>
+															) : value2?.url === "/images" && stats ? (
+																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
+																	{stats?.num_images ? stats?.num_images : null}
+																</span>
+															) : null}
 														</a>
 													</Link>
 												) : (
@@ -167,17 +147,8 @@ const SiteMenu = ({ site, user }) => {
 															className="group"
 															tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
 														>
-															{user ? (
-																<>
-																	<ArrowLeftIcon tw="mr-3 h-6 w-5" />
-																	{value2?.title ? <span>{value2?.title}</span> : null}
-																</>
-															) : (
-																<>
-																	<Skeleton duration={2} tw="mr-3" width={20} height={20} />
-																	<Skeleton duration={2} width={100} height={16} />
-																</>
-															)}
+															<ArrowLeftIcon tw="mr-3 h-6 w-5" />
+															{value2?.title ? <span>{value2?.title}</span> : null}
 														</a>
 													</Link>
 												);
@@ -187,18 +158,14 @@ const SiteMenu = ({ site, user }) => {
 												<div ref={ref} tw="relative">
 													<div tw="relative">
 														<span tw="inline-block w-full rounded-md shadow-sm">
-															{user ? (
-																<SiteSelectionMenu
-																	label={[PrimaryMenuLabel[0].label]}
-																	currentScan={currentScan}
-																	selectedSite={selectedSite}
-																	selectedSiteDetails={selectedSiteDetails}
-																	isComponentVisible={isComponentVisible}
-																	setIsComponentVisible={setIsComponentVisible}
-																/>
-															) : (
-																<Skeleton duration={2} width={209} height={38} tw="relative w-full pl-3 pr-10 py-2" />
-															)}
+															<SiteSelectionMenu
+																label={[PrimaryMenuLabel[0].label]}
+																currentScan={currentScan}
+																selectedSite={selectedSite}
+																selectedSiteDetails={selectedSiteDetails}
+																isComponentVisible={isComponentVisible}
+																setIsComponentVisible={setIsComponentVisible}
+															/>
 														</span>
 
 														<SiteSelectionDropdown

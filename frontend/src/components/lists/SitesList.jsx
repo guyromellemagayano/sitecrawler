@@ -91,10 +91,7 @@ const SitesList = (props) => {
 				<span
 					css={[
 						tw`font-medium block truncate`,
-						(props.verified || scanCount > 0) &&
-						(stats?.num_links == 0 || stats?.num_pages == 0 || stats?.num_images == 0)
-							? tw`text-gray-400`
-							: tw`text-gray-500`
+						!props.verified && scanFinishedAt == null && scanForceHttps == null ? tw`text-gray-400` : tw`text-gray-500`
 					]}
 				>
 					{props.sitesLoaded ? props.name : <Skeleton duration={2} width={130} />}
