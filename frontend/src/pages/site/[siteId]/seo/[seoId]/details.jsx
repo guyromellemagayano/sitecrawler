@@ -37,6 +37,7 @@ const Loader = loadable(() => import("src/components/layouts/Loader"));
 
 const SeoDetail = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
+	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
 	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
@@ -63,12 +64,20 @@ const SeoDetail = (props) => {
 		redirectTo: "/login"
 	});
 
+	React.useEffect(() => {
+		return user
+			? (() => {
+					setEnableSiteIdHook(true);
+			  })()
+			: null;
+	}, [user, enableSiteIdHook]);
+
 	const { currentScan, previousScan } = useCrawl({
-		siteId: props.result.siteId
+		siteId: props.result?.siteId
 	});
 
 	const { siteId } = useSiteId({
-		querySid: enableSiteIdHook ? props.props.result.siteId : null,
+		querySid: enableSiteIdHook ? props.result?.siteId : null,
 		redirectIfFound: false,
 		redirectTo: enableSiteIdHook ? homePageLink : null
 	});
@@ -78,9 +87,9 @@ const SeoDetail = (props) => {
 	}, [currentScan, previousScan]);
 
 	const { pageDetail } = usePageDetail({
-		querySid: enableSiteIdHook ? props.props.result.siteId : null,
+		querySid: enableSiteIdHook ? props.result?.siteId : null,
 		scanObjId: enableSiteIdHook ? scanObjId : null,
-		linkId: enableSiteIdHook ? props.props.result.seoId : null
+		linkId: enableSiteIdHook ? props.result?.seoId : null
 	});
 
 	const seoDetailPageTitle = SeoLabel[1].label + " - " + siteId?.name + " - " + pageDetail?.url;
@@ -141,8 +150,8 @@ const SeoDetail = (props) => {
 											<div tw="max-w-full p-4">
 												<Breadcrumbs
 													isSeo
-													siteId={props.result.siteId}
-													dataId={props.result.seoId}
+													siteId={props.result?.siteId}
+													dataId={props.result?.seoId}
 													pageTitle={SeoLabel[1].label}
 													pageDetailTitle={pageDetail?.url}
 												/>

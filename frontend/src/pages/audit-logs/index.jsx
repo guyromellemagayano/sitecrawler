@@ -9,13 +9,15 @@ import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Hooks
-import { useSite } from "src/hooks/useSite";
 import useUser from "src/hooks/useUser";
 
 // Layout
 import Layout from "src/components/Layout";
 
 // Components
+import MainSidebar from "src/components/sidebar/MainSidebar";
+
+// Loadable
 const ComingSoon = loadable(() => import("src/components/layouts/ComingSoon"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 
@@ -24,15 +26,10 @@ const Reports = ({ width }) => {
 	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
 
 	const pageTitle = "Audit Logs";
-	const sitesApiEndpoint = "/api/site/?ordering=name";
 
 	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: "/login"
-	});
-
-	const { site } = useSite({
-		endpoint: sitesApiEndpoint
 	});
 
 	React.useEffect(() => {
@@ -43,18 +40,37 @@ const Reports = ({ width }) => {
 		return setComponentReady(false);
 	}, []);
 
+	React.useEffect(() => {
+		user ? setComponentReady(true) : setComponentReady(false);
+
+		return { user };
+	}, [user]);
+
 	return (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
+		<Layout user={componentReady ? user : null}>
+			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<ComingSoon
+				<MainSidebar
 					width={width}
-					user={user}
-					pageTitle={pageTitle}
+					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
 					setOpenMobileSidebar={setOpenMobileSidebar}
 				/>
+
+				{componentReady ? (
+					<ComingSoon
+						width={width}
+						user={componentReady ? user : null}
+						pageTitle={pageTitle}
+						openMobileSidebar={openMobileSidebar}
+						setOpenMobileSidebar={setOpenMobileSidebar}
+					/>
+				) : (
+					<div tw="mx-auto">
+						<Loader />
+					</div>
+				)}
 			</section>
 		</Layout>
 	);
