@@ -74,7 +74,7 @@ const Registration = () => {
 								</div>
 
 								<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-									<span tw="px-2 py-4 text-gray-600">
+									<span tw="p-2 text-gray-600">
 										{ReactHtmlParser(RegistrationLabel[19].label)}
 										<Link href="/login">
 											<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
@@ -85,7 +85,7 @@ const Registration = () => {
 								</div>
 							</div>
 
-							<div tw="px-4 xl:px-10 xl:mt-32">
+							<div tw="px-4 xl:px-10 xl:mt-16">
 								<SiteFooter />
 							</div>
 						</div>

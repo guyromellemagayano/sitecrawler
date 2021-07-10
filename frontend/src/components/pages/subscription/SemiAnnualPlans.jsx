@@ -132,7 +132,7 @@ const SemiAnnualPlans = ({
 							</div>
 							<div css={[tw`rounded-lg`, data.id === currentSubscription.id ? tw`shadow-none` : tw`shadow-sm`]}>
 								{data.id === currentSubscription.id ? (
-									<button tw="block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed focus:outline-none">
+									<button tw="block w-full text-center rounded-lg border bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed focus:outline-none">
 										{subscriptionLabel[4].label}
 									</button>
 								) : (
