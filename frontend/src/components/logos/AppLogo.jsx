@@ -1,16 +1,17 @@
-// NextJS
-import Image from "next/image";
+// React
+import * as React from "react";
 
 // External
 import "twin.macro";
 import PropTypes from "prop-types";
 
-const AppLogo = ({ "data-tw": dataTw, src, alt, width, height }) => {
+// Components
+import AppImage from "src/components/images/AppImage";
+
+const AppLogo = ({ src, alt, width, height, "data-tw": dataTw }) => {
 	return (
-		<div tw="flex max-w-full">
-			<span className={dataTw}>
-				<Image src={src} alt={alt} width={width} height={height} />
-			</span>
+		<div tw="flex w-auto">
+			<AppImage src={src} alt={alt} width={width} height={height} className={dataTw} />
 		</div>
 	);
 };

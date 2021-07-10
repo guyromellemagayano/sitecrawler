@@ -114,10 +114,10 @@ const SiteOverview = (props) => {
 	});
 
 	React.useEffect(() => {
-		siteId && stats && uptime && uptimeSummary ? setComponentReady(true) : setComponentReady(false);
+		user && siteId && stats && uptime && uptimeSummary ? setComponentReady(true) : setComponentReady(false);
 
-		return { siteId, stats, uptime, uptimeSummary };
-	}, [siteId, stats, uptime, uptimeSummary]);
+		return { user, siteId, stats, uptime, uptimeSummary };
+	}, [user, siteId, stats, uptime, uptimeSummary]);
 
 	return (
 		<Layout user={componentReady ? user : null}>

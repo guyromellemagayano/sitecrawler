@@ -48,15 +48,9 @@ const Profile = ({ width }) => {
 	});
 
 	React.useEffect(() => {
-		user
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
+		user ? setComponentReady(true) : setComponentReady(false);
 
-		return setComponentReady(false);
+		return { user };
 	}, [user]);
 
 	return (
@@ -124,11 +118,9 @@ const Profile = ({ width }) => {
 										</div>
 									</div>
 
-									{componentReady ? (
-										<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white">
-											<SiteFooter />
-										</div>
-									) : null}
+									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white">
+										<SiteFooter />
+									</div>
 								</div>
 							</main>
 						</Scrollbars>

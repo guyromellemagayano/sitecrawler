@@ -15,7 +15,7 @@
 		"label": "Update"
 	},
 	{
-		"label": "Save Changes"
+		"label": "Save"
 	},
 	{
 		"label": "Payment Method Update Success"
@@ -30,13 +30,13 @@
 		"label": "Payment method form details updated failed. Please try again."
 	},
 	{
-		"label": "Add New Card"
+		"label": "Update Card"
 	},
 	{
 		"label": "Close"
 	},
 	{
-		"label": "Back to Selection"
+		"label": "Go Back"
 	},
 	{
 		"label": "Select Card"

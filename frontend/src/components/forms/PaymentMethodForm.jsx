@@ -40,14 +40,8 @@ const useOptions = () => {
 const PaymentMethodForm = ({
 	loading,
 	setLoading,
-	successMsg,
 	setSuccessMsg,
-	successMsgLoaded,
 	setSuccessMsgLoaded,
-	errorMsg,
-	setErrorMsg,
-	errorMsgLoaded,
-	setErrorMsgLoaded,
 	showPaymentFormModal,
 	setShowPaymentFormModal,
 	updatedPlanId,
@@ -69,10 +63,8 @@ const PaymentMethodForm = ({
 	const options = useOptions();
 
 	const { paymentMethods: paymentMethods, paymentMethodsError: paymentMethodsError } = usePaymentMethods({});
-	const {
-		defaultPaymentMethod: defaultPaymentMethod,
-		defaultPaymentMethodError: defaultPaymentMethodError
-	} = useDefaultPaymentMethod({});
+	const { defaultPaymentMethod: defaultPaymentMethod, defaultPaymentMethodError: defaultPaymentMethodError } =
+		useDefaultPaymentMethod({});
 
 	useEffect(() => {
 		if (
@@ -165,7 +157,7 @@ const PaymentMethodForm = ({
 		<>
 			{!disableForm ? (
 				<form tw="space-y-8" onSubmit={handleAddNewCardInformation}>
-					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+					<div tw="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 						<div tw="sm:col-span-6">
 							<label htmlFor="card-number" tw="block text-sm text-left font-medium leading-5 text-gray-700">
 								{PaymentMethodFormLabel[0].label}
@@ -231,7 +223,7 @@ const PaymentMethodForm = ({
 											type="submit"
 											disabled={loading}
 											css={[
-												tw`cursor-pointer flex-shrink flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
+												tw`cursor-pointer flex-grow flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-3 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
 												loading ? tw`opacity-50 cursor-not-allowed` : tw`hover:bg-green-700`
 											]}
 										>
@@ -240,7 +232,7 @@ const PaymentMethodForm = ({
 										<button
 											type="button"
 											css={[
-												tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+												tw`flex-grow flex-1 mt-3 mr-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
 												loading ? tw`opacity-50 cursor-not-allowed` : tw`hover:bg-gray-50`
 											]}
 											onClick={() => setDisableForm(true)}
@@ -250,10 +242,10 @@ const PaymentMethodForm = ({
 										<button
 											type="button"
 											css={[
-												tw`flex-shrink flex-1 w-full justify-center mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+												tw`flex-grow flex-1 mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
 												loading ? tw`opacity-50 cursor-not-allowed` : tw`hover:bg-gray-50`
 											]}
-											onClick={() => setTimeout(() => setShowPaymentFormModal(!showPaymentFormModal), 150)}
+											onClick={() => setShowPaymentFormModal(!showPaymentFormModal)}
 										>
 											{PaymentMethodFormLabel[11].label}
 										</button>
@@ -265,7 +257,7 @@ const PaymentMethodForm = ({
 				</form>
 			) : (
 				<form tw="space-y-8">
-					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
+					<div tw="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
 						<div tw="sm:col-span-6">
 							<div tw="space-y-1">
 								<label htmlFor="email" tw="block text-sm text-left font-medium text-gray-700">
@@ -284,15 +276,15 @@ const PaymentMethodForm = ({
 										placeholder={PaymentMethodFormLabel[16].label}
 										value={
 											currentPaymentMethod &&
-												currentPaymentMethod !== undefined &&
-												Object.keys(currentPaymentMethod).length > 0
+											currentPaymentMethod !== undefined &&
+											Object.keys(currentPaymentMethod).length > 0
 												? currentPaymentMethod.card.brand.charAt(0).toUpperCase() +
-												currentPaymentMethod.card.brand.slice(1) +
-												" - " +
-												" " +
-												"****" +
-												" " +
-												currentPaymentMethod.card.last4
+												  currentPaymentMethod.card.brand.slice(1) +
+												  " - " +
+												  " " +
+												  "****" +
+												  " " +
+												  currentPaymentMethod.card.last4
 												: ""
 										}
 										aria-describedby="cardinformation"
@@ -307,7 +299,7 @@ const PaymentMethodForm = ({
 										<button
 											type="button"
 											css={[
-												tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
+												tw`flex-grow flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-3 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
 												loading ? tw`opacity-50 cursor-not-allowed` : tw`hover:bg-green-700`
 											]}
 											onClick={() => handleSelectPlan(updatedPlanId, updatedPlanName, selectedPaymentMethod)}
@@ -317,7 +309,7 @@ const PaymentMethodForm = ({
 										<button
 											type="button"
 											css={[
-												tw`flex-shrink flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+												tw`flex-grow flex-1 w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-3 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
 												!disableForm || loading ? tw`opacity-50 cursor-not-allowed` : tw`hover:bg-indigo-700`
 											]}
 											onClick={() => setDisableForm(!disableForm)}
@@ -327,10 +319,10 @@ const PaymentMethodForm = ({
 										<button
 											type="button"
 											css={[
-												tw`flex-shrink flex-1 w-full justify-center mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
+												tw`flex-shrink-0 flex-1 mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`,
 												!disableForm || loading ? tw`opacity-50 cursor-not-allowed` : tw`hover:bg-gray-50`
 											]}
-											onClick={() => setTimeout(() => setShowPaymentFormModal(!showPaymentFormModal), 150)}
+											onClick={() => setShowPaymentFormModal(!showPaymentFormModal)}
 										>
 											{PaymentMethodFormLabel[11].label}
 										</button>
