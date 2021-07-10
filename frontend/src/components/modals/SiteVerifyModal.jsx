@@ -84,6 +84,7 @@ export const SiteVerifyModal = (props) => {
 				return error?.response;
 			});
 
+		// TODO: Add Sentry error reporting here
 		Math.floor(response?.status / 200) === 1
 			? (() => {
 					response?.data.verified
