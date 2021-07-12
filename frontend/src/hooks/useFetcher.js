@@ -25,7 +25,7 @@ const useFetcher = async (...args) => {
 			if (Math.floor(response.status / 200) == 1) {
 				return response.data;
 			} else {
-				Sentry.captureException(response.data);
+				Sentry.captureException(response);
 				return false;
 			}
 		})
