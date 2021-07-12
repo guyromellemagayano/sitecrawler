@@ -208,11 +208,11 @@ const SiteOverview = (props) => {
 												<SitesSeoStats sid={props.result?.siteId} stats={stats} />
 											</div>
 
-											<div tw="col-span-1 md:col-span-4 xl:col-span-4">
+											{/* <div tw="col-span-1 md:col-span-4 xl:col-span-4">
 												<SitesResponseTimeStats sid={props.result?.siteId} uptime={uptime} />
-											</div>
+											</div> */}
 
-											<div tw="flex col-span-1 md:col-span-4 xl:col-span-4">
+											{/* <div tw="flex col-span-1 md:col-span-4 xl:col-span-4">
 												<div tw="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8">
 													<div tw="col-span-1 md:col-span-1">
 														<SitesCurrentStatusStats sid={props.result?.siteId} uptimeSummary={uptimeSummary} />
@@ -226,7 +226,7 @@ const SiteOverview = (props) => {
 														<SitesDowntimeStats sid={props.result?.siteId} uptimeSummary={uptimeSummary} />
 													</div>
 												</div>
-											</div>
+											</div> */}
 										</div>
 									</div>
 
