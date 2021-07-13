@@ -5,12 +5,12 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
+import "twin.macro";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
 
 // JSON
 import OverviewLabel from "public/labels/pages/site/overview.json";
