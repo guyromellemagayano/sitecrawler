@@ -61,6 +61,7 @@ class SubscriptionCurrentView(APIView):
                 )
                 user_subscription = request.user.user_subscription
                 user_subscription.subscription_id = subscription.id
+                user_subscription.cancel_at = None
                 user_subscription.save()
 
             serializer = UserSubscriptionSerializer(user_subscription)

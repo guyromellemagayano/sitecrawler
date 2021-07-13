@@ -73,6 +73,8 @@ class WebhookView(APIView):
                 self._cancel_subscription(user_subscription.user)
                 user_subscription.delete()
             elif user_subscription.status == UserSubscription.STATUS_PAID:
+                user_subscription.cancel_at = None
+                user_subscription.save()
                 self._activate_subscription(user_subscription)
 
         return Response()
