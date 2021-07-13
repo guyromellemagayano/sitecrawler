@@ -1,6 +1,7 @@
 help: ## Show this help.
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: cypress
 
 GITHUB_SHA ?= $(shell git rev-parse HEAD)
 VERSION ?= $(shell date -u '+%Y%m%d.%H%M%S')-$(shell echo $(GITHUB_SHA) | head -c 6)
@@ -72,3 +73,8 @@ logs: ## Display logs for local environment
 
 psql: ## Enter postgres shell for local environment
 	docker-compose exec db psql -U postgres
+
+cypress: dev ## Run cypress integration tests
+	npm install cypress
+	$(shell npm bin)/cypress open
+

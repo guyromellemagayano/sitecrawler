@@ -1,0 +1,7 @@
+{
+	"baseUrl": "http://localhost:8000",
+	"env": {
+		"username": "cypress",
+		"password": "cypress123"
+	}
+}
