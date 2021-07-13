@@ -24,10 +24,10 @@
 		"label": "Payment Method Update Failed"
 	},
 	{
-		"label": "Payment method form details updated successfully."
+		"label": "Default card information updated successfully."
 	},
 	{
-		"label": "Payment method form details updated failed. Please try again."
+		"label": "An unexpected error occurred. Please try again."
 	},
 	{
 		"label": "Update Card"

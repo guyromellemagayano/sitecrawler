@@ -1,12 +1,14 @@
 // React
 import * as React from "react";
 
-// JSON
-import NewActivePlanModalLabel from "./labels/NewActivePlanModal.json";
-
 // External
 import { styled } from "twin.macro";
 import { Transition } from "@headlessui/react";
+import { XIcon } from "@heroicons/react/solid";
+import PropTypes from "prop-types";
+
+// JSON
+import NewActivePlanModalLabel from "./labels/NewActivePlanModal.json";
 
 // Components
 import AppImage from "src/components/images/AppImage";
@@ -16,50 +18,64 @@ const ConfettiBgImgSpan = styled.span`
 	background-size: cover;
 	background-position: top center;
 	background-repeat: no-repeat;
-	min-height: 10rem;
+	min-height: 18rem;
 	width: 100%;
 	position: absolute;
 	z-index: -1;
 `;
 
 const NewActivePlanModal = (props) => {
-	const handleHideSiteDeleteModal = (e) => {
-		return e?.key === "Escape" ? props.setShowModal(false) : null;
+	const handleNewActivePlanModal = (e) => {
+		return e?.key === "Escape"
+			? (() => {
+					props.setShowModal(false);
+
+					setTimeout(() => {
+						props.mutateUser(props.userApiEndpoint);
+					}, 500);
+			  })()
+			: null;
 	};
 
 	React.useEffect(() => {
-		document.addEventListener("keydown", handleHideSiteDeleteModal, true);
+		document.addEventListener("keydown", handleNewActivePlanModal, true);
 
 		return () => {
-			document.removeEventListener("keydown", handleHideSiteDeleteModal, true);
+			document.removeEventListener("keydown", handleNewActivePlanModal, true);
 		};
 	});
 
 	return (
-		<Transition show={props.showModal} tw="fixed z-50 inset-0 overflow-y-auto">
-			<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-				<Transition.Child
-					enter="ease-out duration-300"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
-				>
-					<div tw="fixed inset-0 transition-opacity">
-						<div tw="absolute inset-0 bg-gray-500 opacity-75"></div>
-					</div>
-				</Transition.Child>
-				<span tw="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-				&#8203;
-				<Transition.Child
-					enter="ease-out duration-300"
-					enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-					enterTo="opacity-100 translate-y-0 sm:scale-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-					leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-					tw="inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-6 lg:p-0"
+		<Transition
+			show={props.showModal}
+			tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"
+		>
+			<Transition.Child
+				enter="ease-out duration-300"
+				enterFrom="opacity-0"
+				enterTo="opacity-100"
+				leave="ease-in duration-200"
+				leaveFrom="opacity-100"
+				leaveTo="opacity-0"
+			>
+				<div tw="fixed inset-0 transition-opacity" aria-hidden="true">
+					<div tw="absolute inset-0 bg-gray-500 opacity-75"></div>
+				</div>
+			</Transition.Child>
+
+			<span tw="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+			<Transition.Child
+				enter="ease-out duration-300"
+				enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+				enterTo="opacity-100 translate-y-0 sm:scale-100"
+				leave="ease-in duration-200"
+				leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+				leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+				tw="sm:max-w-xl sm:w-full"
+			>
+				<div
+					tw="sm:w-full sm:mx-auto inline-block align-bottom bg-white rounded-lg px-4 pt-3 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:p-6 lg:p-0"
 					role="dialog"
 					aria-modal="true"
 					aria-labelledby="modal-headline"
@@ -71,15 +87,15 @@ const NewActivePlanModal = (props) => {
 							type="button"
 							tw="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
 							aria-label="Close"
-							onClick={() =>
+							onClick={() => {
+								props.setShowModal(false);
+
 								setTimeout(() => {
-									props.setShowModal(!props.showModal);
-								}, 150)
-							}
+									props.mutateUser(props.userApiEndpoint);
+								}, 500);
+							}}
 						>
-							<svg tw="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-							</svg>
+							<XIcon tw="h-6 w-6" />
 						</button>
 					</div>
 					<div>
@@ -95,9 +111,9 @@ const NewActivePlanModal = (props) => {
 								{NewActivePlanModalLabel[1].label}
 							</h2>
 							<p tw="mb-6 text-base leading-6 font-semibold">Your {props.updatedPlanName} plan is now active.</p>
-							{props.currentSubscriptions &&
-								props.currentSubscriptions?.results &&
-								props.currentSubscriptions?.results
+							{props.subscriptions &&
+								props.subscriptions?.results &&
+								props.subscriptions?.results
 									.filter((result) => result.id === props.updatedPlanId)
 									.map((val, key) => {
 										return (
@@ -137,11 +153,13 @@ const NewActivePlanModal = (props) => {
 																type="button"
 																tw="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm sm:text-sm sm:leading-5 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 																aria-label="Start Crawling"
-																onClick={() =>
+																onClick={() => {
+																	props.setShowModal(false);
+
 																	setTimeout(() => {
-																		props.setShowModal(!props.showModal);
-																	}, 500)
-																}
+																		props.mutateUser(props.userApiEndpoint);
+																	}, 500);
+																}}
 															>
 																{NewActivePlanModalLabel[0].label}
 															</button>
@@ -153,8 +171,8 @@ const NewActivePlanModal = (props) => {
 									})}
 						</div>
 					</div>
-				</Transition.Child>
-			</div>
+				</div>
+			</Transition.Child>
 		</Transition>
 	);
 };

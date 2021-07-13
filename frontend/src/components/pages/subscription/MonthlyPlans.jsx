@@ -1,32 +1,48 @@
 // External
 import { CheckIcon } from "@heroicons/react/solid";
+import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
+// JSON
+import SubscriptionLabel from "public/labels/pages/settings/subscriptions.json";
+import SubscriptionPlansLabel from "./labels/SubscriptionPlans.json";
+
 const MonthlyPlans = ({
-	key,
 	data,
-	currentSubscription,
-	subscriptionLabel,
-	currentPaymentMethod,
+	defaultSubscription,
+	defaultPaymentMethod,
 	loadingProMonthly,
 	loadingAgencyMonthly,
 	setUpdatedPlanId,
 	setUpdatedPlanName,
 	showPaymentFormModal,
-	setShowPaymentFormModal
+	setShowPaymentFormModal,
+	disableLocalTime
 }) => {
-	return data.group.name === "Pro" ? (
-		<div
-			key={key}
-			tw="mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4"
-		>
+	const calendar = require("dayjs/plugin/calendar");
+	const timezone = require("dayjs/plugin/timezone");
+	const utc = require("dayjs/plugin/utc");
+
+	dayjs.extend(calendar);
+	dayjs.extend(utc);
+	dayjs.extend(timezone);
+
+	const calendarStrings = {
+		lastDay: "[Yesterday], dddd [at] hh:mm:ss A",
+		lastWeek: "MMMM DD, YYYY [at] hh:mm:ss A",
+		sameDay: "[Today], dddd [at] hh:mm:ss A",
+		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
+	};
+
+	return data.group.name == "Pro" ? (
+		<div tw="mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4">
 			<div tw="relative rounded-lg shadow-xl">
 				<div tw="pointer-events-none absolute inset-0 rounded-lg border border-indigo-600"></div>
 				<div tw="absolute inset-x-0 top-0 transform translate-y-px">
 					<div tw="flex justify-center transform -translate-y-1/2">
 						<span tw="inline-flex rounded-full bg-indigo-600 px-4 py-1 text-sm leading-5 font-semibold tracking-wider uppercase text-white">
-							{subscriptionLabel[21].label}
+							{SubscriptionLabel[21].label}
 						</span>
 					</div>
 				</div>
@@ -59,30 +75,43 @@ const MonthlyPlans = ({
 						})}
 					</ul>
 					<div tw="mt-10">
-						<div css={[tw`rounded-lg`, data.id === currentSubscription.id ? tw`shadow-none` : tw`shadow-sm`]}>
-							{data.id === currentSubscription.id ? (
-								<button tw="block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed focus:outline-none">
-									{subscriptionLabel[4].label}
+						<div css={[tw`rounded-lg`, data.id == defaultSubscription?.id ? tw`shadow-none` : tw`shadow-sm`]}>
+							{data?.id == defaultSubscription?.id &&
+							defaultSubscription?.status == "PAID" &&
+							defaultSubscription?.cancel_at !== null ? (
+								<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
+									<span tw="px-2 py-5 text-gray-600 text-center">
+										<p tw="text-sm font-medium">{SubscriptionPlansLabel[0].label}</p>
+										<p tw="text-xs text-gray-500">
+											{!disableLocalTime
+												? dayjs(defaultSubscription?.cancel_at).calendar(null, calendarStrings)
+												: dayjs.utc(defaultSubscription?.cancel_at).calendar(null, calendarStrings)}
+											<span tw="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
+										</p>
+									</span>
+								</div>
+							) : null}
+							{data.id == defaultSubscription?.id ? (
+								<button tw="block w-full text-center rounded-lg border bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed focus:outline-none">
+									{SubscriptionLabel[4].label}
 								</button>
 							) : (
 								<button
 									type="button"
 									css={[
 										tw`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white`,
-										!currentPaymentMethod || loadingProMonthly
+										!defaultPaymentMethod || loadingProMonthly
 											? tw`opacity-50 cursor-not-allowed`
 											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
-									disabled={!currentPaymentMethod || loadingProMonthly ? "disabled" : ""}
+									disabled={!defaultPaymentMethod || loadingProMonthly ? "disabled" : ""}
 									onClick={() => {
-										setTimeout(() => {
-											setUpdatedPlanId(data.id);
-											setUpdatedPlanName(data.group.name);
-											setShowPaymentFormModal(!showPaymentFormModal);
-										}, 150);
+										setUpdatedPlanId(data.id);
+										setUpdatedPlanName(data.group.name);
+										setShowPaymentFormModal(!showPaymentFormModal);
 									}}
 								>
-									{loadingProMonthly ? "Processing Payment..." : subscriptionLabel[3].label}
+									{loadingProMonthly ? "Processing Payment..." : SubscriptionLabel[3].label}
 								</button>
 							)}
 						</div>
@@ -90,11 +119,8 @@ const MonthlyPlans = ({
 				</div>
 			</div>
 		</div>
-	) : data.group.name === "Agency" ? (
-		<div
-			key={key}
-			tw="mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3"
-		>
+	) : data.group.name == "Agency" ? (
+		<div tw="mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3">
 			<div tw="h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-r-lg border">
 				<div tw="flex-1 flex flex-col">
 					<div tw="bg-white px-6 py-10">
@@ -126,20 +152,35 @@ const MonthlyPlans = ({
 							})}
 						</ul>
 						<div tw="mt-8">
-							<div css={[tw`rounded-lg`, data.id === currentSubscription.id ? tw`shadow-none` : tw`shadow-sm`]}>
-								{data.id === currentSubscription.id ? (
-									<button tw="block w-full text-center rounded-lg border border-transparent bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed focus:outline-none">
-										{subscriptionLabel[4].label}
+							<div css={[tw`rounded-lg`, data.id == defaultSubscription?.id ? tw`shadow-none` : tw`shadow-sm`]}>
+								{data?.id == defaultSubscription?.id &&
+								defaultSubscription?.status == "PAID" &&
+								defaultSubscription?.cancel_at !== null ? (
+									<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
+										<span tw="px-2 py-5 text-gray-600 text-center">
+											<p tw="text-sm font-medium">{SubscriptionPlansLabel[0].label}</p>
+											<p tw="text-xs text-gray-500">
+												{!disableLocalTime
+													? dayjs(defaultSubscription?.cancel_at).calendar(null, calendarStrings)
+													: dayjs.utc(defaultSubscription?.cancel_at).calendar(null, calendarStrings)}
+												<span tw="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
+											</p>
+										</span>
+									</div>
+								) : null}
+								{data.id == defaultSubscription?.id ? (
+									<button tw="block w-full text-center rounded-lg border bg-white px-6 py-4 text-xl leading-6 font-medium text-indigo-600 border-indigo-700 cursor-not-allowed focus:outline-none">
+										{SubscriptionLabel[4].label}
 									</button>
 								) : (
 									<button
 										css={[
 											tw`block w-full text-center rounded-lg border border-transparent bg-indigo-600 px-6 py-4 text-lg leading-6 font-medium text-white`,
-											!currentPaymentMethod || loadingAgencyMonthly
+											!defaultPaymentMethod || loadingAgencyMonthly
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 										]}
-										disabled={!currentPaymentMethod || loadingAgencyMonthly ? "disabled" : ""}
+										disabled={!defaultPaymentMethod || loadingAgencyMonthly ? "disabled" : ""}
 										onClick={() => {
 											setTimeout(() => {
 												setUpdatedPlanId(data.id);
@@ -148,7 +189,7 @@ const MonthlyPlans = ({
 											}, 150);
 										}}
 									>
-										{loadingAgencyMonthly ? "Processing Payment..." : subscriptionLabel[3].label}
+										{loadingAgencyMonthly ? "Processing Payment..." : SubscriptionLabel[3].label}
 									</button>
 								)}
 							</div>
