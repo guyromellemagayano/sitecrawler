@@ -17,17 +17,17 @@ import PaymentMethodForm from "src/components/forms/PaymentMethodForm";
 const PaymentMethodFormModal = (props) => {
 	const [stripePromiseData, setStripePromiseData] = React.useState("");
 
-	const handleHideSiteDeleteModal = (e) => {
+	const handlePaymentMethodFormModal = (e) => {
 		return e?.key === "Escape" ? props.setShowModal(false) : null;
 	};
 
 	React.useEffect(() => {
-		document.addEventListener("keydown", handleHideSiteDeleteModal, true);
+		document.addEventListener("keydown", props.loading ? null : handlePaymentMethodFormModal, true);
 
 		return () => {
-			document.removeEventListener("keydown", handleHideSiteDeleteModal, true);
+			document.removeEventListener("keydown", props.loading ? null : handlePaymentMethodFormModal, true);
 		};
-	});
+	}, [props.loading]);
 
 	React.useEffect(() => {
 		props.stripePublishableKey ? setStripePromiseData(loadStripe(props.stripePublishableKey)) : null;
@@ -80,8 +80,6 @@ const PaymentMethodFormModal = (props) => {
 									<PaymentMethodForm
 										loading={props.loading}
 										setLoading={props.setLoading}
-										successMsgLoaded={props.successMsgLoaded}
-										setSuccessMsgLoaded={props.setSuccessMsgLoaded}
 										showPaymentFormModal={props.showModal}
 										setShowPaymentFormModal={props.setShowModal}
 										updatedPlanId={props.updatedPlanId}
