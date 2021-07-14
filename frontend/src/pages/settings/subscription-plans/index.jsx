@@ -121,33 +121,31 @@ const Subscriptions = (props) => {
 						.then((response) => {
 							Math.floor(response?.status / 200) === 1
 								? response?.data?.status == "PAID"
-									? (() => {
-											mutateDefaultSubscription(currentSubscriptionApiEndpoint).then((info) => {
-												info?.cancel_at !== null
-													? (() => {
-															setDisableDowngradeToBasicPlan(false);
-															setLoadingProMonthly(false);
-															setLoadingAgencyMonthly(false);
-															setLoadingProSemiAnnually(false);
-															setLoadingAgencySemiAnnually(false);
-															setSuccessMsg((successMsg) => [...successMsg, SubscriptionLabel[24]]);
-															mutateUser(userApiEndpoint);
-													  })()
-													: (() => {
-															Sentry.captureException(response);
+									? mutateDefaultSubscription(currentSubscriptionApiEndpoint).then((info) => {
+											info?.cancel_at !== null
+												? (() => {
+														setDisableDowngradeToBasicPlan(false);
+														setLoadingProMonthly(false);
+														setLoadingAgencyMonthly(false);
+														setLoadingProSemiAnnually(false);
+														setLoadingAgencySemiAnnually(false);
+														setSuccessMsg((successMsg) => [...successMsg, SubscriptionLabel[24]]);
+														mutateUser(userApiEndpoint);
+												  })()
+												: (() => {
+														Sentry.captureException(response);
 
-															setDisableDowngradeToBasicPlan(false);
-															setErrorMsg((errorMsg) => [...errorMsg, SubscriptionLabel[19]]);
-													  })();
-											});
-									  })()
-									: (() => {
+														setDisableDowngradeToBasicPlan(false);
+														setErrorMsg((errorMsg) => [...errorMsg, SubscriptionLabel[19]]);
+												  })();
+									  })
+									: ((response) => {
 											Sentry.captureException(response);
 
 											setDisableDowngradeToBasicPlan(false);
 											setErrorMsg((errorMsg) => [...errorMsg, SubscriptionLabel[19]]);
 									  })()
-								: (() => {
+								: ((response) => {
 										Sentry.captureException(response);
 
 										setDisableDowngradeToBasicPlan(false);
@@ -178,50 +176,48 @@ const Subscriptions = (props) => {
 							}
 						})
 						.then((response) => {
-							response.data
-								? (() => {
-										subscriptions?.results
-											.filter((sub) => sub.id == id)
-											.map((value) => {
-												value.group.name == "Pro" &&
-												value.price.recurring.interval == "month" &&
-												value.price.recurring.interval_count == 1
-													? (() => {
-															setLoadingProMonthly(true);
-															setLoadingAgencyMonthly(false);
-															setLoadingProSemiAnnually(false);
-															setLoadingAgencySemiAnnually(false);
-													  })()
-													: value.group.name == "Agency" &&
-													  value.price.recurring.interval == "month" &&
-													  value.price.recurring.interval_count == 1
-													? (() => {
-															setLoadingProMonthly(false);
-															setLoadingAgencyMonthly(true);
-															setLoadingProSemiAnnually(false);
-															setLoadingAgencySemiAnnually(false);
-													  })()
-													: value.group.name == "Pro" &&
-													  value.price.recurring.interval == "month" &&
-													  value.price.recurring.interval_count == 6
-													? (() => {
-															setLoadingProMonthly(false);
-															setLoadingAgencyMonthly(false);
-															setLoadingProSemiAnnually(true);
-															setLoadingAgencySemiAnnually(false);
-													  })()
-													: (() => {
-															setLoadingProMonthly(false);
-															setLoadingAgencyMonthly(false);
-															setLoadingProSemiAnnually(false);
-															setLoadingAgencySemiAnnually(true);
-													  })();
+							response?.data
+								? subscriptions?.results
+										.filter((sub) => sub.id == id)
+										.map((value) => {
+											value.group.name == "Pro" &&
+											value.price.recurring.interval == "month" &&
+											value.price.recurring.interval_count == 1
+												? (() => {
+														setLoadingProMonthly(true);
+														setLoadingAgencyMonthly(false);
+														setLoadingProSemiAnnually(false);
+														setLoadingAgencySemiAnnually(false);
+												  })()
+												: value.group.name == "Agency" &&
+												  value.price.recurring.interval == "month" &&
+												  value.price.recurring.interval_count == 1
+												? (() => {
+														setLoadingProMonthly(false);
+														setLoadingAgencyMonthly(true);
+														setLoadingProSemiAnnually(false);
+														setLoadingAgencySemiAnnually(false);
+												  })()
+												: value.group.name == "Pro" &&
+												  value.price.recurring.interval == "month" &&
+												  value.price.recurring.interval_count == 6
+												? (() => {
+														setLoadingProMonthly(false);
+														setLoadingAgencyMonthly(false);
+														setLoadingProSemiAnnually(true);
+														setLoadingAgencySemiAnnually(false);
+												  })()
+												: (() => {
+														setLoadingProMonthly(false);
+														setLoadingAgencyMonthly(false);
+														setLoadingProSemiAnnually(false);
+														setLoadingAgencySemiAnnually(true);
+												  })();
 
-												handleSubscriptionUpdate(id);
-											});
-								  })()
-								: (() => {
-										Sentry.captureException(error);
+											handleSubscriptionUpdate(id);
+										})
+								: ((response) => {
+										Sentry.captureException(response);
 
 										setLoading(false);
 										setErrorMsg((errorMsg) => [...errorMsg, SubscriptionLabel[19]]);
@@ -238,53 +234,68 @@ const Subscriptions = (props) => {
 	};
 
 	const handleSubscriptionUpdate = async (subId) => {
-		try {
-			const body = {
-				id: subId
-			};
+		const body = {
+			id: subId
+		};
 
-			const response = await usePostMethod(currentSubscriptionApiEndpoint, body);
-			const data = await response.data;
+		return await axios
+			.post(currentSubscriptionApiEndpoint, body, {
+				headers: {
+					"Accept": "application/json",
+					"Content-Type": "application/json",
+					"X-CSRFToken": Cookies.get("csrftoken")
+				}
+			})
+			.then((response) => {
+				Math.floor(response?.status / 200) === 1
+					? response?.data
+						? setTimeout(() => {
+								mutateDefaultSubscription().then((info) => {
+									info?.status == "PAID"
+										? (() => {
+												subscriptions?.results
+													.filter((sub) => sub.id === info.id)
+													.map((val) => {
+														setUpdatedPlanName(val.group.name);
+														setUpdatedPlanId(val.id);
+													});
 
-			if (Math.floor(response.status / 200) === 1) {
-				if (data) {
-					setTimeout(() => {
-						mutateDefaultSubscription().then((info) => {
-							if (info.status == "PAID") {
-								subscriptions?.results
-									.filter((sub) => sub.id === info.id)
-									.map((val) => {
-										setUpdatedPlanName(val.group.name);
-										setUpdatedPlanId(val.id);
-									});
+												setLoading(false);
+
+												!loading &&
+													setTimeout(() => {
+														setShowPaymentFormModal(false);
+													}, 500);
+
+												showPaymentFormModal &&
+													setTimeout(() => {
+														setShowNewActivePlanModal(true);
+													}, 1000);
+										  })()
+										: info?.status == "WAITING_PAYMENT"
+										? handleSubscriptionUpdate(subId)
+										: null;
+								});
+						  }, 2000)
+						: ((response) => {
+								Sentry.captureException(response);
 
 								setLoading(false);
+								setShowPaymentFormModal(false);
+						  })()
+					: ((response) => {
+							Sentry.captureException(response);
 
-								if (!loading) {
-									setTimeout(() => {
-										setShowPaymentFormModal(false);
-									}, 500);
-								}
+							setLoading(false);
+							setShowPaymentFormModal(false);
+					  })();
+			})
+			.catch((error) => {
+				Sentry.captureException(error);
 
-								if (showPaymentFormModal) {
-									setTimeout(() => {
-										setShowNewActivePlanModal(true);
-									}, 1000);
-								}
-							} else if (info.status == "WAITING_PAYMENT") {
-								handleSubscriptionUpdate(subId);
-							}
-						});
-					}, 2000);
-				}
-			} else {
-				if (data) {
-					console.log(data);
-				}
-			}
-		} catch (error) {
-			throw error.message;
-		}
+				setLoading(false);
+				setShowPaymentFormModal(false);
+			});
 	};
 
 	const handleCurrentPaymentPeriod = (sub, subs) => {
@@ -345,6 +356,8 @@ const Subscriptions = (props) => {
 							subscriptions={subscriptions}
 							mutateUser={mutateUser}
 							userApiEndpoint={userApiEndpoint}
+							setErrorMsg={setErrorMsg}
+							setSuccessMsg={setSuccessMsg}
 						/>
 						<ChangeToBasicModal
 							showModal={showChangeToBasicModal}
@@ -355,7 +368,9 @@ const Subscriptions = (props) => {
 							disableDowngradeToBasicPlan={disableDowngradeToBasicPlan}
 							setDisableDowngradeToBasicPlan={setDisableDowngradeToBasicPlan}
 							errorMsg={errorMsg}
+							setErrorMsg={setErrorMsg}
 							successMsg={successMsg}
+							setSuccessMsg={setSuccessMsg}
 							hideButtons={hideButtons}
 							basicPlanId={basicPlanId}
 							basicPlanName={basicPlanName}

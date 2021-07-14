@@ -36,7 +36,18 @@ const ChangeToBasicModal = (props) => {
 	const router = useRouter();
 
 	const handleDisableDowngradeToBasicPlan = (e) => {
-		return e?.key === "Escape" ? props.setShowModal(false) : null;
+		return e?.key === "Escape"
+			? (() => {
+					props.setShowModal(false);
+
+					setTimeout(() => {
+						props.setErrorMsg([]);
+						props.setSuccessMsg([]);
+					}, 1000);
+
+					router.push(subscriptionPlansLink);
+			  })()
+			: null;
 	};
 
 	React.useEffect(() => {
@@ -197,6 +208,12 @@ const ChangeToBasicModal = (props) => {
 										: () =>
 												(() => {
 													props.setShowModal(false);
+
+													setTimeout(() => {
+														props.setErrorMsg([]);
+														props.setSuccessMsg([]);
+													}, 1000);
+
 													router.push(subscriptionPlansLink);
 												})()
 								}
