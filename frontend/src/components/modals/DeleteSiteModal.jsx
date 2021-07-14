@@ -5,7 +5,7 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/solid";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
 import { Transition } from "@headlessui/react";
 import * as Sentry from "@sentry/nextjs";
 import axios from "axios";

@@ -2,7 +2,7 @@
 import * as React from "react";
 
 // External
-import tw from "twin.macro";
+import "twin.macro";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
@@ -16,7 +16,6 @@ const DeleteUserAccountModal = loadable(() => import("src/components/modals/Dele
 const DeleteUserAccount = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [showDeleteUserAccountModal, setShowDeleteUserAccountModal] = React.useState(false);
-	const [disableDeleteUserAccountButton, setDisableDeleteUserAccountButton] = React.useState(false);
 
 	React.useEffect(() => {
 		props.user
@@ -52,17 +51,12 @@ const DeleteUserAccount = (props) => {
 						{componentReady ? (
 							<button
 								type="button"
-								disabled={disableDeleteUserAccountButton}
 								id="user_account_delete_modal_button"
-								css={[
-									tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150`,
-									disableDeleteUserAccountButton
-										? tw`opacity-50 cursor-not-allowed`
-										: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
-								]}
+								tw="
+									cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 transition ease-in-out duration-150 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700"
 								onClick={() => setShowDeleteUserAccountModal(!showDeleteUserAccountModal)}
 							>
-								{disableDeleteUserAccountButton ? DeleteUserAccountLabel[2].label : DeleteUserAccountLabel[0].label}
+								{DeleteUserAccountLabel[2].label}
 							</button>
 						) : (
 							<Skeleton duration={2} width={150} height={40} />
