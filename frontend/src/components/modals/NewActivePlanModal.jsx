@@ -4,7 +4,7 @@ import * as React from "react";
 // External
 import { styled } from "twin.macro";
 import { Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/solid";
+import { XIcon, CheckIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
 
 // JSON
@@ -31,8 +31,11 @@ const NewActivePlanModal = (props) => {
 					props.setShowModal(false);
 
 					setTimeout(() => {
-						props.mutateUser(props.userApiEndpoint);
-					}, 500);
+						props.setErrorMsg([]);
+						props.setSuccessMsg([]);
+					}, 1000);
+
+					props.mutateUser(props.userApiEndpoint);
 			  })()
 			: null;
 	};
@@ -91,8 +94,11 @@ const NewActivePlanModal = (props) => {
 								props.setShowModal(false);
 
 								setTimeout(() => {
-									props.mutateUser(props.userApiEndpoint);
-								}, 500);
+									props.setErrorMsg([]);
+									props.setSuccessMsg([]);
+								}, 1000);
+
+								props.mutateUser(props.userApiEndpoint);
 							}}
 						>
 							<XIcon tw="h-6 w-6" />
@@ -129,19 +135,7 @@ const NewActivePlanModal = (props) => {
 																	return (
 																		<li key={key} tw="flex items-start my-1">
 																			<div tw="flex-shrink-0">
-																				<svg
-																					tw="h-6 w-6 text-green-500"
-																					stroke="currentColor"
-																					fill="none"
-																					viewBox="0 0 24 24"
-																				>
-																					<path
-																						strokeLinecap="round"
-																						strokeLinejoin="round"
-																						strokeWidth="2"
-																						d="M5 13l4 4L19 7"
-																					/>
-																				</svg>
+																				<CheckIcon tw="h-6 w-6 text-green-500" />
 																			</div>
 																			<p tw="ml-3 text-sm leading-6 font-medium text-gray-500">{val2}</p>
 																		</li>
@@ -157,8 +151,11 @@ const NewActivePlanModal = (props) => {
 																	props.setShowModal(false);
 
 																	setTimeout(() => {
-																		props.mutateUser(props.userApiEndpoint);
-																	}, 500);
+																		props.setErrorMsg([]);
+																		props.setSuccessMsg([]);
+																	}, 1000);
+
+																	props.mutateUser(props.userApiEndpoint);
 																}}
 															>
 																{NewActivePlanModalLabel[0].label}
