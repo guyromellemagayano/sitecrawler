@@ -131,14 +131,14 @@ const PaymentMethodForm = ({
 									setDisableForm(false);
 									setSuccessMsg((successMsg) => [...successMsg, PaymentMethodFormLabel[8].label]);
 							  })()
-							: (() => {
+							: ((response) => {
 									Sentry.captureException(response);
 
 									setLoading(false);
 									setDisableForm(false);
 									setErrorMsg((errorMsg) => [...errorMsg, PaymentMethodFormLabel[9].label]);
 							  })()
-						: (() => {
+						: ((response) => {
 								Sentry.captureException(response);
 
 								setLoading(false);
