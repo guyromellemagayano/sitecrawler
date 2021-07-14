@@ -16,7 +16,6 @@ const DeleteSiteModal = loadable(() => import("src/components/modals/DeleteSiteM
 const DeleteSite = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [showDeleteSiteModal, setShowDeleteSiteModal] = React.useState(false);
-	const [disableDeleteSiteAccountButton, setDisableDeleteSiteAccountButton] = React.useState(false);
 
 	React.useEffect(() => {
 		props.user && props.siteId
@@ -52,17 +51,11 @@ const DeleteSite = (props) => {
 						{componentReady ? (
 							<button
 								type="button"
-								disabled={disableDeleteSiteAccountButton}
 								id="site_delete_modal_button"
-								css={[
-									tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150`,
-									disableDeleteSiteAccountButton
-										? tw`opacity-50 cursor-not-allowed`
-										: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
-								]}
+								tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 transition ease-in-out duration-150 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700"
 								onClick={() => setShowDeleteSiteModal(!showDeleteSiteModal)}
 							>
-								{disableDeleteSiteAccountButton ? DeleteSiteLabel[2].label : DeleteSiteLabel[0].label}
+								{DeleteSiteLabel[2].label}
 							</button>
 						) : (
 							<Skeleton duration={2} width={150} height={40} />
