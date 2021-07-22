@@ -4,7 +4,7 @@ module "reverifier" {
   source = "./modules/ecs_cron"
 
   name = "reverifier"
-  image = "400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-reverifier"
+  image = "400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-reverifier:production"
   schedule = "cron(0 6 * * ? *)"
   assign_public_ip = true
   subnets = [aws_default_subnet.default_az1.id, aws_default_subnet.default_az2.id, aws_default_subnet.default_az3.id, aws_default_subnet.default_az4.id, aws_default_subnet.default_az5.id, aws_default_subnet.default_az6.id]

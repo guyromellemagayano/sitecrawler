@@ -12,9 +12,7 @@ Then it will use `fabric` to deploy to aws ec2 instances:
 
 1. Copy `docker-compose.{env}.yml` to `docker-compose.yml` on the ec2.
 
-2. Copy `secrets.{env}.yml` from `epic-linkapp-secrets` s3 bucket to `docker-compose.override.yml` on the ec2.
-
-3. Runs `docker-compose pull` and `docker-compose up -d`.
+2. Runs `docker-compose pull` and `docker-compose up -d`.
 
 
 ## Initializing machines

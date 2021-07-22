@@ -1,7 +1,7 @@
 version: "2.4"
 services:
   backend:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend:latest
     depends_on:
       db:
         condition: service_healthy

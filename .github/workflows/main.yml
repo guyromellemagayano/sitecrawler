@@ -58,8 +58,15 @@ jobs:
       with:
         python-version: '3.6'
 
+    - name: Retag latest images to staging
+      run: make staging-retag
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: us-east-1
+
     - name: Deploy to staging
-      run: make staging
+      run: make staging-deploy
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -75,8 +82,15 @@ jobs:
       with:
         python-version: '3.6'
 
+    - name: Retag latest images to production
+      run: make production-retag
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: us-east-1
+
     - name: Deploy to production
-      run: make production
+      run: make production-deploy
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -92,6 +106,12 @@ jobs:
     - name: Download crawler task definition
       run: |
         aws ecs describe-task-definition --task-definition prod_crawler_task --query taskDefinition > crawler-task-definition.json
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: crawler-task-definition.json
+        container-name: crawler
+        image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler:production
     - name: Deploy crawler task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
@@ -99,12 +119,3 @@ jobs:
         service: prod_crawler_service
         cluster: prod_fargate
         wait-for-service-stability: true
-
-    - name: Download reverifier task definition
-      run: |
-        aws ecs describe-task-definition --task-definition production_cron_reverifier --query taskDefinition > reverifier-task-definition.json
-    - name: Deploy reverifier task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: reverifier-task-definition.json
-        cluster: prod_fargate

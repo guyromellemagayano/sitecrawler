@@ -27,7 +27,7 @@ services:
       - "traefik.http.routers.redirs.middlewares=redirect-to-https"
     mem_limit: 64M
   backend:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend:staging
     restart: always
     links:
       - db
@@ -46,7 +46,7 @@ services:
         max-file: "3"
     mem_limit: 256M
   frontend:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend:staging
     restart: always
     labels:
       - "traefik.enable=true"
@@ -55,7 +55,7 @@ services:
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
     mem_limit: 128M
   crawler:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler:staging
     restart: always
     links:
       - db
@@ -68,7 +68,7 @@ services:
         max-file: "3"
     mem_limit: 256M
   verifier:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-verifier
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-verifier:staging
     restart: always
     links:
       - db
@@ -81,7 +81,7 @@ services:
         max-file: "3"
     mem_limit: 64M
   scheduler:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler:staging
     restart: always
     links:
       - db
@@ -89,7 +89,7 @@ services:
       ENV: staging
     mem_limit: 64M
   uptimer:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-uptimer
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-uptimer:staging
     restart: always
     links:
       - db

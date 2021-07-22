@@ -1,7 +1,7 @@
 version: "2.4"
 services:
   backend:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend:production
     restart: always
     ports:
       - "8001:8000"
@@ -16,13 +16,13 @@ services:
         max-file: "3"
     mem_limit: 256M
   frontend:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend:production
     restart: always
     ports:
       - "8000:3000"
     mem_limit: 128M
   verifier:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-verifier
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-verifier:production
     restart: always
     environment:
       ENV: production
@@ -33,12 +33,12 @@ services:
         max-file: "3"
     mem_limit: 256M
   scheduler:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend:production
     command: sleep 3600
     restart: always
     mem_limit: 64M
   uptimer:
-    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend:production
     command: sleep 3600
     restart: always
     mem_limit: 64M

@@ -10,11 +10,8 @@ dev:          ## Build and run local environment
 	docker-compose build
 	docker-compose up -d
 
-staging: install-deploy ## Deploy to staging environment
-	deploy/staging.py
-
-production: install-deploy ## Deploy to production environment
-	deploy/production.py
+%-deploy: install-deploy ## Deploy to production environment
+	deploy/$(*F).py
 
 test-backend: ## Run tests on backend prod image
 	docker-compose -f docker-compose.test.yml run --rm backend ./manage.py test
@@ -34,10 +31,31 @@ build-push-go: ## Build and push production go images
 	make $(*F)-build-go
 	make $(*F)-push
 
+%-staging-retag:
+	deploy/ecr-login.sh
+	docker pull 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest
+	docker tag 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):staging
+	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):staging
+
+%-production-retag:
+	deploy/ecr-login.sh
+	docker pull 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest
+	docker tag 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):production
+	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):production
+
+%-retag:
+	make backend-$(*F)-retag
+	make frontend-$(*F)-retag
+	make crawler-$(*F)-retag
+	make reverifier-$(*F)-retag
+	make scheduler-$(*F)-retag
+	make uptimer-$(*F)-retag
+	make verifier-$(*F)-retag
+
 %-push:
 	deploy/ecr-login.sh
-	docker tag 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):$(VERSION)
-	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F)
+	docker tag 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):$(VERSION)
+	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest
 	docker push 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):$(VERSION)
 
 %-build:
@@ -45,9 +63,9 @@ build-push-go: ## Build and push production go images
 	DOCKER_BUILDKIT=1 \
 	docker build \
 		--pull \
-		--cache-from 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) \
+		--cache-from 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
-		-t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) \
+		-t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest \
 		$(*F)/
 
 %-build-go:
@@ -55,9 +73,9 @@ build-push-go: ## Build and push production go images
 	DOCKER_BUILDKIT=1 \
 	docker build \
 		--pull \
-		--cache-from 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) \
+		--cache-from 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
-		-t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F) \
+		-t 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-$(*F):latest \
 		--build-arg SERVICE=$(*F) \
 		go/
 

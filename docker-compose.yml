@@ -9,6 +9,7 @@ services:
       - '--entrypoints.web.address=:8000'
     ports:
       - 8000:8000
+      - 8080:8080
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
   backend:
@@ -56,7 +57,8 @@ services:
         condition: service_healthy
       db:
         condition: service_healthy
-    # environment:
+    environment:
+      - BACKEND_TOKEN_CRAWLER=8719bc509be50ce4982f884049adbbf325f110d4
     #   - LOG_SQL=true
   scheduler:
     build:
@@ -78,7 +80,8 @@ services:
     image: crawl-app-uptimer
     volumes:
       - ./go:/app
-    # environment:
+    environment:
+      - BACKEND_TOKEN_UPTIMER=981b9c2848263ece99d67a10414eeea477a34297
     #   - LOG_SQL=true
   verifier:
     build:

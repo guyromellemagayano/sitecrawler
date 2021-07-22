@@ -4,7 +4,7 @@ resource "aws_ecs_task_definition" "prod_crawler" {
   [
     {
       "name": "crawler",
-      "image": "400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler",
+      "image": "400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler:production",
       "environment": [
         {"name": "ENV", "value": "production"}
       ],
