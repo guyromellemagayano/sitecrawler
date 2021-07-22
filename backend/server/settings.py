@@ -19,10 +19,6 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 import stripe
 
-CONNECT_TO_PROD = False
-CONNECT_TO_PROD_WRITE = False
-
-
 try:
     AWS_REGION = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document", timeout=0.2).json()[
         "region"
@@ -163,14 +159,6 @@ STRIPE_PUBLISHABLE_KEY = secret(
 # pk of group that new users are auto added to
 DEFAULT_USER_GROUP = 1
 
-if CONNECT_TO_PROD:
-    DB_NAME = "production"
-    DB_USER = "production"
-    DB_SUPERUSER_USER = DB_USER
-    DB_HOST = "172.29.165.31"
-    DB_PASS = "74J$wgDJ)xq75D4#plEMtV9_96?=oXt("
-    DB_SUPERUSER_PASS = DB_PASS
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
@@ -183,8 +171,7 @@ DATABASES = {
         "PORT": DB_PORT,
         "ATOMIC_REQUESTS": True,
         "OPTIONS": {
-            "options": "-c statement_timeout=60000"
-            + (" -c default_transaction_read_only=on" if CONNECT_TO_PROD and not CONNECT_TO_PROD_WRITE else ""),
+            "options": "-c statement_timeout=60000",
         },
         "TEST": {
             "SERIALIZE": False,
@@ -200,8 +187,7 @@ DATABASES = {
         "PORT": DB_PORT,
         # superuser timeout is 12h, so be careful, for now only used for vacuum
         "OPTIONS": {
-            "options": "-c statement_timeout=43200000"
-            + (" -c default_transaction_read_only=on" if CONNECT_TO_PROD and not CONNECT_TO_PROD_WRITE else ""),
+            "options": "-c statement_timeout=43200000",
         },
     },
 }
