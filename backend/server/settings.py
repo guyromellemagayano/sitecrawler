@@ -78,7 +78,7 @@ DB_SUPERUSER_PASS = secret("DB_PASS_PRODUCTION", "DB_SUPERUSER_PASS", default=DB
 STRIPE_WEBHOOK_SECRET = secret("STRIPE_WEBHOOK_SECRET", default="123")
 
 
-if ENV == "dev":
+if ENV == "dev" or ENV == "cypress":
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
     VERIFIER_URL = "http://verifier:3000"

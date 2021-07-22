@@ -49,9 +49,19 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: us-east-1
 
-  staging:
+  cypress:
     runs-on: ubuntu-latest
     needs: [build_backend, build_frontend, build_go]
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Run cypress integration tests
+      run: make cypress-ci
+
+
+  staging:
+    runs-on: ubuntu-latest
+    needs: [cypress]
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2

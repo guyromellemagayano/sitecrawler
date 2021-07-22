@@ -1,0 +1,61 @@
+version: '2.4'
+services:
+  traefik:
+    image: traefik
+    command:
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:8000'
+    ports:
+      - 8000:8000
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+  backend:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-backend:latest
+    environment:
+      - ENV=cypress
+    depends_on:
+      localstack:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)'
+  frontend:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend:latest
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.frontend.rule=PathPrefix(`/`)'
+  crawler:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler:latest
+    depends_on:
+      localstack:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+  scheduler:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-scheduler:latest
+  uptimer:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-uptimer:latest
+  verifier:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-verifier:latest
+  reverifier:
+    image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-reverifier:latest
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_PASSWORD: crawldev
+    healthcheck:
+      test: pg_isready -U postgres
+  localstack:
+    image: localstack/localstack
+    environment:
+      HOSTNAME_EXTERNAL: localstack
+    healthcheck:
+      test: curl -f http://localhost:4566/health
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.localstack.rule=PathPrefix(`/localstack/`)'
+      - 'traefik.port=49501'

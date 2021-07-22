@@ -96,3 +96,8 @@ cypress: dev ## Run cypress integration tests
 	npm install cypress
 	$(shell npm bin)/cypress open
 
+cypress-ci:
+	docker-compose -f docker-compose.cypress.yml up -d
+	docker-compose -f docker-compose.cypress.yml exec backend ./manage.py migrate
+	npm install cypress
+	$(shell npm bin)/cypress run
