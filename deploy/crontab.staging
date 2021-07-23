@@ -5,3 +5,4 @@
 30 10 * * *  cd /home/ubuntu/staging/ && /usr/local/bin/docker-compose run --rm backend ./manage.py cron_send_crawl_emails weekly > /home/ubuntu/cron_send_crawl_emails__weekly.log 2>&1
 00 11 * * *  cd /home/ubuntu/staging/ && /usr/local/bin/docker-compose run --rm backend ./manage.py cron_delete_expired_scans > /home/ubuntu/cron_delete_expired_scans.log 2>&1
 00 06 * * *  docker run --network staging_default --link staging_db_1:db --rm -e ENV=staging 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-reverifier:staging > /home/ubuntu/cron_reverifier.log 2>&1
+00 12 * * *  cd /home/ubuntu/staging/ && /usr/local/bin/docker-compose run --rm backend ./manage.py cron_delete_sites_and_users > /home/ubuntu/cron_delete_sites_and_users.log 2>&1
