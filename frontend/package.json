@@ -34,8 +34,8 @@
     "@tailwindcss/forms": "^0.3.3",
     "@tailwindcss/line-clamp": "^0.2.1",
     "@tailwindcss/typography": "^0.4.1",
-    "@tanem/react-nprogress": "^3.0.73",
-    "apexcharts": "3.26.3",
+    "@tanem/react-nprogress": "^3.0.75",
+    "apexcharts": "3.27.3",
     "axios": "^0.21.1",
     "bytes": "^3.1.0",
     "concurrently": "^6.0.2",
@@ -63,7 +63,7 @@
     "react-html-parser": "^2.0.2",
     "react-imask": "^6.1.0",
     "react-loading-skeleton": "^2.1.1",
-    "react-password-strength-bar": "^0.3.4",
+    "react-password-strength-bar": "^0.3.5",
     "react-player": "^2.6.2",
     "react-redux": "^7.2.1",
     "react-resize-detector": "^6.7.4",
@@ -97,7 +97,7 @@
     "postcss": "^8.3.6",
     "react-is": "^17.0.1",
     "styled-jsx-plugin-sass": "^1.0.0",
-    "tailwindcss": "^2.2.4",
+    "tailwindcss": "^2.2.7",
     "twin.macro": "2.6.2"
   }
 }
