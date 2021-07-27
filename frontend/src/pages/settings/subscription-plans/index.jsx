@@ -26,7 +26,6 @@ import {
 	useSubscriptions,
 	useDefaultSubscription
 } from "src/hooks/useStripePromise";
-import usePostMethod from "src/hooks/usePostMethod";
 import useUser from "src/hooks/useUser";
 
 // Layout
@@ -46,7 +45,7 @@ const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumb
 const ChangeToBasicModal = loadable(() => import("src/components/modals/ChangeToBasicModal"));
 const Loader = loadable(() => import("src/components/layouts/Loader"));
 const NewActivePlanModal = loadable(() => import("src/components/modals/NewActivePlanModal"));
-const PaymentMethodFormModal = loadable(() => import("src/components/modals/PaymentMethodFormModal"));
+const PaymentMethodModal = loadable(() => import("src/components/modals/PaymentMethodModal"));
 
 const Subscriptions = (props) => {
 	const [basicPlanId, setBasicPlanId] = React.useState(0);
@@ -97,9 +96,7 @@ const Subscriptions = (props) => {
 
 	React.useEffect(() => {
 		user && stripePromise && defaultPaymentMethod && subscriptions && defaultSubscription
-			? (() => {
-					setComponentReady(true);
-			  })()
+			? setComponentReady(true)
 			: setComponentReady(false);
 
 		return { user, stripePromise, defaultPaymentMethod, subscriptions, defaultSubscription };
@@ -338,7 +335,7 @@ const Subscriptions = (props) => {
 
 				{componentReady ? (
 					<>
-						<PaymentMethodFormModal
+						<PaymentMethodModal
 							showModal={showPaymentFormModal}
 							setShowModal={setShowPaymentFormModal}
 							loading={loading}

@@ -9,23 +9,23 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Transition } from "@headlessui/react";
 
 // JSON
-import PaymentMethodFormModalLabel from "./labels/PaymentMethodFormModal.json";
+import PaymentMethodModalLabel from "./labels/PaymentMethodModal.json";
 
 // Components
-import PaymentMethodForm from "src/components/forms/PaymentMethodForm";
+import PaymentMethodModalForm from "src/components/forms/PaymentMethodModalForm";
 
-const PaymentMethodFormModal = (props) => {
+const PaymentMethodModal = (props) => {
 	const [stripePromiseData, setStripePromiseData] = React.useState("");
 
-	const handlePaymentMethodFormModal = (e) => {
+	const handlePaymentMethodModal = (e) => {
 		return e?.key === "Escape" ? props.setShowModal(false) : null;
 	};
 
 	React.useEffect(() => {
-		document.addEventListener("keydown", props.loading ? null : handlePaymentMethodFormModal, true);
+		document.addEventListener("keydown", props.loading ? null : handlePaymentMethodModal, true);
 
 		return () => {
-			document.removeEventListener("keydown", props.loading ? null : handlePaymentMethodFormModal, true);
+			document.removeEventListener("keydown", props.loading ? null : handlePaymentMethodModal, true);
 		};
 	}, [props.loading]);
 
@@ -72,12 +72,12 @@ const PaymentMethodFormModal = (props) => {
 							<CreditCardIcon tw="h-6 w-6 text-green-600" />
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-							<h3 tw="text-lg leading-6 font-medium text-gray-900">{PaymentMethodFormModalLabel[0].label}</h3>
-							<p tw="my-2 text-sm leading-5 text-gray-500">{PaymentMethodFormModalLabel[0].description}</p>
+							<h3 tw="text-lg leading-6 font-medium text-gray-900">{PaymentMethodModalLabel[0].label}</h3>
+							<p tw="my-2 text-sm leading-5 text-gray-500">{PaymentMethodModalLabel[0].description}</p>
 
 							<div tw="w-full text-center mt-5 sm:rounded-lg inline-block">
 								<Elements stripe={stripePromiseData}>
-									<PaymentMethodForm
+									<PaymentMethodModalForm
 										loading={props.loading}
 										setLoading={props.setLoading}
 										showPaymentFormModal={props.showModal}
@@ -96,6 +96,6 @@ const PaymentMethodFormModal = (props) => {
 	);
 };
 
-PaymentMethodFormModal.propTypes = {};
+PaymentMethodModal.propTypes = {};
 
-export default PaymentMethodFormModal;
+export default PaymentMethodModal;
