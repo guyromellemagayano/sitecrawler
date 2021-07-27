@@ -1,63 +1,51 @@
 // React
-import { useState, useEffect } from "react";
+import * as React from "react";
 
 // External
-import { Formik } from "formik";
-import * as Yup from "yup";
+import "twin.macro";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-import tw from "twin.macro";
 
 // JSON
-import CardLabel from "public/labels/components/billing/Card.json";
+import CardLabel from "./labels/Card.json";
 
-// Hooks
-import usePatchMethod from "src/hooks/usePatchMethod";
+// Loadable
+const PaymentMethodForm = loadable(() => import("src/components/forms/PaymentMethodForm"));
 
-// Components
-const ErrorNotification = loadable(() => import("src/components/notifications/ErrorNotification"));
-const SuccessNotification = loadable(() => import("src/components/notifications/SuccessNotification"));
+const SettingsCard = (props) => {
+	const [stripePromiseData, setStripePromiseData] = React.useState("");
 
-const SettingsCard = ({ user, card }) => {
-	const [cardCvc, setCardCvc] = useState("")
-	const [cardExpirationDate, setCardExpirationDate] = useState("")
-	const [cardNumber, setCardNumber] = useState("")
-	const [componentReady, setComponentReady] = useState(false);
-	const [disableForm, setDisableForm] = useState(true);
-	const [errorMsg, setErrorMsg] = useState("");
-	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
-	const [successMsg, setSuccessMsg] = useState("");
-	const [successMsgLoaded, setSuccessMsgLoaded] = useState(false);
-
-	const userApiEndpoint = "/api/auth/user/";
-
-	const handleCardNumberInputChange = (e) => {
-		setCardNumber(e.target.value);
-	}
-
-	const handleCardExpirationDateInputChange = (e) => {
-		setCardExpirationDate(e.target.value);
-	}
-
-	useEffect(() => {
-		if (user && user !== undefined && Object.keys(user).length > 0 && card && card !== undefined) {
-			console.log(card)
-			setCardNumber()
-			setCardExpirationDate()
-
-			setTimeout(() => {
-				setComponentReady(true)
-			}, 500);
-		}
-	}, [user, card])
+	React.useEffect(() => {
+		props.stripePublishableKey ? setStripePromiseData(loadStripe(props.stripePublishableKey)) : null;
+	}, [props.stripePublishableKey]);
 
 	return (
 		<div>
+			<div tw="max-w-full p-4">
+				<div tw="pt-4 m-auto">
+					<h5 tw="text-xl leading-6 font-medium text-gray-900">{CardLabel[0].label}</h5>
+					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">{CardLabel[0].description}</p>
+				</div>
+			</div>
 
+			<div tw="max-w-full lg:max-w-3xl p-4 pt-0 pb-2">
+				<div tw="space-y-8 divide-y divide-gray-200">
+					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
+						<Elements stripe={stripePromiseData}>
+							<PaymentMethodForm
+								defaultPaymentMethod={props.defaultPaymentMethod}
+								paymentMethods={props.paymentMethods}
+							/>
+						</Elements>
+					</div>
+				</div>
+			</div>
 		</div>
-	)
-}
+	);
+};
 
-SettingsCard.propTypes = {}
+SettingsCard.propTypes = {};
 
 export default SettingsCard;
