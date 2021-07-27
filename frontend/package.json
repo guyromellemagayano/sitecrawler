@@ -35,7 +35,7 @@
     "@tailwindcss/line-clamp": "^0.2.1",
     "@tailwindcss/typography": "^0.4.1",
     "@tanem/react-nprogress": "^3.0.75",
-    "apexcharts": "3.27.3",
+    "apexcharts": "3.26.3",
     "axios": "^0.21.1",
     "bytes": "^3.1.0",
     "concurrently": "^6.0.2",
