@@ -3,8 +3,19 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
 	mode: "jit",
-	purge: ["./src/**/*.{js,jsx}"],
+	purge: {
+		content: ["./src/**/*.{js,jsx}"],
+		options: {
+			safelist: {
+				standard: ["outline-none"]
+			}
+		}
+	},
 	darkMode: false,
+	future: {
+		purgeLayersByDefault: true,
+		applyComplexClasses: true
+	},
 	theme: {
 		inset: {
 			0: "0",
