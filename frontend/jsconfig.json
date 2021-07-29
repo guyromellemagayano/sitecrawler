@@ -1,0 +1,32 @@
+{
+    "exclude": [
+        "node_modules",
+        ".next"
+    ],
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@components/*": [
+                "./src/components/*"
+            ],
+            "@enums/*": [
+                "./src/enums/*"
+            ],
+            "@helpers/*": [
+                "./src/helpers/*"
+            ],
+            "@hooks/*": [
+                "./src/hooks/*"
+            ],
+            "@pages/*": [
+                "./src/pages/*"
+            ],
+            "@styles/*": [
+                "./src/styles/*"
+            ],
+            "@utils/*": [
+                "./src/utils/*"
+            ]
+        }
+    }
+}
