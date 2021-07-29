@@ -77,6 +77,8 @@ DB_SUPERUSER_PASS = secret("DB_PASS_PRODUCTION", "DB_SUPERUSER_PASS", default=DB
 
 STRIPE_WEBHOOK_SECRET = secret("STRIPE_WEBHOOK_SECRET", default="123")
 
+FORCE_ENABLE_SENTRY = False
+
 
 if ENV == "dev" or ENV == "cypress":
     DEBUG = True
@@ -130,7 +132,7 @@ else:
     raise Exception(f"Unknown ENV: {ENV}")
 
 
-if ENV != "dev" and ENV != "test":
+if (ENV != "dev" and ENV != "test") or FORCE_ENABLE_SENTRY:
     sentry_sdk.init(
         dsn="https://90c7ff164eee42279efb2d6c7d19b358@o432365.ingest.sentry.io/5394436",
         integrations=[DjangoIntegration()],
