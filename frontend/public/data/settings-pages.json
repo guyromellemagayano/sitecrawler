@@ -27,11 +27,6 @@
         "title": "Subscription Plans",
         "slug": "subscription-plans",
         "url": "/settings/subscription-plans"
-      },
-      {
-        "title": "Billing Settings",
-        "slug": "billing-settings",
-        "url": "/settings/billing"
       }
     ]
   },
