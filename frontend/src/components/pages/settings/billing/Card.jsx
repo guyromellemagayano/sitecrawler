@@ -18,7 +18,7 @@ const SettingsCard = (props) => {
 	const [stripePromiseData, setStripePromiseData] = React.useState("");
 
 	React.useEffect(() => {
-		props.stripePublishableKey ? setStripePromiseData(loadStripe(props.stripePublishableKey)) : null;
+		props.stripePublishableKey ? setStripePromiseData(props.stripePublishableKey) : null;
 	}, [props.stripePublishableKey]);
 
 	return (
@@ -33,7 +33,7 @@ const SettingsCard = (props) => {
 			<div tw="max-w-full lg:max-w-3xl p-4 pt-0 pb-2">
 				<div tw="space-y-8 divide-y divide-gray-200">
 					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
-						<Elements stripe={stripePromiseData}>
+						<Elements stripe={loadStripe(stripePromiseData)}>
 							<PaymentMethodForm
 								defaultPaymentMethod={props.defaultPaymentMethod}
 								paymentMethods={props.paymentMethods}
