@@ -4,6 +4,7 @@ from crawl.common import ChoiceField
 from crawl.models import Link
 from .page_data import PageDataSerializer
 from .tls import TlsSerializer
+from .link import LinkSummarySerializer
 
 
 class PageSerializer(serializers.ModelSerializer):
@@ -80,5 +81,21 @@ class PageDetailSerializer(PageSerializer):
 
     class Meta:
         model = Link
-        fields = PageSerializer.Meta.fields + ["pagedata", "tls"]
-        read_only_fields = PageSerializer.Meta.read_only_fields + ["pagedata", "tls"]
+        fields = PageSerializer.Meta.fields + [
+            "pagedata",
+            "tls",
+        ]
+        read_only_fields = fields
+
+
+class PageDuplicatesSerializer(PageSerializer):
+    pages_with_same_title = LinkSummarySerializer(many=True)
+    pages_with_same_description = LinkSummarySerializer(many=True)
+
+    class Meta:
+        model = Link
+        fields = PageSerializer.Meta.fields + [
+            "pages_with_same_title",
+            "pages_with_same_description",
+        ]
+        read_only_fields = fields
