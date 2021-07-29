@@ -37,7 +37,7 @@ const MyPagination = loadable(() => import("src/components/pagination/Pagination
 const SiteSorting = loadable(() => import("src/components/helpers/sorting/SiteSorting"));
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const Sites = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);

@@ -42,7 +42,7 @@ const MyPagination = loadable(() => import("src/components/pagination/Pagination
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const Images = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);

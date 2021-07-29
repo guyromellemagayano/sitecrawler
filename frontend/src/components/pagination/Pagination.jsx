@@ -14,7 +14,7 @@ import PropTypes from "prop-types";
 import usePage from "src/hooks/usePage";
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 // Components
 const PaginationSkeleton = loadable(() => import("src/components/skeletons/PaginationSkeleton"));

@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import Sorting from "src/components/helpers/sorting/Sorting";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/helpers/functions";
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/utils/functions";
 
 const initialOrder = {
 	linkUrl: "default",

@@ -42,7 +42,7 @@ const PageTableSkeleton = loadable(() => import("src/components/skeletons/PageTa
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const Pages = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);

@@ -40,7 +40,7 @@ const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const Links = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);

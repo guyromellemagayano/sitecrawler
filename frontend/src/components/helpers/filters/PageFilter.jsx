@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import "twin.macro";
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);

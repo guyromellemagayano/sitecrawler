@@ -42,7 +42,7 @@ const SeoTableSkeleton = loadable(() => import("src/components/skeletons/SeoTabl
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const Seo = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
