@@ -56,7 +56,7 @@ const SiteInformation = (props) => {
 	}, [props.user, props.siteId]);
 
 	return (
-		<>
+		<div>
 			<SuccessNotification
 				successMsg={successMsg}
 				successMsgLoaded={successMsgLoaded}
@@ -246,7 +246,7 @@ const SiteInformation = (props) => {
 					)}
 				</Formik>
 			</div>
-		</>
+		</div>
 	);
 };
 
