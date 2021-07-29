@@ -1,9 +1,9 @@
 {
-	"singleQuote": false,
-	"trailingComma": "none",
-	"useTabs": true,
-	"tabWidth": 2,
-	"quoteProps": "consistent",
-	"proseWrap": "never",
-	"printWidth": 120
+    "singleQuote": false,
+    "trailingComma": "none",
+    "useTabs": true,
+    "tabWidth": 2,
+    "quoteProps": "consistent",
+    "proseWrap": "never",
+    "printWidth": 120
 }
