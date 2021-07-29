@@ -17,7 +17,7 @@ import Skeleton from "react-loading-skeleton";
 import SeoStatsLabel from "public/labels/components/sites/SeoStats.json";
 
 // Enums
-import { seoChartContents } from "src/enums/chartContents";
+import { seoChartContents } from "src/enums/ChartContents";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));
