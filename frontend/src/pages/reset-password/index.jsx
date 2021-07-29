@@ -8,7 +8,6 @@ import Link from "next/link";
 import "twin.macro";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
 
 // JSON
@@ -65,7 +64,5 @@ const ResetPassword = () => {
 		</Layout>
 	);
 };
-
-ResetPassword.propTypes = {};
 
 export default ResetPassword;
