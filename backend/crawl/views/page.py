@@ -1,3 +1,5 @@
+from django.db import models
+from django.contrib.postgres.aggregates import ArrayAgg
 from django_filters import rest_framework as filters
 from rest_framework import viewsets, mixins
 from rest_framework_extensions.mixins import DetailSerializerMixin, NestedViewSetMixin
@@ -23,6 +25,12 @@ class PageFilter(filters.FilterSet):
     )
     has_h2_second = filters.BooleanFilter(
         label="Has Second H2", field_name="pagedata__h2_second", method="filter_has_pagedata"
+    )
+    has_duplicated_title = filters.BooleanFilter(
+        label="Has Duplicated Title", field_name="pagedata__title", method="filter_has_duplicated"
+    )
+    has_duplicated_description = filters.BooleanFilter(
+        label="Has Duplicated Description", field_name="pagedata__description", method="filter_has_duplicated"
     )
     num_links = filters.RangeFilter(label="Number of Links")
     num_ok_links = filters.RangeFilter(label="Number of OK Links")
@@ -63,6 +71,21 @@ class PageFilter(filters.FilterSet):
             queryset = queryset.exclude(**kwargs)
         else:
             queryset = queryset.filter(**kwargs)
+        return queryset
+
+    def filter_has_duplicated(self, queryset, name, value):
+        ids = (
+            queryset.values(name)  # group by
+            .annotate(cnt=models.Count("id", distinct=True))  # count pages pery field
+            .annotate(ids=models.Func(ArrayAgg("id", distinct=True), function="UNNEST"))  # get all ids
+            .filter(cnt__gt=1)  # only count duplicates
+            .values("ids")
+        )
+        kwargs = {"id__in": ids}
+        if value:
+            queryset = queryset.filter(**kwargs)
+        else:
+            queryset = queryset.exclude(**kwargs)
         return queryset
 
 
