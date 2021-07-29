@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 import setupLogRocketReact from "logrocket-react";
 
 // Enums
-import appSeo from "src/enums/AppSeo";
+import AppSeo from "src/enums/AppSeo";
 
 // Components
 import GlobalStyles from "src/styles/GlobalStyles";
@@ -102,7 +102,7 @@ const MyApp = ({ Component, pageProps }) => {
 
 	return (
 		<>
-			<DefaultSeo {...appSeo} />
+			<DefaultSeo {...AppSeo} />
 			<GlobalStyles />
 			<TopProgressBar key={state.loadingKey} isRouteChanging={state.isRouteChanging} />
 			<Component {...pageProps} />
