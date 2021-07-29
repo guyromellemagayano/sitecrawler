@@ -2,11 +2,13 @@ from django.db import models
 from django.contrib.postgres.aggregates import ArrayAgg
 from django_filters import rest_framework as filters
 from rest_framework import viewsets, mixins
+from rest_framework.decorators import action
 from rest_framework_extensions.mixins import DetailSerializerMixin, NestedViewSetMixin
+from rest_framework.response import Response
 
 from crawl.common import CsvMixin, HasPermission
 from crawl.models import Link
-from crawl.serializers import PageSerializer, PageDetailSerializer
+from crawl.serializers import PageSerializer, PageDetailSerializer, PageDuplicatesSerializer
 
 
 class PageFilter(filters.FilterSet):
@@ -141,4 +143,12 @@ class PageViewSet(
         queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
         if not self.request.user.is_superuser:
             queryset = queryset.filter(scan__site__user=self.request.user)
+        if self._is_request_to_detail_endpoint():
+            queryset = queryset.select_related("tls", "scan", "pagedata")
         return queryset.pages()
+
+    @action(detail=True, methods=["get"])
+    def duplicates(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = PageDuplicatesSerializer(instance)
+        return Response(serializer.data)

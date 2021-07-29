@@ -202,3 +202,16 @@ class Link(models.Model):
             ("can_see_stylesheets", "Can see stylesheets"),
             ("can_see_pages", "Can see pages"),
         )
+
+    def pages_with_same_pagedata(self, field):
+        kwargs = {
+            "scan": self.scan,
+            f"pagedata__{field}": getattr(self.pagedata, field),
+        }
+        return Link.objects.filter(**kwargs).exclude(id=self.id)
+
+    def pages_with_same_title(self):
+        return self.pages_with_same_pagedata("title")
+
+    def pages_with_same_description(self):
+        return self.pages_with_same_pagedata("description")

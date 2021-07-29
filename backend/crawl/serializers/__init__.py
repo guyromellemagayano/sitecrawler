@@ -5,6 +5,6 @@ from .link import (
     ScriptDetailSerializer,
     StylesheetDetailSerializer,
 )
-from .page import PageSerializer, PageDetailSerializer
+from .page import PageSerializer, PageDetailSerializer, PageDuplicatesSerializer
 from .site import SiteSerializer
 from .scan import ScanDetailSerializer, ScanSerializer
