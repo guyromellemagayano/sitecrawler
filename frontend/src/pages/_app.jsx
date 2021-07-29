@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 import setupLogRocketReact from "logrocket-react";
 
 // Enums
-import appSeo from "src/enums/nextSeo";
+import appSeo from "src/enums/AppSeo";
 
 // Components
 import GlobalStyles from "src/styles/GlobalStyles";
