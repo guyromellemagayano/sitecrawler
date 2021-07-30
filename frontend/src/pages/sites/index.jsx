@@ -15,7 +15,9 @@ import PropTypes from "prop-types";
 
 // JSON
 import SitesLabel from "public/labels/pages/sites.json";
-import DataTableHeadsContent from "public/data/data-table-heads.json";
+
+// Enums
+import { SitesTableLabels } from "@enums/SitesTableLabels";
 
 // Hooks
 import { useSite } from "src/hooks/useSite";
@@ -37,7 +39,7 @@ const MyPagination = loadable(() => import("src/components/pagination/Pagination
 const SiteSorting = loadable(() => import("src/components/helpers/sorting/SiteSorting"));
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const Sites = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -168,7 +170,7 @@ const Sites = ({ width, result }) => {
 					width={width}
 					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
+					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
 				/>
 
 				{componentReady ? (
@@ -229,7 +231,7 @@ const Sites = ({ width, result }) => {
 															<table tw="relative w-full">
 																<thead>
 																	<tr>
-																		{DataTableHeadsContent.map((site, key) => {
+																		{SitesTableLabels.map((site, key) => {
 																			return (
 																				<th
 																					key={key}
@@ -241,7 +243,7 @@ const Sites = ({ width, result }) => {
 																							result={result}
 																							slug={site.slug}
 																							mutateSite={mutateSite}
-																							dataTableHeadsContent={DataTableHeadsContent}
+																							sitesTableLabels={SitesTableLabels}
 																							setPagePath={setPagePath}
 																						/>
 																						<span tw="flex items-center">{site.label}</span>

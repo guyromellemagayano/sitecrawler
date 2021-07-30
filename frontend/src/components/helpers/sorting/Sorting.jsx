@@ -9,7 +9,7 @@ import AscSorting from "./AscSorting";
 import DescSorting from "./DescSorting";
 
 // Helpers
-import { slugToCamelcase, getSlugFromSortKey } from "src/helpers/functions";
+import { slugToCamelcase, getSlugFromSortKey } from "src/utils/functions";
 
 const Sorting = ({ setSortOrder, tableContent, ordering, direction, onSortHandler, slug }) => {
 	const [isAscClicked, setIsAscClicked] = React.useState(false);

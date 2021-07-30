@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import Sorting from "src/components/helpers/sorting/Sorting";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/helpers/functions";
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/utils/functions";
 
 const initialOrder = {
 	imageUrl: "default",
@@ -23,7 +23,7 @@ const initialOrder = {
 	occurrences: "default"
 };
 
-const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePath }) => {
+const ImageSorting = ({ result, slug, mutateImages, imagesTableLabels, setPagePath }) => {
 	const [sortOrder, setSortOrder] = React.useState(initialOrder);
 
 	const { asPath } = useRouter();
@@ -35,7 +35,7 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 		let newPath = removeURLParameter(asPath, "ordering");
 
 		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(imageTableContent, slug);
+		const sortKey = getSortKeyFromSlug(imagesTableLabels, slug);
 
 		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
@@ -63,7 +63,7 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 					{slug == "image-url" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imageTableContent}
+							tableContent={imagesTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.imageUrl}
 							onSortHandler={handleSort}
@@ -72,7 +72,7 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 					) : slug == "image-size" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imageTableContent}
+							tableContent={imagesTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.imageSize}
 							onSortHandler={handleSort}
@@ -81,7 +81,7 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 					) : slug == "status" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imageTableContent}
+							tableContent={imagesTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.status}
 							onSortHandler={handleSort}
@@ -90,7 +90,7 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 					) : slug == "http-code" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imageTableContent}
+							tableContent={imagesTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.httpCode}
 							onSortHandler={handleSort}
@@ -99,7 +99,7 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 					) : slug == "missing-alts" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imageTableContent}
+							tableContent={imagesTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.missingAlts}
 							onSortHandler={handleSort}
@@ -108,7 +108,7 @@ const ImageSorting = ({ result, slug, mutateImages, imageTableContent, setPagePa
 					) : slug == "occurrences" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imageTableContent}
+							tableContent={imagesTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.occurrences}
 							onSortHandler={handleSort}

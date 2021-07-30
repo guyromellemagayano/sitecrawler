@@ -17,7 +17,7 @@ import Skeleton from "react-loading-skeleton";
 import ImagesStatsLabel from "public/labels/components/sites/ImagesStats.json";
 
 // Enums
-import { imagesChartContents } from "src/enums/chartContents";
+import { imagesChartContents } from "src/enums/ChartContents";
 
 // Components
 const Chart = loadable(() => import("react-apexcharts"));

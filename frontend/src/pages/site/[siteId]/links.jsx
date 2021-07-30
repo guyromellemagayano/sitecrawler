@@ -14,7 +14,9 @@ import PropTypes from "prop-types";
 
 // JSON
 import LinksLabel from "public/labels/pages/site/links.json";
-import LinksUrlContent from "public/data/links-url.json";
+
+// Enums
+import { LinksTableLabels } from "@enums/LinksTableLabels";
 
 // Hooks
 import { useLinks, useSiteId } from "src/hooks/useSite";
@@ -40,7 +42,7 @@ const Loader = loadable(() => import("src/components/layouts/Loader"));
 const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const Links = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -247,7 +249,7 @@ const Links = (props) => {
 					width={props.width}
 					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
+					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
 				/>
 
 				{componentReady ? (
@@ -312,7 +314,7 @@ const Links = (props) => {
 													<table tw="relative min-w-full">
 														<thead>
 															<tr>
-																{LinksUrlContent.map((site, key) => {
+																{LinksTableLabels.map((site, key) => {
 																	return (
 																		<th
 																			key={key}
@@ -325,7 +327,7 @@ const Links = (props) => {
 																						result={props.result}
 																						slug={site?.slug}
 																						mutateLinks={mutateLinks}
-																						linksUrlContent={LinksUrlContent}
+																						linksTableLabels={LinksTableLabels}
 																						setPagePath={setPagePath}
 																					/>
 																				) : null}

@@ -12,14 +12,14 @@ import PropTypes from "prop-types";
 import Sorting from "src/components/helpers/sorting/Sorting";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/helpers/functions";
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/utils/functions";
 
 const initialOrder = {
 	pageLargePages: "default",
 	pageBrokenSecurity: "default"
 };
 
-const PageSorting = ({ result, slug, mutatePages, linksPagesContent, setPagePath }) => {
+const PageSorting = ({ result, slug, mutatePages, pagesTableLabels, setPagePath }) => {
 	const [sortOrder, setSortOrder] = React.useState(initialOrder);
 
 	const { asPath } = useRouter();
@@ -31,7 +31,7 @@ const PageSorting = ({ result, slug, mutatePages, linksPagesContent, setPagePath
 		let newPath = removeURLParameter(asPath, "ordering");
 
 		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(linksPagesContent, slug);
+		const sortKey = getSortKeyFromSlug(pagesTableLabels, slug);
 
 		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
@@ -59,7 +59,7 @@ const PageSorting = ({ result, slug, mutatePages, linksPagesContent, setPagePath
 					{slug == "page-url" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={linksPagesContent}
+							tableContent={pagesTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.pageUrl}
 							onSortHandler={handleSort}
@@ -68,7 +68,7 @@ const PageSorting = ({ result, slug, mutatePages, linksPagesContent, setPagePath
 					) : slug == "page-size" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={linksPagesContent}
+							tableContent={pagesTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.pageSize}
 							onSortHandler={handleSort}
@@ -77,7 +77,7 @@ const PageSorting = ({ result, slug, mutatePages, linksPagesContent, setPagePath
 					) : slug == "page-ssl" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={linksPagesContent}
+							tableContent={pagesTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.pageSsl}
 							onSortHandler={handleSort}

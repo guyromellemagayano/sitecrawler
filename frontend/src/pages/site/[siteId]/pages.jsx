@@ -13,8 +13,10 @@ import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // JSON
-import LinksPagesContent from "public/data/links-pages.json";
 import PagesLabel from "public/labels/pages/site/pages.json";
+
+// Enums
+import { PagesTableLabels } from "@enums/PagesTableLabels";
 
 // Hooks
 import { usePages, useSiteId } from "src/hooks/useSite";
@@ -42,7 +44,7 @@ const PageTableSkeleton = loadable(() => import("src/components/skeletons/PageTa
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const Pages = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -242,7 +244,7 @@ const Pages = (props) => {
 					width={props.width}
 					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
+					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
 				/>
 
 				{componentReady ? (
@@ -311,7 +313,7 @@ const Pages = (props) => {
 													<table tw="relative min-w-full">
 														<thead>
 															<tr>
-																{LinksPagesContent.map((site, key) => {
+																{PagesTableLabels.map((site, key) => {
 																	return (
 																		<th
 																			key={key}
@@ -327,7 +329,7 @@ const Pages = (props) => {
 																							result={props.result}
 																							slug={site?.slug}
 																							mutatePages={mutatePages}
-																							linksPagesContent={LinksPagesContent}
+																							pagesTableLabels={PagesTableLabels}
 																							setPagePath={setPagePath}
 																						/>
 																					) : null

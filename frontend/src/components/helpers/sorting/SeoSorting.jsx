@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import Sorting from "src/components/helpers/sorting/Sorting";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/helpers/functions";
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/utils/functions";
 
 const initialOrder = {
 	pageUrl: "default",
@@ -22,7 +22,7 @@ const initialOrder = {
 	totalNonOkLinks: "default"
 };
 
-const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath }) => {
+const SeoSorting = ({ result, slug, mutatePages, seoTableLabels, setPagePath }) => {
 	const [sortOrder, setSortOrder] = React.useState(initialOrder);
 
 	const { asPath } = useRouter();
@@ -34,7 +34,7 @@ const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath })
 		let newPath = removeURLParameter(asPath, "ordering");
 
 		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(seoTableContent, slug);
+		const sortKey = getSortKeyFromSlug(seoTableLabels, slug);
 
 		if (sortOrder[sortItem] == "default") {
 			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
@@ -70,7 +70,7 @@ const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath })
 					{slug == "page-url" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={seoTableContent}
+							tableContent={seoTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.pageUrl}
 							onSortHandler={handleSort}
@@ -79,7 +79,7 @@ const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath })
 					) : slug == "created-at" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={seoTableContent}
+							tableContent={seoTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.createdAt}
 							onSortHandler={handleSort}
@@ -88,7 +88,7 @@ const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath })
 					) : slug == "total-links" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={seoTableContent}
+							tableContent={seoTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.totalLinks}
 							onSortHandler={handleSort}
@@ -97,7 +97,7 @@ const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath })
 					) : slug == "total-ok-links" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={seoTableContent}
+							tableContent={seoTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.totalOkLinks}
 							onSortHandler={handleSort}
@@ -106,7 +106,7 @@ const SeoSorting = ({ result, slug, mutatePages, seoTableContent, setPagePath })
 					) : slug == "total-non-ok-links" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={seoTableContent}
+							tableContent={seoTableLabels}
 							ordering={result.ordering}
 							direction={sortOrder.totalNonOkLinks}
 							onSortHandler={handleSort}

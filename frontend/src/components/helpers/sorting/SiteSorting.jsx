@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import Sorting from "src/components/helpers/sorting/Sorting";
 
 // Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/helpers/functions";
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/utils/functions";
 
 const initialOrder = {
 	siteName: "asc",
@@ -21,7 +21,7 @@ const initialOrder = {
 	totalIssues: "default"
 };
 
-const SiteSorting = ({ result, slug, mutateSite, dataTableHeadsContent, setPagePath }) => {
+const SiteSorting = ({ result, slug, mutateSite, sitesTableLabels, setPagePath }) => {
 	const [sortOrder, setSortOrder] = React.useState(initialOrder);
 
 	const { asPath } = useRouter();
@@ -33,7 +33,7 @@ const SiteSorting = ({ result, slug, mutateSite, dataTableHeadsContent, setPageP
 		let newPath = removeURLParameter(asPath, "ordering");
 
 		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(dataTableHeadsContent, slug);
+		const sortKey = getSortKeyFromSlug(sitesTableLabels, slug);
 
 		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
@@ -60,7 +60,7 @@ const SiteSorting = ({ result, slug, mutateSite, dataTableHeadsContent, setPageP
 				{slug === "site-name" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={dataTableHeadsContent}
+						tableContent={sitesTableLabels}
 						ordering={result.ordering}
 						direction={sortOrder.siteName}
 						onSortHandler={handleSort}
@@ -69,7 +69,7 @@ const SiteSorting = ({ result, slug, mutateSite, dataTableHeadsContent, setPageP
 				) : slug === "crawl-status" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={dataTableHeadsContent}
+						tableContent={sitesTableLabels}
 						ordering={result.ordering}
 						direction={sortOrder.crawlStatus}
 						onSortHandler={handleSort}
@@ -78,7 +78,7 @@ const SiteSorting = ({ result, slug, mutateSite, dataTableHeadsContent, setPageP
 				) : slug === "last-crawled" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={dataTableHeadsContent}
+						tableContent={sitesTableLabels}
 						ordering={result.ordering}
 						direction={sortOrder.lastCrawled}
 						onSortHandler={handleSort}

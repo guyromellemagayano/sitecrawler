@@ -4,9 +4,11 @@ import loadable from "@loadable/component";
 import Skeleton from "react-loading-skeleton";
 
 // Components
-const SkeletonEntries = loadable(() => import("src/components/skeletons/SkeletonEntries"));
+const SkeletonEntries = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.SkeletonEntries
+});
 
-const PaginationSkeleton = () => {
+const HowToSetupSkeleton = () => {
 	const skeletonLimit = 1;
 	const skeletonEntry = (
 		<div tw="relative py-6 px-4 sm:px-6 lg:px-8">
@@ -33,4 +35,4 @@ const PaginationSkeleton = () => {
 	return <SkeletonEntries str={skeletonEntry} limit={skeletonLimit} />;
 };
 
-export default PaginationSkeleton;
+export default HowToSetupSkeleton;

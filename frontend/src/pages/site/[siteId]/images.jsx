@@ -14,7 +14,9 @@ import PropTypes from "prop-types";
 
 // JSON
 import ImagesLabel from "public/labels/pages/site/images.json";
-import ImageTableContent from "public/data/image-table.json";
+
+// Enums
+import { ImagesTableLabels } from "@enums/ImagesTableLabels";
 
 // Hooks
 import { useImages, useSiteId } from "src/hooks/useSite";
@@ -42,7 +44,7 @@ const MyPagination = loadable(() => import("src/components/pagination/Pagination
 const UpgradeErrorAlert = loadable(() => import("src/components/alerts/UpgradeErrorAlert"));
 
 // Helpers
-import { removeURLParameter } from "src/helpers/functions";
+import { removeURLParameter } from "src/utils/functions";
 
 const Images = (props) => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -252,7 +254,7 @@ const Images = (props) => {
 					width={props.width}
 					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
+					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
 				/>
 
 				{componentReady ? (
@@ -319,7 +321,7 @@ const Images = (props) => {
 													<table tw="relative min-w-full">
 														<thead>
 															<tr>
-																{ImageTableContent.map((site, key) => {
+																{ImagesTableLabels.map((site, key) => {
 																	return (
 																		<th
 																			key={key}
@@ -333,7 +335,7 @@ const Images = (props) => {
 																							result={props.result}
 																							slug={site?.slug}
 																							mutateImages={mutateImages}
-																							imageTableContent={ImageTableContent}
+																							imagesTableLabels={ImagesTableLabels}
 																							setPagePath={setPagePath}
 																						/>
 																					) : null

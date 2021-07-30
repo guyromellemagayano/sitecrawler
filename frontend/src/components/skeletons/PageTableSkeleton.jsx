@@ -4,7 +4,9 @@ import loadable from "@loadable/component";
 import Skeleton from "react-loading-skeleton";
 
 // Components
-const TableSkeletonEntries = loadable(() => import("src/components/skeletons/TableSkeletonEntries"));
+const TableSkeletonEntries = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.TableSkeletonEntries
+});
 
 const PageTableSkeleton = () => {
 	const skeletonLimit = 5;
