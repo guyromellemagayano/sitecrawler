@@ -13,15 +13,19 @@ import { Transition } from "@headlessui/react";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
+// JSON
+import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json";
+
 // Hooks
-import useCrawl from "src/hooks/useCrawl";
+import useCrawl from "@hooks/useCrawl";
 
 // Loadable
-const SitesList = loadable(() => import("src/components/lists/SitesList"));
+const SitesList = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.SitesList
+});
 
-const SiteSelectionDropdown = (props) => {
+const SiteSelectDropdown = ({ site, selectedSiteId, handleSiteSelectOnLoad, isComponentVisible }) => {
 	const [sitesLoaded, setSitesLoaded] = React.useState(false);
-	const [selectedSiteId, setSelectedSiteId] = React.useState(null);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
 	const AddNewSiteLink = `/sites/add-new-site/`;
@@ -48,21 +52,6 @@ const SiteSelectionDropdown = (props) => {
 		return handleScanObjId(scanCount, currentScan, previousScan);
 	}, [scanCount, currentScan, previousScan, scanObjId, selectedSiteId]);
 
-	const handleSiteSelectOnLoad = (siteId) => {
-		props.site?.results
-			? (() => {
-					for (let i = 0; i < props.site?.results.length; i++) {
-						if (props.site?.results[i]?.id == siteId) {
-							props.setSelectedSite(props.site?.results[i]?.name);
-							props.setIsComponentVisible(!props.isComponentVisible);
-
-							setSelectedSiteId(siteId);
-						}
-					}
-			  })()
-			: null;
-	};
-
 	const handleDropdownHandler = (siteId) => {
 		return handleSiteSelectOnLoad(siteId);
 	};
@@ -84,52 +73,18 @@ const SiteSelectionDropdown = (props) => {
 	}, [scanObjId, selectedSiteId]);
 
 	React.useEffect(() => {
-		props.isComponentVisible
+		isComponentVisible
 			? (() => {
 					setTimeout(() => {
 						setSitesLoaded(true);
 					}, 500);
 			  })()
 			: setSitesLoaded(false);
-	}, [props.isComponentVisible]);
-
-	React.useEffect(() => {
-		props.site?.results
-			? (() => {
-					for (let i = 0; i < props.site?.results.length; i++) {
-						if (props.site?.results[i]?.id == props.siteId) {
-							props.setSelectedSite(props.site?.results[i]?.name);
-						}
-					}
-			  })()
-			: null;
-	}, [props.site, props.siteId]);
-
-	React.useEffect(() => {
-		props.site?.results
-			? props.site?.results
-					.filter((result) => result?.name === props.selectedSite)
-					.map((val) => {
-						props.setSelectedSiteDetails(val);
-					})
-			: null;
-
-		props.selectedSite
-			? props.site?.results
-				? () => {
-						let currentSite = site?.results.find((result) => result?.id === parseInt(props.siteId));
-
-						if (currentSite !== undefined) {
-							props.setSelectedSite(currentSite?.name);
-						}
-				  }
-				: null
-			: null;
-	}, [props.selectedSite, props.site, props.siteId]);
+	}, [isComponentVisible]);
 
 	return (
 		<Transition
-			show={props.isComponentVisible}
+			show={isComponentVisible}
 			enter="transition ease-out duration-100"
 			enterFrom="transform opacity-0 scale-95"
 			enterTo="transform opacity-100 scale-100"
@@ -138,8 +93,8 @@ const SiteSelectionDropdown = (props) => {
 			leaveTo="transform opacity-0 scale-95"
 			tw="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 		>
-			{props.site?.results ? (
-				props.site?.results?.length > 0 ? (
+			{site?.results ? (
+				site?.results?.length > 0 ? (
 					<ul
 						tabIndex="-1"
 						role="listbox"
@@ -147,7 +102,7 @@ const SiteSelectionDropdown = (props) => {
 						tw="pt-2 h-48 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
 					>
 						<Scrollbars universal>
-							{props.site?.results.map((value, index) => {
+							{site?.results.map((value, index) => {
 								return (
 									<SitesList
 										key={index}
@@ -168,7 +123,7 @@ const SiteSelectionDropdown = (props) => {
 				<Link href={AddNewSiteLink} passHref>
 					<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 						<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
-						{props.label?.[0] ?? null}
+						{PrimaryMenuLabel[2].label}
 					</a>
 				</Link>
 			</span>
@@ -176,6 +131,11 @@ const SiteSelectionDropdown = (props) => {
 	);
 };
 
-SiteSelectionDropdown.propTypes = {};
+SiteSelectDropdown.propTypes = {
+	site: PropTypes.object,
+	selectedSiteId: PropTypes.number,
+	handleSiteSelectOnLoad: PropTypes.func,
+	isComponentVisible: PropTypes.bool
+};
 
-export default SiteSelectionDropdown;
+export default SiteSelectDropdown;

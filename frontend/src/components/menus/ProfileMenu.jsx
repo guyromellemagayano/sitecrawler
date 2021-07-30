@@ -12,13 +12,15 @@ import tw from "twin.macro";
 
 // JSON
 import SidebarLabel from "public/labels/components/profile/Sidebar.json";
-import SidebarPages from "public/data/sidebar-pages.json";
+
+// Enums
+import { ProfileSidebarMenu } from "@enums/SidebarMenus";
 
 // Hooks
-import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
+import useDropdownOutsideClick from "@hooks/useDropdownOutsideClick";
 
 // Components
-import ProfileSidebarSkeleton from "src/components/skeletons/ProfileSidebarSkeleton";
+import ProfileSidebarSkeleton from "@components/skeletons/ProfileSidebarSkeleton";
 
 const ProfileMenu = ({ user }) => {
 	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
@@ -96,7 +98,7 @@ const ProfileMenu = ({ user }) => {
 									</span>
 								</div>
 								<div tw="border-t border-gray-300"></div>
-								{SidebarPages.map((val, key) => (
+								{ProfileSidebarMenu.map((val, key) => (
 									<div key={key}>
 										<div tw="py-1">
 											{val.links
@@ -115,7 +117,7 @@ const ProfileMenu = ({ user }) => {
 										<div tw="border-t border-gray-300"></div>
 									</div>
 								))}
-								{SidebarPages.filter((page) => page.slug === "global-settings").map((val, key) => (
+								{ProfileSidebarMenu.filter((page) => page.slug === "global-settings").map((val, key) => (
 									<div key={key} tw="py-1">
 										{val.links
 											.filter((page) => page.slug === "logout")
@@ -142,6 +144,8 @@ const ProfileMenu = ({ user }) => {
 	);
 };
 
-ProfileMenu.propTypes = {};
+ProfileMenu.propTypes = {
+	user: PropTypes.object
+};
 
 export default ProfileMenu;

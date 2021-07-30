@@ -3,7 +3,6 @@ import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 // External
 import "twin.macro";
@@ -19,14 +18,20 @@ import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json"
 import { useSite } from "src/hooks/useSite";
 
 // Components
-import ProfileMenu from "src/components/menus/ProfileMenu";
+const ProfileMenu = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.ProfileMenu
+});
+const PrimaryMenu = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.PrimaryMenu
+});
+const SettingsMenu = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.SettingsMenu
+});
+const SiteMenu = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.SiteMenu
+});
 
-// Loadable
-const PrimaryMenu = loadable(() => import("src/components/menus/PrimaryMenu"));
-const SettingsMenu = loadable(() => import("src/components/menus/SettingsMenu"));
-const SiteMenu = loadable(() => import("src/components/menus/SiteMenu"));
-
-const MainSidebar = (props) => {
+const MainSidebar = ({ width, user, openMobileSidebar, handleOpenMobileSidebar }) => {
 	const [selectedMenu, setSelectedMenu] = React.useState(null);
 
 	const lgScreenBreakpoint = 1024;
@@ -46,7 +51,7 @@ const MainSidebar = (props) => {
 				setSelectedMenu(<SiteMenu site={site} />);
 				break;
 			case router.pathname.includes("/settings/"):
-				setSelectedMenu(<SettingsMenu user={props.user} site={site} />);
+				setSelectedMenu(<SettingsMenu user={user} site={site} />);
 				break;
 			default:
 				setSelectedMenu(<PrimaryMenu site={site} />);
@@ -54,17 +59,17 @@ const MainSidebar = (props) => {
 		}
 
 		return selectedMenu;
-	}, [router, site, props.user]);
+	}, [router, site, user]);
 
 	const handleHideSidebarMenu = (event) => {
 		if (event.key === "Escape") {
-			props.setOpenMobileSidebar(false);
+			setOpenMobileSidebar(false);
 		}
 	};
 
 	const handleClickOutsideSidebarMenu = (event) => {
 		if (ref.current && !ref.current.contains(event.target)) {
-			props.setOpenMobileSidebar(false);
+			setOpenMobileSidebar(false);
 		}
 	};
 
@@ -78,8 +83,8 @@ const MainSidebar = (props) => {
 		};
 	});
 
-	return props.width < lgScreenBreakpoint ? (
-		<Transition show={props.openMobileSidebar}>
+	return width < lgScreenBreakpoint ? (
+		<Transition show={openMobileSidebar}>
 			<div tw="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
 					enter="transition-opacity ease-linear duration-300"
@@ -112,9 +117,9 @@ const MainSidebar = (props) => {
 							<div tw="absolute top-0 right-0 -mr-12 pt-2">
 								<button
 									tw="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-									onClick={() => props.setOpenMobileSidebar(false)}
+									onClick={() => setOpenMobileSidebar(false)}
 								>
-									<span tw="sr-only">{PrimaryMenuLabel[4].label}</span>
+									<span tw="sr-only">{PrimaryMenuLabel[0].label}</span>
 									<XIcon tw="h-6 w-6 text-white" />
 								</button>
 							</div>
@@ -122,7 +127,7 @@ const MainSidebar = (props) => {
 							<div ref={ref} tw="flex flex-col w-64 h-screen">
 								<div tw="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">{selectedMenu}</div>
 
-								<ProfileMenu user={props.user} />
+								<ProfileMenu user={user} />
 							</div>
 						</Transition.Child>
 					</div>
@@ -134,12 +139,17 @@ const MainSidebar = (props) => {
 			<div tw="flex flex-col w-64">
 				<div tw="h-0 flex-1 overflow-y-auto">{selectedMenu}</div>
 
-				<ProfileMenu user={props.user} />
+				<ProfileMenu user={user} />
 			</div>
 		</aside>
 	);
 };
 
-MainSidebar.propTypes = {};
+MainSidebar.propTypes = {
+	width: PropTypes.number,
+	user: PropTypes.object,
+	openMobileSidebar: PropTypes.bool,
+	handleOpenMobileSidebar: PropTypes.func
+};
 
 export default MainSidebar;

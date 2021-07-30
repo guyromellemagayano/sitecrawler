@@ -13,27 +13,23 @@ import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
-// JSON
-import SitePages from "public/data/site-pages.json";
-import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json";
+// Enums
+import { SiteSidebarMenu } from "@enums/SidebarMenus";
 
 // Hooks
-import { useStats } from "src/hooks/useSite";
-import useCrawl from "src/hooks/useCrawl";
-import useDropdownOutsideClick from "src/hooks/useDropdownOutsideClick";
+import { useStats } from "@hooks/useSite";
+import useCrawl from "@hooks/useCrawl";
 
 // Components
-import AppLogo from "src/components/logos/AppLogo";
-import SiteSelectionMenu from "src/components/menus/SiteSelectionMenu";
-
-// Loadable
-const SiteSelectionDropdown = loadable(() => import("src/components/dropdowns/SiteSelectionDropdown"));
+const AppLogo = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.AppLogo
+});
+const SiteSelect = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.SiteSelect
+});
 
 const SiteMenu = ({ site }) => {
 	const [scanObjId, setScanObjId] = React.useState(null);
-	const [selectedSite, setSelectedSite] = React.useState(null);
-	const [selectedSiteDetails, setSelectedSiteDetails] = React.useState([]);
-	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
 
 	const appLogoAltText = "app-logo";
 	const siteDashboardLink = "/sites/";
@@ -67,7 +63,7 @@ const SiteMenu = ({ site }) => {
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
-			<div tw="flex flex-col pt-8 pb-4">
+			<div tw="flex flex-col min-h-screen pt-8 pb-4">
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
 					<Link href={siteDashboardLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
@@ -84,7 +80,7 @@ const SiteMenu = ({ site }) => {
 
 				<div tw="flex-1 flex flex-col overflow-y-auto">
 					<nav tw="flex-1 px-4">
-						{SitePages.map((value, index) => {
+						{SiteSidebarMenu.map((value, index) => {
 							return (
 								<div key={index} tw="mb-4">
 									<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
@@ -125,7 +121,9 @@ const SiteMenu = ({ site }) => {
 															) : value2?.slug === "site-settings" ? (
 																<CogIcon tw="mr-3 h-6 w-5" />
 															) : null}
+
 															{value2?.title ? <span>{value2?.title}</span> : null}
+
 															{value2?.url === "/links" && stats ? (
 																<span tw="ml-auto inline-block px-3 text-xs leading-4 rounded-full bg-white text-black">
 																	{stats?.num_links ? stats?.num_links : null}
@@ -154,34 +152,7 @@ const SiteMenu = ({ site }) => {
 												);
 											})
 										) : (
-											<div tw="space-y-1">
-												<div ref={ref} tw="relative">
-													<div tw="relative">
-														<span tw="inline-block w-full rounded-md shadow-sm">
-															<SiteSelectionMenu
-																label={[PrimaryMenuLabel[0].label]}
-																currentScan={currentScan}
-																selectedSite={selectedSite}
-																selectedSiteDetails={selectedSiteDetails}
-																isComponentVisible={isComponentVisible}
-																setIsComponentVisible={setIsComponentVisible}
-															/>
-														</span>
-
-														<SiteSelectionDropdown
-															site={site}
-															siteId={query.siteId}
-															label={[PrimaryMenuLabel[2].label]}
-															isComponentVisible={isComponentVisible}
-															selectedSite={selectedSite}
-															setSelectedSite={setSelectedSite}
-															setSelectedSiteDetails={setSelectedSiteDetails}
-															isComponentVisible={isComponentVisible}
-															setIsComponentVisible={setIsComponentVisible}
-														/>
-													</div>
-												</div>
-											</div>
+											<SiteSelect site={site} currentScan={currentScan} />
 										)}
 									</div>
 								</div>
@@ -194,6 +165,8 @@ const SiteMenu = ({ site }) => {
 	);
 };
 
-SiteMenu.propTypes = {};
+SiteMenu.propTypes = {
+	site: PropTypes.object
+};
 
 export default SiteMenu;
