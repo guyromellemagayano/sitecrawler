@@ -62,7 +62,7 @@ const Profile = ({ width }) => {
 					width={width}
 					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
+					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
 				/>
 
 				{componentReady ? (

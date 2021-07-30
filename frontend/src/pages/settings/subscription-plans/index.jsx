@@ -330,7 +330,7 @@ const Subscriptions = (props) => {
 					width={props.width}
 					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
+					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
 				/>
 
 				{componentReady ? (
