@@ -1,4 +1,4 @@
-export const DashboardMenu = [
+export const DashboardSidebarMenu = [
 	{
 		category: "Site Selection",
 		slug: "site-selection"
@@ -13,21 +13,21 @@ export const DashboardMenu = [
 				url: "/sites"
 			}
 		]
-	},
-	{
-		category: "Reports",
-		slug: "reports",
-		links: [
-			{
-				title: "Audit Logs",
-				slug: "audit-logs",
-				url: "/audit-logs"
-			}
-		]
 	}
+	// {
+	// 	category: "Reports",
+	// 	slug: "reports",
+	// 	links: [
+	// 		{
+	// 			title: "Audit Logs",
+	// 			slug: "audit-logs",
+	// 			url: "/audit-logs"
+	// 		}
+	// 	]
+	// }
 ];
 
-export const ProfileMenu = [
+export const ProfileSidebarMenu = [
 	{
 		category: "Account Settings",
 		slug: "account-settings",
@@ -42,6 +42,11 @@ export const ProfileMenu = [
 				slug: "subscription-plans",
 				url: "/settings/subscription-plans"
 			}
+			// {
+			// 	label: "Billing Settings",
+			// 	slug: "billing-settings",
+			// 	url: "/settings/billing"
+			// }
 		]
 	},
 	{
@@ -67,7 +72,7 @@ export const ProfileMenu = [
 	}
 ];
 
-export const SettingsMenu = [
+export const SettingsSidebarMenu = [
 	{
 		category: "Navigation",
 		slug: "navigation",
@@ -97,6 +102,11 @@ export const SettingsMenu = [
 				slug: "subscription-plans",
 				url: "/settings/subscription-plans"
 			}
+			// {
+			// 	title: "Billing Settings",
+			// 	slug: "billing-settings",
+			// 	url: "/settings/billing"
+			// }
 		]
 	},
 	{
@@ -117,7 +127,7 @@ export const SettingsMenu = [
 	}
 ];
 
-export default SiteMenu = [
+export const SiteSidebarMenu = [
 	{
 		category: "Navigation",
 		slug: "navigation",

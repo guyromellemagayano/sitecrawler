@@ -14,7 +14,9 @@ import PropTypes from "prop-types";
 
 // JSON
 import SeoLabel from "public/labels/pages/site/seo.json";
-import SeoTableContent from "public/data/seo-table.json";
+
+// Enums
+import { SeoTableLabels } from "@enums/SeoTableLabels";
 
 // Hooks
 import { usePages, useSiteId } from "src/hooks/useSite";
@@ -280,7 +282,7 @@ const Seo = (props) => {
 					width={props.width}
 					user={componentReady ? user : null}
 					openMobileSidebar={openMobileSidebar}
-					setOpenMobileSidebar={setOpenMobileSidebar}
+					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
 				/>
 
 				{componentReady ? (
@@ -349,7 +351,7 @@ const Seo = (props) => {
 													<table tw="relative min-w-full">
 														<thead>
 															<tr>
-																{SeoTableContent.map((site, key) => {
+																{SeoTableLabels.map((site, key) => {
 																	return (
 																		<th
 																			key={key}
@@ -365,7 +367,7 @@ const Seo = (props) => {
 																							result={props.result}
 																							slug={site?.slug}
 																							mutatePages={mutatePages}
-																							seoTableContent={SeoTableContent}
+																							seoTableLabels={SeoTableLabels}
 																							setPagePath={setPagePath}
 																						/>
 																					) : null

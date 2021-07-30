@@ -23,7 +23,7 @@ const initialOrder = {
 	occurrences: "default"
 };
 
-const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }) => {
+const LinkSorting = ({ result, slug, mutateLinks, linksTableLabels, setPagePath }) => {
 	const [sortOrder, setSortOrder] = React.useState(initialOrder);
 
 	const { asPath } = useRouter();
@@ -35,7 +35,7 @@ const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }
 		let newPath = removeURLParameter(asPath, "ordering");
 
 		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(linksUrlContent, slug);
+		const sortKey = getSortKeyFromSlug(linksTableLabels, slug);
 
 		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
@@ -62,7 +62,7 @@ const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }
 				{slug == "link-url" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={linksUrlContent}
+						tableContent={linksTableLabels}
 						ordering={result.ordering}
 						direction={sortOrder.linkUrl}
 						onSortHandler={handleSort}
@@ -71,7 +71,7 @@ const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }
 				) : slug == "url-type" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={linksUrlContent}
+						tableContent={linksTableLabels}
 						ordering={result.ordering}
 						direction={sortOrder.urlType}
 						onSortHandler={handleSort}
@@ -80,7 +80,7 @@ const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }
 				) : slug == "status" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={linksUrlContent}
+						tableContent={linksTableLabels}
 						ordering={result.ordering}
 						direction={sortOrder.status}
 						onSortHandler={handleSort}
@@ -89,7 +89,7 @@ const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }
 				) : slug == "http-code" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={linksUrlContent}
+						tableContent={linksTableLabels}
 						ordering={result.ordering}
 						direction={sortOrder.httpCode}
 						onSortHandler={handleSort}
@@ -98,7 +98,7 @@ const LinkSorting = ({ result, slug, mutateLinks, linksUrlContent, setPagePath }
 				) : slug == "occurrences" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={linksUrlContent}
+						tableContent={linksTableLabels}
 						ordering={result.ordering}
 						direction={sortOrder.occurrences}
 						onSortHandler={handleSort}
