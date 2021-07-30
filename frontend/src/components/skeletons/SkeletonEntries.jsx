@@ -1,5 +1,9 @@
+// React
+import * as React from "react";
+
 // External
 import "twin.macro";
+import PropTypes from "prop-types";
 
 const SkeletonEntries = ({ str, limit }) => {
 	let strArray = [];
@@ -9,14 +13,17 @@ const SkeletonEntries = ({ str, limit }) => {
 			strArray.push(str);
 		}
 
-		return strArray.map((value, key) => {
-			return (
-				<div tw="w-full" key={key}>
-					{value}
-				</div>
-			);
-		});
+		return strArray.map((value, key) => (
+			<div tw="w-full" key={key}>
+				{value}
+			</div>
+		));
 	} else return;
+};
+
+SkeletonEntries.propTypes = {
+	str: PropTypes.object,
+	limit: PropTypes.number
 };
 
 export default SkeletonEntries;

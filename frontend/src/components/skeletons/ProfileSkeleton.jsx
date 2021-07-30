@@ -4,7 +4,9 @@ import loadable from "@loadable/component";
 import Skeleton from "react-loading-skeleton";
 
 // Components
-const SkeletonEntries = loadable(() => import("src/components/skeletons/SkeletonEntries"));
+const SkeletonEntries = loadable(() => import("@components"), {
+	resolveComponent: (components) => components.SkeletonEntries
+});
 
 const ProfileSkeleton = () => {
 	const skeletonLimit = 1;
