@@ -12,15 +12,16 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import App from "next/app";
 import LogRocket from "logrocket";
-import PropTypes from "prop-types";
 import setupLogRocketReact from "logrocket-react";
 
+// TODO: Add PropTypes in _app page
+
 // Enums
-import AppSeo from "src/enums/AppSeo";
+import AppSeo from "@enums/AppSeo";
 
 // Components
-import GlobalStyles from "src/styles/GlobalStyles";
-import TopProgressBar from "src/components/TopProgressBar";
+import GlobalStyles from "@styles/GlobalStyles";
+import TopProgressBar from "@components/top-progress-bar";
 
 // Font Awesome
 library.add(fab);
@@ -109,8 +110,6 @@ const MyApp = ({ Component, pageProps }) => {
 		</>
 	);
 };
-
-MyApp.propTypes = {};
 
 MyApp.getInitialProps = async (appContext) => {
 	const appProps = await App.getInitialProps(appContext);
