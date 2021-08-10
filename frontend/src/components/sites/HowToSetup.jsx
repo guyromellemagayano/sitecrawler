@@ -3,33 +3,15 @@ import * as React from "react";
 
 // External
 import tw from "twin.macro";
-import loadable from "@loadable/component";
 import ReactPlayer from "react-player/lazy";
 
-// JSON
-import HowToSetupLabel from "public/labels/components/sites/HowToSetup.json";
+// Enums
+import { ComponentReadyInterval } from "@enums/GlobalValues";
+import { HowToSetupData } from "@enums/HowToSetupData";
+import { HowToSetupLabels } from "@enums/HowToSetupLabels";
 
-// Loadable
-const HowToSetupSkeleton = loadable(() => import("src/components/skeletons/HowToSetupSkeleton"));
-
-const tabItems = [
-	{
-		id: 1,
-		title: "WordPress",
-		video: {
-			src: "https://youtu.be/FKTOwvjJmlY"
-		},
-		defaultvalue: true
-	},
-	{
-		id: 2,
-		title: "BigCommerce",
-		video: {
-			src: "https://youtu.be/Pgoj-AwHOiM"
-		},
-		defaultvalue: false
-	}
-];
+// Components
+import HowToSetupSkeleton from "@components/skeletons/HowToSetupSkeleton";
 
 const HowToSetup = () => {
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -38,7 +20,7 @@ const HowToSetup = () => {
 	React.useEffect(() => {
 		setTimeout(() => {
 			setComponentReady(true);
-		}, 500);
+		}, ComponentReadyInterval);
 
 		return setComponentReady(false);
 	}, []);
@@ -48,12 +30,14 @@ const HowToSetup = () => {
 			<div tw="max-w-7xl mx-auto">
 				<div tw="text-center mb-10">
 					<h3 tw="text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10">
-						{HowToSetupLabel[0].label}
+						{HowToSetupLabels[0].label}
 					</h3>
-					<p tw="mt-3 max-w-2xl mx-auto text-base leading-6 text-gray-500 sm:mt-4">{HowToSetupLabel[1].label}</p>
+					<p tw="mt-3 max-w-2xl mx-auto text-base leading-6 text-gray-500 sm:mt-4">
+						{HowToSetupLabels[1].label}
+					</p>
 				</div>
 				<div tw="relative mx-auto w-full rounded-lg lg:max-w-md mb-8">
-					{tabItems.map(({ id, video }) => {
+					{HowToSetupData.map(({ id, video }) => {
 						return tabActive === id ? (
 							<ReactPlayer key={id} url={video.src} width={"auto"} height={320} controls={true} />
 						) : null;
@@ -70,7 +54,7 @@ const HowToSetup = () => {
 							aria-label="Selected tab"
 							tw="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
 						>
-							{tabItems.map(({ title, defaultValue }, key) => (
+							{HowToSetupData.map(({ title, defaultValue }, key) => (
 								<option key={key} selected={defaultValue}>
 									{title}
 								</option>
@@ -79,7 +63,7 @@ const HowToSetup = () => {
 					</div>
 					<div tw="hidden sm:block">
 						<nav tw="flex justify-center">
-							{tabItems.map(({ title, id }, key) => (
+							{HowToSetupData.map(({ title, id }, key) => (
 								<TabItem
 									key={key}
 									id={id}

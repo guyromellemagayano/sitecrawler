@@ -7,22 +7,25 @@ import Link from "next/link";
 // External
 import "twin.macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { PlusIcon } from "@heroicons/react/solid";
 import { SearchIcon } from "@heroicons/react/solid";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
-// JSON
-import AddSiteLabel from "public/labels/components/sites/AddSite.json";
+// Enums
+import { AddNewSiteLink } from "@enums/PageLinks";
+import { AddSiteLabels } from "@enums/AddSiteLabels";
 
-// Loadable
-const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
+// Hooks
+import { useComponentVisible } from "@hooks/useComponentVisible";
+
+// Components
+import UpgradeErrorModal from "@components/modals/UpgradeErrorModal";
 
 const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
-	const [siteLimitCounter, setSiteLimitCounter] = React.useState(0);
 	const [maxSiteLimit, setMaxSiteLimit] = React.useState(0);
-	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
+	const [siteLimitCounter, setSiteLimitCounter] = React.useState(0);
 
-	const informationPageLink = "/sites/add-new-site/";
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 	const handleSiteLimit = (user, site) => {
 		setSiteLimitCounter(site?.count);
@@ -36,9 +39,9 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	return (
 		<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 			<UpgradeErrorModal
-				show={showUpgradeErrorModal}
-				setShowModal={setShowUpgradeErrorModal}
-				label={[AddSiteLabel[1].label, AddSiteLabel[2].label]}
+				ref={ref}
+				showModal={isComponentVisible}
+				setShowModal={setIsComponentVisible}
 			/>
 
 			<div tw="relative z-10 flex-shrink-0 flex  bg-white border-b border-gray-200">
@@ -46,7 +49,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 					<div tw="flex-1 flex">
 						<div tw="w-full flex lg:ml-0">
 							<label htmlFor="searchSites" tw="sr-only">
-								{AddSiteLabel[3].label}
+								{AddSiteLabels[3].label}
 							</label>
 							<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center">
 								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
@@ -58,13 +61,13 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 										name="search-sites"
 										id="searchSites"
 										tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-										placeholder={AddSiteLabel[3].label}
+										placeholder={AddSiteLabels[3].label}
 										onKeyUp={onSearchEvent}
 										defaultValue={searchKey}
 										autoFocus
 									/>
 								) : (
-									<p tw="sm:text-sm placeholder-gray-500 pl-8">{AddSiteLabel[4].label}</p>
+									<p tw="sm:text-sm placeholder-gray-500 pl-8">{AddSiteLabels[4].label}</p>
 								)}
 							</div>
 						</div>
@@ -74,7 +77,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 							<button
 								type="button"
 								tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"
-								onClick={() => setShowUpgradeErrorModal(!showUpgradeErrorModal)}
+								onClick={() => setIsComponentVisible(!isComponentVisible)}
 							>
 								<span tw="flex items-center space-x-2">
 									{user?.permissions &&
@@ -86,13 +89,16 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 									user?.permissions.includes("can_start_scan") ? null : (
 										<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 									)}
-									<span>{AddSiteLabel[0].label}</span>
+									<span>{AddSiteLabels[0].label}</span>
 								</span>
 							</button>
 						) : (
-							<Link href={informationPageLink} passHref>
-								<a tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
-									{AddSiteLabel[0].label}
+							<Link href={AddNewSiteLink} passHref>
+								<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer inline-flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full">
+									<span tw="flex items-center space-x-2">
+										<PlusIcon tw="mr-2 h-4 w-4 text-white" />
+										{AddSiteLabels[0].label}
+									</span>
 								</a>
 							</Link>
 						)}
@@ -103,6 +109,18 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	);
 };
 
-AddSite.propTypes = {};
+AddSite.propTypes = {
+	onSearchEvent: PropTypes.func,
+	searchKey: PropTypes.string,
+	site: PropTypes.object,
+	user: PropTypes.object
+};
+
+AddSite.defaultProps = {
+	onSearchEvent: null,
+	searchKey: null,
+	site: null,
+	user: null
+};
 
 export default AddSite;
