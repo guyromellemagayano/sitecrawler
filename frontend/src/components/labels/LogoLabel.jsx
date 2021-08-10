@@ -1,5 +1,8 @@
+// React
+import * as React from "react";
+
 // External
-import tw from "twin.macro";
+import "twin.macro";
 import PropTypes from "prop-types";
 
 // Components
@@ -12,7 +15,13 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 	return (
 		<div tw="sm:mx-auto sm:w-full sm:max-w-md">
 			{!isLogin ? (
-				<AppLogo tw="h-12 w-auto mx-auto" src={siteLogoDarkSvg} alt={appLogoAltText} width={230} height={40} />
+				<AppLogo
+					tw="h-12 w-auto mx-auto"
+					src={siteLogoDarkSvg}
+					alt={appLogoAltText}
+					width={230}
+					height={40}
+				/>
 			) : null}
 			<h2 tw="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
 				{isLogin
@@ -29,6 +38,18 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 	);
 };
 
-LogoLabel.propTypes = {};
+LogoLabel.propTypes = {
+	isAddPassword: PropTypes.bool,
+	isLogin: PropTypes.bool,
+	isResetPassword: PropTypes.bool,
+	isSignUp: PropTypes.bool
+};
+
+LogoLabel.defaultProps = {
+	isAddPassword: false,
+	isLogin: false,
+	isResetPassword: false,
+	isSignUp: false
+};
 
 export default LogoLabel;
