@@ -2,33 +2,37 @@
 import * as React from "react";
 
 // External
-import { CreditCardIcon } from "@heroicons/react/solid";
-import { useStripe, useElements, CardNumberElement, CardCvcElement, CardExpiryElement } from "@stripe/react-stripe-js";
-import * as Sentry from "@sentry/nextjs";
-import axios from "axios";
-import Cookies from "js-cookie";
+import {
+	useStripe,
+	useElements,
+	CardNumberElement,
+	CardCvcElement,
+	CardExpiryElement
+} from "@stripe/react-stripe-js";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
-// JSON
-import PaymentMethodFormLabel from "public/labels/components/form/PaymentMethodForm.json";
-import SubscriptionLabel from "public/labels/pages/settings/subscriptions.json";
+// Enums
+import { PaymentMethodFormLabels } from "@enums/PaymentMethodFormLabels";
+import { SubscriptionLabels } from "@enums/SubscriptionLabels";
 
 // Hooks
 import { usePaymentMethods, useDefaultPaymentMethod } from "src/hooks/useStripePromise";
+import { CurrentPaymentMethodApiEndpoint } from "@enums/ApiEndpoints";
+import { usePostMethod } from "@hooks/useHttpMethod";
 
 const useOptions = () => {
 	const options = React.useMemo(() => ({
 		style: {
 			base: {
-				"fontFamily":
+				fontFamily:
 					'Inter var, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
 				"::placeholder": {
 					color: "#aab7c4"
 				},
-				"color": "#424770",
-				"letterSpacing": "0.025em",
-				"lineHeight": "1.25rem"
+				color: "#424770",
+				letterSpacing: "0.025em",
+				lineHeight: "1.25rem"
 			},
 			invalid: {
 				color: "#ef4444"
@@ -40,37 +44,31 @@ const useOptions = () => {
 };
 
 const PaymentMethodForm = ({
-	loading,
-	setLoading,
-	showPaymentFormModal,
-	setShowPaymentFormModal,
-	updatedPlanId,
-	updatedPlanName,
-	handleSelectPlan
+	componentReady,
+	errorMsg,
+	setErrorMsg,
+	setSuccessMsg,
+	successMsg
 }) => {
 	const [currentPaymentMethod, setCurrentPaymentMethod] = React.useState([]);
 	const [disableForm, setDisableForm] = React.useState(true);
 	const [errorCardCvc, setErrorCardCvc] = React.useState("");
 	const [errorCardExpiry, setErrorCardExpiry] = React.useState("");
 	const [errorCardNumber, setErrorCardNumber] = React.useState("");
-	const [errorMsg, setErrorMsg] = React.useState([]);
 	const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
 
-	const paymentMethodApiEndpoint = "/api/stripe/payment-method/";
+	const { paymentMethods } = usePaymentMethods({});
+	const { defaultPaymentMethod } = useDefaultPaymentMethod({});
 
 	const stripe = useStripe();
 	const elements = useElements();
 	const options = useOptions();
 
-	const { paymentMethods } = usePaymentMethods({});
-	const { defaultPaymentMethod } = useDefaultPaymentMethod({});
-
 	React.useEffect(() => {
 		paymentMethods && defaultPaymentMethod
 			? (() => {
 					paymentMethods
-						.filter((paymentMethod) => paymentMethod.id === defaultPaymentMethod.id)
+						.filter((paymentMethod) => paymentMethod?.id === defaultPaymentMethod?.id)
 						.map((val) => {
 							setCurrentPaymentMethod(val);
 						});
@@ -115,44 +113,21 @@ const PaymentMethodForm = ({
 			setLoading(true);
 			setDisableForm(false);
 
-			return await axios
-				.post(paymentMethodApiEndpoint, body, {
-					headers: {
-						"Accept": "application/json",
-						"Content-Type": "application/json",
-						"X-CSRFToken": Cookies.get("csrftoken")
-					}
-				})
-				.then((response) => {
-					Math.floor(response?.status / 200) === 1
-						? response?.data
-							? (() => {
-									setLoading(false);
-									setDisableForm(false);
-									setSuccessMsg((successMsg) => [...successMsg, PaymentMethodFormLabel[8].label]);
-							  })()
-							: ((response) => {
-									Sentry.captureException(response);
+			const response = await usePostMethod(CurrentPaymentMethodApiEndpoint, body);
 
-									setLoading(false);
-									setDisableForm(false);
-									setErrorMsg((errorMsg) => [...errorMsg, PaymentMethodFormLabel[9].label]);
-							  })()
-						: ((response) => {
-								Sentry.captureException(response);
+			Math.floor(response?.status / 200) === 1
+				? (() => {
+						setLoading(false);
+						setDisableForm(false);
+						setSuccessMsg((successMsg) => [...successMsg, PaymentMethodFormLabels[8].label]);
+				  })()
+				: (() => {
+						setLoading(false);
+						setDisableForm(false);
+						setErrorMsg((errorMsg) => [...errorMsg, PaymentMethodFormLabels[9].label]);
+				  })();
 
-								setLoading(false);
-								setDisableForm(false);
-								setErrorMsg((errorMsg) => [...errorMsg, PaymentMethodFormLabel[9].label]);
-						  })();
-				})
-				.catch((error) => {
-					Sentry.captureException(error);
-
-					setLoading(false);
-					setDisableForm(false);
-					setErrorMsg((errorMsg) => [...errorMsg, PaymentMethodFormLabel[9].label]);
-				});
+			return mutateUser(userApiEndpoint);
 		}
 	};
 
@@ -160,8 +135,11 @@ const PaymentMethodForm = ({
 		<form tw="space-y-8" onSubmit={handleAddNewCardInformation}>
 			<div tw="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 				<div tw="sm:col-span-6">
-					<label htmlFor="card-number" tw="block text-sm text-left font-medium leading-5 text-gray-700">
-						{PaymentMethodFormLabel[0].label}
+					<label
+						htmlFor="card-number"
+						tw="block text-sm text-left font-medium leading-5 text-gray-700"
+					>
+						{PaymentMethodFormLabels[0].label}
 					</label>
 					<div tw="mt-1 relative rounded-md shadow-sm">
 						<span
@@ -179,8 +157,11 @@ const PaymentMethodForm = ({
 					)}
 				</div>
 				<div tw="sm:col-span-6">
-					<label htmlFor="expiration-date" tw="block text-sm text-left font-medium leading-5 text-gray-700">
-						{PaymentMethodFormLabel[1].label}
+					<label
+						htmlFor="expiration-date"
+						tw="block text-sm text-left font-medium leading-5 text-gray-700"
+					>
+						{PaymentMethodFormLabels[1].label}
 					</label>
 					<div tw="mt-1 relative rounded-md shadow-sm">
 						<span
@@ -199,7 +180,7 @@ const PaymentMethodForm = ({
 				</div>
 				<div tw="sm:col-span-6">
 					<label htmlFor="cvc" tw="block text-sm text-left font-medium leading-5 text-gray-700">
-						{PaymentMethodFormLabel[2].label}
+						{PaymentMethodFormLabels[2].label}
 					</label>
 					<div tw="mt-1 relative rounded-md shadow-sm">
 						<span
@@ -225,7 +206,11 @@ const PaymentMethodForm = ({
 									<div>
 										{errorMsg?.map((value, index) => {
 											return (
-												<h3 key={index} tw="text-sm leading-5 font-medium text-red-800 break-words" id="modal-headline">
+												<h3
+													key={index}
+													tw="text-sm leading-5 font-medium text-red-800 break-words"
+													id="modal-headline"
+												>
 													{value}
 												</h3>
 											);
@@ -269,7 +254,7 @@ const PaymentMethodForm = ({
 											: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 									]}
 								>
-									{loading ? PaymentMethodFormLabel[3].label : PaymentMethodFormLabel[5].label}
+									{loading ? PaymentMethodFormLabels[3].label : PaymentMethodFormLabels[5].label}
 								</button>
 								<button
 									type="button"
@@ -288,7 +273,7 @@ const PaymentMethodForm = ({
 										})()
 									}
 								>
-									{PaymentMethodFormLabel[12].label}
+									{PaymentMethodFormLabels[12].label}
 								</button>
 								<button
 									type="button"
@@ -303,11 +288,11 @@ const PaymentMethodForm = ({
 										(() => {
 											setErrorMsg([]);
 											setSuccessMsg([]);
-											setShowPaymentFormModal(!showPaymentFormModal);
+											setShowModal(!showModal);
 										})()
 									}
 								>
-									{PaymentMethodFormLabel[11].label}
+									{PaymentMethodFormLabels[11].label}
 								</button>
 							</span>
 						</div>
@@ -321,18 +306,15 @@ const PaymentMethodForm = ({
 				<div tw="sm:col-span-6">
 					<div tw="space-y-1">
 						<label htmlFor="email" tw="block text-sm text-left font-medium text-gray-700">
-							{SubscriptionLabel[6].label}
+							{SubscriptionLabels[6].label}
 						</label>
 						<div tw="mt-1 relative rounded-md shadow-sm">
-							<div tw="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-								<CreditCardIcon tw="h-5 w-5 text-gray-400" />
-							</div>
 							<input
 								type="text"
 								disabled={disableForm}
 								id="cardinformation"
 								tw="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
-								placeholder={PaymentMethodFormLabel[16].label}
+								placeholder={PaymentMethodFormLabels[16].label}
 								value={
 									currentPaymentMethod &&
 									currentPaymentMethod !== undefined &&
@@ -364,9 +346,11 @@ const PaymentMethodForm = ({
 											? tw`opacity-50 cursor-not-allowed`
 											: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 									]}
-									onClick={() => handleSelectPlan(updatedPlanId, updatedPlanName, selectedPaymentMethod)}
+									onClick={() =>
+										handleSelectPlan(updatedPlanId, updatedPlanName, selectedPaymentMethod)
+									}
 								>
-									{loading ? PaymentMethodFormLabel[15].label : PaymentMethodFormLabel[13].label}
+									{loading ? PaymentMethodFormLabels[15].label : PaymentMethodFormLabels[13].label}
 								</button>
 								<button
 									type="button"
@@ -379,7 +363,7 @@ const PaymentMethodForm = ({
 									]}
 									onClick={() => setDisableForm(!disableForm)}
 								>
-									{PaymentMethodFormLabel[10].label}
+									{PaymentMethodFormLabels[10].label}
 								</button>
 								<button
 									type="button"
@@ -390,9 +374,9 @@ const PaymentMethodForm = ({
 											? tw`opacity-50 cursor-not-allowed`
 											: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
-									onClick={() => setShowPaymentFormModal(!showPaymentFormModal)}
+									onClick={() => setShowModal(!showModal)}
 								>
-									{PaymentMethodFormLabel[11].label}
+									{PaymentMethodFormLabels[11].label}
 								</button>
 							</span>
 						</div>
@@ -404,5 +388,7 @@ const PaymentMethodForm = ({
 };
 
 PaymentMethodForm.propTypes = {};
+
+PaymentMethodForm.defaultProps = {};
 
 export default PaymentMethodForm;
