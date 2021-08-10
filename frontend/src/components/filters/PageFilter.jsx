@@ -6,11 +6,19 @@ import { useRouter } from "next/router";
 
 // External
 import "twin.macro";
+import { mutate } from "swr";
+import PropTypes from "prop-types";
 
 // Helpers
-import { removeURLParameter } from "src/utils/functions";
+import { removeURLParameter } from "@utils/functions";
 
-const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, setPagePath }) => {
+const PageFilter = ({
+	result,
+	loadQueryString,
+	handleLoadQueryString,
+	scanApiEndpoint,
+	setPagePath
+}) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [brokenSecurityFilter, setBrokenSecurityFilter] = React.useState(false);
 	const [largePageSizeFilter, setLargePageSizeFilter] = React.useState(false);
@@ -120,13 +128,13 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 		else setPagePath(`${newPath}?`);
 
 		router.push(newPath);
-		mutatePages();
+		mutate(scanApiEndpoint);
 	};
 
 	React.useEffect(() => {
-		setLoadQueryString(new URLSearchParams(window.location.search));
-
 		let loadQueryStringValue = new URLSearchParams(window.location.search);
+
+		handleLoadQueryString;
 
 		if (loadQueryStringValue.has("size_total_min")) {
 			setLargePageSizeFilter(true);
@@ -142,7 +150,10 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 			setNoIssueFilter(false);
 		}
 
-		if (loadQueryStringValue.has("size_total_max") && loadQueryStringValue.get("tls_total") === "true") {
+		if (
+			loadQueryStringValue.has("size_total_max") &&
+			loadQueryStringValue.get("tls_total") === "true"
+		) {
 			setBrokenSecurityFilter(false);
 			setLargePageSizeFilter(false);
 			setAllFilter(false);
@@ -162,7 +173,11 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 	}, []);
 
 	React.useEffect(() => {
-		if (result.size_total_max !== undefined && result.tls_total !== undefined && result.tls_total == "true") {
+		if (
+			result.size_total_max !== undefined &&
+			result.tls_total !== undefined &&
+			result.tls_total == "true"
+		) {
 			loadQueryString && loadQueryString.delete("size_total_min");
 
 			setNoIssueFilter(true);
@@ -188,8 +203,16 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 			setAllFilter(false);
 		}
 
-		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
-			if (result.size_total_max == undefined && result.size_total_min == undefined && result.tls_total == undefined) {
+		if (
+			loadQueryString &&
+			loadQueryString !== undefined &&
+			loadQueryString.toString().length === 0
+		) {
+			if (
+				result.size_total_max == undefined &&
+				result.size_total_min == undefined &&
+				result.tls_total == undefined
+			) {
 				setLargePageSizeFilter(false);
 				setNoIssueFilter(false);
 				setBrokenSecurityFilter(false);
@@ -202,7 +225,9 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 		<div tw="pb-4 bg-white">
 			<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 				<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
-					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">Filter</h4>
+					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">
+						Filter
+					</h4>
 					<div tw="ml-4 mt-2 mr-2">
 						<div>
 							<label tw="flex items-center">
@@ -213,7 +238,9 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 									checked={allFilter}
 									value="all"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">All Pages</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									All Pages
+								</span>
 							</label>
 						</div>
 					</div>
@@ -227,7 +254,9 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 									checked={largePageSizeFilter}
 									value="pageLargePages"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Large Page Size</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Large Page Size
+								</span>
 							</label>
 						</div>
 					</div>
@@ -241,7 +270,9 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 									checked={brokenSecurityFilter}
 									value="pageBrokenSecurity"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Broken Security</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Broken Security
+								</span>
 							</label>
 						</div>
 					</div>
@@ -257,7 +288,9 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 									checked={noIssueFilter}
 									value="no-issues"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">No Issues</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									No Issues
+								</span>
 							</label>
 						</div>
 					</div>
@@ -267,6 +300,26 @@ const PageFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, 
 	);
 };
 
-PageFilter.propTypes = {};
+PageFilter.propTypes = {
+	handleLoadQueryString: PropTypes.func,
+	result: PropTypes.shape({
+		size_total_max: PropTypes.number,
+		size_total_min: PropTypes.number,
+		tls_total: PropTypes.string
+	}),
+	scanApiEndpoint: PropTypes.string,
+	setPagePath: PropTypes.func
+};
+
+PageFilter.defaultProps = {
+	handleLoadQueryString: null,
+	result: {
+		size_total_max: null,
+		size_total_min: null,
+		tls_total: null
+	},
+	scanApiEndpoint: null,
+	setPagePath: null
+};
 
 export default PageFilter;

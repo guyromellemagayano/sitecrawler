@@ -6,11 +6,19 @@ import { useRouter } from "next/router";
 
 // External
 import "twin.macro";
+import { mutate } from "swr";
+import PropTypes from "prop-types";
 
 // Helpers
-import { removeURLParameter } from "src/utils/functions";
+import { removeURLParameter } from "@utils/functions";
 
-const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages, setPagePath }) => {
+const ImageFilter = ({
+	result,
+	loadQueryString,
+	handleLoadQueryString,
+	scanApiEndpoint,
+	setPagePath
+}) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [imageBrokenSecurityFilter, setImageBrokenSecurityFilter] = React.useState(false);
 	const [imageMissingAltsFilter, setImageMissingAltsFilter] = React.useState(false);
@@ -158,13 +166,13 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 		else setPagePath(`${newPath}?`);
 
 		router.push(newPath);
-		mutateImages;
+		mutate(scanApiEndpoint);
 	};
 
 	React.useEffect(() => {
-		setLoadQueryString(new URLSearchParams(window.location.search));
-
 		let loadQueryStringValue = new URLSearchParams(window.location.search);
+
+		handleLoadQueryString;
 
 		if (loadQueryStringValue.get("status__neq") === "OK") {
 			setImageNotWorkingFilter(true);
@@ -279,7 +287,11 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 			setAllFilter(false);
 		}
 
-		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
+		if (
+			loadQueryString &&
+			loadQueryString !== undefined &&
+			loadQueryString.toString().length === 0
+		) {
 			if (
 				result.status == undefined &&
 				result.status__neq == undefined &&
@@ -301,7 +313,9 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 		<div tw="lg:pb-4 bg-white">
 			<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 				<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
-					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">Filter</h4>
+					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">
+						Filter
+					</h4>
 					<div tw="ml-4 mt-2 mr-2">
 						<div>
 							<label tw="flex items-center">
@@ -312,7 +326,9 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 									checked={allFilter}
 									value="all"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">All Images</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									All Images
+								</span>
 							</label>
 						</div>
 					</div>
@@ -326,7 +342,9 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 									checked={imageNotWorkingFilter}
 									value="notWorking"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Broken Images</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Broken Images
+								</span>
 							</label>
 						</div>
 					</div>
@@ -340,7 +358,9 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 									checked={imageBrokenSecurityFilter}
 									value="brokenSecurity"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Broken Security</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Broken Security
+								</span>
 							</label>
 						</div>
 					</div>
@@ -354,7 +374,9 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 									checked={imageMissingAltsFilter}
 									value="missingAlts"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Missing Alts</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Missing Alts
+								</span>
 							</label>
 						</div>
 					</div>
@@ -370,7 +392,9 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 									checked={noIssueFilter}
 									value="no-issues"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">No Issues</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									No Issues
+								</span>
 							</label>
 						</div>
 					</div>
@@ -380,6 +404,20 @@ const ImageFilter = ({ result, loadQueryString, setLoadQueryString, mutateImages
 	);
 };
 
-ImageFilter.propTypes = {};
+ImageFilter.propTypes = {
+	result: PropTypes.object,
+	loadQueryString: PropTypes.string,
+	handleLoadQueryString: PropTypes.func,
+	scanApiEndpoint: PropTypes.string,
+	setPagePath: PropTypes.string
+};
+
+ImageFilter.defaultProps = {
+	result: null,
+	loadQueryString: null,
+	handleLoadQueryString: null,
+	scanApiEndpoint: null,
+	setPagePath: null
+};
 
 export default ImageFilter;

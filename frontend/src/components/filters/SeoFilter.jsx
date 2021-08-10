@@ -6,11 +6,19 @@ import { useRouter } from "next/router";
 
 // External
 import "twin.macro";
+import { mutate } from "swr";
+import PropTypes from "prop-types";
 
 // Helpers
-import { removeURLParameter } from "src/utils/functions";
+import { removeURLParameter } from "@utils/functions";
 
-const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, setPagePath }) => {
+const SeoFilter = ({
+	result,
+	loadQueryString,
+	handleLoadQueryString,
+	scanApiEndpoint,
+	setPagePath
+}) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [noDescription, setNoDescription] = React.useState(false);
 	const [noH1First, setNoH1First] = React.useState(false);
@@ -47,7 +55,8 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 			newPath = removeURLParameter(newPath, "has_h2_first");
 			newPath = removeURLParameter(newPath, "has_h2_second");
 
-			if (newPath.includes("?")) newPath += `&has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
+			if (newPath.includes("?"))
+				newPath += `&has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
 			else newPath += `?has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
 		} else if (filterType == "no-issues" && filterStatus == false) {
 			loadQueryString && loadQueryString.delete("has_title");
@@ -267,13 +276,13 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 		else setPagePath(`${newPath}?`);
 
 		router.push(newPath);
-		mutatePages;
+		mutate(scanApiEndpoint);
 	};
 
 	React.useEffect(() => {
-		setLoadQueryString(new URLSearchParams(window.location.search));
-
 		let loadQueryStringValue = new URLSearchParams(window.location.search);
+
+		handleLoadQueryString;
 
 		if (
 			loadQueryStringValue.has("has_title") &&
@@ -295,7 +304,10 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 			setAllFilter(false);
 		}
 
-		if (loadQueryStringValue.has("has_title") && loadQueryStringValue.get("has_title") === "false") {
+		if (
+			loadQueryStringValue.has("has_title") &&
+			loadQueryStringValue.get("has_title") === "false"
+		) {
 			setNoIssueFilter(false);
 			setNoTitle(true);
 			setNoDescription(false);
@@ -306,7 +318,10 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 			setAllFilter(false);
 		}
 
-		if (loadQueryStringValue.has("has_description") && loadQueryStringValue.get("has_description") === "false") {
+		if (
+			loadQueryStringValue.has("has_description") &&
+			loadQueryStringValue.get("has_description") === "false"
+		) {
 			setNoIssueFilter(false);
 			setNoTitle(false);
 			setNoDescription(true);
@@ -317,7 +332,10 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 			setAllFilter(false);
 		}
 
-		if (loadQueryStringValue.has("has_h1_first") && loadQueryStringValue.get("has_h1_first") === "false") {
+		if (
+			loadQueryStringValue.has("has_h1_first") &&
+			loadQueryStringValue.get("has_h1_first") === "false"
+		) {
 			setNoIssueFilter(false);
 			setNoTitle(false);
 			setNoDescription(false);
@@ -328,7 +346,10 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 			setAllFilter(false);
 		}
 
-		if (loadQueryStringValue.has("has_h1_second") && loadQueryStringValue.get("has_h1_second") === "false") {
+		if (
+			loadQueryStringValue.has("has_h1_second") &&
+			loadQueryStringValue.get("has_h1_second") === "false"
+		) {
 			setNoIssueFilter(false);
 			setNoTitle(false);
 			setNoDescription(false);
@@ -339,7 +360,10 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 			setAllFilter(false);
 		}
 
-		if (loadQueryStringValue.has("has_h2_first") && loadQueryStringValue.get("has_h2_first") === "false") {
+		if (
+			loadQueryStringValue.has("has_h2_first") &&
+			loadQueryStringValue.get("has_h2_first") === "false"
+		) {
 			setNoIssueFilter(false);
 			setNoTitle(false);
 			setNoDescription(false);
@@ -350,7 +374,10 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 			setAllFilter(false);
 		}
 
-		if (loadQueryStringValue.has("has_h2_second") && loadQueryStringValue.get("has_h2_second") === "false") {
+		if (
+			loadQueryStringValue.has("has_h2_second") &&
+			loadQueryStringValue.get("has_h2_second") === "false"
+		) {
 			setNoIssueFilter(false);
 			setNoTitle(false);
 			setNoDescription(false);
@@ -510,7 +537,11 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 			setAllFilter(false);
 		}
 
-		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
+		if (
+			loadQueryString &&
+			loadQueryString !== undefined &&
+			loadQueryString.toString().length === 0
+		) {
 			if (
 				result.has_title == undefined &&
 				result.has_description == undefined &&
@@ -535,7 +566,9 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 		<div tw="pb-4 bg-white">
 			<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 				<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
-					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">Filter</h4>
+					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">
+						Filter
+					</h4>
 					<div tw="ml-4 mt-2 mr-2">
 						<div>
 							<label tw="flex items-center">
@@ -546,7 +579,9 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 									checked={allFilter}
 									value="all"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">All Pages</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									All Pages
+								</span>
 							</label>
 						</div>
 					</div>
@@ -560,7 +595,9 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 									checked={noTitle}
 									value="noTitle"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Without Title</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Without Title
+								</span>
 							</label>
 						</div>
 					</div>
@@ -574,7 +611,9 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 									checked={noDescription}
 									value="noDescription"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Without Description</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Without Description
+								</span>
 							</label>
 						</div>
 					</div>
@@ -588,7 +627,9 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 									checked={noH1First}
 									value="noH1First"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Without First H1</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Without First H1
+								</span>
 							</label>
 						</div>
 					</div>
@@ -602,7 +643,9 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 									checked={noH1Second}
 									value="noH1Second"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Without Second H1</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Without Second H1
+								</span>
 							</label>
 						</div>
 					</div>
@@ -616,7 +659,9 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 									checked={noH2First}
 									value="noH2First"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Without First H2</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Without First H2
+								</span>
 							</label>
 						</div>
 					</div>
@@ -630,12 +675,16 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 									checked={noH2Second}
 									value="noH2Second"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Without Second H2</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Without Second H2
+								</span>
 							</label>
 						</div>
 					</div>
 				</div>
-				<div className={`lg:-mt-2 lg:flex items-center align-end justify-end flex-end flex-wrap sm:flex-nowrap`}>
+				<div
+					className={`lg:-mt-2 lg:flex items-center align-end justify-end flex-end flex-wrap sm:flex-nowrap`}
+				>
 					<div className={`mt-2`}>
 						<div>
 							<label tw="flex items-center">
@@ -646,7 +695,9 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 									checked={noIssueFilter}
 									value="no-issues"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">No Issues</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									No Issues
+								</span>
 							</label>
 						</div>
 					</div>
@@ -656,6 +707,20 @@ const SeoFilter = ({ result, loadQueryString, setLoadQueryString, mutatePages, s
 	);
 };
 
-SeoFilter.propTypes = {};
+SeoFilter.propTypes = {
+	result: PropTypes.object,
+	loadQueryString: PropTypes.string,
+	handleLoadQueryString: PropTypes.func,
+	scanApiEndpoint: PropTypes.string,
+	setPagePath: PropTypes.string
+};
+
+SeoFilter.defaultProps = {
+	result: null,
+	loadQueryString: null,
+	handleLoadQueryString: null,
+	scanApiEndpoint: null,
+	setPagePath: null
+};
 
 export default SeoFilter;

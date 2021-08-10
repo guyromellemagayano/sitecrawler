@@ -6,11 +6,19 @@ import { useRouter } from "next/router";
 
 // External
 import "twin.macro";
+import { mutate } from "swr";
+import PropTypes from "prop-types";
 
 // Helpers
-import { removeURLParameter } from "src/utils/functions";
+import { removeURLParameter } from "@utils/functions";
 
-const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, setPagePath }) => {
+const LinkFilter = ({
+	result,
+	loadQueryString,
+	handleLoadQueryString,
+	scanApiEndpoint,
+	setPagePath
+}) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [externalFilter, setExternalFilter] = React.useState(false);
 	const [internalFilter, setInternalFilter] = React.useState(false);
@@ -117,13 +125,13 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 		else setPagePath(`${newPath}?`);
 
 		router.push(newPath);
-		mutateLinks;
+		mutate(scanApiEndpoint);
 	};
 
 	React.useEffect(() => {
-		setLoadQueryString(new URLSearchParams(window.location.search));
-
 		let loadQueryStringValue = new URLSearchParams(window.location.search);
+
+		handleLoadQueryString;
 
 		if (loadQueryStringValue.has("status__neq")) {
 			if (loadQueryStringValue.get("status__neq") === "OK") {
@@ -191,7 +199,11 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 			setExternalFilter(false);
 		}
 
-		if (result.status__neq !== undefined && result.type !== undefined && result.type === "EXTERNAL") {
+		if (
+			result.status__neq !== undefined &&
+			result.type !== undefined &&
+			result.type === "EXTERNAL"
+		) {
 			setIssueFilter(true);
 			setNoIssueFilter(false);
 			setAllFilter(false);
@@ -227,8 +239,16 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 			}
 		}
 
-		if (loadQueryString && loadQueryString !== undefined && loadQueryString.toString().length === 0) {
-			if (result.type == undefined && result.status == undefined && result.status__neq == undefined) {
+		if (
+			loadQueryString &&
+			loadQueryString !== undefined &&
+			loadQueryString.toString().length === 0
+		) {
+			if (
+				result.type == undefined &&
+				result.status == undefined &&
+				result.status__neq == undefined
+			) {
 				setIssueFilter(false);
 				setNoIssueFilter(false);
 				setInternalFilter(false);
@@ -242,7 +262,9 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 		<div tw="pb-4 bg-white">
 			<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 				<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
-					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">Filter</h4>
+					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">
+						Filter
+					</h4>
 					<div tw="ml-4 mt-2 mr-2">
 						<div>
 							<label tw="flex items-center">
@@ -253,7 +275,9 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 									checked={allFilter}
 									value="all"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">All Links</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									All Links
+								</span>
 							</label>
 						</div>
 					</div>
@@ -267,7 +291,9 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 									checked={issueFilter}
 									value="issues"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Links with Issues</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Links with Issues
+								</span>
 							</label>
 						</div>
 					</div>
@@ -281,7 +307,9 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 									checked={internalFilter}
 									value="internal"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">Internal Links</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									Internal Links
+								</span>
 							</label>
 						</div>
 					</div>
@@ -295,7 +323,9 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 									checked={externalFilter}
 									value="external"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">External Links</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									External Links
+								</span>
 							</label>
 						</div>
 					</div>
@@ -311,7 +341,9 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 									checked={noIssueFilter}
 									value="no-issues"
 								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">No Issues</span>
+								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+									No Issues
+								</span>
 							</label>
 						</div>
 					</div>
@@ -321,6 +353,20 @@ const LinkFilter = ({ result, loadQueryString, setLoadQueryString, mutateLinks, 
 	);
 };
 
-LinkFilter.propTypes = {};
+LinkFilter.propTypes = {
+	result: PropTypes.object,
+	loadQueryString: PropTypes.string,
+	handleLoadQueryString: PropTypes.func,
+	scanApiEndpoint: PropTypes.string,
+	setPagePath: PropTypes.string
+};
+
+LinkFilter.defaultProps = {
+	result: null,
+	loadQueryString: null,
+	handleLoadQueryString: null,
+	scanApiEndpoint: null,
+	setPagePath: null
+};
 
 export default LinkFilter;
