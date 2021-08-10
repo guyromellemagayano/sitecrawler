@@ -6,16 +6,29 @@ import Link from "next/link";
 
 // External
 import "twin.macro";
-import { ExclamationIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
+import { XCircleIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
 
-// Enums
-import { SubscriptionPlansLink } from "@enums/PageLinks";
-import { UpgradeErrorModalLabels } from "@enums/UpgradeErrorModalLabels";
+// JSON
+import SiteVerifyModalLabel from "./labels/SiteVerifyModal.json";
 
-const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) => {
+const SiteVerifyErrorModal = ({ showModal, handleShowModal }) => {
+	const sitesLink = "/sites";
+
+	const handleHideSiteVerifyErrorModal = (e) => {
+		return e?.key === "Escape" ? handleShowModal : null;
+	};
+
+	React.useEffect(() => {
+		document.addEventListener("keydown", handleHideSiteVerifyErrorModal, true);
+
+		return () => {
+			document.removeEventListener("keydown", handleHideSiteVerifyErrorModal, true);
+		};
+	});
+
 	return (
 		<Transition
 			show={showModal}
@@ -45,32 +58,29 @@ const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) =>
 				leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 			>
 				<div
-					ref={ref}
-					tw="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden transform transition-all sm:max-w-lg sm:w-full sm:p-6 whitespace-normal"
+					tw="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden transform transition-all sm:max-w-lg sm:w-full sm:p-6"
 					role="dialog"
 					aria-modal="true"
 					aria-labelledby="modal-headline"
 				>
 					<div tw="sm:flex sm:items-start">
-						<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
-							<ExclamationIcon tw="h-6 w-6 text-yellow-600" aria-hidden="true" />
+						<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+							<XCircleIcon tw="h-6 w-6 text-red-600" aria-hidden="true" />
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-								{UpgradeErrorModalLabels[0].label}
+								{SiteVerifyModalLabel[1].label}
 							</h3>
 							<div tw="mt-2">
-								<p tw="text-sm leading-5 text-gray-500">
-									{ReactHtmlParser(UpgradeErrorModalLabels[1].label)}
-								</p>
+								<p tw="text-sm leading-5 text-gray-500">{ReactHtmlParser(SiteVerifyModalLabel[2].label)}</p>
 							</div>
 						</div>
 					</div>
 					<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 						<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
-							<Link href={SubscriptionPlansLink} passHref>
-								<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-									{UpgradeErrorModalLabels[3].label}
+							<Link href={sitesLink} passHref>
+								<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+									{SiteVerifyModalLabel[4].label}
 								</a>
 							</Link>
 						</span>
@@ -78,9 +88,9 @@ const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) =>
 							<button
 								type="button"
 								tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-								onClick={() => setShowModal(!showModal)}
+								onClick={handleShowModal}
 							>
-								{UpgradeErrorModalLabels[2].label}
+								{SiteVerifyModalLabel[3].label}
 							</button>
 						</span>
 					</div>
@@ -88,16 +98,16 @@ const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) =>
 			</Transition.Child>
 		</Transition>
 	);
-});
+};
 
-UpgradeErrorModal.propTypes = {
+SiteVerifyErrorModal.propTypes = {
 	showModal: PropTypes.bool,
-	setShowModal: PropTypes.func
+	handleShowModal: PropTypes.func
 };
 
-UpgradeErrorModal.defaultProps = {
+SiteVerifyErrorModal.defaultProps = {
 	showModal: false,
-	setShowModal: null
+	handleShowModal: null
 };
 
-export default UpgradeErrorModal;
+export default SiteVerifyErrorModal;
