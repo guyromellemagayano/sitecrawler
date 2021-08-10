@@ -5,13 +5,13 @@ import * as React from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-// Hooks
-import { useScan } from "src/hooks/useSite";
+// Enums
+import { RevalidationInterval } from "@enums/GlobalValues";
 
-// Global axios defaults
-axios.defaults.headers.common["Accept"] = "application/json";
-axios.defaults.headers.common["Content-Type"] = "application/json";
-axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
+// Hooks
+import { usePostMethod } from "./useHttpMethod";
+import { useScan } from "./useSite";
+import { SiteApiEndpoint } from "@enums/ApiEndpoints";
 
 const useCrawl = ({ siteId }) => {
 	const [isCrawlFinished, setIsCrawlFinished] = React.useState(true);
@@ -22,37 +22,19 @@ const useCrawl = ({ siteId }) => {
 
 	const selectedSiteRef = React.useRef(null);
 
-	const scanRefreshInterval = 3000;
-
 	const { scan } = useScan({
 		querySid: siteId,
-		refreshInterval: scanRefreshInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	const handleMutateCurrentSite = async (endpoint) => {
-		const response = await axios
-			.post(endpoint)
-			.then((response) => {
-				return response;
-			})
-			.catch((error) => {
-				return error.response;
-			});
-		const data = await response?.data;
+		const response = await usePostMethod(endpoint);
 
-		Math.floor(response?.status / 200) === 1
-			? () => {
-					data
-						? () => {
-								return true;
-						  }
-						: null;
-			  }
-			: null;
+		return Math.floor(response?.status / 200) === 1 ? true : false;
 	};
 
 	const handleCrawl = (e) => {
-		let endpoint = `/api/site/${siteId}/start_scan/`;
+		let endpoint = `${SiteApiEndpoint + siteId}/start_scan/`;
 
 		e?.preventDefault();
 

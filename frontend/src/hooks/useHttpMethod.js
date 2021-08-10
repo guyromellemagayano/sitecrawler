@@ -1,4 +1,5 @@
 // External
+import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -44,6 +45,16 @@ export const useDeleteMethod = async (endpoint) => {
 			 * console.log('Error', error.response.status);
 			 */
 
+			if (error.response) {
+				Sentry.captureException(error.response.data);
+				Sentry.captureException(error.response.status);
+				Sentry.captureException(error.response.headers);
+			} else if (error.request) {
+				Sentry.captureException(error.request);
+			} else {
+				Sentry.captureException(error.message);
+			}
+
 			return error.response;
 		});
 };
@@ -79,6 +90,16 @@ export const useGetMethod = async (endpoint) => {
 			 * console.log('Error', error.response.headers);
 			 * console.log('Error', error.response.status);
 			 */
+
+			if (error.response) {
+				Sentry.captureException(error.response.data);
+				Sentry.captureException(error.response.status);
+				Sentry.captureException(error.response.headers);
+			} else if (error.request) {
+				Sentry.captureException(error.request);
+			} else {
+				Sentry.captureException(error.message);
+			}
 
 			return error.message;
 		});
@@ -116,6 +137,16 @@ export const usePatchMethod = async (endpoint, data) => {
 			 * console.log('Error', error.response.status);
 			 */
 
+			if (error.response) {
+				Sentry.captureException(error.response.data);
+				Sentry.captureException(error.response.status);
+				Sentry.captureException(error.response.headers);
+			} else if (error.request) {
+				Sentry.captureException(error.request);
+			} else {
+				Sentry.captureException(error.message);
+			}
+
 			return error.message;
 		});
 };
@@ -152,6 +183,16 @@ export const usePostMethod = async (endpoint, data) => {
 			 * console.log('Error', error.response.status);
 			 */
 
+			if (error.response) {
+				Sentry.captureException(error.response.data);
+				Sentry.captureException(error.response.status);
+				Sentry.captureException(error.response.headers);
+			} else if (error.request) {
+				Sentry.captureException(error.request);
+			} else {
+				Sentry.captureException(error.message);
+			}
+
 			return error.message;
 		});
 };
@@ -187,6 +228,16 @@ export const usePutMethod = async (endpoint, data) => {
 			 * console.log('Error', error.response.headers);
 			 * console.log('Error', error.response.status);
 			 */
+
+			if (error.response) {
+				Sentry.captureException(error.response.data);
+				Sentry.captureException(error.response.status);
+				Sentry.captureException(error.response.headers);
+			} else if (error.request) {
+				Sentry.captureException(error.request);
+			} else {
+				Sentry.captureException(error.message);
+			}
 
 			return error.message;
 		});

@@ -5,21 +5,20 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // Hooks
+import { UserApiEndpoint } from "@enums/ApiEndpoints";
 import useFetcher from "@hooks/useFetcher";
 
 const useUser = ({ redirectIfFound = false, redirectTo = "", refreshInterval = 0 }) => {
-	const userApiEndpoint = "/api/auth/user/";
-
 	const router = useRouter();
 
 	const {
 		data: user,
 		mutate: mutateUser,
 		error: userError
-	} = useSWR(userApiEndpoint, useFetcher, {
+	} = useSWR(UserApiEndpoint, useFetcher, {
 		onErrorRetry: (error, key, revalidate, { retryCount }) => {
 			if (error && error !== undefined && error.status === 404) return;
-			if (key === userApiEndpoint) return;
+			if (key === UserApiEndpoint) return;
 			if (retryCount >= 10) return;
 
 			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);

@@ -173,7 +173,7 @@ export const useLinks = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterva
 };
 
 export const useUptime = ({ querySid = 0, refreshInterval = 0 }) => {
-	const uptimeApiEndpoint = `/api/site/${querySid}/uptime/`;
+	const uptimeApiEndpoint = `${SiteApiEndpoint + querySid}/uptime/`;
 
 	const {
 		data: uptime,
