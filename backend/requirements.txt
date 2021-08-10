@@ -1,9 +1,9 @@
-django==3.2.5
+django==3.2.6
 djangorestframework==3.12.4
 psycopg2==2.9.1
 django-rest-auth[with_social]==0.9.5
 drf-extensions==0.7.0
-requests==2.25.1
+requests==2.26.0
 django-filter==2.4.0
 boto3==1.17.106
 django-health-check==3.16.4
