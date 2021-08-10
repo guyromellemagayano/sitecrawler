@@ -5,12 +5,16 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
+import "twin.macro";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
+import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
-import tw from "twin.macro";
 
-const UpgradeErrorAlert = ({ message = "", link = "#" }) => {
+// Enums
+import { ComponentReadyInterval } from "@enums/GlobalValues";
+
+const UpgradeErrorAlert = ({ message, link }) => {
 	const [isOpen, setIsOpen] = React.useState(false);
 
 	const upgradeMessage =
@@ -20,7 +24,7 @@ const UpgradeErrorAlert = ({ message = "", link = "#" }) => {
 	React.useEffect(() => {
 		setTimeout(() => {
 			setIsOpen(true);
-		}, 500);
+		}, ComponentReadyInterval);
 
 		return () => {
 			setIsOpen(true);
@@ -57,6 +61,16 @@ const UpgradeErrorAlert = ({ message = "", link = "#" }) => {
 			</span>
 		</Transition>
 	);
+};
+
+UpgradeErrorAlert.propTypes = {
+	message: PropTypes.string,
+	link: PropTypes.string
+};
+
+UpgradeErrorAlert.defaultProps = {
+	message: "",
+	link: "#"
 };
 
 export default UpgradeErrorAlert;
