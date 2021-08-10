@@ -170,7 +170,7 @@ class ScanInline(admin.TabularInline):
 
 @admin.register(Site)
 class SiteAdmin(admin.ModelAdmin):
-    list_display = ("url", "user")
+    list_display = ("url", "team")
     list_filter = ("user__username",)
     inlines = [ScanInline]
 

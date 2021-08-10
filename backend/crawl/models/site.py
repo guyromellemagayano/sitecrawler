@@ -24,6 +24,8 @@ class Site(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
+    # TODO: remove null after data migration
+    team = models.ForeignKey("teams.Team", on_delete=models.CASCADE, null=True)
 
     url = models.CharField(max_length=2048, null=False)
     name = models.CharField(max_length=255, null=False, default="")
