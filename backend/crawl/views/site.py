@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from crawl.models import Site
 from crawl.serializers import SiteSerializer, ScanSerializer
 from crawl.services import scan, verify
+from teams.service import get_current_team
 
 
 class SiteViewSet(
@@ -32,7 +33,7 @@ class SiteViewSet(
         return query.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, verification_id=uuid.uuid4())
+        serializer.save(user=self.request.user, team=get_current_team(self.request), verification_id=uuid.uuid4())
 
     def perform_destroy(self, instance):
         instance.deleted_at = datetime.datetime.now()
