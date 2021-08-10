@@ -10,7 +10,7 @@ def forwards(apps, schema_editor):
     GroupSettings = apps.get_model("crawl", "GroupSettings")
     Group = apps.get_model("auth", "Group")
 
-    group, created = Group.objects.get_or_create(pk=1, name="Basic")
+    group, created = Group.objects.get_or_create(name="Basic")
     GroupSettings.objects.get_or_create(group=group)
 
     if created:

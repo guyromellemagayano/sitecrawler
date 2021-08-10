@@ -6,9 +6,11 @@ services:
       - '--api.insecure=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
+      - "--providers.docker.constraints=Label(`traefik.environment`,`local`)"
       - '--entrypoints.web.address=:8000'
     ports:
       - 8000:8000
+      - 8080:8080
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
   backend:
@@ -29,6 +31,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)'
+      - 'traefik.environment=local'
   frontend:
     build:
       context: ./frontend
@@ -42,6 +45,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.frontend.rule=PathPrefix(`/`)'
+      - 'traefik.environment=local'
   crawler:
     build:
       context: ./go
@@ -124,6 +128,7 @@ services:
       - 'traefik.enable=true'
       - 'traefik.http.routers.localstack.rule=PathPrefix(`/localstack/`)'
       - 'traefik.port=49501'
+      - 'traefik.environment=local'
 
 volumes:
   db-data:

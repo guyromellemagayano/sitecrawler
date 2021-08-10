@@ -6,9 +6,10 @@ services:
       - '--api.insecure=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
-      - '--entrypoints.web.address=:8000'
+      - "--providers.docker.constraints=Label(`traefik.environment`,`cypress`)"
+      - '--entrypoints.web.address=:9000'
     ports:
-      - 8000:8000
+      - 9000:9000
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
   backend:
@@ -23,11 +24,13 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.backend.rule=PathPrefix(`/api/`)||PathPrefix(`/auth/`)||PathPrefix(`/admin/`)||PathPrefix(`/static/`)'
+      - 'traefik.environment=cypress'
   frontend:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-frontend:latest
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.frontend.rule=PathPrefix(`/`)'
+      - 'traefik.environment=cypress'
   crawler:
     image: 400936075989.dkr.ecr.us-east-1.amazonaws.com/crawl-app-crawler:latest
     depends_on:
@@ -59,3 +62,4 @@ services:
       - 'traefik.enable=true'
       - 'traefik.http.routers.localstack.rule=PathPrefix(`/localstack/`)'
       - 'traefik.port=49501'
+      - 'traefik.environment=cypress'
