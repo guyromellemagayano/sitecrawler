@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import "twin.macro";
 import * as Sentry from "@sentry/nextjs";
 import LogRocket from "logrocket";
+import PropTypes from "prop-types";
 
 const Layout = ({ user, children }) => {
 	useEffect(() => {
@@ -27,6 +28,16 @@ const Layout = ({ user, children }) => {
 			<main tw="h-screen">{children}</main>
 		</div>
 	);
+};
+
+Layout.propTypes = {
+	user: PropTypes.object,
+	children: PropTypes.array.isRequired
+};
+
+Layout.defaultProps = {
+	user: null,
+	children: null
 };
 
 export default Layout;
