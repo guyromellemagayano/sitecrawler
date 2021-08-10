@@ -6,42 +6,40 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
+import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { DocumentReportIcon, ExternalLinkIcon } from "@heroicons/react/outline";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Enums
 import { DashboardSidebarMenu } from "@enums/SidebarMenus";
+import { GlobalLabels, SiteLogoWhite } from "@enums/GlobalValues";
+import { SitesLink } from "@enums/PageLinks";
 
 // Components
-const AppLogo = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.AppLogo
-});
-const SiteSelect = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SiteSelect
-});
+import AppLogo from "@components/logos/AppLogo";
+import SiteSelect from "@components/select/SiteSelect";
 
 const PrimaryMenu = ({ site }) => {
-	const appLogoAltText = "app-logo";
-	const siteDashboardLink = "/sites/";
-
 	const { asPath } = useRouter();
 	const router = useRouter();
 
 	return (
-		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
+		<Scrollbars
+			renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />}
+			universal
+		>
 			<div tw="flex flex-col min-h-screen pt-8 pb-4">
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
-					<Link href={siteDashboardLink} passHref>
+					<Link href={SitesLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
 							<AppLogo
 								tw="w-48 h-auto"
-								src="/images/logos/site-logo-white.svg"
-								alt={appLogoAltText}
-								width={230}
-								height={40}
+								src={SiteLogoWhite}
+								alt={GlobalLabels[0].label}
+								width={GlobalLabels[0].width}
+								height={GlobalLabels[0].height}
 							/>
 						</a>
 					</Link>
@@ -49,7 +47,9 @@ const PrimaryMenu = ({ site }) => {
 
 				<div tw="flex-1 flex flex-col overflow-y-auto">
 					<nav tw="flex-1 px-4">
-						{DashboardSidebarMenu.map((value, index) => {
+						{DashboardSidebarMenu.filter((e) => {
+							return !router.pathname.includes("/sites/") ? e.slug !== "navigation" : true;
+						}).map((value, index) => {
 							return (
 								<div key={index} tw="mb-4">
 									<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider">
@@ -59,19 +59,19 @@ const PrimaryMenu = ({ site }) => {
 									<div tw="my-3" role="group">
 										{value?.links ? (
 											value?.links.map((value2, index) => {
-												return (
+												return value2.slug !== "go-back-to-sites" ? (
 													<Link key={index} href={value2?.url} passHref>
 														<a
 															className={`group ${
 																router.pathname == value2?.url ||
-																(asPath.includes("/sites") && value2?.url.includes("/sites"))
+																(asPath.includes("/sites/") && value2?.url.includes("/sites/"))
 																	? "bg-gray-1100"
 																	: "hover:bg-gray-1100 focus:bg-gray-1100"
 															}`}
 															css={[
 																tw`cursor-pointer`,
 																router.pathname == value2?.url ||
-																(asPath.includes("/sites") && value2?.url.includes("/sites"))
+																(asPath.includes("/sites/") && value2?.url.includes("/sites/"))
 																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md `
 																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none  transition ease-in-out duration-150`
 															]}
@@ -82,6 +82,16 @@ const PrimaryMenu = ({ site }) => {
 																<DocumentReportIcon tw="mr-3 h-6 w-5" />
 															) : null}
 
+															{value2?.title ? <span>{value2?.title}</span> : null}
+														</a>
+													</Link>
+												) : (
+													<Link key={index} href={value2?.url} passHref>
+														<a
+															className="group"
+															tw="cursor-pointer mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white"
+														>
+															<ArrowLeftIcon tw="mr-3 h-6 w-5" />
 															{value2?.title ? <span>{value2?.title}</span> : null}
 														</a>
 													</Link>
@@ -103,6 +113,10 @@ const PrimaryMenu = ({ site }) => {
 
 PrimaryMenu.propTypes = {
 	site: PropTypes.object
+};
+
+PrimaryMenu.defaultProps = {
+	site: null
 };
 
 export default PrimaryMenu;

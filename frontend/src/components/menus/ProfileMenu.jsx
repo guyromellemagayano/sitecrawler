@@ -10,20 +10,18 @@ import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
-// JSON
-import SidebarLabel from "public/labels/components/profile/Sidebar.json";
-
 // Enums
+import { SidebarLabels } from "@enums/SidebarLabels";
 import { ProfileSidebarMenu } from "@enums/SidebarMenus";
 
 // Hooks
-import useDropdownOutsideClick from "@hooks/useDropdownOutsideClick";
+import { useComponentVisible } from "@hooks/useComponentVisible";
 
 // Components
 import ProfileSidebarSkeleton from "@components/skeletons/ProfileSidebarSkeleton";
 
 const ProfileMenu = ({ user }) => {
-	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 	return (
 		<div ref={ref} tw="flex-shrink-0 flex flex-col relative">
@@ -32,7 +30,7 @@ const ProfileMenu = ({ user }) => {
 					<button
 						type="button"
 						className="group hover:bg-gray-1100"
-						tw="p-4 flex items-center justify-between flex-shrink-0 w-full focus:outline-none transition ease-in-out duration-150 bg-gray-900 "
+						tw="p-4 flex items-center justify-between flex-shrink-0 w-full focus:outline-none transition ease-in-out duration-150 bg-gray-900"
 						id="options-menu"
 						aria-haspopup="true"
 						aria-expanded={isComponentVisible ? "true" : "false"}
@@ -40,7 +38,10 @@ const ProfileMenu = ({ user }) => {
 					>
 						<div tw="flex items-center">
 							<div tw="flex flex-col flex-wrap text-left">
-								<p className="truncate-profile-text" tw="text-sm leading-tight mb-1 font-medium text-white">
+								<p
+									className="truncate-profile-text"
+									tw="text-sm leading-tight mb-1 font-medium text-white"
+								>
 									{user?.first_name}
 								</p>
 								<p
@@ -66,7 +67,12 @@ const ProfileMenu = ({ user }) => {
 						leaveTo="transform opacity-0 scale-95"
 					>
 						<div tw="z-10 mx-3 origin-top absolute right-0 left-0 bottom-0 mt-1 mb-20 rounded-md shadow-lg">
-							<div tw="rounded-md bg-white" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+							<div
+								tw="rounded-md bg-white"
+								role="menu"
+								aria-orientation="vertical"
+								aria-labelledby="options-menu"
+							>
 								<div tw="py-1">
 									<span className="group" tw="flex justify-between items-center my-1 px-4 py-2">
 										<span
@@ -79,7 +85,7 @@ const ProfileMenu = ({ user }) => {
 													: tw`text-red-800`
 											]}
 										>
-											{user?.group?.name} {SidebarLabel[0].label}
+											{user?.group?.name} {SidebarLabels[0].label}
 										</span>
 										{(user?.group?.name === "Basic" || user?.group?.name === "Pro") && (
 											<Link href="/settings/subscription-plans" passHref>
@@ -91,7 +97,7 @@ const ProfileMenu = ({ user }) => {
 															: tw`bg-blue-200 text-blue-800 hover:bg-blue-600`
 													]}
 												>
-													<small>{SidebarLabel[1].label}</small>
+													<small>{SidebarLabels[1].label}</small>
 												</a>
 											</Link>
 										)}
@@ -117,22 +123,24 @@ const ProfileMenu = ({ user }) => {
 										<div tw="border-t border-gray-300"></div>
 									</div>
 								))}
-								{ProfileSidebarMenu.filter((page) => page.slug === "global-settings").map((val, key) => (
-									<div key={key} tw="py-1">
-										{val.links
-											.filter((page) => page.slug === "logout")
-											.map((val, key) => (
-												<Link key={key} href={val.url}>
-													<a
-														tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-														role="menuitem"
-													>
-														{val.label}
-													</a>
-												</Link>
-											))}
-									</div>
-								))}
+								{ProfileSidebarMenu.filter((page) => page.slug === "global-settings").map(
+									(val, key) => (
+										<div key={key} tw="py-1">
+											{val.links
+												.filter((page) => page.slug === "logout")
+												.map((val, key) => (
+													<Link key={key} href={val.url}>
+														<a
+															tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+															role="menuitem"
+														>
+															{val.label}
+														</a>
+													</Link>
+												))}
+										</div>
+									)
+								)}
 							</div>
 						</div>
 					</Transition>
@@ -145,7 +153,23 @@ const ProfileMenu = ({ user }) => {
 };
 
 ProfileMenu.propTypes = {
-	user: PropTypes.object
+	user: PropTypes.shape({
+		email: PropTypes.string,
+		first_name: PropTypes.string,
+		group: PropTypes.shape({
+			name: PropTypes.string
+		})
+	})
+};
+
+ProfileMenu.defaultProps = {
+	user: {
+		email: null,
+		first_name: null,
+		group: {
+			name: null
+		}
+	}
 };
 
 export default ProfileMenu;

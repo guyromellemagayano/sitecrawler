@@ -9,11 +9,12 @@ import Link from "next/link";
 import { ArrowLeftIcon, LinkIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/solid";
 import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Enums
+import { GlobalLabels, SiteLogoWhite } from "@enums/GlobalValues";
+import { SitesLink } from "@enums/PageLinks";
 import { SiteSidebarMenu } from "@enums/SidebarMenus";
 
 // Hooks
@@ -21,18 +22,11 @@ import { useStats } from "@hooks/useSite";
 import useCrawl from "@hooks/useCrawl";
 
 // Components
-const AppLogo = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.AppLogo
-});
-const SiteSelect = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SiteSelect
-});
+import AppLogo from "@components/logos/AppLogo";
+import SiteSelect from "@components/select/SiteSelect";
 
 const SiteMenu = ({ site }) => {
 	const [scanObjId, setScanObjId] = React.useState(null);
-
-	const appLogoAltText = "app-logo";
-	const siteDashboardLink = "/sites/";
 
 	const { query, asPath } = useRouter();
 
@@ -62,17 +56,20 @@ const SiteMenu = ({ site }) => {
 	});
 
 	return (
-		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
+		<Scrollbars
+			renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />}
+			universal
+		>
 			<div tw="flex flex-col min-h-screen pt-8 pb-4">
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
-					<Link href={siteDashboardLink} passHref>
+					<Link href={SitesLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
 							<AppLogo
 								tw="w-48 h-auto"
-								src="/images/logos/site-logo-white.svg"
-								alt={appLogoAltText}
-								width={230}
-								height={40}
+								src={SiteLogoWhite}
+								alt={GlobalLabels[0].label}
+								width={GlobalLabels[0].width}
+								height={GlobalLabels[0].height}
 							/>
 						</a>
 					</Link>
@@ -167,6 +164,10 @@ const SiteMenu = ({ site }) => {
 
 SiteMenu.propTypes = {
 	site: PropTypes.object
+};
+
+SiteMenu.defaultProps = {
+	site: null
 };
 
 export default SiteMenu;
