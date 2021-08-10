@@ -1,12 +1,21 @@
 // External
 import "twin.macro";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
 
-const SiteSuccessBadge = (props) => {
-	return (
-		<span tw="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-			{props.text}
-		</span>
-	);
+// Common
+const Badge = loadable(() => import("./common/Badge"));
+
+const SiteSuccessBadge = ({ text }) => {
+	return <Badge isSuccess text={text} />;
+};
+
+SiteSuccessBadge.propTypes = {
+	text: PropTypes.string
+};
+
+SiteSuccessBadge.defaultProps = {
+	text: null
 };
 
 export default SiteSuccessBadge;

@@ -1,12 +1,21 @@
 // External
 import "twin.macro";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
 
-const SiteWarningBadge = (props) => {
-	return (
-		<div tw="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-			{props.text}
-		</div>
-	);
+// Common
+const Badge = loadable(() => import("./common/Badge"));
+
+const SiteWarningBadge = ({ text }) => {
+	return <Badge isWarning text={text} />;
+};
+
+SiteWarningBadge.propTypes = {
+	text: PropTypes.string
+};
+
+SiteWarningBadge.defaultProps = {
+	text: null
 };
 
 export default SiteWarningBadge;
