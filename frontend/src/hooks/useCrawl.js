@@ -4,7 +4,6 @@ import * as React from "react";
 // External
 import axios from "axios";
 import Cookies from "js-cookie";
-import PropTypes from "prop-types";
 
 // Hooks
 import { useScan } from "src/hooks/useSite";
@@ -60,13 +59,19 @@ const useCrawl = ({ siteId }) => {
 		setIsCrawlStarted(true);
 		setIsCrawlFinished(false);
 
-		selectedSiteRef.current && selectedSiteRef.current.contains(e?.target) ? handleMutateCurrentSite(endpoint) : null;
+		selectedSiteRef.current && selectedSiteRef.current.contains(e?.target)
+			? handleMutateCurrentSite(endpoint)
+			: null;
 	};
 
 	React.useEffect(() => {
 		const handleScan = (scan) => {
-			let previousScanResult = scan?.results.find((e) => e.finished_at !== null && e.force_https !== null);
-			let currentScanResult = scan?.results.find((e) => e.finished_at == null && e.force_https == null);
+			let previousScanResult = scan?.results.find(
+				(e) => e.finished_at !== null && e.force_https !== null
+			);
+			let currentScanResult = scan?.results.find(
+				(e) => e.finished_at == null && e.force_https == null
+			);
 
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
@@ -99,10 +104,6 @@ const useCrawl = ({ siteId }) => {
 		isCrawlStarted,
 		isCrawlFinished
 	};
-};
-
-useCrawl.propTypes = {
-	siteId: PropTypes.number
 };
 
 export default useCrawl;

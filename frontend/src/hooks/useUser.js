@@ -1,6 +1,3 @@
-// React
-import * as React from "react";
-
 // NextJS
 import { useRouter } from "next/router";
 
@@ -8,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // Hooks
-import useFetcher from "src/hooks/useFetcher";
+import useFetcher from "@hooks/useFetcher";
 
 const useUser = ({ redirectIfFound = false, redirectTo = "", refreshInterval = 0 }) => {
 	const userApiEndpoint = "/api/auth/user/";

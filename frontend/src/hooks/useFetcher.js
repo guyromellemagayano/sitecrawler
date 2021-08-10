@@ -3,24 +3,27 @@ import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const sleep = (ms) => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve;
-		}, ms);
-	});
-};
+// Enums
+import { ComponentReadyInterval } from "@enums/GlobalValues";
 
 const useFetcher = async (...args) => {
+	const sleep = (ms) => {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				resolve;
+			}, ms);
+		});
+	};
+
 	return await axios
 		.get(...args, {
 			headers: {
-				"Accept": "application/json",
+				Accept: "application/json",
 				"Content-Type": "application/json",
 				"X-CSRFToken": Cookies.get("csrftoken")
 			}
 		})
-		.then(sleep(500))
+		.then(sleep(ComponentReadyInterval))
 		.then((response) => {
 			if (Math.floor(response.status / 200) == 1) {
 				return response.data;
