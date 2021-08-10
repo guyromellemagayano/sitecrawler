@@ -229,6 +229,7 @@ INSTALLED_APPS = [
     "uptime",
     "signup",
     "userext",
+    "teams",
 ]
 
 MIDDLEWARE = [
