@@ -8,41 +8,35 @@ import { useRouter } from "next/router";
 import "twin.macro";
 import { Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
-// JSON
-import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json";
+// Enums
+import { SiteApiEndpoint } from "@enums/ApiEndpoints";
+import { LgScreenBreakpoint, EndpointRefreshInterval } from "@enums/GlobalValues";
+import { SidebarMenuLabels } from "@enums/SidebarMenuLabels";
 
 // Hooks
-import { useSite } from "src/hooks/useSite";
+import { useComponentVisible } from "@hooks/useComponentVisible";
+import { useSite } from "@hooks/useSite";
 
 // Components
-const ProfileMenu = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.ProfileMenu
-});
-const PrimaryMenu = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.PrimaryMenu
-});
-const SettingsMenu = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SettingsMenu
-});
-const SiteMenu = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SiteMenu
-});
+import PrimaryMenu from "@components/menus/PrimaryMenu";
+import ProfileMenu from "@components/menus/ProfileMenu";
+import SettingsMenu from "@components/menus/SettingsMenu";
+import SiteMenu from "@components/menus/SiteMenu";
 
-const MainSidebar = ({ width, user, openMobileSidebar, handleOpenMobileSidebar }) => {
+const Sidebar = ({ width, user }) => {
 	const [selectedMenu, setSelectedMenu] = React.useState(null);
 
-	const lgScreenBreakpoint = 1024;
-	const siteApiEndpoint = "/api/site/?ordering=name&per_page=100";
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 	const router = useRouter();
-	const ref = React.useRef(null);
+
+	const siteApiEndpoint = `${SiteApiEndpoint}?ordering=name&per_page=100`;
 
 	const { site } = useSite({
 		endpoint: siteApiEndpoint,
-		refreshInterval: 7500
+		refreshInterval: EndpointRefreshInterval
 	});
 
 	React.useEffect(() => {
@@ -61,30 +55,8 @@ const MainSidebar = ({ width, user, openMobileSidebar, handleOpenMobileSidebar }
 		return selectedMenu;
 	}, [router, site, user]);
 
-	const handleHideSidebarMenu = (event) => {
-		if (event.key === "Escape") {
-			setOpenMobileSidebar(false);
-		}
-	};
-
-	const handleClickOutsideSidebarMenu = (event) => {
-		if (ref.current && !ref.current.contains(event.target)) {
-			setOpenMobileSidebar(false);
-		}
-	};
-
-	React.useEffect(() => {
-		document.addEventListener("keydown", handleHideSidebarMenu, true);
-		document.addEventListener("click", handleClickOutsideSidebarMenu, true);
-
-		return () => {
-			document.removeEventListener("keydown", handleHideSidebarMenu, true);
-			document.removeEventListener("click", handleClickOutsideSidebarMenu, true);
-		};
-	});
-
-	return width < lgScreenBreakpoint ? (
-		<Transition show={openMobileSidebar}>
+	return width < LgScreenBreakpoint ? (
+		<Transition show={isComponentVisible}>
 			<div tw="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
 					enter="transition-opacity ease-linear duration-300"
@@ -117,9 +89,9 @@ const MainSidebar = ({ width, user, openMobileSidebar, handleOpenMobileSidebar }
 							<div tw="absolute top-0 right-0 -mr-12 pt-2">
 								<button
 									tw="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-									onClick={() => setOpenMobileSidebar(false)}
+									onClick={() => setIsComponentVisible(!isComponentVisible)}
 								>
-									<span tw="sr-only">{PrimaryMenuLabel[0].label}</span>
+									<span tw="sr-only">{SidebarMenuLabels[0].label}</span>
 									<XIcon tw="h-6 w-6 text-white" />
 								</button>
 							</div>
@@ -145,11 +117,14 @@ const MainSidebar = ({ width, user, openMobileSidebar, handleOpenMobileSidebar }
 	);
 };
 
-MainSidebar.propTypes = {
-	width: PropTypes.number,
+Sidebar.propTypes = {
 	user: PropTypes.object,
-	openMobileSidebar: PropTypes.bool,
-	handleOpenMobileSidebar: PropTypes.func
+	width: PropTypes.number
 };
 
-export default MainSidebar;
+Sidebar.defaultProps = {
+	width: null,
+	user: null
+};
+
+export default Sidebar;
