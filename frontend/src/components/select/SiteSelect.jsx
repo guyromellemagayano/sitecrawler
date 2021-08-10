@@ -7,22 +7,18 @@ import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Hooks
-import useDropdownOutsideClick from "@hooks/useDropdownOutsideClick";
+import { useComponentVisible } from "@hooks/useComponentVisible";
 
 // Components
-const SiteSelectMenu = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SiteSelectMenu
-});
-const SiteSelectDropdown = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SiteSelectDropdown
-});
+import SiteSelectDropdown from "@components/dropdowns/SiteSelectDropdown";
+import SiteSelectMenu from "@components/menus/SiteSelectMenu";
 
 const SiteSelect = ({ site, siteId, currentScan }) => {
 	const [selectedSite, setSelectedSite] = React.useState(null);
 	const [selectedSiteDetails, setSelectedSiteDetails] = React.useState([]);
 	const [selectedSiteId, setSelectedSiteId] = React.useState(null);
 
-	const { ref, isComponentVisible, setIsComponentVisible } = useDropdownOutsideClick(false);
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 	const handleSiteSelectOnLoad = (siteId) => {
 		site?.results
@@ -82,7 +78,8 @@ const SiteSelect = ({ site, siteId, currentScan }) => {
 							currentScan={currentScan}
 							selectedSite={selectedSite}
 							selectedSiteDetails={selectedSiteDetails}
-							handleIsComponentVisible={() => setIsComponentVisible(!isComponentVisible)}
+							isComponentVisible={isComponentVisible}
+							setIsComponentVisible={setIsComponentVisible}
 						/>
 					</span>
 
@@ -99,9 +96,21 @@ const SiteSelect = ({ site, siteId, currentScan }) => {
 };
 
 SiteSelect.propTypes = {
-	site: PropTypes.object,
-	siteId: PropTypes.number,
-	currentScan: PropTypes.object
+	currentScan: PropTypes.object,
+	results: PropTypes.object,
+	site: PropTypes.shape({
+		results: PropTypes.array
+	}),
+	siteId: PropTypes.number
+};
+
+SiteSelect.defaultProps = {
+	currentScan: null,
+	results: null,
+	site: {
+		results: null
+	},
+	siteId: null
 };
 
 export default SiteSelect;
