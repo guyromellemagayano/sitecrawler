@@ -1,5 +1,16 @@
 export const DashboardSidebarMenu = [
 	{
+		category: "Navigation",
+		slug: "navigation",
+		links: [
+			{
+				title: "Go Back to Sites",
+				slug: "go-back-to-sites",
+				url: "/sites"
+			}
+		]
+	},
+	{
 		category: "Site Selection",
 		slug: "site-selection"
 	},
@@ -41,12 +52,12 @@ export const ProfileSidebarMenu = [
 				label: "Subscription Plans",
 				slug: "subscription-plans",
 				url: "/settings/subscription-plans"
+			},
+			{
+				label: "Billing Settings",
+				slug: "billing-settings",
+				url: "/settings/billing"
 			}
-			// {
-			// 	label: "Billing Settings",
-			// 	slug: "billing-settings",
-			// 	url: "/settings/billing"
-			// }
 		]
 	},
 	{
@@ -101,12 +112,12 @@ export const SettingsSidebarMenu = [
 				title: "Subscription Plans",
 				slug: "subscription-plans",
 				url: "/settings/subscription-plans"
+			},
+			{
+				title: "Billing Settings",
+				slug: "billing-settings",
+				url: "/settings/billing"
 			}
-			// {
-			// 	title: "Billing Settings",
-			// 	slug: "billing-settings",
-			// 	url: "/settings/billing"
-			// }
 		]
 	},
 	{
