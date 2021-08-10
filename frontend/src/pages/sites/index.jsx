@@ -5,59 +5,50 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
-import tw from "twin.macro";
 import { ExternalLinkIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
-
-// JSON
-import SitesLabel from "public/labels/pages/sites.json";
+import tw from "twin.macro";
 
 // Enums
+import { EndpointRefreshInterval } from "@enums/GlobalValues";
+import { SitesLabels } from "@enums/SitesLabels";
 import { SitesTableLabels } from "@enums/SitesTableLabels";
 
 // Hooks
-import { useSite } from "src/hooks/useSite";
-import useUser from "src/hooks/useUser";
-
-// Layout
-import Layout from "src/components/Layout";
+import { useSite } from "@hooks/useSite";
+import useUser from "@hooks/useUser";
 
 // Components
-import MainSidebar from "src/components/sidebar/MainSidebar";
-import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
-import SiteFooter from "src/components/layouts/Footer";
-
-// Loadable
-const AddSite = loadable(() => import("src/components/pages/sites/AddSite"));
-const DataTable = loadable(() => import("src/components/tables/DataTable"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const MyPagination = loadable(() => import("src/components/pagination/Pagination"));
-const SiteSorting = loadable(() => import("src/components/helpers/sorting/SiteSorting"));
+import AddSite from "@components/sites/AddSite";
+import DataPagination from "@components/pagination";
+import DataTable from "@components/tables/DataTable";
+import Footer from "@components/layouts/Footer";
+import Layout from "@components/layouts";
+import Loader from "@components/loader";
+import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
+import Sidebar from "@components/layouts/Sidebar";
+import SiteSorting from "@components/sorting/SiteSorting";
 
 // Helpers
-import { removeURLParameter } from "src/utils/functions";
+import { LoginLink } from "@enums/PageLinks";
+import { removeURLParameter } from "@utils/functions";
 
 const Sites = ({ width, result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
-	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [pagePath, setPagePath] = React.useState("");
 	const [searchKey, setSearchKey] = React.useState("");
-
-	const pageTitle = SitesLabel[0].label;
-	const siteRefreshInterval = 3000;
 
 	const { asPath } = useRouter();
 	const router = useRouter();
 
 	const { user } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login"
+		redirectTo: LoginLink
 	});
 
 	let scanApiEndpoint = "";
@@ -88,7 +79,7 @@ const Sites = ({ width, result }) => {
 
 	const { site, mutateSite } = useSite({
 		endpoint: scanApiEndpoint,
-		refreshInterval: siteRefreshInterval
+		refreshInterval: EndpointRefreshInterval
 	});
 
 	const handleSearch = async (e) => {
@@ -115,7 +106,7 @@ const Sites = ({ width, result }) => {
 		router.push(newPath);
 	};
 
-	const onItemsPerPageChange = (count) => {
+	const handleItemsPerPageChange = (count) => {
 		const countValue = parseInt(count.target.value);
 
 		let newPath = asPath;
@@ -141,15 +132,15 @@ const Sites = ({ width, result }) => {
 	React.useEffect(() => {
 		user && site
 			? (() => {
-					user?.settings.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
+					user?.settings.disableLocalTime
+						? setDisableLocalTime(true)
+						: setDisableLocalTime(false) ?? null;
 
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
+					setComponentReady(true);
 			  })()
-			: null;
+			: setComponentReady(false);
 
-		return setComponentReady(false);
+		return { user, site };
 	}, [user, site]);
 
 	React.useEffect(() => {
@@ -163,23 +154,17 @@ const Sites = ({ width, result }) => {
 
 	return (
 		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageTitle : null} />
+			<NextSeo title={componentReady ? SitesLabels[0].label : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<MainSidebar
-					width={width}
-					user={componentReady ? user : null}
-					openMobileSidebar={openMobileSidebar}
-					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
-				/>
+				<Sidebar width={width} user={componentReady ? user : null} />
 
 				{componentReady ? (
 					<div tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
 						<div tw="relative flex-shrink-0 flex">
 							<div tw="border-b flex-shrink-0 flex">
 								<MobileSidebarButton
-									openMobileSidebar={openMobileSidebar}
-									setOpenMobileSidebar={setOpenMobileSidebar}
+									handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
 								/>
 							</div>
 
@@ -197,13 +182,18 @@ const Sites = ({ width, result }) => {
 									{site?.count > 0 && (
 										<div tw="flex-none px-4 pt-12 sm:px-6 md:px-8 md:flex md:items-start md:justify-between">
 											<div tw="flex-1 min-w-0">
-												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
+												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+													{SitesLabels[0].label}
+												</h2>
 												<div tw="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
 													<div tw="mt-2 flex items-center text-sm text-gray-500">
-														<ExternalLinkIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+														<ExternalLinkIcon
+															tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+															aria-hidden="true"
+														/>
 														<span tw="text-sm leading-6 font-semibold text-gray-500">
 															{site?.count + " "}
-															{site?.count > 1 ? SitesLabel[3].label : SitesLabel[2].label}
+															{site?.count > 1 ? SitesLabels[3].label : SitesLabels[2].label}
 														</span>
 													</div>
 												</div>
@@ -219,7 +209,9 @@ const Sites = ({ width, result }) => {
 										tabIndex="0"
 									>
 										<div css={[tw`flex-1 w-full h-full`, site?.count < 1 && tw`flex flex-auto`]}>
-											<div css={[tw`flex-1 w-full h-full`, site?.count < 1 && tw`flex flex-initial`]}>
+											<div
+												css={[tw`flex-1 w-full h-full`, site?.count < 1 && tw`flex flex-initial`]}
+											>
 												<div
 													css={[
 														tw`flex-1 w-full h-full py-2 overflow-x-auto`,
@@ -257,27 +249,32 @@ const Sites = ({ width, result }) => {
 																<tbody tw="relative divide-y divide-gray-200">
 																	{site?.results.map((value, index) => (
 																		<DataTable
+																			disableLocalTime={disableLocalTime}
 																			key={index}
-																			siteId={value.id}
+																			mutateSite={mutateSite}
+																			siteId={parseInt(value.id)}
 																			siteName={value.name}
 																			siteUrl={value.url}
+																			siteVerificationId={parseInt(value.verification_id)}
 																			siteVerified={value.verified}
-																			siteVerificationId={value.verification_id}
-																			disableLocalTime={disableLocalTime}
-																			mutateSite={mutateSite}
 																		/>
 																	))}
 																</tbody>
 															</table>
 														)}
 
-														{site?.count == 0 && result?.search == undefined && result?.ordering == undefined && (
-															<section tw="flex flex-col justify-center h-full">
-																<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-																	<h3 tw="text-lg leading-6 font-medium text-gray-500">{SitesLabel[1].label}</h3>
-																</div>
-															</section>
-														)}
+														{/* TODO: Develop a single component for NoSitesAvailableState */}
+														{site?.count == 0 &&
+															result?.search == undefined &&
+															result?.ordering == undefined && (
+																<section tw="flex flex-col justify-center h-full">
+																	<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
+																		<h3 tw="text-lg leading-6 font-medium text-gray-500">
+																			{SitesLabels[1].label}
+																		</h3>
+																	</div>
+																</section>
+															)}
 													</div>
 												</div>
 											</div>
@@ -286,19 +283,18 @@ const Sites = ({ width, result }) => {
 
 									<div tw="flex-none px-4 sm:px-6 md:px-8">
 										<div tw="pt-4 border-t border-gray-200">
-											<MyPagination
-												href="/sites/"
-												pathName={pagePath}
+											<DataPagination
+												activePage={parseInt(result?.page ? result?.page : 0)}
 												apiEndpoint={scanApiEndpoint}
-												page={result?.page ? result?.page : 0}
-												linksPerPage={linksPerPage}
-												onItemsPerPageChange={onItemsPerPageChange}
+												handleItemsPerPageChange={handleItemsPerPageChange}
+												linksPerPage={parseInt(linksPerPage)}
+												pathName={pagePath}
 											/>
 										</div>
 
 										{componentReady ? (
 											<div tw="w-full p-4 border-t border-gray-200">
-												<SiteFooter />
+												<Footer />
 											</div>
 										) : null}
 									</div>
@@ -316,7 +312,26 @@ const Sites = ({ width, result }) => {
 	);
 };
 
-Sites.propTypes = {};
+Sites.propTypes = {
+	result: PropTypes.shape({
+		ordering: PropTypes.string,
+		page: PropTypes.string,
+		per_page: PropTypes.string,
+		search: PropTypes.string
+	}),
+	search: PropTypes.any,
+	width: PropTypes.number
+};
+
+Sites.defaultProps = {
+	result: {
+		ordering: null,
+		page: null,
+		per_page: null,
+		search: null
+	},
+	width: null
+};
 
 export default withResizeDetector(Sites);
 
