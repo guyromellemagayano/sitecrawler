@@ -14,7 +14,8 @@ dev:          ## Build and run local environment
 	deploy/$(*F).py
 
 test-backend: ## Run tests on backend prod image
-	docker-compose -f docker-compose.test.yml run --rm backend ./manage.py test
+	docker-compose -p web-crawl-app-test-backend -f docker-compose.test.yml run --rm backend ./manage.py test
+	docker-compose -p web-crawl-app-test down -v
 
 build-push-go: ## Build and push production go images
 	make crawler-build-push-go
@@ -80,7 +81,7 @@ build-push-go: ## Build and push production go images
 		go/
 
 test-go:
-	cd go && docker-compose -f docker-compose.test.yml up --build
+	cd go && docker-compose -p web-crawl-app-test-go -f docker-compose.test.yml up --build
 
 install-deploy:
 	python -m pip install --upgrade pip
@@ -92,13 +93,17 @@ logs: ## Display logs for local environment
 psql: ## Enter postgres shell for local environment
 	docker-compose exec db psql -U postgres
 
+psql-cypress: ## Enter postgres shell for cypress environment
+	docker-compose -p web-crawl-app-cypress exec db psql -U postgres
+
 cypress: dev ## Run cypress integration tests
 	npm install cypress
 	$(shell npm bin)/cypress open
 
 cypress-ci:
 	deploy/ecr-login.sh
-	docker-compose -f docker-compose.cypress.yml up -d
-	docker-compose -f docker-compose.cypress.yml run backend ./manage.py migrate
+	docker-compose -p web-crawl-app-cypress -f docker-compose.cypress.yml up -d
+	docker-compose -p web-crawl-app-cypress -f docker-compose.cypress.yml run backend ./manage.py migrate
 	npm install cypress
 	$(shell npm bin)/cypress run
+	docker-compose -p web-crawl-app-cypress down -v
