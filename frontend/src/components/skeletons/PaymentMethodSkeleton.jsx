@@ -1,14 +1,11 @@
 // External
 import tw from "twin.macro";
-import loadable from "@loadable/component";
 import Skeleton from "react-loading-skeleton";
 
 // Components
-const SkeletonEntries = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SkeletonEntries
-});
+import SkeletonEntries from "@components/skeletons/common/SkeletonEntries";
 
-const PaymentMethodsSkeleton = () => {
+const PaymentMethodSkeleton = () => {
 	const skeletonLimit = 1;
 	const skeletonEntry = (
 		<div tw="flex items-center space-x-3 my-0">
@@ -24,4 +21,4 @@ const PaymentMethodsSkeleton = () => {
 	return <SkeletonEntries str={skeletonEntry} limit={skeletonLimit} />;
 };
 
-export default PaymentMethodsSkeleton;
+export default PaymentMethodSkeleton;

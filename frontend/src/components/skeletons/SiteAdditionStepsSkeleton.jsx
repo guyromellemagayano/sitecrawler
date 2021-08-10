@@ -1,12 +1,9 @@
 // External
 import "twin.macro";
-import loadable from "@loadable/component";
 import Skeleton from "react-loading-skeleton";
 
 // Components
-const SkeletonEntries = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SkeletonEntries
-});
+import SkeletonEntries from "@components/skeletons/common/SkeletonEntries";
 
 const SiteAdditionStepsSkeleton = () => {
 	const skeletonLimit = 1;

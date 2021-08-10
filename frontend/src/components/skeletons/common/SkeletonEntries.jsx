@@ -5,7 +5,7 @@ import * as React from "react";
 import "twin.macro";
 import PropTypes from "prop-types";
 
-const TableSkeletonEntries = ({ str, limit }) => {
+const SkeletonEntries = ({ str, limit }) => {
 	let strArray = [];
 
 	if (limit > 0) {
@@ -14,16 +14,21 @@ const TableSkeletonEntries = ({ str, limit }) => {
 		}
 
 		return strArray.map((value, key) => (
-			<tr tw="w-full" key={key}>
+			<div tw="w-full" key={key}>
 				{value}
-			</tr>
+			</div>
 		));
 	} else return;
 };
 
-TableSkeletonEntries.propTypes = {
-	str: PropTypes.instanceOf(Element).isRequired,
-	limite: PropTypes.number
+SkeletonEntries.propTypes = {
+	str: PropTypes.object,
+	limit: PropTypes.number
 };
 
-export default TableSkeletonEntries;
+SkeletonEntries.defaultProps = {
+	str: null,
+	limit: null
+};
+
+export default SkeletonEntries;
