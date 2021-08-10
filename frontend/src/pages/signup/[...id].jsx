@@ -18,7 +18,7 @@ import tw from "twin.macro";
 import SignupLabel from "public/labels/pages/signup.json";
 
 // Layout
-import Layout from "src/components/Layout";
+import Layout from "@components/layouts";
 
 // Components
 import SiteFooter from "src/components/layouts/Footer";
