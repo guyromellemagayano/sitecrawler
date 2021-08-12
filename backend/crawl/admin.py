@@ -170,6 +170,7 @@ class ScanInline(admin.TabularInline):
 
 @admin.register(Site)
 class SiteAdmin(admin.ModelAdmin):
+    readonly_fields = ("created_at", "updated_at")
     list_display = ("url", "team")
     list_filter = ("user__username",)
     inlines = [ScanInline]

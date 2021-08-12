@@ -6,12 +6,14 @@ from .models import Team, MembershipType, Membership
 class MembershipInline(admin.TabularInline):
     model = Membership
     extra = 0
+    readonly_fields = ("created_at", "updated_at")
 
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     inlines = [MembershipInline]
     search_fields = ("name",)
+    readonly_fields = ("created_at", "updated_at")
 
     def has_delete_permission(self, *args, **kwargs):
         return False
