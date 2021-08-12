@@ -15,6 +15,8 @@ class TeamManager(models.Manager):
 class Team(models.Model):
     objects = TeamManager()
 
+    created_at = models.DateTimeField(auto_now_add=True, null=False)
+    updated_at = models.DateTimeField(auto_now=True, null=False)
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -35,6 +37,9 @@ class MembershipType(models.Model):
 
 
 class Membership(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, null=False)
+    updated_at = models.DateTimeField(auto_now=True, null=False)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     type = models.ForeignKey(MembershipType, on_delete=models.CASCADE)
