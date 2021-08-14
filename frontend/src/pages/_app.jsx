@@ -3,6 +3,7 @@ import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
 // External
 import "tailwindcss/tailwind.css";
@@ -11,7 +12,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import App from "next/app";
-import LogRocket from "logrocket";
+
 import setupLogRocketReact from "logrocket-react";
 
 // TODO: Add PropTypes in _app page
@@ -23,16 +24,17 @@ import AppSeo from "@enums/AppSeo";
 import GlobalStyles from "@styles/GlobalStyles";
 import TopProgressBar from "@components/top-progress-bar";
 
+// Dynamic
+const LogRocket = dynamic(() => import("logrocket"), { ssr: false });
+
 // Font Awesome
 library.add(fab);
 library.add(fas);
 
-// Sentry
+// LogRocket
 if (process.env.NODE_ENV === "production") {
-	if (typeof window !== "undefined") {
-		LogRocket.init("epic-design-labs/link-app");
-		setupLogRocketReact(LogRocket);
-	}
+	LogRocket.init("epic-design-labs/link-app");
+	setupLogRocketReact(LogRocket);
 }
 
 const MyApp = ({ Component, pageProps }) => {
