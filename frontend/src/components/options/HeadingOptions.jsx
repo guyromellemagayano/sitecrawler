@@ -5,26 +5,43 @@ import * as React from "react";
 import { useRouter } from "next/router";
 
 // External
-import tw from "twin.macro";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SearchIcon, DownloadIcon, GlobeIcon, LinkIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
+import tw from "twin.macro";
 
-// JSON
-import HeadingOptionsLabel from "./labels/HeadingOptions.json";
+// Enums
+import { HeadingOptionsLabels } from "@enums/HeadingOptionsLabels";
 
-// Loadable
-const SiteVerifyErrorModal = loadable(() => import("src/components/modals/SiteVerifyModal"), {
-	resolveComponent: (components) => components.SiteVerifyErrorModal
-});
-const UpgradeErrorModal = loadable(() => import("src/components/modals/UpgradeErrorModal"));
+// Components
+import SiteVerifyErrorModal from "@components/modals/SiteVerifyModal";
+import UpgradeErrorModal from "@components/modals/UpgradeErrorModal";
 
-const HeadingOptions = (props) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+const HeadingOptions = ({
+	componentReady,
+	count,
+	dataLabel,
+	disableLocalTime,
+	handleCrawl,
+	isCrawlFinished,
+	isCrawlStarted,
+	isImages,
+	isLinks,
+	isPages,
+	isSeo,
+	pageTitle,
+	permissions,
+	queryString,
+	scanFinishedAt,
+	scanObjId,
+	siteId,
+	siteName,
+	siteUrl,
+	verified
+}) => {
 	const [showSiteVerifyErrorModal, setShowSiteVerifyErrorModal] = React.useState(false);
 	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
 
@@ -45,36 +62,35 @@ const HeadingOptions = (props) => {
 
 	const { asPath } = useRouter();
 
-	React.useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
-
-		return setComponentReady(false);
-	}, []);
-
 	return (
 		<div tw="pt-4 m-auto md:flex md:items-center md:justify-between">
-			<UpgradeErrorModal show={showUpgradeErrorModal} setShowModal={setShowUpgradeErrorModal} />
-			<SiteVerifyErrorModal show={showSiteVerifyErrorModal} setShowModal={setShowSiteVerifyErrorModal} />
+			<UpgradeErrorModal
+				showModal={showUpgradeErrorModal}
+				handleShowModal={() => setShowUpgradeErrorModal(!showUpgradeErrorModal)}
+			/>
+
+			<SiteVerifyErrorModal
+				showModal={showSiteVerifyErrorModal}
+				handleShowModal={() => setShowSiteVerifyErrorModal(!showSiteVerifyErrorModal)}
+			/>
 
 			<div tw="flex-1 min-w-0">
-				<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{props.pageTitle}</h2>
+				<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
 				<div tw="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
 					<div tw="mt-2 flex items-center text-sm text-gray-500">
 						<GlobeIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-						{props.siteName && componentReady ? (
+						{componentReady ? (
 							<a
-								href={props.siteUrl}
+								href={siteUrl}
 								target="_blank"
-								title={props.siteName}
+								title={siteName}
 								className="truncate-link"
 								tw="max-w-lg text-sm leading-6 font-semibold text-gray-500 hover:text-gray-900 truncate"
 							>
-								{props.siteName}
+								{siteName}
 							</a>
 						) : (
-							HeadingOptionsLabel[4].label
+							HeadingOptionsLabels[4].label
 						)}
 					</div>
 
@@ -86,45 +102,47 @@ const HeadingOptions = (props) => {
 								aria-hidden="true"
 							/>
 
-							{props.scanFinishedAt && componentReady ? (
+							{scanFinishedAt && componentReady ? (
 								<p tw="text-sm leading-6 text-gray-500">
-									{!props.disableLocalTime
-										? dayjs(props.scanFinishedAt).calendar(null, calendarStrings)
-										: dayjs.utc(props.scanFinishedAt).calendar(null, calendarStrings)}
-									<span tw="ml-2 font-medium">({!props.disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
+									{!disableLocalTime
+										? dayjs(scanFinishedAt).calendar(null, calendarStrings)
+										: dayjs.utc(scanFinishedAt).calendar(null, calendarStrings)}
+									<span tw="ml-2 font-medium">
+										({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
+									</span>
 								</p>
 							) : (
-								HeadingOptionsLabel[4].label
+								HeadingOptionsLabels[4].label
 							)}
 						</div>
 					)}
 
 					<div tw="mt-2 flex items-center text-sm text-gray-500">
-						{(props.isLinks || props.isSeo || props.isPages || props.isImages) && props.count ? (
+						{isLinks || isSeo || isPages || isImages ? (
 							<>
-								{props.isLinks ? (
+								{isLinks ? (
 									<LinkIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-								) : props.isSeo ? (
+								) : isSeo ? (
 									<SearchIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-								) : props.isPages ? (
+								) : isPages ? (
 									<DocumentTextIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
-								) : props.isImages ? (
+								) : isImages ? (
 									<PhotographIcon tw="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" />
 								) : null}
 
-								{(props.permissions?.includes("can_see_images") &&
-									props.permissions?.includes("can_see_pages") &&
-									props.permissions?.includes("can_see_scripts") &&
-									props.permissions?.includes("can_see_stylesheets")) ||
+								{(permissions?.includes("can_see_images") &&
+									permissions?.includes("can_see_pages") &&
+									permissions?.includes("can_see_scripts") &&
+									permissions?.includes("can_see_stylesheets")) ||
 								asPath.includes("links")
-									? props.count > 1 && componentReady
-										? props.count + " " + props.dataLabel[0]
-										: props.count == 1 && componentReady
-										? props.count + " " + props.dataLabel[1]
-										: props.count == 0 && componentReady
-										? props.dataLabel[2]
-										: HeadingOptionsLabel[4].label
-									: HeadingOptionsLabel[1].label}
+									? count > 1 && componentReady
+										? count + " " + dataLabel[0]
+										: count == 1 && componentReady
+										? count + " " + dataLabel[1]
+										: count == 0 && componentReady
+										? dataLabel[2]
+										: HeadingOptionsLabels[4].label
+									: HeadingOptionsLabels[1].label}
 							</>
 						) : null}
 					</div>
@@ -135,19 +153,19 @@ const HeadingOptions = (props) => {
 				{componentReady ? (
 					<button
 						type="button"
-						disabled={props.isCrawlStarted && !props.isCrawlFinished}
+						disabled={isCrawlStarted && !isCrawlFinished}
 						onClick={
-							props.permissions?.includes("can_start_scan")
-								? props.verified
-									? props.handleCrawl
+							permissions?.includes("can_start_scan")
+								? verified
+									? handleCrawl
 									: () => setShowSiteVerifyErrorModal(!showSiteVerifyErrorModal)
 								: () => setShowUpgradeErrorModal(!showUpgradeErrorModal)
 						}
 						css={[
 							tw`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none`,
-							props.permissions?.includes("can_start_scan")
-								? props.verified
-									? props.isCrawlStarted && !props.isCrawlFinished
+							permissions?.includes("can_start_scan")
+								? verified
+									? isCrawlStarted && !isCrawlFinished
 										? tw`bg-green-600 opacity-50 cursor-not-allowed`
 										: tw`bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 									: tw`bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-red-500`
@@ -155,31 +173,31 @@ const HeadingOptions = (props) => {
 						]}
 					>
 						<span tw="flex items-center space-x-2">
-							{props.permissions?.includes("can_start_scan") ? (
+							{permissions?.includes("can_start_scan") ? (
 								<>
 									<FontAwesomeIcon icon={["fas", "spider"]} tw="w-4 h-4 text-white" />
 
-									{props.verified ? (
-										!props.isCrawlStarted && props.isCrawlFinished ? (
-											<span>{HeadingOptionsLabel[2].label}</span>
+									{verified ? (
+										!isCrawlStarted && isCrawlFinished ? (
+											<span>{HeadingOptionsLabels[2].label}</span>
 										) : (
-											<span>{HeadingOptionsLabel[3].label}</span>
+											<span>{HeadingOptionsLabels[3].label}</span>
 										)
 									) : (
-										<span>{HeadingOptionsLabel[2].label}</span>
+										<span>{HeadingOptionsLabels[2].label}</span>
 									)}
 								</>
-							) : props.verified ? (
+							) : verified ? (
 								<>
 									<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 
-									<span>{HeadingOptionsLabel[2].label}</span>
+									<span>{HeadingOptionsLabels[2].label}</span>
 								</>
 							) : (
 								<>
 									<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 
-									<span>{HeadingOptionsLabel[2].label}</span>
+									<span>{HeadingOptionsLabels[2].label}</span>
 								</>
 							)}
 						</span>
@@ -191,36 +209,36 @@ const HeadingOptions = (props) => {
 				{asPath.includes("links") ? (
 					componentReady ? (
 						<a
-							href={`/api/site/${props.siteId}/scan/${props.scanObjId}/${
-								props.isLinks ? "link" : props.isPages || props.isSeo ? "page" : props.isImages ? "image" : null
-							}/?format=csv${props.queryString}`}
+							href={`/api/site/${siteId}/scan/${scanObjId}/${
+								isLinks ? "link" : isPages || isSeo ? "page" : isImages ? "image" : null
+							}/?format=csv${queryString}`}
 							tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 						>
 							<span tw="flex items-center space-x-2">
 								<DownloadIcon tw="w-4 h-4 text-white" />
 
-								<span>{HeadingOptionsLabel[0].label}</span>
+								<span>{HeadingOptionsLabels[0].label}</span>
 							</span>
 						</a>
 					) : (
 						<Skeleton duration={2} width={150} height={40} tw="ml-2" />
 					)
 				) : asPath.includes("pages") || asPath.includes("images") ? (
-					props.permissions?.includes("can_see_images") &&
-					props.permissions?.includes("can_see_pages") &&
-					props.permissions?.includes("can_see_scripts") &&
-					props.permissions?.includes("can_see_stylesheets") ? (
+					permissions?.includes("can_see_images") &&
+					permissions?.includes("can_see_pages") &&
+					permissions?.includes("can_see_scripts") &&
+					permissions?.includes("can_see_stylesheets") ? (
 						componentReady ? (
 							<a
-								href={`/api/site/${props.siteId}/scan/${props.scanObjId}/${
-									props.isLinks ? "link" : props.isPages || props.isSeo ? "page" : props.isImages ? "image" : null
-								}/?format=csv${props.queryString}`}
+								href={`/api/site/${siteId}/scan/${scanObjId}/${
+									isLinks ? "link" : isPages || isSeo ? "page" : isImages ? "image" : null
+								}/?format=csv${queryString}`}
 								tw="inline-flex items-center ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 							>
 								<span tw="flex items-center space-x-2">
 									<DownloadIcon tw="w-4 h-4 text-white" />
 
-									<span>{HeadingOptionsLabel[0].label}</span>
+									<span>{HeadingOptionsLabels[0].label}</span>
 								</span>
 							</a>
 						) : (
@@ -234,7 +252,7 @@ const HeadingOptions = (props) => {
 						>
 							<span tw="flex items-center space-x-2">
 								<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
-								<span>{HeadingOptionsLabel[0].label}</span>
+								<span>{HeadingOptionsLabels[0].label}</span>
 							</span>
 						</button>
 					) : (
@@ -246,6 +264,50 @@ const HeadingOptions = (props) => {
 	);
 };
 
-HeadingOptions.propTypes = {};
+HeadingOptions.propTypes = {
+	componentReady: PropTypes.bool,
+	count: PropTypes.number,
+	dataLabel: PropTypes.array,
+	disableLocalTime: PropTypes.bool,
+	handleCrawl: PropTypes.func,
+	isCrawlFinished: PropTypes.bool,
+	isCrawlStarted: PropTypes.bool,
+	isImages: PropTypes.bool,
+	isLinks: PropTypes.bool,
+	isPages: PropTypes.bool,
+	isSeo: PropTypes.bool,
+	pageTitle: PropTypes.string,
+	permissions: PropTypes.array,
+	queryString: PropTypes.string,
+	scanFinishedAt: PropTypes.string,
+	scanObjId: PropTypes.number,
+	siteId: PropTypes.number,
+	siteName: PropTypes.string,
+	siteUrl: PropTypes.string,
+	verified: PropTypes.bool
+};
+
+HeadingOptions.defaultProps = {
+	componentReady: false,
+	count: null,
+	dataLabel: null,
+	disableLocalTime: false,
+	handleCrawl: null,
+	isCrawlFinished: false,
+	isCrawlStarted: false,
+	isImages: false,
+	isLinks: false,
+	isPages: false,
+	isSeo: false,
+	pageTitle: null,
+	permissions: null,
+	queryString: null,
+	scanFinishedAt: null,
+	scanObjId: null,
+	siteId: null,
+	siteName: null,
+	siteUrl: null,
+	verified: false
+};
 
 export default HeadingOptions;
