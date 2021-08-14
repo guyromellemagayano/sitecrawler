@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 // Hooks
 import usePage from "@hooks/usePage";
 
-// Helpers
+// Utils
 import { removeURLParameter } from "@utils/functions";
 
 // Components
@@ -32,13 +32,14 @@ const PaginationLocale = {
 };
 
 const DataPagination = ({
-	pathName,
-	apiEndpoint,
 	activePage,
+	apiEndpoint,
+	componentReady,
+	handleItemsPerPageChange,
 	linksPerPage,
-	handleItemsPerPageChange
+	pathName
 }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+	const [pageData, setPageData] = React.useState([]);
 
 	const currentPage = activePage || 1;
 	const linkNumbers = [];
@@ -59,18 +60,12 @@ const DataPagination = ({
 	};
 
 	React.useEffect(() => {
-		page
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
+		page ? setPageData(page) : null;
 
-		return setComponentReady(false);
+		return pageData;
 	}, [page]);
 
-	const totalPages = Math.ceil(page?.count / linksPerPage);
+	const totalPages = Math.ceil(pageData.count / linksPerPage);
 
 	for (let i = 1; i <= totalPages; i++) {
 		pageNumbers.push(i);
@@ -78,7 +73,7 @@ const DataPagination = ({
 
 	if (totalPages < 1) return null;
 
-	for (let i = 1; i <= page?.count; i++) {
+	for (let i = 1; i <= pageData.count; i++) {
 		linkNumbers.push(i);
 	}
 
@@ -146,6 +141,7 @@ const DataPagination = ({
 DataPagination.propTypes = {
 	activePage: PropTypes.number,
 	apiEndpoint: PropTypes.string,
+	componentReady: PropTypes.bool,
 	handleItemsPerPageChange: PropTypes.func,
 	linksPerPage: PropTypes.number,
 	pathName: PropTypes.string
@@ -154,6 +150,7 @@ DataPagination.propTypes = {
 DataPagination.defaultProps = {
 	activePage: null,
 	apiEndpoint: null,
+	componentReady: false,
 	handleItemsPerPageChange: null,
 	linksPerPage: null,
 	pathName: null
