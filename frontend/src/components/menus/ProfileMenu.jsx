@@ -129,7 +129,7 @@ const ProfileMenu = ({ user }) => {
 											{val.links
 												.filter((page) => page.slug === "logout")
 												.map((val, key) => (
-													<Link key={key} href={val.url}>
+													<Link key={key} href={val.url} passHref>
 														<a
 															tw="block px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
 															role="menuitem"

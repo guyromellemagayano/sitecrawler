@@ -23,29 +23,27 @@ const Logout = () => {
 
 	const { mutateUser } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login"
+		redirectTo: LoginLink
 	});
 
 	React.useEffect(() => {
 		(async () => {
-			const { response } = await usePostMethod(LogoutApiEndpoint);
+			const response = await usePostMethod(LogoutApiEndpoint);
 
 			Math.floor(response?.status / 200) === 1
 				? (() => {
-						response?.data?.detail
+						response?.data.detail
 							? (() => {
 									setLogoutDetail(response?.data?.detail);
-									// mutateUser(UserApiEndpoint);
+									mutateUser(UserApiEndpoint, false);
 
-									response?.data.detail !== undefined ? (window.location.href = LoginLink) : error;
+									response?.data.detail !== undefined ? (window.location.href = LoginLink) : null;
 							  })()
 							: null;
 				  })()
 				: null;
 		})();
-	});
-
-	console.log(logoutDetail);
+	}, []);
 
 	return (
 		<Layout>
