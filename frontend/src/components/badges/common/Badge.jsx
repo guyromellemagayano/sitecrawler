@@ -35,7 +35,7 @@ Badge.defaultProps = {
 	isDanger: false,
 	isSuccess: false,
 	isWarning: false,
-	text: ""
+	text: null
 };
 
 export default Badge;
