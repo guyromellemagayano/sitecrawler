@@ -31,7 +31,6 @@ import Sidebar from "@components/layouts/Sidebar";
 
 const Billing = ({ width }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
-	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 
 	const { user } = useUser({
 		redirectIfFound: false,
@@ -55,13 +54,20 @@ const Billing = ({ width }) => {
 			<NextSeo title={componentReady ? BillingSettingsLabels[0].label : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar width={width} user={componentReady ? user : null} />
+				<Sidebar
+					ref={ref}
+					width={width}
+					user={componentReady ? user : null}
+					openSidebar={isComponentVisible}
+					setOpenSidebar={setIsComponentVisible}
+				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="relative flex-shrink-0 flex bg-white">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton
-								handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
+								openSidebar={isComponentVisible}
+								setOpenSidebar={setIsComponentVisible}
 							/>
 						</div>
 
