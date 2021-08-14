@@ -9,10 +9,10 @@ import "twin.macro";
 import { SearchIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
 
-// JSON
-import LinkOptionsLabel from "./labels/LinkOptions.json";
+// Enums
+import { LinkOptionsLabels } from "@enums/LinkOptionsLabels";
 
-const LinkOptions = (props) => {
+const LinkOptions = ({ onSearchEvent, permissions, searchKey }) => {
 	const { asPath } = useRouter();
 
 	return (
@@ -22,16 +22,16 @@ const LinkOptions = (props) => {
 					<div tw="flex-1 flex">
 						<div tw="w-full flex lg:ml-0">
 							<label htmlFor="searchSites" tw="sr-only">
-								{LinkOptionsLabel[1].label}
+								{LinkOptionsLabels[1].label}
 							</label>
 							<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center">
 								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
 									<SearchIcon tw="h-5 w-5 text-gray-400" />
 								</div>
-								{(props.permissions?.includes("can_see_pages") &&
-									props.permissions?.includes("can_see_scripts") &&
-									props.permissions?.includes("can_see_stylesheets") &&
-									props.permissions?.includes("can_see_images")) ||
+								{(permissions?.includes("can_see_pages") &&
+									permissions?.includes("can_see_scripts") &&
+									permissions?.includes("can_see_stylesheets") &&
+									permissions?.includes("can_see_images")) ||
 								asPath.includes("links") ? (
 									<input
 										type="search"
@@ -40,19 +40,19 @@ const LinkOptions = (props) => {
 										tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
 										placeholder={
 											asPath.includes("pages")
-												? LinkOptionsLabel[0].label
+												? LinkOptionsLabels[0].label
 												: asPath.includes("links")
-												? LinkOptionsLabel[1].label
+												? LinkOptionsLabels[1].label
 												: asPath.includes("images")
-												? LinkOptionsLabel[2].label
-												: LinkOptionsLabel[3].label
+												? LinkOptionsLabels[2].label
+												: LinkOptionsLabels[3].label
 										}
-										onKeyUp={props.onSearchEvent}
-										defaultValue={props.searchKey}
+										onKeyUp={onSearchEvent}
+										defaultValue={searchKey}
 										autoFocus
 									/>
 								) : (
-									<p tw="sm:text-sm placeholder-gray-500 pl-8">{LinkOptionsLabel[9].label}</p>
+									<p tw="sm:text-sm placeholder-gray-500 pl-8">{LinkOptionsLabels[9].label}</p>
 								)}
 							</div>
 						</div>
@@ -63,6 +63,16 @@ const LinkOptions = (props) => {
 	);
 };
 
-LinkOptions.propTypes = {};
+LinkOptions.propTypes = {
+	onSearchEvent: PropTypes.func,
+	permissions: PropTypes.array,
+	searchKey: PropTypes.string
+};
+
+LinkOptions.defaultProps = {
+	onSearchEvent: null,
+	permissions: null,
+	searchKey: null
+};
 
 export default LinkOptions;
