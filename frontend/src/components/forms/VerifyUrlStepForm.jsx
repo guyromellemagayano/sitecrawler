@@ -6,31 +6,27 @@ import * as React from "react";
 import Link from "next/link";
 
 // External
-import axios from "axios";
-import Cookies from "js-cookie";
 import tw from "twin.macro";
 
 // JSON
 import { VerifyUrlLabels } from "@enums/VerifyUrlLabels";
+import { usePostMethod } from "@hooks/useHttpMethod";
+import { SiteApiEndpoint } from "@enums/ApiEndpoints";
 
 const VerifyUrlStepForm = ({
 	currentStep,
 	disableSiteVerify,
 	enableNextStep,
-	errorMsgLoaded,
 	setCurrentStep,
 	setDisableSiteVerify,
 	setEditMode,
 	setEnableNextStep,
 	setErrorMsg,
-	setErrorMsgLoaded,
 	setSiteId,
 	setSiteVerifyId,
 	setSuccessMsg,
-	setSuccessMsgLoaded,
 	siteData,
-	siteVerifyId,
-	successMsgLoaded
+	siteVerifyId
 }) => {
 	const handleSubmit = async (e) => {
 		e?.preventDefault();
@@ -41,44 +37,36 @@ const VerifyUrlStepForm = ({
 			sid: e?.currentTarget?.site_verify_id?.value
 		};
 
-		const response = await axios
-			.post("/api/site/" + body?.sid + "/verify/", body, {
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-					"X-CSRFToken": Cookies.get("csrftoken")
-				}
-			})
-			.then((response) => {
-				return response;
-			})
-			.catch((error) => {
-				return error.response;
-			});
+		const { response, error } = await usePostMethod(SiteApiEndpoint + body?.sid + "/verify/", body);
 
-		const data = await response?.data;
+		Math.floor(response?.status / 200) === 1
+			? response?.data?.verified === true
+				? (() => {
+						setSuccessMsg((successMsg) => [...successMsg, VerifyUrlLabels[20].label]);
 
-		if (Math.floor(response?.status / 200) === 1) {
-			if (data?.verified === true) {
-				setSuccessMsg(VerifyUrlLabels[20].label);
-				setSuccessMsgLoaded(!successMsgLoaded);
-				setTimeout(() => {
-					setEnableNextStep(!enableNextStep);
-					setDisableSiteVerify(false);
-				}, 1000);
-			} else {
-				setErrorMsg(VerifyUrlLabels[21].label);
-				setErrorMsgLoaded(!errorMsgLoaded);
-				setTimeout(() => {
-					setDisableSiteVerify(false);
-				}, 1000);
-			}
-		} else {
-			setErrorMsg(VerifyUrlLabels[21].label);
-			setErrorMsgLoaded(!errorMsgLoaded);
+						setTimeout(() => {
+							setEnableNextStep(!enableNextStep);
+							setDisableSiteVerify(false);
+						}, 1000);
+				  })()
+				: (() => {
+						setErrorMsg((errorMsg) => [...errorMsg, VerifyUrlLabels[21].label]);
 
-			return null;
-		}
+						setTimeout(() => {
+							setDisableSiteVerify(false);
+						}, 1000);
+
+						return error;
+				  })()
+			: (() => {
+					setErrorMsg((errorMsg) => [...errorMsg, VerifyUrlLabels[21].label]);
+
+					setTimeout(() => {
+						setDisableSiteVerify(false);
+					}, 1000);
+
+					return error;
+			  })();
 	};
 
 	const handleEditMode = (e) => {
@@ -179,44 +167,32 @@ VerifyUrlStepForm.propTypes = {
 	currentStep: PropTypes.number,
 	disableSiteVerify: PropTypes.bool,
 	enableNextStep: PropTypes.bool,
-	errorMsgLoaded: PropTypes.bool,
-	setCurrentStep: PropTypes.number,
-	setDisableSiteVerify: PropTypes.bool,
-	setEditMode: PropTypes.bool,
-	setEnableNextStep: PropTypes.bool,
-	setErrorMsg: PropTypes.string,
-	setErrorMsgLoaded: PropTypes.bool,
-	setSiteId: PropTypes.number,
-	setSiteVerifyId: PropTypes.number,
-	setSuccessMsg: PropTypes.string,
-	setSuccessMsgLoaded: PropTypes.bool,
-	siteData: PropTypes.shape({
-		id: PropTypes.number
-	}),
-	siteVerifyId: PropTypes.number,
-	successMsgLoaded: PropTypes.bool
+	id: PropTypes.number,
+	setCurrentStep: PropTypes.func,
+	setDisableSiteVerify: PropTypes.func,
+	setEditMode: PropTypes.func,
+	setEnableNextStep: PropTypes.func,
+	setErrorMsg: PropTypes.func,
+	setSiteId: PropTypes.func,
+	setSiteVerifyId: PropTypes.func,
+	setSuccessMsg: PropTypes.func,
+	siteVerifyId: PropTypes.number
 };
 
 VerifyUrlStepForm.defaultProps = {
 	currentStep: null,
 	disableSiteVerify: false,
 	enableNextStep: false,
-	errorMsgLoaded: false,
+	id: null,
 	setCurrentStep: null,
 	setDisableSiteVerify: false,
 	setEditMode: false,
 	setEnableNextStep: false,
 	setErrorMsg: null,
-	setErrorMsgLoaded: false,
 	setSiteId: null,
 	setSiteVerifyId: null,
 	setSuccessMsg: null,
-	setSuccessMsgLoaded: false,
-	siteData: {
-		id: null
-	},
-	siteVerifyId: null,
-	successMsgLoaded: false
+	siteVerifyId: null
 };
 
 export default VerifyUrlStepForm;

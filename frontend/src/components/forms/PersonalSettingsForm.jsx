@@ -27,10 +27,10 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 	React.useEffect(() => {
 		user
 			? (() => {
-					setUsername(user.username);
-					setFirstname(user.first_name);
-					setLastname(user.last_name);
-					setEmail(user.email);
+					setUsername(user?.username);
+					setFirstname(user?.first_name);
+					setLastname(user?.last_name);
+					setEmail(user?.email);
 			  })()
 			: null;
 
@@ -38,7 +38,7 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 	}, [user]);
 
 	React.useEffect(() => {
-		!disableForm ? firstnameRef.current.focus() : null;
+		!disableForm ? firstnameRef.current.focus() : setDisableForm(true);
 	}, [disableForm]);
 
 	const handleUserNameInputChange = (e) => {
@@ -84,12 +84,11 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 					username: values.username,
 					first_name: values.firstname,
 					last_name: values.lastname,
-					settings: user.settings,
-					large_page_size_threshold: user.large_page_size_threshold
+					settings: user?.settings,
+					large_page_size_threshold: user?.large_page_size_threshold
 				};
 
-				const response = await usePatchMethod(UserApiEndpoint, body);
-				const data = response?.data;
+				const { response, error } = await usePatchMethod(UserApiEndpoint, body);
 
 				setErrorMsg([]);
 				setSuccessMsg([]);
@@ -100,18 +99,20 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 							setSubmitting(false);
 							setDisableForm(!disableForm);
 							setSuccessMsg((successMsg) => [...successMsg, PersonalSettingsLabels[11].label]);
+
+							mutateUser(UserApiEndpoint);
 					  })()
 					: (() => {
 							resetForm({ values: "" });
 							setSubmitting(false);
 							setDisableForm(!disableForm);
 
-							data
-								? setErrorMsg((errorMsg) => [...errorMsg, data?.username])
+							response?.data
+								? setErrorMsg((errorMsg) => [...errorMsg, response?.data?.username])
 								: setErrorMsg((errorMsg) => [...errorMsg, PasswordSettingsLabels[15].label]);
-					  })();
 
-				mutateUser(UserApiEndpoint);
+							return error;
+					  })();
 			}}
 		>
 			{({ errors, handleBlur, handleSubmit, isSubmitting, touched, values }) => (
@@ -332,14 +333,6 @@ PersonalSettingsForm.propTypes = {
 	setErrorMsg: PropTypes.func,
 	setSuccessMsg: PropTypes.func,
 	settings: PropTypes.object,
-	user: PropTypes.shape({
-		email: PropTypes.string,
-		first_name: PropTypes.string,
-		large_page_size_threshold: PropTypes.number,
-		last_name: PropTypes.string,
-		settings: PropTypes.object,
-		username: PropTypes.string
-	}),
 	username: PropTypes.string
 };
 
@@ -353,14 +346,6 @@ PersonalSettingsForm.defaultProps = {
 	setErrorMsg: null,
 	setSuccessMsg: null,
 	settings: null,
-	user: {
-		email: null,
-		first_name: null,
-		large_page_size_threshold: null,
-		last_name: null,
-		settings: null,
-		username: null
-	},
 	username: null
 };
 

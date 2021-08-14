@@ -9,51 +9,68 @@ import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
 // Enums
-import { GlobalSettingsLabels } from "@enums/GlobalSettingsLabels";
+import { SettingsLabels } from "@enums/SettingsLabels";
+import { SiteApiEndpoint } from "@enums/ApiEndpoints";
 
 // Hooks
 import { usePatchMethod } from "@hooks/useHttpMethod";
-import { SiteApiEndpoint, UserApiEndpoint } from "@enums/ApiEndpoints";
 
-const LargePageSizeSettingsForm = ({
+const SiteInformationSettingsForm = ({
 	componentReady,
-	endpoint,
-	largePageSizeThreshold,
 	mutateSite,
 	mutateSiteId,
-	mutateUser,
 	setErrorMsg,
-	siteIdApiEndpoint,
-	setLargePageSizeThreshold,
 	setSuccessMsg,
-	siteId,
-	user
+	siteId
 }) => {
 	const [disableForm, setDisableForm] = React.useState(true);
+	const [sitename, setSitename] = React.useState("");
+	const [siteurl, setSiteUrl] = React.useState("");
 
-	const largePageSizeThresholdRef = React.useRef();
+	const sitenameRef = React.useRef();
+	const siteIdApiEndpoint = `${SiteApiEndpoint + siteId?.id}/`;
 
 	React.useEffect(() => {
-		!disableForm ? largePageSizeThresholdRef.current.focus() : setDisableForm(true);
+		siteId
+			? (() => {
+					setSitename(siteId?.name);
+					setSiteUrl(siteId?.url);
+			  })()
+			: null;
+
+		return { sitename, siteurl };
+	}, [siteId]);
+
+	React.useEffect(() => {
+		!disableForm ? sitenameRef.current.focus() : setDisableForm(true);
 	}, [disableForm]);
 
-	const handleLargePageSizeInputChange = (e) => {
-		setLargePageSizeThreshold(e.target.value);
+	const handleSiteNameInputChange = (e) => {
+		setSitename(e.target.value);
+	};
+
+	const handleSiteUrlInputChange = (e) => {
+		setSiteUrl(e.target.value);
 	};
 
 	return (
 		<Formik
 			enableReinitialize={true}
-			initialValues={{ largepagesizethreshold: largePageSizeThreshold }}
+			initialValues={{
+				sitename: sitename
+			}}
 			validationSchema={Yup.object().shape({
-				largepagesizethreshold: Yup.number().required(GlobalSettingsLabels[12].label)
+				sitename: Yup.string()
+					.min(1, SettingsLabels[21].label)
+					.max(255, SettingsLabels[22].label)
+					.required(SettingsLabels[20].label)
 			})}
 			onSubmit={async (values, { setSubmitting, resetForm }) => {
 				const body = {
-					large_page_size_threshold: values.largepagesizethreshold
+					name: values.sitename
 				};
 
-				const response = await usePatchMethod(endpoint, body);
+				const response = await usePatchMethod(siteIdApiEndpoint, body);
 
 				setErrorMsg([]);
 				setSuccessMsg([]);
@@ -63,24 +80,16 @@ const LargePageSizeSettingsForm = ({
 							resetForm({ values: "" });
 							setSubmitting(false);
 							setDisableForm(!disableForm);
-							setSuccessMsg((successMsg) => [...successMsg, GlobalSettingsLabels[13].label]);
+							setSuccessMsg((successMsg) => [...successMsg, SettingsLabels[15].label]);
 					  })()
 					: (() => {
 							resetForm({ values: "" });
 							setSubmitting(false);
 							setDisableForm(!disableForm);
-							setErrorMsg((errorMsg) => [...errorMsg, GlobalSettingsLabels[11].label]);
+							setErrorMsg((errorMsg) => [...errorMsg, SettingsLabels[14].label]);
 					  })();
 
-				user && user?.large_page_size_threshold
-					? (() => {
-							siteId && siteId?.large_page_size_threshold
-								? (() => {
-										mutateSiteId(siteIdApiEndpoint);
-								  })()
-								: mutateUser(UserApiEndpoint);
-					  })()
-					: null;
+				mutateSiteId(siteIdApiEndpoint);
 			}}
 		>
 			{({ errors, handleBlur, handleSubmit, isSubmitting, touched, values }) => (
@@ -89,29 +98,26 @@ const LargePageSizeSettingsForm = ({
 						<div tw="sm:col-span-3">
 							{componentReady ? (
 								<>
-									<label
-										htmlFor="largepagesizethreshold"
-										tw="block text-sm font-medium leading-5 text-gray-700"
-									>
-										{GlobalSettingsLabels[3].label}
+									<label htmlFor="sitename" tw="block text-sm font-medium leading-5 text-gray-700">
+										{SettingsLabels[4].label}
 									</label>
 									<div tw="mt-1 relative flex rounded-md shadow-sm">
 										<input
-											ref={largePageSizeThresholdRef}
-											type="number"
-											id="largepagesizethreshold"
-											value={values.largepagesizethreshold}
+											ref={sitenameRef}
+											type="text"
+											id="sitename"
+											value={values.sitename}
 											autoFocus={true}
-											name="largepagesizethreshold"
+											name="sitename"
 											disabled={isSubmitting || disableForm}
 											css={[
 												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
 												(isSubmitting || disableForm) &&
 													tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-												errors.largepagesizethreshold ? tw`border-red-300` : tw`border-gray-300`
+												errors.sitename ? tw`border-red-300` : tw`border-gray-300`
 											]}
-											aria-describedby="largepagesizethreshold"
-											onChange={handleLargePageSizeInputChange}
+											aria-describedby="sitename"
+											onChange={handleSiteNameInputChange}
 											onBlur={handleBlur}
 										/>
 									</div>
@@ -123,12 +129,36 @@ const LargePageSizeSettingsForm = ({
 								</>
 							)}
 
-							{errors.largepagesizethreshold && touched.largepagesizethreshold && (
+							{errors.sitename && touched.sitename && (
 								<span tw="block mt-2 text-xs leading-5 text-red-700">
-									{errors.largepagesizethreshold &&
-										touched.largepagesizethreshold &&
-										errors.largepagesizethreshold}
+									{errors.sitename && touched.sitename && errors.sitename}
 								</span>
+							)}
+						</div>
+
+						<div tw="sm:col-span-3">
+							{componentReady ? (
+								<>
+									<label htmlFor="siteurl" tw="block text-sm font-medium leading-5 text-gray-700">
+										{SettingsLabels[5].label}
+									</label>
+									<div tw="mt-1 rounded-md shadow-sm">
+										<input
+											id="siteurl"
+											type="url"
+											value={siteurl}
+											disabled={true}
+											tw="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300 opacity-50 bg-gray-300 cursor-not-allowed"
+											aria-describedby="email"
+											onChange={handleSiteUrlInputChange}
+										/>
+									</div>
+								</>
+							) : (
+								<>
+									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
+									<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+								</>
 							)}
 						</div>
 
@@ -149,10 +179,10 @@ const LargePageSizeSettingsForm = ({
 													]}
 												>
 													{isSubmitting
-														? GlobalSettingsLabels[15].label
+														? SettingsLabels[19].label
 														: !disableForm
-														? GlobalSettingsLabels[17].label
-														: GlobalSettingsLabels[16].label}
+														? SettingsLabels[8].label
+														: SettingsLabels[6].label}
 												</button>
 											) : (
 												<button
@@ -167,10 +197,10 @@ const LargePageSizeSettingsForm = ({
 													onClick={() => setDisableForm(!disableForm)}
 												>
 													{isSubmitting
-														? GlobalSettingsLabels[15].label
+														? SettingsLabels[19].label
 														: !disableForm
-														? GlobalSettingsLabels[17].label
-														: GlobalSettingsLabels[16].label}
+														? SettingsLabels[8].label
+														: SettingsLabels[6].label}
 												</button>
 											)
 										) : (
@@ -192,34 +222,30 @@ const LargePageSizeSettingsForm = ({
 	);
 };
 
-LargePageSizeSettingsForm.propTypes = {
+SiteInformationSettingsForm.propTypes = {
 	componentReady: PropTypes.bool,
-	endpoint: PropTypes.string,
-	large_page_size_threshold: PropTypes.number,
-	largePageSizeThreshold: PropTypes.number,
 	mutateSite: PropTypes.func,
 	mutateSiteId: PropTypes.func,
 	mutateUser: PropTypes.func,
 	setErrorMsg: PropTypes.func,
-	setLargePageSizeThreshold: PropTypes.func,
 	setSuccessMsg: PropTypes.func,
-	siteId: PropTypes.object,
-	siteIdApiEndpoint: PropTypes.any
+	id: PropTypes.number,
+	name: PropTypes.string,
+	url: PropTypes.string,
+	user: PropTypes.object
 };
 
-LargePageSizeSettingsForm.defaultProps = {
+SiteInformationSettingsForm.defaultProps = {
 	componentReady: false,
-	endpoint: null,
-	large_page_size_threshold: null,
-	largePageSizeThreshold: null,
 	mutateSite: null,
 	mutateSiteId: null,
 	mutateUser: null,
 	setErrorMsg: null,
-	setLargePageSizeThreshold: null,
 	setSuccessMsg: null,
-	siteId: null,
-	siteIdApiEndpoint: null
+	id: null,
+	name: null,
+	url: null,
+	user: null
 };
 
-export default LargePageSizeSettingsForm;
+export default SiteInformationSettingsForm;

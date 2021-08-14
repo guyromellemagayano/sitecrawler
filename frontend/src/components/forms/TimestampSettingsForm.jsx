@@ -13,7 +13,13 @@ import { UserApiEndpoint } from "@enums/ApiEndpoints";
 // Hooks
 import { usePatchMethod } from "@hooks/useHttpMethod";
 
-const TimestampSettingsForm = ({ componentReady, setErrorMsg, setSuccessMsg, user }) => {
+const TimestampSettingsForm = ({
+	componentReady,
+	mutateUser,
+	setErrorMsg,
+	setSuccessMsg,
+	user
+}) => {
 	const handleToggleTimestamp = async (e) => {
 		e.preventDefault();
 
@@ -28,15 +34,11 @@ const TimestampSettingsForm = ({ componentReady, setErrorMsg, setSuccessMsg, use
 
 		Math.floor(response?.status / 200 === 1)
 			? data?.settings?.disableLocalTime
-				? (() => {
-						setSuccessMsg((successMsg) => [...successMsg, GlobalSettingsLabels[9].label]);
-				  })()
-				: (() => {
-						setSuccessMsg((successMsg) => [...successMsg, GlobalSettingsLabels[10].label]);
-				  })()
-			: (() => {
-					setErrorMsg((errorMsg) => [...errorMsg, GlobalSettingsLabels[11].label]);
-			  })();
+				? setSuccessMsg((successMsg) => [...successMsg, GlobalSettingsLabels[9].label])
+				: setSuccessMsg((successMsg) => [...successMsg, GlobalSettingsLabels[10].label])
+			: setErrorMsg((errorMsg) => [...errorMsg, GlobalSettingsLabels[11].label]);
+
+		mutateUser(UserApiEndpoint);
 	};
 
 	return (
@@ -125,31 +127,17 @@ const TimestampSettingsForm = ({ componentReady, setErrorMsg, setSuccessMsg, use
 TimestampSettingsForm.propTypes = {
 	componentReady: PropTypes.bool,
 	disableLocalTime: PropTypes.bool,
+	mutateUser: PropTypes.func,
 	setErrorMsg: PropTypes.func,
-	setSuccessMsg: PropTypes.func,
-	settings: PropTypes.shape({
-		disableLocalTime: PropTypes.bool
-	}),
-	user: PropTypes.shape({
-		settings: PropTypes.shape({
-			disableLocalTime: PropTypes.bool
-		})
-	})
+	setSuccessMsg: PropTypes.func
 };
 
 TimestampSettingsForm.defaultProps = {
 	componentReady: false,
 	disableLocalTime: false,
+	mutateUser: null,
 	setErrorMsg: null,
-	setSuccessMsg: null,
-	settings: {
-		disableLocalTime: false
-	},
-	user: {
-		settings: {
-			disableLocalTime: false
-		}
-	}
+	setSuccessMsg: null
 };
 
 export default TimestampSettingsForm;

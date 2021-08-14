@@ -9,7 +9,6 @@ import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
 // Enums
-import { ComponentReadyInterval } from "@enums/GlobalValues";
 import { ContactApiEndpoint } from "@enums/ApiEndpoints";
 import { SupportFormLabels } from "@enums/SupportFormLabels";
 
@@ -20,22 +19,9 @@ import { usePostMethod } from "@hooks/useHttpMethod";
 import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
 import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
 
-const SupportForm = ({ user }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+const SupportForm = ({ componentReady }) => {
 	const [errorMsg, setErrorMsg] = React.useState([]);
 	const [successMsg, setSuccessMsg] = React.useState([]);
-
-	React.useEffect(() => {
-		user
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, ComponentReadyInterval);
-			  })()
-			: null;
-
-		return setComponentReady(false);
-	}, [user]);
 
 	return (
 		<div>
@@ -170,6 +156,14 @@ const SupportForm = ({ user }) => {
 			</div>
 		</div>
 	);
+};
+
+SupportForm.propTypes = {
+	componentReady: PropTypes.bool
+};
+
+SupportForm.defaultProps = {
+	componentReady: false
 };
 
 export default SupportForm;
