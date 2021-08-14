@@ -27,7 +27,7 @@ const SiteInformationSettingsForm = ({
 	const [sitename, setSitename] = React.useState("");
 	const [siteurl, setSiteUrl] = React.useState("");
 
-	const sitenameRef = React.useRef();
+	const sitenameRef = React.useRef(null);
 	const siteIdApiEndpoint = `${SiteApiEndpoint + siteId?.id}/`;
 
 	React.useEffect(() => {
@@ -40,10 +40,6 @@ const SiteInformationSettingsForm = ({
 
 		return { sitename, siteurl };
 	}, [siteId]);
-
-	React.useEffect(() => {
-		!disableForm ? sitenameRef.current.focus() : setDisableForm(true);
-	}, [disableForm]);
 
 	const handleSiteNameInputChange = (e) => {
 		setSitename(e.target.value);
@@ -103,7 +99,6 @@ const SiteInformationSettingsForm = ({
 									</label>
 									<div tw="mt-1 relative flex rounded-md shadow-sm">
 										<input
-											ref={sitenameRef}
 											type="text"
 											id="sitename"
 											value={values.sitename}

@@ -17,11 +17,7 @@ import { usePostMethod } from "@hooks/useHttpMethod";
 const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSuccessMsg }) => {
 	const [disableForm, setDisableForm] = React.useState(true);
 
-	const password1Ref = React.useRef();
-
-	React.useEffect(() => {
-		!disableForm ? password1Ref.current.focus() : null;
-	}, [disableForm]);
+	const password1Ref = React.useRef(null);
 
 	return (
 		<Formik
@@ -80,7 +76,6 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 									</label>
 									<div tw="mt-1 relative flex rounded-md shadow-sm">
 										<input
-											ref={password1Ref}
 											type="password"
 											id="password1"
 											value={values.password1}

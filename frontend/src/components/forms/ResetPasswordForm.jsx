@@ -1,6 +1,9 @@
 // React
 import * as React from "react";
 
+// NextJS
+import dynamic from "next/dynamic";
+
 // External
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -11,22 +14,25 @@ import tw from "twin.macro";
 // Enums
 import { ResetPasswordApiEndpoint } from "@enums/ApiEndpoints";
 import { ResetPasswordLabels } from "@enums/ResetPasswordLabels";
+import { usePostMethod } from "@hooks/useHttpMethod";
 
 // Components
-import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
-import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
+const ErrorMessageAlert = dynamic(() => import("@components/alerts/ErrorMessageAlert"));
+const SuccessMessageAlert = dynamic(() => import("@components/alerts/SuccessMessageAlert"));
 
 const ResetPasswordForm = () => {
-	const [errorMsg, setErrorMsg] = React.useState("");
-	const [successMsg, setSuccessMsg] = React.useState("");
+	const [errorMsg, setErrorMsg] = React.useState([]);
+	const [successMsg, setSuccessMsg] = React.useState([]);
 
 	return (
 		<>
-			{errorMsg ? (
-				<ErrorMessageAlert message={errorMsg} />
-			) : successMsg ? (
-				<SuccessMessageAlert message={successMsg} />
-			) : null}
+			{errorMsg.length > 0
+				? errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)
+				: null}
+
+			{successMsg.length > 0
+				? successMsg.map((value, index) => <SuccessMessageAlert key={index} message={value} />)
+				: null}
 
 			<Formik
 				initialValues={{
@@ -42,33 +48,19 @@ const ResetPasswordForm = () => {
 						email: values.email
 					};
 
-					await axios
-						.post(ResetPasswordApiEndpoint, body, {
-							headers: {
-								Accept: "application/json",
-								"Content-Type": "application/json",
-								"X-CSRFToken": Cookies.get("csrftoken")
-							}
-						})
-						.then((response) => {
-							Math.floor(response.status / 200) === 1
-								? (() => {
-										setErrorMsg("");
-										resetForm({ values: "" });
-										setSubmitting(false);
-										setSuccessMsg(response.data.detail);
-								  })()
-								: (() => {
-										setSubmitting(false);
-										resetForm({ values: "" });
-										setErrorMsg(ResetPasswordLabels[3].label);
-								  })();
-						})
-						.catch((error) => {
-							setSubmitting(false);
-							resetForm({ values: "" });
-							setErrorMsg(ResetPasswordLabels[3].label);
-						});
+					const response = await usePostMethod(ResetPasswordApiEndpoint, body);
+
+					Math.floor(response?.status / 200) === 1
+						? (() => {
+								resetForm({ values: "" });
+								setSubmitting(false);
+								setSuccessMsg((successMsg) => [...successMsg, response?.data?.detail]);
+						  })()
+						: (() => {
+								resetForm({ values: "" });
+								setSubmitting(false);
+								setErrorMsg((errorMsg) => [...errorMsg, ResetPasswordLabels[3].label]);
+						  })();
 				}}
 			>
 				{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
@@ -83,6 +75,7 @@ const ResetPasswordForm = () => {
 									type="email"
 									name="email"
 									disabled={isSubmitting}
+									autoFocus={true}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 										isSubmitting &&

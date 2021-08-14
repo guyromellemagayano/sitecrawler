@@ -13,13 +13,12 @@ import { GlobalSettingsLabels } from "@enums/GlobalSettingsLabels";
 
 // Hooks
 import { usePatchMethod } from "@hooks/useHttpMethod";
-import { SiteApiEndpoint, UserApiEndpoint } from "@enums/ApiEndpoints";
+import { UserApiEndpoint } from "@enums/ApiEndpoints";
 
 const LargePageSizeSettingsForm = ({
 	componentReady,
 	endpoint,
 	largePageSizeThreshold,
-	mutateSite,
 	mutateSiteId,
 	mutateUser,
 	setErrorMsg,
@@ -30,12 +29,6 @@ const LargePageSizeSettingsForm = ({
 	user
 }) => {
 	const [disableForm, setDisableForm] = React.useState(true);
-
-	const largePageSizeThresholdRef = React.useRef();
-
-	React.useEffect(() => {
-		!disableForm ? largePageSizeThresholdRef.current.focus() : setDisableForm(true);
-	}, [disableForm]);
 
 	const handleLargePageSizeInputChange = (e) => {
 		setLargePageSizeThreshold(e.target.value);
@@ -97,7 +90,6 @@ const LargePageSizeSettingsForm = ({
 									</label>
 									<div tw="mt-1 relative flex rounded-md shadow-sm">
 										<input
-											ref={largePageSizeThresholdRef}
 											type="number"
 											id="largepagesizethreshold"
 											value={values.largepagesizethreshold}
@@ -197,7 +189,6 @@ LargePageSizeSettingsForm.propTypes = {
 	endpoint: PropTypes.string,
 	large_page_size_threshold: PropTypes.number,
 	largePageSizeThreshold: PropTypes.number,
-	mutateSite: PropTypes.func,
 	mutateSiteId: PropTypes.func,
 	mutateUser: PropTypes.func,
 	setErrorMsg: PropTypes.func,
@@ -212,7 +203,6 @@ LargePageSizeSettingsForm.defaultProps = {
 	endpoint: null,
 	large_page_size_threshold: null,
 	largePageSizeThreshold: null,
-	mutateSite: null,
 	mutateSiteId: null,
 	mutateUser: null,
 	setErrorMsg: null,

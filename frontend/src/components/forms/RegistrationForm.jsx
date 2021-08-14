@@ -157,6 +157,7 @@ const RegistrationForm = () => {
 									id="firstname"
 									type="text"
 									name="firstname"
+									autoFocus={true}
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
@@ -335,7 +336,7 @@ const RegistrationForm = () => {
 											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
 								>
-									{isSubmitting ? RegistrationLabels[9].label : RegistrationLabels[11].label}
+									{isSubmitting ? RegistrationLabels[15].label : RegistrationLabels[11].label}
 								</button>
 							</span>
 						</div>

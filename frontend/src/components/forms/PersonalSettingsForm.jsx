@@ -22,7 +22,7 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 	const [lastname, setLastname] = React.useState("");
 	const [username, setUsername] = React.useState("");
 
-	const firstnameRef = React.useRef();
+	const firstnameRef = React.useRef(null);
 
 	React.useEffect(() => {
 		user
@@ -36,10 +36,6 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 
 		return { username, firstname, lastname, email };
 	}, [user]);
-
-	React.useEffect(() => {
-		!disableForm ? firstnameRef.current.focus() : setDisableForm(true);
-	}, [disableForm]);
 
 	const handleUserNameInputChange = (e) => {
 		setUsername(e.target.value);
@@ -126,7 +122,6 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 									</label>
 									<div tw="mt-1 relative rounded-md shadow-sm">
 										<input
-											ref={firstnameRef}
 											type="text"
 											id="firstname"
 											value={values.firstname}
