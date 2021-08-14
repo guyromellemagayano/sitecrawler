@@ -9,6 +9,7 @@ import {
 	StripePromiseApiEndpoint,
 	SubscriptionsApiEndpoint
 } from "@enums/ApiEndpoints";
+import { RevalidationInterval } from "@enums/GlobalValues";
 
 // Hooks
 import useFetcher from "src/hooks/useFetcher";
@@ -24,7 +25,7 @@ export const useStripePromise = () => {
 			if (key === StripePromiseApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		}
 	});
 
@@ -42,7 +43,7 @@ export const usePaymentMethods = ({ refreshInterval = 0 }) => {
 			if (key === PaymentMethodApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		refreshInterval: refreshInterval
 	});
@@ -61,7 +62,7 @@ export const useDefaultPaymentMethod = ({ refreshInterval = 0 }) => {
 			if (key === DefaultPaymentMethodApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		refreshInterval: refreshInterval
 	});
@@ -80,7 +81,7 @@ export const useSubscriptions = ({ refreshInterval = 0 }) => {
 			if (key === SubscriptionsApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		refreshInterval: refreshInterval
 	});
@@ -99,7 +100,7 @@ export const useDefaultSubscription = ({ refreshInterval = 0 }) => {
 			if (key === DefaultSubscriptionApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		refreshInterval: refreshInterval
 	});

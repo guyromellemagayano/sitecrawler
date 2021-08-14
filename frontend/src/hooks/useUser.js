@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 // External
 import useSWR from "swr";
 
+import { RevalidationInterval } from "@enums/GlobalValues";
+
 // Hooks
 import { UserApiEndpoint } from "@enums/ApiEndpoints";
 import useFetcher from "@hooks/useFetcher";
@@ -21,7 +23,7 @@ const useUser = ({ redirectIfFound = false, redirectTo = "", refreshInterval = 0
 			if (key === UserApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		onSuccess: (data) => {
 			if (data !== undefined && Object.keys(data).length > 0 && !redirectIfFound) {
