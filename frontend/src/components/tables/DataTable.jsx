@@ -11,7 +11,6 @@ import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
 // Enums
-import { ComponentReadyInterval } from "@enums/GlobalValues";
 import { DataTableLabels } from "@enums/DataTableLabels";
 
 // Hooks
@@ -23,6 +22,7 @@ import DeleteSiteModal from "@components/modals/DeleteSiteModal";
 import SiteVerifyModal from "@components/modals/SiteVerifyModal";
 
 const DataTable = ({
+	componentReady,
 	disableLocalTime,
 	mutateSite,
 	siteId,
@@ -31,7 +31,6 @@ const DataTable = ({
 	siteVerificationId,
 	siteVerified
 }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
 	const [scanCount, setScanCount] = React.useState(null);
 	const [scanFinishedAt, setScanFinishedAt] = React.useState(null);
 	const [scanForceHttps, setScanForceHttps] = React.useState(null);
@@ -82,14 +81,6 @@ const DataTable = ({
 		querySid: siteId,
 		scanObjId: scanObjId
 	});
-
-	React.useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, ComponentReadyInterval);
-
-		return setComponentReady(false);
-	}, []);
 
 	const setLinkErrors = () => {
 		let valLength = stats?.num_non_ok_links;
@@ -360,6 +351,7 @@ const DataTable = ({
 };
 
 DataTable.propTypes = {
+	componentReady: PropTypes.bool,
 	disableLocalTime: PropTypes.bool,
 	mutateSite: PropTypes.func,
 	siteId: PropTypes.number,
@@ -370,6 +362,7 @@ DataTable.propTypes = {
 };
 
 DataTable.defaultProps = {
+	componentReady: false,
 	disableLocalTime: false,
 	mutateSite: null,
 	siteId: null,

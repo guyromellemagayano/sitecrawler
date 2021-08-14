@@ -10,8 +10,8 @@ import bytes from "bytes";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
-// JSON
-import ImageTableLabel from "./labels/ImageTable.json";
+// Enums
+import { ImageTableLabels } from "@enums/ImageTableLabels";
 
 // Hooks
 import { useImageDetail } from "src/hooks/useSite";
@@ -71,10 +71,10 @@ const ImagesTable = ({ siteId, val }) => {
 								<a
 									href={val.url}
 									target="_blank"
-									title={ImageTableLabel[0].label}
+									title={ImageTableLabels[0].label}
 									tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
 								>
-									{ImageTableLabel[0].label}
+									{ImageTableLabels[0].label}
 								</a>
 							) : (
 								<Skeleton duration={2} width={59.73} height={24} />
@@ -140,6 +140,30 @@ const ImagesTable = ({ siteId, val }) => {
 	);
 };
 
-ImagesTable.propTypes = {};
+ImagesTable.propTypes = {
+	siteId: PropTypes.number,
+	http_status: PropTypes.string,
+	id: PropTypes.number,
+	length: PropTypes.number,
+	missing_alts: PropTypes.number,
+	occurences: PropTypes.number,
+	scan_id: PropTypes.number,
+	size: PropTypes.number,
+	status: PropTypes.string,
+	url: PropTypes.string
+};
+
+ImagesTable.defaultProps = {
+	siteId: null,
+	http_status: null,
+	id: null,
+	length: null,
+	missing_alts: null,
+	occurences: null,
+	scan_id: null,
+	size: null,
+	status: null,
+	url: null
+};
 
 export default ImagesTable;
