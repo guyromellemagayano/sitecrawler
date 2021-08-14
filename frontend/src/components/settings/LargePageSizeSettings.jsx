@@ -20,7 +20,7 @@ const LargePageSizeSettings = ({ componentReady, mutateSite, mutateSiteId, siteI
 	const [largePageSizeThreshold, setLargePageSizeThreshold] = React.useState(0);
 	const [successMsg, setSuccessMsg] = React.useState([]);
 
-	let siteIdApiEndpoint = `${SiteApiEndpoint + siteId?.id}/`;
+	const siteIdApiEndpoint = `${SiteApiEndpoint + siteId?.id}/`;
 
 	React.useEffect(() => {
 		user && user?.large_page_size_threshold
@@ -91,24 +91,14 @@ const LargePageSizeSettings = ({ componentReady, mutateSite, mutateSiteId, siteI
 
 LargePageSizeSettings.propTypes = {
 	site: PropTypes.object,
-	siteId: PropTypes.shape({
-		id: PropTypes.number,
-		large_page_size_threshold: PropTypes.number
-	}),
-	user: PropTypes.shape({
-		large_page_size_threshold: PropTypes.number
-	})
+	id: PropTypes.number,
+	large_page_size_threshold: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 };
 
 LargePageSizeSettings.defaultProps = {
 	site: null,
-	siteId: {
-		id: null,
-		large_page_size_threshold: null
-	},
-	user: {
-		large_page_size_threshold: null
-	}
+	id: null,
+	large_page_size_threshold: null
 };
 
 export default LargePageSizeSettings;

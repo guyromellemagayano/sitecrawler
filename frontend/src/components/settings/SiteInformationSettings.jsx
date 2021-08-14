@@ -55,7 +55,7 @@ SiteInformationSettings.propTypes = {
 	componentReady: PropTypes.bool,
 	mutateSite: PropTypes.func,
 	mutateSiteId: PropTypes.func,
-	siteId: PropTypes.number
+	siteId: PropTypes.oneOfType([PropTypes.number, PropTypes.object])
 };
 
 SiteInformationSettings.defaultProps = {
