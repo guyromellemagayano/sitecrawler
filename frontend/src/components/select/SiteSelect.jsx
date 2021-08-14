@@ -97,19 +97,13 @@ const SiteSelect = ({ site, siteId, currentScan }) => {
 
 SiteSelect.propTypes = {
 	currentScan: PropTypes.object,
-	results: PropTypes.object,
-	site: PropTypes.shape({
-		results: PropTypes.array
-	}),
+	results: PropTypes.array,
 	siteId: PropTypes.number
 };
 
 SiteSelect.defaultProps = {
 	currentScan: null,
 	results: null,
-	site: {
-		results: null
-	},
 	siteId: null
 };
 
