@@ -43,7 +43,6 @@
         "@fortawesome/react-fontawesome": "^0.1.15",
         "@headlessui/react": "^1.4.0",
         "@heroicons/react": "^1.0.3",
-        "@loadable/component": "^5.14.1",
         "@next/eslint-plugin-next": "^11.0.1",
         "@sentry/nextjs": "^6.11.0",
         "@sentry/tracing": "^6.11.0",
@@ -100,7 +99,6 @@
     "devDependencies": {
         "@babel/core": "^7.15.0",
         "@babel/plugin-transform-react-jsx": "^7.14.9",
-        "@loadable/babel-plugin": "^5.13.2",
         "@tailwindcss/jit": "^0.1.18",
         "add": "^2.0.6",
         "autoprefixer": "^10.3.1",
