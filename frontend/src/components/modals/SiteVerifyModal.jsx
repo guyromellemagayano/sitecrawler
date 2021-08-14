@@ -234,15 +234,7 @@ const SiteVerifyModal = React.forwardRef(
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 										]}
-										onClick={() => {
-											setShowModal(!showModal);
-
-											!showModal
-												? (() => {
-														setTimeout(() => {}, 3000);
-												  })()
-												: null;
-										}}
+										onClick={() => setShowModal(!showModal)}
 									>
 										{!enableNextStep
 											? SiteVerifyModalLabels[6].label

@@ -17,6 +17,7 @@ import tw from "twin.macro";
 // Enums
 import { DeleteUserAccountModalLabels } from "@enums/DeleteUserAccountModalLabels";
 import { LoginLink } from "@enums/PageLinks";
+import { RevalidationInterval } from "@enums/GlobalValues";
 import { UserApiEndpoint } from "@enums/ApiEndpoints";
 
 const DeleteUserAccountModal = React.forwardRef(
@@ -73,7 +74,7 @@ const DeleteUserAccountModal = React.forwardRef(
 									setShowModal(!showModal);
 									mutateUser(UserApiEndpoint);
 									router.push(LoginLink);
-								}, 3000);
+								}, RevalidationInterval);
 						  })()
 						: (() => {
 								Sentry.captureException(response);
