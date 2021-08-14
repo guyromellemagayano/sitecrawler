@@ -56,15 +56,11 @@ const ResetPasswordForm = ({ result }) => {
 };
 
 ResetPasswordForm.propTypes = {
-	result: PropTypes.shape({
-		id: PropTypes.array
-	})
+	id: PropTypes.array
 };
 
-ResetPasswordForm.propTypes = {
-	result: {
-		id: null
-	}
+ResetPasswordForm.defaultProps = {
+	id: null
 };
 
 export default ResetPasswordForm;
