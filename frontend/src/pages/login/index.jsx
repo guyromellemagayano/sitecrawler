@@ -37,11 +37,6 @@ const Login = () => {
 	const [successMsg, setSuccessMsg] = React.useState([]);
 
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
-	const usernameRef = React.useRef();
-
-	React.useEffect(() => {
-		usernameRef.current.focus();
-	}, []);
 
 	return (
 		<Layout>
@@ -56,6 +51,7 @@ const Login = () => {
 									<div tw="lg:grid lg:grid-cols-12 lg:gap-8">
 										<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
 											<div>
+												{/* TODO: Update values of this component */}
 												<AppLogo
 													tw="flex justify-start w-60 h-12 mb-8"
 													src="/images/logos/site-logo-dark.svg"
@@ -164,7 +160,6 @@ const Login = () => {
 																		</label>
 																		<div tw="mt-1">
 																			<input
-																				ref={usernameRef}
 																				id="username"
 																				name="username"
 																				type="text"
