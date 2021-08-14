@@ -5,11 +5,13 @@ import * as React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
+// NextJS
+import dynamic from "next/dynamic";
+
 // External
 import "twin.macro";
 import { SearchIcon } from "@heroicons/react/solid";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
@@ -21,8 +23,8 @@ import { SeoStatsLabels } from "@enums/SeoStatsLabels";
 // Components
 import SeoStatsSkeleton from "@components/skeletons/SeoStatsSkeleton";
 
-// Loadable
-const Chart = loadable(() => import("react-apexcharts"));
+// Dynamic
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const SeoStats = ({ componentReady, sid, stats, width }) => {
 	const router = useRouter();

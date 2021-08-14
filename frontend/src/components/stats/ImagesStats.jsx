@@ -3,13 +3,13 @@ import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 
 // External
 import "twin.macro";
 import { PhotographIcon } from "@heroicons/react/outline";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
@@ -21,8 +21,8 @@ import { LgScreenBreakpoint } from "@enums/GlobalValues";
 // Components
 import ImagesStatsSkeleton from "@components/skeletons/ImagesStatsSkeleton";
 
-// Loadable
-const Chart = loadable(() => import("react-apexcharts"));
+// Dynamic
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ImagesStats = ({ componentReady, sid, stats, width }) => {
 	const router = useRouter();

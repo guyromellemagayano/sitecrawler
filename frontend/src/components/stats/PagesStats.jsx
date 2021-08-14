@@ -3,13 +3,13 @@ import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 
 // External
 import "twin.macro";
 import { DocumentIcon } from "@heroicons/react/outline";
 import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
@@ -21,8 +21,8 @@ import { PagesStatsLabels } from "@enums/PagesStatsLabels";
 // Components
 import PagesStatsSkeleton from "@components/skeletons/PagesStatsSkeleton";
 
-// Loadable
-const Chart = loadable(() => import("react-apexcharts"));
+// Dynamic
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const PagesStats = ({ componentReady, sid, stats, width }) => {
 	const router = useRouter();
