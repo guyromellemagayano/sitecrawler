@@ -17,9 +17,9 @@ import { AlertLoadInterval, ComponentReadyInterval } from "@enums/GlobalValues";
 import { VerifyUrlLabels } from "@enums/VerifyUrlLabels";
 
 // Components
-import ErrorNotification from "@components/notifications/ErrorNotification";
+import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
 import ShowHelpModal from "@components/modals/ShowHelpModal";
-import SuccessNotification from "@components/notifications/SuccessNotification";
+import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
 import VerifyUrlStepForm from "@components/forms/VerifyUrlStepForm";
 
 const VerifyUrl = ({ currentStep, setCurrentStep, setEditMode, setSiteId, siteData }) => {
@@ -27,11 +27,9 @@ const VerifyUrl = ({ currentStep, setCurrentStep, setEditMode, setSiteId, siteDa
 	const [copyValue, setCopyValue] = React.useState(null);
 	const [disableSiteVerify, setDisableSiteVerify] = React.useState(false);
 	const [enableNextStep, setEnableNextStep] = React.useState(false);
-	const [errorMsg, setErrorMsg] = React.useState("");
-	const [errorMsgLoaded, setErrorMsgLoaded] = React.useState(false);
+	const [errorMsg, setErrorMsg] = React.useState([]);
 	const [siteVerifyId, setSiteVerifyId] = React.useState(null);
-	const [successMsg, setSuccessMsg] = React.useState("");
-	const [successMsgLoaded, setSuccessMsgLoaded] = React.useState(false);
+	const [successMsg, setSuccessMsg] = React.useState([]);
 
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
@@ -58,61 +56,17 @@ const VerifyUrl = ({ currentStep, setCurrentStep, setEditMode, setSiteId, siteDa
 			: null;
 	}, [siteData]);
 
-	React.useEffect(() => {
-		successMsg
-			? (() => {
-					setTimeout(() => {
-						setSuccessMsgLoaded(true);
-					}, ComponentReadyInterval);
-			  })()
-			: null;
-
-		errorMsg
-			? () => {
-					(() => {
-						setTimeout(() => {
-							setErrorMsgLoaded(true);
-						}, ComponentReadyInterval);
-					})();
-			  }
-			: null;
-	}, [successMsg, errorMsg]);
-
-	React.useEffect(() => {
-		successMsgLoaded
-			? (() => {
-					setTimeout(() => {
-						setSuccessMsgLoaded(false);
-					}, AlertLoadInterval);
-			  })()
-			: null;
-
-		errorMsgLoaded
-			? (() => {
-					setTimeout(() => {
-						setErrorMsgLoaded(false);
-					}, AlertLoadInterval);
-			  })()
-			: null;
-	}, [successMsgLoaded, errorMsgLoaded]);
-
 	return currentStep == 2 ? (
-		<>
+		<div>
 			<NextSeo title={pageTitle} />
 
-			<SuccessNotification
-				successMsg={successMsg}
-				successMsgLoaded={successMsgLoaded}
-				setSuccessMsgLoaded={setSuccessMsgLoaded}
-				successMsgTitle={VerifyUrlLabels[27].label}
-			/>
+			{errorMsg.length > 0
+				? errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)
+				: null}
 
-			<ErrorNotification
-				errorMsg={errorMsg}
-				errorMsgLoaded={errorMsgLoaded}
-				setErrorMsgLoaded={setErrorMsgLoaded}
-				errorMsgTitle={VerifyUrlLabels[26].label}
-			/>
+			{successMsg.length > 0
+				? successMsg.map((value, index) => <SuccessMessageAlert key={index} message={value} />)
+				: null}
 
 			<ShowHelpModal
 				ref={ref}
@@ -207,25 +161,21 @@ const VerifyUrl = ({ currentStep, setCurrentStep, setEditMode, setSiteId, siteDa
 							currentStep={currentStep}
 							disableSiteVerify={disableSiteVerify}
 							enableNextStep={enableNextStep}
-							errorMsgLoaded={errorMsgLoaded}
 							setCurrentStep={setCurrentStep}
 							setDisableSiteVerify={setDisableSiteVerify}
 							setEditMode={setEditMode}
 							setEnableNextStep={setEnableNextStep}
 							setErrorMsg={setErrorMsg}
-							setErrorMsgLoaded={setErrorMsgLoaded}
 							setSiteId={setSiteId}
 							setSiteVerifyId={setSiteVerifyId}
 							setSuccessMsg={setSuccessMsg}
-							setSuccessMsgLoaded={setSuccessMsgLoaded}
 							siteData={siteData}
 							siteVerifyId={siteVerifyId}
-							successMsgLoaded={successMsgLoaded}
 						/>
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	) : null;
 };
 
