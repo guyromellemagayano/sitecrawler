@@ -8,75 +8,66 @@ import Link from "next/link";
 import "twin.macro";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
-// JSON
-import OverviewLabel from "public/labels/pages/site/overview.json";
+// Enums
+import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
+import { OverviewLabels } from "@enums/OverviewLabels";
+import { LoginLink, SitesLink } from "@enums/PageLinks";
 
 // Hooks
-import { useStats, useSiteId, useUptime, useUptimeSummary } from "src/hooks/useSite";
-import useCrawl from "src/hooks/useCrawl";
-import useUser from "src/hooks/useUser";
-
-// Layout
-import Layout from "src/components/Layout";
+import { useComponentVisible } from "@hooks/useComponentVisible";
+import { useStats, useSiteId, useUptime, useUptimeSummary } from "@hooks/useSite";
+import useCrawl from "@hooks/useCrawl";
+import useUser from "@hooks/useUser";
 
 // Components
-import AppLogo from "src/components/logos/AppLogo";
-import MainSidebar from "src/components/sidebar/MainSidebar";
-import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
-import SiteFooter from "src/components/layouts/Footer";
+// import CurrentStatusStats from "@components/stats/CurrentStatusStats";
+// import ResponseTimeStats from "@components/stats/ResponseTimeStats";
+// import SitesDowntimeStats from "@components/stats/DowntimeStats";
+// import SitesUptimeStats from "@components/stats/UptimeStats";
+import AppLogo from "@components/logos/AppLogo";
+import Breadcrumbs from "@components/breadcrumbs";
+import Footer from "@components/layouts/Footer";
+import HeadingOptions from "@components/options/HeadingOptions";
+import ImagesStats from "@components/stats/ImagesStats";
+import Layout from "@components/layouts";
+import LinksStats from "@components/stats/LinksStats";
+import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
+import OverviewStats from "@components/stats/OverviewStats";
+import PagesStats from "@components/stats/PagesStats";
+import SeoStats from "@components/stats/SeoStats";
+import Sidebar from "@components/layouts/Sidebar";
+import Stats from "@components/stats";
 
-// Components
-import SitesCurrentStatusStats from "src/components/pages/overview/CurrentStatusStats";
-import SitesDowntimeStats from "src/components/pages/overview/DowntimeStats";
-import SitesImagesStats from "src/components/pages/overview/ImagesStats";
-import SitesLinksStats from "src/components/pages/overview/LinksStats";
-import SitesOverview from "src/components/pages/overview/Overview";
-import SitesPagesStats from "src/components/pages/overview/PagesStats";
-import SitesResponseTimeStats from "src/components/pages/overview/ResponseTimeStats";
-import SitesSeoStats from "src/components/pages/overview/SeoStats";
-import SitesStats from "src/components/pages/overview/Stats";
-import SitesUptimeStats from "src/components/pages/overview/UptimeStats";
-
-// Loadable
-const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
-const HeadingOptions = loadable(() => import("src/components/headings/HeadingOptions"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-
-const SiteOverview = (props) => {
+const Overview = ({ result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
 	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
-	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
 
-	const appLogoAltText = "app-logo";
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 	const { user: user } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login"
+		redirectTo: LoginLink
 	});
 
 	React.useEffect(() => {
-		return user
-			? (() => {
-					user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false) ?? null;
-
-					setEnableSiteIdHook(true);
-			  })()
-			: null;
+		return user ? setEnableSiteIdHook(true) : setEnableSiteIdHook(false);
 	}, [user, enableSiteIdHook]);
 
-	const { selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished } =
-		useCrawl({
-			siteId: enableSiteIdHook ? props.result?.siteId : null
-		});
-
-	const homePageLink = "/sites/";
-	const pageTitle = OverviewLabel[0].label;
+	const {
+		selectedSiteRef,
+		handleCrawl,
+		currentScan,
+		previousScan,
+		scanCount,
+		isCrawlStarted,
+		isCrawlFinished
+	} = useCrawl({
+		siteId: enableSiteIdHook ? parseInt(result?.siteId) : null
+	});
 
 	React.useEffect(() => {
 		const handleScanObjId = (scanCount, currentScan, previousScan) => {
@@ -95,161 +86,193 @@ const SiteOverview = (props) => {
 	}, [scanCount, currentScan, previousScan]);
 
 	const { siteId } = useSiteId({
-		querySid: enableSiteIdHook ? props.result?.siteId : null,
+		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null,
 		redirectIfFound: false,
 		redirectTo: enableSiteIdHook ? "/sites" : null
 	});
 
 	const { stats } = useStats({
-		querySid: enableSiteIdHook ? props.result?.siteId : null,
-		scanObjId: props.result?.scanObjId ?? scanObjId
+		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null,
+		scanObjId: result?.scanObjId ?? scanObjId
 	});
 
 	const { uptime } = useUptime({
-		querySid: enableSiteIdHook ? props.result?.siteId : null
+		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null
 	});
 
 	const { uptimeSummary } = useUptimeSummary({
-		querySid: enableSiteIdHook ? props.result?.siteId : null
+		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null
 	});
 
 	React.useEffect(() => {
-		user && siteId && stats && uptime && uptimeSummary ? setComponentReady(true) : setComponentReady(false);
+		user && siteId && stats && uptime && uptimeSummary && result
+			? (() => {
+					user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false);
+
+					setComponentReady(true);
+			  })()
+			: setComponentReady(false);
 
 		return { user, siteId, stats, uptime, uptimeSummary };
-	}, [user, siteId, stats, uptime, uptimeSummary]);
+	}, [user, siteId, stats, uptime, uptimeSummary, result]);
 
 	return (
 		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageTitle : null} />
+			<NextSeo title={componentReady ? OverviewLabels[0].label : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<MainSidebar
-					width={props.width}
+				<Sidebar
+					openSidebar={isComponentVisible}
+					ref={ref}
+					setOpenSidebar={setIsComponentVisible}
 					user={componentReady ? user : null}
-					openMobileSidebar={openMobileSidebar}
-					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
 				/>
 
-				{componentReady ? (
-					<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
-						<div tw="relative flex-shrink-0 flex">
-							<div tw="border-b flex-shrink-0 flex">
-								<MobileSidebarButton
-									openMobileSidebar={openMobileSidebar}
-									setOpenMobileSidebar={setOpenMobileSidebar}
-								/>
-							</div>
-
-							<Link href={homePageLink} passHref>
-								<a tw="p-1 block w-full cursor-pointer lg:hidden">
-									<AppLogo
-										tw="w-48 h-auto"
-										src="/images/logos/site-logo-dark.svg"
-										alt={appLogoAltText}
-										width={230}
-										height={40}
-									/>
-								</a>
-							</Link>
+				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
+					<div tw="relative flex-shrink-0 flex">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton
+								openSidebar={isComponentVisible}
+								setOpenSidebar={setIsComponentVisible}
+							/>
 						</div>
 
-						<Scrollbars universal>
-							<main tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
-								<div tw="w-full p-6 mx-auto">
-									<div tw="max-w-full p-4">
-										<Breadcrumbs siteId={props.result?.siteId} pageTitle={pageTitle} />
-										<HeadingOptions
-											isOverview
-											verified={siteId?.verified}
-											siteId={props.result?.siteId}
-											siteName={siteId?.name}
-											siteUrl={siteId?.url}
-											scanObjId={scanObjId}
-											permissions={user?.permissions}
-											pageTitle={OverviewLabel[0].label}
-											handleCrawl={handleCrawl}
-											isCrawlStarted={isCrawlStarted}
-											isCrawlFinished={isCrawlFinished}
-											disableLocalTime={disableLocalTime}
-											scanFinishedAt={stats?.finished_at}
-										/>
-									</div>
+						<Link href={SitesLink} passHref>
+							<a tw="p-1 block w-full cursor-pointer lg:hidden">
+								<AppLogo
+									tw="w-48 h-auto"
+									src={SiteLogoDark}
+									alt={GlobalLabels[0].label}
+									width={GlobalLabels[0].width}
+									height={GlobalLabels[0].height}
+								/>
+							</a>
+						</Link>
+					</div>
 
-									<div tw="max-w-full p-4 sm:px-6 md:px-4">
-										<div tw="grid grid-cols-1 md:grid-cols-4 gap-8">
-											<div tw="col-span-1 md:col-span-2">
-												<SitesOverview
-													verified={siteId?.verified}
-													stats={stats}
-													user={user}
-													isCrawlStarted={isCrawlStarted}
-													isCrawlFinished={isCrawlFinished}
-												/>
+					<Scrollbars universal>
+						<main
+							tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none"
+							tabIndex="0"
+						>
+							<div tw="w-full p-6 mx-auto">
+								<div tw="max-w-full p-4">
+									<Breadcrumbs
+										siteId={parseInt(result?.siteId)}
+										pageTitle={OverviewLabels[0].label}
+									/>
+									<HeadingOptions
+										componentReady={componentReady}
+										disableLocalTime={disableLocalTime}
+										handleCrawl={handleCrawl}
+										isCrawlFinished={isCrawlFinished}
+										isCrawlStarted={isCrawlStarted}
+										isOverview
+										pageTitle={OverviewLabels[0].label}
+										permissions={user?.permissions}
+										scanFinishedAt={stats?.finished_at}
+										scanObjId={scanObjId}
+										siteId={parseInt(result?.siteId)}
+										siteName={siteId?.name}
+										siteUrl={siteId?.url}
+										verified={siteId?.verified}
+									/>
+								</div>
+
+								<div tw="max-w-full p-4 sm:px-6 md:px-4">
+									<div tw="grid grid-cols-1 md:grid-cols-4 gap-8">
+										<div tw="col-span-1 md:col-span-2">
+											<OverviewStats
+												componentReady={componentReady}
+												verified={siteId?.verified}
+												stats={stats}
+												user={user}
+												isCrawlStarted={isCrawlStarted}
+												isCrawlFinished={isCrawlFinished}
+											/>
+										</div>
+
+										<div tw="col-span-1 md:col-span-2">
+											<Stats componentReady={componentReady} stats={stats} />
+										</div>
+
+										<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
+											<LinksStats
+												componentReady={componentReady}
+												sid={parseInt(result?.siteId)}
+												stats={stats}
+											/>
+										</div>
+
+										<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
+											<PagesStats
+												componentReady={componentReady}
+												sid={parseInt(result?.siteId)}
+												stats={stats}
+											/>
+										</div>
+
+										<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
+											<ImagesStats
+												componentReady={componentReady}
+												sid={parseInt(result?.siteId)}
+												stats={stats}
+											/>
+										</div>
+
+										<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
+											<SeoStats
+												componentReady={componentReady}
+												sid={parseInt(result?.siteId)}
+												stats={stats}
+											/>
+										</div>
+
+										{/* <div tw="col-span-1 md:col-span-4 xl:col-span-4">
+												<ResponseTimeStats sid={parseInt(result?.siteId)} uptime={uptime} />
 											</div>
 
-											<div tw="col-span-1 md:col-span-2">
-												<SitesStats stats={stats} />
-											</div>
-
-											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
-												<SitesLinksStats sid={props.result?.siteId} stats={stats} />
-											</div>
-
-											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
-												<SitesPagesStats sid={props.result?.siteId} stats={stats} />
-											</div>
-
-											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
-												<SitesImagesStats sid={props.result?.siteId} stats={stats} />
-											</div>
-
-											<div tw="col-span-1 lg:col-span-2 2xl:col-span-1">
-												<SitesSeoStats sid={props.result?.siteId} stats={stats} />
-											</div>
-
-											{/* <div tw="col-span-1 md:col-span-4 xl:col-span-4">
-												<SitesResponseTimeStats sid={props.result?.siteId} uptime={uptime} />
-											</div> */}
-
-											{/* <div tw="flex col-span-1 md:col-span-4 xl:col-span-4">
+											<div tw="flex col-span-1 md:col-span-4 xl:col-span-4">
 												<div tw="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8">
 													<div tw="col-span-1 md:col-span-1">
-														<SitesCurrentStatusStats sid={props.result?.siteId} uptimeSummary={uptimeSummary} />
+														<CurrentStatusStats sid={parseInt(result?.siteId)} uptimeSummary={uptimeSummary} />
 													</div>
 
 													<div tw="col-span-1 md:col-span-1">
-														<SitesUptimeStats sid={props.result?.sid} uptimeSummary={uptimeSummary} />
+														<SitesUptimeStats sid={parseInt(result?.siteId)} uptimeSummary={uptimeSummary} />
 													</div>
 
 													<div tw="col-span-1 md:col-span-1">
-														<SitesDowntimeStats sid={props.result?.siteId} uptimeSummary={uptimeSummary} />
+														<SitesDowntimeStats sid={parseInt(result?.siteId)} disableLocalTime={disableLocalTime} uptimeSummary={uptimeSummary} />
 													</div>
 												</div>
 											</div> */}
-										</div>
-									</div>
-
-									<div tw="static bottom-0 w-full mx-auto p-4">
-										<SiteFooter />
 									</div>
 								</div>
-							</main>
-						</Scrollbars>
-					</div>
-				) : (
-					<div tw="mx-auto">
-						<Loader />
-					</div>
-				)}
+
+								<div tw="static bottom-0 w-full mx-auto p-4">
+									<Footer />
+								</div>
+							</div>
+						</main>
+					</Scrollbars>
+				</div>
 			</section>
 		</Layout>
 	);
 };
 
-SiteOverview.propTypes = {};
+Overview.propTypes = {
+	scanObjId: PropTypes.number,
+	siteId: PropTypes.number
+};
 
-export default withResizeDetector(SiteOverview);
+Overview.defaultProps = {
+	scanObjId: null,
+	siteId: null
+};
+
+export default Overview;
 
 export async function getServerSideProps(ctx) {
 	return {
