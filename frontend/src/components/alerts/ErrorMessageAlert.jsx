@@ -7,6 +7,9 @@ import { Transition } from "@headlessui/react";
 import { XCircleIcon, XIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
 
+// Enums
+import { RevalidationInterval } from "@enums/GlobalValues";
+
 const ErrorMessageAlert = ({ className, message }) => {
 	const [isOpen, setIsOpen] = React.useState(true);
 
@@ -15,7 +18,7 @@ const ErrorMessageAlert = ({ className, message }) => {
 	React.useEffect(() => {
 		setTimeout(() => {
 			setIsOpen(false);
-		}, 3000);
+		}, RevalidationInterval);
 
 		return () => {
 			setIsOpen(false);
