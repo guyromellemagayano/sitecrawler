@@ -6,24 +6,23 @@ import { useRouter } from "next/router";
 
 // External
 import "twin.macro";
+import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Components
-import Sorting from "src/components/helpers/sorting/Sorting";
+import Sorting from "@components/sorting/common/Sorting";
 
-// Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/utils/functions";
+// Utils
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "@utils/functions";
 
 const initialOrder = {
-	linkUrl: "default",
-	urlType: "default",
-	status: "default",
-	httpCode: "default",
-	linkLocation: "default",
-	occurrences: "default"
+	siteName: "asc",
+	crawlStatus: "default",
+	lastCrawled: "default",
+	totalIssues: "default"
 };
 
-const LinkSorting = ({ result, slug, mutateLinks, linksTableLabels, setPagePath }) => {
+const SiteSorting = ({ result, slug, mutateSite, sitesTableLabels, setPagePath }) => {
 	const [sortOrder, setSortOrder] = React.useState(initialOrder);
 
 	const { asPath } = useRouter();
@@ -35,7 +34,7 @@ const LinkSorting = ({ result, slug, mutateLinks, linksTableLabels, setPagePath 
 		let newPath = removeURLParameter(asPath, "ordering");
 
 		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(linksTableLabels, slug);
+		const sortKey = getSortKeyFromSlug(sitesTableLabels, slug);
 
 		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
@@ -53,54 +52,36 @@ const LinkSorting = ({ result, slug, mutateLinks, linksTableLabels, setPagePath 
 		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
 		router.push(newPath);
-		mutateLinks;
+		mutateSite;
 	};
 
 	return slug !== undefined ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
-				{slug == "link-url" ? (
+				{slug === "site-name" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={linksTableLabels}
+						tableContent={sitesTableLabels}
 						ordering={result.ordering}
-						direction={sortOrder.linkUrl}
+						direction={sortOrder.siteName}
 						onSortHandler={handleSort}
 						slug={slug}
 					/>
-				) : slug == "url-type" ? (
+				) : slug === "crawl-status" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={linksTableLabels}
+						tableContent={sitesTableLabels}
 						ordering={result.ordering}
-						direction={sortOrder.urlType}
+						direction={sortOrder.crawlStatus}
 						onSortHandler={handleSort}
 						slug={slug}
 					/>
-				) : slug == "status" ? (
+				) : slug === "last-crawled" ? (
 					<Sorting
 						setSortOrder={setSortOrder}
-						tableContent={linksTableLabels}
+						tableContent={sitesTableLabels}
 						ordering={result.ordering}
-						direction={sortOrder.status}
-						onSortHandler={handleSort}
-						slug={slug}
-					/>
-				) : slug == "http-code" ? (
-					<Sorting
-						setSortOrder={setSortOrder}
-						tableContent={linksTableLabels}
-						ordering={result.ordering}
-						direction={sortOrder.httpCode}
-						onSortHandler={handleSort}
-						slug={slug}
-					/>
-				) : slug == "occurrences" ? (
-					<Sorting
-						setSortOrder={setSortOrder}
-						tableContent={linksTableLabels}
-						ordering={result.ordering}
-						direction={sortOrder.occurrences}
+						direction={sortOrder.lastCrawled}
 						onSortHandler={handleSort}
 						slug={slug}
 					/>
@@ -110,6 +91,18 @@ const LinkSorting = ({ result, slug, mutateLinks, linksTableLabels, setPagePath 
 	) : null;
 };
 
-LinkSorting.propTypes = {};
+SiteSorting.propTypes = {
+	mutateSite: PropTypes.func,
+	result: PropTypes.object,
+	setPagePath: PropTypes.func,
+	sitesTableLabels: PropTypes.array,
+	slug: PropTypes.string
+};
 
-export default LinkSorting;
+SiteSorting.defaultProps = {
+	result: null,
+	sitesTableLabels: [],
+	slug: null
+};
+
+export default SiteSorting;

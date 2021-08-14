@@ -6,20 +6,25 @@ import { useRouter } from "next/router";
 
 // External
 import "twin.macro";
+import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Components
-import Sorting from "src/components/helpers/sorting/Sorting";
+const Sorting = loadable(() => import("@components/sorting/common/Sorting"));
 
-// Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/utils/functions";
+// Utils
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "@utils/functions";
 
 const initialOrder = {
-	pageLargePages: "default",
-	pageBrokenSecurity: "default"
+	imageUrl: "default",
+	imageSize: "default",
+	status: "default",
+	httpCode: "default",
+	missingAlts: "default",
+	occurrences: "default"
 };
 
-const PageSorting = ({ result, slug, mutatePages, pagesTableLabels, setPagePath }) => {
+const ImageSorting = ({ result, slug, mutateImages, labels, setPagePath }) => {
 	const [sortOrder, setSortOrder] = React.useState(initialOrder);
 
 	const { asPath } = useRouter();
@@ -31,7 +36,7 @@ const PageSorting = ({ result, slug, mutatePages, pagesTableLabels, setPagePath 
 		let newPath = removeURLParameter(asPath, "ordering");
 
 		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(pagesTableLabels, slug);
+		const sortKey = getSortKeyFromSlug(labels, slug);
 
 		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
@@ -49,37 +54,64 @@ const PageSorting = ({ result, slug, mutatePages, pagesTableLabels, setPagePath 
 		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
 		router.push(newPath);
-		mutatePages;
+		mutateImages;
 	};
 
 	return slug !== undefined ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
-					{slug == "page-url" ? (
+					{slug == "image-url" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={pagesTableLabels}
+							tableContent={labels}
 							ordering={result.ordering}
-							direction={sortOrder.pageUrl}
+							direction={sortOrder.imageUrl}
 							onSortHandler={handleSort}
 							slug={slug}
 						/>
-					) : slug == "page-size" ? (
+					) : slug == "image-size" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={pagesTableLabels}
+							tableContent={labels}
 							ordering={result.ordering}
-							direction={sortOrder.pageSize}
+							direction={sortOrder.imageSize}
 							onSortHandler={handleSort}
 							slug={slug}
 						/>
-					) : slug == "page-ssl" ? (
+					) : slug == "status" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={pagesTableLabels}
+							tableContent={labels}
 							ordering={result.ordering}
-							direction={sortOrder.pageSsl}
+							direction={sortOrder.status}
+							onSortHandler={handleSort}
+							slug={slug}
+						/>
+					) : slug == "http-code" ? (
+						<Sorting
+							setSortOrder={setSortOrder}
+							tableContent={labels}
+							ordering={result.ordering}
+							direction={sortOrder.httpCode}
+							onSortHandler={handleSort}
+							slug={slug}
+						/>
+					) : slug == "missing-alts" ? (
+						<Sorting
+							setSortOrder={setSortOrder}
+							tableContent={labels}
+							ordering={result.ordering}
+							direction={sortOrder.missingAlts}
+							onSortHandler={handleSort}
+							slug={slug}
+						/>
+					) : slug == "occurrences" ? (
+						<Sorting
+							setSortOrder={setSortOrder}
+							tableContent={labels}
+							ordering={result.ordering}
+							direction={sortOrder.occurrences}
 							onSortHandler={handleSort}
 							slug={slug}
 						/>
@@ -90,6 +122,6 @@ const PageSorting = ({ result, slug, mutatePages, pagesTableLabels, setPagePath 
 	) : null;
 };
 
-PageSorting.propTypes = {};
+ImageSorting.propTypes = {};
 
-export default PageSorting;
+export default ImageSorting;

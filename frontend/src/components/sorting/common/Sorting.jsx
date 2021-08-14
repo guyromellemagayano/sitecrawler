@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 import AscSorting from "./AscSorting";
 import DescSorting from "./DescSorting";
 
-// Helpers
+// Utils
 import { slugToCamelcase, getSlugFromSortKey } from "src/utils/functions";
 
 const Sorting = ({ setSortOrder, tableContent, ordering, direction, onSortHandler, slug }) => {
@@ -26,7 +26,8 @@ const Sorting = ({ setSortOrder, tableContent, ordering, direction, onSortHandle
 			resultSlug = getSlugFromSortKey(tableContent, ordering.replace("-", ""));
 			orderItem = slugToCamelcase(resultSlug);
 
-			if (ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+			if (ordering.includes("-"))
+				setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
 			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
 		}
 	}, [ordering]);

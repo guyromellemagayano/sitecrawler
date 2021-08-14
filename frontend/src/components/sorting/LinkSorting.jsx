@@ -9,21 +9,21 @@ import "twin.macro";
 import PropTypes from "prop-types";
 
 // Components
-import Sorting from "src/components/helpers/sorting/Sorting";
+import Sorting from "./common/Sorting";
 
-// Helpers
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "src/utils/functions";
+// Utils
+import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "@utils/functions";
 
 const initialOrder = {
-	imageUrl: "default",
-	imageSize: "default",
+	linkUrl: "default",
+	urlType: "default",
 	status: "default",
 	httpCode: "default",
-	missingAlts: "default",
+	linkLocation: "default",
 	occurrences: "default"
 };
 
-const ImageSorting = ({ result, slug, mutateImages, imagesTableLabels, setPagePath }) => {
+const LinkSorting = ({ result, slug, mutateLinks, labels, setPagePath }) => {
 	const [sortOrder, setSortOrder] = React.useState(initialOrder);
 
 	const { asPath } = useRouter();
@@ -35,7 +35,7 @@ const ImageSorting = ({ result, slug, mutateImages, imagesTableLabels, setPagePa
 		let newPath = removeURLParameter(asPath, "ordering");
 
 		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(imagesTableLabels, slug);
+		const sortKey = getSortKeyFromSlug(labels, slug);
 
 		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
@@ -53,36 +53,36 @@ const ImageSorting = ({ result, slug, mutateImages, imagesTableLabels, setPagePa
 		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
 
 		router.push(newPath);
-		mutateImages;
+		mutateLinks;
 	};
 
 	return slug !== undefined ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
-					{slug == "image-url" ? (
+					{slug == "link-url" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imagesTableLabels}
-							ordering={result.ordering}
-							direction={sortOrder.imageUrl}
+							tableContent={labels}
+							ordering={result?.ordering}
+							direction={sortOrder.linkUrl}
 							onSortHandler={handleSort}
 							slug={slug}
 						/>
-					) : slug == "image-size" ? (
+					) : slug == "url-type" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imagesTableLabels}
-							ordering={result.ordering}
-							direction={sortOrder.imageSize}
+							tableContent={labels}
+							ordering={result?.ordering}
+							direction={sortOrder.urlType}
 							onSortHandler={handleSort}
 							slug={slug}
 						/>
 					) : slug == "status" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imagesTableLabels}
-							ordering={result.ordering}
+							tableContent={labels}
+							ordering={result?.ordering}
 							direction={sortOrder.status}
 							onSortHandler={handleSort}
 							slug={slug}
@@ -90,26 +90,17 @@ const ImageSorting = ({ result, slug, mutateImages, imagesTableLabels, setPagePa
 					) : slug == "http-code" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imagesTableLabels}
-							ordering={result.ordering}
+							tableContent={labels}
+							ordering={result?.ordering}
 							direction={sortOrder.httpCode}
-							onSortHandler={handleSort}
-							slug={slug}
-						/>
-					) : slug == "missing-alts" ? (
-						<Sorting
-							setSortOrder={setSortOrder}
-							tableContent={imagesTableLabels}
-							ordering={result.ordering}
-							direction={sortOrder.missingAlts}
 							onSortHandler={handleSort}
 							slug={slug}
 						/>
 					) : slug == "occurrences" ? (
 						<Sorting
 							setSortOrder={setSortOrder}
-							tableContent={imagesTableLabels}
-							ordering={result.ordering}
+							tableContent={labels}
+							ordering={result?.ordering}
 							direction={sortOrder.occurrences}
 							onSortHandler={handleSort}
 							slug={slug}
@@ -121,6 +112,20 @@ const ImageSorting = ({ result, slug, mutateImages, imagesTableLabels, setPagePa
 	) : null;
 };
 
-ImageSorting.propTypes = {};
+LinkSorting.propTypes = {
+	labels: PropTypes.array,
+	mutateLinks: PropTypes.func,
+	ordering: PropTypes.string,
+	setPagePath: PropTypes.func,
+	slug: PropTypes.string
+};
 
-export default ImageSorting;
+LinkSorting.defaultProps = {
+	labels: null,
+	mutateLinks: null,
+	ordering: null,
+	setPagePath: null,
+	slug: null
+};
+
+export default LinkSorting;
