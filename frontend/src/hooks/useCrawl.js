@@ -1,17 +1,13 @@
 // React
 import * as React from "react";
 
-// External
-import axios from "axios";
-import Cookies from "js-cookie";
-
 // Enums
 import { RevalidationInterval } from "@enums/GlobalValues";
+import { SiteApiEndpoint } from "@enums/ApiEndpoints";
 
 // Hooks
 import { usePostMethod } from "./useHttpMethod";
 import { useScan } from "./useSite";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
 
 const useCrawl = ({ siteId }) => {
 	const [isCrawlFinished, setIsCrawlFinished] = React.useState(true);
@@ -58,11 +54,11 @@ const useCrawl = ({ siteId }) => {
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
 			setScanCount(scan?.count);
-
-			return { currentScan, previousScan, scanCount };
 		};
 
-		return scan ? handleScan(scan) : null;
+		scan && scan?.results ? handleScan(scan) : null;
+
+		return { currentScan, previousScan, scanCount };
 	}, [scan]);
 
 	React.useEffect(() => {

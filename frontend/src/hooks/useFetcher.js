@@ -1,5 +1,4 @@
 // External
-import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -28,20 +27,11 @@ const useFetcher = async (...args) => {
 			if (Math.floor(response.status / 200) == 1) {
 				return response.data;
 			} else {
-				Sentry.captureException(response);
 				return false;
 			}
 		})
 		.catch((error) => {
-			if (error.response) {
-				Sentry.captureException(error.response.data);
-				Sentry.captureException(error.response.status);
-				Sentry.captureException(error.response.headers);
-			} else if (error.request) {
-				Sentry.captureException(error.request);
-			} else {
-				Sentry.captureException(error.message);
-			}
+			return error.message;
 		});
 };
 

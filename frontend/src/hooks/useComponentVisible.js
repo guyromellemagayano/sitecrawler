@@ -194,3 +194,76 @@ export const usePaymentMethodModalVisible = (initialIsVisible) => {
 		setIsPaymentMethodModalVisible
 	};
 };
+
+export const useUpgradeErrorModalVisible = (initialIsVisible) => {
+	const [isUpgradeErrorModalVisible, setIsUpgradeErrorModalVisible] =
+		React.useState(initialIsVisible);
+
+	const upgradeErrorModalRef = React.useRef(null);
+
+	const handleHideUpgradeErrorModal = (event) => {
+		if (event.key === "Escape" && upgradeErrorModalRef.current) {
+			setIsUpgradeErrorModalVisible(!isUpgradeErrorModalVisible);
+		}
+	};
+
+	const handleClickOutsideUpgradeErrorModal = (event) => {
+		if (upgradeErrorModalRef.current && !upgradeErrorModalRef.current.contains(event.target)) {
+			setIsUpgradeErrorModalVisible(!isUpgradeErrorModalVisible);
+		}
+	};
+
+	React.useEffect(() => {
+		document.addEventListener("keydown", handleHideUpgradeErrorModal, true);
+		document.addEventListener("click", handleClickOutsideUpgradeErrorModal, true);
+
+		return () => {
+			document.removeEventListener("keydown", handleHideUpgradeErrorModal, true);
+			document.removeEventListener("click", handleClickOutsideUpgradeErrorModal, true);
+		};
+	});
+
+	return {
+		upgradeErrorModalRef,
+		isUpgradeErrorModalVisible,
+		setIsUpgradeErrorModalVisible
+	};
+};
+
+export const useSiteVerifyErrorModalVisible = (initialIsVisible) => {
+	const [isSiteVerifyErrorModalVisible, setIsSiteVerifyErrorModalVisible] =
+		React.useState(initialIsVisible);
+
+	const siteVerifyErrorModalRef = React.useRef(null);
+
+	const handleHideSiteVerifyErrorModal = (event) => {
+		if (event.key === "Escape" && siteVerifyErrorModalRef.current) {
+			setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible);
+		}
+	};
+
+	const handleClickOutsideUpgradeErrorModal = (event) => {
+		if (
+			siteVerifyErrorModalRef.current &&
+			!siteVerifyErrorModalRef.current.contains(event.target)
+		) {
+			setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible);
+		}
+	};
+
+	React.useEffect(() => {
+		document.addEventListener("keydown", handleHideSiteVerifyErrorModal, true);
+		document.addEventListener("click", handleClickOutsideUpgradeErrorModal, true);
+
+		return () => {
+			document.removeEventListener("keydown", handleHideSiteVerifyErrorModal, true);
+			document.removeEventListener("click", handleClickOutsideUpgradeErrorModal, true);
+		};
+	});
+
+	return {
+		siteVerifyErrorModalRef,
+		isSiteVerifyErrorModalVisible,
+		setIsSiteVerifyErrorModalVisible
+	};
+};
