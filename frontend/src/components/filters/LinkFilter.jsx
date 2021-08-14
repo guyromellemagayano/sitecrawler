@@ -9,21 +9,17 @@ import "twin.macro";
 import { mutate } from "swr";
 import PropTypes from "prop-types";
 
-// Helpers
+// Utils
 import { removeURLParameter } from "@utils/functions";
 
-const LinkFilter = ({
-	result,
-	loadQueryString,
-	handleLoadQueryString,
-	scanApiEndpoint,
-	setPagePath
-}) => {
+const LinkFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [externalFilter, setExternalFilter] = React.useState(false);
 	const [internalFilter, setInternalFilter] = React.useState(false);
 	const [issueFilter, setIssueFilter] = React.useState(false);
 	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
+
+	const filterQueryString = new URLSearchParams(window.location.search);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -35,7 +31,7 @@ const LinkFilter = ({
 		let newPath = asPath;
 		newPath = removeURLParameter(newPath, "page");
 
-		if (filterType == "issues" && filterStatus == true) {
+		if (filterType === "issues" && filterStatus) {
 			setIssueFilter(true);
 			setNoIssueFilter(false);
 			setAllFilter(false);
@@ -44,7 +40,7 @@ const LinkFilter = ({
 
 			if (newPath.includes("?")) newPath += `&status__neq=OK`;
 			else newPath += `?status__neq=OK`;
-		} else if (filterType == "issues" && filterStatus == false) {
+		} else if (filterType === "issues" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("status__neq");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -53,17 +49,16 @@ const LinkFilter = ({
 			setIssueFilter(false);
 		}
 
-		if (filterType == "no-issues" && filterStatus == true) {
+		if (filterType === "no-issues" && filterStatus) {
 			setIssueFilter(false);
 			setNoIssueFilter(true);
 			setAllFilter(false);
 
-			newPath = removeURLParameter(newPath, "type");
 			newPath = removeURLParameter(newPath, "status__neq");
 
 			if (newPath.includes("?")) newPath += `&status=OK`;
 			else newPath += `?status=OK`;
-		} else if (filterType == "no-issues" && filterStatus == false) {
+		} else if (filterType === "no-issues" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("status");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -72,7 +67,7 @@ const LinkFilter = ({
 			setNoIssueFilter(false);
 		}
 
-		if (filterType == "internal" && filterStatus == true) {
+		if (filterType === "internal" && filterStatus) {
 			setInternalFilter(true);
 			setExternalFilter(false);
 			setAllFilter(false);
@@ -81,7 +76,7 @@ const LinkFilter = ({
 
 			if (newPath.includes("?")) newPath += `&type=PAGE`;
 			else newPath += `?type=PAGE`;
-		} else if (filterType == "internal" && filterStatus == false) {
+		} else if (filterType === "internal" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("type");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -90,7 +85,7 @@ const LinkFilter = ({
 			setInternalFilter(false);
 		}
 
-		if (filterType == "external" && filterStatus == true) {
+		if (filterType === "external" && filterStatus) {
 			setExternalFilter(true);
 			setInternalFilter(false);
 			setAllFilter(false);
@@ -99,7 +94,7 @@ const LinkFilter = ({
 
 			if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
 			else newPath += `?type=EXTERNAL`;
-		} else if (filterType == "external" && filterStatus == false) {
+		} else if (filterType === "external" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("type");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -108,7 +103,7 @@ const LinkFilter = ({
 			setExternalFilter(false);
 		}
 
-		if (filterType == "all" && filterStatus == true) {
+		if (filterType === "all" && filterStatus) {
 			setAllFilter(true);
 			setIssueFilter(false);
 			setNoIssueFilter(false);
@@ -125,138 +120,51 @@ const LinkFilter = ({
 		else setPagePath(`${newPath}?`);
 
 		router.push(newPath);
+
 		mutate(scanApiEndpoint);
 	};
 
 	React.useEffect(() => {
-		let loadQueryStringValue = new URLSearchParams(window.location.search);
-
-		handleLoadQueryString;
-
-		if (loadQueryStringValue.has("status__neq")) {
-			if (loadQueryStringValue.get("status__neq") === "OK") {
-				setIssueFilter(true);
-				setNoIssueFilter(false);
-				setAllFilter(false);
-				setInternalFilter(false);
-				setExternalFilter(false);
-			}
+		if (filterQueryString.has("status__neq")) {
+			setIssueFilter(true);
+		} else {
+			setIssueFilter(false);
 		}
 
-		if (loadQueryStringValue.has("status")) {
-			if (loadQueryStringValue.get("status") === "OK") {
-				setNoIssueFilter(true);
-				setIssueFilter(false);
-				setAllFilter(false);
-				setInternalFilter(false);
-				setExternalFilter(false);
-			}
+		if (filterQueryString.has("status")) {
+			setNoIssueFilter(true);
+		} else {
+			setNoIssueFilter(false);
 		}
 
-		if (loadQueryStringValue.has("type")) {
-			if (loadQueryStringValue.get("type") === "PAGE") {
+		if (filterQueryString.has("type")) {
+			if (filterQueryString.get("type") === "PAGE") {
 				setInternalFilter(true);
 				setExternalFilter(false);
-				setAllFilter(false);
-			} else if (loadQueryStringValue.get("type") === "EXTERNAL") {
+			} else if (filterQueryString.get("type") === "EXTERNAL") {
 				setExternalFilter(true);
 				setInternalFilter(false);
-				setAllFilter(false);
-			} else if (loadQueryStringValue.get("type") === "EXTERNALOTHER") {
+			} else if (filterQueryString.get("type") === "EXTERNALOTHER") {
 				setExternalFilter(true);
 				setInternalFilter(false);
-				setAllFilter(false);
-			}
-		}
-
-		if (
-			!loadQueryStringValue.has("type") &&
-			!loadQueryStringValue.has("status") &&
-			!loadQueryStringValue.has("status__neq")
-		) {
-			setNoIssueFilter(false);
-			setIssueFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(false);
-			setAllFilter(true);
-		}
-	}, []);
-
-	React.useEffect(() => {
-		if (result.status !== undefined && result.status === "OK") {
-			setNoIssueFilter(true);
-			setIssueFilter(false);
-			setAllFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(false);
-		}
-
-		if (result.status__neq !== undefined && result.status__neq === "OK") {
-			setIssueFilter(true);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(false);
-		}
-
-		if (
-			result.status__neq !== undefined &&
-			result.type !== undefined &&
-			result.type === "EXTERNAL"
-		) {
-			setIssueFilter(true);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-			setInternalFilter(false);
-			setExternalFilter(true);
-		}
-
-		if (result.status__neq !== undefined && result.type !== undefined && result.type === "PAGE") {
-			setIssueFilter(true);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-			setInternalFilter(true);
-			setExternalFilter(false);
-		}
-
-		if (result.type !== undefined && result.type == "PAGE") {
-			setInternalFilter(true);
-			setExternalFilter(false);
-			setAllFilter(false);
-		}
-
-		if (Array.isArray(result.type)) {
-			if (result.type !== undefined && result.type.join("") == "EXTERNALOTHER") {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
 			}
 		} else {
-			if (result.type !== undefined && result.type == "EXTERNAL") {
-				setExternalFilter(true);
-				setInternalFilter(false);
-				setAllFilter(false);
-			}
+			setInternalFilter(false);
+			setExternalFilter(false);
 		}
 
 		if (
-			loadQueryString &&
-			loadQueryString !== undefined &&
-			loadQueryString.toString().length === 0
+			!filterQueryString.has("type") &&
+			!filterQueryString.has("status") &&
+			!filterQueryString.has("status__neq")
 		) {
-			if (
-				result.type == undefined &&
-				result.status == undefined &&
-				result.status__neq == undefined
-			) {
-				setIssueFilter(false);
-				setNoIssueFilter(false);
-				setInternalFilter(false);
-				setExternalFilter(false);
-				setAllFilter(true);
-			}
+			setAllFilter(true);
+		} else {
+			setAllFilter(false);
 		}
-	}, [handleFilter, loadQueryString]);
+
+		return { noIssueFilter, issueFilter, internalFilter, externalFilter, allFilter };
+	});
 
 	return (
 		<div tw="pb-4 bg-white">
@@ -354,17 +262,13 @@ const LinkFilter = ({
 };
 
 LinkFilter.propTypes = {
-	result: PropTypes.object,
-	loadQueryString: PropTypes.string,
-	handleLoadQueryString: PropTypes.func,
+	loadQueryString: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 	scanApiEndpoint: PropTypes.string,
-	setPagePath: PropTypes.string
+	setPagePath: PropTypes.func
 };
 
 LinkFilter.defaultProps = {
-	result: null,
 	loadQueryString: null,
-	handleLoadQueryString: null,
 	scanApiEndpoint: null,
 	setPagePath: null
 };

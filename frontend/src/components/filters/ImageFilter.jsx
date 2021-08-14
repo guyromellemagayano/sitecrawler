@@ -9,21 +9,17 @@ import "twin.macro";
 import { mutate } from "swr";
 import PropTypes from "prop-types";
 
-// Helpers
+// Utils
 import { removeURLParameter } from "@utils/functions";
 
-const ImageFilter = ({
-	result,
-	loadQueryString,
-	handleLoadQueryString,
-	scanApiEndpoint,
-	setPagePath
-}) => {
+const ImageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [imageBrokenSecurityFilter, setImageBrokenSecurityFilter] = React.useState(false);
 	const [imageMissingAltsFilter, setImageMissingAltsFilter] = React.useState(false);
 	const [imageNotWorkingFilter, setImageNotWorkingFilter] = React.useState(false);
 	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
+
+	const filterQueryString = new URLSearchParams(window.location.search);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -35,7 +31,7 @@ const ImageFilter = ({
 		let newPath = asPath;
 		newPath = removeURLParameter(newPath, "page");
 
-		if (filterType === "notWorking" && filterStatus == true) {
+		if (filterType === "notWorking" && filterStatus) {
 			setImageNotWorkingFilter(true);
 			setImageBrokenSecurityFilter(false);
 			setImageMissingAltsFilter(false);
@@ -50,7 +46,7 @@ const ImageFilter = ({
 
 			if (newPath.includes("?")) newPath += `&status__neq=OK`;
 			else newPath += `?status__neq=OK`;
-		} else if (filterType === "notWorking" && filterStatus == false) {
+		} else if (filterType === "notWorking" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("status__neq");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -61,7 +57,7 @@ const ImageFilter = ({
 			setImageNotWorkingFilter(false);
 		}
 
-		if (filterType === "no-issues" && filterStatus == true) {
+		if (filterType === "no-issues" && filterStatus) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
 			setImageMissingAltsFilter(false);
@@ -74,7 +70,7 @@ const ImageFilter = ({
 
 			if (newPath.includes("?")) newPath += `&status=OK&tls_status=OK&missing_alts__iszero=true`;
 			else newPath += `?status=OK&tls_status=OK&missing_alts__iszero=true`;
-		} else if (filterType === "no-issues" && filterStatus == false) {
+		} else if (filterType === "no-issues" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("status");
 			loadQueryString && loadQueryString.delete("missing_alts__iszero");
 			loadQueryString && loadQueryString.delete("tls_status");
@@ -95,7 +91,7 @@ const ImageFilter = ({
 			setNoIssueFilter(false);
 		}
 
-		if (filterType === "brokenSecurity" && filterStatus == true) {
+		if (filterType === "brokenSecurity" && filterStatus) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(true);
 			setImageMissingAltsFilter(false);
@@ -110,7 +106,7 @@ const ImageFilter = ({
 
 			if (newPath.includes("?")) newPath += `&tls_status__neq=OK`;
 			else newPath += `?tls_status__neq=OK`;
-		} else if (filterType === "brokenSecurity" && filterStatus == false) {
+		} else if (filterType === "brokenSecurity" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("tls_status__neq");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -121,7 +117,7 @@ const ImageFilter = ({
 			setImageBrokenSecurityFilter(false);
 		}
 
-		if (filterType === "missingAlts" && filterStatus == true) {
+		if (filterType === "missingAlts" && filterStatus) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
 			setImageMissingAltsFilter(true);
@@ -136,7 +132,7 @@ const ImageFilter = ({
 
 			if (newPath.includes("?")) newPath += `&missing_alts__gt=0`;
 			else newPath += `?missing_alts__gt=0`;
-		} else if (filterType === "missingAlts" && filterStatus == false) {
+		} else if (filterType === "missingAlts" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("missing_alts__gt");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -147,7 +143,7 @@ const ImageFilter = ({
 			setImageMissingAltsFilter(false);
 		}
 
-		if (filterType == "all" && filterStatus == true) {
+		if (filterType == "all" && filterStatus) {
 			setImageNotWorkingFilter(false);
 			setImageBrokenSecurityFilter(false);
 			setImageMissingAltsFilter(false);
@@ -166,148 +162,60 @@ const ImageFilter = ({
 		else setPagePath(`${newPath}?`);
 
 		router.push(newPath);
+
 		mutate(scanApiEndpoint);
 	};
 
 	React.useEffect(() => {
-		let loadQueryStringValue = new URLSearchParams(window.location.search);
-
-		handleLoadQueryString;
-
-		if (loadQueryStringValue.get("status__neq") === "OK") {
+		if (filterQueryString.get("status__neq") === "OK") {
 			setImageNotWorkingFilter(true);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setAllFilter(false);
-			setNoIssueFilter(false);
+		} else {
+			setImageNotWorkingFilter(false);
 		}
 
 		if (
-			loadQueryStringValue.get("status") === "OK" &&
-			loadQueryStringValue.get("tls_status") === "OK" &&
-			loadQueryStringValue.get("missing_alts__iszero") === "true"
+			filterQueryString.get("status") === "OK" &&
+			filterQueryString.get("tls_status") === "OK" &&
+			filterQueryString.get("missing_alts__iszero") === "true"
 		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setAllFilter(false);
 			setNoIssueFilter(true);
+		} else {
+			setNoIssueFilter(false);
 		}
 
-		if (loadQueryStringValue.get("tls_status__neq") === "OK") {
-			setImageNotWorkingFilter(false);
+		if (filterQueryString.get("tls_status__neq") === "OK") {
 			setImageBrokenSecurityFilter(true);
-			setImageMissingAltsFilter(false);
-			setAllFilter(false);
-			setNoIssueFilter(false);
+		} else {
+			setImageBrokenSecurityFilter(false);
 		}
 
-		if (loadQueryStringValue.get("missing_alts__gt") === "0") {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
+		if (filterQueryString.get("missing_alts__gt") === "0") {
 			setImageMissingAltsFilter(true);
-			setAllFilter(false);
-			setNoIssueFilter(false);
+		} else {
+			setImageMissingAltsFilter(false);
 		}
 
 		if (
-			!loadQueryStringValue.has("status") &&
-			!loadQueryStringValue.has("status__neq") &&
-			!loadQueryStringValue.has("tls_status") &&
-			!loadQueryStringValue.has("tls_status__neq") &&
-			!loadQueryStringValue.has("missing_alts__gt") &&
-			!loadQueryStringValue.has("missing_alts__iszero")
+			!filterQueryString.has("status") &&
+			!filterQueryString.has("status__neq") &&
+			!filterQueryString.has("tls_status") &&
+			!filterQueryString.has("tls_status__neq") &&
+			!filterQueryString.has("missing_alts__gt") &&
+			!filterQueryString.has("missing_alts__iszero")
 		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
 			setAllFilter(true);
-			setNoIssueFilter(false);
-		}
-	}, []);
-
-	React.useEffect(() => {
-		if (
-			result.status__neq !== undefined &&
-			result.status == undefined &&
-			result.tls_status == undefined &&
-			result.tls_status__neq == undefined &&
-			result.missing_alts__iszero == undefined &&
-			result.missing_alts__gt == undefined
-		) {
-			setImageNotWorkingFilter(true);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(false);
+		} else {
 			setAllFilter(false);
 		}
 
-		if (
-			result.status__neq == undefined &&
-			result.status === undefined &&
-			result.tls_status == undefined &&
-			result.tls_status__neq !== undefined &&
-			result.missing_alts__iszero == undefined &&
-			result.missing_alts__gt == undefined
-		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(true);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-		}
-
-		if (
-			result.status__neq == undefined &&
-			result.status == undefined &&
-			result.tls_status == undefined &&
-			result.tls_status__neq == undefined &&
-			result.missing_alts__iszero == undefined &&
-			result.missing_alts__gt !== undefined
-		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(true);
-			setNoIssueFilter(false);
-			setAllFilter(false);
-		}
-
-		if (
-			result.status__neq == undefined &&
-			result.status !== undefined &&
-			result.tls_status !== undefined &&
-			result.tls_status__neq == undefined &&
-			result.missing_alts__iszero !== undefined &&
-			result.missing_alts__gt == undefined
-		) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
-			setNoIssueFilter(true);
-			setAllFilter(false);
-		}
-
-		if (
-			loadQueryString &&
-			loadQueryString !== undefined &&
-			loadQueryString.toString().length === 0
-		) {
-			if (
-				result.status == undefined &&
-				result.status__neq == undefined &&
-				result.tls_status == undefined &&
-				result.tls_status__neq == undefined &&
-				result.missing_alts__iszero == undefined &&
-				result.missing_alts__gt == undefined
-			) {
-				setImageNotWorkingFilter(false);
-				setImageBrokenSecurityFilter(false);
-				setImageMissingAltsFilter(false);
-				setNoIssueFilter(false);
-				setAllFilter(true);
-			}
-		}
-	}, [handleFilter, loadQueryString]);
+		return {
+			imageNotWorkingFilter,
+			imageBrokenSecurityFilter,
+			imageMissingAltsFilter,
+			noIssueFilter,
+			allFilter
+		};
+	});
 
 	return (
 		<div tw="lg:pb-4 bg-white">
@@ -405,17 +313,13 @@ const ImageFilter = ({
 };
 
 ImageFilter.propTypes = {
-	result: PropTypes.object,
 	loadQueryString: PropTypes.string,
-	handleLoadQueryString: PropTypes.func,
 	scanApiEndpoint: PropTypes.string,
-	setPagePath: PropTypes.string
+	setPagePath: PropTypes.func
 };
 
 ImageFilter.defaultProps = {
-	result: null,
 	loadQueryString: null,
-	handleLoadQueryString: null,
 	scanApiEndpoint: null,
 	setPagePath: null
 };

@@ -9,16 +9,10 @@ import "twin.macro";
 import { mutate } from "swr";
 import PropTypes from "prop-types";
 
-// Helpers
+// Utils
 import { removeURLParameter } from "@utils/functions";
 
-const SeoFilter = ({
-	result,
-	loadQueryString,
-	handleLoadQueryString,
-	scanApiEndpoint,
-	setPagePath
-}) => {
+const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [noDescription, setNoDescription] = React.useState(false);
 	const [noH1First, setNoH1First] = React.useState(false);
@@ -27,6 +21,8 @@ const SeoFilter = ({
 	const [noH2Second, setNoH2Second] = React.useState(false);
 	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
 	const [noTitle, setNoTitle] = React.useState(false);
+
+	const filterQueryString = new URLSearchParams(window.location.search);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -38,7 +34,7 @@ const SeoFilter = ({
 		let newPath = asPath;
 		newPath = removeURLParameter(newPath, "page");
 
-		if (filterType == "no-issues" && filterStatus == true) {
+		if (filterType === "no-issues" && filterStatus) {
 			setNoTitle(false);
 			setNoIssueFilter(true);
 			setNoDescription(false);
@@ -58,7 +54,7 @@ const SeoFilter = ({
 			if (newPath.includes("?"))
 				newPath += `&has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
 			else newPath += `?has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
-		} else if (filterType == "no-issues" && filterStatus == false) {
+		} else if (filterType === "no-issues" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("has_title");
 			loadQueryString && loadQueryString.delete("has_description");
 			loadQueryString && loadQueryString.delete("has_h1_first");
@@ -80,7 +76,7 @@ const SeoFilter = ({
 			setNoIssueFilter(false);
 		}
 
-		if (filterType == "noTitle" && filterStatus == true) {
+		if (filterType === "noTitle" && filterStatus) {
 			setNoTitle(true);
 			setNoIssueFilter(false);
 			setNoDescription(false);
@@ -98,7 +94,7 @@ const SeoFilter = ({
 
 			if (newPath.includes("?")) newPath += `&has_title=false`;
 			else newPath += `?has_title=false`;
-		} else if (filterType == "noTitle" && filterStatus == false) {
+		} else if (filterType === "noTitle" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("has_title");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -109,7 +105,7 @@ const SeoFilter = ({
 			setNoTitle(false);
 		}
 
-		if (filterType == "noDescription" && filterStatus == true) {
+		if (filterType === "noDescription" && filterStatus) {
 			setNoTitle(false);
 			setNoIssueFilter(false);
 			setNoDescription(true);
@@ -127,7 +123,7 @@ const SeoFilter = ({
 
 			if (newPath.includes("?")) newPath += `&has_description=false`;
 			else newPath += `?has_description=false`;
-		} else if (filterType == "noDescription" && filterStatus == false) {
+		} else if (filterType === "noDescription" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("has_description");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -138,7 +134,7 @@ const SeoFilter = ({
 			setNoDescription(false);
 		}
 
-		if (filterType == "noH1First" && filterStatus == true) {
+		if (filterType === "noH1First" && filterStatus) {
 			setNoTitle(false);
 			setNoIssueFilter(false);
 			setNoDescription(false);
@@ -156,7 +152,7 @@ const SeoFilter = ({
 
 			if (newPath.includes("?")) newPath += `&has_h1_first=false`;
 			else newPath += `?has_h1_first=false`;
-		} else if (filterType == "noH1First" && filterStatus == false) {
+		} else if (filterType === "noH1First" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("has_h1_first");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -167,7 +163,7 @@ const SeoFilter = ({
 			setNoH1First(false);
 		}
 
-		if (filterType == "noH1Second" && filterStatus == true) {
+		if (filterType === "noH1Second" && filterStatus) {
 			setNoTitle(false);
 			setNoIssueFilter(false);
 			setNoDescription(false);
@@ -185,7 +181,7 @@ const SeoFilter = ({
 
 			if (newPath.includes("?")) newPath += `&has_h1_second=false`;
 			else newPath += `?has_h1_second=false`;
-		} else if (filterType == "noH1Second" && filterStatus == false) {
+		} else if (filterType === "noH1Second" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("has_h1_second");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -196,7 +192,7 @@ const SeoFilter = ({
 			setNoH1Second(false);
 		}
 
-		if (filterType == "noH2First" && filterStatus == true) {
+		if (filterType === "noH2First" && filterStatus) {
 			setNoTitle(false);
 			setNoIssueFilter(false);
 			setNoDescription(false);
@@ -214,7 +210,7 @@ const SeoFilter = ({
 
 			if (newPath.includes("?")) newPath += `&has_h2_first=false`;
 			else newPath += `?has_h2_first=false`;
-		} else if (filterType == "noH2First" && filterStatus == false) {
+		} else if (filterType === "noH2First" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("has_h2_first");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -225,7 +221,7 @@ const SeoFilter = ({
 			setNoH2First(false);
 		}
 
-		if (filterType == "noH2Second" && filterStatus == true) {
+		if (filterType === "noH2Second" && filterStatus) {
 			setNoTitle(false);
 			setNoIssueFilter(false);
 			setNoDescription(false);
@@ -243,7 +239,7 @@ const SeoFilter = ({
 
 			if (newPath.includes("?")) newPath += `&has_h2_second=false`;
 			else newPath += `?has_h2_second=false`;
-		} else if (filterType == "noH2Second" && filterStatus == false) {
+		} else if (filterType === "noH2Second" && !filterStatus) {
 			loadQueryString && loadQueryString.delete("has_h2_second");
 			loadQueryString && loadQueryString.delete("page");
 
@@ -254,7 +250,7 @@ const SeoFilter = ({
 			setNoH2Second(false);
 		}
 
-		if (filterType == "all" && filterStatus == true) {
+		if (filterType === "all" && filterStatus) {
 			setNoTitle(false);
 			setNoIssueFilter(false);
 			setNoDescription(false);
@@ -280,287 +276,77 @@ const SeoFilter = ({
 	};
 
 	React.useEffect(() => {
-		let loadQueryStringValue = new URLSearchParams(window.location.search);
-
-		handleLoadQueryString;
-
 		if (
-			loadQueryStringValue.has("has_title") &&
-			loadQueryStringValue.get("has_title") === "true" &&
-			loadQueryStringValue.has("has_description") &&
-			loadQueryStringValue.get("has_description") === "true" &&
-			loadQueryStringValue.has("has_h1_first") &&
-			loadQueryStringValue.get("has_h1_first") === "true" &&
-			loadQueryStringValue.has("has_h2_first") &&
-			loadQueryStringValue.get("has_h2_first") === "true"
+			filterQueryString.get("has_title") === "true" &&
+			filterQueryString.get("has_description") === "true" &&
+			filterQueryString.get("has_h1_first") === "true" &&
+			filterQueryString.get("has_h2_first") === "true"
 		) {
 			setNoIssueFilter(true);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
+		} else {
+			setNoIssueFilter(false);
 		}
 
-		if (
-			loadQueryStringValue.has("has_title") &&
-			loadQueryStringValue.get("has_title") === "false"
-		) {
-			setNoIssueFilter(false);
+		if (filterQueryString.get("has_title") === "false") {
 			setNoTitle(true);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
+		} else {
+			setNoTitle(false);
 		}
 
-		if (
-			loadQueryStringValue.has("has_description") &&
-			loadQueryStringValue.get("has_description") === "false"
-		) {
-			setNoIssueFilter(false);
-			setNoTitle(false);
+		if (filterQueryString.get("has_description") === "false") {
 			setNoDescription(true);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
+		} else {
+			setNoDescription(false);
 		}
 
-		if (
-			loadQueryStringValue.has("has_h1_first") &&
-			loadQueryStringValue.get("has_h1_first") === "false"
-		) {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
+		if (filterQueryString.get("has_h1_first") === "false") {
 			setNoH1First(true);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
+		} else {
+			setNoH1First(false);
 		}
 
-		if (
-			loadQueryStringValue.has("has_h1_second") &&
-			loadQueryStringValue.get("has_h1_second") === "false"
-		) {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
+		if (filterQueryString.get("has_h1_second") === "false") {
 			setNoH1Second(true);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
+		} else {
+			setNoH1Second(false);
 		}
 
-		if (
-			loadQueryStringValue.has("has_h2_first") &&
-			loadQueryStringValue.get("has_h2_first") === "false"
-		) {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
+		if (filterQueryString.get("has_h2_first") === "false") {
 			setNoH2First(true);
-			setNoH2Second(false);
-			setAllFilter(false);
+		} else {
+			setNoH2First(false);
 		}
 
-		if (
-			loadQueryStringValue.has("has_h2_second") &&
-			loadQueryStringValue.get("has_h2_second") === "false"
-		) {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
+		if (filterQueryString.get("has_h2_second") === "false") {
 			setNoH2Second(true);
-			setAllFilter(false);
+		} else {
+			setNoH2Second(false);
 		}
 
 		if (
-			!loadQueryStringValue.has("has_title") &&
-			!loadQueryStringValue.has("has_description") &&
-			!loadQueryStringValue.has("has_h1_first") &&
-			!loadQueryStringValue.has("has_h1_second") &&
-			!loadQueryStringValue.has("has_h2_first") &&
-			!loadQueryStringValue.has("has_h2_second")
+			!filterQueryString.has("has_title") &&
+			!filterQueryString.has("has_description") &&
+			!filterQueryString.has("has_h1_first") &&
+			!filterQueryString.has("has_h1_second") &&
+			!filterQueryString.has("has_h2_first") &&
+			!filterQueryString.has("has_h2_second")
 		) {
-			setNoIssueFilter(false);
-			setNoTitle(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
 			setAllFilter(true);
-		}
-	}, []);
-
-	React.useEffect(() => {
-		if (
-			result.has_title !== undefined &&
-			result.has_title.includes("true") &&
-			result.has_description !== undefined &&
-			result.has_description.includes("true") &&
-			result.has_h1_first !== undefined &&
-			result.has_h1_first.includes("true") &&
-			result.has_h2_first !== undefined &&
-			result.has_h2_first.includes("true")
-		) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(true);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
+		} else {
 			setAllFilter(false);
 		}
 
-		if (result.has_title !== undefined && result.has_title.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(true);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_description !== undefined && result.has_description.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(true);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_h1_first !== undefined && result.has_h1_first.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(true);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_h1_second !== undefined && result.has_h1_second.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(true);
-			setNoH2First(false);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_h2_first !== undefined && result.has_h2_first.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_second");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(true);
-			setNoH2Second(false);
-			setAllFilter(false);
-		}
-
-		if (result.has_h2_second !== undefined && result.has_h2_second.includes("false")) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-
-			setNoTitle(false);
-			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(true);
-			setAllFilter(false);
-		}
-
-		if (
-			loadQueryString &&
-			loadQueryString !== undefined &&
-			loadQueryString.toString().length === 0
-		) {
-			if (
-				result.has_title == undefined &&
-				result.has_description == undefined &&
-				result.has_h1_first == undefined &&
-				result.has_h1_second == undefined &&
-				result.has_h2_first == undefined &&
-				result.has_h2_second == undefined
-			) {
-				setNoTitle(false);
-				setNoIssueFilter(false);
-				setNoDescription(false);
-				setNoH1First(false);
-				setNoH1Second(false);
-				setNoH2First(false);
-				setNoH2Second(false);
-				setAllFilter(true);
-			}
-		}
-	}, [handleFilter, loadQueryString]);
+		return {
+			noIssueFilter,
+			noTitle,
+			noDescription,
+			noH1First,
+			noH1Second,
+			noH2First,
+			noH2Second,
+			allFilter
+		};
+	});
 
 	return (
 		<div tw="pb-4 bg-white">
@@ -708,17 +494,13 @@ const SeoFilter = ({
 };
 
 SeoFilter.propTypes = {
-	result: PropTypes.object,
 	loadQueryString: PropTypes.string,
-	handleLoadQueryString: PropTypes.func,
 	scanApiEndpoint: PropTypes.string,
-	setPagePath: PropTypes.string
+	setPagePath: PropTypes.func
 };
 
 SeoFilter.defaultProps = {
-	result: null,
 	loadQueryString: null,
-	handleLoadQueryString: null,
 	scanApiEndpoint: null,
 	setPagePath: null
 };
