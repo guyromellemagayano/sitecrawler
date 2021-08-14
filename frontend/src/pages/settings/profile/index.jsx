@@ -8,15 +8,14 @@ import Link from "next/link";
 import "twin.macro";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import { withResizeDetector } from "react-resize-detector";
-import PropTypes from "prop-types";
 
 // Enums
-import { ComponentReadyInterval, GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
+import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
 import { LoginLink, SitesLink } from "@enums/PageLinks";
 import { ProfileSettingsLabels } from "@enums/ProfileSettingsLabels";
 
 // Hooks
+import { useComponentVisible } from "@hooks/useComponentVisible";
 import useUser from "@hooks/useUser";
 
 // Components
@@ -30,9 +29,10 @@ import PasswordSettings from "@components/settings/PasswordSettings";
 import PersonalSettings from "@components/settings/PersonalSettings";
 import Sidebar from "@components/layouts/Sidebar";
 
-const Profile = ({ width }) => {
+const ProfileSettings = () => {
 	const [componentReady, setComponentReady] = React.useState(false);
-	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
+
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 	const { user, mutateUser } = useUser({
 		redirectIfFound: false,
@@ -40,13 +40,9 @@ const Profile = ({ width }) => {
 	});
 
 	React.useEffect(() => {
-		user
-			? setTimeout(() => {
-					setComponentReady(true);
-			  }, ComponentReadyInterval)
-			: setComponentReady(false);
+		user ? setComponentReady(true) : setComponentReady(false);
 
-		return { user };
+		return user;
 	}, [user]);
 
 	return (
@@ -54,16 +50,23 @@ const Profile = ({ width }) => {
 			<NextSeo title={componentReady ? ProfileSettingsLabels[0].label : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar width={width} user={componentReady ? user : null} />
+				<Sidebar
+					ref={ref}
+					user={componentReady ? user : null}
+					openSidebar={isComponentVisible}
+					setOpenSidebar={setIsComponentVisible}
+				/>
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="relative flex-shrink-0 flex bg-white">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton
-								handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
+								openSidebar={isComponentVisible}
+								setOpenSidebar={setIsComponentVisible}
 							/>
 						</div>
 
+						{/* TODO: Turn this into a single component */}
 						<Link href={SitesLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
@@ -126,12 +129,4 @@ const Profile = ({ width }) => {
 	);
 };
 
-Profile.propTypes = {
-	width: PropTypes.number
-};
-
-Profile.defaultProps = {
-	width: null
-};
-
-export default withResizeDetector(Profile);
+export default ProfileSettings;
