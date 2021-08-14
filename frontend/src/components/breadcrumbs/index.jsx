@@ -14,15 +14,16 @@ import { BreadcrumbsLabels } from "@enums/BreadcrumbsLabels";
 import { SitesLink } from "@enums/PageLinks";
 
 const Breadcrumbs = ({
-	siteId,
-	isOther,
 	dataId,
-	pageDetailTitle,
-	isPages,
 	isImages,
+	isLinks,
+	isOther,
+	isPages,
 	isSeo,
+	isSites,
+	pageDetailTitle,
 	pageTitle,
-	isSites
+	siteId
 }) => {
 	const homeLabel = BreadcrumbsLabels[0].label;
 	const siteIdOverviewPageLink = `/site/${siteId}/overview/`;
@@ -99,18 +100,20 @@ const Breadcrumbs = ({
 Breadcrumbs.propTypes = {
 	dataId: PropTypes.number,
 	isImages: PropTypes.bool,
+	isLinks: PropTypes.bool,
 	isOther: PropTypes.bool,
 	isPages: PropTypes.bool,
 	isSeo: PropTypes.bool,
 	isSites: PropTypes.bool,
 	pageDetailTitle: PropTypes.string,
 	pageTitle: PropTypes.string,
-	siteId: PropTypes.number
+	siteId: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 };
 
 Breadcrumbs.defaultProps = {
 	dataId: null,
 	isImages: false,
+	isLinks: false,
 	isOther: false,
 	isPages: false,
 	isSeo: false,
