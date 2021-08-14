@@ -92,7 +92,7 @@ const LargePageSizeSettingsForm = ({
 										<input
 											type="number"
 											id="largepagesizethreshold"
-											value={values.largepagesizethreshold}
+											value={values.largepagesizethreshold || 0}
 											autoFocus={true}
 											name="largepagesizethreshold"
 											disabled={isSubmitting || disableForm}
@@ -187,8 +187,8 @@ const LargePageSizeSettingsForm = ({
 LargePageSizeSettingsForm.propTypes = {
 	componentReady: PropTypes.bool,
 	endpoint: PropTypes.string,
-	large_page_size_threshold: PropTypes.number,
-	largePageSizeThreshold: PropTypes.number,
+	large_page_size_threshold: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+	largePageSizeThreshold: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	mutateSiteId: PropTypes.func,
 	mutateUser: PropTypes.func,
 	setErrorMsg: PropTypes.func,
