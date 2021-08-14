@@ -1,4 +1,4 @@
-export const linksChartContents = [
+export const LinksChartContents = [
 	{
 		label: "Broken Links",
 		filter: "status__neq=OK",
@@ -11,7 +11,7 @@ export const linksChartContents = [
 	}
 ];
 
-export const seoChartContents = [
+export const SeoChartContents = [
 	{
 		label: "Missing Title",
 		filter: "has_title=false",
@@ -39,7 +39,7 @@ export const seoChartContents = [
 	}
 ];
 
-export const pagesChartContents = [
+export const PagesChartContents = [
 	{
 		label: "Large Page Size",
 		filter: "size_total_min=1048576",
@@ -57,7 +57,7 @@ export const pagesChartContents = [
 	}
 ];
 
-export const imagesChartContents = [
+export const ImagesChartContents = [
 	{
 		label: "Broken Images",
 		filter: "status__neq=OK",
