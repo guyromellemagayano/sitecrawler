@@ -7,17 +7,11 @@ import Link from "next/link";
 // External
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import { withResizeDetector } from "react-resize-detector";
-import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
 // Enums
-import {
-	ComponentReadyInterval,
-	GlobalLabels,
-	MutateInterval,
-	SiteLogoDark
-} from "@enums/GlobalValues";
+import { GlobalLabels, MutateInterval, SiteLogoDark } from "@enums/GlobalValues";
 import { LoginLink, SitesLink } from "@enums/PageLinks";
 import { SubscriptionLabels } from "@enums/SubscriptionLabels";
 import {
@@ -27,6 +21,7 @@ import {
 } from "@enums/ApiEndpoints";
 
 // Hooks
+import { useComponentVisible } from "@hooks/useComponentVisible";
 import {
 	useChangeToBasicPlanModalVisible,
 	useNewActivePlanModalVisible,
@@ -55,7 +50,7 @@ import SemiAnnualPlans from "@components/plans/SemiAnnualPlans";
 import Sidebar from "@components/layouts/Sidebar";
 import Footer from "@components/layouts/Footer";
 
-const Subscriptions = ({ width }) => {
+const SubscriptionPlans = () => {
 	const [basicPlanId, setBasicPlanId] = React.useState(0);
 	const [basicPlanName, setBasicPlanName] = React.useState("");
 	const [componentReady, setComponentReady] = React.useState(false);
@@ -68,12 +63,12 @@ const Subscriptions = ({ width }) => {
 	const [loadingAgencySemiAnnually, setLoadingAgencySemiAnnually] = React.useState(false);
 	const [loadingProMonthly, setLoadingProMonthly] = React.useState(false);
 	const [loadingProSemiAnnually, setLoadingProSemiAnnually] = React.useState(false);
-	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
 	const [successMsg, setSuccessMsg] = React.useState([]);
 	const [togglePaymentPeriod, setTogglePaymentPeriod] = React.useState(false);
 	const [updatedPlanId, setUpdatedPlanId] = React.useState(0);
 	const [updatedPlanName, setUpdatedPlanName] = React.useState("");
 
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 	const { newActivePlanModalRef, isNewActivePlanModalVisible, setIsNewActivePlanModalVisible } =
 		useNewActivePlanModalVisible(false);
 	const {
@@ -98,9 +93,7 @@ const Subscriptions = ({ width }) => {
 			? (() => {
 					user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false);
 
-					setTimeout(() => {
-						setComponentReady(true);
-					}, ComponentReadyInterval);
+					setComponentReady(true);
 			  })()
 			: setComponentReady(false);
 
@@ -282,7 +275,12 @@ const Subscriptions = ({ width }) => {
 			<NextSeo title={componentReady ? SubscriptionLabels[25].label : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar width={width} user={componentReady ? user : null} />
+				<Sidebar
+					ref={ref}
+					user={componentReady ? user : null}
+					openSidebar={isComponentVisible}
+					setOpenSidebar={setIsComponentVisible}
+				/>
 
 				<PaymentMethodModal
 					handleSelectPlan={handleSelectPlan}
@@ -332,7 +330,8 @@ const Subscriptions = ({ width }) => {
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton
-								handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
+								openSidebar={isComponentVisible}
+								setOpenSidebar={setIsComponentVisible}
 							/>
 						</div>
 
@@ -418,66 +417,83 @@ const Subscriptions = ({ width }) => {
 													<div tw="absolute inset-0 h-5/6 lg:h-2/3"></div>
 													<div tw="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 														<div tw="relative lg:grid lg:grid-cols-7">
-															{subscriptions && subscriptions?.results
-																? subscriptions?.results
-																		.filter((result) => result.group.name === "Basic")
-																		.map((val, key) => (
-																			<BasicPlan
-																				componentReady={componentReady}
-																				data={val}
-																				defaultSubscription={defaultSubscription}
-																				key={key}
-																				setBasicPlanId={setBasicPlanId}
-																				setBasicPlanName={setBasicPlanName}
-																				setShowModal={setIsChangeToBasicPlanModalVisible}
-																				showModal={isChangeToBasicPlanModalVisible}
-																			/>
-																		))
-																: null}
+															{subscriptions && subscriptions?.results ? (
+																subscriptions?.results
+																	.filter((result) => result.group.name === "Basic")
+																	.map((val, key) => (
+																		<BasicPlan
+																			data={val}
+																			defaultSubscription={defaultSubscription}
+																			key={key}
+																			setBasicPlanId={setBasicPlanId}
+																			setBasicPlanName={setBasicPlanName}
+																			setShowModal={setIsChangeToBasicPlanModalVisible}
+																			showModal={isChangeToBasicPlanModalVisible}
+																		/>
+																	))
+															) : (
+																<span tw="mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3">
+																	<Skeleton duration={2} width={347.41} height={553} />
+																</span>
+															)}
 
-															{togglePaymentPeriod
-																? subscriptions?.results
-																	? subscriptions?.results
-																			.filter(
-																				(result) => result.price.recurring.interval_count === 6
-																			)
-																			.map((val, key) => (
-																				<SemiAnnualPlans
-																					componentReady={componentReady}
-																					data={val}
-																					defaultPaymentMethod={defaultPaymentMethod}
-																					defaultSubscription={defaultSubscription}
-																					disableLocalTime={disableLocalTime}
-																					key={key}
-																					loadingAgencySemiAnnually={loadingAgencySemiAnnually}
-																					loadingProSemiAnnually={loadingProSemiAnnually}
-																					setShowModal={setIsPaymentMethodModalVisible}
-																					setUpdatedPlanId={setUpdatedPlanId}
-																					setUpdatedPlanName={setUpdatedPlanName}
-																					showModal={isPaymentMethodModalVisible}
-																				/>
-																			))
-																	: null
-																: subscriptions?.results
-																? subscriptions?.results
-																		.filter((result) => result.price.recurring.interval_count === 1)
+															{togglePaymentPeriod ? (
+																subscriptions?.results ? (
+																	subscriptions?.results
+																		.filter((result) => result.price.recurring.interval_count === 6)
 																		.map((val, key) => (
-																			<MonthlyPlans
-																				componentReady={componentReady}
+																			<SemiAnnualPlans
 																				data={val}
 																				defaultPaymentMethod={defaultPaymentMethod}
 																				defaultSubscription={defaultSubscription}
 																				disableLocalTime={disableLocalTime}
 																				key={key}
-																				loadingAgencyMonthly={loadingAgencyMonthly}
-																				loadingProMonthly={loadingProMonthly}
+																				loadingAgencySemiAnnually={loadingAgencySemiAnnually}
+																				loadingProSemiAnnually={loadingProSemiAnnually}
 																				setShowModal={setIsPaymentMethodModalVisible}
 																				setUpdatedPlanId={setUpdatedPlanId}
 																				setUpdatedPlanName={setUpdatedPlanName}
 																				showModal={isPaymentMethodModalVisible}
 																			/>
 																		))
-																: null}
+																) : (
+																	<>
+																		<span tw="mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4">
+																			<Skeleton duration={2} width={521.11} height={811} />
+																		</span>
+																		<span tw="mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3">
+																			<Skeleton duration={2} width={347.41} height={553} />
+																		</span>
+																	</>
+																)
+															) : subscriptions?.results ? (
+																subscriptions?.results
+																	.filter((result) => result.price.recurring.interval_count === 1)
+																	.map((val, key) => (
+																		<MonthlyPlans
+																			data={val}
+																			defaultPaymentMethod={defaultPaymentMethod}
+																			defaultSubscription={defaultSubscription}
+																			disableLocalTime={disableLocalTime}
+																			key={key}
+																			loadingAgencyMonthly={loadingAgencyMonthly}
+																			loadingProMonthly={loadingProMonthly}
+																			setShowModal={setIsPaymentMethodModalVisible}
+																			setUpdatedPlanId={setUpdatedPlanId}
+																			setUpdatedPlanName={setUpdatedPlanName}
+																			showModal={isPaymentMethodModalVisible}
+																		/>
+																	))
+															) : (
+																<>
+																	<span tw="mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4">
+																		<Skeleton duration={2} width={521.11} height={811} />
+																	</span>
+																	<span tw="mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3">
+																		<Skeleton duration={2} width={347.41} height={553} />
+																	</span>
+																</>
+															)}
 														</div>
 													</div>
 												</div>
@@ -498,12 +514,4 @@ const Subscriptions = ({ width }) => {
 	);
 };
 
-Subscriptions.propTypes = {
-	width: PropTypes.number
-};
-
-Subscriptions.defaulProps = {
-	width: null
-};
-
-export default withResizeDetector(Subscriptions);
+export default SubscriptionPlans;
