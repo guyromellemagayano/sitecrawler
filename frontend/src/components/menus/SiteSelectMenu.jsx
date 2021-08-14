@@ -67,7 +67,7 @@ SiteSelectMenu.propTypes = {
 	currentScan: PropTypes.object,
 	isComponentVisible: PropTypes.bool,
 	selectedSite: PropTypes.string,
-	selectedSiteDetails: PropTypes.array,
+	selectedSiteDetails: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 	setIsComponentVisible: PropTypes.func
 };
 
