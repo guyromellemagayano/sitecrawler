@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 // Utils
 import { removeURLParameter } from "@utils/functions";
 
-const ImageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
+const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [imageBrokenSecurityFilter, setImageBrokenSecurityFilter] = React.useState(false);
 	const [imageMissingAltsFilter, setImageMissingAltsFilter] = React.useState(false);
@@ -47,9 +47,6 @@ const ImageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&status__neq=OK`;
 			else newPath += `?status__neq=OK`;
 		} else if (filterType === "notWorking" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("status__neq");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("status__neq")) {
 				newPath = removeURLParameter(newPath, "status__neq");
 			}
@@ -71,11 +68,6 @@ const ImageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&status=OK&tls_status=OK&missing_alts__iszero=true`;
 			else newPath += `?status=OK&tls_status=OK&missing_alts__iszero=true`;
 		} else if (filterType === "no-issues" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("status");
-			loadQueryString && loadQueryString.delete("missing_alts__iszero");
-			loadQueryString && loadQueryString.delete("tls_status");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("status")) {
 				newPath = removeURLParameter(newPath, "status");
 			}
@@ -107,9 +99,6 @@ const ImageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&tls_status__neq=OK`;
 			else newPath += `?tls_status__neq=OK`;
 		} else if (filterType === "brokenSecurity" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("tls_status__neq");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("tls_status__neq")) {
 				newPath = removeURLParameter(newPath, "tls_status__neq");
 			}
@@ -133,9 +122,6 @@ const ImageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&missing_alts__gt=0`;
 			else newPath += `?missing_alts__gt=0`;
 		} else if (filterType === "missingAlts" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("missing_alts__gt");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("missing_alts__gt")) {
 				newPath = removeURLParameter(newPath, "missing_alts__gt");
 			}
@@ -313,13 +299,11 @@ const ImageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 };
 
 ImageFilter.propTypes = {
-	loadQueryString: PropTypes.string,
 	scanApiEndpoint: PropTypes.string,
 	setPagePath: PropTypes.func
 };
 
 ImageFilter.defaultProps = {
-	loadQueryString: null,
 	scanApiEndpoint: null,
 	setPagePath: null
 };

@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 // Utils
 import { removeURLParameter } from "@utils/functions";
 
-const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
+const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [noDescription, setNoDescription] = React.useState(false);
 	const [noH1First, setNoH1First] = React.useState(false);
@@ -55,12 +55,6 @@ const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 				newPath += `&has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
 			else newPath += `?has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
 		} else if (filterType === "no-issues" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (
 				newPath.includes("has_title") &&
 				newPath.includes("has_description") &&
@@ -95,9 +89,6 @@ const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&has_title=false`;
 			else newPath += `?has_title=false`;
 		} else if (filterType === "noTitle" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("has_title");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("has_title")) {
 				newPath = removeURLParameter(newPath, "has_title");
 			}
@@ -124,9 +115,6 @@ const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&has_description=false`;
 			else newPath += `?has_description=false`;
 		} else if (filterType === "noDescription" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("has_description");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("has_description")) {
 				newPath = removeURLParameter(newPath, "has_description");
 			}
@@ -153,9 +141,6 @@ const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&has_h1_first=false`;
 			else newPath += `?has_h1_first=false`;
 		} else if (filterType === "noH1First" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("has_h1_first");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("has_h1_first")) {
 				newPath = removeURLParameter(newPath, "has_h1_first");
 			}
@@ -182,9 +167,6 @@ const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&has_h1_second=false`;
 			else newPath += `?has_h1_second=false`;
 		} else if (filterType === "noH1Second" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("has_h1_second");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("has_h1_second")) {
 				newPath = removeURLParameter(newPath, "has_h1_second");
 			}
@@ -211,9 +193,6 @@ const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&has_h2_first=false`;
 			else newPath += `?has_h2_first=false`;
 		} else if (filterType === "noH2First" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("has_h2_first");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("has_h2_first")) {
 				newPath = removeURLParameter(newPath, "has_h2_first");
 			}
@@ -240,9 +219,6 @@ const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&has_h2_second=false`;
 			else newPath += `?has_h2_second=false`;
 		} else if (filterType === "noH2Second" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("has_h2_second");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("has_h2_second")) {
 				newPath = removeURLParameter(newPath, "has_h2_second");
 			}
@@ -494,13 +470,11 @@ const SeoFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 };
 
 SeoFilter.propTypes = {
-	loadQueryString: PropTypes.string,
 	scanApiEndpoint: PropTypes.string,
 	setPagePath: PropTypes.func
 };
 
 SeoFilter.defaultProps = {
-	loadQueryString: null,
 	scanApiEndpoint: null,
 	setPagePath: null
 };

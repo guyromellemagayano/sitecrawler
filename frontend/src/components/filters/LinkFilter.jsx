@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 // Utils
 import { removeURLParameter } from "@utils/functions";
 
-const LinkFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
+const LinkFilter = ({ scanApiEndpoint, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [externalFilter, setExternalFilter] = React.useState(false);
 	const [internalFilter, setInternalFilter] = React.useState(false);
@@ -41,9 +41,6 @@ const LinkFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&status__neq=OK`;
 			else newPath += `?status__neq=OK`;
 		} else if (filterType === "issues" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("status__neq");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("status__neq")) newPath = removeURLParameter(newPath, "status__neq");
 
 			setIssueFilter(false);
@@ -59,9 +56,6 @@ const LinkFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&status=OK`;
 			else newPath += `?status=OK`;
 		} else if (filterType === "no-issues" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("status");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("status")) newPath = removeURLParameter(newPath, "status");
 
 			setNoIssueFilter(false);
@@ -77,9 +71,6 @@ const LinkFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&type=PAGE`;
 			else newPath += `?type=PAGE`;
 		} else if (filterType === "internal" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("type");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("type=PAGE")) newPath = removeURLParameter(newPath, "type");
 
 			setInternalFilter(false);
@@ -95,9 +86,6 @@ const LinkFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
 			else newPath += `?type=EXTERNAL`;
 		} else if (filterType === "external" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("type");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("type=EXTERNAL")) newPath = removeURLParameter(newPath, "type");
 
 			setExternalFilter(false);
@@ -262,13 +250,11 @@ const LinkFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 };
 
 LinkFilter.propTypes = {
-	loadQueryString: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 	scanApiEndpoint: PropTypes.string,
 	setPagePath: PropTypes.func
 };
 
 LinkFilter.defaultProps = {
-	loadQueryString: null,
 	scanApiEndpoint: null,
 	setPagePath: null
 };

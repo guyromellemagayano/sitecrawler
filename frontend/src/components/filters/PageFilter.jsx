@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 // Utils
 import { removeURLParameter } from "@utils/functions";
 
-const PageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
+const PageFilter = ({ scanApiEndpoint, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);
 	const [brokenSecurityFilter, setBrokenSecurityFilter] = React.useState(false);
 	const [largePageSizeFilter, setLargePageSizeFilter] = React.useState(false);
@@ -42,10 +42,6 @@ const PageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&size_total_max=1048575&tls_total=true`;
 			else newPath += `?size_total_max=1048575&tls_total=true`;
 		} else if (filterType === "no-issues" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("size_total_max");
-			loadQueryString && loadQueryString.delete("tls_total");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("size_total_max") && newPath.includes("tls_total")) {
 				newPath = removeURLParameter(newPath, "size_total_max");
 				newPath = removeURLParameter(newPath, "tls_total");
@@ -67,9 +63,6 @@ const PageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&size_total_min=1048576`;
 			else newPath += `?size_total_min=1048576`;
 		} else if (filterType === "pageLargePages" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("size_total_min");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("size_total_min")) {
 				newPath = removeURLParameter(newPath, "size_total_min");
 			}
@@ -88,11 +81,6 @@ const PageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&tls_total=false`;
 			else newPath += `?tls_total=false`;
 		} else if (filterType === "pageBrokenSecurity" && !filterStatus) {
-			loadQueryString && loadQueryString.delete("tls_total");
-			loadQueryString && loadQueryString.delete("size_total_min");
-			loadQueryString && loadQueryString.delete("size_total_max");
-			loadQueryString && loadQueryString.delete("page");
-
 			if (newPath.includes("tls_total")) {
 				newPath = removeURLParameter(newPath, "size_total_max");
 				newPath = removeURLParameter(newPath, "size_total_min");
@@ -233,13 +221,11 @@ const PageFilter = ({ loadQueryString, scanApiEndpoint, setPagePath }) => {
 };
 
 PageFilter.propTypes = {
-	loadQueryString: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 	scanApiEndpoint: PropTypes.string,
 	setPagePath: PropTypes.func
 };
 
 PageFilter.defaultProps = {
-	loadQueryString: null,
 	scanApiEndpoint: null,
 	setPagePath: null
 };
