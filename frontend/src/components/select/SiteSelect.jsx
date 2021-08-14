@@ -3,7 +3,6 @@ import * as React from "react";
 
 // External
 import "twin.macro";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Hooks
