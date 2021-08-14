@@ -164,17 +164,17 @@ const TlsErrorModal = React.forwardRef(({ scanObjId, setShowModal, showModal, si
 });
 
 TlsErrorModal.propTypes = {
-	scanObjId: PropTypes.any,
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.any,
-	siteId: PropTypes.any
-};
-
-TlsErrorModal.defaultProps = {
 	scanObjId: PropTypes.number,
 	setShowModal: PropTypes.func,
 	showModal: PropTypes.bool,
 	siteId: PropTypes.number
+};
+
+TlsErrorModal.defaultProps = {
+	scanObjId: null,
+	setShowModal: null,
+	showModal: false,
+	siteId: null
 };
 
 export default TlsErrorModal;
