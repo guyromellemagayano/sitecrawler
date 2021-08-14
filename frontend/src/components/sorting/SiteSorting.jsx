@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 
 // External
 import "twin.macro";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Components

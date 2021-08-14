@@ -3,14 +3,14 @@ import * as React from "react";
 
 // NextJS
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
 // External
 import "twin.macro";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Components
-const Sorting = loadable(() => import("@components/sorting/common/Sorting"));
+const Sorting = dynamic(() => import("@components/sorting/common/Sorting"));
 
 // Utils
 import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "@utils/functions";
@@ -122,6 +122,20 @@ const ImageSorting = ({ result, slug, mutateImages, labels, setPagePath }) => {
 	) : null;
 };
 
-ImageSorting.propTypes = {};
+ImageSorting.propTypes = {
+	labels: PropTypes.array,
+	mutateImages: PropTypes.func,
+	ordering: PropTypes.string,
+	setPagePath: PropTypes.func,
+	slug: PropTypes.string
+};
+
+ImageSorting.defaultProps = {
+	labels: null,
+	mutateImages: null,
+	ordering: null,
+	setPagePath: null,
+	slug: null
+};
 
 export default ImageSorting;
