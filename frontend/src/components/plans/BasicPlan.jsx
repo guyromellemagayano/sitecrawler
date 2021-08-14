@@ -4,7 +4,6 @@ import * as React from "react";
 // External
 import { CheckIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
 // Enums
@@ -12,7 +11,6 @@ import { SubscriptionLabels } from "@enums/SubscriptionLabels";
 import { SubscriptionPlanLabels } from "@enums/SubscriptionPlanLabels";
 
 const BasicPlan = ({
-	componentReady,
 	data,
 	defaultSubscription,
 	setBasicPlanId,
@@ -20,7 +18,7 @@ const BasicPlan = ({
 	setShowModal,
 	showModal
 }) => {
-	return componentReady ? (
+	return (
 		<div tw="mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3">
 			<div tw="h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-l-lg border">
 				<div tw="flex-1 flex flex-col">
@@ -97,70 +95,33 @@ const BasicPlan = ({
 				</div>
 			</div>
 		</div>
-	) : (
-		<span tw="mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3">
-			<Skeleton duration={2} width={347.41} height={553} />
-		</span>
 	);
 };
 
 BasicPlan.propTypes = {
+	cancel_at: PropTypes.string,
 	componentReady: PropTypes.bool,
-	data: PropTypes.shape({
-		features: PropTypes.array,
-		group: PropTypes.shape({
-			id: PropTypes.number,
-			name: PropTypes.string
-		}),
-		id: PropTypes.number,
-		price: PropTypes.shape({
-			unit_amount: PropTypes.number
-		})
-	}),
-	defaultSubscription: PropTypes.shape({
-		cancel_at: PropTypes.string,
-		id: PropTypes.number
-	}),
-	features: PropTypes.any,
-	group: PropTypes.shape({
-		id: PropTypes.any,
-		name: PropTypes.any
-	}),
-	id: PropTypes.any,
-	id: PropTypes.any,
-	id: PropTypes.any,
-	name: PropTypes.any,
-	price: PropTypes.shape({
-		unit_amount: PropTypes.any
-	}),
+	features: PropTypes.array,
+	id: PropTypes.number,
+	name: PropTypes.string,
 	setBasicPlanId: PropTypes.func,
 	setBasicPlanName: PropTypes.func,
 	setShowModal: PropTypes.func,
 	showModal: PropTypes.bool,
-	unit_amount: PropTypes.any
+	unit_amount: PropTypes.number
 };
 
 BasicPlan.defaultProps = {
+	cancel_at: null,
 	componentReady: false,
-	data: {
-		features: null,
-		group: {
-			id: null,
-			name: null
-		},
-		id: null,
-		price: {
-			unit_amount: null
-		}
-	},
-	defaultSubscription: {
-		cancel_at: null,
-		id: null
-	},
+	features: null,
+	id: null,
+	name: null,
 	setBasicPlanId: null,
 	setBasicPlanName: null,
 	setShowModal: null,
-	showModal: null
+	showModal: false,
+	unit_amount: null
 };
 
 export default BasicPlan;
