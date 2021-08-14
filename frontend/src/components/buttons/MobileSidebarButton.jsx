@@ -6,13 +6,13 @@ import "twin.macro";
 import { MenuIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
 
-const MobileSidebarButton = ({ handleOpenMobileSidebar }) => {
+const MobileSidebarButton = ({ openSidebar, setOpenSidebar }) => {
 	const openSidebarLabel = "Open sidebar";
 
 	return (
 		<button
 			tw="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900 lg:hidden"
-			onClick={handleOpenMobileSidebar}
+			onClick={() => setOpenSidebar(!openSidebar)}
 		>
 			<span tw="sr-only">{openSidebarLabel}</span>
 			<MenuIcon tw="h-6 w-6" />
@@ -21,11 +21,13 @@ const MobileSidebarButton = ({ handleOpenMobileSidebar }) => {
 };
 
 MobileSidebarButton.propTypes = {
-	handleOpenMobileSidebar: PropTypes.func
+	openSidebar: PropTypes.bool,
+	setOpenSidebar: PropTypes.func
 };
 
 MobileSidebarButton.defaultProps = {
-	handleOpenMobileSidebar: null
+	openSidebar: false,
+	setOpenSidebar: null
 };
 
 export default MobileSidebarButton;
