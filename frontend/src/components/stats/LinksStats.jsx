@@ -7,54 +7,40 @@ import Link from "next/link";
 
 // External
 import "twin.macro";
-import { PhotographIcon } from "@heroicons/react/outline";
+import { LinkIcon } from "@heroicons/react/outline";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
-// JSON
-import ImagesStatsLabel from "public/labels/components/sites/ImagesStats.json";
-
 // Enums
-import { imagesChartContents } from "src/enums/ChartContents";
+import { LinksChartContents } from "@enums/ChartContents";
+import { LinksStatsLabels } from "@enums/LinksStatsLabels";
+import { LgScreenBreakpoint } from "@enums/GlobalValues";
 
 // Components
+import LinksStatsSkeleton from "@components/skeletons/LinksStatsSkeleton";
+
+// Loadable
 const Chart = loadable(() => import("react-apexcharts"));
 
-const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-
-	const lgScreenBreakpoint = 1024;
-
+const LinksStats = ({ componentReady, sid, stats, width }) => {
 	const router = useRouter();
 
-	React.useEffect(() => {
-		const delay = 500;
-
-		let timer = setTimeout(() => setComponentReady(true), delay);
-
-		return () => {
-			clearTimeout(timer);
-		};
-	}, []);
-
 	const legendClickHandler = (label) => {
-		let path = `/site/${sid}/images`;
+		let path = `/site/${sid}/links`;
 
-		imagesChartContents.forEach((item) => {
+		LinksChartContents.forEach((item) => {
 			if (label === item.label && item.filter !== "")
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.push("/site/[siteId]/images", path, { shallow: true });
+		router.push("/site/[siteId]/links", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats?.num_non_ok_images ? stats.num_non_ok_images : 0,
-		stats?.num_images_tls_non_ok ? stats.num_images_tls_non_ok : 0,
-		stats?.num_images_with_missing_alts ? stats.num_images_with_missing_alts : 0,
-		stats?.num_images_fully_ok ? stats.num_images_fully_ok : 0
+		stats?.num_non_ok_links ? stats?.num_non_ok_links : 0,
+		stats?.num_ok_links ? stats?.num_ok_links : 0
 	];
 
 	const chartOptions = {
@@ -67,10 +53,10 @@ const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
 				}
 			}
 		},
-		labels: imagesChartContents.map((item) => item.label),
-		colors: imagesChartContents.map((item) => item.color),
+		labels: LinksChartContents.map((item) => item.label),
+		colors: LinksChartContents.map((item) => item.color),
 		fill: {
-			colors: imagesChartContents.map((item) => item.color)
+			colors: LinksChartContents.map((item) => item.color)
 		},
 		stroke: {
 			width: 0
@@ -108,7 +94,7 @@ const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
 						total: {
 							show: true,
 							showAlways: true,
-							label: "Image Errors",
+							label: "Link Errors",
 							fontSize: "15px",
 							color: "#2A324B",
 							formatter: function (val) {
@@ -148,20 +134,26 @@ const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
 			<div tw="flex justify-between py-8 px-5">
 				<div tw="flex items-center">
 					{componentReady ? (
-						<PhotographIcon tw="w-5 h-5 text-gray-900 mr-2" />
+						<LinkIcon tw="w-5 h-5 text-gray-900 mr-2" />
 					) : (
 						<span tw="w-6 h-6 mr-2">
 							<Skeleton duration={2} width={15} height={15} />
 						</span>
 					)}
 					<h2 tw="text-lg font-bold leading-7 text-gray-900">
-						{componentReady ? ImagesStatsLabel[0].label : <Skeleton duration={2} width={100} height={15} />}
+						{componentReady ? (
+							LinksStatsLabels[0].label
+						) : (
+							<Skeleton duration={2} width={100} height={15} />
+						)}
 					</h2>
 				</div>
 				<div>
 					{componentReady ? (
-						<Link href="/site/[siteId]/images" as={`/site/${sid}/images`} passHref>
-							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{ImagesStatsLabel[1].label}</a>
+						<Link href="/site/[siteId]/links" as={`/site/${sid}/links`} passHref>
+							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">
+								{LinksStatsLabels[1].label}
+							</a>
 						</Link>
 					) : (
 						<span tw="leading-5">
@@ -176,28 +168,35 @@ const SitesImagesStats = ({ width, sid, stats, scanResult }) => {
 						options={chartOptions}
 						series={chartSeries}
 						type="donut"
-						width={lgScreenBreakpoint > width ? "400" : "600"}
-						height={lgScreenBreakpoint > width ? "530" : "530"}
+						width={LgScreenBreakpoint > width ? "400" : "600"}
+						height={LgScreenBreakpoint > width ? "530" : "530"}
 					/>
 				) : (
-					<div className="h-530" tw="flex flex-col items-start">
-						<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
-						<div tw="flex flex-col space-y-3 mt-8">
-							{[...Array(4)].map((value, key) => (
-								<span key={key} tw="space-x-3">
-									<Skeleton circle={true} width={20} height={20} />
-									<Skeleton width={150} height={20} />
-									<Skeleton width={20} height={20} />
-								</span>
-							))}
-						</div>
-					</div>
+					<LinksStatsSkeleton />
 				)}
 			</div>
 		</div>
 	);
 };
 
-SitesImagesStats.propTypes = {};
+LinksStats.propTypes = {
+	componentReady: PropTypes.bool,
+	sid: PropTypes.number,
+	stats: PropTypes.shape({
+		num_non_ok_links: PropTypes.number,
+		num_ok_links: PropTypes.number
+	}),
+	width: PropTypes.number
+};
 
-export default withResizeDetector(SitesImagesStats);
+LinksStats.defaultProps = {
+	componentReady: false,
+	sid: null,
+	stats: {
+		num_non_ok_links: null,
+		num_ok_links: null
+	},
+	width: null
+};
+
+export default withResizeDetector(LinksStats);

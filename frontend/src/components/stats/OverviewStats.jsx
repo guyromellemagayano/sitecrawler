@@ -4,42 +4,39 @@ import * as React from "react";
 // External
 import "twin.macro";
 import { InformationCircleIcon } from "@heroicons/react/outline";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
-// JSON
-import OverviewLabel from "public/labels/components/sites/Overview.json";
+// Enums
+import { OverviewStatsLabels } from "@enums/OverviewLabels";
 
-// Loadable
-const SiteDangerStatus = loadable(() => import("src/components/status/SiteDangerStatus"));
-const SiteSuccessStatus = loadable(() => import("src/components/status/SiteSuccessStatus"));
-const SiteInProgressStatus = loadable(() => import("src/components/status/SiteInProgressStatus"));
-const TlsErrorModal = loadable(() => import("src/components/modals/TlsErrorModal"));
+// Hooks
+import { useComponentVisible } from "@hooks/useComponentVisible";
 
-const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-	const [showTlsErrorModal, setShowTlsErrorModal] = React.useState(false);
+// Components
+import SiteDangerStatus from "@components/status/SiteDangerStatus";
+import SiteSuccessStatus from "@components/status/SiteSuccessStatus";
+import SiteInProgressStatus from "@components/status/SiteInProgressStatus";
+import TlsErrorModal from "@components/modals/TlsErrorModal";
 
-	React.useEffect(() => {
-		stats
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
-
-		return setComponentReady(false);
-	}, [stats]);
+const OverviewStats = ({
+	componentReady,
+	verified,
+	stats,
+	user,
+	isCrawlStarted,
+	isCrawlFinished
+}) => {
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 	return (
 		<>
 			<TlsErrorModal
-				showModal={showTlsErrorModal}
-				setShowModal={setShowTlsErrorModal}
-				siteId={stats?.site_id}
+				ref={ref}
 				scanObjId={stats?.id}
+				setShowModal={setIsComponentVisible}
+				showModal={isComponentVisible}
+				siteId={stats?.site_id}
 			/>
 
 			<div tw="h-full overflow-hidden rounded-lg border">
@@ -52,14 +49,20 @@ const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished 
 						</span>
 					)}
 					<h2 tw="text-lg font-bold leading-7 text-gray-900">
-						{componentReady ? OverviewLabel[7].label : <Skeleton duration={2} width={100} height={15} />}
+						{componentReady ? (
+							OverviewStatsLabels[7].label
+						) : (
+							<Skeleton duration={2} width={100} height={15} />
+						)}
 					</h2>
 				</div>
 
 				<div tw="p-5">
 					<dl tw="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 col-span-4">
 						<div tw="py-3 sm:col-span-1">
-							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[1].label}</dt>
+							<dt tw="text-sm leading-5 font-medium text-gray-500">
+								{OverviewStatsLabels[1].label}
+							</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
 								{componentReady ? (
 									verified ? (
@@ -77,7 +80,9 @@ const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished 
 						</div>
 						{user?.permissions?.includes("can_see_pages") && (
 							<div tw="py-3 sm:col-span-1">
-								<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[3].label}</dt>
+								<dt tw="text-sm leading-5 font-medium text-gray-500">
+									{OverviewStatsLabels[3].label}
+								</dt>
 								<dd tw="mt-1 text-sm leading-5 text-gray-900">
 									{componentReady ? (
 										!isCrawlStarted && isCrawlFinished ? (
@@ -88,7 +93,7 @@ const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished 
 													<span tw="flex flex-col items-start justify-start space-x-1">
 														<button
 															type="button"
-															onClick={() => setShowTlsErrorModal(true)}
+															onClick={() => setIsComponentVisible(!isComponentVisible)}
 															tw="focus:outline-none hover:text-gray-50"
 														>
 															<span tw="flex items-center">
@@ -111,7 +116,9 @@ const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished 
 							</div>
 						)}
 						<div tw="py-3 sm:col-span-1">
-							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[4].label}</dt>
+							<dt tw="text-sm leading-5 font-medium text-gray-500">
+								{OverviewStatsLabels[4].label}
+							</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
 								{componentReady ? (
 									!isCrawlStarted && isCrawlFinished ? (
@@ -134,7 +141,9 @@ const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished 
 							</dd>
 						</div>
 						<div tw="py-3 sm:col-span-1">
-							<dt tw="text-sm leading-5 font-medium text-gray-500">{OverviewLabel[5].label}</dt>
+							<dt tw="text-sm leading-5 font-medium text-gray-500">
+								{OverviewStatsLabels[5].label}
+							</dt>
 							<dd tw="mt-1 text-sm leading-5 text-gray-900">
 								{componentReady ? (
 									!isCrawlStarted && isCrawlFinished ? (
@@ -157,6 +166,36 @@ const SitesOverview = ({ verified, stats, user, isCrawlStarted, isCrawlFinished 
 	);
 };
 
-SitesOverview.propTypes = {};
+OverviewStats.propTypes = {
+	componentReady: PropTypes.bool,
+	isCrawlFinished: PropTypes.bool,
+	isCrawlStarted: PropTypes.bool,
+	stats: PropTypes.shape({
+		force_https: PropTypes.bool,
+		id: PropTypes.number,
+		num_pages_tls_non_ok: PropTypes.number,
+		site_id: PropTypes.number
+	}),
+	user: PropTypes.shape({
+		permissions: PropTypes.array
+	}),
+	verified: PropTypes.bool
+};
 
-export default SitesOverview;
+OverviewStats.defaultProps = {
+	componentReady: false,
+	isCrawlFinished: false,
+	isCrawlStarted: false,
+	stats: {
+		force_https: false,
+		id: null,
+		num_pages_tls_non_ok: null,
+		site_id: null
+	},
+	user: {
+		permissions: null
+	},
+	verified: false
+};
+
+export default OverviewStats;

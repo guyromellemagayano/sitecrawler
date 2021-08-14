@@ -7,58 +7,48 @@ import Link from "next/link";
 
 // External
 import "twin.macro";
-import { DocumentIcon } from "@heroicons/react/outline";
+import { SearchIcon } from "@heroicons/react/solid";
 import { withResizeDetector } from "react-resize-detector";
 import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
-// JSON
-import PagesStatsLabel from "public/labels/components/sites/PagesStats.json";
-
 // Enums
-import { pagesChartContents } from "src/enums/ChartContents";
+import { LgScreenBreakpoint } from "@enums/GlobalValues";
+import { SeoChartContents } from "@enums/ChartContents";
+import { SeoStatsLabels } from "@enums/SeoStatsLabels";
 
 // Components
+import SeoStatsSkeleton from "@components/skeletons/SeoStatsSkeleton";
+
+// Loadable
 const Chart = loadable(() => import("react-apexcharts"));
 
-const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-
-	const lgScreenBreakpoint = 1024;
-
+const SeoStats = ({ componentReady, sid, stats, width }) => {
 	const router = useRouter();
 
-	React.useEffect(() => {
-		const delay = 500;
-
-		let timer = setTimeout(() => setComponentReady(true), delay);
-
-		return () => {
-			clearTimeout(timer);
-		};
-	}, []);
-
 	const legendClickHandler = (label) => {
-		let path = `/site/${sid}/pages`;
+		let path = `/site/${sid}/seo`;
 
-		pagesChartContents.forEach((item, index) => {
+		SeoChartContents.forEach((item, index) => {
 			if (label === item.label && item.filter !== "")
 				path += path.includes("?") ? `&${item.filter}` : `?${item.filter}`;
 		});
 
-		router.push("/site/[siteId]/pages", path, { shallow: true });
+		router.push("/site/[siteId]/seo", path, { shallow: true });
 	};
 
 	const chartSeries = [
-		stats?.num_pages_big ? stats?.num_pages_big : 0,
-		stats?.num_pages_tls_non_ok ? stats?.num_pages_tls_non_ok : 0,
-		stats?.num_pages_small_tls_ok ? stats?.num_pages_small_tls_ok : 0
+		stats?.num_pages_without_title ? stats.num_pages_without_title : 0,
+		stats?.num_pages_without_description ? stats.num_pages_without_description : 0,
+		stats?.num_pages_without_h1_first ? stats.num_pages_without_h1_first : 0,
+		stats?.num_pages_without_h2_first ? stats.num_pages_without_h2_first : 0,
+		stats?.num_pages_seo_ok ? stats.num_pages_seo_ok : 0
 	];
 
 	const chartOptions = {
 		chart: {
-			id: "pageStats",
+			id: "seoStats",
 			type: "donut",
 			events: {
 				legendClick: function (chartContext, seriesIndex, config) {
@@ -66,10 +56,10 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 				}
 			}
 		},
-		labels: pagesChartContents.map((item) => item.label),
-		colors: pagesChartContents.map((item) => item.color),
+		labels: SeoChartContents.map((item) => item.label),
+		colors: SeoChartContents.map((item) => item.color),
 		fill: {
-			colors: pagesChartContents.map((item) => item.color)
+			colors: SeoChartContents.map((item) => item.color)
 		},
 		stroke: {
 			width: 0
@@ -107,7 +97,7 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 						total: {
 							show: true,
 							showAlways: true,
-							label: "Page Errors",
+							label: "SEO Errors",
 							fontSize: "15px",
 							color: "#2A324B",
 							formatter: function (val) {
@@ -147,20 +137,26 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 			<div tw="flex justify-between py-8 px-5">
 				<div tw="flex items-center">
 					{componentReady ? (
-						<DocumentIcon tw="w-5 h-5 text-gray-900 mr-2" />
+						<SearchIcon tw="w-5 h-5 text-gray-900 mr-2" />
 					) : (
 						<span tw="w-6 h-6 mr-2">
 							<Skeleton duration={2} width={15} height={15} />
 						</span>
 					)}
 					<h2 tw="text-lg font-bold leading-7 text-gray-900">
-						{componentReady ? PagesStatsLabel[0].label : <Skeleton duration={2} width={100} height={15} />}
+						{componentReady ? (
+							SeoStatsLabels[0].label
+						) : (
+							<Skeleton duration={2} width={100} height={15} />
+						)}
 					</h2>
 				</div>
 				<div>
 					{componentReady ? (
-						<Link href="/site/[siteId]/pages" as={`/site/${sid}/pages`} passHref>
-							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{PagesStatsLabel[1].label}</a>
+						<Link href="/site/[siteId]/seo" as={`/site/${sid}/seo`} passHref>
+							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">
+								{SeoStatsLabels[1].label}
+							</a>
 						</Link>
 					) : (
 						<span tw="leading-5">
@@ -175,28 +171,43 @@ const SitesPagesStats = ({ width, sid, stats, scanResult }) => {
 						options={chartOptions}
 						series={chartSeries}
 						type="donut"
-						width={lgScreenBreakpoint > width ? "400" : "600"}
-						height={lgScreenBreakpoint > width ? "530" : "530"}
+						width={LgScreenBreakpoint > width ? "400" : "600"}
+						height={LgScreenBreakpoint > width ? "530" : "530"}
 					/>
 				) : (
-					<div tw="flex flex-col items-start" className="h-530">
-						<Skeleton circle={true} duration={2} width={208.23} height={208.23} className="mt-6 block" />
-						<div tw="flex flex-col space-y-3 mt-8">
-							{[...Array(3)].map((value, key) => (
-								<span key={key} tw="space-x-3">
-									<Skeleton circle={true} width={20} height={20} />
-									<Skeleton width={150} height={20} />
-									<Skeleton width={20} height={20} />
-								</span>
-							))}
-						</div>
-					</div>
+					<SeoStatsSkeleton />
 				)}
 			</div>
 		</div>
 	);
 };
 
-SitesPagesStats.propTypes = {};
+SeoStats.propTypes = {
+	componentReady: PropTypes.bool,
+	sid: PropTypes.number,
+	stats: PropTypes.shape({
+		num_pages_seo_ok: PropTypes.number,
+		num_pages_without_description: PropTypes.number,
+		num_pages_without_h1_first: PropTypes.number,
+		num_pages_without_h2_first: PropTypes.number,
+		num_pages_without_title: PropTypes.number
+	}),
+	user: PropTypes.object,
+	width: PropTypes.number
+};
 
-export default withResizeDetector(SitesPagesStats);
+SeoStats.defaultProps = {
+	componentReady: false,
+	sid: null,
+	stats: {
+		num_pages_seo_ok: null,
+		num_pages_without_description: null,
+		num_pages_without_h1_first: null,
+		num_pages_without_h2_first: null,
+		num_pages_without_title: null
+	},
+	user: null,
+	width: null
+};
+
+export default withResizeDetector(SeoStats);
