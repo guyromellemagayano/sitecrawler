@@ -1,10 +1,12 @@
+// React
+import * as React from "react";
+
 // External
 import "twin.macro";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
 // Common
-const Badge = loadable(() => import("./common/Badge"));
+import Badge from "./common/Badge";
 
 const SiteSuccessBadge = ({ text }) => {
 	return <Badge isSuccess text={text} />;
