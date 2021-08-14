@@ -19,6 +19,7 @@
         ]
     ],
     "plugins": [
+        "@loadable/babel-plugin",
         "babel-plugin-macros",
         "inline-react-svg",
         "add-react-displayname",
