@@ -239,9 +239,7 @@ const SiteVerifyModal = React.forwardRef(
 
 											!showModal
 												? (() => {
-														setTimeout(() => {
-															mutateSite(SiteApiEndpoint);
-														}, 3000);
+														setTimeout(() => {}, 3000);
 												  })()
 												: null;
 										}}

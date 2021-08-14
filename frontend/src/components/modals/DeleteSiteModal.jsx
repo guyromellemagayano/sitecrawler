@@ -7,16 +7,16 @@ import { useRouter } from "next/router";
 // External
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
 import { Transition } from "@headlessui/react";
-import axios from "axios";
-import Cookies from "js-cookie";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 
 // Enums
 import { DeleteSiteModalLabels } from "@enums/DeleteSiteModalLabels";
+import { RevalidationInterval } from "@enums/GlobalValues";
 import { SiteApiEndpoint } from "@enums/ApiEndpoints";
 import { SitesLink } from "@enums/PageLinks";
+import { useDeleteMethod } from "@hooks/useHttpMethod";
 
 const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal, siteId }, ref) => {
 	const [disableDeleteSite, setDisableDeleteSite] = React.useState(false);
@@ -24,7 +24,7 @@ const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal,
 	const [successMsg, setSuccessMsg] = React.useState([]);
 	const [hideButtons, setHideButtons] = React.useState(false);
 
-	const siteIdApiEndpoint = `${SiteApiEndpoint + siteId}/`;
+	const SiteIdApiEndpoint = `${SiteApiEndpoint + siteId}/`;
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -34,43 +34,31 @@ const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal,
 
 		setDisableDeleteSite(true);
 
-		return await axios
-			.delete(siteIdApiEndpoint, {
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-					"X-CSRFToken": Cookies.get("csrftoken")
-				}
-			})
-			.then((response) => {
-				Math.floor(response?.status / 204) === 1
-					? (() => {
-							setDisableDeleteSite(false);
-							setSuccessMsg((successMsg) => [...successMsg, DeleteSiteModalLabels[7]]);
+		const response = await useDeleteMethod(SiteIdApiEndpoint);
 
-							asPath.includes("settings")
-								? (() => {
-										setTimeout(() => {
-											setShowModal(!showModal);
-											router.push(SitesLink);
-										}, 3000);
-								  })()
-								: (() => {
-										setTimeout(() => {
-											setShowModal(!showModal);
-											mutateSite;
-										}, 3000);
-								  })();
-					  })()
-					: (() => {
-							setDisableDeleteSite(false);
-							setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabels[3]]);
-					  })();
-			})
-			.catch((error) => {
-				setDisableDeleteSite(false);
-				setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabels[3]]);
-			});
+		return Math.floor(response?.status / 204) === 1
+			? (() => {
+					setDisableDeleteSite(false);
+					setSuccessMsg((successMsg) => [...successMsg, DeleteSiteModalLabels[7]]);
+
+					asPath.includes("settings")
+						? (() => {
+								setTimeout(() => {
+									setShowModal(!showModal);
+									router.push(SitesLink);
+								}, RevalidationInterval);
+						  })()
+						: (() => {
+								setTimeout(() => {
+									setShowModal(!showModal);
+									mutateSite;
+								}, RevalidationInterval);
+						  })();
+			  })()
+			: (() => {
+					setDisableDeleteSite(false);
+					setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabels[3]]);
+			  })();
 	};
 
 	React.useEffect(() => {

@@ -120,7 +120,7 @@ const ShowHelpModal = React.forwardRef(
 );
 
 ShowHelpModal.propTypes = {
-	copyValue: PropTypes.object,
+	copyValue: PropTypes.string,
 	setCopyValue: PropTypes.func,
 	setShowModal: PropTypes.func,
 	showModal: PropTypes.bool,
