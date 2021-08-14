@@ -22,7 +22,7 @@ const TableSkeletonEntries = ({ str, limit }) => {
 };
 
 TableSkeletonEntries.propTypes = {
-	str: PropTypes.instanceOf(Element).isRequired,
+	str: PropTypes.object,
 	limit: PropTypes.number
 };
 
