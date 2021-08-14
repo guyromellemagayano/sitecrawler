@@ -153,23 +153,15 @@ const ProfileMenu = ({ user }) => {
 };
 
 ProfileMenu.propTypes = {
-	user: PropTypes.shape({
-		email: PropTypes.string,
-		first_name: PropTypes.string,
-		group: PropTypes.shape({
-			name: PropTypes.string
-		})
-	})
+	email: PropTypes.string,
+	first_name: PropTypes.string,
+	name: PropTypes.string
 };
 
 ProfileMenu.defaultProps = {
-	user: {
-		email: null,
-		first_name: null,
-		group: {
-			name: null
-		}
-	}
+	email: null,
+	first_name: null,
+	name: null
 };
 
 export default ProfileMenu;
