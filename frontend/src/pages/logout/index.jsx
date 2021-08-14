@@ -6,7 +6,8 @@ import "twin.macro";
 import { NextSeo } from "next-seo";
 
 // Enums
-import { LogoutApiEndpoint } from "@enums/ApiEndpoints";
+import { LoginLink } from "@enums/PageLinks";
+import { LogoutApiEndpoint, UserApiEndpoint } from "@enums/ApiEndpoints";
 
 // Hooks
 import { usePostMethod } from "@hooks/useHttpMethod";
@@ -27,22 +28,24 @@ const Logout = () => {
 
 	React.useEffect(() => {
 		(async () => {
-			const { response, error } = await usePostMethod(LogoutApiEndpoint);
+			const { response } = await usePostMethod(LogoutApiEndpoint);
 
-			return Math.floor(response?.status / 200) === 1
+			Math.floor(response?.status / 200) === 1
 				? (() => {
 						response?.data?.detail
 							? (() => {
 									setLogoutDetail(response?.data?.detail);
-									mutateUser;
+									// mutateUser(UserApiEndpoint);
 
-									response?.data?.detail !== undefined ? (window.location.href = "/login") : null;
+									response?.data.detail !== undefined ? (window.location.href = LoginLink) : error;
 							  })()
 							: null;
 				  })()
-				: error;
+				: null;
 		})();
 	});
+
+	console.log(logoutDetail);
 
 	return (
 		<Layout>
