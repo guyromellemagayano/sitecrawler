@@ -159,7 +159,7 @@ const CustomStyles = createGlobalStyle`
 		display: block !important;
 		margin-left: auto !important;
 		margin-right: auto !important;
-		max-width: 16rem;
+		max-width: 20rem;
 	}
 
 	.apexcharts-legend-series {

@@ -2,7 +2,6 @@ Hello {{user.first_name}},
 
 Your site {{crawl_site.name}} ({{crawl_site.url}}) is {{status}}.
 
-Visit your dashboard to learn more:
 https://{{site.domain}}/dashboard/site/{{crawl_site.id}}/overview
 
 Thanks,

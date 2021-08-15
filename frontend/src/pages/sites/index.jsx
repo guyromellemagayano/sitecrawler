@@ -289,16 +289,14 @@ const Sites = ({ result }) => {
 								</div>
 
 								<div tw="flex-none px-4 sm:px-6 md:px-8">
-									<div tw="pt-4 border-t border-gray-200">
-										<DataPagination
-											activePage={parseInt(result?.page ? result?.page : 0)}
-											apiEndpoint={scanApiEndpoint}
-											handleItemsPerPageChange={handleItemsPerPageChange}
-											linksPerPage={parseInt(linksPerPage)}
-											pathName={pagePath}
-											componentReady={componentReady}
-										/>
-									</div>
+									<DataPagination
+										activePage={parseInt(result?.page ? result?.page : 0)}
+										apiEndpoint={scanApiEndpoint}
+										handleItemsPerPageChange={handleItemsPerPageChange}
+										linksPerPage={parseInt(linksPerPage)}
+										pathName={pagePath}
+										componentReady={componentReady}
+									/>
 
 									{componentReady ? (
 										<div tw="w-full p-4 border-t border-gray-200">

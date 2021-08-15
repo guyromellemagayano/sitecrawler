@@ -13,22 +13,22 @@ export const LinksChartContents = [
 
 export const SeoChartContents = [
 	{
-		label: "Missing Title",
+		label: "Missing Titles",
 		filter: "has_title=false",
 		color: "#f56565"
 	},
 	{
-		label: "Missing Description",
+		label: "Missing Descriptions",
 		filter: "has_description=false",
 		color: "#e53e3e"
 	},
 	{
-		label: "Missing H1",
+		label: "Missing H1s",
 		filter: "has_h1_first=false",
 		color: "#c53030"
 	},
 	{
-		label: "Missing H2",
+		label: "Missing H2s",
 		filter: "has_h2_first=false",
 		color: "#9b2c2c"
 	},
@@ -41,7 +41,7 @@ export const SeoChartContents = [
 
 export const PagesChartContents = [
 	{
-		label: "Large Page Size",
+		label: "Large Page Sizes",
 		filter: "size_total_min=1048576",
 		color: "#f56565"
 	},
@@ -49,6 +49,16 @@ export const PagesChartContents = [
 		label: "Broken Security",
 		filter: "tls_total=false",
 		color: "#e53e3e"
+	},
+	{
+		label: "Duplicate Titles",
+		filter: "has_duplicated_title=true",
+		color: "#c53030"
+	},
+	{
+		label: "Duplicate Descriptions",
+		filter: "has_duplicated_description=true",
+		color: "#9b2c2c"
 	},
 	{
 		label: "No Issues",

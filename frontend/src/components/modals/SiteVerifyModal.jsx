@@ -268,7 +268,7 @@ const SiteVerifyModal = React.forwardRef(
 									</span>
 								) : (
 									<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
-										<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
+										<Link href="/site/[siteId]/overview/" as={`/site/${siteId}/overview/`} passHref>
 											<a tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
 												{SiteVerifyModalLabels[5].label}
 											</a>

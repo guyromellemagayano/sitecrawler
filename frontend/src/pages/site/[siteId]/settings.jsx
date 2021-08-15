@@ -52,7 +52,7 @@ const SiteSettings = ({ result }) => {
 		redirectTo: SitesLink
 	});
 
-	const homePageLink = `/site/${result?.siteId}/overview`;
+	const homePageLink = `/site/${result?.siteId}`;
 	const pageTitle = SettingsLabels[1].label + " - " + siteId?.name;
 
 	React.useEffect(() => {
