@@ -6,42 +6,45 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
-import { ArrowLeftIcon, UserCircleIcon, ViewBoardsIcon, CreditCardIcon, SupportIcon } from "@heroicons/react/solid";
+import {
+	ArrowLeftIcon,
+	UserCircleIcon,
+	ViewBoardsIcon,
+	CreditCardIcon,
+	SupportIcon
+} from "@heroicons/react/solid";
 import { GlobeIcon } from "@heroicons/react/outline";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Enums
+import { GlobalLabels, SiteLogoWhite } from "@enums/GlobalValues";
+import { SitesLink } from "@enums/PageLinks";
 import { SettingsSidebarMenu } from "@enums/SidebarMenus";
 
 // Components
-const AppLogo = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.AppLogo
-});
-const SiteSelect = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SiteSelect
-});
+import AppLogo from "@components/logos/AppLogo";
+import SiteSelect from "@components/select/SiteSelect";
 
 const SettingsMenu = ({ site }) => {
-	const appLogoAltText = "app-logo";
-	const siteDashboardLink = "/sites/";
-
 	const router = useRouter();
 
 	return (
-		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
-			<div tw="flex flex-col min-h-screen pt-8 pb-4">
+		<Scrollbars
+			renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />}
+			universal
+		>
+			<div tw="flex flex-col min-h-screen py-4 lg:py-8">
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
-					<Link href={siteDashboardLink} passHref>
+					<Link href={SitesLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
 							<AppLogo
 								tw="w-48 h-auto"
-								src="/images/logos/site-logo-white.svg"
-								alt={appLogoAltText}
-								width={230}
-								height={40}
+								src={SiteLogoWhite}
+								alt={GlobalLabels[0].label}
+								width={GlobalLabels[0].width}
+								height={GlobalLabels[0].height}
 							/>
 						</a>
 					</Link>
@@ -118,6 +121,10 @@ const SettingsMenu = ({ site }) => {
 
 SettingsMenu.propTypes = {
 	site: PropTypes.object
+};
+
+SettingsMenu.defaultProps = {
+	site: null
 };
 
 export default SettingsMenu;

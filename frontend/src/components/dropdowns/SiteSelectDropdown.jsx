@@ -10,25 +10,27 @@ import "twin.macro";
 import { PlusIcon } from "@heroicons/react/solid";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { Transition } from "@headlessui/react";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
-// JSON
-import PrimaryMenuLabel from "public/labels/components/sidebar/PrimaryMenu.json";
+// Enums
+import { AddNewSiteLink } from "@enums/PageLinks";
+import { SidebarMenuLabels } from "@enums/SidebarMenuLabels";
 
 // Hooks
 import useCrawl from "@hooks/useCrawl";
 
-// Loadable
-const SitesList = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SitesList
-});
+// Components
+import { ComponentReadyInterval } from "@enums/GlobalValues";
+import SitesList from "@components/lists/SitesList";
 
-const SiteSelectDropdown = ({ site, selectedSiteId, handleSiteSelectOnLoad, isComponentVisible }) => {
+const SiteSelectDropdown = ({
+	site,
+	selectedSiteId,
+	handleSiteSelectOnLoad,
+	isComponentVisible
+}) => {
 	const [sitesLoaded, setSitesLoaded] = React.useState(false);
 	const [scanObjId, setScanObjId] = React.useState(null);
-
-	const AddNewSiteLink = `/sites/add-new-site/`;
 
 	const router = useRouter();
 
@@ -66,7 +68,7 @@ const SiteSelectDropdown = ({ site, selectedSiteId, handleSiteSelectOnLoad, isCo
 						scanObjId: scanObjId
 					}
 				});
-			}, 500);
+			}, ComponentReadyInterval);
 		} else {
 			return false;
 		}
@@ -77,7 +79,7 @@ const SiteSelectDropdown = ({ site, selectedSiteId, handleSiteSelectOnLoad, isCo
 			? (() => {
 					setTimeout(() => {
 						setSitesLoaded(true);
-					}, 500);
+					}, ComponentReadyInterval);
 			  })()
 			: setSitesLoaded(false);
 	}, [isComponentVisible]);
@@ -121,9 +123,9 @@ const SiteSelectDropdown = ({ site, selectedSiteId, handleSiteSelectOnLoad, isCo
 
 			<span tw="relative flex m-2 justify-center shadow-sm rounded-md">
 				<Link href={AddNewSiteLink} passHref>
-					<a tw="w-full flex items-center justify-center rounded-md px-3 py-2 border border-transparent text-sm leading-4 font-medium text-white bg-green-600 cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+					<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full">
 						<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
-						{PrimaryMenuLabel[2].label}
+						{SidebarMenuLabels[2].label}
 					</a>
 				</Link>
 			</span>
@@ -136,6 +138,13 @@ SiteSelectDropdown.propTypes = {
 	selectedSiteId: PropTypes.number,
 	handleSiteSelectOnLoad: PropTypes.func,
 	isComponentVisible: PropTypes.bool
+};
+
+SiteSelectDropdown.defaultProps = {
+	site: null,
+	selectedSiteId: null,
+	handleSiteSelectOnLoad: null,
+	isComponentVisible: false
 };
 
 export default SiteSelectDropdown;

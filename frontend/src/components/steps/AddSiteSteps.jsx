@@ -2,16 +2,14 @@
 import * as React from "react";
 
 // External
-import loadable from "@loadable/component";
-import PropTypes from "prop-types";
 import tw from "twin.macro";
 
-// JSON
-import InformationLabel from "public/labels/pages/add-new-site/information.json";
+// Enums
+import { InformationLabels } from "@enums/InformationLabels";
 
-// Loadable
-const UrlInformationStep = loadable(() => import("src/components/steps/UrlInformationStep"));
-const VerifyUrlStep = loadable(() => import("src/components/steps/VerifyUrlStep"));
+// Components
+import UrlInformationStep from "./UrlInformationStep";
+import VerifyUrlStep from "./VerifyUrlStep";
 
 const AddSiteSteps = () => {
 	const [currentStep, setCurrentStep] = React.useState(1);
@@ -21,18 +19,18 @@ const AddSiteSteps = () => {
 
 	const stepsData = [
 		{
-			title: InformationLabel[13].label,
-			subtitle: InformationLabel[1].label
+			title: InformationLabels[13].label,
+			subtitle: InformationLabels[1].label
 		},
 		{
-			title: InformationLabel[14].label,
-			subtitle: InformationLabel[2].label
+			title: InformationLabels[14].label,
+			subtitle: InformationLabels[2].label
 		}
 	];
 
 	return (
 		<>
-			<nav aria-label={InformationLabel[18].label} tw="max-w-full p-4">
+			<nav aria-label={InformationLabels[18].label} tw="max-w-full p-4">
 				<ol tw="space-y-4 md:flex md:space-y-0 md:space-x-8">
 					{stepsData.map((value, key) => {
 						return (
@@ -44,7 +42,9 @@ const AddSiteSteps = () => {
 									]}
 									aria-current="step"
 								>
-									<span tw="text-xs text-indigo-600 font-semibold tracking-wide uppercase">{value.title}</span>
+									<span tw="text-xs text-indigo-600 font-semibold tracking-wide uppercase">
+										{value.title}
+									</span>
 									<span tw="text-sm font-medium">{value.subtitle}</span>
 								</span>
 							</li>
@@ -62,6 +62,7 @@ const AddSiteSteps = () => {
 				setEditMode={setEditMode}
 				siteId={siteId}
 			/>
+
 			<VerifyUrlStep
 				currentStep={currentStep}
 				setCurrentStep={setCurrentStep}
@@ -72,7 +73,5 @@ const AddSiteSteps = () => {
 		</>
 	);
 };
-
-AddSiteSteps.propTypes = {};
 
 export default AddSiteSteps;

@@ -7,25 +7,25 @@ import * as Sentry from "@sentry/nextjs";
 import * as Yup from "yup";
 import axios from "axios";
 import Cookies from "js-cookie";
-import loadable from "@loadable/component";
 import PasswordStrengthBar from "react-password-strength-bar";
-import PropTypes from "prop-types";
 import tw from "twin.macro";
 
-// Loadable
-const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
-const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
+// Enums
+import { RegistrationApiEndpoint } from "@enums/ApiEndpoints";
+import { RegistrationLabels } from "@enums/RegistrationLabels";
 
-const RegistrationForm = (props) => {
+// Components
+import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
+import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
+
+const RegistrationForm = () => {
 	const [errorEmail, setErrorEmail] = React.useState(false);
 	const [errorMsg, setErrorMsg] = React.useState([]);
 	const [errorUsername, setErrorUsername] = React.useState(false);
 	const [successMsg, setSuccessMsg] = React.useState([]);
 
-	const registrationApiEndpoint = "/api/auth/registration/";
-
 	return (
-		<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
+		<>
 			{successMsg.length > 0
 				? successMsg.map((value, index) => {
 						return (
@@ -60,17 +60,22 @@ const RegistrationForm = (props) => {
 					password2: ""
 				}}
 				validationSchema={Yup.object({
-					firstname: Yup.string().required(props.label[0]),
-					lastname: Yup.string().required(props.label[0]),
-					username: Yup.string().required(props.label[0]),
-					email: Yup.string().email(props.label[1]).required(props.label[0]),
-					password1: Yup.string().min(8, props.label[4]).max(128, props.label[5]).required(props.label[0]),
+					firstname: Yup.string().required(RegistrationLabels[0].label),
+					lastname: Yup.string().required(RegistrationLabels[0].label),
+					username: Yup.string().required(RegistrationLabels[0].label),
+					email: Yup.string()
+						.email(RegistrationLabels[1].label)
+						.required(RegistrationLabels[0].label),
+					password1: Yup.string()
+						.min(8, RegistrationLabels[12].label)
+						.max(128, RegistrationLabels[13].label)
+						.required(RegistrationLabels[0].label),
 					password2: Yup.string()
 						.when("password1", {
 							is: (val) => val && val.length > 0,
-							then: Yup.string().oneOf([Yup.ref("password1")], props.label[6])
+							then: Yup.string().oneOf([Yup.ref("password1")], RegistrationLabels[14].label)
 						})
-						.required(props.label[0])
+						.required(RegistrationLabels[0].label)
 				})}
 				onSubmit={async (values, { setSubmitting, resetForm }) => {
 					const body = {
@@ -88,9 +93,9 @@ const RegistrationForm = (props) => {
 					setErrorEmail(false);
 
 					return await axios
-						.post(registrationApiEndpoint, body, {
+						.post(RegistrationApiEndpoint, body, {
 							headers: {
-								"Accept": "application/json",
+								Accept: "application/json",
 								"Content-Type": "application/json",
 								"X-CSRFToken": Cookies.get("csrftoken")
 							}
@@ -100,14 +105,12 @@ const RegistrationForm = (props) => {
 								? (() => {
 										setSubmitting(false);
 										resetForm({ values: "" });
-										setSuccessMsg((successMsg) => [...successMsg, props.label[8]]);
+										setSuccessMsg((successMsg) => [...successMsg, RegistrationLabels[2].label]);
 								  })()
 								: (() => {
-										Sentry.captureException(response);
-
 										setSubmitting(false);
 										resetForm({ values: "" });
-										setErrorMsg((errorMsg) => [...errorMsg, props.label[9]]);
+										setErrorMsg((errorMsg) => [...errorMsg, RegistrationLabels[3].label]);
 								  })();
 						})
 						.catch((error) => {
@@ -138,7 +141,7 @@ const RegistrationForm = (props) => {
 
 										setSubmitting(false);
 										resetForm({ values: "" });
-										setErrorMsg((errorMsg) => [...errorMsg, props.label[9]]);
+										setErrorMsg((errorMsg) => [...errorMsg, RegistrationLabels[3].label]);
 								  })();
 						});
 				}}
@@ -147,17 +150,19 @@ const RegistrationForm = (props) => {
 					<form onSubmit={handleSubmit}>
 						<div tw="mt-1">
 							<label htmlFor="firstname" tw="block text-sm font-medium text-gray-700">
-								{props.label[10]}
+								{RegistrationLabels[5].label}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
 									id="firstname"
 									type="text"
 									name="firstname"
+									autoFocus={true}
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										isSubmitting &&
+											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 										errors.firstname ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="firstname"
@@ -175,7 +180,7 @@ const RegistrationForm = (props) => {
 
 						<div tw="mt-6">
 							<label htmlFor="lastname" tw="block text-sm font-medium text-gray-700">
-								{props.label[11]}
+								{RegistrationLabels[6].label}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -185,7 +190,8 @@ const RegistrationForm = (props) => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										isSubmitting &&
+											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 										errors.lastname ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="lastname"
@@ -203,7 +209,7 @@ const RegistrationForm = (props) => {
 
 						<div tw="mt-6">
 							<label htmlFor="username" tw="block text-sm font-medium text-gray-700">
-								{props.label[12]}
+								{RegistrationLabels[7].label}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -213,7 +219,8 @@ const RegistrationForm = (props) => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										isSubmitting &&
+											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 										errors.username || errorUsername ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="username"
@@ -231,7 +238,7 @@ const RegistrationForm = (props) => {
 
 						<div tw="mt-6">
 							<label htmlFor="email" tw="block text-sm font-medium text-gray-700">
-								{props.label[13]}
+								{RegistrationLabels[8].label}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -241,7 +248,8 @@ const RegistrationForm = (props) => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none `,
+										isSubmitting &&
+											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none `,
 										errors.email || errorEmail ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="email"
@@ -259,7 +267,7 @@ const RegistrationForm = (props) => {
 
 						<div tw="mt-6">
 							<label htmlFor="password" tw="block text-sm font-medium text-gray-700">
-								{props.label[14]}
+								{RegistrationLabels[9].label}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -269,7 +277,8 @@ const RegistrationForm = (props) => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										isSubmitting &&
+											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 										errors.password1 ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="password1"
@@ -288,7 +297,7 @@ const RegistrationForm = (props) => {
 
 						<div tw="mt-6">
 							<label htmlFor="password" tw="block text-sm font-medium text-gray-700">
-								{props.label[2]}
+								{RegistrationLabels[10].label}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -298,7 +307,8 @@ const RegistrationForm = (props) => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:leading-5`,
-										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										isSubmitting &&
+											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 										errors.password2 ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="password2"
@@ -326,17 +336,15 @@ const RegistrationForm = (props) => {
 											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
 								>
-									{isSubmitting ? props.label[7] : props.label[3]}
+									{isSubmitting ? RegistrationLabels[15].label : RegistrationLabels[11].label}
 								</button>
 							</span>
 						</div>
 					</form>
 				)}
 			</Formik>
-		</div>
+		</>
 	);
 };
-
-RegistrationForm.propTypes = {};
 
 export default RegistrationForm;

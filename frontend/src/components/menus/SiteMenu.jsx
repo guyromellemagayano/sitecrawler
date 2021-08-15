@@ -9,11 +9,12 @@ import Link from "next/link";
 import { ArrowLeftIcon, LinkIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/solid";
 import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import tw from "twin.macro";
 
 // Enums
+import { GlobalLabels, SiteLogoWhite } from "@enums/GlobalValues";
+import { SitesLink } from "@enums/PageLinks";
 import { SiteSidebarMenu } from "@enums/SidebarMenus";
 
 // Hooks
@@ -21,23 +22,16 @@ import { useStats } from "@hooks/useSite";
 import useCrawl from "@hooks/useCrawl";
 
 // Components
-const AppLogo = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.AppLogo
-});
-const SiteSelect = loadable(() => import("@components"), {
-	resolveComponent: (components) => components.SiteSelect
-});
+import AppLogo from "@components/logos/AppLogo";
+import SiteSelect from "@components/select/SiteSelect";
 
-const SiteMenu = ({ site }) => {
+const SiteMenu = ({ site, siteId }) => {
 	const [scanObjId, setScanObjId] = React.useState(null);
 
-	const appLogoAltText = "app-logo";
-	const siteDashboardLink = "/sites/";
-
-	const { query, asPath } = useRouter();
+	const { asPath } = useRouter();
 
 	const { currentScan, previousScan, scanCount } = useCrawl({
-		siteId: query.siteId
+		siteId: siteId
 	});
 
 	React.useEffect(() => {
@@ -57,22 +51,25 @@ const SiteMenu = ({ site }) => {
 	}, [scanCount, currentScan, previousScan]);
 
 	const { stats } = useStats({
-		querySid: query.siteId,
+		querySid: siteId,
 		scanObjId: scanObjId
 	});
 
 	return (
-		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
-			<div tw="flex flex-col min-h-screen pt-8 pb-4">
+		<Scrollbars
+			renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />}
+			universal
+		>
+			<div tw="flex flex-col min-h-screen py-4 lg:py-8">
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
-					<Link href={siteDashboardLink} passHref>
+					<Link href={SitesLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
 							<AppLogo
 								tw="w-48 h-auto"
-								src="/images/logos/site-logo-white.svg"
-								alt={appLogoAltText}
-								width={230}
-								height={40}
+								src={SiteLogoWhite}
+								alt={GlobalLabels[0].label}
+								width={GlobalLabels[0].width}
+								height={GlobalLabels[0].height}
 							/>
 						</a>
 					</Link>
@@ -91,19 +88,19 @@ const SiteMenu = ({ site }) => {
 										{value?.links ? (
 											value?.links.map((value2, index) => {
 												const hrefVal = "/site/[siteId]" + value2?.url;
-												const asVal = "/site/" + query.siteId + value2?.url;
+												const asVal = "/site/" + siteId + value2?.url;
 
 												return value2?.slug !== "go-back-to-sites" ? (
 													<Link key={index} href={hrefVal} as={asVal} passHref>
 														<a
 															className={`group ${
-																!asPath.includes("/site/" + query.siteId + value2?.url)
+																!asPath.includes("/site/" + siteId + value2?.url)
 																	? "hover:bg-gray-1100 focus:bg-gray-1100"
 																	: "bg-gray-1100"
 															}`}
 															css={[
 																tw`cursor-pointer`,
-																asPath.includes("/site/" + query.siteId + value2?.url)
+																asPath.includes("/site/" + siteId + value2?.url)
 																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md `
 																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none transition ease-in-out duration-150`
 															]}
@@ -152,7 +149,7 @@ const SiteMenu = ({ site }) => {
 												);
 											})
 										) : (
-											<SiteSelect site={site} currentScan={currentScan} />
+											<SiteSelect site={site} siteId={siteId} currentScan={currentScan} />
 										)}
 									</div>
 								</div>
@@ -166,7 +163,13 @@ const SiteMenu = ({ site }) => {
 };
 
 SiteMenu.propTypes = {
-	site: PropTypes.object
+	site: PropTypes.object,
+	siteId: PropTypes.number
+};
+
+SiteMenu.defaultProps = {
+	site: null,
+	siteId: null
 };
 
 export default SiteMenu;

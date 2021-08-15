@@ -11,27 +11,14 @@ import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
 
-// JSON
-import UpgradeErrorModalLabel from "./labels/UpgradeErrorModal.json";
+// Enums
+import { SubscriptionPlansLink } from "@enums/PageLinks";
+import { UpgradeErrorModalLabels } from "@enums/UpgradeErrorModalLabels";
 
-const UpgradeErrorModal = ({ show, setShowModal, label }) => {
-	const settingsSubscriptionsLink = "/settings/subscription-plans";
-
-	const handleHideUpgradeErrorModal = (e) => {
-		return e?.key === "Escape" ? setShowModal(false) : null;
-	};
-
-	React.useEffect(() => {
-		document.addEventListener("keydown", handleHideUpgradeErrorModal, true);
-
-		return () => {
-			document.removeEventListener("keydown", handleHideUpgradeErrorModal, true);
-		};
-	});
-
+const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) => {
 	return (
 		<Transition
-			show={show}
+			show={showModal}
 			tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"
 		>
 			<Transition.Child
@@ -58,7 +45,8 @@ const UpgradeErrorModal = ({ show, setShowModal, label }) => {
 				leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 			>
 				<div
-					tw="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden transform transition-all sm:max-w-lg sm:w-full sm:p-6"
+					ref={ref}
+					tw="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden transform transition-all sm:max-w-lg sm:w-full sm:p-6 whitespace-normal"
 					role="dialog"
 					aria-modal="true"
 					aria-labelledby="modal-headline"
@@ -69,20 +57,20 @@ const UpgradeErrorModal = ({ show, setShowModal, label }) => {
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-								{label?.[0] ?? UpgradeErrorModalLabel[0].label}
+								{UpgradeErrorModalLabels[0].label}
 							</h3>
 							<div tw="mt-2">
 								<p tw="text-sm leading-5 text-gray-500">
-									{label?.[1] ?? ReactHtmlParser(UpgradeErrorModalLabel[1].label)}
+									{ReactHtmlParser(UpgradeErrorModalLabels[1].label)}
 								</p>
 							</div>
 						</div>
 					</div>
 					<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 						<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
-							<Link href={settingsSubscriptionsLink} passHref>
+							<Link href={SubscriptionPlansLink} passHref>
 								<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-									{UpgradeErrorModalLabel[3].label}
+									{UpgradeErrorModalLabels[3].label}
 								</a>
 							</Link>
 						</span>
@@ -90,9 +78,9 @@ const UpgradeErrorModal = ({ show, setShowModal, label }) => {
 							<button
 								type="button"
 								tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-								onClick={() => setShowModal(!show)}
+								onClick={() => setShowModal(!showModal)}
 							>
-								{UpgradeErrorModalLabel[2].label}
+								{UpgradeErrorModalLabels[2].label}
 							</button>
 						</span>
 					</div>
@@ -100,8 +88,16 @@ const UpgradeErrorModal = ({ show, setShowModal, label }) => {
 			</Transition.Child>
 		</Transition>
 	);
+});
+
+UpgradeErrorModal.propTypes = {
+	showModal: PropTypes.bool,
+	setShowModal: PropTypes.func
 };
 
-UpgradeErrorModal.propTypes = {};
+UpgradeErrorModal.defaultProps = {
+	showModal: false,
+	setShowModal: null
+};
 
 export default UpgradeErrorModal;

@@ -1,18 +1,13 @@
 // React
 import * as React from "react";
 
-// External
-import axios from "axios";
-import Cookies from "js-cookie";
-import PropTypes from "prop-types";
+// Enums
+import { RevalidationInterval } from "@enums/GlobalValues";
+import { SiteApiEndpoint } from "@enums/ApiEndpoints";
 
 // Hooks
-import { useScan } from "src/hooks/useSite";
-
-// Global axios defaults
-axios.defaults.headers.common["Accept"] = "application/json";
-axios.defaults.headers.common["Content-Type"] = "application/json";
-axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
+import { usePostMethod } from "./useHttpMethod";
+import { useScan } from "./useSite";
 
 const useCrawl = ({ siteId }) => {
 	const [isCrawlFinished, setIsCrawlFinished] = React.useState(true);
@@ -23,59 +18,47 @@ const useCrawl = ({ siteId }) => {
 
 	const selectedSiteRef = React.useRef(null);
 
-	const scanRefreshInterval = 3000;
-
 	const { scan } = useScan({
 		querySid: siteId,
-		refreshInterval: scanRefreshInterval
+		refreshInterval: RevalidationInterval
 	});
 
 	const handleMutateCurrentSite = async (endpoint) => {
-		const response = await axios
-			.post(endpoint)
-			.then((response) => {
-				return response;
-			})
-			.catch((error) => {
-				return error.response;
-			});
-		const data = await response?.data;
+		const response = await usePostMethod(endpoint);
 
-		Math.floor(response?.status / 200) === 1
-			? () => {
-					data
-						? () => {
-								return true;
-						  }
-						: null;
-			  }
-			: null;
+		return Math.floor(response?.status / 200) === 1 ? true : false;
 	};
 
 	const handleCrawl = (e) => {
-		let endpoint = `/api/site/${siteId}/start_scan/`;
+		let endpoint = `${SiteApiEndpoint + siteId}/start_scan/`;
 
 		e?.preventDefault();
 
 		setIsCrawlStarted(true);
 		setIsCrawlFinished(false);
 
-		selectedSiteRef.current && selectedSiteRef.current.contains(e?.target) ? handleMutateCurrentSite(endpoint) : null;
+		selectedSiteRef.current && selectedSiteRef.current.contains(e?.target)
+			? handleMutateCurrentSite(endpoint)
+			: null;
 	};
 
 	React.useEffect(() => {
 		const handleScan = (scan) => {
-			let previousScanResult = scan?.results.find((e) => e.finished_at !== null && e.force_https !== null);
-			let currentScanResult = scan?.results.find((e) => e.finished_at == null && e.force_https == null);
+			let previousScanResult = scan?.results.find(
+				(e) => e.finished_at !== null && e.force_https !== null
+			);
+			let currentScanResult = scan?.results.find(
+				(e) => e.finished_at == null && e.force_https == null
+			);
 
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
 			setScanCount(scan?.count);
-
-			return { currentScan, previousScan, scanCount };
 		};
 
-		return scan ? handleScan(scan) : null;
+		scan && scan?.results ? handleScan(scan) : null;
+
+		return { currentScan, previousScan, scanCount };
 	}, [scan]);
 
 	React.useEffect(() => {
@@ -99,10 +82,6 @@ const useCrawl = ({ siteId }) => {
 		isCrawlStarted,
 		isCrawlFinished
 	};
-};
-
-useCrawl.propTypes = {
-	siteId: PropTypes.number
 };
 
 export default useCrawl;

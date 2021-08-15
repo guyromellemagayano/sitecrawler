@@ -11,23 +11,19 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
 
-// JSON
-import ResetPasswordLabel from "public/labels/pages/reset-password.json";
-
-// Layout
-import Layout from "src/components/Layout";
+// Enums
+import { LoginLink } from "@enums/PageLinks";
+import { ResetPasswordLabels } from "@enums/ResetPasswordLabels";
 
 // Components
-import { UpdatePasswordForm } from "src/components/forms/ResetPasswordForm";
-import LogoLabel from "src/components/labels/LogoLabel";
+import Layout from "@components/layouts";
+import LogoLabel from "@components/labels/LogoLabel";
+import UpdatePasswordForm from "@components/forms/UpdatePasswordForm";
 
 const ResetPasswordForm = ({ result }) => {
-	const pageTitle = "Reset Password Form";
-	const loginLink = "/login/";
-
 	return (
 		<Layout>
-			<NextSeo title={pageTitle} />
+			<NextSeo title={ResetPasswordLabels[14].label} />
 
 			<div tw="bg-gray-50 overflow-auto h-screen">
 				<Scrollbars universal>
@@ -36,25 +32,16 @@ const ResetPasswordForm = ({ result }) => {
 							<LogoLabel isResetPassword />
 
 							<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-								<UpdatePasswordForm
-									result={result}
-									label={[
-										ResetPasswordLabel[0].label,
-										ResetPasswordLabel[11].label,
-										ResetPasswordLabel[3].label,
-										ResetPasswordLabel[12].label,
-										ResetPasswordLabel[13].label,
-										ResetPasswordLabel[6].label,
-										ResetPasswordLabel[5].label
-									]}
-								/>
+								<div tw="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
+									<UpdatePasswordForm result={result} />
+								</div>
 
 								<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 									<span tw="px-2 py-5 text-gray-500">
-										{ReactHtmlParser(ResetPasswordLabel[7].label)}
-										<Link href={loginLink}>
+										{ReactHtmlParser(ResetPasswordLabels[7].label)}
+										<Link href={LoginLink}>
 											<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
-												{ResetPasswordLabel[8].label}
+												{ResetPasswordLabels[8].label}
 											</a>
 										</Link>
 									</span>
@@ -68,7 +55,13 @@ const ResetPasswordForm = ({ result }) => {
 	);
 };
 
-ResetPasswordForm.propTypes = {};
+ResetPasswordForm.propTypes = {
+	id: PropTypes.array
+};
+
+ResetPasswordForm.defaultProps = {
+	id: null
+};
 
 export default ResetPasswordForm;
 

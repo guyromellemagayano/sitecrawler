@@ -10,15 +10,13 @@ import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
-// JSON
-import SeoTableLabel from "./labels/SeoTable.json";
+// Enums
+import { SeosTableLabels } from "@enums/SeosTableLabels";
 
 // Hooks
 import { usePageDetail } from "src/hooks/useSite";
 
-const SeoTable = ({ siteId, val, disableLocalTime }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-
+const SeoTable = ({ componentReady, siteId, val, disableLocalTime }) => {
 	const calendar = require("dayjs/plugin/calendar");
 	const timezone = require("dayjs/plugin/timezone");
 	const utc = require("dayjs/plugin/utc");
@@ -39,18 +37,6 @@ const SeoTable = ({ siteId, val, disableLocalTime }) => {
 		scanObjId: val.scan_id,
 		linkId: val.id
 	});
-
-	React.useEffect(() => {
-		pageDetail
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
-
-		return setComponentReady(false);
-	}, [pageDetail]);
 
 	return (
 		<tr>
@@ -81,10 +67,10 @@ const SeoTable = ({ siteId, val, disableLocalTime }) => {
 								<a
 									href={val.url}
 									target="_blank"
-									title={SeoTableLabel[0].label}
+									title={SeosTableLabels[0].label}
 									tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
 								>
-									{SeoTableLabel[0].label}
+									{SeosTableLabels[0].label}
 								</a>
 							) : (
 								<Skeleton duration={2} width={59.73} height={24} />
@@ -116,16 +102,38 @@ const SeoTable = ({ siteId, val, disableLocalTime }) => {
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
-			<td className="icon-status" tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-green-500">
+			<td
+				className="icon-status"
+				tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-green-500"
+			>
 				{componentReady ? pageDetail?.num_ok_links : <Skeleton duration={2} width={45} />}
 			</td>
-			<td className="icon-status" tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-red-500">
+			<td
+				className="icon-status"
+				tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-red-500"
+			>
 				{componentReady ? pageDetail?.num_non_ok_links : <Skeleton duration={2} width={45} />}
 			</td>
 		</tr>
 	);
 };
 
-SeoTable.propTypes = {};
+SeoTable.propTypes = {
+	componentReady: PropTypes.bool,
+	disableLocalTime: PropTypes.bool,
+	id: PropTypes.number,
+	scan_id: PropTypes.number,
+	siteId: PropTypes.number,
+	url: PropTypes.string
+};
+
+SeoTable.defaultProps = {
+	componentReady: false,
+	disableLocalTime: false,
+	siteId: null,
+	id: null,
+	scan_id: null,
+	url: null
+};
 
 export default SeoTable;

@@ -1,5 +1,16 @@
 export const DashboardSidebarMenu = [
 	{
+		category: "Navigation",
+		slug: "navigation",
+		links: [
+			{
+				title: "Go Back to Sites",
+				slug: "go-back-to-sites",
+				url: "/sites"
+			}
+		]
+	},
+	{
 		category: "Site Selection",
 		slug: "site-selection"
 	},

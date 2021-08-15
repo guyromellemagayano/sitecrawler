@@ -6,31 +6,40 @@ import Link from "next/link";
 
 // External
 import dayjs from "dayjs";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
-// JSON
-import DataTableLabel from "public/labels/components/sites/DataTable.json";
+// Enums
+import { DataTableLabels } from "@enums/DataTableLabels";
 
 // Hooks
-import { useScan, useStats } from "src/hooks/useSite";
+import { useScan, useStats } from "@hooks/useSite";
+import { useSiteVerifyModalVisible, useSiteDeleteModalVisible } from "@hooks/useComponentVisible";
 
-// Loadable
-const SiteVerifyModal = loadable(() => import("src/components/modals/SiteVerifyModal"), {
-	resolveComponent: (components) => components.SiteVerifyModal
-});
-const DeleteSiteModal = loadable(() => import("src/components/modals/DeleteSiteModal"));
+// Components
+import DeleteSiteModal from "@components/modals/DeleteSiteModal";
+import SiteVerifyModal from "@components/modals/SiteVerifyModal";
 
-const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId, disableLocalTime, mutateSite }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+const DataTable = ({
+	componentReady,
+	disableLocalTime,
+	mutateSite,
+	siteId,
+	siteName,
+	siteUrl,
+	siteVerificationId,
+	siteVerified
+}) => {
 	const [scanCount, setScanCount] = React.useState(null);
 	const [scanFinishedAt, setScanFinishedAt] = React.useState(null);
 	const [scanForceHttps, setScanForceHttps] = React.useState(null);
 	const [scanObjId, setScanObjId] = React.useState(null);
-	const [showDeleteSiteModal, setShowDeleteSiteModal] = React.useState(false);
-	const [showVerifySiteModal, setShowVerifySiteModal] = React.useState(false);
+
+	const { siteVerifyModalRef, isSiteVerifyModalVisible, setIsSiteVerifyModalVisible } =
+		useSiteVerifyModalVisible(false);
+	const { siteDeleteModalRef, isSiteDeleteModalVisible, setIsSiteDeleteModalVisible } =
+		useSiteDeleteModalVisible(false);
 
 	const calendar = require("dayjs/plugin/calendar");
 	const timezone = require("dayjs/plugin/timezone");
@@ -73,14 +82,6 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 		scanObjId: scanObjId
 	});
 
-	React.useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
-
-		return setComponentReady(false);
-	}, []);
-
 	const setLinkErrors = () => {
 		let valLength = stats?.num_non_ok_links;
 
@@ -94,7 +95,8 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 	};
 
 	const setImageErrors = () => {
-		let valLength = stats?.num_non_ok_images + stats?.num_images_with_missing_alts + stats?.num_images_tls_non_ok;
+		let valLength =
+			stats?.num_non_ok_images + stats?.num_images_with_missing_alts + stats?.num_images_tls_non_ok;
 
 		return valLength;
 	};
@@ -122,223 +124,252 @@ const DataTable = ({ siteId, siteName, siteUrl, siteVerified, siteVerificationId
 	};
 
 	return (
-		<>
-			<SiteVerifyModal
-				siteId={siteId}
-				siteUrl={siteUrl}
-				siteName={siteName}
-				siteVerificationId={siteVerificationId}
-				show={showVerifySiteModal}
-				setShowModal={setShowVerifySiteModal}
-				mutateSite={mutateSite}
-			/>
-			<DeleteSiteModal
-				siteId={siteId}
-				mutateSite={mutateSite}
-				showModal={showDeleteSiteModal}
-				setShowModal={setShowDeleteSiteModal}
-			/>
+		<tr>
+			<td tw="flex-none px-6 py-4 whitespace-nowrap">
+				<SiteVerifyModal
+					mutateSite={mutateSite}
+					setShowModal={setIsSiteVerifyModalVisible}
+					showModal={isSiteVerifyModalVisible}
+					siteId={siteId}
+					siteName={siteName}
+					siteUrl={siteUrl}
+					siteVerificationId={siteVerificationId}
+					ref={siteVerifyModalRef}
+				/>
 
-			<tr>
-				<td tw="flex-none px-6 py-4 whitespace-nowrap">
-					<span tw="flex flex-col items-start">
-						<span>
-							{componentReady ? (
-								!siteVerified ? (
-									<>
-										<span
-											aria-label="Not Verified"
-											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
-										></span>
-										<div tw="inline-flex flex-col justify-start items-start">
+				<DeleteSiteModal
+					mutateSite={mutateSite}
+					setShowModal={setIsSiteDeleteModalVisible}
+					showModal={isSiteDeleteModalVisible}
+					ref={siteDeleteModalRef}
+					siteId={siteId}
+				/>
+
+				<span tw="flex flex-col items-start">
+					<span>
+						{componentReady ? (
+							!siteVerified ? (
+								<>
+									<span
+										aria-label="Not Verified"
+										tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
+									></span>
+									<div tw="inline-flex flex-col justify-start items-start">
+										<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-400">
+											<p className="truncate-link">{siteName}</p>
+										</span>
+										<span tw="flex justify-start text-sm leading-5 text-gray-500">
+											{scanCount > 0 ? (
+												<Link
+													href="/site/[siteId]/overview"
+													as={`/site/${siteId}/overview`}
+													passHref
+												>
+													<a
+														type="button"
+														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+													>
+														{DataTableLabels[21].label}
+													</a>
+												</Link>
+											) : null}
+
+											<button
+												type="button"
+												css={[
+													tw`cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150`,
+													scanCount > 0 && tw`ml-3`
+												]}
+												onClick={() => setIsSiteVerifyModalVisible(!isSiteVerifyModalVisible)}
+											>
+												{DataTableLabels[0].label}
+											</button>
+											<button
+												type="button"
+												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+												onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
+											>
+												{DataTableLabels[1].label}
+											</button>
+										</span>
+									</div>
+								</>
+							) : (
+								<>
+									<span
+										aria-label="Verified"
+										css={[
+											tw`relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+											scanFinishedAt == null && scanForceHttps == null
+												? tw`bg-yellow-400`
+												: tw`bg-green-400`
+										]}
+									></span>
+									<div tw="inline-flex flex-col justify-start items-start">
+										{stats?.num_links > 0 || stats?.num_pages > 0 || stats?.num_images > 0 ? (
+											<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
+												<a
+													className="truncate-link"
+													tw="text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500"
+													title={siteName}
+												>
+													{siteName}
+												</a>
+											</Link>
+										) : (
 											<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-400">
 												<p className="truncate-link">{siteName}</p>
 											</span>
-											<span tw="flex justify-start text-sm leading-5 text-gray-500">
-												{scanCount > 0 ? (
-													<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
-														<a
-															type="button"
-															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
-														>
-															{DataTableLabel[21].label}
-														</a>
-													</Link>
-												) : null}
+										)}
 
-												<button
-													type="button"
-													css={[
-														tw`cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150`,
-														scanCount > 0 && tw`ml-3`
-													]}
-													onClick={() => setShowVerifySiteModal(!showVerifySiteModal)}
-												>
-													{DataTableLabel[0].label}
-												</button>
-												<button
-													type="button"
-													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
-													onClick={(e) => setShowDeleteSiteModal(!showDeleteSiteModal)}
-												>
-													{DataTableLabel[1].label}
-												</button>
-											</span>
-										</div>
-									</>
-								) : (
-									<>
-										<span
-											aria-label="Verified"
-											css={[
-												tw`relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-												scanFinishedAt == null && scanForceHttps == null ? tw`bg-yellow-400` : tw`bg-green-400`
-											]}
-										></span>
-										<div tw="inline-flex flex-col justify-start items-start">
-											{stats?.num_links > 0 || stats?.num_pages > 0 || stats?.num_images > 0 ? (
-												<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
-													<a
-														className="truncate-link"
-														tw="text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500"
-														title={siteName}
-													>
-														{siteName}
-													</a>
-												</Link>
-											) : (
-												<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-400">
-													<p className="truncate-link">{siteName}</p>
-												</span>
-											)}
-
-											<span tw="flex justify-start text-sm leading-5">
-												<a
-													href={siteUrl}
-													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
-													title={DataTableLabel[3].label}
-													target="_blank"
-												>
-													{DataTableLabel[3].label}
-												</a>
-											</span>
-										</div>
-									</>
-								)
-							) : (
-								<>
-									<span tw="flex flex-row items-center py-2 space-x-3">
-										<Skeleton
-											circle={true}
-											duration={2}
-											width={9}
-											height={9}
-											className="relative -left-3 flex-shrink-0 inline-block"
-										/>
-										<Skeleton
-											duration={2}
-											width={150}
-											className="relative -left-3 inline-flex flex-col justify-start items-start"
-										/>
-									</span>
-									<span tw="ml-2 flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
-										<Skeleton duration={2} width={70} />
-										<Skeleton duration={2} width={73} />
-									</span>
+										<span tw="flex justify-start text-sm leading-5">
+											<a
+												href={siteUrl}
+												tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+												title={DataTableLabels[3].label}
+												target="_blank"
+											>
+												{DataTableLabels[3].label}
+											</a>
+										</span>
+									</div>
 								</>
-							)}
-						</span>
+							)
+						) : (
+							<>
+								<span tw="flex flex-row items-center py-2 space-x-3">
+									<Skeleton
+										circle={true}
+										duration={2}
+										width={9}
+										height={9}
+										className="relative -left-3 flex-shrink-0 inline-block"
+									/>
+									<Skeleton
+										duration={2}
+										width={150}
+										className="relative -left-3 inline-flex flex-col justify-start items-start"
+									/>
+								</span>
+								<span tw="ml-2 flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
+									<Skeleton duration={2} width={70} />
+									<Skeleton duration={2} width={73} />
+								</span>
+							</>
+						)}
 					</span>
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-					{componentReady ? (
-						scanCount > 0 ? (
-							<span tw="space-x-2">
-								<span tw="text-sm leading-5 text-gray-500">
-									{!disableLocalTime
-										? dayjs(
+				</span>
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
+				{componentReady ? (
+					scanCount > 0 ? (
+						<span tw="space-x-2">
+							<span tw="text-sm leading-5 text-gray-500">
+								{!disableLocalTime
+									? dayjs(
+											scanFinishedAt == null && scanForceHttps == null
+												? scan?.results[1]?.finished_at
+												: scan?.results[0]?.finished_at
+									  ).calendar(null, calendarStrings)
+									: dayjs
+											.utc(
 												scanFinishedAt == null && scanForceHttps == null
 													? scan?.results[1]?.finished_at
 													: scan?.results[0]?.finished_at
-										  ).calendar(null, calendarStrings)
-										: dayjs
-												.utc(
-													scanFinishedAt == null && scanForceHttps == null
-														? scan?.results[1]?.finished_at
-														: scan?.results[0]?.finished_at
-												)
-												.calendar(null, calendarStrings)}
-								</span>
-								<span tw="text-sm leading-5 font-medium text-gray-500">
-									({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
-								</span>
+											)
+											.calendar(null, calendarStrings)}
 							</span>
-						) : (
-							<span tw="space-x-2">
-								<span tw="text-sm leading-5 text-gray-500">{DataTableLabel[19].label}</span>
+							<span tw="text-sm leading-5 font-medium text-gray-500">
+								({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
 							</span>
-						)
+						</span>
 					) : (
-						<Skeleton duration={2} width={176.7} />
-					)}
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{stats ? (
-						<span css={[setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>{setTotalIssues()}</span>
+						<span tw="space-x-2">
+							<span tw="text-sm leading-5 text-gray-500">{DataTableLabels[19].label}</span>
+						</span>
+					)
+				) : (
+					<Skeleton duration={2} width={176.7} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{stats ? (
+					<span css={[setTotalIssues() > 0 ? tw`text-red-500` : tw`text-green-500`]}>
+						{setTotalIssues()}
+					</span>
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{stats ? (
+					stats?.num_links > 0 ? (
+						<Link href="/site/[siteId]/links" as={`/site/${siteId}/links`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats?.num_links}
+							</a>
+						</Link>
 					) : (
-						<Skeleton duration={2} width={45} />
-					)}
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{stats ? (
-						stats?.num_links > 0 ? (
-							<Link href="/site/[siteId]/links" as={`/site/${siteId}/links`} passHref>
-								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-									{stats?.num_links}
-								</a>
-							</Link>
-						) : (
-							stats?.num_links
-						)
+						stats?.num_links
+					)
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{stats ? (
+					stats?.num_pages > 0 ? (
+						<Link href="/site/[siteId]/pages" as={`/site/${siteId}/pages`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats?.num_pages}
+							</a>
+						</Link>
 					) : (
-						<Skeleton duration={2} width={45} />
-					)}
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{stats ? (
-						stats?.num_pages > 0 ? (
-							<Link href="/site/[siteId]/pages" as={`/site/${siteId}/pages`} passHref>
-								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-									{stats?.num_pages}
-								</a>
-							</Link>
-						) : (
-							stats?.num_pages
-						)
+						stats?.num_pages
+					)
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{stats ? (
+					stats?.num_images > 0 ? (
+						<Link href="/site/[siteId]/images" as={`/site/${siteId}/images`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats?.num_images}
+							</a>
+						</Link>
 					) : (
-						<Skeleton duration={2} width={45} />
-					)}
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{stats ? (
-						stats?.num_images > 0 ? (
-							<Link href="/site/[siteId]/images" as={`/site/${siteId}/images`} passHref>
-								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-									{stats?.num_images}
-								</a>
-							</Link>
-						) : (
-							stats?.num_images
-						)
-					) : (
-						<Skeleton duration={2} width={45} />
-					)}
-				</td>
-			</tr>
-		</>
+						stats?.num_images
+					)
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+		</tr>
 	);
 };
 
-DataTable.propTypes = {};
+DataTable.propTypes = {
+	componentReady: PropTypes.bool,
+	disableLocalTime: PropTypes.bool,
+	mutateSite: PropTypes.func,
+	siteId: PropTypes.number,
+	siteName: PropTypes.string,
+	siteUrl: PropTypes.string,
+	siteVerificationId: PropTypes.number,
+	siteVerified: PropTypes.bool
+};
+
+DataTable.defaultProps = {
+	componentReady: false,
+	disableLocalTime: false,
+	mutateSite: null,
+	siteId: null,
+	siteName: null,
+	siteUrl: null,
+	siteVerificationId: null,
+	siteVerified: false
+};
 
 export default DataTable;

@@ -1,5 +1,5 @@
 // React
-import { useEffect, useState, useRef } from "react";
+import * as React from "react";
 
 // NextJS
 import Link from "next/link";
@@ -11,50 +11,36 @@ import { Formik } from "formik";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import * as Yup from "yup";
-import loadable from "@loadable/component";
-import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 
-// JSON
-import LoginLabel from "public/labels/pages/login.json";
+// Enums
+import { GlobalLabels } from "@enums/GlobalValues";
+import { LoginApiEndpoint, GoogleLoginApiEndpoint } from "@enums/ApiEndpoints";
+import { LoginLabels } from "@enums/LoginLabels";
 
 // Hooks
-import usePostMethod from "src/hooks/usePostMethod";
-import useShowPassword from "src/hooks/useShowPassword";
+import { usePostMethod } from "@hooks/useHttpMethod";
+import { useShowPassword } from "@hooks/useShowPassword";
 
-// Layout
-import Layout from "src/components/Layout";
-
-// Component
-import AppLogo from "src/components/logos/AppLogo";
-import SiteFooter from "src/components/layouts/Footer";
-import LogoLabel from "src/components/labels/LogoLabel";
-
-// Loadable
-const ErrorMessageAlert = loadable(() => import("src/components/alerts/ErrorMessageAlert"));
-const SuccessMessageAlert = loadable(() => import("src/components/alerts/SuccessMessageAlert"));
+// Components
+import AppLogo from "@components/logos/AppLogo";
+import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
+import Footer from "@components/layouts/Footer";
+import Layout from "@components/layouts";
+import LogoLabel from "@components/labels/LogoLabel";
+import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
 
 const Login = () => {
-	const [errorMsg, setErrorMsg] = useState([]);
-	const [successMsg, setSuccessMsg] = useState([]);
-	const [disableLoginForm, setDisableLoginForm] = useState(false);
-
-	const appLogoAltText = "app-logo";
-	const pageTitle = "Login";
-	const loginApiEndpoint = "/api/auth/login/";
-	const googleLoginApiEndpoint = "/auth/google/login/";
+	const [disableLoginForm, setDisableLoginForm] = React.useState(false);
+	const [errorMsg, setErrorMsg] = React.useState([]);
+	const [successMsg, setSuccessMsg] = React.useState([]);
 
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
-	const usernameRef = useRef();
-
-	useEffect(() => {
-		usernameRef.current.focus();
-	}, []);
 
 	return (
 		<Layout>
-			<NextSeo title={pageTitle} />
+			<NextSeo title={LoginLabels[20].label} />
 
 			<div tw="h-screen bg-gray-50 flex flex-col justify-center">
 				<Scrollbars universal>
@@ -65,16 +51,17 @@ const Login = () => {
 									<div tw="lg:grid lg:grid-cols-12 lg:gap-8">
 										<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
 											<div>
+												{/* TODO: Update values of this component */}
 												<AppLogo
 													tw="flex justify-start w-60 h-12 mb-8"
 													src="/images/logos/site-logo-dark.svg"
-													alt={appLogoAltText}
+													alt={GlobalLabels[0].label}
 													width={320}
 													height={60}
 												/>
 												<h4 tw="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none">
-													{LoginLabel[0].label}
-													<span tw="text-red-600">{ReactHtmlParser(LoginLabel[1].label)}</span>
+													{LoginLabels[0].label}
+													<span tw="text-red-600">{ReactHtmlParser(LoginLabels[1].label)}</span>
 													<br tw="hidden md:inline" />
 												</h4>
 											</div>
@@ -83,18 +70,20 @@ const Login = () => {
 											<LogoLabel isLogin />
 
 											<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-												{errorMsg &&
-													errorMsg !== undefined &&
-													errorMsg !== [] &&
-													Object.keys(errorMsg).length > 0 &&
-													errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)}
-												{successMsg &&
-													successMsg !== undefined &&
-													errorMsg !== [] &&
-													Object.keys(successMsg).length > 0 &&
-													successMsg.map((value, index) => <SuccessMessageAlert key={index} message={value} />)}
+												{errorMsg.length > 0
+													? errorMsg.map((value, index) => (
+															<ErrorMessageAlert key={index} message={value} />
+													  ))
+													: null}
+
+												{successMsg.length > 0
+													? successMsg.map((value, index) => (
+															<SuccessMessageAlert key={index} message={value} />
+													  ))
+													: null}
 
 												<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
+													{/* TODO: Turn this into a single component, loginForm */}
 													<Formik
 														initialValues={{
 															username: "",
@@ -102,8 +91,8 @@ const Login = () => {
 															rememberme: false
 														}}
 														validationSchema={Yup.object({
-															username: Yup.string().required(LoginLabel[10].label),
-															password: Yup.string().required(LoginLabel[10].label)
+															username: Yup.string().required(LoginLabels[10].label),
+															password: Yup.string().required(LoginLabels[10].label)
 														})}
 														onSubmit={async (values, { setSubmitting, resetForm }) => {
 															const body = {
@@ -117,7 +106,7 @@ const Login = () => {
 															// }
 
 															try {
-																const response = await usePostMethod(loginApiEndpoint, body);
+																const response = await usePostMethod(LoginApiEndpoint, body);
 																const data = response.data;
 
 																setErrorMsg([]);
@@ -128,7 +117,10 @@ const Login = () => {
 																	setDisableLoginForm(!disableLoginForm);
 
 																	if (data.key && data.key !== undefined && data.key.length > 0) {
-																		setSuccessMsg((successMsg) => [...successMsg, LoginLabel[12].label]);
+																		setSuccessMsg((successMsg) => [
+																			...successMsg,
+																			LoginLabels[12].label
+																		]);
 
 																		setTimeout(() => {
 																			Router.push("/sites/");
@@ -141,7 +133,7 @@ const Login = () => {
 																	} else {
 																		resetForm({ values: "" });
 																		setSubmitting(false);
-																		setErrorMsg(LoginLabel[11].label);
+																		setErrorMsg(LoginLabels[11].label);
 																	}
 																}
 															} catch (error) {
@@ -149,16 +141,25 @@ const Login = () => {
 															}
 														}}
 													>
-														{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
+														{({
+															values,
+															errors,
+															touched,
+															handleChange,
+															handleSubmit,
+															isSubmitting
+														}) => (
 															<>
 																<form onSubmit={handleSubmit}>
 																	<div tw="mt-1">
-																		<label htmlFor="username" tw="block text-sm font-medium text-gray-700">
-																			{LoginLabel[2].label}
+																		<label
+																			htmlFor="username"
+																			tw="block text-sm font-medium text-gray-700"
+																		>
+																			{LoginLabels[2].label}
 																		</label>
 																		<div tw="mt-1">
 																			<input
-																				ref={usernameRef}
 																				id="username"
 																				name="username"
 																				type="text"
@@ -169,7 +170,9 @@ const Login = () => {
 																					tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 																					(isSubmitting || disableLoginForm) &&
 																						tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-																					errors.username || errorMsg.length ? tw`border-red-300` : tw`border-gray-300`
+																					errors.username || errorMsg.length
+																						? tw`border-red-300`
+																						: tw`border-gray-300`
 																				]}
 																				aria-describedby="username"
 																				onChange={handleChange}
@@ -186,8 +189,11 @@ const Login = () => {
 
 																	<div tw="mt-6">
 																		<div tw="flex items-center justify-between">
-																			<label htmlFor="password" tw="block text-sm font-medium text-gray-700">
-																				{LoginLabel[3].label}
+																			<label
+																				htmlFor="password"
+																				tw="block text-sm font-medium text-gray-700"
+																			>
+																				{LoginLabels[3].label}
 																			</label>
 																			<div tw="text-xs">
 																				<button
@@ -199,7 +205,9 @@ const Login = () => {
 																					]}
 																					onClick={() => setIsPasswordShown(!isPasswordShown)}
 																				>
-																					{isPasswordShown ? LoginLabel[15].label : LoginLabel[14].label}
+																					{isPasswordShown
+																						? LoginLabels[15].label
+																						: LoginLabels[14].label}
 																				</button>
 																			</div>
 																		</div>
@@ -215,7 +223,9 @@ const Login = () => {
 																					tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 																					(isSubmitting || disableLoginForm) &&
 																						tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-																					errors.password || errorMsg.length ? tw`border-red-300` : tw`border-gray-300`
+																					errors.password || errorMsg.length
+																						? tw`border-red-300`
+																						: tw`border-gray-300`
 																				]}
 																				aria-describedby="password"
 																				onChange={handleChange}
@@ -246,8 +256,11 @@ const Login = () => {
 																				onChange={handleChange}
 																				value={values.rememberme}
 																			/>
-																			<label htmlFor="rememberme" tw="ml-2 block text-sm text-gray-900">
-																				{LoginLabel[4].label}
+																			<label
+																				htmlFor="rememberme"
+																				tw="ml-2 block text-sm text-gray-900"
+																			>
+																				{LoginLabels[4].label}
 																			</label>
 																		</div>
 
@@ -260,7 +273,7 @@ const Login = () => {
 																							tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
 																					]}
 																				>
-																					{LoginLabel[5].label}
+																					{LoginLabels[5].label}
 																				</a>
 																			</Link>
 																		</div>
@@ -278,7 +291,9 @@ const Login = () => {
 																						: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 																				]}
 																			>
-																				{isSubmitting || disableLoginForm ? LoginLabel[13].label : LoginLabel[6].label}
+																				{isSubmitting || disableLoginForm
+																					? LoginLabels[13].label
+																					: LoginLabels[6].label}
 																			</button>
 																		</span>
 																	</div>
@@ -290,7 +305,9 @@ const Login = () => {
 																			<div tw="w-full border-t border-gray-300"></div>
 																		</div>
 																		<div tw="relative flex justify-center text-sm leading-5">
-																			<span tw="px-2 bg-white text-gray-600">{LoginLabel[7].label}</span>
+																			<span tw="px-2 bg-white text-gray-600">
+																				{LoginLabels[7].label}
+																			</span>
 																		</div>
 																	</div>
 
@@ -298,7 +315,7 @@ const Login = () => {
 																		<div>
 																			<span tw="w-full inline-flex rounded-md shadow-sm">
 																				<a
-																					href={googleLoginApiEndpoint}
+																					href={GoogleLoginApiEndpoint}
 																					css={[
 																						tw`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500`,
 																						isSubmitting || disableLoginForm
@@ -306,7 +323,7 @@ const Login = () => {
 																							: tw`hover:bg-gray-50`
 																					]}
 																				>
-																					<span tw="sr-only">{LoginLabel[16].label}</span>
+																					<span tw="sr-only">{LoginLabels[16].label}</span>
 																					<FontAwesomeIcon icon={["fab", "google"]} tw="w-4 h-4" />
 																				</a>
 																			</span>
@@ -319,8 +336,11 @@ const Login = () => {
 																					disabled={true}
 																					tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
 																				>
-																					<span tw="sr-only">{LoginLabel[17].label}</span>
-																					<FontAwesomeIcon icon={["fab", "facebook-f"]} tw="w-4 h-4" />
+																					<span tw="sr-only">{LoginLabels[17].label}</span>
+																					<FontAwesomeIcon
+																						icon={["fab", "facebook-f"]}
+																						tw="w-4 h-4"
+																					/>
 																				</a>
 																			</span>
 																		</div>
@@ -332,8 +352,11 @@ const Login = () => {
 																					disabled={true}
 																					tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
 																				>
-																					<span tw="sr-only">{LoginLabel[18].label}</span>
-																					<FontAwesomeIcon icon={["fab", "linkedin-in"]} tw="w-4 h-4" />
+																					<span tw="sr-only">{LoginLabels[18].label}</span>
+																					<FontAwesomeIcon
+																						icon={["fab", "linkedin-in"]}
+																						tw="w-4 h-4"
+																					/>
 																				</a>
 																			</span>
 																		</div>
@@ -346,10 +369,10 @@ const Login = () => {
 
 												<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 													<span tw="px-2 py-5 text-gray-600">
-														{ReactHtmlParser(LoginLabel[8].label)}
+														{ReactHtmlParser(LoginLabels[8].label)}
 														<Link href="/registration">
 															<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
-																{LoginLabel[9].label}
+																{LoginLabels[9].label}
 															</a>
 														</Link>
 													</span>
@@ -359,7 +382,7 @@ const Login = () => {
 									</div>
 
 									<div tw="px-4 xl:px-10 xl:mt-32">
-										<SiteFooter />
+										<Footer />
 									</div>
 								</div>
 							</div>
@@ -370,7 +393,5 @@ const Login = () => {
 		</Layout>
 	);
 };
-
-Login.propTypes = {};
 
 export default Login;

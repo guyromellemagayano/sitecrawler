@@ -4,26 +4,22 @@ import { useState, useEffect } from "react";
 // External
 import "twin.macro";
 import { NextSeo } from "next-seo";
-import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
-import PropTypes from "prop-types";
 
 // Hooks
-import useUser from "src/hooks/useUser";
+import { useComponentVisible } from "@hooks/useComponentVisible";
+import useUser from "@hooks/useUser";
 
 // Layout
-import Layout from "src/components/Layout";
+import Layout from "@components/layouts";
 
 // Components
-import MainSidebar from "src/components/sidebar/MainSidebar";
+import ComingSoon from "@components/layouts/ComingSoon";
+import Sidebar from "@components/layouts/Sidebar";
 
-// Loadable
-const ComingSoon = loadable(() => import("src/components/layouts/ComingSoon"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-
-const Reports = ({ width }) => {
+const Reports = () => {
 	const [componentReady, setComponentReady] = React.useState(false);
-	const [openMobileSidebar, setOpenMobileSidebar] = useState(false);
+
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 	const pageTitle = "Audit Logs";
 
@@ -43,7 +39,7 @@ const Reports = ({ width }) => {
 	React.useEffect(() => {
 		user ? setComponentReady(true) : setComponentReady(false);
 
-		return { user };
+		return user;
 	}, [user]);
 
 	return (
@@ -51,31 +47,21 @@ const Reports = ({ width }) => {
 			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<MainSidebar
-					width={width}
+				<Sidebar
+					ref={ref}
 					user={componentReady ? user : null}
-					openMobileSidebar={openMobileSidebar}
-					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
+					openSidebar={isComponentVisible}
+					setOpenSidebar={setIsComponentVisible}
 				/>
 
-				{componentReady ? (
-					<ComingSoon
-						width={width}
-						user={componentReady ? user : null}
-						pageTitle={pageTitle}
-						openMobileSidebar={openMobileSidebar}
-						setOpenMobileSidebar={setOpenMobileSidebar}
-					/>
-				) : (
-					<div tw="mx-auto">
-						<Loader />
-					</div>
-				)}
+				<ComingSoon
+					pageTitle={pageTitle}
+					openSidebar={isComponentVisible}
+					setOpenSidebar={setIsComponentVisible}
+				/>
 			</section>
 		</Layout>
 	);
 };
 
-Reports.propTypes = {};
-
-export default withResizeDetector(Reports);
+export default Reports;

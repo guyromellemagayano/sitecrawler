@@ -1,51 +1,49 @@
 // React
-import { useEffect, useState } from "react";
+import * as React from "react";
 
 // External
-import { NextSeo } from "next-seo";
-import PropTypes from "prop-types";
 import "twin.macro";
+import { NextSeo } from "next-seo";
+
+// Enums
+import { LoginLink } from "@enums/PageLinks";
+import { LogoutApiEndpoint, UserApiEndpoint } from "@enums/ApiEndpoints";
 
 // Hooks
-import usePostMethod from "src/hooks/usePostMethod";
-import useUser from "src/hooks/useUser";
+import { usePostMethod } from "@hooks/useHttpMethod";
+import useUser from "@hooks/useUser";
 
 // Components
-import Layout from "src/components/Layout";
+import Layout from "@components/layouts";
 
 const Logout = () => {
-	const [logoutDetail, setLogoutDetail] = useState(null);
+	const [logoutDetail, setLogoutDetail] = React.useState(null);
 
 	const pageTitle = "Logout";
-	const logoutApiEndpoint = "/api/auth/logout/";
 
-	const { mutateUser: mutateUser } = useUser({
+	const { mutateUser } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login"
+		redirectTo: LoginLink
 	});
 
-	useEffect(() => {
+	React.useEffect(() => {
 		(async () => {
-			try {
-				const response = await usePostMethod(logoutApiEndpoint);
+			const response = await usePostMethod(LogoutApiEndpoint);
 
-				if (Math.floor(response.status / 200) === 1) {
-					if (response.data.detail) {
-						setLogoutDetail(response.data.detail);
-						mutateUser;
+			Math.floor(response?.status / 200) === 1
+				? (() => {
+						response?.data.detail
+							? (() => {
+									setLogoutDetail(response?.data?.detail);
+									mutateUser(UserApiEndpoint, false);
 
-						if (response.data.detail !== undefined) {
-							window.location.href = "/login";
-						}
-					}
-				} else {
-					return null;
-				}
-			} catch (error) {
-				return null;
-			}
+									response?.data.detail !== undefined ? (window.location.href = LoginLink) : null;
+							  })()
+							: null;
+				  })()
+				: null;
 		})();
-	});
+	}, []);
 
 	return (
 		<Layout>
@@ -59,7 +57,5 @@ const Logout = () => {
 		</Layout>
 	);
 };
-
-Logout.propTypes = {};
 
 export default Logout;

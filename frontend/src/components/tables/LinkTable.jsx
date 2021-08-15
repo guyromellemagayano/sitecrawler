@@ -9,37 +9,23 @@ import "twin.macro";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
-// JSON
-import LinkTableLabel from "./labels/LinkTable.json";
+// Enums
+import { LinkTableLabels } from "@enums/LinkTableLabels";
 
 // Hooks
-import { useLinkDetail } from "src/hooks/useSite";
+import { useLinkDetail } from "@hooks/useSite";
 
 // Components
-import SiteDangerBadge from "src/components/badges/SiteDangerBadge";
-import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
-import SiteWarningBadge from "src/components/badges/SiteWarningBadge";
+import SiteDangerBadge from "@components/badges/SiteDangerBadge";
+import SiteSuccessBadge from "@components/badges/SiteSuccessBadge";
+import SiteWarningBadge from "@components/badges/SiteWarningBadge";
 
-const LinkTable = ({ siteId, val }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-
+const LinkTable = ({ componentReady, siteId, val }) => {
 	const { linkDetail } = useLinkDetail({
 		querySid: siteId,
 		scanObjId: val?.scan_id,
 		linkId: val?.id
 	});
-
-	React.useEffect(() => {
-		linkDetail
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
-
-		return setComponentReady(false);
-	}, [linkDetail]);
 
 	return (
 		<tr>
@@ -70,10 +56,10 @@ const LinkTable = ({ siteId, val }) => {
 								<a
 									href={val?.url}
 									target="_blank"
-									title={LinkTableLabel[0].label}
+									title={LinkTableLabels[0].label}
 									tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
 								>
-									{LinkTableLabel[0].label}
+									{LinkTableLabels[0].label}
 								</a>
 							) : (
 								<Skeleton duration={2} width={59.73} height={24} />
@@ -123,8 +109,14 @@ const LinkTable = ({ siteId, val }) => {
 									{linkDetail?.pages[0]?.url == val?.url ? "/" : linkDetail?.pages[0]?.url}
 								</span>
 								&nbsp;
-								{linkDetail?.pages?.length - 1 > 0 ? "+" + parseInt(linkDetail?.pages?.length - 1) : null}{" "}
-								{linkDetail?.pages?.length - 1 > 1 ? "others" : linkDetail?.pages?.length - 1 === 1 ? "other" : null}
+								{linkDetail?.pages?.length - 1 > 0
+									? "+" + parseInt(linkDetail?.pages?.length - 1)
+									: null}{" "}
+								{linkDetail?.pages?.length - 1 > 1
+									? "others"
+									: linkDetail?.pages?.length - 1 === 1
+									? "other"
+									: null}
 							</a>
 						</Link>
 					) : null
@@ -139,6 +131,28 @@ const LinkTable = ({ siteId, val }) => {
 	);
 };
 
-LinkTable.propTypes = {};
+LinkTable.propTypes = {
+	componentReady: PropTypes.bool,
+	siteId: PropTypes.number,
+	http_status: PropTypes.string,
+	id: PropTypes.number,
+	occurences: PropTypes.number,
+	scan_id: PropTypes.number,
+	status: PropTypes.string,
+	type: PropTypes.string,
+	url: PropTypes.string
+};
+
+LinkTable.defaultProps = {
+	componentReady: false,
+	siteId: null,
+	http_status: null,
+	id: null,
+	occurences: null,
+	scan_id: null,
+	status: null,
+	type: null,
+	url: null
+};
 
 export default LinkTable;

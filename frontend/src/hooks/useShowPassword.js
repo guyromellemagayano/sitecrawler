@@ -1,32 +1,23 @@
-import { useState, useEffect, useRef } from 'react';
+// React
+import * as React from "react";
 
-const useShowPassword = (initialState) => {
-	const [isPasswordShown, setIsPasswordShown] = useState(initialState);
-	const passwordRef = useRef(null);
+export const useShowPassword = (initialState) => {
+	const [isPasswordShown, setIsPasswordShown] = React.useState(initialState);
+	const passwordRef = React.useRef(null);
 
 	const handleShowHidePassword = (props) => {
 		if (props.current) {
-			props.current.type = isPasswordShown ? 'text' : 'password';
+			props.current.type = isPasswordShown ? "text" : "password";
 		}
 	};
 
-	useEffect(() => {
-		document.addEventListener(
-			'toggle',
-			handleShowHidePassword(passwordRef),
-			true
-		);
+	React.useEffect(() => {
+		document.addEventListener("toggle", handleShowHidePassword(passwordRef), true);
 
 		return () => {
-			document.removeEventListener(
-				'toggle',
-				handleShowHidePassword(passwordRef),
-				true
-			);
+			document.removeEventListener("toggle", handleShowHidePassword(passwordRef), true);
 		};
 	});
 
 	return { passwordRef, isPasswordShown, setIsPasswordShown };
 };
-
-export default useShowPassword;

@@ -11,19 +11,17 @@ import bytes from "bytes";
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 
-// JSON
-import PageTableLabel from "./labels/PageTable.json";
+// Enums
+import { PageTableLabels } from "@enums/PageTableLabels";
 
 // Hooks
-import { usePageDetail } from "src/hooks/useSite";
+import { usePageDetail } from "@hooks/useSite";
 
 // Components
-import SiteSuccessIcon from "src/components/icons/SiteSuccessIcon";
-import SiteDangerIcon from "src/components/icons/SiteDangerIcon";
+import SiteSuccessIcon from "@components/icons/SiteSuccessIcon";
+import SiteDangerIcon from "@components/icons/SiteDangerIcon";
 
-const PageTable = ({ siteId, val }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-
+const PageTable = ({ componentReady, siteId, val }) => {
 	const { query } = useRouter();
 
 	const { pageDetail } = usePageDetail({
@@ -31,18 +29,6 @@ const PageTable = ({ siteId, val }) => {
 		scanObjId: val?.scan_id,
 		linkId: val?.id
 	});
-
-	React.useEffect(() => {
-		pageDetail
-			? (() => {
-					setTimeout(() => {
-						setComponentReady(true);
-					}, 500);
-			  })()
-			: null;
-
-		return setComponentReady(false);
-	}, [pageDetail]);
 
 	return (
 		<tr>
@@ -72,10 +58,10 @@ const PageTable = ({ siteId, val }) => {
 							<a
 								href={val?.url}
 								target="_blank"
-								title={PageTableLabel[0].label}
+								title={PageTableLabels[0].label}
 								tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
 							>
-								{PageTableLabel[0].label}
+								{PageTableLabels[0].label}
 							</a>
 						) : (
 							<Skeleton duration={2} width={59.73} height={24} />
@@ -108,6 +94,24 @@ const PageTable = ({ siteId, val }) => {
 	);
 };
 
-PageTable.propTypes = {};
+PageTable.propTypes = {
+	componentReady: PropTypes.bool,
+	siteId: PropTypes.number,
+	id: PropTypes.number,
+	scan_id: PropTypes.number,
+	size_total: PropTypes.number,
+	tls_total: PropTypes.string,
+	url: PropTypes.string
+};
+
+PageTable.defaultProps = {
+	componentReady: false,
+	siteId: null,
+	id: null,
+	scan_id: null,
+	size_total: null,
+	tls_total: null,
+	url: null
+};
 
 export default PageTable;

@@ -8,57 +8,52 @@ import Link from "next/link";
 import "twin.macro";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import { withResizeDetector } from "react-resize-detector";
-import loadable from "@loadable/component";
 import PropTypes from "prop-types";
 
-// JSON
-import SettingsLabel from "public/labels/pages/settings/settings.json";
+// Enums
+import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
+import { LoginLink, SitesLink } from "@enums/PageLinks";
+import { SettingsLabels } from "@enums/SettingsLabels";
+import { SiteApiEndpoint } from "@enums/ApiEndpoints";
 
 // Hooks
-import { useSite, useSiteId } from "src/hooks/useSite";
-import useUser from "src/hooks/useUser";
-
-// Layout
-import Layout from "src/components/Layout";
+import { useComponentVisible } from "@hooks/useComponentVisible";
+import { useSite, useSiteId } from "@hooks/useSite";
+import useUser from "@hooks/useUser";
 
 // Components
-import AppLogo from "src/components/logos/AppLogo";
-import MainSidebar from "src/components/sidebar/MainSidebar";
-import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
-import SiteFooter from "src/components/layouts/Footer";
+import AppLogo from "@components/logos/AppLogo";
+import Breadcrumbs from "@components/breadcrumbs";
+import DeleteSiteSettings from "@components/settings/DeleteSiteSettings";
+import Footer from "@components/layouts/Footer";
+import LargePageSizeSettings from "@components/settings/LargePageSizeSettings";
+import Layout from "@components/layouts";
+import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
+import Sidebar from "@components/layouts/Sidebar";
+import SiteInformationSettings from "@components/settings/SiteInformationSettings";
 
-// Loadable
-const Breadcrumbs = loadable(() => import("src/components/breadcrumbs/Breadcrumbs"));
-const DeleteSiteSettings = loadable(() => import("src/components/pages/settings/site/DeleteSite"));
-const LargePageSizeSettings = loadable(() => import("src/components/pages/settings/site/LargePageSize"));
-const Loader = loadable(() => import("src/components/layouts/Loader"));
-const SiteInformationSettings = loadable(() => import("src/components/pages/settings/site/SiteInformation"));
-
-const SiteSettings = (props) => {
-	const [openMobileSidebar, setOpenMobileSidebar] = React.useState(false);
+const SiteSettings = ({ result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 
-	const appLogoAltText = "app-logo";
-	const sitesApiEndpoint = `/api/site/?ordering=name`;
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
-	const { user } = useUser({
+	const { user, mutateUser } = useUser({
 		redirectIfFound: false,
-		redirectTo: "/login"
+		redirectTo: LoginLink
 	});
 
 	const { mutateSite } = useSite({
-		endpoint: sitesApiEndpoint
+		endpoint: SiteApiEndpoint
 	});
 
 	const { siteId, mutateSiteId } = useSiteId({
-		querySid: props.result?.siteId,
+		querySid: result?.siteId,
 		redirectIfFound: false,
-		redirectTo: "/sites"
+		redirectTo: SitesLink
 	});
 
-	const homePageLink = `/site/${props.result?.siteId}/overview`;
-	const pageTitle = SettingsLabel[1].label + " - " + siteId?.name;
+	const homePageLink = `/site/${result?.siteId}/overview`;
+	const pageTitle = SettingsLabels[1].label + " - " + siteId?.name;
 
 	React.useEffect(() => {
 		user && siteId ? setComponentReady(true) : setComponentReady(false);
@@ -71,79 +66,98 @@ const SiteSettings = (props) => {
 			<NextSeo title={componentReady ? pageTitle : null} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<MainSidebar
-					width={props.width}
+				<Sidebar
+					ref={ref}
 					user={componentReady ? user : null}
-					openMobileSidebar={openMobileSidebar}
-					handleOpenMobileSidebar={() => setOpenMobileSidebar(!openMobileSidebar)}
+					openSidebar={isComponentVisible}
+					setOpenSidebar={setIsComponentVisible}
 				/>
 
-				{componentReady ? (
-					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-						<div tw="relative flex-shrink-0 flex">
-							<div tw="border-b flex-shrink-0 flex">
-								<MobileSidebarButton
-									openMobileSidebar={openMobileSidebar}
-									setOpenMobileSidebar={setOpenMobileSidebar}
-								/>
-							</div>
-
-							<Link href={homePageLink} passHref>
-								<a tw="p-1 block w-full cursor-pointer lg:hidden">
-									<AppLogo
-										tw="w-48 h-auto"
-										src="/images/logos/site-logo-dark.svg"
-										alt={appLogoAltText}
-										width={230}
-										height={40}
-									/>
-								</a>
-							</Link>
+				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
+					<div tw="relative flex-shrink-0 flex">
+						<div tw="border-b flex-shrink-0 flex">
+							<MobileSidebarButton
+								openSidebar={isComponentVisible}
+								setOpenSidebar={setIsComponentVisible}
+							/>
 						</div>
 
-						<Scrollbars universal>
-							<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
-								<div tw="max-w-full p-4 sm:px-6 md:px-8">
-									<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
-										<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
-											<div tw="max-w-full p-4">
-												<Breadcrumbs siteId={props.result?.siteId} pageTitle={SettingsLabel[1].label} />
+						<Link href={homePageLink} passHref>
+							<a tw="p-1 block w-full cursor-pointer lg:hidden">
+								<AppLogo
+									tw="w-48 h-auto"
+									src={SiteLogoDark}
+									alt={GlobalLabels[0].label}
+									width={GlobalLabels[0].width}
+									height={GlobalLabels[0].height}
+								/>
+							</a>
+						</Link>
+					</div>
 
-												<div tw="pt-4 m-auto">
-													<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-														{SettingsLabel[1].label}
-													</h2>
-												</div>
-											</div>
+					<Scrollbars universal>
+						<main
+							tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none"
+							tabIndex="0"
+						>
+							<div tw="max-w-full p-4 sm:px-6 md:px-8">
+								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
+									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
+										<div tw="max-w-full p-4">
+											<Breadcrumbs isOther pageTitle={pageTitle} siteId={result?.siteId} />
 
-											<div tw="space-y-12 divide-y divide-gray-200">
-												<SiteInformationSettings user={user} siteId={siteId} settingsLabel={SettingsLabel} />
-												<LargePageSizeSettings user={user} siteId={siteId} mutateSiteId={mutateSiteId} />
-												<DeleteSiteSettings user={user} siteId={siteId} mutateSite={mutateSite} />
+											<div tw="pt-4 m-auto">
+												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+													{pageTitle}
+												</h2>
 											</div>
 										</div>
-									</div>
 
-									<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-										<SiteFooter />
+										<div tw="space-y-12 divide-y divide-gray-200">
+											<SiteInformationSettings
+												componentReady={componentReady}
+												mutateSite={mutateSite}
+												mutateSiteId={mutateSiteId}
+												siteId={componentReady ? siteId : null}
+											/>
+											<LargePageSizeSettings
+												componentReady={componentReady}
+												mutateSite={mutateSite}
+												mutateUser={mutateUser}
+												mutateSiteId={mutateSiteId}
+												siteId={componentReady ? siteId : null}
+												user={componentReady ? user : null}
+											/>
+											<DeleteSiteSettings
+												componentReady={componentReady}
+												mutateSite={mutateSite}
+												siteId={componentReady ? siteId : null}
+											/>
+										</div>
 									</div>
 								</div>
-							</main>
-						</Scrollbars>
-					</div>
-				) : (
-					<div tw="mx-auto">
-						<Loader />
-					</div>
-				)}
+
+								<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white">
+									<Footer />
+								</div>
+							</div>
+						</main>
+					</Scrollbars>
+				</div>
 			</section>
 		</Layout>
 	);
 };
 
-SiteSettings.propTypes = {};
+SiteSettings.propTypes = {
+	siteId: PropTypes.number
+};
 
-export default withResizeDetector(SiteSettings);
+SiteSettings.defaultProps = {
+	siteId: null
+};
+
+export default SiteSettings;
 
 export async function getServerSideProps(ctx) {
 	return {

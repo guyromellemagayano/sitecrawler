@@ -1,6 +1,3 @@
-// React
-import * as React from "react";
-
 // NextJS
 import { useRouter } from "next/router";
 
@@ -8,9 +5,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // Hooks
-import useFetcher from "src/hooks/useFetcher";
-
-const siteApiEndpoint = "/api/site/";
+import { RevalidationInterval } from "@enums/GlobalValues";
+import { SiteApiEndpoint } from "@enums/ApiEndpoints";
+import useFetcher from "@hooks/useFetcher";
 
 export const useSite = ({ endpoint, refreshInterval = 0 }) => {
 	const {
@@ -23,7 +20,7 @@ export const useSite = ({ endpoint, refreshInterval = 0 }) => {
 			if (key === endpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		refreshInterval: refreshInterval
 	});
@@ -31,7 +28,12 @@ export const useSite = ({ endpoint, refreshInterval = 0 }) => {
 	return { site, mutateSite, siteError };
 };
 
-export const useSiteId = ({ querySid = 0, redirectIfFound = false, redirectTo = "", refreshInterval = 0 }) => {
+export const useSiteId = ({
+	querySid = 0,
+	redirectIfFound = false,
+	redirectTo = "",
+	refreshInterval = 0
+}) => {
 	const router = useRouter();
 
 	const {
@@ -39,23 +41,34 @@ export const useSiteId = ({ querySid = 0, redirectIfFound = false, redirectTo = 
 		mutate: mutateSiteId,
 		error: siteIdError
 	} = useSWR(
-		() => (querySid && querySid !== 0 && querySid !== undefined ? siteApiEndpoint + querySid + "/" : null),
+		() =>
+			querySid && querySid !== 0 && querySid !== undefined
+				? SiteApiEndpoint + querySid + "/"
+				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/") return;
+				if (key === SiteApiEndpoint + querySid + "/") return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			},
 			onSuccess: (data) => {
 				if (data !== undefined) {
 					if (data?.verified == false && data?.last_finished_scan_id !== null && !redirectIfFound) {
 						return;
-					} else if (data?.verified == true && data?.last_finished_scan_id == null && !redirectIfFound) {
+					} else if (
+						data?.verified == true &&
+						data?.last_finished_scan_id == null &&
+						!redirectIfFound
+					) {
 						return;
-					} else if (data?.verified == true && data?.last_finished_scan_id !== null && !redirectIfFound) {
+					} else if (
+						data?.verified == true &&
+						data?.last_finished_scan_id !== null &&
+						!redirectIfFound
+					) {
 						return;
 					} else {
 						router.push({ pathname: redirectTo });
@@ -79,16 +92,16 @@ export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
 	} = useSWR(
 		() =>
 			querySid && querySid !== 0 && querySid !== undefined
-				? siteApiEndpoint + querySid + "/scan/?ordering=-finished_at"
+				? SiteApiEndpoint + querySid + "/scan/?ordering=-finished_at"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/?ordering=-finished_at") return;
+				if (key === SiteApiEndpoint + querySid + "/scan/?ordering=-finished_at") return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			},
 			refreshInterval: refreshInterval
 		}
@@ -104,17 +117,22 @@ export const useStats = ({ querySid = 0, scanObjId = 0, refreshInterval = 0 }) =
 		error: statsError
 	} = useSWR(
 		() =>
-			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/"
+			querySid &&
+			querySid !== 0 &&
+			querySid !== undefined &&
+			scanObjId &&
+			scanObjId !== 0 &&
+			scanObjId !== undefined
+				? SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/") return;
+				if (key === SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/") return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			},
 			refreshInterval: refreshInterval
 		}
@@ -130,7 +148,12 @@ export const useLinks = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterva
 		error: linksError
 	} = useSWR(
 		() =>
-			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
+			querySid &&
+			querySid !== 0 &&
+			querySid !== undefined &&
+			scanObjId &&
+			scanObjId !== 0 &&
+			scanObjId !== undefined
 				? endpoint
 				: null,
 		useFetcher,
@@ -140,7 +163,7 @@ export const useLinks = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterva
 				if (key === endpoint) return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			},
 			refreshInterval: refreshInterval
 		}
@@ -150,22 +173,26 @@ export const useLinks = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterva
 };
 
 export const useUptime = ({ querySid = 0, refreshInterval = 0 }) => {
-	const uptimeApiEndpoint = `/api/site/${querySid}/uptime/`;
+	const uptimeApiEndpoint = `${SiteApiEndpoint + querySid}/uptime/`;
 
 	const {
 		data: uptime,
 		mutate: mutateUptime,
 		error: uptimeError
-	} = useSWR(() => (querySid && querySid !== 0 && querySid !== undefined ? uptimeApiEndpoint : null), useFetcher, {
-		onErrorRetry: (error, key, revalidate, { retryCount }) => {
-			if (error !== undefined && error.status === 404) return;
-			if (key === uptimeApiEndpoint) return;
-			if (retryCount >= 10) return;
+	} = useSWR(
+		() => (querySid && querySid !== 0 && querySid !== undefined ? uptimeApiEndpoint : null),
+		useFetcher,
+		{
+			onErrorRetry: (error, key, revalidate, { retryCount }) => {
+				if (error !== undefined && error.status === 404) return;
+				if (key === uptimeApiEndpoint) return;
+				if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
-		},
-		refreshInterval: refreshInterval
-	});
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
+			},
+			refreshInterval: refreshInterval
+		}
+	);
 
 	return { uptime, mutateUptime, uptimeError };
 };
@@ -186,7 +213,7 @@ export const useUptimeSummary = ({ querySid = 0, refreshInterval = 0 }) => {
 				if (key === uptimeSummaryApiEndpoint) return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			},
 			refreshInterval: refreshInterval
 		}
@@ -202,7 +229,12 @@ export const useImages = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterv
 		error: imagesError
 	} = useSWR(
 		() =>
-			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
+			querySid &&
+			querySid !== 0 &&
+			querySid !== undefined &&
+			scanObjId &&
+			scanObjId !== 0 &&
+			scanObjId !== undefined
 				? endpoint
 				: null,
 		useFetcher,
@@ -212,7 +244,7 @@ export const useImages = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterv
 				if (key === endpoint) return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			},
 			refreshInterval: refreshInterval
 		}
@@ -228,7 +260,12 @@ export const usePages = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterva
 		error: pagesError
 	} = useSWR(
 		() =>
-			querySid && querySid !== 0 && querySid !== undefined && scanObjId && scanObjId !== 0 && scanObjId !== undefined
+			querySid &&
+			querySid !== 0 &&
+			querySid !== undefined &&
+			scanObjId &&
+			scanObjId !== 0 &&
+			scanObjId !== undefined
 				? endpoint
 				: null,
 		useFetcher,
@@ -238,7 +275,7 @@ export const usePages = ({ endpoint, querySid = 0, scanObjId = 0, refreshInterva
 				if (key === endpoint) return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			},
 			refreshInterval: refreshInterval
 		}
@@ -263,16 +300,16 @@ export const useLinkDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 			linkId &&
 			linkId !== 0 &&
 			linkId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/" + linkId
+				? SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/" + linkId
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/" + linkId) return;
+				if (key === SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/" + linkId) return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			}
 		}
 	);
@@ -296,16 +333,17 @@ export const usePageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 			linkId &&
 			linkId !== 0 &&
 			linkId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/"
+				? SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/") return;
+				if (key === SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/")
+					return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			}
 		}
 	);
@@ -329,7 +367,16 @@ export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, 
 			pageId &&
 			pageId !== 0 &&
 			pageId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + pageId + "/link/" + "?" + addQuery + ""
+				? SiteApiEndpoint +
+				  querySid +
+				  "/scan/" +
+				  scanObjId +
+				  "/page/" +
+				  pageId +
+				  "/link/" +
+				  "?" +
+				  addQuery +
+				  ""
 				: null,
 		useFetcher,
 		{
@@ -337,12 +384,21 @@ export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, 
 				if (error !== undefined && error.status === 404) return;
 				if (
 					key ===
-					siteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + pageId + "/link/" + "?" + addQuery + ""
+					SiteApiEndpoint +
+						querySid +
+						"/scan/" +
+						scanObjId +
+						"/page/" +
+						pageId +
+						"/link/" +
+						"?" +
+						addQuery +
+						""
 				)
 					return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			}
 		}
 	);
@@ -366,16 +422,17 @@ export const useImageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 			linkId &&
 			linkId !== 0 &&
 			linkId !== undefined
-				? siteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/" + linkId + "/"
+				? SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/" + linkId + "/"
 				: null,
 		useFetcher,
 		{
 			onErrorRetry: (error, key, revalidate, { retryCount }) => {
 				if (error !== undefined && error.status === 404) return;
-				if (key === siteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/" + linkId + "/") return;
+				if (key === SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/image/" + linkId + "/")
+					return;
 				if (retryCount >= 10) return;
 
-				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+				setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 			}
 		}
 	);

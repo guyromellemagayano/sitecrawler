@@ -10,11 +10,11 @@ import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 
-// JSON
-import AccountExistContent from "public/labels/pages/account-exist.json";
+// Enums
+import { AccountExistsLabels } from "@enums/AccountExistsLabels";
 
-// Layout
-import Layout from "src/components/Layout";
+// Components
+import Layout from "@components/layouts";
 
 const AccountExist = () => {
 	const pageTitle = "Account Exist";
@@ -25,11 +25,15 @@ const AccountExist = () => {
 
 			<div tw="overflow-auto h-screen">
 				<Scrollbars universal>
+					{/* TODO: Update UI of this page */}
 					<div tw="flex flex-col justify-center h-full">
 						<div tw="relative py-12 sm:px-6 lg:px-8">
-							{AccountExistContent.map((val, key) => {
+							{AccountExistsLabels.map((val, key) => {
 								return (
-									<div key={key} tw="max-w-lg min-h-screen flex flex-col justify-center mx-auto py-12 sm:px-6 lg:px-8">
+									<div
+										key={key}
+										tw="max-w-lg min-h-screen flex flex-col justify-center mx-auto py-12 sm:px-6 lg:px-8"
+									>
 										<div tw="bg-white rounded-lg">
 											<div tw="px-4 py-5 sm:p-6">
 												<h3 tw="text-lg leading-6 font-medium text-red-600">{val.title}</h3>
@@ -39,7 +43,7 @@ const AccountExist = () => {
 												<div tw="mt-3 text-sm leading-5">
 													{val.cta.map((val2, key) => {
 														return (
-															<Link key={key} href={val2.url}>
+															<Link key={key} href={val2.url} passHref>
 																<a tw="font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 																	{ReactHtmlParser(val2.label)}
 																</a>

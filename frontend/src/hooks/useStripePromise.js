@@ -1,23 +1,31 @@
 // External
 import useSWR from "swr";
 
+// Enums
+import {
+	DefaultPaymentMethodApiEndpoint,
+	DefaultSubscriptionApiEndpoint,
+	PaymentMethodApiEndpoint,
+	StripePromiseApiEndpoint,
+	SubscriptionsApiEndpoint
+} from "@enums/ApiEndpoints";
+import { RevalidationInterval } from "@enums/GlobalValues";
+
 // Hooks
 import useFetcher from "src/hooks/useFetcher";
 
 export const useStripePromise = () => {
-	const stripePromiseApiEndpoint = "/api/stripe/config/";
-
 	const {
 		data: stripePromise,
 		mutate: mutateStripePromise,
 		error: stripePromiseError
-	} = useSWR(stripePromiseApiEndpoint, useFetcher, {
+	} = useSWR(StripePromiseApiEndpoint, useFetcher, {
 		onErrorRetry: (error, key, revalidate, { retryCount }) => {
 			if (error && error !== undefined && error.status === 404) return;
-			if (key === stripePromiseApiEndpoint) return;
+			if (key === StripePromiseApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		}
 	});
 
@@ -25,19 +33,17 @@ export const useStripePromise = () => {
 };
 
 export const usePaymentMethods = ({ refreshInterval = 0 }) => {
-	const paymentMethodApiEndpoint = "/api/stripe/payment-method/";
-
 	const {
 		data: paymentMethods,
 		mutate: mutatePaymentMethods,
 		error: paymentMethodsError
-	} = useSWR(paymentMethodApiEndpoint, useFetcher, {
+	} = useSWR(PaymentMethodApiEndpoint, useFetcher, {
 		onErrorRetry: (error, key, revalidate, { retryCount }) => {
 			if (error && error !== undefined && error.status === 404) return;
-			if (key === paymentMethodApiEndpoint) return;
+			if (key === PaymentMethodApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		refreshInterval: refreshInterval
 	});
@@ -46,19 +52,17 @@ export const usePaymentMethods = ({ refreshInterval = 0 }) => {
 };
 
 export const useDefaultPaymentMethod = ({ refreshInterval = 0 }) => {
-	const defaultPaymentMethodApiEndpoint = "/api/stripe/payment-method/default/";
-
 	const {
 		data: defaultPaymentMethod,
 		mutate: mutateDefaultPaymentMethod,
 		error: defaultPaymentMethodError
-	} = useSWR(defaultPaymentMethodApiEndpoint, useFetcher, {
+	} = useSWR(DefaultPaymentMethodApiEndpoint, useFetcher, {
 		onErrorRetry: (error, key, revalidate, { retryCount }) => {
 			if (error && error !== undefined && error.status === 404) return;
-			if (key === defaultPaymentMethodApiEndpoint) return;
+			if (key === DefaultPaymentMethodApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		refreshInterval: refreshInterval
 	});
@@ -67,19 +71,17 @@ export const useDefaultPaymentMethod = ({ refreshInterval = 0 }) => {
 };
 
 export const useSubscriptions = ({ refreshInterval = 0 }) => {
-	const subscriptionsApiEndpoint = "/api/stripe/subscription/";
-
 	const {
 		data: subscriptions,
 		mutate: mutateSubscriptions,
 		error: subscriptionsError
-	} = useSWR(subscriptionsApiEndpoint, useFetcher, {
+	} = useSWR(SubscriptionsApiEndpoint, useFetcher, {
 		onErrorRetry: (error, key, revalidate, { retryCount }) => {
 			if (error && error !== undefined && error.status === 404) return;
-			if (key === subscriptionsApiEndpoint) return;
+			if (key === SubscriptionsApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		refreshInterval: refreshInterval
 	});
@@ -88,19 +90,17 @@ export const useSubscriptions = ({ refreshInterval = 0 }) => {
 };
 
 export const useDefaultSubscription = ({ refreshInterval = 0 }) => {
-	const defaultSubscriptionApiEndpoint = "/api/stripe/subscription/current/";
-
 	const {
 		data: defaultSubscription,
 		mutate: mutateDefaultSubscription,
 		error: defaultSubscriptionError
-	} = useSWR(defaultSubscriptionApiEndpoint, useFetcher, {
+	} = useSWR(DefaultSubscriptionApiEndpoint, useFetcher, {
 		onErrorRetry: (error, key, revalidate, { retryCount }) => {
 			if (error && error !== undefined && error.status === 404) return;
-			if (key === defaultSubscriptionApiEndpoint) return;
+			if (key === DefaultSubscriptionApiEndpoint) return;
 			if (retryCount >= 10) return;
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 3000);
+			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
 		},
 		refreshInterval: refreshInterval
 	});
