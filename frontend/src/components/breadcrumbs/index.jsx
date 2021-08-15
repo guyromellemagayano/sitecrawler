@@ -26,7 +26,7 @@ const Breadcrumbs = ({
 	siteId
 }) => {
 	const homeLabel = BreadcrumbsLabels[0].label;
-	const siteIdOverviewPageLink = `/site/${siteId}/overview/`;
+	const siteIdOverviewPageLink = `/site/${siteId}`;
 
 	return (
 		<nav tw="flex pt-4 pb-8" aria-label="Breadcrumb">

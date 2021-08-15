@@ -161,7 +161,7 @@ export const SiteSidebarMenu = [
 			{
 				title: "Overview",
 				slug: "overview",
-				url: "/overview"
+				url: "/"
 			}
 		]
 	},
