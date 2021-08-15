@@ -38,7 +38,7 @@ We just completed a crawl of test.com and we found:
 - 0 seo issues.
 
 Visit your site dashboard to learn more:
-https://example.com/dashboard/site/{self.site.id}/overview
+https://example.com/dashboard/site/{self.site.id}
 
 Thanks,
 example.com
