@@ -189,8 +189,6 @@ const Pages = ({ result }) => {
 		  })()
 		: null;
 
-	console.log(scanApiEndpoint);
-
 	const { pages, mutatePages } = usePages({
 		endpoint: enableSiteIdHook ? scanApiEndpoint : null,
 		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null,
