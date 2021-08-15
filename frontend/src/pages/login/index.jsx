@@ -15,7 +15,7 @@ import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 
 // Enums
-import { GlobalLabels } from "@enums/GlobalValues";
+import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
 import { LoginApiEndpoint, GoogleLoginApiEndpoint } from "@enums/ApiEndpoints";
 import { LoginLabels } from "@enums/LoginLabels";
 
@@ -51,13 +51,12 @@ const Login = () => {
 									<div tw="lg:grid lg:grid-cols-12 lg:gap-8">
 										<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
 											<div>
-												{/* TODO: Update values of this component */}
 												<AppLogo
-													tw="flex justify-start w-60 h-12 mb-8"
-													src="/images/logos/site-logo-dark.svg"
+													className="flex"
+													src={SiteLogoDark}
 													alt={GlobalLabels[0].label}
-													width={320}
-													height={60}
+													width={GlobalLabels[0].width}
+													height={GlobalLabels[0].height}
 												/>
 												<h4 tw="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none">
 													{LoginLabels[0].label}

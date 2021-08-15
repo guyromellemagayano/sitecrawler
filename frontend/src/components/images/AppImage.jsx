@@ -7,17 +7,12 @@ import Image from "next/image";
 // External
 import PropTypes from "prop-types";
 
-const AppImage = ({ alt, className, height, src, width }) => {
-	return (
-		<span className={className}>
-			<Image src={src} alt={alt} width={width} height={height} />
-		</span>
-	);
+const AppImage = ({ alt, height, src, width }) => {
+	return <Image src={src} alt={alt} width={width} height={height} />;
 };
 
 AppImage.propTypes = {
 	alt: PropTypes.string,
-	className: PropTypes.string,
 	height: PropTypes.number,
 	src: PropTypes.string,
 	width: PropTypes.number
@@ -25,7 +20,6 @@ AppImage.propTypes = {
 
 AppImage.defaultProps = {
 	alt: null,
-	className: null,
 	height: null,
 	src: null,
 	width: null

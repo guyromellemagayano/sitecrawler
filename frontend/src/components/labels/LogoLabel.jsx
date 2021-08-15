@@ -7,23 +7,23 @@ import PropTypes from "prop-types";
 
 // Components
 import AppLogo from "src/components/logos/AppLogo";
+import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
 
 const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
-	const siteLogoDarkSvg = "/images/logos/site-logo-dark.svg";
 	const appLogoAltText = "app-logo";
 
 	return (
 		<div tw="sm:mx-auto sm:w-full sm:max-w-md">
 			{!isLogin ? (
 				<AppLogo
-					tw="h-12 w-auto mx-auto"
-					src={siteLogoDarkSvg}
-					alt={appLogoAltText}
-					width={230}
-					height={40}
+					className="flex justify-center"
+					src={SiteLogoDark}
+					alt={GlobalLabels[0].label}
+					width={GlobalLabels[0].width}
+					height={GlobalLabels[0].height}
 				/>
 			) : null}
-			<h2 tw="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
+			<h2 tw="my-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
 				{isLogin
 					? "Log In"
 					: isSignUp

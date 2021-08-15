@@ -40,11 +40,11 @@ const SettingsMenu = ({ site }) => {
 					<Link href={SitesLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
 							<AppLogo
-								tw="w-48 h-auto"
+								className="flex"
 								src={SiteLogoWhite}
-								alt={GlobalLabels[0].label}
-								width={GlobalLabels[0].width}
-								height={GlobalLabels[0].height}
+								alt={GlobalLabels[1].label}
+								width={GlobalLabels[1].width}
+								height={GlobalLabels[1].height}
 							/>
 						</a>
 					</Link>

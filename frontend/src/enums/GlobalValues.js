@@ -1,8 +1,13 @@
 export const GlobalLabels = [
 	{
 		label: "app-logo",
-		width: 230,
-		height: 40
+		width: 300,
+		height: 60
+	},
+	{
+		label: "app-logo",
+		width: 200,
+		height: 45
 	}
 ];
 
