@@ -38,13 +38,15 @@ const PagesStats = ({ componentReady, sid, stats, width }) => {
 		router.push("/site/[siteId]/pages", path, { shallow: true });
 	};
 
-	const chartSeries = [
+	const series = [
 		stats?.num_pages_big ? stats?.num_pages_big : 0,
 		stats?.num_pages_tls_non_ok ? stats?.num_pages_tls_non_ok : 0,
+		stats?.num_pages_duplicated_title ? stats?.num_pages_duplicated_title : 0,
+		stats?.num_pages_duplicated_description ? stats?.num_pages_duplicated_description : 0,
 		stats?.num_pages_small_tls_ok ? stats?.num_pages_small_tls_ok : 0
 	];
 
-	const chartOptions = {
+	const options = {
 		chart: {
 			id: "pageStats",
 			type: "donut",
@@ -166,8 +168,8 @@ const PagesStats = ({ componentReady, sid, stats, width }) => {
 			<div tw="flex justify-center mx-auto max-w-sm">
 				{componentReady ? (
 					<Chart
-						options={chartOptions}
-						series={chartSeries}
+						options={options}
+						series={series}
 						type="donut"
 						width={LgScreenBreakpoint > width ? "400" : "600"}
 						height={LgScreenBreakpoint > width ? "530" : "530"}
