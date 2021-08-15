@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 
 // Enums
 import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-import { LgScreenBreakpoint, EndpointRefreshInterval } from "@enums/GlobalValues";
+import { EndpointRefreshInterval } from "@enums/GlobalValues";
 import { SidebarMenuLabels } from "@enums/SidebarMenuLabels";
 
 // Hooks
