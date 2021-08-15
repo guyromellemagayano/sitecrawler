@@ -160,7 +160,11 @@ const DataTable = ({
 										</span>
 										<span tw="flex justify-start text-sm leading-5 text-gray-500">
 											{scanCount > 0 ? (
-												<Link href="/site/[siteId]" as={`/site/${siteId}`} passHref>
+												<Link
+													href="/site/[siteId]/overview"
+													as={`/site/${siteId}/overview`}
+													passHref
+												>
 													<a
 														type="button"
 														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
@@ -203,7 +207,7 @@ const DataTable = ({
 									></span>
 									<div tw="inline-flex flex-col justify-start items-start">
 										{stats?.num_links > 0 || stats?.num_pages > 0 || stats?.num_images > 0 ? (
-											<Link href="/site/[siteId]" as={`/site/${siteId}`} passHref>
+											<Link href="/site/[siteId]/overview" as={`/site/${siteId}/overview`} passHref>
 												<a
 													className="truncate-link"
 													tw="text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500"

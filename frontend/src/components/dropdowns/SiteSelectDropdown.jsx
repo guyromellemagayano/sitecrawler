@@ -62,7 +62,7 @@ const SiteSelectDropdown = ({
 		if (scanObjId && selectedSiteId) {
 			setTimeout(() => {
 				router.push({
-					pathname: `/site/[siteId]`,
+					pathname: `/site/[siteId]/overview/`,
 					query: {
 						siteId: selectedSiteId,
 						scanObjId: scanObjId

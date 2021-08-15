@@ -92,7 +92,7 @@ const VerifyUrlStepForm = ({
 			<div tw="flex lg:justify-between w-full">
 				{enableNextStep ? (
 					<span tw="inline-flex">
-						<Link href="/site/[id]" as={`/site/${siteData?.id}`} passHref>
+						<Link href="/site/[id]/overview/" as={`/site/${siteData?.id}/overview/`} passHref>
 							<a
 								css={[
 									tw`cursor-pointer inline-flex sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
