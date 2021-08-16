@@ -23,8 +23,8 @@ import SiteWarningBadge from "@components/badges/SiteWarningBadge";
 const LinkTable = ({ componentReady, siteId, val }) => {
 	const { linkDetail } = useLinkDetail({
 		querySid: siteId,
-		scanObjId: val?.scan_id,
-		linkId: val?.id
+		scanObjId: val.scan_id,
+		linkId: val.id
 	});
 
 	return (
@@ -35,16 +35,16 @@ const LinkTable = ({ componentReady, siteId, val }) => {
 						<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
 							{componentReady ? (
 								<Link
-									href="/site/[siteId]/links/[linkId]/details"
-									as={`/site/${siteId}/links/${linkDetail?.id}/details`}
+									href="/site/[siteId]/links/[linkId]/"
+									as={`/site/${siteId}/links/${linkDetail?.id}/`}
 									passHref
 								>
 									<a
 										className="truncate-link"
 										tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-										title={val?.url}
+										title={val.url}
 									>
-										{val?.url}
+										{val.url}
 									</a>
 								</Link>
 							) : (
@@ -54,7 +54,7 @@ const LinkTable = ({ componentReady, siteId, val }) => {
 						<div tw="flex justify-start leading-5 text-gray-500">
 							{componentReady ? (
 								<a
-									href={val?.url}
+									href={val.url}
 									target="_blank"
 									title={LinkTableLabels[0].label}
 									tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
@@ -70,9 +70,9 @@ const LinkTable = ({ componentReady, siteId, val }) => {
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				{componentReady ? (
-					val?.type === "PAGE" ? (
+					val.type === "PAGE" ? (
 						"Internal"
-					) : val?.type === "EXTERNAL" ? (
+					) : val.type === "EXTERNAL" ? (
 						"External"
 					) : (
 						"Other"
@@ -83,12 +83,12 @@ const LinkTable = ({ componentReady, siteId, val }) => {
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				{componentReady ? (
-					val?.status === "OK" ? (
+					val.status === "OK" ? (
 						<SiteSuccessBadge text={"OK"} />
-					) : val?.status === "TIMEOUT" ? (
+					) : val.status === "TIMEOUT" ? (
 						<SiteWarningBadge text={"TIMEOUT"} />
-					) : val?.status === "HTTP_ERROR" ? (
-						<SiteDangerBadge text={`${val?.http_status} HTTP ERROR`} />
+					) : val.status === "HTTP_ERROR" ? (
+						<SiteDangerBadge text={`${val.http_status} HTTP ERROR`} />
 					) : (
 						<SiteDangerBadge text={"OTHER ERROR"} />
 					)
@@ -100,13 +100,13 @@ const LinkTable = ({ componentReady, siteId, val }) => {
 				{componentReady ? (
 					linkDetail?.pages?.length > 0 ? (
 						<Link
-							href="/site/[siteId]/links/[linkId]/details"
-							as={`/site/${siteId}/links/${linkDetail?.id}/details`}
+							href="/site/[siteId]/links/[linkId]/"
+							as={`/site/${siteId}/links/${linkDetail?.id}/`}
 							passHref
 						>
 							<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								<span className="truncate-link">
-									{linkDetail?.pages[0]?.url == val?.url ? "/" : linkDetail?.pages[0]?.url}
+									{linkDetail?.pages[0]?.url == val.url ? "/" : linkDetail?.pages[0]?.url}
 								</span>
 								&nbsp;
 								{linkDetail?.pages?.length - 1 > 0
@@ -125,7 +125,7 @@ const LinkTable = ({ componentReady, siteId, val }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
-				{componentReady ? val?.occurences : <Skeleton duration={2} width={45} />}
+				{componentReady ? val.occurences : <Skeleton duration={2} width={45} />}
 			</td>
 		</tr>
 	);
