@@ -41,46 +41,44 @@ const SeoTable = ({ componentReady, siteId, val, disableLocalTime }) => {
 	return (
 		<tr>
 			<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-200">
-				<div tw="flex items-center">
-					<div>
-						<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
-							{componentReady ? (
-								<Link
-									href="/site/[siteId]/seo/[seoId]/details"
-									as={`/site/${siteId}/seo/${pageDetail?.id}/details`}
-									passHref
-								>
-									<a
-										className="truncate-link"
-										tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-										title={val?.url}
-									>
-										{val?.url}
-									</a>
-								</Link>
-							) : (
-								<Skeleton duration={2} width={288} />
-							)}
-						</div>
-						<div tw="flex justify-start leading-5 text-gray-500">
-							{componentReady ? (
+				<div tw="flex flex-col items-start">
+					<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
+						{componentReady && pageDetail ? (
+							<Link
+								href="/site/[siteId]/seo/[seoId]/"
+								as={`/site/${siteId}/seo/${pageDetail?.id}/`}
+								passHref
+							>
 								<a
-									href={val.url}
-									target="_blank"
-									title={SeosTableLabels[0].label}
-									tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+									className="truncate-link"
+									tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
+									title={val?.url}
 								>
-									{SeosTableLabels[0].label}
+									{val?.url}
 								</a>
-							) : (
-								<Skeleton duration={2} width={59.73} height={24} />
-							)}
-						</div>
+							</Link>
+						) : (
+							<Skeleton duration={2} width={300} />
+						)}
+					</div>
+					<div tw="flex justify-start leading-5 text-gray-500">
+						{componentReady && pageDetail ? (
+							<a
+								href={val.url}
+								target="_blank"
+								title={SeosTableLabels[0].label}
+								tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+							>
+								{SeosTableLabels[0].label}
+							</a>
+						) : (
+							<Skeleton duration={2} width={59.73} height={24} />
+						)}
 					</div>
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200">
-				{componentReady ? (
+				{componentReady && pageDetail ? (
 					<span tw="space-x-2">
 						<span tw="text-sm leading-5 text-gray-500">
 							{!disableLocalTime
@@ -96,7 +94,7 @@ const SeoTable = ({ componentReady, siteId, val, disableLocalTime }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200">
-				{componentReady ? (
+				{componentReady && pageDetail ? (
 					<span tw="text-sm leading-5 text-gray-500">{pageDetail?.num_links}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
@@ -106,13 +104,21 @@ const SeoTable = ({ componentReady, siteId, val, disableLocalTime }) => {
 				className="icon-status"
 				tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-green-500"
 			>
-				{componentReady ? pageDetail?.num_ok_links : <Skeleton duration={2} width={45} />}
+				{componentReady && pageDetail ? (
+					pageDetail?.num_ok_links
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
 			</td>
 			<td
 				className="icon-status"
 				tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-red-500"
 			>
-				{componentReady ? pageDetail?.num_non_ok_links : <Skeleton duration={2} width={45} />}
+				{componentReady && pageDetail ? (
+					pageDetail?.num_non_ok_links
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
 			</td>
 		</tr>
 	);

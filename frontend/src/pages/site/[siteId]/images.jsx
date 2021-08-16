@@ -47,7 +47,6 @@ const Images = ({ result }) => {
 	const [componentReady, setComponentReady] = React.useState(false);
 	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
 	const [linksPerPage, setLinksPerPage] = React.useState(20);
-	const [loadQueryString, setLoadQueryString] = React.useState("");
 	const [pagePath, setPagePath] = React.useState("");
 	const [scanObjId, setScanObjId] = React.useState(null);
 	const [searchKey, setSearchKey] = React.useState("");
@@ -70,7 +69,6 @@ const Images = ({ result }) => {
 		handleCrawl,
 		currentScan,
 		previousScan,
-		scanCount,
 		isCrawlStarted,
 		isCrawlFinished
 	} = useCrawl({
@@ -84,20 +82,10 @@ const Images = ({ result }) => {
 	});
 
 	React.useEffect(() => {
-		const handleScanObjId = (scanCount, currentScan, previousScan) => {
-			scanCount > 1
-				? previousScan
-					? setScanObjId(previousScan?.id)
-					: false
-				: currentScan
-				? setScanObjId(currentScan?.id)
-				: setScanObjId(previousScan?.id);
+		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 
-			return scanObjId;
-		};
-
-		handleScanObjId(scanCount, currentScan, previousScan);
-	}, [scanCount, currentScan, previousScan]);
+		return scanObjId;
+	}, [currentScan, previousScan]);
 
 	const pageTitle = ImagesLabels[1].label + " - " + siteId?.name;
 
@@ -106,6 +94,11 @@ const Images = ({ result }) => {
 	let statusString = "";
 	let tlsStatusString = "";
 	let missingAltsString = "";
+	let filterQueryString = "";
+
+	if (typeof window !== "undefined") {
+		filterQueryString = new URLSearchParams(window.location.search);
+	}
 
 	user?.permissions.includes("can_see_images")
 		? (() => {
@@ -159,6 +152,15 @@ const Images = ({ result }) => {
 						? scanApiEndpoint.includes("?")
 							? `&ordering=${result?.ordering}`
 							: `?ordering=${result?.ordering}`
+						: "";
+
+				queryString +=
+					typeof window !== "undefined" &&
+					filterQueryString.toString() !== "" &&
+					filterQueryString.toString() !== undefined
+						? scanApiEndpoint.includes("?")
+							? window.location.search.replace("?", "&")
+							: window.location.search
 						: "";
 
 				scanApiEndpoint += queryString;
@@ -249,7 +251,7 @@ const Images = ({ result }) => {
 					setOpenSidebar={setIsComponentVisible}
 				/>
 
-				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
+				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton
@@ -266,16 +268,14 @@ const Images = ({ result }) => {
 					</div>
 
 					<Scrollbars universal>
-						<main
-							tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none"
-							tabIndex="0"
-						>
-							<div tw="w-full p-6 mx-auto">
-								<div className="max-w-full p-4">
+						<main tw="absolute w-full h-full mx-auto left-0 right-0">
+							<div tw="flex flex-col h-full p-6 mx-auto">
+								<div tw="flex-none p-4">
 									<Breadcrumbs
 										siteId={parseInt(result?.siteId)}
 										pageTitle={ImagesLabels[1].label}
 									/>
+
 									<HeadingOptions
 										componentReady={componentReady}
 										count={images?.count}
@@ -299,85 +299,112 @@ const Images = ({ result }) => {
 										verified={siteId?.verified}
 									/>
 								</div>
-							</div>
-							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-								{user?.permissions.includes("can_see_images") ? (
-									<ImageFilter scanApiEndpoint={scanApiEndpoint} setPagePath={setPagePath} />
-								) : null}
 
-								<div tw="pb-4">
-									<div tw="flex flex-col">
-										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-											<div tw="relative min-w-full rounded-lg border-gray-300">
-												<table tw="relative min-w-full">
-													<thead>
-														<tr>
-															{ImagesTableLabels.map((site, key) => {
-																return (
-																	<th
-																		key={key}
-																		className="min-width-adjust"
-																		tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																	>
-																		<span tw="flex items-center justify-start">
-																			{user?.permissions.includes("can_see_images") ? (
-																				site?.slug ? (
-																					<ImageSorting
-																						result={result}
-																						slug={site?.slug}
-																						mutateImages={mutateImages}
-																						labels={ImagesTableLabels}
-																						setPagePath={setPagePath}
+								<div tw="flex-grow max-w-full p-4 pb-0">
+									{user?.permissions.includes("can_see_images") ? (
+										<ImageFilter
+											filterQueryString={filterQueryString}
+											scanApiEndpoint={scanApiEndpoint}
+											setPagePath={setPagePath}
+										/>
+									) : null}
+
+									{images?.results !== undefined && images?.results.length !== 0 && (
+										<div tw="pb-4">
+											<div tw="flex flex-col">
+												<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+													<div tw="min-w-full h-full rounded-lg border-gray-300">
+														{images?.results !== undefined && images?.results.length > 0 && (
+															<>
+																<table tw="relative min-w-full">
+																	<thead>
+																		<tr>
+																			{ImagesTableLabels.map((site, key) => {
+																				return (
+																					<th
+																						key={key}
+																						className="min-width-adjust"
+																						tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																					>
+																						<span tw="flex items-center justify-start">
+																							{user?.permissions.includes("can_see_images") ? (
+																								site?.slug ? (
+																									<ImageSorting
+																										result={result}
+																										slug={site?.slug}
+																										mutateImages={mutateImages}
+																										labels={ImagesTableLabels}
+																										setPagePath={setPagePath}
+																									/>
+																								) : null
+																							) : null}
+																							<span className="label" tw="flex items-center">
+																								{site?.label}
+																							</span>
+																						</span>
+																					</th>
+																				);
+																			})}
+																		</tr>
+																	</thead>
+																	<tbody tw="relative">
+																		{user?.permissions.includes("can_see_images") ? (
+																			images?.results !== undefined &&
+																			images?.results.length > 0 ? (
+																				images?.results.map((val, key) => (
+																					<ImageTable
+																						key={key}
+																						siteId={parseInt(result?.siteId)}
+																						val={val}
+																						componentReady={componentReady}
 																					/>
-																				) : null
-																			) : null}
-																			<span className="label" tw="flex items-center">
-																				{site?.label}
-																			</span>
-																		</span>
-																	</th>
-																);
-															})}
-														</tr>
-													</thead>
-													<tbody tw="relative">
-														{user?.permissions.includes("can_see_images") ? (
-															images?.results !== undefined ? (
-																images?.results.map((val, key) => (
-																	<ImageTable
-																		key={key}
-																		siteId={parseInt(result?.siteId)}
-																		val={val}
-																	/>
-																))
-															) : null
-														) : (
-															<ImageTableSkeleton />
-														)}
-													</tbody>
-												</table>
+																				))
+																			) : null
+																		) : (
+																			<ImageTableSkeleton />
+																		)}
+																	</tbody>
+																</table>
 
-												{user?.permissions.length == 0 ? (
-													<div tw="absolute left-0 right-0">
-														<UpgradeErrorAlert link={SubscriptionPlansLink} />
+																{user?.permissions.length == 0 ? (
+																	<div tw="absolute left-0 right-0">
+																		<UpgradeErrorAlert link={SubscriptionPlansLink} />
+																	</div>
+																) : null}
+															</>
+														)}
 													</div>
-												) : null}
+												</div>
 											</div>
 										</div>
-									</div>
+									)}
+
+									{images?.results !== undefined && images?.results.length == 0 && (
+										<section tw="flex flex-col justify-center h-full">
+											<div tw="px-4 py-5 sm:p-6 sm:-mt-12 flex items-center justify-center">
+												<h3 tw="text-lg leading-6 font-medium text-gray-500">
+													{ImagesLabels[3].label}
+												</h3>
+											</div>
+										</section>
+									)}
 								</div>
 
-								<DataPagination
-									activePage={parseInt(result?.page) ? parseInt(result?.page) : 0}
-									apiEndpoint={scanApiEndpoint}
-									componentReady={componentReady}
-									handleItemsPerPageChange={handleItemsPerPageChange}
-									linksPerPage={parseInt(linksPerPage)}
-									pathName={pagePath}
-								/>
+								<div tw="flex-none p-4 pt-0">
+									<DataPagination
+										activePage={parseInt(result?.page) ? parseInt(result?.page) : 0}
+										apiEndpoint={scanApiEndpoint}
+										componentReady={componentReady}
+										handleItemsPerPageChange={handleItemsPerPageChange}
+										linksPerPage={parseInt(linksPerPage)}
+										pathName={pagePath}
+									/>
 
-								<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-									<Footer />
+									{componentReady ? (
+										<div tw="w-full p-4 border-t border-gray-200">
+											<Footer />
+										</div>
+									) : null}
 								</div>
 							</div>
 						</main>
@@ -389,7 +416,7 @@ const Images = ({ result }) => {
 };
 
 Images.propTypes = {
-	result: PropTypes.object
+	result: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 };
 
 Images.defaultProps = {

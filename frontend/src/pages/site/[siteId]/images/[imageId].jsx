@@ -7,7 +7,7 @@ import Link from "next/link";
 // External
 import "twin.macro";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { LinkIcon } from "@heroicons/react/solid";
+import { DocumentTextIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import bytes from "bytes";
@@ -70,7 +70,7 @@ const ImagesDetail = ({ result }) => {
 		return user ? setEnableSiteIdHook(true) : setEnableSiteIdHook(false);
 	}, [user, enableSiteIdHook]);
 
-	const { selectedSiteRef, currentScan, previousScan, scanCount } = useCrawl({
+	const { selectedSiteRef, currentScan, previousScan } = useCrawl({
 		siteId: enableSiteIdHook ? parseInt(result?.siteId) : null
 	});
 
@@ -81,20 +81,10 @@ const ImagesDetail = ({ result }) => {
 	});
 
 	React.useEffect(() => {
-		const handleScanObjId = (scanCount, currentScan, previousScan) => {
-			scanCount > 1
-				? previousScan
-					? setScanObjId(previousScan?.id)
-					: false
-				: currentScan
-				? setScanObjId(currentScan?.id)
-				: setScanObjId(previousScan?.id);
+		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 
-			return scanObjId;
-		};
-
-		handleScanObjId(scanCount, currentScan, previousScan);
-	}, [scanCount, currentScan, previousScan]);
+		return scanObjId;
+	}, [currentScan, previousScan]);
 
 	const { imageDetail } = useImageDetail({
 		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null,
@@ -208,46 +198,57 @@ const ImagesDetail = ({ result }) => {
 																)}
 															</dd>
 														</div>
+
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 															<dt tw="text-sm leading-5 font-medium text-gray-500">
 																{ImagesLabels[7].label}
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	imageDetail?.type === "PAGE" ? (
-																		"Page"
-																	) : imageDetail?.type === "EXTERNAL" ? (
-																		"External"
-																	) : imageDetail?.type === "NON_WEB" ? (
-																		"Non-Web"
+																	imageDetail?.type ? (
+																		imageDetail?.type === "PAGE" ? (
+																			"Page"
+																		) : imageDetail?.type === "EXTERNAL" ? (
+																			"External"
+																		) : imageDetail?.type === "NON_WEB" ? (
+																			"Non-Web"
+																		) : (
+																			"Other"
+																		)
 																	) : (
-																		"Other"
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={75} />
 																)}
 															</dd>
 														</div>
+
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 															<dt tw="text-sm leading-5 font-medium text-gray-500">
 																{ImagesLabels[8].label}
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	imageDetail?.status === "OK" ? (
-																		<SiteSuccessBadge text={"OK"} />
-																	) : imageDetail?.status === "TIMEOUT" ? (
-																		<SiteWarningBadge text={"TIMEOUT"} />
-																	) : imageDetail?.status === "HTTP_ERROR" ? (
-																		<SiteDangerBadge text={"HTTP ERROR"} />
+																	imageDetail?.status ? (
+																		imageDetail?.status === "OK" ? (
+																			<SiteSuccessBadge text={"OK"} />
+																		) : imageDetail?.status === "TIMEOUT" ? (
+																			<SiteWarningBadge text={"TIMEOUT"} />
+																		) : imageDetail?.status === "HTTP_ERROR" ? (
+																			<SiteDangerBadge text={"HTTP ERROR"} />
+																		) : (
+																			<SiteDangerBadge text={"OTHER ERROR"} />
+																		)
 																	) : (
-																		<SiteDangerBadge text={"OTHER ERROR"} />
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={100} />
 																)}
 															</dd>
 														</div>
+
 														{imageDetail?.error && (
 															<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 																<dt tw="text-sm leading-5 font-medium text-gray-500">
@@ -262,83 +263,124 @@ const ImagesDetail = ({ result }) => {
 																</dd>
 															</div>
 														)}
+
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 															<dt className="text-sm leading-5 font-medium text-gray-500">
 																{ImagesLabels[10].label}
 															</dt>
 															<dd className="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	bytes(imageDetail?.size, {
-																		thousandsSeparator: " ",
-																		unitSeparator: " "
-																	})
+																	imageDetail?.size ? (
+																		bytes(imageDetail?.size, {
+																			thousandsSeparator: " ",
+																			unitSeparator: " "
+																		})
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={75} />
 																)}
 															</dd>
 														</div>
+
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
 															<dt tw="text-sm leading-5 font-medium text-gray-500">
 																{ImagesLabels[11].label}
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-																<ul>
-																	{componentReady ? (
-																		imageDetail?.pages.map((val, key) => {
-																			return (
-																				<li
-																					key={key}
-																					tw="pb-3 flex items-center justify-between text-sm leading-5"
-																				>
-																					<div tw="w-0 flex-1 flex items-center">
-																						<LinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
-																						<span tw="ml-2 flex-1 w-0">
-																							<a
-																								href={val.url}
-																								target="_blank"
-																								title={val.url}
-																								tw="break-words block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out"
-																							>
-																								{val.url}
-																							</a>
+																{imageDetail?.pages !== undefined &&
+																imageDetail?.pages.length > 0 ? (
+																	<ul>
+																		{componentReady ? (
+																			imageDetail?.pages.map((val, key) => {
+																				return componentReady ? (
+																					<li
+																						key={key}
+																						tw="pb-6 flex items-center justify-between text-sm leading-5"
+																					>
+																						<div tw="w-0 flex-1 flex items-center">
+																							<DocumentTextIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
+																							<span tw="ml-2 flex-1 w-0">
+																								<Link
+																									href={`/site/${parseInt(result?.siteId)}/pages/${
+																										val.id
+																									}/`}
+																									passHref
+																								>
+																									<a
+																										title={val.url}
+																										target="_blank"
+																										tw="break-words block p-2 font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out"
+																									>
+																										{val.url}
+																									</a>
+																								</Link>
 
-																							<span tw="block px-2 text-sm leading-5 font-medium text-gray-500">
-																								{ImagesLabels[12].label}{" "}
-																								<span tw="text-gray-400">
-																									{val.alt_text && val.alt_text !== null
-																										? val.alt_text
-																										: "No Alt Text"}
+																								<span tw="block px-2 text-sm leading-5 font-medium text-gray-500">
+																									{ImagesLabels[12].label}{" "}
+																									<span tw="text-gray-400">
+																										{val.alt_text && val.alt_text !== null
+																											? val.alt_text
+																											: "No Alt Text"}
+																									</span>
 																								</span>
+
+																								<div tw="block p-2 space-x-3">
+																									<a
+																										href={val.url}
+																										target="_blank"
+																										title="Visit External Site"
+																										tw="cursor-pointer text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
+																									>
+																										Visit External Site
+																									</a>
+																									<CopyToClipboard
+																										onCopy={handleUrlCopy}
+																										text={val.url}
+																									>
+																										<button tw="cursor-pointer  text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150">
+																											{copied && copyValue === val.url
+																												? "Copied!"
+																												: "Copy URL"}
+																										</button>
+																									</CopyToClipboard>
+																								</div>
 																							</span>
-																						</span>
-																					</div>
-																					<div tw="ml-4 flex-shrink-0">
-																						<CopyToClipboard onCopy={handleUrlCopy} text={val.url}>
-																							<button tw="font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out">
-																								{copied && copyValue === val.url
-																									? "Copied!"
-																									: "Copy URL"}
-																							</button>
-																						</CopyToClipboard>
-																					</div>
-																				</li>
-																			);
-																		})
-																	) : (
-																		<li tw="pb-3 flex items-center justify-between">
-																			<div tw="w-0 flex-1 flex items-center">
-																				<Skeleton duration={2} width={20} height={20} />
-																				<span tw="ml-2 space-y-2 flex-1 w-0">
-																					<Skeleton duration={2} width={250} height={36} />
-																					<Skeleton duration={2} width={150} height={36} />
-																				</span>
-																			</div>
-																			<div tw="ml-4 flex-shrink-0">
-																				<Skeleton duration={2} width={75} height={36} />
-																			</div>
-																		</li>
-																	)}
-																</ul>
+																						</div>
+																					</li>
+																				) : (
+																					<li tw="pb-3 flex items-center justify-between">
+																						<div tw="w-0 flex-1 flex items-center">
+																							<Skeleton duration={2} width={20} height={20} />
+																							<span tw="ml-2 space-y-2 flex-1 w-0">
+																								<Skeleton duration={2} width={250} height={36} />
+																								<Skeleton duration={2} width={150} height={36} />
+																							</span>
+																						</div>
+																						<div tw="ml-4 flex-shrink-0">
+																							<Skeleton duration={2} width={75} height={36} />
+																						</div>
+																					</li>
+																				);
+																			})
+																		) : (
+																			<li tw="pb-3 flex items-center justify-between">
+																				<div tw="w-0 flex-1 flex items-center">
+																					<Skeleton duration={2} width={20} height={20} />
+																					<span tw="ml-2 flex-1 w-0">
+																						<Skeleton duration={2} width={350} height={36} />
+																					</span>
+																				</div>
+																				<div tw="ml-4 flex-shrink-0">
+																					<Skeleton duration={2} width={75} height={36} />
+																				</div>
+																			</li>
+																		)}
+																	</ul>
+																) : (
+																	<span tw="text-gray-500">None</span>
+																)}
 															</dd>
 														</div>
 													</dl>

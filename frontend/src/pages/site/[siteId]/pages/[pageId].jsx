@@ -451,7 +451,7 @@ const PageDetail = ({ result }) => {
 																			return componentReady ? (
 																				<li
 																					key={key}
-																					tw="pb-3 flex items-center justify-between text-sm leading-5"
+																					tw="pb-6 flex items-center justify-between text-sm leading-5"
 																				>
 																					<div tw="w-0 flex-1 flex items-center">
 																						<LinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />

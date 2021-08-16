@@ -12,17 +12,43 @@ import PropTypes from "prop-types";
 // Utils
 import { removeURLParameter } from "@utils/functions";
 
-const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
+const ImageFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);
-	const [imageBrokenSecurityFilter, setImageBrokenSecurityFilter] = React.useState(false);
-	const [imageMissingAltsFilter, setImageMissingAltsFilter] = React.useState(false);
-	const [imageNotWorkingFilter, setImageNotWorkingFilter] = React.useState(false);
+	const [unsecuredImagesFilter, setUnsecuredImagesFilter] = React.useState(false);
+	const [missingAltsFilter, setMissingAltsFilter] = React.useState(false);
+	const [brokenImagesFilter, setBrokenImagesFilter] = React.useState(false);
 	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
-
-	const filterQueryString = new URLSearchParams(window.location.search);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
+
+	const ImageFilters = [
+		{
+			label: "All Images",
+			checked: allFilter,
+			value: "all"
+		},
+		{
+			label: "Broken Images",
+			checked: brokenImagesFilter,
+			value: "brokenImages"
+		},
+		{
+			label: "Unsecured Images",
+			checked: unsecuredImagesFilter,
+			value: "unsecuredImages"
+		},
+		{
+			label: "Missing Alts",
+			checked: missingAltsFilter,
+			value: "missingAlts"
+		},
+		{
+			label: "No Issues",
+			checked: noIssueFilter,
+			value: "noIssues"
+		}
+	];
 
 	const handleFilter = async (e) => {
 		const filterType = e.target.value;
@@ -31,10 +57,10 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 		let newPath = asPath;
 		newPath = removeURLParameter(newPath, "page");
 
-		if (filterType === "notWorking" && filterStatus) {
-			setImageNotWorkingFilter(true);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
+		if (filterType === "brokenImages" && filterStatus) {
+			setBrokenImagesFilter(true);
+			setUnsecuredImagesFilter(false);
+			setMissingAltsFilter(false);
 			setNoIssueFilter(false);
 			setAllFilter(false);
 
@@ -46,18 +72,21 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 			if (newPath.includes("?")) newPath += `&status__neq=OK`;
 			else newPath += `?status__neq=OK`;
-		} else if (filterType === "notWorking" && !filterStatus) {
+		} else if (filterType === "brokenImages" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("status__neq");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (newPath.includes("status__neq")) {
 				newPath = removeURLParameter(newPath, "status__neq");
 			}
 
-			setImageNotWorkingFilter(false);
+			setBrokenImagesFilter(false);
 		}
 
-		if (filterType === "no-issues" && filterStatus) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
+		if (filterType === "noIssues" && filterStatus) {
+			setBrokenImagesFilter(false);
+			setUnsecuredImagesFilter(false);
+			setMissingAltsFilter(false);
 			setNoIssueFilter(true);
 			setAllFilter(false);
 
@@ -67,26 +96,29 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 			if (newPath.includes("?")) newPath += `&status=OK&tls_status=OK&missing_alts__iszero=true`;
 			else newPath += `?status=OK&tls_status=OK&missing_alts__iszero=true`;
-		} else if (filterType === "no-issues" && !filterStatus) {
-			if (newPath.includes("status")) {
-				newPath = removeURLParameter(newPath, "status");
-			}
+		} else if (filterType === "noIssues" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("status");
+			filterQueryString && filterQueryString.delete("tls_status");
+			filterQueryString && filterQueryString.delete("missing_alts__iszero");
+			filterQueryString && filterQueryString.delete("page");
 
-			if (newPath.includes("missing_alts__iszero")) {
+			if (
+				newPath.includes("status") &&
+				newPath.includes("missing_alts__iszero") &&
+				newPath.includes("tls_status")
+			) {
 				newPath = removeURLParameter(newPath, "missing_alts__iszero");
-			}
-
-			if (newPath.includes("tls_status")) {
+				newPath = removeURLParameter(newPath, "status");
 				newPath = removeURLParameter(newPath, "tls_status");
 			}
 
 			setNoIssueFilter(false);
 		}
 
-		if (filterType === "brokenSecurity" && filterStatus) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(true);
-			setImageMissingAltsFilter(false);
+		if (filterType === "unsecuredImages" && filterStatus) {
+			setBrokenImagesFilter(false);
+			setUnsecuredImagesFilter(true);
+			setMissingAltsFilter(false);
 			setNoIssueFilter(false);
 			setAllFilter(false);
 
@@ -98,18 +130,21 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 			if (newPath.includes("?")) newPath += `&tls_status__neq=OK`;
 			else newPath += `?tls_status__neq=OK`;
-		} else if (filterType === "brokenSecurity" && !filterStatus) {
+		} else if (filterType === "unsecuredImages" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("tls_status__neq");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (newPath.includes("tls_status__neq")) {
 				newPath = removeURLParameter(newPath, "tls_status__neq");
 			}
 
-			setImageBrokenSecurityFilter(false);
+			setUnsecuredImagesFilter(false);
 		}
 
 		if (filterType === "missingAlts" && filterStatus) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(true);
+			setBrokenImagesFilter(false);
+			setUnsecuredImagesFilter(false);
+			setMissingAltsFilter(true);
 			setNoIssueFilter(false);
 			setAllFilter(false);
 
@@ -122,17 +157,20 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?")) newPath += `&missing_alts__gt=0`;
 			else newPath += `?missing_alts__gt=0`;
 		} else if (filterType === "missingAlts" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("missing_alts__gt");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (newPath.includes("missing_alts__gt")) {
 				newPath = removeURLParameter(newPath, "missing_alts__gt");
 			}
 
-			setImageMissingAltsFilter(false);
+			setMissingAltsFilter(false);
 		}
 
 		if (filterType == "all" && filterStatus) {
-			setImageNotWorkingFilter(false);
-			setImageBrokenSecurityFilter(false);
-			setImageMissingAltsFilter(false);
+			setBrokenImagesFilter(false);
+			setUnsecuredImagesFilter(false);
+			setMissingAltsFilter(false);
 			setNoIssueFilter(false);
 			setAllFilter(true);
 
@@ -154,9 +192,9 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 	React.useEffect(() => {
 		if (filterQueryString.get("status__neq") === "OK") {
-			setImageNotWorkingFilter(true);
+			setBrokenImagesFilter(true);
 		} else {
-			setImageNotWorkingFilter(false);
+			setBrokenImagesFilter(false);
 		}
 
 		if (
@@ -170,15 +208,15 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 		}
 
 		if (filterQueryString.get("tls_status__neq") === "OK") {
-			setImageBrokenSecurityFilter(true);
+			setUnsecuredImagesFilter(true);
 		} else {
-			setImageBrokenSecurityFilter(false);
+			setUnsecuredImagesFilter(false);
 		}
 
 		if (filterQueryString.get("missing_alts__gt") === "0") {
-			setImageMissingAltsFilter(true);
+			setMissingAltsFilter(true);
 		} else {
-			setImageMissingAltsFilter(false);
+			setMissingAltsFilter(false);
 		}
 
 		if (
@@ -195,9 +233,9 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 		}
 
 		return {
-			imageNotWorkingFilter,
-			imageBrokenSecurityFilter,
-			imageMissingAltsFilter,
+			brokenImagesFilter,
+			unsecuredImagesFilter,
+			missingAltsFilter,
 			noIssueFilter,
 			allFilter
 		};
@@ -210,88 +248,48 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">
 						Filter
 					</h4>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={allFilter}
-									value="all"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									All Images
-								</span>
-							</label>
-						</div>
-					</div>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={imageNotWorkingFilter}
-									value="notWorking"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									Broken Images
-								</span>
-							</label>
-						</div>
-					</div>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={imageBrokenSecurityFilter}
-									value="brokenSecurity"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									Broken Security
-								</span>
-							</label>
-						</div>
-					</div>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={imageMissingAltsFilter}
-									value="missingAlts"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									Missing Alts
-								</span>
-							</label>
-						</div>
-					</div>
+					{ImageFilters.filter((e) => e.value !== "noIssues").map((value, key) => {
+						return (
+							<div key={key} tw="ml-4 mt-2 mr-2">
+								<div>
+									<label tw="flex items-center">
+										<input
+											type="checkbox"
+											tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+											onChange={handleFilter}
+											checked={value.checked}
+											value={value.value}
+										/>
+										<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+											{value.label}
+										</span>
+									</label>
+								</div>
+							</div>
+						);
+					})}
 				</div>
 				<div tw="lg:-mt-2 lg:flex items-center justify-end flex-wrap sm:flex-nowrap">
-					<div tw="mt-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={noIssueFilter}
-									value="no-issues"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									No Issues
-								</span>
-							</label>
-						</div>
-					</div>
+					{ImageFilters.filter((e) => e.value === "noIssues").map((value, key) => {
+						return (
+							<div key={key} tw="mt-2">
+								<div>
+									<label tw="flex items-center">
+										<input
+											type="checkbox"
+											tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+											onChange={handleFilter}
+											checked={value.checked}
+											value={value.value}
+										/>
+										<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+											{value.label}
+										</span>
+									</label>
+								</div>
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</div>
@@ -299,11 +297,13 @@ const ImageFilter = ({ scanApiEndpoint, setPagePath }) => {
 };
 
 ImageFilter.propTypes = {
+	filterQueryString: PropTypes.object,
 	scanApiEndpoint: PropTypes.string,
 	setPagePath: PropTypes.func
 };
 
 ImageFilter.defaultProps = {
+	filterQueryString: null,
 	scanApiEndpoint: null,
 	setPagePath: null
 };

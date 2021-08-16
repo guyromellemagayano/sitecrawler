@@ -9,23 +9,67 @@ import "twin.macro";
 import { mutate } from "swr";
 import PropTypes from "prop-types";
 
+// Enums
+import { SeoFilterLabels } from "@enums/SeoFilterLabels";
+
 // Utils
 import { removeURLParameter } from "@utils/functions";
 
-const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
+const SeoFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
 	const [allFilter, setAllFilter] = React.useState(false);
-	const [noDescription, setNoDescription] = React.useState(false);
-	const [noH1First, setNoH1First] = React.useState(false);
-	const [noH1Second, setNoH1Second] = React.useState(false);
-	const [noH2First, setNoH2First] = React.useState(false);
-	const [noH2Second, setNoH2Second] = React.useState(false);
+	const [missingDescriptionsFilter, setMissingDescriptionsFilter] = React.useState(false);
+	const [missingFirstH1Filter, setMissingFirstH1Filter] = React.useState(false);
+	const [missingFirstH2Filter, setMissingFirstH2Filter] = React.useState(false);
+	const [missingSecondH1Filter, setMissingSecondH1Filter] = React.useState(false);
+	const [missingSecondH2Filter, setMissingSecondH2Filter] = React.useState(false);
 	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
-	const [noTitle, setNoTitle] = React.useState(false);
-
-	const filterQueryString = new URLSearchParams(window.location.search);
+	const [missingTitlesFilter, setMissingTitlesFilter] = React.useState(false);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
+
+	const SeoFilters = [
+		{
+			label: "All Pages",
+			checked: allFilter,
+			value: "all"
+		},
+		{
+			label: "Missing Titles",
+			checked: missingTitlesFilter,
+			value: "missingTitles"
+		},
+		{
+			label: "Missing Descriptions",
+			checked: missingDescriptionsFilter,
+			value: "missingDescriptions"
+		},
+		{
+			label: "Missing First H1s",
+			checked: missingFirstH1Filter,
+			value: "missingFirstH1"
+		},
+		{
+			label: "Missing First H2s",
+			checked: missingFirstH2Filter,
+			value: "missingFirstH2"
+		},
+		{
+			label: "Missing Second H1s",
+			checked: missingSecondH1Filter,
+			value: "missingSecondH1"
+		},
+		{
+			label: "Missing Second H2s",
+			checked: missingSecondH2Filter,
+			value: "missingSecondH2"
+		},
+		{
+			label: "No Issues",
+			checked: noIssueFilter,
+			value: "noIssues"
+		}
+	];
 
 	const handleFilter = async (e) => {
 		const filterType = e.target.value;
@@ -34,14 +78,14 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 		let newPath = asPath;
 		newPath = removeURLParameter(newPath, "page");
 
-		if (filterType === "no-issues" && filterStatus) {
-			setNoTitle(false);
+		if (filterType === "noIssues" && filterStatus) {
+			setMissingTitlesFilter(false);
 			setNoIssueFilter(true);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
+			setMissingDescriptionsFilter(false);
+			setMissingFirstH1Filter(false);
+			setMissingSecondH1Filter(false);
+			setMissingFirstH2Filter(false);
+			setMissingSecondH2Filter(false);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "has_title");
@@ -54,7 +98,13 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 			if (newPath.includes("?"))
 				newPath += `&has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
 			else newPath += `?has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
-		} else if (filterType === "no-issues" && !filterStatus) {
+		} else if (filterType === "noIssues" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("has_title");
+			filterQueryString && filterQueryString.delete("has_description");
+			filterQueryString && filterQueryString.delete("has_h1_first");
+			filterQueryString && filterQueryString.delete("has_h2_first");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (
 				newPath.includes("has_title") &&
 				newPath.includes("has_description") &&
@@ -70,14 +120,14 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 			setNoIssueFilter(false);
 		}
 
-		if (filterType === "noTitle" && filterStatus) {
-			setNoTitle(true);
+		if (filterType === "missingTitles" && filterStatus) {
+			setMissingTitlesFilter(true);
 			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
+			setMissingDescriptionsFilter(false);
+			setMissingFirstH1Filter(false);
+			setMissingSecondH1Filter(false);
+			setMissingFirstH2Filter(false);
+			setMissingSecondH2Filter(false);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "has_description");
@@ -88,22 +138,25 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 			if (newPath.includes("?")) newPath += `&has_title=false`;
 			else newPath += `?has_title=false`;
-		} else if (filterType === "noTitle" && !filterStatus) {
+		} else if (filterType === "missingTitles" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("has_title");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (newPath.includes("has_title")) {
 				newPath = removeURLParameter(newPath, "has_title");
 			}
 
-			setNoTitle(false);
+			setMissingTitlesFilter(false);
 		}
 
-		if (filterType === "noDescription" && filterStatus) {
-			setNoTitle(false);
+		if (filterType === "missingDescriptions" && filterStatus) {
+			setMissingTitlesFilter(false);
 			setNoIssueFilter(false);
-			setNoDescription(true);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
+			setMissingDescriptionsFilter(true);
+			setMissingFirstH1Filter(false);
+			setMissingSecondH1Filter(false);
+			setMissingFirstH2Filter(false);
+			setMissingSecondH2Filter(false);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "has_title");
@@ -114,22 +167,25 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 			if (newPath.includes("?")) newPath += `&has_description=false`;
 			else newPath += `?has_description=false`;
-		} else if (filterType === "noDescription" && !filterStatus) {
+		} else if (filterType === "missingDescriptions" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("has_description");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (newPath.includes("has_description")) {
 				newPath = removeURLParameter(newPath, "has_description");
 			}
 
-			setNoDescription(false);
+			setMissingDescriptionsFilter(false);
 		}
 
-		if (filterType === "noH1First" && filterStatus) {
-			setNoTitle(false);
+		if (filterType === "missingFirstH1" && filterStatus) {
+			setMissingTitlesFilter(false);
 			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(true);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
+			setMissingDescriptionsFilter(false);
+			setMissingFirstH1Filter(true);
+			setMissingSecondH1Filter(false);
+			setMissingFirstH2Filter(false);
+			setMissingSecondH2Filter(false);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "has_title");
@@ -140,22 +196,25 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 			if (newPath.includes("?")) newPath += `&has_h1_first=false`;
 			else newPath += `?has_h1_first=false`;
-		} else if (filterType === "noH1First" && !filterStatus) {
+		} else if (filterType === "missingFirstH1" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("has_h1_first");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (newPath.includes("has_h1_first")) {
 				newPath = removeURLParameter(newPath, "has_h1_first");
 			}
 
-			setNoH1First(false);
+			setMissingFirstH1Filter(false);
 		}
 
-		if (filterType === "noH1Second" && filterStatus) {
-			setNoTitle(false);
+		if (filterType === "missingSecondH1" && filterStatus) {
+			setMissingTitlesFilter(false);
 			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(true);
-			setNoH2First(false);
-			setNoH2Second(false);
+			setMissingDescriptionsFilter(false);
+			setMissingFirstH1Filter(false);
+			setMissingSecondH1Filter(true);
+			setMissingFirstH2Filter(false);
+			setMissingSecondH2Filter(false);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "has_title");
@@ -166,22 +225,25 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 			if (newPath.includes("?")) newPath += `&has_h1_second=false`;
 			else newPath += `?has_h1_second=false`;
-		} else if (filterType === "noH1Second" && !filterStatus) {
+		} else if (filterType === "missingSecondH1" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("has_h1_second");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (newPath.includes("has_h1_second")) {
 				newPath = removeURLParameter(newPath, "has_h1_second");
 			}
 
-			setNoH1Second(false);
+			setMissingSecondH1Filter(false);
 		}
 
-		if (filterType === "noH2First" && filterStatus) {
-			setNoTitle(false);
+		if (filterType === "missingFirstH2" && filterStatus) {
+			setMissingTitlesFilter(false);
 			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(true);
-			setNoH2Second(false);
+			setMissingDescriptionsFilter(false);
+			setMissingFirstH1Filter(false);
+			setMissingSecondH1Filter(false);
+			setMissingFirstH2Filter(true);
+			setMissingSecondH2Filter(false);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "has_title");
@@ -192,22 +254,25 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 			if (newPath.includes("?")) newPath += `&has_h2_first=false`;
 			else newPath += `?has_h2_first=false`;
-		} else if (filterType === "noH2First" && !filterStatus) {
+		} else if (filterType === "missingFirstH2" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("has_h2_first");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (newPath.includes("has_h2_first")) {
 				newPath = removeURLParameter(newPath, "has_h2_first");
 			}
 
-			setNoH2First(false);
+			setMissingFirstH2Filter(false);
 		}
 
-		if (filterType === "noH2Second" && filterStatus) {
-			setNoTitle(false);
+		if (filterType === "missingSecondH2" && filterStatus) {
+			setMissingTitlesFilter(false);
 			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(true);
+			setMissingDescriptionsFilter(false);
+			setMissingFirstH1Filter(false);
+			setMissingSecondH1Filter(false);
+			setMissingFirstH2Filter(false);
+			setMissingSecondH2Filter(true);
 			setAllFilter(false);
 
 			newPath = removeURLParameter(newPath, "has_title");
@@ -218,22 +283,25 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 			if (newPath.includes("?")) newPath += `&has_h2_second=false`;
 			else newPath += `?has_h2_second=false`;
-		} else if (filterType === "noH2Second" && !filterStatus) {
+		} else if (filterType === "missingSecondH2" && !filterStatus) {
+			filterQueryString && filterQueryString.delete("has_h2_second");
+			filterQueryString && filterQueryString.delete("page");
+
 			if (newPath.includes("has_h2_second")) {
 				newPath = removeURLParameter(newPath, "has_h2_second");
 			}
 
-			setNoH2Second(false);
+			setMissingSecondH2Filter(false);
 		}
 
 		if (filterType === "all" && filterStatus) {
-			setNoTitle(false);
+			setMissingTitlesFilter(false);
 			setNoIssueFilter(false);
-			setNoDescription(false);
-			setNoH1First(false);
-			setNoH1Second(false);
-			setNoH2First(false);
-			setNoH2Second(false);
+			setMissingDescriptionsFilter(false);
+			setMissingFirstH1Filter(false);
+			setMissingSecondH1Filter(false);
+			setMissingFirstH2Filter(false);
+			setMissingSecondH2Filter(false);
 			setAllFilter(true);
 
 			newPath = removeURLParameter(newPath, "has_title");
@@ -248,6 +316,7 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 		else setPagePath(`${newPath}?`);
 
 		router.push(newPath);
+
 		mutate(scanApiEndpoint);
 	};
 
@@ -264,39 +333,39 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 		}
 
 		if (filterQueryString.get("has_title") === "false") {
-			setNoTitle(true);
+			setMissingTitlesFilter(true);
 		} else {
-			setNoTitle(false);
+			setMissingTitlesFilter(false);
 		}
 
 		if (filterQueryString.get("has_description") === "false") {
-			setNoDescription(true);
+			setMissingDescriptionsFilter(true);
 		} else {
-			setNoDescription(false);
+			setMissingDescriptionsFilter(false);
 		}
 
 		if (filterQueryString.get("has_h1_first") === "false") {
-			setNoH1First(true);
+			setMissingFirstH1Filter(true);
 		} else {
-			setNoH1First(false);
+			setMissingFirstH1Filter(false);
 		}
 
 		if (filterQueryString.get("has_h1_second") === "false") {
-			setNoH1Second(true);
+			setMissingSecondH1Filter(true);
 		} else {
-			setNoH1Second(false);
+			setMissingSecondH1Filter(false);
 		}
 
 		if (filterQueryString.get("has_h2_first") === "false") {
-			setNoH2First(true);
+			setMissingFirstH2Filter(true);
 		} else {
-			setNoH2First(false);
+			setMissingFirstH2Filter(false);
 		}
 
 		if (filterQueryString.get("has_h2_second") === "false") {
-			setNoH2Second(true);
+			setMissingSecondH2Filter(true);
 		} else {
-			setNoH2Second(false);
+			setMissingSecondH2Filter(false);
 		}
 
 		if (
@@ -314,12 +383,12 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 
 		return {
 			noIssueFilter,
-			noTitle,
-			noDescription,
-			noH1First,
-			noH1Second,
-			noH2First,
-			noH2Second,
+			missingTitlesFilter,
+			missingDescriptionsFilter,
+			missingFirstH1Filter,
+			missingSecondH1Filter,
+			missingFirstH2Filter,
+			missingSecondH2Filter,
 			allFilter
 		};
 	});
@@ -329,140 +398,50 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 			<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 				<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
 					<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 text-base leading-4 font-semibold text-gray-600">
-						Filter
+						{SeoFilterLabels[0].label}
 					</h4>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={allFilter}
-									value="all"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									All Pages
-								</span>
-							</label>
-						</div>
-					</div>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={noTitle}
-									value="noTitle"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									Without Title
-								</span>
-							</label>
-						</div>
-					</div>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={noDescription}
-									value="noDescription"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									Without Description
-								</span>
-							</label>
-						</div>
-					</div>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={noH1First}
-									value="noH1First"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									Without First H1
-								</span>
-							</label>
-						</div>
-					</div>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={noH1Second}
-									value="noH1Second"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									Without Second H1
-								</span>
-							</label>
-						</div>
-					</div>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={noH2First}
-									value="noH2First"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									Without First H2
-								</span>
-							</label>
-						</div>
-					</div>
-					<div tw="ml-4 mt-2 mr-2">
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={noH2Second}
-									value="noH2Second"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									Without Second H2
-								</span>
-							</label>
-						</div>
-					</div>
+					{SeoFilters.filter((e) => e.value !== "noIssues").map((value, key) => {
+						return (
+							<div key={key} tw="ml-4 mt-2 mr-2">
+								<div>
+									<label tw="flex items-center">
+										<input
+											type="checkbox"
+											tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+											onChange={handleFilter}
+											checked={value.checked}
+											value={value.value}
+										/>
+										<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+											{value.label}
+										</span>
+									</label>
+								</div>
+							</div>
+						);
+					})}
 				</div>
-				<div
-					className={`lg:-mt-2 lg:flex items-center align-end justify-end flex-end flex-wrap sm:flex-nowrap`}
-				>
-					<div className={`mt-2`}>
-						<div>
-							<label tw="flex items-center">
-								<input
-									type="checkbox"
-									tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-									onChange={handleFilter}
-									checked={noIssueFilter}
-									value="no-issues"
-								/>
-								<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
-									No Issues
-								</span>
-							</label>
-						</div>
-					</div>
+				<div tw="lg:-mt-2 lg:flex items-center justify-end flex-wrap sm:flex-nowrap">
+					{SeoFilters.filter((e) => e.value === "noIssues").map((value, key) => {
+						return (
+							<div key={key} tw="mt-2">
+								<div>
+									<label tw="flex items-center">
+										<input
+											type="checkbox"
+											tw="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+											onChange={handleFilter}
+											checked={value.checked}
+											value={value.value}
+										/>
+										<span tw="ml-2 text-left text-xs leading-4 font-normal text-gray-500">
+											{value.label}
+										</span>
+									</label>
+								</div>
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</div>
@@ -470,11 +449,13 @@ const SeoFilter = ({ scanApiEndpoint, setPagePath }) => {
 };
 
 SeoFilter.propTypes = {
+	filterQueryString: PropTypes.object,
 	scanApiEndpoint: PropTypes.string,
 	setPagePath: PropTypes.func
 };
 
 SeoFilter.defaultProps = {
+	filterQueryString: null,
 	scanApiEndpoint: null,
 	setPagePath: null
 };

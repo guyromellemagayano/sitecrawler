@@ -62,7 +62,7 @@ const SeoDetail = ({ result }) => {
 		return user ? setEnableSiteIdHook(true) : setEnableSiteIdHook(false);
 	}, [user, enableSiteIdHook]);
 
-	const { selectedSiteRef, currentScan, previousScan, scanCount } = useCrawl({
+	const { selectedSiteRef, currentScan, previousScan } = useCrawl({
 		siteId: enableSiteIdHook ? parseInt(result?.siteId) : null
 	});
 
@@ -73,20 +73,10 @@ const SeoDetail = ({ result }) => {
 	});
 
 	React.useEffect(() => {
-		const handleScanObjId = (scanCount, currentScan, previousScan) => {
-			scanCount > 1
-				? previousScan
-					? setScanObjId(previousScan?.id)
-					: false
-				: currentScan
-				? setScanObjId(currentScan?.id)
-				: setScanObjId(previousScan?.id);
+		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 
-			return scanObjId;
-		};
-
-		handleScanObjId(scanCount, currentScan, previousScan);
-	}, [scanCount, currentScan, previousScan]);
+		return scanObjId;
+	}, [currentScan, previousScan]);
 
 	const { pageDetail } = usePageDetail({
 		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null,
@@ -106,7 +96,7 @@ const SeoDetail = ({ result }) => {
 		<Layout user={componentReady ? user : null}>
 			<NextSeo title={componentReady ? seoDetailPageTitle : null} />
 
-			<div tw="h-screen flex overflow-hidden bg-white">
+			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					openSidebar={isComponentVisible}
 					ref={ref}
@@ -201,7 +191,11 @@ const SeoDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	pageDetail?.num_links
+																	pageDetail?.num_links ? (
+																		pageDetail?.num_links
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={45} />
 																)}
@@ -214,7 +208,11 @@ const SeoDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	pageDetail?.num_ok_links
+																	pageDetail?.num_ok_links ? (
+																		pageDetail?.num_ok_links
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={45} />
 																)}
@@ -227,7 +225,11 @@ const SeoDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	pageDetail?.num_non_ok_links
+																	pageDetail?.num_non_ok_links ? (
+																		pageDetail?.num_non_ok_links
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={45} />
 																)}
@@ -243,7 +245,7 @@ const SeoDetail = ({ result }) => {
 																	pageDetail?.pagedata?.title ? (
 																		pageDetail?.pagedata?.title
 																	) : (
-																		<span tw="text-gray-500">None</span>
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={200} />
@@ -260,7 +262,7 @@ const SeoDetail = ({ result }) => {
 																	pageDetail?.pagedata?.description ? (
 																		pageDetail?.pagedata?.description
 																	) : (
-																		<span tw="text-gray-500">None</span>
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={200} />
@@ -277,7 +279,7 @@ const SeoDetail = ({ result }) => {
 																	pageDetail?.pagedata?.h1_first ? (
 																		pageDetail?.pagedata?.h1_first
 																	) : (
-																		<span tw="text-gray-500">None</span>
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={200} />
@@ -294,7 +296,7 @@ const SeoDetail = ({ result }) => {
 																	pageDetail?.pagedata?.h1_second ? (
 																		pageDetail?.pagedata?.h1_second
 																	) : (
-																		<span tw="text-gray-500">None</span>
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={200} />
@@ -311,7 +313,7 @@ const SeoDetail = ({ result }) => {
 																	pageDetail?.pagedata?.h2_first ? (
 																		pageDetail?.pagedata?.h2_first
 																	) : (
-																		<span tw="text-gray-500">None</span>
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={200} />
@@ -328,7 +330,7 @@ const SeoDetail = ({ result }) => {
 																	pageDetail?.pagedata?.h2_second ? (
 																		pageDetail?.pagedata?.h2_second
 																	) : (
-																		<span tw="text-gray-500">None</span>
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={200} />
@@ -349,7 +351,7 @@ const SeoDetail = ({ result }) => {
 						</main>
 					</Scrollbars>
 				</div>
-			</div>
+			</section>
 		</Layout>
 	);
 };
