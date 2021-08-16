@@ -7,7 +7,7 @@ import Link from "next/link";
 // External
 import "twin.macro";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { LinkIcon } from "@heroicons/react/solid";
+import { DocumentTextIcon } from "@heroicons/react/solid";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import dayjs from "dayjs";
@@ -278,7 +278,7 @@ const LinkDetail = ({ result }) => {
 																				return componentReady ? (
 																					<li key={key} tw="pb-3 flex text-sm leading-5">
 																						<div tw="w-full flex-1 flex items-center">
-																							<LinkIcon tw="flex-shrink h-5 w-5 text-gray-400" />
+																							<DocumentTextIcon tw="flex-shrink h-5 w-5 text-gray-400" />
 																							<span tw="ml-2 flex-1 w-0">
 																								<Link
 																									href={`/site/${parseInt(result?.siteId)}/pages/${
@@ -299,10 +299,10 @@ const LinkDetail = ({ result }) => {
 																									<a
 																										href={val.url}
 																										target="_blank"
-																										title="Visit Site"
+																										title="Visit External Site"
 																										tw="cursor-pointer text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
 																									>
-																										Visit Site
+																										Visit External Site
 																									</a>
 																									<CopyToClipboard
 																										onCopy={handleUrlCopy}
