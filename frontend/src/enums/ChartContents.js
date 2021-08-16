@@ -74,7 +74,7 @@ export const ImagesChartContents = [
 		color: "#f56565"
 	},
 	{
-		label: "Broken Security",
+		label: "Unsecured Images",
 		filter: "tls_status__neq=OK",
 		color: "#e53e3e"
 	},
