@@ -67,7 +67,6 @@ const Links = ({ result }) => {
 		handleCrawl,
 		currentScan,
 		previousScan,
-		scanCount,
 		isCrawlStarted,
 		isCrawlFinished
 	} = useCrawl({
@@ -81,20 +80,10 @@ const Links = ({ result }) => {
 	});
 
 	React.useEffect(() => {
-		const handleScanObjId = (scanCount, currentScan, previousScan) => {
-			scanCount > 1
-				? previousScan
-					? setScanObjId(previousScan?.id)
-					: false
-				: currentScan
-				? setScanObjId(currentScan?.id)
-				: setScanObjId(previousScan?.id);
+		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 
-			return scanObjId;
-		};
-
-		handleScanObjId(scanCount, currentScan, previousScan);
-	}, [scanCount, currentScan, previousScan]);
+		return scanObjId;
+	}, [currentScan, previousScan]);
 
 	const pageTitle = LinksLabels[1].label + " - " + siteId?.name;
 
@@ -103,6 +92,11 @@ const Links = ({ result }) => {
 	let statusString = "";
 	let statusNeqString = "";
 	let typeString = "";
+	let filterQueryString = "";
+
+	if (typeof window !== "undefined") {
+		filterQueryString = new URLSearchParams(window.location.search);
+	}
 
 	scanApiEndpoint =
 		`${SiteApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/link/?per_page=` +
@@ -156,6 +150,15 @@ const Links = ({ result }) => {
 			? scanApiEndpoint.includes("?")
 				? `&ordering=${result?.ordering}`
 				: `?ordering=${result?.ordering}`
+			: "";
+
+	queryString +=
+		typeof window !== "undefined" &&
+		filterQueryString.toString() !== "" &&
+		filterQueryString.toString() !== undefined
+			? scanApiEndpoint.includes("?")
+				? window.location.search.replace("?", "&")
+				: window.location.search
 			: "";
 
 	scanApiEndpoint += queryString;
@@ -261,13 +264,11 @@ const Links = ({ result }) => {
 					</div>
 
 					<Scrollbars universal>
-						<main
-							tw="flex-1 relative max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none"
-							tabIndex="0"
-						>
-							<div tw="w-full p-6 mx-auto">
-								<div className="max-w-full p-4">
+						<main tw="absolute w-full h-full mx-auto left-0 right-0">
+							<div tw="flex flex-col h-full p-6 mx-auto">
+								<div tw="flex-none p-4">
 									<Breadcrumbs siteId={parseInt(result?.siteId)} pageTitle={LinksLabels[1].label} />
+
 									<HeadingOptions
 										componentReady={componentReady}
 										count={links?.count}
@@ -287,73 +288,95 @@ const Links = ({ result }) => {
 										verified={siteId?.verified}
 									/>
 								</div>
-							</div>
-							<div tw="max-w-full px-4 py-4 sm:px-6 md:px-8">
-								<LinkFilter scanApiEndpoint={scanApiEndpoint} setPagePath={setPagePath} />
 
-								<div tw="pb-4">
-									<div tw="flex flex-col">
-										<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-											<div tw="relative min-w-full rounded-lg border-gray-300">
-												<table tw="relative min-w-full">
-													<thead>
-														<tr>
-															{LinksTableLabels.map((site, key) => {
-																return (
-																	<th
-																		key={key}
-																		className="min-width-adjust"
-																		tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-																	>
-																		<div tw="flex items-center justify-start">
-																			{site?.slug ? (
-																				<LinkSorting
-																					result={result}
-																					slug={site?.slug}
-																					mutateLinks={mutateLinks}
-																					labels={LinksTableLabels}
-																					setPagePath={setPagePath}
+								<div tw="flex-grow max-w-full p-4 pb-0">
+									<LinkFilter
+										filterQueryString={filterQueryString}
+										scanApiEndpoint={scanApiEndpoint}
+										setPagePath={setPagePath}
+									/>
+
+									{links?.results !== undefined && links?.results.length !== 0 && (
+										<div tw="pb-4">
+											<div tw="flex flex-col">
+												<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+													<div tw="min-w-full h-full rounded-lg border-gray-300">
+														{links?.results !== undefined && links?.results.length > 0 && (
+															<table tw="relative min-w-full">
+																<thead>
+																	<tr>
+																		{LinksTableLabels.map((site, key) => {
+																			return (
+																				<th
+																					key={key}
+																					className="min-width-adjust"
+																					tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+																				>
+																					<span tw="flex items-center justify-start">
+																						{site?.slug ? (
+																							<LinkSorting
+																								result={result}
+																								slug={site?.slug}
+																								mutateLinks={mutateLinks}
+																								labels={LinksTableLabels}
+																								setPagePath={setPagePath}
+																							/>
+																						) : null}
+																						<span className="label" tw="flex items-center">
+																							{site?.label}
+																						</span>
+																					</span>
+																				</th>
+																			);
+																		})}
+																	</tr>
+																</thead>
+																<tbody tw="relative">
+																	{links?.results !== undefined && links?.results.length > 0
+																		? links?.results.map((val, key) => (
+																				<LinkTable
+																					key={key}
+																					siteId={parseInt(result?.siteId)}
+																					val={val}
+																					componentReady={componentReady}
 																				/>
-																			) : null}
-																			<span className="label" tw="flex items-center">
-																				{site?.label}
-																			</span>
-																		</div>
-																	</th>
-																);
-															})}
-														</tr>
-													</thead>
-													<tbody tw="relative">
-														{links?.results !== undefined &&
-															links?.results !== null &&
-															links?.results !== [] &&
-															links?.results.map((val, key) => (
-																<LinkTable
-																	key={key}
-																	siteId={parseInt(result?.siteId)}
-																	val={val}
-																	componentReady={componentReady}
-																/>
-															))}
-													</tbody>
-												</table>
+																		  ))
+																		: null}
+																</tbody>
+															</table>
+														)}
+													</div>
+												</div>
 											</div>
 										</div>
-									</div>
+									)}
+
+									{links?.results !== undefined && links?.results.length == 0 && (
+										<section tw="flex flex-col justify-center h-full">
+											<div tw="px-4 py-5 sm:p-6 sm:-mt-12 flex items-center justify-center">
+												<h3 tw="text-lg leading-6 font-medium text-gray-500">
+													{LinksLabels[3].label}
+												</h3>
+											</div>
+										</section>
+									)}
 								</div>
 
-								<DataPagination
-									activePage={parseInt(result?.page) ? parseInt(result?.page) : 0}
-									apiEndpoint={scanApiEndpoint}
-									componentReady={componentReady}
-									handleItemsPerPageChange={handleItemsPerPageChange}
-									linksPerPage={parseInt(linksPerPage)}
-									pathName={pagePath}
-								/>
+								<div tw="flex-none p-4 pt-0">
+									<DataPagination
+										activePage={parseInt(result?.page) ? parseInt(result?.page) : 0}
+										apiEndpoint={scanApiEndpoint}
+										componentReady={componentReady}
+										handleItemsPerPageChange={handleItemsPerPageChange}
+										linksPerPage={parseInt(linksPerPage)}
+										pathName={pagePath}
+									/>
 
-								<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
-									<Footer />
+									{componentReady ? (
+										<div tw="w-full p-4 border-t border-gray-200">
+											<Footer />
+										</div>
+									) : null}
 								</div>
 							</div>
 						</main>

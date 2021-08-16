@@ -44,12 +44,8 @@ const useCrawl = ({ siteId }) => {
 
 	React.useEffect(() => {
 		const handleScan = (scan) => {
-			let previousScanResult = scan?.results.find(
-				(e) => e.finished_at !== null && e.force_https !== null
-			);
-			let currentScanResult = scan?.results.find(
-				(e) => e.finished_at == null && e.force_https == null
-			);
+			let previousScanResult = scan?.results.find((e) => e.finished_at !== null);
+			let currentScanResult = scan?.results.find((e) => e.finished_at == null);
 
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
