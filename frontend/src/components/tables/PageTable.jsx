@@ -35,10 +35,10 @@ const PageTable = ({ componentReady, siteId, val }) => {
 			<td tw="flex-none px-6 py-4 whitespace-nowrap border-b border-gray-200">
 				<div tw="flex flex-col items-start">
 					<div className="link-item" tw="text-sm leading-5 font-medium text-gray-900">
-						{componentReady ? (
+						{componentReady && pageDetail ? (
 							<Link
-								href="/site/[siteId]/pages/[pageId]/details"
-								as={`/site/${query.siteId}/pages/${pageDetail?.id}/details`}
+								href="/site/[siteId]/pages/[pageId]/"
+								as={`/site/${query.siteId}/pages/${pageDetail?.id}/`}
 								passHref
 							>
 								<a
@@ -54,7 +54,7 @@ const PageTable = ({ componentReady, siteId, val }) => {
 						)}
 					</div>
 					<div tw="flex justify-start leading-5 text-gray-500">
-						{componentReady ? (
+						{componentReady && pageDetail ? (
 							<a
 								href={val?.url}
 								target="_blank"
@@ -70,7 +70,7 @@ const PageTable = ({ componentReady, siteId, val }) => {
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
-				{componentReady ? (
+				{componentReady && pageDetail ? (
 					bytes(val?.size_total, {
 						thousandsSeparator: " ",
 						unitSeparator: " "
@@ -80,7 +80,7 @@ const PageTable = ({ componentReady, siteId, val }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
-				{componentReady ? (
+				{componentReady && pageDetail ? (
 					val?.tls_total == true ? (
 						<SiteSuccessIcon />
 					) : (

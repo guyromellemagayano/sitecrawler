@@ -69,7 +69,6 @@ const Pages = ({ result }) => {
 		handleCrawl,
 		currentScan,
 		previousScan,
-		scanCount,
 		isCrawlStarted,
 		isCrawlFinished
 	} = useCrawl({
@@ -83,22 +82,10 @@ const Pages = ({ result }) => {
 	});
 
 	React.useEffect(() => {
-		const handleScanObjId = (scanCount, currentScan, previousScan) => {
-			scanCount > 1
-				? previousScan
-					? setScanObjId(previousScan?.id)
-					: false
-				: currentScan
-				? setScanObjId(currentScan?.id)
-				: setScanObjId(previousScan?.id);
+		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 
-			return scanObjId;
-		};
-
-		handleScanObjId(scanCount, currentScan, previousScan);
-
-		return { scanObjId };
-	}, [scanCount, currentScan, previousScan]);
+		return scanObjId;
+	}, [currentScan, previousScan]);
 
 	const pageTitle = PagesLabels[1].label + " - " + siteId?.name;
 
@@ -436,7 +423,7 @@ const Pages = ({ result }) => {
 };
 
 Pages.propTypes = {
-	result: PropTypes.object
+	result: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 };
 
 Pages.defaultProps = {

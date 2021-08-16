@@ -71,7 +71,7 @@ const PageDetail = ({ result }) => {
 		return user ? setEnableSiteIdHook(true) : setEnableSiteIdHook(false);
 	}, [user, enableSiteIdHook]);
 
-	const { selectedSiteRef, currentScan, previousScan, scanCount } = useCrawl({
+	const { selectedSiteRef, currentScan, previousScan } = useCrawl({
 		siteId: enableSiteIdHook ? parseInt(result?.siteId) : null
 	});
 
@@ -82,20 +82,10 @@ const PageDetail = ({ result }) => {
 	});
 
 	React.useEffect(() => {
-		const handleScanObjId = (scanCount, currentScan, previousScan) => {
-			scanCount > 1
-				? previousScan
-					? setScanObjId(previousScan?.id)
-					: false
-				: currentScan
-				? setScanObjId(currentScan?.id)
-				: setScanObjId(previousScan?.id);
+		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 
-			return scanObjId;
-		};
-
-		handleScanObjId(scanCount, currentScan, previousScan);
-	}, [scanCount, currentScan, previousScan]);
+		return scanObjId;
+	}, [currentScan, previousScan]);
 
 	const { pageDetail } = usePageDetail({
 		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null,
@@ -224,10 +214,14 @@ const PageDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	bytes(pageDetail?.size_total, {
-																		thousandsSeparator: " ",
-																		unitSeparator: " "
-																	})
+																	pageDetail?.size_total ? (
+																		bytes(pageDetail?.size_total, {
+																			thousandsSeparator: " ",
+																			unitSeparator: " "
+																		})
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={75} />
 																)}
@@ -240,10 +234,14 @@ const PageDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	bytes(pageDetail?.size_images, {
-																		thousandsSeparator: " ",
-																		unitSeparator: " "
-																	})
+																	pageDetail?.size_images ? (
+																		bytes(pageDetail?.size_images, {
+																			thousandsSeparator: " ",
+																			unitSeparator: " "
+																		})
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={75} />
 																)}
@@ -256,10 +254,14 @@ const PageDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	bytes(pageDetail?.size_scripts, {
-																		thousandsSeparator: " ",
-																		unitSeparator: " "
-																	})
+																	pageDetail?.size_scripts ? (
+																		bytes(pageDetail?.size_scripts, {
+																			thousandsSeparator: " ",
+																			unitSeparator: " "
+																		})
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={75} />
 																)}
@@ -272,10 +274,14 @@ const PageDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	bytes(pageDetail?.size_stylesheets, {
-																		thousandsSeparator: " ",
-																		unitSeparator: " "
-																	})
+																	pageDetail?.size_stylesheets ? (
+																		bytes(pageDetail?.size_stylesheets, {
+																			thousandsSeparator: " ",
+																			unitSeparator: " "
+																		})
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={75} />
 																)}
@@ -288,7 +294,11 @@ const PageDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	pageDetail?.num_ok_images
+																	pageDetail?.num_ok_images ? (
+																		pageDetail?.num_ok_images
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={45} />
 																)}
@@ -301,7 +311,15 @@ const PageDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	pageDetail?.num_non_ok_images
+																	pageDetail?.num_non_ok_images >= 0 ? (
+																		pageDetail?.num_non_ok_images === 0 ? (
+																			<span tw="text-gray-500">None</span>
+																		) : (
+																			pageDetail?.num_non_ok_images
+																		)
+																	) : (
+																		<span tw="text-gray-500">Not Available</span>
+																	)
 																) : (
 																	<Skeleton duration={2} width={45} />
 																)}
@@ -356,10 +374,14 @@ const PageDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	pageDetail?.num_non_tls_images ? (
-																		pageDetail?.num_non_tls_images
+																	pageDetail?.num_non_tls_images >= 0 ? (
+																		pageDetail?.num_non_tls_images == 0 ? (
+																			<span tw="text-gray-500">None</span>
+																		) : (
+																			pageDetail?.num_non_tls_images
+																		)
 																	) : (
-																		<span tw="text-gray-500">None</span>
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={45} />
@@ -373,10 +395,14 @@ const PageDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	pageDetail?.num_non_tls_scripts ? (
-																		pageDetail?.num_non_tls_scripts
+																	pageDetail?.num_non_tls_scripts >= 0 ? (
+																		pageDetail?.num_non_tls_scripts == 0 ? (
+																			<span tw="text-gray-500">None</span>
+																		) : (
+																			pageDetail?.num_non_tls_scripts
+																		)
 																	) : (
-																		<span tw="text-gray-500">None</span>
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={45} />
@@ -390,10 +416,14 @@ const PageDetail = ({ result }) => {
 															</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
-																	pageDetail?.num_non_tls_stylesheets > 0 ? (
-																		pageDetail?.num_non_tls_stylesheets
+																	pageDetail?.num_non_tls_stylesheets >= 0 ? (
+																		pageDetail?.num_non_tls_stylesheets == 0 ? (
+																			<span tw="text-gray-500">None</span>
+																		) : (
+																			pageDetail?.num_non_tls_stylesheets
+																		)
 																	) : (
-																		<span tw="text-gray-500">None</span>
+																		<span tw="text-gray-500">Not Available</span>
 																	)
 																) : (
 																	<Skeleton duration={2} width={45} />
@@ -405,16 +435,17 @@ const PageDetail = ({ result }) => {
 											</div>
 										</div>
 
-										{pageDetailLink?.count > 0 && (
-											<div tw="max-w-4xl py-6 px-4">
-												<div tw="overflow-hidden py-2">
-													<div tw="px-4 py-5 sm:p-0">
-														<dl>
-															<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-																<dt tw="text-sm leading-5 font-medium text-gray-500">
-																	{PagesLabels[14].label}
-																</dt>
-																<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+										<div tw="max-w-4xl py-6 px-4 border-t border-gray-200">
+											<div tw="overflow-hidden py-2">
+												<div tw="px-4 py-5 sm:p-0">
+													<dl>
+														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+															<dt tw="text-sm leading-5 font-medium text-gray-500">
+																{PagesLabels[14].label}
+															</dt>
+															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+																{pageDetailLink?.results !== undefined &&
+																pageDetailLink?.count > 0 ? (
 																	<ul>
 																		{pageDetailLink?.results.map((val, key) => {
 																			return componentReady ? (
@@ -460,13 +491,15 @@ const PageDetail = ({ result }) => {
 																			);
 																		})}
 																	</ul>
-																</dd>
-															</div>
-														</dl>
-													</div>
+																) : (
+																	<span tw="text-gray-500">None</span>
+																)}
+															</dd>
+														</div>
+													</dl>
 												</div>
 											</div>
-										)}
+										</div>
 									</div>
 								</div>
 
