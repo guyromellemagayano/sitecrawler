@@ -2,7 +2,6 @@
 import * as React from "react";
 
 // NextJS
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 // External
@@ -22,12 +21,10 @@ import SiteSuccessIcon from "@components/icons/SiteSuccessIcon";
 import SiteDangerIcon from "@components/icons/SiteDangerIcon";
 
 const PageTable = ({ componentReady, siteId, val }) => {
-	const { query } = useRouter();
-
 	const { pageDetail } = usePageDetail({
 		querySid: siteId,
-		scanObjId: val?.scan_id,
-		linkId: val?.id
+		scanObjId: val.scan_id,
+		linkId: val.id
 	});
 
 	return (
@@ -38,15 +35,15 @@ const PageTable = ({ componentReady, siteId, val }) => {
 						{componentReady && pageDetail ? (
 							<Link
 								href="/site/[siteId]/pages/[pageId]/"
-								as={`/site/${query.siteId}/pages/${pageDetail?.id}/`}
+								as={`/site/${siteId}/pages/${pageDetail?.id}/`}
 								passHref
 							>
 								<a
 									className="truncate-link"
 									tw="text-sm leading-6 font-semibold text-blue-900 hover:text-blue-900"
-									title={val?.url}
+									title={val.url}
 								>
-									{val?.url}
+									{val.url}
 								</a>
 							</Link>
 						) : (
@@ -56,7 +53,7 @@ const PageTable = ({ componentReady, siteId, val }) => {
 					<div tw="flex justify-start leading-5 text-gray-500">
 						{componentReady && pageDetail ? (
 							<a
-								href={val?.url}
+								href={val.url}
 								target="_blank"
 								title={PageTableLabels[0].label}
 								tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
@@ -71,7 +68,7 @@ const PageTable = ({ componentReady, siteId, val }) => {
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				{componentReady && pageDetail ? (
-					bytes(val?.size_total, {
+					bytes(val.size_total, {
 						thousandsSeparator: " ",
 						unitSeparator: " "
 					})
@@ -81,7 +78,7 @@ const PageTable = ({ componentReady, siteId, val }) => {
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				{componentReady && pageDetail ? (
-					val?.tls_total == true ? (
+					val.tls_total == true ? (
 						<SiteSuccessIcon />
 					) : (
 						<SiteDangerIcon />
