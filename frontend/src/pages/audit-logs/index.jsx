@@ -29,12 +29,10 @@ const Reports = () => {
 	});
 
 	React.useEffect(() => {
-		setTimeout(() => {
-			setComponentReady(true);
-		}, 500);
+		user ? setComponentReady(true) : setComponentReady(false);
 
-		return setComponentReady(false);
-	}, []);
+		return user;
+	}, [user]);
 
 	React.useEffect(() => {
 		user ? setComponentReady(true) : setComponentReady(false);
@@ -43,13 +41,13 @@ const Reports = () => {
 	}, [user]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageTitle : null} />
+		<Layout user={user}>
+			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					ref={ref}
-					user={componentReady ? user : null}
+					user={user}
 					openSidebar={isComponentVisible}
 					setOpenSidebar={setIsComponentVisible}
 				/>

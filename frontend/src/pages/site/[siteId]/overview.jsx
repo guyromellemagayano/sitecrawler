@@ -117,15 +117,15 @@ const Overview = ({ result }) => {
 	}, [user, siteId, stats, uptime, uptimeSummary, result]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? OverviewLabels[0].label : null} />
+		<Layout user={user}>
+			<NextSeo title={OverviewLabels[0].label} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					openSidebar={isComponentVisible}
 					ref={ref}
 					setOpenSidebar={setIsComponentVisible}
-					user={componentReady ? user : null}
+					user={user}
 				/>
 
 				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">

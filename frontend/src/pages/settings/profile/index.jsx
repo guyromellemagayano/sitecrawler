@@ -46,13 +46,13 @@ const ProfileSettings = () => {
 	}, [user]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? ProfileSettingsLabels[0].label : null} />
+		<Layout user={user}>
+			<NextSeo title={ProfileSettingsLabels[0].label} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					ref={ref}
-					user={componentReady ? user : null}
+					user={user}
 					openSidebar={isComponentVisible}
 					setOpenSidebar={setIsComponentVisible}
 				/>
@@ -101,17 +101,14 @@ const ProfileSettings = () => {
 										<div tw="space-y-12 divide-y divide-gray-200">
 											<PersonalSettings
 												componentReady={componentReady}
-												user={componentReady ? user : null}
-												mutateUser={componentReady ? mutateUser : null}
+												user={user}
+												mutateUser={mutateUser}
 											/>
-											<PasswordSettings
-												componentReady={componentReady}
-												mutateUser={componentReady ? mutateUser : null}
-											/>
+											<PasswordSettings componentReady={componentReady} mutateUser={mutateUser} />
 											<DeleteUserAccountSettings
 												componentReady={componentReady}
-												user={componentReady ? user : null}
-												mutateUser={componentReady ? mutateUser : null}
+												user={user}
+												mutateUser={mutateUser}
 											/>
 										</div>
 									</div>

@@ -156,13 +156,13 @@ const Sites = ({ result }) => {
 	}, [result, asPath]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? SitesLabels[0].label : null} />
+		<Layout user={user}>
+			<NextSeo title={SitesLabels[0].label} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					ref={ref}
-					user={componentReady ? user : null}
+					user={user}
 					openSidebar={isComponentVisible}
 					setOpenSidebar={setIsComponentVisible}
 				/>
@@ -176,12 +176,7 @@ const Sites = ({ result }) => {
 							/>
 						</div>
 
-						<AddSite
-							user={componentReady ? user : null}
-							site={componentReady ? site : null}
-							searchKey={searchKey}
-							onSearchEvent={handleSearch}
-						/>
+						<AddSite user={user} site={site} searchKey={searchKey} onSearchEvent={handleSearch} />
 					</div>
 
 					<Scrollbars universal>
