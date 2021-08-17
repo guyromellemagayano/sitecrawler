@@ -185,23 +185,15 @@ const PagesStats = ({ componentReady, sid, stats, width }) => {
 PagesStats.propTypes = {
 	componentReady: PropTypes.bool,
 	sid: PropTypes.number,
-	stats: PropTypes.shape({
-		num_pages_big: PropTypes.number,
-		num_pages_small_tls_ok: PropTypes.number,
-		num_pages_tls_non_ok: PropTypes.number
-	}),
-	user: PropTypes.object,
+	stats: PropTypes.object,
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 	width: PropTypes.number
 };
 
 PagesStats.defaultProps = {
 	componentReady: false,
 	sid: null,
-	stats: {
-		num_pages_big: null,
-		num_pages_small_tls_ok: null,
-		num_pages_tls_non_ok: null
-	},
+	stats: null,
 	user: null,
 	width: null
 };

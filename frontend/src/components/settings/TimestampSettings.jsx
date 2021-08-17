@@ -53,7 +53,7 @@ const TimestampSettings = ({ componentReady, mutateUser, user }) => {
 TimestampSettings.propTypes = {
 	componentReady: PropTypes.bool,
 	mutateUser: PropTypes.func,
-	user: PropTypes.object
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
 };
 
 TimestampSettings.defaultProps = {

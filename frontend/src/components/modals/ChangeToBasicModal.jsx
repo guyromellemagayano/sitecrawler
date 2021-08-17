@@ -254,10 +254,7 @@ const ChangeToBasicModal = React.forwardRef(
 ChangeToBasicModal.propTypes = {
 	basicPlanId: PropTypes.number,
 	basicPlanName: PropTypes.string,
-	defaultPaymentMethod: PropTypes.object,
-	defaultSubscription: PropTypes.shape({
-		cancel_at: PropTypes.string
-	}),
+	defaultPaymentMethod: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 	disableDowngradeToBasicPlan: PropTypes.bool,
 	disableLocalTime: PropTypes.bool,
 	errorMsg: PropTypes.array,
@@ -274,9 +271,7 @@ ChangeToBasicModal.defaultProps = {
 	basicPlanId: null,
 	basicPlanName: null,
 	defaultPaymentMethod: null,
-	defaultSubscription: {
-		cancel_at: null
-	},
+	defaultSubscription: null,
 	disableDowngradeToBasicPlan: false,
 	disableLocalTime: false,
 	errorMsg: null,

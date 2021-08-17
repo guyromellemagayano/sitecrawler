@@ -193,15 +193,11 @@ const UpdatePasswordForm = ({ result }) => {
 };
 
 UpdatePasswordForm.propTypes = {
-	result: PropTypes.shape({
-		id: PropTypes.array
-	})
+	result: PropTypes.object
 };
 
 UpdatePasswordForm.defaultProps = {
-	result: {
-		id: null
-	}
+	result: null
 };
 
 export default UpdatePasswordForm;

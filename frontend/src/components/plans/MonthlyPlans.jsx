@@ -227,7 +227,7 @@ const MonthlyPlans = ({
 MonthlyPlans.propTypes = {
 	cancel_at: PropTypes.string,
 	componentReady: PropTypes.bool,
-	defaultPaymentMethod: PropTypes.object,
+	defaultPaymentMethod: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 	disableLocalTime: PropTypes.bool,
 	features: PropTypes.array,
 	id: PropTypes.number,

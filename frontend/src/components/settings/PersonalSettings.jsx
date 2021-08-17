@@ -55,7 +55,7 @@ const PersonalSettings = ({ componentReady, mutateUser, user }) => {
 PersonalSettings.propTypes = {
 	componentReady: PropTypes.bool,
 	mutateUser: PropTypes.func,
-	user: PropTypes.object
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
 };
 
 PersonalSettings.defaultProps = {

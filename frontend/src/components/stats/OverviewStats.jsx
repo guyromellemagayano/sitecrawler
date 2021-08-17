@@ -170,15 +170,8 @@ OverviewStats.propTypes = {
 	componentReady: PropTypes.bool,
 	isCrawlFinished: PropTypes.bool,
 	isCrawlStarted: PropTypes.bool,
-	stats: PropTypes.shape({
-		force_https: PropTypes.bool,
-		id: PropTypes.number,
-		num_pages_tls_non_ok: PropTypes.number,
-		site_id: PropTypes.number
-	}),
-	user: PropTypes.shape({
-		permissions: PropTypes.array
-	}),
+	stats: PropTypes.object,
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 	verified: PropTypes.bool
 };
 
@@ -186,15 +179,8 @@ OverviewStats.defaultProps = {
 	componentReady: false,
 	isCrawlFinished: false,
 	isCrawlStarted: false,
-	stats: {
-		force_https: false,
-		id: null,
-		num_pages_tls_non_ok: null,
-		site_id: null
-	},
-	user: {
-		permissions: null
-	},
+	stats: null,
+	user: null,
 	verified: false
 };
 

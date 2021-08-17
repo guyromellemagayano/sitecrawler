@@ -66,7 +66,7 @@ const DeleteUserAccountSettings = ({ componentReady, mutateUser, user }) => {
 DeleteUserAccountSettings.propTypes = {
 	componentReady: PropTypes.bool,
 	mutateUser: PropTypes.func,
-	user: PropTypes.object
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
 };
 
 DeleteUserAccountSettings.defaultProps = {

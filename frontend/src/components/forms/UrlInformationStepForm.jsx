@@ -378,11 +378,7 @@ UrlInformationStepForm.propTypes = {
 	setErrorMsg: PropTypes.func,
 	setErrorMsgLoaded: PropTypes.func,
 	setSiteData: PropTypes.func,
-	siteData: PropTypes.shape({
-		id: PropTypes.number,
-		name: PropTypes.string,
-		url: PropTypes.string
-	}),
+	siteData: PropTypes.object,
 	url: PropTypes.any
 };
 
@@ -396,11 +392,7 @@ UrlInformationStepForm.defaultProps = {
 	setErrorMsg: null,
 	setErrorMsgLoaded: null,
 	setSiteData: null,
-	siteData: {
-		id: null,
-		name: null,
-		url: null
-	}
+	siteData: null
 };
 
 export default UrlInformationStepForm;

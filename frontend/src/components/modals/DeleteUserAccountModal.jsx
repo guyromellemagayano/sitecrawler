@@ -266,18 +266,14 @@ DeleteUserAccountModal.propTypes = {
 	mutateUser: PropTypes.func,
 	setShowModal: PropTypes.func,
 	showModal: PropTypes.bool,
-	user: PropTypes.shape({
-		id: PropTypes.number
-	})
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
 };
 
 DeleteUserAccountModal.defaultProps = {
 	mutateUser: null,
 	setShowModal: null,
 	showModal: null,
-	user: {
-		id: null
-	}
+	user: null
 };
 
 export default DeleteUserAccountModal;

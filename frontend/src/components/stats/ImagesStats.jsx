@@ -184,24 +184,14 @@ const ImagesStats = ({ componentReady, sid, stats, width }) => {
 ImagesStats.propTypes = {
 	componentReady: PropTypes.bool,
 	sid: PropTypes.number,
-	stats: PropTypes.shape({
-		num_images_fully_ok: PropTypes.number,
-		num_images_tls_non_ok: PropTypes.number,
-		num_images_with_missing_alts: PropTypes.number,
-		num_non_ok_images: PropTypes.number
-	}),
+	stats: PropTypes.object,
 	width: PropTypes.number
 };
 
 ImagesStats.defaultProps = {
 	componentReady: false,
 	sid: null,
-	stats: {
-		num_images_fully_ok: null,
-		num_images_tls_non_ok: null,
-		num_images_with_missing_alts: null,
-		num_non_ok_images: null
-	},
+	stats: null,
 	width: null
 };
 
