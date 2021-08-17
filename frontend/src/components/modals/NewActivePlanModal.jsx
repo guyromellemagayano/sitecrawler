@@ -10,9 +10,10 @@ import PropTypes from "prop-types";
 
 // Enums
 import { NewActivePlanModalLabels } from "@enums/NewActivePlanModalLabels";
+import { GlobalLabels, SubscriptionSuccessBadge } from "@enums/GlobalValues";
 
 // Components
-import AppImage from "@components/images/AppImage";
+import AppLogo from "@components/logos/AppLogo";
 
 const ConfettiBgImgSpan = styled.span`
 	background: url("/images/backgrounds/subscription-success-bg.png");
@@ -95,12 +96,12 @@ const NewActivePlanModal = React.forwardRef(
 								</button>
 							</div>
 							<div>
-								<AppImage
-									src="/images/backgrounds/subscription-success-badge.png"
-									alt="badge-modal-img"
-									tw="w-full inline-flex justify-center mx-auto mt-12 mb-14"
-									width={72}
-									height={72}
+								<AppLogo
+									src={SubscriptionSuccessBadge}
+									alt={GlobalLabels[2].label}
+									className="w-full inline-flex justify-center mx-auto mt-12 mb-14"
+									width={GlobalLabels[2].width}
+									height={GlobalLabels[2].height}
 								/>
 								<div tw="text-center sm:mt-3">
 									<h2 tw="mb-3 text-3xl leading-6 font-bold text-gray-900" id="modal-headline">
@@ -175,7 +176,7 @@ NewActivePlanModal.propTypes = {
 	setShowModal: PropTypes.func,
 	setSuccessMsg: PropTypes.func,
 	showModal: PropTypes.bool,
-	subscriptions: PropTypes.object,
+	subscriptions: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 	updatedPlanId: PropTypes.number,
 	updatedPlanName: PropTypes.string,
 	userApiEndpoint: PropTypes.string
