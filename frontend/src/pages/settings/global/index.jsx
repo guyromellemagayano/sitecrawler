@@ -48,13 +48,13 @@ const GlobalSettings = () => {
 	}, [user]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageTitle : null} />
+		<Layout user={user}>
+			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					ref={ref}
-					user={componentReady ? user : null}
+					user={user}
 					openSidebar={isComponentVisible}
 					setOpenSidebar={setIsComponentVisible}
 				/>
@@ -104,12 +104,12 @@ const GlobalSettings = () => {
 												<TimestampSettings
 													componentReady={componentReady}
 													mutateUser={mutateUser}
-													user={componentReady ? user : null}
+													user={user}
 												/>
 												<LargePageSizeSettings
 													componentReady={componentReady}
 													mutateUser={mutateUser}
-													user={componentReady ? user : null}
+													user={user}
 												/>
 											</div>
 										</div>

@@ -31,7 +31,7 @@ const Layout = ({ user, children }) => {
 };
 
 Layout.propTypes = {
-	user: PropTypes.object,
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 	children: PropTypes.array.isRequired
 };
 

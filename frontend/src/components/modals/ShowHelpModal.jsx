@@ -124,9 +124,7 @@ ShowHelpModal.propTypes = {
 	setCopyValue: PropTypes.func,
 	setShowModal: PropTypes.func,
 	showModal: PropTypes.bool,
-	siteData: PropTypes.shape({
-		url: PropTypes.string
-	})
+	siteData: PropTypes.object
 };
 
 ShowHelpModal.defaultProps = {
@@ -134,9 +132,7 @@ ShowHelpModal.defaultProps = {
 	setCopyValue: null,
 	setShowModal: null,
 	showModal: false,
-	siteData: {
-		url: null
-	}
+	siteData: null
 };
 
 export default ShowHelpModal;

@@ -249,13 +249,13 @@ const Pages = ({ result }) => {
 	}, [user, siteId, pages]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageTitle : null} />
+		<Layout user={user}>
+			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					ref={ref}
-					user={componentReady ? user : null}
+					user={user}
 					openSidebar={isComponentVisible}
 					setOpenSidebar={setIsComponentVisible}
 				/>

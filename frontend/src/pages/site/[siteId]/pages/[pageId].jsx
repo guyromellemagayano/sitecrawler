@@ -116,15 +116,15 @@ const PageDetail = ({ result }) => {
 	};
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageDetailPageTitle : null} />
+		<Layout user={user}>
+			<NextSeo title={pageDetailPageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					openSidebar={isComponentVisible}
 					ref={ref}
 					setOpenSidebar={setIsComponentVisible}
-					user={componentReady ? user : null}
+					user={user}
 				/>
 
 				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
@@ -313,7 +313,7 @@ const PageDetail = ({ result }) => {
 																{componentReady ? (
 																	pageDetail?.num_non_ok_images >= 0 ? (
 																		pageDetail?.num_non_ok_images === 0 ? (
-																			<span tw="text-gray-500">None</span>
+																			<span tw="text-gray-500">Not Available</span>
 																		) : (
 																			pageDetail?.num_non_ok_images
 																		)
@@ -376,7 +376,7 @@ const PageDetail = ({ result }) => {
 																{componentReady ? (
 																	pageDetail?.num_non_tls_images >= 0 ? (
 																		pageDetail?.num_non_tls_images == 0 ? (
-																			<span tw="text-gray-500">None</span>
+																			<span tw="text-gray-500">Not Available</span>
 																		) : (
 																			pageDetail?.num_non_tls_images
 																		)
@@ -397,7 +397,7 @@ const PageDetail = ({ result }) => {
 																{componentReady ? (
 																	pageDetail?.num_non_tls_scripts >= 0 ? (
 																		pageDetail?.num_non_tls_scripts == 0 ? (
-																			<span tw="text-gray-500">None</span>
+																			<span tw="text-gray-500">Not Available</span>
 																		) : (
 																			pageDetail?.num_non_tls_scripts
 																		)
@@ -418,7 +418,7 @@ const PageDetail = ({ result }) => {
 																{componentReady ? (
 																	pageDetail?.num_non_tls_stylesheets >= 0 ? (
 																		pageDetail?.num_non_tls_stylesheets == 0 ? (
-																			<span tw="text-gray-500">None</span>
+																			<span tw="text-gray-500">Not Available</span>
 																		) : (
 																			pageDetail?.num_non_tls_stylesheets
 																		)
@@ -492,7 +492,7 @@ const PageDetail = ({ result }) => {
 																		})}
 																	</ul>
 																) : (
-																	<span tw="text-gray-500">None</span>
+																	<span tw="text-gray-500">Not Available</span>
 																)}
 															</dd>
 														</div>

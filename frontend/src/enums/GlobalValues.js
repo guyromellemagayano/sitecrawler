@@ -8,6 +8,11 @@ export const GlobalLabels = [
 		label: "app-logo",
 		width: 200,
 		height: 45
+	},
+	{
+		label: "badge-modal-img",
+		width: 72,
+		height: 72
 	}
 ];
 
@@ -20,3 +25,4 @@ export const MutateInterval = 2000;
 export const RevalidationInterval = 3000;
 export const SiteLogoDark = "/images/logos/site-logo-dark.svg";
 export const SiteLogoWhite = "/images/logos/site-logo-white.svg";
+export const SubscriptionSuccessBadge = "/images/backgrounds/subscription-success-badge.png";

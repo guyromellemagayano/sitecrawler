@@ -15,16 +15,24 @@ import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
 import PaymentMethodForm from "@components/forms/PaymentMethodForm";
 import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
 
-const PaymentMethodSettings = ({ componentReady, stripePublishableKey, user }) => {
+const PaymentMethodSettings = ({
+	componentReady,
+	defaultPaymentMethod,
+	mutateDefaultPaymentMethod,
+	mutatePaymentMethods,
+	paymentMethods,
+	stripePromise
+}) => {
 	const [errorMsg, setErrorMsg] = React.useState([]);
 	const [successMsg, setSuccessMsg] = React.useState([]);
-	const [stripePromiseData, setStripePromiseData] = React.useState("");
 
-	React.useEffect(() => {
-		stripePublishableKey ? setStripePromiseData(loadStripe(stripePublishableKey)) : null;
-	}, [stripePublishableKey]);
-
-	console.log(stripePromiseData);
+	const stripePromiseData = React.useMemo(
+		() =>
+			componentReady && stripePromise
+				? loadStripe(stripePromise?.publishable_key, { stripePromise })
+				: null,
+		[stripePromise, componentReady]
+	);
 
 	return (
 		<div>
@@ -50,13 +58,15 @@ const PaymentMethodSettings = ({ componentReady, stripePublishableKey, user }) =
 
 			<div tw="max-w-full lg:max-w-3xl p-4 pt-0 pb-2">
 				<Elements stripe={stripePromiseData}>
-					{/* <PaymentMethodForm
+					<PaymentMethodForm
 						componentReady={componentReady}
-						errorMsg={errorMsg}
+						defaultPaymentMethod={defaultPaymentMethod}
+						mutateDefaultPaymentMethod={mutateDefaultPaymentMethod}
+						mutatePaymentMethods={mutatePaymentMethods}
+						paymentMethods={paymentMethods}
 						setErrorMsg={setErrorMsg}
 						setSuccessMsg={setSuccessMsg}
-						successMsg={successMsg}
-					/> */}
+					/>
 				</Elements>
 			</div>
 		</div>
@@ -64,11 +74,21 @@ const PaymentMethodSettings = ({ componentReady, stripePublishableKey, user }) =
 };
 
 PaymentMethodSettings.propTypes = {
-	componentReady: PropTypes.bool
+	componentReady: PropTypes.bool,
+	defaultPaymentMethod: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+	mutateDefaultPaymentMethod: PropTypes.func,
+	mutatePaymentMethods: PropTypes.func,
+	paymentMethods: PropTypes.oneOfType([PropTypes.array, PropTypes.string]),
+	stripePromise: PropTypes.object
 };
 
 PaymentMethodSettings.defaultProps = {
-	componentReady: false
+	componentReady: false,
+	defaultPaymentMethod: null,
+	mutateDefaultPaymentMethod: null,
+	mutatePaymentMethods: null,
+	paymentMethods: null,
+	stripePromise: null
 };
 
 export default PaymentMethodSettings;

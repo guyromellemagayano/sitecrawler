@@ -236,15 +236,15 @@ const Links = ({ result }) => {
 	}, [user, siteId, links]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageTitle : null} />
+		<Layout user={user}>
+			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					openSidebar={isComponentVisible}
 					ref={ref}
 					setOpenSidebar={setIsComponentVisible}
-					user={componentReady ? user : null}
+					user={user}
 				/>
 
 				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">

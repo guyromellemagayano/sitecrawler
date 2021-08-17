@@ -143,24 +143,12 @@ const CurrentStatusStats = ({ sid, uptimeSummary }) => {
 
 CurrentStatusStats.propTypes = {
 	sid: PropTypes.number,
-	uptimeSummary: PropTypes.shape({
-		current: PropTypes.shape({
-			status: PropTypes.string
-		}),
-		last_downtime: PropTypes.string,
-		last_ok: PropTypes.string
-	})
+	uptimeSummary: PropTypes.object
 };
 
 CurrentStatusStats.defaultProps = {
 	sid: null,
-	uptimeSummary: {
-		current: {
-			status: null
-		},
-		last_downtime: null,
-		last_ok: null
-	}
+	uptimeSummary: null
 };
 
 export default CurrentStatusStats;

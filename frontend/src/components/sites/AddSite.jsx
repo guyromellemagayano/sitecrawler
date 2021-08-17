@@ -113,7 +113,7 @@ AddSite.propTypes = {
 	onSearchEvent: PropTypes.func,
 	searchKey: PropTypes.string,
 	site: PropTypes.object,
-	user: PropTypes.object
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
 };
 
 AddSite.defaultProps = {

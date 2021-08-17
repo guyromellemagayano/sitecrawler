@@ -62,13 +62,13 @@ const SiteSettings = ({ result }) => {
 	}, [user, siteId]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageTitle : null} />
+		<Layout user={user}>
+			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					ref={ref}
-					user={componentReady ? user : null}
+					user={user}
 					openSidebar={isComponentVisible}
 					setOpenSidebar={setIsComponentVisible}
 				/>
@@ -118,20 +118,20 @@ const SiteSettings = ({ result }) => {
 												componentReady={componentReady}
 												mutateSite={mutateSite}
 												mutateSiteId={mutateSiteId}
-												siteId={componentReady ? siteId : null}
+												siteId={siteId}
 											/>
 											<LargePageSizeSettings
 												componentReady={componentReady}
 												mutateSite={mutateSite}
 												mutateUser={mutateUser}
 												mutateSiteId={mutateSiteId}
-												siteId={componentReady ? siteId : null}
-												user={componentReady ? user : null}
+												siteId={siteId}
+												user={user}
 											/>
 											<DeleteSiteSettings
 												componentReady={componentReady}
 												mutateSite={mutateSite}
-												siteId={componentReady ? siteId : null}
+												siteId={siteId}
 											/>
 										</div>
 									</div>

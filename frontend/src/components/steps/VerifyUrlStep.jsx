@@ -184,12 +184,7 @@ VerifyUrl.propTypes = {
 	setCurrentStep: PropTypes.func,
 	setEditMode: PropTypes.func,
 	setSiteId: PropTypes.func,
-	siteData: PropTypes.shape({
-		id: PropTypes.number,
-		name: PropTypes.string,
-		url: PropTypes.string,
-		verification_id: PropTypes.string
-	})
+	siteData: PropTypes.object
 };
 
 VerifyUrl.defaultProps = {
@@ -197,12 +192,7 @@ VerifyUrl.defaultProps = {
 	setCurrentStep: null,
 	setEditMode: null,
 	setSiteId: null,
-	siteData: {
-		id: null,
-		name: null,
-		url: null,
-		verification_id: null
-	}
+	siteData: null
 };
 
 export default VerifyUrl;

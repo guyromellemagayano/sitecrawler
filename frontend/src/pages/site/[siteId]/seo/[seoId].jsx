@@ -93,15 +93,15 @@ const SeoDetail = ({ result }) => {
 	}, [user, siteId, pageDetail]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? seoDetailPageTitle : null} />
+		<Layout user={user}>
+			<NextSeo title={seoDetailPageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					openSidebar={isComponentVisible}
 					ref={ref}
 					setOpenSidebar={setIsComponentVisible}
-					user={componentReady ? user : null}
+					user={user}
 				/>
 
 				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">

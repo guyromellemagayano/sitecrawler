@@ -150,38 +150,12 @@ const Stats = ({ componentReady, stats }) => {
 
 Stats.propTypes = {
 	componentReady: PropTypes.bool,
-	num_images: PropTypes.number,
-	num_images_tls_non_ok: PropTypes.number,
-	num_images_with_missing_alts: PropTypes.number,
-	num_links: PropTypes.number,
-	num_non_ok_images: PropTypes.number,
-	num_non_ok_links: PropTypes.number,
-	num_pages: PropTypes.number,
-	num_pages_big: PropTypes.number,
-	num_pages_tls_non_ok: PropTypes.number,
-	num_pages_without_description: PropTypes.number,
-	num_pages_without_h1_first: PropTypes.number,
-	num_pages_without_h2_first: PropTypes.number,
-	num_pages_without_title: PropTypes.number
+	stats: PropTypes.object
 };
 
 Stats.defaultProps = {
 	componentReady: false,
-	stats: {
-		num_images: PropTypes.number,
-		num_images_tls_non_ok: PropTypes.number,
-		num_images_with_missing_alts: PropTypes.number,
-		num_links: PropTypes.number,
-		num_non_ok_images: PropTypes.number,
-		num_non_ok_links: PropTypes.number,
-		num_pages: PropTypes.number,
-		num_pages_big: PropTypes.number,
-		num_pages_tls_non_ok: PropTypes.number,
-		num_pages_without_description: PropTypes.number,
-		num_pages_without_h1_first: PropTypes.number,
-		num_pages_without_h2_first: PropTypes.number,
-		num_pages_without_title: PropTypes.number
-	}
+	stats: null
 };
 
 export default Stats;

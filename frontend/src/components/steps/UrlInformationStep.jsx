@@ -69,11 +69,7 @@ UrlInformationStep.propTypes = {
 	setCurrentStep: PropTypes.func,
 	setEditMode: PropTypes.func,
 	setSiteData: PropTypes.func,
-	siteData: PropTypes.shape({
-		id: PropTypes.number,
-		name: PropTypes.string,
-		url: PropTypes.string
-	})
+	siteData: PropTypes.object
 };
 
 UrlInformationStep.defaultProps = {
@@ -82,11 +78,7 @@ UrlInformationStep.defaultProps = {
 	setCurrentStep: null,
 	setEditMode: null,
 	setSiteData: null,
-	siteData: {
-		id: null,
-		name: null,
-		url: null
-	}
+	siteData: null
 };
 
 export default UrlInformationStep;

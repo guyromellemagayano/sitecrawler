@@ -48,13 +48,13 @@ const AddNewSite = () => {
 	}, [user]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? pageDetailTitle : null} />
+		<Layout user={user}>
+			<NextSeo title={pageDetailTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					ref={ref}
-					user={componentReady ? user : null}
+					user={user}
 					openSidebar={isComponentVisible}
 					setOpenSidebar={setIsComponentVisible}
 				/>

@@ -271,13 +271,13 @@ const SubscriptionPlans = () => {
 	}, [defaultSubscription, subscriptions]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? SubscriptionLabels[25].label : null} />
+		<Layout user={user}>
+			<NextSeo title={SubscriptionLabels[25].label} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					ref={ref}
-					user={componentReady ? user : null}
+					user={user}
 					openSidebar={isComponentVisible}
 					setOpenSidebar={setIsComponentVisible}
 				/>

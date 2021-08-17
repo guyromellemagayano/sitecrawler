@@ -182,20 +182,14 @@ const LinksStats = ({ componentReady, sid, stats, width }) => {
 LinksStats.propTypes = {
 	componentReady: PropTypes.bool,
 	sid: PropTypes.number,
-	stats: PropTypes.shape({
-		num_non_ok_links: PropTypes.number,
-		num_ok_links: PropTypes.number
-	}),
+	stats: PropTypes.object,
 	width: PropTypes.number
 };
 
 LinksStats.defaultProps = {
 	componentReady: false,
 	sid: null,
-	stats: {
-		num_non_ok_links: null,
-		num_ok_links: null
-	},
+	stats: null,
 	width: null
 };
 

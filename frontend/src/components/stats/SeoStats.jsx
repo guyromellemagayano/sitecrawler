@@ -187,27 +187,15 @@ const SeoStats = ({ componentReady, sid, stats, width }) => {
 SeoStats.propTypes = {
 	componentReady: PropTypes.bool,
 	sid: PropTypes.number,
-	stats: PropTypes.shape({
-		num_pages_seo_ok: PropTypes.number,
-		num_pages_without_description: PropTypes.number,
-		num_pages_without_h1_first: PropTypes.number,
-		num_pages_without_h2_first: PropTypes.number,
-		num_pages_without_title: PropTypes.number
-	}),
-	user: PropTypes.object,
+	stats: PropTypes.object,
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 	width: PropTypes.number
 };
 
 SeoStats.defaultProps = {
 	componentReady: false,
 	sid: null,
-	stats: {
-		num_pages_seo_ok: null,
-		num_pages_without_description: null,
-		num_pages_without_h1_first: null,
-		num_pages_without_h2_first: null,
-		num_pages_without_title: null
-	},
+	stats: null,
 	user: null,
 	width: null
 };

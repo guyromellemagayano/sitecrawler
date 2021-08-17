@@ -27,7 +27,6 @@ const SiteInformationSettingsForm = ({
 	const [sitename, setSitename] = React.useState("");
 	const [siteurl, setSiteUrl] = React.useState("");
 
-	const sitenameRef = React.useRef(null);
 	const siteIdApiEndpoint = `${SiteApiEndpoint + siteId?.id}/`;
 
 	React.useEffect(() => {
@@ -120,7 +119,7 @@ const SiteInformationSettingsForm = ({
 							) : (
 								<>
 									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
 								</>
 							)}
 
@@ -152,7 +151,7 @@ const SiteInformationSettingsForm = ({
 							) : (
 								<>
 									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
 								</>
 							)}
 						</div>
@@ -227,7 +226,7 @@ SiteInformationSettingsForm.propTypes = {
 	id: PropTypes.number,
 	name: PropTypes.string,
 	url: PropTypes.string,
-	user: PropTypes.object
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
 };
 
 SiteInformationSettingsForm.defaultProps = {

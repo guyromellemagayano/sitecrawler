@@ -125,25 +125,13 @@ const SitesDowntimeStats = ({ sid, disableLocalTime, uptimeSummary }) => {
 SitesDowntimeStats.propTypes = {
 	disableLocalTime: PropTypes.bool,
 	sid: PropTypes.number,
-	uptimeSummary: PropTypes.shape({
-		current: PropTypes.shape({
-			status: PropTypes.string
-		}),
-		last_downtime: PropTypes.string,
-		last_ok: PropTypes.string
-	})
+	uptimeSummary: PropTypes.object
 };
 
 SitesDowntimeStats.defaultProps = {
 	disableLocalTime: false,
 	sid: null,
-	uptimeSummary: {
-		current: {
-			status: null
-		},
-		last_downtime: null,
-		last_ok: null
-	}
+	uptimeSummary: null
 };
 
 export default SitesDowntimeStats;

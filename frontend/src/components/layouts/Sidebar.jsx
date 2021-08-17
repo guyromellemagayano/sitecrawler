@@ -119,7 +119,7 @@ const Sidebar = React.forwardRef(({ user, openSidebar, setOpenSidebar }, ref) =>
 Sidebar.propTypes = {
 	openSidebar: PropTypes.bool,
 	setOpenSidebar: PropTypes.func,
-	user: PropTypes.object
+	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
 };
 
 Sidebar.defaultProps = {

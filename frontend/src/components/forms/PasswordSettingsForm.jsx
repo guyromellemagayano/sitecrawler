@@ -17,8 +17,6 @@ import { usePostMethod } from "@hooks/useHttpMethod";
 const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSuccessMsg }) => {
 	const [disableForm, setDisableForm] = React.useState(true);
 
-	const password1Ref = React.useRef(null);
-
 	return (
 		<Formik
 			initialValues={{
@@ -101,7 +99,7 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 							) : (
 								<>
 									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
 								</>
 							)}
 
@@ -140,7 +138,7 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 							) : (
 								<>
 									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
 								</>
 							)}
 
