@@ -2,22 +2,26 @@
 import * as React from "react";
 
 // NextJS
+import dynamic from "next/dynamic";
 import Link from "next/link";
 
 // External
 import "twin.macro";
 import { NextSeo } from "next-seo";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import { withResizeDetector } from "react-resize-detector";
-import PropTypes from "prop-types";
 
 // Enums
 import { BillingSettingsLabels } from "@enums/BillingSettingsLabels";
-import { ComponentReadyInterval, GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
+import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
 import { LoginLink, SitesLink } from "@enums/PageLinks";
 
 // Hooks
-import { useStripePromise, useDefaultPaymentMethod } from "@hooks/useStripePromise";
+import { useComponentVisible } from "@hooks/useComponentVisible";
+import {
+	useStripePromise,
+	useDefaultPaymentMethod,
+	usePaymentMethods
+} from "@hooks/useStripePromise";
 import useUser from "@hooks/useUser";
 
 // Components
@@ -26,38 +30,40 @@ import Breadcrumbs from "@components/breadcrumbs";
 import Footer from "@components/layouts/Footer";
 import Layout from "@components/layouts";
 import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
-import PaymentMethodSettings from "@components/settings/PaymentMethodSettings";
 import Sidebar from "@components/layouts/Sidebar";
 
-const Billing = ({ width }) => {
+// Dynamic
+const PaymentMethodSettings = dynamic(() => import("@components/settings/PaymentMethodSettings"));
+
+const Billing = () => {
 	const [componentReady, setComponentReady] = React.useState(false);
+
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 	const { user } = useUser({
 		redirectIfFound: false,
 		redirectTo: LoginLink
 	});
 	const { stripePromise } = useStripePromise({});
-	const { defaultPaymentMethod } = useDefaultPaymentMethod({});
+	const { defaultPaymentMethod, mutateDefaultPaymentMethod } = useDefaultPaymentMethod({});
+	const { paymentMethods, mutatePaymentMethods } = usePaymentMethods({});
 
 	React.useEffect(() => {
-		user && stripePromise && defaultPaymentMethod
-			? setTimeout(() => {
-					setComponentReady(true);
-			  }, ComponentReadyInterval)
+		user && stripePromise && defaultPaymentMethod && paymentMethods
+			? setComponentReady(true)
 			: setComponentReady(false);
 
-		return { user, stripePromise, defaultPaymentMethod };
-	}, [user, stripePromise, defaultPaymentMethod]);
+		return { user, stripePromise, defaultPaymentMethod, paymentMethods };
+	}, [user, stripePromise, defaultPaymentMethod, paymentMethods]);
 
 	return (
-		<Layout user={componentReady ? user : null}>
-			<NextSeo title={componentReady ? BillingSettingsLabels[0].label : null} />
+		<Layout user={user}>
+			<NextSeo title={BillingSettingsLabels[0].label} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar
 					ref={ref}
-					width={width}
-					user={componentReady ? user : null}
+					user={user}
 					openSidebar={isComponentVisible}
 					setOpenSidebar={setIsComponentVisible}
 				/>
@@ -71,6 +77,7 @@ const Billing = ({ width }) => {
 							/>
 						</div>
 
+						{/* TODO: Turn this into a single component */}
 						<Link href={SitesLink} passHref>
 							<a tw="p-1 block w-full cursor-pointer lg:hidden">
 								<AppLogo
@@ -103,11 +110,14 @@ const Billing = ({ width }) => {
 										</div>
 
 										<div tw="space-y-12 divide-y divide-gray-200">
-											{/* <PaymentMethodSettings
+											<PaymentMethodSettings
 												componentReady={componentReady}
-												stripePublishableKey={stripePromise?.publishable_key}
-												user={componentReady ? user : null}
-											/> */}
+												defaultPaymentMethod={defaultPaymentMethod}
+												mutateDefaultPaymentMethod={mutateDefaultPaymentMethod}
+												mutatePaymentMethods={mutatePaymentMethods}
+												paymentMethods={paymentMethods}
+												stripePromise={stripePromise}
+											/>
 										</div>
 									</div>
 								</div>
@@ -124,12 +134,4 @@ const Billing = ({ width }) => {
 	);
 };
 
-Billing.propTypes = {
-	width: PropTypes.number
-};
-
-Billing.defaultProps = {
-	width: null
-};
-
-export default withResizeDetector(Billing);
+export default Billing;

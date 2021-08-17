@@ -52,12 +52,12 @@ export const ProfileSidebarMenu = [
 				label: "Subscription Plans",
 				slug: "subscription-plans",
 				url: "/settings/subscription-plans"
+			},
+			{
+				label: "Billing Settings",
+				slug: "billing-settings",
+				url: "/settings/billing"
 			}
-			// {
-			// 	label: "Billing Settings",
-			// 	slug: "billing-settings",
-			// 	url: "/settings/billing"
-			// }
 		]
 	},
 	{
@@ -112,12 +112,12 @@ export const SettingsSidebarMenu = [
 				title: "Subscription Plans",
 				slug: "subscription-plans",
 				url: "/settings/subscription-plans"
+			},
+			{
+				title: "Billing Settings",
+				slug: "billing-settings",
+				url: "/settings/billing"
 			}
-			// {
-			// 	title: "Billing Settings",
-			// 	slug: "billing-settings",
-			// 	url: "/settings/billing"
-			// }
 		]
 	},
 	{
