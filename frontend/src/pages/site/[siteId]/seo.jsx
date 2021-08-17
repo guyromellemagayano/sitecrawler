@@ -438,7 +438,7 @@ const Seo = ({ result }) => {
 										pathName={pagePath}
 									/>
 
-									{(
+									{componentReady ? (
 										<div tw="w-full p-4 border-t border-gray-200">
 											<Footer />
 										</div>
