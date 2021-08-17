@@ -22,8 +22,6 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 	const [lastname, setLastname] = React.useState("");
 	const [username, setUsername] = React.useState("");
 
-	const firstnameRef = React.useRef(null);
-
 	React.useEffect(() => {
 		user
 			? (() => {
@@ -59,7 +57,8 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 			initialValues={{
 				username: username,
 				firstname: firstname,
-				lastname: lastname
+				lastname: lastname,
+				email: email
 			}}
 			validationSchema={Yup.object().shape({
 				username: Yup.string()
@@ -80,11 +79,12 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 					username: values.username,
 					first_name: values.firstname,
 					last_name: values.lastname,
+					email: values.email,
 					settings: user?.settings,
 					large_page_size_threshold: user?.large_page_size_threshold
 				};
 
-				const { response, error } = await usePatchMethod(UserApiEndpoint, body);
+				const response = await usePatchMethod(UserApiEndpoint, body);
 
 				setErrorMsg([]);
 				setSuccessMsg([]);
@@ -105,9 +105,7 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 
 							response?.data
 								? setErrorMsg((errorMsg) => [...errorMsg, response?.data?.username])
-								: setErrorMsg((errorMsg) => [...errorMsg, PasswordSettingsLabels[15].label]);
-
-							return error;
+								: setErrorMsg((errorMsg) => [...errorMsg, PersonalSettingsLabels[15].label]);
 					  })();
 			}}
 		>
@@ -143,7 +141,7 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 							) : (
 								<>
 									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
 								</>
 							)}
 
@@ -182,7 +180,7 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 							) : (
 								<>
 									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
 								</>
 							)}
 
@@ -221,7 +219,7 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 							) : (
 								<>
 									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
 								</>
 							)}
 
@@ -242,7 +240,7 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 										<input
 											id="email"
 											type="email"
-											value={email}
+											value={values.email}
 											disabled={true}
 											tw="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm border-gray-300 opacity-50 bg-gray-300 cursor-not-allowed"
 											aria-describedby="email"
@@ -253,7 +251,7 @@ const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 							) : (
 								<>
 									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={435.17} height={38} tw="mt-1 relative flex " />
+									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
 								</>
 							)}
 						</div>
