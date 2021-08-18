@@ -41,6 +41,6 @@ def scan_cache_create_or_update_site(sender, instance, created, **kwargs):
     ScanCache.objects.filter(scan__site_id=instance.id).delete()
 
 
-@receiver(post_save, sender="crawl.UserProfile")
-def scan_cache_create_or_update_user_profile(sender, instance, created, **kwargs):
-    ScanCache.objects.filter(scan__site__user_id=instance.user_id).delete()
+@receiver(post_save, sender="crawl.Config")
+def scan_cache_create_or_update_config(sender, instance, created, **kwargs):
+    ScanCache.objects.filter(scan__site__team_id=instance.team_id).delete()

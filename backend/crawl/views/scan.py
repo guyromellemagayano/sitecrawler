@@ -54,7 +54,7 @@ class ScanViewSet(
         return Response()
 
     def _send_initial_email(self, scan_id):
-        scan = Scan.objects.select_related("site", "site__user__userprofile").with_details().get(pk=scan_id)
+        scan = Scan.objects.select_related("site__user").with_details().get(pk=scan_id)
 
         site = models.Site.objects.get_current()
         context = {"user": scan.site.user, "scan": scan, "site": site}

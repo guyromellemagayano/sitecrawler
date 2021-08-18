@@ -4,7 +4,7 @@ from .link_image import LinkImage
 from .scan_cache import ScanCache
 from .scan import Scan
 from .site import Site
-from .user_profile import UserProfile
+from .config import Config
 from .group_settings import GroupSettings
 from .page_data import PageData
 from .tls import Tls

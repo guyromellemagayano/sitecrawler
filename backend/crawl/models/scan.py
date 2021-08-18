@@ -31,12 +31,12 @@ class ScanQuerySet(QuerySet):
         # this method is optimized to do single query when cache is available
         if not recursive:
             super(ScanQuerySet, self.select_for_update(of=("self",))).get(*args, **kwargs)
-            return self.select_related("site__user__userprofile").get(*args, recursive=True, **kwargs)
+            return self.select_related("site__team__crawl_config").get(*args, recursive=True, **kwargs)
 
-        # use threshold from site if not null, otherwise from user
+        # use threshold from site if not null, otherwise from team's crawl config
         large_page_size_threshold = scan.site.large_page_size_threshold
         if not large_page_size_threshold:
-            large_page_size_threshold = scan.site.user.userprofile.large_page_size_threshold
+            large_page_size_threshold = scan.site.team.crawl_config.large_page_size_threshold
 
         scan_with_details = Scan.objects.all()._details(large_page_size_threshold).get(*args, **kwargs)
         cache = ScanCache.objects.create_from_scan(scan_with_details)

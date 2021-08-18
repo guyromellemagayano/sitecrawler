@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models.functions import Now
 
-from .models import Link, Scan, Site, UserProfile, GroupSettings, PageData, Tls, LinkImage, ScanArchive, ScanCache
+from .models import Link, Scan, Site, Config, GroupSettings, PageData, Tls, LinkImage, ScanArchive, ScanCache
 
 
 class PageChildInline(admin.TabularInline):
@@ -176,8 +176,8 @@ class SiteAdmin(admin.ModelAdmin):
     inlines = [ScanInline]
 
 
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
+@admin.register(Config)
+class ConfigAdmin(admin.ModelAdmin):
     list_display = ("team",)
     search_fields = ("user__username", "user__email")
     readonly_fields = ("team",)
