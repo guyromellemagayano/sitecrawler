@@ -20,4 +20,5 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(StripeCustomer)
 class StripeCustomerAdmin(admin.ModelAdmin):
+    readonly_fields = ("team",)
     list_display = ("team",)

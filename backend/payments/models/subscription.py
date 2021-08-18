@@ -21,7 +21,7 @@ class Subscription(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
-    team = models.ForeignKey("teams.Team", on_delete=models.CASCADE)
+    team = models.OneToOneField("teams.Team", on_delete=models.CASCADE)
 
     stripe_id = models.CharField(max_length=63)
     subscription_type = models.ForeignKey("SubscriptionType", on_delete=models.PROTECT, null=False)

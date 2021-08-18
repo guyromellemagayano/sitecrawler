@@ -57,7 +57,7 @@ class WebhookView(APIView):
                 customer = StripeCustomer.objects.get(customer_id=customer_id)
             except StripeCustomer.DoesNotExist:
                 return Response()
-            self._cancel_subscription(customer.user)
+            self._cancel_subscription(customer.team.subscription.user)
         elif event["type"] == "customer.subscription.updated":
             stripe_subscription_id = event.get("data", {}).get("object", {}).get("id")
             if not stripe_subscription_id:
