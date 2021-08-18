@@ -4,71 +4,73 @@ from rest_framework.response import Response
 from rest_framework import status
 import stripe
 
-from ..models import Subscription, UserSubscription
-from ..serializers import UserSubscriptionSerializer
+from ..models import SubscriptionType, Subscription
+from ..serializers import SubscriptionSerializer
 from ..services import customer
 from teams.service import get_current_team
 
 
 class SubscriptionCurrentView(APIView):
     def get(self, request):
-        if not hasattr(request.user, "user_subscription"):
+        print(request.user)
+        print(request.user.__dict__)
+        if not hasattr(request.user, "subscription"):
             return Response(self._none())
-        user_subscription = request.user.user_subscription
-        serializer = UserSubscriptionSerializer(user_subscription)
+        subscription = request.user.subscription
+        serializer = SubscriptionSerializer(subscription)
         return Response(serializer.data)
 
     def _none(self):
-        return UserSubscriptionSerializer(None).data
+        return SubscriptionSerializer(None).data
 
     def delete(self, request):
-        if not hasattr(request.user, "user_subscription"):
+        if not hasattr(request.user, "subscription"):
             return Response(self._none())
 
-        user_subscription = request.user.user_subscription
+        subscription = request.user.subscription
 
         stripe_subscription = stripe.Subscription.modify(
-            user_subscription.stripe_id,
+            subscription.stripe_id,
             cancel_at_period_end=True,
         )
 
-        user_subscription.set_cancel_at_timestamp(stripe_subscription.cancel_at)
-        user_subscription.save()
+        subscription.set_cancel_at_timestamp(stripe_subscription.cancel_at)
+        subscription.save()
 
-        serializer = UserSubscriptionSerializer(user_subscription)
+        serializer = SubscriptionSerializer(subscription)
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = UserSubscriptionSerializer(data=request.data)
+        serializer = SubscriptionSerializer(data=request.data)
         if serializer.is_valid():
-            subscription = Subscription.objects.get(pk=serializer.data["id"])
-            if subscription.group_id == settings.DEFAULT_USER_GROUP:
+            subscription_type = SubscriptionType.objects.get(pk=serializer.data["id"])
+            if subscription_type.group_id == settings.DEFAULT_USER_GROUP:
                 return self.delete(request)
 
-            if not hasattr(request.user, "user_subscription"):
+            if not hasattr(request.user, "subscription"):
                 stripe_subscription = stripe.Subscription.create(
-                    customer=customer.get_or_create_id(request), items=[{"price": subscription.price_id}]
+                    customer=customer.get_or_create_id(request), items=[{"price": subscription_type.price_id}]
                 )
-                user_subscription = UserSubscription.objects.create(
+                subscription = Subscription.objects.create(
                     user=request.user,
                     team=get_current_team(request),
-                    subscription_id=subscription.id,
+                    subscription_type_id=subscription_type.id,
                     stripe_id=stripe_subscription.id,
                 )
             else:
-                stripe_subscription = stripe.Subscription.retrieve(request.user.user_subscription.stripe_id)
+                stripe_subscription = stripe.Subscription.retrieve(request.user.subscription.stripe_id)
                 stripe.Subscription.modify(
-                    request.user.user_subscription.stripe_id,
+                    request.user.subscription.stripe_id,
                     cancel_at_period_end=False,
                     proration_behavior="always_invoice",
-                    items=[{"id": stripe_subscription["items"]["data"][0].id, "price": subscription.price_id}],
+                    items=[{"id": stripe_subscription["items"]["data"][0].id, "price": subscription_type.price_id}],
                 )
-                user_subscription = request.user.user_subscription
-                user_subscription.subscription_id = subscription.id
-                user_subscription.cancel_at = None
-                user_subscription.save()
+                subscription = request.user.subscription
+                subscription.subscription_type_id = subscription_type.id
+                subscription.cancel_at = None
+                subscription.save()
 
-            serializer = UserSubscriptionSerializer(user_subscription)
+            serializer = SubscriptionSerializer(subscription)
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

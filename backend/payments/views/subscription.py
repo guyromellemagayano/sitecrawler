@@ -1,14 +1,13 @@
 from rest_framework import viewsets, mixins
-from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.response import Response
 
-from ..models import Subscription
-from ..serializers import SubscriptionSerializer
+from ..models import SubscriptionType
+from ..serializers import SubscriptionTypeSerializer
 
 
 class SubscriptionViewSet(
-    mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
 ):
-    serializer_class = SubscriptionSerializer
-    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionTypeSerializer
+    queryset = SubscriptionType.objects.all()

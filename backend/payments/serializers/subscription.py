@@ -1,20 +1,14 @@
 from rest_framework import serializers
-import stripe
 
-from userext.serializers import GroupSerializer
+from crawl.common import ChoiceField
 from ..models import Subscription
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=True)
-    price = serializers.SerializerMethodField(read_only=True)
-    group = GroupSerializer(read_only=True)
+    id = serializers.IntegerField(required=True, source="subscription_type_id")
+    status = ChoiceField(Subscription.STATUS_CHOICES, read_only=True)
 
     class Meta:
         model = Subscription
-        fields = ["id", "price", "group", "features"]
-        read_only_fields = fields
-
-    def get_price(self, subscription):
-        if hasattr(subscription, "price_id"):
-            return stripe.Price.retrieve(subscription.price_id)
+        read_only_fields = ["status", "cancel_at"]
+        fields = read_only_fields + ["id"]
