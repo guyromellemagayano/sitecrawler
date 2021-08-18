@@ -18,3 +18,11 @@ class UserProfile(models.Model):
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(team=instance)
+
+
+# TODO: remove once we remove user from relations
+@receiver(post_save, sender="teams.Membership")
+def fix_for_unknown_user(sender, instance, created, **kwargs):
+    up = UserProfile.objects.get(team=instance.team)
+    up.user = instance.user
+    up.save()
