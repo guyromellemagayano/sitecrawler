@@ -17,9 +17,15 @@ class UserSubscription(models.Model):
         (STATUS_PAID, "PAID"),
     ]
 
+    created_at = models.DateTimeField(auto_now_add=True, null=False)
+    updated_at = models.DateTimeField(auto_now=True, null=False)
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False, related_name="user_subscription"
     )
+    # TODO: remove null after data migration
+    team = models.ForeignKey("teams.Team", on_delete=models.CASCADE, null=True)
+
     stripe_id = models.CharField(max_length=63)
     subscription = models.ForeignKey("Subscription", on_delete=models.PROTECT, null=False)
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, null=False, default=STATUS_WAITING_PAYMENT)

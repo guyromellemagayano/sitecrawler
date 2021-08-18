@@ -14,9 +14,10 @@ class SubscriptionAdmin(admin.ModelAdmin, DynamicArrayMixin):
 
 @admin.register(UserSubscription)
 class UserSubscriptionAdmin(admin.ModelAdmin):
-    list_display = ("user",)
+    readonly_fields = ("team", "created_at", "updated_at")
+    list_display = ("team", "subscription", "status")
 
 
 @admin.register(StripeCustomer)
 class StripeCustomerAdmin(admin.ModelAdmin):
-    list_display = ("user",)
+    list_display = ("team",)

@@ -7,6 +7,7 @@ import stripe
 from ..models import Subscription, UserSubscription
 from ..serializers import UserSubscriptionSerializer
 from ..services import customer
+from teams.service import get_current_team
 
 
 class SubscriptionCurrentView(APIView):
@@ -49,7 +50,10 @@ class SubscriptionCurrentView(APIView):
                     customer=customer.get_or_create_id(request), items=[{"price": subscription.price_id}]
                 )
                 user_subscription = UserSubscription.objects.create(
-                    user=request.user, subscription_id=subscription.id, stripe_id=stripe_subscription.id
+                    user=request.user,
+                    team=get_current_team(request),
+                    subscription_id=subscription.id,
+                    stripe_id=stripe_subscription.id,
                 )
             else:
                 stripe_subscription = stripe.Subscription.retrieve(request.user.user_subscription.stripe_id)
