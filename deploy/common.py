@@ -142,4 +142,4 @@ def docker_compose(i, c, name):
 
     c.run(f"cd {name} && docker-compose run backend ./manage.py migrate --database superuser")
 
-    c.run("docker system prune -f")
+    c.run("docker system prune -af")
