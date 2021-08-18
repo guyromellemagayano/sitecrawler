@@ -178,9 +178,9 @@ class SiteAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ("user",)
+    list_display = ("team",)
     search_fields = ("user__username", "user__email")
-    readonly_fields = ("user",)
+    readonly_fields = ("team",)
 
 
 @admin.register(GroupSettings)

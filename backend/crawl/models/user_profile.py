@@ -6,12 +6,15 @@ from django.dispatch import receiver
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    # TODO: remove null
+    team = models.OneToOneField("teams.Team", on_delete=models.CASCADE, related_name="crawl_config", null=True)
+
     settings = JSONField(default=dict)
     large_page_size_threshold = models.PositiveIntegerField(default=1024 * 1024)
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender="teams.Team")
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
+        UserProfile.objects.create(team=instance)

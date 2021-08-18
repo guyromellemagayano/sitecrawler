@@ -33,7 +33,7 @@ def get_or_create_id(request):
     customer = stripe.Customer.create(
         email=request.user.email,
         name=str(team),
-        description=f"Stripe customer for team: {team}, user: {request.user}",
+        description=f"team: {team}, user: {request.user}",
     )
     StripeCustomer.objects.create(team=team, customer_id=customer["id"])
 
