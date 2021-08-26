@@ -5,14 +5,17 @@ from django.db import migrations
 
 def forwards_func(apps, schema_editor):
     Plan = apps.get_model("teams", "Plan")
+    Plan = apps.get_model("crawl", "GroupSettings")
     for plan in Plan.objects.all():
-        group_settings = plan.group.groupsettings
-        print(plan, group_settings)
-        plan.max_sites = group_settings.max_sites
-        plan.recrawl_schedule = group_settings.recrawl_schedule
-        plan.recrawl_frequency = group_settings.recrawl_frequency
-        plan.uptime_schedule = group_settings.uptime_schedule
-        plan.save()
+        try:
+            group_settings = plan.group.groupsettings
+            plan.max_sites = group_settings.max_sites
+            plan.recrawl_schedule = group_settings.recrawl_schedule
+            plan.recrawl_frequency = group_settings.recrawl_frequency
+            plan.uptime_schedule = group_settings.uptime_schedule
+            plan.save()
+        except GroupSettings.DoesNotExist:
+            pass
 
 
 class Migration(migrations.Migration):
