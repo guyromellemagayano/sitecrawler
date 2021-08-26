@@ -23,6 +23,7 @@ class Site(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
+    # TODO: remove user
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
     team = models.ForeignKey("teams.Team", on_delete=models.CASCADE)
 

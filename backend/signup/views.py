@@ -75,6 +75,7 @@ class SignupViewSet(
 
         # create site
         Site.objects.create(
+            team=user.membership_set.first().team,
             user=user,
             name=signup.url,
             url=signup.url,
