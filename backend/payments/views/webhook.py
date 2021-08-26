@@ -5,6 +5,7 @@ from rest_framework.response import Response
 import stripe
 
 from ..models import Subscription, StripeCustomer
+from teams.models import Plan
 
 
 class WebhookView(APIView):
@@ -83,7 +84,7 @@ class WebhookView(APIView):
         subscription.user.groups.clear()
         subscription.user.groups.add(subscription.subscription_type.group)
 
-        subscription.team.plan_id = subscription.plan_id
+        subscription.team.plan_id = subscription.subscription_type.plan_id
         subscription.team.save()
 
     def _cancel_subscription(self, subscription):
