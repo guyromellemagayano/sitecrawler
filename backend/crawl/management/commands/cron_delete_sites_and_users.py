@@ -1,24 +1,25 @@
-from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
 from crawl.models import Site, Scan
+from teams.models import Team
 
 
+# This is named delete_sites_and_users for historic reasons, it now deletes sites and teams
 class Command(BaseCommand):
     help = "Deletes old scans, keep first and last 3, archive stats"
 
     def handle(self, *args, **options):
-        print("Starting delete sites and users job", flush=True)
+        print("Starting delete sites and teams job", flush=True)
 
         sites_to_delete = Site.objects.filter(deleted_at__isnull=False)
-        users_to_delete = User.objects.filter(is_active=False)
+        teams_to_delete = Team.objects.filter(deleted_at__isnull=False)
 
         scan_ids_to_be_deleted = []
         scan_ids_to_be_deleted.extend(Scan.objects.filter(site__in=sites_to_delete).values_list("id", flat=True))
-        scan_ids_to_be_deleted.extend(Scan.objects.filter(site__user__in=users_to_delete).values_list("id", flat=True))
+        scan_ids_to_be_deleted.extend(Scan.objects.filter(site__team__in=teams_to_delete).values_list("id", flat=True))
 
         print(
-            f"Deleting {sites_to_delete.count()} sites and {users_to_delete.count()} users ({len(scan_ids_to_be_deleted)} scans)",
+            f"Deleting {sites_to_delete.count()} sites and {teams_to_delete.count()} teams ({len(scan_ids_to_be_deleted)} scans)",
             flush=True,
         )
 
@@ -29,6 +30,13 @@ class Command(BaseCommand):
 
         # regular deletion for everything else
         sites_to_delete.delete()
-        users_to_delete.delete()
 
-        print("Delete sites and users job done", flush=True)
+        # delete users in team membership if they're not part of any other team
+        for team in teams_to_delete:
+            for team_membership in team.membership_set.select_related("user").all():
+                if team_membership.user.membership_set.count() == 1:
+                    team_membership.user.delete()
+
+        teams_to_delete.delete()
+
+        print("Delete sites and teams job done", flush=True)
