@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Team, MembershipType, Membership
+from .models import Team, MembershipType, Membership, Plan
 
 
 class MembershipInline(admin.TabularInline):
@@ -21,6 +21,17 @@ class TeamAdmin(admin.ModelAdmin):
 
 @admin.register(MembershipType)
 class MembershipTypeAdmin(admin.ModelAdmin):
+    readonly_fields = ("id", "group")
+
+    def has_delete_permission(self, *args, **kwargs):
+        return False
+
+    def has_add_permission(self, *args, **kwargs):
+        return False
+
+
+@admin.register(Plan)
+class PlanAdmin(admin.ModelAdmin):
     readonly_fields = ("id", "group")
 
     def has_delete_permission(self, *args, **kwargs):

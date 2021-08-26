@@ -12,8 +12,6 @@ from teams.service import get_current_team
 
 class SubscriptionCurrentView(APIView):
     def get(self, request):
-        print(request.user)
-        print(request.user.__dict__)
         if not hasattr(request.user, "subscription"):
             return Response(self._none())
         subscription = request.user.subscription

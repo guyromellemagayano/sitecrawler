@@ -8,7 +8,7 @@ from .models import StripeCustomer, SubscriptionType, Subscription
 class SubscriptionTypeAdmin(admin.ModelAdmin, DynamicArrayMixin):
     list_display = (
         "name",
-        "group",
+        "plan",
     )
 
 

@@ -34,10 +34,10 @@ class WebhookView(APIView):
             if not customer:
                 return Response()
             try:
-                subscription = Subscription.objects.get(user__stripe_customer__customer_id=customer)
+                subscription = Subscription.objects.get(team__stripe_customer__customer_id=customer)
             except Subscription.DoesNotExist:
                 return Response()
-            self._cancel_subscription(subscription.user)
+            self._cancel_subscription(subscription)
             subscription.status = Subscription.STATUS_PAYMENT_FAILED
             subscription.save()
         elif event["type"] == "customer.subscription.deleted":
@@ -45,7 +45,7 @@ class WebhookView(APIView):
             if stripe_subscription_id:
                 try:
                     subscription = Subscription.objects.get(stripe_id=stripe_subscription_id)
-                    self._cancel_subscription(subscription.user)
+                    self._cancel_subscription(subscription)
                     subscription.delete()
                     return Response()
                 except Subscription.DoesNotExist:
@@ -57,7 +57,7 @@ class WebhookView(APIView):
                 customer = StripeCustomer.objects.get(customer_id=customer_id)
             except StripeCustomer.DoesNotExist:
                 return Response()
-            self._cancel_subscription(customer.team.subscription.user)
+            self._cancel_subscription(customer.team.subscription)
         elif event["type"] == "customer.subscription.updated":
             stripe_subscription_id = event.get("data", {}).get("object", {}).get("id")
             if not stripe_subscription_id:
@@ -70,7 +70,7 @@ class WebhookView(APIView):
                 subscription.set_cancel_at_timestamp(event.get("data", {}).get("object", {}).get("cancel_at"))
                 subscription.save()
             elif event.get("data", {}).get("object", {}).get("canceled_at"):
-                self._cancel_subscription(subscription.user)
+                self._cancel_subscription(subscription)
                 subscription.delete()
             elif subscription.status == Subscription.STATUS_PAID:
                 subscription.cancel_at = None
@@ -83,6 +83,12 @@ class WebhookView(APIView):
         subscription.user.groups.clear()
         subscription.user.groups.add(subscription.subscription_type.group)
 
-    def _cancel_subscription(self, user):
-        user.groups.clear()
-        user.groups.add(Group.objects.get(pk=settings.DEFAULT_USER_GROUP))
+        subscription.team.plan_id = subscription.plan_id
+        subscription.team.save()
+
+    def _cancel_subscription(self, subscription):
+        subscription.user.groups.clear()
+        subscription.user.groups.add(Group.objects.get(pk=settings.DEFAULT_USER_GROUP))
+
+        subscription.team.plan_id = Plan.BASIC
+        subscription.team.save()

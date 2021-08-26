@@ -20,6 +20,7 @@ class Subscription(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
+    # TODO: remove user
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
     team = models.OneToOneField("teams.Team", on_delete=models.CASCADE)
 
