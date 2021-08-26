@@ -1,17 +1,20 @@
-from django.contrib.auth.models import Permission, Group
+from django.contrib.auth.models import Permission
 from rest_framework import serializers
 from rest_auth.serializers import UserDetailsSerializer
 
+from teams.models import Plan
 from teams.service import get_current_team
 
 
-class GroupSerializer(serializers.ModelSerializer):
-    max_sites = serializers.IntegerField(source="groupsettings.max_sites", read_only=True)
+# TODO: move this to team endpoint in frontend
+class PlanSerializer(serializers.ModelSerializer):
+    max_sites = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(source="get_id_display", read_only=True)
 
     class Meta:
-        model = Group
+        model = Plan
         fields = ["id", "name", "max_sites"]
-        read_only_fields = ["id", "name", "max_sites"]
+        read_only_fields = fields
 
 
 class UserSerializer(UserDetailsSerializer):
@@ -19,7 +22,7 @@ class UserSerializer(UserDetailsSerializer):
 
     settings = serializers.JSONField(source="membership_set.first.team.crawl_config.settings")
     permissions = serializers.SerializerMethodField()
-    group = GroupSerializer(source="groups.first", read_only=True)
+    group = PlanSerializer(source="membership_set.first.team.plan", read_only=True)
     large_page_size_threshold = serializers.IntegerField(
         source="membership_set.first.team.crawl_config.large_page_size_threshold"
     )

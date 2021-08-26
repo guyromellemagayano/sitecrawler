@@ -16,27 +16,26 @@ func ScheduleWorker(logger *zap.SugaredLogger, db *database.Database, scanServic
 	loop := func() error {
 		defer common.PanicLogger(logger)
 
-		var groupSettings []database.CrawlGroupsetting
-		err := db.All(&groupSettings)
+		var plans []database.TeamPlan
+		err := db.All(&plans)
 		if err != nil {
-			return errors.Wrap(err, "could not get all groups")
+			return errors.Wrap(err, "could not get all plans")
 		}
-		for _, groupSetting := range groupSettings {
-			schedule, err := cron.ParseStandard(groupSetting.RecrawlSchedule)
+		for _, plan := range plans {
+			schedule, err := cron.ParseStandard(plan.RecrawlSchedule)
 			if err != nil {
-				return errors.Wrapf(err, "could not parse schedule for group %v", groupSetting.GroupID)
+				return errors.Wrapf(err, "could not parse schedule for plan %v", plan.ID)
 			}
 			var sites []database.CrawlSite
 			err = db.All(&sites,
-				database.Join("JOIN auth_user AS u ON u.id = t.user_id"),
-				database.Join("JOIN auth_user_groups as ug ON ug.user_id = u.id"),
-				database.Where("ug.group_id = ?", groupSetting.GroupID),
+				database.Join("JOIN teams_team AS team ON team.id = t.team_id"),
+				database.Where("team.plan_id = ?", plan.ID),
 				database.Where("t.verified = true"),
 				database.Where("t.deleted_at IS NULL"),
 			)
-			logger.Infof("Got %v sites for group id %v", len(sites), groupSetting.GroupID)
+			logger.Infof("Got %v sites for plan id %v", len(sites), plan.ID)
 			if err != nil {
-				return errors.Wrapf(err, "could not get sites for group %v", groupSetting.GroupID)
+				return errors.Wrapf(err, "could not get sites for plan %v", plan.ID)
 			}
 			for _, site := range sites {
 				log := logger.With("site_id", site.ID)
@@ -60,7 +59,7 @@ func ScheduleWorker(logger *zap.SugaredLogger, db *database.Database, scanServic
 					}
 				}
 			}
-			logger.Infof("Done for group id %v", groupSetting.GroupID)
+			logger.Infof("Done for plan id %v", plan.ID)
 		}
 		return nil
 	}

@@ -14,8 +14,8 @@ type ScheduleService struct {
 	Logger         *zap.SugaredLogger
 	BackendService *common.BackendService
 
-	cron   *cron.Cron
-	groups map[int]*group
+	cron  *cron.Cron
+	plans map[int]*planEntry
 }
 
 func NewScheduleService(log *zap.SugaredLogger, db *database.Database, backendService *common.BackendService) *ScheduleService {
@@ -24,38 +24,37 @@ func NewScheduleService(log *zap.SugaredLogger, db *database.Database, backendSe
 		Logger:         log,
 		BackendService: backendService,
 
-		cron:   cron.New(),
-		groups: make(map[int]*group),
+		cron:  cron.New(),
+		plans: make(map[int]*planEntry),
 	}
 	s.cron.Start()
 	return s
 }
 
-type group struct {
+type planEntry struct {
 	ID       int
-	GroupID  int
 	Schedule string
 	EntryID  cron.EntryID
 }
 
 func (s *ScheduleService) Reload() error {
-	var groupSettings []database.CrawlGroupsetting
-	err := s.Database.All(&groupSettings)
+	var plans []database.TeamPlan
+	err := s.Database.All(&plans)
 	if err != nil {
-		return errors.Wrap(err, "could not get all group settings")
+		return errors.Wrap(err, "could not get all plans")
 	}
 
-	for _, gs := range groupSettings {
-		g, ok := s.groups[gs.ID]
+	for _, plan := range plans {
+		existing, ok := s.plans[plan.ID]
 		if !ok {
-			if err := s.add(gs); err != nil {
+			if err := s.add(plan); err != nil {
 				return err
 			}
 			continue
 		}
-		if g.Schedule != gs.UptimeSchedule {
-			s.remove(g)
-			if err := s.add(gs); err != nil {
+		if existing.Schedule != plan.UptimeSchedule {
+			s.remove(existing)
+			if err := s.add(plan); err != nil {
 				return err
 			}
 		}
@@ -63,29 +62,28 @@ func (s *ScheduleService) Reload() error {
 	return nil
 }
 
-func (s *ScheduleService) add(gs database.CrawlGroupsetting) error {
-	s.Logger.Infof("Adding %v at %v", gs.GroupID, gs.UptimeSchedule)
+func (s *ScheduleService) add(plan database.TeamPlan) error {
+	s.Logger.Infof("Adding %v at %v", plan.ID, plan.UptimeSchedule)
 
-	g := &group{
-		ID:       gs.ID,
-		GroupID:  gs.GroupID,
-		Schedule: gs.UptimeSchedule,
+	pe := &planEntry{
+		ID:       plan.ID,
+		Schedule: plan.UptimeSchedule,
 	}
-	entryID, err := s.cron.AddJob(gs.UptimeSchedule, &UptimeJob{
+	entryID, err := s.cron.AddJob(plan.UptimeSchedule, &UptimeJob{
 		Database:       s.Database,
 		Logger:         s.Logger,
 		BackendService: s.BackendService,
-		Group:          g,
+		Plan:           pe,
 	})
 	if err != nil {
 		return err
 	}
-	g.EntryID = entryID
-	s.groups[gs.ID] = g
+	pe.EntryID = entryID
+	s.plans[plan.ID] = pe
 	return nil
 }
 
-func (s *ScheduleService) remove(g *group) {
-	delete(s.groups, g.ID)
-	s.cron.Remove(g.EntryID)
+func (s *ScheduleService) remove(p *planEntry) {
+	delete(s.plans, p.ID)
+	s.cron.Remove(p.EntryID)
 }

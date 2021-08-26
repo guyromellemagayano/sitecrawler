@@ -22,41 +22,40 @@ type UptimeJob struct {
 	Logger         *zap.SugaredLogger
 	BackendService *common.BackendService
 
-	Group *group
+	Plan *planEntry
 }
 
 func (j *UptimeJob) Run() {
 	if err := j.run(); err != nil {
-		j.Logger.Errorf("Uptime job failed for group id %v: %v", j.Group.GroupID, err)
+		j.Logger.Errorf("Uptime job failed for plan id %v: %v", j.Plan.ID, err)
 	}
 }
 
 func (j *UptimeJob) run() error {
-	j.Logger.Infof("Running job for group id %v", j.Group.GroupID)
+	j.Logger.Infof("Running job for plan id %v", j.Plan.ID)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*5)
 	defer cancel()
 
 	var sites []*database.CrawlSite
 	err := j.Database.All(&sites,
-		database.Join("JOIN auth_user AS u ON u.id = t.user_id"),
-		database.Join("JOIN auth_user_groups as ug ON ug.user_id = u.id"),
-		database.Where("ug.group_id = ?", j.Group.GroupID),
+		database.Join("JOIN teams_team AS team ON team.id = t.team_id"),
+		database.Where("team.plan_id = ?", j.Plan.ID),
 		database.Where("t.verified = true"),
 		database.Where("t.deleted_at IS NULL"),
 	)
 	if err != nil {
-		return errors.Wrapf(err, "could not get sites for group %v", j.Group.GroupID)
+		return errors.Wrapf(err, "could not get sites for plan %v", j.Plan.ID)
 	}
 	if len(sites) == 0 {
-		j.Logger.Infof("No sites for group id %v, stopping", j.Group.GroupID)
+		j.Logger.Infof("No sites for plan id %v, stopping", j.Plan.ID)
 		return ctx.Err()
 	}
-	j.Logger.Infof("Got %v sites for group id %v", len(sites), j.Group.GroupID)
+	j.Logger.Infof("Got %v sites for plan id %v", len(sites), j.Plan.ID)
 
 	lastStats, err := j.loadLastStats(sites)
 	if err != nil {
-		return errors.Wrapf(err, "could not get last stats for group %v", j.Group.GroupID)
+		return errors.Wrapf(err, "could not get last stats for plan %v", j.Plan.ID)
 	}
 
 	// Since non-retry results are written to channel sync, we need buffered channel for all sites
@@ -88,17 +87,17 @@ func (j *UptimeJob) run() error {
 	}
 
 	if len(stats) == 0 {
-		j.Logger.Infof("No stats for group id %v, stopping", j.Group.GroupID)
+		j.Logger.Infof("No stats for plan id %v, stopping", j.Plan.ID)
 		return ctx.Err()
 	}
-	j.Logger.Infof("Inserting %v stats in db for group id %v", len(stats), j.Group.GroupID)
+	j.Logger.Infof("Inserting %v stats in db for plan id %v", len(stats), j.Plan.ID)
 
 	err = j.Database.MultiInsert(&stats)
 	if err != nil {
 		return errors.Wrap(err, "could not insert stats")
 	}
 
-	j.Logger.Infof("Sending %v emails for group id %v", len(statsToSendEmail), j.Group.GroupID)
+	j.Logger.Infof("Sending %v emails for plan id %v", len(statsToSendEmail), j.Plan.ID)
 
 	if len(statsToSendEmail) != 0 {
 		statIDs := make([]int, len(statsToSendEmail))
@@ -113,7 +112,7 @@ func (j *UptimeJob) run() error {
 		}
 	}
 
-	j.Logger.Infof("Job done for group id %v", j.Group.GroupID)
+	j.Logger.Infof("Job done for plan id %v", j.Plan.ID)
 
 	return ctx.Err()
 }
@@ -218,7 +217,7 @@ func (j *UptimeJob) loadLastStats(sites []*database.CrawlSite) (map[int]*databas
 		database.Order("created_at DESC"),
 	)
 	if err != nil {
-		return nil, errors.Wrapf(err, "could not get sites for group %v", j.Group.GroupID)
+		return nil, errors.Wrapf(err, "could not get sites for plan %v", j.Plan.ID)
 	}
 
 	result := make(map[int]*database.UptimeUptimestat, len(lastStats))

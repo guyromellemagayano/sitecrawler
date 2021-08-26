@@ -48,6 +48,11 @@ var Columns = struct {
 
 		User string
 	}
+	CrawlConfig struct {
+		ID, Settings, LargePageSizeThreshold, TeamID string
+
+		Team string
+	}
 	CrawlFifoentry struct {
 		ID, Url, Depth, ScanID string
 
@@ -109,17 +114,12 @@ var Columns = struct {
 		Scan string
 	}
 	CrawlSite struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt, TeamID string
 
-		User string
+		Team, User string
 	}
 	CrawlTl struct {
 		ID, NotBefore, NotAfter, CommonName, Organization, DnsNames, IssuerOrganization, IssuerCn, CipherSuite, Version, Errors string
-	}
-	CrawlUserprofile struct {
-		ID, Settings, UserID, LargePageSizeThreshold string
-
-		User string
 	}
 	DjangoAdminLog struct {
 		ID, ActionTime, ObjectID, ObjectRepr, ActionFlag, ChangeMessage, ContentTypeID, UserID string
@@ -142,19 +142,19 @@ var Columns = struct {
 		ID, Title string
 	}
 	PaymentStripecustomer struct {
-		ID, CustomerID, UserID string
+		ID, CustomerID, TeamID string
 
-		User string
+		Team string
 	}
 	PaymentSubscription struct {
-		ID, PriceID, GroupID, Features, Name string
+		ID, SubscriptionTypeID, UserID, StripeID, Status, CancelAt, CreatedAt, UpdatedAt, TeamID string
 
-		Group string
+		Team, SubscriptionType, User string
 	}
-	PaymentUsersubscription struct {
-		ID, SubscriptionID, UserID, StripeID, Status, CancelAt string
+	PaymentSubscriptiontype struct {
+		ID, PriceID, GroupID, Features, Name, PlanID string
 
-		Subscription, User string
+		Group, Plan string
 	}
 	SignupSignup struct {
 		ID, CreatedAt, FirstName, LastName, Username, Email, Url, Token string
@@ -176,6 +176,26 @@ var Columns = struct {
 		ID, Token, TokenSecret, ExpiresAt, AccountID, AppID string
 
 		Account, App string
+	}
+	TeamMembership struct {
+		ID, TeamID, TypeID, UserID, CreatedAt, UpdatedAt string
+
+		Team, Type, User string
+	}
+	TeamMembershiptype struct {
+		ID, GroupID string
+
+		Group string
+	}
+	TeamPlan struct {
+		ID, GroupID, MaxSites, RecrawlFrequency, RecrawlSchedule, UptimeSchedule string
+
+		Group string
+	}
+	TeamTeam struct {
+		ID, Name, CreatedAt, UpdatedAt, PlanID string
+
+		Plan string
 	}
 	UptimeUptimestat struct {
 		ID, CreatedAt, Status, HttpStatus, ResponseTime, Error, SiteID string
@@ -288,6 +308,18 @@ var Columns = struct {
 		UserID:  "user_id",
 
 		User: "User",
+	},
+	CrawlConfig: struct {
+		ID, Settings, LargePageSizeThreshold, TeamID string
+
+		Team string
+	}{
+		ID:                     "id",
+		Settings:               "settings",
+		LargePageSizeThreshold: "large_page_size_threshold",
+		TeamID:                 "team_id",
+
+		Team: "Team",
 	},
 	CrawlFifoentry: struct {
 		ID, Url, Depth, ScanID string
@@ -480,9 +512,9 @@ var Columns = struct {
 		Scan: "Scan",
 	},
 	CrawlSite: struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt, TeamID string
 
-		User string
+		Team, User string
 	}{
 		ID:                     "id",
 		CreatedAt:              "created_at",
@@ -495,7 +527,9 @@ var Columns = struct {
 		Name:                   "name",
 		LargePageSizeThreshold: "large_page_size_threshold",
 		DeletedAt:              "deleted_at",
+		TeamID:                 "team_id",
 
+		Team: "Team",
 		User: "User",
 	},
 	CrawlTl: struct {
@@ -512,18 +546,6 @@ var Columns = struct {
 		CipherSuite:        "cipher_suite",
 		Version:            "version",
 		Errors:             "errors",
-	},
-	CrawlUserprofile: struct {
-		ID, Settings, UserID, LargePageSizeThreshold string
-
-		User string
-	}{
-		ID:                     "id",
-		Settings:               "settings",
-		UserID:                 "user_id",
-		LargePageSizeThreshold: "large_page_size_threshold",
-
-		User: "User",
 	},
 	DjangoAdminLog: struct {
 		ID, ActionTime, ObjectID, ObjectRepr, ActionFlag, ChangeMessage, ContentTypeID, UserID string
@@ -578,43 +600,49 @@ var Columns = struct {
 		Title: "title",
 	},
 	PaymentStripecustomer: struct {
-		ID, CustomerID, UserID string
+		ID, CustomerID, TeamID string
 
-		User string
+		Team string
 	}{
 		ID:         "id",
 		CustomerID: "customer_id",
-		UserID:     "user_id",
+		TeamID:     "team_id",
 
-		User: "User",
+		Team: "Team",
 	},
 	PaymentSubscription: struct {
-		ID, PriceID, GroupID, Features, Name string
+		ID, SubscriptionTypeID, UserID, StripeID, Status, CancelAt, CreatedAt, UpdatedAt, TeamID string
 
-		Group string
+		Team, SubscriptionType, User string
+	}{
+		ID:                 "id",
+		SubscriptionTypeID: "subscription_type_id",
+		UserID:             "user_id",
+		StripeID:           "stripe_id",
+		Status:             "status",
+		CancelAt:           "cancel_at",
+		CreatedAt:          "created_at",
+		UpdatedAt:          "updated_at",
+		TeamID:             "team_id",
+
+		Team:             "Team",
+		SubscriptionType: "SubscriptionType",
+		User:             "User",
+	},
+	PaymentSubscriptiontype: struct {
+		ID, PriceID, GroupID, Features, Name, PlanID string
+
+		Group, Plan string
 	}{
 		ID:       "id",
 		PriceID:  "price_id",
 		GroupID:  "group_id",
 		Features: "features",
 		Name:     "name",
+		PlanID:   "plan_id",
 
 		Group: "Group",
-	},
-	PaymentUsersubscription: struct {
-		ID, SubscriptionID, UserID, StripeID, Status, CancelAt string
-
-		Subscription, User string
-	}{
-		ID:             "id",
-		SubscriptionID: "subscription_id",
-		UserID:         "user_id",
-		StripeID:       "stripe_id",
-		Status:         "status",
-		CancelAt:       "cancel_at",
-
-		Subscription: "Subscription",
-		User:         "User",
+		Plan:  "Plan",
 	},
 	SignupSignup: struct {
 		ID, CreatedAt, FirstName, LastName, Username, Email, Url, Token string
@@ -680,6 +708,59 @@ var Columns = struct {
 		Account: "Account",
 		App:     "App",
 	},
+	TeamMembership: struct {
+		ID, TeamID, TypeID, UserID, CreatedAt, UpdatedAt string
+
+		Team, Type, User string
+	}{
+		ID:        "id",
+		TeamID:    "team_id",
+		TypeID:    "type_id",
+		UserID:    "user_id",
+		CreatedAt: "created_at",
+		UpdatedAt: "updated_at",
+
+		Team: "Team",
+		Type: "Type",
+		User: "User",
+	},
+	TeamMembershiptype: struct {
+		ID, GroupID string
+
+		Group string
+	}{
+		ID:      "id",
+		GroupID: "group_id",
+
+		Group: "Group",
+	},
+	TeamPlan: struct {
+		ID, GroupID, MaxSites, RecrawlFrequency, RecrawlSchedule, UptimeSchedule string
+
+		Group string
+	}{
+		ID:               "id",
+		GroupID:          "group_id",
+		MaxSites:         "max_sites",
+		RecrawlFrequency: "recrawl_frequency",
+		RecrawlSchedule:  "recrawl_schedule",
+		UptimeSchedule:   "uptime_schedule",
+
+		Group: "Group",
+	},
+	TeamTeam: struct {
+		ID, Name, CreatedAt, UpdatedAt, PlanID string
+
+		Plan string
+	}{
+		ID:        "id",
+		Name:      "name",
+		CreatedAt: "created_at",
+		UpdatedAt: "updated_at",
+		PlanID:    "plan_id",
+
+		Plan: "Plan",
+	},
 	UptimeUptimestat: struct {
 		ID, CreatedAt, Status, HttpStatus, ResponseTime, Error, SiteID string
 
@@ -725,6 +806,9 @@ var Tables = struct {
 	AuthtokenToken struct {
 		Name, Alias string
 	}
+	CrawlConfig struct {
+		Name, Alias string
+	}
 	CrawlFifoentry struct {
 		Name, Alias string
 	}
@@ -767,9 +851,6 @@ var Tables = struct {
 	CrawlTl struct {
 		Name, Alias string
 	}
-	CrawlUserprofile struct {
-		Name, Alias string
-	}
 	DjangoAdminLog struct {
 		Name, Alias string
 	}
@@ -794,7 +875,7 @@ var Tables = struct {
 	PaymentSubscription struct {
 		Name, Alias string
 	}
-	PaymentUsersubscription struct {
+	PaymentSubscriptiontype struct {
 		Name, Alias string
 	}
 	SignupSignup struct {
@@ -810,6 +891,18 @@ var Tables = struct {
 		Name, Alias string
 	}
 	SocialaccountSocialtoken struct {
+		Name, Alias string
+	}
+	TeamMembership struct {
+		Name, Alias string
+	}
+	TeamMembershiptype struct {
+		Name, Alias string
+	}
+	TeamPlan struct {
+		Name, Alias string
+	}
+	TeamTeam struct {
 		Name, Alias string
 	}
 	UptimeUptimestat struct {
@@ -868,6 +961,12 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "authtoken_token",
+		Alias: "t",
+	},
+	CrawlConfig: struct {
+		Name, Alias string
+	}{
+		Name:  "crawl_config",
 		Alias: "t",
 	},
 	CrawlFifoentry: struct {
@@ -954,12 +1053,6 @@ var Tables = struct {
 		Name:  "crawl_tls",
 		Alias: "t",
 	},
-	CrawlUserprofile: struct {
-		Name, Alias string
-	}{
-		Name:  "crawl_userprofile",
-		Alias: "t",
-	},
 	DjangoAdminLog: struct {
 		Name, Alias string
 	}{
@@ -1008,10 +1101,10 @@ var Tables = struct {
 		Name:  "payments_subscription",
 		Alias: "t",
 	},
-	PaymentUsersubscription: struct {
+	PaymentSubscriptiontype: struct {
 		Name, Alias string
 	}{
-		Name:  "payments_usersubscription",
+		Name:  "payments_subscriptiontype",
 		Alias: "t",
 	},
 	SignupSignup: struct {
@@ -1042,6 +1135,30 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "socialaccount_socialtoken",
+		Alias: "t",
+	},
+	TeamMembership: struct {
+		Name, Alias string
+	}{
+		Name:  "teams_membership",
+		Alias: "t",
+	},
+	TeamMembershiptype: struct {
+		Name, Alias string
+	}{
+		Name:  "teams_membershiptype",
+		Alias: "t",
+	},
+	TeamPlan: struct {
+		Name, Alias string
+	}{
+		Name:  "teams_plan",
+		Alias: "t",
+	},
+	TeamTeam: struct {
+		Name, Alias string
+	}{
+		Name:  "teams_team",
 		Alias: "t",
 	},
 	UptimeUptimestat: struct {
@@ -1151,6 +1268,17 @@ type AuthtokenToken struct {
 	UserID  int       `pg:"user_id,use_zero"`
 
 	User *AuthUser `pg:"fk:user_id"`
+}
+
+type CrawlConfig struct {
+	tableName struct{} `pg:"crawl_config,alias:t,,discard_unknown_columns"`
+
+	ID                     int                    `pg:"id,pk"`
+	Settings               map[string]interface{} `pg:"settings,use_zero"`
+	LargePageSizeThreshold int                    `pg:"large_page_size_threshold,use_zero"`
+	TeamID                 int64                  `pg:"team_id,use_zero"`
+
+	Team *TeamTeam `pg:"fk:team_id"`
 }
 
 type CrawlFifoentry struct {
@@ -1345,7 +1473,9 @@ type CrawlSite struct {
 	Name                   string     `pg:"name,use_zero"`
 	LargePageSizeThreshold *int       `pg:"large_page_size_threshold"`
 	DeletedAt              *time.Time `pg:"deleted_at"`
+	TeamID                 int64      `pg:"team_id,use_zero"`
 
+	Team *TeamTeam `pg:"fk:team_id"`
 	User *AuthUser `pg:"fk:user_id"`
 }
 
@@ -1363,17 +1493,6 @@ type CrawlTl struct {
 	CipherSuite        string                 `pg:"cipher_suite,use_zero"`
 	Version            string                 `pg:"version,use_zero"`
 	Errors             map[string]interface{} `pg:"errors"`
-}
-
-type CrawlUserprofile struct {
-	tableName struct{} `pg:"crawl_userprofile,alias:t,,discard_unknown_columns"`
-
-	ID                     int                    `pg:"id,pk"`
-	Settings               map[string]interface{} `pg:"settings,use_zero"`
-	UserID                 int                    `pg:"user_id,use_zero"`
-	LargePageSizeThreshold int                    `pg:"large_page_size_threshold,use_zero"`
-
-	User *AuthUser `pg:"fk:user_id"`
 }
 
 type DjangoAdminLog struct {
@@ -1437,35 +1556,41 @@ type PaymentStripecustomer struct {
 
 	ID         int    `pg:"id,pk"`
 	CustomerID string `pg:"customer_id,use_zero"`
-	UserID     int    `pg:"user_id,use_zero"`
+	TeamID     int64  `pg:"team_id,use_zero"`
 
-	User *AuthUser `pg:"fk:user_id"`
+	Team *TeamTeam `pg:"fk:team_id"`
 }
 
 type PaymentSubscription struct {
 	tableName struct{} `pg:"payments_subscription,alias:t,,discard_unknown_columns"`
+
+	ID                 int        `pg:"id,pk"`
+	SubscriptionTypeID int        `pg:"subscription_type_id,use_zero"`
+	UserID             int        `pg:"user_id,use_zero"`
+	StripeID           string     `pg:"stripe_id,use_zero"`
+	Status             int        `pg:"status,use_zero"`
+	CancelAt           *time.Time `pg:"cancel_at"`
+	CreatedAt          time.Time  `pg:"created_at,use_zero"`
+	UpdatedAt          time.Time  `pg:"updated_at,use_zero"`
+	TeamID             int64      `pg:"team_id,use_zero"`
+
+	Team             *TeamTeam                `pg:"fk:team_id"`
+	SubscriptionType *PaymentSubscriptiontype `pg:"fk:subscription_type_id"`
+	User             *AuthUser                `pg:"fk:user_id"`
+}
+
+type PaymentSubscriptiontype struct {
+	tableName struct{} `pg:"payments_subscriptiontype,alias:t,,discard_unknown_columns"`
 
 	ID       int      `pg:"id,pk"`
 	PriceID  string   `pg:"price_id,use_zero"`
 	GroupID  int      `pg:"group_id,use_zero"`
 	Features []string `pg:"features,array,use_zero"`
 	Name     string   `pg:"name,use_zero"`
+	PlanID   *int     `pg:"plan_id"`
 
 	Group *AuthGroup `pg:"fk:group_id"`
-}
-
-type PaymentUsersubscription struct {
-	tableName struct{} `pg:"payments_usersubscription,alias:t,,discard_unknown_columns"`
-
-	ID             int        `pg:"id,pk"`
-	SubscriptionID int        `pg:"subscription_id,use_zero"`
-	UserID         int        `pg:"user_id,use_zero"`
-	StripeID       string     `pg:"stripe_id,use_zero"`
-	Status         int        `pg:"status,use_zero"`
-	CancelAt       *time.Time `pg:"cancel_at"`
-
-	Subscription *PaymentSubscription `pg:"fk:subscription_id"`
-	User         *AuthUser            `pg:"fk:user_id"`
+	Plan  *TeamPlan  `pg:"fk:plan_id"`
 }
 
 type SignupSignup struct {
@@ -1529,6 +1654,55 @@ type SocialaccountSocialtoken struct {
 
 	Account *SocialaccountSocialaccount `pg:"fk:account_id"`
 	App     *SocialaccountSocialapp     `pg:"fk:app_id"`
+}
+
+type TeamMembership struct {
+	tableName struct{} `pg:"teams_membership,alias:t,,discard_unknown_columns"`
+
+	ID        int64     `pg:"id,pk"`
+	TeamID    int64     `pg:"team_id,use_zero"`
+	TypeID    int       `pg:"type_id,use_zero"`
+	UserID    int       `pg:"user_id,use_zero"`
+	CreatedAt time.Time `pg:"created_at,use_zero"`
+	UpdatedAt time.Time `pg:"updated_at,use_zero"`
+
+	Team *TeamTeam           `pg:"fk:team_id"`
+	Type *TeamMembershiptype `pg:"fk:type_id"`
+	User *AuthUser           `pg:"fk:user_id"`
+}
+
+type TeamMembershiptype struct {
+	tableName struct{} `pg:"teams_membershiptype,alias:t,,discard_unknown_columns"`
+
+	ID      int `pg:"id,pk"`
+	GroupID int `pg:"group_id,use_zero"`
+
+	Group *AuthGroup `pg:"fk:group_id"`
+}
+
+type TeamPlan struct {
+	tableName struct{} `pg:"teams_plan,alias:t,,discard_unknown_columns"`
+
+	ID               int    `pg:"id,pk"`
+	GroupID          int    `pg:"group_id,use_zero"`
+	MaxSites         int    `pg:"max_sites,use_zero"`
+	RecrawlFrequency int    `pg:"recrawl_frequency,use_zero"`
+	RecrawlSchedule  string `pg:"recrawl_schedule,use_zero"`
+	UptimeSchedule   string `pg:"uptime_schedule,use_zero"`
+
+	Group *AuthGroup `pg:"fk:group_id"`
+}
+
+type TeamTeam struct {
+	tableName struct{} `pg:"teams_team,alias:t,,discard_unknown_columns"`
+
+	ID        int64     `pg:"id,pk"`
+	Name      string    `pg:"name,use_zero"`
+	CreatedAt time.Time `pg:"created_at,use_zero"`
+	UpdatedAt time.Time `pg:"updated_at,use_zero"`
+	PlanID    int       `pg:"plan_id,use_zero"`
+
+	Plan *TeamPlan `pg:"fk:plan_id"`
 }
 
 type UptimeUptimestat struct {
