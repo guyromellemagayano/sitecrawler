@@ -25,6 +25,27 @@ class Plan(models.Model):
     id = models.PositiveSmallIntegerField(choices=ID_CHOICES, primary_key=True)
     group = models.OneToOneField(Group, on_delete=models.CASCADE)
 
+    # settings
+    RECRAWL_DAILY = 1
+    RECRAWL_WEEKLY = 2
+    RECRAWL_CHOICES = [
+        (RECRAWL_DAILY, "Daily"),
+        (RECRAWL_WEEKLY, "Weekly"),
+    ]
+
+    max_sites = models.IntegerField(default=10)
+    recrawl_schedule = models.CharField(
+        max_length=63,
+        default="0 18 * * 0",
+        help_text="<a href='https://en.wikipedia.org/wiki/Cron'>cron format</a>",
+    )
+    recrawl_frequency = models.PositiveSmallIntegerField(choices=RECRAWL_CHOICES, null=False, default=RECRAWL_WEEKLY)
+    uptime_schedule = models.CharField(
+        max_length=63,
+        default="0 * * * *",
+        help_text="<a href='https://en.wikipedia.org/wiki/Cron'>cron format</a>",
+    )
+
     def __str__(self):
         return self.get_id_display()
 
