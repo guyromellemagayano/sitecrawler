@@ -81,6 +81,7 @@ class WebhookView(APIView):
         return Response()
 
     def _activate_subscription(self, subscription):
+        # TODO: remove handling user groups
         subscription.user.groups.clear()
         subscription.user.groups.add(subscription.subscription_type.group)
 

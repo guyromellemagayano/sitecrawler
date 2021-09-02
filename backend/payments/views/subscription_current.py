@@ -12,9 +12,10 @@ from teams.service import get_current_team
 
 class SubscriptionCurrentView(APIView):
     def get(self, request):
-        if not hasattr(request.user, "subscription"):
+        team = get_current_team(request)
+        if not hasattr(team, "subscription"):
             return Response(self._none())
-        subscription = request.user.subscription
+        subscription = team.subscription
         serializer = SubscriptionSerializer(subscription)
         return Response(serializer.data)
 
@@ -22,10 +23,11 @@ class SubscriptionCurrentView(APIView):
         return SubscriptionSerializer(None).data
 
     def delete(self, request):
-        if not hasattr(request.user, "subscription"):
+        team = get_current_team(request)
+        if not hasattr(team, "subscription"):
             return Response(self._none())
 
-        subscription = request.user.subscription
+        subscription = team.subscription
 
         stripe_subscription = stripe.Subscription.modify(
             subscription.stripe_id,
@@ -45,25 +47,27 @@ class SubscriptionCurrentView(APIView):
             if subscription_type.group_id == settings.DEFAULT_USER_GROUP:
                 return self.delete(request)
 
-            if not hasattr(request.user, "subscription"):
+            team = get_current_team(request)
+            if not hasattr(team, "subscription"):
                 stripe_subscription = stripe.Subscription.create(
                     customer=customer.get_or_create_id(request), items=[{"price": subscription_type.price_id}]
                 )
+                # TODO: remove setting user
                 subscription = Subscription.objects.create(
                     user=request.user,
-                    team=get_current_team(request),
+                    team=team,
                     subscription_type_id=subscription_type.id,
                     stripe_id=stripe_subscription.id,
                 )
             else:
-                stripe_subscription = stripe.Subscription.retrieve(request.user.subscription.stripe_id)
+                stripe_subscription = stripe.Subscription.retrieve(team.subscription.stripe_id)
                 stripe.Subscription.modify(
-                    request.user.subscription.stripe_id,
+                    team.subscription.stripe_id,
                     cancel_at_period_end=False,
                     proration_behavior="always_invoice",
                     items=[{"id": stripe_subscription["items"]["data"][0].id, "price": subscription_type.price_id}],
                 )
-                subscription = request.user.subscription
+                subscription = team.subscription
                 subscription.subscription_type_id = subscription_type.id
                 subscription.cancel_at = None
                 subscription.save()

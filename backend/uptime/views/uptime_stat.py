@@ -11,6 +11,7 @@ from rest_framework_extensions.mixins import NestedViewSetMixin
 
 from uptime.models import UptimeStat
 from uptime.serializers import UptimeStatSerializer
+from teams.service import get_current_team
 
 
 class TooLarge(APIException):
@@ -67,7 +68,10 @@ class UptimeStatViewSet(
     ordering = ["created_at"]
 
     def get_queryset(self):
-        return super().get_queryset().filter(site__deleted_at__isnull=True)
+        queryset = super().get_queryset().filter(site__deleted_at__isnull=True)
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(site__team=get_current_team(self.request))
+        return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

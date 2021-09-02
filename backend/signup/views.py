@@ -74,6 +74,7 @@ class SignupViewSet(
             raise ValidationError(detail="User with this email already exists.")
 
         # create site
+        # TODO: remove setting user
         Site.objects.create(
             team=user.membership_set.first().team,
             user=user,
