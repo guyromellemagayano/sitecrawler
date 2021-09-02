@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from crawl.models import Site
 from crawl.serializers import SiteSerializer, ScanSerializer
 from crawl.services import scan, verify
-from teams.service import get_current_team
+from teams.service import get_current_team, has_permission
 
 
 class SiteViewSet(
@@ -24,13 +24,13 @@ class SiteViewSet(
 
     filterset_fields = ["verified"]
     search_fields = ["url", "name"]
-    ordering_fields = ["name", "url", "verified", "id", "created_at", "updated_at", "user_id", "verification_id"]
+    ordering_fields = ["name", "url", "verified", "id", "created_at", "updated_at", "verification_id"]
 
     def get_queryset(self):
         query = Site.objects.filter(deleted_at__isnull=True).annotate_last_finished_scan_id()
         if self.detail and self.request.user.is_superuser:
             return query
-        return query.filter(user=self.request.user)
+        return query.filter(team=get_current_team(self.request))
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, team=get_current_team(self.request), verification_id=uuid.uuid4())
@@ -52,7 +52,7 @@ class SiteViewSet(
 
     @action(detail=True, methods=["post"])
     def start_scan(self, request, pk=None):
-        if not request.user.has_perm("crawl.can_start_scan"):
+        if not has_permission(request, "crawl.can_start_scan"):
             raise PermissionDenied("You don't have permission to start a scan.")
 
         site = self.get_object()

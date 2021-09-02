@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from crawl.common import CsvMixin, HasPermission
 from crawl.models import Link
 from crawl.serializers import PageSerializer, PageDetailSerializer, PageDuplicatesSerializer
+from teams.service import get_current_team
 
 
 class PageFilter(filters.FilterSet):
@@ -142,7 +143,7 @@ class PageViewSet(
     def get_queryset(self):
         queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
         if not self.request.user.is_superuser:
-            queryset = queryset.filter(scan__site__user=self.request.user)
+            queryset = queryset.filter(scan__site__team=get_current_team(self.request))
         if self._is_request_to_detail_endpoint():
             queryset = queryset.select_related("tls", "scan", "pagedata")
         return queryset.pages()

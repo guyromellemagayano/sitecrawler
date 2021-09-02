@@ -3,6 +3,8 @@ from rest_framework import permissions, serializers
 from rest_framework.settings import api_settings
 from rest_framework_csv.renderers import CSVRenderer
 
+from teams.service import has_permission
+
 
 class SubQueryCount(Subquery):
     output_field = IntegerField()
@@ -43,7 +45,7 @@ def HasPermission(perm):
         message = "Not available in this subscription."
 
         def has_permission(self, request, view):
-            return request.user.has_perm(perm)
+            return has_permission(request, perm)
 
     return HasPermissionClass
 

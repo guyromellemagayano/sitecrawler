@@ -172,14 +172,14 @@ class ScanInline(admin.TabularInline):
 class SiteAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at")
     list_display = ("url", "team")
-    list_filter = ("user__username",)
+    list_filter = ("team",)
     inlines = [ScanInline]
 
 
 @admin.register(Config)
 class ConfigAdmin(admin.ModelAdmin):
     list_display = ("team",)
-    search_fields = ("user__username", "user__email")
+    search_fields = ("team__name",)
     readonly_fields = ("team",)
 
 

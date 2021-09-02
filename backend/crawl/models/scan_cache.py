@@ -35,7 +35,7 @@ class ScanCache(models.Model):
         return self.created_at > scan.finished_at
 
 
-# delete cache on user profile or site update (possible changes to big page threshold)
+# delete cache on crawl config (per team) or site update (possible changes to big page threshold)
 @receiver(post_save, sender="crawl.Site")
 def scan_cache_create_or_update_site(sender, instance, created, **kwargs):
     ScanCache.objects.filter(scan__site_id=instance.id).delete()

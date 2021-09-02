@@ -11,6 +11,7 @@ from crawl.serializers import (
     ScriptDetailSerializer,
     StylesheetDetailSerializer,
 )
+from teams.service import get_current_team
 
 
 class HumanReadableMultipleChoiceFilter(filters.MultipleChoiceFilter):
@@ -76,7 +77,7 @@ class PageChildViewSet(
     def get_queryset(self):
         queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
         if not self.request.user.is_superuser:
-            queryset = queryset.filter(scan__site__user=self.request.user)
+            queryset = queryset.filter(scan__site__team=get_current_team(self.request))
         return queryset
 
 

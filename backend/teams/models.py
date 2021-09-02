@@ -1,4 +1,6 @@
-from django.contrib.auth.models import Group, User
+from functools import cached_property
+
+from django.contrib.auth.models import Group, User, Permission
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -84,6 +86,18 @@ class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     type = models.ForeignKey(MembershipType, on_delete=models.CASCADE)
+
+    @cached_property
+    def _permissions(self):
+        return {
+            f"{x.content_type.app_label}.{x.codename}": True
+            for x in Permission.objects.select_related("content_type").filter(
+                group__in=[self.team.plan.group_id, self.type.group_id]
+            )
+        }
+
+    def has_perm(self, perm):
+        return self._permissions.get(perm, False)
 
 
 @receiver(post_save, sender=User)

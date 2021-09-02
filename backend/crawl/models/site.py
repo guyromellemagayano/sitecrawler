@@ -37,4 +37,4 @@ class Site(models.Model):
     large_page_size_threshold = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user}: {self.url} ({self.id})"
+        return f"{self.team}: {self.url} ({self.id})"

@@ -1,2 +1,15 @@
 def get_current_team(request):
-    return request.user.membership_set.select_related("team").first().team
+    return get_current_membership(request).team
+
+
+def get_current_membership(request):
+    if hasattr(request, "membership"):
+        return request.membership
+    request.membership = (
+        request.user.membership_set.select_related("team__plan", "type").filter(team__deleted_at__isnull=True).first()
+    )
+    return request.membership
+
+
+def has_permission(request, permission):
+    return get_current_membership(request).has_perm(permission)
