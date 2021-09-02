@@ -88,16 +88,15 @@ class Membership(models.Model):
     type = models.ForeignKey(MembershipType, on_delete=models.CASCADE)
 
     @cached_property
-    def _permissions(self):
+    def permissions(self):
         return {
-            f"{x.content_type.app_label}.{x.codename}": True
+            f"{x.content_type.app_label}.{x.codename}": x
             for x in Permission.objects.select_related("content_type").filter(
-                group__in=[self.team.plan.group_id, self.type.group_id]
+                models.Q(group__in=[self.team.plan.group_id, self.type.group_id])
+                | models.Q(group__user=self.user_id)
+                | models.Q(user=self.user_id)
             )
         }
-
-    def has_perm(self, perm):
-        return self._permissions.get(perm, False)
 
 
 @receiver(post_save, sender=User)

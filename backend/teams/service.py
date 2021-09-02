@@ -14,4 +14,4 @@ def get_current_membership(request):
 def has_permission(request, permission, membership=None):
     if membership is None:
         membership = get_current_membership(request)
-    return membership.has_perm(permission)
+    return permission in membership.permissions

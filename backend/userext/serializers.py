@@ -1,9 +1,8 @@
-from django.contrib.auth.models import Permission
 from rest_framework import serializers
 from rest_auth.serializers import UserDetailsSerializer
 
 from teams.models import Plan
-from teams.service import get_current_team
+from teams.service import get_current_team, get_current_membership
 
 
 # TODO: move this to team endpoint in frontend
@@ -20,6 +19,7 @@ class PlanSerializer(serializers.ModelSerializer):
 class UserSerializer(UserDetailsSerializer):
     id = serializers.IntegerField()
 
+    # TODO: remove settings, plan and large_page_size_threshold from here
     settings = serializers.JSONField(source="membership_set.first.team.crawl_config.settings")
     permissions = serializers.SerializerMethodField()
     group = PlanSerializer(source="membership_set.first.team.plan", read_only=True)
@@ -58,13 +58,4 @@ class UserSerializer(UserDetailsSerializer):
         return instance
 
     def get_permissions(self, user):
-        return [p.codename for p in self._user_permissions(user) if self._is_custom(p)]
-
-    def _is_custom(self, permission):
-        django_prefixes = ["add_", "change_", "delete_", "view_"]
-        return not any(permission.codename.startswith(prefix) for prefix in django_prefixes)
-
-    def _user_permissions(self, user):
-        if user.is_superuser:
-            return Permission.objects.all()
-        return user.user_permissions.all() | Permission.objects.filter(group__user=user)
+        return [p.codename for p in get_current_membership(self.context["request"]).permissions.values()]
