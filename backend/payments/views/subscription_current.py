@@ -53,9 +53,7 @@ class SubscriptionCurrentView(APIView):
                 stripe_subscription = stripe.Subscription.create(
                     customer=customer.get_or_create_id(request), items=[{"price": subscription_type.price_id}]
                 )
-                # TODO: remove setting user
                 subscription = Subscription.objects.create(
-                    user=request.user,
                     team=team,
                     subscription_type_id=subscription_type.id,
                     stripe_id=stripe_subscription.id,

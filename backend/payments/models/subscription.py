@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
@@ -20,8 +19,6 @@ class Subscription(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
-    # TODO: remove user
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
     team = models.OneToOneField("teams.Team", on_delete=models.CASCADE)
 
     stripe_id = models.CharField(max_length=63)
