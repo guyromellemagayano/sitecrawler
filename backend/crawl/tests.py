@@ -16,7 +16,6 @@ class ScanSendFinishedEmailTestCase(TestCase):
         self.client.force_login(self.superuser)
         self.client.raise_request_exception = True
         self.site = models.Site.objects.create(
-            user=self.superuser,
             team=self.superuser.membership_set.first().team,
             url="test.com",
         )
