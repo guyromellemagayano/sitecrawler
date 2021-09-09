@@ -45,7 +45,7 @@ class SignupViewSet(
 
         # get and delete signup object
         try:
-            signup = Signup.objects.get(token=pk)
+            signup = Signup.objects.get(token=token)
             signup.delete()
         except Signup.DoesNotExist:
             raise NotFound(detail="Signup with this token does not exist.")
@@ -74,10 +74,8 @@ class SignupViewSet(
             raise ValidationError(detail="User with this email already exists.")
 
         # create site
-        # TODO: remove setting user
         Site.objects.create(
             team=user.membership_set.first().team,
-            user=user,
             name=signup.url,
             url=signup.url,
             verification_id=uuid.uuid4(),

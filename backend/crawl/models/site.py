@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import models
 from django.db.models.query import QuerySet
 
@@ -23,8 +22,6 @@ class Site(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
-    # TODO: remove user
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     team = models.ForeignKey("teams.Team", on_delete=models.CASCADE)
 
     url = models.CharField(max_length=2048, null=False)

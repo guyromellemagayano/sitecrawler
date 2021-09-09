@@ -33,8 +33,7 @@ class SiteViewSet(
         return query.filter(team=get_current_team(self.request))
 
     def perform_create(self, serializer):
-        # TODO: remove setting user
-        serializer.save(user=self.request.user, team=get_current_team(self.request), verification_id=uuid.uuid4())
+        serializer.save(team=get_current_team(self.request), verification_id=uuid.uuid4())
 
     def perform_destroy(self, instance):
         instance.deleted_at = datetime.datetime.now()

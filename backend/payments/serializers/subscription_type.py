@@ -8,6 +8,7 @@ from ..models import SubscriptionType
 class SubscriptionTypeSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True)
     price = serializers.SerializerMethodField(read_only=True)
+    # TODO: remove group when not used in frontend
     group = PlanSerializer(source="plan", read_only=True)
     plan = PlanSerializer(read_only=True)
 
