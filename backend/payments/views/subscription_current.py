@@ -7,6 +7,7 @@ import stripe
 from ..models import SubscriptionType, Subscription
 from ..serializers import SubscriptionSerializer
 from ..services import customer
+from teams.models import Plan
 from teams.service import get_current_team
 
 
@@ -44,7 +45,7 @@ class SubscriptionCurrentView(APIView):
         serializer = SubscriptionSerializer(data=request.data)
         if serializer.is_valid():
             subscription_type = SubscriptionType.objects.get(pk=serializer.data["id"])
-            if subscription_type.group_id == settings.DEFAULT_USER_GROUP:
+            if subscription_type.plan_id == Plan.BASIC:
                 return self.delete(request)
 
             team = get_current_team(request)

@@ -8,8 +8,6 @@ class SubscriptionType(models.Model):
     price_id = models.CharField(max_length=63, unique=True)
     features = ArrayField(models.CharField(max_length=255), blank=True, default=list)
     plan = models.ForeignKey("teams.Plan", on_delete=models.CASCADE, null=True)
-    # TODO: remove group
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

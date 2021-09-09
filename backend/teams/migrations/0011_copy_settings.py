@@ -5,7 +5,10 @@ from django.db import migrations
 
 def forwards_func(apps, schema_editor):
     Plan = apps.get_model("teams", "Plan")
-    Plan = apps.get_model("crawl", "GroupSettings")
+    try:
+        GroupSettings = apps.get_model("crawl", "GroupSettings")
+    except LookupError:
+        return
     for plan in Plan.objects.all():
         try:
             group_settings = plan.group.groupsettings

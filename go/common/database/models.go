@@ -63,11 +63,6 @@ var Columns = struct {
 
 		Entry string
 	}
-	CrawlGroupsetting struct {
-		ID, MaxSites, GroupID, RecrawlSchedule, UptimeSchedule, RecrawlFrequency string
-
-		Group string
-	}
 	CrawlLink struct {
 		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts, CachedNumImages, CachedNumLinks, CachedNumNonOkImages, CachedNumNonOkLinks, CachedNumNonOkScripts, CachedNumNonOkStylesheets, CachedNumOkImages, CachedNumOkLinks, CachedNumOkScripts, CachedNumOkStylesheets, CachedNumScripts, CachedNumStylesheets string
 
@@ -152,9 +147,9 @@ var Columns = struct {
 		Team, SubscriptionType, User string
 	}
 	PaymentSubscriptiontype struct {
-		ID, PriceID, GroupID, Features, Name, PlanID string
+		ID, PriceID, Features, Name, PlanID string
 
-		Group, Plan string
+		Plan string
 	}
 	SignupSignup struct {
 		ID, CreatedAt, FirstName, LastName, Username, Email, Url, Token string
@@ -193,7 +188,7 @@ var Columns = struct {
 		Group string
 	}
 	TeamTeam struct {
-		ID, Name, CreatedAt, UpdatedAt, PlanID string
+		ID, Name, CreatedAt, UpdatedAt, PlanID, DeletedAt string
 
 		Plan string
 	}
@@ -345,20 +340,6 @@ var Columns = struct {
 		Data:      "data",
 
 		Entry: "Entry",
-	},
-	CrawlGroupsetting: struct {
-		ID, MaxSites, GroupID, RecrawlSchedule, UptimeSchedule, RecrawlFrequency string
-
-		Group string
-	}{
-		ID:               "id",
-		MaxSites:         "max_sites",
-		GroupID:          "group_id",
-		RecrawlSchedule:  "recrawl_schedule",
-		UptimeSchedule:   "uptime_schedule",
-		RecrawlFrequency: "recrawl_frequency",
-
-		Group: "Group",
 	},
 	CrawlLink: struct {
 		ID, CreatedAt, Type, Url, Status, HttpStatus, ResponseTime, Error, ScanID, Size, TlsStatus, TlsID, CachedNumNonTlsImages, CachedNumNonTlsScripts, CachedNumNonTlsStylesheets, CachedNumTlsImages, CachedNumTlsScripts, CachedNumTlsStylesheets, CachedTlsImages, CachedTlsScripts, CachedTlsStylesheets, CachedTlsTotal, CachedSizeImages, CachedSizeScripts, CachedSizeStylesheets, CachedSizeTotal, CachedImageOccurences, CachedLinkOccurences, CachedScriptOccurences, CachedStylesheetOccurences, CachedImageMissingAlts, CachedNumImages, CachedNumLinks, CachedNumNonOkImages, CachedNumNonOkLinks, CachedNumNonOkScripts, CachedNumNonOkStylesheets, CachedNumOkImages, CachedNumOkLinks, CachedNumOkScripts, CachedNumOkStylesheets, CachedNumScripts, CachedNumStylesheets string
@@ -630,19 +611,17 @@ var Columns = struct {
 		User:             "User",
 	},
 	PaymentSubscriptiontype: struct {
-		ID, PriceID, GroupID, Features, Name, PlanID string
+		ID, PriceID, Features, Name, PlanID string
 
-		Group, Plan string
+		Plan string
 	}{
 		ID:       "id",
 		PriceID:  "price_id",
-		GroupID:  "group_id",
 		Features: "features",
 		Name:     "name",
 		PlanID:   "plan_id",
 
-		Group: "Group",
-		Plan:  "Plan",
+		Plan: "Plan",
 	},
 	SignupSignup: struct {
 		ID, CreatedAt, FirstName, LastName, Username, Email, Url, Token string
@@ -749,7 +728,7 @@ var Columns = struct {
 		Group: "Group",
 	},
 	TeamTeam: struct {
-		ID, Name, CreatedAt, UpdatedAt, PlanID string
+		ID, Name, CreatedAt, UpdatedAt, PlanID, DeletedAt string
 
 		Plan string
 	}{
@@ -758,6 +737,7 @@ var Columns = struct {
 		CreatedAt: "created_at",
 		UpdatedAt: "updated_at",
 		PlanID:    "plan_id",
+		DeletedAt: "deleted_at",
 
 		Plan: "Plan",
 	},
@@ -813,9 +793,6 @@ var Tables = struct {
 		Name, Alias string
 	}
 	CrawlFiforelation struct {
-		Name, Alias string
-	}
-	CrawlGroupsetting struct {
 		Name, Alias string
 	}
 	CrawlLink struct {
@@ -979,12 +956,6 @@ var Tables = struct {
 		Name, Alias string
 	}{
 		Name:  "crawl_fiforelation",
-		Alias: "t",
-	},
-	CrawlGroupsetting: struct {
-		Name, Alias string
-	}{
-		Name:  "crawl_groupsettings",
 		Alias: "t",
 	},
 	CrawlLink: struct {
@@ -1304,19 +1275,6 @@ type CrawlFiforelation struct {
 	Entry *CrawlFifoentry `pg:"fk:entry_id"`
 }
 
-type CrawlGroupsetting struct {
-	tableName struct{} `pg:"crawl_groupsettings,alias:t,,discard_unknown_columns"`
-
-	ID               int    `pg:"id,pk"`
-	MaxSites         int    `pg:"max_sites,use_zero"`
-	GroupID          int    `pg:"group_id,use_zero"`
-	RecrawlSchedule  string `pg:"recrawl_schedule,use_zero"`
-	UptimeSchedule   string `pg:"uptime_schedule,use_zero"`
-	RecrawlFrequency int    `pg:"recrawl_frequency,use_zero"`
-
-	Group *AuthGroup `pg:"fk:group_id"`
-}
-
 type CrawlLink struct {
 	tableName struct{} `pg:"crawl_link,alias:t,,discard_unknown_columns"`
 
@@ -1468,7 +1426,7 @@ type CrawlSite struct {
 	Url                    string     `pg:"url,use_zero"`
 	VerificationID         string     `pg:"verification_id,use_zero"`
 	Verified               bool       `pg:"verified,use_zero"`
-	UserID                 int        `pg:"user_id,use_zero"`
+	UserID                 *int       `pg:"user_id"`
 	LastVerifyError        *string    `pg:"last_verify_error"`
 	Name                   string     `pg:"name,use_zero"`
 	LargePageSizeThreshold *int       `pg:"large_page_size_threshold"`
@@ -1584,13 +1542,11 @@ type PaymentSubscriptiontype struct {
 
 	ID       int      `pg:"id,pk"`
 	PriceID  string   `pg:"price_id,use_zero"`
-	GroupID  int      `pg:"group_id,use_zero"`
 	Features []string `pg:"features,array,use_zero"`
 	Name     string   `pg:"name,use_zero"`
 	PlanID   *int     `pg:"plan_id"`
 
-	Group *AuthGroup `pg:"fk:group_id"`
-	Plan  *TeamPlan  `pg:"fk:plan_id"`
+	Plan *TeamPlan `pg:"fk:plan_id"`
 }
 
 type SignupSignup struct {
@@ -1696,11 +1652,12 @@ type TeamPlan struct {
 type TeamTeam struct {
 	tableName struct{} `pg:"teams_team,alias:t,,discard_unknown_columns"`
 
-	ID        int64     `pg:"id,pk"`
-	Name      string    `pg:"name,use_zero"`
-	CreatedAt time.Time `pg:"created_at,use_zero"`
-	UpdatedAt time.Time `pg:"updated_at,use_zero"`
-	PlanID    int       `pg:"plan_id,use_zero"`
+	ID        int64      `pg:"id,pk"`
+	Name      string     `pg:"name,use_zero"`
+	CreatedAt time.Time  `pg:"created_at,use_zero"`
+	UpdatedAt time.Time  `pg:"updated_at,use_zero"`
+	PlanID    int        `pg:"plan_id,use_zero"`
+	DeletedAt *time.Time `pg:"deleted_at"`
 
 	Plan *TeamPlan `pg:"fk:plan_id"`
 }

@@ -5,7 +5,6 @@ from .scan_cache import ScanCache
 from .scan import Scan
 from .site import Site
 from .config import Config
-from .group_settings import GroupSettings
 from .page_data import PageData
 from .tls import Tls
 from .fifo import FifoEntry, FifoRelation

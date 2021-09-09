@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth.models import Group
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import stripe
@@ -81,16 +80,9 @@ class WebhookView(APIView):
         return Response()
 
     def _activate_subscription(self, subscription):
-        # TODO: remove handling user groups
-        subscription.user.groups.clear()
-        subscription.user.groups.add(subscription.subscription_type.group)
-
         subscription.team.plan_id = subscription.subscription_type.plan_id
         subscription.team.save()
 
     def _cancel_subscription(self, subscription):
-        subscription.user.groups.clear()
-        subscription.user.groups.add(Group.objects.get(pk=settings.DEFAULT_USER_GROUP))
-
         subscription.team.plan_id = Plan.BASIC
         subscription.team.save()

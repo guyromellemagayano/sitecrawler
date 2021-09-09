@@ -158,9 +158,6 @@ STRIPE_PUBLISHABLE_KEY = secret(
     default="pk_test_51HIVFqBQhL0pYs2DVDldVquI8cWSn4zpmkPG5NOC7fR06i2HfvChSGs1geC30H5OAIrYbTEkj9s8Sei3etUr6FhD00iH8BAzac",
 )
 
-# pk of group that new users are auto added to
-DEFAULT_USER_GROUP = 1
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
