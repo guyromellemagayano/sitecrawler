@@ -109,9 +109,9 @@ var Columns = struct {
 		Scan string
 	}
 	CrawlSite struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt, TeamID string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt, TeamID string
 
-		Team, User string
+		Team string
 	}
 	CrawlTl struct {
 		ID, NotBefore, NotAfter, CommonName, Organization, DnsNames, IssuerOrganization, IssuerCn, CipherSuite, Version, Errors string
@@ -142,9 +142,9 @@ var Columns = struct {
 		Team string
 	}
 	PaymentSubscription struct {
-		ID, SubscriptionTypeID, UserID, StripeID, Status, CancelAt, CreatedAt, UpdatedAt, TeamID string
+		ID, SubscriptionTypeID, StripeID, Status, CancelAt, CreatedAt, UpdatedAt, TeamID string
 
-		Team, SubscriptionType, User string
+		Team, SubscriptionType string
 	}
 	PaymentSubscriptiontype struct {
 		ID, PriceID, Features, Name, PlanID string
@@ -493,9 +493,9 @@ var Columns = struct {
 		Scan: "Scan",
 	},
 	CrawlSite: struct {
-		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, UserID, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt, TeamID string
+		ID, CreatedAt, UpdatedAt, Url, VerificationID, Verified, LastVerifyError, Name, LargePageSizeThreshold, DeletedAt, TeamID string
 
-		Team, User string
+		Team string
 	}{
 		ID:                     "id",
 		CreatedAt:              "created_at",
@@ -503,7 +503,6 @@ var Columns = struct {
 		Url:                    "url",
 		VerificationID:         "verification_id",
 		Verified:               "verified",
-		UserID:                 "user_id",
 		LastVerifyError:        "last_verify_error",
 		Name:                   "name",
 		LargePageSizeThreshold: "large_page_size_threshold",
@@ -511,7 +510,6 @@ var Columns = struct {
 		TeamID:                 "team_id",
 
 		Team: "Team",
-		User: "User",
 	},
 	CrawlTl: struct {
 		ID, NotBefore, NotAfter, CommonName, Organization, DnsNames, IssuerOrganization, IssuerCn, CipherSuite, Version, Errors string
@@ -592,13 +590,12 @@ var Columns = struct {
 		Team: "Team",
 	},
 	PaymentSubscription: struct {
-		ID, SubscriptionTypeID, UserID, StripeID, Status, CancelAt, CreatedAt, UpdatedAt, TeamID string
+		ID, SubscriptionTypeID, StripeID, Status, CancelAt, CreatedAt, UpdatedAt, TeamID string
 
-		Team, SubscriptionType, User string
+		Team, SubscriptionType string
 	}{
 		ID:                 "id",
 		SubscriptionTypeID: "subscription_type_id",
-		UserID:             "user_id",
 		StripeID:           "stripe_id",
 		Status:             "status",
 		CancelAt:           "cancel_at",
@@ -608,7 +605,6 @@ var Columns = struct {
 
 		Team:             "Team",
 		SubscriptionType: "SubscriptionType",
-		User:             "User",
 	},
 	PaymentSubscriptiontype: struct {
 		ID, PriceID, Features, Name, PlanID string
@@ -1426,7 +1422,6 @@ type CrawlSite struct {
 	Url                    string     `pg:"url,use_zero"`
 	VerificationID         string     `pg:"verification_id,use_zero"`
 	Verified               bool       `pg:"verified,use_zero"`
-	UserID                 *int       `pg:"user_id"`
 	LastVerifyError        *string    `pg:"last_verify_error"`
 	Name                   string     `pg:"name,use_zero"`
 	LargePageSizeThreshold *int       `pg:"large_page_size_threshold"`
@@ -1434,7 +1429,6 @@ type CrawlSite struct {
 	TeamID                 int64      `pg:"team_id,use_zero"`
 
 	Team *TeamTeam `pg:"fk:team_id"`
-	User *AuthUser `pg:"fk:user_id"`
 }
 
 type CrawlTl struct {
@@ -1524,7 +1518,6 @@ type PaymentSubscription struct {
 
 	ID                 int        `pg:"id,pk"`
 	SubscriptionTypeID int        `pg:"subscription_type_id,use_zero"`
-	UserID             int        `pg:"user_id,use_zero"`
 	StripeID           string     `pg:"stripe_id,use_zero"`
 	Status             int        `pg:"status,use_zero"`
 	CancelAt           *time.Time `pg:"cancel_at"`
@@ -1534,7 +1527,6 @@ type PaymentSubscription struct {
 
 	Team             *TeamTeam                `pg:"fk:team_id"`
 	SubscriptionType *PaymentSubscriptiontype `pg:"fk:subscription_type_id"`
-	User             *AuthUser                `pg:"fk:user_id"`
 }
 
 type PaymentSubscriptiontype struct {
