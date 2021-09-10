@@ -15,6 +15,7 @@ var (
 	VisibilityTimeout int64 = 60
 	WaitTimeSeconds   int64 = 5
 	PingInterval            = 10 * time.Second
+	MaxPingRetries          = 5
 )
 
 type SQSService struct {
@@ -124,6 +125,8 @@ func (m *SQSMessage) Success() error {
 func (m *SQSMessage) startPinger(ctx context.Context, log *zap.SugaredLogger) {
 	ticker := time.NewTicker(PingInterval)
 	defer ticker.Stop()
+
+	successiveErrorsCount := 0
 	for {
 		select {
 		case <-ctx.Done():
@@ -132,11 +135,18 @@ func (m *SQSMessage) startPinger(ctx context.Context, log *zap.SugaredLogger) {
 			if err := m.ping(); err != nil {
 				select {
 				case <-ctx.Done():
+					return
 				default:
-					log.Errorw("Sqs ping failed",
-						"err", err,
-					)
+					successiveErrorsCount++
+					if successiveErrorsCount >= int(VisibilityTimeout)/int(PingInterval.Seconds()) {
+						log.Errorw("Sqs ping failed over visibility timeout",
+							"err", err,
+							"count", successiveErrorsCount,
+						)
+					}
 				}
+			} else {
+				successiveErrorsCount = 0
 			}
 		}
 	}
