@@ -16,6 +16,13 @@ resource "aws_ecs_task_definition" "prod_crawler" {
           "awslogs-stream-prefix": "ecs"
         }
       },
+      "ulimits": [
+        {
+          "softLimit": 1048576,
+          "hardLimit": 1048576,
+          "name": "nofile"
+        }
+      ],
       "essential": true
     }
   ]
