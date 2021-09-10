@@ -143,6 +143,7 @@ func (m *SQSMessage) startPinger(ctx context.Context, log *zap.SugaredLogger) {
 							"err", err,
 							"count", successiveErrorsCount,
 						)
+						successiveErrorsCount = 0
 					}
 				}
 			} else {
