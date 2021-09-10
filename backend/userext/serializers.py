@@ -1,19 +1,8 @@
 from rest_framework import serializers
 from rest_auth.serializers import UserDetailsSerializer
 
-from teams.models import Plan
+from teams.serializers import PlanSerializer
 from teams.service import get_current_team, get_current_membership
-
-
-# TODO: move this to team endpoint in frontend
-class PlanSerializer(serializers.ModelSerializer):
-    max_sites = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(source="get_id_display", read_only=True)
-
-    class Meta:
-        model = Plan
-        fields = ["id", "name", "max_sites"]
-        read_only_fields = fields
 
 
 class UserSerializer(UserDetailsSerializer):

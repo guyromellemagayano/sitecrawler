@@ -1,7 +1,7 @@
 from rest_framework import serializers
 import stripe
 
-from userext.serializers import PlanSerializer
+from teams.serializers import PlanSerializer
 from ..models import SubscriptionType
 
 

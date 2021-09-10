@@ -1,3 +1,4 @@
+from .config import ConfigSerializer
 from .link import (
     LinkSerializer,
     LinkDetailSerializer,

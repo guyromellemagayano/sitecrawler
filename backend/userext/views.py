@@ -22,8 +22,7 @@ class UserExtViewSet(mixins.DestroyModelMixin, mixins.RetrieveModelMixin, viewse
 
             # delete team if it has no other owner
             if not has_other_owner:
-                team.deleted_at = datetime.datetime.now()
-                team.save()
+                team.soft_delete()
 
         super().perform_destroy(user)
 

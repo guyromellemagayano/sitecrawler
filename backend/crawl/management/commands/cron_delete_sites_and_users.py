@@ -30,13 +30,6 @@ class Command(BaseCommand):
 
         # regular deletion for everything else
         sites_to_delete.delete()
-
-        # delete users in team membership if they're not part of any other team
-        for team in teams_to_delete:
-            for team_membership in team.membership_set.select_related("user").all():
-                if team_membership.user.membership_set.count() == 1:
-                    team_membership.user.delete()
-
         teams_to_delete.delete()
 
         print("Delete sites and teams job done", flush=True)
