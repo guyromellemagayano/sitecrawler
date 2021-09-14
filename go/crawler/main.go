@@ -3,9 +3,10 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
-	_ "net/http/pprof"
 
+	"cloud.google.com/go/profiler"
 	"github.com/Epic-Design-Labs/web-crawl-app/go/common"
+	"google.golang.org/api/option"
 )
 
 func main() {
@@ -16,6 +17,20 @@ func main() {
 	awsSession, err := common.NewAwsSession(env)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	credentials := common.Secret(log, awsSession, env, "PROFILER_SERVICE_ACCOUNT", "")
+	if credentials != "" {
+		cfg := profiler.Config{
+			Service:        "crawler",
+			ServiceVersion: env,
+			ProjectID:      "edl-app-link-spider",
+		}
+		if err := profiler.Start(cfg, option.WithCredentialsJSON([]byte(credentials))); err != nil {
+			log.Error(err)
+		}
+	} else {
+		log.Warn("No credentials, profiler disabled.")
 	}
 
 	db := common.ConfigureDatabase(log, awsSession, "crawler", env)

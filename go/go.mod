@@ -3,6 +3,7 @@ module github.com/Epic-Design-Labs/web-crawl-app/go
 go 1.14
 
 require (
+	cloud.google.com/go/profiler v0.1.0
 	github.com/0xAX/notificator v0.0.0-20191016112426-3962a5ea8da1 // indirect
 	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/TheZeroSlave/zapsentry v1.5.0
@@ -21,5 +22,6 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stretchr/testify v1.6.1
 	go.uber.org/zap v1.15.0
+	google.golang.org/api v0.54.0
 	gopkg.in/urfave/cli.v1 v1.20.0 // indirect
 )
