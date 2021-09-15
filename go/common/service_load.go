@@ -19,10 +19,16 @@ const (
 	userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"
 )
 
-type LoadService struct {
+type LoadService interface {
+	Load(log *zap.SugaredLogger, url string) (*LoadResponse, error)
+	CloseIdleConnections()
 }
 
-func (l *LoadService) Load(log *zap.SugaredLogger, url string) (*LoadResponse, error) {
+type loadService struct {
+	client *retryablehttp.Client
+}
+
+func NewLoadService() *loadService {
 	client := retryablehttp.NewClient()
 	cipherSuites := []uint16{}
 	// add insecure ciphers with higher priority, if they're chosen we will save that as error
@@ -45,6 +51,12 @@ func (l *LoadService) Load(log *zap.SugaredLogger, url string) (*LoadResponse, e
 		},
 	}
 
+	return &loadService{
+		client: client,
+	}
+}
+
+func (l *loadService) Load(log *zap.SugaredLogger, url string) (*LoadResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	lr := &LoadResponse{
 		cancel: cancel,
@@ -58,7 +70,7 @@ func (l *LoadService) Load(log *zap.SugaredLogger, url string) (*LoadResponse, e
 	req.Header.Add("Accept-Encoding", "gzip")
 	req.Header.Add("Accept", "text/html,*/*;q=0.9")
 	req.Header.Set("User-Agent", userAgent)
-	resp, err := client.Do(req)
+	resp, err := l.client.Do(req)
 	if err != nil {
 		return lr, err
 	}
@@ -90,6 +102,11 @@ func (l *LoadService) Load(log *zap.SugaredLogger, url string) (*LoadResponse, e
 	lr.Body = wrappedBody
 
 	return lr, nil
+}
+
+// CloseIdleConnections should be called periodically for long running processes
+func (l *loadService) CloseIdleConnections() {
+	l.client.HTTPClient.CloseIdleConnections()
 }
 
 type LoadResponse struct {

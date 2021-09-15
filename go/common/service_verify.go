@@ -14,7 +14,7 @@ const metaTagName = "epic-crawl-id"
 
 type VerifyService struct {
 	Database    *database.Database
-	LoadService *LoadService
+	LoadService LoadService
 }
 
 func (v *VerifyService) VerifySite(log *zap.SugaredLogger, siteID int) error {

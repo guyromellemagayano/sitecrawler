@@ -34,7 +34,7 @@ const (
 type ScanService struct {
 	Database       *database.Database
 	VerifyService  *common.VerifyService
-	LoadService    *common.LoadService
+	LoadService    common.LoadService
 	BackendService *common.BackendService
 }
 
@@ -62,6 +62,8 @@ func (s *ScanService) ScanSite(ctx context.Context, log *zap.SugaredLogger, scan
 	}
 
 	log.Infof("Starting scan for %v", scan.Site.Url)
+
+	defer s.LoadService.CloseIdleConnections()
 
 	if err := s.Start(ctx, log, scan); err != nil {
 		return err

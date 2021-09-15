@@ -40,6 +40,8 @@ func (v *VerifyEndpoint) ServeHTTP(log *zap.SugaredLogger, w http.ResponseWriter
 		return err
 	}
 
+	v.VerifyService.LoadService.CloseIdleConnections()
+
 	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(response); err != nil {

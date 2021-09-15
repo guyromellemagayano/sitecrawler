@@ -24,7 +24,7 @@ func main() {
 	db := common.ConfigureDatabase(log, awsSession, "verifier", env)
 	defer db.Close()
 
-	loadService := &common.LoadService{}
+	loadService := common.NewLoadService()
 	verifyService := &common.VerifyService{Database: db, LoadService: loadService}
 
 	http.Handle("/verify", common.WrapEndpoint(log, &VerifyEndpoint{VerifyService: verifyService}))

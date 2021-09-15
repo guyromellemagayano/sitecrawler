@@ -17,7 +17,7 @@ func main() {
 	db := common.ConfigureDatabase(log, awsSession, "reverifier", env)
 	defer db.Close()
 
-	loadService := &common.LoadService{}
+	loadService := common.NewLoadService()
 	verifyService := &common.VerifyService{Database: db, LoadService: loadService}
 
 	if err := ReverifyWorker(log, db, verifyService); err != nil {
