@@ -1,11 +1,8 @@
-import datetime
-
 from django.contrib.auth.models import User
 from rest_framework import mixins
 from rest_framework import viewsets
 
 from .serializers import UserSerializer
-from teams.models import MembershipType
 
 
 class UserExtViewSet(mixins.DestroyModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -14,15 +11,7 @@ class UserExtViewSet(mixins.DestroyModelMixin, mixins.RetrieveModelMixin, viewse
 
     def perform_destroy(self, user):
         for user_membership in user.membership_set.all():
-            team = user_membership.team
-            has_other_owner = False
-            for team_membership in team.membership_set.all():
-                if team_membership.user_id != user.id and team_membership.type_id == MembershipType.OWNER:
-                    has_other_owner = True
-
-            # delete team if it has no other owner
-            if not has_other_owner:
-                team.soft_delete()
+            user_membership.delete()
 
         super().perform_destroy(user)
 

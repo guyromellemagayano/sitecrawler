@@ -2,6 +2,7 @@ from functools import cached_property
 
 from django.contrib.auth.models import User, Permission
 from django.db import models
+from .membership_type import MembershipType
 
 
 class Membership(models.Model):
@@ -11,6 +12,11 @@ class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     team = models.ForeignKey("Team", on_delete=models.CASCADE)
     type = models.ForeignKey("MembershipType", on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "team"], name="membership_unique_user_team"),
+        ]
 
     @cached_property
     def permissions(self):
@@ -22,3 +28,16 @@ class Membership(models.Model):
                 | models.Q(user=self.user_id)
             )
         }
+
+    def delete(self):
+        team = self.team
+        has_other_owner = False
+        for team_membership in team.membership_set.all():
+            if team_membership.user_id != self.user_id and team_membership.type_id == MembershipType.OWNER:
+                has_other_owner = True
+
+        # delete team if it has no other owner
+        if not has_other_owner:
+            team.soft_delete()
+
+        super().delete()

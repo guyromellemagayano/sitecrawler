@@ -1,10 +1,8 @@
-import datetime
-
 from rest_framework import viewsets, mixins
 
-from .models import Team
-from .serializers import TeamSerializer
-from .service import get_current_team
+from teams.models import Team
+from teams.serializers import TeamSerializer
+from teams.service import get_current_team
 
 
 class TeamViewSet(
