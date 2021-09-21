@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Team, MembershipType, Membership, Plan
+from .models import Invitation, Team, MembershipType, Membership, Plan
 
 
 class MembershipInline(admin.TabularInline):
@@ -39,3 +39,8 @@ class PlanAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, *args, **kwargs):
         return False
+
+
+@admin.register(Invitation)
+class InvitationAdmin(admin.ModelAdmin):
+    readonly_fields = ("id",)

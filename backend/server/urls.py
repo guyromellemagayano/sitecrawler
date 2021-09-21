@@ -41,7 +41,7 @@ from payments.views import (
 )
 from signup.views import SignupViewSet
 from support.views import ContactView
-from teams.views import MembershipViewSet, TeamViewSet
+from teams.views import MembershipViewSet, TeamViewSet, MembershipTypeViewSet
 from uptime.views import UptimeStatViewSet, SendUptimeEmailsView
 from userext.views import UserExtViewSet
 
@@ -84,6 +84,7 @@ router.register(r"signup", SignupViewSet, basename="signup")
 
 team_router = router.register(r"team", TeamViewSet, basename="team")
 team_router.register(r"membership", MembershipViewSet, basename="membership", parents_query_lookups=["team"])
+router.register(r"membership_type", MembershipTypeViewSet, basename="membership_type")
 
 router.register(r"auth/user", UserExtViewSet, basename="user")
 

@@ -1,0 +1,9 @@
+Hello,
+
+You're invited to the {{invitation.team.name}} team on {{site.name}}.
+
+Visit the dashboard to accept and join the team:
+https://{{site.domain}}/team/invitation/{{invitation.id}}/
+
+Thanks,
+{{site.name}}

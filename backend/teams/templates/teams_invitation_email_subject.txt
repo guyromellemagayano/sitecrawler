@@ -1,0 +1,1 @@
+You are invited to a team on {{site.name}}
