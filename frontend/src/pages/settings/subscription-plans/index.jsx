@@ -1,54 +1,39 @@
-// React
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import { NextSeo } from "next-seo";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
-
-// Enums
+import Breadcrumbs from "@components/breadcrumbs";
+import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
+import Layout from "@components/layouts";
+import Footer from "@components/layouts/Footer";
+import Sidebar from "@components/layouts/Sidebar";
+import AppLogo from "@components/logos/AppLogo";
+import ChangeToBasicModal from "@components/modals/ChangeToBasicModal";
+import NewActivePlanModal from "@components/modals/NewActivePlanModal";
+import PaymentMethodModal from "@components/modals/PaymentMethodModal";
+import BasicPlan from "@components/plans/BasicPlan";
+import MonthlyPlans from "@components/plans/MonthlyPlans";
+import SemiAnnualPlans from "@components/plans/SemiAnnualPlans";
+import { CurrentPaymentMethodApiEndpoint, CurrentSubscriptionApiEndpoint, UserApiEndpoint } from "@enums/ApiEndpoints";
 import { GlobalLabels, MutateInterval, SiteLogoDark } from "@enums/GlobalValues";
 import { LoginLink, SitesLink } from "@enums/PageLinks";
 import { SubscriptionLabels } from "@enums/SubscriptionLabels";
 import {
-	CurrentPaymentMethodApiEndpoint,
-	CurrentSubscriptionApiEndpoint,
-	UserApiEndpoint
-} from "@enums/ApiEndpoints";
-
-// Hooks
-import { useComponentVisible } from "@hooks/useComponentVisible";
-import {
 	useChangeToBasicPlanModalVisible,
+	useComponentVisible,
 	useNewActivePlanModalVisible,
 	usePaymentMethodModalVisible
 } from "@hooks/useComponentVisible";
 import { useDeleteMethod, usePostMethod } from "@hooks/useHttpMethod";
 import {
-	useStripePromise,
 	useDefaultPaymentMethod,
-	useSubscriptions,
-	useDefaultSubscription
+	useDefaultSubscription,
+	useStripePromise,
+	useSubscriptions
 } from "@hooks/useStripePromise";
 import useUser from "@hooks/useUser";
-
-// Components
-import AppLogo from "@components/logos/AppLogo";
-import BasicPlan from "@components/plans/BasicPlan";
-import Breadcrumbs from "@components/breadcrumbs";
-import ChangeToBasicModal from "@components/modals/ChangeToBasicModal";
-import Layout from "@components/layouts";
-import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
-import MonthlyPlans from "@components/plans/MonthlyPlans";
-import NewActivePlanModal from "@components/modals/NewActivePlanModal";
-import PaymentMethodModal from "@components/modals/PaymentMethodModal";
-import SemiAnnualPlans from "@components/plans/SemiAnnualPlans";
-import Sidebar from "@components/layouts/Sidebar";
-import Footer from "@components/layouts/Footer";
+import { NextSeo } from "next-seo";
+import Link from "next/link";
+import * as React from "react";
+import { Scrollbars } from "react-custom-scrollbars-2";
+import Skeleton from "react-loading-skeleton";
+import tw from "twin.macro";
 
 const SubscriptionPlans = () => {
 	const [basicPlanId, setBasicPlanId] = React.useState(0);
@@ -71,11 +56,8 @@ const SubscriptionPlans = () => {
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 	const { newActivePlanModalRef, isNewActivePlanModalVisible, setIsNewActivePlanModalVisible } =
 		useNewActivePlanModalVisible(false);
-	const {
-		changeToBasicPlanModalRef,
-		isChangeToBasicPlanModalVisible,
-		setIsChangeToBasicPlanModalVisible
-	} = useChangeToBasicPlanModalVisible(false);
+	const { changeToBasicPlanModalRef, isChangeToBasicPlanModalVisible, setIsChangeToBasicPlanModalVisible } =
+		useChangeToBasicPlanModalVisible(false);
 	const { paymentMethodModalRef, isPaymentMethodModalVisible, setIsPaymentMethodModalVisible } =
 		usePaymentMethodModalVisible(false);
 
@@ -149,7 +131,7 @@ const SubscriptionPlans = () => {
 							? subscriptions?.results
 									.filter((sub) => sub.id == id)
 									.map((value) => {
-										value?.group?.name == "Pro" &&
+										value?.plan?.name == "Pro" &&
 										value?.price?.recurring?.interval == "month" &&
 										value?.price?.recurring?.interval_count == 1
 											? (() => {
@@ -158,7 +140,7 @@ const SubscriptionPlans = () => {
 													setLoadingProSemiAnnually(false);
 													setLoadingAgencySemiAnnually(false);
 											  })()
-											: value?.group?.name == "Agency" &&
+											: value?.plan?.name == "Agency" &&
 											  value?.price?.recurring?.interval == "month" &&
 											  value?.price?.recurring?.interval_count == 1
 											? (() => {
@@ -167,7 +149,7 @@ const SubscriptionPlans = () => {
 													setLoadingProSemiAnnually(false);
 													setLoadingAgencySemiAnnually(false);
 											  })()
-											: value?.group?.name == "Pro" &&
+											: value?.plan?.name == "Pro" &&
 											  value?.price?.recurring?.interval == "month" &&
 											  value?.price?.recurring?.interval_count == 6
 											? (() => {
@@ -213,7 +195,7 @@ const SubscriptionPlans = () => {
 										subscriptions?.results
 											.filter((sub) => sub.id === info.id)
 											.map((val) => {
-												setUpdatedPlanName(val?.group?.name);
+												setUpdatedPlanName(val?.plan?.name);
 												setUpdatedPlanId(val?.id);
 											});
 
@@ -275,12 +257,7 @@ const SubscriptionPlans = () => {
 			<NextSeo title={SubscriptionLabels[25].label} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar
-					ref={ref}
-					user={user}
-					openSidebar={isComponentVisible}
-					setOpenSidebar={setIsComponentVisible}
-				/>
+				<Sidebar ref={ref} user={user} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 
 				<PaymentMethodModal
 					handleSelectPlan={handleSelectPlan}
@@ -329,10 +306,7 @@ const SubscriptionPlans = () => {
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
-							<MobileSidebarButton
-								openSidebar={isComponentVisible}
-								setOpenSidebar={setIsComponentVisible}
-							/>
+							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 						</div>
 
 						<Link href={SitesLink} passHref>
@@ -349,10 +323,7 @@ const SubscriptionPlans = () => {
 					</div>
 
 					<Scrollbars universal>
-						<main
-							tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none"
-							tabIndex="0"
-						>
+						<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="max-w-full p-4 sm:px-6 md:px-8">
 								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 									<div tw="lg:col-span-3 xl:col-span-3 xl:pr-8">
@@ -379,9 +350,7 @@ const SubscriptionPlans = () => {
 												</div>
 
 												<div tw="flex items-center justify-center">
-													<p tw="text-base leading-7 font-medium text-gray-500 mx-4">
-														{SubscriptionLabels[1].label}
-													</p>
+													<p tw="text-base leading-7 font-medium text-gray-500 mx-4">{SubscriptionLabels[1].label}</p>
 
 													<span
 														role="checkbox"
@@ -402,9 +371,7 @@ const SubscriptionPlans = () => {
 														/>
 													</span>
 
-													<p tw="text-base leading-7 font-medium text-gray-500 mx-4">
-														{SubscriptionLabels[2].label}
-													</p>
+													<p tw="text-base leading-7 font-medium text-gray-500 mx-4">{SubscriptionLabels[2].label}</p>
 												</div>
 
 												<div tw="mt-10 mb-2">
@@ -419,7 +386,7 @@ const SubscriptionPlans = () => {
 														<div tw="relative lg:grid lg:grid-cols-7">
 															{subscriptions && subscriptions?.results ? (
 																subscriptions?.results
-																	.filter((result) => result.group.name === "Basic")
+																	.filter((result) => result.plan.name === "Basic")
 																	.map((val, key) => (
 																		<BasicPlan
 																			data={val}
