@@ -1,11 +1,18 @@
 {
+    "root": true,
     "parser": "babel-eslint",
     "parserOptions": {
         "ecmaVersion": "latest",
+        "sourceType": "module",
         "ecmaFeatures": {
             "jsx": true,
             "experimentalObjectRestSpread": true
         }
+    },
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
     },
     "plugins": [
         "module-resolver",
@@ -15,7 +22,9 @@
         "next",
         "next/core-web-vitals",
         "plugin:import/errors",
-        "plugin:import/warnings"
+        "plugin:import/warnings",
+        "eslint:recommended",
+        "prettier"
     ],
     "settings": {
         "react": {
@@ -37,6 +46,7 @@
         "no-inner-declarations": "off",
         "valid-jsdoc": "off",
         "require-jsdoc": "off",
+        "prettier/prettier": "error",
         "quotes": [
             "error",
             "backtick"
@@ -82,10 +92,16 @@
             }
         ],
         "settings": {
+            "react": {
+                "version": "detect"
+            },
             "import/resolver": {
                 "node": {
-                    "paths": [
-                        "./src"
+                    "extensions": [
+                        ".js",
+                        ".jsx",
+                        ".ts",
+                        ".tsx"
                     ]
                 }
             }
