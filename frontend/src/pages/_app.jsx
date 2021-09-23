@@ -1,27 +1,17 @@
-// React
-import * as React from "react";
-
-// NextJS
-import { useRouter } from "next/router";
-
-// External
-import "tailwindcss/tailwind.css";
-import { DefaultSeo } from "next-seo";
+import TopProgressBar from "@components/top-progress-bar";
+import AppSeo from "@enums/AppSeo";
+import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import App from "next/app";
+import GlobalStyles from "@styles/GlobalStyles";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
-
-// TODO: Add PropTypes in _app page
-
-// Enums
-import AppSeo from "@enums/AppSeo";
-
-// Components
-import GlobalStyles from "@styles/GlobalStyles";
-import TopProgressBar from "@components/top-progress-bar";
+import { DefaultSeo } from "next-seo";
+import App from "next/app";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import * as React from "react";
+import "tailwindcss/tailwind.css";
 
 // Font Awesome
 library.add(fab);
@@ -109,6 +99,11 @@ const MyApp = ({ Component, pageProps }) => {
 			<Component {...pageProps} />
 		</>
 	);
+};
+
+MyApp.propTypes = {
+	Component: PropTypes.any,
+	pageProps: PropTypes.any
 };
 
 MyApp.getInitialProps = async (appContext) => {

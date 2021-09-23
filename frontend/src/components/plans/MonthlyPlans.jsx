@@ -1,13 +1,9 @@
-// External
+import { SubscriptionLabels } from "@enums/SubscriptionLabels";
+import { SubscriptionPlanLabels } from "@enums/SubscriptionPlanLabels";
 import { CheckIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
-
-// Enums
-import { SubscriptionLabels } from "@enums/SubscriptionLabels";
-import { SubscriptionPlanLabels } from "@enums/SubscriptionPlanLabels";
 
 const MonthlyPlans = ({
 	data,
@@ -36,7 +32,7 @@ const MonthlyPlans = ({
 		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
 
-	return data?.group?.name == "Pro" ? (
+	return data?.plan?.name == "Pro" ? (
 		<div tw="mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4">
 			<div tw="relative rounded-lg shadow-xl">
 				<div tw="pointer-events-none absolute inset-0 rounded-lg border border-indigo-600"></div>
@@ -49,11 +45,8 @@ const MonthlyPlans = ({
 				</div>
 				<div tw="bg-white rounded-t-lg px-6 pt-12 pb-10">
 					<div>
-						<h3
-							tw="text-center text-3xl leading-9 font-semibold text-gray-900 sm:-mx-6"
-							id="tier-growth"
-						>
-							{data?.group?.name}
+						<h3 tw="text-center text-3xl leading-9 font-semibold text-gray-900 sm:-mx-6" id="tier-growth">
+							{data?.plan?.name}
 							<span tw="text-red-400">*</span>
 						</h3>
 						<div tw="mt-4 flex items-center justify-center">
@@ -79,12 +72,7 @@ const MonthlyPlans = ({
 						})}
 					</ul>
 					<div tw="mt-10">
-						<div
-							css={[
-								tw`rounded-lg`,
-								data?.id == defaultSubscription?.id ? tw`shadow-none` : tw`shadow-sm`
-							]}
-						>
+						<div css={[tw`rounded-lg`, data?.id == defaultSubscription?.id ? tw`shadow-none` : tw`shadow-sm`]}>
 							{data?.id == defaultSubscription?.id &&
 							defaultSubscription?.status == "PAID" &&
 							defaultSubscription?.cancel_at !== null ? (
@@ -95,9 +83,7 @@ const MonthlyPlans = ({
 											{!disableLocalTime
 												? dayjs(defaultSubscription?.cancel_at).calendar(null, calendarStrings)
 												: dayjs.utc(defaultSubscription?.cancel_at).calendar(null, calendarStrings)}
-											<span tw="ml-1 font-medium">
-												({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
-											</span>
+											<span tw="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
 										</p>
 									</span>
 								</div>
@@ -118,13 +104,11 @@ const MonthlyPlans = ({
 									disabled={!defaultPaymentMethod || loadingProMonthly ? "disabled" : ""}
 									onClick={() => {
 										setUpdatedPlanId(data?.id);
-										setUpdatedPlanName(data?.group?.name);
+										setUpdatedPlanName(data?.plan?.name);
 										setShowModal(!showModal);
 									}}
 								>
-									{loadingProMonthly
-										? SubscriptionPlanLabels[1].label
-										: SubscriptionLabels[3].label}
+									{loadingProMonthly ? SubscriptionPlanLabels[1].label : SubscriptionLabels[3].label}
 								</button>
 							)}
 						</div>
@@ -132,14 +116,14 @@ const MonthlyPlans = ({
 				</div>
 			</div>
 		</div>
-	) : data?.group?.name == "Agency" ? (
+	) : data?.plan?.name == "Agency" ? (
 		<div tw="mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3">
 			<div tw="h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-r-lg border">
 				<div tw="flex-1 flex flex-col">
 					<div tw="bg-white px-6 py-10">
 						<div>
 							<h3 tw="text-center text-2xl leading-8 font-medium text-gray-900" id="tier-scale">
-								{data?.group?.name}
+								{data?.plan?.name}
 								<span tw="text-red-400">*</span>
 							</h3>
 							<div tw="mt-4 flex items-center justify-center">
@@ -165,12 +149,7 @@ const MonthlyPlans = ({
 							})}
 						</ul>
 						<div tw="mt-8">
-							<div
-								css={[
-									tw`rounded-lg`,
-									data?.id == defaultSubscription?.id ? tw`shadow-none` : tw`shadow-sm`
-								]}
-							>
+							<div css={[tw`rounded-lg`, data?.id == defaultSubscription?.id ? tw`shadow-none` : tw`shadow-sm`]}>
 								{data?.id == defaultSubscription?.id &&
 								defaultSubscription?.status == "PAID" &&
 								defaultSubscription?.cancel_at !== null ? (
@@ -180,12 +159,8 @@ const MonthlyPlans = ({
 											<p tw="text-xs text-gray-500">
 												{!disableLocalTime
 													? dayjs(defaultSubscription?.cancel_at).calendar(null, calendarStrings)
-													: dayjs
-															.utc(defaultSubscription?.cancel_at)
-															.calendar(null, calendarStrings)}
-												<span tw="ml-1 font-medium">
-													({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
-												</span>
+													: dayjs.utc(defaultSubscription?.cancel_at).calendar(null, calendarStrings)}
+												<span tw="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
 											</p>
 										</span>
 									</div>
@@ -206,13 +181,11 @@ const MonthlyPlans = ({
 										disabled={!defaultPaymentMethod || loadingAgencyMonthly ? "disabled" : ""}
 										onClick={() => {
 											setUpdatedPlanId(data?.id);
-											setUpdatedPlanName(data?.group?.name);
+											setUpdatedPlanName(data?.plan?.name);
 											setShowModal(!showModal);
 										}}
 									>
-										{loadingAgencyMonthly
-											? SubscriptionPlanLabels[1].label
-											: SubscriptionLabels[3].label}
+										{loadingAgencyMonthly ? SubscriptionPlanLabels[1].label : SubscriptionLabels[3].label}
 									</button>
 								)}
 							</div>

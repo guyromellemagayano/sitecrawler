@@ -1,25 +1,13 @@
-// React
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import "twin.macro";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { PlusIcon } from "@heroicons/react/solid";
-import { SearchIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
-
-// Enums
-import { AddNewSiteLink } from "@enums/PageLinks";
-import { AddSiteLabels } from "@enums/AddSiteLabels";
-
-// Hooks
-import { useComponentVisible } from "@hooks/useComponentVisible";
-
-// Components
 import UpgradeErrorModal from "@components/modals/UpgradeErrorModal";
+import { AddSiteLabels } from "@enums/AddSiteLabels";
+import { AddNewSiteLink } from "@enums/PageLinks";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
+import { useComponentVisible } from "@hooks/useComponentVisible";
+import Link from "next/link";
+import PropTypes from "prop-types";
+import * as React from "react";
+import "twin.macro";
 
 const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 	const [maxSiteLimit, setMaxSiteLimit] = React.useState(0);
@@ -29,7 +17,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 
 	const handleSiteLimit = (user, site) => {
 		setSiteLimitCounter(site?.count);
-		setMaxSiteLimit(user?.group?.max_sites);
+		setMaxSiteLimit(user?.plan?.max_sites);
 	};
 
 	React.useEffect(() => {
@@ -38,11 +26,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 
 	return (
 		<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-			<UpgradeErrorModal
-				ref={ref}
-				showModal={isComponentVisible}
-				setShowModal={setIsComponentVisible}
-			/>
+			<UpgradeErrorModal ref={ref} showModal={isComponentVisible} setShowModal={setIsComponentVisible} />
 
 			<div tw="relative z-10 flex-shrink-0 flex  bg-white border-b border-gray-200">
 				<div tw="flex-1 p-4 flex justify-between">

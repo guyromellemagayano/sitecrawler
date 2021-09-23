@@ -16,4 +16,4 @@ export const SignupApiEndpoint = `/api/signup/`;
 export const SiteApiEndpoint = `/api/site/`;
 export const StripePromiseApiEndpoint = `/api/stripe/config/`;
 export const SubscriptionsApiEndpoint = `/api/stripe/subscription/`;
-export const UserApiEndpoint = `/api/auth/user/`;
+export const UserApiEndpoint = `/api/team/current/`;

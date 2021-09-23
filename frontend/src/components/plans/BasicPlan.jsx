@@ -1,23 +1,11 @@
-// React
-import * as React from "react";
-
-// External
-import { CheckIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
-import tw from "twin.macro";
-
-// Enums
 import { SubscriptionLabels } from "@enums/SubscriptionLabels";
 import { SubscriptionPlanLabels } from "@enums/SubscriptionPlanLabels";
+import { CheckIcon } from "@heroicons/react/solid";
+import PropTypes from "prop-types";
+import * as React from "react";
+import tw from "twin.macro";
 
-const BasicPlan = ({
-	data,
-	defaultSubscription,
-	setBasicPlanId,
-	setBasicPlanName,
-	setShowModal,
-	showModal
-}) => {
+const BasicPlan = ({ data, defaultSubscription, setBasicPlanId, setBasicPlanName, setShowModal, showModal }) => {
 	return (
 		<div tw="mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3">
 			<div tw="h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-l-lg border">
@@ -25,16 +13,14 @@ const BasicPlan = ({
 					<div tw="bg-white px-6 py-10">
 						<div>
 							<h3 tw="text-center text-2xl leading-8 font-medium text-gray-900" id="tier-hobby">
-								{data?.group?.name}
+								{data?.plan?.name}
 							</h3>
 							<div tw="mt-4 flex items-center justify-center">
 								<span tw="px-3 flex items-start text-6xl leading-none tracking-tight text-gray-900">
 									<span tw="mt-2 mr-2 text-4xl font-medium">$</span>
 									<span tw="font-bold">{data?.price?.unit_amount / 100}</span>
 								</span>
-								<span tw="text-xl leading-7 font-medium text-gray-500">
-									{SubscriptionLabels[22].label}
-								</span>
+								<span tw="text-xl leading-7 font-medium text-gray-500">{SubscriptionLabels[22].label}</span>
 							</div>
 						</div>
 					</div>
@@ -52,14 +38,8 @@ const BasicPlan = ({
 							})}
 						</ul>
 						<div tw="mt-8">
-							<div
-								css={[
-									tw`rounded-lg`,
-									defaultSubscription?.cancel_at !== null ? tw`shadow-none` : tw`shadow-sm`
-								]}
-							>
-								{defaultSubscription?.cancel_at !== undefined &&
-								defaultSubscription?.cancel_at !== null ? (
+							<div css={[tw`rounded-lg`, defaultSubscription?.cancel_at !== null ? tw`shadow-none` : tw`shadow-sm`]}>
+								{defaultSubscription?.cancel_at !== undefined && defaultSubscription?.cancel_at !== null ? (
 									<button
 										type="button"
 										disabled={true}
@@ -79,7 +59,7 @@ const BasicPlan = ({
 										onClick={() =>
 											(() => {
 												setBasicPlanId(data?.id);
-												setBasicPlanName(data?.group?.name);
+												setBasicPlanName(data?.plan?.name);
 												setShowModal(!showModal);
 											})()
 										}
