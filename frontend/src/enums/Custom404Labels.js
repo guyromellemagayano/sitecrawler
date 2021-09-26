@@ -1,8 +1,14 @@
 export const Custom404Labels = [
 	{
-		label: "404 - Page Not Found"
+		label: "Page not found"
 	},
 	{
-		label: "Go Back to Login"
+		label: "Please check the URL in the address bar and try again."
+	},
+	{
+		label: "Go back home"
+	},
+	{
+		label: "Contact support"
 	}
 ];
