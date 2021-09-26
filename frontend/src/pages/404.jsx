@@ -15,7 +15,7 @@ const Custom404 = () => {
 			<div tw="bg-white min-h-screen px-4 py-16 sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8">
 				<div tw="max-w-max mx-auto">
 					<main tw="sm:flex">
-						<p tw="text-4xl font-extrabold text-indigo-600 sm:text-5xl">404</p>
+						<p tw="text-4xl font-extrabold text-red-600 sm:text-5xl">404</p>
 						<div tw="sm:ml-6">
 							<div tw="sm:border-l sm:border-gray-200 sm:pl-6">
 								<h1 tw="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
