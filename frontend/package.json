@@ -78,7 +78,6 @@
 		"next": "^11.1.2",
 		"next-compose-plugins": "^2.2.1",
 		"next-seo": "^4.28.1",
-		"next-translate": "^1.1.0",
 		"node-fetch": "^3.0.0",
 		"postcss": "^8.3.8",
 		"postcss-import": "^14.0.2",

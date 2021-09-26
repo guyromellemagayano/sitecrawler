@@ -9,22 +9,26 @@ const SENTRY_ORG = process.env.SENTRY_ORG || process.env.NEXT_PUBLIC_SENTRY_ORG;
 const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN || process.env.NEXT_PUBLIC_SENTRY_AUTH_TOKEN;
 const SENTRY_PROJECT = process.env.SENTRY_PROJECT || process.env.NEXT_PUBLIC_SENTRY_PROJECT;
 
-const moduleExports = {
+const ModuleExports = {
 	trailingSlash: true,
 	devIndicators: {
 		autoPrerender: false
 	},
 	eslint: {
-		dirs: ["pages", "enums", "components", "hooks", "helpers"]
+		dirs: ["pages", "enums", "components", "hooks", "helpers"],
+		ignoreDuringBuilds: true
 	},
 	webpack: (config) => {
 		config.resolve.fallback = { fs: false, module: false };
 		return config;
 	},
-	eslint: {
-		ignoreDuringBuilds: true
+	i18n: {
+		locales: ["en", "fr", "nl"],
+		defaultLocale: "en"
 	}
 };
+
+const BundleAnalyzerPluginOptions = {};
 
 const SentryWebpackPluginOptions = {
 	include: ".",
@@ -34,4 +38,7 @@ const SentryWebpackPluginOptions = {
 	project: SENTRY_PROJECT || "sitecrawler-frontend"
 };
 
-module.exports = withPlugins([withBundleAnalyzer({}), withSentryConfig(moduleExports, SentryWebpackPluginOptions)]);
+module.exports = withPlugins([
+	withBundleAnalyzer(BundleAnalyzerPluginOptions),
+	withSentryConfig(ModuleExports, SentryWebpackPluginOptions)
+]);
