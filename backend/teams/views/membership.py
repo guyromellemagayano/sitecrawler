@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from rest_framework import viewsets, mixins
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
+from teams.common import HasTeamDetailPermission
 from teams.models import Membership, Invitation
 from teams.serializers import MembershipSerializer, MembershipCreateSerializer, MembershipUpdateSerializer
 from teams.service import get_current_team
@@ -18,6 +19,7 @@ class MembershipViewSet(
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
+    permission_classes = [HasTeamDetailPermission("teams.can_manage_membership")]
     queryset = Membership.objects.all()
     serializer_class = MembershipSerializer
 

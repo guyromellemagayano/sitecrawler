@@ -17,6 +17,7 @@ class Membership(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["user", "team"], name="membership_unique_user_team"),
         ]
+        permissions = (("can_manage_membership", "Can manage team"),)
 
     @cached_property
     def permissions(self):

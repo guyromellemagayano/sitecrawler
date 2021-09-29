@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import stripe
 
+from common import HasPermission
 from ..models import SubscriptionType, Subscription
 from ..serializers import SubscriptionSerializer
 from ..services import customer
@@ -12,6 +13,8 @@ from teams.service import get_current_team
 
 
 class SubscriptionCurrentView(APIView):
+    permission_classes = [HasPermission("payments.can_manage_subscription")]
+
     def get(self, request):
         team = get_current_team(request)
         if not hasattr(team, "subscription"):

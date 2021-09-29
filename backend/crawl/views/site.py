@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+from common import HasPermission
 from crawl.models import Site
 from crawl.serializers import SiteSerializer, ScanSerializer
 from crawl.services import scan, verify
@@ -25,6 +26,12 @@ class SiteViewSet(
     filterset_fields = ["verified"]
     search_fields = ["url", "name"]
     ordering_fields = ["name", "url", "verified", "id", "created_at", "updated_at", "verification_id"]
+
+    def get_permissions(self):
+        permission_classes = self.permission_classes
+        if self.action in ["destroy", "create", "update", "partial_update", "verify", "start_scan"]:
+            permission_classes = [HasPermission("crawl.can_manage_site")]
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
         query = Site.objects.filter(deleted_at__isnull=True).annotate_last_finished_scan_id()

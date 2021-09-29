@@ -2,7 +2,8 @@ from django_filters import rest_framework as filters
 from rest_framework import viewsets, mixins
 from rest_framework_extensions.mixins import DetailSerializerMixin, NestedViewSetMixin
 
-from crawl.common import CsvMixin, HasPermission
+from common import HasPermission
+from crawl.common import CsvMixin
 from crawl.models import Link
 from crawl.serializers import (
     LinkSerializer,

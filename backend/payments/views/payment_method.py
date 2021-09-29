@@ -4,6 +4,7 @@ from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.response import Response
 import stripe
 
+from common import HasPermission
 from ..serializers import PaymentMethodSerializer
 from ..services import customer
 
@@ -15,6 +16,8 @@ class CardError(APIException):
 
 
 class PaymentMethodViewSet(viewsets.ViewSet):
+    permission_classes = [HasPermission("payments.can_manage_subscription")]
+
     def list(self, request):
         customer_id = customer.get_id(request)
         if not customer_id:

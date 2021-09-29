@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.serializers import Serializer, ValidationError
 from rest_framework.response import Response
 
+from teams.common import HasTeamDetailPermission
 from teams.models import Team, Membership
 from teams.serializers import TeamSerializer, InvitationSerializer
 from teams.service import get_current_team, set_current_team
@@ -20,6 +21,14 @@ class TeamViewSet(
     serializer_class = TeamSerializer
 
     ordering_fields = ["id", "name", "created_at", "updated_at"]
+
+    def get_permissions(self):
+        permission_classes = self.permission_classes
+        if self.action == "destroy":
+            permission_classes = [HasTeamDetailPermission("teams.can_delete_team")]
+        elif self.action in ["update", "partial_update"]:
+            permission_classes = [HasTeamDetailPermission("teams.can_manage_team")]
+        return [permission() for permission in permission_classes]
 
     def dispatch(self, request, *args, **kwargs):
         if "pk" in kwargs and kwargs["pk"] == "current":

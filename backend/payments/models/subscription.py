@@ -26,6 +26,9 @@ class Subscription(models.Model):
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, null=False, default=STATUS_WAITING_PAYMENT)
     cancel_at = models.DateTimeField(null=True, blank=True)
 
+    class Meta:
+        permissions = (("can_manage_subscription", "Can manage subscription, stripe, payment"),)
+
     def set_cancel_at_timestamp(self, ts):
         self.cancel_at = datetime.utcfromtimestamp(ts)
 

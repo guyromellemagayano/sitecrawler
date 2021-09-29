@@ -6,7 +6,8 @@ from rest_framework.decorators import action
 from rest_framework_extensions.mixins import DetailSerializerMixin, NestedViewSetMixin
 from rest_framework.response import Response
 
-from crawl.common import CsvMixin, HasPermission
+from common import HasPermission
+from crawl.common import CsvMixin
 from crawl.models import Link
 from crawl.serializers import PageSerializer, PageDetailSerializer, PageDuplicatesSerializer
 from teams.service import get_current_team

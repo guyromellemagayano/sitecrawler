@@ -31,6 +31,12 @@ class Team(models.Model):
     name = models.CharField(max_length=255)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, default=Plan.BASIC)
 
+    class Meta:
+        permissions = (
+            ("can_manage_team", "Can manage team"),
+            ("can_delete_team", "Can delete team"),
+        )
+
     def __str__(self):
         return f"{self.name} ({self.id})"
 

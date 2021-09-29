@@ -40,16 +40,6 @@ class CalculatedField:
         return total
 
 
-def HasPermission(perm):
-    class HasPermissionClass(permissions.BasePermission):
-        message = "Not available in this subscription."
-
-        def has_permission(self, request, view):
-            return has_permission(request, perm)
-
-    return HasPermissionClass
-
-
 class CustomCSVRenderer(CSVRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         if renderer_context is not None:

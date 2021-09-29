@@ -2,10 +2,13 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 import stripe
 
+from common import HasPermission
 from ..services import customer
 
 
 class InvoiceViewSet(viewsets.ViewSet):
+    permission_classes = [HasPermission("payments.can_manage_subscription")]
+
     def list(self, request):
         customer_id = customer.get_id(request)
         if not customer_id:
