@@ -10,6 +10,7 @@ concurrency: deploy
 jobs:
   build_backend:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
     - uses: actions/checkout@v2
     - name: Build backend
@@ -28,6 +29,7 @@ jobs:
         AWS_DEFAULT_REGION: us-east-1
   build_frontend:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
     - uses: actions/checkout@v2
     - name: Build and push frontend
@@ -38,6 +40,7 @@ jobs:
         AWS_DEFAULT_REGION: us-east-1
   build_go:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
     - uses: actions/checkout@v2
     - name: Test go
@@ -51,6 +54,7 @@ jobs:
 
   cypress:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [build_backend, build_frontend, build_go]
     steps:
     - uses: actions/checkout@v2
@@ -64,6 +68,7 @@ jobs:
 
   staging:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [cypress]
     steps:
     - uses: actions/checkout@v2
@@ -88,6 +93,7 @@ jobs:
   production:
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: [staging]
     steps:
     - uses: actions/checkout@v2
