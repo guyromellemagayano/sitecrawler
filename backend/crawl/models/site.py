@@ -34,7 +34,10 @@ class Site(models.Model):
     large_page_size_threshold = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
-        permissions = (("can_manage_site", "Can manage site"),)
+        permissions = (
+            ("can_manage_site", "Can manage site"),
+            ("can_see_all_sites", "Can see all sites"),
+        )
 
     def __str__(self):
         return f"{self.team}: {self.url} ({self.id})"

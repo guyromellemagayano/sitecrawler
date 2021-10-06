@@ -57,7 +57,10 @@ class TeamViewSet(
         invitation = serializer.validated_data["id"]
 
         try:
-            Membership.objects.create(user=request.user, team=invitation.team, type=invitation.membership_type)
+            membership = Membership.objects.create(
+                user=request.user, team=invitation.team, type=invitation.membership_type
+            )
+            membership.sites.add(*invitation.sites.all())
         except IntegrityError:
             raise ValidationError(f"{request.user} is already member of {invitation.team.name} team.")
 

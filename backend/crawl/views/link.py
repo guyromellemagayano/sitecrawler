@@ -12,7 +12,7 @@ from crawl.serializers import (
     ScriptDetailSerializer,
     StylesheetDetailSerializer,
 )
-from teams.service import get_current_team
+from teams.service import get_current_membership, get_current_team, has_permission
 
 
 class HumanReadableMultipleChoiceFilter(filters.MultipleChoiceFilter):
@@ -77,8 +77,12 @@ class PageChildViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
-        if not self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            pass
+        elif has_permission(self.request, "crawl.can_see_all_sites"):
             queryset = queryset.filter(scan__site__team=get_current_team(self.request))
+        else:
+            queryset = queryset.filter(scan__site__membership=get_current_membership(self.request))
         return queryset
 
 

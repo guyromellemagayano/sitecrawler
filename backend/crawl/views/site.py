@@ -10,7 +10,7 @@ from common import HasPermission
 from crawl.models import Site
 from crawl.serializers import SiteSerializer, ScanSerializer
 from crawl.services import scan, verify
-from teams.service import get_current_team, has_permission
+from teams.service import get_current_membership, get_current_team, has_permission
 
 
 class SiteViewSet(
@@ -37,7 +37,9 @@ class SiteViewSet(
         query = Site.objects.filter(deleted_at__isnull=True).annotate_last_finished_scan_id()
         if self.detail and self.request.user.is_superuser:
             return query
-        return query.filter(team=get_current_team(self.request))
+        if has_permission(self.request, "crawl.can_see_all_sites"):
+            return query.filter(team=get_current_team(self.request))
+        return query.filter(membership=get_current_membership(self.request))
 
     def perform_create(self, serializer):
         serializer.save(team=get_current_team(self.request), verification_id=uuid.uuid4())

@@ -7,6 +7,7 @@ class Invitation(models.Model):
     email = models.EmailField()
     team = models.ForeignKey("Team", on_delete=models.CASCADE)
     membership_type = models.ForeignKey("MembershipType", on_delete=models.CASCADE)
+    sites = models.ManyToManyField("crawl.Site", blank=True)
 
     def __str__(self):
         return f"Invite {self.email} to {self.team} as {self.membership_type}"

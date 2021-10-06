@@ -10,7 +10,7 @@ from common import HasPermission
 from crawl.common import CsvMixin
 from crawl.models import Link
 from crawl.serializers import PageSerializer, PageDetailSerializer, PageDuplicatesSerializer
-from teams.service import get_current_team
+from teams.service import get_current_membership, get_current_team, has_permission
 
 
 class PageFilter(filters.FilterSet):
@@ -143,8 +143,12 @@ class PageViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
-        if not self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            pass
+        elif has_permission(self.request, "crawl.can_see_all_sites"):
             queryset = queryset.filter(scan__site__team=get_current_team(self.request))
+        else:
+            queryset = queryset.filter(scan__site__membership=get_current_membership(self.request))
         if self._is_request_to_detail_endpoint():
             queryset = queryset.select_related("tls", "scan", "pagedata")
         return queryset.pages()

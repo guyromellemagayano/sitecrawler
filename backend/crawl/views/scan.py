@@ -9,7 +9,7 @@ from rest_framework_extensions.mixins import DetailSerializerMixin, NestedViewSe
 
 from crawl.models import Scan
 from crawl.serializers import ScanDetailSerializer, ScanSerializer
-from teams.service import get_current_team
+from teams.service import get_current_membership, get_current_team, has_permission
 
 
 class ScanViewSet(
@@ -35,8 +35,12 @@ class ScanViewSet(
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(site__deleted_at__isnull=True)
-        if not self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            pass
+        elif has_permission(self.request, "crawl.can_see_all_sites"):
             queryset = queryset.filter(site__team=get_current_team(self.request))
+        else:
+            queryset = queryset.filter(site__membership=get_current_membership(self.request))
         if self._is_request_to_detail_endpoint():
             queryset = queryset.with_details()
         return queryset

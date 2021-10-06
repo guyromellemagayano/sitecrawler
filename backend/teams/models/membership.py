@@ -13,6 +13,8 @@ class Membership(models.Model):
     team = models.ForeignKey("Team", on_delete=models.CASCADE)
     type = models.ForeignKey("MembershipType", on_delete=models.CASCADE)
 
+    sites = models.ManyToManyField("crawl.Site", blank=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["user", "team"], name="membership_unique_user_team"),

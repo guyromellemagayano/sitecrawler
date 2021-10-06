@@ -36,16 +36,17 @@ class MembershipViewSet(
     def get_serializer_class(self):
         if self.action == "create":
             return MembershipCreateSerializer
-        if self.action == "update":
+        if self.action in ("update", "partial_update"):
             return MembershipUpdateSerializer
         return super().get_serializer_class()
 
     def perform_create(self, serializer):
         invitation = Invitation.objects.create(
-            membership_type=serializer.validated_data["type_id"],
-            email=serializer.validated_data["user_email"],
             team_id=self.kwargs["parent_lookup_team"],
+            email=serializer.validated_data["user_email"],
+            membership_type=serializer.validated_data["type_id"],
         )
+        invitation.sites.add(*serializer.validated_data["sites"])
 
         site = models.Site.objects.get_current()
         context = {"invitation": invitation, "site": site}
