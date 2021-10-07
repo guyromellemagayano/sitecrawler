@@ -114,7 +114,7 @@
 		"@babel/plugin-transform-react-jsx": "^7.14.9",
 		"@tailwindcss/jit": "^0.1.18",
 		"add": "^2.0.6",
-		"autoprefixer": "^10.3.5",
+		"autoprefixer": "^10.3.7",
 		"babel-eslint": "^10.1.0",
 		"babel-loader": "^8.2.2",
 		"babel-plugin-add-react-displayname": "^0.0.5",
