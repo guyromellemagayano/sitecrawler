@@ -4,6 +4,8 @@ from django.db import models
 
 class Invitation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=False)
+
     email = models.EmailField()
     team = models.ForeignKey("Team", on_delete=models.CASCADE)
     membership_type = models.ForeignKey("MembershipType", on_delete=models.CASCADE)

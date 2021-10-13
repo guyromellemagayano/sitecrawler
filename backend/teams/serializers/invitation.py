@@ -1,9 +1,13 @@
 from rest_framework import serializers
+
 from teams.models import Invitation
+from .membership_type import MembershipTypeSerializer
 
 
 class InvitationSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Invitation.objects.all())
+
+    membership_type = MembershipTypeSerializer(read_only=True)
 
     def validate(self, data):
         if self.context["request"].user.email != data["id"].email:
@@ -12,4 +16,5 @@ class InvitationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Invitation
-        fields = ["id"]
+        read_only_fields = ["created_at", "email", "membership_type", "sites"]
+        fields = ["id"] + read_only_fields
