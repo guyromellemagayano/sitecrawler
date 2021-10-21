@@ -49,11 +49,13 @@ const Login = () => {
 											<LogoLabel isLogin />
 
 											<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-												{errorMsg && errorMsg.length > 0
-													? errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)
-													: null}
+												{errorMsg && errorMsg instanceof Array && errorMsg.length > 0 ? (
+													errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)
+												) : typeof errorMsg === "string" ? (
+													<ErrorMessageAlert message={errorMsg} />
+												) : null}
 
-												{successMsg && successMsg.length > 0
+												{successMsg && successMsg instanceof Array && successMsg.length > 0
 													? successMsg.map((value, index) => <SuccessMessageAlert key={index} message={value} />)
 													: null}
 

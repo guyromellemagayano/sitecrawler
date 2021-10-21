@@ -25,6 +25,10 @@ const ModuleExports = {
 	i18n: {
 		locales: ["en", "fr", "nl"],
 		defaultLocale: "en"
+	},
+	sentry: {
+		disableServerWebpackPlugin: true,
+		disableClientWebpackPlugin: true
 	}
 };
 

@@ -270,3 +270,6 @@ package-lock.json
 # cypress
 cypress/videos
 cypress/screenshots
+
+# backup
+*.bak
