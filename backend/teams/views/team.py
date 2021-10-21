@@ -35,6 +35,8 @@ class TeamViewSet(
             team = get_current_team(request)
             if team:
                 kwargs["pk"] = team.id
+            else:
+                kwargs["pk"] = -1
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):

@@ -23,4 +23,6 @@ class InvitationViewSet(
             team = get_current_team(request)
             if team:
                 kwargs["parent_lookup_team"] = team.id
+            else:
+                kwargs["parent_lookup_team"] = -1
         return super().dispatch(request, *args, **kwargs)
