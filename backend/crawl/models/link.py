@@ -19,6 +19,35 @@ class SubQuerySizeSum(Subquery):
 
 
 class LinkQuerySet(QuerySet):
+    def annotate_link_adjusted(self):
+        return self.annotate(
+            status_adjusted=models.Case(
+                models.When(
+                    resolved_status=True,
+                    then=models.Value(Link.STATUS_OK, output_field=models.PositiveSmallIntegerField()),
+                ),
+                default=models.F("status"),
+            ),
+            tls_status_adjusted=models.Case(
+                models.When(
+                    resolved_tls=True,
+                    then=models.Value(Link.TLS_OK, output_field=models.PositiveSmallIntegerField()),
+                ),
+                default=models.F("tls_status"),
+            ),
+        )
+
+    def annotate_page_adjusted(self):
+        return self.annotate(
+            tls_total_adjusted=models.Case(
+                models.When(
+                    resolved_tls=True,
+                    then=True,
+                ),
+                default=models.F("cached_tls_total"),
+            ),
+        )
+
     def annotate_size(self):
         return (
             self.annotate(size_images=F("cached_size_images"))
@@ -194,6 +223,23 @@ class Link(models.Model):
     cached_num_non_ok_images = models.PositiveIntegerField(null=True, blank=True)
     cached_num_non_ok_scripts = models.PositiveIntegerField(null=True, blank=True)
     cached_num_non_ok_stylesheets = models.PositiveIntegerField(null=True, blank=True)
+
+    # link level resolves
+    resolved_status = models.BooleanField(null=True, blank=True)
+    # tls is both link and page level
+    resolved_tls = models.BooleanField(null=True, blank=True)
+    # missing_alts is image only
+    resolved_missing_alts = models.BooleanField(null=True, blank=True)
+    # page level resolves
+    resolved_size = models.BooleanField(null=True, blank=True)
+    resolved_missing_title = models.BooleanField(null=True, blank=True)
+    resolved_missing_description = models.BooleanField(null=True, blank=True)
+    resolved_missing_h1_first = models.BooleanField(null=True, blank=True)
+    resolved_missing_h1_second = models.BooleanField(null=True, blank=True)
+    resolved_missing_h2_first = models.BooleanField(null=True, blank=True)
+    resolved_missing_h2_second = models.BooleanField(null=True, blank=True)
+    resolved_duplicate_title = models.BooleanField(null=True, blank=True)
+    resolved_duplicate_description = models.BooleanField(null=True, blank=True)
 
     class Meta:
         permissions = (

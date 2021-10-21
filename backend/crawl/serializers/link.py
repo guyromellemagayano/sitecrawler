@@ -19,34 +19,41 @@ class SourceLinkImageSerializer(serializers.Serializer):
 
 
 class LinkSerializer(serializers.ModelSerializer):
-    status = ChoiceField(Link.STATUS_CHOICES)
-    type = ChoiceField(Link.TYPE_CHOICES)
-    tls_status = ChoiceField(Link.TLS_STATUS_CHOICES)
+    status = ChoiceField(Link.STATUS_CHOICES, read_only=True)
+    status_adjusted = ChoiceField(Link.STATUS_CHOICES, read_only=True)
+    type = ChoiceField(Link.TYPE_CHOICES, read_only=True)
+    tls_status = ChoiceField(Link.TLS_STATUS_CHOICES, read_only=True)
+    tls_status_adjusted = ChoiceField(Link.TLS_STATUS_CHOICES, read_only=True)
     occurences = serializers.IntegerField(read_only=True)
     missing_alts = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Link
-        fields = [
+        read_only_fields = [
             "id",
             "created_at",
             "scan_id",
             "type",
             "url",
             "status",
+            "status_adjusted",
             "http_status",
             "response_time",
             "error",
             "size",
             "occurences",
             "tls_status",
+            "tls_status_adjusted",
             "missing_alts",
         ]
-        read_only_fields = fields
+        fields = read_only_fields + [
+            "resolved_status",
+            "resolved_tls",
+        ]
 
 
 class LinkDetailSerializer(LinkSerializer):
-    pages = serializers.SerializerMethodField()
+    pages = serializers.SerializerMethodField(read_only=True)
     tls = TlsSerializer(read_only=True)
 
     def get_pages(self, obj):
@@ -70,11 +77,13 @@ class LinkDetailSerializer(LinkSerializer):
         pages_get_key = "id"
 
         model = Link
-        fields = [x for x in LinkSerializer.Meta.fields if x != "occurences"] + [
+        read_only_fields = [x for x in LinkSerializer.Meta.read_only_fields if x != "occurences"] + [
             "tls",
             "pages",
         ]
-        read_only_fields = fields
+        fields = read_only_fields + [
+            x for x in LinkSerializer.Meta.fields if x not in LinkSerializer.Meta.read_only_fields
+        ]
 
 
 class ImageDetailSerializer(LinkDetailSerializer):

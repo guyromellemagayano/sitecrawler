@@ -29,11 +29,17 @@ class HumanReadableMultipleChoiceFilter(filters.MultipleChoiceFilter):
 class LinkFilter(filters.FilterSet):
     type = HumanReadableMultipleChoiceFilter(choices=Link.TYPE_CHOICES)
     type__neq = HumanReadableMultipleChoiceFilter(field_name="type", choices=Link.TYPE_CHOICES, exclude=True)
-    status = HumanReadableMultipleChoiceFilter(choices=Link.STATUS_CHOICES)
-    status__neq = HumanReadableMultipleChoiceFilter(field_name="status", choices=Link.STATUS_CHOICES, exclude=True)
-    tls_status = HumanReadableMultipleChoiceFilter(choices=Link.TLS_STATUS_CHOICES)
+    status = HumanReadableMultipleChoiceFilter(
+        field_name="status_adjusted", choices=Link.STATUS_CHOICES, label="Status"
+    )
+    status__neq = HumanReadableMultipleChoiceFilter(
+        field_name="status_adjusted", choices=Link.STATUS_CHOICES, exclude=True, label="Exclude status"
+    )
+    tls_status = HumanReadableMultipleChoiceFilter(
+        field_name="tls_status_adjusted", choices=Link.TLS_STATUS_CHOICES, label="TLS status"
+    )
     tls_status__neq = HumanReadableMultipleChoiceFilter(
-        field_name="tls_status", choices=Link.TLS_STATUS_CHOICES, exclude=True
+        field_name="tls_status_adjusted", choices=Link.TLS_STATUS_CHOICES, exclude=True, label="Exclude TLS status"
     )
     http_status__neq = filters.NumberFilter(field_name="http_status", exclude=True)
 
@@ -54,6 +60,7 @@ class PageChildViewSet(
     NestedViewSetMixin,
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = Link.objects.all()
@@ -76,7 +83,7 @@ class PageChildViewSet(
     ]
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
+        queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True).annotate_link_adjusted()
         if self.request.user.is_superuser:
             pass
         elif has_permission(self.request, "crawl.can_see_all_sites"):

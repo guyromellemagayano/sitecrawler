@@ -61,7 +61,7 @@ class PageFilter(filters.FilterSet):
     tls_images = filters.BooleanFilter(label="All images tls ok")
     tls_scripts = filters.BooleanFilter(label="All scripts tls ok")
     tls_stylesheets = filters.BooleanFilter(label="All stylesheets tls ok")
-    tls_total = filters.BooleanFilter(label="Whole page tls ok")
+    tls_total = filters.BooleanFilter(field_name="tls_total_adjusted", label="Whole page tls ok")
 
     class Meta:
         model = Link
@@ -99,6 +99,7 @@ class PageViewSet(
     NestedViewSetMixin,
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     permission_classes = [HasPermission("crawl.can_see_pages")]
@@ -142,7 +143,7 @@ class PageViewSet(
     ]
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
+        queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True).annotate_page_adjusted()
         if self.request.user.is_superuser:
             pass
         elif has_permission(self.request, "crawl.can_see_all_sites"):

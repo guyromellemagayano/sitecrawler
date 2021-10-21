@@ -24,7 +24,7 @@ class PageSerializer(serializers.ModelSerializer):
     size_scripts = serializers.IntegerField(read_only=True)
     size_stylesheets = serializers.IntegerField(read_only=True)
     size_total = serializers.IntegerField(read_only=True)
-    tls_status = ChoiceField(Link.TLS_STATUS_CHOICES)
+    tls_status = ChoiceField(Link.TLS_STATUS_CHOICES, read_only=True)
     num_tls_images = serializers.IntegerField(read_only=True)
     num_non_tls_images = serializers.IntegerField(read_only=True)
     num_tls_scripts = serializers.IntegerField(read_only=True)
@@ -35,10 +35,11 @@ class PageSerializer(serializers.ModelSerializer):
     tls_scripts = serializers.BooleanField(read_only=True)
     tls_stylesheets = serializers.BooleanField(read_only=True)
     tls_total = serializers.BooleanField(read_only=True)
+    tls_total_adjusted = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Link
-        fields = [
+        read_only_fields = [
             "id",
             "created_at",
             "scan_id",
@@ -71,8 +72,11 @@ class PageSerializer(serializers.ModelSerializer):
             "tls_scripts",
             "tls_stylesheets",
             "tls_total",
+            "tls_total_adjusted",
         ]
-        read_only_fields = fields
+        fields = read_only_fields + [
+            "resolved_tls",
+        ]
 
 
 class PageDetailSerializer(PageSerializer):
@@ -81,11 +85,13 @@ class PageDetailSerializer(PageSerializer):
 
     class Meta:
         model = Link
-        fields = PageSerializer.Meta.fields + [
+        read_only_fields = PageSerializer.Meta.read_only_fields + [
             "pagedata",
             "tls",
         ]
-        read_only_fields = fields
+        fields = read_only_fields + [
+            x for x in PageSerializer.Meta.fields if x not in PageSerializer.Meta.read_only_fields
+        ]
 
 
 class PageDuplicatesSerializer(PageSerializer):
@@ -94,8 +100,8 @@ class PageDuplicatesSerializer(PageSerializer):
 
     class Meta:
         model = Link
-        fields = PageSerializer.Meta.fields + [
+        read_only_fields = PageSerializer.Meta.read_only_fields + [
             "pages_with_same_title",
             "pages_with_same_description",
         ]
-        read_only_fields = fields
+        fields = read_only_fields

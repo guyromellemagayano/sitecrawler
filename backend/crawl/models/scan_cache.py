@@ -35,12 +35,19 @@ class ScanCache(models.Model):
         return self.created_at > scan.finished_at
 
 
-# delete cache on crawl config (per team) or site update (possible changes to big page threshold)
+# delete cache on site update (all caches for site) - possible big page threshold update
 @receiver(post_save, sender="crawl.Site")
 def scan_cache_create_or_update_site(sender, instance, created, **kwargs):
     ScanCache.objects.filter(scan__site_id=instance.id).delete()
 
 
+# delete cache on link update - possible resolved update
+@receiver(post_save, sender="crawl.Link")
+def scan_cache_create_or_update_link(sender, instance, created, **kwargs):
+    ScanCache.objects.filter(scan_id=instance.scan_id).delete()
+
+
+# delete cache on crawl config update (all caches for team) - possible big page threshold update
 @receiver(post_save, sender="crawl.Config")
 def scan_cache_create_or_update_config(sender, instance, created, **kwargs):
     ScanCache.objects.filter(scan__site__team_id=instance.team_id).delete()
