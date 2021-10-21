@@ -15,7 +15,12 @@ def HasTeamDetailPermission(perm):
                 team_id = view.kwargs["parent_lookup_team"]
             elif "pk" in view.kwargs:
                 team_id = view.kwargs["pk"]
-            membership = Membership.objects.get(team_id=team_id, user_id=request.user.id)
+            try:
+                membership = Membership.objects.select_related("team__plan", "type").get(
+                    team_id=team_id, user_id=request.user.id
+                )
+            except Membership.DoesNotExist:
+                return False
             return has_permission(request, perm, membership=membership)
 
     return HasPermissionClass

@@ -31,6 +31,7 @@ class ScanViewSet(
     }
     search_fields = []
     ordering_fields = ["started_at", "finished_at"]
+    ordering = ["-finished_at"]
 
     def get_queryset(self):
         queryset = super().get_queryset()

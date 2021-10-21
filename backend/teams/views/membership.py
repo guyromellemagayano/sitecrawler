@@ -20,7 +20,7 @@ class MembershipViewSet(
     viewsets.GenericViewSet,
 ):
     permission_classes = [HasTeamDetailPermission("teams.can_manage_membership")]
-    queryset = Membership.objects.all()
+    queryset = Membership.objects.all().select_related("user", "type").prefetch_related("sites")
     serializer_class = MembershipSerializer
 
     def dispatch(self, request, *args, **kwargs):
@@ -28,10 +28,9 @@ class MembershipViewSet(
             team = get_current_team(request)
             if team:
                 kwargs["parent_lookup_team"] = team.id
+            else:
+                kwargs["parent_lookup_team"] = -1
         return super().dispatch(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return super().get_queryset().select_related("user", "type")
 
     def get_serializer_class(self):
         if self.action == "create":
