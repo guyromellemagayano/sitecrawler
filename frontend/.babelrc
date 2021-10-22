@@ -41,9 +41,11 @@
                 ],
                 "alias": {
                     "@components": "./src/components/",
+                    "@configs": "./src/configs/",
                     "@enums": "./src/enums/",
                     "@helpers": "./src/helpers/",
                     "@hooks": "./src/hooks/",
+                    "@locales": "./src/locales/",
                     "@pages": "./src/pages/",
                     "@styles": "./src/styles/",
                     "@utils": "./src/utils/"
