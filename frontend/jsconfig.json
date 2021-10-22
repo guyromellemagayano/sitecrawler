@@ -9,6 +9,9 @@
             "@components/*": [
                 "./src/components/*"
             ],
+            "@configs/*": [
+                "./src/configs/*"
+            ],
             "@enums/*": [
                 "./src/enums/*"
             ],
@@ -17,6 +20,9 @@
             ],
             "@hooks/*": [
                 "./src/hooks/*"
+            ],
+            "@locales/*": [
+                "./src/locales/*"
             ],
             "@pages/*": [
                 "./src/pages/*"
