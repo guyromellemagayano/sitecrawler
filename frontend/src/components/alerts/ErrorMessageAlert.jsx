@@ -31,7 +31,7 @@ export const ErrorMessageAlert = ({ message = "" }) => {
 			leave="transition-opacity duration-150"
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
-			tw="max-w-2xl z-10 origin-top fixed right-0 left-0 rounded-md bg-red-100 shadow-lg p-4 mt-1 mx-auto mb-10"
+			tw="max-w-2xl z-10 origin-top fixed right-0 left-0 bottom-0 rounded-md bg-red-100 shadow-lg p-4 mt-1 mx-auto mb-10"
 		>
 			<div tw="flex items-center">
 				<div tw="flex-shrink-0">
