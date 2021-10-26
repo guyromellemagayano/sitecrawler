@@ -1,38 +1,43 @@
-import { ComponentReadyInterval } from "@enums/GlobalValues";
+import { FormSubmissionInterval } from "@enums/GlobalValues";
 import AxiosApiInstance from "@helpers/axios";
 import { sleep } from "@utils/sleep";
 
 // Axios DELETE method
 export const useDeleteMethod = async (endpoint) => {
 	return await AxiosApiInstance.delete(endpoint)
-		.then(await sleep(ComponentReadyInterval))
-		.then((response) => response);
+		.then(sleep(FormSubmissionInterval))
+		.then((response) => response)
+		.catch((error) => error.config);
 };
 
 // Axios GET method
 export const useGetMethod = async (endpoint) => {
 	return await AxiosApiInstance.get(endpoint)
-		.then(await sleep(ComponentReadyInterval))
-		.then((response) => response);
+		.then(sleep(FormSubmissionInterval))
+		.then((response) => response)
+		.catch((error) => error.config);
 };
 
 // Axios PATCH method
 export const usePatchMethod = async (endpoint, data) => {
 	return await AxiosApiInstance.patch(endpoint, data)
-		.then(await sleep(ComponentReadyInterval))
-		.then((response) => response);
+		.then(sleep(FormSubmissionInterval))
+		.then((response) => response)
+		.catch((error) => error.config);
 };
 
 // Axios POST method
 export const usePostMethod = async (endpoint, data) => {
 	return await AxiosApiInstance.post(endpoint, data)
-		.then(await sleep(ComponentReadyInterval))
-		.then((response) => response);
+		.then(sleep(FormSubmissionInterval))
+		.then((response) => response)
+		.catch((error) => error.config);
 };
 
 // Axios PUT method
 export const usePutMethod = async (endpoint, data) => {
 	return await AxiosApiInstance.put(endpoint, data)
-		.then(await sleep(ComponentReadyInterval))
-		.then((response) => response);
+		.then(sleep(FormSubmissionInterval))
+		.then((response) => response)
+		.catch((error) => error.config);
 };
