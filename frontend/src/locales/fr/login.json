@@ -1,0 +1,22 @@
+{
+	"headline": "Trouvez les problèmes de site Web avant vos clients. ",
+	"tryFree": "Essayer gratuitement.",
+	"username": "Nom d'utilisateur",
+	"password": "Mot de passe",
+	"rememberMe": "Souviens-toi de moi",
+	"forgotPassword": "Mot de passe oublié?",
+	"signIn": "S'identifier",
+	"continueWith": "Ou continuer avec",
+	"noAccount": "Vous n'avez pas de compte? ",
+	"createAccount": "Créer un compte",
+	"requiredField": "Champs requis",
+	"loginFailed": "Échec de la connexion. Veuillez réessayer",
+	"loginSuccess": "Connexion réussie. Vous rediriger vers le tableau de bord...",
+	"signingIn": "Connectez-vous...",
+	"showPassword": "Montrer le mot de passe",
+	"hidePassword": "Masquer le mot de passe",
+	"googleSignIn": "Connectez-vous avec Google",
+	"facebookSignIn": "Connectez-vous avec Facebook",
+	"linkedinSignIn": "Connectez-vous avec LinkedIn",
+	"login": "Connexion"
+}

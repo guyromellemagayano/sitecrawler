@@ -1,0 +1,22 @@
+{
+	"headline": "Vind websiteproblemen voordat uw klanten dat doen. ",
+	"tryFree": "Probeer gratis.",
+	"username": "Gebruikersnaam",
+	"password": "Wachtwoord",
+	"rememberMe": "Onthoud me",
+	"forgotPassword": "Uw wachtwoord vergeten?",
+	"signIn": "Inloggen",
+	"continueWith": "Of ga verder met",
+	"noAccount": "Heb geen account? ",
+	"createAccount": "Maak een account aan",
+	"requiredField": "Verplicht veld",
+	"loginFailed": "Inloggen mislukt. Probeer het opnieuw",
+	"loginSuccess": "Succesvol ingelogd. U doorverwijzen naar het dashboard...",
+	"signingIn": "Inloggen...",
+	"showPassword": "Laat wachtwoord zien",
+	"hidePassword": "Verberg wachtwoord",
+	"googleSignIn": "Inloggen met Google",
+	"facebookSignIn": "Meld je aan met facebook",
+	"linkedinSignIn": "Aanmelden met LinkedIn",
+	"login": "Log in"
+}
