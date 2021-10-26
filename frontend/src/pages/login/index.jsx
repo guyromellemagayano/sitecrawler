@@ -1,13 +1,15 @@
-import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
-import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
+import { ErrorMessageAlert } from "@components/alerts/ErrorMessageAlert";
+import { SuccessMessageAlert } from "@components/alerts/SuccessMessageAlert";
 import LoginForm from "@components/forms/LoginForm";
 import LogoLabel from "@components/labels/LogoLabel";
-import Layout from "@components/layouts";
+import { NoAuthLayout } from "@components/layouts";
 import Footer from "@components/layouts/Footer";
 import AppLogo from "@components/logos/AppLogo";
-import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
-import { LoginLabels } from "@enums/LoginLabels";
+import { NoAuthAppLogo } from "@configs/GlobalValues";
+import { RegistrationLink } from "@configs/PageLinks";
+import { SiteLogoDark } from "@enums/GlobalValues";
 import { NextSeo } from "next-seo";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import * as React from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -18,9 +20,16 @@ const Login = () => {
 	const [errorMsg, setErrorMsg] = React.useState([]);
 	const [successMsg, setSuccessMsg] = React.useState([]);
 
+	const { t } = useTranslation("login");
+	const login = t("login");
+	const headline = t("headline");
+	const tryFree = t("tryFree");
+	const createAccount = t("createAccount");
+	const noAccount = t("noAccount");
+
 	return (
-		<Layout>
-			<NextSeo title={LoginLabels[20].label} />
+		<NoAuthLayout>
+			<NextSeo title={login} />
 
 			<div tw="h-screen bg-gray-50 flex flex-col justify-center">
 				<Scrollbars universal>
@@ -34,13 +43,13 @@ const Login = () => {
 												<AppLogo
 													className="flex"
 													src={SiteLogoDark}
-													alt={GlobalLabels[0].label}
-													width={GlobalLabels[0].width}
-													height={GlobalLabels[0].height}
+													alt={NoAuthAppLogo.label}
+													width={NoAuthAppLogo.width}
+													height={NoAuthAppLogo.height}
 												/>
 												<h4 tw="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none">
-													{LoginLabels[0].label}
-													<span tw="text-red-600">{ReactHtmlParser(LoginLabels[1].label)}</span>
+													{headline}
+													<span tw="text-red-600">{ReactHtmlParser(tryFree)}</span>
 													<br tw="hidden md:inline" />
 												</h4>
 											</div>
@@ -49,15 +58,19 @@ const Login = () => {
 											<LogoLabel isLogin />
 
 											<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-												{errorMsg && errorMsg instanceof Array && errorMsg.length > 0 ? (
-													errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)
-												) : typeof errorMsg === "string" ? (
-													<ErrorMessageAlert message={errorMsg} />
+												{errorMsg !== [] && errorMsg.length > 0 ? (
+													typeof errorMsg === "object" ? (
+														errorMsg.map((value, key) => <ErrorMessageAlert key={key} message={value} />)
+													) : (
+														<ErrorMessageAlert message={errorMsg} />
+													)
+												) : successMsg !== [] && successMsg.length > 0 ? (
+													typeof successMsg === "object" ? (
+														successMsg.map((value, key) => <SuccessMessageAlert key={key} message={value} />)
+													) : (
+														<SuccessMessageAlert message={successMsg} />
+													)
 												) : null}
-
-												{successMsg && successMsg instanceof Array && successMsg.length > 0
-													? successMsg.map((value, index) => <SuccessMessageAlert key={index} message={value} />)
-													: null}
 
 												<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
 													<LoginForm errorMsg={errorMsg} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
@@ -65,10 +78,10 @@ const Login = () => {
 
 												<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 													<span tw="px-2 py-5 text-gray-600">
-														{ReactHtmlParser(LoginLabels[8].label)}
-														<Link href="/registration">
+														{ReactHtmlParser(noAccount)}
+														<Link href={RegistrationLink}>
 															<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
-																{LoginLabels[9].label}
+																{createAccount}
 															</a>
 														</Link>
 													</span>
@@ -86,7 +99,7 @@ const Login = () => {
 					</div>
 				</Scrollbars>
 			</div>
-		</Layout>
+		</NoAuthLayout>
 	);
 };
 

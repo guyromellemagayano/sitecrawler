@@ -1,12 +1,12 @@
 import { GoogleLoginApiEndpoint, LoginApiEndpoint } from "@enums/ApiEndpoints";
-import { LoginLabels } from "@enums/LoginLabels";
 import { SitesLink } from "@enums/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import { useShowPassword } from "@hooks/useShowPassword";
 import { Formik } from "formik";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import * as React from "react";
 import tw from "twin.macro";
@@ -17,16 +17,34 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
 
+	const router = useRouter();
+
+	const { t } = useTranslation("login");
+	const username = t("username");
+	const password = t("password");
+	const requiredField = t("requiredField");
+	const loginSuccess = t("loginSuccess");
+	const loginFailed = t("loginFailed");
+	const showPassword = t("showPassword");
+	const hidePassword = t("hidePassword");
+	const rememberMe = t("rememberMe");
+	const forgotPassword = t("forgotPassword");
+	const signingIn = t("signingIn");
+	const signIn = t("signIn");
+	const continueWith = t("continueWith");
+	const googleSignIn = t("googleSignIn");
+	const facebookSignIn = t("facebookSignIn");
+	const linkedinSignIn = t("linkedinSignIn");
+
 	return (
 		<Formik
 			initialValues={{
 				username: "",
-				password: "",
-				rememberme: false
+				password: ""
 			}}
 			validationSchema={Yup.object({
-				username: Yup.string().required(LoginLabels[10].label),
-				password: Yup.string().required(LoginLabels[10].label)
+				username: Yup.string().required(requiredField),
+				password: Yup.string().required(requiredField)
 			})}
 			onSubmit={async (values, { setSubmitting, resetForm }) => {
 				const body = {
@@ -39,45 +57,47 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 				// } else {
 				// }
 
-				try {
-					const response = await usePostMethod(LoginApiEndpoint, body);
-					const data = response.data;
+				const response = await usePostMethod(LoginApiEndpoint, body);
+				const data = response.data;
 
-					setErrorMsg([]);
-					setSuccessMsg([]);
+				setErrorMsg([]);
+				setSuccessMsg([]);
 
-					if (Math.floor(response.status / 200) === 1) {
-						setSubmitting(false);
-						setDisableLoginForm(!disableLoginForm);
-
-						if (data.key && data.key !== undefined && data.key.length > 0) {
-							setSuccessMsg((successMsg) => [...successMsg, LoginLabels[12].label]);
-
-							setTimeout(() => {
-								Router.push(SitesLink);
-							}, 500);
-						}
-					} else {
-						if (data) {
+				Math.floor(response.status / 200) === 1
+					? (() => {
 							setSubmitting(false);
-							setErrorMsg((errorMsg) => [...errorMsg, data.non_field_errors]);
-						} else {
-							resetForm({ values: "" });
-							setSubmitting(false);
-							setErrorMsg(LoginLabels[11].label);
-						}
-					}
-				} catch (error) {
-					return null;
-				}
+							setDisableLoginForm(!disableLoginForm);
+
+							data && data?.key && data?.key?.length > 0
+								? (() => {
+										setSuccessMsg((successMsg) => [...successMsg, loginSuccess]);
+
+										setTimeout(() => {
+											router.push(SitesLink);
+										}, 500);
+								  })()
+								: null;
+					  })()
+					: (() => {
+							data
+								? (() => {
+										setSubmitting(false);
+										setErrorMsg((errorMsg) => [...errorMsg, data.non_field_errors]);
+								  })()
+								: (() => {
+										resetForm({ values: "" });
+										setSubmitting(false);
+										setErrorMsg(loginFailed);
+								  })();
+					  })();
 			}}
 		>
 			{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
-				<>
+				<React.Fragment>
 					<form onSubmit={handleSubmit}>
 						<div tw="mt-1">
 							<label htmlFor="username" tw="block text-sm font-medium text-gray-700">
-								{LoginLabels[2].label}
+								{username}
 							</label>
 							<div tw="mt-1">
 								<input
@@ -109,7 +129,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 						<div tw="mt-6">
 							<div tw="flex items-center justify-between">
 								<label htmlFor="password" tw="block text-sm font-medium text-gray-700">
-									{LoginLabels[3].label}
+									{password}
 								</label>
 								<div tw="text-xs">
 									<button
@@ -121,7 +141,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 										]}
 										onClick={() => setIsPasswordShown(!isPasswordShown)}
 									>
-										{isPasswordShown ? LoginLabels[15].label : LoginLabels[14].label}
+										{isPasswordShown ? hidePassword : showPassword}
 									</button>
 								</div>
 							</div>
@@ -169,7 +189,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 									value={values.rememberme}
 								/>
 								<label htmlFor="rememberme" tw="ml-2 block text-sm text-gray-900">
-									{LoginLabels[4].label}
+									{rememberMe}
 								</label>
 							</div>
 
@@ -182,7 +202,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 												tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
 										]}
 									>
-										{LoginLabels[5].label}
+										{forgotPassword}
 									</a>
 								</Link>
 							</div>
@@ -200,7 +220,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
 								>
-									{isSubmitting || disableLoginForm ? LoginLabels[13].label : LoginLabels[6].label}
+									{isSubmitting || disableLoginForm ? signingIn : signIn}
 								</button>
 							</span>
 						</div>
@@ -212,7 +232,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 								<div tw="w-full border-t border-gray-300"></div>
 							</div>
 							<div tw="relative flex justify-center text-sm leading-5">
-								<span tw="px-2 bg-white text-gray-600">{LoginLabels[7].label}</span>
+								<span tw="px-2 bg-white text-gray-600">{continueWith}</span>
 							</div>
 						</div>
 
@@ -228,7 +248,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 												: tw`hover:bg-gray-50`
 										]}
 									>
-										<span tw="sr-only">{LoginLabels[16].label}</span>
+										<span tw="sr-only">{googleSignIn}</span>
 										<FontAwesomeIcon icon={["fab", "google"]} tw="w-4 h-4" />
 									</a>
 								</span>
@@ -241,7 +261,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 										disabled={true}
 										tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
 									>
-										<span tw="sr-only">{LoginLabels[17].label}</span>
+										<span tw="sr-only">{facebookSignIn}</span>
 										<FontAwesomeIcon icon={["fab", "facebook-f"]} tw="w-4 h-4" />
 									</a>
 								</span>
@@ -254,14 +274,14 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 										disabled={true}
 										tw="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none"
 									>
-										<span tw="sr-only">{LoginLabels[18].label}</span>
+										<span tw="sr-only">{linkedinSignIn}</span>
 										<FontAwesomeIcon icon={["fab", "linkedin-in"]} tw="w-4 h-4" />
 									</a>
 								</span>
 							</div>
 						</div>
 					</div>
-				</>
+				</React.Fragment>
 			)}
 		</Formik>
 	);

@@ -3,7 +3,8 @@ module.exports = {
 	defaultLocale: "en",
 	pages: {
 		"*": ["common"],
-		"/404": ["error"]
+		"/404": ["error"],
+		"/login": ["login"]
 	},
 	interpolation: {
 		prefix: "${",
