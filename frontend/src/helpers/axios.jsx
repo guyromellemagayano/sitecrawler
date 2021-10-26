@@ -26,7 +26,7 @@ AxiosApiInstance.interceptors.request.use(
 AxiosApiInstance.interceptors.response.use(
 	async (response) => response,
 	async (error) => {
-		error.response.status === 403
+		Math.floor(error.response.status / 400) === 1
 			? Cookies.remove("csrftoken")
 			: (() => {
 					Sentry.captureException(error);
