@@ -1,19 +1,16 @@
-// React
-import * as React from "react";
-
-// External
-import "twin.macro";
-import { CheckCircleIcon, XIcon } from "@heroicons/react/solid";
-import { Transition } from "@headlessui/react";
-import PropTypes from "prop-types";
-
-// Enums
 import { RevalidationInterval } from "@enums/GlobalValues";
+import { Transition } from "@headlessui/react";
+import { CheckCircleIcon, XIcon } from "@heroicons/react/solid";
+import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
+import * as React from "react";
+import "twin.macro";
 
-const SuccessMessageAlert = ({ className, message }) => {
+export const SuccessMessageAlert = ({ message = "" }) => {
 	const [isOpen, setIsOpen] = React.useState(true);
 
-	const dismissMessage = "Dismiss";
+	const { t } = useTranslation("common");
+	const dismissMessage = t("dismissMessage");
 
 	React.useEffect(() => {
 		setTimeout(() => {
@@ -34,7 +31,6 @@ const SuccessMessageAlert = ({ className, message }) => {
 			leave="transition-opacity duration-150"
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
-			className={className}
 			tw="max-w-2xl z-10 origin-top fixed right-0 left-0 bottom-0 rounded-md bg-green-100 shadow-lg p-4 mt-1 mx-auto mb-10"
 		>
 			<div tw="flex items-center">
@@ -62,13 +58,6 @@ const SuccessMessageAlert = ({ className, message }) => {
 };
 
 SuccessMessageAlert.propTypes = {
-	message: PropTypes.string,
-	className: PropTypes.string
+	className: PropTypes.string,
+	message: PropTypes.string
 };
-
-SuccessMessageAlert.defaultProps = {
-	message: "",
-	className: "bottom-0"
-};
-
-export default SuccessMessageAlert;

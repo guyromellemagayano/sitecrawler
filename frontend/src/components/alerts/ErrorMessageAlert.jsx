@@ -1,19 +1,16 @@
-// React
-import * as React from "react";
-
-// External
-import "twin.macro";
+import { RevalidationInterval } from "@enums/GlobalValues";
 import { Transition } from "@headlessui/react";
 import { XCircleIcon, XIcon } from "@heroicons/react/solid";
+import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
+import * as React from "react";
+import "twin.macro";
 
-// Enums
-import { RevalidationInterval } from "@enums/GlobalValues";
-
-const ErrorMessageAlert = ({ className, message }) => {
+export const ErrorMessageAlert = ({ message = "" }) => {
 	const [isOpen, setIsOpen] = React.useState(true);
 
-	const dismissMessage = "Dismiss";
+	const { t } = useTranslation("common");
+	const dismissMessage = t("dismissMessage");
 
 	React.useEffect(() => {
 		setTimeout(() => {
@@ -34,7 +31,6 @@ const ErrorMessageAlert = ({ className, message }) => {
 			leave="transition-opacity duration-150"
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
-			className={className}
 			tw="max-w-2xl z-10 origin-top fixed right-0 left-0 rounded-md bg-red-100 shadow-lg p-4 mt-1 mx-auto mb-10"
 		>
 			<div tw="flex items-center">
@@ -62,13 +58,5 @@ const ErrorMessageAlert = ({ className, message }) => {
 };
 
 ErrorMessageAlert.propTypes = {
-	message: PropTypes.string,
-	className: PropTypes.string
+	message: PropTypes.string
 };
-
-ErrorMessageAlert.defaultProps = {
-	message: "",
-	className: "bottom-0"
-};
-
-export default ErrorMessageAlert;
