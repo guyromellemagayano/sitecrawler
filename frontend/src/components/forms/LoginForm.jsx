@@ -58,7 +58,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 				// }
 
 				const response = await usePostMethod(LoginApiEndpoint, body);
-				const data = response.data;
+				const data = response ? response.data : null;
 
 				setErrorMsg([]);
 				setSuccessMsg([]);
@@ -82,7 +82,7 @@ const LoginForm = ({ errorMsg, setErrorMsg, setSuccessMsg }) => {
 							data
 								? (() => {
 										setSubmitting(false);
-										setErrorMsg((errorMsg) => [...errorMsg, data.non_field_errors]);
+										setErrorMsg((errorMsg) => [...errorMsg, data.non_field_errors[0]]);
 								  })()
 								: (() => {
 										resetForm({ values: "" });
