@@ -262,14 +262,12 @@ dist
 # terraform state
 *.tfstate*
 
-# frontend
-!frontend/.env
-
-package-lock.json
-
 # cypress
 cypress/videos
 cypress/screenshots
 
 # backup
 *.bak
+
+# sentry
+.sentryclirc
