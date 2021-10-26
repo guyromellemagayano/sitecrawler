@@ -1,5 +1,5 @@
 import TopProgressBar from "@components/top-progress-bar";
-import AppSeo from "@enums/AppSeo";
+import AppSeo from "@configs/AppSeo";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -11,6 +11,7 @@ import App from "next/app";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import * as React from "react";
+import { SWRConfig } from "swr";
 import "tailwindcss/tailwind.css";
 
 // Font Awesome
@@ -18,12 +19,16 @@ library.add(fab);
 library.add(fas);
 
 // LogRocket
-if (process.env.NODE_ENV === "production") {
-	if (typeof window !== "undefined") {
-		LogRocket.init("epic-design-labs/link-app");
-		setupLogRocketReact(LogRocket);
-	}
-}
+process.env.NODE_ENV === "production"
+	? (() => {
+			typeof window
+				? (() => {
+						LogRocket.init("epic-design-labs/link-app");
+						setupLogRocketReact(LogRocket);
+				  })()
+				: null;
+	  })()
+	: null;
 
 const MyApp = ({ Component, pageProps }) => {
 	let activeRequests = 0;
@@ -92,12 +97,12 @@ const MyApp = ({ Component, pageProps }) => {
 	}, [router.events]);
 
 	return (
-		<>
+		<SWRConfig>
 			<DefaultSeo {...AppSeo} />
 			<GlobalStyles />
 			<TopProgressBar key={state.loadingKey} isRouteChanging={state.isRouteChanging} />
 			<Component {...pageProps} />
-		</>
+		</SWRConfig>
 	);
 };
 
