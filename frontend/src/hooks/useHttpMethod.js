@@ -1,244 +1,38 @@
-// External
-import * as Sentry from "@sentry/nextjs";
-import axios from "axios";
-import Cookies from "js-cookie";
-
-// Enums
 import { ComponentReadyInterval } from "@enums/GlobalValues";
+import AxiosApiInstance from "@helpers/axios";
+import { sleep } from "@utils/sleep";
 
-// Global axios defaults
-axios.defaults.headers.common["Accept"] = "application/json";
-axios.defaults.headers.common["Content-Type"] = "application/json";
-axios.defaults.headers.common["X-CSRFToken"] = Cookies.get("csrftoken");
-
-const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
-
+// Axios DELETE method
 export const useDeleteMethod = async (endpoint) => {
-	// Promise timeout
-	await sleep(ComponentReadyInterval);
-
-	// Axios DELETE method
-	return await axios
-		.delete(endpoint)
-		.then((response) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log(response.data);
-			 * console.log(response.status);
-			 * console.log(response.statusText);
-			 * console.log(response.headers);
-			 * console.log(response.config);
-			 */
-
-			return response;
-		})
-		.catch((error) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log('Error:', error.config);
-			 * console.log('Error:', error.request);
-			 * console.log('Error:', error.message);
-			 * console.log('Error:', error.response.data);
-			 * console.log('Error', error.response.headers);
-			 * console.log('Error', error.response.status);
-			 */
-
-			if (error.response) {
-				Sentry.captureException(error.response.data);
-				Sentry.captureException(error.response.status);
-				Sentry.captureException(error.response.headers);
-			} else if (error.request) {
-				Sentry.captureException(error.request);
-			} else {
-				Sentry.captureException(error.message);
-			}
-
-			return error.response;
-		});
+	return await AxiosApiInstance.delete(endpoint)
+		.then(await sleep(ComponentReadyInterval))
+		.then((response) => response);
 };
 
+// Axios GET method
 export const useGetMethod = async (endpoint) => {
-	// Promise timeout
-	await sleep(ComponentReadyInterval);
-
-	// Axios GET method
-	return await axios
-		.get(endpoint)
-		.then((response) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log(response.data);
-			 * console.log(response.status);
-			 * console.log(response.statusText);
-			 * console.log(response.headers);
-			 * console.log(response.config);
-			 */
-
-			return response;
-		})
-		.catch((error) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log('Error:', error.config);
-			 * console.log('Error:', error.request);
-			 * console.log('Error:', error.message);
-			 * console.log('Error:', error.response.data);
-			 * console.log('Error', error.response.headers);
-			 * console.log('Error', error.response.status);
-			 */
-
-			if (error.response) {
-				Sentry.captureException(error.response.data);
-				Sentry.captureException(error.response.status);
-				Sentry.captureException(error.response.headers);
-			} else if (error.request) {
-				Sentry.captureException(error.request);
-			} else {
-				Sentry.captureException(error.message);
-			}
-
-			return error.message;
-		});
+	return await AxiosApiInstance.get(endpoint)
+		.then(await sleep(ComponentReadyInterval))
+		.then((response) => response);
 };
 
+// Axios PATCH method
 export const usePatchMethod = async (endpoint, data) => {
-	// Promise timeout
-	await sleep(ComponentReadyInterval);
-
-	// Axios PATCH method
-	return await axios
-		.patch(endpoint, data)
-		.then((response) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log(response.data);
-			 * console.log(response.status);
-			 * console.log(response.statusText);
-			 * console.log(response.headers);
-			 * console.log(response.config);
-			 */
-
-			return response;
-		})
-		.catch((error) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log('Error:', error.config);
-			 * console.log('Error:', error.request);
-			 * console.log('Error:', error.message);
-			 * console.log('Error:', error.response.data);
-			 * console.log('Error', error.response.headers);
-			 * console.log('Error', error.response.status);
-			 */
-
-			if (error.response) {
-				Sentry.captureException(error.response.data);
-				Sentry.captureException(error.response.status);
-				Sentry.captureException(error.response.headers);
-			} else if (error.request) {
-				Sentry.captureException(error.request);
-			} else {
-				Sentry.captureException(error.message);
-			}
-
-			return error.message;
-		});
+	return await AxiosApiInstance.patch(endpoint, data)
+		.then(await sleep(ComponentReadyInterval))
+		.then((response) => response);
 };
 
+// Axios POST method
 export const usePostMethod = async (endpoint, data) => {
-	// Promise timeout
-	await sleep(ComponentReadyInterval);
-
-	// Axios POST method
-	return await axios
-		.post(endpoint, data)
-		.then((response) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log(response.data);
-			 * console.log(response.status);
-			 * console.log(response.statusText);
-			 * console.log(response.headers);
-			 * console.log(response.config);
-			 */
-
-			return response;
-		})
-		.catch((error) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log('Error:', error.config);
-			 * console.log('Error:', error.request);
-			 * console.log('Error:', error.message);
-			 * console.log('Error:', error.response.data);
-			 * console.log('Error', error.response.headers);
-			 * console.log('Error', error.response.status);
-			 */
-
-			if (error.response) {
-				Sentry.captureException(error.response.data);
-				Sentry.captureException(error.response.status);
-				Sentry.captureException(error.response.headers);
-			} else if (error.request) {
-				Sentry.captureException(error.request);
-			} else {
-				Sentry.captureException(error.message);
-			}
-
-			return error.message;
-		});
+	return await AxiosApiInstance.post(endpoint, data)
+		.then(await sleep(ComponentReadyInterval))
+		.then((response) => response);
 };
 
+// Axios PUT method
 export const usePutMethod = async (endpoint, data) => {
-	// Promise timeout
-	await sleep(ComponentReadyInterval);
-
-	// Axios PUT method
-	return await axios
-		.put(endpoint, data)
-		.then((response) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log(response.data);
-			 * console.log(response.status);
-			 * console.log(response.statusText);
-			 * console.log(response.headers);
-			 * console.log(response.config);
-			 */
-
-			return response;
-		})
-		.catch((error) => {
-			/**
-			 * Debugging purpose only
-			 *
-			 * console.log('Error:', error.config);
-			 * console.log('Error:', error.request);
-			 * console.log('Error:', error.message);
-			 * console.log('Error:', error.response.data);
-			 * console.log('Error', error.response.headers);
-			 * console.log('Error', error.response.status);
-			 */
-
-			if (error.response) {
-				Sentry.captureException(error.response.data);
-				Sentry.captureException(error.response.status);
-				Sentry.captureException(error.response.headers);
-			} else if (error.request) {
-				Sentry.captureException(error.request);
-			} else {
-				Sentry.captureException(error.message);
-			}
-
-			return error.message;
-		});
+	return await AxiosApiInstance.put(endpoint, data)
+		.then(await sleep(ComponentReadyInterval))
+		.then((response) => response);
 };
