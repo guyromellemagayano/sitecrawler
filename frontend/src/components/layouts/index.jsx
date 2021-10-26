@@ -1,28 +1,52 @@
-// React
-import { useEffect } from "react";
-
-// External
-import "twin.macro";
+import { FallbackMessageAlert } from "@components/alerts/FallbackMessageAlert";
+import Loader from "@components/loader";
+import { LoginLink } from "@enums/PageLinks";
+import { useUser } from "@hooks/useUser";
 import * as Sentry from "@sentry/nextjs";
 import LogRocket from "logrocket";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
+import * as React from "react";
+import "twin.macro";
 
-const Layout = ({ user, children }) => {
-	useEffect(() => {
-		process.env.NODE_ENV === "production"
-			? user
-				? (() => {
-						LogRocket.identify("epic-design-labs/link-app", {
-							name: user?.first_name + " " + user?.last_name,
-							email: user?.email
-						});
+const fallbackMessageAlert = () => <FallbackMessageAlert />;
 
-						Sentry.setUser({ id: user?.pk, email: user?.email, username: user?.username });
-				  })()
-				: Sentry.configureScope((scope) => scope.setUser(null))
-			: null;
+export const AuthLayout = ({ children }) => {
+	const { user, validatingUser } = useUser();
+
+	const router = useRouter();
+
+	React.useEffect(() => {
+		user && typeof user === "object" && Object.keys(user).length > 0
+			? (() => {
+					// LogRocket identity
+					LogRocket.identify("epic-design-labs/link-app", {
+						name: user.first_name + " " + user.last_name,
+						email: user.email
+					});
+
+					// Sentry setUser
+					Sentry.setUser({ id: user.pk, email: user.email, username: user.username });
+			  })()
+			: router.push(LoginLink);
 	}, [user]);
 
+	return !validatingUser ? (
+		<Sentry.ErrorBoundary fallback={fallbackMessageAlert} showDialog>
+			<div id="root-auth">
+				<main tw="h-screen">{children}</main>
+			</div>
+		</Sentry.ErrorBoundary>
+	) : (
+		<Loader />
+	);
+};
+
+AuthLayout.propTypes = {
+	children: PropTypes.any
+};
+
+export const NoAuthLayout = ({ children }) => {
 	return (
 		<div id="root-auth">
 			<main tw="h-screen">{children}</main>
@@ -30,14 +54,6 @@ const Layout = ({ user, children }) => {
 	);
 };
 
-Layout.propTypes = {
-	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-	children: PropTypes.array.isRequired
+NoAuthLayout.propTypes = {
+	children: PropTypes.any
 };
-
-Layout.defaultProps = {
-	user: null,
-	children: null
-};
-
-export default Layout;
