@@ -1,0 +1,14 @@
+{
+	"appLogoAlt": "app-logo",
+	"badgeModalImgAlt": "badge-modal-img",
+	"isLogin": "Log in",
+	"isSignUp": "Inschrijven",
+	"isResetPassword": "Wachtwoord opnieuw instellen",
+	"isAddPassword": "Wachtwoord toevoegen",
+	"isResetPasswordForm": "Wachtwoordformulier opnieuw instellen",
+	"loaderMessage": "Bezig met laden...",
+	"dismissMessage": "Afwijzen",
+	"fallbackErrorMessage": "Er is een fout opgetreden. Probeer het opnieuw",
+	"loginFailedErrorMessage": "Login failed. Please try again",
+	"siteLogoAltMessage": "Inloggen mislukt. Probeer het opnieuw"
+}

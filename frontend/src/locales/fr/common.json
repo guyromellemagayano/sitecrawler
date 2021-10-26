@@ -1,0 +1,14 @@
+{
+	"appLogoAlt": "app-logo",
+	"badgeModalImgAlt": "badge-modal-img",
+	"isLogin": "Connexion",
+	"isSignUp": "S'inscrire",
+	"isResetPassword": "Réinitialiser le mot de passe",
+	"isAddPassword": "Ajouter un mot de passe",
+	"isResetPasswordForm": "Formulaire de réinitialisation du mot de passe",
+	"loaderMessage": "Chargement...",
+	"dismissMessage": "Rejeter",
+	"fallbackErrorMessage": "Une erreur est survenue. Veuillez réessayer",
+	"loginFailedErrorMessage": "Échec de la connexion. Veuillez réessayer",
+	"siteLogoAltMessage": "Logo de l'application SiteCrawler"
+}

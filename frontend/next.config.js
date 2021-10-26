@@ -1,25 +1,30 @@
-const { withSentryConfig } = require("@sentry/nextjs");
 const withPlugins = require("next-compose-plugins");
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
 	enabled: process.env.ANALYZE === "true"
 });
+const withNextTranslate = require("next-translate");
+const { withSentryConfig } = require("@sentry/nextjs");
 
-const SENTRY_URL = process.env.SENTRY_URL || process.env.NEXT_PUBLIC_SENTRY_URL;
-const SENTRY_ORG = process.env.SENTRY_ORG || process.env.NEXT_PUBLIC_SENTRY_ORG;
-const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN || process.env.NEXT_PUBLIC_SENTRY_AUTH_TOKEN;
-const SENTRY_PROJECT = process.env.SENTRY_PROJECT || process.env.NEXT_PUBLIC_SENTRY_PROJECT;
+const basePath = "";
+const isProduction = process.env.NODE_ENV === "production";
 
-const ModuleExports = {
+const SentryAuthToken = isProduction ? process.env.SENTRY_AUTH_TOKEN : null;
+const SentryOrg = isProduction ? process.env.SENTRY_ORG : null;
+const SentryProject = isProduction ? process.env.SENTRY_PROJECT : null;
+const SentryUrl = isProduction ? process.env.SENTRY_URL : null;
+
+const NextConfig = {
 	trailingSlash: true,
 	devIndicators: {
-		autoPrerender: false
+		buildActivity: false
 	},
 	eslint: {
 		dirs: ["pages", "enums", "components", "hooks", "helpers"],
 		ignoreDuringBuilds: true
 	},
-	webpack: (config) => {
+	webpack: (config, options) => {
 		config.resolve.fallback = { fs: false, module: false };
+
 		return config;
 	},
 	i18n: {
@@ -27,22 +32,23 @@ const ModuleExports = {
 		defaultLocale: "en"
 	},
 	sentry: {
-		disableServerWebpackPlugin: true,
-		disableClientWebpackPlugin: true
-	}
+		disableServerWebpackPlugin: isProduction ? false : true,
+		disableClientWebpackPlugin: isProduction ? false : true
+	},
+	productionBrowserSourceMaps: true
 };
 
-const BundleAnalyzerPluginOptions = {};
-
 const SentryWebpackPluginOptions = {
-	include: ".",
-	url: SENTRY_URL || "https://sentry.io/organizations/epic-design-labs/",
-	org: SENTRY_ORG || "epic-design-labs",
-	authToken: SENTRY_AUTH_TOKEN || "21024702c44e4bf3a4ac704e27d82a5e7cb2be29340046dc8d9c6d0b06a92ff1",
-	project: SENTRY_PROJECT || "sitecrawler-frontend"
+	include: ".next",
+	ignore: ["node_modules"],
+	stripPrefix: ["webpack://_N_E/"],
+	urlPrefix: `~${basePath}/_next`,
+	url: SentryUrl,
+	org: SentryOrg,
+	authToken: SentryAuthToken,
+	project: SentryProject
 };
 
 module.exports = withPlugins([
-	withBundleAnalyzer(BundleAnalyzerPluginOptions),
-	withSentryConfig(ModuleExports, SentryWebpackPluginOptions)
+	withNextTranslate(withBundleAnalyzer(withSentryConfig(NextConfig, SentryWebpackPluginOptions)))
 ]);
