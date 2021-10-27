@@ -1,6 +1,6 @@
 import { ComponentReadyInterval } from "@enums/GlobalValues";
 import AxiosApiInstance from "@helpers/axios";
-import { sleep } from "@utils/sleep";
+import { sleep } from "@helpers/sleep";
 
 const useFetcher = async (...args) => {
 	return await AxiosApiInstance.get(...args)
