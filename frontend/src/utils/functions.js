@@ -1,8 +1,8 @@
 export const removeURLParameter = (url, parameter) => {
 	//prefer to use l.search if you have a location/link object
-	const urlparts = url.split('?');
+	const urlparts = url.split("?");
 	if (urlparts.length >= 2) {
-		const prefix = encodeURIComponent(parameter) + '=';
+		const prefix = encodeURIComponent(parameter) + "=";
 		const pars = urlparts[1].split(/[&;]/g);
 
 		//reverse iteration as may be destructive
@@ -13,7 +13,7 @@ export const removeURLParameter = (url, parameter) => {
 			}
 		}
 
-		return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
+		return urlparts[0] + (pars.length > 0 ? "?" + pars.join("&") : "");
 	}
 
 	return url;
@@ -26,7 +26,7 @@ export const slugToCamelcase = (slug) => {
 };
 
 export const getSortKeyFromSlug = (content, slug) => {
-	let sortKey = '';
+	let sortKey = "";
 
 	content.forEach((val, index) => {
 		if (val.slug == slug) sortKey = val.key;
@@ -36,7 +36,7 @@ export const getSortKeyFromSlug = (content, slug) => {
 };
 
 export const getSlugFromSortKey = (content, sortKey) => {
-	let slug = '';
+	let slug = "";
 
 	content.forEach((val, index) => {
 		if (val.key == sortKey) slug = val.slug;
