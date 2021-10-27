@@ -22,7 +22,7 @@ const NextConfig = {
 		dirs: ["pages", "enums", "components", "hooks", "helpers"],
 		ignoreDuringBuilds: true
 	},
-	webpack: (config, options) => {
+	webpack: (config) => {
 		config.resolve.fallback = { fs: false, module: false };
 
 		return config;
