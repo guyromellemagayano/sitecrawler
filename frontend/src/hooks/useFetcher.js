@@ -1,6 +1,6 @@
 import { EndpointRefreshInterval } from "@configs/GlobalValues";
-import { sleep } from "@helpers/sleep";
 import AxiosApiInstance from "@utils/axios";
+import { sleep } from "@utils/sleep";
 
 const useFetcher = async (...args) => {
 	return await AxiosApiInstance.get(...args)
