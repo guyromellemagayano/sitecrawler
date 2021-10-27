@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from crawl.common import ChoiceField
+from crawl.common import ChoiceField, Fields
 from crawl.models import Link
 from .page_data import PageDataSerializer
 from .tls import TlsSerializer
@@ -24,6 +24,7 @@ class PageSerializer(serializers.ModelSerializer):
     size_scripts = serializers.IntegerField(read_only=True)
     size_stylesheets = serializers.IntegerField(read_only=True)
     size_total = serializers.IntegerField(read_only=True)
+    size_total_adjusted = serializers.IntegerField(read_only=True)
     tls_status = ChoiceField(Link.TLS_STATUS_CHOICES, read_only=True)
     num_tls_images = serializers.IntegerField(read_only=True)
     num_non_tls_images = serializers.IntegerField(read_only=True)
@@ -39,44 +40,58 @@ class PageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Link
-        read_only_fields = [
-            "id",
-            "created_at",
-            "scan_id",
-            "url",
-            "size",
-            "num_links",
-            "num_ok_links",
-            "num_non_ok_links",
-            "num_images",
-            "num_ok_images",
-            "num_non_ok_images",
-            "num_scripts",
-            "num_ok_scripts",
-            "num_non_ok_scripts",
-            "num_stylesheets",
-            "num_ok_stylesheets",
-            "num_non_ok_stylesheets",
-            "size_images",
-            "size_scripts",
-            "size_stylesheets",
-            "size_total",
-            "tls_status",
-            "num_tls_images",
-            "num_non_tls_images",
-            "num_tls_scripts",
-            "num_non_tls_scripts",
-            "num_tls_stylesheets",
-            "num_non_tls_stylesheets",
-            "tls_images",
-            "tls_scripts",
-            "tls_stylesheets",
-            "tls_total",
-            "tls_total_adjusted",
-        ]
-        fields = read_only_fields + [
-            "resolved_tls",
-        ]
+        read_only_fields = Fields(
+            [
+                "id",
+                "created_at",
+                "scan_id",
+                "url",
+                "size",
+                "num_links",
+                "num_ok_links",
+                "num_non_ok_links",
+                "num_images",
+                "num_ok_images",
+                "num_non_ok_images",
+                "num_scripts",
+                "num_ok_scripts",
+                "num_non_ok_scripts",
+                "num_stylesheets",
+                "num_ok_stylesheets",
+                "num_non_ok_stylesheets",
+                "size_images",
+                "size_scripts",
+                "size_stylesheets",
+                "size_total",
+                "size_total_adjusted",
+                "tls_status",
+                "num_tls_images",
+                "num_non_tls_images",
+                "num_tls_scripts",
+                "num_non_tls_scripts",
+                "num_tls_stylesheets",
+                "num_non_tls_stylesheets",
+                "tls_images",
+                "tls_scripts",
+                "tls_stylesheets",
+                "tls_total",
+                "tls_total_adjusted",
+            ]
+        )
+        fields = read_only_fields + Fields(
+            [
+                "resolved_tls",
+                "resolved_size",
+                "resolved_missing_title",
+                "resolved_missing_description",
+                "resolved_missing_h1_first",
+                "resolved_missing_h1_second",
+                "resolved_missing_h2_first",
+                "resolved_missing_h2_second",
+                "resolved_duplicate_title",
+                "resolved_duplicate_description",
+            ]
+        )
 
 
 class PageDetailSerializer(PageSerializer):
@@ -85,13 +100,13 @@ class PageDetailSerializer(PageSerializer):
 
     class Meta:
         model = Link
-        read_only_fields = PageSerializer.Meta.read_only_fields + [
-            "pagedata",
-            "tls",
-        ]
-        fields = read_only_fields + [
-            x for x in PageSerializer.Meta.fields if x not in PageSerializer.Meta.read_only_fields
-        ]
+        read_only_fields = PageSerializer.Meta.read_only_fields + Fields(
+            [
+                "pagedata",
+                "tls",
+            ]
+        )
+        fields = read_only_fields + PageSerializer.Meta.fields
 
 
 class PageDuplicatesSerializer(PageSerializer):
@@ -100,8 +115,10 @@ class PageDuplicatesSerializer(PageSerializer):
 
     class Meta:
         model = Link
-        read_only_fields = PageSerializer.Meta.read_only_fields + [
-            "pages_with_same_title",
-            "pages_with_same_description",
-        ]
+        read_only_fields = PageSerializer.Meta.read_only_fields + Fields(
+            [
+                "pages_with_same_title",
+                "pages_with_same_description",
+            ]
+        )
         fields = read_only_fields

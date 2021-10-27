@@ -1,17 +1,8 @@
 from rest_framework import serializers
 
-from crawl.common import ChoiceField
+from crawl.common import ChoiceField, Fields
 from crawl.models import Link
 from .tls import TlsSerializer
-
-
-class Fields(list):
-    def __init__(self, add=[], remove=[]):
-        self.remove = set(remove)
-        super().__init__(x for x in add if x not in remove)
-
-    def __add__(self, other):
-        return Fields(super().__add__(other), self.remove | other.remove)
 
 
 class LinkSummarySerializer(serializers.ModelSerializer):

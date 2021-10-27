@@ -57,6 +57,13 @@ class LinkQuerySet(QuerySet):
                 ),
                 default=models.F("cached_tls_total"),
             ),
+            size_total_adjusted=models.Case(
+                models.When(
+                    resolved_size=True,
+                    then=models.Value(0, output_field=models.PositiveIntegerField()),
+                ),
+                default=models.F("cached_size_total"),
+            ),
         )
 
     def annotate_size(self):

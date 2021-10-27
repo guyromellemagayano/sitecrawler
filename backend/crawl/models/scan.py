@@ -94,7 +94,9 @@ class ScanQuerySet(QuerySet):
             .annotate(num_pages_without_h2_first=SubQueryCount(pages.filter(pagedata__h2_first="")))
             .annotate(num_pages_without_h2_second=SubQueryCount(pages.filter(pagedata__h2_second="")))
             .annotate(
-                num_pages_big=SubQueryCount(pages.annotate_size().filter(size_total__gt=large_page_size_threshold))
+                num_pages_big=SubQueryCount(
+                    pages.annotate_size().filter(size_total_adjusted__gt=large_page_size_threshold)
+                )
             )
             .annotate(num_pages_tls_non_ok=SubQueryCount(pages.exclude(tls_total_adjusted=1)))
             .annotate(num_images_tls_non_ok=SubQueryCount(images.exclude(tls_status_adjusted=Link.TLS_OK)))
@@ -108,7 +110,9 @@ class ScanQuerySet(QuerySet):
             )
             .annotate(
                 num_pages_small_tls_ok=SubQueryCount(
-                    pages.annotate_size().filter(size_total__lte=large_page_size_threshold, tls_total_adjusted=1)
+                    pages.annotate_size().filter(
+                        size_total_adjusted__lte=large_page_size_threshold, tls_total_adjusted=1
+                    )
                 )
             )
             .annotate(num_pages_duplicated_title=duplicated_count("pagedata__title"))

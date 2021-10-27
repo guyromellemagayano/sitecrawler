@@ -57,7 +57,7 @@ class PageFilter(filters.FilterSet):
     size_images = filters.RangeFilter(label="Size of Images")
     size_scripts = filters.RangeFilter(label="Size of Scripts")
     size_stylesheets = filters.RangeFilter(label="Size of Stylesheets")
-    size_total = filters.RangeFilter(label="Total Size")
+    size_total = filters.RangeFilter(label="Total Size", field_name="size_total_adjusted")
     tls_images = filters.BooleanFilter(label="All images tls ok")
     tls_scripts = filters.BooleanFilter(label="All scripts tls ok")
     tls_stylesheets = filters.BooleanFilter(label="All stylesheets tls ok")
