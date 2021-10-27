@@ -4,7 +4,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const SentryDsn = isProduction ? process.env.SENTRY_DSN : null;
 
 Sentry.init({
-	environment: "production",
+	environment: isProduction ? "production" : "development",
 	tracesSampleRate: 0.01,
 	dsn: SentryDsn
 });
