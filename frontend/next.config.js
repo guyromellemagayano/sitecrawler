@@ -2,16 +2,8 @@ const withPlugins = require("next-compose-plugins");
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
 	enabled: process.env.ANALYZE === "true"
 });
-const withNextTranslate = require("next-translate");
 const { withSentryConfig } = require("@sentry/nextjs");
-
-const basePath = "";
-const isProduction = process.env.NODE_ENV === "production";
-
-const SentryAuthToken = isProduction ? process.env.SENTRY_AUTH_TOKEN : null;
-const SentryOrg = isProduction ? process.env.SENTRY_ORG : null;
-const SentryProject = isProduction ? process.env.SENTRY_PROJECT : null;
-const SentryUrl = isProduction ? process.env.SENTRY_URL : null;
+const withNextTranslate = require("next-translate");
 
 const NextConfig = {
 	trailingSlash: true,
@@ -39,10 +31,7 @@ const SentryWebpackPluginOptions = {
 	ignore: ["node_modules"],
 	stripPrefix: ["webpack://_N_E/"],
 	urlPrefix: `~${basePath}/_next`,
-	url: SentryUrl,
-	org: SentryOrg,
-	authToken: SentryAuthToken,
-	project: SentryProject
+	silent: true
 };
 
 module.exports = withPlugins([
