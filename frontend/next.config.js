@@ -29,8 +29,6 @@ const NextConfig = {
 const SentryWebpackPluginOptions = {
 	include: ".next",
 	ignore: ["node_modules"],
-	stripPrefix: ["webpack://_N_E/"],
-	urlPrefix: `~${basePath}/_next`,
 	silent: true
 };
 
