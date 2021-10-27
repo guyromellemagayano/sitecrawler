@@ -10,5 +10,10 @@
 	"dismissMessage": "Afwijzen",
 	"fallbackErrorMessage": "Er is een fout opgetreden. Probeer het opnieuw",
 	"loginFailedErrorMessage": "Login failed. Please try again",
-	"siteLogoAltMessage": "Inloggen mislukt. Probeer het opnieuw"
+	"siteLogoAltMessage": "Inloggen mislukt. Probeer het opnieuw",
+	"about": "Wat betreft",
+	"privacyPolicy": "Privacybeleid",
+	"terms": "Voorwaarden",
+	"support": "Steun",
+	"allRightsReserved": "Alle rechten voorbehouden"
 }

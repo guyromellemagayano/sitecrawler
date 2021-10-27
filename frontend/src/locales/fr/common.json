@@ -10,5 +10,10 @@
 	"dismissMessage": "Rejeter",
 	"fallbackErrorMessage": "Une erreur est survenue. Veuillez réessayer",
 	"loginFailedErrorMessage": "Échec de la connexion. Veuillez réessayer",
-	"siteLogoAltMessage": "Logo de l'application SiteCrawler"
+	"siteLogoAltMessage": "Logo de l'application SiteCrawler",
+	"about": "À propos",
+	"privacyPolicy": "Politique de confidentialité",
+	"terms": "Termes",
+	"support": "Soutien",
+	"allRightsReserved": "Tous les droits sont réservés"
 }
