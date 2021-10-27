@@ -49,7 +49,11 @@ class ScanQuerySet(QuerySet):
         pages = Link.objects.filter(type=Link.TYPE_PAGE, scan_id=OuterRef("pk")).annotate_page_adjusted()
         external_links = Link.objects.filter(type=Link.TYPE_EXTERNAL, scan_id=OuterRef("pk"))
         links = Link.objects.filter(cached_link_occurences__gt=0, scan_id=OuterRef("pk")).annotate_link_adjusted()
-        images = Link.objects.filter(cached_image_occurences__gt=0, scan_id=OuterRef("pk")).annotate_link_adjusted()
+        images = (
+            Link.objects.filter(cached_image_occurences__gt=0, scan_id=OuterRef("pk"))
+            .annotate_link_adjusted()
+            .annotate_image_adjusted()
+        )
         scripts = Link.objects.filter(cached_script_occurences__gt=0, scan_id=OuterRef("pk")).annotate_link_adjusted()
         stylesheets = Link.objects.filter(
             cached_stylesheet_occurences__gt=0, scan_id=OuterRef("pk")
@@ -94,11 +98,11 @@ class ScanQuerySet(QuerySet):
             )
             .annotate(num_pages_tls_non_ok=SubQueryCount(pages.exclude(tls_total_adjusted=1)))
             .annotate(num_images_tls_non_ok=SubQueryCount(images.exclude(tls_status_adjusted=Link.TLS_OK)))
-            .annotate(num_images_with_missing_alts=SubQueryCount(images.filter(cached_image_missing_alts__gt=0)))
+            .annotate(num_images_with_missing_alts=SubQueryCount(images.filter(missing_alts_adjusted__gt=0)))
             .annotate(
                 num_images_fully_ok=SubQueryCount(
                     images.images().filter(
-                        missing_alts=0, tls_status_adjusted=Link.TLS_OK, status_adjusted=Link.STATUS_OK
+                        missing_alts_adjusted=0, tls_status_adjusted=Link.TLS_OK, status_adjusted=Link.STATUS_OK
                     )
                 )
             )

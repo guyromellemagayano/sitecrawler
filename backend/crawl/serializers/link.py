@@ -5,6 +5,15 @@ from crawl.models import Link
 from .tls import TlsSerializer
 
 
+class Fields(list):
+    def __init__(self, add=[], remove=[]):
+        self.remove = set(remove)
+        super().__init__(x for x in add if x not in remove)
+
+    def __add__(self, other):
+        return Fields(super().__add__(other), self.remove | other.remove)
+
+
 class LinkSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Link
@@ -25,31 +34,33 @@ class LinkSerializer(serializers.ModelSerializer):
     tls_status = ChoiceField(Link.TLS_STATUS_CHOICES, read_only=True)
     tls_status_adjusted = ChoiceField(Link.TLS_STATUS_CHOICES, read_only=True)
     occurences = serializers.IntegerField(read_only=True)
-    missing_alts = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Link
-        read_only_fields = [
-            "id",
-            "created_at",
-            "scan_id",
-            "type",
-            "url",
-            "status",
-            "status_adjusted",
-            "http_status",
-            "response_time",
-            "error",
-            "size",
-            "occurences",
-            "tls_status",
-            "tls_status_adjusted",
-            "missing_alts",
-        ]
-        fields = read_only_fields + [
-            "resolved_status",
-            "resolved_tls",
-        ]
+        read_only_fields = Fields(
+            [
+                "id",
+                "created_at",
+                "scan_id",
+                "type",
+                "url",
+                "status",
+                "status_adjusted",
+                "http_status",
+                "response_time",
+                "error",
+                "size",
+                "occurences",
+                "tls_status",
+                "tls_status_adjusted",
+            ]
+        )
+        fields = read_only_fields + Fields(
+            [
+                "resolved_status",
+                "resolved_tls",
+            ]
+        )
 
 
 class LinkDetailSerializer(LinkSerializer):
@@ -77,22 +88,48 @@ class LinkDetailSerializer(LinkSerializer):
         pages_get_key = "id"
 
         model = Link
-        read_only_fields = [x for x in LinkSerializer.Meta.read_only_fields if x != "occurences"] + [
-            "tls",
-            "pages",
-        ]
-        fields = read_only_fields + [
-            x for x in LinkSerializer.Meta.fields if x not in LinkSerializer.Meta.read_only_fields
-        ]
+        read_only_fields = LinkSerializer.Meta.read_only_fields + Fields(
+            add=[
+                "tls",
+                "pages",
+            ],
+            remove=["occurences"],
+        )
+        fields = LinkSerializer.Meta.fields + read_only_fields
 
 
-class ImageDetailSerializer(LinkDetailSerializer):
+class ImageSerializer(LinkSerializer):
+    missing_alts = serializers.IntegerField(read_only=True)
+    missing_alts_adjusted = serializers.IntegerField(read_only=True)
+
+    class Meta(LinkSerializer.Meta):
+        read_only_fields = LinkSerializer.Meta.read_only_fields + Fields(
+            [
+                "missing_alts",
+                "missing_alts_adjusted",
+            ]
+        )
+        fields = (
+            LinkSerializer.Meta.fields
+            + read_only_fields
+            + Fields(
+                [
+                    "resolved_missing_alts",
+                ]
+            )
+        )
+
+
+class ImageDetailSerializer(ImageSerializer, LinkDetailSerializer):
     class Meta(LinkDetailSerializer.Meta):
         pages_attr = "source_link_images"
         pages_parent_lookup = "parent_lookup_image_pages"
         pages_serializer = SourceLinkImageSerializer
         pages_get_key = "from_link_id"
         pages_select_related = ["from_link"]
+
+        read_only_fields = ImageSerializer.Meta.read_only_fields + LinkDetailSerializer.Meta.read_only_fields
+        fields = ImageSerializer.Meta.fields + LinkDetailSerializer.Meta.fields
 
     def get_pages(self, obj):
         query_str = """

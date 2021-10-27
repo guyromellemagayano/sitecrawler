@@ -37,6 +37,17 @@ class LinkQuerySet(QuerySet):
             ),
         )
 
+    def annotate_image_adjusted(self):
+        return self.images().annotate(
+            missing_alts_adjusted=models.Case(
+                models.When(
+                    resolved_missing_alts=True,
+                    then=models.Value(0, output_field=models.PositiveIntegerField()),
+                ),
+                default=models.F("missing_alts"),
+            ),
+        )
+
     def annotate_page_adjusted(self):
         return self.annotate(
             tls_total_adjusted=models.Case(
