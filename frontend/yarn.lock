@@ -1920,7 +1920,7 @@
     "@sentry/utils" "6.13.3"
     tslib "^1.9.3"
 
-"@sentry/integrations@6.13.3", "@sentry/integrations@^6.13.3":
+"@sentry/integrations@6.13.3":
   version "6.13.3"
   resolved "https://registry.yarnpkg.com/@sentry/integrations/-/integrations-6.13.3.tgz#9d80229de6e815c53fa52ca2422a0d13820b8d4e"
   integrity sha512-iC8LkbBTxlRo9FNxRqFfEm85FrELltc3E9gFsFSBkCnf7S/3nDCDW+mJX92KpRk97Wqid6/JwlXttKz8lsdF2A==
@@ -1953,7 +1953,7 @@
     "@sentry/webpack-plugin" "1.17.1"
     tslib "^1.9.3"
 
-"@sentry/node@6.13.3", "@sentry/node@^6.13.3":
+"@sentry/node@6.13.3":
   version "6.13.3"
   resolved "https://registry.yarnpkg.com/@sentry/node/-/node-6.13.3.tgz#94c646c31fd240ab68ee8b85aa663e65eb499d06"
   integrity sha512-ZeZSw+TcPcf4e0j7iEqNMtoVmz+WFW/TEoGokXIwysZqSgchKdAXDHqn+CqUqFan7d76JcJmzztAUK2JruQ2Kg==
