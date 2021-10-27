@@ -4,7 +4,8 @@ module.exports = {
 	pages: {
 		"*": ["common"],
 		"/404": ["error"],
-		"/login": ["login"]
+		"/login": ["login"],
+		"/sites": ["sites"]
 	},
 	interpolation: {
 		prefix: "${",
