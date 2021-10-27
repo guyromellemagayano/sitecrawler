@@ -5,6 +5,6 @@ const SentryDsn = isProduction ? process.env.SENTRY_DSN : null;
 
 Sentry.init({
 	environment: "production",
-	tracesSampleRate: 1.0,
+	tracesSampleRate: 0.01,
 	dsn: SentryDsn
 });

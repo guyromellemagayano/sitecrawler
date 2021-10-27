@@ -32,23 +32,10 @@ const NextConfig = {
 		defaultLocale: "en"
 	},
 	sentry: {
-		disableServerWebpackPlugin: isProduction ? false : true,
-		disableClientWebpackPlugin: isProduction ? false : true
+		disableServerWebpackPlugin: true,
+		disableClientWebpackPlugin: true
 	},
 	productionBrowserSourceMaps: true
 };
 
-const SentryWebpackPluginOptions = {
-	include: ".next",
-	ignore: ["node_modules"],
-	stripPrefix: ["webpack://_N_E/"],
-	urlPrefix: `~${basePath}/_next`,
-	url: SentryUrl,
-	org: SentryOrg,
-	authToken: SentryAuthToken,
-	project: SentryProject
-};
-
-module.exports = withPlugins([
-	withNextTranslate(withBundleAnalyzer(withSentryConfig(NextConfig, SentryWebpackPluginOptions)))
-]);
+module.exports = withPlugins([withNextTranslate(withBundleAnalyzer(withSentryConfig(NextConfig)))]);
