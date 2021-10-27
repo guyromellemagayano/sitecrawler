@@ -1,6 +1,6 @@
 import { FormSubmissionInterval } from "@enums/GlobalValues";
 import AxiosApiInstance from "@helpers/axios";
-import { sleep } from "@utils/sleep";
+import { sleep } from "@helpers/sleep";
 
 // Axios DELETE method
 export const useDeleteMethod = async (endpoint) => {
