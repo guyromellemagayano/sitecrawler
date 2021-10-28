@@ -1,5 +1,3 @@
-import { ErrorMessageAlert } from "@components/alerts/ErrorMessageAlert";
-import { SuccessMessageAlert } from "@components/alerts/SuccessMessageAlert";
 import LoginForm from "@components/forms/LoginForm";
 import LogoLabel from "@components/labels/LogoLabel";
 import { NoAuthLayout } from "@components/layouts";
@@ -17,9 +15,6 @@ import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
 const Login = () => {
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
-
 	const { t } = useTranslation("login");
 	const login = t("login");
 	const headline = t("headline");
@@ -58,22 +53,8 @@ const Login = () => {
 											<LogoLabel isLogin />
 
 											<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-												{errorMsg !== [] && errorMsg.length > 0 ? (
-													typeof errorMsg === "object" ? (
-														errorMsg.map((value, key) => <ErrorMessageAlert key={key} message={value} />)
-													) : (
-														<ErrorMessageAlert message={errorMsg} />
-													)
-												) : successMsg !== [] && successMsg.length > 0 ? (
-													typeof successMsg === "object" ? (
-														successMsg.map((value, key) => <SuccessMessageAlert key={key} message={value} />)
-													) : (
-														<SuccessMessageAlert message={successMsg} />
-													)
-												) : null}
-
 												<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
-													<LoginForm errorMsg={errorMsg} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
+													<LoginForm />
 												</div>
 
 												<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
