@@ -8,7 +8,9 @@ export const useUser = () => {
 		mutate: mutateUser,
 		error: errorUser,
 		isValidating: validatingUser
-	} = useSWR(UserApiEndpoint, useFetcher);
+	} = useSWR(UserApiEndpoint, useFetcher, {
+		refreshWhenOffline: true
+	});
 
 	return { user, mutateUser, errorUser, validatingUser };
 };
