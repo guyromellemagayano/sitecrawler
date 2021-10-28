@@ -1,21 +1,12 @@
 import { FormSubmissionInterval } from "@enums/GlobalValues";
 import AxiosApiInstance from "@utils/axios";
 import { sleep } from "@utils/sleep";
-import Cookies from "js-cookie";
-
-const customAxiosHeaders = {
-	"Accept": "application/json",
-	"Content-Type": "application/json",
-	"X-CSRFToken": Cookies.get("csrftoken")
-};
 
 // Axios DELETE method
 export const useDeleteMethod = async (endpoint) => {
-	return await AxiosApiInstance.delete(endpoint, { headers: customAxiosHeaders })
+	return await AxiosApiInstance.delete(endpoint)
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
-			console.log(response);
-
 			return response;
 		})
 		.catch((error) => {
@@ -25,7 +16,7 @@ export const useDeleteMethod = async (endpoint) => {
 
 // Axios GET method
 export const useGetMethod = async (endpoint) => {
-	return await AxiosApiInstance.get(endpoint, { headers: customAxiosHeaders })
+	return await AxiosApiInstance.get(endpoint)
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
 			return response;
@@ -37,7 +28,7 @@ export const useGetMethod = async (endpoint) => {
 
 // Axios PATCH method
 export const usePatchMethod = async (endpoint, data) => {
-	return await AxiosApiInstance.patch(endpoint, data, { headers: customAxiosHeaders })
+	return await AxiosApiInstance.patch(endpoint, data)
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
 			return response;
@@ -49,7 +40,7 @@ export const usePatchMethod = async (endpoint, data) => {
 
 // Axios POST method
 export const usePostMethod = async (endpoint, data) => {
-	return await AxiosApiInstance.post(endpoint, data, { headers: customAxiosHeaders })
+	return await AxiosApiInstance.post(endpoint, data)
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
 			return response;
@@ -61,7 +52,7 @@ export const usePostMethod = async (endpoint, data) => {
 
 // Axios PUT method
 export const usePutMethod = async (endpoint, data) => {
-	return await AxiosApiInstance.put(endpoint, data, { headers: customAxiosHeaders })
+	return await AxiosApiInstance.put(endpoint, data)
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
 			return response;
