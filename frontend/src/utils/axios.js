@@ -1,13 +1,24 @@
 import { EndpointRefreshInterval } from "@configs/GlobalValues";
 import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
+import Cookies from "js-cookie";
+
+const customAxiosHeaders = {
+	"Accept": "application/json",
+	"Content-Type": "application/json",
+	"X-CSRFToken": Cookies.get("csrftoken")
+};
 
 const AxiosApiInstance = axios.create({
-	timeout: EndpointRefreshInterval
+	timeout: EndpointRefreshInterval,
+	headers: customAxiosHeaders,
+	validateStatus: (status) => {
+		return status > 200 && status <= 500;
+	}
 });
 
 AxiosApiInstance.interceptors.request.use(
-	(config) => {
+	async (config) => {
 		return config;
 	},
 	(error) => {
@@ -18,10 +29,10 @@ AxiosApiInstance.interceptors.request.use(
 );
 
 AxiosApiInstance.interceptors.response.use(
-	(response) => {
+	async (response) => {
 		return response;
 	},
-	(error) => {
+	async (error) => {
 		Sentry.captureException(error);
 
 		return Promise.reject(error);
