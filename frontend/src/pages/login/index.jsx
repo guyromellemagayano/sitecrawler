@@ -1,6 +1,6 @@
 import LoginForm from "@components/forms/LoginForm";
 import LogoLabel from "@components/labels/LogoLabel";
-import { NoAuthLayout } from "@components/layouts";
+import { AuthLayout } from "@components/layouts";
 import Footer from "@components/layouts/Footer";
 import AppLogo from "@components/logos/AppLogo";
 import { NoAuthAppLogo } from "@configs/GlobalValues";
@@ -23,7 +23,7 @@ const Login = () => {
 	const noAccount = t("noAccount");
 
 	return (
-		<NoAuthLayout>
+		<AuthLayout>
 			<NextSeo title={login} />
 
 			<div tw="h-screen bg-gray-50 flex flex-col justify-center">
@@ -80,7 +80,7 @@ const Login = () => {
 					</div>
 				</Scrollbars>
 			</div>
-		</NoAuthLayout>
+		</AuthLayout>
 	);
 };
 
