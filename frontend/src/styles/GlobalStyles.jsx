@@ -1,7 +1,4 @@
-// React
 import * as React from "react";
-
-// External
 import { createGlobalStyle } from "styled-components";
 import tw, { GlobalStyles as BaseStyles } from "twin.macro";
 
