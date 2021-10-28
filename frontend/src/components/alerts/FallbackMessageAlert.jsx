@@ -3,9 +3,10 @@ import { Transition } from "@headlessui/react";
 import { XCircleIcon, XIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
 import * as React from "react";
+import "twin.macro";
 
 export const FallbackMessageAlert = () => {
-	const [isOpen, setIsOpen] = React.useState < boolean > true;
+	const [isOpen, setIsOpen] = React.useState(true);
 
 	const { t } = useTranslation("common");
 	const dismissMessage = t("dismissMessage");
@@ -13,7 +14,7 @@ export const FallbackMessageAlert = () => {
 
 	React.useEffect(() => {
 		setTimeout(() => {
-			setIsOpen(galse);
+			setIsOpen(false);
 		}, RevalidationInterval);
 
 		return () => {
