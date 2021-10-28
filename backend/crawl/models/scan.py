@@ -87,12 +87,12 @@ class ScanQuerySet(QuerySet):
             .annotate(num_stylesheets=SubQueryCount(stylesheets))
             .annotate(num_non_ok_stylesheets=SubQueryCount(stylesheets.exclude(status_adjusted=Link.STATUS_OK)))
             .annotate(num_pages_seo_ok=SubQueryCount(seo_ok_pages))
-            .annotate(num_pages_without_title=SubQueryCount(pages.filter(pagedata__title="")))
-            .annotate(num_pages_without_description=SubQueryCount(pages.filter(pagedata__description="")))
-            .annotate(num_pages_without_h1_first=SubQueryCount(pages.filter(pagedata__h1_first="")))
-            .annotate(num_pages_without_h1_second=SubQueryCount(pages.filter(pagedata__h1_second="")))
-            .annotate(num_pages_without_h2_first=SubQueryCount(pages.filter(pagedata__h2_first="")))
-            .annotate(num_pages_without_h2_second=SubQueryCount(pages.filter(pagedata__h2_second="")))
+            .annotate(num_pages_without_title=SubQueryCount(pages.filter(has_title_adjusted=False)))
+            .annotate(num_pages_without_description=SubQueryCount(pages.filter(has_description_adjusted=False)))
+            .annotate(num_pages_without_h1_first=SubQueryCount(pages.filter(has_h1_first_adjusted=False)))
+            .annotate(num_pages_without_h1_second=SubQueryCount(pages.filter(has_h1_second_adjusted=False)))
+            .annotate(num_pages_without_h2_first=SubQueryCount(pages.filter(has_h2_first_adjusted=False)))
+            .annotate(num_pages_without_h2_second=SubQueryCount(pages.filter(has_h2_second_adjusted=False)))
             .annotate(
                 num_pages_big=SubQueryCount(
                     pages.annotate_size().filter(size_total_adjusted__gt=large_page_size_threshold)

@@ -64,6 +64,50 @@ class LinkQuerySet(QuerySet):
                 ),
                 default=models.F("cached_size_total"),
             ),
+            has_title_adjusted=models.Case(
+                models.When(
+                    resolved_missing_title=True,
+                    then=True,
+                ),
+                default=models.ExpressionWrapper(~models.Q(pagedata__title=""), output_field=models.BooleanField()),
+            ),
+            has_description_adjusted=models.Case(
+                models.When(
+                    resolved_missing_description=True,
+                    then=True,
+                ),
+                default=models.ExpressionWrapper(
+                    ~models.Q(pagedata__description=""), output_field=models.BooleanField()
+                ),
+            ),
+            has_h1_first_adjusted=models.Case(
+                models.When(
+                    resolved_missing_h1_first=True,
+                    then=True,
+                ),
+                default=models.ExpressionWrapper(~models.Q(pagedata__h1_first=""), output_field=models.BooleanField()),
+            ),
+            has_h1_second_adjusted=models.Case(
+                models.When(
+                    resolved_missing_h1_second=True,
+                    then=True,
+                ),
+                default=models.ExpressionWrapper(~models.Q(pagedata__h1_second=""), output_field=models.BooleanField()),
+            ),
+            has_h2_first_adjusted=models.Case(
+                models.When(
+                    resolved_missing_h2_first=True,
+                    then=True,
+                ),
+                default=models.ExpressionWrapper(~models.Q(pagedata__h2_first=""), output_field=models.BooleanField()),
+            ),
+            has_h2_second_adjusted=models.Case(
+                models.When(
+                    resolved_missing_h2_second=True,
+                    then=True,
+                ),
+                default=models.ExpressionWrapper(~models.Q(pagedata__h2_second=""), output_field=models.BooleanField()),
+            ),
         )
 
     def annotate_size(self):

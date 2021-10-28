@@ -14,22 +14,12 @@ from teams.service import get_current_membership, get_current_team, has_permissi
 
 
 class PageFilter(filters.FilterSet):
-    has_title = filters.BooleanFilter(label="Has Title", field_name="pagedata__title", method="filter_has_pagedata")
-    has_description = filters.BooleanFilter(
-        label="Has Description", field_name="pagedata__description", method="filter_has_pagedata"
-    )
-    has_h1_first = filters.BooleanFilter(
-        label="Has First H1", field_name="pagedata__h1_first", method="filter_has_pagedata"
-    )
-    has_h1_second = filters.BooleanFilter(
-        label="Has Second H1", field_name="pagedata__h1_second", method="filter_has_pagedata"
-    )
-    has_h2_first = filters.BooleanFilter(
-        label="Has First H2", field_name="pagedata__h2_first", method="filter_has_pagedata"
-    )
-    has_h2_second = filters.BooleanFilter(
-        label="Has Second H2", field_name="pagedata__h2_second", method="filter_has_pagedata"
-    )
+    has_title = filters.BooleanFilter(label="Has Title", field_name="has_title_adjusted")
+    has_description = filters.BooleanFilter(label="Has Description", field_name="has_description_adjusted")
+    has_h1_first = filters.BooleanFilter(label="Has First H1", field_name="has_h1_first_adjusted")
+    has_h1_second = filters.BooleanFilter(label="Has Second H1", field_name="has_h1_second_adjusted")
+    has_h2_first = filters.BooleanFilter(label="Has First H2", field_name="has_h2_first_adjusted")
+    has_h2_second = filters.BooleanFilter(label="Has Second H2", field_name="has_h2_second_adjusted")
     has_duplicated_title = filters.BooleanFilter(
         label="Has Duplicated Title", field_name="pagedata__title", method="filter_has_duplicated"
     )
@@ -68,14 +58,6 @@ class PageFilter(filters.FilterSet):
         fields = {
             "created_at": ["gt", "gte", "lt", "lte"],
         }
-
-    def filter_has_pagedata(self, queryset, name, value):
-        kwargs = {name: ""}
-        if value:
-            queryset = queryset.exclude(**kwargs)
-        else:
-            queryset = queryset.filter(**kwargs)
-        return queryset
 
     def filter_has_duplicated(self, queryset, name, value):
         ids = (

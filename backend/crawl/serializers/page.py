@@ -37,6 +37,12 @@ class PageSerializer(serializers.ModelSerializer):
     tls_stylesheets = serializers.BooleanField(read_only=True)
     tls_total = serializers.BooleanField(read_only=True)
     tls_total_adjusted = serializers.BooleanField(read_only=True)
+    has_title_adjusted = serializers.BooleanField(read_only=True)
+    has_description_adjusted = serializers.BooleanField(read_only=True)
+    has_h1_first_adjusted = serializers.BooleanField(read_only=True)
+    has_h1_second_adjusted = serializers.BooleanField(read_only=True)
+    has_h2_first_adjusted = serializers.BooleanField(read_only=True)
+    has_h2_second_adjusted = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Link
@@ -76,6 +82,12 @@ class PageSerializer(serializers.ModelSerializer):
                 "tls_stylesheets",
                 "tls_total",
                 "tls_total_adjusted",
+                "has_title_adjusted",
+                "has_description_adjusted",
+                "has_h1_first_adjusted",
+                "has_h1_second_adjusted",
+                "has_h2_first_adjusted",
+                "has_h2_second_adjusted",
             ]
         )
         fields = read_only_fields + Fields(
