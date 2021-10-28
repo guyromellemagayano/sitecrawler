@@ -43,6 +43,8 @@ class PageSerializer(serializers.ModelSerializer):
     has_h1_second_adjusted = serializers.BooleanField(read_only=True)
     has_h2_first_adjusted = serializers.BooleanField(read_only=True)
     has_h2_second_adjusted = serializers.BooleanField(read_only=True)
+    has_duplicated_title_adjusted = serializers.BooleanField(read_only=True)
+    has_duplicated_description_adjusted = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Link
@@ -88,6 +90,8 @@ class PageSerializer(serializers.ModelSerializer):
                 "has_h1_second_adjusted",
                 "has_h2_first_adjusted",
                 "has_h2_second_adjusted",
+                "has_duplicated_title_adjusted",
+                "has_duplicated_description_adjusted",
             ]
         )
         fields = read_only_fields + Fields(

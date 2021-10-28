@@ -64,7 +64,8 @@ class ScanQuerySet(QuerySet):
 
         def duplicated_count(field):
             return Subquery(
-                pages.values(field)  # group by
+                pages.filter(~Q(**{f"resolved_duplicate_{field[10:]}": True}))
+                .values(field)  # group by
                 .annotate(cnt=models.Count("id", distinct=True))  # count pages pery field
                 .filter(cnt__gt=1)  # only count duplicates
                 .annotate(

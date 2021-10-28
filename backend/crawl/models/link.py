@@ -1,19 +1,15 @@
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.db import models
-from django.db.models import (
-    Sum,
-    F,
-    Subquery,
-    PositiveIntegerField,
-)
+from django.db.models import F
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 
 
-class SubQuerySizeSum(Subquery):
-    output_field = PositiveIntegerField()
+class SubQuerySizeSum(models.Subquery):
+    output_field = models.PositiveIntegerField()
 
     def __init__(self, queryset, *args, **kwargs):
-        queryset = queryset.annotate(total=Coalesce(Sum("size"), 0)).values("total")
+        queryset = queryset.annotate(total=Coalesce(models.Sum("size"), 0)).values("total")
         queryset.query.set_group_by()
         super().__init__(queryset, *args, **kwargs)
 
@@ -49,6 +45,30 @@ class LinkQuerySet(QuerySet):
         )
 
     def annotate_page_adjusted(self):
+        def has_pagedata_adjusted(name):
+            return models.Case(
+                models.When(
+                    **{
+                        f"resolved_missing_{name}": True,
+                        "then": True,
+                    }
+                ),
+                default=models.ExpressionWrapper(
+                    ~models.Q(**{f"pagedata__{name}": ""}), output_field=models.BooleanField()
+                ),
+            )
+
+        def has_duplicated_adjusted(name):
+            ids = (
+                self.filter(~models.Q(**{f"resolved_duplicate_{name}": True}))
+                .values(f"pagedata__{name}")  # group by
+                .annotate(cnt=models.Count("id", distinct=True))  # count pages per field
+                .annotate(ids=models.Func(ArrayAgg("id", distinct=True), function="UNNEST"))  # get all ids
+                .filter(cnt__gt=1)  # only count duplicates
+                .values("ids")
+            )
+            return models.ExpressionWrapper(models.Q(id__in=ids), output_field=models.BooleanField())
+
         return self.annotate(
             tls_total_adjusted=models.Case(
                 models.When(
@@ -64,50 +84,14 @@ class LinkQuerySet(QuerySet):
                 ),
                 default=models.F("cached_size_total"),
             ),
-            has_title_adjusted=models.Case(
-                models.When(
-                    resolved_missing_title=True,
-                    then=True,
-                ),
-                default=models.ExpressionWrapper(~models.Q(pagedata__title=""), output_field=models.BooleanField()),
-            ),
-            has_description_adjusted=models.Case(
-                models.When(
-                    resolved_missing_description=True,
-                    then=True,
-                ),
-                default=models.ExpressionWrapper(
-                    ~models.Q(pagedata__description=""), output_field=models.BooleanField()
-                ),
-            ),
-            has_h1_first_adjusted=models.Case(
-                models.When(
-                    resolved_missing_h1_first=True,
-                    then=True,
-                ),
-                default=models.ExpressionWrapper(~models.Q(pagedata__h1_first=""), output_field=models.BooleanField()),
-            ),
-            has_h1_second_adjusted=models.Case(
-                models.When(
-                    resolved_missing_h1_second=True,
-                    then=True,
-                ),
-                default=models.ExpressionWrapper(~models.Q(pagedata__h1_second=""), output_field=models.BooleanField()),
-            ),
-            has_h2_first_adjusted=models.Case(
-                models.When(
-                    resolved_missing_h2_first=True,
-                    then=True,
-                ),
-                default=models.ExpressionWrapper(~models.Q(pagedata__h2_first=""), output_field=models.BooleanField()),
-            ),
-            has_h2_second_adjusted=models.Case(
-                models.When(
-                    resolved_missing_h2_second=True,
-                    then=True,
-                ),
-                default=models.ExpressionWrapper(~models.Q(pagedata__h2_second=""), output_field=models.BooleanField()),
-            ),
+            has_title_adjusted=has_pagedata_adjusted("title"),
+            has_description_adjusted=has_pagedata_adjusted("description"),
+            has_h1_first_adjusted=has_pagedata_adjusted("h1_first"),
+            has_h1_second_adjusted=has_pagedata_adjusted("h1_second"),
+            has_h2_first_adjusted=has_pagedata_adjusted("h2_first"),
+            has_h2_second_adjusted=has_pagedata_adjusted("h2_second"),
+            has_duplicated_title_adjusted=has_duplicated_adjusted("title"),
+            has_duplicated_description_adjusted=has_duplicated_adjusted("description"),
         )
 
     def annotate_size(self):

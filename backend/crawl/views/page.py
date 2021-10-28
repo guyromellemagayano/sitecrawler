@@ -1,5 +1,3 @@
-from django.db import models
-from django.contrib.postgres.aggregates import ArrayAgg
 from django_filters import rest_framework as filters
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
@@ -21,10 +19,10 @@ class PageFilter(filters.FilterSet):
     has_h2_first = filters.BooleanFilter(label="Has First H2", field_name="has_h2_first_adjusted")
     has_h2_second = filters.BooleanFilter(label="Has Second H2", field_name="has_h2_second_adjusted")
     has_duplicated_title = filters.BooleanFilter(
-        label="Has Duplicated Title", field_name="pagedata__title", method="filter_has_duplicated"
+        label="Has Duplicated Title", field_name="has_duplicated_title_adjusted"
     )
     has_duplicated_description = filters.BooleanFilter(
-        label="Has Duplicated Description", field_name="pagedata__description", method="filter_has_duplicated"
+        label="Has Duplicated Description", field_name="has_duplicated_description_adjusted"
     )
     num_links = filters.RangeFilter(label="Number of Links")
     num_ok_links = filters.RangeFilter(label="Number of OK Links")
@@ -58,21 +56,6 @@ class PageFilter(filters.FilterSet):
         fields = {
             "created_at": ["gt", "gte", "lt", "lte"],
         }
-
-    def filter_has_duplicated(self, queryset, name, value):
-        ids = (
-            queryset.values(name)  # group by
-            .annotate(cnt=models.Count("id", distinct=True))  # count pages pery field
-            .annotate(ids=models.Func(ArrayAgg("id", distinct=True), function="UNNEST"))  # get all ids
-            .filter(cnt__gt=1)  # only count duplicates
-            .values("ids")
-        )
-        kwargs = {"id__in": ids}
-        if value:
-            queryset = queryset.filter(**kwargs)
-        else:
-            queryset = queryset.exclude(**kwargs)
-        return queryset
 
 
 class PageViewSet(
