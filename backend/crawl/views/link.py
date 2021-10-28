@@ -7,6 +7,7 @@ from crawl.common import CsvMixin
 from crawl.models import Link
 from crawl.serializers import (
     LinkSerializer,
+    ImageSerializer,
     LinkDetailSerializer,
     ImageDetailSerializer,
     ScriptDetailSerializer,
@@ -29,11 +30,17 @@ class HumanReadableMultipleChoiceFilter(filters.MultipleChoiceFilter):
 class LinkFilter(filters.FilterSet):
     type = HumanReadableMultipleChoiceFilter(choices=Link.TYPE_CHOICES)
     type__neq = HumanReadableMultipleChoiceFilter(field_name="type", choices=Link.TYPE_CHOICES, exclude=True)
-    status = HumanReadableMultipleChoiceFilter(choices=Link.STATUS_CHOICES)
-    status__neq = HumanReadableMultipleChoiceFilter(field_name="status", choices=Link.STATUS_CHOICES, exclude=True)
-    tls_status = HumanReadableMultipleChoiceFilter(choices=Link.TLS_STATUS_CHOICES)
+    status = HumanReadableMultipleChoiceFilter(
+        field_name="status_adjusted", choices=Link.STATUS_CHOICES, label="Status"
+    )
+    status__neq = HumanReadableMultipleChoiceFilter(
+        field_name="status_adjusted", choices=Link.STATUS_CHOICES, exclude=True, label="Exclude status"
+    )
+    tls_status = HumanReadableMultipleChoiceFilter(
+        field_name="tls_status_adjusted", choices=Link.TLS_STATUS_CHOICES, label="TLS status"
+    )
     tls_status__neq = HumanReadableMultipleChoiceFilter(
-        field_name="tls_status", choices=Link.TLS_STATUS_CHOICES, exclude=True
+        field_name="tls_status_adjusted", choices=Link.TLS_STATUS_CHOICES, exclude=True, label="Exclude TLS status"
     )
     http_status__neq = filters.NumberFilter(field_name="http_status", exclude=True)
 
@@ -54,6 +61,7 @@ class PageChildViewSet(
     NestedViewSetMixin,
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = Link.objects.all()
@@ -76,7 +84,7 @@ class PageChildViewSet(
     ]
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
+        queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True).annotate_link_adjusted()
         if self.request.user.is_superuser:
             pass
         elif has_permission(self.request, "crawl.can_see_all_sites"):
@@ -96,27 +104,27 @@ class LinkViewSet(PageChildViewSet):
 class ImageFilter(LinkFilter):
     # custom filters because field name doesn't match filter name
     missing_alts__gt = filters.NumberFilter(
-        field_name="cached_image_missing_alts",
+        field_name="missing_alts_adjusted",
         label="Missing alts is greater than",
         lookup_expr="gt",
     )
     missing_alts__gte = filters.NumberFilter(
-        field_name="cached_image_missing_alts",
+        field_name="missing_alts_adjusted",
         label="Missing alts is greater than or equal to",
         lookup_expr="gte",
     )
     missing_alts__lt = filters.NumberFilter(
-        field_name="cached_image_missing_alts",
+        field_name="missing_alts_adjusted",
         label="Missing alts is less than (doesn't work for 0)",
         lookup_expr="lt",
     )
     missing_alts__lte = filters.NumberFilter(
-        field_name="cached_image_missing_alts",
+        field_name="missing_alts_adjusted",
         label="Missing alts is less than or equal to (doesn't work for 0)",
         lookup_expr="lte",
     )
     missing_alts__iszero = filters.BooleanFilter(
-        field_name="cached_image_missing_alts",
+        field_name="missing_alts_adjusted",
         label="Missing alts is zero",
         lookup_expr="isnull",
     )
@@ -127,6 +135,7 @@ class ImageFilter(LinkFilter):
 
 class ImageViewSet(PageChildViewSet):
     permission_classes = [HasPermission("crawl.can_see_images")]
+    serializer_class = ImageSerializer
     serializer_detail_class = ImageDetailSerializer
 
     filterset_class = ImageFilter
@@ -135,7 +144,7 @@ class ImageViewSet(PageChildViewSet):
     ]
 
     def get_queryset(self):
-        return super().get_queryset().images()
+        return super().get_queryset().images().annotate_image_adjusted()
 
 
 class ScriptViewSet(PageChildViewSet):

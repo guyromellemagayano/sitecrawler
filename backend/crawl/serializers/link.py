@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from crawl.common import ChoiceField
+from crawl.common import ChoiceField, Fields
 from crawl.models import Link
 from .tls import TlsSerializer
 
@@ -19,34 +19,43 @@ class SourceLinkImageSerializer(serializers.Serializer):
 
 
 class LinkSerializer(serializers.ModelSerializer):
-    status = ChoiceField(Link.STATUS_CHOICES)
-    type = ChoiceField(Link.TYPE_CHOICES)
-    tls_status = ChoiceField(Link.TLS_STATUS_CHOICES)
+    status = ChoiceField(Link.STATUS_CHOICES, read_only=True)
+    status_adjusted = ChoiceField(Link.STATUS_CHOICES, read_only=True)
+    type = ChoiceField(Link.TYPE_CHOICES, read_only=True)
+    tls_status = ChoiceField(Link.TLS_STATUS_CHOICES, read_only=True)
+    tls_status_adjusted = ChoiceField(Link.TLS_STATUS_CHOICES, read_only=True)
     occurences = serializers.IntegerField(read_only=True)
-    missing_alts = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Link
-        fields = [
-            "id",
-            "created_at",
-            "scan_id",
-            "type",
-            "url",
-            "status",
-            "http_status",
-            "response_time",
-            "error",
-            "size",
-            "occurences",
-            "tls_status",
-            "missing_alts",
-        ]
-        read_only_fields = fields
+        read_only_fields = Fields(
+            [
+                "id",
+                "created_at",
+                "scan_id",
+                "type",
+                "url",
+                "status",
+                "status_adjusted",
+                "http_status",
+                "response_time",
+                "error",
+                "size",
+                "occurences",
+                "tls_status",
+                "tls_status_adjusted",
+            ]
+        )
+        fields = read_only_fields + Fields(
+            [
+                "resolved_status",
+                "resolved_tls",
+            ]
+        )
 
 
 class LinkDetailSerializer(LinkSerializer):
-    pages = serializers.SerializerMethodField()
+    pages = serializers.SerializerMethodField(read_only=True)
     tls = TlsSerializer(read_only=True)
 
     def get_pages(self, obj):
@@ -70,20 +79,48 @@ class LinkDetailSerializer(LinkSerializer):
         pages_get_key = "id"
 
         model = Link
-        fields = [x for x in LinkSerializer.Meta.fields if x != "occurences"] + [
-            "tls",
-            "pages",
-        ]
-        read_only_fields = fields
+        read_only_fields = LinkSerializer.Meta.read_only_fields + Fields(
+            add=[
+                "tls",
+                "pages",
+            ],
+            remove=["occurences"],
+        )
+        fields = LinkSerializer.Meta.fields + read_only_fields
 
 
-class ImageDetailSerializer(LinkDetailSerializer):
+class ImageSerializer(LinkSerializer):
+    missing_alts = serializers.IntegerField(read_only=True)
+    missing_alts_adjusted = serializers.IntegerField(read_only=True)
+
+    class Meta(LinkSerializer.Meta):
+        read_only_fields = LinkSerializer.Meta.read_only_fields + Fields(
+            [
+                "missing_alts",
+                "missing_alts_adjusted",
+            ]
+        )
+        fields = (
+            LinkSerializer.Meta.fields
+            + read_only_fields
+            + Fields(
+                [
+                    "resolved_missing_alts",
+                ]
+            )
+        )
+
+
+class ImageDetailSerializer(ImageSerializer, LinkDetailSerializer):
     class Meta(LinkDetailSerializer.Meta):
         pages_attr = "source_link_images"
         pages_parent_lookup = "parent_lookup_image_pages"
         pages_serializer = SourceLinkImageSerializer
         pages_get_key = "from_link_id"
         pages_select_related = ["from_link"]
+
+        read_only_fields = ImageSerializer.Meta.read_only_fields + LinkDetailSerializer.Meta.read_only_fields
+        fields = ImageSerializer.Meta.fields + LinkDetailSerializer.Meta.fields
 
     def get_pages(self, obj):
         query_str = """

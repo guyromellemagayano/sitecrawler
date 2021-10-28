@@ -46,19 +46,26 @@ class ScanQuerySet(QuerySet):
 
     def _details(self, large_page_size_threshold):
         # annotate with details, all should start with `num_`, because that prefix is cached in ScanCache
-        pages = Link.objects.filter(type=Link.TYPE_PAGE, scan_id=OuterRef("pk"))
+        pages = Link.objects.filter(type=Link.TYPE_PAGE, scan_id=OuterRef("pk")).annotate_page_adjusted()
         external_links = Link.objects.filter(type=Link.TYPE_EXTERNAL, scan_id=OuterRef("pk"))
-        links = Link.objects.filter(cached_link_occurences__gt=0, scan_id=OuterRef("pk"))
-        images = Link.objects.filter(cached_image_occurences__gt=0, scan_id=OuterRef("pk"))
-        scripts = Link.objects.filter(cached_script_occurences__gt=0, scan_id=OuterRef("pk"))
-        stylesheets = Link.objects.filter(cached_stylesheet_occurences__gt=0, scan_id=OuterRef("pk"))
+        links = Link.objects.filter(cached_link_occurences__gt=0, scan_id=OuterRef("pk")).annotate_link_adjusted()
+        images = (
+            Link.objects.filter(cached_image_occurences__gt=0, scan_id=OuterRef("pk"))
+            .annotate_link_adjusted()
+            .annotate_image_adjusted()
+        )
+        scripts = Link.objects.filter(cached_script_occurences__gt=0, scan_id=OuterRef("pk")).annotate_link_adjusted()
+        stylesheets = Link.objects.filter(
+            cached_stylesheet_occurences__gt=0, scan_id=OuterRef("pk")
+        ).annotate_link_adjusted()
         seo_ok_pages = pages.exclude(
             Q(pagedata__title="") | Q(pagedata__description="") | Q(pagedata__h1_first="") | Q(pagedata__h2_first="")
         )
 
         def duplicated_count(field):
             return Subquery(
-                pages.values(field)  # group by
+                pages.filter(~Q(**{f"resolved_duplicate_{field[10:]}": True}))
+                .values(field)  # group by
                 .annotate(cnt=models.Count("id", distinct=True))  # count pages pery field
                 .filter(cnt__gt=1)  # only count duplicates
                 .annotate(
@@ -73,34 +80,40 @@ class ScanQuerySet(QuerySet):
             self.annotate(num_pages=SubQueryCount(pages))
             .annotate(num_external_links=SubQueryCount(external_links))
             .annotate(num_links=SubQueryCount(links))
-            .annotate(num_non_ok_links=SubQueryCount(links.exclude(status=Link.STATUS_OK)))
+            .annotate(num_non_ok_links=SubQueryCount(links.exclude(status_adjusted=Link.STATUS_OK)))
             .annotate(num_images=SubQueryCount(images))
-            .annotate(num_non_ok_images=SubQueryCount(images.exclude(status=Link.STATUS_OK)))
+            .annotate(num_non_ok_images=SubQueryCount(images.exclude(status_adjusted=Link.STATUS_OK)))
             .annotate(num_scripts=SubQueryCount(scripts))
-            .annotate(num_non_ok_scripts=SubQueryCount(scripts.exclude(status=Link.STATUS_OK)))
+            .annotate(num_non_ok_scripts=SubQueryCount(scripts.exclude(status_adjusted=Link.STATUS_OK)))
             .annotate(num_stylesheets=SubQueryCount(stylesheets))
-            .annotate(num_non_ok_stylesheets=SubQueryCount(stylesheets.exclude(status=Link.STATUS_OK)))
+            .annotate(num_non_ok_stylesheets=SubQueryCount(stylesheets.exclude(status_adjusted=Link.STATUS_OK)))
             .annotate(num_pages_seo_ok=SubQueryCount(seo_ok_pages))
-            .annotate(num_pages_without_title=SubQueryCount(pages.filter(pagedata__title="")))
-            .annotate(num_pages_without_description=SubQueryCount(pages.filter(pagedata__description="")))
-            .annotate(num_pages_without_h1_first=SubQueryCount(pages.filter(pagedata__h1_first="")))
-            .annotate(num_pages_without_h1_second=SubQueryCount(pages.filter(pagedata__h1_second="")))
-            .annotate(num_pages_without_h2_first=SubQueryCount(pages.filter(pagedata__h2_first="")))
-            .annotate(num_pages_without_h2_second=SubQueryCount(pages.filter(pagedata__h2_second="")))
+            .annotate(num_pages_without_title=SubQueryCount(pages.filter(has_title_adjusted=False)))
+            .annotate(num_pages_without_description=SubQueryCount(pages.filter(has_description_adjusted=False)))
+            .annotate(num_pages_without_h1_first=SubQueryCount(pages.filter(has_h1_first_adjusted=False)))
+            .annotate(num_pages_without_h1_second=SubQueryCount(pages.filter(has_h1_second_adjusted=False)))
+            .annotate(num_pages_without_h2_first=SubQueryCount(pages.filter(has_h2_first_adjusted=False)))
+            .annotate(num_pages_without_h2_second=SubQueryCount(pages.filter(has_h2_second_adjusted=False)))
             .annotate(
-                num_pages_big=SubQueryCount(pages.annotate_size().filter(size_total__gt=large_page_size_threshold))
+                num_pages_big=SubQueryCount(
+                    pages.annotate_size().filter(size_total_adjusted__gt=large_page_size_threshold)
+                )
             )
-            .annotate(num_pages_tls_non_ok=SubQueryCount(pages.annotate_tls().exclude(tls_total=1)))
-            .annotate(num_images_tls_non_ok=SubQueryCount(images.exclude(tls_status=Link.TLS_OK)))
-            .annotate(num_images_with_missing_alts=SubQueryCount(images.filter(cached_image_missing_alts__gt=0)))
+            .annotate(num_pages_tls_non_ok=SubQueryCount(pages.exclude(tls_total_adjusted=1)))
+            .annotate(num_images_tls_non_ok=SubQueryCount(images.exclude(tls_status_adjusted=Link.TLS_OK)))
+            .annotate(num_images_with_missing_alts=SubQueryCount(images.filter(missing_alts_adjusted__gt=0)))
             .annotate(
                 num_images_fully_ok=SubQueryCount(
-                    images.images().filter(missing_alts=0, tls_status=Link.TLS_OK, status=Link.STATUS_OK)
+                    images.images().filter(
+                        missing_alts_adjusted=0, tls_status_adjusted=Link.TLS_OK, status_adjusted=Link.STATUS_OK
+                    )
                 )
             )
             .annotate(
                 num_pages_small_tls_ok=SubQueryCount(
-                    pages.annotate_size().annotate_tls().filter(size_total__lte=large_page_size_threshold, tls_total=1)
+                    pages.annotate_size().filter(
+                        size_total_adjusted__lte=large_page_size_threshold, tls_total_adjusted=1
+                    )
                 )
             )
             .annotate(num_pages_duplicated_title=duplicated_count("pagedata__title"))

@@ -1,9 +1,7 @@
 from django.db.models import Count, Subquery, IntegerField
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.settings import api_settings
 from rest_framework_csv.renderers import CSVRenderer
-
-from teams.service import has_permission
 
 
 class SubQueryCount(Subquery):
@@ -57,3 +55,12 @@ class CsvMixin:
         if self.request.query_params.get("format") == "csv":
             return None
         return super().paginate_queryset(queryset)
+
+
+class Fields(list):
+    def __init__(self, add=[], remove=[]):
+        self.remove = set(remove)
+        super().__init__(x for x in add if x not in remove)
+
+    def __add__(self, other):
+        return Fields(super().__add__(other), self.remove | other.remove)

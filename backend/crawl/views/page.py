@@ -1,5 +1,3 @@
-from django.db import models
-from django.contrib.postgres.aggregates import ArrayAgg
 from django_filters import rest_framework as filters
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
@@ -14,27 +12,17 @@ from teams.service import get_current_membership, get_current_team, has_permissi
 
 
 class PageFilter(filters.FilterSet):
-    has_title = filters.BooleanFilter(label="Has Title", field_name="pagedata__title", method="filter_has_pagedata")
-    has_description = filters.BooleanFilter(
-        label="Has Description", field_name="pagedata__description", method="filter_has_pagedata"
-    )
-    has_h1_first = filters.BooleanFilter(
-        label="Has First H1", field_name="pagedata__h1_first", method="filter_has_pagedata"
-    )
-    has_h1_second = filters.BooleanFilter(
-        label="Has Second H1", field_name="pagedata__h1_second", method="filter_has_pagedata"
-    )
-    has_h2_first = filters.BooleanFilter(
-        label="Has First H2", field_name="pagedata__h2_first", method="filter_has_pagedata"
-    )
-    has_h2_second = filters.BooleanFilter(
-        label="Has Second H2", field_name="pagedata__h2_second", method="filter_has_pagedata"
-    )
+    has_title = filters.BooleanFilter(label="Has Title", field_name="has_title_adjusted")
+    has_description = filters.BooleanFilter(label="Has Description", field_name="has_description_adjusted")
+    has_h1_first = filters.BooleanFilter(label="Has First H1", field_name="has_h1_first_adjusted")
+    has_h1_second = filters.BooleanFilter(label="Has Second H1", field_name="has_h1_second_adjusted")
+    has_h2_first = filters.BooleanFilter(label="Has First H2", field_name="has_h2_first_adjusted")
+    has_h2_second = filters.BooleanFilter(label="Has Second H2", field_name="has_h2_second_adjusted")
     has_duplicated_title = filters.BooleanFilter(
-        label="Has Duplicated Title", field_name="pagedata__title", method="filter_has_duplicated"
+        label="Has Duplicated Title", field_name="has_duplicated_title_adjusted"
     )
     has_duplicated_description = filters.BooleanFilter(
-        label="Has Duplicated Description", field_name="pagedata__description", method="filter_has_duplicated"
+        label="Has Duplicated Description", field_name="has_duplicated_description_adjusted"
     )
     num_links = filters.RangeFilter(label="Number of Links")
     num_ok_links = filters.RangeFilter(label="Number of OK Links")
@@ -57,40 +45,17 @@ class PageFilter(filters.FilterSet):
     size_images = filters.RangeFilter(label="Size of Images")
     size_scripts = filters.RangeFilter(label="Size of Scripts")
     size_stylesheets = filters.RangeFilter(label="Size of Stylesheets")
-    size_total = filters.RangeFilter(label="Total Size")
+    size_total = filters.RangeFilter(label="Total Size", field_name="size_total_adjusted")
     tls_images = filters.BooleanFilter(label="All images tls ok")
     tls_scripts = filters.BooleanFilter(label="All scripts tls ok")
     tls_stylesheets = filters.BooleanFilter(label="All stylesheets tls ok")
-    tls_total = filters.BooleanFilter(label="Whole page tls ok")
+    tls_total = filters.BooleanFilter(field_name="tls_total_adjusted", label="Whole page tls ok")
 
     class Meta:
         model = Link
         fields = {
             "created_at": ["gt", "gte", "lt", "lte"],
         }
-
-    def filter_has_pagedata(self, queryset, name, value):
-        kwargs = {name: ""}
-        if value:
-            queryset = queryset.exclude(**kwargs)
-        else:
-            queryset = queryset.filter(**kwargs)
-        return queryset
-
-    def filter_has_duplicated(self, queryset, name, value):
-        ids = (
-            queryset.values(name)  # group by
-            .annotate(cnt=models.Count("id", distinct=True))  # count pages pery field
-            .annotate(ids=models.Func(ArrayAgg("id", distinct=True), function="UNNEST"))  # get all ids
-            .filter(cnt__gt=1)  # only count duplicates
-            .values("ids")
-        )
-        kwargs = {"id__in": ids}
-        if value:
-            queryset = queryset.filter(**kwargs)
-        else:
-            queryset = queryset.exclude(**kwargs)
-        return queryset
 
 
 class PageViewSet(
@@ -99,6 +64,7 @@ class PageViewSet(
     NestedViewSetMixin,
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     permission_classes = [HasPermission("crawl.can_see_pages")]
@@ -142,7 +108,7 @@ class PageViewSet(
     ]
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True)
+        queryset = super().get_queryset().filter(scan__site__deleted_at__isnull=True).annotate_page_adjusted()
         if self.request.user.is_superuser:
             pass
         elif has_permission(self.request, "crawl.can_see_all_sites"):
