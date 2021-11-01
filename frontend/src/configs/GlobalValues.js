@@ -15,7 +15,7 @@ export const BadgeModalImage = {
 	height: 72
 };
 
-// Intervals
+// Numerical Values
 export const AlertLoadInterval = 3500;
 export const ComponentReadyInterval = 500;
 export const EndpointRefreshInterval = 1500;
@@ -23,6 +23,7 @@ export const FormSubmissionInterval = 1000;
 export const LgScreenBreakpoint = 1024;
 export const MutateInterval = 2000;
 export const RevalidationInterval = 3000;
+export const RedirectInterval = 1250;
 
 // File Locations
 export const SiteLogoDark = "/images/logos/site-logo-dark.svg";
