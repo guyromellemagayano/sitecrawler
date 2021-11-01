@@ -1,4 +1,4 @@
-import { NoAuthLayout } from "@components/layouts";
+import Layout from "@components/layouts";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -13,7 +13,7 @@ const Error404 = () => {
 	const contactSupport = t("contactSupport");
 
 	return (
-		<NoAuthLayout>
+		<Layout>
 			<NextSeo title={pageNotFound} />
 
 			<div tw="bg-white min-h-screen px-4 py-16 sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8">
@@ -41,7 +41,7 @@ const Error404 = () => {
 					</main>
 				</div>
 			</div>
-		</NoAuthLayout>
+		</Layout>
 	);
 };
 
