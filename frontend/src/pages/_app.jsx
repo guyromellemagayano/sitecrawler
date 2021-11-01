@@ -11,7 +11,6 @@ import App from "next/app";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { SWRConfig } from "swr";
 import "tailwindcss/tailwind.css";
 
 // Font Awesome
@@ -97,12 +96,12 @@ const MyApp = ({ Component, pageProps }) => {
 	}, [router.events]);
 
 	return (
-		<SWRConfig>
+		<React.Fragment>
 			<DefaultSeo {...AppSeo} />
 			<GlobalStyles />
 			<TopProgressBar key={state.loadingKey} isRouteChanging={state.isRouteChanging} />
 			<Component {...pageProps} />
-		</SWRConfig>
+		</React.Fragment>
 	);
 };
 
