@@ -1,6 +1,6 @@
 import { ErrorMessageAlert } from "@components/alerts/ErrorMessageAlert";
 import { SuccessMessageAlert } from "@components/alerts/SuccessMessageAlert";
-import { ComponentReadyInterval } from "@configs/GlobalValues";
+import { RedirectInterval } from "@configs/GlobalValues";
 import { SocialLoginLinks } from "@configs/SocialLogin";
 import { LoginApiEndpoint } from "@enums/ApiEndpoints";
 import { SitesLink } from "@enums/PageLinks";
@@ -80,22 +80,27 @@ const LoginForm = () => {
 					// }
 
 					const response = await usePostMethod(LoginApiEndpoint, body);
-					const data = response ? response.data : null;
+					const data = response?.data || null;
+					const status = response?.status || null;
 
-					Math.floor(response.status / 200) === 1
+					Math.floor(status / 200) === 1
 						? (() => {
 								setSubmitting(false);
 								setDisableLoginForm(!disableLoginForm);
 
-								data && data?.key && data?.key?.length > 0
+								data
 									? (() => {
 											setSuccessMsg((successMsg) => [...successMsg, loginSuccess]);
 
 											setTimeout(() => {
 												router.push(SitesLink);
-											}, ComponentReadyInterval);
+											}, RedirectInterval);
 									  })()
-									: null;
+									: (() => {
+											resetForm({ values: "" });
+											setSubmitting(false);
+											setErrorMsg(loginFailed);
+									  })();
 						  })()
 						: (() => {
 								data
