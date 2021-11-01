@@ -1,22 +1,29 @@
-// External
-import useSWR from "swr";
-
-// Hooks
-import { RevalidationInterval } from "@enums/GlobalValues";
+import { EndpointRefreshInterval } from "@configs/GlobalValues";
 import useFetcher from "@hooks/useFetcher";
+import useSWR from "swr";
+import { useUser } from "./useUser";
 
-const usePage = ({ endpoint }) => {
-	const { data: page, error: pageError } = useSWR(endpoint ? endpoint : null, useFetcher, {
-		onErrorRetry: (error, key, revalidate, { retryCount }) => {
-			if (error && error !== undefined && error.status === 404) return;
-			if (key === endpoint) return;
-			if (retryCount >= 10) return;
+const usePage = ({ endpoint = null }) => {
+	const { user } = useUser();
 
-			setTimeout(() => revalidate({ retryCount: retryCount + 1 }), RevalidationInterval);
+	const {
+		data: page,
+		mutate: mutatePage,
+		error: pageError,
+		isValidating: validatingPage
+	} = useSWR(
+		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+			? endpoint !== null
+				? endpoint
+				: null
+			: null,
+		useFetcher,
+		{
+			refreshInterval: EndpointRefreshInterval
 		}
-	});
+	);
 
-	return { page, pageError };
+	return { page, mutatePage, validatingPage, pageError };
 };
 
 export default usePage;
