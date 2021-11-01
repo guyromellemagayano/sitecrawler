@@ -1,63 +1,182 @@
+import { customAxiosHeaders } from "@configs/CustomAxiosHeaders";
 import { FormSubmissionInterval } from "@enums/GlobalValues";
-import AxiosApiInstance from "@utils/axios";
 import { sleep } from "@utils/sleep";
+import axios from "axios";
 
-// Axios DELETE method
+/**
+ * Axios callback function to be used for deleting data
+ *
+ * @param {string} endpoint
+ * @returns {object} response
+ * @return {object} error
+ */
 export const useDeleteMethod = async (endpoint) => {
-	return await AxiosApiInstance.delete(endpoint)
+	return await axios
+		.delete(endpoint, { headers: customAxiosHeaders })
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
 			return response;
 		})
 		.catch((error) => {
-			return error;
-		});
+			if (error.response) {
+				// The request was made and the server responsded with a status code
+				// that falls out of the the range of 2xx
+				console.log(error.response.data);
+				console.log(error.response.status);
+				console.log(error.response.headers);
+			} else if (error.request) {
+				// The request was made but no response was received
+      	// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      	// http.ClientRequest in node.js
+				console.log(error.request)
+			} else {
+				// Something happened in setting up the request that triggered an Error
+				console.log('Error: ', error.message)
+			}
+
+			return error.config
+		})
 };
 
-// Axios GET method
+/**
+ * Axios callback function to be used for getting data
+ *
+ * @param {string} endpoint
+ * @returns {object} response
+ * @return {object} error
+ */
 export const useGetMethod = async (endpoint) => {
-	return await AxiosApiInstance.get(endpoint)
+	return await axios
+		.get(endpoint, { headers: customAxiosHeaders })
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
 			return response;
 		})
 		.catch((error) => {
-			return error;
-		});
+			if (error.response) {
+				// The request was made and the server responsded with a status code
+				// that falls out of the the range of 2xx
+				console.log(error.response.data);
+				console.log(error.response.status);
+				console.log(error.response.headers);
+			} else if (error.request) {
+				// The request was made but no response was received
+      	// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      	// http.ClientRequest in node.js
+				console.log(error.request)
+			} else {
+				// Something happened in setting up the request that triggered an Error
+				console.log('Error: ', error.message)
+			}
+
+			return error.config
+		})
 };
 
-// Axios PATCH method
+/**
+ * Axios callback function to be used for patching data
+ *
+ * @param {string} endpoint
+ * @param {object} data
+ * @returns {object} response
+ * @returns {object} error
+ */
 export const usePatchMethod = async (endpoint, data) => {
-	return await AxiosApiInstance.patch(endpoint, data)
+	return await axios
+		.patch(endpoint, data, { headers: customAxiosHeaders })
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
 			return response;
 		})
 		.catch((error) => {
-			return error;
-		});
+			if (error.response) {
+				// The request was made and the server responsded with a status code
+				// that falls out of the the range of 2xx
+				console.log(error.response.data);
+				console.log(error.response.status);
+				console.log(error.response.headers);
+			} else if (error.request) {
+				// The request was made but no response was received
+      	// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      	// http.ClientRequest in node.js
+				console.log(error.request)
+			} else {
+				// Something happened in setting up the request that triggered an Error
+				console.log('Error: ', error.message)
+			}
+
+			return error.config
+		})
 };
 
-// Axios POST method
+/**
+ * Axios callback function to be used for posting data
+ *
+ * @param {string} endpoint
+ * @param {object} data
+ * @returns {object} response
+ * @returns {object} error
+ */
 export const usePostMethod = async (endpoint, data) => {
-	return await AxiosApiInstance.post(endpoint, data)
+	return await axios
+		.post(endpoint, data, { headers: customAxiosHeaders })
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
 			return response;
 		})
 		.catch((error) => {
-			return error;
-		});
+			if (error.response) {
+				// The request was made and the server responsded with a status code
+				// that falls out of the the range of 2xx
+				console.log(error.response.data);
+				console.log(error.response.status);
+				console.log(error.response.headers);
+			} else if (error.request) {
+				// The request was made but no response was received
+      	// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      	// http.ClientRequest in node.js
+				console.log(error.request)
+			} else {
+				// Something happened in setting up the request that triggered an Error
+				console.log('Error: ', error.message)
+			}
+
+			return error.config
+		})
 };
 
-// Axios PUT method
+/**
+ * Axios callback function to be used for putting data
+ *
+ * @param {string} endpoint
+ * @param {object} data
+ * @returns {object} response
+ * @returns {object} error
+ */
 export const usePutMethod = async (endpoint, data) => {
-	return await AxiosApiInstance.put(endpoint, data)
+	return await axios
+		.put(endpoint, data, { headers: customAxiosHeaders })
 		.then(sleep(FormSubmissionInterval))
 		.then((response) => {
 			return response;
 		})
 		.catch((error) => {
-			return error;
-		});
+			if (error.response) {
+				// The request was made and the server responsded with a status code
+				// that falls out of the the range of 2xx
+				console.log(error.response.data);
+				console.log(error.response.status);
+				console.log(error.response.headers);
+			} else if (error.request) {
+				// The request was made but no response was received
+      	// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      	// http.ClientRequest in node.js
+				console.log(error.request)
+			} else {
+				// Something happened in setting up the request that triggered an Error
+				console.log('Error: ', error.message)
+			}
+
+			return error.config
+		})
 };
