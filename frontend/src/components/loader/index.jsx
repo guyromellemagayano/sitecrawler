@@ -1,11 +1,10 @@
-// React
+import useTranslation from "next-translate/useTranslation";
 import * as React from "react";
-
-// External
 import "twin.macro";
 
 const Loader = () => {
-	const loaderMessage = "Loading...";
+	const { t } = useTranslation("common");
+	const loaderMessage = t("loaderMessage");
 
 	return (
 		<section tw="flex flex-col justify-center min-h-screen">
