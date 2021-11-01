@@ -3,3 +3,4 @@ export const LoginLink = "/login/";
 export const RegistrationLink = "/registration/";
 export const SitesLink = "/sites/";
 export const SubscriptionPlansLink = "/settings/subscription-plans/";
+export const Custom404ErrorLink = "/404/";
