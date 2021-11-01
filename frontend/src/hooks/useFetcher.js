@@ -1,16 +1,13 @@
-import { FormSubmissionInterval } from "@configs/GlobalValues";
-import AxiosApiInstance from "@utils/axios";
-import { sleep } from "@utils/sleep";
+import axios from "axios";
 
-const useFetcher = async (...args) => {
-	return await AxiosApiInstance.get(...args)
-		.then(sleep(FormSubmissionInterval))
-		.then((response) => {
-			return response;
-		})
-		.catch((error) => {
-			return error;
-		});
-};
+/**
+ * SWR fetcher callback function to be used for fetching data
+ *
+ * @param  {string} url
+ * @returns {object} response
+ * @returns {object} error
+ */
+const useFetcher = (url) =>
+	axios.get(url).then((response) => (Math.round(response?.status / 200) === 1 ? response?.data : null));
 
 export default useFetcher;
