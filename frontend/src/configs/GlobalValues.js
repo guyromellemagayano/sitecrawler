@@ -18,7 +18,7 @@ export const BadgeModalImage = {
 // Numerical Values
 export const AlertLoadInterval = 3500;
 export const ComponentReadyInterval = 500;
-export const EndpointRefreshInterval = 1500;
+export const EndpointRefreshInterval = 7500;
 export const FormSubmissionInterval = 1000;
 export const LgScreenBreakpoint = 1024;
 export const MutateInterval = 2000;
