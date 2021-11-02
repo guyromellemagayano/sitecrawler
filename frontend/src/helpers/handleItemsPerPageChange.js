@@ -5,19 +5,20 @@ import { handleRemoveURLParameter } from "./handleRemoveUrlParameter";
 /**
  * Helper function that handles pagination items per page change
  *
- * @param {*} scanApiEndpoint
- * @param {*} count
- * @param {*} setLinksPerPage
+ * @param {string} scanApiEndpoint
+ * @param {number} count
+ * @param {any} setLinksPerPage
  */
-export const handleItemsPerPageChange = (scanApiEndpoint, count, setLinksPerPage) => {
+export const handleItemsPerPageChange = async (scanApiEndpoint, count, setLinksPerPage) => {
+	const router = useRouter();
+
 	const countValue = count?.target?.value ? parseInt(count?.target?.value) : null;
 
 	let newPath = asPath;
+
 	newPath = handleRemoveURLParameter(newPath, "page");
 
-	const router = useRouter();
-
-	countValue
+	countValue !== null
 		? (() => {
 				newPath.includes("per_page") ? (newPath = handleRemoveURLParameter(newPath, "per_page")) : null;
 				newPath.includes("?")
@@ -31,9 +32,11 @@ export const handleItemsPerPageChange = (scanApiEndpoint, count, setLinksPerPage
 					  })();
 
 				setLinksPerPage(countValue);
-
-				mutate(scanApiEndpoint);
-				router.push(newPath);
 		  })()
 		: null;
+
+	mutate(scanApiEndpoint);
+	router.push(newPath);
+
+	return;
 };
