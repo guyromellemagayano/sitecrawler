@@ -14,11 +14,6 @@ const NextConfig = {
 		dirs: ["pages", "enums", "components", "hooks", "helpers"],
 		ignoreDuringBuilds: true
 	},
-	webpack: (config) => {
-		config.resolve.fallback = { fs: false, module: false };
-
-		return config;
-	},
 	i18n: {
 		locales: ["en", "fr", "nl"],
 		defaultLocale: "en"
