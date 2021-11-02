@@ -7,7 +7,7 @@ import axios from "axios";
  * @returns {object} response
  * @returns {object} error
  */
-const useFetcher = (url) =>
-	axios.get(url).then((response) => (Math.round(response?.status / 200) === 1 ? response?.data : null));
+const useFetcher = (url = null) =>
+	axios.get(url ?? null).then(async (response) => (Math.round(response?.status / 200) === 1 ? response?.data : null));
 
 export default useFetcher;
