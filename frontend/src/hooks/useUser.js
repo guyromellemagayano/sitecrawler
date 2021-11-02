@@ -1,14 +1,13 @@
-import { UserApiEndpoint } from "@configs/ApiEndpoints";
 import useFetcher from "@hooks/useFetcher";
 import useSWR from "swr";
 
-export const useUser = () => {
+export const useUser = (endpoint = null) => {
 	const {
 		data: user,
 		mutate: mutateUser,
 		error: errorUser,
 		isValidating: validatingUser
-	} = useSWR(UserApiEndpoint, useFetcher, {
+	} = useSWR(endpoint ?? null, useFetcher, {
 		refreshWhenOffline: true
 	});
 
