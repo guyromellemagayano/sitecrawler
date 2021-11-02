@@ -10,9 +10,9 @@ import axios from "axios";
  * @returns {object} response
  * @return {object} error
  */
-export const useDeleteMethod = async (endpoint) => {
+export const useDeleteMethod = async (endpoint = null) => {
 	return await axios
-		.delete(endpoint, {
+		.delete(endpoint ?? null, {
 			headers: customAxiosHeaders,
 			validateStatus: (status) => {
 				return status < 500;
@@ -50,9 +50,9 @@ export const useDeleteMethod = async (endpoint) => {
  * @returns {object} response
  * @return {object} error
  */
-export const useGetMethod = async (endpoint) => {
+export const useGetMethod = async (endpoint = null) => {
 	return await axios
-		.get(endpoint, {
+		.get(endpoint ?? null, {
 			headers: customAxiosHeaders,
 			validateStatus: (status) => {
 				return status < 500;
@@ -91,9 +91,9 @@ export const useGetMethod = async (endpoint) => {
  * @returns {object} response
  * @returns {object} error
  */
-export const usePatchMethod = async (endpoint, data) => {
+export const usePatchMethod = async (endpoint = null, data = null) => {
 	return await axios
-		.patch(endpoint, data, {
+		.patch(endpoint ?? null, data ?? null, {
 			headers: customAxiosHeaders,
 			validateStatus: (status) => {
 				return status < 500;
@@ -132,9 +132,9 @@ export const usePatchMethod = async (endpoint, data) => {
  * @returns {object} response
  * @returns {object} error
  */
-export const usePostMethod = async (endpoint, data) => {
+export const usePostMethod = async (endpoint = null, data = null) => {
 	return await axios
-		.post(endpoint, data, {
+		.post(endpoint ?? null, data ?? null, {
 			headers: customAxiosHeaders,
 			validateStatus: (status) => {
 				return status < 500;
@@ -173,9 +173,9 @@ export const usePostMethod = async (endpoint, data) => {
  * @returns {object} response
  * @returns {object} error
  */
-export const usePutMethod = async (endpoint, data) => {
+export const usePutMethod = async (endpoint = null, data = null) => {
 	return await axios
-		.put(endpoint, data, {
+		.put(endpoint ?? null, data ?? null, {
 			headers: customAxiosHeaders,
 			validateStatus: (status) => {
 				return status < 500;
