@@ -1,12 +1,73 @@
-// React
+import { useNProgress } from "@tanem/react-nprogress";
+import { useRouter } from "next/router";
 import * as React from "react";
 
-// External
-import { useNProgress } from "@tanem/react-nprogress";
+const TopProgressBar = () => {
+	const [state, setState] = React.useState({
+		isRouteChanging: false
+	});
 
-const TopProgressBar = ({ isRouteChanging }) => {
+	let activeRequests = 0;
+
+	const router = useRouter();
+
+	React.useEffect(() => {
+		const handleRouteChangeStart = () => {
+			setState((prevState) => ({
+				...prevState,
+				isRouteChanging: true
+			}));
+		};
+
+		const handleRouteChangeEnd = () => {
+			if (activeRequests > 0) {
+				return;
+			}
+
+			setState((prevState) => ({
+				...prevState,
+				isRouteChanging: false
+			}));
+		};
+
+		router.events.on("routeChangeStart", handleRouteChangeStart);
+		router.events.on("routeChangeComplete", handleRouteChangeEnd);
+		router.events.on("routeChangeError", handleRouteChangeEnd);
+
+		typeof window !== "undefined" &&
+			(() => {
+				const originalFetch = window.fetch;
+
+				window.fetch = async function (...args) {
+					if (activeRequests === 0) {
+						handleRouteChangeStart();
+					}
+
+					activeRequests++;
+
+					try {
+						const response = await originalFetch(...args);
+						return response;
+					} catch (error) {
+						return Promise.reject(error);
+					} finally {
+						activeRequests -= 1;
+						if (activeRequests === 0) {
+							handleRouteChangeEnd();
+						}
+					}
+				};
+			})();
+
+		return () => {
+			router.events.off("routeChangeStart", handleRouteChangeStart);
+			router.events.off("routeChangeComplete", handleRouteChangeEnd);
+			router.events.off("routeChangeError", handleRouteChangeEnd);
+		};
+	}, [router.events]);
+
 	const { animationDuration, isFinished, progress } = useNProgress({
-		isAnimating: isRouteChanging
+		isAnimating: state.isRouteChanging
 	});
 
 	return (

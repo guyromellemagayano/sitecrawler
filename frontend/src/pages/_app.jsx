@@ -3,12 +3,11 @@ import AppSeo from "@configs/AppSeo";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import GlobalStyles from "@styles/GlobalStyles";
+import { GlobalStyles } from "@styles/GlobalStyles";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import App from "next/app";
-import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import * as React from "react";
 import "tailwindcss/tailwind.css";
@@ -30,76 +29,11 @@ process.env.NODE_ENV === "production"
 	: null;
 
 const MyApp = ({ Component, pageProps }) => {
-	let activeRequests = 0;
-
-	const router = useRouter();
-
-	const [state, setState] = React.useState({
-		isRouteChanging: false,
-		loadingKey: 0
-	});
-
-	React.useEffect(() => {
-		const handleRouteChangeStart = () => {
-			setState((prevState) => ({
-				...prevState,
-				isRouteChanging: true,
-				loadingKey: prevState.loadingKey ^ 1
-			}));
-		};
-
-		const handleRouteChangeEnd = () => {
-			if (activeRequests > 0) {
-				return;
-			}
-
-			setState((prevState) => ({
-				...prevState,
-				isRouteChanging: false
-			}));
-		};
-
-		router.events.on("routeChangeStart", handleRouteChangeStart);
-		router.events.on("routeChangeComplete", handleRouteChangeEnd);
-		router.events.on("routeChangeError", handleRouteChangeEnd);
-
-		typeof window !== "undefined" &&
-			(() => {
-				const originalFetch = window.fetch;
-
-				window.fetch = async function (...args) {
-					if (activeRequests === 0) {
-						handleRouteChangeStart();
-					}
-
-					activeRequests++;
-
-					try {
-						const response = await originalFetch(...args);
-						return response;
-					} catch (error) {
-						return Promise.reject(error);
-					} finally {
-						activeRequests -= 1;
-						if (activeRequests === 0) {
-							handleRouteChangeEnd();
-						}
-					}
-				};
-			})();
-
-		return () => {
-			router.events.off("routeChangeStart", handleRouteChangeStart);
-			router.events.off("routeChangeComplete", handleRouteChangeEnd);
-			router.events.off("routeChangeError", handleRouteChangeEnd);
-		};
-	}, [router.events]);
-
 	return (
 		<React.Fragment>
 			<DefaultSeo {...AppSeo} />
 			<GlobalStyles />
-			<TopProgressBar key={state.loadingKey} isRouteChanging={state.isRouteChanging} />
+			<TopProgressBar />
 			<Component {...pageProps} />
 		</React.Fragment>
 	);
