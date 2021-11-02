@@ -8,8 +8,6 @@
 	"isResetPasswordForm": "Reset Password Form",
 	"loaderMessage": "Loading...",
 	"dismissMessage": "Dismiss",
-	"fallbackErrorMessage": "An error has occurred. Please try again",
-	"loginFailedErrorMessage": "Login failed. Please try again",
 	"siteLogoAltMessage": "SiteCrawler App Logo",
 	"about": "About",
 	"privacyPolicy": "Privacy Policy",

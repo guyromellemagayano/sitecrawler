@@ -8,8 +8,6 @@
 	"isResetPasswordForm": "Formulaire de réinitialisation du mot de passe",
 	"loaderMessage": "Chargement...",
 	"dismissMessage": "Rejeter",
-	"fallbackErrorMessage": "Une erreur est survenue. Veuillez réessayer",
-	"loginFailedErrorMessage": "Échec de la connexion. Veuillez réessayer",
 	"siteLogoAltMessage": "Logo de l'application SiteCrawler",
 	"about": "À propos",
 	"privacyPolicy": "Politique de confidentialité",

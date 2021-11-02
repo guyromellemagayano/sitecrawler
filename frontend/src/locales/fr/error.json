@@ -2,5 +2,7 @@
 	"pageNotFound": "Page non trouvée",
 	"urlCheck": "Veuillez vérifier l'URL dans la barre d'adresse et réessayer.",
 	"goBackHome": "Rentrer à la maison",
-	"contactSupport": "Contactez le support"
+	"contactSupport": "Contactez le support",
+	"fallbackErrorMessage": "Une erreur est survenue. Veuillez réessayer",
+	"loginFailedErrorMessage": "Échec de la connexion. Veuillez réessayer"
 }
