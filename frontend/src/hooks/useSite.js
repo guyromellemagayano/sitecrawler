@@ -10,10 +10,10 @@ export const useSite = ({ endpoint = null, refreshInterval = 0 }) => {
 	const {
 		data: site,
 		mutate: mutateSite,
-		error: siteError,
+		error: errorSite,
 		isValidating: validatingSite
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? endpoint !== null
 				? endpoint
 				: null
@@ -24,7 +24,7 @@ export const useSite = ({ endpoint = null, refreshInterval = 0 }) => {
 		}
 	);
 
-	return { site, mutateSite, siteError, validatingSite };
+	return { site, mutateSite, errorSite, validatingSite };
 };
 
 export const useSiteId = ({ querySid = 0, redirectIfFound = false, redirectTo = null, refreshInterval = 0 }) => {
@@ -34,10 +34,10 @@ export const useSiteId = ({ querySid = 0, redirectIfFound = false, redirectTo = 
 	const {
 		data: siteId,
 		mutate: mutateSiteId,
-		error: siteIdError,
+		error: errorSiteId,
 		isValidating: validatingSiteId
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0
 				? SiteApiEndpoint + querySid + "/"
 				: null
@@ -57,7 +57,7 @@ export const useSiteId = ({ querySid = 0, redirectIfFound = false, redirectTo = 
 		}
 	);
 
-	return { siteId, mutateSiteId, validatingSiteId, siteIdError };
+	return { siteId, mutateSiteId, errorSiteId, validatingSiteId };
 };
 
 export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
@@ -66,10 +66,10 @@ export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
 	const {
 		data: scan,
 		mutate: mutateScan,
-		error: scanError,
+		error: errorScan,
 		isValidating: validatingScan
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0
 				? SiteApiEndpoint + querySid + "/scan/?ordering=-finished_at"
 				: null
@@ -80,7 +80,7 @@ export const useScan = ({ querySid = 0, refreshInterval = 0 }) => {
 		}
 	);
 
-	return { scan, mutateScan, validatingScan, scanError };
+	return { scan, mutateScan, errorScan, validatingScan };
 };
 
 export const useStats = ({ querySid = 0, scanObjId = 0, refreshInterval = 0 }) => {
@@ -89,10 +89,10 @@ export const useStats = ({ querySid = 0, scanObjId = 0, refreshInterval = 0 }) =
 	const {
 		data: stats,
 		mutate: mutateStats,
-		error: statsError,
+		error: errorStats,
 		isValidating: validatingStats
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0 && scanObjId !== 0
 				? SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/"
 				: null
@@ -103,7 +103,7 @@ export const useStats = ({ querySid = 0, scanObjId = 0, refreshInterval = 0 }) =
 		}
 	);
 
-	return { stats, mutateStats, validatingStats, statsError };
+	return { stats, mutateStats, errorStats, validatingStats };
 };
 
 export const useLinks = ({ endpoint = null, querySid = 0, scanObjId = 0, refreshInterval = 0 }) => {
@@ -112,10 +112,10 @@ export const useLinks = ({ endpoint = null, querySid = 0, scanObjId = 0, refresh
 	const {
 		data: links,
 		mutate: mutateLinks,
-		error: linksError,
+		error: errorLinks,
 		isValidating: validateLinks
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0 && scanObjId !== 0 && endpoint !== null
 				? endpoint
 				: null
@@ -126,7 +126,7 @@ export const useLinks = ({ endpoint = null, querySid = 0, scanObjId = 0, refresh
 		}
 	);
 
-	return { links, mutateLinks, validateLinks, linksError };
+	return { links, mutateLinks, errorLinks, validateLinks };
 };
 
 export const useUptime = ({ querySid = 0, refreshInterval = 0 }) => {
@@ -135,10 +135,10 @@ export const useUptime = ({ querySid = 0, refreshInterval = 0 }) => {
 	const {
 		data: uptime,
 		mutate: mutateUptime,
-		error: uptimeError,
+		error: errorUptime,
 		isValidating: validatingUptime
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0
 				? SiteApiEndpoint + querySid + "/uptime/"
 				: null
@@ -149,7 +149,7 @@ export const useUptime = ({ querySid = 0, refreshInterval = 0 }) => {
 		}
 	);
 
-	return { uptime, mutateUptime, validatingUptime, uptimeError };
+	return { uptime, mutateUptime, errorUptime, validatingUptime };
 };
 
 export const useUptimeSummary = ({ querySid = 0, refreshInterval = 0 }) => {
@@ -158,10 +158,10 @@ export const useUptimeSummary = ({ querySid = 0, refreshInterval = 0 }) => {
 	const {
 		data: uptimeSummary,
 		mutate: mutateUptimeSummary,
-		error: uptimeSummaryError,
+		error: errorUptimeSummary,
 		isValidating: validatingUptimeSummaryError
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0
 				? SiteApiEndpoint + querySid + "/uptime/summary/"
 				: null
@@ -172,7 +172,7 @@ export const useUptimeSummary = ({ querySid = 0, refreshInterval = 0 }) => {
 		}
 	);
 
-	return { uptimeSummary, mutateUptimeSummary, validatingUptimeSummaryError, uptimeSummaryError };
+	return { uptimeSummary, mutateUptimeSummary, errorUptimeSummary, validatingUptimeSummaryError };
 };
 
 export const useImages = ({ endpoint = null, querySid = 0, scanObjId = 0, refreshInterval = 0 }) => {
@@ -181,10 +181,10 @@ export const useImages = ({ endpoint = null, querySid = 0, scanObjId = 0, refres
 	const {
 		data: images,
 		mutate: mutateImages,
-		error: imagesError,
+		error: errorImages,
 		isValidating: validatingImages
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0 && scanObjId !== 0 && endpoint !== null
 				? endpoint
 				: null
@@ -195,7 +195,7 @@ export const useImages = ({ endpoint = null, querySid = 0, scanObjId = 0, refres
 		}
 	);
 
-	return { images, mutateImages, validatingImages, imagesError };
+	return { images, mutateImages, errorImages, validatingImages };
 };
 
 export const usePages = ({ endpoint = null, querySid = 0, scanObjId = 0, refreshInterval = 0 }) => {
@@ -204,10 +204,10 @@ export const usePages = ({ endpoint = null, querySid = 0, scanObjId = 0, refresh
 	const {
 		data: pages,
 		mutate: mutatePages,
-		error: pagesError,
+		error: errorPages,
 		isValidating: validatingPages
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0 && scanObjId !== 0 && endpoint !== null
 				? endpoint
 				: null
@@ -218,7 +218,7 @@ export const usePages = ({ endpoint = null, querySid = 0, scanObjId = 0, refresh
 		}
 	);
 
-	return { pages, mutatePages, validatingPages, pagesError };
+	return { pages, mutatePages, errorPages, validatingPages };
 };
 
 export const useLinkDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
@@ -227,10 +227,10 @@ export const useLinkDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 	const {
 		data: linkDetail,
 		mutate: mutateLinkDetail,
-		error: linkDetailError,
+		error: errorLinkDetail,
 		isValidating: validatingLinkDetail
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0 && scanObjId !== 0 && linkId !== 0
 				? SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/link/" + linkId
 				: null
@@ -238,7 +238,7 @@ export const useLinkDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 		useFetcher
 	);
 
-	return { linkDetail, mutateLinkDetail, validatingLinkDetail, linkDetailError };
+	return { linkDetail, mutateLinkDetail, errorLinkDetail, validatingLinkDetail };
 };
 
 export const usePageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
@@ -247,10 +247,10 @@ export const usePageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 	const {
 		data: pageDetail,
 		mutate: mutatePageDetail,
-		error: pageDetailError,
+		error: errorPageDetail,
 		isValidating: validatingPageDetail
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0 && scanObjId !== 0 && linkId !== 0
 				? SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + linkId + "/"
 				: null
@@ -258,7 +258,7 @@ export const usePageDetail = ({ querySid = 0, scanObjId = 0, linkId = 0 }) => {
 		useFetcher
 	);
 
-	return { pageDetail, mutatePageDetail, validatingPageDetail, pageDetailError };
+	return { pageDetail, mutatePageDetail, errorPageDetail, validatingPageDetail };
 };
 
 export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, pageId = 0 }) => {
@@ -267,10 +267,10 @@ export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, 
 	const {
 		data: pageDetailLink,
 		mutate: mutatePageDetailLink,
-		error: pageDetailLinkError,
+		error: errorPageDetailLink,
 		isValidating: validatingPageDetailLink
 	} = useSWR(
-		user && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
+		typeof user !== undefined && user !== null && typeof user === "object" && !Object.keys(user).includes("detail")
 			? querySid !== 0 && scanObjId !== 0 && pageId !== 0
 				? SiteApiEndpoint + querySid + "/scan/" + scanObjId + "/page/" + pageId + "/link/" + addQuery !== ""
 					? "?" + addQuery
@@ -280,5 +280,5 @@ export const usePageDetailLink = ({ addQuery = "", querySid = 0, scanObjId = 0, 
 		useFetcher
 	);
 
-	return { pageDetailLink, mutatePageDetailLink, validatingPageDetailLink, pageDetailLinkError };
+	return { pageDetailLink, mutatePageDetailLink, errorPageDetailLink, validatingPageDetailLink };
 };
