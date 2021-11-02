@@ -1,4 +1,4 @@
-import { UserApiEndpoint } from "@enums/ApiEndpoints";
+import { UserApiEndpoint } from "@configs/ApiEndpoints";
 import useFetcher from "@hooks/useFetcher";
 import useSWR from "swr";
 
