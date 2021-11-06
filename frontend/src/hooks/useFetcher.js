@@ -8,6 +8,9 @@ import axios from "axios";
  * @returns {object} error
  */
 const useFetcher = (url = null) =>
-	axios.get(url ?? null).then(async (response) => (Math.round(response?.status / 200) === 1 ? response?.data : null));
+	axios
+		.get(url ?? null)
+		.then(async (response) => response)
+		.catch(async (error) => error);
 
 export default useFetcher;
