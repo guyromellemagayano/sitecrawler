@@ -6,11 +6,11 @@ import * as React from "react";
 import "twin.macro";
 
 export const PageNotFoundMessage = () => {
-	const { t } = useTranslation("error");
-	const pageNotFound = t("pageNotFound");
-	const urlCheck = t("urlCheck");
-	const goBackHome = t("goBackHome");
-	const contactSupport = t("contactSupport");
+	const { t } = useTranslation();
+	const pageNotFound = t("page404:pageNotFound");
+	const urlCheck = t("page404:urlCheck");
+	const goBackHome = t("page404:goBackHome");
+	const contactSupport = t("page404:contactSupport");
 
 	return (
 		<Layout>
