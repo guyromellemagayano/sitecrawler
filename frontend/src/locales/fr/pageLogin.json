@@ -10,8 +10,6 @@
 	"noAccount": "Vous n'avez pas de compte? ",
 	"createAccount": "Créer un compte",
 	"requiredField": "Champs requis",
-	"loginFailed": "Échec de la connexion. Veuillez réessayer",
-	"loginSuccess": "Connexion réussie. Vous rediriger vers le tableau de bord...",
 	"signingIn": "Connectez-vous...",
 	"showPassword": "Montrer le mot de passe",
 	"hidePassword": "Masquer le mot de passe",
