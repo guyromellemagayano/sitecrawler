@@ -1,9 +1,9 @@
 export const AccountExistsLink = "/account-exist/";
+export const DashboardLink = "/dashboard/";
 export const AuditLogsLink = DashboardLink + "audit-logs/";
 export const ConfirmEmailLink = "/confirm-email/";
 export const Custom404ErrorLink = "/404/";
 export const Custom500ErrorLink = "/500/";
-export const DashboardLink = "/dashboard/";
 export const HomeLink = "/";
 export const ImagesLink = "/images/";
 export const LinksLink = "/links/";
