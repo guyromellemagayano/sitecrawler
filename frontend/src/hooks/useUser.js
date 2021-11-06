@@ -1,3 +1,4 @@
+import { NoInterval } from "@configs/GlobalValues";
 import useFetcher from "@hooks/useFetcher";
 import useSWR from "swr";
 
@@ -8,6 +9,7 @@ export const useUser = (endpoint = null) => {
 		error: errorUser,
 		isValidating: validatingUser
 	} = useSWR(endpoint ?? null, useFetcher, {
+		refreshInterval: NoInterval,
 		refreshWhenOffline: true
 	});
 
