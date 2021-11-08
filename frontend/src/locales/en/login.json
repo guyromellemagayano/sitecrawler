@@ -10,13 +10,12 @@
 	"noAccount": "Don't have an account? ",
 	"createAccount": "Create Account",
 	"requiredField": "Required field",
-	"loginFailed": "Login failed. Please try again",
-	"loginSuccess": "Login success. Redirecting you to the dashboard...",
 	"signingIn": "Signing In...",
 	"showPassword": "Show Password",
 	"hidePassword": "Hide Password",
 	"googleSignIn": "Sign in with Google",
-	"facebookSignIn": "Sign in with Facebook",
-	"linkedinSignIn": "Sign in with LinkedIn",
-	"login": "Login"
+	"login": "Login",
+	"loginOkSuccess": "User information retrieved successfully. Redirecting you to sites dashboard page...",
+	"loginCreatedSuccess": "User information updated successfully.",
+	"loginFailed": "Login failed. Please try again"
 }

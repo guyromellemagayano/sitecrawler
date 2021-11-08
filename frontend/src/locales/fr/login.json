@@ -14,7 +14,8 @@
 	"showPassword": "Montrer le mot de passe",
 	"hidePassword": "Masquer le mot de passe",
 	"googleSignIn": "Connectez-vous avec Google",
-	"facebookSignIn": "Connectez-vous avec Facebook",
-	"linkedinSignIn": "Connectez-vous avec LinkedIn",
-	"login": "Connexion"
+	"login": "Connexion",
+	"loginOkSuccess": "Informations utilisateur récupérées avec succès. Vous rediriger vers la page du tableau de bord des sites...",
+	"loginCreatedSuccess": "Informations utilisateur mises à jour avec succès.",
+	"loginFailed": "Échec de la connexion. Veuillez réessayer"
 }

@@ -3,9 +3,10 @@ module.exports = {
 	defaultLocale: "en",
 	pages: {
 		"*": ["common"],
-		"/404": ["page404"],
-		"/login": ["pageLogin"],
-		"/dashboard/sites": ["pageSites"]
+		"/": ["home"],
+		"/404": ["404"],
+		"/login": ["login"],
+		"/dashboard/sites": ["sites"]
 	},
 	interpolation: {
 		prefix: "${",

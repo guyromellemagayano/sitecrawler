@@ -10,13 +10,12 @@
 	"noAccount": "Heb geen account? ",
 	"createAccount": "Maak een account aan",
 	"requiredField": "Verplicht veld",
-	"loginFailed": "Inloggen mislukt. Probeer het opnieuw",
-	"loginSuccess": "Succesvol ingelogd. U doorverwijzen naar het dashboard...",
 	"signingIn": "Inloggen...",
 	"showPassword": "Laat wachtwoord zien",
 	"hidePassword": "Verberg wachtwoord",
 	"googleSignIn": "Inloggen met Google",
-	"facebookSignIn": "Meld je aan met facebook",
-	"linkedinSignIn": "Aanmelden met LinkedIn",
-	"login": "Log in"
+	"login": "Log in",
+	"loginOkSuccess": "Gebruikersinformatie succesvol opgehaald. U wordt omgeleid naar de dashboardpagina van de site...",
+	"loginCreatedSuccess": "Gebruikersinformatie is bijgewerkt.",
+	"loginFailed": "Inloggen mislukt. Probeer het opnieuw"
 }
