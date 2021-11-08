@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { useUser } from "./useUser";
 
-export const useSite = ({ endpoint = null }) => {
+export const useSite = (endpoint = null) => {
 	const {
 		data: site,
 		mutate: mutateSite,
