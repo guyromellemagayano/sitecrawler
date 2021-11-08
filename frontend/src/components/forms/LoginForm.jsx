@@ -1,9 +1,7 @@
-import { ErrorMessageAlert } from "@components/alerts/ErrorMessageAlert";
-import { SuccessMessageAlert } from "@components/alerts/SuccessMessageAlert";
-import { RedirectInterval } from "@configs/GlobalValues";
+import { LoginApiEndpoint } from "@configs/ApiEndpoints";
+import { RedirectInterval, RevalidationInterval } from "@configs/GlobalValues";
+import { SitesLink } from "@configs/PageLinks";
 import { SocialLoginLinks } from "@configs/SocialLogin";
-import { LoginApiEndpoint } from "@enums/ApiEndpoints";
-import { SitesLink } from "@enums/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import { useShowPassword } from "@hooks/useShowPassword";
@@ -16,25 +14,16 @@ import * as React from "react";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
-const LoginForm = () => {
+const LoginForm = ({ setErrorMessage, setSuccessMessage }) => {
 	const [disableLoginForm, setDisableLoginForm] = React.useState(false);
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
 
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
 	const router = useRouter();
-
-	React.useEffect(() => {
-		setErrorMsg([]);
-		setSuccessMsg([]);
-	}, []);
 
 	const { t } = useTranslation("login");
 	const username = t("username");
 	const password = t("password");
 	const requiredField = t("requiredField");
-	const loginSuccess = t("loginSuccess");
-	const loginFailed = t("loginFailed");
 	const showPassword = t("showPassword");
 	const hidePassword = t("hidePassword");
 	const rememberMe = t("rememberMe");
@@ -42,23 +31,17 @@ const LoginForm = () => {
 	const signingIn = t("signingIn");
 	const signIn = t("signIn");
 	const continueWith = t("continueWith");
+	const loginOkSuccess = t("loginOkSuccess");
+	const loginFailed = t("loginFailed");
 
 	const linksArray = SocialLoginLinks();
 
+	React.useEffect(() => {
+		router.prefetch(SitesLink);
+	}, []);
+
 	return (
 		<React.Fragment>
-			{errorMsg && Array.isArray(errorMsg) && errorMsg !== [] && errorMsg.length > 0 ? (
-				errorMsg.map((value, key) => <ErrorMessageAlert key={key} message={value} />)
-			) : typeof errorMsg === "string" && errorMsg !== "" && errorMsg.length > 0 ? (
-				<ErrorMessageAlert message={errorMsg} />
-			) : null}
-
-			{successMsg && Array.isArray(successMsg) && successMsg !== [] && successMsg.length > 0 ? (
-				successMsg.map((value, key) => <SuccessMessageAlert key={key} message={value} />)
-			) : typeof successMsg === "string" && successMsg !== "" && successMsg.length > 0 ? (
-				<SuccessMessageAlert message={successMsg} />
-			) : null}
-
 			<Formik
 				initialValues={{
 					username: "",
@@ -80,44 +63,68 @@ const LoginForm = () => {
 					// }
 
 					const response = await usePostMethod(LoginApiEndpoint, body);
-					const data = response?.data || null;
-					const status = response?.status || null;
+					const data = response?.data ?? null;
+					const status = response?.status ?? null;
 
-					Math.floor(status / 200) === 1
-						? (() => {
+					switch (status) {
+						case 200:
+							setSubmitting(false);
+							setDisableLoginForm(!disableLoginForm);
+
+							if (typeof data !== "undefined" && data !== null) {
+								setSuccessMessage((prevState) => [...prevState, loginOkSuccess]);
+
+								setTimeout(() => {
+									router.push(SitesLink);
+								}, RedirectInterval);
+							} else {
+								resetForm({ values: "" });
 								setSubmitting(false);
-								setDisableLoginForm(!disableLoginForm);
+								setErrorMessage((prevState) => [...prevState, loginFailed]);
 
-								data
-									? (() => {
-											setSuccessMsg((successMsg) => [...successMsg, loginSuccess]);
+								setTimeout(() => {
+									setErrorMessage((prevState) => [
+										...prevState,
+										prevState.indexOf(loginFailed) !== -1 ? prevState.splice(prevState.indexOf(loginFailed), 1) : null
+									]);
+								}, RevalidationInterval);
+							}
+							break;
+						default:
+							data
+								? (() => {
+										resetForm({ values: "" });
+										setSubmitting(false);
 
-											setTimeout(() => {
-												router.push(SitesLink);
-											}, RedirectInterval);
-									  })()
-									: (() => {
-											resetForm({ values: "" });
-											setSubmitting(false);
-											setErrorMsg(loginFailed);
-									  })();
-						  })()
-						: (() => {
-								data
-									? (() => {
-											resetForm({ values: "" });
-											setSubmitting(false);
+										data?.non_field_errors?.map((message) => {
+											setErrorMessage((prevState) => [...prevState, message]);
+										});
 
+										setTimeout(() => {
 											data?.non_field_errors?.map((message) => {
-												setErrorMsg((errorMsg) => [...errorMsg, message]);
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(message) !== -1 ? prevState.splice(prevState.indexOf(message), 1) : null
+												]);
 											});
-									  })()
-									: (() => {
-											resetForm({ values: "" });
-											setSubmitting(false);
-											setErrorMsg(loginFailed);
-									  })();
-						  })();
+										}, RevalidationInterval);
+								  })()
+								: (() => {
+										resetForm({ values: "" });
+										setSubmitting(false);
+										setErrorMessage((prevState) => [...prevState, loginFailed]);
+
+										setTimeout(() => {
+											setErrorMessage((prevState) => [
+												...prevState,
+												prevState.indexOf(loginFailed) !== -1
+													? prevState.splice(prevState.indexOf(loginFailed), 1)
+													: null
+											]);
+										}, RevalidationInterval);
+								  })();
+							break;
+					}
 				}}
 			>
 				{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
@@ -139,7 +146,7 @@ const LoginForm = () => {
 											tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 											(isSubmitting || disableLoginForm) &&
 												tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-											errors.username || errorMsg.length ? tw`border-red-300` : tw`border-gray-300`
+											errors.username ? tw`border-red-300` : tw`border-gray-300`
 										]}
 										aria-describedby="username"
 										onChange={handleChange}
@@ -185,7 +192,7 @@ const LoginForm = () => {
 											tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 											(isSubmitting || disableLoginForm) &&
 												tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-											errors.password || errorMsg.length ? tw`border-red-300` : tw`border-gray-300`
+											errors.password ? tw`border-red-300` : tw`border-gray-300`
 										]}
 										aria-describedby="password"
 										onChange={handleChange}
@@ -264,7 +271,7 @@ const LoginForm = () => {
 								</div>
 							</div>
 
-							<div tw="mt-6 grid grid-cols-3 gap-3">
+							<div tw="mt-6 grid grid-cols-1 gap-3">
 								{linksArray.map((links, key) => {
 									return (
 										<div key={key}>
@@ -274,7 +281,7 @@ const LoginForm = () => {
 													disabled={links.disabled}
 													title={links.label}
 													css={[
-														tw`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500`,
+														tw`w-full inline-flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500`,
 														links.disabled
 															? tw`bg-gray-300 opacity-50 cursor-not-allowed pointer-events-none`
 															: tw`bg-white`,
@@ -283,8 +290,8 @@ const LoginForm = () => {
 															: tw`hover:bg-gray-50`
 													]}
 												>
-													<span tw="sr-only">{links.label}</span>
-													<FontAwesomeIcon icon={links.icon} tw="w-4 h-4" />
+													<FontAwesomeIcon icon={links.icon} tw="-ml-0.5 w-4 h-4 mr-3" />
+													{links.label}
 												</a>
 											</span>
 										</div>
@@ -300,9 +307,8 @@ const LoginForm = () => {
 };
 
 LoginForm.propTypes = {
-	errorMsg: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-	setErrorMsg: PropTypes.func,
-	setSuccessMsg: PropTypes.func
+	setErrorMessage: PropTypes.func,
+	setSuccessMessage: PropTypes.func
 };
 
 export default LoginForm;
