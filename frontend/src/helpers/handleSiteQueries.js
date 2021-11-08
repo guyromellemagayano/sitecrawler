@@ -31,7 +31,7 @@ export const handleSiteQueries = ({ result = null }) => {
  * @returns {string} The updated scan API endpoint
  */
 export const handleScanApiEndpoint = (result = null, linksPerPage = null) => {
-	let perPageQuery = "?per_page";
+	let perPageQuery = "&per_page";
 	let orderingByNameQuery = "&ordering=name";
 	let scanApiEndpoint = SiteApiEndpoint + perPageQuery + linksPerPage + orderingByNameQuery;
 	let queryString = "";
