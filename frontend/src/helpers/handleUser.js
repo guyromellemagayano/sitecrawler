@@ -1,4 +1,4 @@
-import { DashboardRoute, RevalidationInterval } from "@configs/GlobalValues";
+import { DashboardRoute, HomeRoute, RedirectInterval, RevalidationInterval } from "@configs/GlobalValues";
 import { DashboardLink, LoginLink, SitesLink } from "@configs/PageLinks";
 import { useUser } from "@hooks/useUser";
 import * as Sentry from "@sentry/nextjs";
@@ -16,6 +16,7 @@ import * as React from "react";
 export const handleUser = ({ endpoint = null, status = null }) => {
 	const [isUserReady, setIsUserReady] = React.useState(false);
 	const [userData, setUserData] = React.useState(null);
+	const [successMessage, setSuccessMessage] = React.useState([]);
 	const [errorMessage, setErrorMessage] = React.useState([]);
 	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
 
@@ -23,20 +24,20 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 	const { asPath } = useRouter();
 	const router = useRouter();
 
-	const { t } = useTranslation();
-	const userBadRequestError = t("componentAlerts:userBadRequestError");
-	const userForbiddenError = t("componentAlerts:userForbiddenError");
-	const userNotFoundError = t("componentAlerts:userNotFoundError");
-	const userTooManyRequests = t("componentAlerts:userTooManyRequests");
-	const userInternalServerError = t("componentAlerts:userinternalServerError");
-	const userBadGatewayError = t("componentAlerts:userBadGatewayError");
-	const userServiceUnavailableError = t("componentAlerts:userServiceUnavailableError");
-	const userGatewayTimeoutError = t("componentAlerts:userGatewayTimeoutError");
-	const userUnknownError = t("componentAlerts:userUnknownError");
+	const { t } = useTranslation("common");
+	const userBadRequestError = t("userBadRequestError");
+	const userForbiddenError = t("userForbiddenError");
+	const userNotFoundError = t("userNotFoundError");
+	const userTooManyRequests = t("userTooManyRequests");
+	const userInternalServerError = t("userInternalServerError");
+	const userBadGatewayError = t("userBadGatewayError");
+	const userServiceUnavailableError = t("userServiceUnavailableError");
+	const userGatewayTimeoutError = t("userGatewayTimeoutError");
+	const userUnknownError = t("userUnknownError");
 
 	React.useEffect(() => {
 		!validatingUser
-			? (() => {
+			? () => {
 					if (Math.round(status / 200) === 1) {
 						asPath.includes(DashboardRoute)
 							? (() => {
@@ -59,7 +60,7 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												);
 										  })()
 										: (() => {
-												setErrorMessage((errorMessage) => [...errorMessage, userNotFoundError]);
+												setErrorMessage((prevState) => [...prevState, userNotFoundError]);
 												setIsUserReady(false);
 
 												// Capture 2XX errors and send to Sentry
@@ -72,18 +73,31 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 													);
 													Sentry.captureException(new Error(errorUser));
 												});
-										  })();
 
-									// Mutate `sites` after this status code is received
-									mutateUser(endpoint ?? null);
+												setTimeout(() => {
+													setSuccessMessage((prevState) => [
+														...prevState,
+														prevState.indexOf(userNotFoundError) !== -1
+															? prevState.splice(prevState.indexOf(userNotFoundError), 1)
+															: null
+													]);
+												}, RevalidationInterval);
+										  })();
 							  })()
-							: router.push(SitesLink);
+							: (() => {
+									setIsUserReady(true);
+
+									setTimeout(() => {
+										router.push(SitesLink);
+									}, RedirectInterval);
+							  })();
 					} else if (Math.round(status / 400) === 1) {
 						asPath.includes(DashboardRoute)
 							? (() => {
 									switch (status) {
 										case 400:
-											setErrorMessage((errorMessage) => [...errorMessage, userBadRequestError]);
+											setErrorMessage((prevState) => [...prevState, userBadRequestError]);
+											setIsUserReady(false);
 
 											// Capture 400 errors and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -96,11 +110,21 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												Sentry.captureException(new Error(errorUser));
 											});
 
-											// Mutate `user` after this status code is received
-											mutateUser(endpoint ?? null);
+											setTimeout(() => {
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userBadRequestError) !== -1
+														? prevState.splice(prevState.indexOf(userBadRequestError), 1)
+														: null
+												]);
+
+												// Mutate `user` after this status code is received
+												mutateUser(endpoint ?? null);
+											}, RevalidationInterval);
 											break;
 										case 403:
-											setErrorMessage((errorMessage) => [...errorMessage, userForbiddenError]);
+											setErrorMessage((prevState) => [...prevState, userForbiddenError]);
+											setIsUserReady(false);
 
 											// Capture 403 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -113,13 +137,23 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												Sentry.captureException(new Error(errorUser));
 											});
 
-											// Redirect to login page after this status code is received
 											setTimeout(() => {
-												router.push(LoginLink);
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userForbiddenError) !== -1
+														? prevState.splice(prevState.indexOf(userForbiddenError), 1)
+														: null
+												]);
+
+												// Redirect to login page after this status code is received
+												setTimeout(() => {
+													router.push(LoginLink);
+												}, RedirectInterval);
 											}, RevalidationInterval);
 											break;
 										case 404:
-											setErrorMessage((errorMessage) => [...errorMessage, userNotFoundError]);
+											setErrorMessage((prevState) => [...prevState, userNotFoundError]);
+											setIsUserReady(false);
 
 											// Capture 404 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -132,13 +166,23 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												Sentry.captureException(new Error(errorUser));
 											});
 
-											// Redirect to login page after this status code is received
 											setTimeout(() => {
-												router.push(LoginLink);
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userNotFoundError) !== -1
+														? prevState.splice(prevState.indexOf(userNotFoundError), 1)
+														: null
+												]);
+
+												// Redirect to login page after this status code is received
+												setTimeout(() => {
+													router.push(LoginLink);
+												}, RedirectInterval);
 											}, RevalidationInterval);
 											break;
 										case 429:
-											setErrorMessage((errorMessage) => [...errorMessage, userTooManyRequests]);
+											setErrorMessage((prevState) => [...prevState, userTooManyRequests]);
+											setIsUserReady(false);
 
 											// Capture 429 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -151,11 +195,21 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												Sentry.captureException(new Error(errorUser));
 											});
 
-											// Mutate `user` after this status code is received
-											mutateUser(endpoint ?? null);
+											setTimeout(() => {
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userTooManyRequests) !== -1
+														? prevState.splice(prevState.indexOf(userTooManyRequests), 1)
+														: null
+												]);
+
+												// Mutate `user` after this status code is received
+												mutateUser(endpoint ?? null);
+											}, RevalidationInterval);
 											break;
 										default:
-											setErrorMessage((errorMessage) => [...errorMessage, userUnknownError]);
+											setErrorMessage((prevState) => [...prevState, userUnknownError]);
+											setIsUserReady(false);
 
 											// Capture any errors within 4XX status codes range and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -167,16 +221,36 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												);
 												Sentry.captureException(new Error(errorUser));
 											});
+
+											setTimeout(() => {
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userUnknownError) !== -1
+														? prevState.splice(prevState.indexOf(userUnknownError), 1)
+														: null
+												]);
+											}, RevalidationInterval);
 											break;
 									}
 							  })()
-							: null;
+							: (() => {
+									setIsUserReady(false);
+
+									if (HomeRoute === asPath) {
+										setTimeout(() => {
+											router.push(LoginLink);
+										}, RedirectInterval);
+									}
+
+									return null;
+							  })();
 					} else if (Math.round(status / 500) === 1) {
 						asPath.includes(DashboardLink)
 							? (() => {
 									switch (status) {
 										case 500:
-											setErrorMessage((errorMessage) => [...errorMessage, userInternalServerError]);
+											setErrorMessage((prevState) => [...prevState, userInternalServerError]);
+											setIsUserReady(false);
 
 											// Capture 500 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -188,9 +262,17 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												);
 												Sentry.captureException(new Error(errorUser));
 											});
+
+											setTimeout(() => {
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userInternalServerError).splice(0, 0)
+												]);
+											}, RevalidationInterval);
 											break;
 										case 502:
-											setErrorMessage((errorMessage) => [...errorMessage, userBadGatewayError]);
+											setErrorMessage((prevState) => [...prevState, userBadGatewayError]);
+											setIsUserReady(false);
 
 											// Capture 502 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -202,9 +284,17 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												);
 												Sentry.captureException(new Error(errorUser));
 											});
+
+											setTimeout(() => {
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userBadGatewayError).splice(0, 0)
+												]);
+											}, RevalidationInterval);
 											break;
 										case 503:
-											setErrorMessage((errorMessage) => [...errorMessage, userServiceUnavailableError]);
+											setErrorMessage((prevState) => [...prevState, userServiceUnavailableError]);
+											setIsUserReady(false);
 
 											// Capture 503 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -216,9 +306,17 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												);
 												Sentry.captureException(new Error(errorUser));
 											});
+
+											setTimeout(() => {
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userServiceUnavailableError).splice(0, 0)
+												]);
+											}, RevalidationInterval);
 											break;
 										case 504:
-											setErrorMessage((errorMessage) => [...errorMessage, userGatewayTimeoutError]);
+											setErrorMessage((prevState) => [...prevState, userGatewayTimeoutError]);
+											setIsUserReady(false);
 
 											// Capture 504 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -230,9 +328,17 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												);
 												Sentry.captureException(new Error(errorUser));
 											});
+
+											setTimeout(() => {
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userGatewayTimeoutError).splice(0, 0)
+												]);
+											}, RevalidationInterval);
 											break;
 										default:
-											setErrorMessage((errorMessage) => [...errorMessage, userUnknownError]);
+											setErrorMessage((prevState) => [...prevState, userUnknownError]);
+											setIsUserReady(false);
 
 											// Capture any errors other than 2XX, 4XX, and 5XX status codes and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -244,15 +350,35 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 												);
 												Sentry.captureException(new Error(errorUser));
 											});
+
+											setTimeout(() => {
+												setErrorMessage((prevState) => [
+													...prevState,
+													prevState.indexOf(userUnknownError).splice(0, 0)
+												]);
+											}, RevalidationInterval);
 											break;
 									}
 
-									// Mutate `sites` after this status code is received
-									mutateUser(endpoint ?? null);
+									setTimeout(() => {
+										// Mutate `sites` after this status code is received
+										mutateUser(endpoint ?? null);
+									}, RevalidationInterval);
 							  })()
-							: null;
+							: (() => {
+									setIsUserReady(false);
+
+									if (HomeRoute === asPath) {
+										setTimeout(() => {
+											router.push(LoginLink);
+										}, RedirectInterval);
+									}
+
+									return null;
+							  })();
 					} else {
-						setErrorMessage((errorMessage) => [...errorMessage, userUnknownError]);
+						setErrorMessage((prevState) => [...prevState, userUnknownError]);
+						setIsUserReady(false);
 
 						// Capture any errors other than 2XX, 4XX, and 5XX status codes and send to Sentry
 						Sentry.configureScope((scope) => {
@@ -264,10 +390,29 @@ export const handleUser = ({ endpoint = null, status = null }) => {
 							);
 							Sentry.captureException(new Error(errorUser));
 						});
+
+						setTimeout(() => {
+							setErrorMessage((prevState) => [
+								...prevState,
+								prevState.indexOf(userUnknownError) !== -1
+									? prevState.splice(prevState.indexOf(userUnknownError), 1)
+									: null
+							]);
+						}, RevalidationInterval);
 					}
-			  })()
+			  }
 			: null;
 	}, [user, validatingUser, errorUser, status, asPath]);
 
-	return { validatingUser, isUserReady, userData, mutateUser, disableLocalTime, errorMessage };
+	return {
+		validatingUser,
+		isUserReady,
+		userData,
+		mutateUser,
+		disableLocalTime,
+		successMessage,
+		setSuccessMessage,
+		errorMessage,
+		setErrorMessage
+	};
 };
