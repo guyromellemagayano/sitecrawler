@@ -24,7 +24,6 @@ export const LgScreenBreakpoint = 1024;
 export const MutateInterval = 2000;
 export const RevalidationInterval = 3000;
 export const RedirectInterval = 1250;
-export const NoInterval = 0;
 
 // File Locations
 export const SiteLogoDark = "/images/logos/site-logo-dark.svg";
@@ -33,3 +32,5 @@ export const SubscriptionSuccessBadge = "/images/backgrounds/subscription-succes
 
 // Routes
 export const DashboardRoute = "/dashboard";
+export const LoginRoute = "/login";
+export const HomeRoute = "/";
