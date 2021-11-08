@@ -12,41 +12,26 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import tw from "twin.macro";
 
-const Alert = ({ isError, isSuccess, isWarning, isInfo, asPath = null, message = null, link = "#" }) => {
+const Alert = ({ isError, isSuccess, isWarning, message = null }) => {
 	const [isOpen, setIsOpen] = React.useState(true);
 
-	const { t } = useTranslation();
-	const loginFailed = t("componentAlerts:loginFailed");
-	const loginSuccess = t("componentAlerts:loginSuccess");
-	const fallbackErrorMessage = t("componentAlerts:fallbackErrorMessage");
-	const fallbackWarningMessage = t("componentAlerts:fallbackWarningMessage");
-	const fallbackInfoMessage = t("componentAlerts:fallbackInfoMessage");
-	const fallbackSuccessMessage = t("componentAlerts:fallbackSuccessMessage");
-	const dismissMessage = t("componentAlerts:dismissMessage");
+	const { t } = useTranslation("common");
+	const fallbackErrorMessage = t("fallbackErrorMessage");
+	const fallbackWarningMessage = t("fallbackWarningMessage");
+	const fallbackInfoMessage = t("fallbackInfoMessage");
+	const fallbackSuccessMessage = t("fallbackSuccessMessage");
+	const dismissMessage = t("dismissMessage");
 
 	let alertMessage = message ?? null;
 
-	switch (asPath) {
-		case asPath.includes("/login"):
-			if (isSuccess) {
-				alertMessage = message !== null ? message : loginSuccess;
-			} else if (isError) {
-				alertMessage = message !== null ? message : loginFailed;
-			} else {
-				alertMessage = message;
-			}
-			break;
-		default:
-			if (isSuccess) {
-				alertMessage = message !== null ? message : fallbackSuccessMessage;
-			} else if (isError) {
-				alertMessage = message !== null ? message : fallbackErrorMessage;
-			} else if (isWarning) {
-				alertMessage = message !== null ? message : fallbackWarningMessage;
-			} else {
-				alertMessage = message !== null ? message : fallbackInfoMessage;
-			}
-			break;
+	if (isSuccess) {
+		alertMessage = message !== null ? message : fallbackSuccessMessage;
+	} else if (isError) {
+		alertMessage = message !== null ? message : fallbackErrorMessage;
+	} else if (isWarning) {
+		alertMessage = message !== null ? message : fallbackWarningMessage;
+	} else {
+		alertMessage = message !== null ? message : fallbackInfoMessage;
 	}
 
 	React.useEffect(() => {
@@ -55,7 +40,7 @@ const Alert = ({ isError, isSuccess, isWarning, isInfo, asPath = null, message =
 		}, RevalidationInterval);
 
 		return isOpen;
-	}, []);
+	});
 
 	return (
 		<Transition
@@ -67,7 +52,7 @@ const Alert = ({ isError, isSuccess, isWarning, isInfo, asPath = null, message =
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
 			css={[
-				tw`max-w-2xl z-10 origin-top fixed right-0 left-0 bottom-0 rounded-md shadow-lg p-4 mt-1 mx-auto mb-10`,
+				tw`max-w-2xl z-10 origin-top fixed right-0 left-0 bottom-0 rounded-md shadow-lg p-4 mt-1 mx-auto my-6`,
 				isSuccess ? tw`bg-green-100` : isError ? tw`bg-red-100` : isWarning ? tw`bg-yellow-100` : tw`bg-indigo-100`
 			]}
 		>
@@ -104,14 +89,14 @@ const Alert = ({ isError, isSuccess, isWarning, isInfo, asPath = null, message =
 						<button
 							type="button"
 							css={[
-								tw`inline-flex bg-red-100 rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2`,
+								tw`inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2`,
 								isSuccess
-									? tw`text-green-500 hover:bg-green-100  focus:ring-offset-green-50 focus:ring-green-600`
+									? tw`text-green-500 bg-green-100 hover:bg-green-100  focus:ring-offset-green-50 focus:ring-green-600`
 									: isError
-									? tw`text-red-500 hover:bg-red-100  focus:ring-offset-red-50 focus:ring-red-600`
+									? tw`text-red-500 bg-red-100 hover:bg-red-100  focus:ring-offset-red-50 focus:ring-red-600`
 									: isWarning
-									? tw`text-yellow-500 hover:bg-yellow-100  focus:ring-offset-yellow-50 focus:ring-yellow-600`
-									: tw`text-indigo-500 hover:bg-indigo-100  focus:ring-offset-indigo-50 focus:ring-indigo-600`
+									? tw`text-yellow-500 bg-yellow-100 hover:bg-yellow-100  focus:ring-offset-yellow-50 focus:ring-yellow-600`
+									: tw`text-indigo-500 bg-indigo-100 hover:bg-indigo-100  focus:ring-offset-indigo-50 focus:ring-indigo-600`
 							]}
 							onClick={() => setIsOpen(false)}
 						>
@@ -126,13 +111,10 @@ const Alert = ({ isError, isSuccess, isWarning, isInfo, asPath = null, message =
 };
 
 Alert.propTypes = {
-	component: PropTypes.string,
-	isError: PropTypes.bool,
-	isInfo: PropTypes.bool,
-	isSuccess: PropTypes.bool,
-	isWarning: PropTypes.bool,
-	link: PropTypes.string,
-	message: PropTypes.string
+	isError: PropTypes.any,
+	isSuccess: PropTypes.any,
+	isWarning: PropTypes.any,
+	message: PropTypes.any
 };
 
 export default Alert;

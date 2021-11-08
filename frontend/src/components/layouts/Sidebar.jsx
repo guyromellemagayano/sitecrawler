@@ -1,37 +1,28 @@
-// React
-import * as React from "react";
-
-// NextJS
-import { useRouter } from "next/router";
-
-// External
-import "twin.macro";
-import { Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
-
-// Enums
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-import { EndpointRefreshInterval } from "@enums/GlobalValues";
-import { SidebarMenuLabels } from "@enums/SidebarMenuLabels";
-
-// Hooks
-import { useSite } from "@hooks/useSite";
-
-// Components
 import PrimaryMenu from "@components/menus/PrimaryMenu";
 import ProfileMenu from "@components/menus/ProfileMenu";
 import SettingsMenu from "@components/menus/SettingsMenu";
 import SiteMenu from "@components/menus/SiteMenu";
+import { SiteApiEndpoint } from "@enums/ApiEndpoints";
+import { EndpointRefreshInterval } from "@enums/GlobalValues";
+import { SidebarMenuLabels } from "@enums/SidebarMenuLabels";
+import { Transition } from "@headlessui/react";
+import { XIcon } from "@heroicons/react/solid";
+import { useSite } from "@hooks/useSite";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import * as React from "react";
+import "twin.macro";
 
-const Sidebar = React.forwardRef(({ user, openSidebar, setOpenSidebar }, ref) => {
+export const Sidebar = React.forwardRef(({ isUserReady, user = null, openSidebar, setOpenSidebar }, ref) => {
 	const [selectedMenu, setSelectedMenu] = React.useState(null);
 
 	const router = useRouter();
 
-	const siteApiEndpoint = `${SiteApiEndpoint}?ordering=name&per_page=100`;
+	const orderingByNameQuery = "?ordering=name";
+	const perPageQuery = "&per_page=100";
+	const siteApiEndpoint = `${SiteApiEndpoint + orderingByNameQuery + perPageQuery}`;
 
-	const { site } = useSite({
+	const { site, validatingSite, errorSite } = useSite({
 		endpoint: siteApiEndpoint,
 		refreshInterval: EndpointRefreshInterval
 	});
@@ -53,7 +44,7 @@ const Sidebar = React.forwardRef(({ user, openSidebar, setOpenSidebar }, ref) =>
 	}, [router, site, user]);
 
 	return (
-		<>
+		<React.Fragment>
 			<Transition show={openSidebar} tw="flex lg:hidden flex-shrink-0">
 				<div tw="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true">
 					<Transition.Child
@@ -112,20 +103,13 @@ const Sidebar = React.forwardRef(({ user, openSidebar, setOpenSidebar }, ref) =>
 					<ProfileMenu user={user} />
 				</div>
 			</aside>
-		</>
+		</React.Fragment>
 	);
 });
 
 Sidebar.propTypes = {
+	isUserReady: PropTypes.bool,
 	openSidebar: PropTypes.bool,
 	setOpenSidebar: PropTypes.func,
-	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
+	user: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 };
-
-Sidebar.defaultProps = {
-	openSidebar: null,
-	setOpenSidebar: null,
-	user: null
-};
-
-export default Sidebar;

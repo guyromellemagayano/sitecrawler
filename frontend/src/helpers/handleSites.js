@@ -1,4 +1,4 @@
-import { DashboardRoute } from "@configs/GlobalValues";
+import { DashboardRoute, RevalidationInterval } from "@configs/GlobalValues";
 import { SitesLink } from "@configs/PageLinks";
 import { useSite } from "@hooks/useSite";
 import * as Sentry from "@sentry/nextjs";
@@ -17,20 +17,24 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 	const [isSiteReady, setIsSiteReady] = React.useState(false);
 	const [siteData, setSiteData] = React.useState(null);
 	const [errorMessage, setErrorMessage] = React.useState([]);
+	const [successMessage, setSuccessMessage] = React.useState([]);
 
 	const { site, mutateSite, validatingSite, errorSite } = useSite(endpoint ?? null);
 	const { asPath } = useRouter();
+	const router = useRouter();
 
-	const { t } = useTranslation();
-	const siteBadRequestError = t("componentAlerts:siteBadRequestError");
-	const siteForbiddenError = t("componentAlerts:siteForbiddenError");
-	const siteNotFoundError = t("componentAlerts:siteNotFoundError");
-	const siteTooManyRequests = t("componentAlerts:siteTooManyRequests");
-	const siteInternalServerError = t("componentAlerts:siteinternalServerError");
-	const siteBadGatewayError = t("componentAlerts:siteBadGatewayError");
-	const siteServiceUnavailableError = t("componentAlerts:siteServiceUnavailableError");
-	const siteGatewayTimeoutError = t("componentAlerts:siteGatewayTimeoutError");
-	const siteUnknownError = t("componentAlerts:siteUnknownError");
+	const { t } = useTranslation("common");
+	const siteOkSuccess = t("siteOkSuccess");
+	const siteCreatedSuccess = t("siteCreatedSuccess");
+	const siteBadRequestError = t("siteBadRequestError");
+	const siteForbiddenError = t("siteForbiddenError");
+	const siteNotFoundError = t("siteNotFoundError");
+	const siteTooManyRequests = t("siteTooManyRequests");
+	const siteInternalServerError = t("siteInternalServerError");
+	const siteBadGatewayError = t("siteBadGatewayError");
+	const siteServiceUnavailableError = t("siteServiceUnavailableError");
+	const siteGatewayTimeoutError = t("siteGatewayTimeoutError");
+	const siteUnknownError = t("siteUnknownError");
 
 	React.useEffect(() => {
 		!validatingSite
@@ -41,7 +45,20 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 									setSiteData(site?.data ?? null);
 
 									typeof siteData !== "undefined" || siteData !== null
-										? setIsSiteReady(true)
+										? (() => {
+												switch (status) {
+													case 200:
+														setSuccessMessage((successMessage) => [...successMessage, siteOkSuccess]);
+														break;
+													case 201:
+														setSuccessMessage((successMessage) => [...successMessage, siteCreatedSuccess]);
+														break;
+													default:
+														break;
+												}
+
+												setIsSiteReady(true);
+										  })()
 										: (() => {
 												setErrorMessage((errorMessage) => [...errorMessage, siteNotFoundError]);
 												setIsSiteReady(false);
@@ -64,6 +81,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 									switch (status) {
 										case 400:
 											setErrorMessage((errorMessage) => [...errorMessage, siteBadRequestError]);
+											setIsSiteReady(false);
 
 											// Capture 400 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -81,6 +99,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 											break;
 										case 403:
 											setErrorMessage((errorMessage) => [...errorMessage, siteForbiddenError]);
+											setIsSiteReady(false);
 
 											// Capture 403 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -100,6 +119,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 											break;
 										case 404:
 											setErrorMessage((errorMessage) => [...errorMessage, siteNotFoundError]);
+											setIsSiteReady(false);
 
 											// Capture 404 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -119,6 +139,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 											break;
 										case 429:
 											setErrorMessage((errorMessage) => [...errorMessage, siteTooManyRequests]);
+											setIsSiteReady(false);
 
 											// Capture 429 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -133,6 +154,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 											break;
 										default:
 											setErrorMessage((errorMessage) => [...errorMessage, siteUnknownError]);
+											setIsSiteReady(false);
 
 											// Capture any errors within 4XX status codes range and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -150,6 +172,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 									switch (status) {
 										case 500:
 											setErrorMessage((errorMessage) => [...errorMessage, siteInternalServerError]);
+											setIsSiteReady(false);
 
 											// Capture 500 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -164,6 +187,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 											break;
 										case 502:
 											setErrorMessage((errorMessage) => [...errorMessage, siteBadGatewayError]);
+											setIsSiteReady(false);
 
 											// Capture 502 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -178,6 +202,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 											break;
 										case 503:
 											setErrorMessage((errorMessage) => [...errorMessage, siteServiceUnavailableError]);
+											setIsSiteReady(false);
 
 											// Capture 503 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -192,6 +217,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 											break;
 										case 504:
 											setErrorMessage((errorMessage) => [...errorMessage, siteGatewayTimeoutError]);
+											setIsSiteReady(false);
 
 											// Capture 504 error status code and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -206,6 +232,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 											break;
 										default:
 											setErrorMessage((errorMessage) => [...errorMessage, siteUnknownError]);
+											setIsSiteReady(false);
 
 											// Capture any errors other than 2XX, 4XX, and 5XX status codes and send to Sentry
 											Sentry.configureScope((scope) => {
@@ -224,6 +251,7 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 									mutateSite(endpoint ?? null);
 								} else {
 									setErrorMessage((errorMessage) => [...errorMessage, siteUnknownError]);
+									setIsSiteReady(false);
 
 									// Capture any errors other than 2XX, 4XX, and 5XX status codes and send to Sentry
 									Sentry.configureScope((scope) => {
@@ -242,5 +270,14 @@ export const handleSites = ({ endpoint = null, status = null }) => {
 			: null;
 	}, [site, validatingSite, errorSite, status, asPath]);
 
-	return { validatingSite, isSiteReady, siteData, mutateSite, errorMessage };
+	return {
+		validatingSite,
+		isSiteReady,
+		siteData,
+		mutateSite,
+		successMessage,
+		setSuccessMessage,
+		errorMessage,
+		setErrorMessage
+	};
 };

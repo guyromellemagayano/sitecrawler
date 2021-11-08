@@ -1,22 +1,11 @@
-// React
-import * as React from "react";
-
-// NextJS
-import { useRouter } from "next/router";
-
-// External
-import "twin.macro";
-import Pagination from "rc-pagination";
-import PropTypes from "prop-types";
-
-// Hooks
-import usePage from "@hooks/usePage";
-
-// Utils
-import { removeURLParameter } from "@utils/functions";
-
-// Components
 import PaginationSkeleton from "@components/skeletons/PaginationSkeleton";
+import usePage from "@hooks/usePage";
+import { removeURLParameter } from "@utils/functions";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import Pagination from "rc-pagination";
+import * as React from "react";
+import "twin.macro";
 
 const PaginationLocale = {
 	items_per_page: "Rows per Page",
@@ -113,9 +102,7 @@ const DataPagination = ({
 			/>
 
 			<div tw="flex items-center mt-4 lg:m-0">
-				<h1 tw="-mt-px pr-4 inline-flex items-center text-sm leading-5 font-normal text-gray-500">
-					Rows per page
-				</h1>
+				<h1 tw="-mt-px pr-4 inline-flex items-center text-sm leading-5 font-normal text-gray-500">Rows per page</h1>
 				<div>
 					<select
 						onChange={handleItemsPerPageChange}
