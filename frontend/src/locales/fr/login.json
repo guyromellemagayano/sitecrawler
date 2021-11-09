@@ -17,5 +17,6 @@
 	"login": "Connexion",
 	"loginOkSuccess": "Informations utilisateur récupérées avec succès. Vous rediriger vers la page du tableau de bord des sites...",
 	"loginCreatedSuccess": "Informations utilisateur mises à jour avec succès.",
+	"loginWrongCredentials": "Impossible de se connecter avec les informations d'identification fournies.",
 	"loginFailed": "Échec de la connexion. Veuillez réessayer"
 }

@@ -17,5 +17,6 @@
 	"login": "Login",
 	"loginOkSuccess": "User information retrieved successfully. Redirecting you to sites dashboard page...",
 	"loginCreatedSuccess": "User information updated successfully.",
+	"loginWrongCredentials": "Unable to log in with provided credentials.",
 	"loginFailed": "Login failed. Please try again"
 }
