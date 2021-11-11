@@ -2,28 +2,31 @@ import Layout from "@components/layouts";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import PropTypes from "prop-types";
 import * as React from "react";
 import "twin.macro";
 
-export const PageNotFoundMessage = () => {
-	const { t } = useTranslation("404");
-	const pageNotFound = t("pageNotFound");
-	const urlCheck = t("urlCheck");
-	const goBackHome = t("goBackHome");
-	const contactSupport = t("contactSupport");
+const ErrorMessage = ({ statusCode }) => {
+	// Translations
+	const { t } = useTranslation();
+	const error = t("error:error");
+	const errorHeading = t("error:errorHeading");
+	const goBackHome = t("error:goBackHome");
+	const contactSupport = t("error:contactSupport");
+
+	const pageTitle = statusCode + " " + error;
 
 	return (
 		<Layout>
-			<NextSeo title={pageNotFound} />
+			<NextSeo title={pageTitle} />
 
 			<div tw="bg-white min-h-screen px-4 py-16 sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8">
 				<div tw="max-w-max mx-auto">
 					<main tw="sm:flex">
-						<p tw="text-4xl font-extrabold text-indigo-600 sm:text-5xl">404</p>
+						<p tw="text-4xl font-extrabold text-indigo-600 sm:text-5xl">{statusCode}</p>
 						<div tw="sm:ml-6">
 							<div tw="sm:border-l sm:border-gray-200 sm:pl-6">
-								<h1 tw="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">{pageNotFound}</h1>
-								<p tw="mt-1 text-base text-gray-500">{urlCheck}</p>
+								<h1 tw="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">{errorHeading}</h1>
 							</div>
 							<div tw="mt-10 flex space-x-3 sm:border-l sm:border-transparent sm:pl-6">
 								<Link href="/" passHref={true}>
@@ -44,3 +47,9 @@ export const PageNotFoundMessage = () => {
 		</Layout>
 	);
 };
+
+ErrorMessage.propTypes = {
+	statusCode: PropTypes.number
+};
+
+export default ErrorMessage;
