@@ -2,9 +2,8 @@ module.exports = {
 	locales: ["en", "fr", "nl"],
 	defaultLocale: "en",
 	pages: {
-		"*": ["common"],
+		"*": ["common", "alerts"],
 		"/": ["home"],
-		"/404": ["404"],
 		"/login": ["login"],
 		"/registration": ["registration"],
 		"/dashboard/sites": ["sites"]
