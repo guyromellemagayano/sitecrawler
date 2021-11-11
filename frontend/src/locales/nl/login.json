@@ -1,22 +1,13 @@
 {
-	"headline": "Vind websiteproblemen voordat uw klanten dat doen. ",
-	"tryFree": "Probeer gratis.",
-	"username": "Gebruikersnaam",
-	"password": "Wachtwoord",
 	"rememberMe": "Onthoud me",
 	"forgotPassword": "Uw wachtwoord vergeten?",
 	"signIn": "Inloggen",
 	"continueWith": "Of ga verder met",
 	"noAccount": "Heb geen account? ",
 	"createAccount": "Maak een account aan",
-	"requiredField": "Verplicht veld",
 	"signingIn": "Inloggen...",
 	"showPassword": "Laat wachtwoord zien",
 	"hidePassword": "Verberg wachtwoord",
 	"googleSignIn": "Inloggen met Google",
-	"login": "Log in",
-	"loginOkSuccess": "Gebruikersinformatie succesvol opgehaald. U wordt omgeleid naar de dashboardpagina van de site...",
-	"loginCreatedSuccess": "Gebruikersinformatie is bijgewerkt.",
-	"loginWrongCredentials": "Kan niet inloggen met opgegeven inloggegevens.",
-	"loginFailed": "Inloggen mislukt. Probeer het opnieuw"
+	"login": "Log in"
 }

@@ -6,6 +6,7 @@ module.exports = {
 		"/": ["home"],
 		"/404": ["404"],
 		"/login": ["login"],
+		"/registration": ["registration"],
 		"/dashboard/sites": ["sites"]
 	},
 	interpolation: {
