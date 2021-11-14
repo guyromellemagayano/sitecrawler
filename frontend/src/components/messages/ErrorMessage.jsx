@@ -9,12 +9,82 @@ import "twin.macro";
 const ErrorMessage = ({ statusCode }) => {
 	// Translations
 	const { t } = useTranslation();
-	const error = t("error:error");
-	const errorHeading = t("error:errorHeading");
-	const goBackHome = t("error:goBackHome");
-	const contactSupport = t("error:contactSupport");
+	const goBackHome = t("common:goBackHome");
+	const contactSupport = t("common:contactSupport");
+	const badRequestError = t("alerts:badRequestError");
+	const pageBadRequestError = t("alerts:pageBadRequestError");
+	const unauthorizedError = t("alerts:unauthorizedError");
+	const pageUnauthorizedError = t("alerts:pageUnauthorizedError");
+	const forbiddenError = t("alerts:forbiddenError");
+	const pageForbiddenError = t("alerts:pageForbiddenError");
+	const notFoundError = t("alerts:notFoundError");
+	const pageNotFoundError = t("alerts:pageNotFoundError");
+	const requestTimeoutError = t("alerts:requestTimeoutError");
+	const pageRequestTimeoutError = t("alerts:pageRequestTimeoutError");
+	const tooManyRequestsError = t("alerts:tooManyRequestsError");
+	const pageTooManyRequestsError = t("alerts:pageTooManyRequestsError");
+	const internalServerError = t("alerts:internalServerError");
+	const pageInternalServerError = t("alerts:pageInternalServerError");
+	const badGatewayError = t("alerts:badGatewayError");
+	const pageBadGatewayError = t("alerts:pageBadgatewayError");
+	const serviceUnavailableError = t("alerts:serviceUnavailableError");
+	const pageServiceUnavailableError = t("alerts:pageServiceUnavailableError");
+	const gatewayTimeoutError = t("alerts:gatewayTimeoutError");
+	const pageGatewayTimeoutError = t("alerts:pageGatewayTimeoutError");
+	const unknownError = t("alerts:unknownError");
+	const pageUnknownError = t("alerts:pageUnknownError");
 
-	const pageTitle = statusCode + " " + error;
+	let heading = "";
+	let subheading = "";
+
+	switch (statusCode) {
+		case 400:
+			heading = badRequestError;
+			subheading = pageBadRequestError;
+			break;
+		case 401:
+			heading = unauthorizedError;
+			subheading = pageUnauthorizedError;
+			break;
+		case 403:
+			heading = forbiddenError;
+			subheading = pageForbiddenError;
+			break;
+		case 404:
+			heading = notFoundError;
+			subheading = pageNotFoundError;
+			break;
+		case 408:
+			heading = requestTimeoutError;
+			subheading = pageRequestTimeoutError;
+			break;
+		case 429:
+			heading = tooManyRequestsError;
+			subheading = pageTooManyRequestsError;
+			break;
+		case 500:
+			heading = internalServerError;
+			subheading = pageInternalServerError;
+			break;
+		case 502:
+			heading = badGatewayError;
+			subheading = pageBadGatewayError;
+			break;
+		case 503:
+			heading = serviceUnavailableError;
+			subheading = pageServiceUnavailableError;
+			break;
+		case 504:
+			heading = gatewayTimeoutError;
+			subheading = pageGatewayTimeoutError;
+			break;
+		default:
+			heading = unknownError;
+			subheading = pageUnknownError;
+			break;
+	}
+
+	const pageTitle = statusCode + " " + heading;
 
 	return (
 		<Layout>
@@ -26,7 +96,8 @@ const ErrorMessage = ({ statusCode }) => {
 						<p tw="text-4xl font-extrabold text-indigo-600 sm:text-5xl">{statusCode}</p>
 						<div tw="sm:ml-6">
 							<div tw="sm:border-l sm:border-gray-200 sm:pl-6">
-								<h1 tw="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">{errorHeading}</h1>
+								<h1 tw="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">{heading}</h1>
+								<p tw="max-w-sm mt-1 text-base text-gray-500">{subheading}</p>
 							</div>
 							<div tw="mt-10 flex space-x-3 sm:border-l sm:border-transparent sm:pl-6">
 								<Link href="/" passHref={true}>
