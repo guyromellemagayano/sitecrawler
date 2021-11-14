@@ -16,24 +16,35 @@ export async function getServerSideProps({ req }) {
 	const userData = userResponse.data ?? null;
 	const userStatus = userResponse.status ?? null;
 
-	if ((!userData || Object.keys(userData).includes("detail")) && userStatus === 404) {
-		return {
-			notFound: true
-		};
-	} else if ((!userData || Object.keys(userData).includes("detail")) && userStatus === 403) {
-		return {
-			redirect: {
-				destination: LoginLink,
-				permanent: false
-			}
-		};
+	if (typeof userData === "undefined" || userData === null) {
+		if (userStatus === 404) {
+			return {
+				notFound: true
+			};
+		} else {
+			return {
+				redirect: {
+					destination: LoginLink,
+					permanent: false
+				}
+			};
+		}
 	} else {
-		return {
-			redirect: {
-				destination: SitesLink,
-				permanent: false
-			}
-		};
+		if (userData.includes("detail")) {
+			return {
+				redirect: {
+					destination: LoginLink,
+					permanent: false
+				}
+			};
+		} else {
+			return {
+				redirect: {
+					destination: SitesLink,
+					permanent: false
+				}
+			};
+		}
 	}
 }
 
