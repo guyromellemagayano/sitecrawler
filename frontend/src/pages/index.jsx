@@ -1,59 +1,49 @@
 import Layout from "@components/layouts";
-import Loader from "@components/loader";
-import RedirectingToPage from "@components/messages/RedirectingToPage";
+import { Loader } from "@components/loaders";
 import { UserApiEndpoint } from "@configs/ApiEndpoints";
 import { LoginLink, SitesLink } from "@configs/PageLinks";
 import { server } from "@configs/ServerEnv";
-import { handleUser } from "@helpers/handleUser";
-import axios from "axios";
+import { useGetMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import * as React from "react";
-import { SWRConfig } from "swr";
 
+// Pre-render `user` data with NextJS SSR. Redirect to a 404 page if the user is not found, redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req }) {
-	const userResponse = await axios.get(`${server + UserApiEndpoint}`, {
-		headers: req.headers,
-		validateStatus: (status) => {
-			return status < 500;
-		}
-	});
-	const userData = userResponse?.data ?? null;
-	const userStatus = userResponse?.status ?? null;
+	const userResponse = await useGetMethod(`${server + UserApiEndpoint}`, req.headers);
+	const userData = userResponse.data ?? null;
+	const userStatus = userResponse.status ?? null;
 
-	return {
-		props: {
-			fallback: {
-				userStatus: userStatus ?? null,
-				userApiEndpoint: userData ?? null
+	if ((!userData || Object.keys(userData).includes("detail")) && userStatus === 404) {
+		return {
+			notFound: true
+		};
+	} else if ((!userData || Object.keys(userData).includes("detail")) && userStatus === 403) {
+		return {
+			redirect: {
+				destination: LoginLink,
+				permanent: false
 			}
-		}
-	};
+		};
+	} else {
+		return {
+			redirect: {
+				destination: SitesLink,
+				permanent: false
+			}
+		};
+	}
 }
 
-const HomeBody = ({ fallback = null }) => {
-	const { validatingUser, isUserReady } = handleUser({
-		endpoint: fallback?.userApiEndpoint ?? null,
-		status: fallback?.userStatus ?? null
-	});
-
-	return validatingUser && !isUserReady ? (
-		<Loader />
-	) : !validatingUser && isUserReady && Math.round(fallback?.userStatus / 200) === 1 ? (
-		<RedirectingToPage page="Sites Dashboard" />
-	) : !validatingUser && Math.round(fallback?.userStatus / 200) !== 1 ? (
-		<RedirectingToPage page="Login" />
-	) : null;
-};
-
-const Home = ({ fallback }) => {
+const Home = () => {
 	// Router
 	const router = useRouter();
 
 	// Translations
 	const { t } = useTranslation("home");
-	const home = t("Home");
+	const home = t("home");
 
 	React.useEffect(() => {
 		router.prefetch(SitesLink);
@@ -61,13 +51,16 @@ const Home = ({ fallback }) => {
 	}, []);
 
 	return (
-		<SWRConfig value={{ fallback }}>
-			<Layout>
-				<NextSeo title={home} />
-				<HomeBody fallback={fallback} />
-			</Layout>
-		</SWRConfig>
+		<Layout>
+			<NextSeo title={home} />
+			<Loader />
+		</Layout>
 	);
+};
+
+Home.propTypes = {
+	userData: PropTypes.object,
+	userStatus: PropTypes.number
 };
 
 export default Home;
