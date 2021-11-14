@@ -1,4 +1,4 @@
-import ErrorMessage from "@components/messages/ErrorMessage";
+import { ErrorMessage } from "@components/messages";
 import * as React from "react";
 
 const Error = ({ statusCode }) => {

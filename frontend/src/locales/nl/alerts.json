@@ -17,7 +17,7 @@
 	"pageUnauthorizedError": "U heeft geen toegang tot deze pagina. Log alstublieft in om toegang te krijgen tot deze pagina.",
 	"pageUnknownError": "Nou dat is raar! Maak je geen zorgen, laat ons deze situatie meteen afhandelen.",
 	"requestTimeoutError": "Verzoek time-out",
-	"serviceUnavailableGetError": "Dienst tijdelijk niet beschikbaar",
+	"serviceUnavailableError": "Dienst tijdelijk niet beschikbaar",
 	"siteBadGatewayDeleteError": "",
 	"siteBadGatewayGetError": "Er is een slechte gateway-fout opgetreden tijdens het ophalen van uw geregistreerde sites. Probeer deze pagina over een paar minuten te openen.",
 	"siteBadGatewayPatchError": "",

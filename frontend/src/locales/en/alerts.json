@@ -17,7 +17,7 @@
 	"pageUnauthorizedError": "You are unauthorized to access this page. Please login to access this page.",
 	"pageUnknownError": "Now that is weird! Don't worry, let us handle this situation right away.",
 	"requestTimeoutError": "Request Timeout",
-	"serviceUnavailableGetError": "Service Temporarily Unavailable",
+	"serviceUnavailableError": "Service Temporarily Unavailable",
 	"siteBadGatewayDeleteError": "",
 	"siteBadGatewayGetError": "A bad gateway error has occurred while fetching your registered sites. Please try to access this page in a few minutes.",
 	"siteBadGatewayPatchError": "",
