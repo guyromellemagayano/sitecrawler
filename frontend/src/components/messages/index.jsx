@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import "twin.macro";
 
-const ErrorMessage = ({ statusCode }) => {
+export const ErrorMessage = ({ statusCode }) => {
 	// Translations
 	const { t } = useTranslation();
 	const goBackHome = t("common:goBackHome");
@@ -26,7 +26,7 @@ const ErrorMessage = ({ statusCode }) => {
 	const internalServerError = t("alerts:internalServerError");
 	const pageInternalServerError = t("alerts:pageInternalServerError");
 	const badGatewayError = t("alerts:badGatewayError");
-	const pageBadGatewayError = t("alerts:pageBadgatewayError");
+	const pageBadGatewayError = t("alerts:pageBadGatewayError");
 	const serviceUnavailableError = t("alerts:serviceUnavailableError");
 	const pageServiceUnavailableError = t("alerts:pageServiceUnavailableError");
 	const gatewayTimeoutError = t("alerts:gatewayTimeoutError");
@@ -123,4 +123,20 @@ ErrorMessage.propTypes = {
 	statusCode: PropTypes.number
 };
 
-export default ErrorMessage;
+export const LoadingMessage = ({ message = null }) => {
+	// Translations
+	const { t } = useTranslation("common");
+	const loaderMessage = t("loaderMessage");
+
+	return (
+		<section tw="flex flex-col justify-center min-h-screen">
+			<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
+				<h3 tw="text-lg leading-6 font-medium text-gray-500">{message !== null ? message : loaderMessage}</h3>
+			</div>
+		</section>
+	);
+};
+
+LoadingMessage.propTypes = {
+	message: PropTypes.any
+};
