@@ -21,7 +21,7 @@ export const ComponentReadyInterval = 500;
 export const EndpointRefreshInterval = 7500;
 export const FormSubmissionInterval = 1000;
 export const LgScreenBreakpoint = 1024;
-export const MutateInterval = 2000;
+export const MutateInterval = 1500;
 export const RevalidationInterval = 3000;
 export const RedirectInterval = 1250;
 
