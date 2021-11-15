@@ -20,11 +20,11 @@ const Alert = ({ isError, isSuccess, isWarning, message }) => {
 
 	let alertMessage = message ?? null;
 
-	React.useCallback(() => {
+	React.useEffect(() => {
 		setTimeout(() => {
 			setIsOpen(false);
 		}, RevalidationInterval);
-	}, [isOpen]);
+	}, []);
 
 	return (
 		<Transition
@@ -36,7 +36,7 @@ const Alert = ({ isError, isSuccess, isWarning, message }) => {
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
 			css={[
-				tw`max-w-2xl z-10 origin-top fixed right-0 left-0 bottom-0 rounded-md shadow-lg p-4 mt-1 mx-auto my-6`,
+				tw`max-w-lg z-10 origin-top fixed bottom-0 left-0 right-0 rounded-md shadow p-4 mx-auto my-6`,
 				isSuccess ? tw`bg-green-100` : isError ? tw`bg-red-100` : isWarning ? tw`bg-yellow-100` : tw`bg-indigo-100`
 			]}
 		>
@@ -95,10 +95,10 @@ const Alert = ({ isError, isSuccess, isWarning, message }) => {
 };
 
 Alert.propTypes = {
-	isError: PropTypes.boolean,
-	isSuccess: PropTypes.boolean,
-	isWarning: PropTypes.boolean,
-	message: PropTypes.string
+	isError: PropTypes.any,
+	isSuccess: PropTypes.any,
+	isWarning: PropTypes.any,
+	message: PropTypes.any
 };
 
 export default Alert;
