@@ -1,6 +1,5 @@
 import LoginForm from "@components/forms/LoginForm";
 import LogoLabel from "@components/labels/LogoLabel";
-import Footer from "@components/layouts/components/Footer";
 import AppLogo from "@components/logos/AppLogo";
 import { NoAuthAppLogo } from "@configs/GlobalValues";
 import { RegistrationLink } from "@configs/PageLinks";
@@ -11,8 +10,9 @@ import * as React from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
+import Footer from "../components/Footer";
 
-const LoginPageLayout = ({ status, data }) => {
+export const LoginPageLayout = () => {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("common:headline");
@@ -49,15 +49,15 @@ const LoginPageLayout = ({ status, data }) => {
 
 										<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 											<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
-												<LoginForm status={status} data={data} />
+												<LoginForm />
 											</div>
 
 											<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 												<span tw="px-2 py-5 text-gray-600">
-													{ReactHtmlParser(createAccount)}
+													{ReactHtmlParser(noAccount)}
 													<Link href={RegistrationLink}>
 														<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
-															{noAccount}
+															{createAccount}
 														</a>
 													</Link>
 												</span>
@@ -77,5 +77,3 @@ const LoginPageLayout = ({ status, data }) => {
 		</section>
 	);
 };
-
-export default LoginPageLayout;
