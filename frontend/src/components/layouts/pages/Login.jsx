@@ -53,7 +53,7 @@ export const LoginPageLayout = () => {
 											</div>
 
 											<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-												<span tw="px-2 py-5 text-gray-600">
+												<span tw="px-2 py-5 text-gray-500">
 													{ReactHtmlParser(noAccount)}
 													<Link href={RegistrationLink}>
 														<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
