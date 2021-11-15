@@ -7,7 +7,6 @@ import { useGetMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
 import * as React from "react";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a 404 page if the user is not found, redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
@@ -61,11 +60,6 @@ const Login = () => {
 			<LoginPageLayout />
 		</Layout>
 	);
-};
-
-Login.propTypes = {
-	userData: PropTypes.object,
-	userStatus: PropTypes.number
 };
 
 export default Login;
