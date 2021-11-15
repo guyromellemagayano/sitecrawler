@@ -1,6 +1,7 @@
 {
 	"badGatewayError": "Mauvaise passerelle",
 	"badRequestError": "Mauvaise demande",
+	"fallbackUnknownError": "Une erreur inconnue s'est produite : {{ message }} avec la trace de pile suivante: {{ component }}",
 	"forbiddenError": "Interdit",
 	"gatewayTimeoutError": "Délai d'expiration de la passerelle",
 	"internalServerError": "Erreur Interne du Serveur",

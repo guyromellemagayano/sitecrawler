@@ -1,6 +1,7 @@
 {
 	"badGatewayError": "Bad Gateway",
 	"badRequestError": "Bad Request",
+	"fallbackUnknownError": "An unknown error has occured: {{ message }} with the following stack trace: {{ component }}",
 	"forbiddenError": "Forbidden",
 	"gatewayTimeoutError": "Gateway Timeout",
 	"internalServerError": "Internal Server Error",

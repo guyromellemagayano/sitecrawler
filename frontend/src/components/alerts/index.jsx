@@ -12,35 +12,19 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import tw from "twin.macro";
 
-const Alert = ({ isError, isSuccess, isWarning, message = null }) => {
+const Alert = ({ isError, isSuccess, isWarning, message }) => {
 	const [isOpen, setIsOpen] = React.useState(true);
 
-	const { t } = useTranslation("common");
-	const fallbackErrorMessage = t("fallbackErrorMessage");
-	const fallbackWarningMessage = t("fallbackWarningMessage");
-	const fallbackInfoMessage = t("fallbackInfoMessage");
-	const fallbackSuccessMessage = t("fallbackSuccessMessage");
-	const dismissMessage = t("dismissMessage");
+	const { t } = useTranslation();
+	const dismissMessage = t("common:dismissMessage");
 
 	let alertMessage = message ?? null;
 
-	if (isSuccess) {
-		alertMessage = message !== null ? message : fallbackSuccessMessage;
-	} else if (isError) {
-		alertMessage = message !== null ? message : fallbackErrorMessage;
-	} else if (isWarning) {
-		alertMessage = message !== null ? message : fallbackWarningMessage;
-	} else {
-		alertMessage = message !== null ? message : fallbackInfoMessage;
-	}
-
-	React.useEffect(() => {
+	React.useCallback(() => {
 		setTimeout(() => {
 			setIsOpen(false);
 		}, RevalidationInterval);
-
-		return isOpen;
-	});
+	}, [isOpen]);
 
 	return (
 		<Transition
@@ -111,10 +95,10 @@ const Alert = ({ isError, isSuccess, isWarning, message = null }) => {
 };
 
 Alert.propTypes = {
-	isError: PropTypes.any,
-	isSuccess: PropTypes.any,
-	isWarning: PropTypes.any,
-	message: PropTypes.any
+	isError: PropTypes.boolean,
+	isSuccess: PropTypes.boolean,
+	isWarning: PropTypes.boolean,
+	message: PropTypes.string
 };
 
 export default Alert;
