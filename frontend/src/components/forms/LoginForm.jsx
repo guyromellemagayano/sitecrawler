@@ -43,16 +43,9 @@ const LoginForm = (status, data) => {
 	const signingIn = t("login:signingIn");
 	const signIn = t("login:signIn");
 	const continueWith = t("login:continueWith");
-	const userOkSuccess = t("alerts:userOkSuccess");
-	const userBadRequestPostError = t("alerts:userBadRequestPostError");
-	const userForbiddenPostError = t("alerts:userForbiddenPostError");
-	const userNotFoundPostError = t("alerts:userNotFoundPostError");
-	const userTooManyRequestsPostError = t("alerts:userTooManyRequestsPostError");
-	const userInternalServerPostError = t("alerts:userInternalServerPostError");
-	const userBadGatewayPostError = t("alerts:userBadGatewayPostError");
-	const userServiceUnavailablePostError = t("alerts:userServiceUnavailablePostError");
-	const userGatewayTimeoutPostError = t("alerts:userGatewayTimeoutPostError");
-	const userUnknownError = t("alerts:userUnknownError");
+	const loginOkSuccess = t("alerts:loginOkSuccess");
+	const loginBadRequestPostError = t("alerts:loginBadRequestPostError");
+	const loginUnknownError = t("alerts:loginUnknownError");
 
 	// Social media links array
 	const linksArray = SocialLoginLinks();
@@ -113,12 +106,12 @@ const LoginForm = (status, data) => {
 						// Disable submission as soon as 200 OK or 201 Created response is issued
 						setSubmitting(false);
 						setDisableLoginForm(!disableLoginForm);
-						setSuccessMessage((prevState) => [...prevState, userOkSuccess]);
+						setSuccessMessage((prevState) => [...prevState, loginOkSuccess]);
 
 						setTimeout(() => {
 							setSuccessMessage((prevState) => [
 								...prevState,
-								prevState.indexOf(userOkSuccess) !== -1 ? prevState.splice(prevState.indexOf(userOkSuccess), 1) : null
+								prevState.indexOf(loginOkSuccess) !== -1 ? prevState.splice(prevState.indexOf(loginOkSuccess), 1) : null
 							]);
 
 							// Redirect to sites dashboard page after successful 200 OK response is established
@@ -134,31 +127,10 @@ const LoginForm = (status, data) => {
 
 						switch (loginResponseStatus) {
 							case 400:
-								errorStatusCodeMessage = userBadRequestPostError;
-								break;
-							case 403:
-								errorStatusCodeMessage = userForbiddenPostError;
-								break;
-							case 404:
-								errorStatusCodeMessage = userNotFoundPostError;
-								break;
-							case 429:
-								errorStatusCodeMessage = userTooManyRequestsPostError;
-								break;
-							case 500:
-								errorStatusCodeMessage = userInternalServerPostError;
-								break;
-							case 502:
-								errorStatusCodeMessage = userBadGatewayPostError;
-								break;
-							case 503:
-								errorStatusCodeMessage = userServiceUnavailablePostError;
-								break;
-							case 504:
-								errorStatusCodeMessage = userGatewayTimeoutPostError;
+								errorStatusCodeMessage = loginBadRequestPostError;
 								break;
 							default:
-								errorStatusCodeMessage = userUnknownError;
+								errorStatusCodeMessage = loginUnknownError;
 								break;
 						}
 

@@ -16,7 +16,7 @@ export const LoginPageLayout = () => {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("common:headline");
-	const tryFree = t("common:tryFree");
+	const highlight = t("common:highlight");
 	const createAccount = t("login:createAccount");
 	const noAccount = t("login:noAccount");
 
@@ -38,8 +38,8 @@ export const LoginPageLayout = () => {
 												height={NoAuthAppLogo.height}
 											/>
 											<h4 tw="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none">
-												{headline}
-												<span tw="text-red-600">{ReactHtmlParser(tryFree)}</span>
+												{headline}&nbsp;
+												<span tw="text-red-600">{ReactHtmlParser(highlight)}</span>
 												<br tw="hidden md:inline" />
 											</h4>
 										</div>
