@@ -36,7 +36,7 @@ const Alert = ({ isError, isSuccess, isWarning, message }) => {
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
 			css={[
-				tw`max-w-lg z-10 origin-top fixed bottom-0 left-0 right-0 rounded-md shadow p-4 mx-auto my-6`,
+				tw`max-w-sm z-10 origin-top fixed bottom-0 right-6 rounded-md shadow p-4 mx-auto my-6`,
 				isSuccess ? tw`bg-green-100` : isError ? tw`bg-red-100` : isWarning ? tw`bg-yellow-100` : tw`bg-indigo-100`
 			]}
 		>
