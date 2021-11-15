@@ -30,7 +30,7 @@ export async function getServerSideProps({ req }) {
 			};
 		}
 	} else {
-		if (userData.includes("detail")) {
+		if (userData.detail) {
 			return {
 				redirect: {
 					destination: LoginLink,
