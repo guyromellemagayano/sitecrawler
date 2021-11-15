@@ -139,6 +139,9 @@ const LoginForm = (status, data) => {
 							case 403:
 								errorStatusCodeMessage = userForbiddenPostError;
 								break;
+							case 404:
+								errorStatusCodeMessage = userNotFoundPostError;
+								break;
 							case 429:
 								errorStatusCodeMessage = userTooManyRequestsPostError;
 								break;
