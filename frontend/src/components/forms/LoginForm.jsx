@@ -1,47 +1,77 @@
-import { LoginApiEndpoint } from "@configs/ApiEndpoints";
-import { RedirectInterval, RevalidationInterval } from "@configs/GlobalValues";
+import Alert from "@components/alerts";
+import { LoginApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
+import { RevalidationInterval } from "@configs/GlobalValues";
 import { SitesLink } from "@configs/PageLinks";
 import { SocialLoginLinks } from "@configs/SocialLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import { useShowPassword } from "@hooks/useShowPassword";
+import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
 import * as React from "react";
+import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
-const LoginForm = ({ setErrorMessage, setSuccessMessage }) => {
+const LoginForm = (status, data) => {
 	const [disableLoginForm, setDisableLoginForm] = React.useState(false);
+	const [errorMessage, setErrorMessage] = React.useState([]);
+	const [successMessage, setSuccessMessage] = React.useState([]);
 
+	// Show password hook
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
+
+	// Router
+	const { asPath } = useRouter();
 	const router = useRouter();
 
-	const { t } = useTranslation("login");
-	const username = t("username");
-	const password = t("password");
-	const requiredField = t("requiredField");
-	const showPassword = t("showPassword");
-	const hidePassword = t("hidePassword");
-	const rememberMe = t("rememberMe");
-	const forgotPassword = t("forgotPassword");
-	const signingIn = t("signingIn");
-	const signIn = t("signIn");
-	const continueWith = t("continueWith");
-	const loginOkSuccess = t("loginOkSuccess");
-	const loginFailed = t("loginFailed");
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
 
+	// Translations
+	const { t } = useTranslation();
+	const username = t("common:username");
+	const password = t("common:password");
+	const requiredField = t("common:requiredField");
+	const showPassword = t("login:showPassword");
+	const hidePassword = t("login:hidePassword");
+	const rememberMe = t("login:rememberMe");
+	const forgotPassword = t("login:forgotPassword");
+	const signingIn = t("login:signingIn");
+	const signIn = t("login:signIn");
+	const continueWith = t("login:continueWith");
+	const userOkSuccess = t("alerts:userOkSuccess");
+	const userBadRequestPostError = t("alerts:userBadRequestPostError");
+	const userForbiddenPostError = t("alerts:userForbiddenPostError");
+	const userNotFoundPostError = t("alerts:userNotFoundPostError");
+	const userTooManyRequestsPostError = t("alerts:userTooManyRequestsPostError");
+	const userInternalServerPostError = t("alerts:userInternalServerPostError");
+	const userBadGatewayPostError = t("alerts:userBadGatewayPostError");
+	const userServiceUnavailablePostError = t("alerts:userServiceUnavailablePostError");
+	const userGatewayTimeoutPostError = t("alerts:userGatewayTimeoutPostError");
+	const userUnknownError = t("alerts:userUnknownError");
+
+	// Social media links array
 	const linksArray = SocialLoginLinks();
 
+	// Prefetch sites page for faster loading
 	React.useEffect(() => {
 		router.prefetch(SitesLink);
 	}, []);
 
 	return (
 		<React.Fragment>
+			{errorMessage && errorMessage.length > 0
+				? errorMessage.map((value, key) => <Alert key={key} message={value} isError />)
+				: null}
+
+			{successMessage && successMessage.length > 0
+				? successMessage.map((value, key) => <Alert key={key} message={value} isSuccess />)
+				: null}
+
 			<Formik
 				initialValues={{
 					username: "",
@@ -52,6 +82,7 @@ const LoginForm = ({ setErrorMessage, setSuccessMessage }) => {
 					password: Yup.string().required(requiredField)
 				})}
 				onSubmit={async (values, { setSubmitting, resetForm }) => {
+					// Form body values
 					const body = {
 						username: values.username,
 						password: values.password
@@ -62,68 +93,93 @@ const LoginForm = ({ setErrorMessage, setSuccessMessage }) => {
 					// } else {
 					// }
 
-					const response = await usePostMethod(LoginApiEndpoint, body);
-					const data = response?.data ?? null;
-					const status = response?.status ?? null;
+					const loginResponse = await usePostMethod(LoginApiEndpoint, body);
+					const loginResponseData = loginResponse.data ?? null;
+					const loginResponseStatus = loginResponse.status ?? null;
 
-					switch (status) {
-						case 200:
-							setSubmitting(false);
-							setDisableLoginForm(!disableLoginForm);
+					if (loginResponseData !== null && Math.round(loginResponseStatus / 200) === 1) {
+						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+						mutate(UserApiEndpoint, false);
 
-							if (typeof data !== "undefined" && data !== null) {
-								setSuccessMessage((prevState) => [...prevState, loginOkSuccess]);
+						// Collect user data and send to Sentry
+						Sentry.configureScope((scope) =>
+							scope.setUser({
+								id: loginResponseData?.id,
+								username: loginResponseData?.username,
+								email: loginResponseData?.email
+							})
+						);
 
-								setTimeout(() => {
-									router.push(SitesLink);
-								}, RedirectInterval);
-							} else {
-								resetForm({ values: "" });
-								setSubmitting(false);
-								setErrorMessage((prevState) => [...prevState, loginFailed]);
+						// Disable submission as soon as 200 OK or 201 Created response is issued
+						setSubmitting(false);
+						setDisableLoginForm(!disableLoginForm);
+						setSuccessMessage((prevState) => [...prevState, userOkSuccess]);
 
-								setTimeout(() => {
-									setErrorMessage((prevState) => [
-										...prevState,
-										prevState.indexOf(loginFailed) !== -1 ? prevState.splice(prevState.indexOf(loginFailed), 1) : null
-									]);
-								}, RevalidationInterval);
-							}
-							break;
-						default:
-							data
-								? (() => {
-										resetForm({ values: "" });
-										setSubmitting(false);
+						setTimeout(() => {
+							setSuccessMessage((prevState) => [
+								...prevState,
+								prevState.indexOf(userOkSuccess) !== -1 ? prevState.splice(prevState.indexOf(userOkSuccess), 1) : null
+							]);
 
-										data?.non_field_errors?.map((message) => {
-											setErrorMessage((prevState) => [...prevState, message]);
-										});
+							// Redirect to sites dashboard page after successful 200 OK response is established
+							setTimeout(() => {
+								router.push(SitesLink);
+							}, RedirectInterval);
+						}, RevalidationInterval);
+					} else {
+						let errorStatusCodeMessage = "";
 
-										setTimeout(() => {
-											data?.non_field_errors?.map((message) => {
-												setErrorMessage((prevState) => [
-													...prevState,
-													prevState.indexOf(message) !== -1 ? prevState.splice(prevState.indexOf(message), 1) : null
-												]);
-											});
-										}, RevalidationInterval);
-								  })()
-								: (() => {
-										resetForm({ values: "" });
-										setSubmitting(false);
-										setErrorMessage((prevState) => [...prevState, loginFailed]);
+						resetForm({ values: "" });
+						setSubmitting(false);
 
-										setTimeout(() => {
-											setErrorMessage((prevState) => [
-												...prevState,
-												prevState.indexOf(loginFailed) !== -1
-													? prevState.splice(prevState.indexOf(loginFailed), 1)
-													: null
-											]);
-										}, RevalidationInterval);
-								  })();
-							break;
+						switch (loginResponseStatus) {
+							case 400:
+								errorStatusCodeMessage = userBadRequestPostError;
+								break;
+							case 403:
+								errorStatusCodeMessage = userForbiddenPostError;
+								break;
+							case 429:
+								errorStatusCodeMessage = userTooManyRequestsPostError;
+								break;
+							case 500:
+								errorStatusCodeMessage = userInternalServerPostError;
+								break;
+							case 502:
+								errorStatusCodeMessage = userBadGatewayPostError;
+								break;
+							case 503:
+								errorStatusCodeMessage = userServiceUnavailablePostError;
+								break;
+							case 504:
+								errorStatusCodeMessage = userGatewayTimeoutPostError;
+								break;
+							default:
+								errorStatusCodeMessage = userUnknownError;
+								break;
+						}
+
+						setErrorMessage((prevState) => [...prevState, errorStatusCodeMessage]);
+
+						// Capture unknown errors and send to Sentry
+						Sentry.configureScope((scope) => {
+							scope.setTag("route", asPath);
+							scope.setTag("status", loginResponseStatus);
+							scope.setTag(
+								"message",
+								errorMessage.find((message) => message === errorStatusCodeMessage)
+							);
+							Sentry.captureException(new Error(loginResponse));
+						});
+
+						setTimeout(() => {
+							setErrorMessage((prevState) => [
+								...prevState,
+								prevState.indexOf(errorStatusCodeMessage) !== -1
+									? prevState.splice(prevState.indexOf(errorStatusCodeMessage), 1)
+									: null
+							]);
+						}, RevalidationInterval);
 					}
 				}}
 			>
@@ -304,11 +360,6 @@ const LoginForm = ({ setErrorMessage, setSuccessMessage }) => {
 			</Formik>
 		</React.Fragment>
 	);
-};
-
-LoginForm.propTypes = {
-	setErrorMessage: PropTypes.func,
-	setSuccessMessage: PropTypes.func
 };
 
 export default LoginForm;
