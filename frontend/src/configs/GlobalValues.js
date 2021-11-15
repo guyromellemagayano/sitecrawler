@@ -1,11 +1,9 @@
 // Objects
 export const NoAuthAppLogo = {
-	label: "app-logo",
 	width: 300,
 	height: 60
 };
 export const AuthAppLogo = {
-	label: "app-logo",
 	width: 200,
 	height: 45
 };
