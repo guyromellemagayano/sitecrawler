@@ -1,10 +1,6 @@
 {
-	"thanksCheckEmailVerification": "Merci pour l'enregistrement. Veuillez vérifier votre courrier électronique pour vérification!",
 	"createAccount": "Créer un compte",
 	"agreeTermsPrivacyPolicy": "En vous inscrivant, vous acceptez les conditions d'utilisation et la politique de confidentialité.",
-	"headline": "Trouvez les problèmes de site Web avant vos clients.",
-	"highlight": "Try for free.",
-	"registration": "Registration",
-	"login": "Login",
-	"alreadyHaveAccount": "Already have an account?"
+	"registration": "Inscription",
+	"alreadyHaveAccount": "Vous avez déjà un compte?"
 }

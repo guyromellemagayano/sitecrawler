@@ -1,13 +1,8 @@
-// React
+import Image from "next/image";
+import PropTypes from "prop-types";
 import * as React from "react";
 
-// NextJS
-import Image from "next/image";
-
-// External
-import PropTypes from "prop-types";
-
-const AppImage = ({ alt, height, src, width }) => {
+const AppImage = ({ alt = null, height = null, src = null, width = null }) => {
 	return <Image src={src} alt={alt} width={width} height={height} />;
 };
 
@@ -16,13 +11,6 @@ AppImage.propTypes = {
 	height: PropTypes.number,
 	src: PropTypes.string,
 	width: PropTypes.number
-};
-
-AppImage.defaultProps = {
-	alt: null,
-	height: null,
-	src: null,
-	width: null
 };
 
 export default AppImage;

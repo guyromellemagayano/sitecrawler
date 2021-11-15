@@ -1,53 +1,58 @@
-// React
-import * as React from "react";
-
-// External
-import { Formik } from "formik";
+import Alert from "@components/alerts";
+import { RegistrationApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
+import { RevalidationInterval } from "@configs/GlobalValues";
+import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
-import * as Yup from "yup";
-import axios from "axios";
-import Cookies from "js-cookie";
+import { Formik } from "formik";
+import useTranslation from "next-translate/useTranslation";
+import { useRouter } from "next/router";
+import * as React from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
+import { useSWRConfig } from "swr";
 import tw from "twin.macro";
-
-// Enums
-import { RegistrationApiEndpoint } from "@enums/ApiEndpoints";
-import { RegistrationLabels } from "@enums/RegistrationLabels";
-
-// Components
-import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
-import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
+import * as Yup from "yup";
 
 const RegistrationForm = () => {
-	const [errorEmail, setErrorEmail] = React.useState(false);
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [errorUsername, setErrorUsername] = React.useState(false);
-	const [successMsg, setSuccessMsg] = React.useState([]);
+	const [isErrorEmail, setIsErrorEmail] = React.useState(false);
+	const [isErrorUsername, setIsErrorUsername] = React.useState(false);
+	const [errorMessage, setErrorMessage] = React.useState([]);
+	const [successMessage, setSuccessMessage] = React.useState([]);
+
+	// Router
+	const { asPath } = useRouter();
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
+
+	// Translations
+	const { t } = useTranslation();
+	const firstName = t("common:firstName");
+	const lastName = t("common:lastName");
+	const username = t("common:username");
+	const emailAddress = t("common:emailAddress");
+	const password = t("common:password");
+	const repeatPassword = t("common:repeatPassword");
+	const requiredField = t("common:requiredField");
+	const invalidEmail = t("common:invalidEmail");
+	const tooShort = t("common:tooShort");
+	const tooLong = t("common:tooLong");
+	const submitting = t("common:submitting");
+	const createAccount = t("registration:createAccount");
+	const bothPasswordsNeedSame = t("common:bothPasswordsNeedSame");
+	const registrationOkSuccess = t("alerts:registrationOkSuccess");
+	const registrationUsernameAlreadyExistsError = t("alerts:registrationUsernameAlreadyExistsError");
+	const registrationEmailAlreadyExistsError = t("alerts:registrationEmailAlreadyExistsError");
+	const registrationBadRequestPostError = t("alerts:registrationBadRequestPostError");
+	const registrationUnknownError = t("alerts:registrationUnknownError");
 
 	return (
-		<>
-			{successMsg.length > 0
-				? successMsg.map((value, index) => {
-						return (
-							<SuccessMessageAlert
-								key={index}
-								message={value}
-								className={errorMsg.length > 1 && index > 0 ? "bottom-20" : "bottom-0"}
-							/>
-						);
-				  })
+		<React.Fragment>
+			{errorMessage && errorMessage.length > 0
+				? errorMessage.map((value, key) => <Alert key={key} message={value} isError />)
 				: null}
 
-			{errorMsg.length > 0
-				? errorMsg.map((value, index) => {
-						return (
-							<ErrorMessageAlert
-								key={index}
-								message={value}
-								className={errorMsg.length > 1 && index > 0 ? "bottom-20" : "bottom-0"}
-							/>
-						);
-				  })
+			{successMessage && successMessage.length > 0
+				? successMessage.map((value, key) => <Alert key={key} message={value} isSuccess />)
 				: null}
 
 			<Formik
@@ -60,22 +65,17 @@ const RegistrationForm = () => {
 					password2: ""
 				}}
 				validationSchema={Yup.object({
-					firstname: Yup.string().required(RegistrationLabels[0].label),
-					lastname: Yup.string().required(RegistrationLabels[0].label),
-					username: Yup.string().required(RegistrationLabels[0].label),
-					email: Yup.string()
-						.email(RegistrationLabels[1].label)
-						.required(RegistrationLabels[0].label),
-					password1: Yup.string()
-						.min(8, RegistrationLabels[12].label)
-						.max(128, RegistrationLabels[13].label)
-						.required(RegistrationLabels[0].label),
+					firstname: Yup.string().required(requiredField),
+					lastname: Yup.string().required(requiredField),
+					username: Yup.string().required(requiredField),
+					email: Yup.string().email(invalidEmail).required(requiredField),
+					password1: Yup.string().min(1, tooShort).max(150, tooLong).required(requiredField),
 					password2: Yup.string()
 						.when("password1", {
 							is: (val) => val && val.length > 0,
-							then: Yup.string().oneOf([Yup.ref("password1")], RegistrationLabels[14].label)
+							then: Yup.string().oneOf([Yup.ref("password1")], bothPasswordsNeedSame)
 						})
-						.required(RegistrationLabels[0].label)
+						.required(requiredField)
 				})}
 				onSubmit={async (values, { setSubmitting, resetForm }) => {
 					const body = {
@@ -87,70 +87,106 @@ const RegistrationForm = () => {
 						last_name: values.lastname
 					};
 
-					setErrorMsg([]);
-					setSuccessMsg([]);
-					setErrorUsername(false);
-					setErrorEmail(false);
+					const registrationResponse = await usePostMethod(RegistrationApiEndpoint, body);
+					const registrationResponseData = registrationResponse.data ?? null;
+					const registrationResponseStatus = registrationResponse.status ?? null;
 
-					return await axios
-						.post(RegistrationApiEndpoint, body, {
-							headers: {
-								Accept: "application/json",
-								"Content-Type": "application/json",
-								"X-CSRFToken": Cookies.get("csrftoken")
-							}
-						})
-						.then((response) => {
-							Math.floor(response.status / 200) === 1
-								? (() => {
-										setSubmitting(false);
-										resetForm({ values: "" });
-										setSuccessMsg((successMsg) => [...successMsg, RegistrationLabels[2].label]);
-								  })()
-								: (() => {
-										setSubmitting(false);
-										resetForm({ values: "" });
-										setErrorMsg((errorMsg) => [...errorMsg, RegistrationLabels[3].label]);
-								  })();
-						})
-						.catch((error) => {
-							error.response.data
-								? (() => {
-										error.response.data.username
-											? (() => {
-													Sentry.captureException(error.response.data.username);
+					if (registrationResponseData !== null && Math.round(registrationResponseStatus / 200) === 1) {
+						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+						mutate(UserApiEndpoint, false);
 
-													setSubmitting(false);
-													setErrorMsg((errorMsg) => [...errorMsg, error.response.data.username]);
-													setErrorUsername(true);
-											  })()
-											: null;
+						setSubmitting(false);
+						resetForm({ values: "" });
+						setSuccessMessage((prevState) => [...prevState, registrationOkSuccess]);
 
-										error.response.data.email
-											? (() => {
-													Sentry.captureException(error.response.data.email);
+						setTimeout(() => {
+							setSuccessMessage((prevState) => [
+								...prevState,
+								prevState.indexOf(registrationOkSuccess) !== -1
+									? prevState.splice(prevState.indexOf(registrationOkSuccess), 1)
+									: null
+							]);
+						}, RevalidationInterval);
+					} else {
+						let errorStatusCodeMessage = "";
 
-													setSubmitting(false);
-													setErrorMsg((errorMsg) => [...errorMsg, error.response.data.email]);
-													setErrorEmail(true);
-											  })()
-											: null;
-								  })()
-								: (() => {
-										Sentry.captureException(error.message);
+						resetForm({ values: "" });
+						setSubmitting(false);
 
-										setSubmitting(false);
-										resetForm({ values: "" });
-										setErrorMsg((errorMsg) => [...errorMsg, RegistrationLabels[3].label]);
-								  })();
+						switch (registrationResponseStatus) {
+							case 400:
+								errorStatusCodeMessage = registrationBadRequestPostError;
+								break;
+							default:
+								errorStatusCodeMessage = registrationUnknownError;
+								break;
+						}
+
+						setErrorMessage((prevState) => [...prevState, errorStatusCodeMessage]);
+
+						registrationResponseData.username
+							? (() => {
+									setErrorMessage((prevState) => [...prevState, registrationUsernameAlreadyExistsError]);
+									setIsErrorUsername(true);
+
+									setTimeout(() => {
+										setErrorMessage((prevState) => [
+											...prevState,
+											prevState.indexOf(registrationUsernameAlreadyExistsError) !== -1
+												? prevState.splice(prevState.indexOf(registrationUsernameAlreadyExistsError), 1)
+												: null
+										]);
+
+										setIsErrorUsername(false);
+									}, RevalidationInterval);
+							  })()
+							: null;
+
+						registrationResponseData.email
+							? (() => {
+									setErrorMessage((prevState) => [...prevState, registrationEmailAlreadyExistsError]);
+									setIsErrorEmail(true);
+
+									setTimeout(() => {
+										setErrorMessage((prevState) => [
+											...prevState,
+											prevState.indexOf(registrationEmailAlreadyExistsError) !== -1
+												? prevState.splice(prevState.indexOf(registrationEmailAlreadyExistsError), 1)
+												: null
+										]);
+
+										setIsErrorEmail(false);
+									}, RevalidationInterval);
+							  })()
+							: null;
+
+						// Capture unknown errors and send to Sentry
+						Sentry.configureScope((scope) => {
+							scope.setTag("route", asPath);
+							scope.setTag("status", registrationResponseStatus);
+							scope.setTag(
+								"message",
+								errorMessage.find((message) => message === errorStatusCodeMessage)
+							);
+							Sentry.captureException(new Error(registrationResponse));
 						});
+
+						setTimeout(() => {
+							setErrorMessage((prevState) => [
+								...prevState,
+								prevState.indexOf(errorStatusCodeMessage) !== -1
+									? prevState.splice(prevState.indexOf(errorStatusCodeMessage), 1)
+									: null
+							]);
+						}, RevalidationInterval);
+					}
 				}}
 			>
 				{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
 					<form onSubmit={handleSubmit}>
 						<div tw="mt-1">
 							<label htmlFor="firstname" tw="block text-sm font-medium text-gray-700">
-								{RegistrationLabels[5].label}
+								{firstName}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -161,8 +197,7 @@ const RegistrationForm = () => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting &&
-											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 										errors.firstname ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="firstname"
@@ -180,7 +215,7 @@ const RegistrationForm = () => {
 
 						<div tw="mt-6">
 							<label htmlFor="lastname" tw="block text-sm font-medium text-gray-700">
-								{RegistrationLabels[6].label}
+								{lastName}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -190,8 +225,7 @@ const RegistrationForm = () => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting &&
-											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 										errors.lastname ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="lastname"
@@ -209,7 +243,7 @@ const RegistrationForm = () => {
 
 						<div tw="mt-6">
 							<label htmlFor="username" tw="block text-sm font-medium text-gray-700">
-								{RegistrationLabels[7].label}
+								{username}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -219,9 +253,8 @@ const RegistrationForm = () => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting &&
-											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-										errors.username || errorUsername ? tw`border-red-300` : tw`border-gray-300`
+										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										errors.username || isErrorUsername ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="username"
 									onChange={handleChange}
@@ -238,7 +271,7 @@ const RegistrationForm = () => {
 
 						<div tw="mt-6">
 							<label htmlFor="email" tw="block text-sm font-medium text-gray-700">
-								{RegistrationLabels[8].label}
+								{emailAddress}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -248,9 +281,8 @@ const RegistrationForm = () => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting &&
-											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none `,
-										errors.email || errorEmail ? tw`border-red-300` : tw`border-gray-300`
+										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none `,
+										errors.email || isErrorEmail ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="email"
 									onChange={handleChange}
@@ -267,7 +299,7 @@ const RegistrationForm = () => {
 
 						<div tw="mt-6">
 							<label htmlFor="password" tw="block text-sm font-medium text-gray-700">
-								{RegistrationLabels[9].label}
+								{password}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -277,8 +309,7 @@ const RegistrationForm = () => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting &&
-											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 										errors.password1 ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="password1"
@@ -297,7 +328,7 @@ const RegistrationForm = () => {
 
 						<div tw="mt-6">
 							<label htmlFor="password" tw="block text-sm font-medium text-gray-700">
-								{RegistrationLabels[10].label}
+								{repeatPassword}
 							</label>
 							<div tw="mt-1 rounded-md">
 								<input
@@ -307,8 +338,7 @@ const RegistrationForm = () => {
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md sm:leading-5`,
-										isSubmitting &&
-											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 										errors.password2 ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="password2"
@@ -336,14 +366,14 @@ const RegistrationForm = () => {
 											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
 								>
-									{isSubmitting ? RegistrationLabels[15].label : RegistrationLabels[11].label}
+									{isSubmitting ? submitting : createAccount}
 								</button>
 							</span>
 						</div>
 					</form>
 				)}
 			</Formik>
-		</>
+		</React.Fragment>
 	);
 };
 

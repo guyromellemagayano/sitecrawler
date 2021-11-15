@@ -1,16 +1,18 @@
-// React
-import * as React from "react";
-
-// External
-import "twin.macro";
+import AppLogo from "@components/logos/AppLogo";
+import { NoAuthAppLogo, SiteLogoDark } from "@configs/GlobalValues";
+import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-
-// Components
-import AppLogo from "src/components/logos/AppLogo";
-import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
+import * as React from "react";
+import "twin.macro";
 
 const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
-	const appLogoAltText = "app-logo";
+	const { t } = useTranslation("common");
+	const appLogo = t("appLogo");
+	const isLoginText = t("isLogin");
+	const isSignUpText = t("isSignUp");
+	const isResetPasswordText = t("isResetPassword");
+	const isAddPasswordText = t("isAddPassword");
+	const isResetPasswordFormText = t("isResetPasswordForm");
 
 	return (
 		<div tw="sm:mx-auto sm:w-full sm:max-w-md">
@@ -18,21 +20,21 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 				<AppLogo
 					className="flex justify-center"
 					src={SiteLogoDark}
-					alt={GlobalLabels[0].label}
-					width={GlobalLabels[0].width}
-					height={GlobalLabels[0].height}
+					alt={appLogo}
+					width={NoAuthAppLogo.width}
+					height={NoAuthAppLogo.height}
 				/>
 			) : null}
 			<h2 tw="my-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
 				{isLogin
-					? "Log In"
+					? isLoginText
 					: isSignUp
-					? "Sign Up"
+					? isSignUpText
 					: isResetPassword
-					? "Reset Password"
+					? isResetPasswordText
 					: isAddPassword
-					? "Add Password"
-					: "Reset Password Form"}
+					? isAddPasswordText
+					: isResetPasswordFormText}
 			</h2>
 		</div>
 	);
