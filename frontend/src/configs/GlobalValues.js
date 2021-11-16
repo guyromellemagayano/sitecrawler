@@ -14,14 +14,17 @@ export const BadgeModalImage = {
 };
 
 // Numerical Values
-export const AlertLoadInterval = 3500;
 export const ComponentReadyInterval = 500;
 export const EndpointRefreshInterval = 7500;
+export const FormPasswordMinChars = 8;
+export const FormPasswordMaxChars = 128;
+export const FormStringMaxChars = 150;
+export const FormStringMinChars = 1;
 export const FormSubmissionInterval = 1000;
 export const LgScreenBreakpoint = 1024;
 export const MutateInterval = 1500;
-export const RevalidationInterval = 3000;
 export const RedirectInterval = 1250;
+export const RevalidationInterval = 3000;
 
 // File Locations
 export const SiteLogoDark = "/images/logos/site-logo-dark.svg";
