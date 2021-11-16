@@ -18,13 +18,16 @@ const Alert = ({ isError, isSuccess, isWarning, message }) => {
 	const { t } = useTranslation();
 	const dismissMessage = t("common:dismissMessage");
 
-	let alertMessage = message ?? null;
+	// https://ux.stackexchange.com/questions/85882/for-how-long-should-alerts-be-displayed/85897#85897
+	let alertRetentionTime = "";
 
-	React.useEffect(() => {
-		setTimeout(() => {
-			setIsOpen(false);
-		}, RevalidationInterval);
-	}, []);
+	message !== null && typeof message !== "undefined"
+		? (alertRetentionTime = message?.length * 75)
+		: (alertRetentionTime = RevalidationInterval);
+
+	setTimeout(() => {
+		setIsOpen(false);
+	}, alertRetentionTime);
 
 	return (
 		<Transition
@@ -36,11 +39,11 @@ const Alert = ({ isError, isSuccess, isWarning, message }) => {
 			leaveFrom="opacity-100"
 			leaveTo="opacity-0"
 			css={[
-				tw`max-w-sm z-10 origin-top fixed bottom-0 right-6 rounded-md shadow p-4 mx-auto my-6`,
+				tw`max-w-sm z-10 origin-top rounded-md shadow p-4`,
 				isSuccess ? tw`bg-green-100` : isError ? tw`bg-red-100` : isWarning ? tw`bg-yellow-100` : tw`bg-indigo-100`
 			]}
 		>
-			<div tw="flex items-center">
+			<div tw="flex items-start">
 				<div tw="flex-shrink-0">
 					{isSuccess ? (
 						<CheckCircleIcon tw="h-5 w-5 text-green-400" />
@@ -65,7 +68,7 @@ const Alert = ({ isError, isSuccess, isWarning, message }) => {
 								: tw`text-indigo-800`
 						]}
 					>
-						{alertMessage}
+						{message}
 					</h3>
 				</div>
 				<div tw="ml-auto pl-3">
