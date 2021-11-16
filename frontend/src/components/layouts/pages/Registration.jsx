@@ -12,7 +12,7 @@ export const RegistrationPageLayout = () => {
 	// Translations
 	const { t } = useTranslation();
 	const agreeTermsPrivacyPolicy = t("registration:agreeTermsPrivacyPolicy");
-	const alreadyHaveAccount = t("registration:alreadyHaveAccount");
+	const alreadyHaveAccount = t("common:alreadyHaveAccount");
 	const isLogin = t("common:isLogin");
 
 	return (
