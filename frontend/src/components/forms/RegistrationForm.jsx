@@ -1,6 +1,11 @@
 import Alert from "@components/alerts";
 import { RegistrationApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { RevalidationInterval } from "@configs/GlobalValues";
+import {
+	FormPasswordMaxChars,
+	FormPasswordMinChars,
+	FormStringMaxChars,
+	FormStringMinChars
+} from "@configs/GlobalValues";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
@@ -47,13 +52,21 @@ const RegistrationForm = () => {
 
 	return (
 		<React.Fragment>
-			{errorMessage && errorMessage.length > 0
-				? errorMessage.map((value, key) => <Alert key={key} message={value} isError />)
-				: null}
+			{errorMessage !== [] && errorMessage.length > 0 ? (
+				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
+					{errorMessage.map((value, key) => (
+						<Alert key={key} message={value} isError />
+					))}
+				</div>
+			) : null}
 
-			{successMessage && successMessage.length > 0
-				? successMessage.map((value, key) => <Alert key={key} message={value} isSuccess />)
-				: null}
+			{successMessage !== [] && successMessage.length > 0 ? (
+				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
+					{successMessage.map((value, key) => (
+						<Alert key={key} message={value} isSuccess />
+					))}
+				</div>
+			) : null}
 
 			<Formik
 				initialValues={{
@@ -67,9 +80,15 @@ const RegistrationForm = () => {
 				validationSchema={Yup.object({
 					firstname: Yup.string().required(requiredField),
 					lastname: Yup.string().required(requiredField),
-					username: Yup.string().required(requiredField),
+					username: Yup.string()
+						.min(FormStringMinChars, tooShort)
+						.max(FormStringMaxChars, tooLong)
+						.required(requiredField),
 					email: Yup.string().email(invalidEmail).required(requiredField),
-					password1: Yup.string().min(1, tooShort).max(150, tooLong).required(requiredField),
+					password1: Yup.string()
+						.min(FormPasswordMinChars, tooShort)
+						.max(FormPasswordMaxChars, tooLong)
+						.required(requiredField),
 					password2: Yup.string()
 						.when("password1", {
 							is: (val) => val && val.length > 0,
@@ -97,16 +116,12 @@ const RegistrationForm = () => {
 
 						setSubmitting(false);
 						resetForm({ values: "" });
-						setSuccessMessage((prevState) => [...prevState, registrationOkSuccess]);
-
-						setTimeout(() => {
-							setSuccessMessage((prevState) => [
-								...prevState,
-								prevState.indexOf(registrationOkSuccess) !== -1
-									? prevState.splice(prevState.indexOf(registrationOkSuccess), 1)
-									: null
-							]);
-						}, RevalidationInterval);
+						setSuccessMessage((prevState) => [
+							...prevState,
+							prevState.indexOf(registrationOkSuccess) !== -1
+								? prevState.find((prevState) => prevState === registrationOkSuccess)
+								: registrationOkSuccess
+						]);
 					} else {
 						let errorStatusCodeMessage = "";
 
@@ -122,41 +137,36 @@ const RegistrationForm = () => {
 								break;
 						}
 
-						setErrorMessage((prevState) => [...prevState, errorStatusCodeMessage]);
+						setErrorMessage((prevState) => [
+							...prevState,
+							prevState.indexOf(errorStatusCodeMessage) !== -1
+								? prevState.find((prevState) => prevState === errorStatusCodeMessage)
+								: errorStatusCodeMessage
+						]);
 
 						registrationResponseData.username
 							? (() => {
-									setErrorMessage((prevState) => [...prevState, registrationUsernameAlreadyExistsError]);
+									setErrorMessage((prevState) => [
+										...prevState,
+										prevState.indexOf(registrationUsernameAlreadyExistsError) !== -1
+											? prevState.find((prevState) => prevState === registrationUsernameAlreadyExistsError)
+											: registrationUsernameAlreadyExistsError
+									]);
+
 									setIsErrorUsername(true);
-
-									setTimeout(() => {
-										setErrorMessage((prevState) => [
-											...prevState,
-											prevState.indexOf(registrationUsernameAlreadyExistsError) !== -1
-												? prevState.splice(prevState.indexOf(registrationUsernameAlreadyExistsError), 1)
-												: null
-										]);
-
-										setIsErrorUsername(false);
-									}, RevalidationInterval);
 							  })()
 							: null;
 
 						registrationResponseData.email
 							? (() => {
-									setErrorMessage((prevState) => [...prevState, registrationEmailAlreadyExistsError]);
+									setErrorMessage((prevState) => [
+										...prevState,
+										prevState.indexOf(registrationEmailAlreadyExistsError) !== -1
+											? prevState.find((prevState) => prevState === registrationEmailAlreadyExistsError)
+											: registrationEmailAlreadyExistsError
+									]);
+
 									setIsErrorEmail(true);
-
-									setTimeout(() => {
-										setErrorMessage((prevState) => [
-											...prevState,
-											prevState.indexOf(registrationEmailAlreadyExistsError) !== -1
-												? prevState.splice(prevState.indexOf(registrationEmailAlreadyExistsError), 1)
-												: null
-										]);
-
-										setIsErrorEmail(false);
-									}, RevalidationInterval);
 							  })()
 							: null;
 
@@ -170,15 +180,6 @@ const RegistrationForm = () => {
 							);
 							Sentry.captureException(new Error(registrationResponse));
 						});
-
-						setTimeout(() => {
-							setErrorMessage((prevState) => [
-								...prevState,
-								prevState.indexOf(errorStatusCodeMessage) !== -1
-									? prevState.splice(prevState.indexOf(errorStatusCodeMessage), 1)
-									: null
-							]);
-						}, RevalidationInterval);
 					}
 				}}
 			>

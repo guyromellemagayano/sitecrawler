@@ -1,7 +1,7 @@
 import Layout from "@components/layouts";
 import { RegistrationPageLayout } from "@components/layouts/pages/Registration";
 import { UserApiEndpoint } from "@configs/ApiEndpoints";
-import { SitesLink } from "@configs/PageLinks";
+import { LoginLink, SitesLink } from "@configs/PageLinks";
 import { server } from "@configs/ServerEnv";
 import { useGetMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
@@ -48,6 +48,7 @@ const Registration = () => {
 	// Prefetch sites page for faster loading
 	React.useEffect(() => {
 		router.prefetch(SitesLink);
+		router.prefetch(LoginLink);
 	}, []);
 
 	return (
