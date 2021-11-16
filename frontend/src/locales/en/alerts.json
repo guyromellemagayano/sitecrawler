@@ -49,13 +49,19 @@
 	"userServiceUnavailableGetError": "We can't fetch your user information as the service is currently unavailable. Please try to access this page in a few minutes.",
 	"userTooManyRequestsGetError": "You're sending us way too many user requests right now! Can you wait a bit for us to finish this request?",
 	"userUnknownError": "An unknown error has occurred while fetching your user information. Please try again.",
-
+	"loginOkSuccess": "Login success! Redirecting you to Sites Dashboard...",
 	"loginBadRequestPostError": "We're unable to log you in with the provided credentials. Please recheck your login details.",
 	"loginUnknownError": "An unknown error has occurred while we're logging you in. Please try again.",
-
 	"registrationOkSuccess": "Thanks for signing up. Please check your email for verification!",
 	"registrationUsernameAlreadyExistsError": "It seems that this username was already taken and still exists. Try another one.",
 	"registrationEmailAlreadyExistsError": "It seems that this email address was already taken and still exists. Try another one.",
 	"registrationBadRequestPostError": "We're unable to register you with the provided credentials. Please recheck your registration details.",
-	"registrationUnknownError": "An unknown error has occurred while we registered your user information. Please try again."
+	"registrationUnknownError": "An unknown error has occurred while we registered your user information. Please try again.",
+	"resetPasswordOkSuccess": "Reset password request sent successfully! Please check your email to continue the process.",
+	"resetPasswordBadRequestPostError": "We're unable to reset your password with the provided credentials. Please recheck your reset password details.",
+	"resetPasswordUnknownError": "An unknown error has occurred while we're resetting your password. Please try again.",
+	"updatePasswordOkSuccess": "Password has been reset successfully. Redirecting you to login page...",
+	"updatePasswordBadRequestPostError": "We're unable to update your password with the provided credentials. Please recheck your update password details.",
+	"updatePasswordInvalidTokenError": "Token already expired. We can't process with your request anymore.",
+	"updatePasswordUnknownError": "An unknown error has occurred while we're updating your password. Please try again."
 }

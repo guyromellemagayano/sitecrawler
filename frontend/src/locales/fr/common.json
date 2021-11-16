@@ -1,7 +1,8 @@
 {
 	"about": "À propos",
 	"allRightsReserved": "Tous les droits sont réservés",
-	"appLogoAlt": "app-logo",
+	"alreadyHaveAccount": "Vous avez déjà un compte?",
+	"appLogo": "app-logo",
 	"badgeModalImgAlt": "badge-modal-img",
 	"bothPasswordsNeedSame": "Les deux mots de passe doivent être identiques !",
 	"contactSupport": "Contactez le support",
@@ -21,7 +22,6 @@
 	"loaderMessage": "Chargement...",
 	"pageText": "page",
 	"password": "Mot de passe",
-	"passwordsDontMatch": "Les mots de passe ne correspondent pas",
 	"privacyPolicy": "Politique de confidentialité",
 	"redirectingToPage": "Vous rediriger vers",
 	"repeatPassword": "Répéter le mot de passe",

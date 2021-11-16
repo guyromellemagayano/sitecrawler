@@ -1,7 +1,8 @@
 {
 	"about": "Wat betreft",
 	"allRightsReserved": "Alle rechten voorbehouden",
-	"appLogoAlt": "app-logo",
+	"alreadyHaveAccount": "Heb je al een account?",
+	"appLogo": "app-logo",
 	"badgeModalImgAlt": "badge-modal-img",
 	"bothPasswordsNeedSame": "Beide wachtwoorden moeten hetzelfde zijn!",
 	"contactSupport": "Contact opnemen met ondersteuning",
@@ -21,7 +22,6 @@
 	"loaderMessage": "Bezig met laden...",
 	"pageText": "bladzijde",
 	"password": "Wachtwoord",
-	"passwordsDontMatch": "De wachtwoorden komen niet overeen",
 	"privacyPolicy": "Privacybeleid",
 	"redirectingToPage": "U doorverwijzen naar",
 	"repeatPassword": "Herhaal wachtwoord",

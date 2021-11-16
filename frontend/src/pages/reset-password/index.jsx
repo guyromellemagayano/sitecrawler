@@ -1,55 +1,59 @@
-// React
+import Layout from "@components/layouts";
+import { ResetPasswordPageLayout } from "@components/layouts/pages/ResetPassword";
+import { UserApiEndpoint } from "@configs/ApiEndpoints";
+import { LoginLink, SitesLink } from "@configs/PageLinks";
+import { server } from "@configs/ServerEnv";
+import { useGetMethod } from "@hooks/useHttpMethod";
+import { NextSeo } from "next-seo";
+import useTranslation from "next-translate/useTranslation";
+import { useRouter } from "next/router";
 import * as React from "react";
 
-// NextJS
-import Link from "next/link";
+// Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
+export async function getServerSideProps({ req }) {
+	const userResponse = await useGetMethod(`${server + UserApiEndpoint}`, req.headers);
+	const userData = userResponse.data ?? null;
+	const userStatus = userResponse.status ?? null;
 
-// External
-import "twin.macro";
-import { NextSeo } from "next-seo";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import ReactHtmlParser from "react-html-parser";
-
-// Enums
-import { LoginLink } from "@enums/PageLinks";
-import { ResetPasswordLabels } from "@enums/ResetPasswordLabels";
-
-// Components
-import Layout from "@components/layouts";
-import LogoLabel from "@components/labels/LogoLabel";
-import ResetPasswordForm from "@components/forms/ResetPasswordForm";
+	if (
+		typeof userData !== "undefined" &&
+		userData !== null &&
+		!userData.detail &&
+		typeof userData === "object" &&
+		Object.keys(userData).length > 0 &&
+		Math.round(userStatus / 200 === 1)
+	) {
+		return {
+			redirect: {
+				destination: SitesLink,
+				permanent: false
+			}
+		};
+	} else {
+		return {
+			props: {}
+		};
+	}
+}
 
 const ResetPassword = () => {
+	// Router
+	const router = useRouter();
+
+	// Translations
+	const { t } = useTranslation("common");
+	const isResetPassword = t("isResetPassword");
+
+	// Prefetch sites page for faster loading
+	React.useEffect(() => {
+		router.prefetch(SitesLink);
+		router.prefetch(LoginLink);
+	}, []);
+
 	return (
 		<Layout>
-			<NextSeo title={ResetPasswordLabels[5].label} />
-
-			<div tw="bg-gray-50 overflow-auto h-screen">
-				<Scrollbars universal>
-					<div tw="flex flex-col justify-center h-full">
-						<div tw="relative py-12 sm:px-6 lg:px-8">
-							<LogoLabel isResetPassword />
-
-							<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-								<div tw="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
-									<ResetPasswordForm />
-								</div>
-
-								<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
-									<span tw="px-2 py-5 text-gray-500">
-										{ReactHtmlParser(ResetPasswordLabels[7].label)}
-										<Link href={LoginLink}>
-											<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
-												{ResetPasswordLabels[8].label}
-											</a>
-										</Link>
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</Scrollbars>
-			</div>
+			<NextSeo title={isResetPassword} />
+			<ResetPasswordPageLayout />
 		</Layout>
 	);
 };

@@ -1,73 +1,115 @@
-// React
-import * as React from "react";
-
-// NextJS
-import dynamic from "next/dynamic";
-
-// External
-import { Formik } from "formik";
-import * as Yup from "yup";
-import axios from "axios";
-import Cookies from "js-cookie";
-import tw from "twin.macro";
-
-// Enums
-import { ResetPasswordApiEndpoint } from "@enums/ApiEndpoints";
-import { ResetPasswordLabels } from "@enums/ResetPasswordLabels";
+import Alert from "@components/alerts";
+import { ResetPasswordApiEndpoint } from "@configs/ApiEndpoints";
 import { usePostMethod } from "@hooks/useHttpMethod";
-
-// Components
-const ErrorMessageAlert = dynamic(() => import("@components/alerts/ErrorMessageAlert"));
-const SuccessMessageAlert = dynamic(() => import("@components/alerts/SuccessMessageAlert"));
+import * as Sentry from "@sentry/nextjs";
+import { Formik } from "formik";
+import useTranslation from "next-translate/useTranslation";
+import { useRouter } from "next/router";
+import * as React from "react";
+import tw from "twin.macro";
+import * as Yup from "yup";
 
 const ResetPasswordForm = () => {
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
+	const [errorMessage, setErrorMessage] = React.useState([]);
+	const [successMessage, setSuccessMessage] = React.useState([]);
+
+	// Router
+	const { asPath } = useRouter();
+
+	// Translations
+	const { t } = useTranslation();
+	const requiredField = t("common:requiredField");
+	const invalidEmail = t("common:invalidEmail");
+	const resetPasswordOkSuccess = t("alerts:resetPasswordOkSuccess");
+	const resetPasswordBadRequestPostError = t("alerts:resetPasswordBadRequestPostError");
+	const resetPasswordUnknownError = t("alerts:resetPasswordUnknownError");
+	const emailAddress = t("common:emailAddress");
+	const isResetPassword = t("common:isResetPassword");
+	const submitting = t("common:submitting");
 
 	return (
-		<>
-			{errorMsg.length > 0
-				? errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)
-				: null}
+		<React.Fragment>
+			{errorMessage !== [] && errorMessage.length > 0 ? (
+				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
+					{errorMessage.map((value, key) => (
+						<Alert key={key} message={value} isError />
+					))}
+				</div>
+			) : null}
 
-			{successMsg.length > 0
-				? successMsg.map((value, index) => <SuccessMessageAlert key={index} message={value} />)
-				: null}
+			{successMessage !== [] && successMessage.length > 0 ? (
+				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
+					{successMessage.map((value, key) => (
+						<Alert key={key} message={value} isSuccess />
+					))}
+				</div>
+			) : null}
 
 			<Formik
 				initialValues={{
 					email: ""
 				}}
 				validationSchema={Yup.object({
-					email: Yup.string()
-						.email(ResetPasswordLabels[1].label)
-						.required(ResetPasswordLabels[0].label)
+					email: Yup.string().email(invalidEmail).required(requiredField)
 				})}
 				onSubmit={async (values, { setSubmitting, resetForm }) => {
 					const body = {
 						email: values.email
 					};
 
-					const response = await usePostMethod(ResetPasswordApiEndpoint, body);
+					const resetPasswordResponse = await usePostMethod(ResetPasswordApiEndpoint, body);
+					const resetPasswordResponseData = resetPasswordResponse.data ?? null;
+					const resetPasswordResponseStatus = resetPasswordResponse.status ?? null;
 
-					Math.floor(response?.status / 200) === 1
-						? (() => {
-								resetForm({ values: "" });
-								setSubmitting(false);
-								setSuccessMsg((successMsg) => [...successMsg, response?.data?.detail]);
-						  })()
-						: (() => {
-								resetForm({ values: "" });
-								setSubmitting(false);
-								setErrorMsg((errorMsg) => [...errorMsg, ResetPasswordLabels[3].label]);
-						  })();
+					if (resetPasswordResponseData !== null && Math.round(resetPasswordResponseStatus / 200) === 1) {
+						resetForm({ values: "" });
+						setSubmitting(false);
+						setSuccessMessage((prevState) => [
+							...prevState,
+							prevState.indexOf(resetPasswordOkSuccess) !== -1
+								? prevState.find((prevState) => prevState === resetPasswordOkSuccess)
+								: resetPasswordOkSuccess
+						]);
+					} else {
+						let errorStatusCodeMessage = "";
+
+						resetForm({ values: "" });
+						setSubmitting(false);
+
+						switch (resetPasswordResponseStatus) {
+							case 400:
+								errorStatusCodeMessage = resetPasswordBadRequestPostError;
+								break;
+							default:
+								errorStatusCodeMessage = resetPasswordUnknownError;
+								break;
+						}
+
+						setErrorMessage((prevState) => [
+							...prevState,
+							prevState.indexOf(errorStatusCodeMessage) !== -1
+								? prevState.find((prevState) => prevState === errorStatusCodeMessage)
+								: errorStatusCodeMessage
+						]);
+
+						// Capture unknown errors and send to Sentry
+						Sentry.configureScope((scope) => {
+							scope.setTag("route", asPath);
+							scope.setTag("status", resetPasswordResponseStatus);
+							scope.setTag(
+								"message",
+								errorMessage.find((message) => message === errorStatusCodeMessage)
+							);
+							Sentry.captureException(new Error(resetPasswordResponse));
+						});
+					}
 				}}
 			>
 				{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
 					<form onSubmit={handleSubmit}>
 						<div tw="mt-1">
 							<label htmlFor="email" tw="block text-sm font-medium leading-5 text-gray-700">
-								{ResetPasswordLabels[4].label}
+								{emailAddress}
 							</label>
 							<div tw="mt-1 rounded-md shadow-sm">
 								<input
@@ -78,9 +120,8 @@ const ResetPasswordForm = () => {
 									autoFocus={true}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-										isSubmitting &&
-											tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-										errors.email || errorMsg ? tw`border-red-300` : tw`border-gray-300`
+										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+										errors.email ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="email"
 									onChange={handleChange}
@@ -107,14 +148,14 @@ const ResetPasswordForm = () => {
 											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
 								>
-									{isSubmitting ? ResetPasswordLabels[6].label : ResetPasswordLabels[5].label}
+									{isSubmitting ? submitting : isResetPassword}
 								</button>
 							</span>
 						</div>
 					</form>
 				)}
 			</Formik>
-		</>
+		</React.Fragment>
 	);
 };
 

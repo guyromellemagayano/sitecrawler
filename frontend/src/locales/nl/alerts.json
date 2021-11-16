@@ -49,13 +49,19 @@
 	"userServiceUnavailableGetError": "We kunnen uw gebruikersgegevens niet ophalen omdat de service momenteel niet beschikbaar is. Probeer deze pagina over een paar minuten te openen.",
 	"userTooManyRequestsGetError": "We kunnen uw gebruikersgegevens niet ophalen omdat de service momenteel niet beschikbaar is. Probeer deze pagina over een paar minuten te openen.",
 	"userUnknownError": "Er is een onbekende fout opgetreden bij het ophalen van uw gebruikersgegevens. Probeer het opnieuw.",
-
+	"loginOkSuccess": "Succesvol ingelogd! U wordt doorverwezen naar het Sites-dashboard...",
 	"loginBadRequestPostError": "We kunnen u niet aanmelden met de opgegeven inloggegevens. Controleer uw inloggegevens opnieuw.",
 	"loginUnknownError": "Er is een onbekende fout opgetreden tijdens het inloggen. Probeer het opnieuw.",
-
 	"registrationOkSuccess": "Bedankt voor het aanmelden. Controleer uw e-mail voor verificatie!",
 	"registrationUsernameAlreadyExistsError": "Het lijkt erop dat deze gebruikersnaam al in gebruik was en nog steeds bestaat. Probeer een andere.",
 	"registrationEmailAlreadyExistsError": "Het lijkt erop dat dit e-mailadres al in gebruik was en nog steeds bestaat. Probeer een andere.",
 	"registrationBadRequestPostError": "We kunnen u niet registreren met de opgegeven inloggegevens. Controleer uw registratiegegevens opnieuw.",
-	"registrationUnknownError": "Er is een onbekende fout opgetreden bij het registreren van uw gebruikersgegevens. Probeer het opnieuw."
+	"registrationUnknownError": "Er is een onbekende fout opgetreden bij het registreren van uw gebruikersgegevens. Probeer het opnieuw.",
+	"resetPasswordOkSuccess": "Reset wachtwoordverzoek succesvol verzonden! Controleer uw e-mail om door te gaan met het proces.",
+	"resetPasswordBadRequestPostError": "We kunnen uw wachtwoord niet opnieuw instellen met de opgegeven inloggegevens. Controleer de details van uw reset-wachtwoord opnieuw.",
+	"resetPasswordUnknownError": "Er is een onbekende fout opgetreden terwijl we uw wachtwoord opnieuw instellen. Probeer het opnieuw.",
+	"updatePasswordOkSuccess": "Wachtwoord is succesvol gereset. U wordt doorverwezen naar de inlogpagina...",
+	"updatePasswordBadRequestPostError": "We kunnen uw wachtwoord niet bijwerken met de opgegeven inloggegevens. Controleer de details van uw updatewachtwoord opnieuw.",
+	"updatePasswordInvalidTokenError": "Token is al verlopen. We kunnen uw verzoek niet meer in behandeling nemen.",
+	"updatePasswordUnknownError": "Er is een onbekende fout opgetreden tijdens het bijwerken van uw wachtwoord. Probeer het opnieuw."
 }
