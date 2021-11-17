@@ -1,86 +1,66 @@
 import { customAxiosHeaders } from "@configs/CustomAxiosHeaders";
-import { FormSubmissionInterval } from "@enums/GlobalValues";
-import { sleep } from "@utils/sleep";
+import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
+
+// Use `axios` interceptors for all HTTP methods (GET, POST, PUT, DELETE, etc.)
+axios.interceptors.request.use((req) => {
+	req.headers = {
+		...req.headers,
+		...customAxiosHeaders
+	};
+
+	return req;
+});
+
+axios.interceptors.response.use(
+	(res) => res,
+	(err) => {
+		if (err.response) {
+			// The request was made and the server responsded with a status code
+			// that falls out of the the range of 2xx
+			Sentry.captureException(err.response);
+
+			return err.response;
+		} else if (err.request) {
+			// The request was made but no response was received
+			// `err.request` is an instance of XMLHttpRequest in the browser and an instance of
+			// http.ClientRequest in node.js
+			Sentry.captureException(err.request);
+
+			return err.request;
+		} else {
+			// Something happened in setting up the request that triggered an Error
+			Sentry.captureException(err.config);
+
+			return err.config;
+		}
+	}
+);
 
 /**
  * Axios callback function to be used for deleting data
  *
  * @param {string} endpoint
- * @returns {object} response
- * @return {object} error
+ * @param {object} headers
+ * @returns {object} Promise object representing the DELETE response
  */
-export const useDeleteMethod = async (endpoint = null) => {
-	return await axios
-		.delete(endpoint ?? null, {
-			headers: customAxiosHeaders,
-			validateStatus: (status) => {
-				return status < 500;
-			}
-		})
-		.then(sleep(FormSubmissionInterval))
-		.then((response) => {
-			return response;
-		})
-		.catch((error) => {
-			if (error.response) {
-				// The request was made and the server responsded with a status code
-				// that falls out of the the range of 2xx
-				console.log(error.response.data.toJSON());
-				console.log(error.response.status);
-				console.log(error.response.headers.toJSON());
-			} else if (error.request) {
-				// The request was made but no response was received
-				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-				// http.ClientRequest in node.js
-				console.log(error.request);
-			} else {
-				// Something happened in setting up the request that triggered an Error
-				console.log("Error: ", error.message);
-			}
-
-			return error.config;
-		});
+export const useDeleteMethod = async (endpoint = null, headers = null) => {
+	return await axios.delete(endpoint ?? null, {
+		headers: headers ?? customAxiosHeaders
+	});
 };
 
 /**
  * Axios callback function to be used for getting data
  *
  * @param {string} endpoint
- * @returns {object} response
- * @return {object} error
+ * @param {object} headers
+ * @returns {object} Promise object representing the GET response
  */
-export const useGetMethod = async (endpoint = null) => {
-	return await axios
-		.get(endpoint ?? null, {
-			headers: customAxiosHeaders,
-			validateStatus: (status) => {
-				return status < 500;
-			}
-		})
-		.then(sleep(FormSubmissionInterval))
-		.then((response) => {
-			return response;
-		})
-		.catch((error) => {
-			if (error.response) {
-				// The request was made and the server responsded with a status code
-				// that falls out of the the range of 2xx
-				console.log(error.response.data.toJSON());
-				console.log(error.response.status);
-				console.log(error.response.headers.toJSON());
-			} else if (error.request) {
-				// The request was made but no response was received
-				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-				// http.ClientRequest in node.js
-				console.log(error.request);
-			} else {
-				// Something happened in setting up the request that triggered an Error
-				console.log("Error: ", error.message);
-			}
-
-			return error.config;
-		});
+export const useGetMethod = async (endpoint = null, headers = null) => {
+	return await axios.get(endpoint ?? null, {
+		headers: headers ?? customAxiosHeaders
+	});
 };
 
 /**
@@ -88,40 +68,13 @@ export const useGetMethod = async (endpoint = null) => {
  *
  * @param {string} endpoint
  * @param {object} data
- * @returns {object} response
- * @returns {object} error
+ * @param {object} headers
+ * @returns {object} Promise object representing the PATCH response
  */
-export const usePatchMethod = async (endpoint = null, data = null) => {
-	return await axios
-		.patch(endpoint ?? null, data ?? null, {
-			headers: customAxiosHeaders,
-			validateStatus: (status) => {
-				return status < 500;
-			}
-		})
-		.then(sleep(FormSubmissionInterval))
-		.then((response) => {
-			return response;
-		})
-		.catch((error) => {
-			if (error.response) {
-				// The request was made and the server responsded with a status code
-				// that falls out of the the range of 2xx
-				console.log(error.response.data.toJSON());
-				console.log(error.response.status);
-				console.log(error.response.headers.toJSON());
-			} else if (error.request) {
-				// The request was made but no response was received
-				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-				// http.ClientRequest in node.js
-				console.log(error.request);
-			} else {
-				// Something happened in setting up the request that triggered an Error
-				console.log("Error: ", error.message);
-			}
-
-			return error.config;
-		});
+export const usePatchMethod = async (endpoint = null, data = null, headers = null) => {
+	return await axios.patch(endpoint ?? null, data ?? null, {
+		headers: headers ?? customAxiosHeaders
+	});
 };
 
 /**
@@ -129,40 +82,13 @@ export const usePatchMethod = async (endpoint = null, data = null) => {
  *
  * @param {string} endpoint
  * @param {object} data
- * @returns {object} response
- * @returns {object} error
+ * @param {object} headers
+ * @returns {object} Promise object representing the POST response
  */
-export const usePostMethod = async (endpoint = null, data = null) => {
-	return await axios
-		.post(endpoint ?? null, data ?? null, {
-			headers: customAxiosHeaders,
-			validateStatus: (status) => {
-				return status < 500;
-			}
-		})
-		.then(sleep(FormSubmissionInterval))
-		.then((response) => {
-			return response;
-		})
-		.catch((error) => {
-			if (error.response) {
-				// The request was made and the server responsded with a status code
-				// that falls out of the the range of 2xx
-				console.log(error.response.data.toJSON());
-				console.log(error.response.status);
-				console.log(error.response.headers.toJSON());
-			} else if (error.request) {
-				// The request was made but no response was received
-				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-				// http.ClientRequest in node.js
-				console.log(error.request);
-			} else {
-				// Something happened in setting up the request that triggered an Error
-				console.log("Error: ", error.message);
-			}
-
-			return error.config;
-		});
+export const usePostMethod = async (endpoint = null, data = null, headers = null) => {
+	return await axios.post(endpoint ?? null, data ?? null, {
+		headers: headers ?? customAxiosHeaders
+	});
 };
 
 /**
@@ -170,38 +96,11 @@ export const usePostMethod = async (endpoint = null, data = null) => {
  *
  * @param {string} endpoint
  * @param {object} data
- * @returns {object} response
- * @returns {object} error
+ * @param {object} headers
+ * @returns {object} Promise object representing the PUT response
  */
-export const usePutMethod = async (endpoint = null, data = null) => {
-	return await axios
-		.put(endpoint ?? null, data ?? null, {
-			headers: customAxiosHeaders,
-			validateStatus: (status) => {
-				return status < 500;
-			}
-		})
-		.then(sleep(FormSubmissionInterval))
-		.then((response) => {
-			return response;
-		})
-		.catch((error) => {
-			if (error.response) {
-				// The request was made and the server responsded with a status code
-				// that falls out of the the range of 2xx
-				console.log(error.response.data.toJSON());
-				console.log(error.response.status);
-				console.log(error.response.headers.toJSON());
-			} else if (error.request) {
-				// The request was made but no response was received
-				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-				// http.ClientRequest in node.js
-				console.log(error.request);
-			} else {
-				// Something happened in setting up the request that triggered an Error
-				console.log("Error: ", error.message);
-			}
-
-			return error.config;
-		});
+export const usePutMethod = async (endpoint = null, data = null, headers = null) => {
+	return await axios.put(endpoint ?? null, data ?? null, {
+		headers: headers ?? customAxiosHeaders
+	});
 };
