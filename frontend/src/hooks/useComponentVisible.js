@@ -1,6 +1,13 @@
-// React
 import * as React from "react";
 
+/**
+ * Custom React hook that handles showing/hiding <Transition> components.
+ * It can hide those components either by pressing the `ESC` buttom or by clicking
+ * outside the component DOM
+ *
+ * @param {boolean} initialIsVisible
+ * @returns {object} ref, isComponentVisible, setIsComponentVisible
+ */
 export const useComponentVisible = (initialIsVisible) => {
 	const [isComponentVisible, setIsComponentVisible] = React.useState(initialIsVisible);
 
@@ -31,6 +38,14 @@ export const useComponentVisible = (initialIsVisible) => {
 	return { ref, isComponentVisible, setIsComponentVisible };
 };
 
+/**
+ * Custom React hook that handles showing/hiding site verification modal components.
+ * It can hide those components either by pressing the `ESC` buttom or by clicking
+ * outside the component DOM
+ *
+ * @param {boolean} initialIsVisible
+ * @returns {object} siteVerifyModalRef, isSiteVerifyModalVisible, setIsSiteVerifyModalVisible
+ */
 export const useSiteVerifyModalVisible = (initialIsVisible) => {
 	const [isSiteVerifyModalVisible, setIsSiteVerifyModalVisible] = React.useState(initialIsVisible);
 
@@ -61,6 +76,14 @@ export const useSiteVerifyModalVisible = (initialIsVisible) => {
 	return { siteVerifyModalRef, isSiteVerifyModalVisible, setIsSiteVerifyModalVisible };
 };
 
+/**
+ * Custom React hook that handles showing/hiding site delete modal components.
+ * It can hide those components either by pressing the `ESC` buttom or by clicking
+ * outside the component DOM
+ *
+ * @param {boolean} initialIsVisible
+ * @returns {object} siteDeleteModalRef, isSiteDeleteModalVisible, setIsSiteDeleteModalVisible
+ */
 export const useSiteDeleteModalVisible = (initialIsVisible) => {
 	const [isSiteDeleteModalVisible, setIsSiteDeleteModalVisible] = React.useState(initialIsVisible);
 
@@ -91,9 +114,16 @@ export const useSiteDeleteModalVisible = (initialIsVisible) => {
 	return { siteDeleteModalRef, isSiteDeleteModalVisible, setIsSiteDeleteModalVisible };
 };
 
+/**
+ * Custom React hook that handles showing/hiding new active plan modal components.
+ * It can hide those components either by pressing the `ESC` buttom or by clicking
+ * outside the component DOM
+ *
+ * @param {boolean} initialIsVisible
+ * @returns {object} newActivePlanModalRef, isNewActivePlanModalVisible, setIsNewActivePlanModalVisible
+ */
 export const useNewActivePlanModalVisible = (initialIsVisible) => {
-	const [isNewActivePlanModalVisible, setIsNewActivePlanModalVisible] =
-		React.useState(initialIsVisible);
+	const [isNewActivePlanModalVisible, setIsNewActivePlanModalVisible] = React.useState(initialIsVisible);
 
 	const newActivePlanModalRef = React.useRef(null);
 
@@ -122,9 +152,16 @@ export const useNewActivePlanModalVisible = (initialIsVisible) => {
 	return { newActivePlanModalRef, isNewActivePlanModalVisible, setIsNewActivePlanModalVisible };
 };
 
+/**
+ * Custom React hook that handles showing/hiding change to Basic Plan modal components.
+ * It can hide those components either by pressing the `ESC` buttom or by clicking
+ * outside the component DOM
+ *
+ * @param {boolean} initialIsVisible
+ * @returns {object} changeToBasicPlanModalRef, isChangeToBasicPlanModalVisible, setIsChangeToBasicPlanModalVisible
+ */
 export const useChangeToBasicPlanModalVisible = (initialIsVisible) => {
-	const [isChangeToBasicPlanModalVisible, setIsChangeToBasicPlanModalVisible] =
-		React.useState(initialIsVisible);
+	const [isChangeToBasicPlanModalVisible, setIsChangeToBasicPlanModalVisible] = React.useState(initialIsVisible);
 
 	const changeToBasicPlanModalRef = React.useRef(null);
 
@@ -135,10 +172,7 @@ export const useChangeToBasicPlanModalVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsideNewActivePlanModal = (event) => {
-		if (
-			changeToBasicPlanModalRef?.current &&
-			!changeToBasicPlanModalRef?.current.contains(event?.target)
-		) {
+		if (changeToBasicPlanModalRef?.current && !changeToBasicPlanModalRef?.current.contains(event?.target)) {
 			setIsChangeToBasicPlanModalVisible(!isChangeToBasicPlanModalVisible);
 		}
 	};
@@ -160,9 +194,16 @@ export const useChangeToBasicPlanModalVisible = (initialIsVisible) => {
 	};
 };
 
+/**
+ * Custom React hook that handles showing/hiding payment method modal components.
+ * It can hide those components either by pressing the `ESC` buttom or by clicking
+ * outside the component DOM
+ *
+ * @param {boolean} initialIsVisible
+ * @returns {object} paymentMethodModalRef, isPaymentMethodModalVisible, setIsPaymentMethodModalVisible
+ */
 export const usePaymentMethodModalVisible = (initialIsVisible) => {
-	const [isPaymentMethodModalVisible, setIsPaymentMethodModalVisible] =
-		React.useState(initialIsVisible);
+	const [isPaymentMethodModalVisible, setIsPaymentMethodModalVisible] = React.useState(initialIsVisible);
 
 	const paymentMethodModalRef = React.useRef(null);
 
@@ -195,9 +236,16 @@ export const usePaymentMethodModalVisible = (initialIsVisible) => {
 	};
 };
 
+/**
+ * Custom React hook that handles showing/hiding upgrade error modal components.
+ * It can hide those components either by pressing the `ESC` buttom or by clicking
+ * outside the component DOM
+ *
+ * @param {boolean} initialIsVisible
+ * @returns {object} upgradeErrorModalRef, isUpgradeErrorModalVisible, setIsUpgradeErrorModalVisible
+ */
 export const useUpgradeErrorModalVisible = (initialIsVisible) => {
-	const [isUpgradeErrorModalVisible, setIsUpgradeErrorModalVisible] =
-		React.useState(initialIsVisible);
+	const [isUpgradeErrorModalVisible, setIsUpgradeErrorModalVisible] = React.useState(initialIsVisible);
 
 	const upgradeErrorModalRef = React.useRef(null);
 
@@ -230,9 +278,16 @@ export const useUpgradeErrorModalVisible = (initialIsVisible) => {
 	};
 };
 
+/**
+ * Custom React hook that handles showing/hiding site verify error modal components.
+ * It can hide those components either by pressing the `ESC` buttom or by clicking
+ * outside the component DOM
+ *
+ * @param {boolean} initialIsVisible
+ * @returns {object} siteVerifyErrorModalRef, isSiteVerifyErrorModalVisible, setIsSiteVerifyErrorModalVisible
+ */
 export const useSiteVerifyErrorModalVisible = (initialIsVisible) => {
-	const [isSiteVerifyErrorModalVisible, setIsSiteVerifyErrorModalVisible] =
-		React.useState(initialIsVisible);
+	const [isSiteVerifyErrorModalVisible, setIsSiteVerifyErrorModalVisible] = React.useState(initialIsVisible);
 
 	const siteVerifyErrorModalRef = React.useRef(null);
 
@@ -243,10 +298,7 @@ export const useSiteVerifyErrorModalVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsideUpgradeErrorModal = (event) => {
-		if (
-			siteVerifyErrorModalRef?.current &&
-			!siteVerifyErrorModalRef?.current.contains(event?.target)
-		) {
+		if (siteVerifyErrorModalRef?.current && !siteVerifyErrorModalRef?.current.contains(event?.target)) {
 			setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible);
 		}
 	};
