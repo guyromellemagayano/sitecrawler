@@ -24,7 +24,8 @@ export const FormSubmissionInterval = 1000;
 export const LgScreenBreakpoint = 1024;
 export const MutateInterval = 1500;
 export const RedirectInterval = 1250;
-export const RevalidationInterval = 3000;
+export const RevalidationInterval = 5000;
+export const OnErrorRetryCount = 5;
 
 // File Locations
 export const SiteLogoDark = "/images/logos/site-logo-dark.svg";

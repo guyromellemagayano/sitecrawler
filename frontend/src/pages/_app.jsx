@@ -1,5 +1,7 @@
 import TopProgressBar from "@components/top-progress-bar";
+import { UserApiEndpoint } from "@configs/ApiEndpoints";
 import AppSeo from "@configs/AppSeo";
+import { OnErrorRetryCount, RevalidationInterval } from "@configs/GlobalValues";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -30,12 +32,28 @@ process.env.NODE_ENV === "production"
 
 const MyApp = ({ Component, pageProps }) => {
 	return (
-		<React.Fragment>
+		<SWRConfig
+			value={{
+				onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+					// Never retry on 404.
+					if (error.status === 404) return;
+
+					// Never retry for a specific key.
+					if (key === UserApiEndpoint) return;
+
+					// Only retry up to 5 times.
+					if (retryCount >= OnErrorRetryCount) return;
+
+					// Retry after 5 seconds.
+					setTimeout(() => revalidate({ retryCount }), RevalidationInterval);
+				}
+			}}
+		>
 			<DefaultSeo {...AppSeo} />
 			<GlobalStyles />
 			<TopProgressBar />
 			<Component {...pageProps} />
-		</React.Fragment>
+		</SWRConfig>
 	);
 };
 
