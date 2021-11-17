@@ -1,6 +1,11 @@
-// React
 import * as React from "react";
 
+/**
+ * Custom React hook that handles showing/hiding passwords
+ *
+ * @param {boolean} initialState
+ * @returns {object} passwordRef, isPasswordShown, setIsPasswordShown
+ */
 export const useShowPassword = (initialState) => {
 	const [isPasswordShown, setIsPasswordShown] = React.useState(initialState);
 	const passwordRef = React.useRef(null);
