@@ -1,15 +1,16 @@
-// React
+import { SiteApiEndpoint } from "@configs/ApiEndpoints";
+import { RevalidationInterval } from "@configs/GlobalValues";
 import * as React from "react";
-
-// Enums
-import { RevalidationInterval } from "@enums/GlobalValues";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-
-// Hooks
 import { usePostMethod } from "./useHttpMethod";
-import { useScan } from "./useSite";
+import { useScan } from "./useScan";
 
-const useCrawl = ({ siteId }) => {
+/**
+ * Custom React hook for handling realtime crawling processes
+ *
+ * @param {number} siteId
+ * @returns {object} selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished
+ */
+export const useCrawl = (siteId = 0) => {
 	const [isCrawlFinished, setIsCrawlFinished] = React.useState(true);
 	const [isCrawlStarted, setIsCrawlStarted] = React.useState(false);
 	const [currentScan, setCurrentScan] = React.useState(null);
@@ -26,39 +27,37 @@ const useCrawl = ({ siteId }) => {
 	const handleMutateCurrentSite = async (endpoint) => {
 		const response = await usePostMethod(endpoint);
 
-		return Math.floor(response?.status / 200) === 1 ? true : false;
+		return Math.floor(response.status / 200) === 1 ? true : false;
 	};
 
 	const handleCrawl = (e) => {
 		let endpoint = `${SiteApiEndpoint + siteId}/start_scan/`;
 
-		e?.preventDefault();
+		e.preventDefault();
 
 		setIsCrawlStarted(true);
 		setIsCrawlFinished(false);
 
-		selectedSiteRef.current && selectedSiteRef.current.contains(e?.target)
-			? handleMutateCurrentSite(endpoint)
-			: null;
+		selectedSiteRef.current && selectedSiteRef.current.contains(e.target) ? handleMutateCurrentSite(endpoint) : null;
 	};
 
 	React.useEffect(() => {
 		const handleScan = (scan) => {
-			let previousScanResult = scan?.results.find((e) => e.finished_at !== null);
-			let currentScanResult = scan?.results.find((e) => e.finished_at == null);
+			let previousScanResult = scan.results.find((e) => e.finished_at !== null);
+			let currentScanResult = scan.results.find((e) => e.finished_at == null);
 
 			setCurrentScan(currentScanResult);
 			setPreviousScan(previousScanResult);
-			setScanCount(scan?.count);
+			setScanCount(scan.count);
 		};
 
-		scan && scan?.results ? handleScan(scan) : null;
+		scan && scan.results ? handleScan(scan) : null;
 
 		return { currentScan, previousScan, scanCount };
 	}, [scan]);
 
 	React.useEffect(() => {
-		currentScan !== undefined
+		typeof currentScan !== "undefined" && currentScan !== null
 			? (() => {
 					setIsCrawlStarted(true);
 					setIsCrawlFinished(false);
@@ -79,5 +78,3 @@ const useCrawl = ({ siteId }) => {
 		isCrawlFinished
 	};
 };
-
-export default useCrawl;
