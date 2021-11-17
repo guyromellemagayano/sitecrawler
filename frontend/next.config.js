@@ -23,7 +23,14 @@ const NextConfig = {
 		locales: ["en", "fr", "nl"],
 		defaultLocale: "en"
 	},
-	productionBrowserSourceMaps: true
+	productionBrowserSourceMaps: true,
+	experimental: {
+		removeConsole: {
+			exclude: ["error"]
+		}
+		// Uncomment this to suppress all logs
+		// removeConsole: true
+	}
 };
 
 const SentryWebpackPluginOptions = {
