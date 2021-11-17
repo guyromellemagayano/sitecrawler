@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import tw from "twin.macro";
 
-const Alert = ({ isError, isSuccess, isWarning, message }) => {
+const Alert = (isError, isSuccess, isWarning, message) => {
 	const [isOpen, setIsOpen] = React.useState(true);
 
 	const { t } = useTranslation();
@@ -98,10 +98,10 @@ const Alert = ({ isError, isSuccess, isWarning, message }) => {
 };
 
 Alert.propTypes = {
-	isError: PropTypes.any,
-	isSuccess: PropTypes.any,
-	isWarning: PropTypes.any,
-	message: PropTypes.any
+	isError: PropTypes.bool,
+	isSuccess: PropTypes.bool,
+	isWarning: PropTypes.bool,
+	message: PropTypes.string
 };
 
 export default Alert;
