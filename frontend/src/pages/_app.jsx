@@ -1,5 +1,4 @@
 import TopProgressBar from "@components/top-progress-bar";
-import { UserApiEndpoint } from "@configs/ApiEndpoints";
 import AppSeo from "@configs/AppSeo";
 import { OnErrorRetryCount, RevalidationInterval } from "@configs/GlobalValues";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -35,12 +34,6 @@ const MyApp = ({ Component, pageProps }) => {
 				fetcher: useGetMethod,
 				refreshInterval: RevalidationInterval,
 				onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-					// Never retry on 404.
-					if (error.status === 404) return;
-
-					// Never retry for a specific key.
-					if (key === UserApiEndpoint) return;
-
 					// Only retry up to 5 times.
 					if (retryCount >= OnErrorRetryCount) return;
 
