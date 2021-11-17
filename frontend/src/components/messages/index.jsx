@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import "twin.macro";
 
-export const ErrorMessage = (statusCode) => {
+export const ErrorMessage = ({ statusCode }) => {
 	// Translations
 	const { t } = useTranslation();
 	const goBackHome = t("common:goBackHome");
