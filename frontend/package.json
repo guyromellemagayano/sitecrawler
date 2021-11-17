@@ -20,6 +20,12 @@
 	"browser": {
 		"child_process": false
 	},
+	"babelMacros": {
+		"twin": {
+			"preset": "styled-components",
+			"sassyPseudo": true
+		}
+	},
 	"keywords": [
 		"nextjs",
 		"web",
