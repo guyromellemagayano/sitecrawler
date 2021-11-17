@@ -20,7 +20,6 @@ export async function getServerSideProps({ req }) {
 		typeof userData !== "undefined" &&
 		userData !== null &&
 		!userData.detail &&
-		typeof userData === "object" &&
 		Object.keys(userData).length > 0 &&
 		Math.round(userStatus / 200 === 1)
 	) {
