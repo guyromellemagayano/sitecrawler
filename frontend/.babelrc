@@ -1,8 +1,13 @@
 {
     "env": {
-        "production": {
-            "plugins": [
-                "babel-plugin-jsx-remove-data-test-id"
+        "development": {
+            "presets": [
+                [
+                    "@babel/preset-react",
+                    {
+                        "development": true
+                    }
+                ]
             ]
         }
     },
@@ -10,16 +15,17 @@
         [
             "next/babel",
             {
-                "preset-react": {
-                    "runtime": "automatic"
-                }
-            },
-            {
                 "styled-jsx": {
                     "plugins": [
                         "styled-jsx-plugin-sass"
                     ]
                 }
+            }
+        ],
+        [
+            "@babel/preset-react",
+            {
+                "runtime": "automatic"
             }
         ]
     ],
