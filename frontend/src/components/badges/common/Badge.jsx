@@ -1,11 +1,8 @@
-// React
-import * as React from "react";
-
-// External
-import tw from "twin.macro";
 import PropTypes from "prop-types";
+import * as React from "react";
+import tw from "twin.macro";
 
-const Badge = ({ isDanger, isSuccess, isWarning, text }) => {
+export const Badge = (isDanger = false, isSuccess = false, isWarning = false, text = null) => {
 	return (
 		<span
 			css={[
@@ -30,12 +27,3 @@ Badge.propTypes = {
 	isWarning: PropTypes.bool,
 	text: PropTypes.string
 };
-
-Badge.defaultProps = {
-	isDanger: false,
-	isSuccess: false,
-	isWarning: false,
-	text: null
-};
-
-export default Badge;
