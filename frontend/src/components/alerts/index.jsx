@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import tw from "twin.macro";
 
-const Alert = (isError, isSuccess, isWarning, message) => {
+const Alert = (isError = false, isSuccess = false, isWarning = false, message = false) => {
 	const [isOpen, setIsOpen] = React.useState(true);
 
 	const { t } = useTranslation();
