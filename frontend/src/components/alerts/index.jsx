@@ -12,7 +12,10 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import tw from "twin.macro";
 
-const Alert = (isError = false, isSuccess = false, isWarning = false, message = false) => {
+/**
+ * Memoized function to render the `Alerts` component.
+ */
+export const Alert = React.memo(({ isError = false, isSuccess = false, isWarning = false, message = false }) => {
 	const [isOpen, setIsOpen] = React.useState(true);
 
 	const { t } = useTranslation();
@@ -95,7 +98,7 @@ const Alert = (isError = false, isSuccess = false, isWarning = false, message = 
 			</div>
 		</Transition>
 	);
-};
+});
 
 Alert.propTypes = {
 	isError: PropTypes.bool,
@@ -103,5 +106,3 @@ Alert.propTypes = {
 	isWarning: PropTypes.bool,
 	message: PropTypes.string
 };
-
-export default Alert;
