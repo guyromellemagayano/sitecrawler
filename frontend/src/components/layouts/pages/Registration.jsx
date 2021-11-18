@@ -1,5 +1,5 @@
-import RegistrationForm from "@components/forms/RegistrationForm";
-import LogoLabel from "@components/labels/LogoLabel";
+import { RegistrationForm } from "@components/forms/RegistrationForm";
+import { LogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -8,7 +8,10 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
-export const RegistrationPageLayout = () => {
+/**
+ * Memoized function to render the registration page layout.
+ */
+export const RegistrationPageLayout = React.memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const agreeTermsPrivacyPolicy = t("registration:agreeTermsPrivacyPolicy");
@@ -47,4 +50,4 @@ export const RegistrationPageLayout = () => {
 			</Scrollbars>
 		</div>
 	);
-};
+});

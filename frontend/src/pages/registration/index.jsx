@@ -35,7 +35,10 @@ export async function getServerSideProps({ req }) {
 	}
 }
 
-const Registration = () => {
+/**
+ * Memoized `Registration` page.
+ */
+const Registration = React.memo(() => {
 	// Translations
 	const { t } = useTranslation("registration");
 	const registration = t("registration");
@@ -46,7 +49,7 @@ const Registration = () => {
 			<RegistrationPageLayout />
 		</React.Fragment>
 	);
-};
+});
 
 Registration.getLayout = function getLayout(page) {
 	return <Layout>{page}</Layout>;

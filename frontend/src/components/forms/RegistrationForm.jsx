@@ -1,4 +1,4 @@
-import Alert from "@components/alerts";
+import { Alert } from "@components/alerts";
 import { RegistrationApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
 import {
 	FormPasswordMaxChars,
@@ -17,7 +17,10 @@ import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
-const RegistrationForm = () => {
+/**
+ * Memoized function to render the `RegistrationForm` component.
+ */
+export const RegistrationForm = React.memo(() => {
 	const [isErrorEmail, setIsErrorEmail] = React.useState(false);
 	const [isErrorUsername, setIsErrorUsername] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState([]);
@@ -376,6 +379,4 @@ const RegistrationForm = () => {
 			</Formik>
 		</React.Fragment>
 	);
-};
-
-export default RegistrationForm;
+});
