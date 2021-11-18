@@ -100,12 +100,12 @@ export const ErrorMessage = ({ statusCode }) => {
 								<p tw="max-w-sm mt-1 text-base text-gray-500">{subheading}</p>
 							</div>
 							<div tw="mt-10 flex space-x-3 sm:border-l sm:border-transparent sm:pl-6">
-								<Link href="/" passHref={true}>
+								<Link href="/" passHref replace>
 									<a tw="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 										{goBackHome}
 									</a>
 								</Link>
-								<Link href="/support" passHref={true}>
+								<Link href="/support" passHref replace>
 									<a tw="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 										{contactSupport}
 									</a>
