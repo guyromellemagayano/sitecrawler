@@ -1,6 +1,6 @@
-import LoginForm from "@components/forms/LoginForm";
-import LogoLabel from "@components/labels/LogoLabel";
-import AppLogo from "@components/logos/AppLogo";
+import { LoginForm } from "@components/forms/LoginForm";
+import { LogoLabel } from "@components/labels/LogoLabel";
+import { AppLogo } from "@components/logos/AppLogo";
 import { NoAuthAppLogo } from "@configs/GlobalValues";
 import { RegistrationLink } from "@configs/PageLinks";
 import { SiteLogoDark } from "@enums/GlobalValues";
@@ -12,7 +12,10 @@ import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 import Footer from "../components/Footer";
 
-export const LoginPageLayout = () => {
+/**
+ * Memoized function to render the login page layout.
+ */
+export const LoginPageLayout = React.memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("common:headline");
@@ -76,4 +79,4 @@ export const LoginPageLayout = () => {
 			</Scrollbars>
 		</section>
 	);
-};
+});

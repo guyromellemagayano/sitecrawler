@@ -1,6 +1,6 @@
-import Alert from "@components/alerts";
+import { Alert } from "@components/alerts";
 import { LoginApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { RevalidationInterval } from "@configs/GlobalValues";
+import { RedirectInterval } from "@configs/GlobalValues";
 import { SitesLink } from "@configs/PageLinks";
 import { SocialLoginLinks } from "@configs/SocialLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,7 +16,10 @@ import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
-const LoginForm = (status, data) => {
+/**
+ * Memoized function to render the `LoginForm` component.
+ */
+export const LoginForm = React.memo(() => {
 	const [disableLoginForm, setDisableLoginForm] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState([]);
 	const [successMessage, setSuccessMessage] = React.useState([]);
@@ -57,13 +60,21 @@ const LoginForm = (status, data) => {
 
 	return (
 		<React.Fragment>
-			{errorMessage && errorMessage.length > 0
-				? errorMessage.map((value, key) => <Alert key={key} message={value} isError />)
-				: null}
+			{errorMessage !== [] && errorMessage.length > 0 ? (
+				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
+					{errorMessage.map((value, key) => (
+						<Alert key={key} message={value} isError />
+					))}
+				</div>
+			) : null}
 
-			{successMessage && successMessage.length > 0
-				? successMessage.map((value, key) => <Alert key={key} message={value} isSuccess />)
-				: null}
+			{successMessage !== [] && successMessage.length > 0 ? (
+				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
+					{successMessage.map((value, key) => (
+						<Alert key={key} message={value} isSuccess />
+					))}
+				</div>
+			) : null}
 
 			<Formik
 				initialValues={{
@@ -106,19 +117,17 @@ const LoginForm = (status, data) => {
 						// Disable submission as soon as 200 OK or 201 Created response is issued
 						setSubmitting(false);
 						setDisableLoginForm(!disableLoginForm);
-						setSuccessMessage((prevState) => [...prevState, loginOkSuccess]);
+						setSuccessMessage((prevState) => [
+							...prevState,
+							prevState.indexOf(loginOkSuccess) !== -1
+								? prevState.find((prevState) => prevState === loginOkSuccess)
+								: loginOkSuccess
+						]);
 
+						// Redirect to sites dashboard page after successful 200 OK response is established
 						setTimeout(() => {
-							setSuccessMessage((prevState) => [
-								...prevState,
-								prevState.indexOf(loginOkSuccess) !== -1 ? prevState.splice(prevState.indexOf(loginOkSuccess), 1) : null
-							]);
-
-							// Redirect to sites dashboard page after successful 200 OK response is established
-							setTimeout(() => {
-								router.push(SitesLink);
-							}, RedirectInterval);
-						}, RevalidationInterval);
+							router.push(SitesLink);
+						}, RedirectInterval);
 					} else {
 						let errorStatusCodeMessage = "";
 
@@ -134,7 +143,12 @@ const LoginForm = (status, data) => {
 								break;
 						}
 
-						setErrorMessage((prevState) => [...prevState, errorStatusCodeMessage]);
+						setErrorMessage((prevState) => [
+							...prevState,
+							prevState.indexOf(errorStatusCodeMessage) !== -1
+								? prevState.find((prevState) => prevState === errorStatusCodeMessage)
+								: errorStatusCodeMessage
+						]);
 
 						// Capture unknown errors and send to Sentry
 						Sentry.configureScope((scope) => {
@@ -146,15 +160,6 @@ const LoginForm = (status, data) => {
 							);
 							Sentry.captureException(new Error(loginResponse));
 						});
-
-						setTimeout(() => {
-							setErrorMessage((prevState) => [
-								...prevState,
-								prevState.indexOf(errorStatusCodeMessage) !== -1
-									? prevState.splice(prevState.indexOf(errorStatusCodeMessage), 1)
-									: null
-							]);
-						}, RevalidationInterval);
 					}
 				}}
 			>
@@ -335,6 +340,4 @@ const LoginForm = (status, data) => {
 			</Formik>
 		</React.Fragment>
 	);
-};
-
-export default LoginForm;
+});
