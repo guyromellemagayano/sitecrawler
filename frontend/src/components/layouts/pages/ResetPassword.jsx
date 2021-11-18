@@ -1,5 +1,5 @@
-import ResetPasswordForm from "@components/forms/ResetPasswordForm";
-import UpdatePasswordForm from "@components/forms/UpdatePasswordForm";
+import { ResetPasswordForm } from "@components/forms/ResetPasswordForm";
+import { UpdatePasswordForm } from "@components/forms/UpdatePasswordForm";
 import { LogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";

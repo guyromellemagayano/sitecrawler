@@ -1,4 +1,4 @@
-import Alert from "@components/alerts";
+import { Alert } from "@components/alerts";
 import { ConfirmResetPasswordApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
 import { FormPasswordMaxChars, FormPasswordMinChars, RevalidationInterval } from "@configs/GlobalValues";
 import { LoginLink } from "@configs/PageLinks";
@@ -14,7 +14,10 @@ import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
-const UpdatePasswordForm = ({ uid, token }) => {
+/**
+ * Memoized function to render the `UpdatePasswordForm` component.
+ */
+export const UpdatePasswordForm = React.memo(({ uid = null, token = null }) => {
 	const [errorMessage, setErrorMessage] = React.useState([]);
 	const [successMessage, setSuccessMessage] = React.useState([]);
 
@@ -229,14 +232,9 @@ const UpdatePasswordForm = ({ uid, token }) => {
 			</Formik>
 		</React.Fragment>
 	);
-};
+});
 
 UpdatePasswordForm.propTypes = {
-	result: PropTypes.object
+	token: PropTypes.string,
+	uid: PropTypes.string
 };
-
-UpdatePasswordForm.defaultProps = {
-	result: null
-};
-
-export default UpdatePasswordForm;
