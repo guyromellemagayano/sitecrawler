@@ -1,67 +1,54 @@
-// React
+import Layout from "@components/layouts";
+import { AccountExistPageLayout } from "@components/layouts/pages/AccountExist";
+import { UserApiEndpoint } from "@configs/ApiEndpoints";
+import { SitesLink } from "@configs/PageLinks";
+import { server } from "@configs/ServerEnv";
+import { useGetMethod } from "@hooks/useHttpMethod";
+import { NextSeo } from "next-seo";
+import useTranslation from "next-translate/useTranslation";
 import * as React from "react";
 
-// NextJS
-import Link from "next/link";
+// Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
+export async function getServerSideProps({ req }) {
+	const userResponse = await useGetMethod(`${server + UserApiEndpoint}`, req.headers);
+	const userData = userResponse.data ?? null;
+	const userStatus = userResponse.status ?? null;
 
-// External
-import "twin.macro";
-import { NextSeo } from "next-seo";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import ReactHtmlParser from "react-html-parser";
-
-// Enums
-import { AccountExistsLabels } from "@enums/AccountExistsLabels";
-
-// Components
-import Layout from "@components/layouts";
+	if (
+		typeof userData !== "undefined" &&
+		userData !== null &&
+		!userData.detail &&
+		Object.keys(userData).length > 0 &&
+		Math.round(userStatus / 200 === 1)
+	) {
+		return {
+			redirect: {
+				destination: SitesLink,
+				permanent: false
+			}
+		};
+	} else {
+		return {
+			props: {}
+		};
+	}
+}
 
 const AccountExist = () => {
-	const pageTitle = "Account Exist";
+	// Translations
+	const { t } = useTranslation("accountExist");
+	const accountExist = t("accountExist");
 
 	return (
-		<Layout>
-			<NextSeo title={pageTitle} />
-
-			<div tw="overflow-auto h-screen">
-				<Scrollbars universal>
-					{/* TODO: Update UI of this page */}
-					<div tw="flex flex-col justify-center h-full">
-						<div tw="relative py-12 sm:px-6 lg:px-8">
-							{AccountExistsLabels.map((val, key) => {
-								return (
-									<div
-										key={key}
-										tw="max-w-lg min-h-screen flex flex-col justify-center mx-auto py-12 sm:px-6 lg:px-8"
-									>
-										<div tw="bg-white rounded-lg">
-											<div tw="px-4 py-5 sm:p-6">
-												<h3 tw="text-lg leading-6 font-medium text-red-600">{val.title}</h3>
-												<div tw="mt-2 text-sm leading-5 text-gray-500">
-													<p>{val.description}</p>
-												</div>
-												<div tw="mt-3 text-sm leading-5">
-													{val.cta.map((val2, key) => {
-														return (
-															<Link key={key} href={val2.url} passHref>
-																<a tw="font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-																	{ReactHtmlParser(val2.label)}
-																</a>
-															</Link>
-														);
-													})}
-												</div>
-											</div>
-										</div>
-									</div>
-								);
-							})}
-						</div>
-					</div>
-				</Scrollbars>
-			</div>
-		</Layout>
+		<React.Fragment>
+			<NextSeo title={accountExist} />
+			<AccountExistPageLayout />
+		</React.Fragment>
 	);
+};
+
+AccountExist.getLayout = function getLayout(page) {
+	return <Layout>{page}</Layout>;
 };
 
 export default AccountExist;

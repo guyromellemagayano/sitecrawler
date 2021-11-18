@@ -1,0 +1,8 @@
+{
+	"accountExist": "Compte existant",
+	"headline": "Il y a un problème avec votre demande de connexion.",
+	"description": "Vous essayez de vous connecter à un compte existant. Rendez-vous plutôt sur notre page de connexion.",
+	"cta": {
+		"label": "Accédez à la page de connexion"
+	}
+}

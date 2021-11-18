@@ -5,7 +5,13 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import "twin.macro";
 
-const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
+const LogoLabel = ({
+	isLogin = false,
+	isSignUp = false,
+	isResetPassword = false,
+	isAddPassword = false,
+	isAccountExist = false
+}) => {
 	const { t } = useTranslation("common");
 	const appLogo = t("appLogo");
 	const isLoginText = t("isLogin");
@@ -13,6 +19,7 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 	const isResetPasswordText = t("isResetPassword");
 	const isAddPasswordText = t("isAddPassword");
 	const isResetPasswordFormText = t("isResetPasswordForm");
+	const isAccountExistText = t("isAccountExist");
 
 	return (
 		<div tw="sm:mx-auto sm:w-full sm:max-w-md">
@@ -34,6 +41,8 @@ const LogoLabel = ({ isLogin, isSignUp, isResetPassword, isAddPassword }) => {
 					? isResetPasswordText
 					: isAddPassword
 					? isAddPasswordText
+					: isAccountExist
+					? isAccountExistText
 					: isResetPasswordFormText}
 			</h2>
 		</div>
@@ -45,13 +54,6 @@ LogoLabel.propTypes = {
 	isLogin: PropTypes.bool,
 	isResetPassword: PropTypes.bool,
 	isSignUp: PropTypes.bool
-};
-
-LogoLabel.defaultProps = {
-	isAddPassword: false,
-	isLogin: false,
-	isResetPassword: false,
-	isSignUp: false
 };
 
 export default LogoLabel;

@@ -4,9 +4,10 @@ module.exports = {
 	pages: {
 		"*": ["common", "alerts"],
 		"/": ["home"],
+		"/account-exist": ["accountExist"],
+		"/dashboard/*": ["sites"],
 		"/login": ["login"],
-		"/registration": ["registration"],
-		"/dashboard/*": ["sites"]
+		"/registration": ["registration"]
 	},
 	interpolation: {
 		prefix: "${",
