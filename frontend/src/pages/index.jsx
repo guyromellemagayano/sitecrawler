@@ -6,7 +6,6 @@ import { server } from "@configs/ServerEnv";
 import { useGetMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import * as React from "react";
 
@@ -40,24 +39,20 @@ export async function getServerSideProps({ req }) {
 }
 
 const Home = () => {
-	// Router
-	const router = useRouter();
-
 	// Translations
 	const { t } = useTranslation("home");
 	const home = t("home");
 
-	React.useEffect(() => {
-		router.prefetch(SitesLink);
-		router.prefetch(LoginLink);
-	}, []);
-
 	return (
-		<Layout>
+		<React.Fragment>
 			<NextSeo title={home} />
 			<Loader />
-		</Layout>
+		</React.Fragment>
 	);
+};
+
+Home.getLayout = function getLayout(page) {
+	return <Layout>{page}</Layout>;
 };
 
 Home.propTypes = {

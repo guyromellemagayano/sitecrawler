@@ -1,6 +1,8 @@
 import Alert from "@components/alerts";
+import { LoginLink, SitesLink } from "@configs/PageLinks";
 import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import * as React from "react";
 import "twin.macro";
@@ -21,13 +23,20 @@ AlertFallback.propTypes = {
 };
 
 const Layout = ({ children }) => {
+	// Router
+	const router = useRouter();
+
+	// Prefetch sites page for faster loading
+	React.useEffect(() => {
+		router.prefetch(SitesLink);
+		router.prefetch(LoginLink);
+	}, []);
+
 	return (
 		<Sentry.ErrorBoundary
 			fallback={({ error, componentStack }) => AlertFallback({ message: error, component: componentStack })}
 		>
-			<div id="root-auth">
-				<main tw="h-screen">{children}</main>
-			</div>
+			<main tw="h-screen">{children}</main>
 		</Sentry.ErrorBoundary>
 	);
 };

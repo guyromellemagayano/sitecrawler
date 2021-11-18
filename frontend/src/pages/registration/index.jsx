@@ -1,12 +1,11 @@
 import Layout from "@components/layouts";
 import { RegistrationPageLayout } from "@components/layouts/pages/Registration";
 import { UserApiEndpoint } from "@configs/ApiEndpoints";
-import { LoginLink, SitesLink } from "@configs/PageLinks";
+import { SitesLink } from "@configs/PageLinks";
 import { server } from "@configs/ServerEnv";
 import { useGetMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
 import * as React from "react";
 import "twin.macro";
 
@@ -37,25 +36,20 @@ export async function getServerSideProps({ req }) {
 }
 
 const Registration = () => {
-	// Router
-	const router = useRouter();
-
 	// Translations
 	const { t } = useTranslation("registration");
 	const registration = t("registration");
 
-	// Prefetch sites page for faster loading
-	React.useEffect(() => {
-		router.prefetch(SitesLink);
-		router.prefetch(LoginLink);
-	}, []);
-
 	return (
-		<Layout>
+		<React.Fragment>
 			<NextSeo title={registration} />
 			<RegistrationPageLayout />
-		</Layout>
+		</React.Fragment>
 	);
+};
+
+Registration.getLayout = function getLayout(page) {
+	return <Layout>{page}</Layout>;
 };
 
 export default Registration;

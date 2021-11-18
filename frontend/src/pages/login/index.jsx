@@ -1,12 +1,11 @@
 import Layout from "@components/layouts";
 import { LoginPageLayout } from "@components/layouts/pages/Login";
 import { UserApiEndpoint } from "@configs/ApiEndpoints";
-import { RegistrationLink, SitesLink } from "@configs/PageLinks";
+import { SitesLink } from "@configs/PageLinks";
 import { server } from "@configs/ServerEnv";
 import { useGetMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
 import * as React from "react";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
@@ -36,25 +35,20 @@ export async function getServerSideProps({ req }) {
 }
 
 const Login = () => {
-	// Router
-	const router = useRouter();
-
 	// Translations
 	const { t } = useTranslation("login");
 	const login = t("login");
 
-	// Prefetch sites page for faster loading
-	React.useEffect(() => {
-		router.prefetch(SitesLink);
-		router.prefetch(RegistrationLink);
-	}, []);
-
 	return (
-		<Layout>
+		<React.Fragment>
 			<NextSeo title={login} />
 			<LoginPageLayout />
-		</Layout>
+		</React.Fragment>
 	);
+};
+
+Login.getLayout = function getLayout(page) {
+	return <Layout>{page}</Layout>;
 };
 
 export default Login;
