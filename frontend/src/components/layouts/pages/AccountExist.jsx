@@ -1,4 +1,4 @@
-import LogoLabel from "@components/labels/LogoLabel";
+import { LogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -7,12 +7,15 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
-export const AccountExistPageLayout = () => {
+/**
+ * Memoized function to render the account exist page layout.
+ */
+export const AccountExistPageLayout = React.memo(() => {
 	// Translations
-	const { t } = useTranslation("accountExist");
-	const headline = t("headline");
-	const description = t("description");
-	const ctaLabel = t("cta.label");
+	const { t } = useTranslation();
+	const headline = t("accountExist:headline");
+	const description = t("accountExist:description");
+	const goBackLogin = t("common:goBackLogin");
 
 	return (
 		<div tw="bg-gray-50 overflow-auto h-screen">
@@ -30,7 +33,7 @@ export const AccountExistPageLayout = () => {
 								<div tw="mt-6 text-sm leading-5">
 									<Link href={LoginLink} passHref replace>
 										<a tw="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-											{ReactHtmlParser(ctaLabel)}
+											{ReactHtmlParser(goBackLogin)}
 										</a>
 									</Link>
 								</div>
@@ -41,4 +44,4 @@ export const AccountExistPageLayout = () => {
 			</Scrollbars>
 		</div>
 	);
-};
+});

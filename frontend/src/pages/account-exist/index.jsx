@@ -34,7 +34,10 @@ export async function getServerSideProps({ req }) {
 	}
 }
 
-const AccountExist = () => {
+/**
+ * Memoized `AccountExist` page.
+ */
+const AccountExist = React.memo(() => {
 	// Translations
 	const { t } = useTranslation("accountExist");
 	const accountExist = t("accountExist");
@@ -45,7 +48,7 @@ const AccountExist = () => {
 			<AccountExistPageLayout />
 		</React.Fragment>
 	);
-};
+});
 
 AccountExist.getLayout = function getLayout(page) {
 	return <Layout>{page}</Layout>;
