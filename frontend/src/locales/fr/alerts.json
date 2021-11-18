@@ -63,5 +63,7 @@
 	"updatePasswordOkSuccess": "Le mot de passe a été réinitialisé avec succès. Vous rediriger vers la page de connexion...",
 	"updatePasswordBadRequestPostError": "Nous ne sommes pas en mesure de mettre à jour votre mot de passe avec les informations d'identification fournies. Veuillez revérifier les détails de votre mot de passe de mise à jour.",
 	"updatePasswordInvalidTokenError": "Jeton déjà expiré. Nous ne pouvons plus traiter votre demande.",
-	"updatePasswordUnknownError": "Une erreur inconnue s'est produite lors de la mise à jour de votre mot de passe. Veuillez réessayer."
+	"updatePasswordUnknownError": "Une erreur inconnue s'est produite lors de la mise à jour de votre mot de passe. Veuillez réessayer.",
+	"confirmEmailOkSuccess": "Toutes nos félicitations! Votre profil est maintenant prêt à être utilisé. Cliquez sur le bouton ci-dessous pour revenir à la page de connexion.",
+	"confirmEmailUnknownError": "Une erreur inconnue s'est produite lors de la confirmation de votre e-mail. Veuillez réessayer."
 }

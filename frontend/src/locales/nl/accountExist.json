@@ -1,8 +1,5 @@
 {
 	"accountExist": "Account bestaat",
 	"headline": "Er is een probleem met uw inlogverzoek.",
-	"description": "U probeert in te loggen op een bestaand account. Ga in plaats daarvan naar onze inlogpagina.",
-	"cta": {
-		"label": "Ga naar de inlogpagina"
-	}
+	"description": "U probeert in te loggen op een bestaand account. Ga in plaats daarvan naar onze inlogpagina."
 }

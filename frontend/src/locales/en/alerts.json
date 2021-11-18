@@ -63,5 +63,7 @@
 	"updatePasswordOkSuccess": "Password has been reset successfully. Redirecting you to login page...",
 	"updatePasswordBadRequestPostError": "We're unable to update your password with the provided credentials. Please recheck your update password details.",
 	"updatePasswordInvalidTokenError": "Token already expired. We can't process with your request anymore.",
-	"updatePasswordUnknownError": "An unknown error has occurred while we're updating your password. Please try again."
+	"updatePasswordUnknownError": "An unknown error has occurred while we're updating your password. Please try again.",
+	"confirmEmailOkSuccess": "Congratulations! Your profile is now ready to use. Click on the button below to go back to Login page.",
+	"confirmEmailUnknownError": "An unknown error has occurred while we're confirming your email. Please try again."
 }
