@@ -1,6 +1,6 @@
 import ResetPasswordForm from "@components/forms/ResetPasswordForm";
 import UpdatePasswordForm from "@components/forms/UpdatePasswordForm";
-import LogoLabel from "@components/labels/LogoLabel";
+import { LogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -10,7 +10,10 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
-export const ResetPasswordPageLayout = () => {
+/**
+ * Memoized function to render the reset password page layout.
+ */
+export const ResetPasswordPageLayout = React.memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");
@@ -44,9 +47,15 @@ export const ResetPasswordPageLayout = () => {
 			</Scrollbars>
 		</div>
 	);
-};
+});
 
-export const ResetPasswordFormPageLayout = ({ uid, token }) => {
+/**
+ * Memoized function to render the reset password form page layout.
+ *
+ * @param {string} uid
+ * @param {string} token
+ */
+export const ResetPasswordFormPageLayout = React.memo(({ uid, token }) => {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");
@@ -80,7 +89,7 @@ export const ResetPasswordFormPageLayout = ({ uid, token }) => {
 			</Scrollbars>
 		</div>
 	);
-};
+});
 
 ResetPasswordFormPageLayout.propTypes = {
 	token: PropTypes.string,

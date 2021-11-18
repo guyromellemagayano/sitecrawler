@@ -34,7 +34,12 @@ export async function getServerSideProps({ req }) {
 	}
 }
 
-const ResetPassword = () => {
+/**
+ * Memoized `ResetPassword` page.
+ *
+ * @description Reset password page
+ */
+const ResetPassword = React.memo(() => {
 	// Translations
 	const { t } = useTranslation("common");
 	const isResetPassword = t("isResetPassword");
@@ -45,7 +50,7 @@ const ResetPassword = () => {
 			<ResetPasswordPageLayout />
 		</React.Fragment>
 	);
-};
+});
 
 ResetPassword.getLayout = function getLayout(page) {
 	return <Layout>{page}</Layout>;

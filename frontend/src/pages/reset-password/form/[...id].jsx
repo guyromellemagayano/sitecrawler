@@ -36,7 +36,13 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-const ResetPasswordForm = ({ result }) => {
+/**
+ * Memoized `ResetPasswordForm` component.
+ *
+ * @param {object} result
+ * @description Reset password form page
+ */
+const ResetPasswordForm = React.memo(({ result }) => {
 	// Translations
 	const { t } = useTranslation("common");
 	const isResetPasswordForm = t("isResetPasswordForm");
@@ -47,7 +53,7 @@ const ResetPasswordForm = ({ result }) => {
 			<ResetPasswordFormPageLayout uid={result.id[0]} token={result.id[1]} />
 		</React.Fragment>
 	);
-};
+});
 
 ResetPasswordForm.getLayout = function getLayout(page) {
 	return <Layout>{page}</Layout>;

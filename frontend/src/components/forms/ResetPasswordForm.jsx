@@ -1,4 +1,4 @@
-import Alert from "@components/alerts";
+import { Alert } from "@components/alerts";
 import { ResetPasswordApiEndpoint } from "@configs/ApiEndpoints";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
@@ -9,7 +9,10 @@ import * as React from "react";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
-const ResetPasswordForm = () => {
+/**
+ * Memoized function to render the `ResetPasswordForm` component.
+ */
+const ResetPasswordForm = React.memo(() => {
 	const [errorMessage, setErrorMessage] = React.useState([]);
 	const [successMessage, setSuccessMessage] = React.useState([]);
 
@@ -157,6 +160,6 @@ const ResetPasswordForm = () => {
 			</Formik>
 		</React.Fragment>
 	);
-};
+});
 
 export default ResetPasswordForm;
