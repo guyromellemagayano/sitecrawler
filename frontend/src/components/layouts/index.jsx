@@ -1,4 +1,4 @@
-import Alert from "@components/alerts";
+import { Alert } from "@components/alerts";
 import { LoginLink, SitesLink } from "@configs/PageLinks";
 import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
