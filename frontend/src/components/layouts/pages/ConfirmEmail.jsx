@@ -19,7 +19,6 @@ const ConfirmEmailPageLayout = React.memo(() => {
 	const [failure, setFailure] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState([]);
 	const [successMessage, setSuccessMessage] = React.useState([]);
-	const [uid, setUid] = React.useState(null);
 
 	// Router
 	const { asPath } = useRouter();
@@ -28,15 +27,6 @@ const ConfirmEmailPageLayout = React.memo(() => {
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
-
-	// Set the `uid` and `token` from the URL query parameters
-	React.useEffect(() => {
-		const hasKeyProperty = query.hasOwnProperty("id") ? true : false;
-
-		if (Object.keys(query).length > 0 && hasKeyProperty) {
-			setUid(query.id[0]);
-		}
-	}, [query]);
 
 	// Translations
 	const { t } = useTranslation();
@@ -51,14 +41,12 @@ const ConfirmEmailPageLayout = React.memo(() => {
 	React.useEffect(() => {
 		(async () => {
 			const body = {
-				key: uid
+				key: query.id[0]
 			};
 
 			const confirmEmailResponse = await usePostMethod(ConfirmEmailApiEndpoint, body);
 			const confirmEmailResponseData = confirmEmailResponse.data ?? null;
 			const confirmEmailResponseStatus = confirmEmailResponse.status ?? null;
-
-			console.log(confirmEmailResponse);
 
 			if (confirmEmailResponseData !== null && Math.round(confirmEmailResponseStatus / 200) === 1) {
 				// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
@@ -94,7 +82,7 @@ const ConfirmEmailPageLayout = React.memo(() => {
 				});
 			}
 		})();
-	}, [uid]);
+	}, []);
 
 	return (
 		<div tw="bg-gray-50 overflow-auto h-screen">
