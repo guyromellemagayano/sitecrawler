@@ -1,4 +1,4 @@
-import { AppImage } from "@components/images/AppImage";
+import Image from "next/image";
 import PropTypes from "prop-types";
 import * as React from "react";
 import "twin.macro";
@@ -15,7 +15,7 @@ import "twin.macro";
 export const AppLogo = React.memo(({ alt = null, height = null, src = null, width = null, className = null }) => {
 	return (
 		<span className={className}>
-			<AppImage src={src} alt={alt} width={width} height={height} />
+			<Image src={src} alt={alt} width={width} height={height} />
 		</span>
 	);
 });
