@@ -1,4 +1,4 @@
-import { GoogleLoginApiEndpoint } from "@enums/ApiEndpoints";
+import { GoogleLoginApiEndpoint } from "@configs/ApiEndpoints";
 import useTranslation from "next-translate/useTranslation";
 
 export const SocialLoginLinks = () => {
