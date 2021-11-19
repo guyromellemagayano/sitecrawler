@@ -38,7 +38,6 @@ const UpdatePasswordForm = React.memo(() => {
 
 	// Router
 	const { asPath } = useRouter();
-	const router = useRouter();
 	const { query } = useRouter();
 
 	// SWR hook for global mutations
