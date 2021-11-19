@@ -56,9 +56,6 @@ export const ResetPasswordPageLayout = React.memo(() => {
 
 /**
  * Memoized function to render the reset password form page layout.
- *
- * @param {string} uid
- * @param {string} token
  */
 export const ResetPasswordFormPageLayout = React.memo(() => {
 	// Translations
