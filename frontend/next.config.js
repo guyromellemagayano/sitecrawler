@@ -4,11 +4,50 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 });
 const { withSentryConfig } = require("@sentry/nextjs");
 const withNextTranslate = require("next-translate");
+const { isProd } = require("@configs/ServerEnv");
+
+const SecurityHeaders = [
+	{
+		key: "X-DNS-Prefetch-Control",
+		value: "on"
+	},
+	{
+		key: "Strict-Transport-Security",
+		value: "max-age=63072000; includeSubDomains; preload"
+	},
+	{
+		key: "X-XSS-Protection",
+		value: "1; mode=block"
+	},
+	{
+		key: "X-Frame-Options",
+		value: "SAMEORIGIN"
+	},
+	{
+		key: "Permissions-Policy",
+		value: "geolocation=()"
+	},
+	{
+		key: "X-Content-Type-Options",
+		value: "nosniff"
+	},
+	{
+		key: "Referrer-Policy",
+		value:
+			"no-referrer, no-referrer-when-downgrade, same-origin, origin, strict-origin,, origin-when-cross-origin, strict-origin-when-cross-origin, unsafe-url"
+	},
+	{
+		key: "Content-Security-Policy",
+		value: "default-src 'self'"
+	}
+];
 
 const NextConfig = {
 	trailingSlash: true,
 	devIndicators: {
-		buildActivity: false
+		ignoreDuringBuilds: true,
+		buildActivity: false,
+		autoPrerender: false
 	},
 	eslint: {
 		dirs: ["pages", "enums", "components", "hooks", "helpers"],
@@ -25,11 +64,19 @@ const NextConfig = {
 	},
 	productionBrowserSourceMaps: true,
 	experimental: {
-		removeConsole: {
-			exclude: ["error"]
-		}
-		// Uncomment this to suppress all logs
-		// removeConsole: true
+		removeConsole: isProd
+			? true
+			: {
+					exclude: ["error"]
+			  }
+	},
+	async headers() {
+		return [
+			{
+				source: "/(.*)",
+				headers: SecurityHeaders
+			}
+		];
 	}
 };
 
