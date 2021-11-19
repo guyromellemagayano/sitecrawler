@@ -1,7 +1,7 @@
+import UpdatePasswordForm from "@components/forms/UpdatePasswordForm";
 import { LogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import * as React from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -9,14 +9,9 @@ import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
 /**
- * Dynamic imports
- */
-const UpdatePasswordForm = dynamic(() => import("@components/forms/UpdatePasswordForm"));
-
-/**
  * Memoized function to render the reset password form page layout.
  */
-export const ResetPasswordFormPageLayout = React.memo(() => {
+const ResetPasswordFormPageLayout = React.memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");
@@ -51,3 +46,5 @@ export const ResetPasswordFormPageLayout = React.memo(() => {
 		</div>
 	);
 });
+
+export default ResetPasswordFormPageLayout;
