@@ -4,7 +4,6 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 });
 const { withSentryConfig } = require("@sentry/nextjs");
 const withNextTranslate = require("next-translate");
-const { isProd } = require("@configs/ServerEnv");
 
 const SecurityHeaders = [
 	{
@@ -64,11 +63,12 @@ const NextConfig = {
 	},
 	productionBrowserSourceMaps: true,
 	experimental: {
-		removeConsole: isProd
-			? true
-			: {
-					exclude: ["error"]
-			  }
+		removeConsole:
+			process.env.NODE_ENV === "production"
+				? true
+				: {
+						exclude: ["error"]
+				  }
 	},
 	async headers() {
 		return [
