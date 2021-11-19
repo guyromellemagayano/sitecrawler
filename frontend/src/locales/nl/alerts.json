@@ -65,5 +65,7 @@
 	"updatePasswordInvalidTokenError": "Token is al verlopen. We kunnen uw verzoek niet meer in behandeling nemen.",
 	"updatePasswordUnknownError": "Er is een onbekende fout opgetreden tijdens het bijwerken van uw wachtwoord. Probeer het opnieuw.",
 	"confirmEmailOkSuccess": "Gefeliciteerd! Je profiel is nu klaar voor gebruik. Klik op de onderstaande knop om terug te gaan naar de inlogpagina.",
-	"confirmEmailUnknownError": "Er is een onbekende fout opgetreden terwijl we uw e-mail bevestigen. Probeer het opnieuw."
+	"confirmEmailUnknownError": "Er is een onbekende fout opgetreden terwijl we uw e-mail bevestigen. Probeer het opnieuw.",
+	"signupOkSuccess": "Wachtwoordgegevens succesvol toegevoegd aan huidige gebruiker. U wordt doorverwezen naar het Sites-dashboard...",
+	"signupUnknownError": "Er is een onbekende fout opgetreden tijdens het toevoegen van uw wachtwoordgegevens. Probeer het opnieuw."
 }

@@ -65,5 +65,7 @@
 	"updatePasswordInvalidTokenError": "Token already expired. We can't process with your request anymore.",
 	"updatePasswordUnknownError": "An unknown error has occurred while we're updating your password. Please try again.",
 	"confirmEmailOkSuccess": "Congratulations! Your profile is now ready to use. Click on the button below to go back to Login page.",
-	"confirmEmailUnknownError": "An unknown error has occurred while we're confirming your email. Please try again."
+	"confirmEmailUnknownError": "An unknown error has occurred while we're confirming your email. Please try again.",
+	"signupOkSuccess": "Password details added to current user successfully. Redirecting you to Sites Dashboard...",
+	"signupUnknownError": "An unknown error has occurred while we're adding your password details. Please try again."
 }

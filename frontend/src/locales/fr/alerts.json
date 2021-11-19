@@ -65,5 +65,7 @@
 	"updatePasswordInvalidTokenError": "Jeton déjà expiré. Nous ne pouvons plus traiter votre demande.",
 	"updatePasswordUnknownError": "Une erreur inconnue s'est produite lors de la mise à jour de votre mot de passe. Veuillez réessayer.",
 	"confirmEmailOkSuccess": "Toutes nos félicitations! Votre profil est maintenant prêt à être utilisé. Cliquez sur le bouton ci-dessous pour revenir à la page de connexion.",
-	"confirmEmailUnknownError": "Une erreur inconnue s'est produite lors de la confirmation de votre e-mail. Veuillez réessayer."
+	"confirmEmailUnknownError": "Une erreur inconnue s'est produite lors de la confirmation de votre e-mail. Veuillez réessayer.",
+	"signupOkSuccess": "Détails du mot de passe ajoutés avec succès à l'utilisateur actuel. Vous rediriger vers le tableau de bord de Sites...",
+	"signupUnknownError": "Une erreur inconnue s'est produite lors de l'ajout des détails de votre mot de passe. Veuillez réessayer."
 }

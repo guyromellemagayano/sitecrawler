@@ -1,47 +1,83 @@
-// React
-import * as React from "react";
-
-// NextJS
-import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
-
-// External
-import { Formik } from "formik";
-import * as Yup from "yup";
-import PasswordStrengthBar from "react-password-strength-bar";
-import PropTypes from "prop-types";
-import tw from "twin.macro";
-
-// Enums
-import { FormSubmissionInterval } from "@enums/GlobalValues";
-import { SignupApiEndpoint } from "@enums/ApiEndpoints";
-import { SignupLabels } from "@enums/SignupLabels";
-import { SitesLink } from "@enums/PageLinks";
-
-// Hooks
+import { Alert } from "@components/alerts";
+import { SignupApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
+import { FormPasswordMaxChars, FormPasswordMinChars } from "@configs/GlobalValues";
+import { SitesLink } from "@configs/PageLinks";
 import { usePostMethod } from "@hooks/useHttpMethod";
+import * as Sentry from "@sentry/nextjs";
+import { Formik } from "formik";
+import useTranslation from "next-translate/useTranslation";
+import { useRouter } from "next/router";
+import * as React from "react";
+import PasswordStrengthBar from "react-password-strength-bar";
+import { useSWRConfig } from "swr";
+import tw from "twin.macro";
+import * as Yup from "yup";
 
-// Components
-const ErrorMessageAlert = dynamic(() => import("@components/alerts/ErrorMessageAlert"));
-const SuccessMessageAlert = dynamic(() => import("@components/alerts/SuccessMessageAlert"));
+const SignupForm = React.memo(() => {
+	const [disableSignupForm, setDisableSignupForm] = React.useState(false);
+	const [isErrorPassword, setIsErrorPassword] = React.useState(false);
+	const [errorMessage, setErrorMessage] = React.useState([]);
+	const [successMessage, setSuccessMessage] = React.useState([]);
+	const [uid, setUid] = React.useState(null);
 
-const SignupForm = ({ result }) => {
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
-
-	const signupConfirmApiEndpoint = SignupApiEndpoint + result.id[0] + "/confirm/";
-
+	// Router
+	const { asPath } = useRouter();
+	const { query } = useRouter();
 	const router = useRouter();
 
-	return (
-		<div>
-			{errorMsg.length > 0
-				? errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)
-				: null}
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
 
-			{successMsg.length > 0
-				? successMsg.map((value, index) => <SuccessMessageAlert key={index} message={value} />)
-				: null}
+	// Complete signup API endpoint
+	let signupConfirmApiEndpoint = "";
+
+	// Translations
+	const { t } = useTranslation();
+	const bothPasswordsNeedSame = t("common:bothPasswordsNeedSame");
+	const completeSignup = t("signup:completeSignup");
+	const password = t("common:password");
+	const repeatPassword = t("common:repeatPassword");
+	const requiredField = t("common:requiredField");
+	const signupOkSuccess = t("alerts:signupOkSuccess");
+	const signupUnknownError = t("alerts:signupUnknownError");
+	const submitting = t("common:submitting");
+	const tooLong = t("common:tooLong");
+	const tooShort = t("common:tooShort");
+
+	// Set the `uid` and `token` from the URL query parameters
+	React.useEffect(() => {
+		const confirmSlug = "/confirm/";
+		const hasKeyProperty = query.hasOwnProperty("id") ? true : false;
+
+		if (Object.keys(query).length > 0 && hasKeyProperty) {
+			setUid(query.id[0]);
+		}
+
+		signupConfirmApiEndpoint = SignupApiEndpoint + uid + confirmSlug;
+	}, [query]);
+
+	// Prefetch sites page for faster loading
+	React.useEffect(() => {
+		router.prefetch(SitesLink);
+	}, []);
+
+	return (
+		<React.Fragment>
+			{errorMessage !== [] && errorMessage.length > 0 ? (
+				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
+					{errorMessage.map((value, key) => (
+						<Alert key={key} message={value} isError />
+					))}
+				</div>
+			) : null}
+
+			{successMessage !== [] && successMessage.length > 0 ? (
+				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
+					{successMessage.map((value, key) => (
+						<Alert key={key} message={value} isSuccess />
+					))}
+				</div>
+			) : null}
 
 			<Formik
 				initialValues={{
@@ -50,45 +86,67 @@ const SignupForm = ({ result }) => {
 				}}
 				validationSchema={Yup.object().shape({
 					password: Yup.string()
-						.min(10, SignupLabels[10].label)
-						.max(128, SignupLabels[11].label)
-						.required(SignupLabels[0].label),
+						.min(FormPasswordMinChars, tooShort)
+						.max(FormPasswordMaxChars, tooLong)
+						.required(requiredField),
 					repeatPassword: Yup.string()
 						.when("password", {
-							is: (val) => (val && val.length > 0 ? true : false),
-							then: Yup.string().oneOf([Yup.ref("password")], SignupLabels[3].label)
+							is: (val) => val && val.length > 0,
+							then: Yup.string().oneOf([Yup.ref("password")], bothPasswordsNeedSame)
 						})
-						.required(SignupLabels[0].label)
+						.required(requiredField)
 				})}
 				onSubmit={async (values, { setSubmitting, resetForm }) => {
 					const body = {
 						password: values.password
 					};
 
-					const response = await usePostMethod(signupConfirmApiEndpoint, body);
+					const signupResponse = await usePostMethod(signupConfirmApiEndpoint, body);
+					const signupResponseData = signupResponse.data ?? null;
+					const signupResponseStatus = signupResponse.status ?? null;
 
-					Math.floor(response?.status / 200) === 1
-						? (() => {
-								resetForm({ values: "" });
-								setSubmitting(false);
-								setSuccessMsg((successMsg) => [...successMsg, SignupLabels[4].label]);
+					if (signupResponseData !== null && Math.round(signupResponseStatus / 200) === 1) {
+						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+						mutate(UserApiEndpoint, false);
 
-								setTimeout(() => {
-									router.push(SitesLink);
-								}, FormSubmissionInterval);
-						  })()
-						: (() => {
-								resetForm({ values: "" });
-								setSubmitting(false);
-								setErrorMsg((errorMsg) => [...errorMsg, SignupLabels[5].label]);
-						  })();
+						setSubmitting(false);
+						setDisableSignupForm(!disableSignupForm);
+						resetForm({ values: "" });
+						setSuccessMessage((prevState) => [
+							...prevState,
+							prevState.indexOf(signupOkSuccess) !== -1
+								? prevState.find((prevState) => prevState === signupOkSuccess)
+								: signupOkSuccess
+						]);
+					} else {
+						resetForm({ values: "" });
+						setSubmitting(false);
+
+						setErrorMessage((prevState) => [
+							...prevState,
+							prevState.indexOf(signupUnknownError) !== -1
+								? prevState.find((prevState) => prevState === signupUnknownError)
+								: signupUnknownError
+						]);
+
+						// Capture unknown errors and send to Sentry
+						Sentry.configureScope((scope) => {
+							scope.setTag("route", asPath);
+							scope.setTag("status", signupResponseStatus);
+							scope.setTag(
+								"message",
+								errorMessage.find((message) => message === signupUnknownError)
+							);
+							Sentry.captureException(new Error(signupResponse));
+						});
+					}
 				}}
 			>
 				{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 					<form onSubmit={handleSubmit}>
 						<div tw="mt-1">
 							<label htmlFor="password" tw="block text-sm font-medium leading-5 text-gray-700">
-								{SignupLabels[6].label}
+								{password}
 							</label>
 							<div tw="mt-1">
 								<input
@@ -96,10 +154,11 @@ const SignupForm = ({ result }) => {
 									type="password"
 									name="password"
 									autoFocus={true}
+									disabled={isSubmitting || disableSignupForm}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
 										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-										errors.password ? tw`border-red-300` : tw`border-gray-300`
+										errors.password || isErrorPassword ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="password"
 									onChange={handleChange}
@@ -117,21 +176,19 @@ const SignupForm = ({ result }) => {
 						</div>
 
 						<div tw="mt-6">
-							<label
-								htmlFor="repeatPassword"
-								tw="block text-sm font-medium leading-5 text-gray-700"
-							>
-								{SignupLabels[7].label}
+							<label htmlFor="repeatPassword" tw="block text-sm font-medium leading-5 text-gray-700">
+								{repeatPassword}
 							</label>
 							<div tw="mt-1">
 								<input
 									id="repeatPassword"
 									type="password"
 									name="repeatPassword"
+									disabled={isSubmitting || disableSignupForm}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
 										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-										errors.repeatPassword ? tw`border-red-300` : tw`border-gray-300`
+										errors.repeatPassword || isErrorPassword ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="repeatPassword"
 									onChange={handleChange}
@@ -151,31 +208,23 @@ const SignupForm = ({ result }) => {
 							<span tw="block w-full rounded-md shadow-sm">
 								<button
 									type="submit"
-									disabled={isSubmitting}
+									disabled={isSubmitting || disableSignupForm}
 									css={[
 										tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
-										isSubmitting
+										isSubmitting || disableSignupForm
 											? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
 											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
 								>
-									{isSubmitting ? SignupLabels[9].label : SignupLabels[8].label}
+									{isSubmitting || disableSignupForm ? submitting : completeSignup}
 								</button>
 							</span>
 						</div>
 					</form>
 				)}
 			</Formik>
-		</div>
+		</React.Fragment>
 	);
-};
-
-SignupForm.propTypes = {
-	id: PropTypes.array
-};
-
-SignupForm.defaultProps = {
-	id: null
-};
+});
 
 export default SignupForm;
