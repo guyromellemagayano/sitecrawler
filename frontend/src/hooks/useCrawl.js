@@ -31,7 +31,8 @@ export const useCrawl = (siteId = 0) => {
 	};
 
 	const handleCrawl = (e) => {
-		let endpoint = `${SiteApiEndpoint + siteId}/start_scan/`;
+		const startScanSlug = "/start_scan/";
+		let endpoint = `${SiteApiEndpoint + siteId + startScanSlug}`;
 
 		e.preventDefault();
 

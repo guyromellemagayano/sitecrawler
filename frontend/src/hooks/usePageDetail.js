@@ -10,8 +10,8 @@ import useSWR from "swr";
  * @returns {object} data, error, isValidating
  */
 export const usePageDetail = (querySid = 0, scanObjId = 0, linkId = 0) => {
-	const scanEndpoint = "/scan/";
-	const pageEndpoint = "/page/";
+	const scanSlug = "/scan/";
+	const pageSlug = "/page/";
 
 	const {
 		data: pageDetail,
@@ -27,7 +27,7 @@ export const usePageDetail = (querySid = 0, scanObjId = 0, linkId = 0) => {
 			typeof linkId !== "undefined" &&
 			linkId !== null &&
 			linkId !== 0
-			? SiteApiEndpoint + querySid + scanEndpoint + scanObjId + pageEndpoint + linkId + "/"
+			? SiteApiEndpoint + querySid + scanSlug + scanObjId + pageSlug + linkId + "/"
 			: null
 	);
 

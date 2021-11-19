@@ -8,7 +8,7 @@ import useSWR from "swr";
  * @returns {object} data, error, isValidating
  */
 export const useUptimeSummary = (querySid = 0) => {
-	const uptimeSummaryEndpoint = "/uptime/summary/";
+	const uptimeSummarySlug = "/uptime/summary/";
 
 	const {
 		data: uptimeSummary,
@@ -16,7 +16,7 @@ export const useUptimeSummary = (querySid = 0) => {
 		isValidating: validatingUptimeSummaryError
 	} = useSWR(
 		typeof querySid !== "undefined" && querySid !== null && querySid !== 0
-			? SiteApiEndpoint + querySid + uptimeSummaryEndpoint
+			? SiteApiEndpoint + querySid + uptimeSummarySlug
 			: null
 	);
 
