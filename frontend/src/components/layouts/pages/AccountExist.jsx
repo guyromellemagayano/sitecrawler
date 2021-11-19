@@ -10,7 +10,7 @@ import "twin.macro";
 /**
  * Memoized function to render the account exist page layout.
  */
-export const AccountExistPageLayout = React.memo(() => {
+const AccountExistPageLayout = React.memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("accountExist:headline");
@@ -45,3 +45,5 @@ export const AccountExistPageLayout = React.memo(() => {
 		</div>
 	);
 });
+
+export default AccountExistPageLayout;
