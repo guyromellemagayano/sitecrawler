@@ -28,9 +28,6 @@ const SignupForm = React.memo(() => {
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
-	// Complete signup API endpoint
-	let signupConfirmApiEndpoint = "";
-
 	// Translations
 	const { t } = useTranslation();
 	const bothPasswordsNeedSame = t("common:bothPasswordsNeedSame");
@@ -46,15 +43,17 @@ const SignupForm = React.memo(() => {
 
 	// Set the `uid` and `token` from the URL query parameters
 	React.useEffect(() => {
-		const confirmSlug = "/confirm/";
 		const hasKeyProperty = query.hasOwnProperty("id") ? true : false;
 
 		if (Object.keys(query).length > 0 && hasKeyProperty) {
 			setUid(query.id[0]);
 		}
-
-		signupConfirmApiEndpoint = SignupApiEndpoint + uid + confirmSlug;
 	}, [query]);
+
+	// Complete signup API endpoint
+	const confirmSlug = "/confirm/";
+
+	let signupConfirmApiEndpoint = SignupApiEndpoint + uid + confirmSlug;
 
 	// Prefetch sites page for faster loading
 	React.useEffect(() => {
@@ -128,6 +127,8 @@ const SignupForm = React.memo(() => {
 								? prevState.find((prevState) => prevState === signupUnknownError)
 								: signupUnknownError
 						]);
+
+						setIsErrorPassword(true);
 
 						// Capture unknown errors and send to Sentry
 						Sentry.configureScope((scope) => {
