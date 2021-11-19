@@ -163,7 +163,7 @@ const LoginForm = React.memo(() => {
 					}
 				}}
 			>
-				{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
+				{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 					<React.Fragment>
 						<form onSubmit={handleSubmit}>
 							<div tw="mt-1">
@@ -186,6 +186,7 @@ const LoginForm = React.memo(() => {
 										]}
 										aria-describedby="username"
 										onChange={handleChange}
+										onBlur={handleBlur}
 										value={values.username}
 									/>
 								</div>
@@ -232,6 +233,7 @@ const LoginForm = React.memo(() => {
 										]}
 										aria-describedby="password"
 										onChange={handleChange}
+										onBlur={handleBlur}
 										value={values.password}
 									/>
 								</div>

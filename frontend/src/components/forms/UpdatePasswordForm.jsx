@@ -158,7 +158,7 @@ const UpdatePasswordForm = React.memo(() => {
 					}
 				}}
 			>
-				{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
+				{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 					<form onSubmit={handleSubmit}>
 						<div tw="mt-1">
 							<label htmlFor="password1" tw="block text-sm font-medium leading-5 text-gray-700">
@@ -177,6 +177,7 @@ const UpdatePasswordForm = React.memo(() => {
 									]}
 									aria-describedby="password1"
 									onChange={handleChange}
+									onBlur={handleBlur}
 									value={values.password1}
 								/>
 							</div>
@@ -206,6 +207,7 @@ const UpdatePasswordForm = React.memo(() => {
 									]}
 									aria-describedby="password2"
 									onChange={handleChange}
+									onBlur={handleBlur}
 									value={values.password2}
 								/>
 							</div>

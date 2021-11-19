@@ -108,7 +108,7 @@ const ResetPasswordForm = React.memo(() => {
 					}
 				}}
 			>
-				{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
+				{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 					<form onSubmit={handleSubmit}>
 						<div tw="mt-1">
 							<label htmlFor="email" tw="block text-sm font-medium leading-5 text-gray-700">
@@ -128,6 +128,7 @@ const ResetPasswordForm = React.memo(() => {
 									]}
 									aria-describedby="email"
 									onChange={handleChange}
+									onBlur={handleBlur}
 									value={values.email}
 								/>
 							</div>

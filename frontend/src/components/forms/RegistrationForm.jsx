@@ -186,7 +186,7 @@ export const RegistrationForm = React.memo(() => {
 					}
 				}}
 			>
-				{({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) => (
+				{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 					<form onSubmit={handleSubmit}>
 						<div tw="mt-1">
 							<label htmlFor="firstname" tw="block text-sm font-medium text-gray-700">
@@ -206,6 +206,7 @@ export const RegistrationForm = React.memo(() => {
 									]}
 									aria-describedby="firstname"
 									onChange={handleChange}
+									onBlur={handleBlur}
 									value={values.firstname}
 								/>
 							</div>
@@ -234,6 +235,7 @@ export const RegistrationForm = React.memo(() => {
 									]}
 									aria-describedby="lastname"
 									onChange={handleChange}
+									onBlur={handleBlur}
 									value={values.lastname}
 								/>
 							</div>
@@ -262,6 +264,7 @@ export const RegistrationForm = React.memo(() => {
 									]}
 									aria-describedby="username"
 									onChange={handleChange}
+									onBlur={handleBlur}
 									value={values.username}
 								/>
 							</div>
@@ -290,6 +293,7 @@ export const RegistrationForm = React.memo(() => {
 									]}
 									aria-describedby="email"
 									onChange={handleChange}
+									onBlur={handleBlur}
 									value={values.email}
 								/>
 							</div>
@@ -318,6 +322,7 @@ export const RegistrationForm = React.memo(() => {
 									]}
 									aria-describedby="password1"
 									onChange={handleChange}
+									onBlur={handleBlur}
 									value={values.password1}
 								/>
 							</div>
@@ -347,6 +352,7 @@ export const RegistrationForm = React.memo(() => {
 									]}
 									aria-describedby="password2"
 									onChange={handleChange}
+									onBlur={handleBlur}
 									value={values.password2}
 								/>
 							</div>
