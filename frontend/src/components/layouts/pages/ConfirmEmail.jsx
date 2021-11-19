@@ -13,21 +13,30 @@ import tw from "twin.macro";
 
 /**
  * Memoized function to render the confirm mail page layout
- *
- * @param {string} uid
  */
-export const ConfirmEmailPageLayout = React.memo(({ uid = null }) => {
+const ConfirmEmailPageLayout = React.memo(() => {
 	const [success, setSuccess] = React.useState(false);
 	const [failure, setFailure] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState([]);
 	const [successMessage, setSuccessMessage] = React.useState([]);
+	const [uid, setUid] = React.useState(null);
 
 	// Router
 	const { asPath } = useRouter();
 	const router = useRouter();
+	const { query } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
+
+	// Set the `uid` and `token` from the URL query parameters
+	React.useEffect(() => {
+		const hasKeyProperty = query.hasOwnProperty("id") ? true : false;
+
+		if (Object.keys(query).length > 0 && hasKeyProperty) {
+			setUid(query.id[0]);
+		}
+	}, [query]);
 
 	// Translations
 	const { t } = useTranslation();
@@ -48,6 +57,8 @@ export const ConfirmEmailPageLayout = React.memo(({ uid = null }) => {
 			const confirmEmailResponse = await usePostMethod(ConfirmEmailApiEndpoint, body);
 			const confirmEmailResponseData = confirmEmailResponse.data ?? null;
 			const confirmEmailResponseStatus = confirmEmailResponse.status ?? null;
+
+			console.log(confirmEmailResponse);
 
 			if (confirmEmailResponseData !== null && Math.round(confirmEmailResponseStatus / 200) === 1) {
 				// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
@@ -105,29 +116,51 @@ export const ConfirmEmailPageLayout = React.memo(({ uid = null }) => {
 								{success &&
 								typeof successMessage !== "undefined" &&
 								successMessage !== null &&
-								successMessage !== [] ? (
+								successMessage !== [] &&
+								successMessage.length > 0 ? (
 									<div tw="mt-3 text-sm leading-5 text-gray-500">
 										{successMessage.map((value, key) => (
 											<p key={key}>{value}</p>
 										))}
 										<div tw="mt-5">
 											<Link href={LoginLink} passHref replace>
-												<a tw="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+												<a
+													css={[
+														success &&
+														typeof successMessage !== "undefined" &&
+														successMessage !== null &&
+														successMessage !== [] &&
+														successMessage.length > 0
+															? tw`inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm`
+															: tw`hidden`
+													]}
+												>
 													{goBackLogin}
 												</a>
 											</Link>
 										</div>
 									</div>
-								) : failure && typeof errorMessage !== "undefined" && errorMessage !== null && errorMessage !== [] ? (
+								) : failure &&
+								  typeof errorMessage !== "undefined" &&
+								  errorMessage !== null &&
+								  errorMessage !== [] &&
+								  errorMessage.length > 0 ? (
 									<div tw="mt-3 text-sm leading-5 text-gray-500">
 										{errorMessage.map((value, key) => (
 											<p key={key}>{value}</p>
 										))}
-
 										<div tw="mt-5">
 											<button
 												type="button"
-												tw="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm"
+												css={[
+													failure &&
+													typeof errorMessage !== "undefined" &&
+													errorMessage !== null &&
+													errorMessage !== [] &&
+													errorMessage.length > 0
+														? tw`inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm`
+														: tw`hidden`
+												]}
 												onClick={() => router.reload()}
 											>
 												{reloadPage}
@@ -143,3 +176,5 @@ export const ConfirmEmailPageLayout = React.memo(({ uid = null }) => {
 		</div>
 	);
 });
+
+export default ConfirmEmailPageLayout;
