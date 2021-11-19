@@ -60,7 +60,7 @@
 	"resetPasswordOkSuccess": "Reset wachtwoordverzoek succesvol verzonden! Controleer uw e-mail om door te gaan met het proces.",
 	"resetPasswordBadRequestPostError": "We kunnen uw wachtwoord niet opnieuw instellen met de opgegeven inloggegevens. Controleer de details van uw reset-wachtwoord opnieuw.",
 	"resetPasswordUnknownError": "Er is een onbekende fout opgetreden terwijl we uw wachtwoord opnieuw instellen. Probeer het opnieuw.",
-	"updatePasswordOkSuccess": "Wachtwoord is succesvol gereset. U wordt doorverwezen naar de inlogpagina...",
+	"updatePasswordOkSuccess": "Wachtwoord is succesvol gereset.",
 	"updatePasswordBadRequestPostError": "We kunnen uw wachtwoord niet bijwerken met de opgegeven inloggegevens. Controleer de details van uw updatewachtwoord opnieuw.",
 	"updatePasswordInvalidTokenError": "Token is al verlopen. We kunnen uw verzoek niet meer in behandeling nemen.",
 	"updatePasswordUnknownError": "Er is een onbekende fout opgetreden tijdens het bijwerken van uw wachtwoord. Probeer het opnieuw.",

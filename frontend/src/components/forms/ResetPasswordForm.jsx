@@ -12,7 +12,7 @@ import * as Yup from "yup";
 /**
  * Memoized function to render the `ResetPasswordForm` component.
  */
-export const ResetPasswordForm = React.memo(() => {
+const ResetPasswordForm = React.memo(() => {
 	const [errorMessage, setErrorMessage] = React.useState([]);
 	const [successMessage, setSuccessMessage] = React.useState([]);
 
@@ -161,3 +161,5 @@ export const ResetPasswordForm = React.memo(() => {
 		</React.Fragment>
 	);
 });
+
+export default ResetPasswordForm;

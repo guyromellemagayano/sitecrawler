@@ -1,13 +1,11 @@
 import { Alert } from "@components/alerts";
 import { ConfirmResetPasswordApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { FormPasswordMaxChars, FormPasswordMinChars, RevalidationInterval } from "@configs/GlobalValues";
-import { LoginLink } from "@configs/PageLinks";
+import { FormPasswordMaxChars, FormPasswordMinChars } from "@configs/GlobalValues";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
 import * as React from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useSWRConfig } from "swr";
@@ -17,9 +15,11 @@ import * as Yup from "yup";
 /**
  * Memoized function to render the `UpdatePasswordForm` component.
  */
-export const UpdatePasswordForm = React.memo(({ uid = null, token = null }) => {
+const UpdatePasswordForm = React.memo(() => {
 	const [errorMessage, setErrorMessage] = React.useState([]);
 	const [successMessage, setSuccessMessage] = React.useState([]);
+	const [uid, setUid] = React.useState(null);
+	const [token, setToken] = React.useState(null);
 
 	// Translations
 	const { t } = useTranslation();
@@ -39,9 +39,20 @@ export const UpdatePasswordForm = React.memo(({ uid = null, token = null }) => {
 	// Router
 	const { asPath } = useRouter();
 	const router = useRouter();
+	const { query } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
+
+	// Set the `uid` and `token` from the URL query parameters
+	React.useEffect(() => {
+		const hasKeyProperty = query.hasOwnProperty("id") ? true : false;
+
+		if (Object.keys(query).length > 0 && hasKeyProperty) {
+			setUid(query.id[0]);
+			setToken(query.id[1]);
+		}
+	}, [query]);
 
 	return (
 		<React.Fragment>
@@ -104,10 +115,6 @@ export const UpdatePasswordForm = React.memo(({ uid = null, token = null }) => {
 								? prevState.find((prevState) => prevState === updatePasswordOkSuccess)
 								: updatePasswordOkSuccess
 						]);
-
-						setTimeout(() => {
-							router.replace(LoginLink);
-						}, RevalidationInterval);
 					} else {
 						let errorStatusCodeMessage = "";
 
@@ -234,7 +241,4 @@ export const UpdatePasswordForm = React.memo(({ uid = null, token = null }) => {
 	);
 });
 
-UpdatePasswordForm.propTypes = {
-	token: PropTypes.string,
-	uid: PropTypes.string
-};
+export default UpdatePasswordForm;

@@ -1,14 +1,19 @@
-import { ResetPasswordForm } from "@components/forms/ResetPasswordForm";
-import { UpdatePasswordForm } from "@components/forms/UpdatePasswordForm";
 import { LogoLabel } from "@components/labels/LogoLabel";
+import { Loader } from "@components/loaders";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import PropTypes from "prop-types";
 import * as React from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
+
+/**
+ * Dynamic form imports
+ */
+const ResetPasswordForm = dynamic(() => import("@components/forms/ResetPasswordForm"), { loading: <Loader /> });
+const UpdatePasswordForm = dynamic(() => import("@components/forms/UpdatePasswordForm"), { loading: <Loader /> });
 
 /**
  * Memoized function to render the reset password page layout.
@@ -55,7 +60,7 @@ export const ResetPasswordPageLayout = React.memo(() => {
  * @param {string} uid
  * @param {string} token
  */
-export const ResetPasswordFormPageLayout = React.memo(({ uid, token }) => {
+export const ResetPasswordFormPageLayout = React.memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");
@@ -70,7 +75,7 @@ export const ResetPasswordFormPageLayout = React.memo(({ uid, token }) => {
 
 						<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 							<div tw="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
-								<UpdatePasswordForm uid={uid} token={token} />
+								<UpdatePasswordForm />
 							</div>
 
 							<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
@@ -90,8 +95,3 @@ export const ResetPasswordFormPageLayout = React.memo(({ uid, token }) => {
 		</div>
 	);
 });
-
-ResetPasswordFormPageLayout.propTypes = {
-	token: PropTypes.string,
-	uid: PropTypes.string
-};

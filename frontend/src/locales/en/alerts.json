@@ -60,7 +60,7 @@
 	"resetPasswordOkSuccess": "Reset password request sent successfully! Please check your email to continue the process.",
 	"resetPasswordBadRequestPostError": "We're unable to reset your password with the provided credentials. Please recheck your reset password details.",
 	"resetPasswordUnknownError": "An unknown error has occurred while we're resetting your password. Please try again.",
-	"updatePasswordOkSuccess": "Password has been reset successfully. Redirecting you to login page...",
+	"updatePasswordOkSuccess": "Password has been reset successfully.",
 	"updatePasswordBadRequestPostError": "We're unable to update your password with the provided credentials. Please recheck your update password details.",
 	"updatePasswordInvalidTokenError": "Token already expired. We can't process with your request anymore.",
 	"updatePasswordUnknownError": "An unknown error has occurred while we're updating your password. Please try again.",

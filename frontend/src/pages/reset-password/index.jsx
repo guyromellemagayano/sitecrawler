@@ -36,8 +36,6 @@ export async function getServerSideProps({ req }) {
 
 /**
  * Memoized `ResetPassword` page.
- *
- * @description Reset password page
  */
 const ResetPassword = React.memo(() => {
 	// Translations

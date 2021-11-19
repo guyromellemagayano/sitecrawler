@@ -60,7 +60,7 @@
 	"resetPasswordOkSuccess": "Demande de réinitialisation de mot de passe envoyée avec succès ! Veuillez vérifier votre courrier électronique pour continuer le processus.",
 	"resetPasswordBadRequestPostError": "Nous ne sommes pas en mesure de réinitialiser votre mot de passe avec les informations d'identification fournies. Veuillez revérifier les détails de votre mot de passe de réinitialisation.",
 	"resetPasswordUnknownError": "Une erreur inconnue s'est produite lors de la réinitialisation de votre mot de passe. Veuillez réessayer.",
-	"updatePasswordOkSuccess": "Le mot de passe a été réinitialisé avec succès. Vous rediriger vers la page de connexion...",
+	"updatePasswordOkSuccess": "Le mot de passe a été réinitialisé avec succès.",
 	"updatePasswordBadRequestPostError": "Nous ne sommes pas en mesure de mettre à jour votre mot de passe avec les informations d'identification fournies. Veuillez revérifier les détails de votre mot de passe de mise à jour.",
 	"updatePasswordInvalidTokenError": "Jeton déjà expiré. Nous ne pouvons plus traiter votre demande.",
 	"updatePasswordUnknownError": "Une erreur inconnue s'est produite lors de la mise à jour de votre mot de passe. Veuillez réessayer.",
