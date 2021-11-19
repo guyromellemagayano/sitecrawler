@@ -19,7 +19,7 @@ import * as Yup from "yup";
 /**
  * Memoized function to render the `LoginForm` component.
  */
-export const LoginForm = React.memo(() => {
+const LoginForm = React.memo(() => {
 	const [disableLoginForm, setDisableLoginForm] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState([]);
 	const [successMessage, setSuccessMessage] = React.useState([]);
@@ -341,3 +341,5 @@ export const LoginForm = React.memo(() => {
 		</React.Fragment>
 	);
 });
+
+export default LoginForm;

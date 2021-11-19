@@ -1,4 +1,4 @@
-import { LoginForm } from "@components/forms/LoginForm";
+import LoginForm from "@components/forms/LoginForm";
 import { LogoLabel } from "@components/labels/LogoLabel";
 import { AppLogo } from "@components/logos/AppLogo";
 import { NoAuthAppLogo } from "@configs/GlobalValues";
@@ -15,7 +15,7 @@ import Footer from "../components/Footer";
 /**
  * Memoized function to render the login page layout.
  */
-export const LoginPageLayout = React.memo(() => {
+const LoginPageLayout = React.memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("common:headline");
@@ -80,3 +80,5 @@ export const LoginPageLayout = React.memo(() => {
 		</section>
 	);
 });
+
+export default LoginPageLayout;
