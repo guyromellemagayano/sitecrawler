@@ -1,6 +1,6 @@
 import { Alert } from "@components/alerts";
 import { SignupApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { FormPasswordMaxChars, FormPasswordMinChars } from "@configs/GlobalValues";
+import { FormPasswordMaxChars, FormPasswordMinChars, RedirectInterval } from "@configs/GlobalValues";
 import { SitesLink } from "@configs/PageLinks";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
@@ -117,6 +117,11 @@ const SignupForm = React.memo(() => {
 								? prevState.find((prevState) => prevState === signupOkSuccess)
 								: signupOkSuccess
 						]);
+
+						// Redirect to sites dashboard page after successful 200 OK response is established
+						setTimeout(() => {
+							router.push(SitesLink);
+						}, RedirectInterval);
 					} else {
 						resetForm({ values: "" });
 						setSubmitting(false);
