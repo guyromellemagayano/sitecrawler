@@ -1,5 +1,5 @@
 import Layout from "@components/layouts";
-import { ResetPasswordFormPageLayout } from "@components/layouts/pages/ResetPassword";
+import { ResetPasswordFormPageLayout } from "@components/layouts/pages/ResetPasswordForm";
 import { UserApiEndpoint } from "@configs/ApiEndpoints";
 import { SitesLink } from "@configs/PageLinks";
 import { server } from "@configs/ServerEnv";
