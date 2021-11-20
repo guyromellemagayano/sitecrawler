@@ -1,24 +1,26 @@
-// React
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import "twin.macro";
-import { ExclamationIcon } from "@heroicons/react/solid";
+import { SubscriptionPlansLink } from "@configs/PageLinks";
 import { Transition } from "@headlessui/react";
-import PropTypes from "prop-types";
-import ReactHtmlParser from "react-html-parser";
+import { ExclamationIcon } from "@heroicons/react/solid";
+import { useComponentVisible } from "@hooks/useComponentVisible";
+import useTranslation from "next-translate/useTranslation";
+import Link from "next/link";
+import * as React from "react";
+import "twin.macro";
 
-// Enums
-import { SubscriptionPlansLink } from "@enums/PageLinks";
-import { UpgradeErrorModalLabels } from "@enums/UpgradeErrorModalLabels";
+const UpgradeErrorModal = React.forwardRef((ref) => {
+	// Translations
+	const { t } = useTranslation("common");
+	const siteFeatureNotAvailableTitle = t("siteFeatureNotAvailableTitle");
+	const siteFeatureNotAvailableMessage = t("siteFeatureNotAvailableMessage");
+	const close = t("close");
+	const upgradePlan = t("upgradePlan");
 
-const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) => {
+	// Custom hooks
+	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
+
 	return (
 		<Transition
-			show={showModal}
+			show={isComponentVisible}
 			tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center"
 		>
 			<Transition.Child
@@ -57,12 +59,10 @@ const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) =>
 						</div>
 						<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-								{UpgradeErrorModalLabels[0].label}
+								{siteFeatureNotAvailableTitle}
 							</h3>
 							<div tw="mt-2">
-								<p tw="text-sm leading-5 text-gray-500">
-									{ReactHtmlParser(UpgradeErrorModalLabels[1].label)}
-								</p>
+								<p tw="text-sm leading-5 text-gray-500">{siteFeatureNotAvailableMessage}</p>
 							</div>
 						</div>
 					</div>
@@ -70,7 +70,7 @@ const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) =>
 						<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
 							<Link href={SubscriptionPlansLink} passHref>
 								<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-									{UpgradeErrorModalLabels[3].label}
+									{upgradePlan}
 								</a>
 							</Link>
 						</span>
@@ -78,9 +78,9 @@ const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) =>
 							<button
 								type="button"
 								tw="cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-								onClick={() => setShowModal(!showModal)}
+								onClick={() => setIsComponentVisible(!isComponentVisible)}
 							>
-								{UpgradeErrorModalLabels[2].label}
+								{close}
 							</button>
 						</span>
 					</div>
@@ -89,15 +89,5 @@ const UpgradeErrorModal = React.forwardRef(({ showModal, setShowModal }, ref) =>
 		</Transition>
 	);
 });
-
-UpgradeErrorModal.propTypes = {
-	showModal: PropTypes.bool,
-	setShowModal: PropTypes.func
-};
-
-UpgradeErrorModal.defaultProps = {
-	showModal: false,
-	setShowModal: null
-};
 
 export default UpgradeErrorModal;
