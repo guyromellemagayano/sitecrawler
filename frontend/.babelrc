@@ -1,22 +1,15 @@
 {
-    "env": {
-        "development": {
-            "presets": [
-                [
-                    "@babel/preset-react",
-                    {
-                        "development": true
-                    }
-                ]
-            ]
-        }
-    },
     "presets": [
         [
             "next/babel",
             {
                 "preset-react": {
                     "runtime": "automatic"
+                },
+                "styled-jsx": {
+                    "plugins": [
+                        "styled-jsx-plugin-sass"
+                    ]
                 }
             }
         ]
@@ -24,10 +17,11 @@
     "plugins": [
         "babel-plugin-macros",
         "react-require",
+        "add-react-displayname",
         [
             "styled-components",
             {
-                "ssr": false,
+                "ssr": true,
                 "displayName": false,
                 "filename": false,
                 "minify": false,
