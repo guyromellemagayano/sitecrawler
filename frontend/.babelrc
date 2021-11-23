@@ -28,11 +28,11 @@
             "styled-components",
             {
                 "ssr": true,
-                "displayName": true,
-                "filename": true,
-                "minify": true,
-                "transpileTemplateLiterals": true,
-                "preprocess": true,
+                "displayName": false,
+                "filename": false,
+                "minify": false,
+                "transpileTemplateLiterals": false,
+                "preprocess": false,
                 "pure": true
             }
         ],
