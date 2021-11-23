@@ -15,10 +15,8 @@
         [
             "next/babel",
             {
-                "styled-jsx": {
-                    "plugins": [
-                        "styled-jsx-plugin-sass"
-                    ]
+                "preset-react": {
+                    "runtime": "automatic"
                 }
             }
         ],
@@ -37,12 +35,12 @@
         [
             "styled-components",
             {
-                "ssr": false,
-                "displayName": false,
-                "filename": false,
-                "minify": false,
-                "transpileTemplateLiterals": false,
-                "preprocess": false,
+                "ssr": true,
+                "displayName": true,
+                "filename": true,
+                "minify": true,
+                "transpileTemplateLiterals": true,
+                "preprocess": true,
                 "pure": true
             }
         ],
