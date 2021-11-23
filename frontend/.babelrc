@@ -37,10 +37,12 @@
         [
             "styled-components",
             {
-                "ssr": true,
-                "displayName": true,
-                "minify": true,
-                "preprocess": true,
+                "ssr": false,
+                "displayName": false,
+                "filename": false,
+                "minify": false,
+                "transpileTemplateLiterals": false,
+                "preprocess": false,
                 "pure": true
             }
         ],
