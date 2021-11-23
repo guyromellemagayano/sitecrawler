@@ -19,18 +19,10 @@
                     "runtime": "automatic"
                 }
             }
-        ],
-        [
-            "@babel/preset-react",
-            {
-                "runtime": "automatic"
-            }
         ]
     ],
     "plugins": [
         "babel-plugin-macros",
-        "inline-react-svg",
-        "add-react-displayname",
         "react-require",
         [
             "styled-components",
