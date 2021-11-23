@@ -2,7 +2,19 @@ module.exports = {
 	locales: ["en", "fr", "nl"],
 	defaultLocale: "en",
 	pages: {
-		"*": ["accountExist", "alerts", "common", "confirmEmail", "home", "login", "registration", "signup", "sites"]
+		"*": [
+			"accountExist",
+			"addSite",
+			"alerts",
+			"common",
+			"confirmEmail",
+			"home",
+			"login",
+			"registration",
+			"sidebar",
+			"signup",
+			"sites"
+		]
 	},
 	interpolation: {
 		prefix: "${",
