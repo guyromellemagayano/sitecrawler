@@ -27,13 +27,13 @@
         [
             "styled-components",
             {
-                "ssr": true,
+                "ssr": false,
                 "displayName": false,
                 "filename": false,
                 "minify": false,
                 "transpileTemplateLiterals": false,
                 "preprocess": false,
-                "pure": true
+                "pure": false
             }
         ],
         [
