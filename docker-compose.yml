@@ -39,7 +39,7 @@ services:
     image: crawl-app-frontend
     command: ./docker.dev.sh
     volumes:
-      # - ./frontend:/app
+      - ./frontend:/app
       - node-data:/app/node_modules
       - next-data:/app/.next
     labels:
