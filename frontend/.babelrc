@@ -1,47 +1,17 @@
 {
     "presets": [
-        [
-            "next/babel",
-            {
-                "preset-react": {
-                    "runtime": "automatic"
-                }
-            }
-        ]
+        "next/babel"
     ],
     "plugins": [
         "babel-plugin-macros",
-        "react-require",
-        "add-react-displayname",
         [
-            "styled-components",
+            "babel-plugin-styled-components",
             {
                 "ssr": true,
                 "displayName": false,
                 "filename": false,
-                "minify": false,
-                "transpileTemplateLiterals": false,
-                "preprocess": false,
-                "pure": false
-            }
-        ],
-        [
-            "module-resolver",
-            {
-                "root": [
-                    "."
-                ],
-                "alias": {
-                    "@components": "./src/components/",
-                    "@configs": "./src/configs/",
-                    "@enums": "./src/enums/",
-                    "@helpers": "./src/helpers/",
-                    "@hooks": "./src/hooks/",
-                    "@locales": "./src/locales/",
-                    "@pages": "./src/pages/",
-                    "@styles": "./src/styles/",
-                    "@utils": "./src/utils/"
-                }
+                "minify": true,
+                "pure": true
             }
         ]
     ]
