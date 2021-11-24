@@ -2,4 +2,5 @@
 
 set -e
 
+yarn
 yarn dev
