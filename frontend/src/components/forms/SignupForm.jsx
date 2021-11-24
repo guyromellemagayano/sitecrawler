@@ -1,7 +1,7 @@
-import { Alert } from "@components/alerts";
+import Alert from "@components/alerts";
 import { SignupApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
 import { FormPasswordMaxChars, FormPasswordMinChars, RedirectInterval } from "@configs/GlobalValues";
-import { SitesLink } from "@configs/PageLinks";
+import { DashboardSitesLink } from "@configs/PageLinks";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
@@ -57,7 +57,7 @@ const SignupForm = React.memo(() => {
 
 	// Prefetch sites page for faster loading
 	React.useEffect(() => {
-		router.prefetch(SitesLink);
+		router.prefetch(DashboardSitesLink);
 	}, []);
 
 	return (
@@ -120,7 +120,7 @@ const SignupForm = React.memo(() => {
 
 						// Redirect to sites dashboard page after successful 200 OK response is established
 						setTimeout(() => {
-							router.push(SitesLink);
+							router.push(DashboardSitesLink);
 						}, RedirectInterval);
 					} else {
 						resetForm({ values: "" });

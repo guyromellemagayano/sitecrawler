@@ -1,4 +1,4 @@
-import { Alert } from "@components/alerts";
+import Alert from "@components/alerts";
 import { RegistrationApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
 import {
 	FormPasswordMaxChars,

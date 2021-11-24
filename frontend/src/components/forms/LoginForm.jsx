@@ -1,7 +1,7 @@
-import { Alert } from "@components/alerts";
+import Alert from "@components/alerts";
 import { LoginApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { RedirectInterval } from "@configs/GlobalValues";
-import { SitesLink } from "@configs/PageLinks";
+import { RedirectInterval, ResetPassswordRoute } from "@configs/GlobalValues";
+import { DashboardSitesLink } from "@configs/PageLinks";
 import { SocialLoginLinks } from "@configs/SocialLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePostMethod } from "@hooks/useHttpMethod";
@@ -55,7 +55,7 @@ const LoginForm = React.memo(() => {
 
 	// Prefetch sites page for faster loading
 	React.useEffect(() => {
-		router.prefetch(SitesLink);
+		router.prefetch(DashboardSitesLink);
 	}, []);
 
 	return (
@@ -126,7 +126,7 @@ const LoginForm = React.memo(() => {
 
 						// Redirect to sites dashboard page after successful 200 OK response is established
 						setTimeout(() => {
-							router.push(SitesLink);
+							router.push(DashboardSitesLink);
 						}, RedirectInterval);
 					} else {
 						let errorStatusCodeMessage = "";
@@ -267,7 +267,7 @@ const LoginForm = React.memo(() => {
 								</div>
 
 								<div tw="text-sm">
-									<Link href="/reset-password">
+									<Link href={ResetPassswordRoute}>
 										<a
 											css={[
 												tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150 cursor-pointer`,
