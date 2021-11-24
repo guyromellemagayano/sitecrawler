@@ -9,7 +9,7 @@ import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
 /**
- * Memoized function to render the registration page layout.
+ * Memoized function to render the `RegistrationPageLayout` component.
  */
 export const RegistrationPageLayout = React.memo(() => {
 	// Translations

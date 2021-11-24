@@ -8,7 +8,7 @@ import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
 /**
- * Memoized function to render the account exist page layout.
+ * Memoized function to render the `AcccountExistPageLayout` component
  */
 const AccountExistPageLayout = React.memo(() => {
 	// Translations

@@ -9,7 +9,7 @@ import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
 /**
- * Memoized function to render the reset password form page layout.
+ * Memoized function to render the `ResetPasswordFormPageLayout` component
  */
 const ResetPasswordFormPageLayout = React.memo(() => {
 	// Translations

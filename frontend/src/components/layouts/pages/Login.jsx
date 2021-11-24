@@ -13,7 +13,7 @@ import "twin.macro";
 import Footer from "../components/Footer";
 
 /**
- * Memoized function to render the login page layout.
+ * Memoized function to render the `LoginPageLayout` component.
  */
 const LoginPageLayout = React.memo(() => {
 	// Translations

@@ -8,7 +8,7 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
 
 /**
- * Memoized function to render the signup page layout.
+ * Memoized function to render the `SignupPageLayout` component
  */
 const SignupPageLayout = React.memo(() => {
 	// Translations
