@@ -12,12 +12,8 @@ import "twin.macro";
  * @param {number} width
  * @param {string} className
  */
-export const AppLogo = React.memo(({ alt = null, height = null, src = null, width = null, className = null }) => {
-	return (
-		<span className={className}>
-			<Image src={src} alt={alt} width={width} height={height} priority />
-		</span>
-	);
+export const AppLogo = React.memo(({ alt = null, height = null, src = null, width = null }) => {
+	return <Image src={src} alt={alt} width={width} height={height} priority />;
 });
 
 AppLogo.propTypes = {

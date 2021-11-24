@@ -35,15 +35,9 @@ export const LogoLabel = React.memo(
 		const isConfirmEmailText = t("isConfirmEmail");
 
 		return (
-			<div tw="sm:mx-auto sm:w-full sm:max-w-md">
+			<div tw="sm:mx-auto sm:w-full sm:max-w-md flex align-center">
 				{!isLogin ? (
-					<AppLogo
-						className="flex justify-center"
-						src={SiteLogoDark}
-						alt={appLogo}
-						width={NoAuthAppLogo.width}
-						height={NoAuthAppLogo.height}
-					/>
+					<AppLogo src={SiteLogoDark} alt={appLogo} width={NoAuthAppLogo.width} height={NoAuthAppLogo.height} />
 				) : null}
 				<h2 tw="my-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
 					{isLogin
