@@ -44,5 +44,6 @@
 	"tooLong": "Trop long!",
 	"tooShort": "Trop court!",
 	"upgradePlan": "Plan de mise à niveau",
-	"username": "Nom d'utilisateur"
+	"username": "Nom d'utilisateur",
+	"profileSettings": "Paramètres de profil"
 }

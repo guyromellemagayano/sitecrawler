@@ -44,5 +44,6 @@
 	"tooLong": "Too long!",
 	"tooShort": "Too short!",
 	"upgradePlan": "Upgrade Plan",
-	"username": "Username"
+	"username": "Username",
+	"profileSettings": "Profile Settings"
 }
