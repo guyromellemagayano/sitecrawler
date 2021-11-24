@@ -1,55 +1,16 @@
-import TopProgressBar from "@components/top-progress-bar";
-import AppSeo from "@configs/AppSeo";
-import { OnErrorRetryCount, RevalidationInterval } from "@configs/GlobalValues";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { fab } from "@fortawesome/free-brands-svg-icons";
-import { fas } from "@fortawesome/free-solid-svg-icons";
-import { useGetMethod } from "@hooks/useHttpMethod";
-import { GlobalStyles } from "@styles/GlobalStyles";
-import LogRocket from "logrocket";
-import setupLogRocketReact from "logrocket-react";
-import { DefaultSeo } from "next-seo";
 import App from "next/app";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { SWRConfig } from "swr";
 import "tailwindcss/tailwind.css";
 
-// Font Awesome
-library.add(fab);
-library.add(fas);
-
 const MyApp = ({ Component, pageProps }) => {
-	// Utilizing LogRocket with SSR
-	React.useEffect(() => {
-		if (process.env.NODE_ENV === "production") {
-			LogRocket.init("epic-design-labs/link-app");
-			setupLogRocketReact(LogRocket);
-		}
-	}, []);
-
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);
 
 	return getLayout(
-		<SWRConfig
-			value={{
-				fetcher: useGetMethod,
-				refreshInterval: RevalidationInterval,
-				onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-					// Only retry up to 5 times.
-					if (retryCount >= OnErrorRetryCount) return;
-
-					// Retry after 5 seconds.
-					setTimeout(() => revalidate({ retryCount }), RevalidationInterval);
-				}
-			}}
-		>
-			<DefaultSeo {...AppSeo} />
-			<GlobalStyles />
-			<TopProgressBar />
+		<React.Fragment>
 			<Component {...pageProps} />
-		</SWRConfig>
+		</React.Fragment>
 	);
 };
 
