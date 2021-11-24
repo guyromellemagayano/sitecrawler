@@ -4,10 +4,12 @@ import * as React from "react";
 import "twin.macro";
 
 const Footer = () => {
-	const labelsArray = FooterLabels();
-
+	// Translations
 	const { t } = useTranslation("common");
 	const allRightsReserved = t("allRightsReserved");
+
+	// Footer Labels
+	const labelsArray = FooterLabels();
 
 	return (
 		<footer tw="max-w-full md:flex-col lg:flex-row p-3 md:flex md:items-center md:justify-between">
