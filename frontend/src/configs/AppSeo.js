@@ -56,8 +56,9 @@ export default {
 	additionalLinkTags: [
 		{
 			rel: "icon",
+			type: "image/x-icon",
 			href: "/images/favicons/favicon.ico",
-			type: "image/x-icon"
+			sizes: "19x19"
 		},
 		{
 			rel: "apple-touch-icon-precomposed",
