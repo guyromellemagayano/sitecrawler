@@ -45,8 +45,8 @@ const NextConfig = {
 		autoPrerender: false
 	},
 	eslint: {
-		dirs: ["pages", "enums", "components", "hooks", "helpers"],
-		ignoreDuringBuilds: true
+		dirs: ["pages", "configs", "components", "hooks", "helpers", "styles", "utils"],
+		ignoreDuringBuilds: false
 	},
 	webpack: (config) => {
 		config.resolve.fallback = { fs: false, path: false, module: false, os: false };

@@ -1,38 +1,32 @@
 {
-    "exclude": [
-        "node_modules",
-        ".next"
-    ],
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@components/*": [
-                "./src/components/*"
-            ],
-            "@configs/*": [
-                "./src/configs/*"
-            ],
-            "@enums/*": [
-                "./src/enums/*"
-            ],
-            "@helpers/*": [
-                "./src/helpers/*"
-            ],
-            "@hooks/*": [
-                "./src/hooks/*"
-            ],
-            "@locales/*": [
-                "./src/locales/*"
-            ],
-            "@pages/*": [
-                "./src/pages/*"
-            ],
-            "@styles/*": [
-                "./src/styles/*"
-            ],
-            "@utils/*": [
-                "./src/utils/*"
-            ]
-        }
-    }
+	"exclude": [
+		"node_modules",
+		".next"
+	],
+	"compilerOptions": {
+		"baseUrl": "./src/",
+		"paths": {
+			"@components/*": [
+				"components/*"
+			],
+			"@configs/*": [
+				"configs/*"
+			],
+			"@helpers/*": [
+				"helpers/*"
+			],
+			"@hooks/*": [
+				"hooks/*"
+			],
+			"@pages/*": [
+				"pages/*"
+			],
+			"@styles/*": [
+				"styles/*"
+			],
+			"@utils/*": [
+				"utils/*"
+			]
+		},
+	}
 }
