@@ -1,9 +1,8 @@
 import LoginForm from "@components/forms/LoginForm";
 import { LogoLabel } from "@components/labels/LogoLabel";
 import { AppLogo } from "@components/logos/AppLogo";
-import { NoAuthAppLogo } from "@configs/GlobalValues";
+import { NoAuthAppLogo, SiteLogoDark } from "@configs/GlobalValues";
 import { RegistrationLink } from "@configs/PageLinks";
-import { SiteLogoDark } from "@enums/GlobalValues";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import * as React from "react";
