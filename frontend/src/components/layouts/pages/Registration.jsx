@@ -11,7 +11,7 @@ import "twin.macro";
 /**
  * Memoized function to render the `RegistrationPageLayout` component.
  */
-export const RegistrationPageLayout = React.memo(() => {
+const RegistrationPageLayout = React.memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const agreeTermsPrivacyPolicy = t("registration:agreeTermsPrivacyPolicy");
@@ -36,7 +36,7 @@ export const RegistrationPageLayout = React.memo(() => {
 
 							<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 								<span tw="p-2 text-gray-500">
-									{ReactHtmlParser(alreadyHaveAccount)}&nbsp;
+									{alreadyHaveAccount}&nbsp;
 									<Link href={LoginLink}>
 										<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 											{isLogin}
@@ -51,3 +51,5 @@ export const RegistrationPageLayout = React.memo(() => {
 		</div>
 	);
 });
+
+export default RegistrationPageLayout;
