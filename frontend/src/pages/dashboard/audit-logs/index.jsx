@@ -1,65 +1,63 @@
-// React
-import { useState, useEffect } from "react";
-
-// External
-import "twin.macro";
-import { NextSeo } from "next-seo";
-
-// Hooks
-import { useComponentVisible } from "@hooks/useComponentVisible";
-import useUser from "@hooks/useUser";
-
-// Layout
 import Layout from "@components/layouts";
+import { UserApiEndpoint } from "@configs/ApiEndpoints";
+import { DashboardSitesLink } from "@configs/PageLinks";
+import { server } from "@configs/ServerEnv";
+import { useGetMethod } from "@hooks/useHttpMethod";
+import { NextSeo } from "next-seo";
+import useTranslation from "next-translate/useTranslation";
+import dynamic from "next/dynamic";
+import * as React from "react";
+import "twin.macro";
 
-// Components
-import ComingSoon from "@components/layouts/ComingSoon";
-import Sidebar from "@components/layouts/Sidebar";
+// Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
+export async function getServerSideProps({ req }) {
+	const userResponse = await useGetMethod(`${server + UserApiEndpoint}`, req.headers);
+	const userData = userResponse?.data ?? null;
+	const userStatus = userResponse?.status ?? null;
 
-const Reports = () => {
-	const [componentReady, setComponentReady] = React.useState(false);
+	if (
+		typeof userData !== "undefined" &&
+		userData !== null &&
+		!userData?.detail &&
+		Object.keys(userData)?.length > 0 &&
+		Math.round(userStatus / 200 === 1)
+	) {
+		return {
+			redirect: {
+				destination: DashboardSitesLink,
+				permanent: false
+			}
+		};
+	} else {
+		return {
+			props: {}
+		};
+	}
+}
 
-	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
+/**
+ * Dynamic imports
+ */
+const ComingSoon = dynamic(() => import("@components/layouts/pages/ComingSoon"), { ssr: true });
 
-	const pageTitle = "Audit Logs";
-
-	const { user } = useUser({
-		redirectIfFound: false,
-		redirectTo: "/login"
-	});
-
-	React.useEffect(() => {
-		user ? setComponentReady(true) : setComponentReady(false);
-
-		return user;
-	}, [user]);
-
-	React.useEffect(() => {
-		user ? setComponentReady(true) : setComponentReady(false);
-
-		return user;
-	}, [user]);
+/**
+ * Memoized `Reports` page.
+ */
+const Reports = React.memo(() => {
+	// Translations
+	const { t } = useTranslation("reports");
+	const reports = t("reports");
 
 	return (
-		<Layout user={user}>
-			<NextSeo title={pageTitle} />
-
-			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar
-					ref={ref}
-					user={user}
-					openSidebar={isComponentVisible}
-					setOpenSidebar={setIsComponentVisible}
-				/>
-
-				<ComingSoon
-					pageTitle={pageTitle}
-					openSidebar={isComponentVisible}
-					setOpenSidebar={setIsComponentVisible}
-				/>
-			</section>
-		</Layout>
+		<React.Fragment>
+			<NextSeo title={reports} />
+			<ComingSoon pageTitle={reports} />
+		</React.Fragment>
 	);
+});
+
+Reports.getLayout = function getLayout(page) {
+	return <Layout>{page}</Layout>;
 };
 
 export default Reports;

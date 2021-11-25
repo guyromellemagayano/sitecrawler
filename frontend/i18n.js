@@ -6,6 +6,7 @@ module.exports = {
 			"accountExist",
 			"addSite",
 			"alerts",
+			"auditLogs",
 			"common",
 			"confirmEmail",
 			"home",

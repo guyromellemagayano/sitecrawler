@@ -1,4 +1,5 @@
 {
+	"Custom404ErrorPageNotFound": "404 Error | Page not Found",
 	"about": "About",
 	"allRightsReserved": "All Rights Reserved",
 	"alreadyHaveAccount": "Already have an account?",
@@ -45,5 +46,6 @@
 	"tooShort": "Too short!",
 	"upgradePlan": "Upgrade Plan",
 	"username": "Username",
-	"profileSettings": "Profile Settings"
+	"profileSettings": "Profile Settings",
+	"comingSoon": "Coming Soon"
 }
