@@ -36,7 +36,7 @@ export async function getServerSideProps({ req }) {
 /**
  * Dynamic imports
  */
-const LoginPageLayout = dynamic(() => import("@components/layouts/pages/Login"), { ssr: false });
+const LoginPageLayout = dynamic(() => import("@components/layouts/pages/Login"), { ssr: true });
 
 /**
  * Memoized `Login` page.
