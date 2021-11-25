@@ -4,7 +4,6 @@ import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import * as React from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
 /**
@@ -33,7 +32,7 @@ const AccountExistPageLayout = React.memo(() => {
 								<div tw="mt-6 text-sm leading-5">
 									<Link href={LoginLink} passHref replace>
 										<a tw="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-											{ReactHtmlParser(goBackLogin)}
+											{goBackLogin}
 										</a>
 									</Link>
 								</div>
