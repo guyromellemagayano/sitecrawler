@@ -1,11 +1,13 @@
+import Breadcrumbs from "@components/breadcrumbs";
 import useTranslation from "next-translate/useTranslation";
 import * as React from "react";
 import "twin.macro";
+import Footer from "../components/Footer";
 
 /**
  * Memoized function to render the `ComingSoonPageLayout` component
  */
-const ComingSoonPageLayout = React.memo((pageTitle = null) => {
+const ComingSoonPageLayout = React.memo(({ pageTitle = null }) => {
 	// Translations
 	const { t } = useTranslation("common");
 	const comingSoon = t("comingSoon");
