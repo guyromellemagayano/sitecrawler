@@ -1,12 +1,12 @@
 import Layout from "@components/layouts";
-import { ErrorMessage } from "@components/messages";
+import ErrorPageLayout from "@components/layouts/pages/Error";
 import * as React from "react";
 
 /**
  * Memoized component for Error page
  */
 const Error = React.memo(({ statusCode }) => {
-	return <ErrorMessage statusCode={statusCode} />;
+	return <ErrorPageLayout statusCode={statusCode} />;
 });
 
 Error.getLayout = function getLayout(page) {
