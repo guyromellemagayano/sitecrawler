@@ -12,14 +12,14 @@ import * as React from "react";
 // Pre-render `user` data with NextJS SSR. Redirect to a 404 page if the user is not found, redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req }) {
 	const userResponse = await useGetMethod(`${server + UserApiEndpoint}`, req.headers);
-	const userData = userResponse.data ?? null;
-	const userStatus = userResponse.status ?? null;
+	const userData = userResponse?.data ?? null;
+	const userStatus = userResponse?.status ?? null;
 
 	if (
 		typeof userData !== "undefined" &&
 		userData !== null &&
-		!userData.detail &&
-		Object.keys(userData).length > 0 &&
+		!userData?.detail &&
+		Object.keys(userData)?.length > 0 &&
 		Math.round(userStatus / 200 === 1)
 	) {
 		return {
