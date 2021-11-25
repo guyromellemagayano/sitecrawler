@@ -1,7 +1,7 @@
 import Alert from "@components/alerts";
 import { LoginApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { RedirectInterval, ResetPassswordRoute } from "@configs/GlobalValues";
-import { DashboardSitesLink } from "@configs/PageLinks";
+import { RedirectInterval } from "@configs/GlobalValues";
+import { DashboardSitesLink, ResetPasswordLink } from "@configs/PageLinks";
 import { SocialLoginLinks } from "@configs/SocialLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePostMethod } from "@hooks/useHttpMethod";
@@ -52,11 +52,6 @@ const LoginForm = React.memo(() => {
 
 	// Social media links array
 	const linksArray = SocialLoginLinks();
-
-	// Prefetch sites page for faster loading
-	React.useEffect(() => {
-		router.prefetch(DashboardSitesLink);
-	}, []);
 
 	return (
 		<React.Fragment>
@@ -267,7 +262,7 @@ const LoginForm = React.memo(() => {
 								</div>
 
 								<div tw="text-sm">
-									<Link href={ResetPassswordRoute}>
+									<Link href={ResetPasswordLink}>
 										<a
 											css={[
 												tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150 cursor-pointer`,

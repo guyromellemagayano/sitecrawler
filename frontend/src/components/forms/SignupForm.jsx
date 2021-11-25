@@ -55,11 +55,6 @@ const SignupForm = React.memo(() => {
 
 	let signupConfirmApiEndpoint = SignupApiEndpoint + uid + confirmSlug;
 
-	// Prefetch sites page for faster loading
-	React.useEffect(() => {
-		router.prefetch(DashboardSitesLink);
-	}, []);
-
 	return (
 		<React.Fragment>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
