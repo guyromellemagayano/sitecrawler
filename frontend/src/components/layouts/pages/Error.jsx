@@ -8,9 +8,9 @@ import * as React from "react";
 import "twin.macro";
 
 /**
- * @param {number} statusCode
- *
  * Memoized function to render the `ErrorPageLayout` component
+ *
+ * @param {number} statusCode
  */
 const ErrorPageLayout = React.memo(({ statusCode }) => {
 	// Translations
@@ -129,4 +129,4 @@ ErrorPageLayout.propTypes = {
 	statusCode: PropTypes.number
 };
 
-export default ErrorPageLayout
+export default ErrorPageLayout;

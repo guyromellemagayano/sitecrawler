@@ -6,6 +6,8 @@ import Footer from "../components/Footer";
 
 /**
  * Memoized function to render the `ComingSoonPageLayout` component
+ *
+ * @param {string} pageTitle
  */
 const ComingSoonPageLayout = React.memo(({ pageTitle = null }) => {
 	// Translations
