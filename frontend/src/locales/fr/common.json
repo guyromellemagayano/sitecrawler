@@ -47,5 +47,6 @@
 	"upgradePlan": "Plan de mise à niveau",
 	"username": "Nom d'utilisateur",
 	"profileSettings": "Paramètres de profil",
-	"comingSoon": "À venir"
+	"comingSoon": "À venir",
+	"logout": "Se déconnecter"
 }
