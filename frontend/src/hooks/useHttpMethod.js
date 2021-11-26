@@ -30,9 +30,9 @@ axios.interceptors.response.use(
 			return err.request;
 		} else {
 			// Something happened in setting up the request that triggered an Error
-			Sentry.captureException(err.config);
-
-			return err.config;
+			return new Promise((resolve) => {
+				resolve(axios(err.config));
+			});
 		}
 	}
 );
