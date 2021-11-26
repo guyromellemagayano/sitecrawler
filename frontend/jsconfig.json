@@ -4,28 +4,28 @@
 		".next"
 	],
 	"compilerOptions": {
-		"baseUrl": "./src/",
+		"baseUrl": ".",
 		"paths": {
 			"@components/*": [
-				"components/*"
+				"./src/components/*"
 			],
 			"@configs/*": [
-				"configs/*"
+				"./src/configs/*"
 			],
 			"@helpers/*": [
-				"helpers/*"
+				"./src/helpers/*"
 			],
 			"@hooks/*": [
-				"hooks/*"
+				"./src/hooks/*"
 			],
 			"@pages/*": [
-				"pages/*"
+				"./src/pages/*"
 			],
 			"@styles/*": [
-				"styles/*"
+				"./src/styles/*"
 			],
 			"@utils/*": [
-				"utils/*"
+				"./src/utils/*"
 			]
 		},
 	}

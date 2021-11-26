@@ -73,7 +73,8 @@ const NextConfig = {
 				headers: SecurityHeaders
 			}
 		];
-	}
+	},
+	reactStrictMode: true,
 };
 
 const SentryWebpackPluginOptions = {

@@ -1,6 +1,6 @@
 import { MobileSidebarButton } from "@components/buttons/MobileSidebarButton";
 import AppSeo from "@configs/AppSeo";
-import { NoInterval, OnErrorRetryCount, RevalidationInterval } from "@configs/GlobalValues";
+import { OnErrorRetryCount, RevalidationInterval } from "@configs/GlobalValues";
 import { DashboardSitesLink, DashboardSlug, LoginLink } from "@configs/PageLinks";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
@@ -59,7 +59,6 @@ const Layout = ({ children }) => {
 			value={{
 				fetcher: useGetMethod,
 				refreshInterval: RevalidationInterval,
-				dedupingInterval: NoInterval,
 				onErrorRetry: (err, key, config, revalidate, { retryCount }) => {
 					// Capture unknown errors and send to Sentry
 					Sentry.configureScope((scope) => {
