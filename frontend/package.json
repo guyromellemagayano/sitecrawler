@@ -99,7 +99,7 @@
 		"babel-plugin-styled-components": "^2.0.1",
 		"cross-env": "^7.0.3",
 		"dotenv": "^10.0.0",
-		"eslint": "8.3.0",
+		"eslint": "<8.0.0",
 		"eslint-config-next": "12.0.4",
 		"eslint-config-prettier": "^8.3.0",
 		"prettier": "^2.5.0",
@@ -108,7 +108,6 @@
 		"twin.macro": "^2.8.1"
 	},
 	"resolutions": {
-		"styled-components": "5.2.1",
-		"eslint": "<8.0.0"
+		"styled-components": "5.2.1"
 	}
 }
