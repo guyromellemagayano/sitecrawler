@@ -1,17 +1,13 @@
 // React
-import PropTypes from "prop-types";
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import tw from "twin.macro";
-
+import { SitesApiEndpoint } from "@enums/ApiEndpoints";
 // JSON
 import { VerifyUrlLabels } from "@enums/VerifyUrlLabels";
 import { usePostMethod } from "@hooks/useHttpMethod";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
+// NextJS
+import Link from "next/link";
+import PropTypes from "prop-types";
+// External
+import tw from "twin.macro";
 
 const VerifyUrlStepForm = ({
 	currentStep,
@@ -37,7 +33,7 @@ const VerifyUrlStepForm = ({
 			sid: e?.currentTarget?.site_verify_id?.value
 		};
 
-		const { response, error } = await usePostMethod(SiteApiEndpoint + body?.sid + "/verify/", body);
+		const { response, error } = await usePostMethod(SitesApiEndpoint + body?.sid + "/verify/", body);
 
 		Math.floor(response?.status / 200) === 1
 			? response?.data?.verified === true
@@ -83,12 +79,7 @@ const VerifyUrlStepForm = ({
 
 	return (
 		<form onSubmit={handleSubmit} tw="sm:flex sm:items-center w-full">
-			<input
-				type="hidden"
-				value={siteVerifyId}
-				name="site_verify_id"
-				onChange={handleHiddenInputChange}
-			/>
+			<input type="hidden" value={siteVerifyId} name="site_verify_id" onChange={handleHiddenInputChange} />
 			<div tw="flex lg:justify-between w-full">
 				{enableNextStep ? (
 					<span tw="inline-flex">

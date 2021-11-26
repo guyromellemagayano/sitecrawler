@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useRef, useEffect } from "react";
 
 // External
 import PropTypes from "prop-types";
@@ -12,16 +12,16 @@ import DescSorting from "./DescSorting";
 import { slugToCamelcase, getSlugFromSortKey } from "src/utils/functions";
 
 const Sorting = ({ setSortOrder, tableContent, ordering, direction, onSortHandler, slug }) => {
-	const [isAscClicked, setIsAscClicked] = React.useState(false);
-	const [isDescClicked, setIsDescClicked] = React.useState(false);
+	const [isAscClicked, setIsAscClicked] = useState(false);
+	const [isDescClicked, setIsDescClicked] = useState(false);
 
-	const sortAscRef = React.useRef(null);
-	const sortDescRef = React.useRef(null);
+	const sortAscRef = useRef(null);
+	const sortDescRef = useRef(null);
 
 	let resultSlug = "";
 	let orderItem = "";
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (ordering !== undefined) {
 			resultSlug = getSlugFromSortKey(tableContent, ordering.replace("-", ""));
 			orderItem = slugToCamelcase(resultSlug);
@@ -32,7 +32,7 @@ const Sorting = ({ setSortOrder, tableContent, ordering, direction, onSortHandle
 		}
 	}, [ordering]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (ordering !== undefined) {
 			if (resultSlug == slug) {
 				if (ordering.includes("-")) {

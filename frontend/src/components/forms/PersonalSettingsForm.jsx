@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // External
 import { Formik } from "formik";
@@ -16,13 +16,13 @@ import { UserApiEndpoint } from "@enums/ApiEndpoints";
 import { usePatchMethod } from "@hooks/useHttpMethod";
 
 const PersonalSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSuccessMsg, user }) => {
-	const [disableForm, setDisableForm] = React.useState(true);
-	const [email, setEmail] = React.useState("");
-	const [firstname, setFirstname] = React.useState("");
-	const [lastname, setLastname] = React.useState("");
-	const [username, setUsername] = React.useState("");
+	const [disableForm, setDisableForm] = useState(true);
+	const [email, setEmail] = useState("");
+	const [firstname, setFirstname] = useState("");
+	const [lastname, setLastname] = useState("");
+	const [username, setUsername] = useState("");
 
-	React.useEffect(() => {
+	useEffect(() => {
 		user
 			? (() => {
 					setUsername(user?.username);

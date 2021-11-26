@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // External
 import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
@@ -23,13 +23,13 @@ import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
 import VerifyUrlStepForm from "@components/forms/VerifyUrlStepForm";
 
 const VerifyUrl = ({ currentStep, setCurrentStep, setEditMode, setSiteId, siteData }) => {
-	const [copied, setCopied] = React.useState(false);
-	const [copyValue, setCopyValue] = React.useState(null);
-	const [disableSiteVerify, setDisableSiteVerify] = React.useState(false);
-	const [enableNextStep, setEnableNextStep] = React.useState(false);
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [siteVerifyId, setSiteVerifyId] = React.useState(null);
-	const [successMsg, setSuccessMsg] = React.useState([]);
+	const [copied, setCopied] = useState(false);
+	const [copyValue, setCopyValue] = useState(null);
+	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
+	const [enableNextStep, setEnableNextStep] = useState(false);
+	const [errorMsg, setErrorMsg] = useState([]);
+	const [siteVerifyId, setSiteVerifyId] = useState(null);
+	const [successMsg, setSuccessMsg] = useState([]);
 
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
@@ -47,7 +47,7 @@ const VerifyUrl = ({ currentStep, setCurrentStep, setEditMode, setSiteId, siteDa
 		setIsComponentVisible(!isComponentVisible);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		siteData
 			? (() => {
 					setCopyValue('<meta name="epic-crawl-id" content="' + siteData?.verification_id + '" />');

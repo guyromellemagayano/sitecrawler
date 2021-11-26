@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { forwardRef } from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -17,7 +17,7 @@ import { ChangeToBasicModalLabels } from "@enums/ChangeToBasicModalLabels";
 import { SubscriptionPlansLink } from "@enums/PageLinks";
 import { FormSubmissionInterval } from "@enums/GlobalValues";
 
-const ChangeToBasicModal = React.forwardRef(
+const ChangeToBasicModal = forwardRef(
 	(
 		{
 			basicPlanId,

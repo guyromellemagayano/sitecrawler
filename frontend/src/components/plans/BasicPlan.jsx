@@ -2,7 +2,6 @@ import { SubscriptionLabels } from "@enums/SubscriptionLabels";
 import { SubscriptionPlanLabels } from "@enums/SubscriptionPlanLabels";
 import { CheckIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
-import * as React from "react";
 import tw from "twin.macro";
 
 const BasicPlan = ({ data, defaultSubscription, setBasicPlanId, setBasicPlanName, setShowModal, showModal }) => {

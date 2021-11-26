@@ -4,7 +4,7 @@ import { HomeLink } from "@configs/PageLinks";
 import { server } from "@configs/ServerEnv";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
-import * as React from "react";
+import { memo } from "react";
 import "twin.macro";
 
 // Pre-render `logout` data with NextJS SSR. Redirect to a login page for successful `logout` response (200 OK).
@@ -33,17 +33,17 @@ export async function getServerSideProps({ req }) {
 	}
 }
 
-const Logout = React.memo(() => {
+const Logout = memo(() => {
 	// Translations
 	const { t } = useTranslation("common");
 	const logout = t("logout");
 
 	return (
-		<React.Fragment>
+        <>
 			<NextSeo title={logout} />
 			<Loader />
-		</React.Fragment>
-	);
+		</>
+    );
 });
 
 export default Logout;

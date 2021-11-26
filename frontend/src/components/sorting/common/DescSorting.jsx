@@ -1,13 +1,13 @@
 // React
-import * as React from "react";
+import { forwardRef, useEffect } from "react";
 
 // External
 import tw from "twin.macro";
 import PropTypes from "prop-types";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 
-const DescSorting = React.forwardRef(({ handleClickEvent, isDescClicked, setIsDescClicked }, ref) => {
-	React.useEffect(() => {
+const DescSorting = forwardRef(({ handleClickEvent, isDescClicked, setIsDescClicked }, ref) => {
+	useEffect(() => {
 		document.addEventListener("click", handleClickEvent, true);
 
 		return () => {

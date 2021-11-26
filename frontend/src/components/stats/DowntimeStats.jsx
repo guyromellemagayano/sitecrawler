@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // External
 import "twin.macro";
@@ -12,7 +12,7 @@ import Skeleton from "react-loading-skeleton";
 import DowntimeStatsLabel from "./labels/DowntimeStats.json";
 
 const SitesDowntimeStats = ({ sid, disableLocalTime, uptimeSummary }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+	const [componentReady, setComponentReady] = useState(false);
 
 	const calendar = require("dayjs/plugin/calendar");
 	const customParseFormat = require("dayjs/plugin/customParseFormat");
@@ -33,7 +33,7 @@ const SitesDowntimeStats = ({ sid, disableLocalTime, uptimeSummary }) => {
 		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const delay = 500;
 
 		let timer = setTimeout(() => setComponentReady(true), delay);

@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // External
 import "twin.macro";
@@ -13,7 +13,7 @@ import { ComponentReadyInterval } from "@enums/GlobalValues";
 import { CurrentStatusStatsLabels } from "@enums/CurrentStatusLabels";
 
 const CurrentStatusStats = ({ sid, uptimeSummary }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+	const [componentReady, setComponentReady] = useState(false);
 
 	const calendar = require("dayjs/plugin/calendar");
 	const customParseFormat = require("dayjs/plugin/customParseFormat");
@@ -29,7 +29,7 @@ const CurrentStatusStats = ({ sid, uptimeSummary }) => {
 	dayjs.extend(timezone);
 	dayjs.extend(utc);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		let timer = setTimeout(() => setComponentReady(true), ComponentReadyInterval);
 
 		return () => {

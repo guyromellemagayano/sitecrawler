@@ -1,28 +1,23 @@
 // React
-import * as React from "react";
-
-// NextJS
-import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
-import Link from "next/link";
-
-// External
-import "twin.macro";
-import { DocumentIcon } from "@heroicons/react/outline";
-import { withResizeDetector } from "react-resize-detector";
-import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
-
-// Enums
-import { LgScreenBreakpoint } from "@enums/GlobalValues";
-import { PagesChartContents } from "@enums/ChartContents";
-import { PagesStatsLabels } from "@enums/PagesStatsLabels";
-
 // Components
 import PagesStatsSkeleton from "@components/skeletons/PagesStatsSkeleton";
+import { PagesChartContents } from "@enums/ChartContents";
+// Enums
+import { LgScreenBreakpoint } from "@enums/GlobalValues";
+import { PagesStatsLabels } from "@enums/PagesStatsLabels";
+import { DocumentIcon } from "@heroicons/react/outline";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+// NextJS
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import { withResizeDetector } from "react-resize-detector";
+// External
+import "twin.macro";
 
 // Dynamic
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: true });
 
 const PagesStats = ({ componentReady, sid, stats, width }) => {
 	const router = useRouter();
@@ -144,19 +139,13 @@ const PagesStats = ({ componentReady, sid, stats, width }) => {
 						</span>
 					)}
 					<h2 tw="text-lg font-bold leading-7 text-gray-900">
-						{componentReady ? (
-							PagesStatsLabels[0].label
-						) : (
-							<Skeleton duration={2} width={100} height={15} />
-						)}
+						{componentReady ? PagesStatsLabels[0].label : <Skeleton duration={2} width={100} height={15} />}
 					</h2>
 				</div>
 				<div>
 					{componentReady ? (
 						<Link href="/site/[siteId]/pages" as={`/site/${sid}/pages`} passHref>
-							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">
-								{PagesStatsLabels[1].label}
-							</a>
+							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{PagesStatsLabels[1].label}</a>
 						</Link>
 					) : (
 						<span tw="leading-5">

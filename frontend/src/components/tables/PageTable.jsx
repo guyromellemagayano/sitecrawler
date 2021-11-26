@@ -1,7 +1,4 @@
 // React
-import * as React from "react";
-
-// NextJS
 import Link from "next/link";
 
 // External

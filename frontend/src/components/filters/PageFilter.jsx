@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -16,12 +16,12 @@ import { PageFilterLabels } from "@enums/PageFilterLabels";
 import { removeURLParameter } from "@utils/functions";
 
 const PageFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
-	const [allFilter, setAllFilter] = React.useState(false);
-	const [brokenSecurityFilter, setBrokenSecurityFilter] = React.useState(false);
-	const [duplicateDescriptionsFilter, setDuplicateDescriptionsFilter] = React.useState(false);
-	const [duplicateTitlesFilter, setDuplicateTitlesFilter] = React.useState(false);
-	const [largePageSizesFilter, setLargePageSizesFilter] = React.useState(false);
-	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
+	const [allFilter, setAllFilter] = useState(false);
+	const [brokenSecurityFilter, setBrokenSecurityFilter] = useState(false);
+	const [duplicateDescriptionsFilter, setDuplicateDescriptionsFilter] = useState(false);
+	const [duplicateTitlesFilter, setDuplicateTitlesFilter] = useState(false);
+	const [largePageSizesFilter, setLargePageSizesFilter] = useState(false);
+	const [noIssueFilter, setNoIssueFilter] = useState(false);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -224,7 +224,7 @@ const PageFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
 		mutate(scanApiEndpoint);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (filterQueryString.has("size_total_min")) {
 			setLargePageSizesFilter(true);
 		} else {

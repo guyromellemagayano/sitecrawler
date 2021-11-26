@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState } from "react";
 
 // External
 import { Formik } from "formik";
@@ -20,8 +20,8 @@ import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
 import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
 
 const SupportForm = ({ componentReady }) => {
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
+	const [errorMsg, setErrorMsg] = useState([]);
+	const [successMsg, setSuccessMsg] = useState([]);
 
 	return (
 		<div>

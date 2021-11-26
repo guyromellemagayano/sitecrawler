@@ -3,14 +3,14 @@ import { LogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import * as React from "react";
+import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
 
 /**
  * Memoized function to render the `SignupPageLayout` component
  */
-const SignupPageLayout = React.memo(() => {
+const SignupPageLayout = memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");

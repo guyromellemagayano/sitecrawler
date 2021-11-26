@@ -4,7 +4,7 @@ import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import * as React from "react";
+import { memo } from "react";
 import "twin.macro";
 
 /**
@@ -12,7 +12,7 @@ import "twin.macro";
  *
  * @param {number} statusCode
  */
-const ErrorPageLayout = React.memo(({ statusCode }) => {
+const ErrorPageLayout = memo(({ statusCode }) => {
 	// Translations
 	const { t } = useTranslation();
 	const goBackHome = t("common:goBackHome");

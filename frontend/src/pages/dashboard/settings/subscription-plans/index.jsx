@@ -3,7 +3,7 @@ import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
 import Layout from "@components/layouts";
 import Footer from "@components/layouts/Footer";
 import Sidebar from "@components/layouts/Sidebar";
-import AppLogo from "@components/logos/AppLogo";
+import { AppLogo } from "@components/logos/AppLogo";
 import ChangeToBasicModal from "@components/modals/ChangeToBasicModal";
 import NewActivePlanModal from "@components/modals/NewActivePlanModal";
 import PaymentMethodModal from "@components/modals/PaymentMethodModal";
@@ -30,28 +30,28 @@ import {
 import useUser from "@hooks/useUser";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";
 
 const SubscriptionPlans = () => {
-	const [basicPlanId, setBasicPlanId] = React.useState(0);
-	const [basicPlanName, setBasicPlanName] = React.useState("");
-	const [componentReady, setComponentReady] = React.useState(false);
-	const [disableDowngradeToBasicPlan, setDisableDowngradeToBasicPlan] = React.useState(false);
-	const [disableLocalTime, setDisableLocalTime] = React.useState(false);
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [hideButtons, setHideButtons] = React.useState(false);
-	const [loading, setLoading] = React.useState(false);
-	const [loadingAgencyMonthly, setLoadingAgencyMonthly] = React.useState(false);
-	const [loadingAgencySemiAnnually, setLoadingAgencySemiAnnually] = React.useState(false);
-	const [loadingProMonthly, setLoadingProMonthly] = React.useState(false);
-	const [loadingProSemiAnnually, setLoadingProSemiAnnually] = React.useState(false);
-	const [successMsg, setSuccessMsg] = React.useState([]);
-	const [togglePaymentPeriod, setTogglePaymentPeriod] = React.useState(false);
-	const [updatedPlanId, setUpdatedPlanId] = React.useState(0);
-	const [updatedPlanName, setUpdatedPlanName] = React.useState("");
+	const [basicPlanId, setBasicPlanId] = useState(0);
+	const [basicPlanName, setBasicPlanName] = useState("");
+	const [componentReady, setComponentReady] = useState(false);
+	const [disableDowngradeToBasicPlan, setDisableDowngradeToBasicPlan] = useState(false);
+	const [disableLocalTime, setDisableLocalTime] = useState(false);
+	const [errorMsg, setErrorMsg] = useState([]);
+	const [hideButtons, setHideButtons] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [loadingAgencyMonthly, setLoadingAgencyMonthly] = useState(false);
+	const [loadingAgencySemiAnnually, setLoadingAgencySemiAnnually] = useState(false);
+	const [loadingProMonthly, setLoadingProMonthly] = useState(false);
+	const [loadingProSemiAnnually, setLoadingProSemiAnnually] = useState(false);
+	const [successMsg, setSuccessMsg] = useState([]);
+	const [togglePaymentPeriod, setTogglePaymentPeriod] = useState(false);
+	const [updatedPlanId, setUpdatedPlanId] = useState(0);
+	const [updatedPlanName, setUpdatedPlanName] = useState("");
 
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 	const { newActivePlanModalRef, isNewActivePlanModalVisible, setIsNewActivePlanModalVisible } =
@@ -70,7 +70,7 @@ const SubscriptionPlans = () => {
 	const { subscriptions } = useSubscriptions({});
 	const { defaultSubscription, mutateDefaultSubscription } = useDefaultSubscription({});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		user && stripePromise && defaultPaymentMethod && subscriptions && defaultSubscription
 			? (() => {
 					user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false);
@@ -242,11 +242,11 @@ const SubscriptionPlans = () => {
 		return intervalCount;
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		Object.keys(successMsg).length > 0 ? setHideButtons(true) : setHideButtons(false);
 	}, [successMsg]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		handleCurrentPaymentPeriod(defaultSubscription, subscriptions) > 1
 			? setTogglePaymentPeriod(true)
 			: setTogglePaymentPeriod(false);

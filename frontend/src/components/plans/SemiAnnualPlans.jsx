@@ -3,7 +3,6 @@ import { SubscriptionPlanLabels } from "@enums/SubscriptionPlanLabels";
 import { CheckIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
-import * as React from "react";
 import tw from "twin.macro";
 
 const SemiAnnualPlans = ({

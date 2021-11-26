@@ -1,10 +1,10 @@
 import PaginationSkeleton from "@components/skeletons/PaginationSkeleton";
-import usePage from "@hooks/usePage";
-import { removeURLParameter } from "@utils/functions";
+import { handleRemoveURLParameter } from "@helpers/handleRemoveUrlParameter";
+import { usePage } from "@hooks/usePage";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import Pagination from "rc-pagination";
-import * as React from "react";
+import { useState, useEffect } from "react";
 import "twin.macro";
 
 const PaginationLocale = {
@@ -28,7 +28,7 @@ const DataPagination = ({
 	linksPerPage,
 	pathName
 }) => {
-	const [pageData, setPageData] = React.useState([]);
+	const [pageData, setPageData] = useState([]);
 
 	const currentPage = activePage || 1;
 	const linkNumbers = [];
@@ -43,12 +43,12 @@ const DataPagination = ({
 	});
 
 	const handlePageChange = (pageNum) => {
-		const newPath = removeURLParameter(pathName, "page");
+		const newPath = handleRemoveURLParameter(pathName, "page");
 
 		router.push(`${newPath}page=${pageNum}`);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		page ? setPageData(page) : null;
 
 		return pageData;

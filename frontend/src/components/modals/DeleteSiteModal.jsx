@@ -1,30 +1,27 @@
 // React
-import * as React from "react";
-
-// NextJS
-import { useRouter } from "next/router";
-
-// External
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
-import { Transition } from "@headlessui/react";
-import PropTypes from "prop-types";
-import ReactHtmlParser from "react-html-parser";
-import tw from "twin.macro";
-
+import { DashboardSitesLink } from "@configs/PageLinks";
+import { SitesApiEndpoint } from "@enums/ApiEndpoints";
 // Enums
 import { DeleteSiteModalLabels } from "@enums/DeleteSiteModalLabels";
 import { RevalidationInterval } from "@enums/GlobalValues";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-import { SitesLink } from "@enums/PageLinks";
+import { Transition } from "@headlessui/react";
+// External
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
 import { useDeleteMethod } from "@hooks/useHttpMethod";
+// NextJS
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import { forwardRef, useState, useEffect } from "react";
+import ReactHtmlParser from "react-html-parser";
+import tw from "twin.macro";
 
-const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal, siteId }, ref) => {
-	const [disableDeleteSite, setDisableDeleteSite] = React.useState(false);
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
-	const [hideButtons, setHideButtons] = React.useState(false);
+const DeleteSiteModal = forwardRef(({ mutateSite, setShowModal, showModal, siteId }, ref) => {
+	const [disableDeleteSite, setDisableDeleteSite] = useState(false);
+	const [errorMsg, setErrorMsg] = useState([]);
+	const [successMsg, setSuccessMsg] = useState([]);
+	const [hideButtons, setHideButtons] = useState(false);
 
-	const SiteIdApiEndpoint = `${SiteApiEndpoint + siteId}/`;
+	const SiteIdApiEndpoint = `${SitesApiEndpoint + siteId}/`;
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -45,7 +42,7 @@ const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal,
 						? (() => {
 								setTimeout(() => {
 									setShowModal(!showModal);
-									router.push(SitesLink);
+									router.push(DashboardSitesLink);
 								}, RevalidationInterval);
 						  })()
 						: (() => {
@@ -61,11 +58,11 @@ const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal,
 			  })();
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		Object.keys(successMsg).length > 0 ? setHideButtons(true) : null;
 	}, [successMsg]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		showModal
 			? Object.keys(successMsg).length > 0
 				? (() => {
@@ -128,11 +125,7 @@ const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal,
 								{Object.keys(errorMsg).length > 0 ? (
 									errorMsg?.map((value, index) => {
 										return (
-											<h3
-												key={index}
-												tw="text-lg leading-6 font-medium text-gray-900"
-												id="modal-headline"
-											>
+											<h3 key={index} tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
 												{value.label}
 											</h3>
 										);
@@ -140,11 +133,7 @@ const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal,
 								) : Object.keys(successMsg).length > 0 ? (
 									successMsg?.map((value, index) => {
 										return (
-											<h3
-												key={index}
-												tw="text-lg leading-6 font-medium text-gray-900"
-												id="modal-headline"
-											>
+											<h3 key={index} tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
 												{value.label}
 											</h3>
 										);
@@ -167,17 +156,13 @@ const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal,
 									successMsg?.map((value, index) => {
 										return (
 											<div key={index} tw="my-2">
-												<p tw="text-sm leading-5 text-gray-500">
-													{ReactHtmlParser(value.description)}
-												</p>
+												<p tw="text-sm leading-5 text-gray-500">{ReactHtmlParser(value.description)}</p>
 											</div>
 										);
 									})
 								) : (
 									<div tw="my-2">
-										<p tw="text-sm leading-5 text-gray-500">
-											{DeleteSiteModalLabels[0].description}
-										</p>
+										<p tw="text-sm leading-5 text-gray-500">{DeleteSiteModalLabels[0].description}</p>
 									</div>
 								)}
 							</div>
@@ -199,9 +184,7 @@ const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal,
 											aria-label="Delete Site"
 											onClick={handleSiteDeletion}
 										>
-											{disableDeleteSite
-												? DeleteSiteModalLabels[4].label
-												: DeleteSiteModalLabels[6].label}
+											{disableDeleteSite ? DeleteSiteModalLabels[4].label : DeleteSiteModalLabels[6].label}
 										</button>
 									)}
 
@@ -216,9 +199,7 @@ const DeleteSiteModal = React.forwardRef(({ mutateSite, setShowModal, showModal,
 										]}
 										onClick={disableDeleteSite ? null : () => setShowModal(!showModal)}
 									>
-										{Object.keys(errorMsg).length > 0
-											? DeleteSiteModalLabels[5].label
-											: DeleteSiteModalLabels[2].label}
+										{Object.keys(errorMsg).length > 0 ? DeleteSiteModalLabels[5].label : DeleteSiteModalLabels[2].label}
 									</button>
 								</span>
 							</div>

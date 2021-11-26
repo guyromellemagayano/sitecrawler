@@ -7,18 +7,18 @@ import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import * as React from "react";
+import { memo, useEffect, useState } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
-const SignupForm = React.memo(() => {
-	const [disableSignupForm, setDisableSignupForm] = React.useState(false);
-	const [isErrorPassword, setIsErrorPassword] = React.useState(false);
-	const [errorMessage, setErrorMessage] = React.useState([]);
-	const [successMessage, setSuccessMessage] = React.useState([]);
-	const [uid, setUid] = React.useState(null);
+const SignupForm = memo(() => {
+	const [disableSignupForm, setDisableSignupForm] = useState(false);
+	const [isErrorPassword, setIsErrorPassword] = useState(false);
+	const [errorMessage, setErrorMessage] = useState([]);
+	const [successMessage, setSuccessMessage] = useState([]);
+	const [uid, setUid] = useState(null);
 
 	// Router
 	const { asPath } = useRouter();
@@ -42,7 +42,7 @@ const SignupForm = React.memo(() => {
 	const tooShort = t("common:tooShort");
 
 	// Set the `uid` and `token` from the URL query parameters
-	React.useEffect(() => {
+	useEffect(() => {
 		const hasKeyProperty = query.hasOwnProperty("id") ? true : false;
 
 		if (Object.keys(query).length > 0 && hasKeyProperty) {
@@ -56,7 +56,7 @@ const SignupForm = React.memo(() => {
 	let signupConfirmApiEndpoint = SignupApiEndpoint + uid + confirmSlug;
 
 	return (
-		<React.Fragment>
+        <>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
@@ -224,8 +224,8 @@ const SignupForm = React.memo(() => {
 					</form>
 				)}
 			</Formik>
-		</React.Fragment>
-	);
+		</>
+    );
 });
 
 export default SignupForm;

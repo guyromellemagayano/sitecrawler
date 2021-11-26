@@ -2,14 +2,14 @@ import { LogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import * as React from "react";
+import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
 
 /**
  * Memoized function to render the `AcccountExistPageLayout` component
  */
-const AccountExistPageLayout = React.memo(() => {
+const AccountExistPageLayout = memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("accountExist:headline");

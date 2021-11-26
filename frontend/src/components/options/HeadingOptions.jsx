@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState } from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -42,8 +42,8 @@ const HeadingOptions = ({
 	siteUrl,
 	verified
 }) => {
-	const [showSiteVerifyErrorModal, setShowSiteVerifyErrorModal] = React.useState(false);
-	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = React.useState(false);
+	const [showSiteVerifyErrorModal, setShowSiteVerifyErrorModal] = useState(false);
+	const [showUpgradeErrorModal, setShowUpgradeErrorModal] = useState(false);
 
 	const calendar = require("dayjs/plugin/calendar");
 	const timezone = require("dayjs/plugin/timezone");

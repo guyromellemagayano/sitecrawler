@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState } from "react";
 
 // External
 import "twin.macro";
@@ -14,8 +14,8 @@ import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
 import TimestampSettingsForm from "@components/forms/TimestampSettingsForm";
 
 const TimestampSettings = ({ componentReady, mutateUser, user }) => {
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
+	const [errorMsg, setErrorMsg] = useState([]);
+	const [successMsg, setSuccessMsg] = useState([]);
 
 	return (
 		<div>

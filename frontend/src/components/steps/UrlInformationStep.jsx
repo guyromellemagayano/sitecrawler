@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState } from "react";
 
 // External
 import "twin.macro";
@@ -20,8 +20,8 @@ const UrlInformationStep = ({
 	setSiteData,
 	siteData
 }) => {
-	const [errorMsg, setErrorMsg] = React.useState("");
-	const [errorMsgLoaded, setErrorMsgLoaded] = React.useState(false);
+	const [errorMsg, setErrorMsg] = useState("");
+	const [errorMsgLoaded, setErrorMsgLoaded] = useState(false);
 
 	return currentStep == 1 ? (
 		<>

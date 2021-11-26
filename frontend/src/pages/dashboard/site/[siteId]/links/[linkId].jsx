@@ -1,47 +1,42 @@
 // React
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import "twin.macro";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { DocumentTextIcon } from "@heroicons/react/solid";
-import { NextSeo } from "next-seo";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import dayjs from "dayjs";
-import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
-
+import SiteDangerBadge from "@components/badges/SiteDangerBadge";
+import SiteSuccessBadge from "@components/badges/SiteSuccessBadge";
+import SiteWarningBadge from "@components/badges/SiteWarningBadge";
+import Breadcrumbs from "@components/breadcrumbs";
+import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
+import Layout from "@components/layouts";
+import Footer from "@components/layouts/Footer";
+import Sidebar from "@components/layouts/Sidebar";
+// Components
+import { AppLogo } from "@components/logos/AppLogo";
 // Enums
 import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
 import { LinksLabels } from "@enums/LinksLabels";
 import { LoginLink, SitesLink } from "@enums/PageLinks";
-
+import { DocumentTextIcon } from "@heroicons/react/solid";
 // Hooks
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useSiteId, useLinkDetail } from "@hooks/useSite";
 import useCrawl from "@hooks/useCrawl";
+import { useLinkDetail, useSiteId } from "@hooks/useSite";
 import useUser from "@hooks/useUser";
-
-// Components
-import AppLogo from "@components/logos/AppLogo";
-import Breadcrumbs from "@components/breadcrumbs";
-import Footer from "@components/layouts/Footer";
-import Layout from "@components/layouts";
-import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
-import Sidebar from "@components/layouts/Sidebar";
-import SiteDangerBadge from "@components/badges/SiteDangerBadge";
-import SiteSuccessBadge from "@components/badges/SiteSuccessBadge";
-import SiteWarningBadge from "@components/badges/SiteWarningBadge";
+import dayjs from "dayjs";
+import { NextSeo } from "next-seo";
+// NextJS
+import Link from "next/link";
+import PropTypes from "prop-types";
+import { useState, useEffect } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { Scrollbars } from "react-custom-scrollbars-2";
+import Skeleton from "react-loading-skeleton";
+// External
+import "twin.macro";
 
 const LinkDetail = ({ result }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-	const [copied, setCopied] = React.useState(false);
-	const [copyValue, setCopyValue] = React.useState(null);
-	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
-	const [scanObjId, setScanObjId] = React.useState(null);
+	const [componentReady, setComponentReady] = useState(false);
+	const [copied, setCopied] = useState(false);
+	const [copyValue, setCopyValue] = useState(null);
+	const [enableSiteIdHook, setEnableSiteIdHook] = useState(false);
+	const [scanObjId, setScanObjId] = useState(null);
 
 	const calendar = require("dayjs/plugin/calendar");
 	const timezone = require("dayjs/plugin/timezone");
@@ -65,7 +60,7 @@ const LinkDetail = ({ result }) => {
 		redirectTo: LoginLink
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		return user ? setEnableSiteIdHook(true) : setEnableSiteIdHook(false);
 	}, [user, enableSiteIdHook]);
 
@@ -79,7 +74,7 @@ const LinkDetail = ({ result }) => {
 		redirectTo: enableSiteIdHook ? SitesLink : null
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 
 		return scanObjId;
@@ -91,10 +86,9 @@ const LinkDetail = ({ result }) => {
 		linkId: enableSiteIdHook ? parseInt(result?.linkId) : null
 	});
 
-	const linksDetailPageTitle =
-		LinksLabels[1].label + " - " + siteId?.name + " - " + linkDetail?.url;
+	const linksDetailPageTitle = LinksLabels[1].label + " - " + siteId?.name + " - " + linkDetail?.url;
 
-	React.useEffect(() => {
+	useEffect(() => {
 		user && siteId && linkDetail ? setComponentReady(true) : setComponentReady(false);
 
 		return { user, siteId, linkDetail };
@@ -110,20 +104,12 @@ const LinkDetail = ({ result }) => {
 			<NextSeo title={linksDetailPageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar
-					openSidebar={isComponentVisible}
-					ref={ref}
-					setOpenSidebar={setIsComponentVisible}
-					user={user}
-				/>
+				<Sidebar openSidebar={isComponentVisible} ref={ref} setOpenSidebar={setIsComponentVisible} user={user} />
 
 				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="relative flex-shrink-0 flex bg-white">
 						<div tw="border-b flex-shrink-0 flex">
-							<MobileSidebarButton
-								openSidebar={isComponentVisible}
-								setOpenSidebar={setIsComponentVisible}
-							/>
+							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 						</div>
 
 						{/* TODO: Turn this into a single component */}
@@ -170,26 +156,17 @@ const LinkDetail = ({ result }) => {
 												<div tw="px-4 py-5 sm:p-0">
 													<dl>
 														<div tw="sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{LinksLabels[14].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabels[14].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	<span tw="space-x-2">
 																		<span tw="text-sm">
 																			{!user?.settings?.disableLocalTime
-																				? dayjs(linkDetail?.created_at).calendar(
-																						null,
-																						calendarStrings
-																				  )
-																				: dayjs
-																						.utc(linkDetail?.created_at)
-																						.calendar(null, calendarStrings)}
+																				? dayjs(linkDetail?.created_at).calendar(null, calendarStrings)
+																				: dayjs.utc(linkDetail?.created_at).calendar(null, calendarStrings)}
 																		</span>
 																		<span tw="font-medium">
-																			(
-																			{!user?.settings?.disableLocalTime ? dayjs.tz.guess() : "UTC"}
-																			)
+																			({!user?.settings?.disableLocalTime ? dayjs.tz.guess() : "UTC"})
 																		</span>
 																	</span>
 																) : (
@@ -199,9 +176,7 @@ const LinkDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{LinksLabels[15].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabels[15].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	linkDetail?.type === "PAGE" ? (
@@ -218,9 +193,7 @@ const LinkDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{LinksLabels[16].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabels[16].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	linkDetail?.status === "OK" ? (
@@ -239,9 +212,7 @@ const LinkDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{LinksLabels[17].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabels[17].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	linkDetail?.response_time + "ms"
@@ -253,9 +224,7 @@ const LinkDetail = ({ result }) => {
 
 														{linkDetail?.error !== null && linkDetail?.error ? (
 															<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-																<dt tw="text-sm leading-5 font-medium text-gray-500">
-																	{LinksLabels[18].label}
-																</dt>
+																<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabels[18].label}</dt>
 																<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																	{componentReady ? (
 																		<SiteDangerBadge text={linkDetail?.error} />
@@ -267,9 +236,7 @@ const LinkDetail = ({ result }) => {
 														) : null}
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{LinksLabels[19].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{LinksLabels[19].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{linkDetail?.pages !== undefined && linkDetail?.pages.length > 0 ? (
 																	<ul>
@@ -281,9 +248,7 @@ const LinkDetail = ({ result }) => {
 																							<DocumentTextIcon tw="flex-shrink h-5 w-5 text-gray-400" />
 																							<span tw="ml-2 flex-1 w-0">
 																								<Link
-																									href={`/site/${parseInt(result?.siteId)}/pages/${
-																										val.id
-																									}/`}
+																									href={`/site/${parseInt(result?.siteId)}/pages/${val.id}/`}
 																									passHref
 																								>
 																									<a
@@ -304,14 +269,9 @@ const LinkDetail = ({ result }) => {
 																									>
 																										Visit External Site
 																									</a>
-																									<CopyToClipboard
-																										onCopy={handleUrlCopy}
-																										text={val.url}
-																									>
+																									<CopyToClipboard onCopy={handleUrlCopy} text={val.url}>
 																										<button tw="cursor-pointer  text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150">
-																											{copied && copyValue === val.url
-																												? "Copied!"
-																												: "Copy URL"}
+																											{copied && copyValue === val.url ? "Copied!" : "Copy URL"}
 																										</button>
 																									</CopyToClipboard>
 																								</div>

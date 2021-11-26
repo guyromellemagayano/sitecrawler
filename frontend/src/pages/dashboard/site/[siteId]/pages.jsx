@@ -1,55 +1,49 @@
 // React
-import * as React from "react";
-
-// NextJS
-import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
-
-// External
-import "twin.macro";
-import { NextSeo } from "next-seo";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import PropTypes from "prop-types";
-
+import UpgradeErrorAlert from "@components/alerts/UpgradeErrorAlert";
+// Components
+import Breadcrumbs from "@components/breadcrumbs";
+import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
+import Layout from "@components/layouts";
+import Footer from "@components/layouts/Footer";
+import Sidebar from "@components/layouts/Sidebar";
+import HeadingOptions from "@components/options/HeadingOptions";
+import LinkOptions from "@components/options/LinkOptions";
+import DataPagination from "@components/pagination";
+import PageTableSkeleton from "@components/skeletons/PageTableSkeleton";
+import PageSorting from "@components/sorting/PageSorting";
+import PageTable from "@components/tables/PageTable";
+import { SitesApiEndpoint } from "@enums/ApiEndpoints";
+// Hooks
+import { LoginLink, SitesLink, SubscriptionPlansLink } from "@enums/PageLinks";
 // Enums
 import { PagesLabels } from "@enums/PagesLabels";
 import { PagesTableLabels } from "@enums/PagesTableLabels";
-
-// Hooks
-import { LoginLink, SitesLink, SubscriptionPlansLink } from "@enums/PageLinks";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { usePages, useSiteId } from "@hooks/useSite";
 import useCrawl from "@hooks/useCrawl";
+import { usePages, useSiteId } from "@hooks/useSite";
 import useUser from "@hooks/useUser";
-
-// Components
-import Breadcrumbs from "@components/breadcrumbs";
-import DataPagination from "@components/pagination";
-import Footer from "@components/layouts/Footer";
-import HeadingOptions from "@components/options/HeadingOptions";
-import Layout from "@components/layouts";
-import LinkOptions from "@components/options/LinkOptions";
-import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
-import PageSorting from "@components/sorting/PageSorting";
-import PageTable from "@components/tables/PageTable";
-import PageTableSkeleton from "@components/skeletons/PageTableSkeleton";
-import Sidebar from "@components/layouts/Sidebar";
-import UpgradeErrorAlert from "@components/alerts/UpgradeErrorAlert";
-
-// Dynamic
-const PageFilter = dynamic(() => import("@components/filters/PageFilter"), { ssr: false });
-
 // Utils
 import { removeURLParameter } from "@utils/functions";
+import { NextSeo } from "next-seo";
+import dynamic from "next/dynamic";
+// NextJS
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import { useState, useEffect } from "react";
+import { Scrollbars } from "react-custom-scrollbars-2";
+// External
+import "twin.macro";
+
+// Dynamic
+const PageFilter = dynamic(() => import("@components/filters/PageFilter"), { ssr: true });
 
 const Pages = ({ result }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
-	const [linksPerPage, setLinksPerPage] = React.useState(20);
-	const [pagePath, setPagePath] = React.useState("");
-	const [scanObjId, setScanObjId] = React.useState(null);
-	const [searchKey, setSearchKey] = React.useState("");
+	const [componentReady, setComponentReady] = useState(false);
+	const [enableSiteIdHook, setEnableSiteIdHook] = useState(false);
+	const [linksPerPage, setLinksPerPage] = useState(20);
+	const [pagePath, setPagePath] = useState("");
+	const [scanObjId, setScanObjId] = useState(null);
+	const [searchKey, setSearchKey] = useState("");
 
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 	const { asPath } = useRouter();
@@ -60,18 +54,11 @@ const Pages = ({ result }) => {
 		redirectTo: LoginLink
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		return user ? setEnableSiteIdHook(true) : setEnableSiteIdHook(false);
 	}, [user, enableSiteIdHook]);
 
-	const {
-		selectedSiteRef,
-		handleCrawl,
-		currentScan,
-		previousScan,
-		isCrawlStarted,
-		isCrawlFinished
-	} = useCrawl({
+	const { selectedSiteRef, handleCrawl, currentScan, previousScan, isCrawlStarted, isCrawlFinished } = useCrawl({
 		siteId: enableSiteIdHook ? parseInt(result?.siteId) : null
 	});
 
@@ -81,7 +68,7 @@ const Pages = ({ result }) => {
 		redirectTo: enableSiteIdHook ? SitesLink : null
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 
 		return scanObjId;
@@ -103,12 +90,11 @@ const Pages = ({ result }) => {
 		? (() => {
 				scanApiEndpoint =
 					result?.page !== undefined
-						? `${SiteApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/page/?per_page=` +
+						? `${SitesApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/page/?per_page=` +
 						  linksPerPage +
 						  `&page=` +
 						  result?.page
-						: `${SiteApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/page/?per_page=` +
-						  linksPerPage;
+						: `${SitesApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
 				queryString +=
 					result?.size_total_min !== undefined
@@ -232,9 +218,8 @@ const Pages = ({ result }) => {
 		}
 	};
 
-	React.useEffect(() => {
-		if (removeURLParameter(asPath, "page").includes("?"))
-			setPagePath(`${removeURLParameter(asPath, "page")}&`);
+	useEffect(() => {
+		if (removeURLParameter(asPath, "page").includes("?")) setPagePath(`${removeURLParameter(asPath, "page")}&`);
 		else setPagePath(`${removeURLParameter(asPath, "page")}?`);
 
 		if (result?.search !== undefined) setSearchKey(result?.search);
@@ -242,7 +227,7 @@ const Pages = ({ result }) => {
 		if (result?.per_page !== undefined) setLinksPerPage(result?.per_page);
 	}, [result]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		user && siteId && pages ? setComponentReady(true) : setComponentReady(false);
 
 		return { user, siteId, pages };
@@ -253,27 +238,15 @@ const Pages = ({ result }) => {
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar
-					ref={ref}
-					user={user}
-					openSidebar={isComponentVisible}
-					setOpenSidebar={setIsComponentVisible}
-				/>
+				<Sidebar ref={ref} user={user} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 
 				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
-							<MobileSidebarButton
-								openSidebar={isComponentVisible}
-								setOpenSidebar={setIsComponentVisible}
-							/>
+							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 						</div>
 
-						<LinkOptions
-							permissions={user?.permissions}
-							searchKey={searchKey}
-							onSearchEvent={handleSearch}
-						/>
+						<LinkOptions permissions={user?.permissions} searchKey={searchKey} onSearchEvent={handleSearch} />
 					</div>
 
 					<Scrollbars universal>
@@ -389,9 +362,7 @@ const Pages = ({ result }) => {
 									{pages?.results !== undefined && pages?.results.length == 0 && (
 										<section tw="flex flex-col justify-center h-full">
 											<div tw="px-4 py-5 sm:p-6 sm:-mt-12 flex items-center justify-center">
-												<h3 tw="text-lg leading-6 font-medium text-gray-500">
-													{PagesLabels[3].label}
-												</h3>
+												<h3 tw="text-lg leading-6 font-medium text-gray-500">{PagesLabels[3].label}</h3>
 											</div>
 										</section>
 									)}

@@ -1,17 +1,18 @@
-import { SiteApiEndpoint } from "@configs/ApiEndpoints";
+import { SitesApiEndpoint } from "@configs/ApiEndpoints";
+import { orderingByNameQuery, perPageQuery } from "@configs/GlobalValues";
 import { useRouter } from "next/router";
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { mutate } from "swr";
 import { handleRemoveURLParameter } from "./handleRemoveUrlParameter";
 
-export const handleSiteQueries = ({ result = null }) => {
-	const [linksPerPage, setLinksPerPage] = React.useState(20);
-	const [pagePath, setPagePath] = React.useState("");
-	const [searchKey, setSearchKey] = React.useState("");
+export const handleSiteQueries = (result = null) => {
+	const [linksPerPage, setLinksPerPage] = useState(20);
+	const [pagePath, setPagePath] = useState("");
+	const [searchKey, setSearchKey] = useState("");
 
 	const { asPath } = useRouter();
 
-	React.useEffect(() => {
+	useEffect(() => {
 		handleRemoveURLParameter(asPath, "page").includes("?")
 			? setPagePath(`${handleRemoveURLParameter(asPath, "page")}&`)
 			: setPagePath(`${handleRemoveURLParameter(asPath, "page")}?`);
@@ -31,9 +32,7 @@ export const handleSiteQueries = ({ result = null }) => {
  * @returns {string} The updated scan API endpoint
  */
 export const handleScanApiEndpoint = (result = null, linksPerPage = null) => {
-	let perPageQuery = "&per_page";
-	let orderingByNameQuery = "&ordering=name";
-	let scanApiEndpoint = SiteApiEndpoint + perPageQuery + linksPerPage + orderingByNameQuery;
+	let scanApiEndpoint = SitesApiEndpoint + "?" + perPageQuery + linksPerPage + "&" + orderingByNameQuery + "name";
 	let queryString = "";
 
 	queryString +=
@@ -67,7 +66,7 @@ export const handleScanApiEndpoint = (result = null, linksPerPage = null) => {
  * @param {number} count
  * @param {any} setLinksPerPage
  */
-export const handleItemsPerPageChange = async (scanApiEndpoint, count, setLinksPerPage) => {
+export const handleItemsPerPageChange = async (scanApiEndpoint = null, count = 0, setLinksPerPage) => {
 	const router = useRouter();
 
 	const countValue = count?.target?.value ? parseInt(count?.target?.value) : null;
@@ -106,7 +105,7 @@ export const handleItemsPerPageChange = async (scanApiEndpoint, count, setLinksP
  * @param {string} scanApiEndpoint
  * @param {any} setSearchKey
  */
-export const handleSiteSearch = async (event, scanApiEndpoint, setSearchKey) => {
+export const handleSiteSearch = async (event, scanApiEndpoint = null, setSearchKey) => {
 	const { asPath } = useRouter();
 	const router = useRouter();
 

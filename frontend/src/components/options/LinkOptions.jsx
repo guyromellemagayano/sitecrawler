@@ -1,7 +1,4 @@
 // React
-import * as React from "react";
-
-// NextJS
 import { useRouter } from "next/router";
 
 // External

@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState } from "react";
 
 // External
 import { Formik } from "formik";
@@ -15,7 +15,7 @@ import { PasswordSettingsLabels } from "@enums/PasswordSettingsLabels";
 import { usePostMethod } from "@hooks/useHttpMethod";
 
 const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSuccessMsg }) => {
-	const [disableForm, setDisableForm] = React.useState(true);
+	const [disableForm, setDisableForm] = useState(true);
 
 	return (
 		<Formik

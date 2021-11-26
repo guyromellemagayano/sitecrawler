@@ -1,13 +1,13 @@
 // React
-import * as React from "react";
+import { forwardRef, useEffect } from "react";
 
 // External
 import tw from "twin.macro";
 import PropTypes from "prop-types";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 
-const AscSorting = React.forwardRef(({ handleClickEvent, isAscClicked, setIsAscClicked }, ref) => {
-	React.useEffect(() => {
+const AscSorting = forwardRef(({ handleClickEvent, isAscClicked, setIsAscClicked }, ref) => {
+	useEffect(() => {
 		document.addEventListener("click", handleClickEvent, true);
 
 		return () => {

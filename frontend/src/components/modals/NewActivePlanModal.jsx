@@ -1,19 +1,16 @@
 // React
-import * as React from "react";
-
+// Components
+import { AppLogo } from "@components/logos/AppLogo";
+import { GlobalLabels, SubscriptionSuccessBadge } from "@enums/GlobalValues";
+// Enums
+import { NewActivePlanModalLabels } from "@enums/NewActivePlanModalLabels";
+import { Transition } from "@headlessui/react";
+import { CheckIcon, XIcon } from "@heroicons/react/solid";
+import PropTypes from "prop-types";
+import { forwardRef } from "react";
 // External
 import { mutate } from "swr";
 import { styled } from "twin.macro";
-import { Transition } from "@headlessui/react";
-import { XIcon, CheckIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
-
-// Enums
-import { NewActivePlanModalLabels } from "@enums/NewActivePlanModalLabels";
-import { GlobalLabels, SubscriptionSuccessBadge } from "@enums/GlobalValues";
-
-// Components
-import AppLogo from "@components/logos/AppLogo";
 
 const ConfettiBgImgSpan = styled.span`
 	background: url("/images/backgrounds/subscription-success-bg.png");
@@ -26,7 +23,7 @@ const ConfettiBgImgSpan = styled.span`
 	z-index: -1;
 `;
 
-const NewActivePlanModal = React.forwardRef(
+const NewActivePlanModal = forwardRef(
 	(
 		{
 			setErrorMsg,
@@ -107,9 +104,7 @@ const NewActivePlanModal = React.forwardRef(
 									<h2 tw="mb-3 text-3xl leading-6 font-bold text-gray-900" id="modal-headline">
 										{NewActivePlanModalLabels[1].label}
 									</h2>
-									<p tw="mb-6 text-base leading-6 font-semibold">
-										Your {updatedPlanName} plan is now active.
-									</p>
+									<p tw="mb-6 text-base leading-6 font-semibold">Your {updatedPlanName} plan is now active.</p>
 									{subscriptions &&
 										subscriptions?.results &&
 										subscriptions?.results
@@ -130,9 +125,7 @@ const NewActivePlanModal = React.forwardRef(
 																					<div tw="flex-shrink-0">
 																						<CheckIcon tw="h-6 w-6 text-green-500" />
 																					</div>
-																					<p tw="ml-3 text-sm leading-6 font-medium text-gray-500">
-																						{val2}
-																					</p>
+																					<p tw="ml-3 text-sm leading-6 font-medium text-gray-500">{val2}</p>
 																				</li>
 																			);
 																		})}

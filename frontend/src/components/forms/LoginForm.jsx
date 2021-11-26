@@ -11,7 +11,7 @@ import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import * as React from "react";
+import { memo, useState } from "react";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
@@ -19,10 +19,10 @@ import * as Yup from "yup";
 /**
  * Memoized function to render the `LoginForm` component.
  */
-const LoginForm = React.memo(() => {
-	const [disableLoginForm, setDisableLoginForm] = React.useState(false);
-	const [errorMessage, setErrorMessage] = React.useState([]);
-	const [successMessage, setSuccessMessage] = React.useState([]);
+const LoginForm = memo(() => {
+	const [disableLoginForm, setDisableLoginForm] = useState(false);
+	const [errorMessage, setErrorMessage] = useState([]);
+	const [successMessage, setSuccessMessage] = useState([]);
 
 	// Show password hook
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
@@ -54,7 +54,7 @@ const LoginForm = React.memo(() => {
 	const linksArray = SocialLoginLinks();
 
 	return (
-		<React.Fragment>
+        <>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
@@ -159,7 +159,7 @@ const LoginForm = React.memo(() => {
 				}}
 			>
 				{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-					<React.Fragment>
+					<>
 						<form onSubmit={handleSubmit}>
 							<div tw="mt-1">
 								<label htmlFor="username" tw="block text-sm font-medium text-gray-700">
@@ -332,11 +332,11 @@ const LoginForm = React.memo(() => {
 								})}
 							</div>
 						</div>
-					</React.Fragment>
+					</>
 				)}
 			</Formik>
-		</React.Fragment>
-	);
+		</>
+    );
 });
 
 export default LoginForm;

@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -16,14 +16,14 @@ import { SeoFilterLabels } from "@enums/SeoFilterLabels";
 import { removeURLParameter } from "@utils/functions";
 
 const SeoFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
-	const [allFilter, setAllFilter] = React.useState(false);
-	const [missingDescriptionsFilter, setMissingDescriptionsFilter] = React.useState(false);
-	const [missingFirstH1Filter, setMissingFirstH1Filter] = React.useState(false);
-	const [missingFirstH2Filter, setMissingFirstH2Filter] = React.useState(false);
-	const [missingSecondH1Filter, setMissingSecondH1Filter] = React.useState(false);
-	const [missingSecondH2Filter, setMissingSecondH2Filter] = React.useState(false);
-	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
-	const [missingTitlesFilter, setMissingTitlesFilter] = React.useState(false);
+	const [allFilter, setAllFilter] = useState(false);
+	const [missingDescriptionsFilter, setMissingDescriptionsFilter] = useState(false);
+	const [missingFirstH1Filter, setMissingFirstH1Filter] = useState(false);
+	const [missingFirstH2Filter, setMissingFirstH2Filter] = useState(false);
+	const [missingSecondH1Filter, setMissingSecondH1Filter] = useState(false);
+	const [missingSecondH2Filter, setMissingSecondH2Filter] = useState(false);
+	const [noIssueFilter, setNoIssueFilter] = useState(false);
+	const [missingTitlesFilter, setMissingTitlesFilter] = useState(false);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -320,7 +320,7 @@ const SeoFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
 		mutate(scanApiEndpoint);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (
 			filterQueryString.get("has_title") === "true" &&
 			filterQueryString.get("has_description") === "true" &&

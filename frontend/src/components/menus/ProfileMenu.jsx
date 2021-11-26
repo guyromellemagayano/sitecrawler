@@ -1,25 +1,41 @@
-// React
-// Components
 import ProfileSidebarSkeleton from "@components/skeletons/ProfileSidebarSkeleton";
-// Enums
-import { SidebarLabels } from "@enums/SidebarLabels";
-import { ProfileSidebarMenu } from "@enums/SidebarMenus";
+import { SidebarMenus } from "@configs/SidebarMenus";
 import { Transition } from "@headlessui/react";
-// External
 import { ChevronUpIcon } from "@heroicons/react/solid";
-// Hooks
 import { useComponentVisible } from "@hooks/useComponentVisible";
-// NextJS
+import { useUser } from "@hooks/useUser";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import PropTypes from "prop-types";
-import * as React from "react";
+import { memo } from "react";
 import tw from "twin.macro";
 
-const ProfileMenu = ({ user }) => {
+/**
+ * Memoized function to render the `ProfileMenu` component.
+ */
+const ProfileMenu = memo(() => {
+	// SWR hooks
+	const { user, errorUser, validatingUser } = useUser();
+
+	// Custom hooks
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
+	// Translations
+	const { t } = useTranslation("alerts");
+	const userBadGatewayGetError = t("userBadGatewayGetError");
+	const userBadRequestGetError = t("userBadRequestGetError");
+	const userForbiddenGetError = t("userForbiddenGetError");
+	const userGatewayTimeoutGetError = t("userGatewayTimeoutGetError");
+	const userInternalServerGetError = t("userInternalServerGetError");
+	const userNotFoundGetError = t("userNotFoundGetError");
+	const userServiceUnavailableGetError = t("userServiceUnavailableGetError");
+	const userTooManyRequestsError = t("userTooManyRequestsError");
+	const userUnknownError = t("userUnknownError");
+
+	// Sidebar menus
+	const { ProfileSidebarMenus } = SidebarMenus();
+
 	return (
-		<div ref={ref} tw="flex-shrink-0 flex flex-col relative">
+        <div ref={ref} tw="flex-shrink-0 flex flex-col relative">
 			{user ? (
 				<>
 					<button
@@ -34,13 +50,13 @@ const ProfileMenu = ({ user }) => {
 						<div tw="flex items-center">
 							<div tw="flex flex-col flex-wrap text-left">
 								<p className="truncate-profile-text" tw="text-sm leading-tight mb-1 font-medium text-white">
-									{user?.first_name}
+									{user.first_name}
 								</p>
 								<p
 									className="truncate-profile-text"
 									tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150"
 								>
-									{user?.email}
+									{user.email}
 								</p>
 							</div>
 						</div>
@@ -65,21 +81,21 @@ const ProfileMenu = ({ user }) => {
 										<span
 											css={[
 												tw`text-sm leading-5 font-medium`,
-												user?.plan?.name === "Basic"
+												user.plan.name === "Basic"
 													? tw`text-green-800`
-													: user?.plan?.name === "Pro"
+													: user.plan.name === "Pro"
 													? tw`text-blue-800`
 													: tw`text-red-800`
 											]}
 										>
-											{user?.plan?.name} {SidebarLabels[0].label}
+											{user.plan.name} {SidebarLabels[0].label}
 										</span>
-										{(user?.plan?.name === "Basic" || user?.plan?.name === "Pro") && (
+										{(user.plan.name === "Basic" || user.plan.name === "Pro") && (
 											<Link href="/settings/subscription-plans" passHref>
 												<a
 													css={[
 														tw`text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded hover:text-white cursor-pointer transition ease-in-out duration-150`,
-														user?.plan?.name === "Basic"
+														user.plan.name === "Basic"
 															? tw`bg-green-200 text-green-800 hover:bg-green-600`
 															: tw`bg-blue-200 text-blue-800 hover:bg-blue-600`
 													]}
@@ -91,7 +107,7 @@ const ProfileMenu = ({ user }) => {
 									</span>
 								</div>
 								<div tw="border-t border-gray-300"></div>
-								{ProfileSidebarMenu.map((val, key) => (
+								{ProfileMenu.map((val, key) => (
 									<div key={key}>
 										<div tw="py-1">
 											{val.links
@@ -110,7 +126,7 @@ const ProfileMenu = ({ user }) => {
 										<div tw="border-t border-gray-300"></div>
 									</div>
 								))}
-								{ProfileSidebarMenu.filter((page) => page.slug === "global-settings").map((val, key) => (
+								{ProfileSidebarMenus.filter((page) => page.slug === "global-settings").map((val, key) => (
 									<div key={key} tw="py-1">
 										{val.links
 											.filter((page) => page.slug === "logout")
@@ -134,19 +150,7 @@ const ProfileMenu = ({ user }) => {
 				<ProfileSidebarSkeleton />
 			)}
 		</div>
-	);
-};
-
-ProfileMenu.propTypes = {
-	email: PropTypes.string,
-	first_name: PropTypes.string,
-	name: PropTypes.string
-};
-
-ProfileMenu.defaultProps = {
-	email: null,
-	first_name: null,
-	name: null
-};
+    );
+});
 
 export default ProfileMenu;

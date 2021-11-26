@@ -8,14 +8,14 @@ import {
 	XIcon
 } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
-import * as React from "react";
+import { memo, useState } from "react";
 import tw from "twin.macro";
 
 /**
  * Memoized function to render the `Alerts` component.
  */
-const Alert = React.memo(({ isError = false, isSuccess = false, isWarning = false, message = false }) => {
-	const [isOpen, setIsOpen] = React.useState(true);
+const Alert = memo(({ isError = false, isSuccess = false, isWarning = false, message = false }) => {
+	const [isOpen, setIsOpen] = useState(true);
 
 	const { t } = useTranslation();
 	const dismissMessage = t("common:dismissMessage");

@@ -6,7 +6,7 @@ import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import * as React from "react";
+import { memo, useState, useEffect } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
@@ -14,11 +14,11 @@ import tw from "twin.macro";
 /**
  * Memoized function to render the confirm mail page layout
  */
-const ConfirmEmailPageLayout = React.memo(() => {
-	const [success, setSuccess] = React.useState(false);
-	const [failure, setFailure] = React.useState(false);
-	const [errorMessage, setErrorMessage] = React.useState([]);
-	const [successMessage, setSuccessMessage] = React.useState([]);
+const ConfirmEmailPageLayout = memo(() => {
+	const [success, setSuccess] = useState(false);
+	const [failure, setFailure] = useState(false);
+	const [errorMessage, setErrorMessage] = useState([]);
+	const [successMessage, setSuccessMessage] = useState([]);
 
 	// Router
 	const { asPath } = useRouter();
@@ -38,7 +38,7 @@ const ConfirmEmailPageLayout = React.memo(() => {
 	const goBackLogin = t("common:goBackLogin");
 	const reloadPage = t("common:reloadPage");
 
-	React.useEffect(() => {
+	useEffect(() => {
 		(async () => {
 			const body = {
 				key: query.id[0]

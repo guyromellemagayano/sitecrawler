@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useEffect } from "react";
 
 // NextJS
 import Link from "next/link";
@@ -21,7 +21,7 @@ const SiteVerifyErrorModal = ({ showModal, handleShowModal }) => {
 		return e?.key === "Escape" ? handleShowModal : null;
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		document.addEventListener("keydown", handleHideSiteVerifyErrorModal, true);
 
 		return () => {

@@ -1,28 +1,23 @@
 // React
-import * as React from "react";
-
-// NextJS
-import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
-import Link from "next/link";
-
-// External
-import "twin.macro";
-import { PhotographIcon } from "@heroicons/react/outline";
-import { withResizeDetector } from "react-resize-detector";
-import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
-
-// Enums
-import { ImagesChartContents } from "@enums/ChartContents";
-import { ImagesStatsLabels } from "@enums/ImageStatsLabels";
-import { LgScreenBreakpoint } from "@enums/GlobalValues";
-
 // Components
 import ImagesStatsSkeleton from "@components/skeletons/ImagesStatsSkeleton";
+// Enums
+import { ImagesChartContents } from "@enums/ChartContents";
+import { LgScreenBreakpoint } from "@enums/GlobalValues";
+import { ImagesStatsLabels } from "@enums/ImageStatsLabels";
+import { PhotographIcon } from "@heroicons/react/outline";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+// NextJS
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
+import { withResizeDetector } from "react-resize-detector";
+// External
+import "twin.macro";
 
 // Dynamic
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: true });
 
 const ImagesStats = ({ componentReady, sid, stats, width }) => {
 	const router = useRouter();
@@ -143,19 +138,13 @@ const ImagesStats = ({ componentReady, sid, stats, width }) => {
 						</span>
 					)}
 					<h2 tw="text-lg font-bold leading-7 text-gray-900">
-						{componentReady ? (
-							ImagesStatsLabels[0].label
-						) : (
-							<Skeleton duration={2} width={100} height={15} />
-						)}
+						{componentReady ? ImagesStatsLabels[0].label : <Skeleton duration={2} width={100} height={15} />}
 					</h2>
 				</div>
 				<div>
 					{componentReady ? (
 						<Link href="/site/[siteId]/images" as={`/site/${sid}/images`} passHref>
-							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">
-								{ImagesStatsLabels[1].label}
-							</a>
+							<a tw="text-sm leading-5 font-medium text-gray-500 hover:underline">{ImagesStatsLabels[1].label}</a>
 						</Link>
 					) : (
 						<span tw="leading-5">

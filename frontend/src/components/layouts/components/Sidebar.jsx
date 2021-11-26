@@ -1,115 +1,30 @@
-import PrimaryMenu from "@components/menus/PrimaryMenu";
+import MainMenu from "@components/menus/MainMenu";
 import ProfileMenu from "@components/menus/ProfileMenu";
-import SettingsMenu from "@components/menus/SettingsMenu";
-import SiteMenu from "@components/menus/SiteMenu";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-import { EndpointRefreshInterval } from "@enums/GlobalValues";
-import { SidebarMenuLabels } from "@enums/SidebarMenuLabels";
-import { Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/solid";
-import { useSite } from "@hooks/useSite";
-import { useRouter } from "next/router";
-import PropTypes from "prop-types";
-import * as React from "react";
+import { forwardRef, memo } from "react";
 import "twin.macro";
+import MobileSidebar from "./MobileSidebar";
 
-export const Sidebar = React.forwardRef(({ isUserReady, user = null, openSidebar, setOpenSidebar }, ref) => {
-	const [selectedMenu, setSelectedMenu] = React.useState(null);
+/**
+ * Memoized function to render the `Sidebar` component.
+ */
+const Sidebar = memo(
+	forwardRef(({ openSidebar, setOpenSidebar }, ref) => {
+		return (
+            <>
+				<MobileSidebar ref={ref} openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
 
-	const router = useRouter();
-
-	const orderingByNameQuery = "?ordering=name";
-	const perPageQuery = "&per_page=100";
-	const siteApiEndpoint = `${SiteApiEndpoint + orderingByNameQuery + perPageQuery}`;
-
-	const { site, validatingSite, errorSite } = useSite({
-		endpoint: siteApiEndpoint,
-		refreshInterval: EndpointRefreshInterval
-	});
-
-	React.useEffect(() => {
-		switch (true) {
-			case router.pathname.includes("/site/"):
-				setSelectedMenu(<SiteMenu site={site} siteId={parseInt(router?.query?.siteId)} />);
-				break;
-			case router.pathname.includes("/settings/"):
-				setSelectedMenu(<SettingsMenu user={user} site={site} />);
-				break;
-			default:
-				setSelectedMenu(<PrimaryMenu site={site} />);
-				break;
-		}
-
-		return selectedMenu;
-	}, [router, site, user]);
-
-	return (
-		<React.Fragment>
-			<Transition show={openSidebar} tw="flex lg:hidden flex-shrink-0">
-				<div tw="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true">
-					<Transition.Child
-						enter="transition-opacity ease-linear duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="transition-opacity ease-linear duration-300"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-0"
-					>
-						<div tw="fixed inset-0 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
-					</Transition.Child>
-
-					<Transition.Child
-						enter="transition ease-in-out duration-300 transform"
-						enterFrom="-translate-x-full"
-						enterTo="translate-x-0"
-						leave="transition ease-in-out duration-300 transform"
-						leaveFrom="translate-x-0"
-						leaveTo="-translate-x-full"
-					>
-						<div ref={ref} className="bg-gray-1000" tw="relative flex-1 flex flex-col w-64">
-							<Transition.Child
-								enter="ease-in-out duration-300"
-								enterFrom="opacity-0"
-								enterTo="opacity-100"
-								leave="ease-in-out duration-300"
-								leaveFrom="opacity-100"
-								leaveTo="opacity-0"
-							>
-								<div tw="absolute top-0 right-0 -mr-12 pt-2">
-									<button
-										tw="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-										onClick={() => setOpenSidebar(!openSidebar)}
-									>
-										<span tw="sr-only">{SidebarMenuLabels[0].label}</span>
-										<XIcon tw="h-6 w-6 text-white" />
-									</button>
-								</div>
-
-								<div tw="flex flex-col w-64 h-screen">
-									<div tw="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">{selectedMenu}</div>
-
-									<ProfileMenu user={user} />
-								</div>
-							</Transition.Child>
+				<aside tw="bg-gray-1000 hidden lg:flex lg:flex-shrink-0">
+					<div tw="flex flex-col w-64">
+						<div tw="h-0 flex-1 overflow-y-auto">
+							<MainMenu />
 						</div>
-					</Transition.Child>
-				</div>
-			</Transition>
 
-			<aside className="bg-gray-1000" tw="hidden lg:flex lg:flex-shrink-0">
-				<div tw="flex flex-col w-64">
-					<div tw="h-0 flex-1 overflow-y-auto">{selectedMenu}</div>
+						<ProfileMenu />
+					</div>
+				</aside>
+			</>
+        );
+	})
+);
 
-					<ProfileMenu user={user} />
-				</div>
-			</aside>
-		</React.Fragment>
-	);
-});
-
-Sidebar.propTypes = {
-	isUserReady: PropTypes.bool,
-	openSidebar: PropTypes.bool,
-	setOpenSidebar: PropTypes.func,
-	user: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
-};
+export default Sidebar;

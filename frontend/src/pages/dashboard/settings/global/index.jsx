@@ -1,36 +1,31 @@
 // React
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import "twin.macro";
-import { NextSeo } from "next-seo";
-import { Scrollbars } from "react-custom-scrollbars-2";
-
+import Breadcrumbs from "@components/breadcrumbs";
+import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
+import Layout from "@components/layouts";
+import Footer from "@components/layouts/Footer";
+import Sidebar from "@components/layouts/Sidebar";
+import Loader from "@components/loader";
+// Components
+import { AppLogo } from "@components/logos/AppLogo";
+import LargePageSizeSettings from "@components/settings/LargePageSizeSettings";
+import TimestampSettings from "@components/settings/TimestampSettings";
+import { GlobalSettingsLabels } from "@enums/GlobalSettingsLabels";
+import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
 // Enums
 import { LoginLink, SitesLink } from "@enums/PageLinks";
-import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
-import { GlobalSettingsLabels } from "@enums/GlobalSettingsLabels";
-
 // Hooks
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import useUser from "@hooks/useUser";
-
-// Components
-import AppLogo from "@components/logos/AppLogo";
-import Breadcrumbs from "@components/breadcrumbs";
-import Footer from "@components/layouts/Footer";
-import LargePageSizeSettings from "@components/settings/LargePageSizeSettings";
-import Layout from "@components/layouts";
-import Loader from "@components/loader";
-import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
-import Sidebar from "@components/layouts/Sidebar";
-import TimestampSettings from "@components/settings/TimestampSettings";
+import { NextSeo } from "next-seo";
+// NextJS
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { Scrollbars } from "react-custom-scrollbars-2";
+// External
+import "twin.macro";
 
 const GlobalSettings = () => {
-	const [componentReady, setComponentReady] = React.useState(false);
+	const [componentReady, setComponentReady] = useState(false);
 
 	const pageTitle = GlobalSettingsLabels[20].label;
 
@@ -41,7 +36,7 @@ const GlobalSettings = () => {
 		redirectTo: LoginLink
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		user ? setComponentReady(true) : setComponentReady(false);
 
 		return user;
@@ -52,21 +47,13 @@ const GlobalSettings = () => {
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar
-					ref={ref}
-					user={user}
-					openSidebar={isComponentVisible}
-					setOpenSidebar={setIsComponentVisible}
-				/>
+				<Sidebar ref={ref} user={user} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 
 				{componentReady ? (
 					<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 						<div tw="relative flex-shrink-0 flex bg-white">
 							<div tw="border-b flex-shrink-0 flex">
-								<MobileSidebarButton
-									openSidebar={isComponentVisible}
-									setOpenSidebar={setIsComponentVisible}
-								/>
+								<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 							</div>
 
 							<Link href={SitesLink} passHref>
@@ -83,10 +70,7 @@ const GlobalSettings = () => {
 						</div>
 
 						<Scrollbars universal>
-							<main
-								tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none"
-								tabIndex="0"
-							>
+							<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 								<div tw="max-w-full p-4 sm:px-6 md:px-8">
 									<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 										<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
@@ -94,23 +78,13 @@ const GlobalSettings = () => {
 												<Breadcrumbs isOther pageTitle={pageTitle} />
 
 												<div tw="pt-4 m-auto">
-													<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-														{pageTitle}
-													</h2>
+													<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
 												</div>
 											</div>
 
 											<div tw="space-y-12 divide-y divide-gray-200">
-												<TimestampSettings
-													componentReady={componentReady}
-													mutateUser={mutateUser}
-													user={user}
-												/>
-												<LargePageSizeSettings
-													componentReady={componentReady}
-													mutateUser={mutateUser}
-													user={user}
-												/>
+												<TimestampSettings componentReady={componentReady} mutateUser={mutateUser} user={user} />
+												<LargePageSizeSettings componentReady={componentReady} mutateUser={mutateUser} user={user} />
 											</div>
 										</div>
 									</div>

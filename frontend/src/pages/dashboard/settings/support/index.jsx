@@ -1,35 +1,29 @@
 // React
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import "twin.macro";
-import { NextSeo } from "next-seo";
-import { Scrollbars } from "react-custom-scrollbars-2";
-
+import Breadcrumbs from "@components/breadcrumbs";
+import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
+import SupportForm from "@components/forms/SupportForm";
+import Layout from "@components/layouts";
+import Footer from "@components/layouts/Footer";
+import Sidebar from "@components/layouts/Sidebar";
+// Components
+import { AppLogo } from "@components/logos/AppLogo";
 // Enums
 import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
 import { LoginLink, SitesLink } from "@enums/PageLinks";
 import { SupportFormLabels } from "@enums/SupportFormLabels";
-
 // Hooks
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import useUser from "@hooks/useUser";
-
-// Components
-import AppLogo from "@components/logos/AppLogo";
-import Breadcrumbs from "@components/breadcrumbs";
-import Footer from "@components/layouts/Footer";
-import Layout from "@components/layouts";
-import Loader from "@components/loader";
-import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
-import Sidebar from "@components/layouts/Sidebar";
-import SupportForm from "@components/forms/SupportForm";
+import { NextSeo } from "next-seo";
+// NextJS
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { Scrollbars } from "react-custom-scrollbars-2";
+// External
+import "twin.macro";
 
 const Support = () => {
-	const [componentReady, setComponentReady] = React.useState(false);
+	const [componentReady, setComponentReady] = useState(false);
 
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
@@ -38,7 +32,7 @@ const Support = () => {
 		redirectTo: LoginLink
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		user ? setComponentReady(true) : setComponentReady(false);
 
 		return user;
@@ -49,20 +43,12 @@ const Support = () => {
 			<NextSeo title={SupportFormLabels[1].label} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar
-					ref={ref}
-					user={user}
-					openSidebar={isComponentVisible}
-					setOpenSidebar={setIsComponentVisible}
-				/>
+				<Sidebar ref={ref} user={user} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="relative flex-shrink-0 flex bg-white">
 						<div tw="border-b flex-shrink-0 flex">
-							<MobileSidebarButton
-								openSidebar={isComponentVisible}
-								setOpenSidebar={setIsComponentVisible}
-							/>
+							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 						</div>
 
 						<Link href={SitesLink} passHref>
@@ -79,10 +65,7 @@ const Support = () => {
 					</div>
 
 					<Scrollbars universal>
-						<main
-							tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none"
-							tabIndex="0"
-						>
+						<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="max-w-full p-4 sm:px-6 md:px-8">
 								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">

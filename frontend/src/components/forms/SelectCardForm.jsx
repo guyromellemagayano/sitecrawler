@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // External
 import { CreditCardIcon } from "@heroicons/react/solid";
@@ -21,13 +21,13 @@ const SelectCardForm = ({
 	updatedPlanId,
 	updatedPlanName
 }) => {
-	const [currentPaymentMethod, setCurrentPaymentMethod] = React.useState([]);
-	const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState([]);
+	const [currentPaymentMethod, setCurrentPaymentMethod] = useState([]);
+	const [selectedPaymentMethod, setSelectedPaymentMethod] = useState([]);
 
 	const { paymentMethods } = usePaymentMethods({});
 	const { defaultPaymentMethod } = useDefaultPaymentMethod({});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		paymentMethods && defaultPaymentMethod
 			? (() => {
 					paymentMethods
@@ -39,7 +39,7 @@ const SelectCardForm = ({
 			: null;
 	}, [paymentMethods, defaultPaymentMethod]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		currentPaymentMethod ? setSelectedPaymentMethod(currentPaymentMethod.id) : null;
 	}, [currentPaymentMethod]);
 

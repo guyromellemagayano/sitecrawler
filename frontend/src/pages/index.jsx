@@ -7,7 +7,7 @@ import { useGetMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import * as React from "react";
+import { memo } from "react";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a 404 page if the user is not found, redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req }) {
@@ -38,18 +38,18 @@ export async function getServerSideProps({ req }) {
 	}
 }
 
-const Home = () => {
+const Home = memo(() => {
 	// Translations
 	const { t } = useTranslation("home");
 	const home = t("home");
 
 	return (
-		<React.Fragment>
+        <>
 			<NextSeo title={home} />
 			<Loader />
-		</React.Fragment>
-	);
-};
+		</>
+    );
+});
 
 Home.getLayout = function getLayout(page) {
 	return <Layout>{page}</Layout>;

@@ -1,9 +1,10 @@
 import { useNProgress } from "@tanem/react-nprogress";
 import { useRouter } from "next/router";
-import * as React from "react";
+import { useState, useEffect } from "react";
+import tw, { css } from "twin.macro";
 
 const TopProgressBar = () => {
-	const [state, setState] = React.useState({
+	const [state, setState] = useState({
 		isRouteChanging: false
 	});
 
@@ -11,7 +12,7 @@ const TopProgressBar = () => {
 
 	const router = useRouter();
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const handleRouteChangeStart = () => {
 			setState((prevState) => ({
 				...prevState,
@@ -34,30 +35,31 @@ const TopProgressBar = () => {
 		router.events.on("routeChangeComplete", handleRouteChangeEnd);
 		router.events.on("routeChangeError", handleRouteChangeEnd);
 
-		typeof window !== "undefined" &&
-			(() => {
-				const originalFetch = window.fetch;
+		typeof window !== "undefined"
+			? (() => {
+					const originalFetch = window.fetch;
 
-				window.fetch = async function (...args) {
-					if (activeRequests === 0) {
-						handleRouteChangeStart();
-					}
-
-					activeRequests++;
-
-					try {
-						const response = await originalFetch(...args);
-						return response;
-					} catch (error) {
-						return Promise.reject(error);
-					} finally {
-						activeRequests -= 1;
+					window.fetch = async function (...args) {
 						if (activeRequests === 0) {
-							handleRouteChangeEnd();
+							handleRouteChangeStart();
 						}
-					}
-				};
-			})();
+
+						activeRequests++;
+
+						try {
+							const response = await originalFetch(...args);
+							return response;
+						} catch (error) {
+							return Promise.reject(error);
+						} finally {
+							activeRequests -= 1;
+							if (activeRequests === 0) {
+								handleRouteChangeEnd();
+							}
+						}
+					};
+			  })()
+			: null;
 
 		return () => {
 			router.events.off("routeChangeStart", handleRouteChangeStart);
@@ -71,44 +73,31 @@ const TopProgressBar = () => {
 	});
 
 	return (
-		<>
-			<style jsx>{`
-				.container {
-					opacity: ${isFinished ? 0 : 1};
-					pointer-events: none;
-					transition: opacity ${animationDuration}ms linear;
-				}
-
-				.bar {
-					background: #29d;
-					height: 2px;
-					left: 0;
+		<div
+			css={[
+				tw`fixed top-0 left-0 w-full h-1 z-50 bg-indigo-900 ease-linear pointer-events-none transition-opacity`,
+				css`
 					margin-left: ${(-1 + progress) * 100} + "%";
-					position: fixed;
-					top: 0;
-					transition: margin-left ${animationDuration}ms linear;
-					width: 100%;
-					z-index: 1031;
-				}
-
-				.spinner {
-					box-shadow: 0 0 10px #29d, 0 0 5px #29d;
-					display: block;
-					height: 100%;
-					opacity: 1;
-					position: absolute;
-					right: 0;
-					transform: rotate(3deg) translate(0px, -4px);
-					width: 100px;
-				}
-			`}</style>
-
-			<div className="container">
-				<div className="bar">
-					<div className="spinner" />
-				</div>
-			</div>
-		</>
+					transition-property: margin-left;
+				`,
+				animationDuration
+					? css`
+							transition-delay: ${animationDuration}ms;
+					  `
+					: null,
+				isFinished ? tw`opacity-0` : tw`opacity-100`
+			]}
+		>
+			<div
+				css={[
+					tw`block h-full opacity-100 absolute right-0 transform-gpu rotate-3 translate-x-0 -translate-y-1`,
+					css`
+						width: 100px;
+						box-shadow: 0 0 10px ${tw`bg-indigo-900`}, 0 0 5px ${tw`bg-indigo-900`};
+					`
+				]}
+			/>
+		</div>
 	);
 };
 

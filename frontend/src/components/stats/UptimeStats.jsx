@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // External
 import "twin.macro";
@@ -11,9 +11,9 @@ import Skeleton from "react-loading-skeleton";
 import UptimeStatsLabel from "./labels/UptimeStats.json";
 
 const SitesUptimeStats = (props) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+	const [componentReady, setComponentReady] = useState(false);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const delay = 500;
 
 		let timer = setTimeout(() => setComponentReady(true), delay);

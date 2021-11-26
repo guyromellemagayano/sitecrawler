@@ -15,7 +15,7 @@ import useTranslation from "next-translate/useTranslation";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import * as React from "react";
+import { useEffect } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { SWRConfig } from "swr";
 import "twin.macro";
@@ -42,7 +42,7 @@ const Layout = ({ children }) => {
 	// Custom hooks
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		// Prefetch sites page for faster loading
 		router.prefetch(DashboardSitesLink);
 		router.prefetch(LoginLink);

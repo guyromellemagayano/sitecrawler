@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { forwardRef, useState, useEffect } from "react";
 
 // External
 import "twin.macro";
@@ -15,7 +15,7 @@ import { PaymentMethodModalLabels } from "@enums/PaymentMethodModalLabels";
 // Components
 import SelectCardForm from "@components/forms/SelectCardForm";
 
-const PaymentMethodModal = React.forwardRef(
+const PaymentMethodModal = forwardRef(
 	(
 		{
 			handleSelectPlan,
@@ -31,9 +31,9 @@ const PaymentMethodModal = React.forwardRef(
 		},
 		ref
 	) => {
-		const [stripePromiseData, setStripePromiseData] = React.useState("");
+		const [stripePromiseData, setStripePromiseData] = useState("");
 
-		React.useEffect(() => {
+		useEffect(() => {
 			stripePublishableKey ? setStripePromiseData(loadStripe(stripePublishableKey)) : null;
 		}, [stripePublishableKey]);
 

@@ -1,17 +1,17 @@
 import Alert from "@components/alerts";
 import { RegistrationApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
 import {
-	FormPasswordMaxChars,
-	FormPasswordMinChars,
-	FormStringMaxChars,
-	FormStringMinChars
+    FormPasswordMaxChars,
+    FormPasswordMinChars,
+    FormStringMaxChars,
+    FormStringMinChars
 } from "@configs/GlobalValues";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import * as React from "react";
+import { memo, useState } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
@@ -20,11 +20,11 @@ import * as Yup from "yup";
 /**
  * Memoized function to render the `RegistrationForm` component.
  */
-export const RegistrationForm = React.memo(() => {
-	const [isErrorEmail, setIsErrorEmail] = React.useState(false);
-	const [isErrorUsername, setIsErrorUsername] = React.useState(false);
-	const [errorMessage, setErrorMessage] = React.useState([]);
-	const [successMessage, setSuccessMessage] = React.useState([]);
+export const RegistrationForm = memo(() => {
+	const [isErrorEmail, setIsErrorEmail] = useState(false);
+	const [isErrorUsername, setIsErrorUsername] = useState(false);
+	const [errorMessage, setErrorMessage] = useState([]);
+	const [successMessage, setSuccessMessage] = useState([]);
 
 	// Router
 	const { asPath } = useRouter();
@@ -54,7 +54,7 @@ export const RegistrationForm = React.memo(() => {
 	const registrationUnknownError = t("alerts:registrationUnknownError");
 
 	return (
-		<React.Fragment>
+        <>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
@@ -383,6 +383,6 @@ export const RegistrationForm = React.memo(() => {
 					</form>
 				)}
 			</Formik>
-		</React.Fragment>
-	);
+		</>
+    );
 });

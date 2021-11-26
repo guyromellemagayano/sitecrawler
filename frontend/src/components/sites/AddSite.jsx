@@ -1,57 +1,94 @@
-import UpgradeErrorModal from "@components/modals/UpgradeErrorModal";
-import { AddSiteLabels } from "@enums/AddSiteLabels";
-import { AddNewSiteLink } from "@enums/PageLinks";
+import SiteLimitReachedModal from "@components/modals/SiteLimitReachedModal";
+import { AddNewSiteLink } from "@configs/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { handleScanApiEndpoint, handleSiteQueries, handleSiteSearch } from "@helpers/handleSiteQueries";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
+import { useSites } from "@hooks/useSites";
+import { useUser } from "@hooks/useUser";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import PropTypes from "prop-types";
-import * as React from "react";
+import { useRouter } from "next/router";
+import { memo, useState, useEffect } from "react";
 import "twin.macro";
 
-const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
-	const [maxSiteLimit, setMaxSiteLimit] = React.useState(0);
-	const [siteLimitCounter, setSiteLimitCounter] = React.useState(0);
+/**
+ * Memoized function to render the `AddSite` component
+ */
+const AddSite = memo(() => {
+	const [maxSiteLimit, setMaxSiteLimit] = useState(0);
+	const [siteLimitCounter, setSiteLimitCounter] = useState(0);
 
+	// Translations
+	const { t } = useTranslation("addSite");
+	const addNewSite = t("addNewSite");
+	const searchSites = t("searchSites");
+	const searchNotAvailable = t("searchNotAvailable");
+
+	// Router
+	const { query } = useRouter();
+
+	// SWR hooks
+	const { user, errorUser, validatingUser } = useUser();
+	const { sites, errorSites, validatingSites } = useSites();
+
+	// Custom hooks
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
-	const handleSiteLimit = (user, site) => {
-		setSiteLimitCounter(site?.count);
-		setMaxSiteLimit(user?.plan?.max_sites);
+	// Helper functions
+	const { searchKey, setSearchKey, linksPerPage } = handleSiteQueries(query);
+	const { scanApiEndpoint } = handleScanApiEndpoint(query, linksPerPage);
+
+	// Custom Functions
+	const onHandleSiteSearch = async (event) => {
+		return await handleSiteSearch(event, scanApiEndpoint, setSearchKey);
 	};
 
-	React.useEffect(() => {
-		user && site ? handleSiteLimit(user, site) : null;
-	}, [user, site]);
+	useEffect(() => {
+		typeof user !== "undefined" &&
+		user !== null &&
+		!user.detail &&
+		Object.keys(user).length > 0 &&
+		typeof sites !== "undefined" &&
+		sites !== null &&
+		!sites.detail &&
+		Object.keys(sites).length > 0 &&
+		sites?.count
+			? (() => {
+					setSiteLimitCounter(sites.count);
+					setMaxSiteLimit(user.plan.max_sites);
+			  })()
+			: null;
+	}, [user, sites]);
 
 	return (
 		<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-			<UpgradeErrorModal ref={ref} showModal={isComponentVisible} setShowModal={setIsComponentVisible} />
+			<SiteLimitReachedModal ref={ref} />
 
 			<div tw="relative z-10 flex-shrink-0 flex  bg-white border-b border-gray-200">
 				<div tw="flex-1 p-4 flex justify-between">
 					<div tw="flex-1 flex">
 						<div tw="w-full flex lg:ml-0">
 							<label htmlFor="searchSites" tw="sr-only">
-								{AddSiteLabels[3].label}
+								{searchSites}
 							</label>
 							<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center">
 								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
 									<SearchIcon tw="h-5 w-5 text-gray-400" />
 								</div>
-								{site?.count > 0 ? (
+								{sites?.count > 0 ? (
 									<input
 										type="search"
 										name="search-sites"
 										id="searchSites"
 										tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-										placeholder={AddSiteLabels[3].label}
-										onKeyUp={onSearchEvent}
+										placeholder={searchSites}
+										onKeyUp={onHandleSiteSearch}
 										defaultValue={searchKey}
 										autoFocus
 									/>
 								) : (
-									<p tw="sm:text-sm placeholder-gray-500 pl-8">{AddSiteLabels[4].label}</p>
+									<p tw="sm:text-sm placeholder-gray-500 pl-8">{searchNotAvailable}</p>
 								)}
 							</div>
 						</div>
@@ -73,7 +110,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 									user?.permissions.includes("can_start_scan") ? null : (
 										<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 									)}
-									<span>{AddSiteLabels[0].label}</span>
+									<span>{addNewSite}</span>
 								</span>
 							</button>
 						) : (
@@ -81,7 +118,7 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 								<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer inline-flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full">
 									<span tw="flex items-center space-x-2">
 										<PlusIcon tw="mr-2 h-4 w-4 text-white" />
-										{AddSiteLabels[0].label}
+										{addNewSite}
 									</span>
 								</a>
 							</Link>
@@ -91,20 +128,6 @@ const AddSite = ({ user, site, searchKey, onSearchEvent }) => {
 			</div>
 		</div>
 	);
-};
-
-AddSite.propTypes = {
-	onSearchEvent: PropTypes.func,
-	searchKey: PropTypes.string,
-	site: PropTypes.object,
-	user: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
-};
-
-AddSite.defaultProps = {
-	onSearchEvent: null,
-	searchKey: null,
-	site: null,
-	user: null
-};
+});
 
 export default AddSite;

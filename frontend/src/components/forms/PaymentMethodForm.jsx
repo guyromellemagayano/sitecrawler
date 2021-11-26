@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useMemo, useState, useEffect } from "react";
 
 // External
 import { CreditCardIcon } from "@heroicons/react/solid";
@@ -27,7 +27,7 @@ import { SubscriptionLabels } from "@enums/SubscriptionLabels";
 import { usePostMethod } from "@hooks/useHttpMethod";
 
 const useOptions = () => {
-	const options = React.useMemo(() => ({
+	const options = useMemo(() => ({
 		style: {
 			base: {
 				fontFamily:
@@ -57,18 +57,18 @@ const PaymentMethodForm = ({
 	setErrorMsg,
 	setSuccessMsg
 }) => {
-	const [currentPaymentMethod, setCurrentPaymentMethod] = React.useState([]);
-	const [disableForm, setDisableForm] = React.useState(true);
-	const [errorCardCvc, setErrorCardCvc] = React.useState("");
-	const [errorCardExpiry, setErrorCardExpiry] = React.useState("");
-	const [errorCardNumber, setErrorCardNumber] = React.useState("");
-	const [loading, setLoading] = React.useState(false);
+	const [currentPaymentMethod, setCurrentPaymentMethod] = useState([]);
+	const [disableForm, setDisableForm] = useState(true);
+	const [errorCardCvc, setErrorCardCvc] = useState("");
+	const [errorCardExpiry, setErrorCardExpiry] = useState("");
+	const [errorCardNumber, setErrorCardNumber] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const stripe = useStripe();
 	const elements = useElements();
 	const options = useOptions();
 
-	React.useEffect(() => {
+	useEffect(() => {
 		paymentMethods !== undefined &&
 		paymentMethods !== null &&
 		Object.keys(paymentMethods).length &&

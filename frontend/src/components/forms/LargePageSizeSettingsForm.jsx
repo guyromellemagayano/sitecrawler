@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState } from "react";
 
 // External
 import { Formik } from "formik";
@@ -28,7 +28,7 @@ const LargePageSizeSettingsForm = ({
 	siteId,
 	user
 }) => {
-	const [disableForm, setDisableForm] = React.useState(true);
+	const [disableForm, setDisableForm] = useState(true);
 
 	const handleLargePageSizeInputChange = (e) => {
 		setLargePageSizeThreshold(e.target.value);

@@ -1,19 +1,16 @@
 // React
-import * as React from "react";
-
-// External
-import { Formik } from "formik";
-import { mutate } from "swr";
-import * as Yup from "yup";
-import axios from "axios";
-import Cookies from "js-cookie";
-import PropTypes from "prop-types";
-import tw from "twin.macro";
-
+import { AlertLoadInterval, ComponentReadyInterval } from "@enums/GlobalValues";
 // Enums
 import { InformationLabels } from "@enums/InformationLabels";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-import { AlertLoadInterval, ComponentReadyInterval } from "@enums/GlobalValues";
+import axios from "axios";
+// External
+import { Formik } from "formik";
+import Cookies from "js-cookie";
+import PropTypes from "prop-types";
+import { useEffect } from "react";
+import { mutate } from "swr";
+import tw from "twin.macro";
+import * as Yup from "yup";
 
 const UrlInformationStepForm = ({
 	currentStep,
@@ -27,11 +24,11 @@ const UrlInformationStepForm = ({
 	setSiteData,
 	siteData
 }) => {
-	const siteApiEndpoint = `${SiteApiEndpoint}?ordering=name`;
+	const SitesApiEndpoint = `${SitesApiEndpoint}?ordering=name`;
 	const urlRegex =
 		/^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
 
-	React.useEffect(() => {
+	useEffect(() => {
 		errorMsg
 			? (() => {
 					setTimeout(() => {
@@ -41,7 +38,7 @@ const UrlInformationStepForm = ({
 			: null;
 	}, [errorMsg]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		errorMsgLoaded
 			? (() => {
 					setTimeout(() => {
@@ -55,7 +52,7 @@ const UrlInformationStepForm = ({
 		const response = await axios
 			.post(endpoint, body, {
 				headers: {
-					Accept: "application/json",
+					"Accept": "application/json",
 					"Content-Type": "application/json",
 					"X-CSRFToken": Cookies.get("csrftoken")
 				}
@@ -96,7 +93,7 @@ const UrlInformationStepForm = ({
 		const response = await axios
 			.get(endpoint, {
 				headers: {
-					Accept: "application/json",
+					"Accept": "application/json",
 					"Content-Type": "application/json",
 					"X-CSRFToken": Cookies.get("csrftoken")
 				}
@@ -134,7 +131,7 @@ const UrlInformationStepForm = ({
 		const response = await axios
 			.patch(endpoint, body, {
 				headers: {
-					Accept: "application/json",
+					"Accept": "application/json",
 					"Content-Type": "application/json",
 					"X-CSRFToken": Cookies.get("csrftoken")
 				}
@@ -174,7 +171,7 @@ const UrlInformationStepForm = ({
 		const response = await axios
 			.get(endpoint, {
 				headers: {
-					Accept: "application/json",
+					"Accept": "application/json",
 					"Content-Type": "application/json",
 					"X-CSRFToken": Cookies.get("csrftoken")
 				}
@@ -222,19 +219,14 @@ const UrlInformationStepForm = ({
 			})}
 			onSubmit={(values, { setSubmitting, resetForm }) => {
 				if (editMode) {
-					handleSiteInformationUpdate(
-						SiteApiEndpoint + siteData?.id + "/",
-						values,
-						setSubmitting,
-						resetForm
-					);
+					handleSiteInformationUpdate(SitesApiEndpoint + siteData?.id + "/", values, setSubmitting, resetForm);
 				} else {
 					const body = {
 						url: values?.siteurlprotocol + values?.siteurl,
 						name: values?.sitename
 					};
 
-					handleSiteValidation(siteApiEndpoint, body, setSubmitting, resetForm);
+					handleSiteValidation(SitesApiEndpoint, body, setSubmitting, resetForm);
 				}
 			}}
 		>
@@ -255,9 +247,7 @@ const UrlInformationStepForm = ({
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-										(errors.sitename && touched.sitename) || errorMsg
-											? tw`border-red-300`
-											: tw`border-gray-300`
+										(errors.sitename && touched.sitename) || errorMsg ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="sitename"
 									onChange={handleChange}
@@ -308,17 +298,13 @@ const UrlInformationStepForm = ({
 										editMode
 											? tw`opacity-50 bg-gray-300 cursor-not-allowed`
 											: isSubmitting && tw`text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed`,
-										(errors.siteurl && touched.siteurl) || errorMsg
-											? tw`border-red-300`
-											: tw`border-gray-300`
+										(errors.siteurl && touched.siteurl) || errorMsg ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									placeholder={InformationLabels[5].placeholder}
 									aria-describedby="siteurl"
 									onChange={handleChange}
 									onBlur={handleBlur}
-									value={
-										editMode ? siteData?.url.replace(/^\/\/|^.*?:(\/\/)?/, "") : values?.siteurl
-									}
+									value={editMode ? siteData?.url.replace(/^\/\/|^.*?:(\/\/)?/, "") : values?.siteurl}
 								/>
 							</div>
 

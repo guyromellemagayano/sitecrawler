@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import * as React from "react";
 import tw from "twin.macro";
 
 const Badge = (isDanger = false, isSuccess = false, isWarning = false, text = null) => {

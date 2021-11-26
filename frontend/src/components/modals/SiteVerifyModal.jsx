@@ -1,38 +1,33 @@
 // React
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
+import { SitesApiEndpoint } from "@enums/ApiEndpoints";
+import { DataTableLabels } from "@enums/DataTableLabels";
+// Enums
+import { ComponentReadyInterval } from "@enums/GlobalValues";
+import { SiteVerifyModalLabels } from "@enums/SiteVerifyModalLabels";
+import { Transition } from "@headlessui/react";
 // External
 import { ClipboardIcon, InformationCircleIcon } from "@heroicons/react/solid";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Transition } from "@headlessui/react";
 import axios from "axios";
 import Cookies from "js-cookie";
+// NextJS
+import Link from "next/link";
 import PropTypes from "prop-types";
+import { forwardRef, useState } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 
-// Enums
-import { ComponentReadyInterval } from "@enums/GlobalValues";
-import { DataTableLabels } from "@enums/DataTableLabels";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-import { SiteVerifyModalLabels } from "@enums/SiteVerifyModalLabels";
-
-const SiteVerifyModal = React.forwardRef(
+const SiteVerifyModal = forwardRef(
 	({ mutateSite, setShowModal, showModal, siteId, siteName, siteUrl, siteVerificationId }, ref) => {
-		const [copied, setCopied] = React.useState(false);
-		const [copyValue, setCopyValue] = React.useState(
-			`<meta name="epic-crawl-id" content="${siteVerificationId}" />`
-		);
-		const [disableSiteVerify, setDisableSiteVerify] = React.useState(false);
-		const [enableNextStep, setEnableNextStep] = React.useState(false);
-		const [errorMsg, setErrorMsg] = React.useState(null);
-		const [siteVerifyId, setSiteVerifyId] = React.useState(siteId);
-		const [successMsg, setSuccessMsg] = React.useState(null);
+		const [copied, setCopied] = useState(false);
+		const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${siteVerificationId}" />`);
+		const [disableSiteVerify, setDisableSiteVerify] = useState(false);
+		const [enableNextStep, setEnableNextStep] = useState(false);
+		const [errorMsg, setErrorMsg] = useState(null);
+		const [siteVerifyId, setSiteVerifyId] = useState(siteId);
+		const [successMsg, setSuccessMsg] = useState(null);
 
-		const siteVerifyApiEndpoint = `${SiteApiEndpoint + siteId}/verify/`;
+		const siteVerifyApiEndpoint = `${SitesApiEndpoint + siteId}/verify/`;
 
 		const handleInputChange = ({ copyValue }) => {
 			setCopyValue({ copyValue, copied });
@@ -61,7 +56,7 @@ const SiteVerifyModal = React.forwardRef(
 			const response = await axios
 				.post(siteVerifyApiEndpoint, body, {
 					headers: {
-						Accept: "application/json",
+						"Accept": "application/json",
 						"Content-Type": "application/json",
 						"X-CSRFToken": Cookies.get("csrftoken")
 					}
@@ -151,9 +146,7 @@ const SiteVerifyModal = React.forwardRef(
 											</a>
 										</span>
 
-										<p tw="text-base font-medium leading-6 text-gray-700 mt-4 mb-3">
-											{DataTableLabels[5].label}
-										</p>
+										<p tw="text-base font-medium leading-6 text-gray-700 mt-4 mb-3">{DataTableLabels[5].label}</p>
 										<ol tw="space-y-2 list-decimal ml-4">
 											<li tw="text-sm leading-6 text-gray-500">{DataTableLabels[6].label}</li>
 											<li tw="text-sm leading-6 text-gray-500">
@@ -185,27 +178,21 @@ const SiteVerifyModal = React.forwardRef(
 																	]}
 																>
 																	<ClipboardIcon tw="h-5 w-5 text-gray-400" />
-																	<span>
-																		{copied ? DataTableLabels[17].label : DataTableLabels[18].label}
-																	</span>
+																	<span>{copied ? DataTableLabels[17].label : DataTableLabels[18].label}</span>
 																</button>
 															</CopyToClipboard>
 														</div>
 													</div>
 												</div>
 											</li>
-											<li tw="text-sm leading-6 text-gray-500">
-												{ReactHtmlParser(DataTableLabels[8].label)}
-											</li>
+											<li tw="text-sm leading-6 text-gray-500">{ReactHtmlParser(DataTableLabels[8].label)}</li>
 										</ol>
 									</div>
 									{errorMsg ? (
 										<div tw="block my-5">
 											<div tw="flex justify-center sm:justify-start">
 												<div>
-													<h3 tw="text-sm leading-5 font-medium text-red-800 break-words">
-														{errorMsg}
-													</h3>
+													<h3 tw="text-sm leading-5 font-medium text-red-800 break-words">{errorMsg}</h3>
 												</div>
 											</div>
 										</div>
@@ -213,9 +200,7 @@ const SiteVerifyModal = React.forwardRef(
 										<div tw="block my-5">
 											<div tw="flex justify-center sm:justify-start">
 												<div>
-													<h3 tw="text-sm leading-5 font-medium text-green-800 break-words">
-														{successMsg}
-													</h3>
+													<h3 tw="text-sm leading-5 font-medium text-green-800 break-words">{successMsg}</h3>
 												</div>
 											</div>
 										</div>
@@ -236,9 +221,7 @@ const SiteVerifyModal = React.forwardRef(
 										]}
 										onClick={() => setShowModal(!showModal)}
 									>
-										{!enableNextStep
-											? SiteVerifyModalLabels[6].label
-											: SiteVerifyModalLabels[3].label}
+										{!enableNextStep ? SiteVerifyModalLabels[6].label : SiteVerifyModalLabels[3].label}
 									</button>
 								</span>
 

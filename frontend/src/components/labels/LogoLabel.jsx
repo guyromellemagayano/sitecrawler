@@ -2,7 +2,7 @@ import { AppLogo } from "@components/logos/AppLogo";
 import { NoAuthAppLogo, SiteLogoDark } from "@configs/GlobalValues";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import * as React from "react";
+import { memo } from "react";
 import "twin.macro";
 
 /**
@@ -15,7 +15,7 @@ import "twin.macro";
  * @param {boolean} isAccountExist
  * @param {boolean} isConfirmEmail
  */
-export const LogoLabel = React.memo(
+export const LogoLabel = memo(
 	({
 		isLogin = false,
 		isSignUp = false,
@@ -35,7 +35,7 @@ export const LogoLabel = React.memo(
 		const isConfirmEmailText = t("isConfirmEmail");
 
 		return (
-			<div tw="sm:mx-auto sm:w-full sm:max-w-md flex align-center">
+			<div tw="sm:mx-auto sm:w-full sm:max-w-md flex justify-center flex-col">
 				{!isLogin ? (
 					<AppLogo src={SiteLogoDark} alt={appLogo} width={NoAuthAppLogo.width} height={NoAuthAppLogo.height} />
 				) : null}

@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { forwardRef, useState } from "react";
 
 // External
 import "twin.macro";
@@ -12,9 +12,9 @@ import ReactHtmlParser from "react-html-parser";
 // Enums
 import { VerifyUrlLabels } from "@enums/VerifyUrlLabels";
 
-const ShowHelpModal = React.forwardRef(
+const ShowHelpModal = forwardRef(
 	({ siteData, showModal, setShowModal, copyValue, setCopyValue }, ref) => {
-		const [htmlCopied, setHtmlCopied] = React.useState(false);
+		const [htmlCopied, setHtmlCopied] = useState(false);
 
 		let htmlText =
 			"1. Sign in to the administrator account of the following website: " + siteData?.url + "\n\n";

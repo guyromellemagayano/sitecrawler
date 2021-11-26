@@ -3,15 +3,14 @@ import { LogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import * as React from "react";
+import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
 /**
  * Memoized function to render the `ResetPasswordPageLayout` component.
  */
-const ResetPasswordPageLayout = React.memo(() => {
+const ResetPasswordPageLayout = memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");
@@ -31,7 +30,7 @@ const ResetPasswordPageLayout = React.memo(() => {
 
 							<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 								<span tw="px-2 py-5 text-gray-500">
-									{ReactHtmlParser(alreadyHaveAccount)}&nbsp;
+									{alreadyHaveAccount}&nbsp;
 									<Link href={LoginLink}>
 										<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 											{isLogin}

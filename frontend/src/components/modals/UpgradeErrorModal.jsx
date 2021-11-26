@@ -4,14 +4,14 @@ import { ExclamationIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import * as React from "react";
+import { memo, forwardRef } from "react";
 import "twin.macro";
 
 /**
  * Memoized function to render the `UpgradeErrorModal` component.
  */
-const UpgradeErrorModal = React.memo(
-	React.forwardRef((ref) => {
+const UpgradeErrorModal = memo(
+	forwardRef((ref) => {
 		// Translations
 		const { t } = useTranslation("common");
 		const siteFeatureNotAvailableTitle = t("siteFeatureNotAvailableTitle");

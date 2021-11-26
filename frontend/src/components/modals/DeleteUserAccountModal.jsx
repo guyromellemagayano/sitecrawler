@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { forwardRef, useState, useEffect } from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -20,12 +20,12 @@ import { LoginLink } from "@enums/PageLinks";
 import { RevalidationInterval } from "@enums/GlobalValues";
 import { UserApiEndpoint } from "@enums/ApiEndpoints";
 
-const DeleteUserAccountModal = React.forwardRef(
+const DeleteUserAccountModal = forwardRef(
 	({ showModal, setShowModal, user, mutateUser }, ref) => {
-		const [disableDeleteUser, setDisableDeleteUser] = React.useState(false);
-		const [errorMsg, setErrorMsg] = React.useState([]);
-		const [successMsg, setSuccessMsg] = React.useState([]);
-		const [hideButtons, setHideButtons] = React.useState(false);
+		const [disableDeleteUser, setDisableDeleteUser] = useState(false);
+		const [errorMsg, setErrorMsg] = useState([]);
+		const [successMsg, setSuccessMsg] = useState([]);
+		const [hideButtons, setHideButtons] = useState(false);
 
 		const userIdApiEndpoint = `${UserApiEndpoint + user?.id}`;
 
@@ -35,7 +35,7 @@ const DeleteUserAccountModal = React.forwardRef(
 			return e?.key === "Escape" ? setShowModal(false) : null;
 		};
 
-		React.useEffect(() => {
+		useEffect(() => {
 			document.addEventListener(
 				"keydown",
 				disableDeleteUser ? null : handleHideSiteDeleteModal,
@@ -91,11 +91,11 @@ const DeleteUserAccountModal = React.forwardRef(
 				});
 		};
 
-		React.useEffect(() => {
+		useEffect(() => {
 			Object.keys(successMsg).length > 0 ? setHideButtons(true) : null;
 		}, [successMsg]);
 
-		React.useEffect(() => {
+		useEffect(() => {
 			showModal
 				? Object.keys(successMsg).length > 0
 					? (() => {

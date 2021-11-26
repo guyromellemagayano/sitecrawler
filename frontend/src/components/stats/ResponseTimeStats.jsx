@@ -1,25 +1,21 @@
 // React
-import * as React from "react";
-
+import { PresentationChartLineIcon } from "@heroicons/react/solid";
 // NextJS
 import dynamic from "next/dynamic";
-
+import { useState, useEffect } from "react";
+import Skeleton from "react-loading-skeleton";
 // External
 import "twin.macro";
-import { PresentationChartLineIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
-
 // JSON
 import ResponseTimeStatsLabel from "./labels/ResponseTimeStats.json";
 
 // Components
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: true });
 
 const SitesResponseTimeStats = (props) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+	const [componentReady, setComponentReady] = useState(false);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const delay = 500;
 
 		let timer = setTimeout(() => setComponentReady(true), delay);
@@ -47,20 +43,14 @@ const SitesResponseTimeStats = (props) => {
 						</span>
 					)}
 					<h2 tw="text-lg font-bold leading-7 text-gray-900">
-						{componentReady ? (
-							ResponseTimeStatsLabel[0].label
-						) : (
-							<Skeleton duration={2} width={100} height={15} />
-						)}
+						{componentReady ? ResponseTimeStatsLabel[0].label : <Skeleton duration={2} width={100} height={15} />}
 					</h2>
 				</div>
 			</div>
 
 			<div tw="flex justify-center mx-auto px-5">
 				<div tw="w-full flow-root mt-4 mb-8">
-					<div id="chart-line">
-						{/* <Chart options={chartOptions} series={chartSeries} type="line" height={} /> */}
-					</div>
+					<div id="chart-line">{/* <Chart options={chartOptions} series={chartSeries} type="line" height={} /> */}</div>
 				</div>
 			</div>
 		</div>

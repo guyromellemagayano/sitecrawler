@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // External
 import tw from "twin.macro";
@@ -14,10 +14,10 @@ import { HowToSetupLabels } from "@enums/HowToSetupLabels";
 import HowToSetupSkeleton from "@components/skeletons/HowToSetupSkeleton";
 
 const HowToSetup = () => {
-	const [componentReady, setComponentReady] = React.useState(false);
-	const [tabActive, setTabActive] = React.useState(1);
+	const [componentReady, setComponentReady] = useState(false);
+	const [tabActive, setTabActive] = useState(1);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setTimeout(() => {
 			setComponentReady(true);
 		}, ComponentReadyInterval);

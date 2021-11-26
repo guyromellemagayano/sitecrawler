@@ -3,7 +3,7 @@ import { LogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import * as React from "react";
+import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
@@ -11,7 +11,7 @@ import "twin.macro";
 /**
  * Memoized function to render the `RegistrationPageLayout` component.
  */
-const RegistrationPageLayout = React.memo(() => {
+const RegistrationPageLayout = memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const agreeTermsPrivacyPolicy = t("registration:agreeTermsPrivacyPolicy");

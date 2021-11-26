@@ -4,14 +4,14 @@ import { ExclamationIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import * as React from "react";
+import { memo, forwardRef } from "react";
 import "twin.macro";
 
 /**
  * Memoized function to render the `SiteLimitReachedModal` component.
  */
-const SiteLimitReachedModal = React.memo(
-	React.forwardRef((ref) => {
+const SiteLimitReachedModal = memo(
+	forwardRef((ref) => {
 		// Translations
 		const { t } = useTranslation("common");
 		const maximumSiteLimitReachedTitle = t("maximumSiteLimitReachedTitle");

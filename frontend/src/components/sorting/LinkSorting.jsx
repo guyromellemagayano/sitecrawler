@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState } from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -24,7 +24,7 @@ const initialOrder = {
 };
 
 const LinkSorting = ({ result, slug, mutateLinks, labels, setPagePath }) => {
-	const [sortOrder, setSortOrder] = React.useState(initialOrder);
+	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	const { asPath } = useRouter();
 	const router = useRouter();

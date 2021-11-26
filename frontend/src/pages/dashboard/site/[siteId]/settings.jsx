@@ -1,39 +1,34 @@
 // React
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import "twin.macro";
-import { NextSeo } from "next-seo";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import PropTypes from "prop-types";
-
+import Breadcrumbs from "@components/breadcrumbs";
+import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
+import Layout from "@components/layouts";
+import Footer from "@components/layouts/Footer";
+import Sidebar from "@components/layouts/Sidebar";
+// Components
+import { AppLogo } from "@components/logos/AppLogo";
+import DeleteSiteSettings from "@components/settings/DeleteSiteSettings";
+import LargePageSizeSettings from "@components/settings/LargePageSizeSettings";
+import SiteInformationSettings from "@components/settings/SiteInformationSettings";
+import { SitesApiEndpoint } from "@enums/ApiEndpoints";
 // Enums
 import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
 import { LoginLink, SitesLink } from "@enums/PageLinks";
 import { SettingsLabels } from "@enums/SettingsLabels";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-
 // Hooks
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useSite, useSiteId } from "@hooks/useSite";
 import useUser from "@hooks/useUser";
-
-// Components
-import AppLogo from "@components/logos/AppLogo";
-import Breadcrumbs from "@components/breadcrumbs";
-import DeleteSiteSettings from "@components/settings/DeleteSiteSettings";
-import Footer from "@components/layouts/Footer";
-import LargePageSizeSettings from "@components/settings/LargePageSizeSettings";
-import Layout from "@components/layouts";
-import MobileSidebarButton from "@components/buttons/MobileSidebarButton";
-import Sidebar from "@components/layouts/Sidebar";
-import SiteInformationSettings from "@components/settings/SiteInformationSettings";
+import { NextSeo } from "next-seo";
+// NextJS
+import Link from "next/link";
+import PropTypes from "prop-types";
+import { useState, useEffect } from "react";
+import { Scrollbars } from "react-custom-scrollbars-2";
+// External
+import "twin.macro";
 
 const SiteSettings = ({ result }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+	const [componentReady, setComponentReady] = useState(false);
 
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
@@ -43,7 +38,7 @@ const SiteSettings = ({ result }) => {
 	});
 
 	const { mutateSite } = useSite({
-		endpoint: SiteApiEndpoint
+		endpoint: SitesApiEndpoint
 	});
 
 	const { siteId, mutateSiteId } = useSiteId({
@@ -55,7 +50,7 @@ const SiteSettings = ({ result }) => {
 	const homePageLink = `/site/${result?.siteId}`;
 	const pageTitle = SettingsLabels[1].label + " - " + siteId?.name;
 
-	React.useEffect(() => {
+	useEffect(() => {
 		user && siteId ? setComponentReady(true) : setComponentReady(false);
 
 		return { user, siteId };
@@ -66,20 +61,12 @@ const SiteSettings = ({ result }) => {
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar
-					ref={ref}
-					user={user}
-					openSidebar={isComponentVisible}
-					setOpenSidebar={setIsComponentVisible}
-				/>
+				<Sidebar ref={ref} user={user} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 
 				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
-							<MobileSidebarButton
-								openSidebar={isComponentVisible}
-								setOpenSidebar={setIsComponentVisible}
-							/>
+							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 						</div>
 
 						<Link href={homePageLink} passHref>
@@ -96,10 +83,7 @@ const SiteSettings = ({ result }) => {
 					</div>
 
 					<Scrollbars universal>
-						<main
-							tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none"
-							tabIndex="0"
-						>
+						<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="max-w-full p-4 sm:px-6 md:px-8">
 								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
 									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
@@ -107,9 +91,7 @@ const SiteSettings = ({ result }) => {
 											<Breadcrumbs isOther pageTitle={pageTitle} siteId={result?.siteId} />
 
 											<div tw="pt-4 m-auto">
-												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-													{pageTitle}
-												</h2>
+												<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
 											</div>
 										</div>
 
@@ -128,11 +110,7 @@ const SiteSettings = ({ result }) => {
 												siteId={siteId}
 												user={user}
 											/>
-											<DeleteSiteSettings
-												componentReady={componentReady}
-												mutateSite={mutateSite}
-												siteId={siteId}
-											/>
+											<DeleteSiteSettings componentReady={componentReady} mutateSite={mutateSite} siteId={siteId} />
 										</div>
 									</div>
 								</div>

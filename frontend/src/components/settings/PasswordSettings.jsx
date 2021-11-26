@@ -1,6 +1,6 @@
 // React
 import PropTypes from "prop-types";
-import * as React from "react";
+import { useState } from "react";
 
 // External
 import "twin.macro";
@@ -14,8 +14,8 @@ import PasswordSettingsForm from "@components/forms/PasswordSettingsForm";
 import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
 
 const PasswordSettings = ({ componentReady, mutateUser }) => {
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
+	const [errorMsg, setErrorMsg] = useState([]);
+	const [successMsg, setSuccessMsg] = useState([]);
 
 	return (
 		<div>

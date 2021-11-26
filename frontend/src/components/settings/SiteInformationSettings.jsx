@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState } from "react";
 
 // External
 import PropTypes from "prop-types";
@@ -14,8 +14,8 @@ import SiteInformationSettingsForm from "@components/forms/SiteInformationSettin
 import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
 
 const SiteInformationSettings = ({ componentReady, mutateSite, mutateSiteId, siteId }) => {
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
+	const [errorMsg, setErrorMsg] = useState([]);
+	const [successMsg, setSuccessMsg] = useState([]);
 
 	return (
 		<div>

@@ -1,30 +1,25 @@
 // React
-import * as React from "react";
-
+// Enums
+import { SitesApiEndpoint } from "@enums/ApiEndpoints";
+import { TlsErrorModalLabels } from "@enums/TlsErrorModalLabels";
+import { Transition } from "@headlessui/react";
+import { ExclamationIcon, LinkIcon } from "@heroicons/react/solid";
 // NextJS
 import Link from "next/link";
-
-// Extenal
-import "twin.macro";
-import { ExclamationIcon } from "@heroicons/react/solid";
-import { LinkIcon } from "@heroicons/react/solid";
-import { Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
+import { forwardRef, useState, useEffect } from "react";
 import ReactHtmlParser from "react-html-parser";
 import Skeleton from "react-loading-skeleton";
-
 // Hooks
 import { usePages } from "src/hooks/useSite";
+// Extenal
+import "twin.macro";
 
-// Enums
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-import { TlsErrorModalLabels } from "@enums/TlsErrorModalLabels";
-
-const TlsErrorModal = React.forwardRef(({ scanObjId, setShowModal, showModal, siteId }, ref) => {
-	const [componentReady, setComponentReady] = React.useState(false);
+const TlsErrorModal = forwardRef(({ scanObjId, setShowModal, showModal, siteId }, ref) => {
+	const [componentReady, setComponentReady] = useState(false);
 
 	const brokenSecurityPageLink = `/site/${siteId}/pages/?tls_total=false`;
-	const pageApiEndpoint = `${SiteApiEndpoint + siteId}/scan/${scanObjId}/page/?tls_total=false`;
+	const pageApiEndpoint = `${SitesApiEndpoint + siteId}/scan/${scanObjId}/page/?tls_total=false`;
 
 	const { pages } = usePages({
 		endpoint: pageApiEndpoint,
@@ -32,7 +27,7 @@ const TlsErrorModal = React.forwardRef(({ scanObjId, setShowModal, showModal, si
 		scanObjId: scanObjId
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		pages && scanObjId ? setComponentReady(true) : setComponentReady(false);
 
 		return { pages, scanObjId };
@@ -80,9 +75,7 @@ const TlsErrorModal = React.forwardRef(({ scanObjId, setShowModal, showModal, si
 									{TlsErrorModalLabels[0].label}
 								</h3>
 								<div tw="mt-2">
-									<p tw="text-sm leading-5 text-gray-500">
-										{ReactHtmlParser(TlsErrorModalLabels[1].label)}
-									</p>
+									<p tw="text-sm leading-5 text-gray-500">{ReactHtmlParser(TlsErrorModalLabels[1].label)}</p>
 
 									<div tw="mt-4 mb-2">
 										{pages?.count > 0 && pages?.count < 6 ? (
@@ -100,11 +93,7 @@ const TlsErrorModal = React.forwardRef(({ scanObjId, setShowModal, showModal, si
 																	<span className="truncate-link">{val?.url}</span>
 																	&nbsp;
 																	{val?.count - 1 > 0 ? "+" + parseInt(val?.count - 1) : null}{" "}
-																	{val?.count - 1 > 1
-																		? "others"
-																		: val?.count - 1 === 1
-																		? "other"
-																		: null}
+																	{val?.count - 1 > 1 ? "others" : val?.count - 1 === 1 ? "other" : null}
 																</a>
 															</Link>
 														</span>
@@ -124,11 +113,7 @@ const TlsErrorModal = React.forwardRef(({ scanObjId, setShowModal, showModal, si
 															<span className="truncate-link">{pages?.results[0]?.url}</span>
 															&nbsp;
 															{pages?.count - 1 > 0 ? "+" + parseInt(pages?.count - 1) : null}{" "}
-															{pages?.count - 1 > 1
-																? "others"
-																: pages?.count - 1 === 1
-																? "other"
-																: null}
+															{pages?.count - 1 > 1 ? "others" : pages?.count - 1 === 1 ? "other" : null}
 														</a>
 													</Link>
 												</span>

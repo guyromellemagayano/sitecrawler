@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // NextJS
 import Link from "next/link";
@@ -31,10 +31,10 @@ const DataTable = ({
 	siteVerificationId,
 	siteVerified
 }) => {
-	const [scanCount, setScanCount] = React.useState(null);
-	const [scanFinishedAt, setScanFinishedAt] = React.useState(null);
-	const [scanForceHttps, setScanForceHttps] = React.useState(null);
-	const [scanObjId, setScanObjId] = React.useState(null);
+	const [scanCount, setScanCount] = useState(null);
+	const [scanFinishedAt, setScanFinishedAt] = useState(null);
+	const [scanForceHttps, setScanForceHttps] = useState(null);
+	const [scanObjId, setScanObjId] = useState(null);
 
 	const { siteVerifyModalRef, isSiteVerifyModalVisible, setIsSiteVerifyModalVisible } =
 		useSiteVerifyModalVisible(false);
@@ -60,7 +60,7 @@ const DataTable = ({
 		querySid: siteId
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const currentScanCount = scan?.count;
 		const currentScanFinishedAt = scan?.results[0]?.finished_at ?? null;
 		const currentScanForcehttps = scan?.results[0]?.force_https ?? null;

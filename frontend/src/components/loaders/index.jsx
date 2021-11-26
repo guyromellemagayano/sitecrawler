@@ -1,5 +1,4 @@
-import { LoadingMessage } from "@components/messages";
-import * as React from "react";
+import LoadingMessage from "@components/messages/LoadingMessage";
 import "twin.macro";
 
 export const Loader = () => {

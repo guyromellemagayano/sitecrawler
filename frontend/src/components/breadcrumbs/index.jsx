@@ -3,10 +3,10 @@ import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import * as React from "react";
+import { memo } from "react";
 import "twin.macro";
 
-const Breadcrumbs = React.memo(
+const Breadcrumbs = memo(
 	({
 		dataId = null,
 		isImages = false,

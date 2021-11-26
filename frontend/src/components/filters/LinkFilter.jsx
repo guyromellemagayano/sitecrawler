@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -16,11 +16,11 @@ import { LinkFilterLabels } from "@enums/LinkFilterLabels";
 import { removeURLParameter } from "@utils/functions";
 
 const LinkFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
-	const [allFilter, setAllFilter] = React.useState(false);
-	const [externalLinksFilter, setExternalLinksFilter] = React.useState(false);
-	const [internalLinksFilter, setInternalLinksFilter] = React.useState(false);
-	const [linksWithIssuesFilter, setLinksWithIssuesFilter] = React.useState(false);
-	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
+	const [allFilter, setAllFilter] = useState(false);
+	const [externalLinksFilter, setExternalLinksFilter] = useState(false);
+	const [internalLinksFilter, setInternalLinksFilter] = useState(false);
+	const [linksWithIssuesFilter, setLinksWithIssuesFilter] = useState(false);
+	const [noIssueFilter, setNoIssueFilter] = useState(false);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -148,7 +148,7 @@ const LinkFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
 		mutate(scanApiEndpoint);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (filterQueryString.has("status__neq")) {
 			setLinksWithIssuesFilter(true);
 		} else {

@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 // NextJS
 import { useRouter } from "next/router";
@@ -13,11 +13,11 @@ import PropTypes from "prop-types";
 import { removeURLParameter } from "@utils/functions";
 
 const ImageFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
-	const [allFilter, setAllFilter] = React.useState(false);
-	const [unsecuredImagesFilter, setUnsecuredImagesFilter] = React.useState(false);
-	const [missingAltsFilter, setMissingAltsFilter] = React.useState(false);
-	const [brokenImagesFilter, setBrokenImagesFilter] = React.useState(false);
-	const [noIssueFilter, setNoIssueFilter] = React.useState(false);
+	const [allFilter, setAllFilter] = useState(false);
+	const [unsecuredImagesFilter, setUnsecuredImagesFilter] = useState(false);
+	const [missingAltsFilter, setMissingAltsFilter] = useState(false);
+	const [brokenImagesFilter, setBrokenImagesFilter] = useState(false);
+	const [noIssueFilter, setNoIssueFilter] = useState(false);
 
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -190,7 +190,7 @@ const ImageFilter = ({ filterQueryString, scanApiEndpoint, setPagePath }) => {
 		mutate(scanApiEndpoint);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (filterQueryString.get("status__neq") === "OK") {
 			setBrokenImagesFilter(true);
 		} else {

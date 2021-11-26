@@ -5,7 +5,7 @@ import { NoAuthAppLogo, SiteLogoDark } from "@configs/GlobalValues";
 import { RegistrationLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import * as React from "react";
+import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
@@ -14,7 +14,7 @@ import Footer from "../components/Footer";
 /**
  * Memoized function to render the `LoginPageLayout` component.
  */
-const LoginPageLayout = React.memo(() => {
+const LoginPageLayout = memo(() => {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("common:headline");

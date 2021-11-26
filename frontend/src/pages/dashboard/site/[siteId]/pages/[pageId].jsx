@@ -1,47 +1,42 @@
 // React
-import * as React from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import "twin.macro";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { LinkIcon } from "@heroicons/react/solid";
-import { NextSeo } from "next-seo";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import bytes from "bytes";
-import dayjs from "dayjs";
-import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
-
+import Breadcrumbs from "@components/breadcrumbs";
+import Layout from "@components/layouts";
+import Sidebar from "@components/layouts/Sidebar";
 // Enums
 import { GlobalLabels, SiteLogoDark } from "@enums/GlobalValues";
 import { LoginLink, SitesLink } from "@enums/PageLinks";
 import { PagesLabels } from "@enums/PagesLabels";
-
+import { LinkIcon } from "@heroicons/react/solid";
 // Hooks
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useSiteId, usePageDetail, usePageDetailLink } from "@hooks/useSite";
 import useCrawl from "@hooks/useCrawl";
+import { usePageDetail, usePageDetailLink, useSiteId } from "@hooks/useSite";
 import useUser from "@hooks/useUser";
-
-// Components
-import AppLogo from "src/components/logos/AppLogo";
-import Breadcrumbs from "@components/breadcrumbs";
-import Footer from "src/components/layouts/Footer";
-import Layout from "@components/layouts";
-import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
-import Sidebar from "@components/layouts/Sidebar";
+import bytes from "bytes";
+import dayjs from "dayjs";
+import { NextSeo } from "next-seo";
+// NextJS
+import Link from "next/link";
+import PropTypes from "prop-types";
+import { useState, useEffect } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { Scrollbars } from "react-custom-scrollbars-2";
+import Skeleton from "react-loading-skeleton";
 import SiteDangerBadge from "src/components/badges/SiteDangerBadge";
 import SiteSuccessBadge from "src/components/badges/SiteSuccessBadge";
+import MobileSidebarButton from "src/components/buttons/MobileSidebarButton";
+import Footer from "src/components/layouts/Footer";
+// Components
+import { AppLogo } from "src/components/logos/AppLogo";
+// External
+import "twin.macro";
 
 const PageDetail = ({ result }) => {
-	const [componentReady, setComponentReady] = React.useState(false);
-	const [copied, setCopied] = React.useState(false);
-	const [copyValue, setCopyValue] = React.useState(null);
-	const [enableSiteIdHook, setEnableSiteIdHook] = React.useState(false);
-	const [scanObjId, setScanObjId] = React.useState(null);
+	const [componentReady, setComponentReady] = useState(false);
+	const [copied, setCopied] = useState(false);
+	const [copyValue, setCopyValue] = useState(null);
+	const [enableSiteIdHook, setEnableSiteIdHook] = useState(false);
+	const [scanObjId, setScanObjId] = useState(null);
 
 	const calendar = require("dayjs/plugin/calendar");
 	const timezone = require("dayjs/plugin/timezone");
@@ -67,7 +62,7 @@ const PageDetail = ({ result }) => {
 		redirectTo: LoginLink
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		return user ? setEnableSiteIdHook(true) : setEnableSiteIdHook(false);
 	}, [user, enableSiteIdHook]);
 
@@ -81,7 +76,7 @@ const PageDetail = ({ result }) => {
 		redirectTo: enableSiteIdHook ? SitesLink : null
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		currentScan ? setScanObjId(currentScan?.id) : setScanObjId(previousScan?.id);
 
 		return scanObjId;
@@ -102,10 +97,8 @@ const PageDetail = ({ result }) => {
 		pageId: enableSiteIdHook ? parseInt(result?.pageId) : null
 	});
 
-	React.useEffect(() => {
-		user && siteId && pageDetail && pageDetailLink
-			? setComponentReady(true)
-			: setComponentReady(false);
+	useEffect(() => {
+		user && siteId && pageDetail && pageDetailLink ? setComponentReady(true) : setComponentReady(false);
 
 		return { user, siteId, pageDetail, pageDetailLink };
 	}, [user, siteId, pageDetail, pageDetailLink]);
@@ -120,20 +113,12 @@ const PageDetail = ({ result }) => {
 			<NextSeo title={pageDetailPageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar
-					openSidebar={isComponentVisible}
-					ref={ref}
-					setOpenSidebar={setIsComponentVisible}
-					user={user}
-				/>
+				<Sidebar openSidebar={isComponentVisible} ref={ref} setOpenSidebar={setIsComponentVisible} user={user} />
 
 				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
 					<div tw="relative flex-shrink-0 flex bg-white">
 						<div tw="border-b flex-shrink-0 flex">
-							<MobileSidebarButton
-								openSidebar={isComponentVisible}
-								setOpenSidebar={setIsComponentVisible}
-							/>
+							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 						</div>
 
 						{/* TODO: Turn this into a single component */}
@@ -180,26 +165,17 @@ const PageDetail = ({ result }) => {
 												<div tw="px-4 py-5 sm:p-0">
 													<dl>
 														<div tw="sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[7].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[7].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	<span tw="space-x-2">
 																		<span tw="text-sm">
 																			{!user?.settings?.disableLocalTime
-																				? dayjs(pageDetail?.created_at).calendar(
-																						null,
-																						calendarStrings
-																				  )
-																				: dayjs
-																						.utc(pageDetail?.created_at)
-																						.calendar(null, calendarStrings)}
+																				? dayjs(pageDetail?.created_at).calendar(null, calendarStrings)
+																				: dayjs.utc(pageDetail?.created_at).calendar(null, calendarStrings)}
 																		</span>
 																		<span tw="font-medium">
-																			(
-																			{!user?.settings?.disableLocalTime ? dayjs.tz.guess() : "UTC"}
-																			)
+																			({!user?.settings?.disableLocalTime ? dayjs.tz.guess() : "UTC"})
 																		</span>
 																	</span>
 																) : (
@@ -209,9 +185,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[8].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[8].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.size_total ? (
@@ -229,9 +203,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[9].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[9].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.size_images ? (
@@ -249,9 +221,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[10].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[10].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.size_scripts ? (
@@ -269,9 +239,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[18].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[18].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.size_stylesheets ? (
@@ -289,9 +257,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[11].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[11].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.num_ok_images ? (
@@ -306,9 +272,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[12].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[12].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.num_non_ok_images >= 0 ? (
@@ -335,9 +299,7 @@ const PageDetail = ({ result }) => {
 												<div tw="px-4 py-5 sm:p-0">
 													<dl>
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[15].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[15].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.tls_total ? (
@@ -352,9 +314,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[13].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[13].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.tls_status ? (
@@ -369,9 +329,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[19].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[19].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.num_non_tls_images >= 0 ? (
@@ -390,9 +348,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[20].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[20].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.num_non_tls_scripts >= 0 ? (
@@ -411,9 +367,7 @@ const PageDetail = ({ result }) => {
 														</div>
 
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[21].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[21].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
 																{componentReady ? (
 																	pageDetail?.num_non_tls_stylesheets >= 0 ? (
@@ -440,19 +394,13 @@ const PageDetail = ({ result }) => {
 												<div tw="px-4 py-5 sm:p-0">
 													<dl>
 														<div tw="mt-8 sm:mt-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-															<dt tw="text-sm leading-5 font-medium text-gray-500">
-																{PagesLabels[14].label}
-															</dt>
+															<dt tw="text-sm leading-5 font-medium text-gray-500">{PagesLabels[14].label}</dt>
 															<dd tw="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
-																{pageDetailLink?.results !== undefined &&
-																pageDetailLink?.count > 0 ? (
+																{pageDetailLink?.results !== undefined && pageDetailLink?.count > 0 ? (
 																	<ul>
 																		{pageDetailLink?.results.map((val, key) => {
 																			return componentReady ? (
-																				<li
-																					key={key}
-																					tw="pb-6 flex items-center justify-between text-sm leading-5"
-																				>
+																				<li key={key} tw="pb-6 flex items-center justify-between text-sm leading-5">
 																					<div tw="w-0 flex-1 flex items-center">
 																						<LinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 																						<span tw="ml-2 flex-1 w-0">
@@ -469,9 +417,7 @@ const PageDetail = ({ result }) => {
 																					<div tw="ml-4 flex-shrink-0">
 																						<CopyToClipboard onCopy={handleUrlCopy} text={val.url}>
 																							<button tw="font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out">
-																								{copied && copyValue === val.url
-																									? "Copied!"
-																									: "Copy URL"}
+																								{copied && copyValue === val.url ? "Copied!" : "Copy URL"}
 																							</button>
 																						</CopyToClipboard>
 																					</div>

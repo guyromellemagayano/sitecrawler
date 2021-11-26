@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState, useMemo } from "react";
 
 // External
 import "twin.macro";
@@ -23,10 +23,10 @@ const PaymentMethodSettings = ({
 	paymentMethods,
 	stripePromise
 }) => {
-	const [errorMsg, setErrorMsg] = React.useState([]);
-	const [successMsg, setSuccessMsg] = React.useState([]);
+	const [errorMsg, setErrorMsg] = useState([]);
+	const [successMsg, setSuccessMsg] = useState([]);
 
-	const stripePromiseData = React.useMemo(
+	const stripePromiseData = useMemo(
 		() =>
 			componentReady && stripePromise
 				? loadStripe(stripePromise?.publishable_key, { stripePromise })

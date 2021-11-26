@@ -1,19 +1,16 @@
 // React
-import * as React from "react";
-
-// External
-import { Formik } from "formik";
-import * as Yup from "yup";
-import PropTypes from "prop-types";
-import Skeleton from "react-loading-skeleton";
-import tw from "twin.macro";
-
+import { SitesApiEndpoint } from "@enums/ApiEndpoints";
 // Enums
 import { SettingsLabels } from "@enums/SettingsLabels";
-import { SiteApiEndpoint } from "@enums/ApiEndpoints";
-
 // Hooks
 import { usePatchMethod } from "@hooks/useHttpMethod";
+// External
+import { Formik } from "formik";
+import PropTypes from "prop-types";
+import { useState, useEffect } from "react";
+import Skeleton from "react-loading-skeleton";
+import tw from "twin.macro";
+import * as Yup from "yup";
 
 const SiteInformationSettingsForm = ({
 	componentReady,
@@ -23,13 +20,13 @@ const SiteInformationSettingsForm = ({
 	setSuccessMsg,
 	siteId
 }) => {
-	const [disableForm, setDisableForm] = React.useState(true);
-	const [sitename, setSitename] = React.useState("");
-	const [siteurl, setSiteUrl] = React.useState("");
+	const [disableForm, setDisableForm] = useState(true);
+	const [sitename, setSitename] = useState("");
+	const [siteurl, setSiteUrl] = useState("");
 
-	const siteIdApiEndpoint = `${SiteApiEndpoint + siteId?.id}/`;
+	const siteIdApiEndpoint = `${SitesApiEndpoint + siteId?.id}/`;
 
-	React.useEffect(() => {
+	useEffect(() => {
 		siteId
 			? (() => {
 					setSitename(siteId?.name);
@@ -106,8 +103,7 @@ const SiteInformationSettingsForm = ({
 											disabled={isSubmitting || disableForm}
 											css={[
 												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-												(isSubmitting || disableForm) &&
-													tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+												(isSubmitting || disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
 												errors.sitename ? tw`border-red-300` : tw`border-gray-300`
 											]}
 											aria-describedby="sitename"

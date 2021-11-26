@@ -1,7 +1,4 @@
 // React
-import * as React from "react";
-
-// External
 import "twin.macro";
 import Skeleton from "react-loading-skeleton";
 

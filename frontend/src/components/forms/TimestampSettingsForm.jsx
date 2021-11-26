@@ -1,7 +1,4 @@
 // React
-import * as React from "react";
-
-// External
 import PropTypes from "prop-types";
 import Skeleton from "react-loading-skeleton";
 import tw from "twin.macro";

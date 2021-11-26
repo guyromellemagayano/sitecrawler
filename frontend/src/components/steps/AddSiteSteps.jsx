@@ -1,5 +1,5 @@
 // React
-import * as React from "react";
+import { useState } from "react";
 
 // External
 import tw from "twin.macro";
@@ -12,10 +12,10 @@ import UrlInformationStep from "./UrlInformationStep";
 import VerifyUrlStep from "./VerifyUrlStep";
 
 const AddSiteSteps = () => {
-	const [currentStep, setCurrentStep] = React.useState(1);
-	const [editMode, setEditMode] = React.useState(false);
-	const [siteData, setSiteData] = React.useState({});
-	const [siteId, setSiteId] = React.useState(null);
+	const [currentStep, setCurrentStep] = useState(1);
+	const [editMode, setEditMode] = useState(false);
+	const [siteData, setSiteData] = useState({});
+	const [siteId, setSiteId] = useState(null);
 
 	const stepsData = [
 		{

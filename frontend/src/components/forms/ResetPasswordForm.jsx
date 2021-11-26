@@ -5,16 +5,16 @@ import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import * as React from "react";
+import { memo, useState } from "react";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
  * Memoized function to render the `ResetPasswordForm` component.
  */
-const ResetPasswordForm = React.memo(() => {
-	const [errorMessage, setErrorMessage] = React.useState([]);
-	const [successMessage, setSuccessMessage] = React.useState([]);
+const ResetPasswordForm = memo(() => {
+	const [errorMessage, setErrorMessage] = useState([]);
+	const [successMessage, setSuccessMessage] = useState([]);
 
 	// Router
 	const { asPath } = useRouter();
@@ -31,7 +31,7 @@ const ResetPasswordForm = React.memo(() => {
 	const submitting = t("common:submitting");
 
 	return (
-		<React.Fragment>
+        <>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
@@ -159,8 +159,8 @@ const ResetPasswordForm = React.memo(() => {
 					</form>
 				)}
 			</Formik>
-		</React.Fragment>
-	);
+		</>
+    );
 });
 
 export default ResetPasswordForm;
