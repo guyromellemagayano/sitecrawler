@@ -1,17 +1,17 @@
 import { DefaultPaymentMethodApiEndpoint } from "@configs/ApiEndpoints";
-import useSWR from "swr";
+import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
  * SWR React hook that will handle the current default payment method
  *
- * @returns {object} data, error, isValidating
+ * @returns {object} defaultPaymentMethod, errorDefaultPaymentMethod, validatingDefaultPaymentMethod
  */
 export const useDefaultPaymentMethod = () => {
 	const {
 		data: defaultPaymentMethod,
 		error: errorDefaultPaymentMethod,
 		isValidating: validatingDefaultPaymentMethod
-	} = useSWR(DefaultPaymentMethodApiEndpoint);
+	} = useMainSWRConfig(DefaultPaymentMethodApiEndpoint);
 
 	return { defaultPaymentMethod, errorDefaultPaymentMethod, validatingDefaultPaymentMethod };
 };

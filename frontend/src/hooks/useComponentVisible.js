@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useRef, useEffect } from "react";
 
 /**
  * Custom React hook that handles showing/hiding <Transition> components.
@@ -9,9 +9,9 @@ import * as React from "react";
  * @returns {object} ref, isComponentVisible, setIsComponentVisible
  */
 export const useComponentVisible = (initialIsVisible) => {
-	const [isComponentVisible, setIsComponentVisible] = React.useState(initialIsVisible);
+	const [isComponentVisible, setIsComponentVisible] = useState(initialIsVisible);
 
-	const ref = React.useRef(null);
+	const ref = useRef(null);
 
 	const handleHideComponent = (event) => {
 		if (event?.key === "Escape" && ref?.current) {
@@ -20,12 +20,12 @@ export const useComponentVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsideComponent = (event) => {
-		if (ref?.current && !ref?.current.contains(event?.target)) {
+		if (ref?.current && !Object.values(ref?.current).includes(event?.target)) {
 			setIsComponentVisible(false);
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		document.addEventListener("keydown", handleHideComponent, true);
 		document.addEventListener("click", handleClickOutsideComponent, true);
 
@@ -47,9 +47,9 @@ export const useComponentVisible = (initialIsVisible) => {
  * @returns {object} siteVerifyModalRef, isSiteVerifyModalVisible, setIsSiteVerifyModalVisible
  */
 export const useSiteVerifyModalVisible = (initialIsVisible) => {
-	const [isSiteVerifyModalVisible, setIsSiteVerifyModalVisible] = React.useState(initialIsVisible);
+	const [isSiteVerifyModalVisible, setIsSiteVerifyModalVisible] = useState(initialIsVisible);
 
-	const siteVerifyModalRef = React.useRef(null);
+	const siteVerifyModalRef = useRef(null);
 
 	const handleHideSiteVerifyModal = (event) => {
 		if (event?.key === "Escape" && siteVerifyModalRef?.current) {
@@ -58,12 +58,12 @@ export const useSiteVerifyModalVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsideSiteVerifyModal = (event) => {
-		if (siteVerifyModalRef?.current && !siteVerifyModalRef?.current.contains(event?.target)) {
+		if (siteVerifyModalRef?.current && !Object.values(siteVerifyModalRef?.current).includes(event?.target)) {
 			setIsSiteVerifyModalVisible(!isSiteVerifyModalVisible);
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		document.addEventListener("keydown", handleHideSiteVerifyModal, true);
 		document.addEventListener("click", handleClickOutsideSiteVerifyModal, true);
 
@@ -85,9 +85,9 @@ export const useSiteVerifyModalVisible = (initialIsVisible) => {
  * @returns {object} siteDeleteModalRef, isSiteDeleteModalVisible, setIsSiteDeleteModalVisible
  */
 export const useSiteDeleteModalVisible = (initialIsVisible) => {
-	const [isSiteDeleteModalVisible, setIsSiteDeleteModalVisible] = React.useState(initialIsVisible);
+	const [isSiteDeleteModalVisible, setIsSiteDeleteModalVisible] = useState(initialIsVisible);
 
-	const siteDeleteModalRef = React.useRef(null);
+	const siteDeleteModalRef = useRef(null);
 
 	const handleHideSiteDeleteModal = (event) => {
 		if (event?.key === "Escape" && siteDeleteModalRef?.current) {
@@ -96,12 +96,12 @@ export const useSiteDeleteModalVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsideSiteDeleteModal = (event) => {
-		if (siteDeleteModalRef?.current && !siteDeleteModalRef?.current.contains(event?.target)) {
+		if (siteDeleteModalRef?.current && !Object.values(siteDeleteModalRef?.current).includes(event?.target)) {
 			setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible);
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		document.addEventListener("keydown", handleHideSiteDeleteModal, true);
 		document.addEventListener("click", handleClickOutsideSiteDeleteModal, true);
 
@@ -123,9 +123,9 @@ export const useSiteDeleteModalVisible = (initialIsVisible) => {
  * @returns {object} newActivePlanModalRef, isNewActivePlanModalVisible, setIsNewActivePlanModalVisible
  */
 export const useNewActivePlanModalVisible = (initialIsVisible) => {
-	const [isNewActivePlanModalVisible, setIsNewActivePlanModalVisible] = React.useState(initialIsVisible);
+	const [isNewActivePlanModalVisible, setIsNewActivePlanModalVisible] = useState(initialIsVisible);
 
-	const newActivePlanModalRef = React.useRef(null);
+	const newActivePlanModalRef = useRef(null);
 
 	const handleHideNewActivePlanModal = (event) => {
 		if (event?.key === "Escape" && newActivePlanModalRef?.current) {
@@ -134,12 +134,12 @@ export const useNewActivePlanModalVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsideNewActivePlanModal = (event) => {
-		if (newActivePlanModalRef?.current && !newActivePlanModalRef?.current.contains(event?.target)) {
+		if (newActivePlanModalRef?.current && !Object.values(newActivePlanModalRef?.current).includes(event?.target)) {
 			setIsNewActivePlanModalVisible(!isNewActivePlanModalVisible);
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		document.addEventListener("keydown", handleHideNewActivePlanModal, true);
 		document.addEventListener("click", handleClickOutsideNewActivePlanModal, true);
 
@@ -161,9 +161,9 @@ export const useNewActivePlanModalVisible = (initialIsVisible) => {
  * @returns {object} changeToBasicPlanModalRef, isChangeToBasicPlanModalVisible, setIsChangeToBasicPlanModalVisible
  */
 export const useChangeToBasicPlanModalVisible = (initialIsVisible) => {
-	const [isChangeToBasicPlanModalVisible, setIsChangeToBasicPlanModalVisible] = React.useState(initialIsVisible);
+	const [isChangeToBasicPlanModalVisible, setIsChangeToBasicPlanModalVisible] = useState(initialIsVisible);
 
-	const changeToBasicPlanModalRef = React.useRef(null);
+	const changeToBasicPlanModalRef = useRef(null);
 
 	const handleHideChangeToBasicPlanModal = (event) => {
 		if (event?.key === "Escape" && changeToBasicPlanModalRef?.current) {
@@ -172,12 +172,15 @@ export const useChangeToBasicPlanModalVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsideNewActivePlanModal = (event) => {
-		if (changeToBasicPlanModalRef?.current && !changeToBasicPlanModalRef?.current.contains(event?.target)) {
+		if (
+			changeToBasicPlanModalRef?.current &&
+			!Object.values(changeToBasicPlanModalRef?.current).includes(event?.target)
+		) {
 			setIsChangeToBasicPlanModalVisible(!isChangeToBasicPlanModalVisible);
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		document.addEventListener("keydown", handleHideChangeToBasicPlanModal, true);
 		document.addEventListener("click", handleClickOutsideNewActivePlanModal, true);
 
@@ -203,9 +206,9 @@ export const useChangeToBasicPlanModalVisible = (initialIsVisible) => {
  * @returns {object} paymentMethodModalRef, isPaymentMethodModalVisible, setIsPaymentMethodModalVisible
  */
 export const usePaymentMethodModalVisible = (initialIsVisible) => {
-	const [isPaymentMethodModalVisible, setIsPaymentMethodModalVisible] = React.useState(initialIsVisible);
+	const [isPaymentMethodModalVisible, setIsPaymentMethodModalVisible] = useState(initialIsVisible);
 
-	const paymentMethodModalRef = React.useRef(null);
+	const paymentMethodModalRef = useRef(null);
 
 	const handleHidePaymentMethodModal = (event) => {
 		if (event?.key === "Escape" && paymentMethodModalRef?.current) {
@@ -214,12 +217,12 @@ export const usePaymentMethodModalVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsidePaymentMethodModal = (event) => {
-		if (paymentMethodModalRef?.current && !paymentMethodModalRef?.current.contains(event?.target)) {
+		if (paymentMethodModalRef?.current && !Object.values(paymentMethodModalRef?.current).includes(event?.target)) {
 			setIsPaymentMethodModalVisible(!isPaymentMethodModalVisible);
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		document.addEventListener("keydown", handleHidePaymentMethodModal, true);
 		document.addEventListener("click", handleClickOutsidePaymentMethodModal, true);
 
@@ -245,9 +248,9 @@ export const usePaymentMethodModalVisible = (initialIsVisible) => {
  * @returns {object} upgradeErrorModalRef, isUpgradeErrorModalVisible, setIsUpgradeErrorModalVisible
  */
 export const useUpgradeErrorModalVisible = (initialIsVisible) => {
-	const [isUpgradeErrorModalVisible, setIsUpgradeErrorModalVisible] = React.useState(initialIsVisible);
+	const [isUpgradeErrorModalVisible, setIsUpgradeErrorModalVisible] = useState(initialIsVisible);
 
-	const upgradeErrorModalRef = React.useRef(null);
+	const upgradeErrorModalRef = useRef(null);
 
 	const handleHideUpgradeErrorModal = (event) => {
 		if (event?.key === "Escape" && upgradeErrorModalRef?.current) {
@@ -256,12 +259,12 @@ export const useUpgradeErrorModalVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsideUpgradeErrorModal = (event) => {
-		if (upgradeErrorModalRef?.current && !upgradeErrorModalRef?.current.contains(event?.target)) {
+		if (upgradeErrorModalRef?.current && !Object.values(upgradeErrorModalRef?.current).includes(event?.target)) {
 			setIsUpgradeErrorModalVisible(!isUpgradeErrorModalVisible);
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		document.addEventListener("keydown", handleHideUpgradeErrorModal, true);
 		document.addEventListener("click", handleClickOutsideUpgradeErrorModal, true);
 
@@ -287,9 +290,9 @@ export const useUpgradeErrorModalVisible = (initialIsVisible) => {
  * @returns {object} siteVerifyErrorModalRef, isSiteVerifyErrorModalVisible, setIsSiteVerifyErrorModalVisible
  */
 export const useSiteVerifyErrorModalVisible = (initialIsVisible) => {
-	const [isSiteVerifyErrorModalVisible, setIsSiteVerifyErrorModalVisible] = React.useState(initialIsVisible);
+	const [isSiteVerifyErrorModalVisible, setIsSiteVerifyErrorModalVisible] = useState(initialIsVisible);
 
-	const siteVerifyErrorModalRef = React.useRef(null);
+	const siteVerifyErrorModalRef = useRef(null);
 
 	const handleHideSiteVerifyErrorModal = (event) => {
 		if (event?.key === "Escape" && siteVerifyErrorModalRef?.current) {
@@ -298,12 +301,12 @@ export const useSiteVerifyErrorModalVisible = (initialIsVisible) => {
 	};
 
 	const handleClickOutsideUpgradeErrorModal = (event) => {
-		if (siteVerifyErrorModalRef?.current && !siteVerifyErrorModalRef?.current.contains(event?.target)) {
+		if (siteVerifyErrorModalRef?.current && !Object.values(siteVerifyErrorModalRef?.current).includes(event?.target)) {
 			setIsSiteVerifyErrorModalVisible(!isSiteVerifyErrorModalVisible);
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		document.addEventListener("keydown", handleHideSiteVerifyErrorModal, true);
 		document.addEventListener("click", handleClickOutsideUpgradeErrorModal, true);
 

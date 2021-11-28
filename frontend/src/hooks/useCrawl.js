@@ -1,6 +1,5 @@
-import { SiteApiEndpoint } from "@configs/ApiEndpoints";
-import { RevalidationInterval } from "@configs/GlobalValues";
-import * as React from "react";
+import { SitesApiEndpoint } from "@configs/ApiEndpoints";
+import { memo, useState, useRef, useEffect } from "react";
 import { usePostMethod } from "./useHttpMethod";
 import { useScan } from "./useScan";
 
@@ -10,29 +9,29 @@ import { useScan } from "./useScan";
  * @param {number} siteId
  * @returns {object} selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished
  */
-export const useCrawl = (siteId = 0) => {
-	const [isCrawlFinished, setIsCrawlFinished] = React.useState(true);
-	const [isCrawlStarted, setIsCrawlStarted] = React.useState(false);
-	const [currentScan, setCurrentScan] = React.useState(null);
-	const [previousScan, setPreviousScan] = React.useState(null);
-	const [scanCount, setScanCount] = React.useState(null);
+export const useCrawl = memo((siteId = null) => {
+	const [isCrawlFinished, setIsCrawlFinished] = useState(true);
+	const [isCrawlStarted, setIsCrawlStarted] = useState(false);
+	const [currentScan, setCurrentScan] = useState(null);
+	const [previousScan, setPreviousScan] = useState(null);
+	const [scanCount, setScanCount] = useState(null);
 
-	const selectedSiteRef = React.useRef(null);
+	const selectedSiteRef = useRef(null);
 
-	const { scan } = useScan({
-		querySid: siteId,
-		refreshInterval: RevalidationInterval
-	});
+	const { scan } = useScan(siteId ?? null);
 
 	const handleMutateCurrentSite = async (endpoint) => {
-		const response = await usePostMethod(endpoint);
+		const mutateCurrentSiteResponse = await usePostMethod(endpoint);
+		const mutateCurrentSiteResponseStatus = mutateCurrentSiteResponse.status ?? null;
 
-		return Math.floor(response.status / 200) === 1 ? true : false;
+		return mutateCurrentSiteResponseStatus !== null && Math.floor(mutateCurrentSiteResponseStatus / 200) === 1
+			? true
+			: false;
 	};
 
 	const handleCrawl = (e) => {
 		const startScanSlug = "/start_scan/";
-		let endpoint = `${SiteApiEndpoint + siteId + startScanSlug}`;
+		let endpoint = `${SitesApiEndpoint + siteId + startScanSlug}`;
 
 		e.preventDefault();
 
@@ -42,7 +41,7 @@ export const useCrawl = (siteId = 0) => {
 		selectedSiteRef.current && selectedSiteRef.current.contains(e.target) ? handleMutateCurrentSite(endpoint) : null;
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const handleScan = (scan) => {
 			let previousScanResult = scan.results.find((e) => e.finished_at !== null);
 			let currentScanResult = scan.results.find((e) => e.finished_at == null);
@@ -53,11 +52,9 @@ export const useCrawl = (siteId = 0) => {
 		};
 
 		scan && scan.results ? handleScan(scan) : null;
-
-		return { currentScan, previousScan, scanCount };
 	}, [scan]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		typeof currentScan !== "undefined" && currentScan !== null
 			? (() => {
 					setIsCrawlStarted(true);
@@ -78,4 +75,4 @@ export const useCrawl = (siteId = 0) => {
 		isCrawlStarted,
 		isCrawlFinished
 	};
-};
+});

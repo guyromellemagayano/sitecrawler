@@ -1,5 +1,6 @@
-import { SiteApiEndpoint } from "@configs/ApiEndpoints";
-import useSWR from "swr";
+import { SitesApiEndpoint } from "@configs/ApiEndpoints";
+import { ScanSlug, SitePageSlug } from "@configs/PageLinks";
+import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
  * SWR React hook that will handle a site's `page detail` information
@@ -7,29 +8,29 @@ import useSWR from "swr";
  * @param {number} querySid
  * @param {number} scanObjId
  * @param {number} linkId
- * @returns {object} data, error, isValidating
+ * @returns {object} pageDetail, errorPageDetail, validatingPageDetail
  */
-export const usePageDetail = (querySid = 0, scanObjId = 0, linkId = 0) => {
-	const scanSlug = "/scan/";
-	const pageSlug = "/page/";
+export const usePageDetail = (querySid = null, scanObjId = null, linkId = null) => {
+	const currentEndpoint =
+		typeof querySid !== "undefined" &&
+		querySid !== null &&
+		typeof querySid === "number" &&
+		querySid > 0 &&
+		typeof scanObjId !== "undefined" &&
+		scanObjId !== null &&
+		typeof scanObjId === "number" &&
+		scanObjId > 0 &&
+		typeof linkId !== "undefined" &&
+		linkId !== null &&
+		linkId > 0
+			? SitesApiEndpoint + querySid + ScanSlug + scanObjId + SitePageSlug + linkId + "/"
+			: null;
 
 	const {
 		data: pageDetail,
 		error: errorPageDetail,
 		isValidating: validatingPageDetail
-	} = useSWR(
-		typeof querySid !== "undefined" &&
-			querySid !== null &&
-			querySid !== 0 &&
-			typeof scanObjId !== "undefined" &&
-			scanObjId !== null &&
-			scanObjId !== 0 &&
-			typeof linkId !== "undefined" &&
-			linkId !== null &&
-			linkId !== 0
-			? SiteApiEndpoint + querySid + scanSlug + scanObjId + pageSlug + linkId + "/"
-			: null
-	);
+	} = useMainSWRConfig(currentEndpoint);
 
 	return { pageDetail, errorPageDetail, validatingPageDetail };
 };

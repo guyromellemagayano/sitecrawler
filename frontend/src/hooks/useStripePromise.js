@@ -1,17 +1,17 @@
 import { StripePromiseApiEndpoint } from "@configs/ApiEndpoints";
-import useSWR from "swr";
+import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
  * SWR React hook that will handle `stripe` promises
  *
- * @returns {object} data, error, isValidating
+ * @returns {object} stripePromise, errorStripePromise, validatingStripePromise
  */
 export const useStripePromise = () => {
 	const {
 		data: stripePromise,
 		error: errorStripePromise,
 		isValidating: validatingStripePromise
-	} = useSWR(StripePromiseApiEndpoint);
+	} = useMainSWRConfig(StripePromiseApiEndpoint);
 
 	return { stripePromise, errorStripePromise, validatingStripePromise };
 };

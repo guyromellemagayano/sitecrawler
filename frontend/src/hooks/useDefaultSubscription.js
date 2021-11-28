@@ -1,12 +1,17 @@
 import { DefaultSubscriptionApiEndpoint } from "@configs/ApiEndpoints";
-import useSWR from "swr";
+import { useMainSWRConfig } from "./useMainSWRConfig";
 
+/**
+ * SWR React hook that will handle the current default payment method
+ *
+ * @returns {object} defaultSubscription, errorDefaultPaymentMethod, validatingDefaultPaymentMethod
+ */
 export const useDefaultSubscription = () => {
 	const {
 		data: defaultSubscription,
-		mutate: mutateDefaultSubscription,
-		error: defaultSubscriptionError
-	} = useSWR(DefaultSubscriptionApiEndpoint);
+		error: errorDefaultSubscription,
+		isValidating: validatingDefaultSubscription
+	} = useMainSWRConfig(DefaultSubscriptionApiEndpoint);
 
-	return { defaultSubscription, mutateDefaultSubscription, defaultSubscriptionError };
+	return { defaultSubscription, errorDefaultSubscription, validatingDefaultSubscription };
 };

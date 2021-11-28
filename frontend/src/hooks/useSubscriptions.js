@@ -1,17 +1,17 @@
 import { SubscriptionsApiEndpoint } from "@configs/ApiEndpoints";
-import useSWR from "swr";
+import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
  * SWR React hook that will handle `stripe` subscriptions
  *
- * @returns {object} data, error, isValidating
+ * @returns {object} subscriptions, errorSubscriptions, validatingSubscriptions
  */
 export const useSubscriptions = () => {
 	const {
 		data: subscriptions,
 		error: errorSubscriptions,
 		isValidating: validatingSubscriptions
-	} = useSWR(SubscriptionsApiEndpoint);
+	} = useMainSWRConfig(SubscriptionsApiEndpoint);
 
 	return { subscriptions, errorSubscriptions, validatingSubscriptions };
 };

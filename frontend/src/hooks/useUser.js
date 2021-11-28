@@ -1,13 +1,13 @@
 import { UserApiEndpoint } from "@configs/ApiEndpoints";
-import useSWR from "swr";
+import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
  * SWR React hook that will handle the user information
  *
- * @returns {object} data, error, isValidating
+ * @returns {object} user, errorUser, validatingUser
  */
 export const useUser = () => {
-	const { data: user, error: errorUser, isValidating: validatingUser } = useSWR(UserApiEndpoint);
+	const { data: user, error: errorUser, isValidating: validatingUser } = useMainSWRConfig(UserApiEndpoint);
 
 	return { user, errorUser, validatingUser };
 };

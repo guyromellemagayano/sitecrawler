@@ -1,40 +1,42 @@
-import { SiteApiEndpoint } from "@configs/ApiEndpoints";
-import useSWR from "swr";
+import { SitesApiEndpoint } from "@configs/ApiEndpoints";
+import { ScanSlug, SiteLinkSlug, SitePageSlug } from "@configs/PageLinks";
+import { useMainSWRConfig } from "./useMainSWRConfig";
 
-export const usePageDetailLink = (addQuery = "", querySid = 0, scanObjId = 0, pageId = 0) => {
-	const scanEndpoint = "/scan/";
-	const pageEndpoint = "/page/";
-	const linkEndpoint = "/link/";
+/**
+ * SWR React hook that will handle all the payment methods
+ *
+ * @param {string} addQuery
+ * @param {number} querySid
+ * @param {number} scanObjId
+ * @param {number} pageId
+ * @returns {object} pageDetailLink, errorPageDetailLink, validatingPageDetailLink
+ */
+export const usePageDetailLink = (addQuery = null, querySid = null, scanObjId = null, pageId = null) => {
+	const currentQuery =
+		typeof addQuery !== "undefined" && addQuery !== null && typeof addQuery === "string" && addQuery !== ""
+			? "?" + addQuery
+			: "";
+	const currentEndpoint =
+		typeof querySid !== "undefined" &&
+		querySid !== null &&
+		typeof querySid === "number" &&
+		querySid > 0 &&
+		typeof scanObjId !== "undefined" &&
+		scanObjId !== null &&
+		scanObjId === "number" &&
+		scanObjId > 0 &&
+		typeof pageId !== "undefined" &&
+		pageId !== null &&
+		typeof pageId === "number" &&
+		pageId !== 0
+			? SitesApiEndpoint + querySid + ScanSlug + scanObjId + SitePageSlug + pageId + SiteLinkSlug + currentQuery
+			: null;
 
 	const {
 		data: pageDetailLink,
 		error: errorPageDetailLink,
 		isValidating: validatingPageDetailLink
-	} = useSWR(
-		typeof querySid !== "undefined" &&
-			querySid !== null &&
-			querySid !== 0 &&
-			typeof scanObjId !== "undefined" &&
-			scanObjId !== null &&
-			scanObjId !== 0 &&
-			typeof pageId !== "undefined" &&
-			pageId !== null &&
-			pageId !== 0
-			? SiteApiEndpoint +
-					querySid +
-					scanEndpoint +
-					scanObjId +
-					pageEndpoint +
-					pageId +
-					linkEndpoint +
-					typeof addQuery !==
-					"undefined" &&
-			  addQuery !== null &&
-			  addQuery !== ""
-				? "?" + addQuery
-				: ""
-			: null
-	);
+	} = useMainSWRConfig(currentEndpoint);
 
 	return { pageDetailLink, errorPageDetailLink, validatingPageDetailLink };
 };

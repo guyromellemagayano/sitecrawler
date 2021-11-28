@@ -1,24 +1,23 @@
-import { SiteApiEndpoint } from "@configs/ApiEndpoints";
-import useSWR from "swr";
+import { SitesApiEndpoint } from "@configs/ApiEndpoints";
+import { SummarySlug, UptimeSlug } from "@configs/PageLinks";
+import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
  * SWR React hook that will handle a site's `uptime summary` information
  *
  * @param {number} querySid
- * @returns {object} data, error, isValidating
+ * @returns {object} uptimeSummary, errorUptimeSummary, validatingUptimeSummary
  */
-export const useUptimeSummary = (querySid = 0) => {
-	const uptimeSummarySlug = "/uptime/summary/";
+export const useUptimeSummary = (querySid = null) => {
+	const currentEndpoint = typeof querySid !== "undefined" && querySid !== null && typeof querySid === "number" && querySid > 0
+			? SitesApiEndpoint + querySid + UptimeSlug + SummarySlug
+			: null,
 
 	const {
 		data: uptimeSummary,
 		error: errorUptimeSummary,
-		isValidating: validatingUptimeSummaryError
-	} = useSWR(
-		typeof querySid !== "undefined" && querySid !== null && querySid !== 0
-			? SiteApiEndpoint + querySid + uptimeSummarySlug
-			: null
-	);
+		isValidating: validatingUptimeSummary
+	} = useMainSWRConfig(currentEndpoint);
 
-	return { uptimeSummary, errorUptimeSummary, validatingUptimeSummaryError };
+	return { uptimeSummary, errorUptimeSummary, validatingUptimeSummary };
 };

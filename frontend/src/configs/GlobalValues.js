@@ -36,3 +36,6 @@ export const SubscriptionSuccessBadge = "/images/backgrounds/subscription-succes
 // Query Strings
 export const orderingByNameQuery = "ordering=";
 export const perPageQuery = "per_page=";
+
+// Sort Query String Values
+export const sortByFinishedAtDescending = "-finished_at";

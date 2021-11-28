@@ -1,9 +1,13 @@
 export const DashboardSlug = "/dashboard/";
+export const ScanSlug = "/scan/";
 export const SiteImagesSlug = "/images/";
+export const SiteLinkSlug = "/link/";
 export const SiteLinksSlug = "/links/";
 export const SiteOverviewSlug = "/overview/";
+export const SitePageSlug = "/page/";
 export const SitePagesSlug = "/pages/";
 export const SiteSeoSlug = "/seo/";
+export const UptimeSlug = "/uptime/";
 
 export const AddNewSiteSlug = "add-new-site/";
 export const AuditLogsSlug = "audit-logs/";
@@ -15,6 +19,7 @@ export const SettingsSlug = "settings/";
 export const SiteSlug = "site/";
 export const SitesSlug = "sites/";
 export const SubscriptionPlansSlug = "subscription-plans/";
+export const SummarySlug = "summary/";
 export const SupportSlug = "support/";
 
 export const DashboardSettingsSlug = DashboardSlug + SettingsSlug;

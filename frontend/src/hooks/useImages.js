@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
  * SWR React hook that will handle a site's `images` information
@@ -6,26 +6,26 @@ import useSWR from "swr";
  * @param {string} endpoint
  * @param {number} querySid
  * @param {number} scanObjId
- * @returns {object} data, error, isValidating
+ * @returns {object} images, errorImages, validatingImages
  */
-export const useImages = (endpoint = null, querySid = 0, scanObjId = 0) => {
-	const {
-		data: images,
-		error: errorImages,
-		isValidating: validatingImages
-	} = useSWR(
+export const useImages = (endpoint = null, querySid = null, scanObjId = null) => {
+	const currentEndpoint =
 		typeof querySid !== "undefined" &&
-			querySid !== null &&
-			querySid !== 0 &&
-			typeof scanObjId !== "undefined" &&
-			scanObjId !== null &&
-			scanObjId !== 0 &&
-			typeof endpoint !== "undefined" &&
-			endpoint !== null &&
-			endpoint !== ""
+		querySid !== null &&
+		typeof querySid === "number" &&
+		querySid > 0 &&
+		typeof scanObjId !== "undefined" &&
+		scanObjId !== null &&
+		typeof scanObjId === "number" &&
+		scanObjId > 0 &&
+		typeof endpoint !== "undefined" &&
+		endpoint !== null &&
+		typeof endpoint === "string" &&
+		endpoint !== ""
 			? endpoint
-			: null
-	);
+			: null;
+
+	const { data: images, error: errorImages, isValidating: validatingImages } = useMainSWRConfig(currentEndpoint);
 
 	return { images, errorImages, validatingImages };
 };
