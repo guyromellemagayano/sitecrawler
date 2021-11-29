@@ -1,11 +1,11 @@
 import Layout from "@components/layouts";
+import LoginPageLayout from "@components/layouts/pages/Login";
 import { UserApiEndpoint } from "@configs/ApiEndpoints";
 import { DashboardSitesLink } from "@configs/PageLinks";
 import { server } from "@configs/ServerEnv";
 import { useGetMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import dynamic from "next/dynamic";
 import { memo } from "react";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
@@ -33,10 +33,6 @@ export async function getServerSideProps({ req }) {
 		};
 	}
 }
-/**
- * Dynamic imports
- */
-const LoginPageLayout = dynamic(() => import("@components/layouts/pages/Login"), { ssr: true });
 
 /**
  * Memoized `Login` page.
@@ -47,11 +43,11 @@ const Login = memo(() => {
 	const login = t("login");
 
 	return (
-        <>
+		<>
 			<NextSeo title={login} />
 			<LoginPageLayout />
 		</>
-    );
+	);
 });
 
 Login.getLayout = function getLayout(page) {

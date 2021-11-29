@@ -1,4 +1,4 @@
-import { LogoLabel } from "@components/labels/LogoLabel";
+import LogoLabel from "@components/labels/LogoLabel";
 import { ConfirmEmailApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
 import { LoginLink } from "@configs/PageLinks";
 import { usePostMethod } from "@hooks/useHttpMethod";
@@ -6,7 +6,7 @@ import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useState, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";

@@ -1,7 +1,7 @@
 import Alert from "@components/alerts";
 import { SignupApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
 import { FormPasswordMaxChars, FormPasswordMinChars, RedirectInterval } from "@configs/GlobalValues";
-import { DashboardSitesLink } from "@configs/PageLinks";
+import { ConfirmSlug, DashboardSitesLink } from "@configs/PageLinks";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
@@ -51,12 +51,10 @@ const SignupForm = memo(() => {
 	}, [query]);
 
 	// Complete signup API endpoint
-	const confirmSlug = "/confirm/";
-
-	let signupConfirmApiEndpoint = SignupApiEndpoint + uid + confirmSlug;
+	let signupConfirmApiEndpoint = SignupApiEndpoint + uid + ConfirmSlug;
 
 	return (
-        <>
+		<>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
@@ -225,7 +223,7 @@ const SignupForm = memo(() => {
 				)}
 			</Formik>
 		</>
-    );
+	);
 });
 
 export default SignupForm;

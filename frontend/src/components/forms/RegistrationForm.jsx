@@ -1,10 +1,10 @@
 import Alert from "@components/alerts";
 import { RegistrationApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
 import {
-    FormPasswordMaxChars,
-    FormPasswordMinChars,
-    FormStringMaxChars,
-    FormStringMinChars
+	FormPasswordMaxChars,
+	FormPasswordMinChars,
+	FormStringMaxChars,
+	FormStringMinChars
 } from "@configs/GlobalValues";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
@@ -20,7 +20,7 @@ import * as Yup from "yup";
 /**
  * Memoized function to render the `RegistrationForm` component.
  */
-export const RegistrationForm = memo(() => {
+const RegistrationForm = memo(() => {
 	const [isErrorEmail, setIsErrorEmail] = useState(false);
 	const [isErrorUsername, setIsErrorUsername] = useState(false);
 	const [errorMessage, setErrorMessage] = useState([]);
@@ -54,7 +54,7 @@ export const RegistrationForm = memo(() => {
 	const registrationUnknownError = t("alerts:registrationUnknownError");
 
 	return (
-        <>
+		<>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
@@ -384,5 +384,7 @@ export const RegistrationForm = memo(() => {
 				)}
 			</Formik>
 		</>
-    );
+	);
 });
+
+export default RegistrationForm;

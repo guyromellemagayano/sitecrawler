@@ -11,7 +11,7 @@ import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useState } from "react";
+import { useState } from "react";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
@@ -19,7 +19,7 @@ import * as Yup from "yup";
 /**
  * Memoized function to render the `LoginForm` component.
  */
-const LoginForm = memo(() => {
+const LoginForm = () => {
 	const [disableLoginForm, setDisableLoginForm] = useState(false);
 	const [errorMessage, setErrorMessage] = useState([]);
 	const [successMessage, setSuccessMessage] = useState([]);
@@ -54,7 +54,7 @@ const LoginForm = memo(() => {
 	const linksArray = SocialLoginLinks();
 
 	return (
-        <>
+		<>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
@@ -336,7 +336,7 @@ const LoginForm = memo(() => {
 				)}
 			</Formik>
 		</>
-    );
-});
+	);
+};
 
 export default LoginForm;

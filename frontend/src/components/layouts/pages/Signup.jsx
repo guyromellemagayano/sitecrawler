@@ -1,5 +1,5 @@
 import SignupForm from "@components/forms/SignupForm";
-import { LogoLabel } from "@components/labels/LogoLabel";
+import LogoLabel from "@components/labels/LogoLabel";
 import { LoginLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";

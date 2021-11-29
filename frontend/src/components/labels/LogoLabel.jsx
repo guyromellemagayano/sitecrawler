@@ -1,4 +1,4 @@
-import { AppLogo } from "@components/logos/AppLogo";
+import AppLogo from "@components/logos/AppLogo";
 import { NoAuthAppLogo, SiteLogoDark } from "@configs/GlobalValues";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
@@ -15,7 +15,7 @@ import "twin.macro";
  * @param {boolean} isAccountExist
  * @param {boolean} isConfirmEmail
  */
-export const LogoLabel = memo(
+const LogoLabel = memo(
 	({
 		isLogin = false,
 		isSignUp = false,
@@ -67,3 +67,5 @@ LogoLabel.propTypes = {
 	isResetPassword: PropTypes.bool,
 	isSignUp: PropTypes.bool
 };
+
+export default LogoLabel;

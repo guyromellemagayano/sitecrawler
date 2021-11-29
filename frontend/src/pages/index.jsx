@@ -44,11 +44,11 @@ const Home = memo(() => {
 	const home = t("home");
 
 	return (
-        <>
+		<>
 			<NextSeo title={home} />
 			<Loader />
 		</>
-    );
+	);
 });
 
 Home.getLayout = function getLayout(page) {

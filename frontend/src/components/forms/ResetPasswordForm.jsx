@@ -31,7 +31,7 @@ const ResetPasswordForm = memo(() => {
 	const submitting = t("common:submitting");
 
 	return (
-        <>
+		<>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
@@ -160,7 +160,7 @@ const ResetPasswordForm = memo(() => {
 				)}
 			</Formik>
 		</>
-    );
+	);
 });
 
 export default ResetPasswordForm;

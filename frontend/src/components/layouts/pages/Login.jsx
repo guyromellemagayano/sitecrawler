@@ -1,6 +1,6 @@
 import LoginForm from "@components/forms/LoginForm";
-import { LogoLabel } from "@components/labels/LogoLabel";
-import { AppLogo } from "@components/logos/AppLogo";
+import LogoLabel from "@components/labels/LogoLabel";
+import AppLogo from "@components/logos/AppLogo";
 import { NoAuthAppLogo, SiteLogoDark } from "@configs/GlobalValues";
 import { RegistrationLink } from "@configs/PageLinks";
 import useTranslation from "next-translate/useTranslation";
@@ -56,7 +56,7 @@ const LoginPageLayout = memo(() => {
 
 											<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 												<span tw="px-2 py-5 text-gray-500">
-													{ReactHtmlParser(noAccount)}
+													{noAccount}&nbsp;
 													<Link href={RegistrationLink}>
 														<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 															{createAccount}

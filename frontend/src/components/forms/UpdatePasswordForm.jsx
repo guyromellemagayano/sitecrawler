@@ -54,7 +54,7 @@ const UpdatePasswordForm = memo(() => {
 	}, [query]);
 
 	return (
-        <>
+		<>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
@@ -239,7 +239,7 @@ const UpdatePasswordForm = memo(() => {
 				)}
 			</Formik>
 		</>
-    );
+	);
 });
 
 export default UpdatePasswordForm;

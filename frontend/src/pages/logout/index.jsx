@@ -39,11 +39,11 @@ const Logout = memo(() => {
 	const logout = t("logout");
 
 	return (
-        <>
+		<>
 			<NextSeo title={logout} />
 			<Loader />
 		</>
-    );
+	);
 });
 
 export default Logout;

@@ -1,30 +1,44 @@
 import AppSeo from "@configs/AppSeo";
+import { DashboardSitesLink, LoginLink } from "@configs/PageLinks";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import LogRocket from "logrocket";
+import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import App from "next/app";
-import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
+import { useEffect } from "react";
 import "tailwindcss/tailwind.css";
 
 // Font Awesome
 library.add(fab);
 library.add(fas);
 
-// Dynamic imports
-const GlobalStyles = dynamic(() => import("@styles/GlobalStyles"), { ssr: true });
-const TopProgressBar = dynamic(() => import("@components/top-progress-bar"), { ssr: true });
-
 const MyApp = ({ Component, pageProps }) => {
+	// Router
+	const router = useRouter();
+
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);
 
+	useEffect(() => {
+		// Prefetch sites page for faster loading
+		router.prefetch(DashboardSitesLink);
+		router.prefetch(LoginLink);
+
+		// LogRocket setup
+		if (process.env.NODE_ENV === "production") {
+			LogRocket.init("epic-design-labs/link-app");
+			setupLogRocketReact(LogRocket);
+		}
+	}, []);
+
 	return getLayout(
 		<>
-			<GlobalStyles />
 			<DefaultSeo {...AppSeo} />
-			<TopProgressBar />
+
 			<Component {...pageProps} />
 		</>
 	);

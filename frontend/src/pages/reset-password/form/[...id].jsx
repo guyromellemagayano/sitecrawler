@@ -1,11 +1,11 @@
 import Layout from "@components/layouts";
+import ResetPasswordFormPageLayout from "@components/layouts/pages/ResetPasswordForm";
 import { UserApiEndpoint } from "@configs/ApiEndpoints";
 import { DashboardSitesLink } from "@configs/PageLinks";
 import { server } from "@configs/ServerEnv";
 import { useGetMethod } from "@hooks/useHttpMethod";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import dynamic from "next/dynamic";
 import { memo } from "react";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or if the link already expired; Redirect to the sites dashboard page if the user is still currently logged in (200 OK).
@@ -35,11 +35,6 @@ export async function getServerSideProps({ req }) {
 }
 
 /**
- * Dynamic imports
- */
-const ResetPasswordFormPageLayout = dynamic(() => import("@components/layouts/pages/ResetPasswordForm"), { ssr: true });
-
-/**
  * Memoized `ResetPasswordForm` component.
  */
 const ResetPasswordForm = memo(() => {
@@ -48,11 +43,11 @@ const ResetPasswordForm = memo(() => {
 	const isResetPasswordForm = t("isResetPasswordForm");
 
 	return (
-        <>
+		<>
 			<NextSeo title={isResetPasswordForm} />
 			<ResetPasswordFormPageLayout />
 		</>
-    );
+	);
 });
 
 ResetPasswordForm.getLayout = function getLayout(page) {

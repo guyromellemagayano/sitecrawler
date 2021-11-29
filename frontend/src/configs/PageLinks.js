@@ -8,6 +8,7 @@ export const SitePageSlug = "/page/";
 export const SitePagesSlug = "/pages/";
 export const SiteSeoSlug = "/seo/";
 export const UptimeSlug = "/uptime/";
+export const ConfirmSlug = "/confirm/";
 
 export const AddNewSiteSlug = "add-new-site/";
 export const AuditLogsSlug = "audit-logs/";
