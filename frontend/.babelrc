@@ -1,13 +1,6 @@
 {
     "presets": [
-        [
-            "next/babel",
-            {
-                "preset-react": {
-                    "runtime": "automatic"
-                }
-            }
-        ]
+        "next"
     ],
     "plugins": [
         "babel-plugin-macros",
@@ -15,8 +8,8 @@
             "styled-components",
             {
                 "ssr": true,
-                "displayName": false,
-                "fileName": false,
+                "displayName": true,
+                "fileName": true,
                 "pure": true
             }
         ]

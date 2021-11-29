@@ -1,12 +1,13 @@
+import TopProgressBar from "@components/top-progress-bar";
 import AppSeo from "@configs/AppSeo";
 import { DashboardSitesLink, LoginLink } from "@configs/PageLinks";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import GlobalStyles from "@styles/GlobalStyles";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
-import App from "next/app";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { useEffect } from "react";
@@ -38,7 +39,8 @@ const MyApp = ({ Component, pageProps }) => {
 	return getLayout(
 		<>
 			<DefaultSeo {...AppSeo} />
-
+			<GlobalStyles />
+			<TopProgressBar />
 			<Component {...pageProps} />
 		</>
 	);
@@ -47,12 +49,6 @@ const MyApp = ({ Component, pageProps }) => {
 MyApp.propTypes = {
 	Component: PropTypes.any,
 	pageProps: PropTypes.any
-};
-
-MyApp.getInitialProps = async (appContext) => {
-	const appProps = await App.getInitialProps(appContext);
-
-	return { ...appProps };
 };
 
 export default MyApp;
