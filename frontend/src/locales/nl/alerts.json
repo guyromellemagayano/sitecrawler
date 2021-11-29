@@ -1,7 +1,7 @@
 {
 	"badGatewayError": "Slechte gateway",
 	"badRequestError": "Foutief verzoek",
-	"fallbackUnknownError": "Er is een onbekende fout opgetreden: {{ message }} met de volgende stacktracering: {{ component }}",
+	"fallbackUnknownError": "Er is een onbekende fout opgetreden. Gelieve deze pagina opnieuw te laden",
 	"forbiddenError": "Verboden",
 	"gatewayTimeoutError": "Gateway-time-out",
 	"internalServerError": "Interne Server Fout",
