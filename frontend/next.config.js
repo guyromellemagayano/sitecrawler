@@ -40,31 +40,23 @@ const SecurityHeaders = [
 const NextConfig = {
 	trailingSlash: true,
 	devIndicators: {
-		ignoreDuringBuilds: true,
+		ignoreDuringBuilds: false,
 		buildActivity: false,
 		autoPrerender: false
 	},
 	eslint: {
 		dirs: ["pages", "configs", "components", "hooks", "helpers", "styles", "utils"],
-		ignoreDuringBuilds: false
-	},
-	webpack: (config) => {
-		config.resolve.fallback = { fs: false, path: false, module: false, os: false };
-
-		return config;
+		ignoreDuringBuilds: true
 	},
 	i18n: {
 		locales: ["en", "fr", "nl"],
 		defaultLocale: "en"
 	},
-	productionBrowserSourceMaps: true,
-	experimental: {
-		removeConsole:
-			process.env.NODE_ENV === "production"
-				? true
-				: {
-						exclude: ["error"]
-				  }
+	productionBrowserSourceMaps: false,
+	webpack: (config) => {
+		config.resolve.fallback = { fs: false, path: false, module: false, os: false };
+
+		return config;
 	},
 	async headers() {
 		return [
