@@ -7,7 +7,7 @@ import "twin.macro";
  *
  * @param {string} message
  */
-const LoadingMessage = memo((message = null) => {
+const LoadingMessage = memo(({ message = null }) => {
 	// Translations
 	const { t } = useTranslation("common");
 	const loaderMessage = t("loaderMessage");
