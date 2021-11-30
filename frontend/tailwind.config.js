@@ -4,7 +4,7 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 module.exports = {
 	mode: "jit",
 	purge: {
-		content: ["./src/**/*.{js,jsx}"],
+		content: ["./**/*.{js,jsx}"],
 		options: {
 			safelist: {
 				standard: ["outline-none"]
