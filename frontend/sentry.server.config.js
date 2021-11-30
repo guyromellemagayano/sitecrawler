@@ -6,7 +6,7 @@ const SentryEnv = process.env.SENTRY_ENVIRONMENT;
 
 Sentry.init({
 	environment: SentryEnv,
-	tracesSampleRate: 0.01,
+	tracesSampleRate: 1.0,
 	dsn: SentryDsn,
 	beforeSend(event) {
 		// Check if it is an exception, and if so, show the report dialog
