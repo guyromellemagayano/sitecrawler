@@ -49,5 +49,7 @@
 	"profileSettings": "Profile Settings",
 	"comingSoon": "Coming Soon",
 	"logout": "Logout",
-	"reset": "Reset"
+	"reset": "Reset",
+	"upgrade": "Upgrade",
+	"plan": "Plan"
 }
