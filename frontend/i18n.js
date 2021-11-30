@@ -21,5 +21,5 @@ module.exports = {
 		prefix: "${",
 		suffix: "}"
 	},
-	loadLocaleFrom: (locale, namespace) => import(`./src/locales/${locale}/${namespace}`).then((m) => m.default)
+	loadLocaleFrom: (locale, namespace) => import(`./locales/${locale}/${namespace}`).then((m) => m.default)
 };

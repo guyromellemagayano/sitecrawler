@@ -7,25 +7,25 @@
 		"baseUrl": ".",
 		"paths": {
 			"@components/*": [
-				"./src/components/*"
+				"./components/*"
 			],
 			"@configs/*": [
-				"./src/configs/*"
+				"./configs/*"
 			],
 			"@helpers/*": [
-				"./src/helpers/*"
+				"./helpers/*"
 			],
 			"@hooks/*": [
-				"./src/hooks/*"
+				"./hooks/*"
 			],
 			"@pages/*": [
-				"./src/pages/*"
+				"./pages/*"
 			],
 			"@styles/*": [
-				"./src/styles/*"
+				"./styles/*"
 			],
 			"@utils/*": [
-				"./src/utils/*"
+				"./utils/*"
 			]
 		},
 	}
