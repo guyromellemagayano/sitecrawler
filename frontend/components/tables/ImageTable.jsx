@@ -14,10 +14,6 @@ import Skeleton from "react-loading-skeleton";
 // External
 import "twin.macro";
 
-
-
-
-
 const ImagesTable = ({ componentReady, siteId, val }) => {
 	const { imageDetail } = useImageDetail({
 		querySid: siteId,
