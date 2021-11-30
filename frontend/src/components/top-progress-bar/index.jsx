@@ -1,6 +1,6 @@
 import { useNProgress } from "@tanem/react-nprogress";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import tw, { css } from "twin.macro";
 
 const TopProgressBar = () => {
@@ -75,7 +75,7 @@ const TopProgressBar = () => {
 	return (
 		<div
 			css={[
-				tw`fixed top-0 left-0 w-full h-1 z-50 bg-indigo-900 ease-linear pointer-events-none transition-opacity`,
+				tw`fixed top-0 left-0 w-full h-1 z-50 bg-red-900 ease-linear pointer-events-none transition-opacity`,
 				css`
 					margin-left: ${(-1 + progress) * 100} + "%";
 					transition-property: margin-left;
@@ -93,7 +93,7 @@ const TopProgressBar = () => {
 					tw`block h-full opacity-100 absolute right-0 transform-gpu rotate-3 translate-x-0 -translate-y-1`,
 					css`
 						width: 100px;
-						box-shadow: 0 0 10px ${tw`bg-indigo-900`}, 0 0 5px ${tw`bg-indigo-900`};
+						box-shadow: 0 0 10px ${tw`bg-red-900`}, 0 0 5px ${tw`bg-red-900`};
 					`
 				]}
 			/>
