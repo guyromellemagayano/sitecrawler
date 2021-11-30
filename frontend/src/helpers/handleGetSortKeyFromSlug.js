@@ -1,4 +1,11 @@
-export const getSortKeyFromSlug = (content, slug) => {
+/**
+ * Helper function to get the sort key from a slug
+ *
+ * @param {array} content
+ * @param {string} slug
+ * @returns {string} sortKey
+ */
+export const handleGetSortKeyFromSlug = (content, slug) => {
 	let sortKey = "";
 
 	content.forEach((val) => {
