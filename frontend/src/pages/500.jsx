@@ -1,20 +1,15 @@
 import Layout from "@components/layouts";
-import dynamic from "next/dynamic";
-
-/**
- * Dynamic imports
- */
-const ErrorPageLayout = dynamic(() => import("@components/layouts/pages/Error"), { ssr: true });
+import ErrorPageLayout from "@components/layouts/pages/Error";
 
 /**
  * Memoized `Custom500` page.
  */
 const Custom500 = () => {
-	return <ErrorPageLayout statusCode={500} />;
-};
-
-Custom500.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
+	return (
+		<Layout>
+			<ErrorPageLayout statusCode={404} />
+		</Layout>
+	);
 };
 
 export default Custom500;

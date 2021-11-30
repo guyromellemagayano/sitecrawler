@@ -1,20 +1,15 @@
 import Layout from "@components/layouts";
-import dynamic from "next/dynamic";
-
-/**
- * Dynamic imports
- */
-const ErrorPageLayout = dynamic(() => import("@components/layouts/pages/Error"), { ssr: true });
+import ErrorPageLayout from "@components/layouts/pages/Error";
 
 /**
  * Memoized `Custom404` page.
  */
 const Custom404 = () => {
-	return <ErrorPageLayout statusCode={404} />;
-};
-
-Custom404.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
+	return (
+		<Layout>
+			<ErrorPageLayout statusCode={404} />
+		</Layout>
+	);
 };
 
 export default Custom404;
