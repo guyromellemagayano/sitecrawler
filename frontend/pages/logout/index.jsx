@@ -12,7 +12,7 @@ import { useSWRConfig } from "swr";
 import "twin.macro";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
-export async function getStaticProps() {
+export async function getServerSideProps() {
 	const userResponse = await useGetMethod(`${server + UserApiEndpoint}`);
 	const userData = userResponse?.data ?? null;
 	const userStatus = userResponse?.status ?? null;
