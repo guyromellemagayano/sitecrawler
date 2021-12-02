@@ -12,7 +12,7 @@
     "plugins": [
         "babel-plugin-macros",
         [
-            "styled-components",
+            "babel-plugin-styled-components",
             {
                 "ssr": true
             }
