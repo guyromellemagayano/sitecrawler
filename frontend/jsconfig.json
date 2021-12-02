@@ -5,6 +5,8 @@
 	],
 	"compilerOptions": {
 		"baseUrl": ".",
+		"experimentalDecorators": true,
+		"jsxImportSource": "react",
 		"paths": {
 			"@components/*": [
 				"./components/*"
