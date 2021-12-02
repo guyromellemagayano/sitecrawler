@@ -1,31 +1,17 @@
-# Development
-FROM node:14-alpine AS dev
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+FROM node:16-alpine AS base
 RUN apk add --no-cache libc6-compat
-
 WORKDIR /app
 COPY . .
-RUN yarn install --frozen-lockfile
 
+FROM base AS dev
+ENV NODE_ENV development
+RUN yarn install --frozen-lockfile --production=false
 EXPOSE 3000
+CMD yarn dev
 
-# Production
-FROM node:14-alpine AS prod
-WORKDIR /app
-
+FROM base AS prod
 ENV NODE_ENV production
-
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-
-COPY --from=dev /app/public ./public
-COPY --from=dev --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=dev /app/node_modules ./node_modules
-COPY --from=dev /app/package.json ./package.json
-
-USER nextjs
-
+RUN yarn install --frozen-lockfile --production=true
+EXPOSE 3000
 RUN yarn build
-
 CMD yarn start
-
