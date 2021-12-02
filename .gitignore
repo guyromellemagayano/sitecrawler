@@ -211,6 +211,7 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+!frontend/.env
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -262,14 +263,12 @@ dist
 # terraform state
 *.tfstate*
 
-# frontend
-!frontend/.env
-
-package-lock.json
-
 # cypress
 cypress/videos
 cypress/screenshots
 
 # backup
 *.bak
+
+# sentry
+.sentryclirc

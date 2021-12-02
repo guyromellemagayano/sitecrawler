@@ -1,18 +1,17 @@
-FROM node:14 AS dev
-
-RUN mkdir /app
+FROM node:16-alpine AS base
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
+COPY . .
 
-COPY package.json /app
-COPY yarn.lock /app
-RUN yarn install --install-lockfile
-
-COPY . /app
-
+FROM base AS dev
+ENV NODE_ENV development
+RUN yarn install --frozen-lockfile --production=false
 EXPOSE 3000
+CMD yarn dev
 
-FROM dev AS prod
-
+FROM base AS prod
+ENV NODE_ENV production
+RUN yarn install --frozen-lockfile --production=true
+EXPOSE 3000
 RUN yarn build
-
 CMD yarn start

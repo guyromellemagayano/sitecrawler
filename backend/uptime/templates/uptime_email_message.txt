@@ -2,7 +2,7 @@ Hello {{user.first_name}},
 
 Your site {{crawl_site.name}} ({{crawl_site.url}}) is {{status}}.
 
-https://{{site.domain}}/dashboard/site/{{crawl_site.id}}/overview
+https://{{site.domain}}/site/{{crawl_site.id}}/overview
 
 Thanks,
 {{site.name}}

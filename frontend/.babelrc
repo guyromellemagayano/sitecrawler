@@ -1,53 +1,20 @@
 {
-    "env": {
-        "production": {
-            "plugins": [
-                "babel-plugin-jsx-remove-data-test-id"
-            ]
-        }
-    },
     "presets": [
         [
             "next/babel",
             {
-                "styled-jsx": {
-                    "plugins": [
-                        "styled-jsx-plugin-sass"
-                    ]
+                "preset-react": {
+                    "runtime": "automatic"
                 }
             }
         ]
     ],
     "plugins": [
         "babel-plugin-macros",
-        "inline-react-svg",
-        "add-react-displayname",
-        "react-require",
         [
-            "styled-components",
+            "babel-plugin-styled-components",
             {
-                "ssr": true,
-                "displayName": true,
-                "minify": true,
-                "preprocess": false,
-                "pure": true
-            }
-        ],
-        [
-            "module-resolver",
-            {
-                "root": [
-                    "."
-                ],
-                "alias": {
-                    "@components": "./src/components/",
-                    "@enums": "./src/enums/",
-                    "@helpers": "./src/helpers/",
-                    "@hooks": "./src/hooks/",
-                    "@pages": "./src/pages/",
-                    "@styles": "./src/styles/",
-                    "@utils": "./src/utils/"
-                }
+                "ssr": true
             }
         ]
     ]

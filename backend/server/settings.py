@@ -16,8 +16,8 @@ import sys
 import boto3
 import requests
 import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 import stripe
+from sentry_sdk.integrations.django import DjangoIntegration
 
 try:
     AWS_REGION = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document", timeout=0.2).json()[
@@ -315,7 +315,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX
-LOGIN_REDIRECT_URL = "/sites/"
+LOGIN_REDIRECT_URL = "/dashboard/sites/"
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`

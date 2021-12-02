@@ -1,48 +1,90 @@
-const { withSentryConfig } = require("@sentry/nextjs");
 const withPlugins = require("next-compose-plugins");
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
 	enabled: process.env.ANALYZE === "true"
 });
+const { withSentryConfig } = require("@sentry/nextjs");
+const withNextTranslate = require("next-translate");
 
-const SENTRY_URL = process.env.SENTRY_URL || process.env.NEXT_PUBLIC_SENTRY_URL;
-const SENTRY_ORG = process.env.SENTRY_ORG || process.env.NEXT_PUBLIC_SENTRY_ORG;
-const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN || process.env.NEXT_PUBLIC_SENTRY_AUTH_TOKEN;
-const SENTRY_PROJECT = process.env.SENTRY_PROJECT || process.env.NEXT_PUBLIC_SENTRY_PROJECT;
+const SecurityHeaders = [
+	{
+		key: "X-DNS-Prefetch-Control",
+		value: "on"
+	},
+	{
+		key: "Strict-Transport-Security",
+		value: "max-age=63072000; includeSubDomains; preload"
+	},
+	{
+		key: "X-XSS-Protection",
+		value: "1; mode=block"
+	},
+	{
+		key: "X-Frame-Options",
+		value: "SAMEORIGIN"
+	},
+	{
+		key: "Permissions-Policy",
+		value: "geolocation=()"
+	},
+	{
+		key: "X-Content-Type-Options",
+		value: "nosniff"
+	},
+	{
+		key: "Referrer-Policy",
+		value:
+			"no-referrer, no-referrer-when-downgrade, same-origin, origin, strict-origin,, origin-when-cross-origin, strict-origin-when-cross-origin, unsafe-url"
+	}
+];
 
-const ModuleExports = {
+const NextConfig = {
 	trailingSlash: true,
 	devIndicators: {
-		autoPrerender: false
+		ignoreDuringBuilds: true,
+		buildActivity: false,
+		autoPrerender: true
 	},
 	eslint: {
-		dirs: ["pages", "enums", "components", "hooks", "helpers"],
-		ignoreDuringBuilds: true
-	},
-	webpack: (config) => {
-		config.resolve.fallback = { fs: false, module: false };
-		return config;
+		dirs: ["pages", "configs", "components", "hooks", "helpers", "styles", "utils"],
+		ignoreDuringBuilds: false
 	},
 	i18n: {
 		locales: ["en", "fr", "nl"],
 		defaultLocale: "en"
 	},
+	experimental: {
+		removeConsole:
+			process.env.NODE_ENV === "production"
+				? true
+				: {
+						exclude: ["error"]
+				  }
+	},
+	webpack: (config) => {
+		config.resolve.fallback = { fs: false, path: false, module: false, os: false };
+
+		return config;
+	},
+	async headers() {
+		return [
+			{
+				source: "/(.*)",
+				headers: SecurityHeaders
+			}
+		];
+	}
+};
+
+const SentryWebpackPluginOptions = {
+	include: ".",
+	ignore: ["node_modules"],
+	silent: true,
 	sentry: {
 		disableServerWebpackPlugin: true,
 		disableClientWebpackPlugin: true
 	}
 };
 
-const BundleAnalyzerPluginOptions = {};
-
-const SentryWebpackPluginOptions = {
-	include: ".",
-	url: SENTRY_URL || "https://sentry.io/organizations/epic-design-labs/",
-	org: SENTRY_ORG || "epic-design-labs",
-	authToken: SENTRY_AUTH_TOKEN || "21024702c44e4bf3a4ac704e27d82a5e7cb2be29340046dc8d9c6d0b06a92ff1",
-	project: SENTRY_PROJECT || "sitecrawler-frontend"
-};
-
 module.exports = withPlugins([
-	withBundleAnalyzer(BundleAnalyzerPluginOptions),
-	withSentryConfig(ModuleExports, SentryWebpackPluginOptions)
+	withNextTranslate(withBundleAnalyzer(withSentryConfig(NextConfig, SentryWebpackPluginOptions)))
 ]);

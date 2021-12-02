@@ -1,0 +1,13 @@
+{
+	"rememberMe": "Remember me",
+	"forgotPassword": "Forgot your password?",
+	"signIn": "Sign In",
+	"continueWith": "Or continue with",
+	"noAccount": "Don't have an account? ",
+	"createAccount": "Create Account",
+	"signingIn": "Signing In...",
+	"showPassword": "Show Password",
+	"hidePassword": "Hide Password",
+	"googleSignIn": "Sign in with Google",
+	"login": "Login"
+}

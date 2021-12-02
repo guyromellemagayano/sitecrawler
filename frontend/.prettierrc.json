@@ -1,0 +1,14 @@
+{
+	"semi": true,
+	"trailingComma": "none",
+	"singleQuote": false,
+	"printWidth": 120,
+	"useTabs": true,
+	"tabWidth": 2,
+	"quoteProps": "consistent",
+	"proseWrap": "preserve",
+	"arrowParens": "always",
+	"bracketSpacing": true,
+	"configPath": "./.prettierrc",
+	"requireConfig": true
+}
