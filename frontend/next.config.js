@@ -40,19 +40,26 @@ const SecurityHeaders = [
 const NextConfig = {
 	trailingSlash: true,
 	devIndicators: {
-		ignoreDuringBuilds: false,
+		ignoreDuringBuilds: true,
 		buildActivity: false,
-		autoPrerender: false
+		autoPrerender: true
 	},
 	eslint: {
 		dirs: ["pages", "configs", "components", "hooks", "helpers", "styles", "utils"],
-		ignoreDuringBuilds: true
+		ignoreDuringBuilds: false
 	},
 	i18n: {
 		locales: ["en", "fr", "nl"],
 		defaultLocale: "en"
 	},
-	productionBrowserSourceMaps: false,
+	experimental: {
+		removeConsole:
+			process.env.NODE_ENV === "production"
+				? true
+				: {
+						exclude: ["error"]
+				  }
+	},
 	webpack: (config) => {
 		config.resolve.fallback = { fs: false, path: false, module: false, os: false };
 
@@ -69,7 +76,7 @@ const NextConfig = {
 };
 
 const SentryWebpackPluginOptions = {
-	include: ".next",
+	include: ".",
 	ignore: ["node_modules"],
 	silent: true,
 	sentry: {
