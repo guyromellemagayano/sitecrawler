@@ -3,7 +3,7 @@ import { Loader } from "@components/loaders";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { server } from "@constants/ServerEnv";
-import { AppAxiosInstance } from "@utils/axios";
+import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";

@@ -3,7 +3,7 @@ import AccountExistPageLayout from "@components/layouts/pages/AccountExist";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { server } from "@constants/ServerEnv";
-import { AppAxiosInstance } from "@utils/axios";
+import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 

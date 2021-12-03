@@ -3,7 +3,7 @@ import Dashboard from "@components/layouts/components/Dashboard";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { LoginLink } from "@constants/PageLinks";
 import { server } from "@constants/ServerEnv";
-import { AppAxiosInstance } from "@utils/axios";
+import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import dynamic from "next/dynamic";
