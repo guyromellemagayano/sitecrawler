@@ -893,10 +893,5 @@ module.exports = {
 		wordBreak: ["responsive"],
 		zIndex: ["responsive", "focus-within", "focus"]
 	},
-	plugins: [
-		require("@tailwindcss/typography"),
-		require("@tailwindcss/forms"),
-		require("@tailwindcss/aspect-ratio"),
-		require("@tailwindcss/line-clamp")
-	]
+	plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms")]
 };
