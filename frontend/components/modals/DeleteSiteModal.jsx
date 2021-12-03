@@ -1,5 +1,5 @@
 // React
-import { DashboardSitesLink } from "@configs/PageLinks";
+import { DashboardSitesLink } from "@constants/PageLinks";
 import { SitesApiEndpoint } from "@enums/ApiEndpoints";
 // Enums
 import { DeleteSiteModalLabels } from "@enums/DeleteSiteModalLabels";
@@ -11,7 +11,7 @@ import { useDeleteMethod } from "@hooks/useHttpMethod";
 // NextJS
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { forwardRef, useState, useEffect } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 

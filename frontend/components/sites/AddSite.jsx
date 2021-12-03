@@ -1,23 +1,20 @@
 import SiteLimitReachedModal from "@components/modals/SiteLimitReachedModal";
-import { AddNewSiteLink } from "@configs/PageLinks";
+import { AddNewSiteLink } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { handleScanApiEndpoint, handleSiteQueries, handleSiteSearch } from "@helpers/handleSiteQueries";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
+import { handleScanApiEndpoint, handleSiteQueries, handleSiteSearch } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "twin.macro";
 
-/**
- * Memoized function to render the `AddSite` component
- */
-const AddSite = memo(() => {
-	const [maxSiteLimit, setMaxSiteLimit] = useState(0);
-	const [siteLimitCounter, setSiteLimitCounter] = useState(0);
+export default function AddSite() {
+	const [maxSiteLimit, setMaxSiteLimit] = useState(null);
+	const [siteLimitCounter, setSiteLimitCounter] = useState(null);
 
 	// Translations
 	const { t } = useTranslation("addSite");
@@ -29,8 +26,8 @@ const AddSite = memo(() => {
 	const { query } = useRouter();
 
 	// SWR hooks
-	const { user, validatingUser } = useUser();
-	const { sites, validatingSites } = useSites();
+	const { user, errorUser, validatingUser } = useUser();
+	const { sites, errorSites, validatingSites } = useSites();
 
 	// Custom hooks
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
@@ -47,31 +44,36 @@ const AddSite = memo(() => {
 	useEffect(() => {
 		if (
 			!validatingUser &&
+			!errorUser &&
 			typeof user !== "undefined" &&
 			user !== null &&
-			!user.detail &&
-			Object.keys(user).length > 0
+			Object.keys(user)?.length > 0 &&
+			Math.round(user / 200 === 1)
 		) {
-			setMaxSiteLimit(user.plan.max_sites);
+			setMaxSiteLimit(user?.group?.max_sites ?? 0);
 		}
-	}, [user, validatingUser]);
+	}, [user, errorUser, validatingUser]);
 
 	useEffect(() => {
 		if (
 			!validatingSites &&
+			!errorSites &&
 			typeof sites !== "undefined" &&
 			sites !== null &&
-			!sites.detail &&
-			Object.keys(sites).length > 0 &&
-			sites?.count
+			Object.keys(sites)?.length > 0 &&
+			Math.round(sites / 200 === 1)
 		) {
-			setSiteLimitCounter(sites.count);
+			setSiteLimitCounter(sites?.count ?? 0);
 		}
-	}, [sites, validatingSites]);
+	}, [sites, errorSites, validatingSites]);
 
 	return (
 		<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-			<SiteLimitReachedModal ref={ref} />
+			<SiteLimitReachedModal
+				ref={ref}
+				isComponentVisible={isComponentVisible}
+				setIsComponentVisible={setIsComponentVisible}
+			/>
 
 			<div tw="relative z-10 flex-shrink-0 flex  bg-white border-b border-gray-200">
 				<div tw="flex-1 p-4 flex justify-between">
@@ -111,11 +113,11 @@ const AddSite = memo(() => {
 								<span tw="flex items-center space-x-2">
 									{user?.permissions &&
 									typeof user?.permissions !== "undefined" &&
-									user?.permissions.includes("can_see_images") &&
-									user?.permissions.includes("can_see_pages") &&
-									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") &&
-									user?.permissions.includes("can_start_scan") ? null : (
+									user?.permissions?.includes("can_see_images") &&
+									user?.permissions?.includes("can_see_pages") &&
+									user?.permissions?.includes("can_see_scripts") &&
+									user?.permissions?.includes("can_see_stylesheets") &&
+									user?.permissions?.includes("can_start_scan") ? null : (
 										<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 									)}
 									<span>{addNewSite}</span>
@@ -136,6 +138,4 @@ const AddSite = memo(() => {
 			</div>
 		</div>
 	);
-});
-
-export default AddSite;
+}

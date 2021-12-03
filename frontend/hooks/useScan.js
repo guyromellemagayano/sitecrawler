@@ -1,6 +1,6 @@
-import { SitesApiEndpoint } from "@configs/ApiEndpoints";
-import { orderingByNameQuery, sortByFinishedAtDescending } from "@configs/GlobalValues";
-import { ScanSlug } from "@configs/PageLinks";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { orderingByNameQuery, sortByFinishedAtDescending } from "@constants/GlobalValues";
+import { ScanSlug } from "@constants/PageLinks";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**

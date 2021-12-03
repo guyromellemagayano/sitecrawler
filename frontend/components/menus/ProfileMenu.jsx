@@ -1,7 +1,7 @@
 import ProfileSidebarSkeleton from "@components/skeletons/ProfileSidebarSkeleton";
-import { Basic, Pro } from "@configs/GlobalValues";
-import { SubscriptionPlansSettingsLink } from "@configs/PageLinks";
-import { SidebarMenus } from "@configs/SidebarMenus";
+import { Basic, Pro } from "@constants/GlobalValues";
+import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
+import { SidebarMenus } from "@constants/SidebarMenus";
 import { Transition } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";

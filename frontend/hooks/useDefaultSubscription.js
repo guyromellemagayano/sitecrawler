@@ -1,4 +1,4 @@
-import { DefaultSubscriptionApiEndpoint } from "@configs/ApiEndpoints";
+import { DefaultSubscriptionApiEndpoint } from "@constants/ApiEndpoints";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**

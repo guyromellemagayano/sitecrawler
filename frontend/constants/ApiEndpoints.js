@@ -1,0 +1,26 @@
+import { ApiSlug } from "./GlobalValues";
+
+export const ConfirmEmailApiEndpoint = `${ApiSlug + "auth/registration/verify-email/"}`;
+export const ConfirmResetPasswordApiEndpoint = `${ApiSlug + "auth/password/reset/confirm/"}`;
+export const ContactApiEndpoint = `${ApiSlug + "support/contact/"}`;
+export const CurrentPaymentMethodApiEndpoint = `${ApiSlug + "stripe/payment-method/"}`;
+export const CurrentSubscriptionApiEndpoint = `${ApiSlug + "stripe/subscription/current/"}`;
+export const DefaultPaymentMethodApiEndpoint = `${ApiSlug + "stripe/payment-method/default/"}`;
+export const DefaultSubscriptionApiEndpoint = `${ApiSlug + "stripe/subscription/current/"}`;
+export const GoogleLoginApiEndpoint = "/auth/google/login/";
+export const LoginApiEndpoint = `${ApiSlug + "auth/login/"}`;
+export const LogoutApiEndpoint = `${ApiSlug + "auth/logout/"}`;
+export const PasswordChangeApiEndpoint = `${ApiSlug + "auth/password/change/"}`;
+export const PaymentMethodApiEndpoint = `${ApiSlug + "stripe/payment-method/"}`;
+export const RegistrationApiEndpoint = `${ApiSlug + "auth/registration/"}`;
+export const ResetPasswordApiEndpoint = `${ApiSlug + "auth/password/reset/"}`;
+export const SignupApiEndpoint = `${ApiSlug + "signup/"}`;
+export const SitesApiEndpoint = `${ApiSlug + "site/"}`;
+export const StripePromiseApiEndpoint = `${ApiSlug + "stripe/config/"}`;
+export const SubscriptionsApiEndpoint = `${ApiSlug + "stripe/subscription/"}`;
+export const UserApiEndpoint = `${ApiSlug + "auth/user/"}`;
+export const TeamApiEndpoint = `${ApiSlug + "team/"}`;
+export const CurrentTeamApiEndpoint = `${ApiSlug + "team/current/"}`;
+export const CurrentTeamMembershipApiEndpoint = `${ApiSlug + "team/current/membership/"}`;
+export const AcceptInvitationTeamApiEndpoint = `${ApiSlug + "team/accept_invitation/"}`;
+export const UserMembershipTypeApiEndpoint = `${ApiSlug + "membership_type/"}`;

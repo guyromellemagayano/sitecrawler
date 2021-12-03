@@ -1,4 +1,4 @@
-import { RevalidationInterval } from "@configs/GlobalValues";
+import { RevalidationInterval } from "@constants/GlobalValues";
 import { Transition } from "@headlessui/react";
 import {
 	CheckCircleIcon,

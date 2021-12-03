@@ -1,11 +1,11 @@
 import Alert from "@components/alerts";
-import { RegistrationApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
+import { RegistrationApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import {
 	FormPasswordMaxChars,
 	FormPasswordMinChars,
 	FormStringMaxChars,
 	FormStringMinChars
-} from "@configs/GlobalValues";
+} from "@constants/GlobalValues";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";

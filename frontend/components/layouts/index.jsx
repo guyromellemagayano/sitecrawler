@@ -1,4 +1,4 @@
-import { DashboardSitesLink, LoginLink } from "@configs/PageLinks";
+import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import "twin.macro";

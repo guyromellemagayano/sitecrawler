@@ -1,5 +1,5 @@
-import { SitesApiEndpoint } from "@configs/ApiEndpoints";
-import { memo, useState, useRef, useEffect } from "react";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { memo, useEffect, useRef, useState } from "react";
 import { usePostMethod } from "./useHttpMethod";
 import { useScan } from "./useScan";
 

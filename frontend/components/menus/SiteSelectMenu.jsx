@@ -1,4 +1,4 @@
-import { SidebarMenuLabels } from "@configs/SidebarMenuLabels";
+import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { SelectorIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";

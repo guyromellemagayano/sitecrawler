@@ -1,8 +1,8 @@
 import { AppLogo } from "@components/logos/AppLogo";
 import SiteSelect from "@components/select/SiteSelect";
-import { AuthAppLogo, SiteLogoWhite } from "@configs/GlobalValues";
-import { DashboardSitesLink, SitesSlug } from "@configs/PageLinks";
-import { SidebarMenus } from "@configs/SidebarMenus";
+import { AuthAppLogo, SiteLogoWhite } from "@constants/GlobalValues";
+import { DashboardSitesLink, SitesSlug } from "@constants/PageLinks";
+import { SidebarMenus } from "@constants/SidebarMenus";
 import { DocumentReportIcon, ExternalLinkIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";

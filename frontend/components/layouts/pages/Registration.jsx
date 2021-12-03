@@ -1,6 +1,6 @@
 import RegistrationForm from "@components/forms/RegistrationForm";
 import LogoLabel from "@components/labels/LogoLabel";
-import { LoginLink } from "@configs/PageLinks";
+import { LoginLink } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { memo } from "react";

@@ -1,4 +1,4 @@
-import { StripePromiseApiEndpoint } from "@configs/ApiEndpoints";
+import { StripePromiseApiEndpoint } from "@constants/ApiEndpoints";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**

@@ -1,5 +1,5 @@
-import { SitesApiEndpoint } from "@configs/ApiEndpoints";
-import { SummarySlug, UptimeSlug } from "@configs/PageLinks";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { SummarySlug, UptimeSlug } from "@constants/PageLinks";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
@@ -9,9 +9,10 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @returns {object} uptimeSummary, errorUptimeSummary, validatingUptimeSummary
  */
 export const useUptimeSummary = (querySid = null) => {
-	const currentEndpoint = typeof querySid !== "undefined" && querySid !== null && typeof querySid === "number" && querySid > 0
+	const currentEndpoint =
+		typeof querySid !== "undefined" && querySid !== null && typeof querySid === "number" && querySid > 0
 			? SitesApiEndpoint + querySid + UptimeSlug + SummarySlug
-			: null,
+			: null;
 
 	const {
 		data: uptimeSummary,

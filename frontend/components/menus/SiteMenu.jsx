@@ -1,8 +1,8 @@
 import { AppLogo } from "@components/logos/AppLogo";
 import SiteSelect from "@components/select/SiteSelect";
-import { AuthAppLogo, SiteLogoWhite, SiteRoute } from "@configs/GlobalValues";
-import { DashboardSitesLink } from "@configs/PageLinks";
-import { SidebarMenus } from "@configs/SidebarMenus";
+import { AuthAppLogo, SiteLogoWhite, SiteRoute } from "@constants/GlobalValues";
+import { DashboardSitesLink } from "@constants/PageLinks";
+import { SidebarMenus } from "@constants/SidebarMenus";
 import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon, LinkIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/solid";
 import useCrawl from "@hooks/useCrawl";
@@ -12,7 +12,7 @@ import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useState, useMemo, useEffect } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import tw from "twin.macro";
 

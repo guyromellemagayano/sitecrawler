@@ -13,7 +13,7 @@ import {
 	SitePagesSlug,
 	SiteSeoSlug,
 	SubscriptionPlansSettingsLink
-} from "@configs/PageLinks";
+} from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 
 export const SidebarMenus = () => {

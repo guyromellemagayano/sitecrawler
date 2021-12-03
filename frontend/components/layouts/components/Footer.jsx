@@ -1,4 +1,4 @@
-import { FooterLabels } from "@configs/FooterLabels";
+import { FooterLabels } from "@constants/FooterLabels";
 import useTranslation from "next-translate/useTranslation";
 import "twin.macro";
 

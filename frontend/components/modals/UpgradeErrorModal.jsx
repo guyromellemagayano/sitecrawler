@@ -1,10 +1,10 @@
-import { SubscriptionPlansLink } from "@configs/PageLinks";
+import { SubscriptionPlansLink } from "@constants/PageLinks";
 import { Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import { memo, forwardRef } from "react";
+import { forwardRef, memo } from "react";
 import "twin.macro";
 
 /**

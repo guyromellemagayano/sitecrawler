@@ -1,5 +1,5 @@
 import Alert from "@components/alerts";
-import { ResetPasswordApiEndpoint } from "@configs/ApiEndpoints";
+import { ResetPasswordApiEndpoint } from "@constants/ApiEndpoints";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";

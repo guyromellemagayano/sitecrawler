@@ -1,6 +1,6 @@
-import { SettingsSlug, SitesSlug } from "@configs/PageLinks";
+import { SettingsSlug, SitesSlug } from "@constants/PageLinks";
 import { useRouter } from "next/router";
-import { memo, useState, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import PrimaryMenu from "./PrimaryMenu";
 import SettingsMenu from "./SettingsMenu";
 import SiteMenu from "./SiteMenu";
