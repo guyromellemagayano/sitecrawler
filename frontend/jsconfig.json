@@ -1,34 +1,18 @@
 {
-	"exclude": [
-		"node_modules",
-		".next"
-	],
 	"compilerOptions": {
 		"baseUrl": ".",
 		"experimentalDecorators": true,
 		"jsxImportSource": "react",
 		"paths": {
-			"@components/*": [
-				"./components/*"
-			],
-			"@configs/*": [
-				"./configs/*"
-			],
-			"@helpers/*": [
-				"./helpers/*"
-			],
-			"@hooks/*": [
-				"./hooks/*"
-			],
-			"@pages/*": [
-				"./pages/*"
-			],
-			"@styles/*": [
-				"./styles/*"
-			],
-			"@utils/*": [
-				"./utils/*"
-			]
-		},
-	}
+			"@components/*": ["./components/*"],
+			"@constants/*": ["constants/*"],
+			"@helpers/*": ["./helpers/*"],
+			"@hooks/*": ["./hooks/*"],
+			"@libs/*": ["./libs/*"],
+			"@pages/*": ["./pages/*"],
+			"@styles/*": ["./styles/*"],
+			"@utils/*": ["./utils/*"]
+		}
+	},
+	"exclude": ["./node_modules/", "./.next/"]
 }

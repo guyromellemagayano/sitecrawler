@@ -4,7 +4,7 @@ import { usePage } from "@hooks/usePage";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import Pagination from "rc-pagination";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "twin.macro";
 
 const PaginationLocale = {
@@ -23,7 +23,7 @@ const PaginationLocale = {
 const DataPagination = ({
 	activePage,
 	apiEndpoint,
-
+	componentReady,
 	handleItemsPerPageChange,
 	linksPerPage,
 	pathName

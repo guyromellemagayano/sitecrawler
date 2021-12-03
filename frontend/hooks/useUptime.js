@@ -1,5 +1,5 @@
-import { SitesApiEndpoint } from "@configs/ApiEndpoints";
-import { UptimeSlug } from "@configs/PageLinks";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { UptimeSlug } from "@constants/PageLinks";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**

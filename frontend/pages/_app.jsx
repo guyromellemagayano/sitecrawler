@@ -1,6 +1,6 @@
-import TopProgressBar from "@components/top-progress-bar";
-import AppSeo from "@configs/AppSeo";
-import { isProd } from "@configs/ServerEnv";
+import ProgressBar from "@components/progress-bar";
+import AppSeo from "@constants/AppSeo";
+import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -9,7 +9,6 @@ import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import { useEffect } from "react";
-import "tailwindcss/tailwind.css";
 
 // Font Awesome
 library.add(fab);
@@ -29,9 +28,9 @@ export default function App({ Component, pageProps, err }) {
 
 	return getLayout(
 		<>
-			<DefaultSeo {...AppSeo} />
 			<GlobalStyles />
-			<TopProgressBar />
+			<ProgressBar />
+			<DefaultSeo {...AppSeo} />
 			<Component {...pageProps} err={err} />
 		</>
 	);

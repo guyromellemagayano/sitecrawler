@@ -1,49 +1,36 @@
 {
+	"root": true,
 	"env": {
-		"browser": true,
 		"es2021": true,
+		"browser": true,
 		"node": true
 	},
 	"parser": "@babel/eslint-parser",
-	"extends": [
-		"airbnb",
-		"airbnb/hooks",
-		"eslint:recommended",
-		"eslint:recommended",
-		"plugin:import/errors",
-		"plugin:import/warnings",
-		"plugin:jsx-a11y/recommended",
-		"plugin:react/recommended",
-		"plugin:@next/next/recommended",
-		"next/core-web-vitals",
-		"prettier"
-	],
 	"globals": {
 		"Atomics": "readonly",
 		"SharedArrayBuffer": "readonly"
 	},
-	"parserOptions": {
-		"ecmaFeatures": {
-			"jsx": true
-		},
-		"ecmaVersion": 6,
-		"requireConfigFile": false,
-		"sourceType": "module"
-	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:import/errors",
+		"plugin:import/warnings",
+		"plugin:jsx-a11y/recommended",
+		"plugin:prettier/recommended",
+		"plugin:react/recommended",
+		"plugin:@next/next/recommended",
+		"next",
+		"next/core-web-vitals",
+		"prettier"
+	],
 	"plugins": ["react", "react-hooks"],
 	"settings": {
 		"react": {
 			"version": "detect"
-		}
-	},
-	"rules": {
-		"react/react-in-jsx-scope": "off",
-		"react/jsx-filename-extension": [
-			1,
-			{
-				"extensions": [".js", ".jsx"]
+		},
+		"import/resolver": {
+			"jsconfig": {
+				"config": "jsconfig.json"
 			}
-		],
-		"react/display-name": 1
+		}
 	}
 }

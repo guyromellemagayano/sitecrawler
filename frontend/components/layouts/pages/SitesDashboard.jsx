@@ -1,18 +1,19 @@
-import DataPagination from "@components/pagination";
-import SitesTable from "@components/tables/SitesTable";
-import { handleItemsPerPageChange, handleScanApiEndpoint, handleSiteQueries } from "@helpers/handleSiteQueries";
+import { handleItemsPerPageChange, handleScanApiEndpoint, handleSiteQueries } from "@hooks/useSiteQueries";
 import { ExternalLinkIcon } from "@heroicons/react/outline";
 import { useSites } from "@hooks/useSites";
 import useTranslation from "next-translate/useTranslation";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { memo } from "react";
 import tw from "twin.macro";
 import Footer from "../components/Footer";
 
 /**
- * Memoized function to render the `SitesDashboardPageLayout` component
+ * Dynamic imports
  */
-const SitesDashboardPageLayout = memo(() => {
+const SitesTable = dynamic(() => import("@components/tables/SitesTable"), { ssr: true });
+const DataPagination = dynamic(() => import("@components/pagination"), { ssr: true });
+
+export default function SitesDashboardPageLayout() {
 	// Router
 	const { query } = useRouter();
 
@@ -73,7 +74,7 @@ const SitesDashboardPageLayout = memo(() => {
 
 			<div tw="flex-none px-4 sm:px-6 md:px-8">
 				<DataPagination
-					activePage={parseInt(query?.page ? query?.page : 0)}
+					activePage={parseInt(query?.page > 0 ? query?.page : 0)}
 					apiEndpoint={scanApiEndpoint}
 					handleItemsPerPageChange={onHandleItemsPerPageChange}
 					linksPerPage={parseInt(linksPerPage)}
@@ -87,6 +88,4 @@ const SitesDashboardPageLayout = memo(() => {
 			</div>
 		</>
 	);
-});
-
-export default SitesDashboardPageLayout;
+}

@@ -1,7 +1,7 @@
 import Alert from "@components/alerts";
-import { SignupApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { FormPasswordMaxChars, FormPasswordMinChars, RedirectInterval } from "@configs/GlobalValues";
-import { ConfirmSlug, DashboardSitesLink } from "@configs/PageLinks";
+import { SignupApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { FormPasswordMaxChars, FormPasswordMinChars, RedirectInterval } from "@constants/GlobalValues";
+import { ConfirmSlug, DashboardSitesLink } from "@constants/PageLinks";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";

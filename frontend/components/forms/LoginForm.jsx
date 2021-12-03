@@ -1,7 +1,7 @@
 import Alert from "@components/alerts";
-import { LoginApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { DashboardSitesLink, ResetPasswordLink } from "@configs/PageLinks";
-import { SocialLoginLinks } from "@configs/SocialLogin";
+import { LoginApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { DashboardSitesLink, ResetPasswordLink } from "@constants/PageLinks";
+import { SocialLoginLinks } from "@constants/SocialLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import { useShowPassword } from "@hooks/useShowPassword";

@@ -39,6 +39,7 @@ const SecurityHeaders = [
 
 const NextConfig = {
 	trailingSlash: true,
+	reactStrictMode: true,
 	devIndicators: {
 		ignoreDuringBuilds: true,
 		buildActivity: false,

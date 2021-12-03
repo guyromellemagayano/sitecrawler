@@ -1,6 +1,6 @@
 import LogoLabel from "@components/labels/LogoLabel";
-import { ConfirmEmailApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { LoginLink } from "@configs/PageLinks";
+import { ConfirmEmailApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { LoginLink } from "@constants/PageLinks";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";

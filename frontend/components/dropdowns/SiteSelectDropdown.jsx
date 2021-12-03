@@ -1,6 +1,6 @@
-import { ComponentReadyInterval } from "@configs/GlobalValues";
-import { AddNewSiteLink, DashboardSiteSlug, SiteOverviewSlug } from "@configs/PageLinks";
-import { SidebarMenuLabels } from "@configs/SidebarMenuLabels";
+import { ComponentReadyInterval } from "@constants/GlobalValues";
+import { AddNewSiteLink, DashboardSiteSlug, SiteOverviewSlug } from "@constants/PageLinks";
+import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/solid";
 import { useCrawl } from "@hooks/useCrawl";

@@ -1,5 +1,5 @@
 import AppLogo from "@components/logos/AppLogo";
-import { NoAuthAppLogo, SiteLogoDark } from "@configs/GlobalValues";
+import { NoAuthAppLogo, SiteLogoDark } from "@constants/GlobalValues";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { memo } from "react";

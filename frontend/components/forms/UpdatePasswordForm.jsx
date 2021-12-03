@@ -1,6 +1,6 @@
 import Alert from "@components/alerts";
-import { ConfirmResetPasswordApiEndpoint, UserApiEndpoint } from "@configs/ApiEndpoints";
-import { FormPasswordMaxChars, FormPasswordMinChars } from "@configs/GlobalValues";
+import { ConfirmResetPasswordApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { FormPasswordMaxChars, FormPasswordMinChars } from "@constants/GlobalValues";
 import { usePostMethod } from "@hooks/useHttpMethod";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";

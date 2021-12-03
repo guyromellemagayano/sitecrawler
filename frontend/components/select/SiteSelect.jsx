@@ -2,7 +2,7 @@ import Alert from "@components/alerts";
 import SiteSelectDropdown from "@components/dropdowns/SiteSelectDropdown";
 // import SiteSelectDropdown from "@components/dropdowns/SiteSelectDropdown";
 import SiteSelectMenu from "@components/menus/SiteSelectMenu";
-import { SitesApiEndpoint } from "@configs/ApiEndpoints";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useSites } from "@hooks/useSites";
 import * as Sentry from "@sentry/nextjs";

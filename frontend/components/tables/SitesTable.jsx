@@ -1,5 +1,5 @@
 import { Loader } from "@components/loaders";
-import { SitesTableLabels } from "@configs/SitesTableLabels";
+import { SitesTableLabels } from "@constants/SitesTableLabels";
 import { useSites } from "@hooks/useSites";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";

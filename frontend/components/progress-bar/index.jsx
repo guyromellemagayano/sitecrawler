@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import tw, { css } from "twin.macro";
 
-const TopProgressBar = () => {
+const ProgressBar = () => {
 	const [state, setState] = useState({
 		isRouteChanging: false
 	});
@@ -35,38 +35,34 @@ const TopProgressBar = () => {
 		router.events.on("routeChangeComplete", handleRouteChangeEnd);
 		router.events.on("routeChangeError", handleRouteChangeEnd);
 
-		typeof window !== "undefined"
-			? (() => {
-					const originalFetch = window.fetch;
+		const originalFetch = window.fetch;
 
-					window.fetch = async function (...args) {
-						if (activeRequests === 0) {
-							handleRouteChangeStart();
-						}
+		window.fetch = async function (...args) {
+			if (activeRequests === 0) {
+				handleRouteChangeStart();
+			}
 
-						activeRequests++;
+			activeRequests++;
 
-						try {
-							const response = await originalFetch(...args);
-							return response;
-						} catch (error) {
-							return Promise.reject(error);
-						} finally {
-							activeRequests -= 1;
-							if (activeRequests === 0) {
-								handleRouteChangeEnd();
-							}
-						}
-					};
-			  })()
-			: null;
+			try {
+				const response = await originalFetch(...args);
+				return response;
+			} catch (error) {
+				return Promise.reject(error);
+			} finally {
+				activeRequests -= 1;
+				if (activeRequests === 0) {
+					handleRouteChangeEnd();
+				}
+			}
+		};
 
 		return () => {
 			router.events.off("routeChangeStart", handleRouteChangeStart);
 			router.events.off("routeChangeComplete", handleRouteChangeEnd);
 			router.events.off("routeChangeError", handleRouteChangeEnd);
 		};
-	}, [router.events]);
+	}, [router]);
 
 	const { animationDuration, isFinished, progress } = useNProgress({
 		isAnimating: state.isRouteChanging
@@ -75,7 +71,7 @@ const TopProgressBar = () => {
 	return (
 		<div
 			css={[
-				tw`fixed top-0 left-0 w-full h-1 z-50 bg-red-900 ease-linear pointer-events-none transition-opacity`,
+				tw`fixed top-0 left-0 w-full h-1 z-50 bg-red-400 ease-linear pointer-events-none transition-opacity`,
 				css`
 					margin-left: ${(-1 + progress) * 100} + "%";
 					transition-property: margin-left;
@@ -93,7 +89,7 @@ const TopProgressBar = () => {
 					tw`block h-full opacity-100 absolute right-0 transform-gpu rotate-3 translate-x-0 -translate-y-1`,
 					css`
 						width: 100px;
-						box-shadow: 0 0 10px ${tw`bg-red-900`}, 0 0 5px ${tw`bg-red-900`};
+						box-shadow: 0 0 10px ${tw`bg-red-400`}, 0 0 5px ${tw`bg-red-400`};
 					`
 				]}
 			/>
@@ -101,4 +97,4 @@ const TopProgressBar = () => {
 	);
 };
 
-export default TopProgressBar;
+export default ProgressBar;

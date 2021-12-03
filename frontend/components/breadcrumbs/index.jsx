@@ -1,4 +1,4 @@
-import { DashboardSitesLink, DashboardSiteSlug, SiteOverviewSlug, SiteSlug } from "@configs/PageLinks";
+import { DashboardSitesLink, DashboardSiteSlug, SiteOverviewSlug, SiteSlug } from "@constants/PageLinks";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";

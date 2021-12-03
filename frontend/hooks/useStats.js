@@ -1,5 +1,5 @@
-import { SitesApiEndpoint } from "@configs/ApiEndpoints";
-import { ScanSlug } from "@configs/PageLinks";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { ScanSlug } from "@constants/PageLinks";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**

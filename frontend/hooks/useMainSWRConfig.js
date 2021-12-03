@@ -1,5 +1,5 @@
-import { UserApiEndpoint } from "@configs/ApiEndpoints";
-import { OnErrorRetryCount, RevalidationInterval } from "@configs/GlobalValues";
+import { UserApiEndpoint } from "@constants/ApiEndpoints";
+import { OnErrorRetryCount, RevalidationInterval } from "@constants/GlobalValues";
 import * as Sentry from "@sentry/nextjs";
 import { useRouter } from "next/router";
 import useSWR from "swr";

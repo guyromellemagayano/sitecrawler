@@ -1,4 +1,4 @@
-import { PaymentMethodApiEndpoint } from "@configs/ApiEndpoints";
+import { PaymentMethodApiEndpoint } from "@constants/ApiEndpoints";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**

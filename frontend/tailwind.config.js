@@ -25,10 +25,6 @@ module.exports = {
 		applyComplexClasses: true
 	},
 	theme: {
-		inset: {
-			0: "0",
-			0.5: "0.15rem"
-		},
 		extend: {
 			accessibility: ["hover", "active"],
 			colors: {
@@ -412,7 +408,9 @@ module.exports = {
 			"-1/4": "-25%",
 			"-2/4": "-50%",
 			"-3/4": "-75%",
-			"-full": "-100%"
+			"-full": "-100%",
+			"0": "0",
+			"0.5": "0.15rem"
 		}),
 		keyframes: {
 			spin: {
@@ -893,10 +891,5 @@ module.exports = {
 		wordBreak: ["responsive"],
 		zIndex: ["responsive", "focus-within", "focus"]
 	},
-	plugins: [
-		require("@tailwindcss/typography"),
-		require("@tailwindcss/forms"),
-		require("@tailwindcss/aspect-ratio"),
-		require("@tailwindcss/line-clamp")
-	]
+	plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms")]
 };

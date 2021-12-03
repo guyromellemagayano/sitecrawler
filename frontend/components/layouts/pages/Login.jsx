@@ -1,20 +1,16 @@
 import LoginForm from "@components/forms/LoginForm";
 import LogoLabel from "@components/labels/LogoLabel";
 import AppLogo from "@components/logos/AppLogo";
-import { NoAuthAppLogo, SiteLogoDark } from "@configs/GlobalValues";
-import { RegistrationLink } from "@configs/PageLinks";
+import { NoAuthAppLogo, SiteLogoDark } from "@constants/GlobalValues";
+import { RegistrationLink } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 import Footer from "../components/Footer";
 
-/**
- * Memoized function to render the `LoginPageLayout` component.
- */
-const LoginPageLayout = memo(() => {
+export default function LoginPageLayout() {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("common:headline");
@@ -78,6 +74,4 @@ const LoginPageLayout = memo(() => {
 			</Scrollbars>
 		</section>
 	);
-});
-
-export default LoginPageLayout;
+}

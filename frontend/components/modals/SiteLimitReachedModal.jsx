@@ -1,26 +1,19 @@
-import { SubscriptionPlansSettingsLink } from "@configs/PageLinks";
+import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/solid";
-import { useComponentVisible } from "@hooks/useComponentVisible";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { forwardRef, memo } from "react";
 import "twin.macro";
 
-/**
- * Memoized function to render the `SiteLimitReachedModal` component.
- */
-const SiteLimitReachedModal = memo(
-	forwardRef((ref) => {
+export const SiteLimitReachedModal = memo(
+	forwardRef(({ isComponentVisible, setIsComponentVisible }, ref) => {
 		// Translations
 		const { t } = useTranslation("common");
 		const maximumSiteLimitReachedTitle = t("maximumSiteLimitReachedTitle");
 		const maximumSiteLimitReachedMessage = t("maximumSiteLimitReachedMessage");
 		const close = t("close");
 		const upgradePlan = t("upgradePlan");
-
-		// Custom hooks
-		const { isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
 		return (
 			<Transition
@@ -94,5 +87,3 @@ const SiteLimitReachedModal = memo(
 		);
 	})
 );
-
-export default SiteLimitReachedModal;
