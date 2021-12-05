@@ -14,6 +14,8 @@ import { useEffect } from "react";
 library.add(fab);
 library.add(fas);
 
+// const AuthProvider = dynamic(() => import("@hooks/useAuth").then((mod) => mod.AuthProvider), { ssr: true });
+
 export default function App({ Component, pageProps, err }) {
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);
@@ -29,8 +31,8 @@ export default function App({ Component, pageProps, err }) {
 	return getLayout(
 		<>
 			<GlobalStyles />
-			<ProgressBar />
 			<DefaultSeo {...AppSeo} />
+			<ProgressBar />
 			<Component {...pageProps} err={err} />
 		</>
 	);
