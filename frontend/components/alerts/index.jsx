@@ -8,13 +8,19 @@ import {
 	XIcon
 } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { memo, useState } from "react";
 import tw from "twin.macro";
 
 /**
- * Memoized function to render the `Alerts` component.
+ * Custom function to render the `Alert` component
+ *
+ * @param {boolean} isError
+ * @param {boolean} isSuccess
+ * @param {boolean} isWarning
+ * @param {string} message
  */
-const Alert = memo(({ isError = false, isSuccess = false, isWarning = false, message = false }) => {
+export function Alert({ isError = false, isSuccess = false, isWarning = false, message = false }) {
 	const [isOpen, setIsOpen] = useState(true);
 
 	const { t } = useTranslation();
@@ -97,6 +103,16 @@ const Alert = memo(({ isError = false, isSuccess = false, isWarning = false, mes
 			</div>
 		</Transition>
 	);
-});
+}
 
-export default Alert;
+Alert.propTypes = {
+	isError: PropTypes.bool,
+	isSuccess: PropTypes.bool,
+	isWarning: PropTypes.bool,
+	message: PropTypes.bool
+};
+
+/**
+ * Memoized custom `Alert` component
+ */
+export const MemoizedAlert = memo(Alert);
