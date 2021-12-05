@@ -1,15 +1,7 @@
 import { Layout } from "@components/layouts";
+import { MemoizedLoginPageLayout } from "@components/layouts/pages/Login";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import dynamic from "next/dynamic";
-
-/**
- * Dynamic imports
- */
-const MemoizedLoginPageLayout = dynamic(
-	() => import("@components/layouts/pages/Login").then((mod) => mod.MemoizedLoginPageLayout),
-	{ ssr: true }
-);
 
 export default function Login() {
 	// Translations
