@@ -1,5 +1,7 @@
-import SignupForm from "@components/forms/SignupForm";
-import LogoLabel from "@components/labels/LogoLabel";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedSignupForm } from "@components/forms/SignupForm";
+import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -8,9 +10,9 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
 
 /**
- * Memoized function to render the `SignupPageLayout` component
+ * Custom function to render the `SignupPageLayout` component
  */
-const SignupPageLayout = memo(() => {
+export function SignupPageLayout() {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");
@@ -21,11 +23,11 @@ const SignupPageLayout = memo(() => {
 			<Scrollbars universal>
 				<div tw="flex flex-col justify-center h-full">
 					<div tw="relative py-12 sm:px-6 lg:px-8">
-						<LogoLabel isSignUp />
+						<MemoizedLogoLabel isSignUp />
 
 						<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 							<div tw="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
-								<SignupForm />
+								<MemoizedSignupForm />
 							</div>
 
 							<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
@@ -44,6 +46,9 @@ const SignupPageLayout = memo(() => {
 			</Scrollbars>
 		</div>
 	);
-});
+}
 
-export default SignupPageLayout;
+/**
+ * Memoized custom `SignupPageLayout` component
+ */
+export const MemoizedSignupPageLayout = memo(SignupPageLayout);
