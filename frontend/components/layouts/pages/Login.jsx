@@ -1,30 +1,16 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedLoginForm } from "@components/forms/LoginForm";
+import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
+import { MemoizedAppLogo } from "@components/logos/AppLogo";
 import { NoAuthAppLogo, SiteLogoDark } from "@constants/GlobalValues";
 import { RegistrationLink } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
-
-/**
- * Dynamic imports
- */
-const MemoizedLogoLabel = dynamic(() => import("@components/labels/LogoLabel").then((mod) => mod.MemoizedLogoLabel), {
-	ssr: true
-});
-const MemoizedAppLogo = dynamic(() => import("@components/logos/AppLogo").then((mod) => mod.MemoizedAppLogo), {
-	ssr: true
-});
-const MemoizedLoginForm = dynamic(() => import("@components/forms/LoginForm").then((mod) => mod.MemoizedLoginForm), {
-	ssr: true
-});
-const MemoizedFooter = dynamic(
-	() => import("@components/layouts/components/Footer").then((mod) => mod.MemoizedFooter),
-	{ ssr: true }
-);
+import { MemoizedFooter } from "../components/Footer";
 
 /**
  * Custom function to render the `LoginPageLayout` component
