@@ -1,5 +1,5 @@
 import { Layout } from "@components/layouts";
-import SignupPageLayout from "@components/layouts/pages/Signup";
+import { MemoizedSignupPageLayout } from "@components/layouts/pages/Signup";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { SSR_URL } from "@constants/ServerEnv";
@@ -41,7 +41,7 @@ export default function Signup() {
 	return (
 		<>
 			<NextSeo title={completeSignup} />
-			<SignupPageLayout />
+			<MemoizedSignupPageLayout />
 		</>
 	);
 }

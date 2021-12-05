@@ -1,19 +1,23 @@
-import Alert from "@components/alerts";
+/* eslint-disable no-prototype-builtins */
+import { MemoizedAlert } from "@components/alerts";
 import { SignupApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { FormPasswordMaxChars, FormPasswordMinChars, RedirectInterval } from "@constants/GlobalValues";
 import { ConfirmSlug, DashboardSitesLink } from "@constants/PageLinks";
-import { usePostMethod } from "@hooks/useHttpMethod";
+import { handlePostMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
-const SignupForm = memo(() => {
+/**
+ * Custom function to render the `SignupForm` component
+ */
+export function SignupForm() {
 	const [disableSignupForm, setDisableSignupForm] = useState(false);
 	const [isErrorPassword, setIsErrorPassword] = useState(false);
 	const [errorMessage, setErrorMessage] = useState([]);
@@ -42,13 +46,17 @@ const SignupForm = memo(() => {
 	const tooShort = t("common:tooShort");
 
 	// Set the `uid` and `token` from the URL query parameters
-	useEffect(() => {
+	const handleUid = useCallback(() => {
 		const hasKeyProperty = query.hasOwnProperty("id") ? true : false;
 
 		if (Object.keys(query).length > 0 && hasKeyProperty) {
 			setUid(query.id[0]);
 		}
 	}, [query]);
+
+	useEffect(() => {
+		handleUid();
+	}, [handleUid]);
 
 	// Complete signup API endpoint
 	let signupConfirmApiEndpoint = SignupApiEndpoint + uid + ConfirmSlug;
@@ -58,7 +66,7 @@ const SignupForm = memo(() => {
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
-						<Alert key={key} message={value} isError />
+						<MemoizedAlert key={key} message={value} isError />
 					))}
 				</div>
 			) : null}
@@ -66,7 +74,7 @@ const SignupForm = memo(() => {
 			{successMessage !== [] && successMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{successMessage.map((value, key) => (
-						<Alert key={key} message={value} isSuccess />
+						<MemoizedAlert key={key} message={value} isSuccess />
 					))}
 				</div>
 			) : null}
@@ -93,7 +101,7 @@ const SignupForm = memo(() => {
 						password: values.password
 					};
 
-					const signupResponse = await usePostMethod(signupConfirmApiEndpoint, body);
+					const signupResponse = await handlePostMethod(signupConfirmApiEndpoint, body);
 					const signupResponseData = signupResponse.data ?? null;
 					const signupResponseStatus = signupResponse.status ?? null;
 
@@ -152,7 +160,6 @@ const SignupForm = memo(() => {
 									id="password"
 									type="password"
 									name="password"
-									autoFocus={true}
 									disabled={isSubmitting || disableSignupForm}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
@@ -224,6 +231,9 @@ const SignupForm = memo(() => {
 			</Formik>
 		</>
 	);
-});
+}
 
-export default SignupForm;
+/**
+ * Memoized custom `SignupForm` component
+ */
+export const MemoizedSignupForm = memo(SignupForm);
