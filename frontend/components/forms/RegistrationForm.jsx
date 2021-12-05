@@ -1,4 +1,3 @@
-import Alert from "@components/alerts";
 import { RegistrationApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import {
 	FormPasswordMaxChars,
@@ -6,10 +5,11 @@ import {
 	FormStringMaxChars,
 	FormStringMinChars
 } from "@constants/GlobalValues";
-import { usePostMethod } from "@hooks/useHttpMethod";
+import { handlePostMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { memo, useState } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
@@ -18,9 +18,14 @@ import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
- * Memoized function to render the `RegistrationForm` component.
+ * Dynamic imports
  */
-const RegistrationForm = memo(() => {
+const Alert = dynamic(() => import("@components/alerts"), { ssr: true });
+
+/**
+ * Custom function to render the `RegistrationForm` component
+ */
+export function RegistrationForm() {
 	const [isErrorEmail, setIsErrorEmail] = useState(false);
 	const [isErrorUsername, setIsErrorUsername] = useState(false);
 	const [errorMessage, setErrorMessage] = useState([]);
@@ -109,7 +114,7 @@ const RegistrationForm = memo(() => {
 						last_name: values.lastname
 					};
 
-					const registrationResponse = await usePostMethod(RegistrationApiEndpoint, body);
+					const registrationResponse = await handlePostMethod(RegistrationApiEndpoint, body);
 					const registrationResponseData = registrationResponse.data ?? null;
 					const registrationResponseStatus = registrationResponse.status ?? null;
 
@@ -197,7 +202,6 @@ const RegistrationForm = memo(() => {
 									id="firstname"
 									type="text"
 									name="firstname"
-									autoFocus={true}
 									disabled={isSubmitting}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
@@ -385,6 +389,9 @@ const RegistrationForm = memo(() => {
 			</Formik>
 		</>
 	);
-});
+}
 
-export default RegistrationForm;
+/**
+ * Memoized custom `RegistrationForm` component
+ */
+export const MemoizedRegistrationForm = memo(RegistrationForm);
