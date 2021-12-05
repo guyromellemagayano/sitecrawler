@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import Alert from "@components/alerts";
+import { MemoizedAlert } from "@components/alerts";
 import { LoginApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { ResetPasswordLink } from "@constants/PageLinks";
 import { SocialLoginLinks } from "@constants/SocialLogin";
@@ -57,7 +57,7 @@ export function LoginForm() {
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
-						<Alert key={key} message={value} isError />
+						<MemoizedAlert key={key} message={value} isError />
 					))}
 				</div>
 			) : null}
@@ -65,7 +65,7 @@ export function LoginForm() {
 			{successMessage !== [] && successMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{successMessage.map((value, key) => (
-						<Alert key={key} message={value} isSuccess />
+						<MemoizedAlert key={key} message={value} isSuccess />
 					))}
 				</div>
 			) : null}
@@ -123,8 +123,8 @@ export function LoginForm() {
 					} else {
 						let errorStatusCodeMessage = "";
 
-						resetForm({ values: "" });
 						setSubmitting(false);
+						resetForm({ values: "" });
 
 						switch (loginResponseStatus) {
 							case 400:
