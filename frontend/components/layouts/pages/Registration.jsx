@@ -1,24 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedRegistrationForm } from "@components/forms/RegistrationForm";
+import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
-
-/**
- * Dynamic imports
- */
-const MemoizedLogoLabel = dynamic(() => import("@components/labels/LogoLabel").then((mod) => mod.MemoizedLogoLabel), {
-	ssr: true
-});
-const MemoizedRegistrationForm = dynamic(
-	() => import("@components/forms/RegistrationForm").then((mod) => mod.MemoizedRegistrationForm),
-	{
-		ssr: true
-	}
-);
 
 /**
  * Custom function to render the `RegistrationPageLayout` component
