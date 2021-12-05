@@ -9,7 +9,7 @@ import {
 } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import tw from "twin.macro";
 
 /**
@@ -20,7 +20,7 @@ import tw from "twin.macro";
  * @param {boolean} isWarning
  * @param {string} message
  */
-export function Alert({ isError = false, isSuccess = false, isWarning = false, message = false }) {
+export function Alert({ isError = false, isSuccess = false, isWarning = false, message = null }) {
 	const [isOpen, setIsOpen] = useState(true);
 
 	const { t } = useTranslation();
@@ -33,9 +33,13 @@ export function Alert({ isError = false, isSuccess = false, isWarning = false, m
 		? (alertRetentionTime = message?.length * 75)
 		: (alertRetentionTime = RevalidationInterval);
 
-	setTimeout(() => {
-		setIsOpen(false);
-	}, alertRetentionTime);
+	useEffect(() => {
+		return () => {
+			setTimeout(() => {
+				setIsOpen(false);
+			}, alertRetentionTime);
+		};
+	}, [alertRetentionTime]);
 
 	return (
 		<Transition
@@ -64,7 +68,7 @@ export function Alert({ isError = false, isSuccess = false, isWarning = false, m
 					)}
 				</div>
 				<div tw="ml-3">
-					<h3
+					<p
 						css={[
 							tw`text-sm leading-5 font-medium break-words`,
 							isSuccess
@@ -77,7 +81,7 @@ export function Alert({ isError = false, isSuccess = false, isWarning = false, m
 						]}
 					>
 						{message}
-					</h3>
+					</p>
 				</div>
 				<div tw="ml-auto pl-3">
 					<div tw="flex items-center -mx-1.5">
@@ -109,7 +113,7 @@ Alert.propTypes = {
 	isError: PropTypes.bool,
 	isSuccess: PropTypes.bool,
 	isWarning: PropTypes.bool,
-	message: PropTypes.bool
+	message: PropTypes.string
 };
 
 /**
