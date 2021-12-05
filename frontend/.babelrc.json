@@ -6,7 +6,7 @@
 					"next/babel",
 					{
 						"preset-react": {
-							"development": true
+							"development": false
 						}
 					}
 				]
@@ -34,11 +34,7 @@
 		[
 			"babel-plugin-styled-components",
 			{
-				"ssr": false,
-				"displayName": false,
-				"minify": false,
-				"preprocess": false,
-				"pure": true
+				"ssr": true
 			}
 		]
 	]
