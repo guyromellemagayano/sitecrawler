@@ -1,24 +1,25 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import Alert from "@components/alerts";
 import { LoginApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
-import { DashboardSitesLink, ResetPasswordLink } from "@constants/PageLinks";
+import { ResetPasswordLink } from "@constants/PageLinks";
 import { SocialLoginLinks } from "@constants/SocialLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { usePostMethod } from "@hooks/useHttpMethod";
+import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { useShowPassword } from "@hooks/useShowPassword";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
- * Memoized function to render the `LoginForm` component.
+ * Custom function to render the `LoginForm` component
  */
-const LoginForm = () => {
+export function LoginForm() {
 	const [disableLoginForm, setDisableLoginForm] = useState(false);
 	const [errorMessage, setErrorMessage] = useState([]);
 	const [successMessage, setSuccessMessage] = useState([]);
@@ -27,9 +28,7 @@ const LoginForm = () => {
 	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
 
 	// Router
-	const { pathname } = useRouter();
 	const { asPath } = useRouter();
-	const router = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -92,7 +91,7 @@ const LoginForm = () => {
 					// } else {
 					// }
 
-					const loginResponse = await usePostMethod(LoginApiEndpoint, body);
+					const loginResponse = await handlePostMethod(LoginApiEndpoint, body);
 					const loginResponseData = loginResponse.data ?? null;
 					const loginResponseStatus = loginResponse.status ?? null;
 
@@ -120,7 +119,7 @@ const LoginForm = () => {
 						]);
 
 						// Redirect to sites dashboard page after successful 200 OK response is established
-						router.push(DashboardSitesLink);
+						// router.push(DashboardSitesLink);
 					} else {
 						let errorStatusCodeMessage = "";
 
@@ -169,7 +168,6 @@ const LoginForm = () => {
 										name="username"
 										type="text"
 										autoComplete="username"
-										autoFocus={true}
 										disabled={isSubmitting || disableLoginForm}
 										css={[
 											tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
@@ -260,7 +258,7 @@ const LoginForm = () => {
 								</div>
 
 								<div tw="text-sm">
-									<Link href={ResetPasswordLink}>
+									<Link href={ResetPasswordLink} passHref>
 										<a
 											css={[
 												tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150 cursor-pointer`,
@@ -335,6 +333,9 @@ const LoginForm = () => {
 			</Formik>
 		</>
 	);
-};
+}
 
-export default LoginForm;
+/**
+ * Memoized custom `LoginForm` component
+ */
+export const MemoizedLoginForm = memo(LoginForm);
