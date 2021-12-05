@@ -25,8 +25,7 @@ export function SignupForm() {
 	const [uid, setUid] = useState(null);
 
 	// Router
-	const { asPath } = useRouter();
-	const { query } = useRouter();
+	const { asPath, query } = useRouter();
 	const router = useRouter();
 
 	// SWR hook for global mutations
@@ -55,7 +54,7 @@ export function SignupForm() {
 	}, [query]);
 
 	useEffect(() => {
-		handleUid();
+		return handleUid();
 	}, [handleUid]);
 
 	// Complete signup API endpoint

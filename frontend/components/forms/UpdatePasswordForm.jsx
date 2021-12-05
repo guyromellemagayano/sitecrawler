@@ -39,8 +39,7 @@ export function UpdatePasswordForm() {
 	const updatePasswordInvalidTokenError = t("alerts:updatePasswordInvalidTokenError");
 
 	// Router
-	const { asPath } = useRouter();
-	const { query } = useRouter();
+	const { asPath, query } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
