@@ -1,5 +1,6 @@
-import UpdatePasswordForm from "@components/forms/UpdatePasswordForm";
-import LogoLabel from "@components/labels/LogoLabel";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedUpdatePasswordForm } from "@components/forms/UpdatePasswordForm";
+import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -8,9 +9,9 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
 
 /**
- * Memoized function to render the `ResetPasswordFormPageLayout` component
+ * Custom function to render the `ResetPasswordFormPageLayout` component
  */
-const ResetPasswordFormPageLayout = memo(() => {
+export function ResetPasswordFormPageLayout() {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");
@@ -21,11 +22,11 @@ const ResetPasswordFormPageLayout = memo(() => {
 			<Scrollbars universal>
 				<div tw="flex flex-col justify-center h-full">
 					<div tw="relative py-12 sm:px-6 lg:px-8">
-						<LogoLabel isResetPasswordForm />
+						<MemoizedLogoLabel isResetPasswordForm />
 
 						<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 							<div tw="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
-								<UpdatePasswordForm />
+								<MemoizedUpdatePasswordForm />
 							</div>
 
 							<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
@@ -44,6 +45,9 @@ const ResetPasswordFormPageLayout = memo(() => {
 			</Scrollbars>
 		</div>
 	);
-});
+}
 
-export default ResetPasswordFormPageLayout;
+/**
+ * Memoized custom `ResetPasswordFormPageLayout` component
+ */
+export const MemoizedResetPasswordFormPageLayout = memo(ResetPasswordFormPageLayout);

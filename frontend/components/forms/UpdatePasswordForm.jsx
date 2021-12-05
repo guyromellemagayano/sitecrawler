@@ -1,7 +1,9 @@
-import Alert from "@components/alerts";
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedAlert } from "@components/alerts";
 import { ConfirmResetPasswordApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { FormPasswordMaxChars, FormPasswordMinChars } from "@constants/GlobalValues";
-import { usePostMethod } from "@hooks/useHttpMethod";
+import { handlePostMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
@@ -13,9 +15,9 @@ import tw from "twin.macro";
 import * as Yup from "yup";
 
 /**
- * Memoized function to render the `UpdatePasswordForm` component.
+ * Custom function to render the `UpdatePasswordForm` component
  */
-const UpdatePasswordForm = memo(() => {
+export function UpdatePasswordForm() {
 	const [errorMessage, setErrorMessage] = useState([]);
 	const [successMessage, setSuccessMessage] = useState([]);
 	const [uid, setUid] = useState(null);
@@ -58,7 +60,7 @@ const UpdatePasswordForm = memo(() => {
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
-						<Alert key={key} message={value} isError />
+						<MemoizedAlert key={key} message={value} isError />
 					))}
 				</div>
 			) : null}
@@ -66,7 +68,7 @@ const UpdatePasswordForm = memo(() => {
 			{successMessage !== [] && successMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{successMessage.map((value, key) => (
-						<Alert key={key} message={value} isSuccess />
+						<MemoizedAlert key={key} message={value} isSuccess />
 					))}
 				</div>
 			) : null}
@@ -98,7 +100,7 @@ const UpdatePasswordForm = memo(() => {
 						token: token
 					};
 
-					const updatePasswordResponse = await usePostMethod(ConfirmResetPasswordApiEndpoint, body);
+					const updatePasswordResponse = await handlePostMethod(ConfirmResetPasswordApiEndpoint, body);
 					const updatePasswordResponseData = updatePasswordResponse.data ?? null;
 					const updatePasswordResponseStatus = updatePasswordResponse.status ?? null;
 
@@ -106,8 +108,8 @@ const UpdatePasswordForm = memo(() => {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
 						mutate(UserApiEndpoint, false);
 
-						resetForm({ values: "" });
 						setSubmitting(false);
+						resetForm({ values: "" });
 						setSuccessMessage((prevState) => [
 							...prevState,
 							prevState.indexOf(updatePasswordOkSuccess) !== -1
@@ -117,8 +119,8 @@ const UpdatePasswordForm = memo(() => {
 					} else {
 						let errorStatusCodeMessage = "";
 
-						resetForm({ values: "" });
 						setSubmitting(false);
+						resetForm({ values: "" });
 
 						switch (updatePasswordResponseStatus) {
 							case 400:
@@ -240,6 +242,9 @@ const UpdatePasswordForm = memo(() => {
 			</Formik>
 		</>
 	);
-});
+}
 
-export default UpdatePasswordForm;
+/**
+ * Memoized custom `UpdatePasswordForm` component
+ */
+export const MemoizedUpdatePasswordForm = memo(UpdatePasswordForm);

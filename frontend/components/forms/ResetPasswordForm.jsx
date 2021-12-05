@@ -1,6 +1,7 @@
-import Alert from "@components/alerts";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedAlert } from "@components/alerts";
 import { ResetPasswordApiEndpoint } from "@constants/ApiEndpoints";
-import { usePostMethod } from "@hooks/useHttpMethod";
+import { handlePostMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
@@ -12,7 +13,7 @@ import * as Yup from "yup";
 /**
  * Memoized function to render the `ResetPasswordForm` component.
  */
-const ResetPasswordForm = memo(() => {
+export function ResetPasswordForm() {
 	const [errorMessage, setErrorMessage] = useState([]);
 	const [successMessage, setSuccessMessage] = useState([]);
 
@@ -35,7 +36,7 @@ const ResetPasswordForm = memo(() => {
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
-						<Alert key={key} message={value} isError />
+						<MemoizedAlert key={key} message={value} isError />
 					))}
 				</div>
 			) : null}
@@ -43,7 +44,7 @@ const ResetPasswordForm = memo(() => {
 			{successMessage !== [] && successMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{successMessage.map((value, key) => (
-						<Alert key={key} message={value} isSuccess />
+						<MemoizedAlert key={key} message={value} isSuccess />
 					))}
 				</div>
 			) : null}
@@ -60,13 +61,13 @@ const ResetPasswordForm = memo(() => {
 						email: values.email
 					};
 
-					const resetPasswordResponse = await usePostMethod(ResetPasswordApiEndpoint, body);
+					const resetPasswordResponse = await handlePostMethod(ResetPasswordApiEndpoint, body);
 					const resetPasswordResponseData = resetPasswordResponse.data ?? null;
 					const resetPasswordResponseStatus = resetPasswordResponse.status ?? null;
 
 					if (resetPasswordResponseData !== null && Math.round(resetPasswordResponseStatus / 200) === 1) {
-						resetForm({ values: "" });
 						setSubmitting(false);
+						resetForm({ values: "" });
 						setSuccessMessage((prevState) => [
 							...prevState,
 							prevState.indexOf(resetPasswordOkSuccess) !== -1
@@ -76,8 +77,8 @@ const ResetPasswordForm = memo(() => {
 					} else {
 						let errorStatusCodeMessage = "";
 
-						resetForm({ values: "" });
 						setSubmitting(false);
+						resetForm({ values: "" });
 
 						switch (resetPasswordResponseStatus) {
 							case 400:
@@ -120,7 +121,6 @@ const ResetPasswordForm = memo(() => {
 									type="email"
 									name="email"
 									disabled={isSubmitting}
-									autoFocus={true}
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
@@ -161,6 +161,9 @@ const ResetPasswordForm = memo(() => {
 			</Formik>
 		</>
 	);
-});
+}
 
-export default ResetPasswordForm;
+/**
+ * Memoized custom `ResetPasswordForm` component
+ */
+export const MemoizedResetPasswordForm = memo(ResetPasswordForm);
