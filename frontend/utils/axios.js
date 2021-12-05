@@ -1,12 +1,10 @@
 import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
-import { FormSubmissionInterval } from "@constants/GlobalValues";
 import { SITE_URL } from "@constants/ServerEnv";
 import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
 
 const AppAxiosInstance = axios.create({
 	baseURL: SITE_URL,
-	timeout: FormSubmissionInterval,
 	headers: customAxiosHeaders,
 	validateStatus: function (status) {
 		return status >= 200 && status < 500;
