@@ -40,7 +40,7 @@ export function ConfirmEmailPageLayout() {
 	const goBackLogin = t("common:goBackLogin");
 	const reloadPage = t("common:reloadPage");
 
-	const confirmEmail = useCallback(async () => {
+	const handleConfirmEmail = useCallback(async () => {
 		const body = {
 			key: query.id[0]
 		};
@@ -85,8 +85,8 @@ export function ConfirmEmailPageLayout() {
 	}, [asPath, query]);
 
 	useEffect(() => {
-		confirmEmail();
-	}, [confirmEmail]);
+		handleConfirmEmail();
+	}, [handleConfirmEmail]);
 
 	return (
 		<div tw="bg-gray-50 overflow-auto h-screen">
