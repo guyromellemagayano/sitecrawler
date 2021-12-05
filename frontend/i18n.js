@@ -2,20 +2,18 @@ module.exports = {
 	locales: ["en", "fr", "nl"],
 	defaultLocale: "en",
 	pages: {
-		"*": [
-			"accountExist",
-			"addSite",
-			"alerts",
-			"auditLogs",
-			"common",
-			"confirmEmail",
-			"home",
-			"login",
-			"registration",
-			"sidebar",
-			"signup",
-			"sites"
-		]
+		"*": ["alerts", "common"],
+		"/": ["home"],
+		"/account-exist": ["accountExist"],
+		"/confirm-email/*": ["confirmEmail"],
+		"/dashboard/*": ["sidebar"],
+		"/dashboard/add-new-site": ["addSite"],
+		"/dashboard/audit-logs": ["auditLogs"],
+		"/dashboard/sites": ["sites"],
+		"/login": ["login"],
+		"/registration": ["registration"],
+		"/reset-password/*": ["resetPassword"],
+		"/signup/*": ["signup"]
 	},
 	interpolation: {
 		prefix: "${",
