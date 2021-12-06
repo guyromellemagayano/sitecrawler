@@ -1,16 +1,21 @@
-import LoginForm from "@components/forms/LoginForm";
-import LogoLabel from "@components/labels/LogoLabel";
-import AppLogo from "@components/logos/AppLogo";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedLoginForm } from "@components/forms/LoginForm";
+import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
+import { MemoizedAppLogo } from "@components/logos/AppLogo";
 import { NoAuthAppLogo, SiteLogoDark } from "@constants/GlobalValues";
 import { RegistrationLink } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
-import Footer from "../components/Footer";
+import { MemoizedFooter } from "../components/Footer";
 
-export default function LoginPageLayout() {
+/**
+ * Custom function to render the `LoginPageLayout` component
+ */
+export function LoginPageLayout() {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("common:headline");
@@ -28,7 +33,7 @@ export default function LoginPageLayout() {
 								<div tw="lg:grid lg:grid-cols-12 lg:gap-8">
 									<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
 										<div>
-											<AppLogo
+											<MemoizedAppLogo
 												className="flex"
 												src={SiteLogoDark}
 												alt={NoAuthAppLogo.label}
@@ -43,17 +48,17 @@ export default function LoginPageLayout() {
 										</div>
 									</div>
 									<div tw="mt-12 sm:mt-16 lg:mt-0 lg:col-span-5">
-										<LogoLabel isLogin />
+										<MemoizedLogoLabel isLogin />
 
 										<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 											<div tw="bg-white mt-8 py-8 px-4 shadow-xl rounded-lg sm:px-10">
-												<LoginForm />
+												<MemoizedLoginForm />
 											</div>
 
 											<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 												<span tw="px-2 py-5 text-gray-500">
 													{noAccount}&nbsp;
-													<Link href={RegistrationLink}>
+													<Link href={RegistrationLink} passHref>
 														<a tw="font-medium text-indigo-600 cursor-pointer hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150">
 															{createAccount}
 														</a>
@@ -65,7 +70,7 @@ export default function LoginPageLayout() {
 								</div>
 
 								<div tw="px-4 xl:px-10 xl:mt-32">
-									<Footer />
+									<MemoizedFooter />
 								</div>
 							</div>
 						</div>
@@ -75,3 +80,8 @@ export default function LoginPageLayout() {
 		</section>
 	);
 }
+
+/**
+ * Memoized custom `LoginPageLayout` component
+ */
+export const MemoizedLoginPageLayout = memo(LoginPageLayout);

@@ -3,7 +3,7 @@ import { memo } from "react";
 import "twin.macro";
 
 /**
- * Memoized function to render the `AppLogo` component.
+ * Custom function to render the `AppLogo` component
  *
  * @param {string} alt
  * @param {number} height
@@ -11,8 +11,11 @@ import "twin.macro";
  * @param {number} width
  * @param {string} className
  */
-const AppLogo = memo(({ alt = null, height = null, src = null, width = null }) => {
+export function AppLogo({ alt = null, height = null, src = null, width = null }) {
 	return <Image src={src} alt={alt} width={width} height={height} priority />;
-});
+}
 
-export default AppLogo;
+/**
+ * Memoized custom `AppLogo` component
+ */
+export const MemoizedAppLogo = memo(AppLogo);

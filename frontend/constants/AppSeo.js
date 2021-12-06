@@ -1,5 +1,4 @@
-// FIXME: default SEO of app
-
+/* eslint-disable import/no-anonymous-default-export */
 export default {
 	title: "Welcome",
 	titleTemplate: "%s | SiteCrawler",

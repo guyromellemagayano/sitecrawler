@@ -1,8 +1,12 @@
 import { FooterLabels } from "@constants/FooterLabels";
 import useTranslation from "next-translate/useTranslation";
+import { memo } from "react";
 import "twin.macro";
 
-const Footer = () => {
+/**
+ * Custom function to render the `Footer` component
+ */
+export function Footer() {
 	// Translations
 	const { t } = useTranslation("common");
 	const allRightsReserved = t("allRightsReserved");
@@ -33,6 +37,9 @@ const Footer = () => {
 			</div>
 		</footer>
 	);
-};
+}
 
-export default Footer;
+/**
+ * Memoized custom `Footer` component
+ */
+export const MemoizedFooter = memo(Footer);

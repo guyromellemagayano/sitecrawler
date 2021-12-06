@@ -1,9 +1,9 @@
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { OnErrorRetryCount, RevalidationInterval } from "@constants/GlobalValues";
+import { handleGetMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { useGetMethod } from "./useHttpMethod";
 
 /**
  * Main SWR React hook that will handle all the data fetching, error reporting, and revalidating when `onErrorRetry` is triggered within the app
@@ -15,7 +15,7 @@ export const useMainSWRConfig = (endpoint = null) => {
 	// Router
 	const { asPath } = useRouter();
 
-	const { data, error, isValidating } = useSWR(endpoint, useGetMethod, {
+	const { data, error, isValidating } = useSWR(endpoint, handleGetMethod, {
 		// Capture unknown errors and send to Sentry
 		onError: (err, key, config) => {
 			Sentry.withScope((scope) => {

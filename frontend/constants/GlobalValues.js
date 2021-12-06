@@ -44,6 +44,3 @@ export const sortByFinishedAtDescending = "-finished_at";
 export const Basic = "Basic";
 export const Pro = "Pro";
 export const Agency = "Agency";
-
-// Slugs
-export const ApiSlug = "/api/";

@@ -1,13 +1,14 @@
 import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
-import { ApiSlug, FormSubmissionInterval } from "@constants/GlobalValues";
-import { server } from "@constants/ServerEnv";
+import { SITE_URL } from "@constants/ServerEnv";
 import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
 
 const AppAxiosInstance = axios.create({
-	baseURL: `${server + ApiSlug}`,
-	timeout: FormSubmissionInterval,
-	headers: customAxiosHeaders
+	baseURL: SITE_URL,
+	headers: customAxiosHeaders,
+	validateStatus: function (status) {
+		return status >= 200 && status < 500;
+	}
 });
 
 // Use `axios` interceptors for all HTTP methods (GET, POST, PUT, DELETE, etc.)

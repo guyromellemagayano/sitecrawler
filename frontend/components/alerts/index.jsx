@@ -8,13 +8,19 @@ import {
 	XIcon
 } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useState } from "react";
+import PropTypes from "prop-types";
+import { memo, useEffect, useState } from "react";
 import tw from "twin.macro";
 
 /**
- * Memoized function to render the `Alerts` component.
+ * Custom function to render the `Alert` component
+ *
+ * @param {boolean} isError
+ * @param {boolean} isSuccess
+ * @param {boolean} isWarning
+ * @param {string} message
  */
-const Alert = memo(({ isError = false, isSuccess = false, isWarning = false, message = false }) => {
+export function Alert({ isError = false, isSuccess = false, isWarning = false, message = null }) {
 	const [isOpen, setIsOpen] = useState(true);
 
 	const { t } = useTranslation();
@@ -27,9 +33,13 @@ const Alert = memo(({ isError = false, isSuccess = false, isWarning = false, mes
 		? (alertRetentionTime = message?.length * 75)
 		: (alertRetentionTime = RevalidationInterval);
 
-	setTimeout(() => {
-		setIsOpen(false);
-	}, alertRetentionTime);
+	useEffect(() => {
+		return () => {
+			setTimeout(() => {
+				setIsOpen(false);
+			}, alertRetentionTime);
+		};
+	}, [alertRetentionTime]);
 
 	return (
 		<Transition
@@ -58,7 +68,7 @@ const Alert = memo(({ isError = false, isSuccess = false, isWarning = false, mes
 					)}
 				</div>
 				<div tw="ml-3">
-					<h3
+					<p
 						css={[
 							tw`text-sm leading-5 font-medium break-words`,
 							isSuccess
@@ -71,7 +81,7 @@ const Alert = memo(({ isError = false, isSuccess = false, isWarning = false, mes
 						]}
 					>
 						{message}
-					</h3>
+					</p>
 				</div>
 				<div tw="ml-auto pl-3">
 					<div tw="flex items-center -mx-1.5">
@@ -97,6 +107,16 @@ const Alert = memo(({ isError = false, isSuccess = false, isWarning = false, mes
 			</div>
 		</Transition>
 	);
-});
+}
 
-export default Alert;
+Alert.propTypes = {
+	isError: PropTypes.bool,
+	isSuccess: PropTypes.bool,
+	isWarning: PropTypes.bool,
+	message: PropTypes.string
+};
+
+/**
+ * Memoized custom `Alert` component
+ */
+export const MemoizedAlert = memo(Alert);

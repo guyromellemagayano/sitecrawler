@@ -1,11 +1,16 @@
-import LogoLabel from "@components/labels/LogoLabel";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
 
-export default function AccountExistPageLayout() {
+/**
+ * Custom function to render the `AccountExistPageLayout` component
+ */
+export function AccountExistPageLayout() {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("accountExist:headline");
@@ -17,7 +22,7 @@ export default function AccountExistPageLayout() {
 			<Scrollbars universal>
 				<div tw="flex flex-col justify-center h-full">
 					<div tw="relative py-12 sm:px-6 lg:px-8">
-						<LogoLabel isAccountExist />
+						<MemoizedLogoLabel isAccountExist />
 
 						<div tw="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 							<div tw="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
@@ -40,3 +45,8 @@ export default function AccountExistPageLayout() {
 		</div>
 	);
 }
+
+/**
+ * Memoized custom `AccountExistPageLayout` component
+ */
+export const MemoizedAccountExistPageLayout = memo(AccountExistPageLayout);

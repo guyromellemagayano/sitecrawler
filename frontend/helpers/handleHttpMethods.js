@@ -1,4 +1,4 @@
-import { AppAxiosInstance } from "@utils/axios";
+import AppAxiosInstance from "@utils/axios";
 
 /**
  * Axios callback function to be used for deleting data
@@ -6,7 +6,7 @@ import { AppAxiosInstance } from "@utils/axios";
  * @param {string} endpoint
  * @returns {object} Promise object representing the DELETE response
  */
-export const useDeleteMethod = async (endpoint) => {
+export const handleDeleteMethod = async (endpoint) => {
 	return await AppAxiosInstance.delete(endpoint ?? null);
 };
 
@@ -16,7 +16,7 @@ export const useDeleteMethod = async (endpoint) => {
  * @param {string} endpoint
  * @returns {object} Promise object representing the GET response
  */
-export const useGetMethod = async (endpoint) => {
+export const handleGetMethod = async (endpoint) => {
 	return await AppAxiosInstance.get(endpoint ?? null);
 };
 
@@ -27,7 +27,7 @@ export const useGetMethod = async (endpoint) => {
  * @param {object} data
  * @returns {object} Promise object representing the PATCH response
  */
-export const usePatchMethod = async (endpoint, data) => {
+export const handlePatchMethod = async (endpoint, data) => {
 	return await AppAxiosInstance.patch(endpoint ?? null, data ?? null);
 };
 
@@ -38,7 +38,7 @@ export const usePatchMethod = async (endpoint, data) => {
  * @param {object} data
  * @returns {object} Promise object representing the POST response
  */
-export const usePostMethod = async (endpoint, data) => {
+export const handlePostMethod = async (endpoint, data) => {
 	return await AppAxiosInstance.post(endpoint ?? null, data ?? null);
 };
 
@@ -49,6 +49,6 @@ export const usePostMethod = async (endpoint, data) => {
  * @param {object} data
  * @returns {object} Promise object representing the PUT response
  */
-export const usePutMethod = async (endpoint, data) => {
+export const handlePutMethod = async (endpoint, data) => {
 	return await AppAxiosInstance.put(endpoint ?? null, data ?? null);
 };
