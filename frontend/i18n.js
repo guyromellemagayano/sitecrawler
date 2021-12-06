@@ -5,7 +5,7 @@ module.exports = {
 		"*": ["alerts", "common"],
 		"/": ["home"],
 		"/account-exist": ["accountExist"],
-		"/confirm-email/*": ["confirmEmail"],
+		"/confirm-email/[...id]": ["confirmEmail"],
 		"/dashboard/*": ["sidebar"],
 		"/dashboard/add-new-site": ["addSite"],
 		"/dashboard/audit-logs": ["auditLogs"],
@@ -13,7 +13,7 @@ module.exports = {
 		"/login": ["login"],
 		"/registration": ["registration"],
 		"/reset-password/*": ["resetPassword"],
-		"/signup/*": ["signup"]
+		"/signup/[...id]": ["signup"]
 	},
 	interpolation: {
 		prefix: "${",
