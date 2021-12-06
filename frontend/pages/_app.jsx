@@ -4,6 +4,7 @@ import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import { AuthProvider } from "@hooks/useAuth";
 import { GlobalStyles } from "@styles/GlobalStyles";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
@@ -13,8 +14,6 @@ import { useEffect } from "react";
 // Font Awesome
 library.add(fab);
 library.add(fas);
-
-// const AuthProvider = dynamic(() => import("@hooks/useAuth").then((mod) => mod.AuthProvider), { ssr: true });
 
 export default function App({ Component, pageProps, err }) {
 	// Use the layout defined at the page level, if available
@@ -29,11 +28,11 @@ export default function App({ Component, pageProps, err }) {
 	}, []);
 
 	return getLayout(
-		<>
+		<AuthProvider>
 			<GlobalStyles />
 			<DefaultSeo {...AppSeo} />
 			<ProgressBar />
 			<Component {...pageProps} err={err} />
-		</>
+		</AuthProvider>
 	);
 }
