@@ -49,7 +49,7 @@
 		"@fortawesome/react-fontawesome": "^0.1.16",
 		"@headlessui/react": "^1.4.2",
 		"@heroicons/react": "^1.0.5",
-		"@next/bundle-analyzer": "^12.0.4",
+		"@next/bundle-analyzer": "^12.0.7",
 		"@sentry/nextjs": "6.15.0",
 		"@stripe/react-stripe-js": "^1.6.0",
 		"@stripe/stripe-js": "^1.21.1",
