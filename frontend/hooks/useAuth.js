@@ -31,7 +31,11 @@ export const AuthProvider = ({ children }) => {
 					return;
 				}
 			} else {
-				router.push(LoginLink);
+				if (!pathname.includes(DashboardSlug)) {
+					return;
+				} else {
+					router.push(LoginLink);
+				}
 			}
 		}
 	}, [validatingUser, errorUser, user, pathname]);
