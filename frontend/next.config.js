@@ -88,7 +88,12 @@ const NextConfig = {
 			},
 			{
 				source: "/dashboard/site",
-				destination: "/dashboard/site/:siteId/overview",
+				destination: "/dashboard/sites",
+				permanent: true
+			},
+			{
+				source: "/dashboard/site/:siteId",
+				destination: "/dashboard/sites/:siteId/overview",
 				permanent: true
 			}
 		];
