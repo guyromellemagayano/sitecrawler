@@ -5,7 +5,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { AuthProvider } from "@hooks/useAuth";
-import { GlobalStyles } from "@styles/GlobalStyles";
+import GlobalStyles from "@styles/GlobalStyles";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
@@ -28,11 +28,13 @@ export default function App({ Component, pageProps, err }) {
 	}, []);
 
 	return getLayout(
-		<AuthProvider>
+		<>
 			<GlobalStyles />
 			<DefaultSeo {...AppSeo} />
 			<ProgressBar />
-			<Component {...pageProps} err={err} />
-		</AuthProvider>
+			<AuthProvider>
+				<Component {...pageProps} err={err} />
+			</AuthProvider>
+		</>
 	);
 }
