@@ -11,8 +11,8 @@ import "twin.macro";
  * @param {number} width
  * @param {string} className
  */
-export function AppLogo({ alt = null, height = null, src = null, width = null }) {
-	return <Image src={src} alt={alt} width={width} height={height} priority />;
+export function AppLogo({ alt = null, height = null, src = null, width = null, className = null }) {
+	return <Image src={src} alt={alt} width={width} height={height} className={className} priority />;
 }
 
 /**
