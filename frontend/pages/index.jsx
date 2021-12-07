@@ -18,7 +18,7 @@ export async function getServerSideProps() {
 		userData !== null &&
 		!userData?.detail &&
 		Object.keys(userData)?.length > 0 &&
-		Math.round(userStatus / 200 === 1)
+		Math.round(userStatus / 200) === 1
 	) {
 		return {
 			redirect: {
@@ -52,5 +52,3 @@ export default function Home() {
 Home.getLayout = function getLayout(page) {
 	return <MemoizedLayout>{page}</MemoizedLayout>;
 };
-
-Home.requiresAuth = false;

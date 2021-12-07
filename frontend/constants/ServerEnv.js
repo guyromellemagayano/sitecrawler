@@ -8,8 +8,8 @@ export const SITE_URL =
 		? window.location.protocol + "//" + window.location.hostname
 		: process.env.NEXT_PUBLIC_DEVELOPMENT_SITE_URL;
 
-// SSR URL
-export const SSR_URL =
+// SSR Site URL
+export const SSR_SITE_URL =
 	typeof window !== "undefined" && isProd
 		? window.location.protocol + "//" + window.location.hostname
 		: process.env.NEXT_PUBLIC_DEVELOPMENT_SITE_SERVER_URL;
