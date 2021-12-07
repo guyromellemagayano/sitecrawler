@@ -84,7 +84,7 @@ export const SidebarMenus = () => {
 		links: [
 			{ title: globalSettings, slug: "global-settings", url: GlobalSettingsLink },
 			{ title: helpAndSupport, slug: "help-support", url: HelpAndSupportLink },
-			{ label: logout, slug: "logout", url: LogoutLink }
+			{ title: logout, slug: "logout", url: LogoutLink }
 		]
 	};
 

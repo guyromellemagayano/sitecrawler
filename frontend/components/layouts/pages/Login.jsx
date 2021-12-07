@@ -8,7 +8,6 @@ import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { memo } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 import { MemoizedFooter } from "../components/Footer";
 
@@ -42,7 +41,7 @@ export function LoginPageLayout() {
 											/>
 											<h4 tw="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none">
 												{headline}&nbsp;
-												<span tw="text-red-600">{ReactHtmlParser(highlight)}</span>
+												<span tw="text-red-600">{highlight}</span>
 												<br tw="hidden md:inline" />
 											</h4>
 										</div>

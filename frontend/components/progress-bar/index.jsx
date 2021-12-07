@@ -61,6 +61,11 @@ const ProgressBar = () => {
 			router.events.off("routeChangeStart", handleRouteChangeStart);
 			router.events.off("routeChangeComplete", handleRouteChangeEnd);
 			router.events.off("routeChangeError", handleRouteChangeEnd);
+
+			setState((prevState) => ({
+				...prevState,
+				isRouteChanging: false
+			}));
 		};
 	}, [router]);
 

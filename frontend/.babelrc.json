@@ -34,7 +34,7 @@
 		[
 			"babel-plugin-styled-components",
 			{
-				"ssr": true,
+				"ssr": false,
 				"fileName": false,
 				"displayName": false,
 				"pure": true

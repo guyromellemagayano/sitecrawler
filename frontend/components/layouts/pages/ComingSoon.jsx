@@ -1,42 +1,63 @@
-import Breadcrumbs from "@components/breadcrumbs";
+import { MemoizedBreadcrumbs } from "@components/breadcrumbs";
+import { Loader } from "@components/loaders";
+import { ComponentReadyInterval } from "@constants/GlobalValues";
 import useTranslation from "next-translate/useTranslation";
-import { memo } from "react";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import { memo, useEffect, useState } from "react";
 import "twin.macro";
-import Footer from "../components/Footer";
+import { MemoizedFooter } from "../components/Footer";
 
 /**
- * Memoized function to render the `ComingSoonPageLayout` component
+ * Custom function to render the `ComingSoonPageLayout` component
  *
  * @param {string} pageTitle
  */
-const ComingSoonPageLayout = memo(({ pageTitle = null }) => {
+export function ComingSoonPageLayout({ pageTitle = null }) {
+	const [isComponentReady, setIsComponentReady] = useState(false);
+
+	const { isReady } = useRouter();
+
+	useEffect(() => {
+		if (isReady) {
+			setTimeout(() => {
+				setIsComponentReady(true);
+			}, ComponentReadyInterval);
+		}
+
+		return () => {
+			setIsComponentReady(false);
+		};
+	}, [isReady]);
+
 	// Translations
 	const { t } = useTranslation("common");
 	const comingSoon = t("comingSoon");
 
-	return (
-		<div tw="flex flex-col w-0 flex-1 overflow-hidden">
-			<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
-				<div tw="max-w-full p-4 sm:px-6 md:px-8">
-					<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
-						<div tw="max-w-full p-4">
-							<Breadcrumbs isOther pageTitle={pageTitle} />
+	return isComponentReady ? (
+		<section tw="min-h-screen flex flex-col justify-center px-4 py-12">
+			<MemoizedBreadcrumbs isOther pageTitle={pageTitle} />
 
-							<div tw="pt-4 m-auto">
-								<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{comingSoon}</h2>
-							</div>
-						</div>
+			<div tw="flex pt-12 pb-4">
+				<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">{pageTitle}</h2>
+			</div>
 
-						<div tw="space-y-12 divide-y divide-gray-200">{/* Place Content Here */}</div>
-					</div>
+			<div tw="flex p-4 m-auto">
+				<h4 tw="text-lg leading-6 font-medium text-gray-500">{comingSoon}</h4>
+			</div>
 
-					<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white">
-						<Footer />
-					</div>
-				</div>
-			</main>
-		</div>
+			<MemoizedFooter />
+		</section>
+	) : (
+		<Loader />
 	);
-});
+}
 
-export default ComingSoonPageLayout;
+ComingSoonPageLayout.propTypes = {
+	pageTitle: PropTypes.string
+};
+
+/**
+ * Memoized custom `ComingSoonPageLayout` component
+ */
+export const MemoizedComingSoonPageLayout = memo(ComingSoonPageLayout);

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedAlert } from "@components/alerts";
 import { LoginApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
-import { ResetPasswordLink } from "@constants/PageLinks";
+import { DashboardSitesLink, ResetPasswordLink } from "@constants/PageLinks";
 import { SocialLoginLinks } from "@constants/SocialLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
@@ -20,7 +20,6 @@ import * as Yup from "yup";
  * Custom function to render the `LoginForm` component
  */
 export function LoginForm() {
-	const [disableLoginForm, setDisableLoginForm] = useState(false);
 	const [errorMessage, setErrorMessage] = useState([]);
 	const [successMessage, setSuccessMessage] = useState([]);
 
@@ -29,6 +28,7 @@ export function LoginForm() {
 
 	// Router
 	const { asPath } = useRouter();
+	const router = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -97,7 +97,7 @@ export function LoginForm() {
 
 					if (loginResponseData !== null && Math.round(loginResponseStatus / 200) === 1) {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						mutate(UserApiEndpoint, false);
+						await mutate(UserApiEndpoint, false);
 
 						// Collect user data and send to Sentry
 						Sentry.configureScope((scope) =>
@@ -110,7 +110,6 @@ export function LoginForm() {
 
 						// Disable submission as soon as 200 OK or 201 Created response is issued
 						setSubmitting(false);
-						setDisableLoginForm(!disableLoginForm);
 						setSuccessMessage((prevState) => [
 							...prevState,
 							prevState.indexOf(loginOkSuccess) !== -1
@@ -119,7 +118,7 @@ export function LoginForm() {
 						]);
 
 						// Redirect to sites dashboard page after successful 200 OK response is established
-						// router.push(DashboardSitesLink);
+						router.push(DashboardSitesLink);
 					} else {
 						let errorStatusCodeMessage = "";
 
@@ -168,11 +167,10 @@ export function LoginForm() {
 										name="username"
 										type="text"
 										autoComplete="username"
-										disabled={isSubmitting || disableLoginForm}
+										disabled={isSubmitting}
 										css={[
 											tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-											(isSubmitting || disableLoginForm) &&
-												tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+											isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 											errors.username ? tw`border-red-300` : tw`border-gray-300`
 										]}
 										aria-describedby="username"
@@ -199,8 +197,7 @@ export function LoginForm() {
 											type="button"
 											css={[
 												tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none cursor-pointer`,
-												(isSubmitting || disableLoginForm) &&
-													tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
+												isSubmitting && tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
 											]}
 											onClick={() => setIsPasswordShown(!isPasswordShown)}
 										>
@@ -215,11 +212,10 @@ export function LoginForm() {
 										name="password"
 										type="password"
 										autoComplete="current-password"
-										disabled={isSubmitting || disableLoginForm}
+										disabled={isSubmitting}
 										css={[
 											tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-											(isSubmitting || disableLoginForm) &&
-												tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
+											isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
 											errors.password ? tw`border-red-300` : tw`border-gray-300`
 										]}
 										aria-describedby="password"
@@ -242,11 +238,10 @@ export function LoginForm() {
 										id="rememberme"
 										name="rememberme"
 										type="checkbox"
-										disabled={isSubmitting || disableLoginForm}
+										disabled={isSubmitting}
 										css={[
 											tw`h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded`,
-											(isSubmitting || disableLoginForm) &&
-												tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`
+											isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`
 										]}
 										aria-describedby="rememberme"
 										onChange={handleChange}
@@ -262,8 +257,7 @@ export function LoginForm() {
 										<a
 											css={[
 												tw`font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150 cursor-pointer`,
-												(isSubmitting || disableLoginForm) &&
-													tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
+												isSubmitting && tw`opacity-50 text-gray-500 cursor-not-allowed pointer-events-none`
 											]}
 										>
 											{forgotPassword}
@@ -276,15 +270,15 @@ export function LoginForm() {
 								<span tw="block w-full rounded-md shadow-sm">
 									<button
 										type="submit"
-										disabled={isSubmitting || disableLoginForm}
+										disabled={isSubmitting}
 										css={[
 											tw`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600`,
-											isSubmitting || disableLoginForm
+											isSubmitting
 												? tw`opacity-50 bg-indigo-300 cursor-not-allowed pointer-events-none`
 												: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 										]}
 									>
-										{isSubmitting || disableLoginForm ? signingIn : signIn}
+										{isSubmitting ? signingIn : signIn}
 									</button>
 								</span>
 							</div>
@@ -314,9 +308,7 @@ export function LoginForm() {
 														links.disabled
 															? tw`bg-gray-300 opacity-50 cursor-not-allowed pointer-events-none`
 															: tw`bg-white`,
-														isSubmitting || disableLoginForm
-															? tw`bg-gray-300 cursor-not-allowed pointer-events-none`
-															: tw`hover:bg-gray-50`
+														isSubmitting ? tw`bg-gray-300 cursor-not-allowed pointer-events-none` : tw`hover:bg-gray-50`
 													]}
 												>
 													<FontAwesomeIcon icon={links.icon} tw="-ml-0.5 w-4 h-4 mr-3" />

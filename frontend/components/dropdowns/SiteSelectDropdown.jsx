@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedSitesList } from "@components/lists/SitesList";
 import { ComponentReadyInterval } from "@constants/GlobalValues";
 import { AddNewSiteLink, DashboardSiteSlug, SiteOverviewSlug } from "@constants/PageLinks";
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
@@ -11,9 +13,9 @@ import { memo, useMemo, useState } from "react";
 import "twin.macro";
 
 /**
- * Memoized function to render the `SiteSelectDropdown` component.
+ * Custom function to render the `SiteSelectDropdown` component
  */
-const SiteSelectDropdown = memo(({ selectedSiteId = null, handleSiteSelectOnLoad, isComponentVisible = false }) => {
+export function SiteSelectDropdown({ selectedSiteId = null, handleSiteSelectOnLoad, isComponentVisible = false }) {
 	const [scanObjId, setScanObjId] = useState(null);
 
 	// Sidebar Menu Labels
@@ -29,20 +31,27 @@ const SiteSelectDropdown = memo(({ selectedSiteId = null, handleSiteSelectOnLoad
 		const handleScanObjId = async (scanCount, currentScan, previousScan) => {
 			scanCount > 1
 				? previousScan !== undefined
-					? setScanObjId(previousScan.id)
+					? setScanObjId(previousScan?.id)
 					: false
 				: currentScan !== undefined
-				? setScanObjId(currentScan.id)
-				: setScanObjId(previousScan.id);
+				? setScanObjId(currentScan?.id)
+				: setScanObjId(previousScan?.id);
 
 			return scanObjId;
 		};
 
 		handleScanObjId(scanCount, currentScan, previousScan);
-	}, [scanCount, currentScan, previousScan, scanObjId, selectedSiteId]);
+	}, [scanCount, currentScan, previousScan, scanObjId]);
 
 	useMemo(() => {
-		if (scanObjId && selectedSiteId) {
+		if (
+			typeof scanObjId !== "undefined" &&
+			scanObjId !== null &&
+			scanObjId > 0 &&
+			typeof selectedSiteId !== "undefined" &&
+			selectedSiteId !== null &&
+			selectedSiteId > 0
+		) {
 			setTimeout(() => {
 				router.push({
 					pathname: `${DashboardSiteSlug}[siteId]${SiteOverviewSlug}`,
@@ -53,36 +62,39 @@ const SiteSelectDropdown = memo(({ selectedSiteId = null, handleSiteSelectOnLoad
 				});
 			}, ComponentReadyInterval);
 		}
-	}, [scanObjId, selectedSiteId]);
+	}, [router, scanObjId, selectedSiteId]);
 
 	return (
 		<Transition
 			show={isComponentVisible}
-			enter="transition ease-out duration-100"
-			enterFrom="transform opacity-0 scale-95"
-			enterTo="transform opacity-100 scale-100"
-			leave="transition ease-in duration-75"
-			leaveFrom="transform opacity-100 scale-100"
-			leaveTo="transform opacity-0 scale-95"
-			tw="absolute mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
+			enter="site-select-dropdown-enter"
+			enterFrom="site-select-dropdown-enter-from"
+			enterTo="site-select-dropdown-enter-to"
+			leave="site-select-dropdown-leave"
+			leaveFrom="site-select-dropdown-leave-from"
+			leaveTo="site-select-dropdown-leave-to"
+			tw="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 		>
-			<SitesList handleSiteSelectOnLoad={handleSiteSelectOnLoad} />
+			<MemoizedSitesList handleSiteSelectOnLoad={handleSiteSelectOnLoad} />
 			<span tw="relative flex m-2 justify-center shadow-sm rounded-md">
 				<Link href={AddNewSiteLink} passHref>
 					<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full">
 						<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
-						{labelsArray[2].label}
+						{labelsArray[2]?.label ?? null}
 					</a>
 				</Link>
 			</span>
 		</Transition>
 	);
-});
+}
 
 SiteSelectDropdown.propTypes = {
-	handleSiteSelectOnLoad: PropTypes.any,
+	handleSiteSelectOnLoad: PropTypes.func.isRequired,
 	isComponentVisible: PropTypes.bool,
-	selectedSiteId: PropTypes.any
+	selectedSiteId: PropTypes.number
 };
 
-export default SiteSelectDropdown;
+/**
+ * Memoized custom `SiteSelectDropdown` component
+ */
+export const MemoizedSiteSelectDropdown = memo(SiteSelectDropdown);

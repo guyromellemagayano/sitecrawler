@@ -4,7 +4,6 @@ import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
-import { GlobalStyles } from "@styles/GlobalStyles";
 import axios from "axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
@@ -47,7 +46,6 @@ export default function Registration() {
 
 	return (
 		<>
-			<GlobalStyles />
 			<NextSeo title={registration} />
 			<MemoizedRegistrationPageLayout />
 		</>

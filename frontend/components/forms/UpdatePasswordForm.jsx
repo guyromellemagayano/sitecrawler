@@ -46,11 +46,11 @@ export function UpdatePasswordForm() {
 
 	// Set the `uid` and `token` from the URL query parameters
 	useEffect(() => {
-		const hasKeyProperty = query.hasOwnProperty("id") ? true : false;
+		const hasKeyProperty = query?.hasOwnProperty("id") ? true : false;
 
 		if (Object.keys(query).length > 0 && hasKeyProperty) {
-			setUid(query.id[0]);
-			setToken(query.id[1]);
+			setUid(query?.id[0] ?? null);
+			setToken(query?.id[1] ?? null);
 		}
 	}, [query]);
 
@@ -105,7 +105,7 @@ export function UpdatePasswordForm() {
 
 					if (updatePasswordResponseData !== null && Math.round(updatePasswordResponseStatus / 200) === 1) {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						mutate(UserApiEndpoint, false);
+						await mutate(UserApiEndpoint, false);
 
 						setSubmitting(false);
 						resetForm({ values: "" });
