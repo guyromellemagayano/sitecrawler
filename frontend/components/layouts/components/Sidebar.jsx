@@ -1,28 +1,32 @@
-// import MainMenu from "@components/menus/MainMenu";
-import ProfileMenu from "@components/menus/ProfileMenu";
+import { MemoizedMainMenu } from "@components/menus/MainMenu";
+import { MemoizedProfileMenu } from "@components/menus/ProfileMenu";
 import { forwardRef, memo } from "react";
 import "twin.macro";
-import MobileSidebar from "./MobileSidebar";
+import { MemoizedMobileSidebarLayout } from "./MobileSidebar";
 
 /**
- * Memoized function to render the `Sidebar` component.
+ * Custom function to render the `Sidebar` component
  */
-const Sidebar = memo(
-	forwardRef(({ openSidebar, setOpenSidebar }, ref) => {
-		return (
-			<>
-				<MobileSidebar ref={ref} openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
+export function SidebarLayout({ openSidebar = false, setOpenSidebar }, ref) {
+	return (
+		<>
+			<MemoizedMobileSidebarLayout ref={ref} openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
 
-				<aside tw="bg-gray-1000 hidden lg:flex lg:flex-shrink-0">
-					<div tw="flex flex-col w-64">
-						<div tw="h-0 flex-1 overflow-y-auto">{/* <MainMenu /> */}</div>
-
-						<ProfileMenu />
+			<aside tw="bg-gray-1000 hidden lg:flex lg:flex-shrink-0">
+				<div tw="flex flex-col w-64">
+					<div tw="h-0 flex-1 overflow-y-auto">
+						<MemoizedMainMenu />
 					</div>
-				</aside>
-			</>
-		);
-	})
-);
 
-export default Sidebar;
+					<MemoizedProfileMenu />
+				</div>
+			</aside>
+		</>
+	);
+}
+
+/**
+ * Memoized custom `SidebarLayout` component
+ */
+export const ForwardRefSidebarLayout = forwardRef(SidebarLayout);
+export const MemoizedSidebarLayout = memo(ForwardRefSidebarLayout);
