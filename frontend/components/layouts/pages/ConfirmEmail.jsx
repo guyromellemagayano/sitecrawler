@@ -23,9 +23,8 @@ export function ConfirmEmailPageLayout() {
 	const [successMessage, setSuccessMessage] = useState([]);
 
 	// Router
-	const { asPath } = useRouter();
+	const { asPath, query } = useRouter();
 	const router = useRouter();
-	const { query } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -42,7 +41,7 @@ export function ConfirmEmailPageLayout() {
 
 	const handleConfirmEmail = useCallback(async () => {
 		const body = {
-			key: query.id[0]
+			key: query?.id[0] ?? null
 		};
 
 		const confirmEmailResponse = await handlePostMethod(ConfirmEmailApiEndpoint, body);
@@ -51,7 +50,7 @@ export function ConfirmEmailPageLayout() {
 
 		if (confirmEmailResponseData !== null && Math.round(confirmEmailResponseStatus / 200) === 1) {
 			// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-			mutate(UserApiEndpoint, false);
+			await mutate(UserApiEndpoint, false);
 
 			// Update `successMessage` and `success` states with an actual success message as soon as 200 OK or 201 Created response is issued
 			setSuccessMessage((prevState) => [
