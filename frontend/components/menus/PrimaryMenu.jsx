@@ -1,5 +1,6 @@
-import { AppLogo } from "@components/logos/AppLogo";
-import SiteSelect from "@components/select/SiteSelect";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedAppLogo } from "@components/logos/AppLogo";
+import { MemoizedSiteSelect } from "@components/select/SiteSelect";
 import { AuthAppLogo, SiteLogoWhite } from "@constants/GlobalValues";
 import { DashboardSitesLink, SitesSlug } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
@@ -13,16 +14,15 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import tw from "twin.macro";
 
 /**
- * Memoized function to render `PrimaryMenu` component
+ * Custom function to render the `PrimaryMenu` component
  */
-const PrimaryMenu = memo(() => {
+export function PrimaryMenu() {
 	// Router
-	const { asPath } = useRouter();
-	const { pathname } = useRouter();
+	const { asPath, pathname } = useRouter();
 
 	// Translations
-	const { t } = useTranslation();
-	const appLogo = t("common:appLogo");
+	const { t } = useTranslation("common");
+	const appLogo = t("appLogo");
 
 	// Sidebar menus
 	const { PrimarySidebarMenus } = SidebarMenus();
@@ -33,7 +33,7 @@ const PrimaryMenu = memo(() => {
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
 					<Link href={DashboardSitesLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
-							<AppLogo
+							<MemoizedAppLogo
 								className="flex"
 								src={SiteLogoWhite}
 								alt={appLogo}
@@ -61,16 +61,13 @@ const PrimaryMenu = memo(() => {
 												return value2.slug !== "go-back-to-sites" ? (
 													<Link key={index2} href={value2.url} passHref>
 														<a
-															className={`group ${
-																pathname == value2.url || (asPath.includes(SitesSlug) && value2.url.includes(SitesSlug))
-																	? "bg-gray-1100"
-																	: "hover:bg-gray-1100 focus:bg-gray-1100"
-															}`}
+															className="group"
 															css={[
 																tw`cursor-pointer`,
-																pathname == value2.url || (asPath.includes(SitesSlug) && value2.url.includes(SitesSlug))
-																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md `
-																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none  transition ease-in-out duration-150`
+																value2.url.includes(pathname) ||
+																(asPath.includes(SitesSlug) && value2.url.includes(SitesSlug))
+																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md bg-gray-1100`
+																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none transition ease-in-out duration-150 hover:bg-gray-1100 focus:bg-gray-1100`
 															]}
 														>
 															{value2.slug === "sites" ? (
@@ -95,7 +92,7 @@ const PrimaryMenu = memo(() => {
 												);
 											})
 										) : (
-											<SiteSelect />
+											<MemoizedSiteSelect />
 										)}
 									</div>
 								</div>
@@ -106,6 +103,9 @@ const PrimaryMenu = memo(() => {
 			</div>
 		</Scrollbars>
 	);
-});
+}
 
-export default PrimaryMenu;
+/**
+ * Memoized custom `PrimaryMenu` component
+ */
+export const MemoizedPrimaryMenu = memo(PrimaryMenu);

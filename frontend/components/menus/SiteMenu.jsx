@@ -1,34 +1,35 @@
-import { AppLogo } from "@components/logos/AppLogo";
-import SiteSelect from "@components/select/SiteSelect";
-import { AuthAppLogo, SiteLogoWhite, SiteRoute } from "@constants/GlobalValues";
-import { DashboardSitesLink } from "@constants/PageLinks";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { MemoizedAppLogo } from "@components/logos/AppLogo";
+import { MemoizedSiteSelect } from "@components/select/SiteSelect";
+import { AuthAppLogo, SiteLogoWhite } from "@constants/GlobalValues";
+import { DashboardSitesLink, DashboardSiteSlug } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon, LinkIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/solid";
-import useCrawl from "@hooks/useCrawl";
+import { useCrawl } from "@hooks/useCrawl";
 import { useSiteId } from "@hooks/useSiteId";
 import { useStats } from "@hooks/useStats";
 import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import tw from "twin.macro";
 
 /**
- * Memoized function to generate the `SiteMenu` component.
+ * Custom function to render the `SiteMenu` component
  */
-const SiteMenu = memo(() => {
+export function SiteMenu() {
 	const [scanObjId, setScanObjId] = useState(null);
+	const [errorMessage, setErrorMessage] = useState([]);
 
 	// Router
-	const { asPath } = useRouter();
-	const { pathname } = useRouter();
-	const { query } = useRouter();
+	const { asPath, pathname, query } = useRouter();
 
 	// Custom hooks
-	const { currentScan, previousScan, scanCount } = useCrawl(query.siteId ?? null);
+	const { currentScan, previousScan, scanCount } = useCrawl(query?.siteId ?? null);
 
 	useMemo(() => {
 		const handleScanObjId = (scanCount, currentScan, previousScan) => {
@@ -44,43 +45,44 @@ const SiteMenu = memo(() => {
 		};
 
 		handleScanObjId(scanCount, currentScan, previousScan);
-	}, [scanCount, currentScan, previousScan]);
+	}, [scanCount, currentScan, previousScan, scanObjId]);
 
 	// SWR hooks
-	const { siteId, errorSiteId, validatingSiteId } = useSiteId(query.siteId);
-	const { stats, errorStats, validatingStats } = useStats(query.siteId, scanObjId);
+	const { siteId, errorSiteId, validatingSiteId } = useSiteId(query?.siteId ?? null);
+	const { stats, errorStats, validatingStats } = useStats(query?.siteId ?? null, scanObjId);
 
 	// Translations
 	const { t } = useTranslation();
 	const appLogo = t("common:appLogo");
-	const siteIdBadGatewayGetError = t("alerts:siteIdBadGatewayGetError", { site: siteId.name });
-	const siteIdBadRequestGetError = t("alerts:siteIdBadRequestGetError", { site: siteId.name });
-	const siteIdForbiddenGetError = t("alerts:siteIdForbiddenGetError", { site: siteId.name });
-	const siteIdGatewayTimeoutGetError = t("alerts:siteIdGatewayTimeoutGetError", { site: siteId.name });
-	const siteIdInternalServerGetError = t("alerts:siteIdInternalServerGetError", { site: siteId.name });
-	const siteIdNotFoundGetError = t("alerts:siteIdNotFoundGetError", { site: siteId.name });
-	const siteIdServiceUnavailableGetError = t("alerts:siteIdServiceUnavailableGetError", { site: siteId.name });
-	const siteIdTooManyRequestsError = t("alerts:siteIdTooManyRequestsError", { site: siteId.name });
-	const siteIdUnknownError = t("alerts:siteIdUnknownError", { site: siteId.name });
-	const statsBadGatewayGetError = t("alerts:statsBadGatewayGetError", { site: siteId.name });
-	const statsBadRequestGetError = t("alerts:statsBadRequestGetError", { site: siteId.name });
-	const statsForbiddenGetError = t("alerts:statsForbiddenGetError", { site: siteId.name });
-	const statsGatewayTimeoutGetError = t("alerts:statsGatewayTimeoutGetError", { site: siteId.name });
-	const statsInternalServerGetError = t("alerts:statsInternalServerGetError", { site: siteId.name });
-	const statsNotFoundGetError = t("alerts:statsNotFoundGetError", { site: siteId.name });
-	const statsServiceUnavailableGetError = t("alerts:statsServiceUnavailableGetError", { site: siteId.name });
-	const statsTooManyRequestsError = t("alerts:statsTooManyRequestsError", { site: siteId.name });
-	const statsUnknownError = t("alerts:statsUnknownError", { site: siteId.name });
+	const siteIdBadGatewayGetError = t("alerts:siteIdBadGatewayGetError", { site: siteId?.name ?? null });
+	const siteIdBadRequestGetError = t("alerts:siteIdBadRequestGetError", { site: siteId?.name ?? null });
+	const siteIdForbiddenGetError = t("alerts:siteIdForbiddenGetError", { site: siteId?.name ?? null });
+	const siteIdGatewayTimeoutGetError = t("alerts:siteIdGatewayTimeoutGetError", { site: siteId?.name ?? null });
+	const siteIdInternalServerGetError = t("alerts:siteIdInternalServerGetError", { site: siteId?.name ?? null });
+	const siteIdNotFoundGetError = t("alerts:siteIdNotFoundGetError", { site: siteId?.name ?? null });
+	const siteIdServiceUnavailableGetError = t("alerts:siteIdServiceUnavailableGetError", { site: siteId?.name ?? null });
+	const siteIdTooManyRequestsError = t("alerts:siteIdTooManyRequestsError", { site: siteId?.name ?? null });
+	const siteIdUnknownError = t("alerts:siteIdUnknownError", { site: siteId?.name ?? null });
+	const statsBadGatewayGetError = t("alerts:statsBadGatewayGetError", { site: siteId?.name ?? null });
+	const statsBadRequestGetError = t("alerts:statsBadRequestGetError", { site: siteId?.name ?? null });
+	const statsForbiddenGetError = t("alerts:statsForbiddenGetError", { site: siteId?.name ?? null });
+	const statsGatewayTimeoutGetError = t("alerts:statsGatewayTimeoutGetError", { site: siteId?.name ?? null });
+	const statsInternalServerGetError = t("alerts:statsInternalServerGetError", { site: siteId?.name ?? null });
+	const statsNotFoundGetError = t("alerts:statsNotFoundGetError", { site: siteId?.name ?? null });
+	const statsServiceUnavailableGetError = t("alerts:statsServiceUnavailableGetError", { site: siteId?.name ?? null });
+	const statsTooManyRequestsError = t("alerts:statsTooManyRequestsError", { site: siteId?.name ?? null });
+	const statsUnknownError = t("alerts:statsUnknownError", { site: siteId?.name ?? null });
 
 	// Sidebar menus
 	const { SiteSidebarMenus } = SidebarMenus();
 
-	useEffect(() => {
+	// Handle `siteId` errors
+	const handleSiteIdErrors = useCallback(async () => {
 		if (!validatingSiteId) {
-			if ((typeof siteId === "undefined" || siteId == null) && !(Object.keys(siteId).length > 0)) {
+			if (typeof siteId === "undefined" && siteId == null && !(Object.keys(siteId).length > 0)) {
 				let errorStatusCodeMessage = "";
 
-				switch (errorSiteId.status) {
+				switch (errorSiteId?.status) {
 					case 400:
 						errorStatusCodeMessage = siteIdBadRequestGetError;
 						break;
@@ -123,7 +125,7 @@ const SiteMenu = memo(() => {
 				// Capture unknown errors and send to Sentry
 				Sentry.configureScope((scope) => {
 					scope.setTag("route", asPath);
-					scope.setTag("status", errorSiteId.status);
+					scope.setTag("status", errorSiteId?.status);
 					scope.setTag(
 						"message",
 						errorMessage.find((message) => message === errorStatusCodeMessage)
@@ -135,8 +137,13 @@ const SiteMenu = memo(() => {
 	}, [siteId, validatingSiteId]);
 
 	useEffect(() => {
+		return handleSiteIdErrors();
+	}, [handleSiteIdErrors]);
+
+	// Handle `stats` errors
+	const handleStatsErrors = useCallback(async () => {
 		if (!validatingStats) {
-			if ((typeof stats === "undefined" || stats == null) && !(Object.keys(stats).length > 0)) {
+			if (typeof stats === "undefined" && stats == null && !(Object.keys(stats).length > 0)) {
 				let errorStatusCodeMessage = "";
 
 				switch (errorStats.status) {
@@ -193,13 +200,17 @@ const SiteMenu = memo(() => {
 		}
 	}, [stats, validatingStats]);
 
+	useEffect(() => {
+		return handleStatsErrors();
+	}, [handleStatsErrors]);
+
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
 			<div tw="flex flex-col min-h-screen py-4 lg:py-8">
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
 					<Link href={DashboardSitesLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
-							<AppLogo
+							<MemoizedAppLogo
 								className="flex"
 								src={SiteLogoWhite}
 								alt={appLogo}
@@ -222,20 +233,20 @@ const SiteMenu = memo(() => {
 									<div tw="my-3" role="group">
 										{value.links ? (
 											value.links.map((value2, index2) => {
-												const hrefVal = `${SiteRoute}[siteId]` + value2.url;
-												const asVal = SiteRoute + siteId + value2.url;
+												const hrefVal = `${DashboardSiteSlug}[siteId]` + value2.url;
+												const asVal = DashboardSiteSlug + siteId + value2.url;
 
 												return value2.slug !== "go-back-to-sites" ? (
 													<Link key={index2} href={hrefVal} as={asVal} passHref>
 														<a
 															className={`group ${
-																!pathname.includes(SiteRoute + siteId + value2.url)
+																!pathname.includes(DashboardSiteSlug + siteId + value2.url)
 																	? "hover:bg-gray-1100 focus:bg-gray-1100"
 																	: "bg-gray-1100"
 															}`}
 															css={[
 																tw`cursor-pointer`,
-																pathname.includes(SiteRoute + siteId + value2.url)
+																pathname.includes(DashboardSiteSlug + siteId + value2.url)
 																	? tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-100 rounded-md `
 																	: tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none transition ease-in-out duration-150`
 															]}
@@ -284,7 +295,7 @@ const SiteMenu = memo(() => {
 												);
 											})
 										) : (
-											<SiteSelect />
+											<MemoizedSiteSelect />
 										)}
 									</div>
 								</div>
@@ -295,6 +306,9 @@ const SiteMenu = memo(() => {
 			</div>
 		</Scrollbars>
 	);
-});
+}
 
-export default SiteMenu;
+/**
+ * Memoized custom `SiteMenu` component
+ */
+export const MemoizedSiteMenu = memo(SiteMenu);
