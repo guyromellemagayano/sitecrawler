@@ -1,3 +1,4 @@
+import { MemoizedAlert } from "@components/alerts";
 import { RegistrationApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import {
 	FormPasswordMaxChars,
@@ -9,18 +10,12 @@ import { handlePostMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { memo, useState } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
-
-/**
- * Dynamic imports
- */
-const Alert = dynamic(() => import("@components/alerts"), { ssr: true });
 
 /**
  * Custom function to render the `RegistrationForm` component
@@ -63,7 +58,7 @@ export function RegistrationForm() {
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
-						<Alert key={key} message={value} isError />
+						<MemoizedAlert key={key} message={value} isError />
 					))}
 				</div>
 			) : null}
@@ -71,7 +66,7 @@ export function RegistrationForm() {
 			{successMessage !== [] && successMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{successMessage.map((value, key) => (
-						<Alert key={key} message={value} isSuccess />
+						<MemoizedAlert key={key} message={value} isSuccess />
 					))}
 				</div>
 			) : null}
@@ -120,7 +115,7 @@ export function RegistrationForm() {
 
 					if (registrationResponseData !== null && Math.round(registrationResponseStatus / 200) === 1) {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						mutate(UserApiEndpoint, false);
+						await mutate(UserApiEndpoint, false);
 
 						setSubmitting(false);
 						resetForm({ values: "" });
@@ -133,8 +128,8 @@ export function RegistrationForm() {
 					} else {
 						let errorStatusCodeMessage = "";
 
-						resetForm({ values: "" });
 						setSubmitting(false);
+						resetForm({ values: "" });
 
 						switch (registrationResponseStatus) {
 							case 400:
