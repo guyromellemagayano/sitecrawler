@@ -45,11 +45,11 @@ export function SignupForm() {
 	const tooShort = t("common:tooShort");
 
 	// Set the `uid` and `token` from the URL query parameters
-	const handleUid = useCallback(() => {
-		const hasKeyProperty = query.hasOwnProperty("id") ? true : false;
+	const handleUid = useCallback(async () => {
+		const hasKeyProperty = query?.hasOwnProperty("id") ? true : false;
 
 		if (Object.keys(query).length > 0 && hasKeyProperty) {
-			setUid(query.id[0]);
+			setUid(query?.id[0]);
 		}
 	}, [query]);
 
@@ -106,7 +106,7 @@ export function SignupForm() {
 
 					if (signupResponseData !== null && Math.round(signupResponseStatus / 200) === 1) {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						mutate(UserApiEndpoint, false);
+						await mutate(UserApiEndpoint, false);
 
 						setSubmitting(false);
 						setDisableSignupForm(!disableSignupForm);
