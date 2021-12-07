@@ -164,6 +164,10 @@ export const CustomStyles = createGlobalStyle`
 		${tw`mb-5`}
 	}
 
+	.react-loading-skeleton {
+		${tw`!rounded-md !relative`}
+	}
+
 	@media only screen and (max-width: 1600px) {
 		td {
 			min-width: 10rem;
