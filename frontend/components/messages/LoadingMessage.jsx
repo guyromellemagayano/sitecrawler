@@ -3,11 +3,11 @@ import { memo } from "react";
 import "twin.macro";
 
 /**
- * Memoized function to render the `LoadingMessage` component
+ * Custom function to render the `LoadingMessage` component
  *
  * @param {string} message
  */
-const LoadingMessage = memo(({ message = null }) => {
+export function LoadingMessage({ message = null }) {
 	// Translations
 	const { t } = useTranslation("common");
 	const loaderMessage = t("loaderMessage");
@@ -19,6 +19,9 @@ const LoadingMessage = memo(({ message = null }) => {
 			</div>
 		</section>
 	);
-});
+}
 
-export default LoadingMessage;
+/**
+ * Memoized custom `LoadingMessage` component
+ */
+export const MemoizedLoadingMessage = memo(LoadingMessage);
