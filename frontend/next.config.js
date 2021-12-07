@@ -73,6 +73,25 @@ const NextConfig = {
 				headers: SecurityHeaders
 			}
 		];
+	},
+	async redirects() {
+		return [
+			{
+				source: "/dashboard",
+				destination: "/dashboard/sites",
+				permanent: true
+			},
+			{
+				source: "/dashboard/settings",
+				destination: "/dashboard/settings/profile",
+				permanent: true
+			},
+			{
+				source: "/dashboard/site",
+				destination: "/dashboard/site/:siteId/overview",
+				permanent: true
+			}
+		];
 	}
 };
 
