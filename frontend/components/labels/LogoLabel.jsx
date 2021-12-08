@@ -37,7 +37,7 @@ export function LogoLabel({
 			{!isLogin ? (
 				<MemoizedAppLogo src={SiteLogoDark} alt={appLogo} width={NoAuthAppLogo.width} height={NoAuthAppLogo.height} />
 			) : null}
-			<h2 tw="my-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
+			<h2 tw="mt-12 mb-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
 				{isLogin
 					? isLoginText
 					: isSignUp
