@@ -6,6 +6,11 @@ import { createContext, useCallback, useContext, useEffect } from "react";
 
 export const AuthContext = createContext();
 
+/**
+ * Custom function to render the `AuthProvider` component
+ *
+ * @param {any} children
+ */
 export const AuthProvider = ({ children }) => {
 	// Router
 	const { pathname } = useRouter();
@@ -23,7 +28,7 @@ export const AuthProvider = ({ children }) => {
 				typeof user !== "undefined" &&
 				user !== null &&
 				Object.keys(user)?.length > 0 &&
-				Math.round(user?.status / 200 === 1)
+				Math.round(user?.status / 200) === 1
 			) {
 				if (!pathname.includes(DashboardSlug)) {
 					router.push(DashboardSitesLink);
@@ -44,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 		return authenticate();
 	}, [authenticate]);
 
-	return <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>;
+	return <AuthContext.Provider value={{ user, errorUser, validatingUser }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);
