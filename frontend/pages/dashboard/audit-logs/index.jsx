@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@components/layouts";
+import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
@@ -47,7 +48,9 @@ export default function Reports() {
 	return (
 		<>
 			<NextSeo title={auditLogs} />
-			<MemoizedComingSoonPageLayout pageTitle={auditLogs} />
+			<MemoizedPageLayout pageTitle={auditLogs}>
+				<MemoizedComingSoonPageLayout />
+			</MemoizedPageLayout>
 		</>
 	);
 }
