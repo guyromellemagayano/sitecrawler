@@ -45,11 +45,20 @@
 	"tooLong": "Te lang!",
 	"tooShort": "Te kort!",
 	"upgradePlan": "Upgradeplan",
-	"username": "Gebruikersnaam",
+	"userName": "Gebruikersnaam",
 	"profileSettings": "Profielinstellingen",
 	"comingSoon": "Komt binnenkort",
 	"reset": "Resetten",
 	"upgrade": "Upgrade",
 	"plan": "Plan",
-	"logout": "Uitloggen"
+	"logout": "Uitloggen",
+	"subscriptionPlans": "Abonnementen",
+	"globalSettings": "Algemene instellingen",
+	"billingSettings": "Factureringsinstellingen",
+	"helpSupport": "Hulp en ondersteuning",
+	"update": "Update",
+	"cancel": "Annuleren",
+	"newPassword": "Nieuw paswoord",
+	"confirmPassword": "Bevestig wachtwoord",
+	"request": "Verzoek"
 }

@@ -45,11 +45,20 @@
 	"tooLong": "Too long!",
 	"tooShort": "Too short!",
 	"upgradePlan": "Upgrade Plan",
-	"username": "Username",
+	"userName": "Username",
 	"profileSettings": "Profile Settings",
 	"comingSoon": "Coming Soon",
 	"reset": "Reset",
 	"upgrade": "Upgrade",
 	"plan": "Plan",
-	"logout": "Logout"
+	"logout": "Logout",
+	"subscriptionPlans": "Subscription Plans",
+	"globalSettings": "Global Settings",
+	"billingSettings": "Billing Settings",
+	"helpSupport": "Help & Support",
+	"update": "Update",
+	"cancel": "Cancel",
+	"newPassword": "New Password",
+	"confirmPassword": "Confirm Password",
+	"request": "Request"
 }
