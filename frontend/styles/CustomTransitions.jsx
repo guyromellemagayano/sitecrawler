@@ -121,4 +121,52 @@ export const CustomTransitions = createGlobalStyle`
   .site-select-dropdown-leave-to {
     ${tw`transform opacity-0 scale-95`}
   }
+
+	.delete-user-account-modal-first-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .delete-user-account-modal-first-child-enter-from {
+    ${tw`opacity-0`}
+  }
+
+  .delete-user-account-modal-first-child-enter-to {
+    ${tw`opacity-100`}
+  }
+
+  .delete-user-account-modal-first-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .delete-user-account-modal-first-child-leave-from {
+    ${tw`opacity-100`}
+  }
+
+  .delete-user-account-modal-first-child-leave-to {
+    ${tw`opacity-0`}
+	}
+
+	.delete-user-account-modal-second-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .delete-user-account-modal-second-child-enter-from {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
+
+  .delete-user-account-modal-second-child-enter-to {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .delete-user-account-modal-second-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .delete-user-account-modal-second-child-leave-from {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .delete-user-account-modal-second-child-leave-to {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
 `;

@@ -26,14 +26,19 @@ axios.interceptors.response.use(
 	(res) => res,
 	(err) => {
 		if (err.response) {
+			// Capture `response` errors and send to Sentry
 			Sentry.captureException(err.response);
 
 			return err.response;
 		} else if (err.request) {
+			// Capture `request` errors and send to Sentry
 			Sentry.captureException(err.request);
 
 			return err.request;
 		} else {
+			// Capture other errors and send to Sentry
+			Sentry.captureException(err);
+
 			return Promise.reject(err);
 		}
 	}

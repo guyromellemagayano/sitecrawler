@@ -23,6 +23,7 @@ export const useMainSWRConfig = (endpoint = null) => {
 				scope.setExtra("route", asPath);
 				scope.setExtra("key", key);
 				scope.setExtra("config", config);
+
 				Sentry.captureException(err);
 			});
 
@@ -35,6 +36,7 @@ export const useMainSWRConfig = (endpoint = null) => {
 				scope.setExtra("route", asPath);
 				scope.setExtra("key", key);
 				scope.setExtra("config", config);
+
 				Sentry.captureException(err);
 			});
 

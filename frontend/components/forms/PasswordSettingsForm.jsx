@@ -1,21 +1,41 @@
-// React
-import { useState } from "react";
-
-// External
+import { PasswordChangeApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { handlePostMethod } from "@helpers/handleHttpMethods";
+import { useLoading } from "@hooks/useLoading";
 import { Formik } from "formik";
-import * as Yup from "yup";
-import PasswordStrengthBar from "react-password-strength-bar";
-import PropTypes from "prop-types";
+import useTranslation from "next-translate/useTranslation";
+import { memo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import PasswordStrengthBar from "react-password-strength-bar";
+import { useSWRConfig } from "swr";
 import tw from "twin.macro";
+import * as Yup from "yup";
 
-// Enums
-import { PasswordChangeApiEndpoint, UserApiEndpoint } from "@enums/ApiEndpoints";
-import { PasswordSettingsLabels } from "@enums/PasswordSettingsLabels";
-import { usePostMethod } from "@hooks/useHttpMethod";
-
-const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSuccessMsg }) => {
+/**
+ * Custom function to render the `PasswordSettingsForm` component
+ */
+export function PasswordSettingsForm() {
 	const [disableForm, setDisableForm] = useState(true);
+
+	// Translations
+	const { t } = useTranslation();
+	const saveChanges = t("settings:saveChanges");
+	const passwordChangeUpdateSuccess = t("settings:passwordChangeUpdate.success");
+	const passwordChangeUpdateFailed = t("settings:passwordChangeUpdate.failed");
+	const saving = t("settings:saving");
+	const newPassword = t("common:newPassword");
+	const confirmPassword = t("common:confirmPassword");
+	const update = t("common:update");
+	const requiredField = t("common:requiredField");
+	const tooShort = t("common:tooShort");
+	const tooLong = t("common:tooLong");
+	const bothPasswordsNeedSame = t("common:bothPasswordsNeedSame");
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
+
+	// Custom hooks
+	const { isComponentReady } = useLoading();
 
 	return (
 		<Formik
@@ -24,16 +44,13 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 				password2: ""
 			}}
 			validationSchema={Yup.object().shape({
-				password1: Yup.string()
-					.min(10, PasswordSettingsLabels[7].label)
-					.max(128, PasswordSettingsLabels[8].label)
-					.required(PasswordSettingsLabels[6].label),
+				password1: Yup.string().min(10, tooShort).max(128, tooLong).required(requiredField),
 				password2: Yup.string()
 					.when("password1", {
 						is: (val) => val && val.length > 0,
-						then: Yup.string().oneOf([Yup.ref("password1")], PasswordSettingsLabels[9].label)
+						then: Yup.string().oneOf([Yup.ref("password1")], bothPasswordsNeedSame)
 					})
-					.required(PasswordSettingsLabels[6].label)
+					.required(requiredField)
 			})}
 			onSubmit={async (values, { setSubmitting, resetForm }) => {
 				const body = {
@@ -41,67 +58,77 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 					new_password2: values.password2
 				};
 
-				const response = await usePostMethod(PasswordChangeApiEndpoint, body);
+				const passwordSettingsResponse = await handlePostMethod(PasswordChangeApiEndpoint, body);
+				const passwordSettingsResponseData = passwordSettingsResponse?.data ?? null;
+				const passwordSettingsResponseStatus = passwordSettingsResponse?.status ?? null;
 
-				setErrorMsg([]);
-				setSuccessMsg([]);
+				if (passwordSettingsResponseData !== null && Math.round(passwordSettingsResponseStatus / 200) === 1) {
+					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+					await mutate(UserApiEndpoint);
 
-				Math.floor(response?.status / 200) === 1
-					? (() => {
-							resetForm({ values: "" });
-							setSubmitting(false);
-							setDisableForm(!disableForm);
-							setSuccessMsg((successMsg) => [...successMsg, PasswordSettingsLabels[12].label]);
-					  })()
-					: (() => {
-							resetForm({ values: "" });
-							setSubmitting(false);
-							setDisableForm(!disableForm);
-							setErrorMsg((errorMsg) => [...errorMsg, PasswordSettingsLabels[13].label]);
-					  })();
+					setSubmitting(false);
+					resetForm({ values: "" });
+					setDisableForm(!disableForm);
+					setSuccessMessage((prevState) => [
+						...prevState,
+						prevState.indexOf(passwordChangeUpdateSuccess) !== -1
+							? prevState.find((prevState) => prevState === passwordChangeUpdateSuccess)
+							: passwordChangeUpdateSuccess
+					]);
+				} else {
+					let errorStatusCodeMessage = "";
 
-				mutateUser(UserApiEndpoint);
+					setSubmitting(false);
+					resetForm({ values: "" });
+					setDisableForm(!disableForm);
+
+					switch (passwordSettingsResponseStatus) {
+						default:
+							errorStatusCodeMessage = passwordChangeUpdateFailed;
+							break;
+					}
+
+					setErrorMessage((prevState) => [
+						...prevState,
+						prevState.indexOf(errorStatusCodeMessage) !== -1
+							? prevState.find((prevState) => prevState === errorStatusCodeMessage)
+							: errorStatusCodeMessage
+					]);
+				}
 			}}
 		>
 			{({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
 				<form tw="space-y-8 divide-y divide-gray-200" onSubmit={handleSubmit}>
-					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-5">
-						<div tw="sm:col-span-3">
-							{componentReady ? (
-								<>
-									<label htmlFor="password1" tw="block text-sm font-medium leading-5 text-gray-700">
-										{PasswordSettingsLabels[1].label}
-									</label>
-									<div tw="mt-1 relative flex rounded-md shadow-sm">
-										<input
-											type="password"
-											id="password1"
-											value={values.password1}
-											autoFocus={true}
-											autoComplete="current-password"
-											name="password1"
-											disabled={isSubmitting || disableForm}
-											css={[
-												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-												(isSubmitting || disableForm) &&
-													tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-												errors.password1 ? tw`border-red-300` : tw`border-gray-300`
-											]}
-											aria-describedby="password1"
-											onChange={handleChange}
-											onBlur={handleBlur}
-										/>
-									</div>
-									<div css={[!disableForm ? tw`block` : tw`hidden`]}>
-										<PasswordStrengthBar className="w-full" password={values.password1} />
-									</div>
-								</>
-							) : (
-								<>
-									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
-								</>
-							)}
+					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
+						<div tw="sm:col-span-1">
+							<label htmlFor="password1" tw="block text-sm font-medium leading-5 text-gray-700">
+								{isComponentReady ? newPassword : <Skeleton duration={2} width={150} height={20} />}
+							</label>
+							<div tw="mt-1 relative flex rounded-md shadow-sm">
+								{isComponentReady ? (
+									<input
+										type="password"
+										id="password1"
+										value={values.password1}
+										autoComplete="current-password"
+										name="password1"
+										disabled={isSubmitting || disableForm}
+										css={[
+											tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
+											(isSubmitting || disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+											errors.password1 ? tw`border-red-300` : tw`border-gray-300`
+										]}
+										aria-describedby="password1"
+										onChange={handleChange}
+										onBlur={handleBlur}
+									/>
+								) : (
+									<Skeleton duration={2} width={448} height={38} />
+								)}
+							</div>
+							<div css={[!disableForm ? tw`block` : tw`hidden`]}>
+								<PasswordStrengthBar className="w-full" password={values.password1} />
+							</div>
 
 							{errors.password1 && touched.password1 && (
 								<span tw="block mt-2 text-xs leading-5 text-red-700">
@@ -110,37 +137,31 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 							)}
 						</div>
 
-						<div tw="sm:col-span-3">
-							{componentReady ? (
-								<>
-									<label htmlFor="password2" tw="block text-sm font-medium leading-5 text-gray-700">
-										{PasswordSettingsLabels[2].label}
-									</label>
-									<div tw="mt-1 relative flex rounded-md shadow-sm">
-										<input
-											type="password"
-											id="password2"
-											value={values.password2}
-											name="password2"
-											disabled={isSubmitting || disableForm}
-											css={[
-												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
-												(isSubmitting || disableForm) &&
-													tw`opacity-50 bg-gray-300 cursor-not-allowed`,
-												errors.password2 ? tw`border-red-300` : tw`border-gray-300`
-											]}
-											aria-describedby="password2"
-											onChange={handleChange}
-											onBlur={handleBlur}
-										/>
-									</div>
-								</>
-							) : (
-								<>
-									<Skeleton duration={2} width={150} height={20} tw="block text-sm" />
-									<Skeleton duration={2} width={377.75} height={38} tw="mt-1 relative flex " />
-								</>
-							)}
+						<div tw="sm:col-span-1">
+							<label htmlFor="password2" tw="block text-sm font-medium leading-5 text-gray-700">
+								{isComponentReady ? confirmPassword : <Skeleton duration={2} width={150} height={20} />}
+							</label>
+							<div tw="mt-1 relative flex rounded-md shadow-sm">
+								{isComponentReady ? (
+									<input
+										type="password"
+										id="password2"
+										value={values.password2}
+										name="password2"
+										disabled={isSubmitting || disableForm}
+										css={[
+											tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md sm:text-sm`,
+											(isSubmitting || disableForm) && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+											errors.password2 ? tw`border-red-300` : tw`border-gray-300`
+										]}
+										aria-describedby="password2"
+										onChange={handleChange}
+										onBlur={handleBlur}
+									/>
+								) : (
+									<Skeleton duration={2} width={448} height={38} />
+								)}
+							</div>
 
 							{errors.password2 && touched.password2 && (
 								<span tw="block mt-2 text-xs leading-5 text-red-700">
@@ -149,11 +170,11 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 							)}
 						</div>
 
-						<div tw="sm:col-span-3">
+						<div tw="sm:col-span-1">
 							<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
 								<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
 									<span tw="inline-flex">
-										{componentReady ? (
+										{isComponentReady ? (
 											!disableForm ? (
 												<button
 													type="submit"
@@ -171,11 +192,7 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 															: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 													]}
 												>
-													{isSubmitting
-														? PasswordSettingsLabels[11].label
-														: !disableForm
-														? PasswordSettingsLabels[5].label
-														: PasswordSettingsLabels[3].label}
+													{isSubmitting ? saving : !disableForm ? saveChanges : update}
 												</button>
 											) : (
 												<button
@@ -189,11 +206,7 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 													]}
 													onClick={() => setDisableForm(!disableForm)}
 												>
-													{isSubmitting
-														? PasswordSettingsLabels[11].label
-														: !disableForm
-														? PasswordSettingsLabels[5].label
-														: PasswordSettingsLabels[3].label}
+													{isSubmitting ? saving : !disableForm ? saveChanges : update}
 												</button>
 											)
 										) : (
@@ -213,20 +226,9 @@ const PasswordSettingsForm = ({ componentReady, mutateUser, setErrorMsg, setSucc
 			)}
 		</Formik>
 	);
-};
+}
 
-PasswordSettingsForm.propTypes = {
-	componentReady: PropTypes.bool,
-	mutateUser: PropTypes.func,
-	setErrorMsg: PropTypes.func,
-	setSuccessMsg: PropTypes.func
-};
-
-PasswordSettingsForm.defaultProps = {
-	componentReady: false,
-	mutateUser: null,
-	setErrorMsg: null,
-	setSuccessMsg: null
-};
-
-export default PasswordSettingsForm;
+/**
+ * Memoized custom `PasswordSettingsForm` component
+ */
+export const MemoizedPasswordSettingsForm = memo(PasswordSettingsForm);

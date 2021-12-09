@@ -1,18 +1,23 @@
-import { MobileSidebarButton } from "@components/buttons/MobileSidebarButton";
-import Sidebar from "@components/layouts/components/Sidebar";
-import ProfileSettingsPageLayout from "@components/layouts/pages/ProfileSettings";
+import { DashboardLayout } from "@components/layouts";
+import { MemoizedPageLayout } from "@components/layouts/components/Page";
+import { MemoizedProfileSettingsPageLayout } from "@components/layouts/pages/ProfileSettings";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
+import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
 import { LoginLink } from "@constants/PageLinks";
-import { server } from "@constants/ServerEnv";
-import { useComponentVisible } from "@hooks/useComponentVisible";
-import AppAxiosInstance from "@utils/axios";
+import { SSR_SITE_URL } from "@constants/ServerEnv";
+import axios from "axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import "twin.macro";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
-export async function getStaticProps() {
-	const userResponse = await AppAxiosInstance.get(`${server + UserApiEndpoint}`);
+export async function getServerSideProps({ req }) {
+	const userResponse = await axios.get(`${SSR_SITE_URL + UserApiEndpoint}`, {
+		headers: {
+			cookie: req.headers.cookie ?? null,
+			...customAxiosHeaders
+		}
+	});
 	const userData = userResponse?.data ?? null;
 	const userStatus = userResponse?.status ?? null;
 
@@ -21,7 +26,7 @@ export async function getStaticProps() {
 		userData !== null &&
 		!userData?.detail &&
 		Object.keys(userData)?.length > 0 &&
-		Math.round(userStatus / 200 === 1)
+		Math.round(userStatus / 200) === 1
 	) {
 		return {
 			props: {}
@@ -44,36 +49,13 @@ export default function ProfileSettings() {
 	return (
 		<>
 			<NextSeo title={profileSettings} />
-			<ProfileSettingsPageLayout />
+			<MemoizedPageLayout pageTitle={profileSettings}>
+				<MemoizedProfileSettingsPageLayout />
+			</MemoizedPageLayout>
 		</>
 	);
 }
 
 ProfileSettings.getLayout = function getLayout(page) {
-	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
-
-	return (
-		<Layout>
-			<section tw="h-screen overflow-hidden bg-gray-50 flex flex-col justify-center">
-				<Sidebar ref={ref} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
-
-				{/* Main content */}
-				<div tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
-					<div tw="relative flex-shrink-0 flex">
-						<div tw="border-b flex-shrink-0 flex">
-							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
-						</div>
-
-						{/* <AddSite /> */}
-					</div>
-
-					<Scrollbars universal>
-						<div tw="absolute w-full h-full max-w-screen-2xl mx-auto left-0 right-0">
-							<div tw="flex flex-col h-full">{page}</div>
-						</div>
-					</Scrollbars>
-				</div>
-			</section>
-		</Layout>
-	);
+	return <DashboardLayout>{page}</DashboardLayout>;
 };

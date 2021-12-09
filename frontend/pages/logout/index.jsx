@@ -24,8 +24,6 @@ export default function Logout() {
 			const logoutResponseData = logoutResponse?.data ?? null;
 			const logoutResponseStatus = logoutResponse?.status ?? null;
 
-			console.debug(logoutResponse);
-
 			if (logoutResponseData !== null && Math.round(logoutResponseStatus / 200) === 1) {
 				// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
 				await mutate(UserApiEndpoint, false);

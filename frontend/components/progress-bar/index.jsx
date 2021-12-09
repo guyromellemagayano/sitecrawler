@@ -76,7 +76,7 @@ const ProgressBar = () => {
 	return (
 		<div
 			css={[
-				tw`fixed top-0 left-0 w-full h-1 z-50 bg-red-400 ease-linear pointer-events-none transition-opacity`,
+				tw`fixed top-0 left-0 w-full h-0.5 z-50 bg-red-400 ease-linear pointer-events-none transition-opacity`,
 				css`
 					margin-left: ${(-1 + progress) * 100} + "%";
 					transition-property: margin-left;

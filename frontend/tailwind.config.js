@@ -54,6 +54,9 @@ module.exports = {
 			height: {
 				530: "530px"
 			},
+			minHeight: {
+				page: "calc(100vh - 70px)"
+			},
 			spacing: {
 				16: "16rem"
 			}

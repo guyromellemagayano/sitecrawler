@@ -45,11 +45,20 @@
 	"tooLong": "Trop long!",
 	"tooShort": "Trop court!",
 	"upgradePlan": "Plan de mise à niveau",
-	"username": "Nom d'utilisateur",
+	"userName": "Nom d'utilisateur",
 	"profileSettings": "Paramètres de profil",
 	"comingSoon": "À venir",
 	"reset": "Réinitialiser",
 	"upgrade": "Améliorer",
 	"plan": "Plan",
-	"logout": "Se déconnecter"
+	"logout": "Se déconnecter",
+	"subscriptionPlans": "Forfaits d'abonnement",
+	"globalSettings": "Paramètres globaux",
+	"billingSettings": "Paramètres de facturation",
+	"helpSupport": "Aide et soutien",
+	"update": "Mettre à jour",
+	"cancel": "Annuler",
+	"newPassword": "Nouveau mot de passe",
+	"confirmPassword": "Confirmez le mot de passe",
+	"request": "Demander"
 }

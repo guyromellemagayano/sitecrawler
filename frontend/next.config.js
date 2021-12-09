@@ -39,7 +39,6 @@ const SecurityHeaders = [
 
 const NextConfig = {
 	trailingSlash: true,
-	reactStrictMode: true,
 	devIndicators: {
 		ignoreDuringBuilds: true,
 		buildActivity: false,
@@ -71,6 +70,30 @@ const NextConfig = {
 			{
 				source: "/(.*)",
 				headers: SecurityHeaders
+			}
+		];
+	},
+	async redirects() {
+		return [
+			{
+				source: "/dashboard",
+				destination: "/dashboard/sites",
+				permanent: true
+			},
+			{
+				source: "/dashboard/settings",
+				destination: "/dashboard/settings/profile",
+				permanent: true
+			},
+			{
+				source: "/dashboard/site",
+				destination: "/dashboard/sites",
+				permanent: true
+			},
+			{
+				source: "/dashboard/site/:siteId",
+				destination: "/dashboard/sites/:siteId/overview",
+				permanent: true
 			}
 		];
 	}

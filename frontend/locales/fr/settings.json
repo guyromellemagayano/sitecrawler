@@ -1,0 +1,29 @@
+{
+	"profileInformationUpdate": {
+		"title": "Informations sur le profil",
+		"success": "Informations de profil mises à jour avec succès.",
+		"failed": "Échec de la mise à jour des informations de profil. Veuillez réessayer"
+	},
+	"passwordChangeUpdate": {
+		"title": "Changement de mot de passe",
+		"success": "Mot de passe mis à jour avec succès.",
+		"failed": "La mise à jour du mot de passe a échoué. Veuillez réessayer."
+	},
+	"deleteUserAccountModalRequest": {
+		"title": "Supprimer le compte utilisateur",
+		"headline": "Êtes-vous sûr de vouloir supprimer votre compte ?",
+		"subHeadline": "Vous perdrez définitivement toutes vos données et ne pourrez pas annuler ce processus à tout moment. Nous déconnecterons immédiatement votre session en cours."
+	},
+	"deleteUserAccountModalRequestFailed": {
+		"headline": "Échec de la suppression du compte",
+		"subHeadline": "Échec de la demande de suppression du compte utilisateur. Veuillez réessayer."
+	},
+	"deleteUserAccountModalRequestSuccess": {
+		"headline": "Suppression du compte réussie",
+		"subHeadline": "Suppression de la demande de compte utilisateur envoyée avec succès."
+	},
+	"saving": "Économie...",
+	"saveChanges": "Sauvegarder les modifications",
+	"processing": "Traitement...",
+	"proceed": "Procéder"
+}

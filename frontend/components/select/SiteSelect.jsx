@@ -1,24 +1,43 @@
-import Alert from "@components/alerts";
-import SiteSelectDropdown from "@components/dropdowns/SiteSelectDropdown";
-// import SiteSelectDropdown from "@components/dropdowns/SiteSelectDropdown";
-import SiteSelectMenu from "@components/menus/SiteSelectMenu";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { MemoizedAlert } from "@components/alerts";
+import { MemoizedSiteSelectDropdown } from "@components/dropdowns/SiteSelectDropdown";
+import { MemoizedSiteSelectMenu } from "@components/menus/SiteSelectMenu";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { ComponentReadyInterval } from "@constants/GlobalValues";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useSites } from "@hooks/useSites";
 import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import "twin.macro";
 
 /**
- * Memoized function to render the `SiteSelect` component.
+ * Custom function to render the `SiteSelect` component
  */
-const SiteSelect = memo(() => {
+export function SiteSelect() {
 	const [selectedSite, setSelectedSite] = useState(null);
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
 	const [selectedSiteId, setSelectedSiteId] = useState(null);
 	const [errorMessage, setErrorMessage] = useState([]);
+	const [isComponentReady, setIsComponentReady] = useState(false);
+
+	// Router
+	const { isReady, pathname } = useRouter();
+
+	useEffect(() => {
+		if (isReady && pathname) {
+			setTimeout(() => {
+				setIsComponentReady(true);
+			}, ComponentReadyInterval);
+		}
+
+		return () => {
+			setIsComponentReady(false);
+		};
+	}, [isReady, pathname]);
 
 	// Translations
 	const { t } = useTranslation("alerts");
@@ -33,7 +52,7 @@ const SiteSelect = memo(() => {
 	const siteUnknownError = t("siteUnknownError");
 
 	// Router
-	const { query } = useRouter();
+	const { asPath, query } = useRouter();
 
 	// SWR hooks
 	const { sites, errorSites, validatingSites } = useSites(SitesApiEndpoint);
@@ -41,28 +60,30 @@ const SiteSelect = memo(() => {
 	// Custom hooks
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 
-	// Custom functions
-	const handleSiteSelectOnLoad = async (siteId) => {
-		typeof sites !== "undefined" && sites !== null && Object.keys(sites).length > 0
-			? sites?.results && sites?.results?.length > 0
-				? (() => {
-						for (let i = 0; i < sites?.results?.length; i++) {
-							if (sites?.results?.[i]?.id == siteId) {
-								setSelectedSite(sites?.results?.[i]?.name);
-								setIsComponentVisible(!isComponentVisible);
-								setSelectedSiteId(siteId);
-							}
+	// Handle site selection on load
+	const handleSiteSelectOnLoad = useCallback(
+		async (siteId) => {
+			if (typeof sites !== "undefined" && sites !== null && Object.keys(sites).length > 0) {
+				if (sites?.results && sites?.results?.length > 0) {
+					for (let i = 0; i < sites?.results?.length; i++) {
+						if (sites?.results?.[i]?.id == siteId) {
+							setSelectedSite(sites?.results?.[i]?.name);
+							setIsComponentVisible(!isComponentVisible);
+							setSelectedSiteId(siteId);
 						}
-				  })()
-				: null
-			: null;
-	};
+					}
+				}
+			}
+		},
+		[selectedSite, isComponentVisible, setIsComponentVisible, sites]
+	);
 
-	useEffect(() => {
+	// Handle site selection on click
+	const handleSiteSelectOnClick = useCallback(async () => {
 		if (!validatingSites) {
 			if (typeof sites !== "undefined" && sites !== null && Object.keys(sites).length > 0) {
 				for (let i = 0; i < sites?.results?.length; i++) {
-					if (sites?.results?.[i]?.id === query.siteId) {
+					if (sites?.results?.[i]?.id === query?.siteId) {
 						setSelectedSite(sites?.results?.[i]?.name);
 					}
 				}
@@ -124,6 +145,11 @@ const SiteSelect = memo(() => {
 	}, [sites, query, validatingSites]);
 
 	useEffect(() => {
+		return handleSiteSelectOnClick();
+	}, [handleSiteSelectOnClick]);
+
+	// Handle site selection on change
+	const handleSiteSelectOnChange = useCallback(async () => {
 		if (!validatingSites) {
 			if (typeof sites !== "undefined" && sites !== null && Object.keys(sites).length > 0) {
 				if (typeof selectedSite !== "undefined" && selectedSite !== null) {
@@ -133,49 +159,56 @@ const SiteSelect = memo(() => {
 							setSelectedSiteDetails(val);
 						});
 
-					let currentSite = sites?.results?.find((result) => result.id === parseInt(query.siteId));
+					let currentSite = sites?.results?.find((result) => result.id === parseInt(query?.siteId)) ?? null;
 
 					if (currentSite !== undefined) {
-						setSelectedSite(currentSite.name);
+						setSelectedSite(currentSite?.name);
 					}
 				}
 			}
 		}
 	}, [selectedSite, sites, query, selectedSiteDetails, validatingSites]);
 
+	useEffect(() => {
+		return handleSiteSelectOnChange();
+	}, [handleSiteSelectOnChange]);
+
 	return (
 		<>
 			{errorMessage !== [] && errorMessage.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
 					{errorMessage.map((value, key) => (
-						<Alert key={key} message={value} isError />
+						<MemoizedAlert key={key} message={value} isError />
 					))}
 				</div>
 			) : null}
 
-			<div tw="space-y-1">
-				<div tw="relative">
-					<div tw="relative">
-						<span ref={ref} tw="inline-block w-full rounded-md shadow-sm">
-							<SiteSelectMenu
-								selectedSite={selectedSite}
-								selectedSiteId={selectedSiteId}
-								selectedSiteDetails={selectedSiteDetails}
-								isComponentVisible={isComponentVisible}
-								setIsComponentVisible={setIsComponentVisible}
-							/>
-						</span>
-
-						<SiteSelectDropdown
+			<div tw="relative space-y-1">
+				<span ref={ref} tw="inline-block w-full rounded-md shadow-sm">
+					{isComponentReady ? (
+						<MemoizedSiteSelectMenu
+							selectedSite={selectedSite}
 							selectedSiteId={selectedSiteId}
-							handleSiteSelectOnLoad={handleSiteSelectOnLoad}
+							selectedSiteDetails={selectedSiteDetails}
 							isComponentVisible={isComponentVisible}
+							setIsComponentVisible={setIsComponentVisible}
 						/>
-					</div>
-				</div>
+					) : (
+						<Skeleton width={224} height={38} tw="cursor-default relative w-full pl-3 pr-10 py-2" />
+					)}
+				</span>
+
+				<MemoizedSiteSelectDropdown
+					selectedSiteId={selectedSiteId}
+					handleSiteSelectOnLoad={handleSiteSelectOnLoad}
+					isComponentVisible={isComponentVisible}
+				/>
 			</div>
 		</>
 	);
-});
+}
 
-export default SiteSelect;
+/**
+ * Memoized custom `SiteSelect` component
+ */
+export const MemoizedSiteSelect = memo(SiteSelect);
