@@ -14,7 +14,7 @@ export const BadgeModalImage = {
 };
 
 // Numerical Values
-export const ComponentReadyInterval = 500;
+export const ComponentReadyInterval = 2000;
 export const EndpointRefreshInterval = 7500;
 export const FormPasswordMinChars = 8;
 export const FormPasswordMaxChars = 128;
