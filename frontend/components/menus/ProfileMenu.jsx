@@ -1,13 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedAlert } from "@components/alerts";
 import { MemoizedProfileMenuDropdown } from "@components/dropdowns/ProfileMenuDropdown";
-import { MemoizedProfileSidebarSkeleton } from "@components/skeletons/ProfileSidebarSkeleton";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useGetErrorHandler } from "@hooks/useErrorHandler";
 import { useLoading } from "@hooks/useLoading";
 import { useUser } from "@hooks/useUser";
 import { memo } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 
 /**
@@ -47,25 +48,27 @@ export function ProfileMenu() {
 					>
 						<div tw="flex items-center">
 							<div tw="flex flex-col flex-wrap text-left">
-								{isComponentReady ? (
-									<>
-										<p className="truncate-profile-text" tw="text-sm leading-tight mb-1 font-medium text-white">
-											{user?.data?.first_name}
-										</p>
-										<p
-											className="truncate-profile-text"
-											tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150"
-										>
-											{user?.data?.email}
-										</p>
-									</>
-								) : (
-									<MemoizedProfileSidebarSkeleton />
-								)}
+								<p className="truncate-profile-text" tw="text-sm leading-tight mb-1 font-medium text-white">
+									{isComponentReady && user?.data?.first_name ? (
+										user?.data?.first_name
+									) : (
+										<Skeleton duration={2} width={85} height={15} tw="mb-1" />
+									)}
+								</p>
+								<p
+									className="truncate-profile-text"
+									tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150"
+								>
+									{isComponentReady && user?.data?.email ? (
+										user?.data?.email
+									) : (
+										<Skeleton duration={2} width={130} height={15} />
+									)}
+								</p>
 							</div>
 						</div>
 
-						{isComponentReady ? (
+						{isComponentReady && user?.data?.first_name && user?.data?.email ? (
 							<div>
 								<ChevronUpIcon tw="w-4 h-4 text-white" />
 							</div>
