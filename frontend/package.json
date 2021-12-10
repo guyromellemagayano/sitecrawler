@@ -52,10 +52,10 @@
 		"@sentry/nextjs": "6.16.0",
 		"@stripe/react-stripe-js": "^1.6.0",
 		"@stripe/stripe-js": "^1.21.2",
-		"@tailwindcss/aspect-ratio": "^0.3.0",
-		"@tailwindcss/forms": "^0.3.4",
-		"@tailwindcss/line-clamp": "^0.2.2",
-		"@tailwindcss/typography": "^0.4.1",
+		"@tailwindcss/aspect-ratio": "latest",
+		"@tailwindcss/forms": "latest",
+		"@tailwindcss/line-clamp": "latest",
+		"@tailwindcss/typography": "latest",
 		"@tanem/react-nprogress": "^3.0.82",
 		"apexcharts": "3.32.0",
 		"axios": "^0.24.0",
@@ -106,10 +106,7 @@
 		"eslint-plugin-react-hooks": "^4.3.0",
 		"prettier": "^2.5.1",
 		"react-is": "^17.0.2",
-		"tailwindcss": "^2.2.19",
+		"tailwindcss": "latest",
 		"twin.macro": "^2.8.2"
-	},
-	"resolutions": {
-		"styled-components": "5.2.1"
 	}
 }
