@@ -31,7 +31,6 @@ export default function App({ Component, pageProps, err }) {
 	return getLayout(
 		<SWRConfig
 			value={{
-				refreshWhenHidden: true,
 				refreshWhenOffline: true,
 				errorRetryCount: 5
 			}}
