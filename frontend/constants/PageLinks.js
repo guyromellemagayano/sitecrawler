@@ -15,6 +15,7 @@ export const AuditLogsSlug = "audit-logs/";
 export const BillingSlug = "billing/";
 export const FormSlug = "form/";
 export const GlobalSlug = "global/";
+export const LogoutSlug = "logout/";
 export const ProfileSlug = "profile/";
 export const SettingsSlug = "settings/";
 export const SiteSlug = "site/";
