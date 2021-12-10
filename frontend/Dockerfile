@@ -5,12 +5,11 @@ WORKDIR /app
 
 ENV NODE_ENV development
 
-COPY package.json /app
-COPY yarn.lock /app
+COPY package.json yarn.lock /
 
 RUN yarn install --frozen-lockfile
 
-COPY . /app
+COPY . .
 
 EXPOSE 3000
 

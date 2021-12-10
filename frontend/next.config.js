@@ -61,7 +61,7 @@ const NextConfig = {
 				  }
 	},
 	webpack: (config) => {
-		config.resolve.fallback = { fs: false, path: false, module: false, os: false };
+		config.resolve.fallback = { ...config.resolve.fallback, fs: false, path: false, module: false, os: false };
 
 		return config;
 	},

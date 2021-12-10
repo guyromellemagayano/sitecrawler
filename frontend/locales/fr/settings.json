@@ -22,6 +22,12 @@
 		"headline": "Suppression du compte réussie",
 		"subHeadline": "Suppression de la demande de compte utilisateur envoyée avec succès."
 	},
+	"helpSupportFormSubmissionSuccess": "Message d'assistance envoyé avec succès",
+	"helpSupportFormSubmissionFailed": "Échec du message d'assistance envoyé. Veuillez réessayer.",
+	"helpSupportFormTitle": "Formulaire de prise en charge de l'application",
+	"tellUsYourThoughts": "Dites-nous ce que vous pensez de l'application.",
+	"message": "Message",
+	"submitForm": "Soumettre le formulaire",
 	"saving": "Économie...",
 	"saveChanges": "Sauvegarder les modifications",
 	"processing": "Traitement...",
