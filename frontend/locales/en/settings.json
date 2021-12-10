@@ -22,6 +22,12 @@
 		"headline": "Delete account successful",
 		"subHeadline": "Delete user account request sent successfully."
 	},
+	"helpSupportFormSubmissionSuccess": "Support message sent successfully",
+	"helpSupportFormSubmissionFailed": "Support message sent failed. Please try again.",
+	"helpSupportFormTitle": "App Support Form",
+	"tellUsYourThoughts": "Tell us your thoughts about the app.",
+	"message": "Message",
+	"submitForm": "Submit Form",
 	"saving": "Saving...",
 	"saveChanges": "Save Changes",
 	"processing": "Processing...",

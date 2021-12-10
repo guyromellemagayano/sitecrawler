@@ -22,6 +22,12 @@
 		"headline": "Verwijder account succesvol",
 		"subHeadline": "Verzoek om gebruikersaccount te verwijderen is succesvol verzonden."
 	},
+	"helpSupportFormSubmissionSuccess": "Ondersteuningsbericht succesvol verzonden",
+	"helpSupportFormSubmissionFailed": "Verzonden ondersteuningsbericht is mislukt. Probeer het opnieuw.",
+	"helpSupportFormTitle": "App-ondersteuningsformulier",
+	"message": "Bericht",
+	"tellUsYourThoughts": "Vertel ons uw mening over de app.",
+	"submitForm": "Formulier verzenden",
 	"saving": "Besparing...",
 	"saveChanges": "Wijzigingen opslaan",
 	"processing": "Verwerken...",
