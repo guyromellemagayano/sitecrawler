@@ -3,10 +3,9 @@ import { MemoizedAlert } from "@components/alerts";
 import { MemoizedSiteSelectDropdown } from "@components/dropdowns/SiteSelectDropdown";
 import { MemoizedSiteSelectMenu } from "@components/menus/SiteSelectMenu";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { ComponentReadyInterval } from "@constants/GlobalValues";
 import { useComponentVisible } from "@hooks/useComponentVisible";
+import { useLoading } from "@hooks/useLoading";
 import { useSites } from "@hooks/useSites";
-import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useState } from "react";
@@ -22,22 +21,9 @@ export function SiteSelect() {
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
 	const [selectedSiteId, setSelectedSiteId] = useState(null);
 	const [errorMessage, setErrorMessage] = useState([]);
-	const [isComponentReady, setIsComponentReady] = useState(false);
 
-	// Router
-	const { isReady, pathname } = useRouter();
-
-	useEffect(() => {
-		if (isReady && pathname) {
-			setTimeout(() => {
-				setIsComponentReady(true);
-			}, ComponentReadyInterval);
-		}
-
-		return () => {
-			setIsComponentReady(false);
-		};
-	}, [isReady, pathname]);
+	// Custom hooks
+	const { isComponentReady } = useLoading();
 
 	// Translations
 	const { t } = useTranslation("alerts");
@@ -52,7 +38,7 @@ export function SiteSelect() {
 	const siteUnknownError = t("siteUnknownError");
 
 	// Router
-	const { asPath, query } = useRouter();
+	const { query } = useRouter();
 
 	// SWR hooks
 	const { sites, errorSites, validatingSites } = useSites(SitesApiEndpoint);
@@ -129,23 +115,12 @@ export function SiteSelect() {
 						? prevState.find((prevState) => prevState === errorStatusCodeMessage)
 						: errorStatusCodeMessage
 				]);
-
-				// Capture unknown errors and send to Sentry
-				Sentry.configureScope((scope) => {
-					scope.setTag("route", asPath);
-					scope.setTag("status", errorSites.status);
-					scope.setTag(
-						"message",
-						errorMessage.find((message) => message === errorStatusCodeMessage)
-					);
-					Sentry.captureException(new Error(errorSites));
-				});
 			}
 		}
 	}, [sites, query, validatingSites]);
 
 	useEffect(() => {
-		return handleSiteSelectOnClick();
+		handleSiteSelectOnClick();
 	}, [handleSiteSelectOnClick]);
 
 	// Handle site selection on change
@@ -170,7 +145,7 @@ export function SiteSelect() {
 	}, [selectedSite, sites, query, selectedSiteDetails, validatingSites]);
 
 	useEffect(() => {
-		return handleSiteSelectOnChange();
+		handleSiteSelectOnChange();
 	}, [handleSiteSelectOnChange]);
 
 	return (
