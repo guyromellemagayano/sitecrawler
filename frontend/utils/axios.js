@@ -18,7 +18,6 @@ const AppAxiosInstance = axios.create({
 // Use `axios` interceptors for all HTTP methods (GET, POST, PUT, DELETE, etc.)
 axios.interceptors.request.use(
 	(req) => req,
-	(config) => config,
 	(err) => Promise.reject(err)
 );
 
