@@ -169,4 +169,53 @@ export const CustomTransitions = createGlobalStyle`
   .delete-user-account-modal-second-child-leave-to {
     ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
   }
+
+	.alerts-enter {
+    ${tw`transition-opacity duration-75`}
+  }
+
+  .alerts-enter-from {
+    ${tw`opacity-0`}
+  }
+
+  .alerts-enter-to {
+    ${tw`opacity-100`}
+  }
+
+  .alerts-leave {
+    ${tw`transition-opacity duration-150`}
+  }
+
+  .alerts-leave-from {
+    ${tw`opacity-100`}
+  }
+
+  .alerts-leave-to {
+    ${tw`opacity-0`}
+  }
+
+
+	.notifications-enter {
+    ${tw`transform ease-out duration-300 transition`}
+  }
+
+  .notifications-enter-from {
+    ${tw`translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2`}
+  }
+
+  .notifications-enter-to {
+    ${tw`translate-y-0 opacity-100 sm:translate-x-0`}
+  }
+
+  .notifications-leave {
+    ${tw`transition ease-in duration-100`}
+  }
+
+  .notifications-leave-from {
+    ${tw`opacity-100`}
+  }
+
+  .notifications-leave-to {
+    ${tw`opacity-0`}
+  }
 `;
