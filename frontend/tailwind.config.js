@@ -25,7 +25,7 @@ module.exports = {
 					1300: "#1d2626",
 					1400: "#e7efef"
 				},
-				emerald: {
+				green: {
 					1000: "#19b080"
 				},
 				red: {
@@ -44,6 +44,9 @@ module.exports = {
 			height: {
 				530: "530px"
 			},
+			minHeight: {
+				page: "calc(100vh - 70px)"
+			},
 			spacing: {
 				16: "16rem"
 			}
@@ -52,6 +55,7 @@ module.exports = {
 			transparent: "transparent",
 			current: "currentColor",
 			amber: colors.amber,
+			black: colors.black,
 			blue: colors.blue,
 			cyan: colors.cyan,
 			emeral: colors.emerald,
