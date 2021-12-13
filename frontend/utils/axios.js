@@ -10,7 +10,8 @@ const AppAxiosInstance = axios.create({
 	},
 	validateStatus: function (status) {
 		return status >= 200 && status < 500;
-	}
+	},
+	withCredentials: true
 });
 
 // Use `axios` interceptors for all HTTP methods (GET, POST, PUT, DELETE, etc.)
