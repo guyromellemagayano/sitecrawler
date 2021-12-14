@@ -32,6 +32,7 @@ export default function App({ Component, pageProps, err }) {
 		<SWRConfig
 			value={{
 				refreshWhenOffline: true,
+				refreshWhenHidden: true,
 				errorRetryCount: 5
 			}}
 		>
