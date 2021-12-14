@@ -169,4 +169,28 @@ export const CustomTransitions = createGlobalStyle`
   .delete-user-account-modal-second-child-leave-to {
     ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
   }
+
+	.alerts-enter {
+    ${tw`transition-opacity duration-75`}
+  }
+
+  .alerts-enter-from {
+    ${tw`opacity-0`}
+  }
+
+  .alerts-enter-to {
+    ${tw`opacity-100`}
+  }
+
+  .alerts-leave {
+    ${tw`transition-opacity duration-150`}
+  }
+
+  .alerts-leave-from {
+    ${tw`opacity-100`}
+  }
+
+  .alerts-leave-to {
+    ${tw`opacity-0`}
+  }
 `;

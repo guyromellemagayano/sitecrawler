@@ -32,7 +32,7 @@
 			}
 		],
 		[
-			"styled-components",
+			"babel-plugin-styled-components",
 			{
 				"ssr": true,
 				"fileName": false,
