@@ -50,7 +50,7 @@
 		"@heroicons/react": "latest",
 		"@sentry/nextjs": "6.16.1",
 		"@stripe/react-stripe-js": "^1.6.0",
-		"@stripe/stripe-js": "^1.21.2",
+		"@stripe/stripe-js": "^1.22.0",
 		"@tailwindcss/aspect-ratio": "^0.4.0",
 		"@tailwindcss/forms": "^0.4.0",
 		"@tailwindcss/line-clamp": "^0.3.0",
@@ -82,13 +82,13 @@
 		"react-player": "^2.6.2",
 		"react-resize-detector": "^6.7.6",
 		"styled-components": "5.3.3",
-		"swr": "^1.1.0",
+		"swr": "^1.1.1",
 		"yup": "^0.32.11"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.16.0",
-		"@babel/eslint-parser": "^7.16.3",
-		"@babel/plugin-transform-react-jsx": "^7.16.0",
+		"@babel/core": "^7.16.5",
+		"@babel/eslint-parser": "^7.16.5",
+		"@babel/plugin-transform-react-jsx": "^7.16.5",
 		"@next/bundle-analyzer": "^12.0.7",
 		"@next/eslint-plugin-next": "latest",
 		"babel-plugin-macros": "^3.1.0",
@@ -105,7 +105,7 @@
 		"eslint-plugin-react": "^7.27.1",
 		"eslint-plugin-react-hooks": "^4.3.0",
 		"prettier": "^2.5.1",
-		"tailwindcss": "^3.0.0",
+		"tailwindcss": "^3.0.2",
 		"twin.macro": "^2.8.2"
 	}
 }
