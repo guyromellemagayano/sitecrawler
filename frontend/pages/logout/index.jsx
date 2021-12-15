@@ -20,7 +20,7 @@ export default function Logout() {
 
 	useEffect(() => {
 		(async () => {
-			const logoutResponse = await handlePostMethod(LogoutApiEndpoint);
+			const logoutResponse = await handlePostMethod(LogoutApiEndpoint, null);
 			const logoutResponseData = logoutResponse?.data ?? null;
 			const logoutResponseStatus = logoutResponse?.status ?? null;
 

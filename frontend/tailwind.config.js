@@ -49,6 +49,9 @@ module.exports = {
 			},
 			spacing: {
 				16: "16rem"
+			},
+			zIndex: {
+				9999: 9999
 			}
 		},
 		colors: {

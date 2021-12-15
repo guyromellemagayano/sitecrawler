@@ -6,21 +6,23 @@ import "twin.macro";
 /**
  * Custom function to render the `MobileSidebarButton` component
  *
- * @param {boolean} isComponentVisible
- * @param {function} setIsComponentVisible
+ * @param {boolean} openSidebar
+ * @param {function} setOpenSidebar
  */
-export function MobileSidebarButton({ isComponentVisible, setIsComponentVisible }) {
+export function MobileSidebarButton({ handleOpenSidebar }) {
 	// Translations
 	const { t } = useTranslation("common");
 	const openSidebarText = t("openSidebar");
 
 	return (
 		<button
-			tw="flex-shrink-0 flex px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900 lg:hidden"
-			onClick={() => setIsComponentVisible(!isComponentVisible)}
+			tw="flex-shrink-0 flex items-center px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900 lg:hidden"
+			onClick={handleOpenSidebar}
 		>
-			<span tw="sr-only">{openSidebarText}</span>
-			<MenuIcon tw="h-6 w-6" />
+			<div tw="flex-1">
+				<span tw="sr-only">{openSidebarText}</span>
+				<MenuIcon tw="h-6 w-6" />
+			</div>
 		</button>
 	);
 }

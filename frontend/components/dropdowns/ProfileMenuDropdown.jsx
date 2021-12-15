@@ -3,19 +3,25 @@ import { Basic, Pro } from "@constants/GlobalValues";
 import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { Transition } from "@headlessui/react";
+import { useLoading } from "@hooks/useLoading";
 import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
 import { memo } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 
 /**
  * Custom function to render the `ProfileMenuDropdown` component
  */
-export function ProfileMenuDropdown({ isComponentVisible = false }) {
+export function ProfileMenuDropdown({ isComponentVisible }) {
 	// SWR hooks
 	const { user } = useUser();
+
+	// Custom hooks
+	const { isComponentReady } = useLoading();
 
 	// Translations
 	const { t } = useTranslation();
@@ -49,21 +55,29 @@ export function ProfileMenuDropdown({ isComponentVisible = false }) {
 									: tw`text-red-800`
 							]}
 						>
-							{user?.data?.group?.name} {plan}
+							{isComponentReady && user?.data?.group?.name ? (
+								user?.data?.group?.name + " " + plan
+							) : (
+								<Skeleton duration={2} width={67} height={20} />
+							)}
 						</span>
-						{(user?.data?.group?.name === Basic || user?.data?.group?.name === Pro) && (
-							<Link href={SubscriptionPlansSettingsLink} passHref>
-								<a
-									css={[
-										tw`text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded hover:text-white cursor-pointer transition ease-in-out duration-150`,
-										user?.data?.group?.name === Basic
-											? tw`bg-green-200 text-green-800 hover:bg-green-600`
-											: tw`bg-blue-200 text-blue-800 hover:bg-blue-600`
-									]}
-								>
-									<small>{upgrade}</small>
-								</a>
-							</Link>
+						{isComponentReady && user?.data?.group?.name ? (
+							user?.data?.group?.name === Basic || user?.data?.group?.name === Pro ? (
+								<Link href={SubscriptionPlansSettingsLink} passHref>
+									<a
+										css={[
+											tw`text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded hover:text-white cursor-pointer transition ease-in-out duration-150`,
+											user?.data?.group?.name === Basic
+												? tw`bg-green-200 text-green-800 hover:bg-green-600`
+												: tw`bg-blue-200 text-blue-800 hover:bg-blue-600`
+										]}
+									>
+										<small>{upgrade}</small>
+									</a>
+								</Link>
+							) : null
+						) : (
+							<Skeleton duration={2} width={57} height={24} />
 						)}
 					</span>
 				</div>

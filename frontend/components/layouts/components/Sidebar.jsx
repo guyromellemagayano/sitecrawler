@@ -1,6 +1,7 @@
 import { MemoizedMainMenu } from "@components/menus/MainMenu";
 import { MemoizedProfileMenu } from "@components/menus/ProfileMenu";
 import { forwardRef, memo } from "react";
+import { isMobile } from "react-device-detect";
 import "twin.macro";
 import { MemoizedMobileSidebarLayout } from "./MobileSidebar";
 
@@ -10,7 +11,9 @@ import { MemoizedMobileSidebarLayout } from "./MobileSidebar";
 export function SidebarLayout({ openSidebar = false, setOpenSidebar }, ref) {
 	return (
 		<>
-			<MemoizedMobileSidebarLayout ref={ref} openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
+			{isMobile ? (
+				<MemoizedMobileSidebarLayout ref={ref} openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
+			) : null}
 
 			<aside tw="bg-gray-1000 hidden lg:flex lg:flex-shrink-0">
 				<div tw="flex flex-col w-64">

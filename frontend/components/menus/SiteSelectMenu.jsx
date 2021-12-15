@@ -10,12 +10,7 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `SiteSelectMenu` component
  */
-export function SiteSelectMenu({
-	selectedSite = null,
-	selectedSiteDetails = null,
-	isComponentVisible = false,
-	setIsComponentVisible
-}) {
+export function SiteSelectMenu({ selectedSite, selectedSiteDetails, handleOpenDropdown }) {
 	// Router
 	const { query } = useRouter();
 
@@ -39,7 +34,7 @@ export function SiteSelectMenu({
 			aria-labelledby="listbox-label"
 			className="focus:ring-gray-1100"
 			tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 sm:text-sm sm:leading-5"
-			onClick={() => setIsComponentVisible(!isComponentVisible)}
+			onClick={handleOpenDropdown}
 		>
 			<div tw="flex items-center space-x-3">
 				<span tw="block truncate text-gray-600">
@@ -71,15 +66,9 @@ export function SiteSelectMenu({
 }
 
 SiteSelectMenu.propTypes = {
-	isComponentVisible: PropTypes.bool,
+	handleOpenDropdown: PropTypes.func.isRequired,
 	selectedSite: PropTypes.string,
-	selectedSiteDetails: PropTypes.oneOfType([
-		PropTypes.array,
-		PropTypes.shape({
-			verified: PropTypes.bool
-		})
-	]),
-	setIsComponentVisible: PropTypes.func.isRequired
+	selectedSiteDetails: PropTypes.arrayOf(PropTypes.object)
 };
 
 /**

@@ -15,7 +15,7 @@ import "twin.macro";
 /**
  * Custom function to render the `SiteSelectDropdown` component
  */
-export function SiteSelectDropdown({ selectedSiteId = null, handleSiteSelectOnLoad, isComponentVisible = false }) {
+export function SiteSelectDropdown({ selectedSiteId = null, handleSiteSelectOnLoad, openDropdown }) {
 	const [scanObjId, setScanObjId] = useState(null);
 
 	// Sidebar Menu Labels
@@ -66,7 +66,7 @@ export function SiteSelectDropdown({ selectedSiteId = null, handleSiteSelectOnLo
 
 	return (
 		<Transition
-			show={isComponentVisible}
+			show={openDropdown}
 			enter="site-select-dropdown-enter"
 			enterFrom="site-select-dropdown-enter-from"
 			enterTo="site-select-dropdown-enter-to"
@@ -90,7 +90,7 @@ export function SiteSelectDropdown({ selectedSiteId = null, handleSiteSelectOnLo
 
 SiteSelectDropdown.propTypes = {
 	handleSiteSelectOnLoad: PropTypes.func.isRequired,
-	isComponentVisible: PropTypes.bool,
+	openDropdown: PropTypes.bool,
 	selectedSiteId: PropTypes.number
 };
 
