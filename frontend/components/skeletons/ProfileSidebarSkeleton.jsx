@@ -1,24 +1,25 @@
-// External
-import "twin.macro";
+import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import "twin.macro";
+import { MemoizedSkeletonEntries } from "./common/SkeletonEntries";
 
-// Components
-import SkeletonEntries from "@components/skeletons/common/SkeletonEntries";
-
-const ProfileSidebarSkeleton = () => {
+/**
+ * Custom function to render the `ProfileSidebarSkeleton` component
+ */
+export function ProfileSidebarSkeleton() {
 	const skeletonLimit = 1;
 	const skeletonEntry = (
-		<div className="group" tw="p-4 flex-shrink-0 w-full block bg-gray-900">
-			<div tw="flex items-center">
-				<div>
-					<Skeleton duration={2} width={130} />
-					<Skeleton duration={2} width={130} />
-				</div>
-			</div>
-		</div>
+		<>
+			<Skeleton duration={2} width={85} height={15} tw="mb-1" />
+			<Skeleton duration={2} width={130} height={15} />
+		</>
 	);
 
-	return <SkeletonEntries str={skeletonEntry} limit={skeletonLimit} />;
-};
+	return <MemoizedSkeletonEntries str={skeletonEntry} limit={skeletonLimit} />;
+}
 
-export default ProfileSidebarSkeleton;
+/**
+ * Memoized custom `ProfileSidebarSkeleton` component
+ */
+export const MemoizedProfileSidebarSkeleton = memo(ProfileSidebarSkeleton);

@@ -1,9 +1,7 @@
-// External
-import "twin.macro";
-import Skeleton from "react-loading-skeleton";
-
-// Components
 import SkeletonEntries from "@components/skeletons/common/SkeletonEntries";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import "twin.macro";
 
 const HowToSetupSkeleton = () => {
 	const skeletonLimit = 1;

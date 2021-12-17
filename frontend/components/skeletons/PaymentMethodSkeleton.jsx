@@ -1,9 +1,8 @@
 // External
-import tw from "twin.macro";
-import Skeleton from "react-loading-skeleton";
-
 // Components
 import SkeletonEntries from "@components/skeletons/common/SkeletonEntries";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const PaymentMethodSkeleton = () => {
 	const skeletonLimit = 1;

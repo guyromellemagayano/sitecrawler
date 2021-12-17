@@ -1,9 +1,9 @@
 // External
-import "twin.macro";
-import Skeleton from "react-loading-skeleton";
-
 // Components
 import TableSkeletonEntries from "@components/skeletons/common/TableSkeletonEntries";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import "twin.macro";
 
 const SeoTableSkeleton = () => {
 	const skeletonLimit = 5;
@@ -29,16 +29,10 @@ const SeoTableSkeleton = () => {
 			<td tw="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500 leading-5">
 				<Skeleton duration={2} width={45} />
 			</td>
-			<td
-				className="icon-status"
-				tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-green-500"
-			>
+			<td className="icon-status" tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-green-500">
 				<Skeleton duration={2} width={45} />
 			</td>
-			<td
-				className="icon-status"
-				tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-red-500"
-			>
+			<td className="icon-status" tw="px-6 whitespace-nowrap border-b border-gray-300 text-sm leading-5 text-red-500">
 				<Skeleton duration={2} width={45} />
 			</td>
 		</>
