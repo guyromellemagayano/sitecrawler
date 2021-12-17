@@ -7,11 +7,10 @@ import {
 	FormStringMinChars
 } from "@constants/GlobalValues";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import * as Sentry from "@sentry/nextjs";
+import { useAlertMessage } from "@hooks/useAlertMessage";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
-import { memo, useState } from "react";
+import { memo } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
@@ -21,22 +20,11 @@ import * as Yup from "yup";
  * Custom function to render the `RegistrationForm` component
  */
 export function RegistrationForm() {
-	const [isErrorEmail, setIsErrorEmail] = useState(false);
-	const [isErrorUsername, setIsErrorUsername] = useState(false);
-	const [errorMessage, setErrorMessage] = useState([]);
-	const [successMessage, setSuccessMessage] = useState([]);
-
-	// Router
-	const { asPath } = useRouter();
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
-
 	// Translations
 	const { t } = useTranslation();
 	const firstName = t("common:firstName");
 	const lastName = t("common:lastName");
-	const username = t("common:username");
+	const username = t("common:userName");
 	const emailAddress = t("common:emailAddress");
 	const password = t("common:password");
 	const repeatPassword = t("common:repeatPassword");
@@ -47,27 +35,26 @@ export function RegistrationForm() {
 	const submitting = t("common:submitting");
 	const createAccount = t("registration:createAccount");
 	const bothPasswordsNeedSame = t("common:bothPasswordsNeedSame");
-	const registrationOkSuccess = t("alerts:registrationOkSuccess");
-	const registrationUsernameAlreadyExistsError = t("alerts:registrationUsernameAlreadyExistsError");
-	const registrationEmailAlreadyExistsError = t("alerts:registrationEmailAlreadyExistsError");
-	const registrationBadRequestPostError = t("alerts:registrationBadRequestPostError");
-	const registrationUnknownError = t("alerts:registrationUnknownError");
+	const registrationUsernameAlreadyExistsError = t("alerts:auth.registration.misc.usernameAlreadyExists");
+	const registrationEmailAlreadyExistsError = t("alerts:auth.registration.misc.emailAlreadyExists");
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
+
+	// Custom hooks
+	const { state, setConfig } = useAlertMessage();
 
 	return (
 		<>
-			{errorMessage !== [] && errorMessage.length > 0 ? (
-				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
-					{errorMessage.map((value, key) => (
-						<MemoizedAlert key={key} message={value} isError />
-					))}
-				</div>
-			) : null}
+			{state?.responses !== [] && state?.responses?.length > 0 ? (
+				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
+					{state?.responses?.map((value, key) => {
+						// Alert Messsages
+						const responseText = value?.responseText ?? null;
+						const isSuccess = value?.isSuccess ?? null;
 
-			{successMessage !== [] && successMessage.length > 0 ? (
-				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
-					{successMessage.map((value, key) => (
-						<MemoizedAlert key={key} message={value} isSuccess />
-					))}
+						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+					}) ?? null}
 				</div>
 			) : null}
 
@@ -99,7 +86,7 @@ export function RegistrationForm() {
 						})
 						.required(requiredField)
 				})}
-				onSubmit={async (values, { setSubmitting, resetForm }) => {
+				onSubmit={async (values, { setSubmitting, resetForm, setErrors }) => {
 					const body = {
 						username: values.username,
 						email: values.email,
@@ -110,79 +97,40 @@ export function RegistrationForm() {
 					};
 
 					const registrationResponse = await handlePostMethod(RegistrationApiEndpoint, body);
-					const registrationResponseData = registrationResponse.data ?? null;
-					const registrationResponseStatus = registrationResponse.status ?? null;
+					const registrationResponseData = registrationResponse?.data ?? null;
+					const registrationResponseStatus = registrationResponse?.status ?? null;
+					const registrationResponseMethod = registrationResponse?.config?.method ?? null;
 
 					if (registrationResponseData !== null && Math.round(registrationResponseStatus / 200) === 1) {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						await mutate(UserApiEndpoint, false);
+						await mutate(UserApiEndpoint, null, false);
 
+						// Disable submission and reset form as soon as 200 OK or 201 Created response is issued
 						setSubmitting(false);
 						resetForm({ values: "" });
-						setSuccessMessage((prevState) => [
-							...prevState,
-							prevState.indexOf(registrationOkSuccess) !== -1
-								? prevState.find((prevState) => prevState === registrationOkSuccess)
-								: registrationOkSuccess
-						]);
+
+						// Show alert message after successful 200 OK or 201 Created response is issued
+						setConfig({
+							isRegistration: true,
+							method: registrationResponseMethod,
+							status: registrationResponseStatus
+						});
 					} else {
-						let errorStatusCodeMessage = "";
-
+						// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
 						setSubmitting(false);
-						resetForm({ values: "" });
 
-						switch (registrationResponseStatus) {
-							case 400:
-								errorStatusCodeMessage = registrationBadRequestPostError;
-								break;
-							default:
-								errorStatusCodeMessage = registrationUnknownError;
-								break;
-						}
-
-						setErrorMessage((prevState) => [
-							...prevState,
-							prevState.indexOf(errorStatusCodeMessage) !== -1
-								? prevState.find((prevState) => prevState === errorStatusCodeMessage)
-								: errorStatusCodeMessage
-						]);
+						// Show alert message after failed response is issued
+						setConfig({
+							isRegistration: true,
+							method: registrationResponseMethod,
+							status: registrationResponseStatus
+						});
 
 						registrationResponseData.username
-							? (() => {
-									setErrorMessage((prevState) => [
-										...prevState,
-										prevState.indexOf(registrationUsernameAlreadyExistsError) !== -1
-											? prevState.find((prevState) => prevState === registrationUsernameAlreadyExistsError)
-											: registrationUsernameAlreadyExistsError
-									]);
-
-									setIsErrorUsername(true);
-							  })()
+							? setErrors({ username: registrationUsernameAlreadyExistsError })
+							: registrationResponseData.email
+							? setErrors({ email: registrationEmailAlreadyExistsError })
 							: null;
-
-						registrationResponseData.email
-							? (() => {
-									setErrorMessage((prevState) => [
-										...prevState,
-										prevState.indexOf(registrationEmailAlreadyExistsError) !== -1
-											? prevState.find((prevState) => prevState === registrationEmailAlreadyExistsError)
-											: registrationEmailAlreadyExistsError
-									]);
-
-									setIsErrorEmail(true);
-							  })()
-							: null;
-
-						// Capture unknown errors and send to Sentry
-						Sentry.configureScope((scope) => {
-							scope.setTag("route", asPath);
-							scope.setTag("status", registrationResponseStatus);
-							scope.setTag(
-								"message",
-								errorMessage.find((message) => message === errorStatusCodeMessage)
-							);
-							Sentry.captureException(new Error(registrationResponse));
-						});
 					}
 				}}
 			>
@@ -210,11 +158,9 @@ export function RegistrationForm() {
 								/>
 							</div>
 
-							{errors.firstname && touched.firstname && (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">
-									{errors.firstname && touched.firstname && errors.firstname}
-								</span>
-							)}
+							{errors.firstname || touched.firstname ? (
+								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.firstname || touched.firstname}</span>
+							) : null}
 						</div>
 
 						<div tw="mt-6">
@@ -239,11 +185,9 @@ export function RegistrationForm() {
 								/>
 							</div>
 
-							{errors.lastname && touched.lastname && (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">
-									{errors.lastname && touched.lastname && errors.lastname}
-								</span>
-							)}
+							{errors.lastname || touched.lastname ? (
+								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.lastname || touched.lastname}</span>
+							) : null}
 						</div>
 
 						<div tw="mt-6">
@@ -259,7 +203,7 @@ export function RegistrationForm() {
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none`,
-										errors.username || isErrorUsername ? tw`border-red-300` : tw`border-gray-300`
+										errors.username ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="username"
 									onChange={handleChange}
@@ -268,11 +212,9 @@ export function RegistrationForm() {
 								/>
 							</div>
 
-							{errors.username && touched.username && (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">
-									{errors.username && touched.username && errors.username}
-								</span>
-							)}
+							{errors.username || touched.username ? (
+								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
+							) : null}
 						</div>
 
 						<div tw="mt-6">
@@ -288,7 +230,7 @@ export function RegistrationForm() {
 									css={[
 										tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
 										isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed pointer-events-none `,
-										errors.email || isErrorEmail ? tw`border-red-300` : tw`border-gray-300`
+										errors.email ? tw`border-red-300` : tw`border-gray-300`
 									]}
 									aria-describedby="email"
 									onChange={handleChange}
@@ -297,11 +239,9 @@ export function RegistrationForm() {
 								/>
 							</div>
 
-							{errors.email && touched.email && (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">
-									{errors.email && touched.email && errors.email}
-								</span>
-							)}
+							{errors.email || touched.email ? (
+								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.email || touched.email}</span>
+							) : null}
 						</div>
 
 						<div tw="mt-6">
@@ -327,11 +267,9 @@ export function RegistrationForm() {
 							</div>
 							<PasswordStrengthBar password={values.password1} />
 
-							{errors.password1 && touched.password1 && (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">
-									{errors.password1 && touched.password1 && errors.password1}
-								</span>
-							)}
+							{errors.password1 || touched.password1 ? (
+								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.password1 || touched.password1}</span>
+							) : null}
 						</div>
 
 						<div tw="mt-6">
@@ -356,11 +294,9 @@ export function RegistrationForm() {
 								/>
 							</div>
 
-							{errors.password2 && touched.password2 && (
-								<span tw="block mt-2 text-xs leading-5 text-red-700">
-									{errors.password2 && touched.password2 && errors.password2}
-								</span>
-							)}
+							{errors.password2 || touched.password2 ? (
+								<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.password2 || touched.password2}</span>
+							) : null}
 						</div>
 
 						<div tw="mt-6">
