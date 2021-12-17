@@ -15,8 +15,8 @@ import * as Yup from "yup";
  */
 export function HelpSupportSettingsForm() {
 	const { t } = useTranslation();
-	const helpSupportFormSubmissionSuccess = t("settings:helpSupportFormSubmissionSuccess");
-	const helpSupportFormSubmissionFailed = t("settings:helpSupportFormSubmissionFailed");
+	const helpSupportFormSuccess = t("settings:helpSupportForm.success");
+	const helpSupportFormFailed = t("settings:helpSupportForm.failed");
 	const tellIsYourThoughts = t("settings:tellUsYourThoughts");
 	const message = t("settings:message");
 	const submitForm = t("settings:submitForm");
@@ -51,9 +51,9 @@ export function HelpSupportSettingsForm() {
 					resetForm({ values: "" });
 					setSuccessMessage((prevState) => [
 						...prevState,
-						prevState.indexOf(helpSupportFormSubmissionSuccess) !== -1
-							? prevState.find((prevState) => prevState === helpSupportFormSubmissionSuccess)
-							: helpSupportFormSubmissionSuccess
+						prevState.indexOf(helpSupportFormSuccess) !== -1
+							? prevState.find((prevState) => prevState === helpSupportFormSuccess)
+							: helpSupportFormSuccess
 					]);
 				} else {
 					let errorStatusCodeMessage = "";
@@ -63,7 +63,7 @@ export function HelpSupportSettingsForm() {
 
 					switch (helpSupportResponseStatus) {
 						default:
-							errorStatusCodeMessage = helpSupportFormSubmissionFailed;
+							errorStatusCodeMessage = helpSupportFormFailed;
 							break;
 					}
 
