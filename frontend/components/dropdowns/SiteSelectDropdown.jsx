@@ -8,14 +8,13 @@ import { PlusIcon } from "@heroicons/react/solid";
 import { useCrawl } from "@hooks/useCrawl";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
-import { memo, useMemo, useState } from "react";
+import { forwardRef, memo, useMemo, useState } from "react";
 import "twin.macro";
 
 /**
  * Custom function to render the `SiteSelectDropdown` component
  */
-export function SiteSelectDropdown({ selectedSiteId = null, handleSiteSelectOnLoad, openDropdown }) {
+export function SiteSelectDropdown({ selectedSiteId, handleSiteSelectOnLoad, openDropdown }, ref) {
 	const [scanObjId, setScanObjId] = useState(null);
 
 	// Sidebar Menu Labels
@@ -73,28 +72,24 @@ export function SiteSelectDropdown({ selectedSiteId = null, handleSiteSelectOnLo
 			leave="site-select-dropdown-leave"
 			leaveFrom="site-select-dropdown-leave-from"
 			leaveTo="site-select-dropdown-leave-to"
-			tw="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden"
 		>
-			<MemoizedSitesList handleSiteSelectOnLoad={handleSiteSelectOnLoad} />
-			<span tw="relative flex m-2 justify-center shadow-sm rounded-md">
-				<Link href={AddNewSiteLink} passHref>
-					<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full">
-						<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
-						{labelsArray[2]?.label ?? null}
-					</a>
-				</Link>
-			</span>
+			<div ref={ref} tw="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden">
+				<MemoizedSitesList handleSiteSelectOnLoad={handleSiteSelectOnLoad} />
+				<span tw="relative flex m-2 justify-center shadow-sm rounded-md">
+					<Link href={AddNewSiteLink} passHref>
+						<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full">
+							<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
+							{labelsArray[2]?.label ?? null}
+						</a>
+					</Link>
+				</span>
+			</div>
 		</Transition>
 	);
 }
 
-SiteSelectDropdown.propTypes = {
-	handleSiteSelectOnLoad: PropTypes.func.isRequired,
-	openDropdown: PropTypes.bool,
-	selectedSiteId: PropTypes.number
-};
-
 /**
  * Memoized custom `SiteSelectDropdown` component
  */
-export const MemoizedSiteSelectDropdown = memo(SiteSelectDropdown);
+export const ForwardRefSiteSelectDropdown = forwardRef(SiteSelectDropdown);
+export const MemoizedSiteSelectDropdown = memo(ForwardRefSiteSelectDropdown);
