@@ -1,4 +1,4 @@
-import { MemoizedHelpSupportSettingsForm } from "@components/forms/HelpSupportForm";
+import { MemoizedHelpSupportSettingsForm } from "@components/forms/HelpSupportSettingsForm";
 import { useLoading } from "@hooks/useLoading";
 import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
@@ -13,7 +13,7 @@ import "twin.macro";
 export function HelpSupportSettings() {
 	// Translations
 	const { t } = useTranslation("settings");
-	const helpSupportFormTitle = t("helpSupportFormTitle");
+	const helpSupportFormTitle = t("helpSupportForm.title");
 
 	// SWR hooks
 	const { user, errorUser, validatingUser } = useUser();
