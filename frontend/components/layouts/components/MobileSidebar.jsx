@@ -15,8 +15,8 @@ export function MobileSidebarLayout({ openSidebar, setOpenSidebar }, ref) {
 	const closeSidebar = t("closeSidebar");
 
 	return (
-		<Transition ref={ref} show={openSidebar} tw="flex lg:hidden flex-shrink-0">
-			<div tw="fixed inset-0 flex z-9999 lg:hidden" role="dialog" aria-modal="true">
+		<Transition show={openSidebar} tw="flex lg:hidden flex-shrink-0">
+			<div ref={ref} tw="fixed inset-0 flex z-9999 lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
 					enter="mobile-sidebar-first-child-enter"
 					enterFrom="mobile-sidebar-first-child-enter-from"
