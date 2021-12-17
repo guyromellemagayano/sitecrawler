@@ -1,7 +1,6 @@
 import { DashboardLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedHelpSupportPageLayout } from "@components/layouts/pages/HelpSupport";
-// import HelpSupportPageLayout from "@components/layouts/pages/HelpSupport";
+import { MemoizedHelpSupportSettingsPageLayout } from "@components/layouts/pages/HelpSupportSettings";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
 import { LoginLink } from "@constants/PageLinks";
@@ -51,7 +50,7 @@ export default function HelpSupport() {
 		<>
 			<NextSeo title={helpSupport} />
 			<MemoizedPageLayout pageTitle={helpSupport}>
-				<MemoizedHelpSupportPageLayout />
+				<MemoizedHelpSupportSettingsPageLayout />
 			</MemoizedPageLayout>
 		</>
 	);
