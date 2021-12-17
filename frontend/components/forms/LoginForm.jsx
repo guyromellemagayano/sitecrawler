@@ -1,17 +1,19 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedAlert } from "@components/alerts";
 import { LoginApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { RedirectInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink, ResetPasswordLink } from "@constants/PageLinks";
 import { SocialLoginLinks } from "@constants/SocialLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
+import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useShowPassword } from "@hooks/useShowPassword";
 import * as Sentry from "@sentry/nextjs";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useState } from "react";
+import { memo } from "react";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 import * as Yup from "yup";
@@ -20,22 +22,9 @@ import * as Yup from "yup";
  * Custom function to render the `LoginForm` component
  */
 export function LoginForm() {
-	const [errorMessage, setErrorMessage] = useState([]);
-	const [successMessage, setSuccessMessage] = useState([]);
-
-	// Show password hook
-	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
-
-	// Router
-	const { asPath } = useRouter();
-	const router = useRouter();
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
-
 	// Translations
 	const { t } = useTranslation();
-	const username = t("common:username");
+	const username = t("common:userName");
 	const password = t("common:password");
 	const requiredField = t("common:requiredField");
 	const showPassword = t("login:showPassword");
@@ -45,28 +34,31 @@ export function LoginForm() {
 	const signingIn = t("login:signingIn");
 	const signIn = t("login:signIn");
 	const continueWith = t("login:continueWith");
-	const loginOkSuccess = t("alerts:loginOkSuccess");
-	const loginBadRequestPostError = t("alerts:loginBadRequestPostError");
-	const loginUnknownError = t("alerts:loginUnknownError");
 
 	// Social media links array
 	const linksArray = SocialLoginLinks();
 
+	// Custom hooks
+	const { passwordRef, isPasswordShown, setIsPasswordShown } = useShowPassword(false);
+	const { state, setConfig } = useAlertMessage();
+
+	// Router
+	const router = useRouter();
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
+
 	return (
 		<>
-			{errorMessage !== [] && errorMessage.length > 0 ? (
-				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
-					{errorMessage.map((value, key) => (
-						<MemoizedAlert key={key} message={value} isError />
-					))}
-				</div>
-			) : null}
+			{state?.responses !== [] && state?.responses?.length > 0 ? (
+				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
+					{state?.responses?.map((value, key) => {
+						// Alert Messsages
+						const responseText = value?.responseText ?? null;
+						const isSuccess = value?.isSuccess ?? null;
 
-			{successMessage !== [] && successMessage.length > 0 ? (
-				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
-					{successMessage.map((value, key) => (
-						<MemoizedAlert key={key} message={value} isSuccess />
-					))}
+						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+					}) ?? null}
 				</div>
 			) : null}
 
@@ -92,64 +84,49 @@ export function LoginForm() {
 					// }
 
 					const loginResponse = await handlePostMethod(LoginApiEndpoint, body);
-					const loginResponseData = loginResponse.data ?? null;
-					const loginResponseStatus = loginResponse.status ?? null;
+					const loginResponseData = loginResponse?.data ?? null;
+					const loginResponseStatus = loginResponse?.status ?? null;
+					const loginResponseMethod = loginResponse?.config?.method ?? null;
 
 					if (loginResponseData !== null && Math.round(loginResponseStatus / 200) === 1) {
-						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						await mutate(UserApiEndpoint, false);
+						if (Object.keys(loginResponseData)?.length > 0) {
+							// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+							await mutate(UserApiEndpoint, loginResponseData?.key ?? null, false);
 
-						// Collect user data and send to Sentry
-						Sentry.configureScope((scope) =>
-							scope.setUser({
-								id: loginResponseData?.id,
-								username: loginResponseData?.username,
-								email: loginResponseData?.email
-							})
-						);
+							// Collect user data and send to Sentry
+							Sentry.configureScope((scope) =>
+								scope.setUser({
+									id: loginResponseData?.id,
+									username: loginResponseData?.username,
+									email: loginResponseData?.email
+								})
+							);
 
-						// Disable submission as soon as 200 OK or 201 Created response is issued
-						setSubmitting(false);
-						setSuccessMessage((prevState) => [
-							...prevState,
-							prevState.indexOf(loginOkSuccess) !== -1
-								? prevState.find((prevState) => prevState === loginOkSuccess)
-								: loginOkSuccess
-						]);
+							// Disable submission as soon as 200 OK or 201 Created response is issued
+							setSubmitting(false);
 
-						// Redirect to sites dashboard page after successful 200 OK response is established
-						router.push(DashboardSitesLink);
+							// Show alert message after successful 200 OK or 201 Created response is issued
+							setConfig({
+								isLogin: true,
+								method: loginResponseMethod,
+								status: loginResponseStatus
+							});
+
+							// Redirect to sites dashboard page after successful 200 OK response is established
+							setTimeout(() => {
+								router.push(DashboardSitesLink);
+							}, RedirectInterval);
+						}
 					} else {
-						let errorStatusCodeMessage = "";
-
+						// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
 						setSubmitting(false);
 						resetForm({ values: "" });
 
-						switch (loginResponseStatus) {
-							case 400:
-								errorStatusCodeMessage = loginBadRequestPostError;
-								break;
-							default:
-								errorStatusCodeMessage = loginUnknownError;
-								break;
-						}
-
-						setErrorMessage((prevState) => [
-							...prevState,
-							prevState.indexOf(errorStatusCodeMessage) !== -1
-								? prevState.find((prevState) => prevState === errorStatusCodeMessage)
-								: errorStatusCodeMessage
-						]);
-
-						// Capture unknown errors and send to Sentry
-						Sentry.configureScope((scope) => {
-							scope.setTag("route", asPath);
-							scope.setTag("status", loginResponseStatus);
-							scope.setTag(
-								"message",
-								errorMessage.find((message) => message === errorStatusCodeMessage)
-							);
-							Sentry.captureException(new Error(loginResponse));
+						// Show alert message after failed response is issued
+						setConfig({
+							isLogin: true,
+							method: loginResponseMethod,
+							status: loginResponseStatus
 						});
 					}
 				}}
@@ -180,11 +157,9 @@ export function LoginForm() {
 									/>
 								</div>
 
-								{errors.username && touched.username && (
-									<span tw="block mt-2 text-xs leading-5 text-red-700">
-										{errors.username && touched.username && errors.username}
-									</span>
-								)}
+								{errors.username || touched.username ? (
+									<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.username || touched.username}</span>
+								) : null}
 							</div>
 
 							<div tw="mt-6">
@@ -225,11 +200,9 @@ export function LoginForm() {
 									/>
 								</div>
 
-								{errors.password && touched.password && (
-									<span tw="block mt-2 text-xs leading-5 text-red-700">
-										{errors.password && touched.password && errors.password}
-									</span>
-								)}
+								{errors.password || touched.password ? (
+									<span tw="block mt-2 text-xs leading-5 text-red-700">{errors.password || touched.password}</span>
+								) : null}
 							</div>
 
 							<div tw="mt-6 flex items-center justify-between">
