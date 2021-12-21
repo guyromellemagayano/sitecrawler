@@ -2,7 +2,6 @@ export const AcceptInvitationTeamApiEndpoint = "/api/team/accept_invitation/";
 export const ConfirmEmailApiEndpoint = "/api/auth/registration/verify-email/";
 export const ConfirmResetPasswordApiEndpoint = "/api/auth/password/reset/confirm/";
 export const ContactApiEndpoint = "/api/support/contact/";
-export const CurrentPaymentMethodApiEndpoint = "/api/stripe/payment-method/";
 export const CurrentSubscriptionApiEndpoint = "/api/stripe/subscription/current/";
 export const CurrentTeamApiEndpoint = "/api/team/current/";
 export const CurrentTeamMembershipApiEndpoint = "/api/team/current/membership/";
