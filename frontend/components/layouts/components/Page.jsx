@@ -1,7 +1,6 @@
 import { MemoizedBreadcrumbs } from "@components/breadcrumbs";
 import { LoginLink, LogoutLink } from "@constants/PageLinks";
 import { useLoading } from "@hooks/useLoading";
-import { useUser } from "@hooks/useUser";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useEffect } from "react";
@@ -20,9 +19,6 @@ export function PageLayout({ children, pageTitle = null }) {
 	// Router
 	const router = useRouter();
 
-	// SWR hooks
-	const { user, errorUser, validatingUser } = useUser();
-
 	// Custom hooks
 	const { isComponentReady } = useLoading();
 
@@ -38,11 +34,7 @@ export function PageLayout({ children, pageTitle = null }) {
 			<div tw="flex-grow flex flex-col flex-nowrap w-full">
 				<div tw="w-full pt-12 pb-4">
 					<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-						{isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
-							pageTitle
-						) : (
-							<Skeleton duration={2} width={215} height={36} />
-						)}
+						{isComponentReady ? pageTitle : <Skeleton duration={2} width={215} height={36} />}
 					</h2>
 				</div>
 
