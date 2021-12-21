@@ -2,7 +2,6 @@
 import { MemoizedProfileMenuDropdown } from "@components/dropdowns/ProfileMenuDropdown";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLoading } from "@hooks/useLoading";
 import { useUser } from "@hooks/useUser";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -22,7 +21,6 @@ export function ProfileMenu() {
 		isComponentVisible: isProfileMenuComponentVisible,
 		setIsComponentVisible: setIsProfileMenuComponentVisible
 	} = useComponentVisible(false);
-	const { isComponentReady } = useLoading();
 
 	return (
 		<div ref={profileMenuRef} tw="flex-shrink-0 flex flex-col relative">
@@ -30,15 +28,24 @@ export function ProfileMenu() {
 				type="button"
 				css={[
 					tw`p-4 flex items-center justify-between flex-shrink-0 w-full focus:outline-none transition ease-in-out duration-150 bg-gray-900`,
-					isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null
+					!validatingUser && !errorUser && typeof user !== "undefined" && user !== null && !user?.data?.detail
 						? tw`cursor-pointer hover:bg-gray-1100`
 						: tw`cursor-default`
 				]}
 				id="options-menu"
 				aria-haspopup="true"
-				aria-expanded={isProfileMenuComponentVisible && isComponentReady ? "true" : "false"}
+				aria-expanded={
+					isProfileMenuComponentVisible &&
+					!validatingUser &&
+					!errorUser &&
+					typeof user !== "undefined" &&
+					user !== null &&
+					!user?.data?.detail
+						? "true"
+						: "false"
+				}
 				onClick={
-					isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null
+					!validatingUser && !errorUser && typeof user !== "undefined" && user !== null && !user?.data?.detail
 						? () => setIsProfileMenuComponentVisible(!isProfileMenuComponentVisible)
 						: null
 				}
@@ -46,8 +53,7 @@ export function ProfileMenu() {
 				<div tw="flex items-center">
 					<div tw="flex flex-col flex-wrap text-left">
 						<p className="truncate-profile-text" tw="text-sm leading-tight mb-1 font-medium text-white">
-							{isComponentReady &&
-							!validatingUser &&
+							{!validatingUser &&
 							!errorUser &&
 							typeof user !== "undefined" &&
 							user !== null &&
@@ -61,11 +67,11 @@ export function ProfileMenu() {
 							className="truncate-profile-text"
 							tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150"
 						>
-							{isComponentReady &&
-							!validatingUser &&
+							{!validatingUser &&
 							!errorUser &&
 							typeof user !== "undefined" &&
 							user !== null &&
+							!user?.data?.detail &&
 							user?.data?.email ? (
 								user?.data?.email
 							) : (
@@ -75,8 +81,7 @@ export function ProfileMenu() {
 					</div>
 				</div>
 
-				{isComponentReady &&
-				!validatingUser &&
+				{!validatingUser &&
 				!errorUser &&
 				typeof user !== "undefined" &&
 				user !== null &&
