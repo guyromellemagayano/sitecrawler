@@ -9,7 +9,7 @@ import { MemoizedSiteMenu } from "./SiteMenu";
  * Custom function to render the `MainMenu` component
  */
 export function MainMenu() {
-	const [selectedMenu, setSelectedMenu] = useState(<MemoizedPrimaryMenu />);
+	const [selectedMenu, setSelectedMenu] = useState(null);
 
 	// Router
 	const { asPath } = useRouter();
@@ -23,6 +23,10 @@ export function MainMenu() {
 		} else {
 			setSelectedMenu(<MemoizedPrimaryMenu />);
 		}
+
+		return () => {
+			setSelectedMenu(null);
+		};
 	}, [asPath]);
 
 	useEffect(() => {
