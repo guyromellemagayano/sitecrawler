@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedSignupForm } from "@components/forms/SignupForm";
 import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
