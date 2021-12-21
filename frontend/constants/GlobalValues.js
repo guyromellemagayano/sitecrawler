@@ -26,6 +26,7 @@ export const MutateInterval = 1500;
 export const RedirectInterval = 1250;
 export const RevalidationInterval = 5000;
 export const AlertDisplayInterval = 7500;
+export const ModalDisplayInterval = 3500;
 export const OnErrorRetryCount = 5;
 export const NoInterval = 0;
 
