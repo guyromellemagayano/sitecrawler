@@ -16,6 +16,7 @@ export const useMainSWRConfig = (endpoint = null) => {
 	const { asPath } = useRouter();
 
 	const { data, error, isValidating } = useSWR(endpoint, handleGetMethod, {
+		errorRetryCount: OnErrorRetryCount,
 		// Capture unknown errors and send to Sentry
 		onError: (err, key, config) => {
 			Sentry.withScope((scope) => {

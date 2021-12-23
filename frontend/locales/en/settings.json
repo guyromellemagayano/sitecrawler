@@ -22,9 +22,23 @@
 		"headline": "Delete account successful",
 		"subHeadline": "Delete user account request sent successfully."
 	},
-	"helpSupportFormSubmissionSuccess": "Support message sent successfully",
-	"helpSupportFormSubmissionFailed": "Support message sent failed. Please try again.",
-	"helpSupportFormTitle": "App Support Form",
+	"helpSupportForm": {
+		"title": "App Support Form",
+		"success": "Support message sent successfully",
+		"failed": "Support message sent failed. Please try again."
+	},
+	"timestampSettings": {
+		"title": "Timestamp Settings",
+		"headline": "Enable Local Time",
+		"subHeadline": "Set all sites to use local timezones instead of UTC",
+		"enabled": "Local time enabled globally",
+		"disabled": "Local time disabled globally"
+	},
+	"largePageSizeSettings": {
+		"title": "Large Page Size Settiings",
+		"success": "Large page size threshold updated successfully",
+		"failed": "Large page size threshold update failed. Please try again."
+	},
 	"tellUsYourThoughts": "Tell us your thoughts about the app.",
 	"message": "Message",
 	"submitForm": "Submit Form",

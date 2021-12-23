@@ -1,5 +1,6 @@
 import { MemoizedPasswordSettingsForm } from "@components/forms/PasswordSettingsForm";
 import { useLoading } from "@hooks/useLoading";
+import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -14,13 +15,20 @@ export function PasswordSettings() {
 	const { t } = useTranslation("settings");
 	const passwordChangeUpdateTitle = t("passwordChangeUpdate.title");
 
+	// SWR hooks
+	const { user, errorUser, validatingUser } = useUser();
+
 	// Custom hooks
 	const { isComponentReady } = useLoading();
 
 	return (
 		<div tw="pb-12">
 			<h5 tw="text-xl leading-6 font-bold text-gray-900">
-				{isComponentReady ? passwordChangeUpdateTitle : <Skeleton duration={2} width={175} height={24} />}
+				{isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
+					passwordChangeUpdateTitle
+				) : (
+					<Skeleton duration={2} width={175} height={24} />
+				)}
 			</h5>
 
 			<MemoizedPasswordSettingsForm />

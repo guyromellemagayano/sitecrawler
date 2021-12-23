@@ -1,6 +1,5 @@
-import { MemoizedHelpSupportSettingsForm } from "@components/forms/HelpSupportForm";
+import { MemoizedHelpSupportSettingsForm } from "@components/forms/HelpSupportSettingsForm";
 import { useLoading } from "@hooks/useLoading";
-import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -13,10 +12,7 @@ import "twin.macro";
 export function HelpSupportSettings() {
 	// Translations
 	const { t } = useTranslation("settings");
-	const helpSupportFormTitle = t("helpSupportFormTitle");
-
-	// SWR hooks
-	const { user, errorUser, validatingUser } = useUser();
+	const helpSupportFormTitle = t("helpSupportForm.title");
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
@@ -24,11 +20,7 @@ export function HelpSupportSettings() {
 	return (
 		<div tw="pb-12">
 			<h5 tw="text-xl leading-6 font-bold text-gray-900">
-				{isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
-					helpSupportFormTitle
-				) : (
-					<Skeleton duration={2} width={175} height={24} />
-				)}
+				{isComponentReady ? helpSupportFormTitle : <Skeleton duration={2} width={175} height={24} />}
 			</h5>
 
 			<MemoizedHelpSupportSettingsForm />

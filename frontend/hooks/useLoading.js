@@ -11,11 +11,11 @@ export const useLoading = () => {
 	const [isComponentReady, setIsComponentReady] = useState(false);
 
 	// Router
-	const { isReady, pathname } = useRouter();
+	const { isReady } = useRouter();
 
 	// Handle component loading
 	const handleComponentLoading = useCallback(async () => {
-		if (isReady && pathname) {
+		if (isReady) {
 			setTimeout(() => {
 				setIsComponentReady(true);
 			}, ComponentReadyInterval);
@@ -24,11 +24,11 @@ export const useLoading = () => {
 		return () => {
 			setIsComponentReady(false);
 		};
-	}, [isReady, pathname]);
+	}, [isReady]);
 
 	useEffect(() => {
 		handleComponentLoading();
 	}, [handleComponentLoading]);
 
-	return { isComponentReady, pathname };
+	return { isComponentReady };
 };

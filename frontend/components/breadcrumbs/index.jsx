@@ -3,12 +3,12 @@ import { DashboardSitesLink, DashboardSiteSlug, SiteOverviewSlug, SiteSlug } fro
 import { handleConvertIdToNumber } from "@helpers/handleConvertIdToNumber";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { useLoading } from "@hooks/useLoading";
-import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import "twin.macro";
 
 /**
@@ -40,9 +40,6 @@ export function Breadcrumbs({
 	const { t } = useTranslation("common");
 	const home = t("home");
 
-	// SWR hooks
-	const { user, errorUser, validatingUser } = useUser();
-
 	// Custom hooks
 	const { isComponentReady } = useLoading();
 
@@ -51,7 +48,7 @@ export function Breadcrumbs({
 			<ol tw="flex items-center space-x-4">
 				<li>
 					<div>
-						{isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
+						{isComponentReady ? (
 							<Link
 								href={
 									isOther && typeof siteId !== "undefined" && siteId == null
@@ -72,7 +69,7 @@ export function Breadcrumbs({
 				</li>
 				<li>
 					<div tw="flex items-center">
-						{isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
+						{isComponentReady ? (
 							<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 						) : (
 							<Skeleton duration={2} width={20} height={20} />
@@ -80,7 +77,7 @@ export function Breadcrumbs({
 
 						{typeof pageDetailTitle !== "undefined" && pageDetailTitle !== null && pageDetailTitle !== "" ? (
 							isSites ? (
-								isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
+								isComponentReady ? (
 									<Link href={DashboardSitesLink} passHref>
 										<a aria-current="page" tw="cursor-pointer ml-4 text-sm text-gray-700">
 											{pageTitle}
@@ -89,7 +86,7 @@ export function Breadcrumbs({
 								) : (
 									<Skeleton duration={2} width={128} height={20} tw="ml-4" />
 								)
-							) : isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
+							) : isComponentReady ? (
 								<Link
 									href={`${
 										DashboardSiteSlug +
@@ -107,18 +104,14 @@ export function Breadcrumbs({
 							)
 						) : (
 							<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-								{isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
-									pageTitle
-								) : (
-									<Skeleton duration={2} width={128} height={20} />
-								)}
+								{isComponentReady ? pageTitle : <Skeleton duration={2} width={128} height={20} />}
 							</p>
 						)}
 					</div>
 				</li>
 
 				{typeof pageDetailTitle !== "undefined" && pageDetailTitle !== null && pageDetailTitle !== "" ? (
-					isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
+					isComponentReady ? (
 						<li>
 							<div tw="flex items-center">
 								<ChevronRightIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />

@@ -10,11 +10,10 @@ import { ArrowLeftIcon, LinkIcon, SearchIcon, ViewGridIcon } from "@heroicons/re
 import { useCrawl } from "@hooks/useCrawl";
 import { useSiteId } from "@hooks/useSiteId";
 import { useStats } from "@hooks/useStats";
-import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import tw from "twin.macro";
 
@@ -23,29 +22,31 @@ import tw from "twin.macro";
  */
 export function SiteMenu() {
 	const [scanObjId, setScanObjId] = useState(null);
-	const [errorMessage, setErrorMessage] = useState([]);
 
 	// Router
-	const { asPath, pathname, query } = useRouter();
+	const { pathname, query } = useRouter();
 
 	// Custom hooks
 	const { currentScan, previousScan, scanCount } = useCrawl(query?.siteId ?? null);
 
-	useMemo(() => {
-		const handleScanObjId = (scanCount, currentScan, previousScan) => {
-			scanCount > 1
-				? previousScan !== undefined
-					? setScanObjId(previousScan.id)
-					: false
-				: currentScan !== undefined
-				? setScanObjId(currentScan.id)
-				: setScanObjId(previousScan.id);
+	// Handle issuance of memoized `scanObjId` value
+	const handleScanObjId = useCallback(async () => {
+		if (scanCount > 1) {
+			if (previousScan !== undefined) {
+				setScanObjId(previousScan.id);
+			}
+		} else if (currentScan !== undefined) {
+			setScanObjId(currentScan.id);
+		} else {
+			setScanObjId(previousScan.id);
+		}
 
-			return scanObjId;
-		};
-
-		handleScanObjId(scanCount, currentScan, previousScan);
+		return scanObjId;
 	}, [scanCount, currentScan, previousScan, scanObjId]);
+
+	useEffect(() => {
+		handleScanObjId();
+	}, [handleScanObjId]);
 
 	// SWR hooks
 	const { siteId, errorSiteId, validatingSiteId } = useSiteId(query?.siteId ?? null);
@@ -121,23 +122,12 @@ export function SiteMenu() {
 						? prevState.find((prevState) => prevState === errorStatusCodeMessage)
 						: errorStatusCodeMessage
 				]);
-
-				// Capture unknown errors and send to Sentry
-				Sentry.configureScope((scope) => {
-					scope.setTag("route", asPath);
-					scope.setTag("status", errorSiteId?.status);
-					scope.setTag(
-						"message",
-						errorMessage.find((message) => message === errorStatusCodeMessage)
-					);
-					Sentry.captureException(new Error(errorSiteId));
-				});
 			}
 		}
 	}, [siteId, validatingSiteId]);
 
 	useEffect(() => {
-		return handleSiteIdErrors();
+		handleSiteIdErrors();
 	}, [handleSiteIdErrors]);
 
 	// Handle `stats` errors
@@ -185,23 +175,12 @@ export function SiteMenu() {
 						? prevState.find((prevState) => prevState === errorStatusCodeMessage)
 						: errorStatusCodeMessage
 				]);
-
-				// Capture unknown errors and send to Sentry
-				Sentry.configureScope((scope) => {
-					scope.setTag("route", asPath);
-					scope.setTag("status", errorStats.status);
-					scope.setTag(
-						"message",
-						errorMessage.find((message) => message === errorStatusCodeMessage)
-					);
-					Sentry.captureException(new Error(errorStats));
-				});
 			}
 		}
 	}, [stats, validatingStats]);
 
 	useEffect(() => {
-		return handleStatsErrors();
+		handleStatsErrors();
 	}, [handleStatsErrors]);
 
 	return (
@@ -240,7 +219,7 @@ export function SiteMenu() {
 													<Link key={index2} href={hrefVal} as={asVal} passHref>
 														<a
 															className={`group ${
-																!pathname.includes(DashboardSiteSlug + siteId + value2.url)
+																!pathname?.includes(DashboardSiteSlug + siteId + value2.url)
 																	? "hover:bg-gray-1100 focus:bg-gray-1100"
 																	: "bg-gray-1100"
 															}`}

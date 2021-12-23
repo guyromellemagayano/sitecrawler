@@ -17,7 +17,8 @@ module.exports = {
 		"/login": ["login"],
 		"/registration": ["registration"],
 		"/reset-password/*": ["resetPassword"],
-		"/signup/[...id]": ["signup"]
+		"/signup/[...id]": ["signup"],
+		"/logout": ["logout"]
 	},
 	interpolation: {
 		prefix: "${",

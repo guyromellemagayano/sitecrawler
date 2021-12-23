@@ -2,11 +2,10 @@
 import { MemoizedAlert } from "@components/alerts";
 import { ResetPasswordApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import * as Sentry from "@sentry/nextjs";
+import { useAlertMessage } from "@hooks/useAlertMessage";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
-import { memo, useState } from "react";
+import { memo } from "react";
 import tw from "twin.macro";
 import * as Yup from "yup";
 
@@ -14,38 +13,28 @@ import * as Yup from "yup";
  * Memoized function to render the `ResetPasswordForm` component.
  */
 export function ResetPasswordForm() {
-	const [errorMessage, setErrorMessage] = useState([]);
-	const [successMessage, setSuccessMessage] = useState([]);
-
-	// Router
-	const { asPath } = useRouter();
-
 	// Translations
 	const { t } = useTranslation();
 	const requiredField = t("common:requiredField");
 	const invalidEmail = t("common:invalidEmail");
-	const resetPasswordOkSuccess = t("alerts:resetPasswordOkSuccess");
-	const resetPasswordBadRequestPostError = t("alerts:resetPasswordBadRequestPostError");
-	const resetPasswordUnknownError = t("alerts:resetPasswordUnknownError");
 	const emailAddress = t("common:emailAddress");
 	const isResetPassword = t("common:isResetPassword");
 	const submitting = t("common:submitting");
 
+	// Custom hooks
+	const { state, setConfig } = useAlertMessage();
+
 	return (
 		<>
-			{errorMessage !== [] && errorMessage.length > 0 ? (
-				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
-					{errorMessage.map((value, key) => (
-						<MemoizedAlert key={key} message={value} isError />
-					))}
-				</div>
-			) : null}
+			{state?.responses !== [] && state?.responses?.length > 0 ? (
+				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
+					{state?.responses?.map((value, key) => {
+						// Alert Messsages
+						const responseText = value?.responseText ?? null;
+						const isSuccess = value?.isSuccess ?? null;
 
-			{successMessage !== [] && successMessage.length > 0 ? (
-				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
-					{successMessage.map((value, key) => (
-						<MemoizedAlert key={key} message={value} isSuccess />
-					))}
+						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+					}) ?? null}
 				</div>
 			) : null}
 
@@ -62,49 +51,31 @@ export function ResetPasswordForm() {
 					};
 
 					const resetPasswordResponse = await handlePostMethod(ResetPasswordApiEndpoint, body);
-					const resetPasswordResponseData = resetPasswordResponse.data ?? null;
-					const resetPasswordResponseStatus = resetPasswordResponse.status ?? null;
+					const resetPasswordResponseData = resetPasswordResponse?.data ?? null;
+					const resetPasswordResponseStatus = resetPasswordResponse?.status ?? null;
+					const resetPasswordResponseMethod = resetPasswordResponse?.config?.method ?? null;
 
 					if (resetPasswordResponseData !== null && Math.round(resetPasswordResponseStatus / 200) === 1) {
+						// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
 						setSubmitting(false);
 						resetForm({ values: "" });
-						setSuccessMessage((prevState) => [
-							...prevState,
-							prevState.indexOf(resetPasswordOkSuccess) !== -1
-								? prevState.find((prevState) => prevState === resetPasswordOkSuccess)
-								: resetPasswordOkSuccess
-						]);
+
+						// Show alert message after successful 200 OK or 201 Created response is issued
+						setConfig({
+							isPasswordReset: true,
+							method: resetPasswordResponseMethod,
+							status: resetPasswordResponseStatus
+						});
 					} else {
-						let errorStatusCodeMessage = "";
-
+						// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
 						setSubmitting(false);
 						resetForm({ values: "" });
 
-						switch (resetPasswordResponseStatus) {
-							case 400:
-								errorStatusCodeMessage = resetPasswordBadRequestPostError;
-								break;
-							default:
-								errorStatusCodeMessage = resetPasswordUnknownError;
-								break;
-						}
-
-						setErrorMessage((prevState) => [
-							...prevState,
-							prevState.indexOf(errorStatusCodeMessage) !== -1
-								? prevState.find((prevState) => prevState === errorStatusCodeMessage)
-								: errorStatusCodeMessage
-						]);
-
-						// Capture unknown errors and send to Sentry
-						Sentry.configureScope((scope) => {
-							scope.setTag("route", asPath);
-							scope.setTag("status", resetPasswordResponseStatus);
-							scope.setTag(
-								"message",
-								errorMessage.find((message) => message === errorStatusCodeMessage)
-							);
-							Sentry.captureException(new Error(resetPasswordResponse));
+						// Show alert message after successful 200 OK or 201 Created response is issued
+						setConfig({
+							isPasswordReset: true,
+							method: resetPasswordResponseMethod,
+							status: resetPasswordResponseStatus
 						});
 					}
 				}}

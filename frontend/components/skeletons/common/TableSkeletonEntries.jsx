@@ -1,8 +1,11 @@
-// React
-import "twin.macro";
 import PropTypes from "prop-types";
+import { memo } from "react";
+import "twin.macro";
 
-const TableSkeletonEntries = ({ str, limit }) => {
+/**
+ * Custom function to render the `TableSkeletonEntries` component
+ */
+export function TableSkeletonEntries({ str = null, limit = null }) {
 	let strArray = [];
 
 	if (limit > 0) {
@@ -16,16 +19,14 @@ const TableSkeletonEntries = ({ str, limit }) => {
 			</tr>
 		));
 	} else return;
-};
+}
 
 TableSkeletonEntries.propTypes = {
-	str: PropTypes.object,
-	limit: PropTypes.number
+	limit: PropTypes.number,
+	str: PropTypes.object
 };
 
-TableSkeletonEntries.defaultProps = {
-	str: null,
-	limit: null
-};
-
-export default TableSkeletonEntries;
+/**
+ * Memoized custom `TableSkeletonEntries` component
+ */
+export const MemoizedTableSkeletonEntries = memo(TableSkeletonEntries);

@@ -1,9 +1,9 @@
 // External
-import "twin.macro";
-import Skeleton from "react-loading-skeleton";
-
 // Components
 import TableSkeletonEntries from "@components/skeletons/common/TableSkeletonEntries";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import "twin.macro";
 
 const PageTableSkeleton = () => {
 	const skeletonLimit = 5;

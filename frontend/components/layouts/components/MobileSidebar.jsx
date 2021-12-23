@@ -9,14 +9,14 @@ import "twin.macro";
 /**
  * Custom function to render the `MobileSidebarLayout` component
  */
-export function MobileSidebarLayout({ openSidebar = false, setOpenSidebar }, ref) {
+export function MobileSidebarLayout({ openSidebar, setOpenSidebar }, ref) {
 	// Translations
 	const { t } = useTranslation("sidebar");
 	const closeSidebar = t("closeSidebar");
 
 	return (
 		<Transition show={openSidebar} tw="flex lg:hidden flex-shrink-0">
-			<div tw="fixed inset-0 flex z-40 lg:hidden" role="dialog" aria-modal="true">
+			<div ref={ref} tw="fixed inset-0 flex z-9999 lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
 					enter="mobile-sidebar-first-child-enter"
 					enterFrom="mobile-sidebar-first-child-enter-from"
@@ -36,7 +36,7 @@ export function MobileSidebarLayout({ openSidebar = false, setOpenSidebar }, ref
 					leaveFrom="mobile-sidebar-second-child-leave-from"
 					leaveTo="mobile-sidebar-second-child-leave-to"
 				>
-					<div ref={ref} className="bg-gray-1000" tw="relative flex-1 flex flex-col w-64">
+					<div tw="relative flex-1 flex flex-col w-64 h-0 ">
 						<Transition.Child
 							enter="mobile-sidebar-third-child-enter"
 							enterFrom="mobile-sidebar-third-child-enter-from"
@@ -48,15 +48,15 @@ export function MobileSidebarLayout({ openSidebar = false, setOpenSidebar }, ref
 							<div tw="absolute top-0 right-0 -mr-12 pt-2">
 								<button
 									tw="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-									onClick={() => setOpenSidebar(!openSidebar)}
+									onClick={() => setOpenSidebar(false)}
 								>
 									<span tw="sr-only">{closeSidebar}</span>
 									<XIcon tw="h-6 w-6 text-white" />
 								</button>
 							</div>
 
-							<div tw="flex flex-col w-64 h-screen">
-								<div tw="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
+							<div tw="flex flex-col w-full h-screen bg-gray-1000">
+								<div tw="flex flex-col flex-1 overflow-y-auto ">
 									<MemoizedMainMenu />
 								</div>
 

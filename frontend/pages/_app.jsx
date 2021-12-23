@@ -29,13 +29,7 @@ export default function App({ Component, pageProps, err }) {
 	}, []);
 
 	return getLayout(
-		<SWRConfig
-			value={{
-				refreshWhenOffline: true,
-				refreshWhenHidden: true,
-				errorRetryCount: 5
-			}}
-		>
+		<SWRConfig>
 			<GlobalCustomStyles />
 			<DefaultSeo {...AppSeo} />
 			<ProgressBar />

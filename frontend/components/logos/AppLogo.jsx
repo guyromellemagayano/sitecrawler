@@ -1,4 +1,5 @@
 import Image from "next/image";
+import PropTypes from "prop-types";
 import { memo } from "react";
 import "twin.macro";
 
@@ -14,6 +15,14 @@ import "twin.macro";
 export function AppLogo({ alt = null, height = null, src = null, width = null, className = null }) {
 	return <Image src={src} alt={alt} width={width} height={height} className={className} priority />;
 }
+
+AppLogo.propTypes = {
+	alt: PropTypes.string,
+	className: PropTypes.string,
+	height: PropTypes.number,
+	src: PropTypes.string,
+	width: PropTypes.number
+};
 
 /**
  * Memoized custom `AppLogo` component

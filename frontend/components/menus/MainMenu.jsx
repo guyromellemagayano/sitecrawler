@@ -1,6 +1,6 @@
-import { SettingsSlug, SitesSlug } from "@constants/PageLinks";
+import { DashboardSettingsSlug, DashboardSiteSlug } from "@constants/PageLinks";
 import { useRouter } from "next/router";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { MemoizedPrimaryMenu } from "./PrimaryMenu";
 import { MemoizedSettingsMenu } from "./SettingsMenu";
 import { MemoizedSiteMenu } from "./SiteMenu";
@@ -9,20 +9,29 @@ import { MemoizedSiteMenu } from "./SiteMenu";
  * Custom function to render the `MainMenu` component
  */
 export function MainMenu() {
-	const [selectedMenu, setSelectedMenu] = useState(<MemoizedPrimaryMenu />);
+	const [selectedMenu, setSelectedMenu] = useState(null);
 
 	// Router
-	const { pathname } = useRouter();
+	const { asPath } = useRouter();
 
-	useEffect(() => {
-		if (pathname.includes(SitesSlug)) {
+	// Handle menu selection
+	const handleMenuSelection = useCallback(async () => {
+		if (asPath.includes(DashboardSiteSlug)) {
 			setSelectedMenu(<MemoizedSiteMenu />);
-		} else if (pathname.includes(SettingsSlug)) {
+		} else if (asPath.includes(DashboardSettingsSlug)) {
 			setSelectedMenu(<MemoizedSettingsMenu />);
 		} else {
 			setSelectedMenu(<MemoizedPrimaryMenu />);
 		}
-	}, [pathname]);
+
+		return () => {
+			setSelectedMenu(null);
+		};
+	}, [asPath]);
+
+	useEffect(() => {
+		handleMenuSelection();
+	}, [handleMenuSelection]);
 
 	return selectedMenu;
 }

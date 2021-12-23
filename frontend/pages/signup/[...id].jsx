@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedSignupPageLayout } from "@components/layouts/pages/Signup";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
@@ -7,6 +8,8 @@ import { SSR_SITE_URL } from "@constants/ServerEnv";
 import axios from "axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req }) {
@@ -43,6 +46,13 @@ export default function Signup() {
 	// Translations
 	const { t } = useTranslation("signup");
 	const completeSignup = t("completeSignup");
+
+	// Router
+	const router = useRouter();
+
+	useEffect(() => {
+		router.prefetch(DashboardSitesLink);
+	}, []);
 
 	return (
 		<>

@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { MemoizedAlert } from "@components/alerts";
 import { MemoizedSiteSelectDropdown } from "@components/dropdowns/SiteSelectDropdown";
 import { MemoizedSiteSelectMenu } from "@components/menus/SiteSelectMenu";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
 import { useSites } from "@hooks/useSites";
-import useTranslation from "next-translate/useTranslation";
+import { useUser } from "@hooks/useUser";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -17,52 +16,44 @@ import "twin.macro";
  * Custom function to render the `SiteSelect` component
  */
 export function SiteSelect() {
+	const [messageConfig, setMessageConfig] = useState(null);
 	const [selectedSite, setSelectedSite] = useState(null);
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
 	const [selectedSiteId, setSelectedSiteId] = useState(null);
-	const [errorMessage, setErrorMessage] = useState([]);
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
-
-	// Translations
-	const { t } = useTranslation("alerts");
-	const siteBadGatewayGetError = t("siteBadGatewayGetError");
-	const siteBadRequestGetError = t("siteBadRequestGetError");
-	const siteForbiddenGetError = t("siteForbiddenGetError");
-	const siteGatewayTimeoutGetError = t("siteGatewayTimeoutGetError");
-	const siteInternalServerGetError = t("siteInternalServerGetError");
-	const siteNotFoundGetError = t("siteNotFoundGetError");
-	const siteServiceUnavailableGetError = t("siteServiceUnavailableGetError");
-	const siteTooManyRequestsError = t("siteTooManyRequestsError");
-	const siteUnknownError = t("siteUnknownError");
 
 	// Router
 	const { query } = useRouter();
 
 	// SWR hooks
+	const { user, errorUser, validatingUser } = useUser();
 	const { sites, errorSites, validatingSites } = useSites(SitesApiEndpoint);
 
 	// Custom hooks
-	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
+	const {
+		ref: siteSelectRef,
+		isComponentVisible: isSiteSelectComponentVisible,
+		setIsComponentVisible: setIsSiteSelectComponentVisible
+	} = useComponentVisible(false);
 
 	// Handle site selection on load
-	const handleSiteSelectOnLoad = useCallback(
-		async (siteId) => {
-			if (typeof sites !== "undefined" && sites !== null && Object.keys(sites).length > 0) {
+	const handleSiteSelectOnLoad = async (siteId) => {
+		if (!validatingSites) {
+			if (!errorSites && typeof sites !== "undefined" && sites !== null) {
 				if (sites?.results && sites?.results?.length > 0) {
 					for (let i = 0; i < sites?.results?.length; i++) {
-						if (sites?.results?.[i]?.id == siteId) {
+						if (sites?.results?.[i]?.id === siteId) {
 							setSelectedSite(sites?.results?.[i]?.name);
-							setIsComponentVisible(!isComponentVisible);
+							setIsSiteSelectComponentVisible(!isSiteSelectComponentVisible);
 							setSelectedSiteId(siteId);
 						}
 					}
 				}
 			}
-		},
-		[selectedSite, isComponentVisible, setIsComponentVisible, sites]
-	);
+		}
+	};
 
 	// Handle site selection on click
 	const handleSiteSelectOnClick = useCallback(async () => {
@@ -71,50 +62,26 @@ export function SiteSelect() {
 				for (let i = 0; i < sites?.results?.length; i++) {
 					if (sites?.results?.[i]?.id === query?.siteId) {
 						setSelectedSite(sites?.results?.[i]?.name);
+					} else {
+						setSelectedSite(null);
 					}
 				}
 			} else {
-				let errorStatusCodeMessage = "";
+				const errorSitesStatus = errorSites?.response?.status ?? null;
 
-				switch (errorSites.status) {
-					case 400:
-						errorStatusCodeMessage = siteBadRequestGetError;
-						break;
-					case 403:
-						errorStatusCodeMessage = siteForbiddenGetError;
-						break;
-					case 404:
-						errorStatusCodeMessage = siteNotFoundGetError;
-						break;
-					case 408:
-						errorStatusCodeMessage = siteGatewayTimeoutGetError;
-						break;
-					case 500:
-						errorStatusCodeMessage = siteInternalServerGetError;
-						break;
-					case 502:
-						errorStatusCodeMessage = siteBadGatewayGetError;
-						break;
-					case 503:
-						errorStatusCodeMessage = siteServiceUnavailableGetError;
-						break;
-					case 504:
-						errorStatusCodeMessage = siteGatewayTimeoutGetError;
-						break;
-					case 429:
-						errorStatusCodeMessage = siteTooManyRequestsError;
-						break;
-					default:
-						errorStatusCodeMessage = siteUnknownError;
-						break;
+				if (errorSitesStatus !== null) {
+					setMessageConfig({
+						type: "sites",
+						method: "get",
+						status: errorSitesStatus
+					});
+				} else {
+					setMessageConfig({
+						type: null,
+						method: null,
+						status: null
+					});
 				}
-
-				setErrorMessage((prevState) => [
-					...prevState,
-					prevState.indexOf(errorStatusCodeMessage) !== -1
-						? prevState.find((prevState) => prevState === errorStatusCodeMessage)
-						: errorStatusCodeMessage
-				]);
 			}
 		}
 	}, [sites, query, validatingSites]);
@@ -136,8 +103,10 @@ export function SiteSelect() {
 
 					let currentSite = sites?.results?.find((result) => result.id === parseInt(query?.siteId)) ?? null;
 
-					if (currentSite !== undefined) {
+					if (typeof currentSite !== undefined && currentSite !== null) {
 						setSelectedSite(currentSite?.name);
+					} else {
+						setSelectedSite(null);
 					}
 				}
 			}
@@ -149,37 +118,25 @@ export function SiteSelect() {
 	}, [handleSiteSelectOnChange]);
 
 	return (
-		<>
-			{errorMessage !== [] && errorMessage.length > 0 ? (
-				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
-					{errorMessage.map((value, key) => (
-						<MemoizedAlert key={key} message={value} isError />
-					))}
-				</div>
-			) : null}
+		<div tw="relative space-y-1">
+			<span ref={siteSelectRef} tw="inline-block w-full rounded-md shadow-sm">
+				{isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
+					<MemoizedSiteSelectMenu
+						selectedSite={selectedSite}
+						selectedSiteDetails={selectedSiteDetails}
+						handleOpenDropdown={() => setIsSiteSelectComponentVisible(!isSiteSelectComponentVisible)}
+					/>
+				) : (
+					<Skeleton width={224} height={38} tw="cursor-default relative w-full pl-3 pr-10 py-2" />
+				)}
+			</span>
 
-			<div tw="relative space-y-1">
-				<span ref={ref} tw="inline-block w-full rounded-md shadow-sm">
-					{isComponentReady ? (
-						<MemoizedSiteSelectMenu
-							selectedSite={selectedSite}
-							selectedSiteId={selectedSiteId}
-							selectedSiteDetails={selectedSiteDetails}
-							isComponentVisible={isComponentVisible}
-							setIsComponentVisible={setIsComponentVisible}
-						/>
-					) : (
-						<Skeleton width={224} height={38} tw="cursor-default relative w-full pl-3 pr-10 py-2" />
-					)}
-				</span>
-
-				<MemoizedSiteSelectDropdown
-					selectedSiteId={selectedSiteId}
-					handleSiteSelectOnLoad={handleSiteSelectOnLoad}
-					isComponentVisible={isComponentVisible}
-				/>
-			</div>
-		</>
+			<MemoizedSiteSelectDropdown
+				selectedSiteId={selectedSiteId}
+				handleSiteSelectOnLoad={handleSiteSelectOnLoad}
+				openDropdown={isSiteSelectComponentVisible}
+			/>
+		</div>
 	);
 }
 
