@@ -2,7 +2,7 @@
 import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarButton";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
 // import SiteLimitReachedModal from "@components/modals/SiteLimitReachedModal";
-import { AddNewSiteLink } from "@constants/PageLinks";
+import { AddNewSiteLink, AddNewSiteSlug } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
@@ -19,7 +19,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
+import tw from "twin.macro";
 
 /**
  * Custom function to render the `AddSite` component
@@ -38,7 +38,7 @@ export function AddSite({ handleOpenSidebar }) {
 	const searchNotAvailable = t("searchNotAvailable");
 
 	// Router
-	const { query, pathname } = useRouter();
+	const { query, asPath } = useRouter();
 
 	// SWR hooks
 	const { user, errorUser, validatingUser } = useUser();
@@ -171,7 +171,15 @@ export function AddSite({ handleOpenSidebar }) {
 							</button>
 						) : (
 							<Link href={AddNewSiteLink + "?edit=false&verified=false"} passHref>
-								<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer inline-flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full">
+								<a
+									disabled={asPath.includes(AddNewSiteSlug) ? true : false}
+									css={[
+										tw`border border-transparent inline-flex items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full`,
+										asPath.includes(AddNewSiteSlug)
+											? tw`opacity-50 bg-gray-300 cursor-not-allowed`
+											: tw`cursor-pointer bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 active:bg-green-700 focus:outline-none`
+									]}
+								>
 									<span tw="flex items-center space-x-2">
 										<PlusIcon tw="mr-2 h-4 w-4 text-white" />
 										{addNewSite}
