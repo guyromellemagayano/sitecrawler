@@ -16,9 +16,9 @@ export function HowToSetup() {
 
 	// Translations
 	const { t } = useTranslation();
-	const howToSetupHeadline = t("addSite:howToSetup.headline");
-	const howToSetupSubheadline = t("addSite:howToSetup.subHeadline");
-	const tabSrOnly = t("addSite:howToSetup.tabSrOnly");
+	const howToSetupHeadline = t("sites:howToSetup.headline");
+	const howToSetupSubheadline = t("sites:howToSetup.subHeadline");
+	const tabSrOnly = t("sites:howToSetup.tabSrOnly");
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
