@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { MemoizedAlert } from "@components/alerts";
 import { MemoizedSiteSelectDropdown } from "@components/dropdowns/SiteSelectDropdown";
 import { MemoizedSiteSelectMenu } from "@components/menus/SiteSelectMenu";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
 import { useSites } from "@hooks/useSites";
-import { useUser } from "@hooks/useUser";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -16,19 +17,18 @@ import "twin.macro";
  * Custom function to render the `SiteSelect` component
  */
 export function SiteSelect() {
-	const [messageConfig, setMessageConfig] = useState(null);
 	const [selectedSite, setSelectedSite] = useState(null);
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
 	const [selectedSiteId, setSelectedSiteId] = useState(null);
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
+	const { state, setConfig } = useAlertMessage();
 
 	// Router
 	const { query } = useRouter();
 
 	// SWR hooks
-	const { user, errorUser, validatingUser } = useUser();
 	const { sites, errorSites, validatingSites } = useSites(SitesApiEndpoint);
 
 	// Custom hooks
@@ -39,7 +39,7 @@ export function SiteSelect() {
 	} = useComponentVisible(false);
 
 	// Handle site selection on load
-	const handleSiteSelectOnLoad = async (siteId) => {
+	const handleSiteSelectOnLoad = useCallback(async (siteId) => {
 		if (!validatingSites) {
 			if (!errorSites && typeof sites !== "undefined" && sites !== null) {
 				if (sites?.results && sites?.results?.length > 0) {
@@ -53,38 +53,46 @@ export function SiteSelect() {
 				}
 			}
 		}
-	};
+
+		return () => {
+			setSelectedSite(null);
+			setIsSiteSelectComponentVisible(!isSiteSelectComponentVisible);
+			setSelectedSiteId(null);
+		};
+	}, []);
+
+	useEffect(() => {
+		handleSiteSelectOnLoad();
+	}, [handleSiteSelectOnLoad]);
 
 	// Handle site selection on click
 	const handleSiteSelectOnClick = useCallback(async () => {
 		if (!validatingSites) {
-			if (typeof sites !== "undefined" && sites !== null && Object.keys(sites).length > 0) {
-				for (let i = 0; i < sites?.results?.length; i++) {
-					if (sites?.results?.[i]?.id === query?.siteId) {
-						setSelectedSite(sites?.results?.[i]?.name);
-					} else {
-						setSelectedSite(null);
-					}
-				}
-			} else {
-				const errorSitesStatus = errorSites?.response?.status ?? null;
+			if (!errorSites) {
+				const sitesSelectResponse = await sites;
+				const sitesSelectResponseData = sitesSelectResponse?.data ?? null;
+				const sitesSelectResponseStatus = sitesSelectResponse?.status ?? null;
+				const sitesSelectResponseMethod = sitesSelectResponse?.config?.method ?? null;
 
-				if (errorSitesStatus !== null) {
-					setMessageConfig({
-						type: "sites",
-						method: "get",
-						status: errorSitesStatus
-					});
+				if (sitesSelectResponseData !== null && Math.round(sitesSelectResponseStatus / 200) === 1) {
+					for (let i = 0; i < sites?.results?.length; i++) {
+						if (sites?.results?.[i]?.id === query?.siteId) {
+							setSelectedSite(sites?.results?.[i]?.name ?? null);
+						} else {
+							setSelectedSite(null);
+						}
+					}
 				} else {
-					setMessageConfig({
-						type: null,
-						method: null,
-						status: null
+					// Show alert message after failed response is issued
+					setConfig({
+						isSites: true,
+						method: sitesSelectResponseMethod,
+						status: sitesSelectResponseStatus
 					});
 				}
 			}
 		}
-	}, [sites, query, validatingSites]);
+	}, [query, sites, errorSites, validatingSites]);
 
 	useEffect(() => {
 		handleSiteSelectOnClick();
@@ -93,50 +101,79 @@ export function SiteSelect() {
 	// Handle site selection on change
 	const handleSiteSelectOnChange = useCallback(async () => {
 		if (!validatingSites) {
-			if (typeof sites !== "undefined" && sites !== null && Object.keys(sites).length > 0) {
-				if (typeof selectedSite !== "undefined" && selectedSite !== null) {
-					sites?.results
-						.filter((result) => result.name === selectedSite)
-						.map((val) => {
-							setSelectedSiteDetails(val);
-						});
+			if (!errorSites) {
+				const sitesSelectResponse = await sites;
+				const sitesSelectResponseData = sitesSelectResponse?.data ?? null;
+				const sitesSelectResponseStatus = sitesSelectResponse?.status ?? null;
+				const sitesSelectResponseMethod = sitesSelectResponse?.config?.method ?? null;
 
-					let currentSite = sites?.results?.find((result) => result.id === parseInt(query?.siteId)) ?? null;
+				if (sitesSelectResponseData !== null && Math.round(sitesSelectResponseStatus / 200) === 1) {
+					if (typeof selectedSite !== "undefined" && selectedSite !== null) {
+						sites?.results
+							.filter((result) => result.name === selectedSite)
+							.map((val) => {
+								setSelectedSiteDetails(val);
+							}) ?? null;
 
-					if (typeof currentSite !== undefined && currentSite !== null) {
-						setSelectedSite(currentSite?.name);
-					} else {
-						setSelectedSite(null);
+						let currentSite = sites?.results?.find((result) => result.id === parseInt(query?.siteId)) ?? null;
+
+						if (typeof currentSite !== undefined && currentSite !== null) {
+							setSelectedSite(currentSite?.name ?? null);
+						} else {
+							setSelectedSite(null);
+						}
 					}
+				} else {
+					// Show alert message after failed response is issued
+					setConfig({
+						isSites: true,
+						method: sitesSelectResponseMethod,
+						status: sitesSelectResponseStatus
+					});
 				}
 			}
 		}
-	}, [selectedSite, sites, query, selectedSiteDetails, validatingSites]);
+	}, [query, selectedSite, selectedSiteDetails, sites, errorSites, validatingSites]);
 
 	useEffect(() => {
 		handleSiteSelectOnChange();
 	}, [handleSiteSelectOnChange]);
 
 	return (
-		<div tw="relative space-y-1">
-			<span ref={siteSelectRef} tw="inline-block w-full rounded-md shadow-sm">
-				{isComponentReady && !validatingUser && !errorUser && typeof user !== "undefined" && user !== null ? (
-					<MemoizedSiteSelectMenu
-						selectedSite={selectedSite}
-						selectedSiteDetails={selectedSiteDetails}
-						handleOpenDropdown={() => setIsSiteSelectComponentVisible(!isSiteSelectComponentVisible)}
-					/>
-				) : (
-					<Skeleton width={224} height={38} tw="cursor-default relative w-full pl-3 pr-10 py-2" />
-				)}
-			</span>
+		<>
+			{state?.responses !== [] && state?.responses?.length > 0 ? (
+				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
+					{state?.responses?.map((value, key) => {
+						// Alert Messsages
+						const responseText = value?.responseText ?? null;
+						const isSuccess = value?.isSuccess ?? null;
 
-			<MemoizedSiteSelectDropdown
-				selectedSiteId={selectedSiteId}
-				handleSiteSelectOnLoad={handleSiteSelectOnLoad}
-				openDropdown={isSiteSelectComponentVisible}
-			/>
-		</div>
+						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+					}) ?? null}
+				</div>
+			) : null}
+
+			<div tw="relative space-y-1">
+				<span tw="inline-block w-full rounded-md shadow-sm">
+					{isComponentReady ? (
+						<MemoizedSiteSelectMenu
+							selectedSite={selectedSite}
+							selectedSiteDetails={selectedSiteDetails}
+							handleOpenDropdown={() => setIsSiteSelectComponentVisible(!isSiteSelectComponentVisible)}
+						/>
+					) : (
+						<Skeleton width={224} height={38} tw="cursor-default relative w-full pl-3 pr-10 py-2" />
+					)}
+				</span>
+
+				<MemoizedSiteSelectDropdown
+					ref={siteSelectRef}
+					selectedSiteId={selectedSiteId}
+					handleSiteSelectOnLoad={handleSiteSelectOnLoad}
+					openDropdown={isSiteSelectComponentVisible}
+				/>
+			</div>
+		</>
 	);
 }
 
