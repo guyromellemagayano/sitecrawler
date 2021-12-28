@@ -1,189 +1,247 @@
-// React
-import { SitesApiEndpoint } from "@enums/ApiEndpoints";
-// JSON
-import { VerifyUrlLabels } from "@enums/VerifyUrlLabels";
-import { usePostMethod } from "@hooks/useHttpMethod";
-// NextJS
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import { MemoizedAlert } from "@components/alerts";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { FormSubmissionInterval } from "@constants/GlobalValues";
+import { AddNewSiteLink, DashboardSitesLink } from "@constants/PageLinks";
+import { handlePostMethod } from "@helpers/handleHttpMethods";
+import { useAlertMessage } from "@hooks/useAlertMessage";
+import { useLoading } from "@hooks/useLoading";
+import { useSites } from "@hooks/useSites";
+import { Formik } from "formik";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import PropTypes from "prop-types";
-// External
+import { useRouter } from "next/router";
+import { memo, useCallback, useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 
-const VerifyUrlStepForm = ({
-	currentStep,
-	disableSiteVerify,
-	enableNextStep,
-	setCurrentStep,
-	setDisableSiteVerify,
-	setEditMode,
-	setEnableNextStep,
-	setErrorMsg,
-	setSiteId,
-	setSiteVerifyId,
-	setSuccessMsg,
-	siteData,
-	siteVerifyId
-}) => {
-	const handleSubmit = async (e) => {
-		e?.preventDefault();
+/**
+ * Custom function to render the `VerifyUrlStepForm` component
+ */
+export function VerifyUrlStepForm(props) {
+	const [siteData, setSiteData] = useState(null);
+	const [enableNextStep, setEnableNextStep] = useState(false);
 
-		setDisableSiteVerify(!disableSiteVerify);
+	const { sid, step, setDisableSiteVerify } = props;
 
-		const body = {
-			sid: e?.currentTarget?.site_verify_id?.value
-		};
+	// Translations
+	const { t } = useTranslation();
+	const goToSiteOverview = t("addSite:goToSiteOverview");
+	const verifying = t("addSite:verifying");
+	const verifySiteNow = t("addSite:verifySiteNow");
+	const verifySiteLater = t("addSite:verifySiteLater");
+	const updateSiteDetails = t("addSite:updateSiteDetails");
 
-		const { response, error } = await usePostMethod(SitesApiEndpoint + body?.sid + "/verify/", body);
+	// Router
+	const router = useRouter();
 
-		Math.floor(response?.status / 200) === 1
-			? response?.data?.verified === true
-				? (() => {
-						setSuccessMsg((successMsg) => [...successMsg, VerifyUrlLabels[20].label]);
+	// SWR hooks
+	const { sites, errorSites, validatingSites } = useSites();
 
-						setTimeout(() => {
-							setEnableNextStep(!enableNextStep);
-							setDisableSiteVerify(false);
-						}, 1000);
-				  })()
-				: (() => {
-						setErrorMsg((errorMsg) => [...errorMsg, VerifyUrlLabels[21].label]);
+	// Custom hooks
+	const { state, setConfig } = useAlertMessage();
+	const { isComponentReady } = useLoading();
 
-						setTimeout(() => {
-							setDisableSiteVerify(false);
-						}, 1000);
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
 
-						return error;
-				  })()
-			: (() => {
-					setErrorMsg((errorMsg) => [...errorMsg, VerifyUrlLabels[21].label]);
-
-					setTimeout(() => {
-						setDisableSiteVerify(false);
-					}, 1000);
-
-					return error;
-			  })();
-	};
-
-	const handleEditMode = (e) => {
+	const handleEditMode = async (e) => {
 		e.preventDefault();
 
-		setSiteId(siteData?.id);
-		setEditMode(true);
-		setCurrentStep(currentStep - 1);
+		// Update current URL with query for the next step
+		router.push(
+			{
+				pathname: AddNewSiteLink,
+				query: { step: step - 1, sid: sid ?? null, edit: true }
+			},
+			undefined,
+			{}
+		);
 	};
 
-	const handleHiddenInputChange = (e) => {
-		setSiteVerifyId({ value: e?.currentTarget.site_verify_id.value });
-	};
+	// Handle site data selection based on the given `siteData` prop value
+	const handleSiteData = useCallback(async () => {
+		if (!validatingSites) {
+			if (!errorSites && typeof sites !== "undefined" && sites !== null) {
+				setSiteData(sites?.data?.results?.length > 0 ? sites?.data?.results?.filter((site) => site?.id === sid) : null);
+			}
+		}
+	}, [sid, sites, errorSites, validatingSites]);
+
+	useEffect(() => {
+		handleSiteData();
+	}, [handleSiteData]);
 
 	return (
-		<form onSubmit={handleSubmit} tw="sm:flex sm:items-center w-full">
-			<input type="hidden" value={siteVerifyId} name="site_verify_id" onChange={handleHiddenInputChange} />
-			<div tw="flex lg:justify-between w-full">
-				{enableNextStep ? (
-					<span tw="inline-flex">
-						<Link href="/site/[id]/overview/" as={`/site/${siteData?.id}/overview/`} passHref>
-							<a
-								css={[
-									tw`cursor-pointer inline-flex sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600`,
-									disableSiteVerify
-										? tw`opacity-50 bg-green-400 cursor-not-allowed`
-										: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
-								]}
-							>
-								{VerifyUrlLabels[13].label}
-							</a>
-						</Link>
-					</span>
-				) : (
-					<>
-						<div>
-							<span tw="inline-flex">
-								<button
-									type="submit"
-									disabled={disableSiteVerify}
-									css={[
-										tw`w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
-										disableSiteVerify
-											? tw`opacity-50 cursor-not-allowed`
-											: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-									]}
-								>
-									{disableSiteVerify ? VerifyUrlLabels[18].label : VerifyUrlLabels[10].label}
-								</button>
-							</span>
+		<>
+			{state?.responses !== [] && state?.responses?.length > 0 ? (
+				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
+					{state?.responses?.map((value, key) => {
+						// Alert Messsages
+						const responseText = value?.responseText ?? null;
+						const isSuccess = value?.isSuccess ?? null;
 
-							<span tw="inline-flex">
-								<Link href="/sites" passHref>
-									<a
-										disabled={disableSiteVerify}
-										css={[
-											tw`cursor-pointer w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600`,
-											disableSiteVerify
-												? tw`opacity-50 cursor-not-allowed`
-												: tw`hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
-										]}
-									>
-										{VerifyUrlLabels[11].label}
-									</a>
-								</Link>
-							</span>
-						</div>
+						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
+					}) ?? null}
+				</div>
+			) : null}
 
-						<div>
-							<span tw="inline-flex">
-								<button
-									disabled={disableSiteVerify}
-									css={[
-										tw`cursor-pointer w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 text-sm leading-5 font-medium text-gray-700 bg-white`,
-										disableSiteVerify
-											? tw`opacity-50 cursor-not-allowed`
-											: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-									]}
-									onClick={handleEditMode}
-								>
-									{VerifyUrlLabels[12].label}
-								</button>
-							</span>
-						</div>
-					</>
-				)}
+			<div tw="mb-5 sm:flex sm:justify-between">
+				<div tw="sm:flex sm:justify-start w-full">
+					<Formik
+						enableReinitialize={true}
+						initialValues={{
+							verification_id: siteData?.verification_id ?? null
+						}}
+						onSubmit={async (values, { setSubmitting }) => {
+							const body = {
+								verification_id: values.verification_id
+							};
+
+							const verifyUrlStepResponse = await handlePostMethod(SitesApiEndpoint + sid + "/verify/", body);
+							const verifyUrlStepData = verifyUrlStepResponse?.data ?? null;
+							const verifyUrlStepStatus = verifyUrlStepResponse?.status ?? null;
+							const verifyUrlStepMethod = verifyUrlStepResponse?.config?.method ?? null;
+
+							console.log(verifyUrlStepResponse);
+
+							if (verifyUrlStepData !== null && Math.round(verifyUrlStepStatus / 200) === 1) {
+								// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
+								await mutate(SitesApiEndpoint, false);
+
+								// Disable submission as soon as 200 OK or 201 Created response was issued
+								setSubmitting(false);
+
+								// Show alert message after successful 200 OK or 201 Created response is issued
+								setConfig({
+									isVerifyUrlStep: true,
+									method: verifyUrlStepMethod,
+									status: verifyUrlStepStatus
+								});
+
+								// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+								setTimeout(() => {
+									setEnableNextStep(!enableNextStep);
+									setDisableSiteVerify(false);
+								}, FormSubmissionInterval);
+							} else {
+								// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued
+								setSubmitting(false);
+								setDisableSiteVerify(false);
+
+								// Show alert message after successful 200 OK or 201 Created response is issued
+								setConfig({
+									isVerifyUrlStep: true,
+									method: verifyUrlStepMethod,
+									status: verifyUrlStepStatus
+								});
+							}
+						}}
+					>
+						{({ handleSubmit, isSubmitting, handleChange, values }) => (
+							<form tw="sm:flex sm:items-center w-full" onSubmit={handleSubmit}>
+								<div tw="flex lg:justify-between w-full">
+									{enableNextStep ? (
+										<span tw="inline-flex">
+											{isComponentReady ? (
+												<Link href="/site/[id]/overview/" as={`/site/${sid}/overview/`} passHref replace>
+													<a tw="cursor-pointer inline-flex sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+														{goToSiteOverview}
+													</a>
+												</Link>
+											) : (
+												<Skeleton duration={2} width={160} height={38} tw="mr-3" />
+											)}
+										</span>
+									) : (
+										<>
+											<div>
+												<input
+													id="sitename"
+													type="hidden"
+													name="sitename"
+													disabled={true}
+													tw="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md border-gray-300 opacity-50 bg-gray-300 cursor-not-allowed"
+													aria-describedby="sitename"
+													onChange={handleChange}
+													value={values.verification_id}
+												/>
+
+												<span tw="inline-flex">
+													{isComponentReady ? (
+														<button
+															type="submit"
+															disabled={isSubmitting}
+															css={[
+																tw`w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
+																isSubmitting
+																	? tw`opacity-50 cursor-not-allowed`
+																	: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+															]}
+														>
+															{isSubmitting ? verifying : verifySiteNow}
+														</button>
+													) : (
+														<Skeleton duration={2} width={135} height={38} tw="mr-3" />
+													)}
+												</span>
+
+												<span tw="inline-flex">
+													{isComponentReady ? (
+														<Link href={DashboardSitesLink} passHref replace>
+															<a
+																disabled={isSubmitting}
+																css={[
+																	tw`cursor-pointer w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600`,
+																	isSubmitting
+																		? tw`opacity-50 cursor-not-allowed`
+																		: tw`hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
+																]}
+															>
+																{verifySiteLater}
+															</a>
+														</Link>
+													) : (
+														<Skeleton duration={2} width={140} height={38} tw="mr-3" />
+													)}
+												</span>
+											</div>
+
+											<div>
+												<span tw="inline-flex">
+													{isComponentReady ? (
+														<button
+															disabled={isSubmitting}
+															css={[
+																tw`cursor-pointer w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 text-sm leading-5 font-medium text-gray-700 bg-white`,
+																isSubmitting
+																	? tw`opacity-50 cursor-not-allowed`
+																	: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+															]}
+															onClick={handleEditMode}
+														>
+															{updateSiteDetails}
+														</button>
+													) : (
+														<Skeleton duration={2} width={161} height={38} tw="mr-3" />
+													)}
+												</span>
+											</div>
+										</>
+									)}
+								</div>
+							</form>
+						)}
+					</Formik>
+				</div>
 			</div>
-		</form>
+		</>
 	);
-};
+}
 
-VerifyUrlStepForm.propTypes = {
-	currentStep: PropTypes.number,
-	disableSiteVerify: PropTypes.bool,
-	enableNextStep: PropTypes.bool,
-	id: PropTypes.number,
-	setCurrentStep: PropTypes.func,
-	setDisableSiteVerify: PropTypes.func,
-	setEditMode: PropTypes.func,
-	setEnableNextStep: PropTypes.func,
-	setErrorMsg: PropTypes.func,
-	setSiteId: PropTypes.func,
-	setSiteVerifyId: PropTypes.func,
-	setSuccessMsg: PropTypes.func,
-	siteVerifyId: PropTypes.number
-};
-
-VerifyUrlStepForm.defaultProps = {
-	currentStep: null,
-	disableSiteVerify: false,
-	enableNextStep: false,
-	id: null,
-	setCurrentStep: null,
-	setDisableSiteVerify: false,
-	setEditMode: false,
-	setEnableNextStep: false,
-	setErrorMsg: null,
-	setSiteId: null,
-	setSiteVerifyId: null,
-	setSuccessMsg: null,
-	siteVerifyId: null
-};
-
-export default VerifyUrlStepForm;
+/**
+ * Memoized custom `VerifyUrlStepForm` component
+ */
+export const MemoizedVerifyUrlStepForm = memo(VerifyUrlStepForm);

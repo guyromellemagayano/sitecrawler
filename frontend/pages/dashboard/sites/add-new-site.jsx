@@ -1,30 +1,82 @@
-import { Layout } from "@components/layouts";
-import Dashboard from "@components/layouts/components/Dashboard";
-import { UserApiEndpoint } from "@constants/ApiEndpoints";
-import { LoginLink } from "@constants/PageLinks";
-import { server } from "@constants/ServerEnv";
-import AppAxiosInstance from "@utils/axios";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { DashboardLayout } from "@components/layouts";
+import { MemoizedPageLayout } from "@components/layouts/components/Page";
+import { MemoizedAddNewSitePageLayout } from "@components/layouts/pages/AddNewSite";
+import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
+import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
+import { SSR_SITE_URL } from "@constants/ServerEnv";
+import axios from "axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import dynamic from "next/dynamic";
 import "twin.macro";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
-export async function getStaticProps() {
-	const userResponse = await AppAxiosInstance.get(`${server + UserApiEndpoint}`);
+export async function getServerSideProps({ req, query }) {
+	// User response
+	const userResponse = await axios.get(`${SSR_SITE_URL + UserApiEndpoint}`, {
+		headers: {
+			cookie: req?.headers?.cookie ?? null,
+			...customAxiosHeaders
+		}
+	});
 	const userData = userResponse?.data ?? null;
 	const userStatus = userResponse?.status ?? null;
+
+	// Sites response
+	const sitesResponse = await axios.get(`${SSR_SITE_URL + SitesApiEndpoint}`, {
+		headers: {
+			cookie: req?.headers?.cookie ?? null,
+			...customAxiosHeaders
+		}
+	});
+	const sitesData = sitesResponse?.data ?? null;
+	const sitesStatus = sitesResponse?.status ?? null;
 
 	if (
 		typeof userData !== "undefined" &&
 		userData !== null &&
 		!userData?.detail &&
 		Object.keys(userData)?.length > 0 &&
-		Math.round(userStatus / 200 === 1)
+		Math.round(userStatus / 200) === 1
 	) {
-		return {
-			props: {}
-		};
+		const step = query?.step ?? 1;
+		const sid = query?.sid ?? null;
+		const edit = query?.edit ?? false;
+
+		if (
+			typeof sitesData !== "undefined" &&
+			sitesData !== null &&
+			!sitesData?.detail &&
+			Object.keys(sitesData)?.length > 0 &&
+			Math.round(sitesStatus / 200) === 1
+		) {
+			const sidMatch = sitesData?.results?.find((site) => site.id === sid) ?? null;
+
+			if (sidMatch == null || sid == null) {
+				return {
+					props: {
+						step: step,
+						sid: sid,
+						edit: edit
+					}
+				};
+			} else {
+				return {
+					redirect: {
+						destination: DashboardSitesLink,
+						permanent: false
+					}
+				};
+			}
+		} else {
+			return {
+				redirect: {
+					destination: DashboardSitesLink,
+					permanent: false
+				}
+			};
+		}
 	} else {
 		return {
 			redirect: {
@@ -35,24 +87,27 @@ export async function getStaticProps() {
 	}
 }
 
-/**
- * Dynamic imports
- */
-const AddNewSitePageLayout = dynamic(() => import("@components/layouts/pages/AddNewSite"), { ssr: true });
-
-export default function AddNewSite() {
+export default function AddNewSite(props) {
 	// Translations
 	const { t } = useTranslation("addSite");
 	const addNewSite = t("addNewSite");
 
+	const { step, sid, edit } = props;
+
+	const sanitizedStep = parseInt(step);
+	const sanitizedSid = sid !== null ? parseInt(sid) : null;
+	const sanitizedEdit = !!edit;
+
 	return (
-		<Dashboard>
+		<>
 			<NextSeo title={addNewSite} />
-			<AddNewSitePageLayout />
-		</Dashboard>
+			<MemoizedPageLayout pageTitle={addNewSite}>
+				<MemoizedAddNewSitePageLayout step={sanitizedStep} sid={sanitizedSid} edit={sanitizedEdit} />
+			</MemoizedPageLayout>
+		</>
 	);
 }
 
 AddNewSite.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
+	return <DashboardLayout>{page}</DashboardLayout>;
 };

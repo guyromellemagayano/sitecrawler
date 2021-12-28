@@ -2,7 +2,7 @@
 import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarButton";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
 // import SiteLimitReachedModal from "@components/modals/SiteLimitReachedModal";
-import { AddNewSiteLink, DashboardSitesLink, DashboardSiteSlug } from "@constants/PageLinks";
+import { AddNewSiteLink } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
@@ -83,7 +83,6 @@ export function AddSite({ handleOpenSidebar }) {
 				if (
 					typeof sites !== "undefined" &&
 					sites !== null &&
-					!sites?.data?.detail &&
 					typeof user !== "undefined" &&
 					user !== null &&
 					!user?.data?.detail
@@ -111,48 +110,45 @@ export function AddSite({ handleOpenSidebar }) {
 				<div tw="flex-1 flex">
 					<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
 
-					{DashboardSitesLink.includes(pathname) || DashboardSiteSlug.includes(pathname) ? (
-						<div tw="w-full flex items-center ml-4 lg:ml-0">
-							{isBrowser ? (
-								<>
-									<label htmlFor="searchSites" tw="sr-only">
-										{searchSites}
-									</label>
-									<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center ">
-										<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-											{isComponentReady ? (
-												<SearchIcon tw="h-5 w-5 text-gray-400" />
-											) : (
-												<Skeleton duration={2} width={20} height={20} />
-											)}
-										</div>
-										{siteLimitCounter !== null && siteLimitCounter > 0 ? (
-											isComponentReady ? (
-												<input
-													type="search"
-													name="search-sites"
-													id="searchSites"
-													tw="block w-full max-w-xs h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-													placeholder={searchSites}
-													onKeyUp={useHandleSiteSearch}
-													defaultValue={searchKey}
-												/>
-											) : (
-												<Skeleton duration={2} width={320} height={20} />
-											)
+					<div tw="w-full flex items-center ml-4 lg:ml-0">
+						{isBrowser ? (
+							<>
+								<label htmlFor="searchSites" tw="sr-only">
+									{searchSites}
+								</label>
+								<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center ">
+									<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+										{isComponentReady ? (
+											<SearchIcon tw="h-5 w-5 text-gray-400" />
 										) : (
-											<p tw="flex-1 sm:text-sm placeholder-gray-500 pl-8">
-												{isComponentReady ? searchNotAvailable : <Skeleton duration={2} width={320} height={20} />}
-											</p>
+											<Skeleton duration={2} width={20} height={20} />
 										)}
 									</div>
-								</>
-							) : null}
-						</div>
-					) : null}
+									{siteLimitCounter !== null && siteLimitCounter > 0 ? (
+										isComponentReady ? (
+											<input
+												type="search"
+												name="search-sites"
+												id="searchSites"
+												tw="block w-full max-w-xs h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+												placeholder={searchSites}
+												onKeyUp={useHandleSiteSearch}
+												defaultValue={searchKey}
+											/>
+										) : (
+											<Skeleton duration={2} width={320} height={20} />
+										)
+									) : (
+										<p tw="flex-1 sm:text-sm placeholder-gray-500 pl-8">
+											{isComponentReady ? searchNotAvailable : <Skeleton duration={2} width={320} height={20} />}
+										</p>
+									)}
+								</div>
+							</>
+						) : null}
+					</div>
 				</div>
 				<div tw="ml-4 p-4 xl:p-0 flex items-center lg:ml-6 space-x-2">
-					{console.log(siteLimitCounter, typeof siteLimitCounter, maxSiteLimit, typeof maxSiteLimit)}
 					{isComponentReady ? (
 						siteLimitCounter === maxSiteLimit || siteLimitCounter > maxSiteLimit ? (
 							<button
