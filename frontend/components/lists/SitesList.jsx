@@ -34,7 +34,7 @@ export function SitesList(handleSiteSelectOnLoad) {
 				if (sitesSelectResponseData !== null && Math.round(sitesSelectResponseStatus / 200) === 1) {
 					if (Object.keys(sitesSelectResponseData)?.length > 0) {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						await mutate(SitesApiEndpoint, null, false);
+						await mutate(SitesApiEndpoint, false);
 
 						// Show alert message after successful 200 OK or 201 Created response is issued
 						setConfig({
