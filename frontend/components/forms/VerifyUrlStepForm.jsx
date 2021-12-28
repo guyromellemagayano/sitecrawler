@@ -22,9 +22,8 @@ import tw from "twin.macro";
  */
 export function VerifyUrlStepForm(props) {
 	const [siteData, setSiteData] = useState(null);
-	const [enableNextStep, setEnableNextStep] = useState(false);
 
-	const { sid, step, setDisableSiteVerify } = props;
+	const { sid, step, verified, setDisableSiteVerify, enableNextStep, setEnableNextStep } = props;
 
 	// Translations
 	const { t } = useTranslation();
@@ -35,6 +34,7 @@ export function VerifyUrlStepForm(props) {
 	const updateSiteDetails = t("addSite:updateSiteDetails");
 
 	// Router
+	const { query } = useRouter();
 	const router = useRouter();
 
 	// SWR hooks
@@ -51,10 +51,10 @@ export function VerifyUrlStepForm(props) {
 		e.preventDefault();
 
 		// Update current URL with query for the next step
-		router.push(
+		router.replace(
 			{
 				pathname: AddNewSiteLink,
-				query: { step: step - 1, sid: sid ?? null, edit: true }
+				query: { step: step - 1, sid: sid ?? null, edit: true, verified: false }
 			},
 			undefined,
 			{}
@@ -93,7 +93,7 @@ export function VerifyUrlStepForm(props) {
 					<Formik
 						enableReinitialize={true}
 						initialValues={{
-							verification_id: siteData?.verification_id ?? null
+							verification_id: siteData?.verification_id ?? ""
 						}}
 						onSubmit={async (values, { setSubmitting }) => {
 							const body = {
@@ -105,9 +105,11 @@ export function VerifyUrlStepForm(props) {
 							const verifyUrlStepStatus = verifyUrlStepResponse?.status ?? null;
 							const verifyUrlStepMethod = verifyUrlStepResponse?.config?.method ?? null;
 
-							console.log(verifyUrlStepResponse);
-
-							if (verifyUrlStepData !== null && Math.round(verifyUrlStepStatus / 200) === 1) {
+							if (
+								verifyUrlStepData !== null &&
+								Math.round(verifyUrlStepStatus / 200) === 1 &&
+								verifyUrlStepData?.verified
+							) {
 								// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
 								await mutate(SitesApiEndpoint, false);
 
@@ -119,6 +121,12 @@ export function VerifyUrlStepForm(props) {
 									isVerifyUrlStep: true,
 									method: verifyUrlStepMethod,
 									status: verifyUrlStepStatus
+								});
+
+								// Update router query
+								router.replace({
+									pathname: AddNewSiteLink,
+									query: { step: step + 1, sid: sid ?? null, edit: false, verified: true }
 								});
 
 								// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
@@ -143,7 +151,7 @@ export function VerifyUrlStepForm(props) {
 						{({ handleSubmit, isSubmitting, handleChange, values }) => (
 							<form tw="sm:flex sm:items-center w-full" onSubmit={handleSubmit}>
 								<div tw="flex lg:justify-between w-full">
-									{enableNextStep ? (
+									{enableNextStep && verified && step == 3 ? (
 										<span tw="inline-flex">
 											{isComponentReady ? (
 												<Link href="/site/[id]/overview/" as={`/site/${sid}/overview/`} passHref replace>
@@ -155,11 +163,11 @@ export function VerifyUrlStepForm(props) {
 												<Skeleton duration={2} width={160} height={38} tw="mr-3" />
 											)}
 										</span>
-									) : (
+									) : isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 && !verified ? (
 										<>
-											<div>
+											<div tw="inline-flex items-center justify-start">
 												<input
-													id="sitename"
+													id="siteVerificationId"
 													type="hidden"
 													name="sitename"
 													disabled={true}
@@ -170,63 +178,69 @@ export function VerifyUrlStepForm(props) {
 												/>
 
 												<span tw="inline-flex">
-													{isComponentReady ? (
-														<button
-															type="submit"
-															disabled={isSubmitting}
-															css={[
-																tw`w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
-																isSubmitting
-																	? tw`opacity-50 cursor-not-allowed`
-																	: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-															]}
-														>
-															{isSubmitting ? verifying : verifySiteNow}
-														</button>
-													) : (
-														<Skeleton duration={2} width={135} height={38} tw="mr-3" />
-													)}
+													<button
+														type="submit"
+														disabled={isSubmitting}
+														css={[
+															tw`w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
+															isSubmitting
+																? tw`opacity-50 cursor-not-allowed`
+																: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+														]}
+													>
+														{isSubmitting ? verifying : verifySiteNow}
+													</button>
 												</span>
 
 												<span tw="inline-flex">
-													{isComponentReady ? (
-														<Link href={DashboardSitesLink} passHref replace>
-															<a
-																disabled={isSubmitting}
-																css={[
-																	tw`cursor-pointer w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600`,
-																	isSubmitting
-																		? tw`opacity-50 cursor-not-allowed`
-																		: tw`hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
-																]}
-															>
-																{verifySiteLater}
-															</a>
-														</Link>
-													) : (
-														<Skeleton duration={2} width={140} height={38} tw="mr-3" />
-													)}
+													<Link href={DashboardSitesLink} passHref replace>
+														<a
+															disabled={isSubmitting}
+															css={[
+																tw`cursor-pointer w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600`,
+																isSubmitting
+																	? tw`opacity-50 cursor-not-allowed`
+																	: tw`hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
+															]}
+														>
+															{verifySiteLater}
+														</a>
+													</Link>
 												</span>
 											</div>
 
 											<div>
 												<span tw="inline-flex">
-													{isComponentReady ? (
-														<button
-															disabled={isSubmitting}
-															css={[
-																tw`cursor-pointer w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 text-sm leading-5 font-medium text-gray-700 bg-white`,
-																isSubmitting
-																	? tw`opacity-50 cursor-not-allowed`
-																	: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
-															]}
-															onClick={handleEditMode}
-														>
-															{updateSiteDetails}
-														</button>
-													) : (
-														<Skeleton duration={2} width={161} height={38} tw="mr-3" />
-													)}
+													<button
+														disabled={isSubmitting}
+														css={[
+															tw`cursor-pointer w-full mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 text-sm leading-5 font-medium text-gray-700 bg-white`,
+															isSubmitting
+																? tw`opacity-50 cursor-not-allowed`
+																: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+														]}
+														onClick={handleEditMode}
+													>
+														{updateSiteDetails}
+													</button>
+												</span>
+											</div>
+										</>
+									) : (
+										<>
+											<div tw="inline-flex items-center justify-start">
+												<span tw="inline-flex">
+													<Skeleton duration={2} width={135} height={38} tw="mr-3" />
+												</span>
+
+												<span tw="inline-flex">
+													<Skeleton duration={2} width={140} height={38} tw="mr-3" />
+												</span>
+											</div>
+
+											<div>
+												<span tw="inline-flex">
+													<Skeleton duration={2} width={161} height={38} tw="mr-3" />
 												</span>
 											</div>
 										</>

@@ -45,8 +45,8 @@ export function UrlInformationStepForm(props) {
 	const formSiteUrlLabel = t("addSite:form.siteUrl.label");
 	const formSiteUrlPlaceholder = t("addSite:form.siteUrl.placeholder");
 	const formSiteUrlProtocol = t("addSite:form.siteUrl.protocol");
-	const siteUrlAlreadyExists = t("alerts:sites.post.misc.siteUrlAlreadyExists");
-	const enterValidSiteUrl = t("alerts:sites.post.misc.enterValidSiteUrl");
+	const siteUrlAlreadyExists = t("alerts:sites.urlInformation.post.misc.siteUrlAlreadyExists");
+	const enterValidSiteUrl = t("alerts:sites.urlInformation.post.misc.enterValidSiteUrl");
 
 	// Router
 	const router = useRouter();
@@ -204,7 +204,7 @@ export function UrlInformationStepForm(props) {
 						}
 					} else {
 						const body = {
-							url: values.siteurlprotocol + values.siteurl,
+							url: values.siteurlprotocol !== "" ? values.siteurlprotocol : "https://" + values.siteurl,
 							name: values.sitename,
 							large_page_size_threshold: largePageSizeThreshold
 						};
@@ -212,6 +212,7 @@ export function UrlInformationStepForm(props) {
 						const siteValidationResponse = await handleGetMethod(SitesApiEndpoint);
 						const siteValidationResponseData = siteValidationResponse?.data ?? null;
 						const siteValidationResponseStatus = siteValidationResponse?.status ?? null;
+						const siteValidationResponseMethod = siteValidationResponse?.config?.method ?? null;
 
 						if (
 							siteValidationResponseData !== null &&
@@ -232,45 +233,56 @@ export function UrlInformationStepForm(props) {
 								setSubmitting(false);
 								resetForm({ values: "" });
 								setErrors({ siteurl: siteUrlAlreadyExists });
+							} else {
+								const siteAdditionResponse = await handlePostMethod(SitesApiEndpoint, body);
+								const siteAdditionResponseData = siteAdditionResponse?.data ?? null;
+								const siteAdditionResponseStatus = siteAdditionResponse?.status ?? null;
+								const siteAdditionResponseMethod = siteAdditionResponse?.config?.method ?? null;
+
+								if (siteAdditionResponseData !== null && Math.round(siteAdditionResponseStatus / 200) === 1) {
+									// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
+									await mutate(SitesApiEndpoint, false);
+
+									// Show alert message after successful 200 OK or 201 Created response is issued
+									setConfig({
+										isUrlInformationStep: true,
+										method: siteAdditionResponseMethod,
+										status: siteAdditionResponseStatus
+									});
+
+									// Update current URL with query for the next step
+									router.push(
+										{
+											pathname: AddNewSiteLink,
+											query: { step: step + 1, sid: siteAdditionResponseData?.id ?? null, edit: false, verified: false }
+										},
+										undefined,
+										{}
+									);
+								} else {
+									// Disable submission and reset form as soon as 200 OK or 201 Created response was issued
+									setSubmitting(false);
+									resetForm({ values: "" });
+
+									// Show alert message after successful 200 OK or 201 Created response is issued
+									setConfig({
+										isUrlInformationStep: true,
+										method: siteAdditionResponseMethod,
+										status: siteAdditionResponseStatus
+									});
+								}
 							}
 						} else {
-							const siteAdditionResponse = await handlePostMethod(SitesApiEndpoint, body);
-							const siteAdditionResponseData = siteAdditionResponse?.data ?? null;
-							const siteAdditionResponseStatus = siteAdditionResponse?.status ?? null;
-							const siteAdditionResponseMethod = siteAdditionResponse?.config?.method ?? null;
+							// Disable submission and reset form as soon as 200 OK or 201 Created response was issued
+							setSubmitting(false);
+							resetForm({ values: "" });
 
-							if (siteAdditionResponseData !== null && Math.round(siteAdditionResponseStatus / 200) === 1) {
-								// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-								await mutate(SitesApiEndpoint, false);
-
-								// Show alert message after successful 200 OK or 201 Created response is issued
-								setConfig({
-									isUrlInformationStep: true,
-									method: siteAdditionResponseMethod,
-									status: siteAdditionResponseStatus
-								});
-
-								// Update current URL with query for the next step
-								router.push(
-									{
-										pathname: AddNewSiteLink,
-										query: { step: step + 1, sid: siteAdditionResponseData?.id ?? null, edit: false }
-									},
-									undefined,
-									{}
-								);
-							} else {
-								// Disable submission and reset form as soon as 200 OK or 201 Created response was issued
-								setSubmitting(false);
-								resetForm({ values: "" });
-
-								// Show alert message after successful 200 OK or 201 Created response is issued
-								setConfig({
-									isUrlInformationStep: true,
-									method: siteAdditionResponseMethod,
-									status: siteAdditionResponseStatus
-								});
-							}
+							// Show alert message after successful 200 OK or 201 Created response is issued
+							setConfig({
+								isUrlInformationStep: true,
+								method: siteValidationResponseMethod,
+								status: siteValidationResponseStatus
+							});
 						}
 					}
 				}}
@@ -327,7 +339,7 @@ export function UrlInformationStepForm(props) {
 														tw`focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-3 pr-7 border-transparent bg-transparent sm:text-sm rounded-md`,
 														edit && tw`opacity-50 bg-gray-300 cursor-not-allowed`
 													]}
-													disabled={isSubmitting || edit ? true : false}
+													disabled={isSubmitting || edit}
 													onChange={handleChange}
 													onBlur={handleBlur}
 													value={values.siteurlprotocol}

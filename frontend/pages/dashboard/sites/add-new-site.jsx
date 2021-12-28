@@ -40,9 +40,12 @@ export async function getServerSideProps({ req, query }) {
 		Object.keys(userData)?.length > 0 &&
 		Math.round(userStatus / 200) === 1
 	) {
-		const step = query?.step ?? 1;
-		const sid = query?.sid ?? null;
-		const edit = query?.edit ?? false;
+		console.log(query?.edit, query?.verified);
+
+		const step = parseInt(query?.step ?? 1);
+		const sid = parseInt(query?.sid ?? null);
+		const edit = !!(query?.edit ?? false);
+		const verified = !!(query?.verified ?? false);
 
 		if (
 			typeof sitesData !== "undefined" &&
@@ -53,12 +56,13 @@ export async function getServerSideProps({ req, query }) {
 		) {
 			const sidMatch = sitesData?.results?.find((site) => site.id === sid) ?? null;
 
-			if (sidMatch == null || sid == null) {
+			if (sidMatch == null || sid == null || typeof verified !== "undefined" || typeof edit !== "undefined") {
 				return {
 					props: {
 						step: step,
 						sid: sid,
-						edit: edit
+						edit: edit,
+						verified: verified
 					}
 				};
 			} else {
@@ -92,17 +96,15 @@ export default function AddNewSite(props) {
 	const { t } = useTranslation("addSite");
 	const addNewSite = t("addNewSite");
 
-	const { step, sid, edit } = props;
+	const { step, sid, edit, verified } = props;
 
-	const sanitizedStep = parseInt(step);
-	const sanitizedSid = sid !== null ? parseInt(sid) : null;
-	const sanitizedEdit = !!edit;
+	console.log(step, sid, edit, verified);
 
 	return (
 		<>
 			<NextSeo title={addNewSite} />
 			<MemoizedPageLayout pageTitle={addNewSite}>
-				<MemoizedAddNewSitePageLayout step={sanitizedStep} sid={sanitizedSid} edit={sanitizedEdit} />
+				<MemoizedAddNewSitePageLayout step={step} sid={sid} edit={edit} verified={verified} />
 			</MemoizedPageLayout>
 		</>
 	);
