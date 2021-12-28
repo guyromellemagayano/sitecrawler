@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@components/layouts";
+import { MemoizedDashboardLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
@@ -56,5 +56,5 @@ export default function Reports() {
 }
 
 Reports.getLayout = function getLayout(page) {
-	return <DashboardLayout>{page}</DashboardLayout>;
+	return <MemoizedDashboardLayout>{page}</MemoizedDashboardLayout>;
 };

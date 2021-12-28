@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { DashboardLayout } from "@components/layouts";
+import { MemoizedDashboardLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
 // import { MemoizedSiteOverviewPageLayout } from "@components/layouts/pages/SiteOverview";
@@ -133,5 +133,5 @@ export default function SiteOverview() {
 }
 
 SiteOverview.getLayout = function getLayout(page) {
-	return <DashboardLayout>{page}</DashboardLayout>;
+	return <MemoizedDashboardLayout>{page}</MemoizedDashboardLayout>;
 };

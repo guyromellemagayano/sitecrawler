@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@components/layouts";
+import { MemoizedDashboardLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedHelpSupportSettingsPageLayout } from "@components/layouts/pages/HelpSupportSettings";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
@@ -57,5 +57,5 @@ export default function HelpSupport() {
 }
 
 HelpSupport.getLayout = function getLayout(page) {
-	return <DashboardLayout>{page}</DashboardLayout>;
+	return <MemoizedDashboardLayout>{page}</MemoizedDashboardLayout>;
 };

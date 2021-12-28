@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@components/layouts";
+import { MemoizedDashboardLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
 // import SitesDashboardPageLayout from "@components/layouts/pages/SitesDashboard";
@@ -58,5 +58,5 @@ export default function Sites() {
 }
 
 Sites.getLayout = function getLayout(page) {
-	return <DashboardLayout>{page}</DashboardLayout>;
+	return <MemoizedDashboardLayout>{page}</MemoizedDashboardLayout>;
 };
