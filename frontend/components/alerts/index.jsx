@@ -3,7 +3,7 @@ import { Transition } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon, XIcon } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import tw from "twin.macro";
 
 /**
@@ -19,15 +19,22 @@ export function Alert({ responseText, isSuccess }) {
 	const { t } = useTranslation();
 	const dismiss = t("common:dismiss");
 
-	useEffect(() => {
-		if (responseText !== null && typeof responseText !== "undefined") {
-			return () => {
-				setTimeout(() => {
+	// Handle the alert close
+	const handleAlertClose = useCallback(async () => {
+		responseText !== null && typeof responseText !== "undefined"
+			? setTimeout(() => {
 					setIsOpen(false);
-				}, AlertDisplayInterval);
-			};
-		}
+			  }, AlertDisplayInterval)
+			: null;
+
+		return () => {
+			setIsOpen(false);
+		};
 	}, [responseText]);
+
+	useEffect(() => {
+		handleAlertClose();
+	}, [handleAlertClose]);
 
 	return (
 		<Transition
