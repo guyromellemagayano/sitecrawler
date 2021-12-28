@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { DashboardSitesLink, DashboardSiteSlug, SiteOverviewSlug, SiteSlug } from "@constants/PageLinks";
-import { handleConvertIdToNumber } from "@helpers/handleConvertIdToNumber";
+import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
+import { handleStringToNumberSanitation } from "@helpers/handleStringSanitation";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { useLoading } from "@hooks/useLoading";
 import useTranslation from "next-translate/useTranslation";
@@ -31,10 +31,13 @@ export function Breadcrumbs({
 	isSites = false,
 	pageDetailTitle = null,
 	pageTitle = null,
-	siteId = null
+	siteId = null,
+	props
 }) {
-	const { sanitizedId: sanitizedSiteId } = handleConvertIdToNumber(siteId);
-	const siteIdOverviewPageLink = `${SiteSlug + sanitizedSiteId + SiteOverviewSlug}`;
+	const { sid } = props;
+	const sanitizedSid = handleStringToNumberSanitation(sid);
+
+	const sitesIdOverviewPageLink = `${DashboardSitesLink + sanitizedSid + SiteOverviewSlug}`;
 
 	// Translations
 	const { t } = useTranslation("common");
@@ -53,7 +56,7 @@ export function Breadcrumbs({
 								href={
 									isOther && typeof siteId !== "undefined" && siteId == null
 										? DashboardSitesLink
-										: siteIdOverviewPageLink
+										: sitesIdOverviewPageLink
 								}
 								passHref
 							>
@@ -89,8 +92,9 @@ export function Breadcrumbs({
 							) : isComponentReady ? (
 								<Link
 									href={`${
-										DashboardSiteSlug +
-										sanitizedSiteId +
+										DashboardSitesLink +
+										sanitizedSid +
+										"/" +
 										(isLinks ? "links" : isPages ? "pages" : isImages ? "images" : "seo")
 									}`}
 									passHref
