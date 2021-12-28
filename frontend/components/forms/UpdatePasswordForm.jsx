@@ -102,7 +102,7 @@ export function UpdatePasswordForm() {
 						resetForm({ values: "" });
 
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						await mutate(UserApiEndpoint, null, false);
+						await mutate(UserApiEndpoint, false);
 
 						// Show alert message after successful 200 OK or 201 Created response is issued
 						setConfig({
