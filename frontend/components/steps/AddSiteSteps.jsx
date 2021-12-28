@@ -17,10 +17,10 @@ export function AddSiteSteps(props) {
 	// Translations
 	const { t } = useTranslation();
 	const dismiss = t("common:dismiss");
-	const step1 = t("addSite:step1");
-	const step2 = t("addSite:step2");
-	const verifySite = t("addSite:verifySite");
-	const formDetailLabel = t("addSite:form.detail.label");
+	const step1 = t("sites:step1");
+	const step2 = t("sites:step2");
+	const verifySite = t("sites:verifySite");
+	const formDetailLabel = t("sites:form.detail.label");
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
