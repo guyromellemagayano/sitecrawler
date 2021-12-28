@@ -5,6 +5,7 @@ import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { useLoading } from "@hooks/useLoading";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -31,13 +32,16 @@ export function Breadcrumbs({
 	isSites = false,
 	pageDetailTitle = null,
 	pageTitle = null,
-	siteId = null,
-	props
+	siteId = null
 }) {
-	const { sid } = props;
-	const sanitizedSid = handleStringToNumberSanitation(sid);
+	// Router
+	const { asPath } = useRouter();
 
-	const sitesIdOverviewPageLink = `${DashboardSitesLink + sanitizedSid + SiteOverviewSlug}`;
+	const sanitizedSid = siteId !== null ? handleStringToNumberSanitation(siteId) : null;
+	const sitesIdOverviewPageLink =
+		sanitizedSid !== null && !asPath.includes(DashboardSitesLink)
+			? `${DashboardSitesLink + sanitizedSid + SiteOverviewSlug}`
+			: null;
 
 	// Translations
 	const { t } = useTranslation("common");
