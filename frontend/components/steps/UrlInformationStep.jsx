@@ -15,8 +15,8 @@ export function UrlInformationStep(props) {
 
 	// Translations
 	const { t } = useTranslation();
-	const formDetailLabel = t("addSite:form.detail.label");
-	const formDetailDescription = t("addSite:form.detail.description");
+	const formDetailLabel = t("sites:form.detail.label");
+	const formDetailDescription = t("sites:form.detail.description");
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
