@@ -26,12 +26,12 @@ export function VerifyUrlStepForm(props) {
 	const { sid, step, verified, setDisableSiteVerify, enableNextStep, setEnableNextStep } = props;
 
 	// Translations
-	const { t } = useTranslation();
-	const goToSiteOverview = t("addSite:goToSiteOverview");
-	const verifying = t("addSite:verifying");
-	const verifySiteNow = t("addSite:verifySiteNow");
-	const verifySiteLater = t("addSite:verifySiteLater");
-	const updateSiteDetails = t("addSite:updateSiteDetails");
+	const { t } = useTranslation("sites");
+	const goToSiteOverview = t("goToSiteOverview");
+	const verifying = t("verifying");
+	const verifySiteNow = t("verifySiteNow");
+	const verifySiteLater = t("verifySiteLater");
+	const updateSiteDetails = t("updateSiteDetails");
 
 	// Router
 	const router = useRouter();
