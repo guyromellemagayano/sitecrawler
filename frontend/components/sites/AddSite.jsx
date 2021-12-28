@@ -32,7 +32,7 @@ export function AddSite({ handleOpenSidebar }) {
 	const [siteLimitCounter, setSiteLimitCounter] = useState(null);
 
 	// Translations
-	const { t } = useTranslation("addSite");
+	const { t } = useTranslation("sites");
 	const addNewSite = t("addNewSite");
 	const searchSites = t("searchSites");
 	const searchNotAvailable = t("searchNotAvailable");
