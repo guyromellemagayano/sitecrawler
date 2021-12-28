@@ -1,10 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { DashboardSitesLink, DashboardSiteSlug, SiteOverviewSlug, SiteSlug } from "@constants/PageLinks";
-import { handleConvertIdToNumber } from "@helpers/handleConvertIdToNumber";
+import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
+import { handleStringToNumberSanitation } from "@helpers/handleStringSanitation";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { useLoading } from "@hooks/useLoading";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -33,8 +34,14 @@ export function Breadcrumbs({
 	pageTitle = null,
 	siteId = null
 }) {
-	const { sanitizedId: sanitizedSiteId } = handleConvertIdToNumber(siteId);
-	const siteIdOverviewPageLink = `${SiteSlug + sanitizedSiteId + SiteOverviewSlug}`;
+	// Router
+	const { asPath } = useRouter();
+
+	const sanitizedSid = siteId !== null ? handleStringToNumberSanitation(siteId) : null;
+	const sitesIdOverviewPageLink =
+		sanitizedSid !== null && !asPath.includes(DashboardSitesLink)
+			? `${DashboardSitesLink + sanitizedSid + SiteOverviewSlug}`
+			: null;
 
 	// Translations
 	const { t } = useTranslation("common");
@@ -53,7 +60,7 @@ export function Breadcrumbs({
 								href={
 									isOther && typeof siteId !== "undefined" && siteId == null
 										? DashboardSitesLink
-										: siteIdOverviewPageLink
+										: sitesIdOverviewPageLink
 								}
 								passHref
 							>
@@ -89,8 +96,9 @@ export function Breadcrumbs({
 							) : isComponentReady ? (
 								<Link
 									href={`${
-										DashboardSiteSlug +
-										sanitizedSiteId +
+										DashboardSitesLink +
+										sanitizedSid +
+										"/" +
 										(isLinks ? "links" : isPages ? "pages" : isImages ? "images" : "seo")
 									}`}
 									passHref

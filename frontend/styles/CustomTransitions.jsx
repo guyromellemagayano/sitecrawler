@@ -241,4 +241,52 @@ export const CustomTransitions = createGlobalStyle`
   .site-limit-reached-modal-second-child-leave-to {
     ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
   }
+
+	.show-help-modal-first-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .show-help-modal-first-child-enter-from {
+    ${tw`opacity-0`}
+  }
+
+  .show-help-modal-first-child-enter-to {
+    ${tw`opacity-100`}
+  }
+
+  .show-help-modal-first-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .show-help-modal-first-child-leave-from {
+    ${tw`opacity-100`}
+  }
+
+  .show-help-modal-first-child-leave-to {
+    ${tw`opacity-0`}
+  }
+
+	.show-help-modal-second-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .show-help-modal-second-child-enter-from {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
+
+  .show-help-modal-second-child-enter-to {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .show-help-modal-second-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .show-help-modal-second-child-leave-from {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .show-help-modal-second-child-leave-to {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
 `;

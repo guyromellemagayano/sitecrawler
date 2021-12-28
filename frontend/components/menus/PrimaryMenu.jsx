@@ -2,7 +2,7 @@
 import { MemoizedAppLogo } from "@components/logos/AppLogo";
 import { MemoizedSiteSelect } from "@components/select/SiteSelect";
 import { AuthAppLogo, SiteLogoWhite } from "@constants/GlobalValues";
-import { DashboardSitesLink, SitesSlug } from "@constants/PageLinks";
+import { AddNewSiteSlug, DashboardSitesLink, SitesSlug } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { DocumentReportIcon, ExternalLinkIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
@@ -53,7 +53,7 @@ export function PrimaryMenu() {
 				<div tw="flex-1 flex flex-col overflow-y-auto">
 					<nav tw="flex-1 px-4">
 						{PrimarySidebarMenus.filter((e) => {
-							return !asPath?.includes(SitesSlug) ? e.slug !== "navigation" : true;
+							return !asPath?.includes(AddNewSiteSlug) ? e.slug !== "navigation" : true;
 						}).map((value, index) => {
 							return (
 								<div key={index} tw="mb-4">

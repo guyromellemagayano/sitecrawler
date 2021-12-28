@@ -11,6 +11,7 @@
 	"dismiss": "Dismiss",
 	"emailAddress": "Email Address",
 	"firstName": "First Name",
+	"goBack": "Go Back",
 	"goBackHome": "Go back to Home Page",
 	"goBackLogin": "Go back to Login Page",
 	"headline": "Find website issues before your clients do.",
@@ -59,5 +60,7 @@
 	"cancel": "Cancel",
 	"newPassword": "New Password",
 	"confirmPassword": "Confirm Password",
-	"request": "Request"
+	"request": "Request",
+	"copiedText": "Copied",
+	"copyText": "Copy"
 }

@@ -2,7 +2,7 @@
 import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarButton";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
 // import SiteLimitReachedModal from "@components/modals/SiteLimitReachedModal";
-import { AddNewSiteLink, DashboardSitesLink, DashboardSiteSlug } from "@constants/PageLinks";
+import { AddNewSiteLink, AddNewSiteSlug } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
@@ -19,7 +19,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
+import tw from "twin.macro";
 
 /**
  * Custom function to render the `AddSite` component
@@ -38,7 +38,7 @@ export function AddSite({ handleOpenSidebar }) {
 	const searchNotAvailable = t("searchNotAvailable");
 
 	// Router
-	const { query, pathname } = useRouter();
+	const { query, asPath } = useRouter();
 
 	// SWR hooks
 	const { user, errorUser, validatingUser } = useUser();
@@ -83,7 +83,6 @@ export function AddSite({ handleOpenSidebar }) {
 				if (
 					typeof sites !== "undefined" &&
 					sites !== null &&
-					!sites?.data?.detail &&
 					typeof user !== "undefined" &&
 					user !== null &&
 					!user?.data?.detail
@@ -111,48 +110,45 @@ export function AddSite({ handleOpenSidebar }) {
 				<div tw="flex-1 flex">
 					<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
 
-					{DashboardSitesLink.includes(pathname) || DashboardSiteSlug.includes(pathname) ? (
-						<div tw="w-full flex items-center ml-4 lg:ml-0">
-							{isBrowser ? (
-								<>
-									<label htmlFor="searchSites" tw="sr-only">
-										{searchSites}
-									</label>
-									<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center ">
-										<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-											{isComponentReady ? (
-												<SearchIcon tw="h-5 w-5 text-gray-400" />
-											) : (
-												<Skeleton duration={2} width={20} height={20} />
-											)}
-										</div>
-										{siteLimitCounter !== null && siteLimitCounter > 0 ? (
-											isComponentReady ? (
-												<input
-													type="search"
-													name="search-sites"
-													id="searchSites"
-													tw="block w-full max-w-xs h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-													placeholder={searchSites}
-													onKeyUp={useHandleSiteSearch}
-													defaultValue={searchKey}
-												/>
-											) : (
-												<Skeleton duration={2} width={320} height={20} />
-											)
+					<div tw="w-full flex items-center ml-4 lg:ml-0">
+						{isBrowser ? (
+							<>
+								<label htmlFor="searchSites" tw="sr-only">
+									{searchSites}
+								</label>
+								<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center ">
+									<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+										{isComponentReady ? (
+											<SearchIcon tw="h-5 w-5 text-gray-400" />
 										) : (
-											<p tw="flex-1 sm:text-sm placeholder-gray-500 pl-8">
-												{isComponentReady ? searchNotAvailable : <Skeleton duration={2} width={320} height={20} />}
-											</p>
+											<Skeleton duration={2} width={20} height={20} />
 										)}
 									</div>
-								</>
-							) : null}
-						</div>
-					) : null}
+									{siteLimitCounter !== null && siteLimitCounter > 0 ? (
+										isComponentReady ? (
+											<input
+												type="search"
+												name="search-sites"
+												id="searchSites"
+												tw="block w-full max-w-xs h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+												placeholder={searchSites}
+												onKeyUp={useHandleSiteSearch}
+												defaultValue={searchKey}
+											/>
+										) : (
+											<Skeleton duration={2} width={320} height={20} />
+										)
+									) : (
+										<p tw="flex-1 sm:text-sm placeholder-gray-500 pl-8">
+											{isComponentReady ? searchNotAvailable : <Skeleton duration={2} width={320} height={20} />}
+										</p>
+									)}
+								</div>
+							</>
+						) : null}
+					</div>
 				</div>
 				<div tw="ml-4 p-4 xl:p-0 flex items-center lg:ml-6 space-x-2">
-					{console.log(siteLimitCounter, typeof siteLimitCounter, maxSiteLimit, typeof maxSiteLimit)}
 					{isComponentReady ? (
 						siteLimitCounter === maxSiteLimit || siteLimitCounter > maxSiteLimit ? (
 							<button
@@ -174,8 +170,16 @@ export function AddSite({ handleOpenSidebar }) {
 								</span>
 							</button>
 						) : (
-							<Link href={AddNewSiteLink} passHref>
-								<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer inline-flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full">
+							<Link href={AddNewSiteLink + "?step=1&edit=false&verified=false"} passHref>
+								<a
+									disabled={asPath.includes(AddNewSiteSlug) ? true : false}
+									css={[
+										tw`border border-transparent inline-flex items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full`,
+										asPath.includes(AddNewSiteSlug)
+											? tw`opacity-50 bg-gray-300 cursor-not-allowed`
+											: tw`cursor-pointer bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 active:bg-green-700 focus:outline-none`
+									]}
+								>
 									<span tw="flex items-center space-x-2">
 										<PlusIcon tw="mr-2 h-4 w-4 text-white" />
 										{addNewSite}

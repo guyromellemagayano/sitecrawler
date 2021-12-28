@@ -220,7 +220,7 @@ const Links = ({ result }) => {
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar openSidebar={isComponentVisible} ref={ref} setOpenSidebar={setIsComponentVisible} user={user} />
 
-				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
+				<div ref={selectedSiteRef} tw=" min-h-screen">
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />

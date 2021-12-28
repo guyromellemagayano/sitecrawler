@@ -24,8 +24,8 @@ export function HowToSetup() {
 	const { isComponentReady } = useLoading();
 
 	return (
-		<div tw="lg:col-span-1">
-			<div tw="relative py-6 px-4 sm:px-6 lg:px-8">
+		<div tw="w-full xl:flex-grow-0 xl:flex-none xl:max-w-screen-sm">
+			<div tw="relative py-6 px-4 sm:px-6 lg:px-8 lg:py-0">
 				<div tw="max-w-7xl mx-auto">
 					<div tw="text-center mb-10">
 						<h3 tw="text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10">
@@ -37,9 +37,9 @@ export function HowToSetup() {
 					</div>
 					<div tw="relative mx-auto w-full rounded-lg lg:max-w-md mb-8">
 						{isComponentReady ? (
-							HowToSetupData.map(({ id, video }) => {
+							HowToSetupData.map(({ id, video }, key) => {
 								return tabActive === id ? (
-									<ReactPlayer key={id} url={video.src} width={"auto"} height={320} controls={true} />
+									<ReactPlayer key={key} url={video.src} width={"auto"} height={320} controls={true} />
 								) : null;
 							})
 						) : (
@@ -51,22 +51,28 @@ export function HowToSetup() {
 							<label htmlFor="tabs" className="sr-only">
 								{tabSrOnly}
 							</label>
-							<select
-								id="tabs"
-								name="tabs"
-								aria-label="Selected tab"
-								tw="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md space-x-3"
-							>
-								{HowToSetupData.map(({ title, defaultValue }, key) =>
-									isComponentReady ? (
-										<option key={key} selected={defaultValue}>
-											{title}
-										</option>
-									) : (
-										<Skeleton duration={2} width={100} height={30} />
-									)
-								)}
-							</select>
+							{isComponentReady ? (
+								<select
+									id="tabs"
+									name="tabs"
+									aria-label="Selected tab"
+									tw="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md space-x-3"
+								>
+									{HowToSetupData.map(({ title, defaultValue }) => {
+										return (
+											<option key={title} selected={defaultValue}>
+												{title}
+											</option>
+										);
+									})}
+								</select>
+							) : (
+								<div tw="block w-full space-x-3">
+									{HowToSetupData.map(({ title }) => {
+										return <Skeleton key={title} duration={2} width={100} height={30} />;
+									})}
+								</div>
+							)}
 						</div>
 						<div tw="hidden sm:block">
 							<nav tw="flex justify-center space-x-3">
@@ -80,7 +86,7 @@ export function HowToSetup() {
 											isTabActive={tabActive === id}
 										/>
 									) : (
-										<Skeleton duration={2} width={100} height={30} />
+										<Skeleton key={key} duration={2} width={100} height={30} />
 									)
 								)}
 							</nav>

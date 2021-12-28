@@ -63,7 +63,7 @@ const SiteSettings = ({ result }) => {
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar ref={ref} user={user} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 
-				<div tw="flex flex-col w-0 flex-1 overflow-hidden">
+				<div tw="">
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
@@ -85,7 +85,7 @@ const SiteSettings = ({ result }) => {
 					<Scrollbars universal>
 						<main tw="flex-1 relative z-0 max-w-screen-2xl mx-auto overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="max-w-full p-4 sm:px-6 md:px-8">
-								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
+								<div tw="w-full py-6 mx-auto">
 									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 										<div tw="max-w-full p-4">
 											<Breadcrumbs isOther pageTitle={pageTitle} siteId={result?.siteId} />
@@ -115,7 +115,7 @@ const SiteSettings = ({ result }) => {
 									</div>
 								</div>
 
-								<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200 bg-white">
+								<div tw="static bottom-0 w-full mx-auto p-4 border-t border-gray-200">
 									<Footer />
 								</div>
 							</div>

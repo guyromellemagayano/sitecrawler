@@ -112,6 +112,7 @@ export const SidebarMenus = () => {
 	};
 
 	// Primary menu items
+	PrimarySidebarMenus.push(NavigationMenu);
 	PrimarySidebarMenus.push(SiteSelectionMenu);
 	PrimarySidebarMenus.push(DashboardMenu);
 	PrimarySidebarMenus.push(ReportsMenu);

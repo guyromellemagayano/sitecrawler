@@ -23,6 +23,7 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 // External
 import "twin.macro";
 
@@ -94,7 +95,7 @@ const SeoDetail = ({ result }) => {
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar openSidebar={isComponentVisible} ref={ref} setOpenSidebar={setIsComponentVisible} user={user} />
 
-				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden">
+				<div ref={selectedSiteRef} tw="">
 					<div tw="relative flex-shrink-0 flex bg-white">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
@@ -117,7 +118,7 @@ const SeoDetail = ({ result }) => {
 					<Scrollbars universal>
 						<main tw="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabIndex="0">
 							<div tw="max-w-screen-2xl mx-auto p-4 sm:px-6 md:px-8">
-								<div tw="w-full py-6 mx-auto grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
+								<div tw="w-full py-6 mx-auto">
 									<div tw="lg:col-span-2 xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
 										<div tw="max-w-full p-4">
 											<Breadcrumbs

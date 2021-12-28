@@ -1,22 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { DashboardLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedAddNewSitePageLayout } from "@components/layouts/pages/AddNewSite";
+import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
+// import { MemoizedSiteOverviewPageLayout } from "@components/layouts/pages/SiteOverview";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
+import { useSites } from "@hooks/useSites";
 import axios from "axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import "twin.macro";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req, query }) {
-	// User response
 	const userResponse = await axios.get(`${SSR_SITE_URL + UserApiEndpoint}`, {
 		headers: {
-			cookie: req?.headers?.cookie ?? null,
+			cookie: req.headers.cookie ?? null,
 			...customAxiosHeaders
 		}
 	});
@@ -40,12 +42,7 @@ export async function getServerSideProps({ req, query }) {
 		Object.keys(userData)?.length > 0 &&
 		Math.round(userStatus / 200) === 1
 	) {
-		console.log(query?.edit, query?.verified);
-
-		const step = parseInt(query?.step ?? 1);
-		const sid = parseInt(query?.sid ?? null);
-		const edit = !!(query?.edit ?? false);
-		const verified = !!(query?.verified ?? false);
+		const sid = query?.sid ?? null;
 
 		if (
 			typeof sitesData !== "undefined" &&
@@ -56,21 +53,16 @@ export async function getServerSideProps({ req, query }) {
 		) {
 			const sidMatch = sitesData?.results?.find((site) => site.id === sid) ?? null;
 
-			if (sidMatch == null || sid == null || typeof verified !== "undefined" || typeof edit !== "undefined") {
-				return {
-					props: {
-						step: step,
-						sid: sid,
-						edit: edit,
-						verified: verified
-					}
-				};
-			} else {
+			if (sidMatch == null || sid == null) {
 				return {
 					redirect: {
 						destination: DashboardSitesLink,
 						permanent: false
 					}
+				};
+			} else {
+				return {
+					props: {}
 				};
 			}
 		} else {
@@ -91,25 +83,55 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-export default function AddNewSite(props) {
+export default function SiteOverview() {
+	const [siteName, setSiteName] = useState(null);
+	const { sites, errorSites, validatingSites } = useSites();
+
+	// Router
+	const { query } = useRouter();
+	const router = useRouter();
+
+	// Handle selected site details
+	const handleSiteDetails = useCallback(async () => {
+		if (!validatingSites) {
+			if (
+				!errorSites &&
+				sites !== null &&
+				!sites?.detail &&
+				Object.keys(sites)?.length > 0 &&
+				Math.round(sites?.status / 200) === 1
+			) {
+				const sid = query?.sid ?? null;
+				const siteMatch = sites?.results?.find((site) => site.id === sid) ?? null;
+
+				if (sid == null || siteMatch == null) {
+					router.replace(DashboardSitesLink, undefined, {});
+				} else {
+					setSiteName(siteMatch?.name ?? null);
+				}
+			}
+		}
+	}, [query, sites, errorSites, validatingSites]);
+
+	useEffect(() => {
+		handleSiteDetails();
+	}, [handleSiteDetails]);
+
 	// Translations
-	const { t } = useTranslation("addSite");
-	const addNewSite = t("addNewSite");
-
-	const { step, sid, edit, verified } = props;
-
-	console.log(step, sid, edit, verified);
+	const { t } = useTranslation("site");
+	const siteOverviewName = t("site", { siteName });
 
 	return (
 		<>
-			<NextSeo title={addNewSite} />
-			<MemoizedPageLayout pageTitle={addNewSite}>
-				<MemoizedAddNewSitePageLayout step={step} sid={sid} edit={edit} verified={verified} />
+			<NextSeo title={siteOverviewName} />
+			<MemoizedPageLayout pageTitle={siteOverviewName}>
+				<MemoizedComingSoonPageLayout />
+				{/* <MemoizedSiteOverviewPageLayout /> */}
 			</MemoizedPageLayout>
 		</>
 	);
 }
 
-AddNewSite.getLayout = function getLayout(page) {
+SiteOverview.getLayout = function getLayout(page) {
 	return <DashboardLayout>{page}</DashboardLayout>;
 };

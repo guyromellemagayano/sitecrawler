@@ -9,18 +9,18 @@ import Sidebar from "@components/layouts/Sidebar";
 import HeadingOptions from "@components/options/HeadingOptions";
 import LinkOptions from "@components/options/LinkOptions";
 import DataPagination from "@components/pagination";
-import ImageTableSkeleton from "@components/skeletons/ImageTableSkeleton";
-import ImageSorting from "@components/sorting/ImageSorting";
-import ImageTable from "@components/tables/ImageTable";
+import SeoTableSkeleton from "@components/skeletons/SeoTableSkeleton";
+import SeoSorting from "@components/sorting/SeoSorting";
+import SeoTable from "@components/tables/SeoTable";
 import { SitesApiEndpoint } from "@enums/ApiEndpoints";
-// Enums
-import { ImagesLabels } from "@enums/ImagesLabels";
-import { ImagesTableLabels } from "@enums/ImagesTableLabels";
 // Hooks
 import { LoginLink, SitesLink, SubscriptionPlansLink } from "@enums/PageLinks";
+// Enums
+import { SeoLabels } from "@enums/SeoLabels";
+import { SeoTableLabels } from "@enums/SeoTableLabels";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import useCrawl from "@hooks/useCrawl";
-import { useImages, useSiteId } from "@hooks/useSite";
+import { usePages, useSiteId } from "@hooks/useSite";
 import useUser from "@hooks/useUser";
 // Utils
 import { removeURLParameter } from "@utils/functions";
@@ -35,10 +35,11 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
 
 // Dynamic
-const ImageFilter = dynamic(() => import("@components/filters/ImageFilter"), { ssr: true });
+const SeoFilter = dynamic(() => import("@components/filters/SeoFilter"), { ssr: true });
 
-const Images = ({ result }) => {
+const Seo = ({ result }) => {
 	const [componentReady, setComponentReady] = useState(false);
+	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [enableSiteIdHook, setEnableSiteIdHook] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [pagePath, setPagePath] = useState("");
@@ -74,56 +75,86 @@ const Images = ({ result }) => {
 		return scanObjId;
 	}, [currentScan, previousScan]);
 
-	const pageTitle = ImagesLabels[1].label + " - " + siteId?.name;
+	const pageTitle = SeoLabels[1].label + " - " + siteId?.name;
 
 	let scanApiEndpoint = "";
 	let queryString = "";
-	let statusString = "";
-	let tlsStatusString = "";
-	let missingAltsString = "";
+	let hasTitleString = "";
+	let hasDescriptionString = "";
+	let hasH1FirstString = "";
+	let hasH2FirstString = "";
 	let filterQueryString = "";
 
 	if (typeof window !== "undefined") {
 		filterQueryString = new URLSearchParams(window.location.search);
 	}
 
-	user?.permissions.includes("can_see_images")
+	user?.permissions.includes("can_see_pages") &&
+	user?.permissions.includes("can_see_scripts") &&
+	user?.permissions.includes("can_see_stylesheets")
 		? (() => {
 				scanApiEndpoint =
-					`${SitesApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
-
-				queryString +=
 					result?.page !== undefined
-						? scanApiEndpoint.includes("?")
-							? `&page=${result?.page}`
-							: `?page=${result?.page}`
-						: "";
+						? `${SitesApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/page/?per_page=` +
+						  linksPerPage +
+						  `&page=` +
+						  result?.page
+						: `${SitesApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
-				statusString = result?.status__neq;
-
-				queryString +=
-					result?.status__neq !== undefined
-						? scanApiEndpoint.includes("?")
-							? `&status__neq=${statusString}`
-							: `?status__neq=${statusString}`
-						: "";
-
-				tlsStatusString = result?.tls_status__neq;
+				hasTitleString = Array.isArray(result?.has_title) ? result?.has_title.join("&has_title=") : result?.has_title;
 
 				queryString +=
-					result?.tls_status__neq !== undefined
+					result?.has_title !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&tls_status__neq=${tlsStatusString}`
-							: `?tls_status__neq=${tlsStatusString}`
+							? `&has_title=${hasTitleString}`
+							: `?has_title=${hasTitleString}`
 						: "";
 
-				missingAltsString = result?.missing_alts__gt;
+				hasDescriptionString = Array.isArray(result?.has_description)
+					? result?.has_description.join("&has_description=")
+					: result?.has_description;
 
 				queryString +=
-					result?.missing_alts__gt !== undefined
+					result?.has_description !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&missing_alts__gt=${missingAltsString}`
-							: `?missing_alts__gt=${missingAltsString}`
+							? `&has_description=${hasDescriptionString}`
+							: `?has_description=${hasDescriptionString}`
+						: "";
+
+				hasH1FirstString = Array.isArray(result?.has_h1_first)
+					? result?.has_h1_first.join("&has_h1_first=")
+					: result?.has_h1_first;
+
+				queryString +=
+					result?.has_h1_first !== undefined
+						? scanApiEndpoint.includes("?")
+							? `&has_h1_first=${hasH1FirstString}`
+							: `?has_h1_first=${hasH1FirstString}`
+						: "";
+
+				queryString +=
+					result?.has_h1_second !== undefined
+						? scanApiEndpoint.includes("?")
+							? `&has_h1_second=false`
+							: `?has_h1_second=false`
+						: "";
+
+				hasH2FirstString = Array.isArray(result?.has_h2_first)
+					? result?.has_h2_first.join("&has_h2_first=")
+					: result?.has_h2_first;
+
+				queryString +=
+					result?.has_h2_first !== undefined
+						? scanApiEndpoint.includes("?")
+							? `&has_h2_first=${hasH2FirstString}`
+							: `?has_h2_first=${hasH2FirstString}`
+						: "";
+
+				queryString +=
+					result?.has_h2_second !== undefined
+						? scanApiEndpoint.includes("?")
+							? `&has_h2_second=false`
+							: `?has_h2_second=false`
 						: "";
 
 				queryString +=
@@ -153,7 +184,7 @@ const Images = ({ result }) => {
 		  })()
 		: null;
 
-	const { images, mutateImages } = useImages({
+	const { pages, mutatePages } = usePages({
 		endpoint: enableSiteIdHook ? scanApiEndpoint : null,
 		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null,
 		scanObjId: enableSiteIdHook ? scanObjId : null
@@ -182,7 +213,7 @@ const Images = ({ result }) => {
 
 		router.push(newPath);
 
-		mutateImages(scanApiEndpoint);
+		mutatePages(scanApiEndpoint);
 	};
 
 	const handleItemsPerPageChange = (count) => {
@@ -205,7 +236,7 @@ const Images = ({ result }) => {
 
 			router.push(newPath);
 
-			mutateImages(scanApiEndpoint);
+			mutatePages(scanApiEndpoint);
 		}
 	};
 
@@ -219,19 +250,25 @@ const Images = ({ result }) => {
 	}, [result]);
 
 	useEffect(() => {
-		user && siteId && images ? setComponentReady(true) : setComponentReady(false);
+		user && siteId && pages
+			? (() => {
+					user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false);
 
-		return { user, siteId, images };
-	}, [user, siteId, images]);
+					setComponentReady(true);
+			  })()
+			: setComponentReady(false);
+
+		return { user, siteId, pages };
+	}, [user, siteId, pages]);
 
 	return (
 		<Layout user={user}>
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar ref={ref} user={user} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
+				<Sidebar openSidebar={isComponentVisible} ref={ref} setOpenSidebar={setIsComponentVisible} user={user} />
 
-				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
+				<div ref={selectedSiteRef} tw=" min-h-screen">
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
@@ -244,17 +281,17 @@ const Images = ({ result }) => {
 						<main tw="absolute w-full h-full mx-auto left-0 right-0">
 							<div tw="flex flex-col h-full p-6 mx-auto">
 								<div tw="flex-none p-4">
-									<Breadcrumbs siteId={parseInt(result?.siteId)} pageTitle={ImagesLabels[1].label} />
+									<Breadcrumbs siteId={parseInt(result?.siteId)} pageTitle={SeoLabels[1].label} />
 
 									<HeadingOptions
 										componentReady={componentReady}
-										count={images?.count}
-										dataLabel={[ImagesLabels[2].label, ImagesLabels[14].label, ImagesLabels[3].label]}
+										count={pages?.count}
+										dataLabel={[SeoLabels[2].label, SeoLabels[6].label, SeoLabels[3].label]}
 										handleCrawl={handleCrawl}
 										isCrawlFinished={isCrawlFinished}
 										isCrawlStarted={isCrawlStarted}
-										isImages
-										pageTitle={ImagesLabels[1].label}
+										isSeo
+										pageTitle={SeoLabels[1].label}
 										permissions={user?.permissions}
 										queryString={queryString}
 										scanObjId={scanObjId}
@@ -267,25 +304,27 @@ const Images = ({ result }) => {
 								</div>
 
 								<div tw="flex-grow max-w-full p-4 pb-0">
-									{user?.permissions.includes("can_see_images") ? (
-										<ImageFilter
+									{user?.permissions.includes("can_see_pages") &&
+									user?.permissions.includes("can_see_scripts") &&
+									user?.permissions.includes("can_see_stylesheets") ? (
+										<SeoFilter
 											filterQueryString={filterQueryString}
 											scanApiEndpoint={scanApiEndpoint}
 											setPagePath={setPagePath}
 										/>
 									) : null}
 
-									{images?.results !== undefined && images?.results.length !== 0 && (
+									{pages?.results !== undefined && pages?.results.length !== 0 && (
 										<div tw="pb-4">
 											<div tw="flex flex-col">
 												<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
 													<div tw="min-w-full h-full rounded-lg border-gray-300">
-														{images?.results !== undefined && images?.results.length > 0 && (
+														{pages?.results !== undefined && pages?.results.length > 0 && (
 															<>
 																<table tw="relative min-w-full">
 																	<thead>
 																		<tr>
-																			{ImagesTableLabels.map((site, key) => {
+																			{SeoTableLabels.map((site, key) => {
 																				return (
 																					<th
 																						key={key}
@@ -293,13 +332,15 @@ const Images = ({ result }) => {
 																						tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																					>
 																						<span tw="flex items-center justify-start">
-																							{user?.permissions.includes("can_see_images") ? (
+																							{user?.permissions.includes("can_see_pages") &&
+																							user?.permissions.includes("can_see_scripts") &&
+																							user?.permissions.includes("can_see_stylesheets") ? (
 																								site?.slug ? (
-																									<ImageSorting
+																									<SeoSorting
 																										result={result}
 																										slug={site?.slug}
-																										mutateImages={mutateImages}
-																										labels={ImagesTableLabels}
+																										mutatePages={mutatePages}
+																										labels={SeoTableLabels}
 																										setPagePath={setPagePath}
 																									/>
 																								) : null
@@ -314,19 +355,22 @@ const Images = ({ result }) => {
 																		</tr>
 																	</thead>
 																	<tbody tw="relative">
-																		{user?.permissions.includes("can_see_images") ? (
-																			images?.results !== undefined && images?.results.length > 0 ? (
-																				images?.results.map((val, key) => (
-																					<ImageTable
+																		{user?.permissions.includes("can_see_pages") &&
+																		user?.permissions.includes("can_see_scripts") &&
+																		user?.permissions.includes("can_see_stylesheets") ? (
+																			pages?.results !== undefined && pages?.results.length > 0 ? (
+																				pages?.results.map((val, key) => (
+																					<SeoTable
+																						componentReady={componentReady}
 																						key={key}
 																						siteId={parseInt(result?.siteId)}
 																						val={val}
-																						componentReady={componentReady}
+																						disableLocalTime={disableLocalTime}
 																					/>
 																				))
 																			) : null
 																		) : (
-																			<ImageTableSkeleton />
+																			<SeoTableSkeleton />
 																		)}
 																	</tbody>
 																</table>
@@ -344,10 +388,10 @@ const Images = ({ result }) => {
 										</div>
 									)}
 
-									{images?.results !== undefined && images?.results.length == 0 && (
+									{pages?.results !== undefined && pages?.results.length == 0 && (
 										<section tw="flex flex-col justify-center h-full">
 											<div tw="px-4 py-5 sm:p-6 sm:-mt-12 flex items-center justify-center">
-												<h3 tw="text-lg leading-6 font-medium text-gray-500">{ImagesLabels[3].label}</h3>
+												<h3 tw="text-lg leading-6 font-medium text-gray-500">{SeoLabels[3].label}</h3>
 											</div>
 										</section>
 									)}
@@ -378,15 +422,15 @@ const Images = ({ result }) => {
 	);
 };
 
-Images.propTypes = {
+Seo.propTypes = {
 	result: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 };
 
-Images.defaultProps = {
+Seo.defaultProps = {
 	result: null
 };
 
-export default Images;
+export default Seo;
 
 export async function getServerSideProps(ctx) {
 	return {

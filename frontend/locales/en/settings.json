@@ -12,7 +12,8 @@
 	"deleteUserAccountModalRequest": {
 		"title": "Delete User Account",
 		"headline": "Are you sure you want to delete your account?",
-		"subHeadline": "You will lose all your data permanently and cannot cancel this process any time. We will log out your current session immediately."
+		"subHeadline": "You will lose all your data permanently and cannot cancel this process any time. We will log out your current session immediately.",
+		"proceed": "Proceed"
 	},
 	"deleteUserAccountModalRequestFailed": {
 		"headline": "Delete account failed",
@@ -24,26 +25,32 @@
 	},
 	"helpSupportForm": {
 		"title": "App Support Form",
-		"success": "Support message sent successfully",
-		"failed": "Support message sent failed. Please try again."
+		"tellUsYourThoughts": "Tell us your thoughts about the app.",
+		"message": "Message",
+		"submitForm": "Submit Form"
 	},
 	"timestampSettings": {
 		"title": "Timestamp Settings",
 		"headline": "Enable Local Time",
-		"subHeadline": "Set all sites to use local timezones instead of UTC",
-		"enabled": "Local time enabled globally",
-		"disabled": "Local time disabled globally"
+		"subHeadline": "Set all sites to use local timezones instead of UTC"
 	},
 	"largePageSizeSettings": {
-		"title": "Large Page Size Settiings",
-		"success": "Large page size threshold updated successfully",
-		"failed": "Large page size threshold update failed. Please try again."
+		"title": "Large Page Size Settiings"
 	},
-	"tellUsYourThoughts": "Tell us your thoughts about the app.",
-	"message": "Message",
-	"submitForm": "Submit Form",
+	"cardInformationSettings": {
+		"title": "Card Information Settings",
+		"noCurrentCardRegistered": "No current card registered",
+		"addCard": "Add Card",
+		"cardNumber": "Card Number",
+		"expirationDate": "Expiration Date",
+		"cvc": "CVC",
+		"loadingCardInformation": "Loading card information..."
+	},
+	"subscriptionPlans": {
+		"title": "Subscription Plans",
+		"processingPayment": "Processing payment..."
+	},
 	"saving": "Saving...",
 	"saveChanges": "Save Changes",
-	"processing": "Processing...",
-	"proceed": "Proceed"
+	"processing": "Processing..."
 }
