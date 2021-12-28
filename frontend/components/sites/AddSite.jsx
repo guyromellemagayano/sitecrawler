@@ -170,7 +170,7 @@ export function AddSite({ handleOpenSidebar }) {
 								</span>
 							</button>
 						) : (
-							<Link href={AddNewSiteLink} passHref>
+							<Link href={AddNewSiteLink + "?edit=false&verified=false"} passHref>
 								<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer inline-flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full">
 									<span tw="flex items-center space-x-2">
 										<PlusIcon tw="mr-2 h-4 w-4 text-white" />

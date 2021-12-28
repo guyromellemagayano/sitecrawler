@@ -76,7 +76,7 @@ export function SiteSelectDropdown({ selectedSiteId, handleSiteSelectOnLoad, ope
 			<div ref={ref} tw="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden">
 				<MemoizedSitesList handleSiteSelectOnLoad={handleSiteSelectOnLoad} />
 				<span tw="relative flex m-2 justify-center shadow-sm rounded-md">
-					<Link href={AddNewSiteLink} passHref>
+					<Link href={AddNewSiteLink + "?edit=false&verified=false"} passHref>
 						<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full">
 							<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
 							{labelsArray[2]?.label ?? null}
