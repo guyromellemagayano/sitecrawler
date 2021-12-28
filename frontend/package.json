@@ -84,7 +84,7 @@
 		"react-resize-detector": "^6.7.7",
 		"string-similarity": "^4.0.4",
 		"styled-components": "5.3.3",
-		"swr": "^1.1.1",
+		"swr": "^1.1.2",
 		"yup": "^0.32.11"
 	},
 	"devDependencies": {
