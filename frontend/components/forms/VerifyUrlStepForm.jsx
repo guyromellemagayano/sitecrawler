@@ -34,7 +34,6 @@ export function VerifyUrlStepForm(props) {
 	const updateSiteDetails = t("addSite:updateSiteDetails");
 
 	// Router
-	const { query } = useRouter();
 	const router = useRouter();
 
 	// SWR hooks
