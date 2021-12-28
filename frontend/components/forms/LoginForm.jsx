@@ -89,34 +89,32 @@ export function LoginForm() {
 					const loginResponseMethod = loginResponse?.config?.method ?? null;
 
 					if (loginResponseData !== null && Math.round(loginResponseStatus / 200) === 1) {
-						if (Object.keys(loginResponseData)?.length > 0) {
-							// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-							await mutate(UserApiEndpoint, loginResponseData?.key ?? null, false);
+						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+						await mutate(UserApiEndpoint, loginResponseData?.key ?? null, false);
 
-							// Collect user data and send to Sentry
-							Sentry.configureScope((scope) =>
-								scope.setUser({
-									id: loginResponseData?.id,
-									username: loginResponseData?.username,
-									email: loginResponseData?.email
-								})
-							);
+						// Collect user data and send to Sentry
+						Sentry.configureScope((scope) =>
+							scope.setUser({
+								id: loginResponseData?.id,
+								username: loginResponseData?.username,
+								email: loginResponseData?.email
+							})
+						);
 
-							// Disable submission as soon as 200 OK or 201 Created response is issued
-							setSubmitting(false);
+						// Disable submission as soon as 200 OK or 201 Created response is issued
+						setSubmitting(false);
 
-							// Show alert message after successful 200 OK or 201 Created response is issued
-							setConfig({
-								isLogin: true,
-								method: loginResponseMethod,
-								status: loginResponseStatus
-							});
+						// Show alert message after successful 200 OK or 201 Created response is issued
+						setConfig({
+							isLogin: true,
+							method: loginResponseMethod,
+							status: loginResponseStatus
+						});
 
-							// Redirect to sites dashboard page after successful 200 OK response is established
-							setTimeout(() => {
-								router.push(DashboardSitesLink);
-							}, RedirectInterval);
-						}
+						// Redirect to sites dashboard page after successful 200 OK response is established
+						setTimeout(() => {
+							router.push(DashboardSitesLink);
+						}, RedirectInterval);
 					} else {
 						// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
 						setSubmitting(false);
