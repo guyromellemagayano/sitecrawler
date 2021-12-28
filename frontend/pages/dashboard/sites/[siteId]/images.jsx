@@ -9,18 +9,18 @@ import Sidebar from "@components/layouts/Sidebar";
 import HeadingOptions from "@components/options/HeadingOptions";
 import LinkOptions from "@components/options/LinkOptions";
 import DataPagination from "@components/pagination";
-import PageTableSkeleton from "@components/skeletons/PageTableSkeleton";
-import PageSorting from "@components/sorting/PageSorting";
-import PageTable from "@components/tables/PageTable";
+import ImageTableSkeleton from "@components/skeletons/ImageTableSkeleton";
+import ImageSorting from "@components/sorting/ImageSorting";
+import ImageTable from "@components/tables/ImageTable";
 import { SitesApiEndpoint } from "@enums/ApiEndpoints";
+// Enums
+import { ImagesLabels } from "@enums/ImagesLabels";
+import { ImagesTableLabels } from "@enums/ImagesTableLabels";
 // Hooks
 import { LoginLink, SitesLink, SubscriptionPlansLink } from "@enums/PageLinks";
-// Enums
-import { PagesLabels } from "@enums/PagesLabels";
-import { PagesTableLabels } from "@enums/PagesTableLabels";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import useCrawl from "@hooks/useCrawl";
-import { usePages, useSiteId } from "@hooks/useSite";
+import { useImages, useSiteId } from "@hooks/useSite";
 import useUser from "@hooks/useUser";
 // Utils
 import { removeURLParameter } from "@utils/functions";
@@ -35,9 +35,9 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
 
 // Dynamic
-const PageFilter = dynamic(() => import("@components/filters/PageFilter"), { ssr: true });
+const ImageFilter = dynamic(() => import("@components/filters/ImageFilter"), { ssr: true });
 
-const Pages = ({ result }) => {
+const Images = ({ result }) => {
 	const [componentReady, setComponentReady] = useState(false);
 	const [enableSiteIdHook, setEnableSiteIdHook] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
@@ -74,65 +74,56 @@ const Pages = ({ result }) => {
 		return scanObjId;
 	}, [currentScan, previousScan]);
 
-	const pageTitle = PagesLabels[1].label + " - " + siteId?.name;
+	const pageTitle = ImagesLabels[1].label + " - " + siteId?.name;
 
 	let scanApiEndpoint = "";
 	let queryString = "";
+	let statusString = "";
+	let tlsStatusString = "";
+	let missingAltsString = "";
 	let filterQueryString = "";
 
 	if (typeof window !== "undefined") {
 		filterQueryString = new URLSearchParams(window.location.search);
 	}
 
-	user?.permissions.includes("can_see_pages") &&
-	user?.permissions.includes("can_see_scripts") &&
-	user?.permissions.includes("can_see_stylesheets")
+	user?.permissions.includes("can_see_images")
 		? (() => {
 				scanApiEndpoint =
+					`${SitesApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/image/?per_page=` + linksPerPage;
+
+				queryString +=
 					result?.page !== undefined
-						? `${SitesApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/page/?per_page=` +
-						  linksPerPage +
-						  `&page=` +
-						  result?.page
-						: `${SitesApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
-
-				queryString +=
-					result?.size_total_min !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&size_total_min=1048576`
-							: `?size_total_min=1048576`
+							? `&page=${result?.page}`
+							: `?page=${result?.page}`
 						: "";
 
-				queryString +=
-					result?.size_total_max !== undefined
-						? scanApiEndpoint.includes("?")
-							? `&size_total_max=1048575`
-							: `?size_total_max=1048575`
-						: "";
+				statusString = result?.status__neq;
 
 				queryString +=
-					result?.tls_total !== undefined
-						? result?.tls_total === "true"
-							? scanApiEndpoint.includes("?")
-								? `&tls_total=true`
-								: `?tls_total=true`
-							: scanApiEndpoint.includes("?")
-							? `&tls_total=false`
-							: `?tls_total=false`
+					result?.status__neq !== undefined
+						? scanApiEndpoint.includes("?")
+							? `&status__neq=${statusString}`
+							: `?status__neq=${statusString}`
 						: "";
 
-				queryString +=
-					result?.has_duplicated_title !== undefined
-						? scanApiEndpoint.includes("?")
-							? `&has_duplicated_title=true`
-							: `?has_duplicated_title=true`
-						: "";
+				tlsStatusString = result?.tls_status__neq;
 
 				queryString +=
-					result?.has_duplicated_description !== undefined
+					result?.tls_status__neq !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&has_duplicated_description=true`
-							: `?has_duplicated_description=true`
+							? `&tls_status__neq=${tlsStatusString}`
+							: `?tls_status__neq=${tlsStatusString}`
+						: "";
+
+				missingAltsString = result?.missing_alts__gt;
+
+				queryString +=
+					result?.missing_alts__gt !== undefined
+						? scanApiEndpoint.includes("?")
+							? `&missing_alts__gt=${missingAltsString}`
+							: `?missing_alts__gt=${missingAltsString}`
 						: "";
 
 				queryString +=
@@ -162,7 +153,7 @@ const Pages = ({ result }) => {
 		  })()
 		: null;
 
-	const { pages, mutatePages } = usePages({
+	const { images, mutateImages } = useImages({
 		endpoint: enableSiteIdHook ? scanApiEndpoint : null,
 		querySid: enableSiteIdHook ? parseInt(result?.siteId) : null,
 		scanObjId: enableSiteIdHook ? scanObjId : null
@@ -191,7 +182,7 @@ const Pages = ({ result }) => {
 
 		router.push(newPath);
 
-		mutatePages(scanApiEndpoint);
+		mutateImages(scanApiEndpoint);
 	};
 
 	const handleItemsPerPageChange = (count) => {
@@ -214,7 +205,7 @@ const Pages = ({ result }) => {
 
 			router.push(newPath);
 
-			mutatePages(scanApiEndpoint);
+			mutateImages(scanApiEndpoint);
 		}
 	};
 
@@ -228,10 +219,10 @@ const Pages = ({ result }) => {
 	}, [result]);
 
 	useEffect(() => {
-		user && siteId && pages ? setComponentReady(true) : setComponentReady(false);
+		user && siteId && images ? setComponentReady(true) : setComponentReady(false);
 
-		return { user, siteId, pages };
-	}, [user, siteId, pages]);
+		return { user, siteId, images };
+	}, [user, siteId, images]);
 
 	return (
 		<Layout user={user}>
@@ -240,7 +231,7 @@ const Pages = ({ result }) => {
 			<section tw="h-screen flex overflow-hidden bg-white">
 				<Sidebar ref={ref} user={user} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 
-				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
+				<div ref={selectedSiteRef} tw=" min-h-screen">
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
@@ -253,17 +244,17 @@ const Pages = ({ result }) => {
 						<main tw="absolute w-full h-full mx-auto left-0 right-0">
 							<div tw="flex flex-col h-full p-6 mx-auto">
 								<div tw="flex-none p-4">
-									<Breadcrumbs siteId={parseInt(result?.siteId)} pageTitle={PagesLabels[1].label} />
+									<Breadcrumbs siteId={parseInt(result?.siteId)} pageTitle={ImagesLabels[1].label} />
 
 									<HeadingOptions
 										componentReady={componentReady}
-										count={pages?.count}
-										dataLabel={[PagesLabels[2].label, PagesLabels[6].label, PagesLabels[3].label]}
+										count={images?.count}
+										dataLabel={[ImagesLabels[2].label, ImagesLabels[14].label, ImagesLabels[3].label]}
 										handleCrawl={handleCrawl}
 										isCrawlFinished={isCrawlFinished}
 										isCrawlStarted={isCrawlStarted}
-										isPages
-										pageTitle={PagesLabels[1].label}
+										isImages
+										pageTitle={ImagesLabels[1].label}
 										permissions={user?.permissions}
 										queryString={queryString}
 										scanObjId={scanObjId}
@@ -276,27 +267,25 @@ const Pages = ({ result }) => {
 								</div>
 
 								<div tw="flex-grow max-w-full p-4 pb-0">
-									{user?.permissions.includes("can_see_pages") &&
-									user?.permissions.includes("can_see_scripts") &&
-									user?.permissions.includes("can_see_stylesheets") ? (
-										<PageFilter
+									{user?.permissions.includes("can_see_images") ? (
+										<ImageFilter
 											filterQueryString={filterQueryString}
 											scanApiEndpoint={scanApiEndpoint}
 											setPagePath={setPagePath}
 										/>
 									) : null}
 
-									{pages?.results !== undefined && pages?.results.length !== 0 && (
+									{images?.results !== undefined && images?.results.length !== 0 && (
 										<div tw="pb-4">
 											<div tw="flex flex-col">
 												<div tw="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
 													<div tw="min-w-full h-full rounded-lg border-gray-300">
-														{pages?.results !== undefined && pages?.results.length > 0 && (
+														{images?.results !== undefined && images?.results.length > 0 && (
 															<>
 																<table tw="relative min-w-full">
 																	<thead>
 																		<tr>
-																			{PagesTableLabels.map((site, key) => {
+																			{ImagesTableLabels.map((site, key) => {
 																				return (
 																					<th
 																						key={key}
@@ -304,15 +293,13 @@ const Pages = ({ result }) => {
 																						tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
 																					>
 																						<span tw="flex items-center justify-start">
-																							{user?.permissions.includes("can_see_pages") &&
-																							user?.permissions.includes("can_see_scripts") &&
-																							user?.permissions.includes("can_see_stylesheets") ? (
+																							{user?.permissions.includes("can_see_images") ? (
 																								site?.slug ? (
-																									<PageSorting
+																									<ImageSorting
 																										result={result}
 																										slug={site?.slug}
-																										mutatePages={mutatePages}
-																										labels={PagesTableLabels}
+																										mutateImages={mutateImages}
+																										labels={ImagesTableLabels}
 																										setPagePath={setPagePath}
 																									/>
 																								) : null
@@ -327,12 +314,10 @@ const Pages = ({ result }) => {
 																		</tr>
 																	</thead>
 																	<tbody tw="relative">
-																		{user?.permissions.includes("can_see_pages") &&
-																		user?.permissions.includes("can_see_scripts") &&
-																		user?.permissions.includes("can_see_stylesheets") ? (
-																			pages?.results !== undefined && pages?.results.length > 0 ? (
-																				pages?.results.map((val, key) => (
-																					<PageTable
+																		{user?.permissions.includes("can_see_images") ? (
+																			images?.results !== undefined && images?.results.length > 0 ? (
+																				images?.results.map((val, key) => (
+																					<ImageTable
 																						key={key}
 																						siteId={parseInt(result?.siteId)}
 																						val={val}
@@ -341,7 +326,7 @@ const Pages = ({ result }) => {
 																				))
 																			) : null
 																		) : (
-																			<PageTableSkeleton />
+																			<ImageTableSkeleton />
 																		)}
 																	</tbody>
 																</table>
@@ -359,10 +344,10 @@ const Pages = ({ result }) => {
 										</div>
 									)}
 
-									{pages?.results !== undefined && pages?.results.length == 0 && (
+									{images?.results !== undefined && images?.results.length == 0 && (
 										<section tw="flex flex-col justify-center h-full">
 											<div tw="px-4 py-5 sm:p-6 sm:-mt-12 flex items-center justify-center">
-												<h3 tw="text-lg leading-6 font-medium text-gray-500">{PagesLabels[3].label}</h3>
+												<h3 tw="text-lg leading-6 font-medium text-gray-500">{ImagesLabels[3].label}</h3>
 											</div>
 										</section>
 									)}
@@ -393,15 +378,15 @@ const Pages = ({ result }) => {
 	);
 };
 
-Pages.propTypes = {
+Images.propTypes = {
 	result: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 };
 
-Pages.defaultProps = {
+Images.defaultProps = {
 	result: null
 };
 
-export default Pages;
+export default Images;
 
 export async function getServerSideProps(ctx) {
 	return {

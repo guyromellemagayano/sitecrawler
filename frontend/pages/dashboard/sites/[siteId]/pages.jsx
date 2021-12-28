@@ -9,15 +9,15 @@ import Sidebar from "@components/layouts/Sidebar";
 import HeadingOptions from "@components/options/HeadingOptions";
 import LinkOptions from "@components/options/LinkOptions";
 import DataPagination from "@components/pagination";
-import SeoTableSkeleton from "@components/skeletons/SeoTableSkeleton";
-import SeoSorting from "@components/sorting/SeoSorting";
-import SeoTable from "@components/tables/SeoTable";
+import PageTableSkeleton from "@components/skeletons/PageTableSkeleton";
+import PageSorting from "@components/sorting/PageSorting";
+import PageTable from "@components/tables/PageTable";
 import { SitesApiEndpoint } from "@enums/ApiEndpoints";
 // Hooks
 import { LoginLink, SitesLink, SubscriptionPlansLink } from "@enums/PageLinks";
 // Enums
-import { SeoLabels } from "@enums/SeoLabels";
-import { SeoTableLabels } from "@enums/SeoTableLabels";
+import { PagesLabels } from "@enums/PagesLabels";
+import { PagesTableLabels } from "@enums/PagesTableLabels";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import useCrawl from "@hooks/useCrawl";
 import { usePages, useSiteId } from "@hooks/useSite";
@@ -35,11 +35,10 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import "twin.macro";
 
 // Dynamic
-const SeoFilter = dynamic(() => import("@components/filters/SeoFilter"), { ssr: true });
+const PageFilter = dynamic(() => import("@components/filters/PageFilter"), { ssr: true });
 
-const Seo = ({ result }) => {
+const Pages = ({ result }) => {
 	const [componentReady, setComponentReady] = useState(false);
-	const [disableLocalTime, setDisableLocalTime] = useState(false);
 	const [enableSiteIdHook, setEnableSiteIdHook] = useState(false);
 	const [linksPerPage, setLinksPerPage] = useState(20);
 	const [pagePath, setPagePath] = useState("");
@@ -75,14 +74,10 @@ const Seo = ({ result }) => {
 		return scanObjId;
 	}, [currentScan, previousScan]);
 
-	const pageTitle = SeoLabels[1].label + " - " + siteId?.name;
+	const pageTitle = PagesLabels[1].label + " - " + siteId?.name;
 
 	let scanApiEndpoint = "";
 	let queryString = "";
-	let hasTitleString = "";
-	let hasDescriptionString = "";
-	let hasH1FirstString = "";
-	let hasH2FirstString = "";
 	let filterQueryString = "";
 
 	if (typeof window !== "undefined") {
@@ -101,60 +96,43 @@ const Seo = ({ result }) => {
 						  result?.page
 						: `${SitesApiEndpoint + parseInt(result?.siteId)}/scan/${scanObjId}/page/?per_page=` + linksPerPage;
 
-				hasTitleString = Array.isArray(result?.has_title) ? result?.has_title.join("&has_title=") : result?.has_title;
-
 				queryString +=
-					result?.has_title !== undefined
+					result?.size_total_min !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&has_title=${hasTitleString}`
-							: `?has_title=${hasTitleString}`
-						: "";
-
-				hasDescriptionString = Array.isArray(result?.has_description)
-					? result?.has_description.join("&has_description=")
-					: result?.has_description;
-
-				queryString +=
-					result?.has_description !== undefined
-						? scanApiEndpoint.includes("?")
-							? `&has_description=${hasDescriptionString}`
-							: `?has_description=${hasDescriptionString}`
-						: "";
-
-				hasH1FirstString = Array.isArray(result?.has_h1_first)
-					? result?.has_h1_first.join("&has_h1_first=")
-					: result?.has_h1_first;
-
-				queryString +=
-					result?.has_h1_first !== undefined
-						? scanApiEndpoint.includes("?")
-							? `&has_h1_first=${hasH1FirstString}`
-							: `?has_h1_first=${hasH1FirstString}`
+							? `&size_total_min=1048576`
+							: `?size_total_min=1048576`
 						: "";
 
 				queryString +=
-					result?.has_h1_second !== undefined
+					result?.size_total_max !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&has_h1_second=false`
-							: `?has_h1_second=false`
-						: "";
-
-				hasH2FirstString = Array.isArray(result?.has_h2_first)
-					? result?.has_h2_first.join("&has_h2_first=")
-					: result?.has_h2_first;
-
-				queryString +=
-					result?.has_h2_first !== undefined
-						? scanApiEndpoint.includes("?")
-							? `&has_h2_first=${hasH2FirstString}`
-							: `?has_h2_first=${hasH2FirstString}`
+							? `&size_total_max=1048575`
+							: `?size_total_max=1048575`
 						: "";
 
 				queryString +=
-					result?.has_h2_second !== undefined
+					result?.tls_total !== undefined
+						? result?.tls_total === "true"
+							? scanApiEndpoint.includes("?")
+								? `&tls_total=true`
+								: `?tls_total=true`
+							: scanApiEndpoint.includes("?")
+							? `&tls_total=false`
+							: `?tls_total=false`
+						: "";
+
+				queryString +=
+					result?.has_duplicated_title !== undefined
 						? scanApiEndpoint.includes("?")
-							? `&has_h2_second=false`
-							: `?has_h2_second=false`
+							? `&has_duplicated_title=true`
+							: `?has_duplicated_title=true`
+						: "";
+
+				queryString +=
+					result?.has_duplicated_description !== undefined
+						? scanApiEndpoint.includes("?")
+							? `&has_duplicated_description=true`
+							: `?has_duplicated_description=true`
 						: "";
 
 				queryString +=
@@ -250,13 +228,7 @@ const Seo = ({ result }) => {
 	}, [result]);
 
 	useEffect(() => {
-		user && siteId && pages
-			? (() => {
-					user?.settings?.disableLocalTime ? setDisableLocalTime(true) : setDisableLocalTime(false);
-
-					setComponentReady(true);
-			  })()
-			: setComponentReady(false);
+		user && siteId && pages ? setComponentReady(true) : setComponentReady(false);
 
 		return { user, siteId, pages };
 	}, [user, siteId, pages]);
@@ -266,9 +238,9 @@ const Seo = ({ result }) => {
 			<NextSeo title={pageTitle} />
 
 			<section tw="h-screen flex overflow-hidden bg-white">
-				<Sidebar openSidebar={isComponentVisible} ref={ref} setOpenSidebar={setIsComponentVisible} user={user} />
+				<Sidebar ref={ref} user={user} openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
 
-				<div ref={selectedSiteRef} tw="flex flex-col w-0 flex-1 overflow-hidden min-h-screen">
+				<div ref={selectedSiteRef} tw=" min-h-screen">
 					<div tw="relative flex-shrink-0 flex">
 						<div tw="border-b flex-shrink-0 flex">
 							<MobileSidebarButton openSidebar={isComponentVisible} setOpenSidebar={setIsComponentVisible} />
@@ -281,17 +253,17 @@ const Seo = ({ result }) => {
 						<main tw="absolute w-full h-full mx-auto left-0 right-0">
 							<div tw="flex flex-col h-full p-6 mx-auto">
 								<div tw="flex-none p-4">
-									<Breadcrumbs siteId={parseInt(result?.siteId)} pageTitle={SeoLabels[1].label} />
+									<Breadcrumbs siteId={parseInt(result?.siteId)} pageTitle={PagesLabels[1].label} />
 
 									<HeadingOptions
 										componentReady={componentReady}
 										count={pages?.count}
-										dataLabel={[SeoLabels[2].label, SeoLabels[6].label, SeoLabels[3].label]}
+										dataLabel={[PagesLabels[2].label, PagesLabels[6].label, PagesLabels[3].label]}
 										handleCrawl={handleCrawl}
 										isCrawlFinished={isCrawlFinished}
 										isCrawlStarted={isCrawlStarted}
-										isSeo
-										pageTitle={SeoLabels[1].label}
+										isPages
+										pageTitle={PagesLabels[1].label}
 										permissions={user?.permissions}
 										queryString={queryString}
 										scanObjId={scanObjId}
@@ -307,7 +279,7 @@ const Seo = ({ result }) => {
 									{user?.permissions.includes("can_see_pages") &&
 									user?.permissions.includes("can_see_scripts") &&
 									user?.permissions.includes("can_see_stylesheets") ? (
-										<SeoFilter
+										<PageFilter
 											filterQueryString={filterQueryString}
 											scanApiEndpoint={scanApiEndpoint}
 											setPagePath={setPagePath}
@@ -324,7 +296,7 @@ const Seo = ({ result }) => {
 																<table tw="relative min-w-full">
 																	<thead>
 																		<tr>
-																			{SeoTableLabels.map((site, key) => {
+																			{PagesTableLabels.map((site, key) => {
 																				return (
 																					<th
 																						key={key}
@@ -336,11 +308,11 @@ const Seo = ({ result }) => {
 																							user?.permissions.includes("can_see_scripts") &&
 																							user?.permissions.includes("can_see_stylesheets") ? (
 																								site?.slug ? (
-																									<SeoSorting
+																									<PageSorting
 																										result={result}
 																										slug={site?.slug}
 																										mutatePages={mutatePages}
-																										labels={SeoTableLabels}
+																										labels={PagesTableLabels}
 																										setPagePath={setPagePath}
 																									/>
 																								) : null
@@ -360,17 +332,16 @@ const Seo = ({ result }) => {
 																		user?.permissions.includes("can_see_stylesheets") ? (
 																			pages?.results !== undefined && pages?.results.length > 0 ? (
 																				pages?.results.map((val, key) => (
-																					<SeoTable
-																						componentReady={componentReady}
+																					<PageTable
 																						key={key}
 																						siteId={parseInt(result?.siteId)}
 																						val={val}
-																						disableLocalTime={disableLocalTime}
+																						componentReady={componentReady}
 																					/>
 																				))
 																			) : null
 																		) : (
-																			<SeoTableSkeleton />
+																			<PageTableSkeleton />
 																		)}
 																	</tbody>
 																</table>
@@ -391,7 +362,7 @@ const Seo = ({ result }) => {
 									{pages?.results !== undefined && pages?.results.length == 0 && (
 										<section tw="flex flex-col justify-center h-full">
 											<div tw="px-4 py-5 sm:p-6 sm:-mt-12 flex items-center justify-center">
-												<h3 tw="text-lg leading-6 font-medium text-gray-500">{SeoLabels[3].label}</h3>
+												<h3 tw="text-lg leading-6 font-medium text-gray-500">{PagesLabels[3].label}</h3>
 											</div>
 										</section>
 									)}
@@ -422,15 +393,15 @@ const Seo = ({ result }) => {
 	);
 };
 
-Seo.propTypes = {
+Pages.propTypes = {
 	result: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
 };
 
-Seo.defaultProps = {
+Pages.defaultProps = {
 	result: null
 };
 
-export default Seo;
+export default Pages;
 
 export async function getServerSideProps(ctx) {
 	return {
