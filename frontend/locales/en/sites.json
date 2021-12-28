@@ -8,5 +8,63 @@
 	"siteName": "Site Name",
 	"totalLinks": "Total Links",
 	"totalPages": "Total Pages",
-	"totalImages": "Total Images"
+	"totalImages": "Total Images",
+	"addNewSite": "Add New Site",
+	"searchSites": "Search Sites...",
+	"searchNotAvailable": "Search Not Available",
+	"siteAdditionProgress": "Site Addition Progress",
+	"step1": "Step 1",
+	"step2": "Step 2",
+	"updateSiteDetail": "Update Site Detail",
+	"proceedToStep2": "Proceed to Step 2",
+	"verifySite": "Verify site",
+	"verifySiteTitle": "Verify Site",
+	"verifiedSiteTitle": "Site Verification Success",
+	"instructions": "Instructions",
+	"fillSiteInformation": "Fill in site information",
+	"instruction1": "Sign in to your website.",
+	"instruction2": "Copy the meta tag below and add it within your website's HEAD tag.",
+	"instruction3": "Press Verify Site button below",
+	"needHelp": "Need Help?",
+	"goToSiteOverview": "Go to Site Overview",
+	"verifySiteNow": "Verify Site Now",
+	"verifySiteLater": "Verify Site Later",
+	"updateSiteDetails": "Update Site Details",
+	"verifying": "Verifying...",
+	"verifyIdMetaTag": "Verify ID Meta Tag",
+	"form": {
+		"detail": {
+			"label": "Fill in site information",
+			"description": "Add the name and url of your site to start the process."
+		},
+		"siteName": {
+			"label": "Site Name",
+			"placeholder": "e.g. My Company Name"
+		},
+		"siteUrl": {
+			"label": "Site URL",
+			"placeholder": "e.g. yourdomain.com",
+			"protocol": "Site URL Protocol"
+		}
+	},
+	"howToSetup": {
+		"headline": "How to add site",
+		"subHeadline": "Watch this video to see how to install the meta tag onto your site.",
+		"tabSrOnly": "Platform select tabs"
+	},
+	"siteOverview": "Site Overview | {{ site }}",
+	"subscriptionPlansLabel": {
+		"label": "Choose the plan that best suits your needs",
+		"description": "You can change or cancel your plan at any time."
+	},
+	"bill": {
+		"monthly": "Bill Monthly",
+		"semiAnnual": "Bill Semi-Annually"
+	},
+	"selectPlan": "Select Plan",
+	"currentPlan": "Current Plan",
+	"paymentMethod": {
+		"label": "Payment Method",
+		"description": "You can change or cancel your payment method at any time."
+	}
 }
