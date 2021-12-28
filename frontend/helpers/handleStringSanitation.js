@@ -22,7 +22,7 @@ export const handleStringToBooleanSanitation = (val) => {
 	let sanitizedVal = "";
 
 	if (typeof val !== "undefined" && val !== null && val !== "" && typeof val === "string") {
-		sanitizedVal = Boolean(val);
+		sanitizedVal = val === "true" ? true : false;
 	}
 
 	return sanitizedVal;
