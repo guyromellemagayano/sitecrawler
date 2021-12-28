@@ -103,7 +103,7 @@ export function RegistrationForm() {
 
 					if (registrationResponseData !== null && Math.round(registrationResponseStatus / 200) === 1) {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						await mutate(UserApiEndpoint, null, false);
+						await mutate(UserApiEndpoint, false);
 
 						// Disable submission and reset form as soon as 200 OK or 201 Created response is issued
 						setSubmitting(false);
