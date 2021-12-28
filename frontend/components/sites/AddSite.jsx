@@ -170,7 +170,7 @@ export function AddSite({ handleOpenSidebar }) {
 								</span>
 							</button>
 						) : (
-							<Link href={AddNewSiteLink + "?edit=false&verified=false"} passHref>
+							<Link href={AddNewSiteLink + "?step=1&edit=false&verified=false"} passHref>
 								<a
 									disabled={asPath.includes(AddNewSiteSlug) ? true : false}
 									css={[
