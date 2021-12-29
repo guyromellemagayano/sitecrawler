@@ -6,15 +6,14 @@ module.exports = {
 		"/": ["home"],
 		"/account-exist": ["accountExist"],
 		"/confirm-email/[...id]": ["confirmEmail"],
-		"/dashboard/*": ["sidebar"],
-		"/dashboard/audit-logs": ["auditLogs"],
-		"/dashboard/settings/*": ["settings"],
-		"/dashboard/sites/*": ["sites"],
 		"/login": ["login"],
 		"/logout": ["logout"],
 		"/registration": ["registration"],
 		"/reset-password/*": ["resetPassword"],
-		"/signup/[...id]": ["signup"]
+		"/signup/[...id]": ["signup"],
+		"rgx:^/dashboard": ["sidebar", "sites"],
+		"rgx:^/dashboard/settings": ["settings"],
+		"/dashboard/audit-logs": ["auditLogs"]
 	},
 	interpolation: {
 		prefix: "${",
