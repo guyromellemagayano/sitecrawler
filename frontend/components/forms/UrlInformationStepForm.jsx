@@ -154,11 +154,14 @@ export function UrlInformationStepForm(props) {
 						setDisableForm(!disableForm);
 
 						const urlInformationStepFormResponse = await handleGetMethod(SitesApiEndpoint + sid + "/");
-						const urlInformationStepFormData = urlInformationStepFormResponse?.data ?? null;
-						const urlInformationStepFormStatus = urlInformationStepFormResponse?.status ?? null;
-						const urlInformationStepFormMethod = urlInformationStepFormResponse?.config?.method ?? null;
+						const urlInformationStepFormResponseData = urlInformationStepFormResponse?.data ?? null;
+						const urlInformationStepFormResponseStatus = urlInformationStepFormResponse?.status ?? null;
+						const urlInformationStepFormResponseMethod = urlInformationStepFormResponse?.config?.method ?? null;
 
-						if (urlInformationStepFormData !== null && Math.round(urlInformationStepFormStatus / 200) === 1) {
+						if (
+							urlInformationStepFormResponseData !== null &&
+							Math.round(urlInformationStepFormResponseStatus / 200) === 1
+						) {
 							// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
 							await mutate(SitesApiEndpoint, false);
 
@@ -184,13 +187,14 @@ export function UrlInformationStepForm(props) {
 								);
 							} else {
 								const patchUrlInformationStepFormResponse = await handlePatchMethod(SitesApiEndpoint + sid + "/", body);
-								const patchUrlInformationStepFormData = patchUrlInformationStepFormResponse?.data ?? null;
-								const patchUrlInformationStepFormStatus = patchUrlInformationStepFormResponse?.status ?? null;
-								const patchUrlInformationStepFormMethod = patchUrlInformationStepFormResponse?.config?.method ?? null;
+								const patchUrlInformationStepFormResponseData = patchUrlInformationStepFormResponse?.data ?? null;
+								const patchUrlInformationStepFormResponseStatus = patchUrlInformationStepFormResponse?.status ?? null;
+								const patchUrlInformationStepFormResponseMethod =
+									patchUrlInformationStepFormResponse?.config?.method ?? null;
 
 								if (
-									patchUrlInformationStepFormData !== null &&
-									Math.round(patchUrlInformationStepFormStatus / 200) === 1
+									patchUrlInformationStepFormResponseData !== null &&
+									Math.round(patchUrlInformationStepFormResponseStatus / 200) === 1
 								) {
 									// Disable form after successful 200 OK or 201 Created response is issued
 									setDisableForm(!disableForm);
@@ -198,8 +202,8 @@ export function UrlInformationStepForm(props) {
 									// Show alert message after successful 200 OK or 201 Created response is issued
 									setConfig({
 										isUrlInformationStep: true,
-										method: patchUrlInformationStepFormMethod,
-										status: patchUrlInformationStepFormStatus
+										method: patchUrlInformationStepFormResponseMethod,
+										status: patchUrlInformationStepFormResponseStatus
 									});
 
 									// Update current URL with query for the next step
@@ -208,7 +212,7 @@ export function UrlInformationStepForm(props) {
 											pathname: AddNewSiteLink,
 											query: {
 												step: step + 1,
-												sid: patchUrlInformationStepFormData?.id ?? null,
+												sid: patchUrlInformationStepFormResponseData?.id ?? null,
 												edit: false,
 												verified: false
 											}
@@ -223,8 +227,8 @@ export function UrlInformationStepForm(props) {
 									// Show alert message after successful 200 OK or 201 Created response is issued
 									setConfig({
 										isUrlInformationStep: true,
-										method: patchUrlInformationStepFormMethod,
-										status: patchUrlInformationStepFormStatus
+										method: patchUrlInformationStepFormResponseMethod,
+										status: patchUrlInformationStepFormResponseStatus
 									});
 								}
 							}
@@ -235,8 +239,8 @@ export function UrlInformationStepForm(props) {
 							// Show alert message after successful 200 OK or 201 Created response is issued
 							setConfig({
 								isUrlInformationStep: true,
-								method: urlInformationStepFormMethod,
-								status: urlInformationStepFormStatus
+								method: urlInformationStepFormResponseMethod,
+								status: urlInformationStepFormResponseStatus
 							});
 						}
 					} else {
@@ -395,12 +399,12 @@ export function UrlInformationStepForm(props) {
 												disabled={isSubmitting || editMode}
 												css={[
 													tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-24 sm:text-sm border-gray-300 rounded-md`,
-													editMode
+													editMode && disableForm
 														? tw`opacity-50 bg-gray-300 cursor-not-allowed`
-														: isSubmitting || disableForm
+														: isSubmitting
 														? tw`text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed`
 														: null,
-													errors.siteurl || touched.siteurl ? tw`border-red-300` : tw`border-gray-300`
+													!disableForm && (errors.siteurl || touched.siteurl) ? tw`border-red-300` : tw`border-gray-300`
 												]}
 												placeholder={formSiteUrlPlaceholder}
 												aria-describedby="siteurl"
