@@ -15,16 +15,19 @@
 	"siteAdditionProgress": "Site Addition Progress",
 	"step1": "Step 1",
 	"step2": "Step 2",
+	"step3": "Step 3",
 	"updateSiteDetail": "Update Site Detail",
 	"proceedToStep2": "Proceed to Step 2",
 	"verifySite": "Verify site",
 	"verifySiteTitle": "Verify Site",
+	"verifiedSite": "Site Verified!",
 	"verifiedSiteTitle": "Site Verification Success",
 	"instructions": "Instructions",
 	"fillSiteInformation": "Fill in site information",
 	"instruction1": "Sign in to your website.",
-	"instruction2": "Copy the meta tag below and add it within your website's HEAD tag.",
+	"instruction2": "Copy the meta tag below and add it within your website's <strong>HEAD</strong> tag.",
 	"instruction3": "Press Verify Site button below",
+	"instructionHtmlText": "1. Sign in to the administrator account of the following website: {{ url }} 2. Copy the following meta tag and add it within your website's <head> tag: {{ value }} 3. Save the changes you made in that file. 4. Inform your client that you already made the update to the website.",
 	"needHelp": "Need Help?",
 	"goToSiteOverview": "Go to Site Overview",
 	"verifySiteNow": "Verify Site Now",
@@ -32,6 +35,10 @@
 	"updateSiteDetails": "Update Site Details",
 	"verifying": "Verifying...",
 	"verifyIdMetaTag": "Verify ID Meta Tag",
+	"pasteContents": "Paste the contents into an email and send it to your web developer's email address.",
+	"clickCopyToClipboard": "Click the <strong>Copy to Clipboard</strong> button",
+	"notSure": "Not sure how to do it?",
+	"doTheFollowing": "If for some reason, you can't follow the steps above, do the following:",
 	"form": {
 		"detail": {
 			"label": "Fill in site information",
@@ -61,10 +68,35 @@
 		"monthly": "Bill Monthly",
 		"semiAnnual": "Bill Semi-Annually"
 	},
-	"selectPlan": "Select Plan",
-	"currentPlan": "Current Plan",
-	"paymentMethod": {
+	"paymentMethodLabel": {
 		"label": "Payment Method",
-		"description": "You can change or cancel your payment method at any time."
+		"description": "User generated content in real-time will have multiple touchpoints for offshoring."
+	},
+	"upgradePlanLabel": {
+		"label": "Upgrade Plan",
+		"description": "User generated content in real-time will have multiple touchpoints for offshoring."
+	},
+	"plan": {
+		"select": "Select Plan",
+		"current": "Current Plan"
+	},
+	"defaultCard": "Default Card",
+	"paymentPeriod": "Payment Period",
+	"noCreditDebitCard": "You haven't added a credit card/debit card yet.",
+	"goToPaymentMethod": "Go to Payment Method",
+	"congratulations": "Congratulations!",
+	"startCrawling": "Start Crawling",
+	"downgradePlanLabel": {
+		"label": "Are you sure of this?",
+		"description": "Downgrading your plan will cancel your current subscription and you will be charged for the remaining period."
+	},
+	"downgradeToBasicPlan": "Downgrade to Basic Plan",
+	"subscriptions": "Subscriptions",
+	"mostPopular": "Most Popular",
+	"monthly": "month",
+	"creditDebitCardRequired": "credit/debit card required",
+	"downgradeRequestLabel": {
+		"label": "Downgrade Request Success!",
+		"description": "Downgrading your plan will cancel your current subscription and you will be charged for the remaining period."
 	}
 }
