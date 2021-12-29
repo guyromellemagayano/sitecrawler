@@ -21,7 +21,7 @@ export function UrlInformationStep(props) {
 	// Custom hooks
 	const { isComponentReady } = useLoading();
 
-	return step == 1 ? (
+	return step === 1 ? (
 		<div tw="block pt-8 pb-12">
 			<div tw="py-4 m-auto">
 				<div tw="block mb-12">

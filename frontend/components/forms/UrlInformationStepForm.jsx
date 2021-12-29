@@ -162,19 +162,11 @@ export function UrlInformationStepForm(props) {
 							// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
 							await mutate(SitesApiEndpoint, false);
 
-							// Show alert message after successful 200 OK or 201 Created response is issued
-							setConfig({
-								isUrlInformationStep: true,
-								method: urlInformationStepFormMethod,
-								status: urlInformationStepFormStatus
-							});
-
 							const body = {
 								name: values.sitename
 							};
 
-							console.log(body.name, siteName, body.name === siteName);
-
+							// If no changes has been made, direct user to the next step
 							if (body.name === siteName) {
 								// Update current URL with query for the next step
 								router.replace(

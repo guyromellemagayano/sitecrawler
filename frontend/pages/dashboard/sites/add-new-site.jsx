@@ -42,7 +42,10 @@ export async function getServerSideProps({ req, query }) {
 		Object.keys(userData)?.length > 0 &&
 		Math.round(userStatus / 200) === 1
 	) {
-		const sid = query?.sid ?? null;
+		const sid = query?.sid ? parseInt(query?.sid) : null;
+		const step = query?.step ? parseInt(query?.step) : null;
+		const verified = query?.verified ? (query?.verified === "true" ? true : false) : null;
+		const edit = query?.edit ? (query?.edit === "true" ? true : false) : null;
 
 		if (
 			typeof sitesData !== "undefined" &&
@@ -51,18 +54,26 @@ export async function getServerSideProps({ req, query }) {
 			Object.keys(sitesData)?.length > 0 &&
 			Math.round(sitesStatus / 200) === 1
 		) {
-			const sidMatch = sitesData?.results?.find((site) => site.id === sid) ?? null;
+			const sidMatch = sitesData?.results?.find((site) => site.id === sid && site.verified === verified) ?? null;
 
-			if (typeof sidMatch === "undefined" || typeof sid === "undefined") {
+			if (
+				edit !== null &&
+				verified !== null &&
+				step !== null &&
+				((edit && !verified && step === 1 && sid !== null && sidMatch !== null) ||
+					(!edit && !verified && step === 2 && sid !== null && sidMatch !== null) ||
+					(!edit && !verified && step === 1 && sid === null && sidMatch === null) ||
+					(!edit && verified && step === 3 && sid !== null && sidMatch !== null))
+			) {
+				return {
+					props: {}
+				};
+			} else {
 				return {
 					redirect: {
 						destination: DashboardSitesLink,
 						permanent: false
 					}
-				};
-			} else {
-				return {
-					props: {}
 				};
 			}
 		} else {

@@ -19,7 +19,9 @@ export function AddSiteSteps(props) {
 	const dismiss = t("common:dismiss");
 	const step1 = t("sites:step1");
 	const step2 = t("sites:step2");
+	const step3 = t("sites:step3");
 	const verifySite = t("sites:verifySite");
+	const verifiedSite = t("sites:verifiedSite");
 	const formDetailLabel = t("sites:form.detail.label");
 
 	// Custom hooks
@@ -33,6 +35,10 @@ export function AddSiteSteps(props) {
 		{
 			title: step2,
 			subtitle: verifySite
+		},
+		{
+			title: step3,
+			subtitle: verifiedSite
 		}
 	];
 
@@ -68,7 +74,7 @@ export function AddSiteSteps(props) {
 					</ol>
 				</nav>
 
-				{step == 1 ? <MemoizedUrlInformationStep {...props} /> : <MemoizedVerifyUrlStep {...props} />}
+				{step === 1 ? <MemoizedUrlInformationStep {...props} /> : <MemoizedVerifyUrlStep {...props} />}
 			</div>
 		</div>
 	);

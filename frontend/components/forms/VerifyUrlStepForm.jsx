@@ -2,7 +2,7 @@
 import { MemoizedAlert } from "@components/alerts";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { FormSubmissionInterval } from "@constants/GlobalValues";
-import { AddNewSiteLink, DashboardSitesLink } from "@constants/PageLinks";
+import { AddNewSiteLink, DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useLoading } from "@hooks/useLoading";
@@ -23,7 +23,7 @@ import tw from "twin.macro";
 export function VerifyUrlStepForm(props) {
 	const [siteData, setSiteData] = useState(null);
 
-	const { sid, step, verified, setDisableSiteVerify, enableNextStep, setEnableNextStep } = props;
+	const { sid, step, verified, setDisableSiteVerify } = props;
 
 	// Translations
 	const { t } = useTranslation("sites");
@@ -92,7 +92,7 @@ export function VerifyUrlStepForm(props) {
 					<Formik
 						enableReinitialize={true}
 						initialValues={{
-							verification_id: siteData?.verification_id ?? ""
+							verification_id: siteData?.[0]?.verification_id ?? ""
 						}}
 						onSubmit={async (values, { setSubmitting }) => {
 							const body = {
@@ -104,35 +104,32 @@ export function VerifyUrlStepForm(props) {
 							const verifyUrlStepStatus = verifyUrlStepResponse?.status ?? null;
 							const verifyUrlStepMethod = verifyUrlStepResponse?.config?.method ?? null;
 
-							if (
-								verifyUrlStepData !== null &&
-								Math.round(verifyUrlStepStatus / 200) === 1 &&
-								verifyUrlStepData?.verified
-							) {
-								// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-								await mutate(SitesApiEndpoint, false);
+							if (verifyUrlStepData !== null && Math.round(verifyUrlStepStatus / 200) === 1) {
+								if (verifyUrlStepData?.verified) {
+									// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
+									await mutate(SitesApiEndpoint, false);
 
-								// Disable submission as soon as 200 OK or 201 Created response was issued
-								setSubmitting(false);
+									// Disable submission as soon as 200 OK or 201 Created response was issued
+									setSubmitting(false);
 
-								// Show alert message after successful 200 OK or 201 Created response is issued
-								setConfig({
-									isVerifyUrlStep: true,
-									method: verifyUrlStepMethod,
-									status: verifyUrlStepStatus
-								});
+									// Show alert message after successful 200 OK or 201 Created response is issued
+									setConfig({
+										isVerifyUrlStep: true,
+										method: verifyUrlStepMethod,
+										status: verifyUrlStepStatus
+									});
 
-								// Update router query
-								router.replace({
-									pathname: AddNewSiteLink,
-									query: { step: step + 1, sid: sid ?? null, edit: false, verified: true }
-								});
+									// Update router query
+									router.replace({
+										pathname: AddNewSiteLink,
+										query: { step: step + 1, sid: sid ?? null, edit: false, verified: true }
+									});
 
-								// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
-								setTimeout(() => {
-									setEnableNextStep(!enableNextStep);
-									setDisableSiteVerify(false);
-								}, FormSubmissionInterval);
+									// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+									setTimeout(() => {
+										setDisableSiteVerify(false);
+									}, FormSubmissionInterval);
+								}
 							} else {
 								// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued
 								setSubmitting(false);
@@ -150,10 +147,15 @@ export function VerifyUrlStepForm(props) {
 						{({ handleSubmit, isSubmitting, handleChange, values }) => (
 							<form tw="sm:flex sm:items-center w-full" onSubmit={handleSubmit}>
 								<div tw="flex lg:justify-between w-full">
-									{enableNextStep && verified && step == 3 ? (
+									{isComponentReady && step === 3 && verified && sid !== null ? (
 										<span tw="inline-flex">
-											{isComponentReady ? (
-												<Link href="/site/[id]/overview/" as={`/site/${sid}/overview/`} passHref replace>
+											{siteData !== null && Object.keys(siteData)?.length > 0 ? (
+												<Link
+													href="/sites/[id]/overview/"
+													as={`${DashboardSitesLink + sid + SiteOverviewSlug}`}
+													passHref
+													replace
+												>
 													<a tw="cursor-pointer inline-flex sm:mt-0 relative items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
 														{goToSiteOverview}
 													</a>
@@ -162,7 +164,7 @@ export function VerifyUrlStepForm(props) {
 												<Skeleton duration={2} width={160} height={38} tw="mr-3" />
 											)}
 										</span>
-									) : isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 && !verified ? (
+									) : isComponentReady && step === 2 && !verified && sid !== null ? (
 										<>
 											<div tw="inline-flex items-center justify-start">
 												<input
