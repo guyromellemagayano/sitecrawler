@@ -207,7 +207,7 @@ export function DeleteUserAccountModal({ showModal, setShowModal }, ref) {
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`cursor-pointer hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 										]}
-										onClick={() => setShowModal(!showModal)}
+										onClick={() => setShowModal(false)}
 									>
 										{errorHeadline !== null &&
 										errorHeadline.length > 0 &&
