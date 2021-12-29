@@ -2,7 +2,7 @@
 import { MemoizedAppLogo } from "@components/logos/AppLogo";
 import { MemoizedSiteSelect } from "@components/select/SiteSelect";
 import { AuthAppLogo, SiteLogoWhite } from "@constants/GlobalValues";
-import { AddNewSiteSlug, DashboardSitesLink, SitesSlug } from "@constants/PageLinks";
+import { AddNewSiteSlug, DashboardSitesLink } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { DocumentReportIcon, ExternalLinkIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
@@ -73,10 +73,7 @@ export function PrimaryMenu() {
 																asPath.includes(value2.url) && isComponentReady
 																	? tw`bg-gray-1100 !cursor-default`
 																	: null,
-																asPath.includes(value2.url) ||
-																(asPath.includes(SitesSlug) && SitesSlug.includes(value2.url))
-																	? tw`text-gray-100`
-																	: tw`text-gray-400`,
+																asPath.includes(value2.url) ? tw`text-gray-100` : tw`text-gray-400`,
 																isComponentReady
 																	? tw`cursor-pointer hover:text-gray-100 focus:outline-none transition ease-in-out duration-150 hover:bg-gray-1100 focus:bg-gray-1100`
 																	: tw`cursor-default`
