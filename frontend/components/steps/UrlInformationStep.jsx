@@ -41,4 +41,7 @@ export function UrlInformationStep(props) {
 	) : null;
 }
 
+/**
+ * Memoized custom `UrlInformationStep` component
+ */
 export const MemoizedUrlInformationStep = memo(UrlInformationStep);
