@@ -289,4 +289,149 @@ export const CustomTransitions = createGlobalStyle`
   .show-help-modal-second-child-leave-to {
     ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
   }
+
+	.change-to-basic-modal-first-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .change-to-basic-modal-first-child-enter-from {
+    ${tw`opacity-0`}
+  }
+
+  .change-to-basic-modal-first-child-enter-to {
+    ${tw`opacity-100`}
+  }
+
+  .change-to-basic-modal-first-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .change-to-basic-modal-first-child-leave-from {
+    ${tw`opacity-100`}
+  }
+
+  .change-to-basic-modal-first-child-leave-to {
+    ${tw`opacity-0`}
+  }
+
+	.change-to-basic-modal-second-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .change-to-basic-modal-second-child-enter-from {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
+
+  .change-to-basic-modal-second-child-enter-to {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .change-to-basic-modal-second-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .change-to-basic-modal-second-child-leave-from {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .change-to-basic-modal-second-child-leave-to {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
+
+	.new-active-plan-modal-first-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .new-active-plan-modal-first-child-enter-from {
+    ${tw`opacity-0`}
+  }
+
+  .new-active-plan-modal-first-child-enter-to {
+    ${tw`opacity-100`}
+  }
+
+  .new-active-plan-modal-first-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .new-active-plan-modal-first-child-leave-from {
+    ${tw`opacity-100`}
+  }
+
+  .new-active-plan-modal-first-child-leave-to {
+    ${tw`opacity-0`}
+  }
+
+	.new-active-plan-modal-second-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .new-active-plan-modal-second-child-enter-from {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
+
+  .new-active-plan-modal-second-child-enter-to {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .new-active-plan-modal-second-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .new-active-plan-modal-second-child-leave-from {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .new-active-plan-modal-second-child-leave-to {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
+
+
+	.payment-method-modal-first-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .payment-method-modal-first-child-enter-from {
+    ${tw`opacity-0`}
+  }
+
+  .payment-method-modal-first-child-enter-to {
+    ${tw`opacity-100`}
+  }
+
+  .payment-method-modal-first-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .payment-method-modal-first-child-leave-from {
+    ${tw`opacity-100`}
+  }
+
+  .payment-method-modal-first-child-leave-to {
+    ${tw`opacity-0`}
+  }
+
+	.payment-method-modal-second-child-enter {
+    ${tw`ease-out duration-300`}
+  }
+
+  .payment-method-modal-second-child-enter-from {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
+
+  .payment-method-modal-second-child-enter-to {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .payment-method-modal-second-child-leave {
+    ${tw`ease-in duration-200`}
+  }
+
+  .payment-method-modal-second-child-leave-from {
+    ${tw`opacity-100 translate-y-0 sm:scale-100`}
+  }
+
+  .payment-method-modal-second-child-leave-to {
+    ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
+  }
 `;

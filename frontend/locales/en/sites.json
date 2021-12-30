@@ -59,44 +59,5 @@
 		"subHeadline": "Watch this video to see how to install the meta tag onto your site.",
 		"tabSrOnly": "Platform select tabs"
 	},
-	"siteOverview": "Site Overview | {{ site }}",
-	"subscriptionPlansLabel": {
-		"label": "Choose the plan that best suits your needs",
-		"description": "You can change or cancel your plan at any time."
-	},
-	"bill": {
-		"monthly": "Bill Monthly",
-		"semiAnnual": "Bill Semi-Annually"
-	},
-	"paymentMethodLabel": {
-		"label": "Payment Method",
-		"description": "User generated content in real-time will have multiple touchpoints for offshoring."
-	},
-	"upgradePlanLabel": {
-		"label": "Upgrade Plan",
-		"description": "User generated content in real-time will have multiple touchpoints for offshoring."
-	},
-	"plan": {
-		"select": "Select Plan",
-		"current": "Current Plan"
-	},
-	"defaultCard": "Default Card",
-	"paymentPeriod": "Payment Period",
-	"noCreditDebitCard": "You haven't added a credit card/debit card yet.",
-	"goToPaymentMethod": "Go to Payment Method",
-	"congratulations": "Congratulations!",
-	"startCrawling": "Start Crawling",
-	"downgradePlanLabel": {
-		"label": "Are you sure of this?",
-		"description": "Downgrading your plan will cancel your current subscription and you will be charged for the remaining period."
-	},
-	"downgradeToBasicPlan": "Downgrade to Basic Plan",
-	"subscriptions": "Subscriptions",
-	"mostPopular": "Most Popular",
-	"monthly": "month",
-	"creditDebitCardRequired": "credit/debit card required",
-	"downgradeRequestLabel": {
-		"label": "Downgrade Request Success!",
-		"description": "Downgrading your plan will cancel your current subscription and you will be charged for the remaining period."
-	}
+	"siteOverview": "Site Overview | {{ site }}"
 }

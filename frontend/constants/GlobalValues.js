@@ -8,7 +8,7 @@ export const AuthAppLogo = {
 	height: 45
 };
 export const BadgeModalImage = {
-	label: "badge-modal-img",
+	alt: "badge-modal-img",
 	width: 72,
 	height: 72
 };
@@ -29,6 +29,7 @@ export const AlertDisplayInterval = 7500;
 export const ModalDisplayInterval = 3500;
 export const OnErrorRetryCount = 5;
 export const NoInterval = 0;
+export const UnitAmountToRealPriceDivisor = 100;
 
 // File Locations
 export const SiteLogoDark = "/images/logos/site-logo-dark.svg";

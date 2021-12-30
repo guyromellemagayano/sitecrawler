@@ -62,5 +62,6 @@
 	"confirmPassword": "Confirm Password",
 	"request": "Request",
 	"copiedText": "Copied",
-	"copyText": "Copy"
+	"copyText": "Copy",
+	"proceed": "Proceed"
 }

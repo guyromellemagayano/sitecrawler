@@ -1,28 +1,19 @@
-// React
-import { useState, useEffect } from "react";
-
-// External
-import { CreditCardIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
-import tw from "twin.macro";
-
-// Enums
 import { PaymentMethodFormLabels } from "@enums/PaymentMethodFormLabels";
 import { SubscriptionLabels } from "@enums/SubscriptionLabels";
+import { CreditCardIcon } from "@heroicons/react/solid";
+import { useDefaultPaymentMethod, usePaymentMethods } from "@hooks/useStripePromise";
+import { memo, useEffect, useState } from "react";
+import tw from "twin.macro";
 
-// Hooks
-import { usePaymentMethods, useDefaultPaymentMethod } from "@hooks/useStripePromise";
-
-const SelectCardForm = ({
-	handleSelectPlan,
-	loading,
-	setShowModal,
-	showModal,
-	updatedPlanId,
-	updatedPlanName
-}) => {
+/**
+ * Custom function to render the `SelectCardForm` component
+ */
+export function SelectCardForm(props) {
 	const [currentPaymentMethod, setCurrentPaymentMethod] = useState([]);
 	const [selectedPaymentMethod, setSelectedPaymentMethod] = useState([]);
+
+	// Props
+	const { handlePlanSelect, planId, planName, isProcessingPayment, setShowModal } = props;
 
 	const { paymentMethods } = usePaymentMethods({});
 	const { defaultPaymentMethod } = useDefaultPaymentMethod({});
@@ -85,29 +76,27 @@ const SelectCardForm = ({
 							<span tw="relative z-10 w-full inline-flex">
 								<button
 									type="button"
-									disabled={loading}
+									disabled={isProcessingPayment}
 									css={[
 										tw`flex-grow w-full justify-center mt-3 mr-3 sm:mt-0 relative inline-flex items-center px-3 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 `,
-										loading
+										isProcessingPayment
 											? tw`opacity-50 cursor-not-allowed`
 											: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`
 									]}
-									onClick={() =>
-										handleSelectPlan(updatedPlanId, updatedPlanName, selectedPaymentMethod)
-									}
+									onClick={() => handlePlanSelect(planId, planName, selectedPaymentMethod)}
 								>
-									{loading ? PaymentMethodFormLabels[15].label : PaymentMethodFormLabels[13].label}
+									{isProcessingPayment ? PaymentMethodFormLabels[15].label : PaymentMethodFormLabels[13].label}
 								</button>
 								<button
 									type="button"
-									disabled={loading}
+									disabled={isProcessingPayment}
 									css={[
 										tw`flex-shrink-0 mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm`,
-										loading
+										isProcessingPayment
 											? tw`opacity-50 cursor-not-allowed`
 											: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
-									onClick={() => setShowModal(!showModal)}
+									onClick={() => setShowModal(false)}
 								>
 									{PaymentMethodFormLabels[11].label}
 								</button>
@@ -118,24 +107,9 @@ const SelectCardForm = ({
 			</div>
 		</form>
 	);
-};
+}
 
-SelectCardForm.propTypes = {
-	handleSelectPlan: PropTypes.func,
-	loading: PropTypes.bool,
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool,
-	updatedPlanId: PropTypes.number,
-	updatedPlanName: PropTypes.string
-};
-
-SelectCardForm.defaultProps = {
-	handleSelectPlan: null,
-	loading: false,
-	setShowModal: null,
-	showModal: false,
-	updatedPlanId: null,
-	updatedPlanName: null
-};
-
-export default SelectCardForm;
+/**
+ * Memoized custom `SelectCardForm` component
+ */
+export const MemoizedPersonalSettingsForm = memo(SelectCardForm);

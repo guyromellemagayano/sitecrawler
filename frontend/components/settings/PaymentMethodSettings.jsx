@@ -1,94 +1,60 @@
-// React
-import { useState, useMemo } from "react";
-
-// External
-import "twin.macro";
+import { MemoizedPaymentMethodForm } from "@components/forms/PaymentMethodForm";
+import { useLoading } from "@hooks/useLoading";
+import { useStripePromise } from "@hooks/useStripePromise";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import PropTypes from "prop-types";
+import useTranslation from "next-translate/useTranslation";
+import { memo, useCallback, useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import "twin.macro";
 
-// Enums
-import { PaymentMethodSettingsLabels } from "@enums/PaymentMethodSettingsLabels";
+/**
+ * Custom function to render the `PaymentMethodSettings` component
+ */
+export function PaymentMethodSettings() {
+	// Translations
+	const { t } = useTranslation("settings");
+	const cardInformationTitle = t("settings:cardInformationSettings.title");
 
-// Components
-import ErrorMessageAlert from "@components/alerts/ErrorMessageAlert";
-import PaymentMethodForm from "@components/forms/PaymentMethodForm";
-import SuccessMessageAlert from "@components/alerts/SuccessMessageAlert";
+	// SWR hooks
+	const { stripePromise, errorStripePromise, validatingStripePromise } = useStripePromise();
 
-const PaymentMethodSettings = ({
-	componentReady,
-	defaultPaymentMethod,
-	mutateDefaultPaymentMethod,
-	mutatePaymentMethods,
-	paymentMethods,
-	stripePromise
-}) => {
-	const [errorMsg, setErrorMsg] = useState([]);
-	const [successMsg, setSuccessMsg] = useState([]);
+	// Set `stripe` promise
+	const [stripePromiseData, setStripePromiseData] = useState(null);
 
-	const stripePromiseData = useMemo(
-		() =>
-			componentReady && stripePromise
-				? loadStripe(stripePromise?.publishable_key, { stripePromise })
-				: null,
-		[stripePromise, componentReady]
-	);
+	// Custom hooks
+	const { isComponentReady } = useLoading();
+
+	// Handle `stripe` promise
+	const handleStripePromise = useCallback(async () => {
+		if (!validatingStripePromise) {
+			if (!errorStripePromise && typeof stripePromise !== "undefined" && stripePromise !== null) {
+				const stripePromisePublishableKey = await stripePromise?.data?.publishable_key;
+
+				setStripePromiseData(loadStripe(stripePromisePublishableKey, { stripePromise }));
+			}
+		}
+	}, [stripePromise, validatingStripePromise, errorStripePromise]);
+
+	useEffect(() => {
+		handleStripePromise();
+	}, [handleStripePromise]);
 
 	return (
-		<div>
-			{errorMsg.length > 0
-				? errorMsg.map((value, index) => <ErrorMessageAlert key={index} message={value} />)
-				: null}
+		<div tw="pb-12">
+			<h5 tw="text-xl leading-6 font-bold text-gray-900">
+				{isComponentReady ? cardInformationTitle : <Skeleton duration={2} width={175} height={24} />}
+			</h5>
 
-			{successMsg.length > 0
-				? successMsg.map((value, index) => <SuccessMessageAlert key={index} message={value} />)
-				: null}
-
-			{/* TODO: Develop a separate component, settingsLabel */}
-			<div tw="max-w-full p-4">
-				<div tw="pt-4 m-auto">
-					<h5 tw="text-xl leading-6 font-medium text-gray-900">
-						{PaymentMethodSettingsLabels[0].label}
-					</h5>
-					<p tw="max-w-full mt-2 text-sm leading-5 text-gray-500">
-						{PaymentMethodSettingsLabels[0].description}
-					</p>
-				</div>
-			</div>
-
-			<div tw="max-w-full lg:max-w-3xl p-4 pt-0 pb-2">
-				<Elements stripe={stripePromiseData}>
-					<PaymentMethodForm
-						componentReady={componentReady}
-						defaultPaymentMethod={defaultPaymentMethod}
-						mutateDefaultPaymentMethod={mutateDefaultPaymentMethod}
-						mutatePaymentMethods={mutatePaymentMethods}
-						paymentMethods={paymentMethods}
-						setErrorMsg={setErrorMsg}
-						setSuccessMsg={setSuccessMsg}
-					/>
-				</Elements>
-			</div>
+			<Elements stripe={stripePromiseData}>
+				<MemoizedPaymentMethodForm />
+			</Elements>
 		</div>
 	);
-};
+}
 
-PaymentMethodSettings.propTypes = {
-	componentReady: PropTypes.bool,
-	defaultPaymentMethod: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-	mutateDefaultPaymentMethod: PropTypes.func,
-	mutatePaymentMethods: PropTypes.func,
-	paymentMethods: PropTypes.oneOfType([PropTypes.array, PropTypes.string]),
-	stripePromise: PropTypes.object
-};
-
-PaymentMethodSettings.defaultProps = {
-	componentReady: false,
-	defaultPaymentMethod: null,
-	mutateDefaultPaymentMethod: null,
-	mutatePaymentMethods: null,
-	paymentMethods: null,
-	stripePromise: null
-};
-
-export default PaymentMethodSettings;
+/**
+ * Memoized custom `PaymentMethodSettings` component
+ */
+export const MemoizedPaymentMethodSettings = memo(PaymentMethodSettings);
