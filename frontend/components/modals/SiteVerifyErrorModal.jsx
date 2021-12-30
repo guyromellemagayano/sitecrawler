@@ -1,16 +1,13 @@
 // React
-import { useEffect } from "react";
-
-// NextJS
-import Link from "next/link";
-
-// External
-import "twin.macro";
 import { Transition } from "@headlessui/react";
 import { XCircleIcon } from "@heroicons/react/solid";
+// NextJS
+import Link from "next/link";
 import PropTypes from "prop-types";
+import { useEffect } from "react";
 import ReactHtmlParser from "react-html-parser";
-
+// External
+import "twin.macro";
 // JSON
 import SiteVerifyModalLabel from "./labels/SiteVerifyModal.json";
 
@@ -101,8 +98,8 @@ const SiteVerifyErrorModal = ({ showModal, handleShowModal }) => {
 };
 
 SiteVerifyErrorModal.propTypes = {
-	showModal: PropTypes.bool,
-	handleShowModal: PropTypes.func
+	showModal: PropTypes.bool.isRequired,
+	handleShowModal: PropTypes.func.isRequired
 };
 
 SiteVerifyErrorModal.defaultProps = {

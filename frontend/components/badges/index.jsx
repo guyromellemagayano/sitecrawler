@@ -21,10 +21,10 @@ const Badge = (isDanger = false, isSuccess = false, isWarning = false, text = nu
 };
 
 Badge.propTypes = {
-	isDanger: PropTypes.bool,
-	isSuccess: PropTypes.bool,
-	isWarning: PropTypes.bool,
-	text: PropTypes.string
+	isDanger: PropTypes.bool.isRequired,
+	isSuccess: PropTypes.bool.isRequired,
+	isWarning: PropTypes.bool.isRequired,
+	text: PropTypes.string.isRequired
 };
 
 export default Badge;

@@ -79,8 +79,8 @@ export function Alert({ responseText, isSuccess }) {
 }
 
 Alert.propTypes = {
-	isSuccess: PropTypes.bool,
-	responseText: PropTypes.string
+	isSuccess: PropTypes.bool.isRequired,
+	responseText: PropTypes.string.isRequired
 };
 
 /**

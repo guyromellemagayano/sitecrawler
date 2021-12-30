@@ -149,7 +149,7 @@ Breadcrumbs.propTypes = {
 	isPages: PropTypes.bool,
 	isSites: PropTypes.bool,
 	pageDetailTitle: PropTypes.string,
-	pageTitle: PropTypes.string,
+	pageTitle: PropTypes.string.isRequired,
 	siteId: PropTypes.number
 };
 

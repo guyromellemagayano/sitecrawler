@@ -333,8 +333,8 @@ const LinkDetail = ({ result }) => {
 };
 
 LinkDetail.propTypes = {
-	linkId: PropTypes.number,
-	siteId: PropTypes.number
+	linkId: PropTypes.number.isRequired,
+	siteId: PropTypes.number.isRequired
 };
 
 LinkDetail.defaultProps = {

@@ -464,8 +464,8 @@ const PageDetail = ({ result }) => {
 };
 
 PageDetail.propTypes = {
-	pageId: PropTypes.number,
-	siteId: PropTypes.number
+	pageId: PropTypes.number.isRequired,
+	siteId: PropTypes.number.isRequired
 };
 
 PageDetail.defaultProps = {

@@ -7,7 +7,7 @@ import { RevalidationInterval } from "@enums/GlobalValues";
 import { Transition } from "@headlessui/react";
 // External
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
-import { useDeleteMethod } from "@hooks/useHttpMethod";
+import { handleDeleteMethod } from "@hooks/useHttpMethod";
 // NextJS
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -31,7 +31,7 @@ const DeleteSiteModal = forwardRef(({ mutateSite, setShowModal, showModal, siteI
 
 		setDisableDeleteSite(true);
 
-		const response = await useDeleteMethod(SiteIdApiEndpoint);
+		const response = await handleDeleteMethod(SiteIdApiEndpoint);
 
 		return Math.floor(response?.status / 204) === 1
 			? (() => {
@@ -212,10 +212,10 @@ const DeleteSiteModal = forwardRef(({ mutateSite, setShowModal, showModal, siteI
 });
 
 DeleteSiteModal.propTypes = {
-	mutateSite: PropTypes.func,
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool,
-	siteId: PropTypes.number
+	mutateSite: PropTypes.func.isRequired,
+	setShowModal: PropTypes.func.isRequired,
+	showModal: PropTypes.bool.isRequired,
+	siteId: PropTypes.number.isRequired
 };
 
 DeleteSiteModal.defaultProps = {

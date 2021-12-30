@@ -128,7 +128,7 @@ const SiteSettings = ({ result }) => {
 };
 
 SiteSettings.propTypes = {
-	siteId: PropTypes.number
+	siteId: PropTypes.number.isRequired
 };
 
 SiteSettings.defaultProps = {

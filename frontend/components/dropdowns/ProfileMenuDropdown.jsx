@@ -113,7 +113,7 @@ export function ProfileMenuDropdown({ isComponentVisible }) {
 }
 
 ProfileMenuDropdown.propTypes = {
-	isComponentVisible: PropTypes.bool
+	isComponentVisible: PropTypes.bool.isRequired
 };
 
 /**

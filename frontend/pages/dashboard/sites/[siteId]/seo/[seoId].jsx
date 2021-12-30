@@ -318,8 +318,8 @@ const SeoDetail = ({ result }) => {
 };
 
 SeoDetail.propTypes = {
-	seoId: PropTypes.number,
-	siteId: PropTypes.number
+	seoId: PropTypes.number.isRequired,
+	siteId: PropTypes.number.isRequired
 };
 
 SeoDetail.defaultProps = {

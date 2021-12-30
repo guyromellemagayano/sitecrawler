@@ -12,6 +12,7 @@ import PropTypes from "prop-types";
 import { forwardRef, useEffect, useState } from "react";
 import ReactHtmlParser from "react-html-parser";
 import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 // Extenal
 import "twin.macro";
 
@@ -82,7 +83,7 @@ const TlsErrorModal = forwardRef(({ scanObjId, setShowModal, showModal, siteId }
 											pages?.results.map((val, key) => {
 												return componentReady ? (
 													<div key={key} tw="flex-1 mt-1 flex items-center">
-														<LinkIcon tw="flex-shrink h-5 w-5 text-gray-400" />
+														<LinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 														<span tw="ml-2 flex-1 w-0">
 															<Link
 																href="/site/[siteId]/pages/[pageId]/details"
@@ -106,7 +107,7 @@ const TlsErrorModal = forwardRef(({ scanObjId, setShowModal, showModal, siteId }
 											})
 										) : pages?.count > 5 ? (
 											<div tw="flex-1 flex items-center">
-												<LinkIcon tw="flex-shrink h-5 w-5 text-gray-400" />
+												<LinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" />
 												<span tw="ml-2 flex-1 w-0">
 													<Link href={brokenSecurityPageLink} passHref>
 														<a tw="mr-3 flex items-center outline-none focus:outline-none text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -149,10 +150,10 @@ const TlsErrorModal = forwardRef(({ scanObjId, setShowModal, showModal, siteId }
 });
 
 TlsErrorModal.propTypes = {
-	scanObjId: PropTypes.number,
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool,
-	siteId: PropTypes.number
+	scanObjId: PropTypes.number.isRequired,
+	setShowModal: PropTypes.func.isRequired,
+	showModal: PropTypes.bool.isRequired,
+	siteId: PropTypes.number.isRequired
 };
 
 TlsErrorModal.defaultProps = {

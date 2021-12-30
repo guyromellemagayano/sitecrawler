@@ -268,13 +268,13 @@ const SiteVerifyModal = forwardRef(
 );
 
 SiteVerifyModal.propTypes = {
-	mutateSite: PropTypes.func,
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool,
-	siteId: PropTypes.number,
-	siteName: PropTypes.string,
-	siteUrl: PropTypes.string,
-	siteVerificationId: PropTypes.number
+	mutateSite: PropTypes.func.isRequired,
+	setShowModal: PropTypes.func.isRequired,
+	showModal: PropTypes.bool.isRequired,
+	siteId: PropTypes.number.isRequired,
+	siteName: PropTypes.string.isRequired,
+	siteUrl: PropTypes.string.isRequired,
+	siteVerificationId: PropTypes.number.isRequired
 };
 
 SiteVerifyModal.defaultProps = {

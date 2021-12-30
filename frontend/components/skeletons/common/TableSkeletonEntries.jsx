@@ -22,7 +22,7 @@ export function TableSkeletonEntries({ str = null, limit = null }) {
 }
 
 TableSkeletonEntries.propTypes = {
-	limit: PropTypes.number,
+	limit: PropTypes.number.isRequired,
 	str: PropTypes.object
 };
 

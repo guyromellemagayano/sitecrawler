@@ -361,8 +361,8 @@ const ImagesDetail = ({ result }) => {
 };
 
 ImagesDetail.propTypes = {
-	imageId: PropTypes.number,
-	siteId: PropTypes.number
+	imageId: PropTypes.number.isRequired,
+	siteId: PropTypes.number.isRequired
 };
 
 ImagesDetail.defaultProps = {

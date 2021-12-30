@@ -17,11 +17,11 @@ export function AppLogo({ alt = null, height = null, src = null, width = null, c
 }
 
 AppLogo.propTypes = {
-	alt: PropTypes.string,
-	className: PropTypes.string,
-	height: PropTypes.number,
-	src: PropTypes.string,
-	width: PropTypes.number
+	alt: PropTypes.string.isRequired,
+	className: PropTypes.string.isRequired,
+	height: PropTypes.number.isRequired,
+	src: PropTypes.string.isRequired,
+	width: PropTypes.number.isRequired
 };
 
 /**

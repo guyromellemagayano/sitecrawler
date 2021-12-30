@@ -126,12 +126,12 @@ const DataPagination = ({
 };
 
 DataPagination.propTypes = {
-	activePage: PropTypes.number,
-	apiEndpoint: PropTypes.string,
-	componentReady: PropTypes.bool,
-	handleItemsPerPageChange: PropTypes.func,
-	linksPerPage: PropTypes.number,
-	pathName: PropTypes.string
+	activePage: PropTypes.number.isRequired,
+	apiEndpoint: PropTypes.string.isRequired,
+	componentReady: PropTypes.bool.isRequired,
+	handleItemsPerPageChange: PropTypes.func.isRequired,
+	linksPerPage: PropTypes.number.isRequired,
+	pathName: PropTypes.string.isRequired
 };
 
 DataPagination.defaultProps = {
