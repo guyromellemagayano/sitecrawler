@@ -1,6 +1,10 @@
+import { DashboardSlug } from "@constants/PageLinks";
+import { useLoading } from "@hooks/useLoading";
 import Image from "next/image";
-import PropTypes from "prop-types";
-import { memo } from "react";
+import { useRouter } from "next/router";
+import { memo, useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import "twin.macro";
 
 /**
@@ -13,16 +17,34 @@ import "twin.macro";
  * @param {string} className
  */
 export function AppLogo({ alt = null, height = null, src = null, width = null, className = null }) {
-	return <Image src={src} alt={alt} width={width} height={height} className={className} priority />;
-}
+	const [isDashboard, setIsDashboard] = useState(false);
 
-AppLogo.propTypes = {
-	alt: PropTypes.string.isRequired,
-	className: PropTypes.string.isRequired,
-	height: PropTypes.number.isRequired,
-	src: PropTypes.string.isRequired,
-	width: PropTypes.number.isRequired
-};
+	// Router
+	const { asPath } = useRouter();
+
+	// Custom hooks
+	const { isComponentReady } = useLoading();
+
+	useEffect(() => {
+		if (asPath.includes(DashboardSlug)) {
+			setIsDashboard(true);
+		}
+
+		return () => {
+			setIsDashboard(false);
+		};
+	}, [asPath]);
+
+	return isDashboard ? (
+		isComponentReady ? (
+			<Image src={src} alt={alt} width={width} height={height} className={className} priority />
+		) : (
+			<Skeleton duration={2} width={200} height={45} />
+		)
+	) : (
+		<Image src={src} alt={alt} width={width} height={height} className={className} priority />
+	);
+}
 
 /**
  * Memoized custom `AppLogo` component
