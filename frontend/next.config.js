@@ -94,6 +94,11 @@ const NextConfig = {
 				source: "/dashboard/site/:siteId",
 				destination: "/dashboard/sites/:siteId/overview",
 				permanent: true
+			},
+			{
+				source: "/dashboard/sites/:siteId",
+				destination: "/dashboard/sites/:siteId/overview",
+				permanent: true
 			}
 		];
 	}
