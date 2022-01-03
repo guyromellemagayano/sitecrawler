@@ -7,10 +7,12 @@ import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
-import { useSiteIdValidationRedirect } from "@hooks/useSiteIdValidationRedirect";
+import { handleGetMethod } from "@helpers/handleHttpMethods";
+import { handleStringToNumberSanitation } from "@helpers/handleStringSanitation";
 import axios from "axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
+import useSWR, { SWRConfig } from "swr";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req, query }) {
@@ -60,7 +62,12 @@ export async function getServerSideProps({ req, query }) {
 				};
 			} else {
 				return {
-					props: {}
+					props: {
+						query: query,
+						fallback: {
+							"/api/site/": sitesData
+						}
+					}
 				};
 			}
 		} else {
@@ -81,22 +88,38 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-export default function SiteImages() {
-	// Custom hooks
-	const { siteName } = useSiteIdValidationRedirect();
+// Handle `siteId` and render the page if `siteId` exists. Conversely, return to sites dashboard page when `siteId` doesn't exist
+const SiteImagesPage = ({ query }) => {
+	// Queries
+	const { siteId } = query;
+
+	// Pre-render `sites` based on `fallback` by SWR
+	const { data: sites } = useSWR(`/api/site/`, handleGetMethod);
+
+	const sanitizedSiteId = handleStringToNumberSanitation(siteId);
+	const sidMatch = sites?.data?.results?.find((site) => site.id === sanitizedSiteId) ?? null;
+	const siteName = sidMatch?.name ?? null;
 
 	// Translations
 	const { t } = useTranslation();
-	const siteOverviewName = t("sitesImages", { siteName });
+	const siteImagesName = t("sites:sitesImages", { siteName: siteName });
 
 	return (
 		<>
-			<NextSeo title={siteOverviewName} />
-			<MemoizedPageLayout pageTitle={siteOverviewName}>
+			<NextSeo title={siteImagesName} />
+			<MemoizedPageLayout pageTitle={siteImagesName}>
 				<MemoizedComingSoonPageLayout />
 				{/* <MemoizedSiteImagesPageLayout /> */}
 			</MemoizedPageLayout>
 		</>
+	);
+};
+
+export default function SiteImages({ query, fallback }) {
+	return (
+		<SWRConfig value={{ fallback }}>
+			<SiteImagesPage query={query} />
+		</SWRConfig>
 	);
 }
 
