@@ -1,4 +1,9 @@
 {
+	"sitesOverview": "{{siteName}} | Overview",
+	"sitesLinks": "{{siteName}} | Links",
+	"sitesPages": "{{siteName}} | Pages",
+	"sitesImages": "{{siteName}} | Images",
+	"sitesSeo": "{{siteName}} | SEO",
 	"sitesDashboard": "Sites Dashboard",
 	"noAvailableSites": "No Available Sites",
 	"site": "Site",

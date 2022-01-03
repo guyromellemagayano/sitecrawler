@@ -7,12 +7,12 @@ import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
-import { useSites } from "@hooks/useSites";
+import { handleGetMethod } from "@helpers/handleHttpMethods";
+import { handleStringToNumberSanitation } from "@helpers/handleStringSanitation";
 import axios from "axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import useSWR, { SWRConfig } from "swr";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req, query }) {
@@ -42,7 +42,7 @@ export async function getServerSideProps({ req, query }) {
 		Object.keys(userData)?.length > 0 &&
 		Math.round(userStatus / 200) === 1
 	) {
-		const sid = query?.sid ?? null;
+		const sid = query?.siteId ? parseInt(query?.siteId) : null;
 
 		if (
 			typeof sitesData !== "undefined" &&
@@ -62,7 +62,12 @@ export async function getServerSideProps({ req, query }) {
 				};
 			} else {
 				return {
-					props: {}
+					props: {
+						query: query,
+						fallback: {
+							"/api/site/": sitesData
+						}
+					}
 				};
 			}
 		} else {
@@ -83,43 +88,21 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-export default function SiteOverview() {
-	const [siteName, setSiteName] = useState(null);
-	const { sites, errorSites, validatingSites } = useSites();
+// Handle `siteId` and render the page if `siteId` exists. Conversely, return to sites dashboard page when `siteId` doesn't exist
+const SiteOverviewPage = ({ query }) => {
+	// Queries
+	const { siteId } = query;
 
-	// Router
-	const { query } = useRouter();
-	const router = useRouter();
+	// Pre-render `sites` based on `fallback` by SWR
+	const { data: sites } = useSWR(`/api/site/`, handleGetMethod);
 
-	// Handle selected site details
-	const handleSiteDetails = useCallback(async () => {
-		if (!validatingSites) {
-			if (
-				!errorSites &&
-				sites !== null &&
-				!sites?.detail &&
-				Object.keys(sites)?.length > 0 &&
-				Math.round(sites?.status / 200) === 1
-			) {
-				const sid = query?.sid ?? null;
-				const siteMatch = sites?.results?.find((site) => site.id === sid) ?? null;
-
-				if (sid == null || siteMatch == null) {
-					router.replace(DashboardSitesLink, undefined, {});
-				} else {
-					setSiteName(siteMatch?.name ?? null);
-				}
-			}
-		}
-	}, [query, sites, errorSites, validatingSites]);
-
-	useEffect(() => {
-		handleSiteDetails();
-	}, [handleSiteDetails]);
+	const sanitizedSiteId = handleStringToNumberSanitation(siteId);
+	const sidMatch = sites?.data?.results?.find((site) => site.id === sanitizedSiteId) ?? null;
+	const siteName = sidMatch?.name ?? null;
 
 	// Translations
-	const { t } = useTranslation("site");
-	const siteOverviewName = t("site", { siteName });
+	const { t } = useTranslation();
+	const siteOverviewName = t("sites:sitesOverview", { siteName: siteName });
 
 	return (
 		<>
@@ -129,6 +112,14 @@ export default function SiteOverview() {
 				{/* <MemoizedSiteOverviewPageLayout /> */}
 			</MemoizedPageLayout>
 		</>
+	);
+};
+
+export default function SiteOverview({ query, fallback }) {
+	return (
+		<SWRConfig value={{ fallback }}>
+			<SiteOverviewPage query={query} />
+		</SWRConfig>
 	);
 }
 
