@@ -2,7 +2,7 @@ import { DefaultSubscriptionApiEndpoint } from "@constants/ApiEndpoints";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
- * SWR React hook that will handle the current default payment method
+ * SWR React hook that will handle the default payment method
  *
  * @returns {object} defaultSubscription, errorDefaultPaymentMethod, validatingDefaultPaymentMethod
  */
