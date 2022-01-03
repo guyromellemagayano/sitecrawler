@@ -13,7 +13,7 @@ export function SiteWarningStatus({ text = null }) {
 }
 
 SiteWarningStatus.propTypes = {
-	text: PropTypes.string
+	text: PropTypes.string.isRequired
 };
 
 export const MemoizedSiteWarningStatus = memo(SiteWarningStatus);

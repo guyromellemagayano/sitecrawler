@@ -1,7 +1,7 @@
 // External
-import "twin.macro";
 import { DotsCircleHorizontalIcon } from "@heroicons/react/outline";
 import PropTypes from "prop-types";
+import "twin.macro";
 
 const SiteInProgressStatus = ({ text }) => {
 	return (
@@ -13,7 +13,7 @@ const SiteInProgressStatus = ({ text }) => {
 };
 
 SiteInProgressStatus.propTypes = {
-	text: PropTypes.string
+	text: PropTypes.string.isRequired
 };
 
 SiteInProgressStatus.defaultProps = {

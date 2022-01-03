@@ -13,7 +13,7 @@ export function SiteSuccessStatus({ text = null }) {
 }
 
 SiteSuccessStatus.propTypes = {
-	text: PropTypes.string
+	text: PropTypes.string.isRequired
 };
 
 export const MemoizedSiteSuccessStatus = memo(SiteSuccessStatus);

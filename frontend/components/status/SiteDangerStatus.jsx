@@ -1,7 +1,7 @@
 // External
-import "twin.macro";
 import { XCircleIcon } from "@heroicons/react/outline";
 import PropTypes from "prop-types";
+import "twin.macro";
 
 const SiteDangerStatus = ({ text }) => {
 	return (
@@ -13,7 +13,7 @@ const SiteDangerStatus = ({ text }) => {
 };
 
 SiteDangerStatus.propTypes = {
-	text: PropTypes.string
+	text: PropTypes.string.isRequired
 };
 
 SiteDangerStatus.defaultProps = {
