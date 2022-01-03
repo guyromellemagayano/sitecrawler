@@ -85,6 +85,7 @@
 		"creditDebitCardRequired": "credit/debit card required",
 		"endsOn": "Ends on",
 		"processingPlan": "Processing Plan...",
+		"processingPayment": "Processing Payment...",
 		"renewsOn": "Renews on",
 		"requested": "Requested"
 	},
