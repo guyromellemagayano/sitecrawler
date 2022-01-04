@@ -386,7 +386,6 @@ export const CustomTransitions = createGlobalStyle`
     ${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
   }
 
-
 	.payment-method-modal-first-child-enter {
     ${tw`ease-out duration-300`}
   }
