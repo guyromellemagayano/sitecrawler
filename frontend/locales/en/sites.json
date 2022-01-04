@@ -64,5 +64,6 @@
 		"subHeadline": "Watch this video to see how to install the meta tag onto your site.",
 		"tabSrOnly": "Platform select tabs"
 	},
-	"siteOverview": "Site Overview | {{ site }}"
+	"siteOverview": "Site Overview | {{ site }}",
+	"filter": "Filter"
 }
