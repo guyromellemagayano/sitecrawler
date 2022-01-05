@@ -28,7 +28,7 @@ export function PageSorting(props) {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Props
-	const { result, slug, labels, setPagePath } = props;
+	const { result = null, slug = null, labels = null, setPagePath } = props;
 
 	// Router
 	const { asPath } = useRouter();
@@ -48,7 +48,7 @@ export function PageSorting(props) {
 			const sortItem = handleSlugToCamelCase(slug);
 
 			// Handle sorting from given slug
-			const sortKey = handleGetSortKeyFromSlug(labels, slug);
+			const sortKey = handleGetSortKeyFromSlug(labels ?? null, slug);
 
 			// Update `sortOrder` state
 			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));

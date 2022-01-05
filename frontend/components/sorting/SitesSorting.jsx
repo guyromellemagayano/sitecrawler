@@ -6,6 +6,7 @@ import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { handleSlugToCamelCase } from "@helpers/handleSlugToCamelcase";
 import { handleStringToLowerCase } from "@helpers/handleStringToCase";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
 // import { useSWRConfig } from "swr";
 import "twin.macro";
@@ -29,7 +30,7 @@ export function SitesSorting(props) {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Props
-	const { result, slug, labels, setPagePath } = props;
+	const { result = null, slug = null, labels = null, setPagePath } = props;
 
 	// Router
 	const { asPath } = useRouter();
@@ -50,7 +51,7 @@ export function SitesSorting(props) {
 			const sortItem = handleSlugToCamelCase(slug);
 
 			// Handle sorting from given slug
-			const sortKey = handleGetSortKeyFromSlug(labels, slug);
+			const sortKey = handleGetSortKeyFromSlug(labels ?? null, slug);
 
 			// Update `sortOrder` state
 			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
@@ -120,6 +121,15 @@ export function SitesSorting(props) {
 		</div>
 	) : null;
 }
+
+SitesSorting.propTypes = {
+	labels: PropTypes.array,
+	result: PropTypes.shape({
+		ordering: PropTypes.string
+	}),
+	setPagePath: PropTypes.func.isRequired,
+	slug: PropTypes.string
+};
 
 /**
  * Memoized custom `SitesSorting` component
