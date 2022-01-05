@@ -14,12 +14,15 @@ import "twin.macro";
  * @param {string} scanApiEndpoint
  * @param {function} setPagePath
  */
-export function ImageFilter(filterQueryString = null, scanApiEndpoint = null, setPagePath) {
+export function ImageFilter(props) {
 	const [allFilter, setAllFilter] = useState(false);
 	const [unsecuredImagesFilter, setUnsecuredImagesFilter] = useState(false);
 	const [missingAltsFilter, setMissingAltsFilter] = useState(false);
 	const [brokenImagesFilter, setBrokenImagesFilter] = useState(false);
 	const [noIssueFilter, setNoIssueFilter] = useState(false);
+
+	// Props
+	const { filterQueryString = null, scanApiEndpoint = null, setPagePath } = props;
 
 	// Translations
 	const { t } = useTranslation();

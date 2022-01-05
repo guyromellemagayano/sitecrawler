@@ -14,7 +14,7 @@ import "twin.macro";
  * @param {string} scanApiEndpoint
  * @param {function} setPagePath
  */
-export function SeoFilter(filterQueryString = null, scanApiEndpoint = null, setPagePath) {
+export function SeoFilter(props) {
 	const [allFilter, setAllFilter] = useState(false);
 	const [missingDescriptionsFilter, setMissingDescriptionsFilter] = useState(false);
 	const [missingFirstH1Filter, setMissingFirstH1Filter] = useState(false);
@@ -23,6 +23,9 @@ export function SeoFilter(filterQueryString = null, scanApiEndpoint = null, setP
 	const [missingSecondH2Filter, setMissingSecondH2Filter] = useState(false);
 	const [noIssueFilter, setNoIssueFilter] = useState(false);
 	const [missingTitlesFilter, setMissingTitlesFilter] = useState(false);
+
+	// Props
+	const { filterQueryString = null, scanApiEndpoint = null, setPagePath } = props;
 
 	// Translations
 	const { t } = useTranslation();

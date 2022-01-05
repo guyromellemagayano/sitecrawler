@@ -14,13 +14,16 @@ import "twin.macro";
  * @param {string} scanApiEndpoint
  * @param {function} setPagePath
  */
-export function PageFilter(filterQueryString = null, scanApiEndpoint = null, setPagePath) {
+export function PageFilter(props) {
 	const [allFilter, setAllFilter] = useState(false);
 	const [brokenSecurityFilter, setBrokenSecurityFilter] = useState(false);
 	const [duplicateDescriptionsFilter, setDuplicateDescriptionsFilter] = useState(false);
 	const [duplicateTitlesFilter, setDuplicateTitlesFilter] = useState(false);
 	const [largePageSizesFilter, setLargePageSizesFilter] = useState(false);
 	const [noIssueFilter, setNoIssueFilter] = useState(false);
+
+	// Props
+	const { filterQueryString = null, scanApiEndpoint = null, setPagePath } = props;
 
 	// Translations
 	const { t } = useTranslation();

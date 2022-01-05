@@ -14,12 +14,15 @@ import "twin.macro";
  * @param {string} scanApiEndpoint
  * @param {function} setPagePath
  */
-export function LinkFilter(filterQueryString = null, scanApiEndpoint = null, setPagePath) {
+export function LinkFilter(props) {
 	const [allFilter, setAllFilter] = useState(false);
 	const [externalLinksFilter, setExternalLinksFilter] = useState(false);
 	const [internalLinksFilter, setInternalLinksFilter] = useState(false);
 	const [linksWithIssuesFilter, setLinksWithIssuesFilter] = useState(false);
 	const [noIssueFilter, setNoIssueFilter] = useState(false);
+
+	// Props
+	const { filterQueryString = null, scanApiEndpoint = null, setPagePath } = props;
 
 	// Translations
 	const { t } = useTranslation();
