@@ -1,18 +1,15 @@
-// React
-import { useState } from "react";
-
-// NextJS
+/* eslint-disable react-hooks/exhaustive-deps */
+import { orderingByNameQuery } from "@constants/GlobalValues";
+import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
+import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
+import { handleSlugToCamelCase } from "@helpers/handleSlugToCamelcase";
+import { handleStringToLowerCase } from "@helpers/handleStringToCase";
 import { useRouter } from "next/router";
-
-// External
-import "twin.macro";
 import PropTypes from "prop-types";
-
-// Components
-import Sorting from "./common/Sorting";
-
-// Utils
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "@utils/functions";
+import { memo, useCallback, useEffect, useState } from "react";
+// import { useSWRConfig } from "swr";
+import "twin.macro";
+import { MemoizedSorting } from "./common/Sorting";
 
 const initialOrder = {
 	linkUrl: "default",
@@ -23,86 +20,125 @@ const initialOrder = {
 	occurrences: "default"
 };
 
-const LinkSorting = ({ result, slug, mutateLinks, labels, setPagePath }) => {
+/**
+ * Custom function to render the `LinkSorting` common component
+ *
+ * @param {object} result
+ * @param {string} slug
+ * @param {array} labels
+ * @param {function} setPagePath
+ */
+export function LinkSorting(props) {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
+	// Props
+	const { result, slug, labels, setPagePath } = props;
+
+	// Router
 	const { asPath } = useRouter();
 	const router = useRouter();
 
-	const handleSort = (slug, dir) => {
-		setSortOrder({ ...initialOrder });
+	// SWR hook for global mutations
+	// const { mutate } = useSWRConfig();
 
-		let newPath = removeURLParameter(asPath, "ordering");
+	// Handle sort
+	const handleSort = useCallback(
+		async (slug, dir) => {
+			setSortOrder({ ...initialOrder });
 
-		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(labels, slug);
+			// Remove `ordering` URL parameter
+			let newPath = handleRemoveUrlParameter(asPath, "ordering");
 
-		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
+			// Handle slug to camelcase
+			const sortItem = handleSlugToCamelCase(slug);
 
-		if (dir == "asc") {
-			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-			else newPath += `?ordering=${sortKey}`;
-		} else if (dir == "desc") {
-			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-			else newPath += `?ordering=-${sortKey}`;
-		} else {
-			newPath = removeURLParameter(newPath, "ordering");
-		}
+			// Handle sorting from given slug
+			const sortKey = handleGetSortKeyFromSlug(labels, slug);
 
-		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
-		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
+			// Update `sortOrder` state
+			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
-		router.push(newPath);
-		mutateLinks;
-	};
+			// Sanitize `ordering` values
+			const sanitizedDir = handleStringToLowerCase(dir);
 
-	return slug !== undefined ? (
+			if (sanitizedDir === "asc") {
+				if (newPath.includes("?")) newPath += `&${orderingByNameQuery + sortKey}`;
+				else newPath += `?${orderingByNameQuery + sortKey}`;
+			} else if (sanitizedDir === "desc") {
+				if (newPath.includes("?")) newPath += `&${orderingByNameQuery + "-" + sortKey}`;
+				else newPath += `?${orderingByNameQuery + "-" + sortKey}`;
+			} else {
+				newPath = handleRemoveUrlParameter(newPath, "ordering");
+			}
+
+			if (newPath.includes("?")) setPagePath(`${handleRemoveUrlParameter(newPath, "page")}&`);
+			else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
+
+			// Mutate function here
+			// mutate(linksEndpoint, false)
+
+			router.push(newPath);
+		},
+		[asPath, labels]
+	);
+
+	useEffect(() => {
+		handleSort();
+	}, [handleSort]);
+
+	return typeof slug !== undefined &&
+		slug !== null &&
+		(slug === "link-url" ||
+			slug === "url-type" ||
+			slug === "status" ||
+			slug === "http-code" ||
+			slug === "occurrences") ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
-					{slug == "link-url" ? (
-						<Sorting
+					{slug === "link-url" ? (
+						<MemoizedSorting
 							setSortOrder={setSortOrder}
 							tableContent={labels}
-							ordering={result?.ordering}
-							direction={sortOrder.linkUrl}
-							onSortHandler={handleSort}
+							ordering={result?.ordering ?? null}
+							direction={sortOrder?.linkUrl ?? null}
+							handleSort={handleSort}
 							slug={slug}
 						/>
-					) : slug == "url-type" ? (
-						<Sorting
+					) : slug === "url-type" ? (
+						<MemoizedSorting
 							setSortOrder={setSortOrder}
 							tableContent={labels}
-							ordering={result?.ordering}
-							direction={sortOrder.urlType}
-							onSortHandler={handleSort}
+							ordering={result?.ordering ?? null}
+							direction={sortOrder?.urlType ?? null}
+							handleSort={handleSort}
 							slug={slug}
 						/>
-					) : slug == "status" ? (
-						<Sorting
+					) : slug === "status" ? (
+						<MemoizedSorting
 							setSortOrder={setSortOrder}
 							tableContent={labels}
-							ordering={result?.ordering}
-							direction={sortOrder.status}
-							onSortHandler={handleSort}
+							ordering={result?.ordering ?? null}
+							direction={sortOrder?.status ?? null}
+							handleSort={handleSort}
 							slug={slug}
 						/>
-					) : slug == "http-code" ? (
-						<Sorting
+					) : slug === "http-code" ? (
+						<MemoizedSorting
 							setSortOrder={setSortOrder}
 							tableContent={labels}
-							ordering={result?.ordering}
-							direction={sortOrder.httpCode}
-							onSortHandler={handleSort}
+							ordering={result?.ordering ?? null}
+							direction={sortOrder?.httpCode ?? null}
+							handleSort={handleSort}
 							slug={slug}
 						/>
-					) : slug == "occurrences" ? (
-						<Sorting
+					) : slug === "occurrences" ? (
+						<MemoizedSorting
 							setSortOrder={setSortOrder}
 							tableContent={labels}
-							ordering={result?.ordering}
-							direction={sortOrder.occurrences}
-							onSortHandler={handleSort}
+							ordering={result?.ordering ?? null}
+							direction={sortOrder?.occurrences ?? null}
+							handleSort={handleSort}
 							slug={slug}
 						/>
 					) : null}
@@ -110,22 +146,18 @@ const LinkSorting = ({ result, slug, mutateLinks, labels, setPagePath }) => {
 			</div>
 		</div>
 	) : null;
-};
+}
 
 LinkSorting.propTypes = {
 	labels: PropTypes.array,
-	mutateLinks: PropTypes.func,
-	ordering: PropTypes.string,
-	setPagePath: PropTypes.func,
+	result: PropTypes.shape({
+		ordering: PropTypes.string
+	}),
+	setPagePath: PropTypes.func.isRequired,
 	slug: PropTypes.string
 };
 
-LinkSorting.defaultProps = {
-	labels: null,
-	mutateLinks: null,
-	ordering: null,
-	setPagePath: null,
-	slug: null
-};
-
-export default LinkSorting;
+/**
+ * Memoized custom `LinkSorting` component
+ */
+export const MemoizedLinkSorting = memo(LinkSorting);

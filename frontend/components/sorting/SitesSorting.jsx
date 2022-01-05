@@ -1,33 +1,31 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { MemoizedSorting } from "@components/sorting/common/Sorting";
 import { orderingByNameQuery } from "@constants/GlobalValues";
 import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { handleSlugToCamelCase } from "@helpers/handleSlugToCamelcase";
 import { handleStringToLowerCase } from "@helpers/handleStringToCase";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
-import "twin.macro";
 // import { useSWRConfig } from "swr";
-import { MemoizedSorting } from "./common/Sorting";
+import "twin.macro";
 
 const initialOrder = {
-	pageUrl: "default",
-	createdAt: "default",
-	totalLinks: "default",
-	totalOkLinks: "default",
-	totalNonOkLinks: "default"
+	siteName: "asc",
+	crawlStatus: "default",
+	lastCrawled: "default",
+	totalIssues: "default"
 };
 
 /**
- * Custom function to render the `SeoSorting` common component
+ * Custom function to render the `SitesSorting` common component
  *
  * @param {object} result
  * @param {string} slug
  * @param {array} labels
  * @param {function} setPagePath
  */
-export function SeoSorting(props) {
+export function SitesSorting(props) {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Props
@@ -74,7 +72,7 @@ export function SeoSorting(props) {
 			else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
 
 			// Mutate function here
-			// mutate(seoEndpoint, false)
+			// mutate(sitesEndpoint, false)
 
 			router.push(newPath);
 		},
@@ -87,76 +85,43 @@ export function SeoSorting(props) {
 
 	return typeof slug !== undefined &&
 		slug !== null &&
-		(slug === "page-url" ||
-			slug === "created-at" ||
-			slug === "total-links" ||
-			slug === "total-ok-links" ||
-			slug === "total-non-ok-links") ? (
+		(slug === "site-name" || slug === "crawl-status" || slug === "last-crawled") ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
-				<span>
-					{slug == "page-url" ? (
-						<MemoizedSorting
-							setSortOrder={setSortOrder}
-							tableContent={labels}
-							ordering={result?.ordering ?? null}
-							direction={sortOrder?.pageUrl ?? null}
-							handleSort={handleSort}
-							slug={slug}
-						/>
-					) : slug == "created-at" ? (
-						<MemoizedSorting
-							setSortOrder={setSortOrder}
-							tableContent={labels}
-							ordering={result?.ordering ?? null}
-							direction={sortOrder?.createdAt ?? null}
-							handleSort={handleSort}
-							slug={slug}
-						/>
-					) : slug == "total-links" ? (
-						<MemoizedSorting
-							setSortOrder={setSortOrder}
-							tableContent={labels}
-							ordering={result?.ordering ?? null}
-							direction={sortOrder?.totalLinks ?? null}
-							handleSort={handleSort}
-							slug={slug}
-						/>
-					) : slug == "total-ok-links" ? (
-						<MemoizedSorting
-							setSortOrder={setSortOrder}
-							tableContent={labels}
-							ordering={result?.ordering ?? null}
-							direction={sortOrder?.totalOkLinks ?? null}
-							handleSort={handleSort}
-							slug={slug}
-						/>
-					) : slug == "total-non-ok-links" ? (
-						<MemoizedSorting
-							setSortOrder={setSortOrder}
-							tableContent={labels}
-							ordering={result?.ordering ?? null}
-							direction={sortOrder?.totalNonOkLinks ?? null}
-							handleSort={handleSort}
-							slug={slug}
-						/>
-					) : null}
-				</span>
+				{slug === "site-name" ? (
+					<MemoizedSorting
+						setSortOrder={setSortOrder}
+						tableContent={labels}
+						ordering={result?.ordering ?? null}
+						direction={sortOrder?.siteName ?? null}
+						handleSort={handleSort}
+						slug={slug}
+					/>
+				) : slug === "crawl-status" ? (
+					<MemoizedSorting
+						setSortOrder={setSortOrder}
+						tableContent={labels}
+						ordering={result?.ordering ?? null}
+						direction={sortOrder?.crawlStatus ?? null}
+						handleSort={handleSort}
+						slug={slug}
+					/>
+				) : slug === "last-crawled" ? (
+					<MemoizedSorting
+						setSortOrder={setSortOrder}
+						tableContent={labels}
+						ordering={result?.ordering ?? null}
+						direction={sortOrder?.lastCrawled ?? null}
+						handleSort={handleSort}
+						slug={slug}
+					/>
+				) : null}
 			</div>
 		</div>
 	) : null;
 }
 
-SeoSorting.propTypes = {
-	labels: PropTypes.array,
-	result: PropTypes.shape({
-		ordering: PropTypes.string
-	}),
-	setPagePath: PropTypes.func.isRequired,
-	slug: PropTypes.string
-};
-
 /**
- * Memoized custom `SeoSorting` component
+ * Memoized custom `SitesSorting` component
  */
-export const MemoizedSeoSorting = memo(SeoSorting);
+export const MemoizedSitesSorting = memo(SitesSorting);
