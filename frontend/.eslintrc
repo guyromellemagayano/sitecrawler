@@ -27,7 +27,7 @@
 			"jsx": true
 		},
 		"babelOptions": {
-			"presets": ["@babel/preset-react"]
+			"presets": ["@babel/preset-env", "@babel/preset-react"]
 		}
 	},
 	"rules": {
@@ -36,9 +36,13 @@
 		"react/prop-types": "off",
 		"react/jsx-uses-react": "off",
 		"react/react-in-jsx-scope": "off",
+		"react/display-name": "off",
 		"no-unused-vars": "off",
-		"no-anonymous-exports-page-templates": "warn",
-		"limited-exports-page-templates": "warn"
+		"react-hooks/exhaustive-deps": "off",
+		"jsx-a11y/anchor-is-valid": "off",
+		"jsx-a11y/no-autofocus": "off",
+		"import/no-unresolved": "off",
+		"import/named": "off"
 	},
 	"settings": {
 		"react": {
@@ -46,7 +50,8 @@
 		},
 		"import/resolver": {
 			"jsconfig": {
-				"config": "./jsconfig.json"
+				"config": "jsconfig.json",
+				"extensions": [".js", ".jsx"]
 			},
 			"node": {
 				"extensions": [".js", ".jsx"]
