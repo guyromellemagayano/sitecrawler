@@ -1,4 +1,4 @@
-import { handleRemoveURLParameter } from "@helpers/handleRemoveUrlParameter";
+import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useRouter } from "next/router";
 import { useSWRConfig } from "swr";
 
@@ -21,11 +21,11 @@ export const useItemsPerPageChange = async (scanApiEndpoint = null, count = 0, s
 	const countValue = count?.target?.value ? parseInt(count?.target?.value) : null;
 
 	let newPath = asPath;
-	newPath = handleRemoveURLParameter(newPath, "page");
+	newPath = handleRemoveUrlParameter(newPath, "page");
 
 	countValue !== null
 		? (() => {
-				newPath.includes("per_page") ? (newPath = handleRemoveURLParameter(newPath, "per_page")) : null;
+				newPath.includes("per_page") ? (newPath = handleRemoveUrlParameter(newPath, "per_page")) : null;
 				newPath.includes("?")
 					? (() => {
 							newPath += `&per_page=${countValue}`;
@@ -40,6 +40,6 @@ export const useItemsPerPageChange = async (scanApiEndpoint = null, count = 0, s
 		  })()
 		: null;
 
-	mutate(scanApiEndpoint, false);
+	await mutate(scanApiEndpoint, false);
 	router.push(newPath);
 };
