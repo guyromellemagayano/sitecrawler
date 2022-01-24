@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedSitesList } from "@components/lists/SitesList";
 import { ComponentReadyInterval } from "@constants/GlobalValues";
-import { AddNewSiteLink, DashboardSiteSlug, SiteOverviewSlug } from "@constants/PageLinks";
+import { AddNewSiteLink, DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/solid";
@@ -53,7 +53,7 @@ export function SiteSelectDropdown({ selectedSiteId, handleSiteSelectOnLoad, ope
 		) {
 			setTimeout(() => {
 				router.push({
-					pathname: `${DashboardSiteSlug}[siteId]${SiteOverviewSlug}`,
+					pathname: `${DashboardSitesLink}[siteId]${SiteOverviewSlug}`,
 					query: {
 						siteId: selectedSiteId,
 						scanObjId: scanObjId
