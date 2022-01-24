@@ -1,6 +1,6 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { memo, useEffect, useRef, useState } from "react";
-import { usePostMethod } from "./useHttpMethod";
+import { handlePostMethod } from "@helpers/handleHttpMethods";
+import { useEffect, useRef, useState } from "react";
 import { useScan } from "./useScan";
 
 /**
@@ -9,7 +9,7 @@ import { useScan } from "./useScan";
  * @param {number} siteId
  * @returns {object} selectedSiteRef, handleCrawl, currentScan, previousScan, scanCount, isCrawlStarted, isCrawlFinished
  */
-export const useCrawl = memo((siteId = null) => {
+export const useCrawl = (siteId = null) => {
 	const [isCrawlFinished, setIsCrawlFinished] = useState(true);
 	const [isCrawlStarted, setIsCrawlStarted] = useState(false);
 	const [currentScan, setCurrentScan] = useState(null);
@@ -21,7 +21,7 @@ export const useCrawl = memo((siteId = null) => {
 	const { scan } = useScan(siteId ?? null);
 
 	const handleMutateCurrentSite = async (endpoint) => {
-		const mutateCurrentSiteResponse = await usePostMethod(endpoint);
+		const mutateCurrentSiteResponse = await handlePostMethod(endpoint);
 		const mutateCurrentSiteResponseStatus = mutateCurrentSiteResponse.status ?? null;
 
 		return mutateCurrentSiteResponseStatus !== null && Math.floor(mutateCurrentSiteResponseStatus / 200) === 1
@@ -75,4 +75,4 @@ export const useCrawl = memo((siteId = null) => {
 		isCrawlStarted,
 		isCrawlFinished
 	};
-});
+};
