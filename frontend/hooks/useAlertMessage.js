@@ -31,6 +31,7 @@ export function useAlertMessage() {
 		isSites: false,
 		isStats: false,
 		isPaymentMethod: false,
+		isSubscriptions: false,
 		isSupport: false,
 		isUser: false,
 		method: null,
@@ -437,6 +438,7 @@ export function useAlertMessage() {
 			const isSites = config?.isSites ?? false;
 			const isStats = config?.isStats ?? false;
 			const isPaymentMethod = config?.isPaymentMethod ?? false;
+			const isSubscriptions = config?.isSubscriptions ?? false;
 			const isSupport = config?.isSupport ?? false;
 			const isUser = config?.isUser ?? false;
 			const method = config?.method ?? null;
@@ -460,6 +462,7 @@ export function useAlertMessage() {
 					isSites ||
 					isStats ||
 					isPaymentMethod ||
+					isSubscriptions ||
 					isSupport ||
 					isUser)
 			) {
