@@ -1,9 +1,10 @@
 import { handleStringToLowerCase } from "@helpers/handleStringToCase";
 import { handleUnitAmountToRealPrice } from "@helpers/handleUnitAmountToRealPrice";
 import { CheckIcon } from "@heroicons/react/solid";
+import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 
@@ -11,8 +12,11 @@ import tw from "twin.macro";
  * Custom function to render the `BasicPlan` component
  */
 export function BasicPlan(props) {
+	const [currentSubscriptionId, setCurrentSubscriptionId] = useState(null);
+	const [currentSubscriptionCancelAt, setCurrentSubscriptionCancelAt] = useState(null);
+
 	// Props
-	const { data, defaultSubscription, setPlanId, setPlanName, setShowModal } = props;
+	const { data, setPlanId, setPlanName, setOpen } = props;
 
 	// Translation
 	const { t } = useTranslation();
@@ -21,14 +25,29 @@ export function BasicPlan(props) {
 	const subscriptionPlansCurrentPlan = t("settings:subscriptionPlans.plan.current");
 	const subscriptionPlansRequested = t("settings:subscriptionPlans.requested");
 
+	// SWR hooks
+	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription();
+
 	// Custom variables
 	const planId = data?.id ?? null;
 	const planName = handleStringToLowerCase(data?.plan?.name ?? null);
 	const planNameTitle = data?.plan?.name ?? null;
 	const planPrice = handleUnitAmountToRealPrice(data?.price?.unit_amount ?? null);
 	const planFeatures = data?.features ?? null;
-	const defaultSubscriptionId = defaultSubscription?.id ?? null;
-	const defaultSubscriptionCancelAt = defaultSubscription?.cancel_at ?? null;
+
+	// Handle current subscription
+	const handleCurrentSubscription = useCallback(async () => {
+		if (!validatingCurrentSubscription) {
+			if (!errorCurrentSubscription && typeof currentSubscription !== "undefined" && currentSubscription !== null) {
+				setCurrentSubscriptionId(currentSubscription?.id ?? null);
+				setCurrentSubscriptionCancelAt(currentSubscription?.cancel_at ?? null);
+			}
+		}
+	}, [currentSubscription, errorCurrentSubscription, validatingCurrentSubscription]);
+
+	useEffect(() => {
+		handleCurrentSubscription();
+	}, [handleCurrentSubscription]);
 
 	return (
 		<div tw="mx-auto max-w-md lg:mx-0 lg:max-w-none lg:col-start-1 lg:col-end-3 lg:row-start-2 lg:row-end-3">
@@ -65,16 +84,16 @@ export function BasicPlan(props) {
 							<div
 								css={[
 									tw`rounded-lg`,
-									planName === "basic" && defaultSubscriptionId == null ? tw`shadow-none` : tw`shadow-sm`
+									planName === "basic" && currentSubscriptionId == null ? tw`shadow-none` : tw`shadow-sm`
 								]}
 							>
 								<button
 									type="button"
-									disabled={planName === "basic" && defaultSubscriptionId == null ? true : false}
+									disabled={planName === "basic" && currentSubscriptionId == null ? true : false}
 									css={[
 										tw`block w-full text-center rounded-lg border px-6 py-4 text-lg leading-6 font-medium border-transparent text-white focus:outline-none focus:ring-2 focus:ring-offset-2`,
-										planName === "basic" && defaultSubscriptionId == null
-											? defaultSubscriptionCancelAt == null
+										planName === "basic" && currentSubscriptionId == null
+											? currentSubscriptionCancelAt == null
 												? tw`cursor-default text-indigo-600 border-indigo-700`
 												: tw`cursor-default bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500`
 											: tw`cursor-pointer bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500`
@@ -82,12 +101,12 @@ export function BasicPlan(props) {
 									onClick={() => {
 										setPlanId(planId);
 										setPlanName(planName);
-										setShowModal(true);
+										setOpen(true);
 									}}
 								>
-									{planId === "basic" && defaultSubscriptionId == null
+									{planId === "basic" && currentSubscriptionId == null
 										? subscriptionPlansCurrentPlan
-										: defaultSubscriptionCancelAt !== null
+										: currentSubscriptionCancelAt !== null
 										? subscriptionPlansRequested
 										: subscriptionPlansSelectPlan}
 								</button>
@@ -111,12 +130,9 @@ BasicPlan.propTypes = {
 			unit_amount: PropTypes.number.isRequired
 		})
 	}),
-	defaultSubscription: PropTypes.shape({
-		id: PropTypes.number.isRequired
-	}),
-	setPlanId: PropTypes.func,
-	setPlanName: PropTypes.func,
-	setShowModal: PropTypes.func
+	setPlanId: PropTypes.func.isRequired,
+	setPlanName: PropTypes.func.isRequired,
+	setOpen: PropTypes.func.isRequired
 };
 
 /**

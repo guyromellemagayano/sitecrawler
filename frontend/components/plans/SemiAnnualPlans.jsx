@@ -1,27 +1,24 @@
 import { handleStringToLowerCase } from "@helpers/handleStringToCase";
 import { handleUnitAmountToRealPrice } from "@helpers/handleUnitAmountToRealPrice";
 import { CheckIcon } from "@heroicons/react/solid";
+import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import tw from "twin.macro";
 
 /**
  * Custom function to render the `SemiAnnualPlans` component
  */
 export function SemiAnnualPlans(props) {
+	const [currentSubscriptionId, setCurrentSubscriptionId] = useState(null);
+	const [currentSubscriptionStatus, setCurrentSubscriptionStatus] = useState(null);
+	const [currentSubscriptionCancelAt, setCurrentSubscriptionCancelAt] = useState(null);
+
 	// Props
-	const {
-		data,
-		defaultSubscription,
-		disableLocalTime,
-		loadingAgencySemiAnnually,
-		loadingProSemiAnnually,
-		setShowModal,
-		setPlanId,
-		setPlanName
-	} = props;
+	const { data, disableLocalTime, loadingAgencySemiAnnually, loadingProSemiAnnually, setOpen, setPlanId, setPlanName } =
+		props;
 
 	// Translation
 	const { t } = useTranslation();
@@ -31,6 +28,9 @@ export function SemiAnnualPlans(props) {
 	const subscriptionPlansMostPopular = t("settings:subscriptionPlans.mostPopular");
 	const subscriptionPlansProcessingPlan = t("settings:subscriptionPlans.processingPlan");
 	const subscriptionPlansEndsOn = t("settings:subscriptionPlans.endsOn");
+
+	// SWR hooks
+	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription();
 
 	// Calendar and dayJS plugins
 	const calendar = require("dayjs/plugin/calendar");
@@ -54,9 +54,21 @@ export function SemiAnnualPlans(props) {
 	const planNameTitle = data?.plan?.name ?? null;
 	const planPrice = handleUnitAmountToRealPrice(data?.price?.unit_amount ?? null);
 	const planFeatures = data?.features ?? null;
-	const defaultSubscriptionId = defaultSubscription?.id ?? null;
-	const defaultSubscriptionStatus = defaultSubscription?.status ?? null;
-	const defaultSubscriptionCancelAt = defaultSubscription?.cancel_at ?? null;
+
+	// Handle current subscription
+	const handleCurrentSubscription = useCallback(async () => {
+		if (!validatingCurrentSubscription) {
+			if (!errorCurrentSubscription && typeof currentSubscription !== "undefined" && currentSubscription !== null) {
+				setCurrentSubscriptionId(currentSubscription?.id ?? null);
+				setCurrentSubscriptionStatus(currentSubscription?.status ?? null);
+				setCurrentSubscriptionCancelAt(currentSubscription?.cancel_at ?? null);
+			}
+		}
+	}, [currentSubscription, errorCurrentSubscription, validatingCurrentSubscription]);
+
+	useEffect(() => {
+		handleCurrentSubscription();
+	}, [handleCurrentSubscription]);
 
 	return planName === "pro" ? (
 		<div tw="mt-10 max-w-lg mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-start-3 lg:col-end-6 lg:row-start-1 lg:row-end-4">
@@ -98,17 +110,17 @@ export function SemiAnnualPlans(props) {
 						}) ?? null}
 					</ul>
 					<div tw="mt-10">
-						<div css={[tw`rounded-lg`, planId === defaultSubscriptionId ? tw`shadow-none` : tw`shadow-sm`]}>
-							{planId === defaultSubscriptionId &&
-							defaultSubscriptionStatus === "PAID" &&
-							defaultSubscriptionCancelAt !== null ? (
+						<div css={[tw`rounded-lg`, planId === currentSubscriptionId ? tw`shadow-none` : tw`shadow-sm`]}>
+							{planId === currentSubscriptionId &&
+							currentSubscriptionStatus === "PAID" &&
+							currentSubscriptionCancelAt !== null ? (
 								<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 									<span tw="px-2 py-5 text-gray-600 text-center">
 										<p tw="text-sm font-medium">{subscriptionPlansEndsOn}</p>
 										<p tw="text-xs text-gray-500">
 											{!disableLocalTime
-												? dayjs(defaultSubscriptionCancelAt).calendar(null, calendarStrings)
-												: dayjs.utc(defaultSubscriptionCancelAt).calendar(null, calendarStrings)}
+												? dayjs(currentSubscriptionCancelAt).calendar(null, calendarStrings)
+												: dayjs.utc(currentSubscriptionCancelAt).calendar(null, calendarStrings)}
 											<span tw="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
 										</p>
 									</span>
@@ -117,10 +129,10 @@ export function SemiAnnualPlans(props) {
 
 							<button
 								type="button"
-								disabled={planId === defaultSubscriptionId ? true : false}
+								disabled={planId === currentSubscriptionId ? true : false}
 								css={[
 									tw`block w-full text-center rounded-lg border px-6 py-4 text-lg leading-6 font-medium border-transparent text-white focus:outline-none focus:ring-2 focus:ring-offset-2`,
-									planId === defaultSubscriptionId
+									planId === currentSubscriptionId
 										? loadingProSemiAnnually
 											? tw`opacity-50 cursor-not-allowed bg-indigo-600`
 											: tw`cursor-default text-indigo-600 border-indigo-700`
@@ -129,10 +141,10 @@ export function SemiAnnualPlans(props) {
 								onClick={() => {
 									setPlanId(planId);
 									setPlanName(planName);
-									setShowModal(true);
+									setOpen(true);
 								}}
 							>
-								{planId === defaultSubscriptionId
+								{planId === currentSubscriptionId
 									? subscriptionPlansCurrentPlan
 									: loadingProSemiAnnually
 									? subscriptionPlansProcessingPlan
@@ -143,7 +155,7 @@ export function SemiAnnualPlans(props) {
 				</div>
 			</div>
 		</div>
-	) : (
+	) : planName === "agency" ? (
 		<div tw="mt-10 mx-auto max-w-md lg:m-0 lg:max-w-none lg:col-start-6 lg:col-end-8 lg:row-start-2 lg:row-end-3">
 			<div tw="h-full flex flex-col rounded-lg shadow-lg overflow-hidden lg:rounded-none lg:rounded-r-lg border">
 				<div tw="flex-1 flex flex-col">
@@ -176,17 +188,17 @@ export function SemiAnnualPlans(props) {
 							})}
 						</ul>
 						<div tw="mt-8">
-							<div css={[tw`rounded-lg`, data?.id == defaultSubscription?.id ? tw`shadow-none` : tw`shadow-sm`]}>
-								{planId === defaultSubscriptionId &&
-								defaultSubscriptionStatus === "PAID" &&
-								defaultSubscriptionCancelAt !== null ? (
+							<div css={[tw`rounded-lg`, data?.id == currentSubscription?.id ? tw`shadow-none` : tw`shadow-sm`]}>
+								{planId === currentSubscriptionId &&
+								currentSubscriptionStatus === "PAID" &&
+								currentSubscriptionCancelAt !== null ? (
 									<div tw="relative flex justify-center flex-wrap flex-row text-sm leading-5">
 										<span tw="px-2 py-5 text-gray-600 text-center">
 											<p tw="text-sm font-medium">{subscriptionPlansEndsOn}</p>
 											<p tw="text-xs text-gray-500">
 												{!disableLocalTime
-													? dayjs(defaultSubscriptionCancelAt).calendar(null, calendarStrings)
-													: dayjs.utc(defaultSubscriptionCancelAt).calendar(null, calendarStrings)}
+													? dayjs(currentSubscriptionCancelAt).calendar(null, calendarStrings)
+													: dayjs.utc(currentSubscriptionCancelAt).calendar(null, calendarStrings)}
 												<span tw="ml-1 font-medium">({!disableLocalTime ? dayjs.tz.guess() : "UTC"})</span>
 											</p>
 										</span>
@@ -195,10 +207,10 @@ export function SemiAnnualPlans(props) {
 
 								<button
 									type="button"
-									disabled={planId === defaultSubscriptionId ? true : false}
+									disabled={planId === currentSubscriptionId ? true : false}
 									css={[
 										tw`block w-full text-center rounded-lg border px-6 py-4 text-lg leading-6 font-medium border-transparent text-white focus:outline-none focus:ring-2 focus:ring-offset-2`,
-										planId === defaultSubscriptionId
+										planId === currentSubscriptionId
 											? loadingAgencySemiAnnually
 												? tw`opacity-50 cursor-not-allowed bg-indigo-600`
 												: tw`cursor-default text-indigo-600 border-indigo-700`
@@ -207,10 +219,10 @@ export function SemiAnnualPlans(props) {
 									onClick={() => {
 										setPlanId(planId);
 										setPlanName(planName);
-										setShowModal(true);
+										setOpen(true);
 									}}
 								>
-									{planId === defaultSubscriptionId
+									{planId === currentSubscriptionId
 										? subscriptionPlansCurrentPlan
 										: loadingAgencySemiAnnually
 										? subscriptionPlansProcessingPlan
@@ -222,7 +234,7 @@ export function SemiAnnualPlans(props) {
 				</div>
 			</div>
 		</div>
-	);
+	) : null;
 }
 
 SemiAnnualPlans.propTypes = {
@@ -236,7 +248,7 @@ SemiAnnualPlans.propTypes = {
 			unit_amount: PropTypes.number.isRequired
 		})
 	}),
-	defaultSubscription: PropTypes.shape({
+	currentSubscription: PropTypes.shape({
 		cancel_at: PropTypes.string.isRequired,
 		id: PropTypes.number.isRequired,
 		status: PropTypes.string.isRequired
@@ -246,7 +258,7 @@ SemiAnnualPlans.propTypes = {
 	loadingProSemiAnnually: PropTypes.bool.isRequired,
 	setPlanId: PropTypes.func.isRequired,
 	setPlanName: PropTypes.func.isRequired,
-	setShowModal: PropTypes.func.isRequired
+	setOpen: PropTypes.func.isRequired
 };
 
 /**
