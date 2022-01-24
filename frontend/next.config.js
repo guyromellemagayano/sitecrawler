@@ -5,38 +5,6 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 const { withSentryConfig } = require("@sentry/nextjs");
 const withNextTranslate = require("next-translate");
 
-const SecurityHeaders = [
-	{
-		key: "X-DNS-Prefetch-Control",
-		value: "on"
-	},
-	{
-		key: "Strict-Transport-Security",
-		value: "max-age=63072000; includeSubDomains; preload"
-	},
-	{
-		key: "X-XSS-Protection",
-		value: "1; mode=block"
-	},
-	{
-		key: "X-Frame-Options",
-		value: "SAMEORIGIN"
-	},
-	{
-		key: "Permissions-Policy",
-		value: "geolocation=()"
-	},
-	{
-		key: "X-Content-Type-Options",
-		value: "nosniff"
-	},
-	{
-		key: "Referrer-Policy",
-		value:
-			"no-referrer, no-referrer-when-downgrade, same-origin, origin, strict-origin,, origin-when-cross-origin, strict-origin-when-cross-origin, unsafe-url"
-	}
-];
-
 const NextConfig = {
 	trailingSlash: true,
 	devIndicators: {
@@ -59,19 +27,6 @@ const NextConfig = {
 				: {
 						exclude: ["error"]
 				  }
-	},
-	webpack: (config) => {
-		config.resolve.fallback = { ...config.resolve.fallback, fs: false, path: false, module: false, os: false };
-
-		return config;
-	},
-	async headers() {
-		return [
-			{
-				source: "/(.*)",
-				headers: SecurityHeaders
-			}
-		];
 	},
 	async redirects() {
 		return [
