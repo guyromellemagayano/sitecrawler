@@ -1,6 +1,6 @@
 import { MemoizedAlert } from "@components/alerts";
 // import { MemoizedChangeToBasicModal } from "@components/modals/ChangeToBasicModal";
-import { MemoizedNewActivePlanModal } from "@components/modals/NewActivePlanModal";
+// import { MemoizedNewActivePlanModal } from "@components/modals/NewActivePlanModal";
 import { MemoizedPaymentMethodModal } from "@components/modals/PaymentMethodModal";
 import { MemoizedSubscriptionPlansPricing } from "@components/pricing/SubscriptionPlansPricing";
 import { CurrentSubscriptionApiEndpoint, PaymentMethodApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
@@ -9,7 +9,7 @@ import { handleDeleteMethod, handlePostMethod } from "@helpers/handleHttpMethods
 import { handleStringToLowerCase } from "@helpers/handleStringToCase";
 import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useDefaultSubscription } from "@hooks/useDefaultSubscription";
+import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import { memo, useCallback, useEffect, useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -20,7 +20,6 @@ import "twin.macro";
  * Custom function to render the `SubscriptionPlansPageLayout` component
  */
 export function SubscriptionPlansPageLayout() {
-	const [disableDowngradeToBasicPlan, setDisableDowngradeToBasicPlan] = useState(false);
 	const [intervalCount, setIntervalCount] = useState(0);
 	const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 	const [loadingAgencyMonthly, setLoadingAgencyMonthly] = useState(false);
@@ -30,13 +29,11 @@ export function SubscriptionPlansPageLayout() {
 	const [loadingProSemiAnnually, setLoadingProSemiAnnually] = useState(false);
 	const [planId, setPlanId] = useState(null);
 	const [planName, setPlanName] = useState(null);
-
 	const [togglePaymentPeriod, setTogglePaymentPeriod] = useState(false);
 
 	// SWR hooks
-
 	const { subscriptions, errorSubscriptions, validatingSubscriptions } = useSubscriptions();
-	const { defaultSubscription, errorDefaultSubscription, validatingDefaultSubscription } = useDefaultSubscription();
+	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -47,11 +44,6 @@ export function SubscriptionPlansPageLayout() {
 		ref: newActivePlanModalRef,
 		isComponentVisible: isNewActivePlanModalVisible,
 		setIsComponentVisible: setIsNewActivePlanModalVisible
-	} = useComponentVisible(false);
-	const {
-		ref: changeToBasicPlanModalRef,
-		isComponentVisible: isChangeToBasicPlanModalVisible,
-		setIsComponentVisible: setIsChangeToBasicPlanModalVisible
 	} = useComponentVisible(false);
 	const {
 		ref: paymentMethodModalRef,
@@ -99,9 +91,6 @@ export function SubscriptionPlansPageLayout() {
 				}
 			}
 		} else {
-			// Allow downgrade to Basic Plan
-			setDisableDowngradeToBasicPlan(false);
-
 			// Update `isPaymentMethodModalVisible` state to false
 			setIsPaymentMethodModalVisible(false);
 
@@ -123,49 +112,38 @@ export function SubscriptionPlansPageLayout() {
 			const currentSubscriptionResponseStatus = currentSubscriptionResponse?.status ?? null;
 			const currentSubscriptionResponseMethod = currentSubscriptionResponse?.config?.method ?? null;
 
-			if (
-				currentSubscriptionResponseData !== null &&
-				currentSubscriptionResponseDataStatus === "PAID" &&
-				Math.round(currentSubscriptionResponseStatus / 200) === 1
-			) {
-				// Disable downgrade to Basic Plan
-				setDisableDowngradeToBasicPlan(true);
+			if (currentSubscriptionResponseData !== null && Math.round(currentSubscriptionResponseStatus / 200) === 1) {
+				if (currentSubscriptionResponseDataStatus === "PAID") {
+					// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
+					mutate(CurrentSubscriptionApiEndpoint, false);
 
-				// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
-				mutate(CurrentSubscriptionApiEndpoint, false);
+					const cancelAtCurrentSubscription = currentSubscriptionResponse?.cancel_at ?? null;
 
-				const cancelAtCurrentSubscription = currentSubscriptionResponse?.cancel_at ?? null;
+					if (cancelAtCurrentSubscription !== null) {
+						// Don't load monthly `Pro` plan
+						setLoadingProMonthly(false);
 
-				if (cancelAtCurrentSubscription !== null) {
-					// Allow downgrade to Basic Plan
-					setDisableDowngradeToBasicPlan(false);
+						// Don't load monthly `Agency` plan
+						setLoadingAgencyMonthly(false);
 
-					// Don't load monthly `Pro` plan
-					setLoadingProMonthly(false);
+						// Don't load semi-annually `Pro` plan
+						setLoadingProSemiAnnually(false);
 
-					// Don't load monthly `Agency` plan
-					setLoadingAgencyMonthly(false);
+						// Don't load semi-annually `Agency` plan
+						setLoadingAgencySemiAnnually(false);
 
-					// Don't load semi-annually `Pro` plan
-					setLoadingProSemiAnnually(false);
+						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
+						mutate(UserApiEndpoint, false);
 
-					// Don't load semi-annually `Agency` plan
-					setLoadingAgencySemiAnnually(false);
-
-					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-					mutate(UserApiEndpoint, false);
-
-					// Show alert message after successful 200 OK or 201 Created response is issued
-					setConfig({
-						isCurrentSubscription: true,
-						method: currentSubscriptionResponseMethod,
-						status: currentSubscriptionResponseStatus
-					});
+						// Show alert message after successful 200 OK or 201 Created response is issued
+						setConfig({
+							isCurrentSubscription: true,
+							method: currentSubscriptionResponseMethod,
+							status: currentSubscriptionResponseStatus
+						});
+					}
 				}
 			} else {
-				// Allow downgrade to Basic Plan
-				setDisableDowngradeToBasicPlan(false);
-
 				// Show alert message after unsuccessful 200 OK or 201 Created response is not issued
 				setConfig({
 					isCurrentSubscription: true,
@@ -320,28 +298,32 @@ export function SubscriptionPlansPageLayout() {
 
 	// Handle current payment period
 	const handleCurrentPaymentPeriod = useCallback(async () => {
-		if (!validatingDefaultSubscription && !validatingSubscriptions) {
+		if (!validatingCurrentSubscription && !validatingSubscriptions) {
 			if (
-				!errorDefaultSubscription &&
-				typeof defaultSubscription !== "undefined" &&
-				defaultSubscription !== null &&
-				!defaultSubscription?.data?.detail &&
+				!errorCurrentSubscription &&
+				typeof currentSubscription !== "undefined" &&
+				currentSubscription !== null &&
+				!currentSubscription?.data?.detail &&
 				!errorSubscriptions &&
 				typeof subscriptions !== "undefined" &&
 				subscriptions !== null &&
 				!subscriptions?.data?.detail
 			) {
-				subscriptions
-					?.filter((sub) => sub.id === defaultSubscription?.id)
-					?.map((val) => {
-						setIntervalCount(val.price.recurring.interval_count);
-					}) ?? null;
+				const subscriptionResults = subscriptions?.results ?? null;
+
+				if (subscriptionResults !== null) {
+					subscriptionResults
+						?.filter((sub) => sub.id === currentSubscription?.id)
+						?.map((val) => {
+							setIntervalCount(val.price.recurring.interval_count);
+						}) ?? null;
+				}
 			}
 		}
 	}, [
-		defaultSubscription,
-		errorDefaultSubscription,
-		validatingDefaultSubscription,
+		currentSubscription,
+		errorCurrentSubscription,
+		validatingCurrentSubscription,
 		subscriptions,
 		errorSubscriptions,
 		validatingSubscriptions
@@ -384,28 +366,26 @@ export function SubscriptionPlansPageLayout() {
 				isProcessingPayment={isProcessingPayment}
 				planId={planId}
 				planName={planName}
-				setShowModal={setIsPaymentMethodModalVisible}
-				showModal={isPaymentMethodModalVisible}
+				setOpen={setIsPaymentMethodModalVisible}
+				open={isPaymentMethodModalVisible}
 			/>
 
-			<MemoizedNewActivePlanModal
+			{/* <MemoizedNewActivePlanModal
 				ref={newActivePlanModalRef}
 				planId={planId}
 				planName={planName}
-				setShowModal={setIsNewActivePlanModalVisible}
-				showModal={isNewActivePlanModalVisible}
+				setOpen={setIsNewActivePlanModalVisible}
+				open={isNewActivePlanModalVisible}
 				subscriptions={subscriptions}
-			/>
+			/> */}
 
 			{/* <MemoizedChangeToBasicModal
 				ref={changeToBasicPlanModalRef}
 				planId={planId}
 				planName={planName}
-				defaultSubscription={defaultSubscriptionData}
-				disableDowngradeToBasicPlan={disableDowngradeToBasicPlan}
 				handlePlanSelect={handlePlanSelect}
-				setShowModal={setIsChangeToBasicPlanModalVisible}
-				showModal={isChangeToBasicPlanModalVisible}
+				setOpen={setIsChangeToBasicPlanModalVisible}
+				open={isChangeToBasicPlanModalVisible}
 			/> */}
 
 			<div tw="w-full flex items-start py-4">
@@ -417,8 +397,7 @@ export function SubscriptionPlansPageLayout() {
 					loadingAgencyMonthly={loadingAgencyMonthly}
 					loadingProSemiAnnually={loadingProSemiAnnually}
 					loadingAgencySemiAnnually={loadingAgencySemiAnnually}
-					setIsChangeToBasicPlanModalVisible={setIsChangeToBasicPlanModalVisible}
-					setIsPaymentMethodModalVisible={setIsPaymentMethodModalVisible}
+					setOpen={setIsPaymentMethodModalVisible}
 					setTogglePaymentPeriod={setTogglePaymentPeriod}
 					togglePaymentPeriod={togglePaymentPeriod}
 				/>
