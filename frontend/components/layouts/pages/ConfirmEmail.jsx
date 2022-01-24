@@ -4,11 +4,10 @@ import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { ConfirmEmailApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { LoginLink } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import * as Sentry from "@sentry/nextjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
@@ -31,15 +30,32 @@ export function ConfirmEmailPageLayout() {
 
 	// Translations
 	const { t } = useTranslation();
-	const confirmEmailOkSuccess = t("alerts:confirmEmailOkSuccess");
-	const confirmEmailUnknownError = t("alerts:confirmEmailUnknownError");
-	const loaderMessage = t("common:loaderMessage");
-	const confirmEmailSuccess = t("confirmEmail:confirmEmailSuccess");
 	const confirmEmailFailed = t("confirmEmail:confirmEmailFailed");
+	const confirmEmailSuccess = t("confirmEmail:confirmEmailSuccess");
+	const fallbackUnknownResponse = t("alerts:fallback.unknownResponse");
+	const confirmEmailPost201CreatedSuccessResponse = t("alerts:auth.confirmEmail.post.201CreatedSuccessResponse");
+	const confirmEmailPost400BadRequestErrorResponse = t("alerts:auth.confirmEmail.post.400BadRequestErrorResponse");
+	const confirmEmailPost401UnauthorizedErrorResponse = t("alerts:auth.confirmEmail.post.401UnauthorizedErrorResponse");
+	const confirmEmailPost403ForbiddenErrorResponse = t("alerts:auth.confirmEmail.post.403ForbiddenErrorResponse");
+	const confirmEmailPost404NotFoundErrorResponse = t("alerts:auth.confirmEmail.post.404NotFoundErrorResponse");
+	const confirmEmailPost429TooManyRequestsErrorResponse = t(
+		"alerts:auth.confirmEmail.post.429TooManyRequestsErrorResponse"
+	);
+	const confirmEmailPost500InternalServerErrorResponse = t(
+		"alerts:auth.confirmEmail.post.500InternalServerErrorResponse"
+	);
+	const confirmEmailPost502BadGatewayErrorResponse = t("alerts:auth.confirmEmail.post.502BadGatewayErrorResponse");
+	const confirmEmailPost503ServiceUnavailableErrorResponse = t(
+		"alerts:auth.confirmEmail.post.503ServiceUnavailableErrorResponse"
+	);
+	const confirmEmailPost504GatewayTimeoutErrorResponse = t(
+		"alerts:auth.confirmEmail.post.504GatewayTimeoutErrorResponse"
+	);
 	const goBackLogin = t("common:goBackLogin");
+	const loaderMessage = t("common:loaderMessage");
 	const reloadPage = t("common:reloadPage");
 
-	const handleConfirmEmail = useCallback(async () => {
+	const handleConfirmEmail = useMemo(async () => {
 		const body = {
 			key: query?.id[0] ?? null
 		};
@@ -55,36 +71,60 @@ export function ConfirmEmailPageLayout() {
 			// Update `successMessage` and `success` states with an actual success message as soon as 200 OK or 201 Created response is issued
 			setSuccessMessage((prevState) => [
 				...prevState,
-				prevState.indexOf(confirmEmailOkSuccess) !== -1
-					? prevState.find((prevState) => prevState === confirmEmailOkSuccess)
-					: confirmEmailOkSuccess
+				prevState.indexOf(confirmEmailPost201CreatedSuccessResponse) !== -1
+					? prevState.find((prevState) => prevState === confirmEmailPost201CreatedSuccessResponse)
+					: confirmEmailPost201CreatedSuccessResponse
 			]);
 			setSuccess(true);
 		} else {
 			// Update `errorMessage` and `error` states with an actual success message as soon as an error response is issued
+			let errorStatusCodeMessage = "";
+
+			switch (confirmEmailResponseStatus) {
+				case 400:
+					errorStatusCodeMessage = confirmEmailPost400BadRequestErrorResponse;
+					break;
+				case 401:
+					errorStatusCodeMessage = confirmEmailPost401UnauthorizedErrorResponse;
+					break;
+				case 403:
+					errorStatusCodeMessage = confirmEmailPost403ForbiddenErrorResponse;
+					break;
+				case 404:
+					errorStatusCodeMessage = confirmEmailPost404NotFoundErrorResponse;
+					break;
+				case 429:
+					errorStatusCodeMessage = confirmEmailPost429TooManyRequestsErrorResponse;
+					break;
+				case 500:
+					errorStatusCodeMessage = confirmEmailPost500InternalServerErrorResponse;
+					break;
+				case 502:
+					errorStatusCodeMessage = confirmEmailPost502BadGatewayErrorResponse;
+					break;
+				case 503:
+					errorStatusCodeMessage = confirmEmailPost503ServiceUnavailableErrorResponse;
+					break;
+				case 504:
+					errorStatusCodeMessage = confirmEmailPost504GatewayTimeoutErrorResponse;
+					break;
+				default:
+					errorStatusCodeMessage = fallbackUnknownResponse;
+					break;
+			}
+
 			setErrorMessage((prevState) => [
 				...prevState,
-				prevState.indexOf(confirmEmailUnknownError) !== -1
-					? prevState.find((prevState) => prevState === confirmEmailUnknownError)
-					: confirmEmailUnknownError
+				prevState.indexOf(errorStatusCodeMessage) !== -1
+					? prevState.find((prevState) => prevState === errorStatusCodeMessage)
+					: errorStatusCodeMessage
 			]);
 			setFailure(true);
-
-			// Capture unknown errors and send to Sentry
-			Sentry.configureScope((scope) => {
-				scope.setTag("route", asPath);
-				scope.setTag("status", confirmEmailResponseStatus);
-				scope.setTag(
-					"message",
-					errorMessage.find((message) => message === confirmEmailUnknownError)
-				);
-				Sentry.captureException(new Error(confirmEmailResponse));
-			});
 		}
 	}, [asPath, query]);
 
 	useEffect(() => {
-		handleConfirmEmail();
+		handleConfirmEmail;
 	}, [handleConfirmEmail]);
 
 	return (
@@ -102,7 +142,13 @@ export function ConfirmEmailPageLayout() {
 										success ? tw`text-green-900` : failure ? tw`text-red-900` : tw`text-gray-500`
 									]}
 								>
-									{success ? confirmEmailSuccess : failure ? confirmEmailFailed : loaderMessage}
+									{success ? (
+										confirmEmailSuccess
+									) : failure ? (
+										confirmEmailFailed
+									) : (
+										<span tw="block text-center">{loaderMessage}</span>
+									)}
 								</h3>
 								{success &&
 								typeof successMessage !== "undefined" &&
