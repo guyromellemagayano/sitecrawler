@@ -25,9 +25,6 @@
 		"requireConfigFile": false,
 		"ecmaFeatures": {
 			"jsx": true
-		},
-		"babelOptions": {
-			"presets": ["@babel/preset-env", "@babel/preset-react"]
 		}
 	},
 	"rules": {
