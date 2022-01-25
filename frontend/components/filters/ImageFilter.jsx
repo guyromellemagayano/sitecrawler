@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -14,15 +13,12 @@ import "twin.macro";
  * @param {string} scanApiEndpoint
  * @param {function} setPagePath
  */
-export function ImageFilter(props) {
+const ImageFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPagePath }) => {
 	const [allFilter, setAllFilter] = useState(false);
 	const [unsecuredImagesFilter, setUnsecuredImagesFilter] = useState(false);
 	const [missingAltsFilter, setMissingAltsFilter] = useState(false);
 	const [brokenImagesFilter, setBrokenImagesFilter] = useState(false);
 	const [noIssueFilter, setNoIssueFilter] = useState(false);
-
-	// Props
-	const { filterQueryString = null, scanApiEndpoint = null, setPagePath } = props;
 
 	// Translations
 	const { t } = useTranslation();
@@ -86,8 +82,8 @@ export function ImageFilter(props) {
 				if (newPath.includes("?")) newPath += `&status__neq=OK`;
 				else newPath += `?status__neq=OK`;
 			} else if (filterType === "brokenImages" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("status__neq") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("status__neq") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("status__neq")) {
 					newPath = handleRemoveUrlParameter(newPath, "status__neq");
@@ -110,10 +106,10 @@ export function ImageFilter(props) {
 				if (newPath.includes("?")) newPath += `&status=OK&tls_status=OK&missing_alts__iszero=true`;
 				else newPath += `?status=OK&tls_status=OK&missing_alts__iszero=true`;
 			} else if (filterType === "noIssues" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("status") : null;
-				filterQueryString !== null ? filterQueryString?.delete("tls_status") : null;
-				filterQueryString !== null ? filterQueryString?.delete("missing_alts__iszero") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("status") ?? null;
+				filterQueryString?.delete("tls_status") ?? null;
+				filterQueryString?.delete("missing_alts__iszero") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("status") && newPath.includes("missing_alts__iszero") && newPath.includes("tls_status")) {
 					newPath = handleRemoveUrlParameter(newPath, "missing_alts__iszero");
@@ -140,8 +136,8 @@ export function ImageFilter(props) {
 				if (newPath.includes("?")) newPath += `&tls_status__neq=OK`;
 				else newPath += `?tls_status__neq=OK`;
 			} else if (filterType === "unsecuredImages" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("tls_status__neq") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("tls_status__neq") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("tls_status__neq")) {
 					newPath = handleRemoveUrlParameter(newPath, "tls_status__neq");
@@ -166,8 +162,8 @@ export function ImageFilter(props) {
 				if (newPath.includes("?")) newPath += `&missing_alts__gt=0`;
 				else newPath += `?missing_alts__gt=0`;
 			} else if (filterType === "missingAlts" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("missing_alts__gt") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("missing_alts__gt") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("missing_alts__gt")) {
 					newPath = handleRemoveUrlParameter(newPath, "missing_alts__gt");
@@ -308,12 +304,12 @@ export function ImageFilter(props) {
 			</div>
 		</div>
 	);
-}
+};
 
 ImageFilter.propTypes = {
 	filterQueryString: PropTypes.object,
-	scanApiEndpoint: PropTypes.string.isRequired,
-	setPagePath: PropTypes.func.isRequired
+	scanApiEndpoint: PropTypes.string,
+	setPagePath: PropTypes.func
 };
 
 /**

@@ -8,25 +8,24 @@ import { MemoizedDescSorting } from "./DescSorting";
 /**
  * Custom function to render the `Sorting` common component
  *
- * @param {string} filterQueryString
- * @param {string} scanApiEndpoint
- * @param {function} setPagePath
+ * @param {function} setSortOrder'
+ * @param {array} tableContent
+ * @param {array} ordering
+ * @param {function} handleSort
+ * @param {string} slug
  */
-export function Sorting(props) {
+const Sorting = ({ setSortOrder, tableContent = null, ordering = null, handleSort, slug = null }) => {
 	const [isAscClicked, setIsAscClicked] = useState(false);
 	const [isDescClicked, setIsDescClicked] = useState(false);
 	const [resultSlug, setResultSlug] = useState(null);
 	const [orderItem, setOrderItem] = useState(null);
-
-	// Props
-	const { setSortOrder, tableContent, direction, ordering, handleSort, slug } = props;
 
 	const sortAscRef = useRef(null);
 	const sortDescRef = useRef(null);
 
 	// Handle sort and ordering
 	const handleSortOrdering = useCallback(async () => {
-		if (typeof ordering !== undefined && ordering !== null) {
+		if (ordering !== null) {
 			setResultSlug(handleGetSortKeyFromSlug(tableContent, ordering?.replace("-", "")));
 			setOrderItem(handleSlugToCamelCase(resultSlug));
 
@@ -36,12 +35,20 @@ export function Sorting(props) {
 	}, [orderItem, ordering, resultSlug, setSortOrder, tableContent]);
 
 	useEffect(() => {
-		handleSortOrdering();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSortOrdering();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSortOrdering]);
 
 	// Handle ascending and descending onClick states
 	const handleAscDescOnClickStates = useCallback(async () => {
-		if (typeof ordering !== undefined && ordering !== null) {
+		if (ordering !== null) {
 			if (resultSlug === slug) {
 				if (ordering?.includes("-")) {
 					setIsDescClicked(true);
@@ -58,7 +65,15 @@ export function Sorting(props) {
 	}, [ordering, resultSlug, slug]);
 
 	useEffect(() => {
-		handleAscDescOnClickStates();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleAscDescOnClickStates();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleAscDescOnClickStates]);
 
 	// Handle click event
@@ -100,16 +115,12 @@ export function Sorting(props) {
 			/>
 		</>
 	);
-}
+};
 
 Sorting.propTypes = {
-	direction: PropTypes.string,
-	handleSort: PropTypes.func.isRequired,
-	ordering: PropTypes.shape({
-		includes: PropTypes.func.isRequired,
-		replace: PropTypes.func.isRequired
-	}),
-	setSortOrder: PropTypes.func.isRequired,
+	handleSort: PropTypes.func,
+	ordering: PropTypes.array,
+	setSortOrder: PropTypes.func,
 	slug: PropTypes.string,
 	tableContent: PropTypes.array
 };

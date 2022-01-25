@@ -10,14 +10,27 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `MonthlyPlans` component
+ *
+ * @param {object} data
+ * @param {boolean} disableLocalTime
+ * @param {boolean} loadingAgencyMonthly
+ * @param {boolean} loadingProMonthly
+ * @param {function} setPlanId
+ * @param {function} setPlanName
+ * @param {function} setOpen
  */
-export function MonthlyPlans(props) {
+const MonthlyPlans = ({
+	data = null,
+	disableLocalTime = false,
+	loadingAgencyMonthly = false,
+	loadingProMonthly = false,
+	setOpen,
+	setPlanId,
+	setPlanName
+}) => {
 	const [currentSubscriptionId, setCurrentSubscriptionId] = useState(null);
 	const [currentSubscriptionStatus, setCurrentSubscriptionStatus] = useState(null);
 	const [currentSubscriptionCancelAt, setCurrentSubscriptionCancelAt] = useState(null);
-
-	// Props
-	const { data, disableLocalTime, loadingAgencyMonthly, loadingProMonthly, setOpen, setPlanId, setPlanName } = props;
 
 	// Translation
 	const { t } = useTranslation();
@@ -66,7 +79,15 @@ export function MonthlyPlans(props) {
 	}, [currentSubscription, errorCurrentSubscription, validatingCurrentSubscription]);
 
 	useEffect(() => {
-		handleCurrentSubscription();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleCurrentSubscription();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleCurrentSubscription]);
 
 	return planName === "pro" ? (
@@ -234,25 +255,25 @@ export function MonthlyPlans(props) {
 			</div>
 		</div>
 	) : null;
-}
+};
 
 MonthlyPlans.propTypes = {
 	data: PropTypes.shape({
 		features: PropTypes.array,
-		id: PropTypes.number.isRequired,
+		id: PropTypes.number,
 		plan: PropTypes.shape({
-			name: PropTypes.string.isRequired
+			name: PropTypes.string
 		}),
 		price: PropTypes.shape({
-			unit_amount: PropTypes.number.isRequired
+			unit_amount: PropTypes.number
 		})
 	}),
-	disableLocalTime: PropTypes.bool.isRequired,
-	loadingAgencyMonthly: PropTypes.bool.isRequired,
-	loadingProMonthly: PropTypes.bool.isRequired,
-	setPlanId: PropTypes.func.isRequired,
-	setPlanName: PropTypes.func.isRequired,
-	setOpen: PropTypes.func.isRequired
+	disableLocalTime: PropTypes.bool,
+	loadingAgencyMonthly: PropTypes.bool,
+	loadingProMonthly: PropTypes.bool,
+	setPlanId: PropTypes.func,
+	setPlanName: PropTypes.func,
+	setOpen: PropTypes.func
 };
 
 /**

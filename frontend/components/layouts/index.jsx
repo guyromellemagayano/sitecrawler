@@ -14,7 +14,7 @@ import { MemoizedSidebarLayout } from "./components/Sidebar";
  *
  * @param {any} children
  */
-export function Layout({ children }) {
+const Layout = ({ children }) => {
 	// Router
 	const router = useRouter();
 
@@ -25,7 +25,7 @@ export function Layout({ children }) {
 	}, [router]);
 
 	return <main tw="h-screen">{children}</main>;
-}
+};
 
 Layout.propTypes = {
 	children: PropTypes.any
@@ -41,7 +41,7 @@ export const MemoizedLayout = memo(Layout);
  *
  * @param {any} children
  */
-export function DashboardLayout({ children }) {
+const DashboardLayout = ({ children }) => {
 	// Custom hooks
 	const {
 		ref: dashboardLayoutRef,
@@ -81,7 +81,7 @@ export function DashboardLayout({ children }) {
 			</main>
 		</>
 	);
-}
+};
 
 DashboardLayout.propTypes = {
 	children: PropTypes.any

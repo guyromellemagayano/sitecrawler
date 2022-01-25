@@ -9,7 +9,7 @@ import "twin.macro";
 /**
  * Custom function to render the `PersonalSettings` component
  */
-export function PersonalSettings() {
+const PersonalSettings = () => {
 	// Translations
 	const { t } = useTranslation("settings");
 	const profileInformationUpdateTitle = t("profileInformationUpdate.title");
@@ -26,7 +26,7 @@ export function PersonalSettings() {
 			<MemoizedPersonalSettingsForm />
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `PersonalSettings` component

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedAlert } from "@components/alerts";
 import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useScan } from "@hooks/useScan";
@@ -10,8 +9,11 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `SiteList` component
+ *
+ * @param {object} data
+ * @param {function} handleSiteSelectOnLoad
  */
-export function SiteList({ data, handleSiteSelectOnLoad }) {
+const SiteList = ({ data = null, handleSiteSelectOnLoad }) => {
 	const [scanFinishedAt, setScanFinishedAt] = useState(null);
 	const [scanForceHttps, setScanForceHttps] = useState(null);
 	const [scanCount, setScanCount] = useState(null);
@@ -46,7 +48,15 @@ export function SiteList({ data, handleSiteSelectOnLoad }) {
 	}, [data]);
 
 	useEffect(() => {
-		handleSiteSelection();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteSelection();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteSelection]);
 
 	// Handle `scan` errors
@@ -218,6 +228,6 @@ export function SiteList({ data, handleSiteSelectOnLoad }) {
 			</li>
 		</>
 	);
-}
+};
 
 export const MemoizedSiteList = memo(SiteList);

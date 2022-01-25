@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedSorting } from "@components/sorting/common/Sorting";
 import { orderingByNameQuery } from "@constants/GlobalValues";
 import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
@@ -26,18 +25,15 @@ const initialOrder = {
  * @param {array} labels
  * @param {function} setPagePath
  */
-export function SitesSorting(props) {
+const SitesSorting = ({ result = null, slug = null, labels = null, setPagePath }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
-
-	// Props
-	const { result = null, slug = null, labels = null, setPagePath } = props;
 
 	// Router
 	const { asPath } = useRouter();
 	const router = useRouter();
 
 	// SWR hook for global mutations
-	// const { mutate } = useSWRConfig();
+	// const  { mutate } = useSWRConfig();
 
 	// Handle sort
 	const handleSort = useCallback(
@@ -81,12 +77,18 @@ export function SitesSorting(props) {
 	);
 
 	useEffect(() => {
-		handleSort();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSort();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSort]);
 
-	return typeof slug !== undefined &&
-		slug !== null &&
-		(slug === "site-name" || slug === "crawl-status" || slug === "last-crawled") ? (
+	return slug !== null && (slug === "site-name" || slug === "crawl-status" || slug === "last-crawled") ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				{slug === "site-name" ? (
@@ -120,14 +122,14 @@ export function SitesSorting(props) {
 			</div>
 		</div>
 	) : null;
-}
+};
 
 SitesSorting.propTypes = {
 	labels: PropTypes.array,
 	result: PropTypes.shape({
 		ordering: PropTypes.string
 	}),
-	setPagePath: PropTypes.func.isRequired,
+	setPagePath: PropTypes.func,
 	slug: PropTypes.string
 };
 

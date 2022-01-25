@@ -19,7 +19,7 @@ import "twin.macro";
 /**
  * Custom function to render the `SubscriptionPlansPageLayout` component
  */
-export function SubscriptionPlansPageLayout() {
+const SubscriptionPlansPageLayout = () => {
 	const [intervalCount, setIntervalCount] = useState(0);
 	const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 	const [loadingAgencyMonthly, setLoadingAgencyMonthly] = useState(false);
@@ -404,7 +404,7 @@ export function SubscriptionPlansPageLayout() {
 			</div>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `SubscriptionPlansPageLayout` component

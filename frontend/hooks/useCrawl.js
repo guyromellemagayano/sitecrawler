@@ -55,15 +55,23 @@ export const useCrawl = (siteId = null) => {
 	}, [scan]);
 
 	useEffect(() => {
-		typeof currentScan !== "undefined" && currentScan !== null
-			? (() => {
-					setIsCrawlStarted(true);
-					setIsCrawlFinished(false);
-			  })()
-			: (() => {
-					setIsCrawlStarted(false);
-					setIsCrawlFinished(true);
-			  })();
+		let isMounted = true;
+
+		if (isMounted) {
+			typeof currentScan !== "undefined" && currentScan !== null
+				? (() => {
+						setIsCrawlStarted(true);
+						setIsCrawlFinished(false);
+				  })()
+				: (() => {
+						setIsCrawlStarted(false);
+						setIsCrawlFinished(true);
+				  })();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [currentScan]);
 
 	return {

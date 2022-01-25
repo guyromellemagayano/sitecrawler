@@ -16,7 +16,7 @@ import * as Yup from "yup";
 /**
  * Custom function to render the `UpdatePasswordForm` component
  */
-export function UpdatePasswordForm() {
+const UpdatePasswordForm = () => {
 	const [uid, setUid] = useState(null);
 	const [token, setToken] = useState(null);
 
@@ -202,7 +202,7 @@ export function UpdatePasswordForm() {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `UpdatePasswordForm` component

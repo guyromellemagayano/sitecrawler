@@ -7,14 +7,14 @@ import "twin.macro";
 /**
  * Custom function to render the `AddNewSitePageLayout` component
  */
-export function AddNewSitePageLayout(props) {
+const AddNewSitePageLayout = (props) => {
 	return (
 		<div tw="w-full flex items-start py-4">
 			<MemoizedAddSiteSteps {...props} />
 			<MemoizedHowToSetup />
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `AddNewSitePageLayout` component

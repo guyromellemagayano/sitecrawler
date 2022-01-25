@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedSignupPageLayout } from "@components/layouts/pages/Signup";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";

@@ -12,15 +12,12 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  */
 export const usePageDetail = (querySid = null, scanObjId = null, linkId = null) => {
 	const currentEndpoint =
-		typeof querySid !== "undefined" &&
 		querySid !== null &&
 		typeof querySid === "number" &&
 		querySid > 0 &&
-		typeof scanObjId !== "undefined" &&
 		scanObjId !== null &&
 		typeof scanObjId === "number" &&
 		scanObjId > 0 &&
-		typeof linkId !== "undefined" &&
 		linkId !== null &&
 		linkId > 0
 			? SitesApiEndpoint + querySid + ScanSlug + scanObjId + SitePageSlug + linkId + "/"

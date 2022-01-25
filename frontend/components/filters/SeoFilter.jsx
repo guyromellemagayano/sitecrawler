@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -14,7 +13,7 @@ import "twin.macro";
  * @param {string} scanApiEndpoint
  * @param {function} setPagePath
  */
-export function SeoFilter(props) {
+const SeoFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPagePath }) => {
 	const [allFilter, setAllFilter] = useState(false);
 	const [missingDescriptionsFilter, setMissingDescriptionsFilter] = useState(false);
 	const [missingFirstH1Filter, setMissingFirstH1Filter] = useState(false);
@@ -23,9 +22,6 @@ export function SeoFilter(props) {
 	const [missingSecondH2Filter, setMissingSecondH2Filter] = useState(false);
 	const [noIssueFilter, setNoIssueFilter] = useState(false);
 	const [missingTitlesFilter, setMissingTitlesFilter] = useState(false);
-
-	// Props
-	const { filterQueryString = null, scanApiEndpoint = null, setPagePath } = props;
 
 	// Translations
 	const { t } = useTranslation();
@@ -109,11 +105,11 @@ export function SeoFilter(props) {
 					newPath += `&has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
 				else newPath += `?has_title=true&has_description=true&has_h1_first=true&has_h2_first=true`;
 			} else if (filterType === "noIssues" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("has_title") : null;
-				filterQueryString !== null ? filterQueryString?.delete("has_description") : null;
-				filterQueryString !== null ? filterQueryString?.delete("has_h1_first") : null;
-				filterQueryString !== null ? filterQueryString?.delete("has_h2_first") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("has_title") ?? null;
+				filterQueryString?.delete("has_description") ?? null;
+				filterQueryString?.delete("has_h1_first") ?? null;
+				filterQueryString?.delete("has_h2_first") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (
 					newPath.includes("has_title") &&
@@ -149,8 +145,8 @@ export function SeoFilter(props) {
 				if (newPath.includes("?")) newPath += `&has_title=false`;
 				else newPath += `?has_title=false`;
 			} else if (filterType === "missingTitles" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("has_title") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("has_title") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("has_title")) {
 					newPath = handleRemoveUrlParameter(newPath, "has_title");
@@ -178,8 +174,8 @@ export function SeoFilter(props) {
 				if (newPath.includes("?")) newPath += `&has_description=false`;
 				else newPath += `?has_description=false`;
 			} else if (filterType === "missingDescriptions" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("has_description") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("has_description") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("has_description")) {
 					newPath = handleRemoveUrlParameter(newPath, "has_description");
@@ -207,8 +203,8 @@ export function SeoFilter(props) {
 				if (newPath.includes("?")) newPath += `&has_h1_first=false`;
 				else newPath += `?has_h1_first=false`;
 			} else if (filterType === "missingFirstH1" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("has_h1_first") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("has_h1_first") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("has_h1_first")) {
 					newPath = handleRemoveUrlParameter(newPath, "has_h1_first");
@@ -236,8 +232,8 @@ export function SeoFilter(props) {
 				if (newPath.includes("?")) newPath += `&has_h1_second=false`;
 				else newPath += `?has_h1_second=false`;
 			} else if (filterType === "missingSecondH1" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("has_h1_second") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("has_h1_second") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("has_h1_second")) {
 					newPath = handleRemoveUrlParameter(newPath, "has_h1_second");
@@ -265,8 +261,8 @@ export function SeoFilter(props) {
 				if (newPath.includes("?")) newPath += `&has_h2_first=false`;
 				else newPath += `?has_h2_first=false`;
 			} else if (filterType === "missingFirstH2" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("has_h2_first") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("has_h2_first") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("has_h2_first")) {
 					newPath = handleRemoveUrlParameter(newPath, "has_h2_first");
@@ -294,8 +290,8 @@ export function SeoFilter(props) {
 				if (newPath.includes("?")) newPath += `&has_h2_second=false`;
 				else newPath += `?has_h2_second=false`;
 			} else if (filterType === "missingSecondH2" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("has_h2_second") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("has_h2_second") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("has_h2_second")) {
 					newPath = handleRemoveUrlParameter(newPath, "has_h2_second");
@@ -471,12 +467,12 @@ export function SeoFilter(props) {
 			</div>
 		</div>
 	);
-}
+};
 
 SeoFilter.propTypes = {
 	filterQueryString: PropTypes.object,
-	scanApiEndpoint: PropTypes.string.isRequired,
-	setPagePath: PropTypes.func.isRequired
+	scanApiEndpoint: PropTypes.string,
+	setPagePath: PropTypes.func
 };
 
 /**

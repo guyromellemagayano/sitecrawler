@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedAlert } from "@components/alerts";
 import { MemoizedSiteSelectDropdown } from "@components/dropdowns/SiteSelectDropdown";
 import { MemoizedSiteSelectMenu } from "@components/menus/SiteSelectMenu";
@@ -16,7 +15,7 @@ import "twin.macro";
 /**
  * Custom function to render the `SiteSelect` component
  */
-export function SiteSelect() {
+const SiteSelect = () => {
 	const [selectedSite, setSelectedSite] = useState(null);
 	const [selectedSiteDetails, setSelectedSiteDetails] = useState([]);
 	const [selectedSiteId, setSelectedSiteId] = useState(null);
@@ -62,7 +61,15 @@ export function SiteSelect() {
 	}, []);
 
 	useEffect(() => {
-		handleSiteSelectOnLoad();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteSelectOnLoad();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteSelectOnLoad]);
 
 	// Handle site selection on click
@@ -95,7 +102,15 @@ export function SiteSelect() {
 	}, [query, sites, errorSites, validatingSites]);
 
 	useEffect(() => {
-		handleSiteSelectOnClick();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteSelectOnClick();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteSelectOnClick]);
 
 	// Handle site selection on change
@@ -136,7 +151,15 @@ export function SiteSelect() {
 	}, [query, selectedSite, selectedSiteDetails, sites, errorSites, validatingSites]);
 
 	useEffect(() => {
-		handleSiteSelectOnChange();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteSelectOnChange();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteSelectOnChange]);
 
 	return (
@@ -175,7 +198,7 @@ export function SiteSelect() {
 			</div>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `SiteSelect` component

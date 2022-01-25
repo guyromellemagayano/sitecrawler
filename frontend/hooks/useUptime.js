@@ -10,9 +10,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  */
 export const useUptime = (querySid = null) => {
 	const currentEndpoint =
-		typeof querySid !== "undefined" && querySid !== null && typeof querySid === "number" && querySid > 0
-			? SitesApiEndpoint + querySid + UptimeSlug
-			: null;
+		querySid !== null && typeof querySid === "number" && querySid > 0 ? SitesApiEndpoint + querySid + UptimeSlug : null;
 
 	const { data: uptime, error: errorUptime, isValidating: validatingUptime } = useMainSWRConfig(currentEndpoint);
 

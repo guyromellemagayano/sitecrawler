@@ -4,6 +4,7 @@ import { Transition } from "@headlessui/react";
 import { CheckIcon, XIcon } from "@heroicons/react/solid";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { forwardRef, memo } from "react";
 import { styled } from "twin.macro";
 
@@ -20,11 +21,13 @@ const ConfettiBgImgSpan = styled.span`
 
 /**
  * Custom function to render the `NewActivePlanModal` component
+ *
+ * @param {number} planId
+ * @param {string} planName
+ * @param {boolean} showModal
+ * @param {function} setShowModal
  */
-export function NewActivePlanModal(props, ref) {
-	// Props
-	const { planId, planName, showModal, setShowModal } = props;
-
+const NewActivePlanModal = ({ planId = null, planName = null, showModal = false, setShowModal }, ref) => {
 	// Translation
 	const { t } = useTranslation();
 	const subscriptionPlansCongratulations = t("settings:subscriptionPlans.congratulations");
@@ -34,7 +37,7 @@ export function NewActivePlanModal(props, ref) {
 	const { subscriptions, errorSubscriptions, validatingSubscriptions } = useSubscriptions();
 
 	return (
-		<Transition show={showModal} as="span">
+		<Transition show={showModal}>
 			<div tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
 				<Transition.Child
 					enter="new-active-plan-modal-first-child-enter"
@@ -97,7 +100,7 @@ export function NewActivePlanModal(props, ref) {
 									  typeof subscriptions !== "undefined" &&
 									  subscriptions !== null &&
 									  !subscriptions?.data?.detail
-										? subscriptions
+										? subscriptions?.results
 												?.filter((result) => result.id === planId)
 												?.map((val, key) => {
 													return (
@@ -144,7 +147,14 @@ export function NewActivePlanModal(props, ref) {
 			</div>
 		</Transition>
 	);
-}
+};
+
+NewActivePlanModal.propTypes = {
+	planId: PropTypes.number,
+	planName: PropTypes.string,
+	setShowModal: PropTypes.func,
+	showModal: PropTypes.bool
+};
 
 /**
  * Memoized custom `NewActivePlanModal` component

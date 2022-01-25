@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedLoginForm } from "@components/forms/LoginForm";
 import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { MemoizedAppLogo } from "@components/logos/AppLogo";
@@ -14,7 +13,7 @@ import { MemoizedFooter } from "../components/Footer";
 /**
  * Custom function to render the `LoginPageLayout` component
  */
-export function LoginPageLayout() {
+const LoginPageLayout = () => {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("common:headline");
@@ -78,7 +77,7 @@ export function LoginPageLayout() {
 			</Scrollbars>
 		</section>
 	);
-}
+};
 
 /**
  * Memoized custom `LoginPageLayout` component

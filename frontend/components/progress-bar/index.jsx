@@ -3,6 +3,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import tw, { css } from "twin.macro";
 
+/**
+ * Custom function to render the `ProgressBar` component
+ */
 const ProgressBar = () => {
 	const [state, setState] = useState({
 		isRouteChanging: false
@@ -10,62 +13,71 @@ const ProgressBar = () => {
 
 	let activeRequests = 0;
 
+	// Router
 	const router = useRouter();
 
 	useEffect(() => {
-		const handleRouteChangeStart = () => {
-			setState((prevState) => ({
-				...prevState,
-				isRouteChanging: true
-			}));
-		};
+		let isMounted = true;
 
-		const handleRouteChangeEnd = () => {
-			if (activeRequests > 0) {
-				return;
-			}
+		if (isMounted) {
+			const handleRouteChangeStart = () => {
+				setState((prevState) => ({
+					...prevState,
+					isRouteChanging: true
+				}));
+			};
 
-			setState((prevState) => ({
-				...prevState,
-				isRouteChanging: false
-			}));
-		};
-
-		router.events.on("routeChangeStart", handleRouteChangeStart);
-		router.events.on("routeChangeComplete", handleRouteChangeEnd);
-		router.events.on("routeChangeError", handleRouteChangeEnd);
-
-		const originalFetch = window.fetch;
-
-		window.fetch = async function (...args) {
-			if (activeRequests === 0) {
-				handleRouteChangeStart();
-			}
-
-			activeRequests++;
-
-			try {
-				const response = await originalFetch(...args);
-				return response;
-			} catch (error) {
-				return Promise.reject(error);
-			} finally {
-				activeRequests -= 1;
-				if (activeRequests === 0) {
-					handleRouteChangeEnd();
+			const handleRouteChangeEnd = () => {
+				if (activeRequests > 0) {
+					return;
 				}
-			}
-		};
+
+				setState((prevState) => ({
+					...prevState,
+					isRouteChanging: false
+				}));
+			};
+
+			router.events.on("routeChangeStart", handleRouteChangeStart);
+			router.events.on("routeChangeComplete", handleRouteChangeEnd);
+			router.events.on("routeChangeError", handleRouteChangeEnd);
+
+			const originalFetch = window.fetch;
+
+			window.fetch = async function (...args) {
+				if (activeRequests === 0) {
+					handleRouteChangeStart();
+				}
+
+				activeRequests++;
+
+				try {
+					const response = await originalFetch(...args);
+					return response;
+				} catch (error) {
+					return Promise.reject(error);
+				} finally {
+					activeRequests -= 1;
+					if (activeRequests === 0) {
+						handleRouteChangeEnd();
+					}
+				}
+			};
+
+			return () => {
+				router.events.off("routeChangeStart", handleRouteChangeStart);
+				router.events.off("routeChangeComplete", handleRouteChangeEnd);
+				router.events.off("routeChangeError", handleRouteChangeEnd);
+
+				setState((prevState) => ({
+					...prevState,
+					isRouteChanging: false
+				}));
+			};
+		}
 
 		return () => {
-			router.events.off("routeChangeStart", handleRouteChangeStart);
-			router.events.off("routeChangeComplete", handleRouteChangeEnd);
-			router.events.off("routeChangeError", handleRouteChangeEnd);
-
-			setState((prevState) => ({
-				...prevState,
-				isRouteChanging: false
-			}));
+			isMounted = false;
 		};
 	}, [router]);
 

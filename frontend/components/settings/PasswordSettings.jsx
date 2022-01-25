@@ -9,7 +9,7 @@ import "twin.macro";
 /**
  * Custom function to render the `PasswordSettings` component
  */
-export function PasswordSettings() {
+const PasswordSettings = () => {
 	// Translations
 	const { t } = useTranslation("settings");
 	const passwordChangeUpdateTitle = t("passwordChangeUpdate.title");
@@ -26,7 +26,7 @@ export function PasswordSettings() {
 			<MemoizedPasswordSettingsForm />
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `PasswordSettings` component

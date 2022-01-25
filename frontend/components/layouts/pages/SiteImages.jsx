@@ -5,9 +5,9 @@ import "twin.macro";
 /**
  * Custom function to render the `SiteImagesPageLayout` component
  */
-export function SiteImagesPageLayout() {
+const SiteImagesPageLayout = () => {
 	return <div tw="w-full flex items-start py-4"></div>;
-}
+};
 
 /**
  * Memoized custom `SiteImagesPageLayout` component

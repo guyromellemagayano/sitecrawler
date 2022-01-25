@@ -1,7 +1,7 @@
 import { MemoizedDashboardLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
-// import SitesDashboardPageLayout from "@components/layouts/pages/SitesDashboard";
+// import { MemoizedSitesDashboardPageLayout } from "@components/layouts/pages/SitesDashboard";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
 import { LoginLink } from "@constants/PageLinks";
@@ -51,7 +51,7 @@ export default function Sites() {
 			<NextSeo title={sitesDashboard} />
 			<MemoizedPageLayout pageTitle={sitesDashboard}>
 				<MemoizedComingSoonPageLayout />
-				{/* <SitesDashboardPageLayout /> */}
+				{/* <MemoizedSitesDashboardPageLayout /> */}
 			</MemoizedPageLayout>
 		</>
 	);

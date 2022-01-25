@@ -12,20 +12,14 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @returns {object} pageDetailLink, errorPageDetailLink, validatingPageDetailLink
  */
 export const usePageDetailLink = (addQuery = null, querySid = null, scanObjId = null, pageId = null) => {
-	const currentQuery =
-		typeof addQuery !== "undefined" && addQuery !== null && typeof addQuery === "string" && addQuery !== ""
-			? "?" + addQuery
-			: "";
+	const currentQuery = addQuery !== null && typeof addQuery === "string" && addQuery !== "" ? "?" + addQuery : "";
 	const currentEndpoint =
-		typeof querySid !== "undefined" &&
 		querySid !== null &&
 		typeof querySid === "number" &&
 		querySid > 0 &&
-		typeof scanObjId !== "undefined" &&
 		scanObjId !== null &&
 		scanObjId === "number" &&
 		scanObjId > 0 &&
-		typeof pageId !== "undefined" &&
 		pageId !== null &&
 		typeof pageId === "number" &&
 		pageId !== 0

@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import { memo, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 
 const DataTable = memo(
@@ -204,6 +205,7 @@ const DataTable = memo(
 													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
 													title={DataTableLabels[3].label}
 													target="_blank"
+													rel="noreferrer"
 												>
 													{DataTableLabels[3].label}
 												</a>

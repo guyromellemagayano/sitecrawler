@@ -14,7 +14,7 @@ import * as Yup from "yup";
 /**
  * Custom function to render the `HelpSupportSettingsForm` component
  */
-export function HelpSupportSettingsForm() {
+const HelpSupportSettingsForm = () => {
 	const { t } = useTranslation();
 	const tellIsYourThoughts = t("settings:helpSupportForm.tellUsYourThoughts");
 	const message = t("settings:helpSupportForm.message");
@@ -107,7 +107,7 @@ export function HelpSupportSettingsForm() {
 											value={values.message}
 										/>
 									) : (
-										<Skeleton duration={2} width={448} height={178} />
+										<Skeleton duration={2} width={360} height={178} />
 									)}
 								</div>
 
@@ -153,7 +153,7 @@ export function HelpSupportSettingsForm() {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `HelpSupportSettingsForm` component

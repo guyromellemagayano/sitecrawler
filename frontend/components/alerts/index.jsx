@@ -12,7 +12,7 @@ import tw from "twin.macro";
  * @param {boolean} isSuccess
  * @param {string} responseText
  */
-export function Alert({ responseText, isSuccess }) {
+const Alert = ({ responseText = null, isSuccess = false }) => {
 	const [isOpen, setIsOpen] = useState(true);
 
 	// Translations
@@ -21,7 +21,7 @@ export function Alert({ responseText, isSuccess }) {
 
 	// Handle the alert close
 	const handleAlertClose = useCallback(async () => {
-		responseText !== null && typeof responseText !== "undefined"
+		responseText !== null
 			? setTimeout(() => {
 					setIsOpen(false);
 			  }, AlertDisplayInterval)
@@ -33,7 +33,15 @@ export function Alert({ responseText, isSuccess }) {
 	}, [responseText]);
 
 	useEffect(() => {
-		handleAlertClose();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleAlertClose();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleAlertClose]);
 
 	return (
@@ -76,11 +84,11 @@ export function Alert({ responseText, isSuccess }) {
 			</div>
 		</Transition>
 	);
-}
+};
 
 Alert.propTypes = {
-	isSuccess: PropTypes.bool.isRequired,
-	responseText: PropTypes.string.isRequired
+	isSuccess: PropTypes.bool,
+	responseText: PropTypes.string
 };
 
 /**

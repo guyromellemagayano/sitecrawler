@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedSignupForm } from "@components/forms/SignupForm";
 import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@constants/PageLinks";
@@ -11,7 +10,7 @@ import "twin.macro";
 /**
  * Custom function to render the `SignupPageLayout` component
  */
-export function SignupPageLayout() {
+const SignupPageLayout = () => {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");
@@ -45,7 +44,7 @@ export function SignupPageLayout() {
 			</Scrollbars>
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `SignupPageLayout` component

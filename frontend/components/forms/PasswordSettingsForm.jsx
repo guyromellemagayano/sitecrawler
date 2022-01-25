@@ -16,7 +16,7 @@ import * as Yup from "yup";
 /**
  * Custom function to render the `PasswordSettingsForm` component
  */
-export function PasswordSettingsForm() {
+const PasswordSettingsForm = () => {
 	const [disableForm, setDisableForm] = useState(true);
 
 	// Translations
@@ -133,7 +133,7 @@ export function PasswordSettingsForm() {
 											onBlur={handleBlur}
 										/>
 									) : (
-										<Skeleton duration={2} width={448} height={38} />
+										<Skeleton duration={2} width={360} height={38} />
 									)}
 								</div>
 								<div css={[!disableForm ? tw`block` : tw`hidden`]}>
@@ -167,7 +167,7 @@ export function PasswordSettingsForm() {
 											onBlur={handleBlur}
 										/>
 									) : (
-										<Skeleton duration={2} width={448} height={38} />
+										<Skeleton duration={2} width={360} height={38} />
 									)}
 								</div>
 
@@ -233,7 +233,7 @@ export function PasswordSettingsForm() {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `PasswordSettingsForm` component

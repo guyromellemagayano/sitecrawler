@@ -11,7 +11,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  */
 export const useScan = (querySid = null) => {
 	const currentEndpoint =
-		typeof querySid !== "undefined" && querySid !== null && typeof querySid === "number" && querySid > 0
+		querySid !== null && typeof querySid === "number" && querySid > 0
 			? SitesApiEndpoint + querySid + ScanSlug + "?" + orderingByNameQuery + sortByFinishedAtDescending
 			: null;
 

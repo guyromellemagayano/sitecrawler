@@ -7,10 +7,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @returns {object} page, errorPage, validatingPage
  */
 export const usePage = (endpoint = null) => {
-	const currentEndpoint =
-		typeof endpoint !== "undefined" && endpoint !== null && typeof endpoint === "string" && endpoint !== ""
-			? endpoint
-			: null;
+	const currentEndpoint = endpoint !== null && typeof endpoint === "string" && endpoint !== "" ? endpoint : null;
 
 	const { data: page, error: errorPage, isValidating: validatingPage } = useMainSWRConfig(currentEndpoint);
 

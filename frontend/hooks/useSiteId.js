@@ -8,8 +8,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @returns {object} siteId, errorSiteId, validatingSiteId
  */
 export const useSiteId = (querySid = null) => {
-	const currentEndpoint =
-		typeof querySid !== "undefined" && querySid !== null && querySid > 0 ? SitesApiEndpoint + querySid + "/" : null;
+	const currentEndpoint = querySid !== null && querySid > 0 ? SitesApiEndpoint + querySid + "/" : null;
 
 	const { data: siteId, error: errorSiteId, isValidating: validatingSiteId } = useMainSWRConfig(currentEndpoint);
 

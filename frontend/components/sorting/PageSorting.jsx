@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { orderingByNameQuery } from "@constants/GlobalValues";
 import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
@@ -24,11 +23,8 @@ const initialOrder = {
  * @param {array} labels
  * @param {function} setPagePath
  */
-export function PageSorting(props) {
+const PageSorting = ({ result = null, slug = null, labels = null, setPagePath }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
-
-	// Props
-	const { result = null, slug = null, labels = null, setPagePath } = props;
 
 	// Router
 	const { asPath } = useRouter();
@@ -78,12 +74,18 @@ export function PageSorting(props) {
 	);
 
 	useEffect(() => {
-		handleSort();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSort();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSort]);
 
-	return typeof slug !== undefined &&
-		slug !== null &&
-		(slug === "page-url" || slug === "page-size" || slug === "page-ssl") ? (
+	return slug !== null && (slug === "page-url" || slug === "page-size" || slug === "page-ssl") ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
@@ -119,14 +121,14 @@ export function PageSorting(props) {
 			</div>
 		</div>
 	) : null;
-}
+};
 
 PageSorting.propTypes = {
 	labels: PropTypes.array,
 	result: PropTypes.shape({
 		ordering: PropTypes.string
 	}),
-	setPagePath: PropTypes.func.isRequired,
+	setPagePath: PropTypes.func,
 	slug: PropTypes.string
 };
 

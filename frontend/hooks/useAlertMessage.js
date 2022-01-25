@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { AlertDisplayInterval } from "@constants/GlobalValues";
 import useTranslation from "next-translate/useTranslation";
 import { useCallback, useEffect, useReducer, useState } from "react";
@@ -14,7 +13,7 @@ const messagesReducer = (state, action) => {
 /**
  * Custom hook that will handle success and error messages
  */
-export function useAlertMessage() {
+export const useAlertMessage = () => {
 	const [config, setConfig] = useState({
 		isLocalTimeEnabled: false,
 		isLocalTimeDisabled: false,
@@ -9806,8 +9805,16 @@ export function useAlertMessage() {
 	}, [config]);
 
 	useEffect(() => {
-		handleMessages();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleMessages();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleMessages]);
 
 	return { state, setConfig };
-}
+};

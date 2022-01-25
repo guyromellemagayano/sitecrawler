@@ -10,10 +10,7 @@ import tw from "twin.macro";
  * @param {boolean} isDescClicked
  * @param {function} setIsDescClicked
  */
-export function DescSorting(props, ref) {
-	// Props
-	const { handleClickEvent, isDescClicked, setIsDescClicked } = props;
-
+const DescSorting = ({ handleClickEvent, isDescClicked, setIsDescClicked }, ref) => {
 	useEffect(() => {
 		document.addEventListener("click", handleClickEvent, true);
 
@@ -27,12 +24,12 @@ export function DescSorting(props, ref) {
 			<ChevronDownIcon css={[tw`w-5 h-5 inline-block`, isDescClicked ? tw`text-gray-500` : tw`text-gray-300`]} />
 		</button>
 	);
-}
+};
 
 DescSorting.propTypes = {
-	handleClickEvent: PropTypes.func.isRequired,
+	handleClickEvent: PropTypes.func,
 	isDescClicked: PropTypes.bool,
-	setIsDescClicked: PropTypes.func.isRequired
+	setIsDescClicked: PropTypes.func
 };
 
 /**

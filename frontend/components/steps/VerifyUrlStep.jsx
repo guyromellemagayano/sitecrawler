@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedVerifyUrlStepForm } from "@components/forms/VerifyUrlStepForm";
 import { MemoizedShowHelpModal } from "@components/modals/ShowHelpModal";
 import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
@@ -7,6 +5,7 @@ import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
 import { useSites } from "@hooks/useSites";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ReactHtmlParser from "react-html-parser";
@@ -16,17 +15,15 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `VerifyUrl` component
- *
- * @param {Object} props
  */
-export function VerifyUrlStep(props) {
+const VerifyUrlStep = (props) => {
 	const [copied, setCopied] = useState(false);
 	const [copyValue, setCopyValue] = useState("");
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [siteData, setSiteData] = useState(null);
 
 	// Props
-	const { sid, step, verified } = props;
+	const { sid = null, step = null, verified = false } = props;
 
 	// Translation
 	const { t } = useTranslation();
@@ -62,7 +59,15 @@ export function VerifyUrlStep(props) {
 	}, [sid, sites, errorSites, validatingSites]);
 
 	useEffect(() => {
-		handleSiteDataSelection();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteDataSelection();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteDataSelection]);
 
 	// Handle site data
@@ -77,17 +82,20 @@ export function VerifyUrlStep(props) {
 	}, [siteData]);
 
 	useEffect(() => {
-		handleSiteData();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteData();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteData]);
 
 	// Handle input change
 	const handleInputChange = ({ copyValue }) => {
 		setCopyValue({ copyValue, copied });
-	};
-
-	// Handle open help modal
-	const handleOpenHelpModal = () => {
-		setShowModal(true);
 	};
 
 	return step === 2 || step === 3 ? (
@@ -183,7 +191,7 @@ export function VerifyUrlStep(props) {
 															type="button"
 															tw="inline-flex items-center ml-3 text-gray-400 focus:outline-none"
 															title={needHelp}
-															onClick={handleOpenHelpModal}
+															onClick={() => setShowModal(true)}
 														>
 															<QuestionMarkCircleIcon tw="h-7 w-7" />
 														</button>
@@ -231,7 +239,13 @@ export function VerifyUrlStep(props) {
 			</div>
 		</>
 	) : null;
-}
+};
+
+VerifyUrlStep.propTypes = {
+	sid: PropTypes.number,
+	step: PropTypes.number,
+	verified: PropTypes.bool
+};
 
 /**
  * Memoized custom `VerifyUrlStep` component

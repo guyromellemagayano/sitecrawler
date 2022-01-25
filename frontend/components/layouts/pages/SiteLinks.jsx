@@ -5,9 +5,9 @@ import "twin.macro";
 /**
  * Custom function to render the `SiteLinksPageLayout` component
  */
-export function SiteLinksPageLayout() {
+const SiteLinksPageLayout = () => {
 	return <div tw="w-full flex items-start py-4"></div>;
-}
+};
 
 /**
  * Memoized custom `SiteLinksPageLayout` component

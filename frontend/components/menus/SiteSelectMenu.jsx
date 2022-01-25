@@ -9,8 +9,12 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `SiteSelectMenu` component
+ *
+ * @param {string} selectedSite
+ * @param {array} selectedSiteDetails
+ * @param {function} handleOpenDropdown
  */
-export function SiteSelectMenu({ selectedSite, selectedSiteDetails, handleOpenDropdown }) {
+const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handleOpenDropdown }) => {
 	// Router
 	const { query } = useRouter();
 
@@ -38,7 +42,7 @@ export function SiteSelectMenu({ selectedSite, selectedSiteDetails, handleOpenDr
 		>
 			<div tw="flex items-center space-x-3">
 				<span tw="block truncate text-gray-600">
-					{typeof selectedSite !== "undefined" && selectedSite !== null && Object.keys(selectedSite).length > 0 ? (
+					{selectedSite !== null && Object.keys(selectedSite).length > 0 ? (
 						selectedSiteDetails ? (
 							<div tw="flex items-center space-x-3">
 								<span
@@ -63,10 +67,10 @@ export function SiteSelectMenu({ selectedSite, selectedSiteDetails, handleOpenDr
 			</span>
 		</button>
 	);
-}
+};
 
 SiteSelectMenu.propTypes = {
-	handleOpenDropdown: PropTypes.func.isRequired,
+	handleOpenDropdown: PropTypes.func,
 	selectedSite: PropTypes.string,
 	selectedSiteDetails: PropTypes.arrayOf(PropTypes.object)
 };

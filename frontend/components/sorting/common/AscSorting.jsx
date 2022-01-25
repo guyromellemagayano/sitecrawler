@@ -10,10 +10,7 @@ import tw from "twin.macro";
  * @param {boolean} isAscClicked
  * @param {function} setIsAscClicked
  */
-export function AscSorting(props, ref) {
-	// Props
-	const { handleClickEvent, isAscClicked, setIsAscClicked } = props;
-
+const AscSorting = ({ handleClickEvent, isAscClicked, setIsAscClicked }, ref) => {
 	useEffect(() => {
 		document.addEventListener("click", handleClickEvent, true);
 
@@ -27,12 +24,12 @@ export function AscSorting(props, ref) {
 			<ChevronUpIcon css={[tw`w-5 h-5 inline-block`, isAscClicked ? tw`text-gray-500` : tw`text-gray-300`]} />
 		</button>
 	);
-}
+};
 
 AscSorting.propTypes = {
-	handleClickEvent: PropTypes.func.isRequired,
+	handleClickEvent: PropTypes.func,
 	isAscClicked: PropTypes.bool,
-	setIsAscClicked: PropTypes.func.isRequired
+	setIsAscClicked: PropTypes.func
 };
 
 /**

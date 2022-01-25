@@ -1,5 +1,6 @@
 import { useLoading } from "@hooks/useLoading";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -10,7 +11,7 @@ import { MemoizedVerifyUrlStep } from "./VerifyUrlStep";
 /**
  * Custom function to render the `AddSiteSteps` component
  */
-export function AddSiteSteps(props) {
+const AddSiteSteps = (props) => {
 	// Props
 	const { step } = props;
 
@@ -78,7 +79,11 @@ export function AddSiteSteps(props) {
 			</div>
 		</div>
 	);
-}
+};
+
+AddSiteSteps.propTypes = {
+	step: PropTypes.number
+};
 
 /**
  * Memoized custom `AddSiteSteps` component

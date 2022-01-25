@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable-line no-useless-escape */
 import { MemoizedAlert } from "@components/alerts";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
@@ -22,17 +21,13 @@ import * as Yup from "yup";
 /**
  * Custom function to render the `UrlInformationStepForm` component
  */
-export function UrlInformationStepForm(props) {
+const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 	const [siteData, setSiteData] = useState(null);
 	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState(null);
 	const [siteUrlProtocol, setSiteUrlProtocol] = useState("");
 	const [siteUrl, setSiteUrl] = useState("");
 	const [siteName, setSiteName] = useState("");
 	const [disableForm, setDisableForm] = useState(false);
-
-	// Props
-	const { step, edit, sid } = props;
-
 	const [editMode, setEditMode] = useState(false);
 
 	// Translations
@@ -255,19 +250,20 @@ export function UrlInformationStepForm(props) {
 						const siteValidationResponseStatus = siteValidationResponse?.status ?? null;
 						const siteValidationResponseMethod = siteValidationResponse?.config?.method ?? null;
 
-						if (
-							siteValidationResponseData !== null &&
-							Math.round(siteValidationResponseStatus / 200) === 1 &&
-							siteValidationResponseData?.results?.length > 0
-						) {
+						if (siteValidationResponseData !== null && Math.round(siteValidationResponseStatus / 200) === 1) {
 							let siteValidationResponseDataResultsArray = new Array();
+							let siteValidationResponseDataResult = null;
 
 							siteValidationResponseData?.results?.map((val) => siteValidationResponseDataResultsArray.push(val.url));
 
-							const siteValidationResponseDataResult = stringSimilarity.findBestMatch(
-								body.url,
-								siteValidationResponseDataResultsArray
-							);
+							if (siteValidationResponseDataResultsArray?.length > 0) {
+								siteValidationResponseDataResult = stringSimilarity.findBestMatch(
+									body.url,
+									siteValidationResponseDataResultsArray
+								);
+							}
+
+							console.log(siteValidationResponseDataResultsArray, siteValidationResponseDataResult);
 
 							if (siteValidationResponseDataResult?.bestMatch?.rating === 1) {
 								// Report error message that site URL already exists
@@ -459,7 +455,7 @@ export function UrlInformationStepForm(props) {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `UrlInformationStepForm` component

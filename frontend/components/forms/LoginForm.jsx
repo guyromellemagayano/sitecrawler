@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedAlert } from "@components/alerts";
 import { LoginApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { RedirectInterval } from "@constants/GlobalValues";
@@ -21,7 +20,7 @@ import * as Yup from "yup";
 /**
  * Custom function to render the `LoginForm` component
  */
-export function LoginForm() {
+const LoginForm = () => {
 	// Translations
 	const { t } = useTranslation();
 	const username = t("common:userName");
@@ -296,7 +295,7 @@ export function LoginForm() {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `LoginForm` component

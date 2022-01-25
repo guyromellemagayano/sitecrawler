@@ -7,7 +7,7 @@ import "twin.macro";
 /**
  * Custom function to render the `Footer` component
  */
-export function Footer() {
+const Footer = () => {
 	// Translations
 	const { t } = useTranslation("common");
 	const allRightsReserved = t("allRightsReserved");
@@ -40,7 +40,7 @@ export function Footer() {
 			</div>
 		</footer>
 	);
-}
+};
 
 /**
  * Memoized custom `Footer` component

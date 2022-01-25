@@ -1,4 +1,5 @@
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { memo } from "react";
 import "twin.macro";
 
@@ -7,7 +8,7 @@ import "twin.macro";
  *
  * @param {string} message
  */
-export function LoadingMessage({ message = null }) {
+const LoadingMessage = ({ message = null }) => {
 	// Translations
 	const { t } = useTranslation("common");
 	const loaderMessage = t("loaderMessage");
@@ -19,7 +20,11 @@ export function LoadingMessage({ message = null }) {
 			</div>
 		</section>
 	);
-}
+};
+
+LoadingMessage.propTypes = {
+	message: PropTypes.string
+};
 
 /**
  * Memoized custom `LoadingMessage` component

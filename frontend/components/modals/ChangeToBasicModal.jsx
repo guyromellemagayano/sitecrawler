@@ -1,24 +1,33 @@
 import { Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { forwardRef, memo } from "react";
 import tw from "twin.macro";
 
 /**
  * Custom function to render the `ChangeToBasicModal` component
+ *
+ * @param {number} planId
+ * @param {string} planName
+ * @param {object} defaultPaymentMethod
+ * @param {boolean} disableDowngradeToBasicPlan
+ * @param {function} handlePlanSelect
+ * @param {boolean} showModal
+ * @param {function} setShowModal
  */
-export function ChangeToBasicModal(props, ref) {
-	// Props
-	const {
-		planId,
-		planName,
-		defaultPaymentMethod,
-		disableDowngradeToBasicPlan,
+const ChangeToBasicModal = (
+	{
+		planId = null,
+		planName = null,
+		defaultPaymentMethod = null,
+		disableDowngradeToBasicPlan = false,
 		handlePlanSelect,
-		showModal,
+		showModal = false,
 		setShowModal
-	} = props;
-
+	},
+	ref
+) => {
 	// Translation
 	const { t } = useTranslation();
 	const subscriptionPlansDowngradeToBasicLabel = t("settings:subscriptionPlans.downgradeToBasicPlan.label");
@@ -34,7 +43,7 @@ export function ChangeToBasicModal(props, ref) {
 	};
 
 	return (
-		<Transition show={showModal} as="span">
+		<Transition show={showModal}>
 			<div tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
 				<Transition.Child
 					enter="change-to-basic-modal-first-child-enter"
@@ -116,7 +125,17 @@ export function ChangeToBasicModal(props, ref) {
 			</div>
 		</Transition>
 	);
-}
+};
+
+ChangeToBasicModal.propTypes = {
+	defaultPaymentMethod: PropTypes.object,
+	disableDowngradeToBasicPlan: PropTypes.bool,
+	handlePlanSelect: PropTypes.func,
+	planId: PropTypes.number,
+	planName: PropTypes.string,
+	setShowModal: PropTypes.func,
+	showModal: PropTypes.bool
+};
 
 /**
  * Memoized custom `ChangeToBasicModal` component

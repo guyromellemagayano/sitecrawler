@@ -15,7 +15,7 @@ import { MemoizedFooter } from "./Footer";
  * @param {any} children
  * @param {string} pageTitle
  */
-export function PageLayout({ children, pageTitle = null }) {
+const PageLayout = ({ children, pageTitle = null }) => {
 	// Router
 	const { asPath } = useRouter();
 	const router = useRouter();
@@ -50,11 +50,11 @@ export function PageLayout({ children, pageTitle = null }) {
 			<MemoizedFooter />
 		</section>
 	);
-}
+};
 
 PageLayout.propTypes = {
 	children: PropTypes.any,
-	pageTitle: PropTypes.string.isRequired
+	pageTitle: PropTypes.string
 };
 
 /**

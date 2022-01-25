@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { HowToSetupData } from "@constants/HowToSetup";
 import { useLoading } from "@hooks/useLoading";
 import useTranslation from "next-translate/useTranslation";
@@ -11,7 +10,7 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `HowToSetup` component
  */
-export function HowToSetup() {
+const HowToSetup = () => {
 	const [tabActive, setTabActive] = useState(1);
 
 	// Translations
@@ -96,7 +95,7 @@ export function HowToSetup() {
 			</div>
 		</div>
 	);
-}
+};
 
 const TabItem = ({
 	id = "",

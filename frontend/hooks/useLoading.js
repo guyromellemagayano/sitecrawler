@@ -27,7 +27,15 @@ export const useLoading = () => {
 	}, [isReady]);
 
 	useEffect(() => {
-		handleComponentLoading();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleComponentLoading();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleComponentLoading]);
 
 	return { isComponentReady };

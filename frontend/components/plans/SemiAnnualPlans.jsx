@@ -10,15 +10,27 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `SemiAnnualPlans` component
+ *
+ * @param {object} data
+ * @param {boolean} disableLocalTime
+ * @param {boolean} loadingAgencySemiAnnually
+ * @param {boolean} loadingProSemiAnnually
+ * @param {function} setPlanId
+ * @param {function} setPlanName
+ * @param {function} setOpen
  */
-export function SemiAnnualPlans(props) {
+const SemiAnnualPlans = ({
+	data,
+	disableLocalTime,
+	loadingAgencySemiAnnually,
+	loadingProSemiAnnually,
+	setOpen,
+	setPlanId,
+	setPlanName
+}) => {
 	const [currentSubscriptionId, setCurrentSubscriptionId] = useState(null);
 	const [currentSubscriptionStatus, setCurrentSubscriptionStatus] = useState(null);
 	const [currentSubscriptionCancelAt, setCurrentSubscriptionCancelAt] = useState(null);
-
-	// Props
-	const { data, disableLocalTime, loadingAgencySemiAnnually, loadingProSemiAnnually, setOpen, setPlanId, setPlanName } =
-		props;
 
 	// Translation
 	const { t } = useTranslation();
@@ -67,7 +79,15 @@ export function SemiAnnualPlans(props) {
 	}, [currentSubscription, errorCurrentSubscription, validatingCurrentSubscription]);
 
 	useEffect(() => {
-		handleCurrentSubscription();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleCurrentSubscription();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleCurrentSubscription]);
 
 	return planName === "pro" ? (
@@ -235,30 +255,30 @@ export function SemiAnnualPlans(props) {
 			</div>
 		</div>
 	) : null;
-}
+};
 
 SemiAnnualPlans.propTypes = {
 	data: PropTypes.shape({
 		features: PropTypes.array,
-		id: PropTypes.number.isRequired,
+		id: PropTypes.number,
 		plan: PropTypes.shape({
-			name: PropTypes.string.isRequired
+			name: PropTypes.string
 		}),
 		price: PropTypes.shape({
-			unit_amount: PropTypes.number.isRequired
+			unit_amount: PropTypes.number
 		})
 	}),
 	currentSubscription: PropTypes.shape({
-		cancel_at: PropTypes.string.isRequired,
-		id: PropTypes.number.isRequired,
-		status: PropTypes.string.isRequired
+		cancel_at: PropTypes.string,
+		id: PropTypes.number,
+		status: PropTypes.string
 	}),
-	disableLocalTime: PropTypes.bool.isRequired,
-	loadingAgencySemiAnnually: PropTypes.bool.isRequired,
-	loadingProSemiAnnually: PropTypes.bool.isRequired,
-	setPlanId: PropTypes.func.isRequired,
-	setPlanName: PropTypes.func.isRequired,
-	setOpen: PropTypes.func.isRequired
+	disableLocalTime: PropTypes.bool,
+	loadingAgencySemiAnnually: PropTypes.bool,
+	loadingProSemiAnnually: PropTypes.bool,
+	setPlanId: PropTypes.func,
+	setPlanName: PropTypes.func,
+	setOpen: PropTypes.func
 };
 
 /**

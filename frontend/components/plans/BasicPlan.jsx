@@ -10,13 +10,15 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `BasicPlan` component
+ *
+ * @param {object} data
+ * @param {function} setPlanId
+ * @param {function} setPlanName
+ * @param {function} setOpen
  */
-export function BasicPlan(props) {
+const BasicPlan = ({ data = null, setPlanId, setPlanName, setOpen }) => {
 	const [currentSubscriptionId, setCurrentSubscriptionId] = useState(null);
 	const [currentSubscriptionCancelAt, setCurrentSubscriptionCancelAt] = useState(null);
-
-	// Props
-	const { data, setPlanId, setPlanName, setOpen } = props;
 
 	// Translation
 	const { t } = useTranslation();
@@ -46,7 +48,15 @@ export function BasicPlan(props) {
 	}, [currentSubscription, errorCurrentSubscription, validatingCurrentSubscription]);
 
 	useEffect(() => {
-		handleCurrentSubscription();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleCurrentSubscription();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleCurrentSubscription]);
 
 	return (
@@ -117,22 +127,22 @@ export function BasicPlan(props) {
 			</div>
 		</div>
 	);
-}
+};
 
 BasicPlan.propTypes = {
 	data: PropTypes.shape({
 		features: PropTypes.array,
-		id: PropTypes.number.isRequired,
+		id: PropTypes.number,
 		plan: PropTypes.shape({
-			name: PropTypes.string.isRequired
+			name: PropTypes.string
 		}),
 		price: PropTypes.shape({
-			unit_amount: PropTypes.number.isRequired
+			unit_amount: PropTypes.number
 		})
 	}),
-	setPlanId: PropTypes.func.isRequired,
-	setPlanName: PropTypes.func.isRequired,
-	setOpen: PropTypes.func.isRequired
+	setPlanId: PropTypes.func,
+	setPlanName: PropTypes.func,
+	setOpen: PropTypes.func
 };
 
 /**

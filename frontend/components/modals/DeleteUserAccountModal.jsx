@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { ModalDisplayInterval } from "@constants/GlobalValues";
 import { HomeLink, LoginLink } from "@constants/PageLinks";
@@ -8,6 +7,7 @@ import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
 import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import tw from "twin.macro";
 
@@ -17,7 +17,7 @@ import tw from "twin.macro";
  * @param {boolean} showModal
  * @param {function} setShowModal
  */
-export function DeleteUserAccountModal({ showModal, setShowModal }, ref) {
+const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	const [userIdApiEndpoint, setUserIdApiEndpoint] = useState(null);
 	const [errorHeadline, setErrorHeadline] = useState(null);
 	const [errorSubheadline, setErrorSubheadline] = useState(null);
@@ -38,7 +38,7 @@ export function DeleteUserAccountModal({ showModal, setShowModal }, ref) {
 	const deleteUserAccountModalRequestFailedHeadline = t("settings:deleteUserAccountModalRequestFailed.headline");
 	const deleteUserAccountModalRequestFailedSubheadline = t("settings:deleteUserAccountModalRequestFailed.subHeadline");
 	const processing = t("settings:processing");
-	const proceed = t("settings:deleteUserAccountModalRequest.proceed");
+	const proceed = t("common:proceed");
 	const cancel = t("common:cancel");
 
 	// SWR hooks
@@ -224,7 +224,12 @@ export function DeleteUserAccountModal({ showModal, setShowModal }, ref) {
 			</div>
 		</Transition>
 	);
-}
+};
+
+DeleteUserAccountModal.propTypes = {
+	setShowModal: PropTypes.func,
+	showModal: PropTypes.bool
+};
 
 /**
  * Memoized custom `DeleteUserAccountModal` component

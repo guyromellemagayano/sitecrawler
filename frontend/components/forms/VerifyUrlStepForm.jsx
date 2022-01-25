@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedAlert } from "@components/alerts";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { FormSubmissionInterval } from "@constants/GlobalValues";
@@ -19,11 +18,14 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `VerifyUrlStepForm` component
+ *
+ * @param {number} sid
+ * @param {number} step
+ * @param {boolean} verified
+ * @param {function} setDisableSiteVerify
  */
-export function VerifyUrlStepForm(props) {
+const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisableSiteVerify }) => {
 	const [siteData, setSiteData] = useState(null);
-
-	const { sid, step, verified, setDisableSiteVerify } = props;
 
 	// Translations
 	const { t } = useTranslation("sites");
@@ -254,7 +256,7 @@ export function VerifyUrlStepForm(props) {
 			</div>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `VerifyUrlStepForm` component

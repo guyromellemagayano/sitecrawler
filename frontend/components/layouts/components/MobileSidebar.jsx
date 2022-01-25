@@ -3,13 +3,17 @@ import { MemoizedProfileMenu } from "@components/menus/ProfileMenu";
 import { Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { forwardRef, memo } from "react";
 import "twin.macro";
 
 /**
  * Custom function to render the `MobileSidebarLayout` component
+ *
+ * @param {boolean} openSidebar
+ * @param {boolean} setOpenSidebar
  */
-export function MobileSidebarLayout({ openSidebar, setOpenSidebar }, ref) {
+const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 	// Translations
 	const { t } = useTranslation("sidebar");
 	const closeSidebar = t("closeSidebar");
@@ -68,7 +72,12 @@ export function MobileSidebarLayout({ openSidebar, setOpenSidebar }, ref) {
 			</div>
 		</Transition>
 	);
-}
+};
+
+MobileSidebarLayout.propTypes = {
+	openSidebar: PropTypes.bool,
+	setOpenSidebar: PropTypes.func
+};
 
 /**
  * Memoized custom `MobileSidebarLayout` component

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarButton";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
 // import SiteLimitReachedModal from "@components/modals/SiteLimitReachedModal";
@@ -15,6 +14,7 @@ import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
 import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
@@ -24,10 +24,9 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `AddSite` component
  *
- * @param {boolean} openSidebar
- * @param {function} setOpenSidebar
+ * @param {function} handleOpenSidebar
  */
-export function AddSite({ handleOpenSidebar }) {
+const AddSite = ({ handleOpenSidebar }) => {
 	const [maxSiteLimit, setMaxSiteLimit] = useState(null);
 	const [siteLimitCounter, setSiteLimitCounter] = useState(null);
 
@@ -73,7 +72,15 @@ export function AddSite({ handleOpenSidebar }) {
 	}, [user, errorUser, validatingUser]);
 
 	useEffect(() => {
-		handleMaxSiteLimit();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleMaxSiteLimit();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleMaxSiteLimit]);
 
 	// Handle `siteLimitCounter` value
@@ -99,7 +106,15 @@ export function AddSite({ handleOpenSidebar }) {
 	}, [sites, errorSites, validatingSites, user, errorUser, validatingUser]);
 
 	useEffect(() => {
-		handleSiteLimitCounter();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteLimitCounter();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteLimitCounter]);
 
 	return (
@@ -194,7 +209,11 @@ export function AddSite({ handleOpenSidebar }) {
 			</div>
 		</>
 	);
-}
+};
+
+AddSite.propTypes = {
+	handleOpenSidebar: PropTypes.func
+};
 
 /**
  * Memoized custom `AddSite` component

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedDashboardLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedAddNewSitePageLayout } from "@components/layouts/pages/AddNewSite";
@@ -32,11 +31,10 @@ export async function getServerSideProps({ req, query }) {
 			...customAxiosHeaders
 		}
 	});
-	const sitesData = sitesResponse?.data ?? null;
-	const sitesStatus = sitesResponse?.status ?? null;
+	const sitesResponseData = sitesResponse?.data ?? null;
+	const sitesResponseStatus = sitesResponse?.status ?? null;
 
 	if (
-		typeof userData !== "undefined" &&
 		userData !== null &&
 		!userData?.detail &&
 		Object.keys(userData)?.length > 0 &&
@@ -48,13 +46,13 @@ export async function getServerSideProps({ req, query }) {
 		const edit = query?.edit ? (query?.edit === "true" ? true : false) : null;
 
 		if (
-			typeof sitesData !== "undefined" &&
-			sitesData !== null &&
-			!sitesData?.detail &&
-			Object.keys(sitesData)?.length > 0 &&
-			Math.round(sitesStatus / 200) === 1
+			sitesResponseData !== null &&
+			!sitesResponseData?.detail &&
+			Object.keys(sitesResponseData)?.length > 0 &&
+			Math.round(sitesResponseStatus / 200) === 1
 		) {
-			const sidMatch = sitesData?.results?.find((site) => site.id === sid && site.verified === verified) ?? null;
+			const sidMatch =
+				sitesResponseData?.results?.find((site) => site.id === sid && site.verified === verified) ?? null;
 
 			if (
 				edit !== null &&

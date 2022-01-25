@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { MemoizedAlert } from "@components/alerts";
 import { MemoizedBasicPlan } from "@components/plans/BasicPlan";
@@ -9,6 +8,7 @@ import { useLoading } from "@hooks/useLoading";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -16,22 +16,30 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `SubscriptionPlansPricing` component
+ *
+ * @param {boolean} disableLocalTime
+ * @param {boolean} loadingAgencySemiAnnually
+ * @param {boolean} loadingProSemiAnnually
+ * @param {boolean} loadingAgencyMonthly
+ * @param {boolean} loadingProMonthly
+ * @param {boolean} togglePaymentPeriod
+ * @param {function} setTogglePaymentPeriod
+ * @param {function} setPlanId
+ * @param {function} setPlanName
+ * @param {function} setOpen
  */
-export function SubscriptionPlansPricing(props) {
+const SubscriptionPlansPricing = ({
+	setPlanId,
+	setPlanName,
+	setOpen,
+	setTogglePaymentPeriod,
+	togglePaymentPeriod,
+	loadingAgencySemiAnnually,
+	loadingAgencyMonthly,
+	loadingProSemiAnnually,
+	loadingProMonthly
+}) => {
 	const [disableLocalTime, setDisableLocalTime] = useState(false);
-
-	// Props
-	const {
-		setPlanId,
-		setPlanName,
-		setOpen,
-		setTogglePaymentPeriod,
-		togglePaymentPeriod,
-		loadingAgencySemiAnnually,
-		loadingAgencyMonthly,
-		loadingProSemiAnnually,
-		loadingProMonthly
-	} = props;
 
 	// Translations
 	const { t } = useTranslation();
@@ -69,7 +77,15 @@ export function SubscriptionPlansPricing(props) {
 	}, [user, errorUser, validatingUser]);
 
 	useEffect(() => {
-		handleUserLocalTime();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleUserLocalTime();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleUserLocalTime]);
 
 	// Handle error messages
@@ -90,7 +106,15 @@ export function SubscriptionPlansPricing(props) {
 	}, [subscriptions, errorSubscriptions, validatingSubscriptions]);
 
 	useEffect(() => {
-		handleErrorMessages();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleErrorMessages();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleErrorMessages]);
 
 	return (
@@ -269,7 +293,19 @@ export function SubscriptionPlansPricing(props) {
 			</div>
 		</>
 	);
-}
+};
+
+SubscriptionPlansPricing.propTypes = {
+	loadingAgencyMonthly: PropTypes.bool,
+	loadingAgencySemiAnnually: PropTypes.bool,
+	loadingProMonthly: PropTypes.bool,
+	loadingProSemiAnnually: PropTypes.bool,
+	setOpen: PropTypes.func,
+	setPlanId: PropTypes.func,
+	setPlanName: PropTypes.func,
+	setTogglePaymentPeriod: PropTypes.func,
+	togglePaymentPeriod: PropTypes.bool
+};
 
 /**
  * Memoized custom `SubscriptionPlansPricing` component

@@ -1,39 +1,40 @@
-import { handleItemsPerPageChange, handleScanApiEndpoint, handleSiteQueries } from "@hooks/useSiteQueries";
+import { MemoizedDataPagination } from "@components/pagination";
+import { SitesTable } from "@components/tables/SitesTable";
 import { ExternalLinkIcon } from "@heroicons/react/outline";
+import { useItemsPerPageChange } from "@hooks/useItemsPerPageChange";
+import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
+import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import useTranslation from "next-translate/useTranslation";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
+import { memo } from "react";
 import tw from "twin.macro";
-import Footer from "../components/Footer";
+import { Footer } from "../components/Footer";
 
 /**
- * Dynamic imports
+ * Custom function to render the `SitesDashboardPageLayout` component
  */
-const SitesTable = dynamic(() => import("@components/tables/SitesTable"), { ssr: true });
-const DataPagination = dynamic(() => import("@components/pagination"), { ssr: true });
+const SitesDashboardPageLayout = () => {
+	// Translations
+	const { t } = useTranslation("sites");
+	const site = t("site");
 
-export default function SitesDashboardPageLayout() {
 	// Router
 	const { query } = useRouter();
 
 	// Helper functions
-	const { linksPerPage, setLinksPerPage, pagePath, setPagePath } = handleSiteQueries(query);
-	const { scanApiEndpoint } = handleScanApiEndpoint(query, linksPerPage);
+	const { linksPerPage, setLinksPerPage, pagePath, setPagePath } = useSiteQueries(query);
+	const { scanApiEndpoint } = useScanApiEndpoint(query, linksPerPage);
 
 	// SWR hooks
 	const { sites, validatingSites } = useSites({
 		endpoint: scanApiEndpoint
 	});
 
-	// Custom functions
-	const onHandleItemsPerPageChange = async (count) => {
-		return await handleItemsPerPageChange(scanApiEndpoint, count, setLinksPerPage);
+	// Custom hook that handles items per page change
+	const useHandleItemsPerPageChange = async ({ count }) => {
+		return await useItemsPerPageChange(scanApiEndpoint, count, setLinksPerPage, setPagePath);
 	};
-
-	// Translations
-	const { t } = useTranslation("sites");
-	const site = t("site");
 
 	return (
 		<>
@@ -59,7 +60,6 @@ export default function SitesDashboardPageLayout() {
 					tw`flex-grow focus:outline-none px-4 pt-8 sm:px-6 md:px-8`,
 					sites?.count < 1 ? tw`flex flex-col flex-auto items-center justify-center` : null
 				]}
-				tabIndex="0"
 			>
 				<div css={[tw`flex-1 w-full h-full`, sites?.count < 1 ? tw`flex flex-auto` : null]}>
 					<div css={[tw`flex-1 w-full h-full`, sites?.count < 1 && tw`flex flex-initial`]}>
@@ -73,10 +73,10 @@ export default function SitesDashboardPageLayout() {
 			</div>
 
 			<div tw="flex-none px-4 sm:px-6 md:px-8">
-				<DataPagination
+				<MemoizedDataPagination
 					activePage={parseInt(query?.page > 0 ? query?.page : 0)}
 					apiEndpoint={scanApiEndpoint}
-					handleItemsPerPageChange={onHandleItemsPerPageChange}
+					handleItemsPerPageChange={useHandleItemsPerPageChange}
 					linksPerPage={parseInt(linksPerPage)}
 					pathName={pagePath}
 					componentReady={!validatingSites}
@@ -88,4 +88,9 @@ export default function SitesDashboardPageLayout() {
 			</div>
 		</>
 	);
-}
+};
+
+/**
+ * Memoized custom `SitesDashboardPageLayout` component
+ */
+export const MemoizedSitesDashboardPageLayout = memo(SitesDashboardPageLayout);

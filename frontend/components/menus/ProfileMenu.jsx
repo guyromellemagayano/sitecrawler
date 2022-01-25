@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedProfileMenuDropdown } from "@components/dropdowns/ProfileMenuDropdown";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
@@ -11,7 +10,7 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `ProfileMenu` component
  */
-export function ProfileMenu() {
+const ProfileMenu = () => {
 	// SWR hooks
 	const { user, errorUser, validatingUser } = useUser();
 
@@ -96,7 +95,7 @@ export function ProfileMenu() {
 			<MemoizedProfileMenuDropdown isComponentVisible={isProfileMenuComponentVisible} />
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `ProfileMenu` component

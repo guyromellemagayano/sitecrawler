@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedAlert } from "@components/alerts";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePatchMethod } from "@helpers/handleHttpMethods";
@@ -17,7 +16,7 @@ import * as Yup from "yup";
 /**
  * Custom function to render the `PersonalSettingsForm` component
  */
-export function PersonalSettingsForm() {
+const PersonalSettingsForm = () => {
 	const [disableForm, setDisableForm] = useState(true);
 	const [email, setEmail] = useState(null);
 	const [firstname, setFirstname] = useState(null);
@@ -173,7 +172,7 @@ export function PersonalSettingsForm() {
 											onBlur={handleBlur}
 										/>
 									) : (
-										<Skeleton duration={2} width={448} height={38} />
+										<Skeleton duration={2} width={360} height={38} />
 									)}
 								</div>
 
@@ -204,7 +203,7 @@ export function PersonalSettingsForm() {
 											onBlur={handleBlur}
 										/>
 									) : (
-										<Skeleton duration={2} width={448} height={38} />
+										<Skeleton duration={2} width={360} height={38} />
 									)}
 								</div>
 
@@ -235,7 +234,7 @@ export function PersonalSettingsForm() {
 											onBlur={handleBlur}
 										/>
 									) : (
-										<Skeleton duration={2} width={448} height={38} />
+										<Skeleton duration={2} width={360} height={38} />
 									)}
 								</div>
 
@@ -260,7 +259,7 @@ export function PersonalSettingsForm() {
 											onChange={handleEmailInputChange}
 										/>
 									) : (
-										<Skeleton duration={2} width={448} height={38} />
+										<Skeleton duration={2} width={360} height={38} />
 									)}
 								</div>
 							</div>
@@ -316,7 +315,7 @@ export function PersonalSettingsForm() {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `PersonalSettingsForm` component

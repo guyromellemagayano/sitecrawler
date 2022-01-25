@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { ConfirmEmailApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { LoginLink } from "@constants/PageLinks";
@@ -15,7 +13,7 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `ConfirmEmailPageLayout` component
  */
-export function ConfirmEmailPageLayout() {
+const ConfirmEmailPageLayout = () => {
 	const [success, setSuccess] = useState(false);
 	const [failure, setFailure] = useState(false);
 	const [errorMessage, setErrorMessage] = useState([]);
@@ -124,7 +122,15 @@ export function ConfirmEmailPageLayout() {
 	}, [asPath, query]);
 
 	useEffect(() => {
-		handleConfirmEmail;
+		let isMounted = true;
+
+		if (isMounted) {
+			handleConfirmEmail;
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleConfirmEmail]);
 
 	return (
@@ -212,7 +218,7 @@ export function ConfirmEmailPageLayout() {
 			</Scrollbars>
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `ConfirmEmailPageLayout` component

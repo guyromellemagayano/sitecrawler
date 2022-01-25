@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import ProgressBar from "@components/progress-bar";
 import AppSeo from "@constants/AppSeo";
 import { isProd } from "@constants/ServerEnv";
@@ -16,7 +15,7 @@ import { SWRConfig } from "swr";
 library.add(fab);
 library.add(fas);
 
-export default function App({ Component, pageProps, err }) {
+const MyApp = ({ Component, pageProps, err }) => {
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);
 
@@ -36,4 +35,6 @@ export default function App({ Component, pageProps, err }) {
 			<Component {...pageProps} err={err} />
 		</SWRConfig>
 	);
-}
+};
+
+export default MyApp;

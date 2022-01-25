@@ -5,7 +5,7 @@ import "twin.macro";
 /**
  * Custom function to render the `SkeletonEntries` component
  */
-export function SkeletonEntries({ str = null, limit = null }) {
+const SkeletonEntries = ({ str = null, limit = null }) => {
 	let strArray = [];
 
 	if (limit > 0) {
@@ -19,10 +19,10 @@ export function SkeletonEntries({ str = null, limit = null }) {
 			</div>
 		));
 	} else return;
-}
+};
 
 SkeletonEntries.propTypes = {
-	limit: PropTypes.number.isRequired,
+	limit: PropTypes.number,
 	str: PropTypes.object
 };
 

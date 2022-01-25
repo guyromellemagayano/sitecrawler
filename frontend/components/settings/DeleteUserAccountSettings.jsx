@@ -10,7 +10,7 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `DeleteUserAccountSettings` component
  */
-export function DeleteUserAccountSettings() {
+const DeleteUserAccountSettings = () => {
 	// Translations
 	const { t } = useTranslation();
 	const deleteUserAccountModalRequestTitle = t("settings:deleteUserAccountModalRequest.title");
@@ -58,6 +58,6 @@ export function DeleteUserAccountSettings() {
 			</div>
 		</div>
 	);
-}
+};
 
 export const MemoizedDeleteUserAccountSettings = memo(DeleteUserAccountSettings);

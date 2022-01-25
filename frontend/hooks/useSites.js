@@ -9,9 +9,7 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  */
 export const useSites = (endpoint = null) => {
 	const currentEndpoint =
-		typeof endpoint !== "undefined" && endpoint !== null && typeof endpoint === "string" && endpoint !== ""
-			? endpoint
-			: SitesApiEndpoint;
+		endpoint !== null && typeof endpoint === "string" && endpoint !== "" ? endpoint : SitesApiEndpoint;
 
 	const { data: sites, error: errorSites, isValidating: validatingSites } = useMainSWRConfig(currentEndpoint);
 

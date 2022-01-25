@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -14,16 +13,13 @@ import "twin.macro";
  * @param {string} scanApiEndpoint
  * @param {function} setPagePath
  */
-export function PageFilter(props) {
+const PageFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPagePath }) => {
 	const [allFilter, setAllFilter] = useState(false);
 	const [brokenSecurityFilter, setBrokenSecurityFilter] = useState(false);
 	const [duplicateDescriptionsFilter, setDuplicateDescriptionsFilter] = useState(false);
 	const [duplicateTitlesFilter, setDuplicateTitlesFilter] = useState(false);
 	const [largePageSizesFilter, setLargePageSizesFilter] = useState(false);
 	const [noIssueFilter, setNoIssueFilter] = useState(false);
-
-	// Props
-	const { filterQueryString = null, scanApiEndpoint = null, setPagePath } = props;
 
 	// Translations
 	const { t } = useTranslation();
@@ -92,9 +88,9 @@ export function PageFilter(props) {
 				if (newPath.includes("?")) newPath += `&size_total_max=1048575&tls_total=true`;
 				else newPath += `?size_total_max=1048575&tls_total=true`;
 			} else if (filterType === "noIssues" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("size_total_max") : null;
-				filterQueryString !== null ? filterQueryString?.delete("tls_total") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("size_total_max") ?? null;
+				filterQueryString?.delete("tls_total") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("size_total_max") && newPath.includes("tls_total")) {
 					newPath = handleRemoveUrlParameter(newPath, "size_total_max");
@@ -120,8 +116,8 @@ export function PageFilter(props) {
 				if (newPath.includes("?")) newPath += `&size_total_min=1048576`;
 				else newPath += `?size_total_min=1048576`;
 			} else if (filterType === "largePageSizes" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("size_total_min") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("size_total_min") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("size_total_min")) {
 					newPath = handleRemoveUrlParameter(newPath, "size_total_min");
@@ -147,8 +143,8 @@ export function PageFilter(props) {
 				if (newPath.includes("?")) newPath += `&tls_total=false`;
 				else newPath += `?tls_total=false`;
 			} else if (filterType === "brokenSecurity" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("tls_total") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("tls_total") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("tls_total")) {
 					newPath = handleRemoveUrlParameter(newPath, "size_total_max");
@@ -175,8 +171,8 @@ export function PageFilter(props) {
 				if (newPath.includes("?")) newPath += `&has_duplicated_title=true`;
 				else newPath += `?has_duplicated_title=true`;
 			} else if (filterType === "duplicateTitles" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("has_duplicated_title") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("has_duplicated_title") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("has_duplicated_title")) {
 					newPath = handleRemoveUrlParameter(newPath, "has_duplicated_title");
@@ -201,8 +197,8 @@ export function PageFilter(props) {
 				if (newPath.includes("?")) newPath += `&has_duplicated_description=true`;
 				else newPath += `?has_duplicated_description=true`;
 			} else if (filterType === "duplicateDescriptions" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("has_duplicated_description") : null;
-				filterQueryString !== null ? filterQueryString?.delete("page") : null;
+				filterQueryString?.delete("has_duplicated_description") ?? null;
+				filterQueryString?.delete("page") ?? null;
 
 				if (newPath.includes("has_duplicated_description")) {
 					newPath = handleRemoveUrlParameter(newPath, "has_duplicated_description");
@@ -354,12 +350,12 @@ export function PageFilter(props) {
 			</div>
 		</div>
 	);
-}
+};
 
 PageFilter.propTypes = {
 	filterQueryString: PropTypes.object,
-	scanApiEndpoint: PropTypes.string.isRequired,
-	setPagePath: PropTypes.func.isRequired
+	scanApiEndpoint: PropTypes.string,
+	setPagePath: PropTypes.func
 };
 
 /**

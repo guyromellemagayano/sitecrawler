@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedSitesList } from "@components/lists/SitesList";
 import { ComponentReadyInterval } from "@constants/GlobalValues";
 import { AddNewSiteLink, DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
@@ -13,8 +12,12 @@ import "twin.macro";
 
 /**
  * Custom function to render the `SiteSelectDropdown` component
+ *
+ * @param {number} selectedSiteId
+ * @param {function} handleSiteSelectOnLoad
+ * @param {boolean} openDropdown
  */
-export function SiteSelectDropdown({ selectedSiteId, handleSiteSelectOnLoad, openDropdown }, ref) {
+const SiteSelectDropdown = ({ selectedSiteId = null, handleSiteSelectOnLoad, openDropdown = false }, ref) => {
 	const [scanObjId, setScanObjId] = useState(null);
 
 	// Sidebar Menu Labels
@@ -86,7 +89,7 @@ export function SiteSelectDropdown({ selectedSiteId, handleSiteSelectOnLoad, ope
 			</div>
 		</Transition>
 	);
-}
+};
 
 /**
  * Memoized custom `SiteSelectDropdown` component

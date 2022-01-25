@@ -10,15 +10,12 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  */
 export const usePages = (endpoint = null, querySid = null, scanObjId = null) => {
 	const currentEndpoint =
-		typeof endpoint !== "undefined" &&
 		endpoint !== null &&
 		typeof endpoint === "string" &&
 		endpoint !== "" &&
-		typeof querySid !== "undefined" &&
 		querySid !== null &&
 		typeof querySid === "number" &&
 		querySid > 0 &&
-		typeof scanObjId !== "undefined" &&
 		scanObjId !== null &&
 		typeof scanObjId === "number" &&
 		scanObjId > 0

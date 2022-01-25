@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@constants/PageLinks";
 import useTranslation from "next-translate/useTranslation";
@@ -10,7 +9,7 @@ import "twin.macro";
 /**
  * Custom function to render the `AccountExistPageLayout` component
  */
-export function AccountExistPageLayout() {
+const AccountExistPageLayout = () => {
 	// Translations
 	const { t } = useTranslation();
 	const headline = t("accountExist:headline");
@@ -44,7 +43,7 @@ export function AccountExistPageLayout() {
 			</Scrollbars>
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `AccountExistPageLayout` component

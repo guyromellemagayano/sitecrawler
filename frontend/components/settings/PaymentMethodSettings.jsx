@@ -12,7 +12,7 @@ import "twin.macro";
 /**
  * Custom function to render the `PaymentMethodSettings` component
  */
-export function PaymentMethodSettings() {
+const PaymentMethodSettings = () => {
 	// Translations
 	const { t } = useTranslation("settings");
 	const cardInformationTitle = t("settings:cardInformationSettings.title");
@@ -38,7 +38,15 @@ export function PaymentMethodSettings() {
 	}, [stripePromise, validatingStripePromise, errorStripePromise]);
 
 	useEffect(() => {
-		handleStripePromise();
+		let isMounted = true;
+
+		if (isComponentReady) {
+			handleStripePromise();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleStripePromise]);
 
 	return (
@@ -52,7 +60,7 @@ export function PaymentMethodSettings() {
 			</Elements>
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `PaymentMethodSettings` component

@@ -7,7 +7,8 @@ import { useSWRConfig } from "swr";
  *
  * @param {object} event
  * @param {string} scanApiEndpoint
- * @param {any} setSearchKey
+ * @param {function} setSearchKey
+ * @param {function} setPagePath
  */
 export const useSiteSearch = async (event, scanApiEndpoint = null, setSearchKey, setPagePath) => {
 	// Router
@@ -17,7 +18,7 @@ export const useSiteSearch = async (event, scanApiEndpoint = null, setSearchKey,
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
-	const searchTargetValue = event?.target?.value || null;
+	const searchTargetValue = event.target.value;
 
 	if (event.keyCode !== 13) return false;
 

@@ -5,9 +5,9 @@ import "twin.macro";
 /**
  * Custom function to render the `Loader` component
  */
-export function Loader() {
+const Loader = () => {
 	return <MemoizedLoadingMessage />;
-}
+};
 
 /**
  * Memoized custom `Loader` component

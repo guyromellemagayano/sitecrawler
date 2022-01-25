@@ -1,7 +1,16 @@
 import PropTypes from "prop-types";
+import { memo } from "react";
 import tw from "twin.macro";
 
-const Badge = (isDanger = false, isSuccess = false, isWarning = false, text = null) => {
+/**
+ * Custom function to render the `Badge` component
+ *
+ * @param {boolean} isDanger
+ * @param {boolean} isSuccess
+ * @param {boolean} isWarning
+ * @param {string} text
+ */
+const Badge = ({ isDanger = false, isSuccess = false, isWarning = false, text = null }) => {
 	return (
 		<span
 			css={[
@@ -21,10 +30,13 @@ const Badge = (isDanger = false, isSuccess = false, isWarning = false, text = nu
 };
 
 Badge.propTypes = {
-	isDanger: PropTypes.bool.isRequired,
-	isSuccess: PropTypes.bool.isRequired,
-	isWarning: PropTypes.bool.isRequired,
-	text: PropTypes.string.isRequired
+	isDanger: PropTypes.bool,
+	isSuccess: PropTypes.bool,
+	isWarning: PropTypes.bool,
+	text: PropTypes.string
 };
 
-export default Badge;
+/**
+ * Memoized custom `Badge` component
+ */
+export const MemoizedBadge = memo(Badge);

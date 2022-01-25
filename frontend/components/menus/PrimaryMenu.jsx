@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedAppLogo } from "@components/logos/AppLogo";
 import { MemoizedSiteSelect } from "@components/select/SiteSelect";
 import { AuthAppLogo, SiteLogoWhite } from "@constants/GlobalValues";
@@ -19,7 +18,7 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `PrimaryMenu` component
  */
-export function PrimaryMenu() {
+const PrimaryMenu = () => {
 	// Translations
 	const { t } = useTranslation("common");
 	const appLogo = t("appLogo");
@@ -139,7 +138,7 @@ export function PrimaryMenu() {
 			</div>
 		</Scrollbars>
 	);
-}
+};
 
 /**
  * Memoized custom `PrimaryMenu` component

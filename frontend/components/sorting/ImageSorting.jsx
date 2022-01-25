@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { orderingByNameQuery } from "@constants/GlobalValues";
 import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
@@ -28,18 +27,15 @@ const initialOrder = {
  * @param {array} labels
  * @param {function} setPagePath
  */
-export function ImageSorting(props) {
+const ImageSorting = ({ result = null, slug = null, labels = null, setPagePath }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
-
-	// Props
-	const { result = null, slug = null, labels = null, setPagePath } = props;
 
 	// Router
 	const { asPath } = useRouter();
 	const router = useRouter();
 
 	// SWR hook for global mutations
-	// const { mutate } = useSWRConfig();
+	// const  { mutate } = useSWRConfig();
 
 	// Handle sort
 	const handleSort = useCallback(
@@ -83,11 +79,18 @@ export function ImageSorting(props) {
 	);
 
 	useEffect(() => {
-		handleSort();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSort();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSort]);
 
-	return typeof slug !== undefined &&
-		slug !== null &&
+	return slug !== null &&
 		(slug === "image-url" ||
 			slug === "image-size" ||
 			slug === "status" ||
@@ -156,14 +159,14 @@ export function ImageSorting(props) {
 			</div>
 		</div>
 	) : null;
-}
+};
 
 ImageSorting.propTypes = {
 	labels: PropTypes.array,
 	result: PropTypes.shape({
 		ordering: PropTypes.string
 	}),
-	setPagePath: PropTypes.func.isRequired,
+	setPagePath: PropTypes.func,
 	slug: PropTypes.string
 };
 

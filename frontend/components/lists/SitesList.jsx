@@ -1,8 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedAlert } from "@components/alerts";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useSites } from "@hooks/useSites";
+import PropTypes from "prop-types";
 import { memo, useCallback, useEffect } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -11,8 +11,10 @@ import { MemoizedSiteList } from "./SiteList";
 
 /**
  * Custom function to render the `SitesList` component
+ *
+ * @param {function} handleSiteSelectOnLoad
  */
-export function SitesList(handleSiteSelectOnLoad) {
+const SitesList = ({ handleSiteSelectOnLoad }) => {
 	// SWR hooks
 	const { sites, errorSites, validatingSites } = useSites();
 
@@ -27,21 +29,14 @@ export function SitesList(handleSiteSelectOnLoad) {
 		if (!validatingSites) {
 			if (!errorSites) {
 				const sitesSelectResponse = await sites;
-				const sitesSelectResponseData = sitesSelectResponse?.data ?? null;
-				const sitesSelectResponseStatus = sitesSelectResponse?.status ?? null;
-				const sitesSelectResponseMethod = sitesSelectResponse?.config?.method ?? null;
+				const sitesSelectResponseData = await sitesSelectResponse?.data;
+				const sitesSelectResponseStatus = await sitesSelectResponse?.status;
+				const sitesSelectResponseMethod = await sitesSelectResponse?.config?.method;
 
 				if (sitesSelectResponseData !== null && Math.round(sitesSelectResponseStatus / 200) === 1) {
 					if (Object.keys(sitesSelectResponseData)?.length > 0) {
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
 						await mutate(SitesApiEndpoint, false);
-
-						// Show alert message after successful 200 OK or 201 Created response is issued
-						setConfig({
-							isSites: true,
-							method: sitesSelectResponseMethod,
-							status: sitesSelectResponseStatus
-						});
 					}
 				} else {
 					// Show alert message after failed response is issued
@@ -56,7 +51,15 @@ export function SitesList(handleSiteSelectOnLoad) {
 	}, [sites, errorSites, validatingSites]);
 
 	useEffect(() => {
-		handleSiteSelectResponse();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteSelectResponse();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteSelectResponse]);
 
 	return (
@@ -74,8 +77,8 @@ export function SitesList(handleSiteSelectOnLoad) {
 			) : null}
 
 			{!validatingSites ? (
-				!errorSites && typeof sites !== "undefined" && sites !== null && Object.keys(sites).length > 0 ? (
-					sites?.results && sites?.results?.length > 0 ? (
+				!errorSites && typeof sites !== "undefined" && sites !== null && !sites?.data?.detail ? (
+					sites?.data?.results && sites?.data?.results?.length > 0 ? (
 						<ul
 							tabIndex="-1"
 							role="listbox"
@@ -83,7 +86,7 @@ export function SitesList(handleSiteSelectOnLoad) {
 							tw="pt-2 h-48 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
 						>
 							<Scrollbars universal>
-								{sites?.results?.map((value, index) => (
+								{sites?.data?.results?.map((value, index) => (
 									<MemoizedSiteList key={index} data={value} handleSiteSelectOnLoad={handleSiteSelectOnLoad} />
 								)) ?? null}
 							</Scrollbars>
@@ -93,7 +96,11 @@ export function SitesList(handleSiteSelectOnLoad) {
 			) : null}
 		</>
 	);
-}
+};
+
+SitesList.propTypes = {
+	handleSiteSelectOnLoad: PropTypes.func
+};
 
 /**
  * Memoized custom `SitesList` component

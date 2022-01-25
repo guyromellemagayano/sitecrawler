@@ -17,7 +17,7 @@ import * as Yup from "yup";
 /**
  * Custom function to render the `SignupForm` component
  */
-export function SignupForm() {
+const SignupForm = () => {
 	const [uid, setUid] = useState(null);
 
 	// Router
@@ -211,7 +211,7 @@ export function SignupForm() {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `SignupForm` component

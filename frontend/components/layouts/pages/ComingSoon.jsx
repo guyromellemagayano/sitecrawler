@@ -8,7 +8,7 @@ import "twin.macro";
 /**
  * Custom function to render the `ComingSoonPageLayout` component
  */
-export function ComingSoonPageLayout() {
+const ComingSoonPageLayout = () => {
 	// Translations
 	const { t } = useTranslation("common");
 	const comingSoon = t("comingSoon");
@@ -25,7 +25,7 @@ export function ComingSoonPageLayout() {
 			)}
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `ComingSoonPageLayout` component

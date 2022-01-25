@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -14,15 +13,12 @@ import "twin.macro";
  * @param {string} scanApiEndpoint
  * @param {function} setPagePath
  */
-export function LinkFilter(props) {
+const LinkFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPagePath }) => {
 	const [allFilter, setAllFilter] = useState(false);
 	const [externalLinksFilter, setExternalLinksFilter] = useState(false);
 	const [internalLinksFilter, setInternalLinksFilter] = useState(false);
 	const [linksWithIssuesFilter, setLinksWithIssuesFilter] = useState(false);
 	const [noIssueFilter, setNoIssueFilter] = useState(false);
-
-	// Props
-	const { filterQueryString = null, scanApiEndpoint = null, setPagePath } = props;
 
 	// Translations
 	const { t } = useTranslation();
@@ -80,7 +76,7 @@ export function LinkFilter(props) {
 				if (newPath.includes("?")) newPath += `&status__neq=OK`;
 				else newPath += `?status__neq=OK`;
 			} else if (filterType === "linksWithIssues" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("status__neq") : null;
+				filterQueryString?.delete("status__neq") ?? null;
 
 				if (newPath.includes("status__neq")) newPath = handleRemoveUrlParameter(newPath, "status__neq");
 
@@ -97,7 +93,7 @@ export function LinkFilter(props) {
 				if (newPath.includes("?")) newPath += `&status=OK`;
 				else newPath += `?status=OK`;
 			} else if (filterType === "noIssues" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("status") : null;
+				filterQueryString?.delete("status") ?? null;
 
 				if (newPath.includes("status")) newPath = handleRemoveUrlParameter(newPath, "status");
 
@@ -114,7 +110,7 @@ export function LinkFilter(props) {
 				if (newPath.includes("?")) newPath += `&type=PAGE`;
 				else newPath += `?type=PAGE`;
 			} else if (filterType === "internalLinks" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("type") : null;
+				filterQueryString?.delete("type") ?? null;
 
 				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
 
@@ -131,7 +127,7 @@ export function LinkFilter(props) {
 				if (newPath.includes("?")) newPath += `&type=EXTERNAL`;
 				else newPath += `?type=EXTERNAL`;
 			} else if (filterType === "externalLinks" && !filterStatus) {
-				filterQueryString !== null ? filterQueryString?.delete("type") : null;
+				filterQueryString?.delete("type") ?? null;
 
 				if (newPath.includes("type")) newPath = handleRemoveUrlParameter(newPath, "type");
 
@@ -264,12 +260,12 @@ export function LinkFilter(props) {
 			</div>
 		</div>
 	);
-}
+};
 
 LinkFilter.propTypes = {
 	filterQueryString: PropTypes.object,
-	scanApiEndpoint: PropTypes.string.isRequired,
-	setPagePath: PropTypes.func.isRequired
+	scanApiEndpoint: PropTypes.string,
+	setPagePath: PropTypes.func
 };
 
 /**

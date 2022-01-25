@@ -3,10 +3,9 @@ import { SitesTableLabels } from "@constants/SitesTableLabels";
 import { useSites } from "@hooks/useSites";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { memo } from "react";
 import "twin.macro";
 
-const SitesTable = memo(() => {
+export const SitesTable = () => {
 	const { sites, errorSites, validatingSites } = useSites();
 
 	// Router
@@ -59,7 +58,7 @@ const SitesTable = memo(() => {
 							siteVerificationId={parseInt(value.verification_id)}
 							siteVerified={value.verified}
 						/>
-					))}
+					)) ?? null}
 				</tbody>
 			</table>
 		) : (
@@ -72,6 +71,4 @@ const SitesTable = memo(() => {
 	) : (
 		<Loader />
 	);
-});
-
-export default SitesTable;
+};

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { MemoizedAlert } from "@components/alerts";
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedLoader } from "@components/loaders";
