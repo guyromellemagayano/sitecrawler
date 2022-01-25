@@ -22,36 +22,7 @@ const NextConfig = {
 	},
 	experimental: {
 		removeConsole: process.env.NODE_ENV === "production" ? true : false
-	},
-	// async redirects() {
-	// 	return [
-	// 		{
-	// 			source: "/dashboard",
-	// 			destination: "/dashboard/sites",
-	// 			permanent: true
-	// 		},
-	// 		{
-	// 			source: "/dashboard/settings",
-	// 			destination: "/dashboard/settings/profile",
-	// 			permanent: true
-	// 		},
-	// 		{
-	// 			source: "/dashboard/site",
-	// 			destination: "/dashboard/sites",
-	// 			permanent: true
-	// 		},
-	// 		{
-	// 			source: "/dashboard/site/:siteId",
-	// 			destination: "/dashboard/sites/:siteId/overview",
-	// 			permanent: true
-	// 		},
-	// 		{
-	// 			source: "/dashboard/sites/:siteId",
-	// 			destination: "/dashboard/sites/:siteId/overview",
-	// 			permanent: true
-	// 		}
-	// 	];
-	// }
+	}
 };
 
 const SentryWebpackPluginOptions = {
