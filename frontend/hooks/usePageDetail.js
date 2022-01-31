@@ -8,9 +8,10 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {number} querySid
  * @param {number} scanObjId
  * @param {number} linkId
+ * @param {object} options
  * @returns {object} pageDetail, errorPageDetail, validatingPageDetail
  */
-export const usePageDetail = (querySid = null, scanObjId = null, linkId = null) => {
+export const usePageDetail = (querySid = null, scanObjId = null, linkId = null, options = null) => {
 	const currentEndpoint =
 		querySid !== null &&
 		typeof querySid === "number" &&
@@ -27,7 +28,7 @@ export const usePageDetail = (querySid = null, scanObjId = null, linkId = null) 
 		data: pageDetail,
 		error: errorPageDetail,
 		isValidating: validatingPageDetail
-	} = useMainSWRConfig(currentEndpoint);
+	} = useMainSWRConfig(currentEndpoint, options);
 
 	return { pageDetail, errorPageDetail, validatingPageDetail };
 };

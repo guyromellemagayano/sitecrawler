@@ -6,9 +6,10 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * SWR React hook that will handle a site's `uptime summary` information
  *
  * @param {number} querySid
+ * @param {object} options
  * @returns {object} uptimeSummary, errorUptimeSummary, validatingUptimeSummary
  */
-export const useUptimeSummary = (querySid = null) => {
+export const useUptimeSummary = (querySid = null, options = null) => {
 	const currentEndpoint =
 		querySid !== null && typeof querySid === "number" && querySid > 0
 			? SitesApiEndpoint + querySid + UptimeSlug + SummarySlug
@@ -18,7 +19,7 @@ export const useUptimeSummary = (querySid = null) => {
 		data: uptimeSummary,
 		error: errorUptimeSummary,
 		isValidating: validatingUptimeSummary
-	} = useMainSWRConfig(currentEndpoint);
+	} = useMainSWRConfig(currentEndpoint, options);
 
 	return { uptimeSummary, errorUptimeSummary, validatingUptimeSummary };
 };

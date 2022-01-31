@@ -9,9 +9,16 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {number} querySid
  * @param {number} scanObjId
  * @param {number} pageId
+ * @param {object} options
  * @returns {object} pageDetailLink, errorPageDetailLink, validatingPageDetailLink
  */
-export const usePageDetailLink = (addQuery = null, querySid = null, scanObjId = null, pageId = null) => {
+export const usePageDetailLink = (
+	addQuery = null,
+	querySid = null,
+	scanObjId = null,
+	pageId = null,
+	options = null
+) => {
 	const currentQuery = addQuery !== null && typeof addQuery === "string" && addQuery !== "" ? "?" + addQuery : "";
 	const currentEndpoint =
 		querySid !== null &&
@@ -30,7 +37,7 @@ export const usePageDetailLink = (addQuery = null, querySid = null, scanObjId = 
 		data: pageDetailLink,
 		error: errorPageDetailLink,
 		isValidating: validatingPageDetailLink
-	} = useMainSWRConfig(currentEndpoint);
+	} = useMainSWRConfig(currentEndpoint, options);
 
 	return { pageDetailLink, errorPageDetailLink, validatingPageDetailLink };
 };

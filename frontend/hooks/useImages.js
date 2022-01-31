@@ -6,9 +6,10 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {string} endpoint
  * @param {number} querySid
  * @param {number} scanObjId
+ * @param {object} options
  * @returns {object} images, errorImages, validatingImages
  */
-export const useImages = (endpoint = null, querySid = null, scanObjId = null) => {
+export const useImages = (endpoint = null, querySid = null, scanObjId = null, options = null) => {
 	const currentEndpoint =
 		querySid !== null &&
 		typeof querySid === "number" &&
@@ -22,7 +23,11 @@ export const useImages = (endpoint = null, querySid = null, scanObjId = null) =>
 			? endpoint
 			: null;
 
-	const { data: images, error: errorImages, isValidating: validatingImages } = useMainSWRConfig(currentEndpoint);
+	const {
+		data: images,
+		error: errorImages,
+		isValidating: validatingImages
+	} = useMainSWRConfig(currentEndpoint, options);
 
 	return { images, errorImages, validatingImages };
 };
