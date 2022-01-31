@@ -6,11 +6,11 @@ import { MemoizedSubscriptionPlansPricing } from "@components/pricing/Subscripti
 import { CurrentSubscriptionApiEndpoint, PaymentMethodApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { Basic } from "@constants/GlobalValues";
 import { handleDeleteMethod, handlePostMethod } from "@helpers/handleHttpMethods";
-import { handleStringToLowerCase } from "@helpers/handleStringToCase";
 import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
 import { useSubscriptions } from "@hooks/useSubscriptions";
+import { handleConversionStringToLowercase } from "@utils/convertCase";
 import { memo, useCallback, useEffect, useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
@@ -171,8 +171,8 @@ const SubscriptionPlansPageLayout = () => {
 					subscriptionResults
 						?.filter((sub) => sub.id === id)
 						?.map((value) => {
-							const subscriptionPlanName = handleStringToLowerCase(value?.plan?.name ?? null);
-							const subscriptionPlanPriceRecurringInterval = handleStringToLowerCase(
+							const subscriptionPlanName = handleConversionStringToLowercase(value?.plan?.name ?? null);
+							const subscriptionPlanPriceRecurringInterval = handleConversionStringToLowercase(
 								value?.price?.recurring?.interval ?? null
 							);
 							const subscriptionPlanPriceRecurringIntervalCount = value?.price?.recurring?.interval_count ?? null;
