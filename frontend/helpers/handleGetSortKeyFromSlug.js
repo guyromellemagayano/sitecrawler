@@ -5,12 +5,14 @@
  * @param {string} slug
  * @returns {string} sortKey
  */
-export const handleGetSortKeyFromSlug = (content, slug) => {
+export const handleGetSortKeyFromSlug = (content = null, slug = null) => {
 	let sortKey = "";
 
-	content.forEach((val) => {
-		if (val.slug == slug) sortKey = val.key;
-	});
+	if (slug !== null) {
+		content?.forEach((val) => {
+			if (val.slug == slug) sortKey = val.key;
+		}) ?? null;
+	}
 
 	return sortKey;
 };
