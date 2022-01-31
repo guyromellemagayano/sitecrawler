@@ -296,7 +296,7 @@
 				"504GatewayTimeoutErrorResponse": "Sites post failed. Got a 504 gateway timeout error response.",
 				"misc": {
 					"siteUrlAlreadyExists": "The site url you entered already exists. Please try again with a different site url.",
-					"enterValidSiteUrl": "You entered an invalid email. Please enter a valid URL to proceed to next step."
+					"enterValidSiteUrl": "You entered an invalid site url. Please enter a valid URL to proceed to next step."
 				}
 			}
 		},
@@ -312,7 +312,10 @@
 				"500InternalServerErrorResponse": "Sites verify URL post failed. Got a 500 internal server error response.",
 				"502BadGatewayErrorResponse": "Sites verify URL post failed. Got a 502 bad gateway error response.",
 				"503ServiceUnavailableErrorResponse": "Sites verify URL post failed. Got a 503 service unavailable error response.",
-				"504GatewayTimeoutErrorResponse": "Sites verify URL post failed. Got a 504 gateway timeout error response."
+				"504GatewayTimeoutErrorResponse": "Sites verify URL post failed. Got a 504 gateway timeout error response.",
+				"misc": {
+					"siteVerificationFailedErrorResponse": "The site verification failed. Did you add the verification code to the site url? Please try again"
+				}
 			}
 		}
 	},
