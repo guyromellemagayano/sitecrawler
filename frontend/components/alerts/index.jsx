@@ -3,7 +3,7 @@ import { Transition } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon, XIcon } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import tw from "twin.macro";
 
 /**
@@ -20,29 +20,15 @@ const Alert = ({ responseText = null, isSuccess = false }) => {
 	const dismiss = t("common:dismiss");
 
 	// Handle the alert close
-	const handleAlertClose = useCallback(async () => {
-		responseText !== null
-			? setTimeout(() => {
-					setIsOpen(false);
-			  }, AlertDisplayInterval)
-			: null;
-
-		return () => {
-			setIsOpen(false);
-		};
-	}, [responseText]);
-
 	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleAlertClose();
-		}
+		const timeout = setTimeout(() => {
+			setIsOpen(false);
+		}, AlertDisplayInterval);
 
 		return () => {
-			isMounted = false;
+			clearTimeout(timeout);
 		};
-	}, [handleAlertClose]);
+	});
 
 	return (
 		<Transition
