@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedAppLogo } from "@components/logos/AppLogo";
 import { MemoizedSiteSelect } from "@components/select/SiteSelect";
 import { AuthAppLogo, SiteLogoWhite } from "@constants/GlobalValues";
@@ -19,7 +18,7 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `SettingsMenu` component
  */
-export function SettingsMenu() {
+const SettingsMenu = () => {
 	// Translations
 	const { t } = useTranslation("common");
 	const appLogo = t("appLogo");
@@ -163,7 +162,7 @@ export function SettingsMenu() {
 			</div>
 		</Scrollbars>
 	);
-}
+};
 
 /**
  * Memoized custom `SettingsMenu` component

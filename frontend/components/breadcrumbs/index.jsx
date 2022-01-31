@@ -1,8 +1,7 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
-import { handleStringToNumberSanitation } from "@helpers/handleStringSanitation";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { useLoading } from "@hooks/useLoading";
+import { handleConversionStringToBoolean } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,7 +23,7 @@ import "twin.macro";
  * @param {string} pageTitle
  * @param {number} siteId
  */
-export function Breadcrumbs({
+const Breadcrumbs = ({
 	isImages = false,
 	isLinks = false,
 	isOther = false,
@@ -33,11 +32,11 @@ export function Breadcrumbs({
 	pageDetailTitle = null,
 	pageTitle = null,
 	siteId = null
-}) {
+}) => {
 	// Router
 	const { asPath } = useRouter();
 
-	const sanitizedSid = siteId !== null ? handleStringToNumberSanitation(siteId) : null;
+	const sanitizedSid = siteId !== null ? handleConversionStringToBoolean(siteId) : null;
 	const sitesIdOverviewPageLink =
 		sanitizedSid !== null && !asPath.includes(DashboardSitesLink)
 			? `${DashboardSitesLink + sanitizedSid + SiteOverviewSlug}`
@@ -56,14 +55,7 @@ export function Breadcrumbs({
 				<li>
 					<div>
 						{isComponentReady ? (
-							<Link
-								href={
-									isOther && typeof siteId !== "undefined" && siteId == null
-										? DashboardSitesLink
-										: sitesIdOverviewPageLink
-								}
-								passHref
-							>
+							<Link href={isOther && siteId == null ? DashboardSitesLink : sitesIdOverviewPageLink} passHref>
 								<a tw="text-gray-400 hover:text-gray-500">
 									<HomeIcon tw="flex-shrink-0 h-5 w-5" />
 									<span tw="sr-only">{home}</span>
@@ -82,10 +74,28 @@ export function Breadcrumbs({
 							<Skeleton duration={2} width={20} height={20} />
 						)}
 
-						{typeof pageDetailTitle !== "undefined" && pageDetailTitle !== null && pageDetailTitle !== "" ? (
-							isSites ? (
-								isComponentReady ? (
-									<Link href={DashboardSitesLink} passHref>
+						{pageTitle !== null && pageTitle !== "" ? (
+							pageDetailTitle !== null && pageDetailTitle !== "" ? (
+								isSites ? (
+									isComponentReady ? (
+										<Link href={DashboardSitesLink} passHref>
+											<a aria-current="page" tw="cursor-pointer ml-4 text-sm text-gray-700">
+												{pageTitle}
+											</a>
+										</Link>
+									) : (
+										<Skeleton duration={2} width={128} height={20} tw="ml-4" />
+									)
+								) : isComponentReady ? (
+									<Link
+										href={`${
+											DashboardSitesLink +
+											sanitizedSid +
+											"/" +
+											(isLinks ? "links" : isPages ? "pages" : isImages ? "images" : "seo")
+										}`}
+										passHref
+									>
 										<a aria-current="page" tw="cursor-pointer ml-4 text-sm text-gray-700">
 											{pageTitle}
 										</a>
@@ -93,32 +103,16 @@ export function Breadcrumbs({
 								) : (
 									<Skeleton duration={2} width={128} height={20} tw="ml-4" />
 								)
-							) : isComponentReady ? (
-								<Link
-									href={`${
-										DashboardSitesLink +
-										sanitizedSid +
-										"/" +
-										(isLinks ? "links" : isPages ? "pages" : isImages ? "images" : "seo")
-									}`}
-									passHref
-								>
-									<a aria-current="page" tw="cursor-pointer ml-4 text-sm text-gray-700">
-										{pageTitle}
-									</a>
-								</Link>
 							) : (
-								<Skeleton duration={2} width={128} height={20} tw="ml-4" />
+								<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
+									{isComponentReady ? pageTitle : <Skeleton duration={2} width={128} height={20} />}
+								</p>
 							)
-						) : (
-							<p aria-current="page" tw="cursor-default ml-4 text-sm font-medium text-gray-700">
-								{isComponentReady ? pageTitle : <Skeleton duration={2} width={128} height={20} />}
-							</p>
-						)}
+						) : null}
 					</div>
 				</li>
 
-				{typeof pageDetailTitle !== "undefined" && pageDetailTitle !== null && pageDetailTitle !== "" ? (
+				{pageDetailTitle !== null && pageDetailTitle !== "" ? (
 					isComponentReady ? (
 						<li>
 							<div tw="flex items-center">
@@ -140,7 +134,7 @@ export function Breadcrumbs({
 			</ol>
 		</nav>
 	);
-}
+};
 
 Breadcrumbs.propTypes = {
 	isImages: PropTypes.bool,

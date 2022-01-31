@@ -1,12 +1,14 @@
-import PaginationSkeleton from "@components/skeletons/PaginationSkeleton";
-import { handleRemoveURLParameter } from "@helpers/handleRemoveUrlParameter";
+import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
+import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
+import { useLoading } from "@hooks/useLoading";
 import { usePage } from "@hooks/usePage";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import Pagination from "rc-pagination";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import "twin.macro";
 
+// Pagination strings
 const PaginationLocale = {
 	items_per_page: "Rows per Page",
 	jump_to: "Goto",
@@ -20,13 +22,21 @@ const PaginationLocale = {
 	next_3: "Next 3"
 };
 
+/**
+ * Custom function to render the `Pagination` component
+ *
+ * @param {number} activePage
+ * @param {sting} apiEndpoint
+ * @param {function} handleItemsPerPageChange
+ * @param {number} linksPerPage
+ * @param {string} pathName
+ */
 const DataPagination = ({
-	activePage,
-	apiEndpoint,
-	componentReady,
+	activePage = null,
+	apiEndpoint = null,
 	handleItemsPerPageChange,
-	linksPerPage,
-	pathName
+	linksPerPage = null,
+	pathName = null
 }) => {
 	const [pageData, setPageData] = useState([]);
 
@@ -36,22 +46,24 @@ const DataPagination = ({
 	const pageNumbers = [];
 	const values = [20, 25, 50, 100];
 
+	// Router
 	const router = useRouter();
 
+	// Custom hooks
 	const { page } = usePage({
 		endpoint: apiEndpoint
 	});
+	const { isComponentReady } = useLoading();
 
+	// Custom functions
 	const handlePageChange = (pageNum) => {
-		const newPath = handleRemoveURLParameter(pathName, "page");
+		const newPath = handleRemoveUrlParameter(pathName, "page");
 
 		router.push(`${newPath}page=${pageNum}`);
 	};
 
 	useEffect(() => {
 		page ? setPageData(page) : null;
-
-		return pageData;
 	}, [page]);
 
 	const totalPages = Math.ceil(pageData.count / linksPerPage);
@@ -68,11 +80,11 @@ const DataPagination = ({
 
 	const paginatedItems = linkNumbers.slice(offset).slice(0, linksPerPage);
 
-	return componentReady ? (
-		<div tw="bg-white px-4 mb-4 py-2 lg:flex items-center justify-between sm:px-6 align-middle">
+	return isComponentReady ? (
+		<div tw="bg-white mb-4 py-2 lg:flex items-center justify-between align-middle">
 			<div tw="flex items-center mb-8 lg:m-0">
 				<div tw="mt-2 lg:my-0">
-					<p tw="text-center lg:text-left text-sm leading-5 text-gray-700">
+					<p tw="text-center lg:text-left text-sm leading-5 text-gray-500">
 						Showing
 						<span tw="px-1 font-medium">{paginatedItems[0] || 0}</span>
 						to
@@ -86,11 +98,10 @@ const DataPagination = ({
 
 			{/* TODO: Fix UI of previous and next buttons when they reach their first or last pages */}
 			<Pagination
-				className="flex"
 				current={currentPage}
 				defaultCurrent={currentPage}
 				defaultPageSize={values[0]}
-				disabled={!componentReady}
+				disabled={!isComponentReady}
 				locale={PaginationLocale}
 				nextIcon="Next"
 				onChange={handlePageChange}
@@ -121,26 +132,16 @@ const DataPagination = ({
 			</div>
 		</div>
 	) : (
-		<PaginationSkeleton />
+		<MemoizedPaginationSkeleton />
 	);
 };
 
 DataPagination.propTypes = {
 	activePage: PropTypes.number,
 	apiEndpoint: PropTypes.string,
-	componentReady: PropTypes.bool,
 	handleItemsPerPageChange: PropTypes.func,
 	linksPerPage: PropTypes.number,
 	pathName: PropTypes.string
 };
 
-DataPagination.defaultProps = {
-	activePage: null,
-	apiEndpoint: null,
-	componentReady: false,
-	handleItemsPerPageChange: null,
-	linksPerPage: null,
-	pathName: null
-};
-
-export default DataPagination;
+export const MemoizedDataPagination = memo(DataPagination);

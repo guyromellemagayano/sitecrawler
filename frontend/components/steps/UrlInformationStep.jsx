@@ -1,6 +1,7 @@
 import { MemoizedUrlInformationStepForm } from "@components/forms/UrlInformationStepForm";
 import { useLoading } from "@hooks/useLoading";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -9,19 +10,19 @@ import "twin.macro";
 /**
  * Custom function to render the `UrlInformationStep` component
  */
-export function UrlInformationStep(props) {
+const UrlInformationStep = (props) => {
 	// Props
 	const { step } = props;
 
 	// Translations
 	const { t } = useTranslation();
-	const formDetailLabel = t("addSite:form.detail.label");
-	const formDetailDescription = t("addSite:form.detail.description");
+	const formDetailLabel = t("sites:form.detail.label");
+	const formDetailDescription = t("sites:form.detail.description");
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
 
-	return step == 1 ? (
+	return step === 1 ? (
 		<div tw="block pt-8 pb-12">
 			<div tw="py-4 m-auto">
 				<div tw="block mb-12">
@@ -39,6 +40,13 @@ export function UrlInformationStep(props) {
 			</div>
 		</div>
 	) : null;
-}
+};
 
+UrlInformationStep.propTypes = {
+	step: PropTypes.number
+};
+
+/**
+ * Memoized custom `UrlInformationStep` component
+ */
 export const MemoizedUrlInformationStep = memo(UrlInformationStep);

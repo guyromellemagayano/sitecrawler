@@ -7,15 +7,16 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * SWR React hook that will handle a site's `scan` information
  *
  * @param {number} querySid
+ * @param {object} options
  * @returns {object} scan, errorScan, validatingScan
  */
-export const useScan = (querySid = null) => {
+export const useScan = (querySid = null, options = null) => {
 	const currentEndpoint =
-		typeof querySid !== "undefined" && querySid !== null && typeof querySid === "number" && querySid > 0
+		querySid !== null && typeof querySid === "number" && querySid > 0
 			? SitesApiEndpoint + querySid + ScanSlug + "?" + orderingByNameQuery + sortByFinishedAtDescending
 			: null;
 
-	const { data: scan, error: errorScan, isValidating: validatingScan } = useMainSWRConfig(currentEndpoint);
+	const { data: scan, error: errorScan, isValidating: validatingScan } = useMainSWRConfig(currentEndpoint, options);
 
 	return { scan, errorScan, validatingScan };
 };

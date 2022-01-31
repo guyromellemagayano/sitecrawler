@@ -1,6 +1,7 @@
 import { MemoizedAppLogo } from "@components/logos/AppLogo";
 import { NoAuthAppLogo, SiteLogoDark } from "@constants/GlobalValues";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { memo } from "react";
 import "twin.macro";
 
@@ -14,14 +15,14 @@ import "twin.macro";
  * @param {boolean} isAccountExist
  * @param {boolean} isConfirmEmail
  */
-export function LogoLabel({
+const LogoLabel = ({
 	isLogin = false,
 	isSignUp = false,
 	isResetPassword = false,
 	isAddPassword = false,
 	isAccountExist = false,
 	isConfirmEmail = false
-}) {
+}) => {
 	const { t } = useTranslation("common");
 	const appLogo = t("appLogo");
 	const isLoginText = t("isLogin");
@@ -54,7 +55,16 @@ export function LogoLabel({
 			</h2>
 		</div>
 	);
-}
+};
+
+LogoLabel.propTypes = {
+	isAccountExist: PropTypes.bool,
+	isAddPassword: PropTypes.bool,
+	isConfirmEmail: PropTypes.bool,
+	isLogin: PropTypes.bool,
+	isResetPassword: PropTypes.bool,
+	isSignUp: PropTypes.bool
+};
 
 /**
  * Memoized custom `LogoLabel` component

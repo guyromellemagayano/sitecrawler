@@ -1,37 +1,45 @@
-// React
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { RevalidationInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink } from "@constants/PageLinks";
-import { SitesApiEndpoint } from "@enums/ApiEndpoints";
-// Enums
 import { DeleteSiteModalLabels } from "@enums/DeleteSiteModalLabels";
-import { RevalidationInterval } from "@enums/GlobalValues";
 import { Transition } from "@headlessui/react";
-// External
+import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
-import { useDeleteMethod } from "@hooks/useHttpMethod";
-// NextJS
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, memo, useEffect, useState } from "react";
 import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 
-const DeleteSiteModal = forwardRef(({ mutateSite, setShowModal, showModal, siteId }, ref) => {
+/**
+ * Custom function to render the `DeleteSiteModal` component
+ *
+ * @param {function} setShowModal
+ * @param {boolean} showModal
+ * @param {number} siteId
+ */
+const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref) => {
 	const [disableDeleteSite, setDisableDeleteSite] = useState(false);
 	const [errorMsg, setErrorMsg] = useState([]);
 	const [successMsg, setSuccessMsg] = useState([]);
 	const [hideButtons, setHideButtons] = useState(false);
 
+	// Translations
+	const { t } = useTranslation();
+
 	const SiteIdApiEndpoint = `${SitesApiEndpoint + siteId}/`;
 
+	// Router
 	const { asPath } = useRouter();
 	const router = useRouter();
 
+	// Handle site deletion
 	const handleSiteDeletion = async (e) => {
 		e.preventDefault();
 
 		setDisableDeleteSite(true);
 
-		const response = await useDeleteMethod(SiteIdApiEndpoint);
+		const response = await handleDeleteMethod(SiteIdApiEndpoint);
 
 		return Math.floor(response?.status / 204) === 1
 			? (() => {
@@ -48,7 +56,8 @@ const DeleteSiteModal = forwardRef(({ mutateSite, setShowModal, showModal, siteI
 						: (() => {
 								setTimeout(() => {
 									setShowModal(!showModal);
-									mutateSite;
+
+									// Mutate site here
 								}, RevalidationInterval);
 						  })();
 			  })()
@@ -73,7 +82,7 @@ const DeleteSiteModal = forwardRef(({ mutateSite, setShowModal, showModal, siteI
 						setErrorMsg([]);
 				  })()
 			: null;
-	}, [showModal]);
+	}, [showModal, successMsg]);
 
 	return (
 		<Transition show={showModal} as="span">
@@ -209,20 +218,10 @@ const DeleteSiteModal = forwardRef(({ mutateSite, setShowModal, showModal, siteI
 			</div>
 		</Transition>
 	);
-});
-
-DeleteSiteModal.propTypes = {
-	mutateSite: PropTypes.func,
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool,
-	siteId: PropTypes.number
 };
 
-DeleteSiteModal.defaultProps = {
-	mutateSite: null,
-	setShowModal: null,
-	showModal: false,
-	siteId: null
-};
-
-export default DeleteSiteModal;
+/**
+ * Memoized custom `DeleteSiteModal` component
+ */
+const ForwardRefDeleteSiteModal = forwardRef(DeleteSiteModal);
+export const MemoizedDeleteSiteModal = memo(ForwardRefDeleteSiteModal);

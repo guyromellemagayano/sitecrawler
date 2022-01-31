@@ -6,19 +6,14 @@ module.exports = {
 		"/": ["home"],
 		"/account-exist": ["accountExist"],
 		"/confirm-email/[...id]": ["confirmEmail"],
-		"/dashboard/sites": ["sites", "sidebar", "addSite"],
-		"/dashboard/sites/add-new-site": ["addSite", "sidebar", "addSite"],
-		"/dashboard/audit-logs": ["auditLogs", "sidebar", "addSite"],
-		"/dashboard/settings/profile": ["settings", "sidebar", "addSite"],
-		"/dashboard/settings/subscription-plans": ["settings", "sidebar", "addSite"],
-		"/dashboard/settings/billing": ["settings", "sidebar", "addSite"],
-		"/dashboard/settings/global": ["settings", "sidebar", "addSite"],
-		"/dashboard/settings/support": ["settings", "sidebar", "addSite"],
 		"/login": ["login"],
+		"/logout": ["logout"],
 		"/registration": ["registration"],
 		"/reset-password/*": ["resetPassword"],
 		"/signup/[...id]": ["signup"],
-		"/logout": ["logout"]
+		"rgx:^/dashboard": ["sidebar", "sites"],
+		"rgx:^/dashboard/settings": ["settings"],
+		"/dashboard/audit-logs": ["auditLogs"]
 	},
 	interpolation: {
 		prefix: "${",

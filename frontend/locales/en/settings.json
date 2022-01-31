@@ -12,8 +12,7 @@
 	"deleteUserAccountModalRequest": {
 		"title": "Delete User Account",
 		"headline": "Are you sure you want to delete your account?",
-		"subHeadline": "You will lose all your data permanently and cannot cancel this process any time. We will log out your current session immediately.",
-		"proceed": "Proceed"
+		"subHeadline": "You will lose all your data permanently and cannot cancel this process any time. We will log out your current session immediately."
 	},
 	"deleteUserAccountModalRequestFailed": {
 		"headline": "Delete account failed",
@@ -38,7 +37,7 @@
 		"title": "Large Page Size Settiings"
 	},
 	"cardInformationSettings": {
-		"title": "Card Information Settings",
+		"title": "Card Information",
 		"noCurrentCardRegistered": "No current card registered",
 		"addCard": "Add Card",
 		"cardNumber": "Card Number",
@@ -47,8 +46,48 @@
 		"loadingCardInformation": "Loading card information..."
 	},
 	"subscriptionPlans": {
-		"title": "Subscription Plans",
-		"processingPayment": "Processing payment..."
+		"headline": "Choose the plan that works for you",
+		"subHeadline": "You can change or cancel anytime",
+		"bill": {
+			"monthly": "Bill Monthly",
+			"semiAnnual": "Bill Semi-Annually"
+		},
+		"paymentMethod": {
+			"label": "Payment Method",
+			"description": "User generated content in real-time will have multiple touchpoints for offshoring."
+		},
+		"plan": {
+			"select": "Select Plan",
+			"current": "Current Plan"
+		},
+		"defaultCard": "Default Card",
+		"paymentPeriod": "Payment Period",
+		"noCreditDebitCard": "You haven't added a credit card/debit card yet.",
+		"goToPaymentMethod": "Go to Payment Method",
+		"congratulations": "Congratulations!",
+		"startCrawling": "Start Crawling",
+		"downgradePlan": {
+			"label": "Are you sure of this?",
+			"description": "Downgrading your plan will cancel your current subscription and you will be charged for the remaining period."
+		},
+		"upgradePlan": {
+			"label": "Upgrade Plan",
+			"description": "User generated content in real-time will have multiple touchpoints for offshoring."
+		},
+		"downgradeToBasicPlan": {
+			"title": "Downgrade to Basic Plan",
+			"label": "Are you sure you want to downgrade to Basic Plan?",
+			"description": "Downgrading to the Basic plan will disable most of your current premium features."
+		},
+		"subscriptions": "Subscriptions",
+		"mostPopular": "Most Popular",
+		"monthly": "month",
+		"creditDebitCardRequired": "credit/debit card required",
+		"endsOn": "Ends on",
+		"processingPlan": "Processing Plan...",
+		"processingPayment": "Processing Payment...",
+		"renewsOn": "Renews on",
+		"requested": "Requested"
 	},
 	"saving": "Saving...",
 	"saveChanges": "Save Changes",

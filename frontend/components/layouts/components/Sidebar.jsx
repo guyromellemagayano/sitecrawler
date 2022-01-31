@@ -6,8 +6,11 @@ import { MemoizedMobileSidebarLayout } from "./MobileSidebar";
 
 /**
  * Custom function to render the `Sidebar` component
+ *
+ * @param {boolean} openSidebar
+ * @param {function} setOpenSidebar
  */
-export function SidebarLayout({ openSidebar = false, setOpenSidebar }, ref) {
+const SidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 	return (
 		<>
 			<MemoizedMobileSidebarLayout ref={ref} openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
@@ -23,10 +26,10 @@ export function SidebarLayout({ openSidebar = false, setOpenSidebar }, ref) {
 			</aside>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `SidebarLayout` component
  */
-export const ForwardRefSidebarLayout = forwardRef(SidebarLayout);
+const ForwardRefSidebarLayout = forwardRef(SidebarLayout);
 export const MemoizedSidebarLayout = memo(ForwardRefSidebarLayout);

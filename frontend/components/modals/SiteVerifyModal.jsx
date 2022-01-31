@@ -1,136 +1,189 @@
-// React
-import { SitesApiEndpoint } from "@enums/ApiEndpoints";
-import { DataTableLabels } from "@enums/DataTableLabels";
-// Enums
-import { ComponentReadyInterval } from "@enums/GlobalValues";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { FormSubmissionInterval } from "@constants/GlobalValues";
 import { SiteVerifyModalLabels } from "@enums/SiteVerifyModalLabels";
-import { Transition } from "@headlessui/react";
-// External
+import { Dialog, Transition } from "@headlessui/react";
+import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { ClipboardIcon, InformationCircleIcon } from "@heroicons/react/solid";
-import axios from "axios";
-import Cookies from "js-cookie";
-// NextJS
+import { useAlertMessage } from "@hooks/useAlertMessage";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import PropTypes from "prop-types";
-import { forwardRef, useState } from "react";
+import { forwardRef, Fragment, memo, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ReactHtmlParser from "react-html-parser";
+import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 
-const SiteVerifyModal = forwardRef(
-	({ mutateSite, setShowModal, showModal, siteId, siteName, siteUrl, siteVerificationId }, ref) => {
-		const [copied, setCopied] = useState(false);
-		const [copyValue, setCopyValue] = useState(`<meta name="epic-crawl-id" content="${siteVerificationId}" />`);
-		const [disableSiteVerify, setDisableSiteVerify] = useState(false);
-		const [enableNextStep, setEnableNextStep] = useState(false);
-		const [errorMsg, setErrorMsg] = useState(null);
-		const [siteVerifyId, setSiteVerifyId] = useState(siteId);
-		const [successMsg, setSuccessMsg] = useState(null);
+/**
+ * Custom function to render the `SiteVerifyModal` component
+ *
+ * @param {boolean} showModal
+ * @param {function} setShowModal
+ * @param {string} siteUrl
+ * @param {number} siteId
+ * @param {string} siteName
+ * @param {number} siteVerificationId
+ */
+const SiteVerifyModal = (
+	{ setShowModal, showModal = false, siteId = null, siteName = null, siteUrl = null, siteVerificationId = null },
+	ref
+) => {
+	const [copied, setCopied] = useState(false);
+	const [copyValue, setCopyValue] = useState(null);
+	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
+	const [enableNextStep, setEnableNextStep] = useState(false);
+	const [siteVerifyId, setSiteVerifyId] = useState(siteId);
 
-		const siteVerifyApiEndpoint = `${SitesApiEndpoint + siteId}/verify/`;
+	// Translations
+	const { t } = useTranslation();
+	const verifySiteTitleText = t("sites:verifySiteTitle");
+	const verifyingText = t("sites:verifying");
+	const closeText = t("common:close");
+	const copiedText = t("common:copiedText");
+	const copyText = t("common:copyText");
+	const instructionsText = t("sites:instructions");
+	const instruction1Text = t("sites:instruction1");
+	const instruction2Text = t("sites:instruction2");
+	const instruction3Text = t("sites:instruction3");
+	const instructionHtmlText = t("sites:instructionHtmlText");
+	const verifyIdMetaTagText = t("sites:verifyIdMetaTagText");
 
-		const handleInputChange = ({ copyValue }) => {
-			setCopyValue({ copyValue, copied });
+	const siteVerifyApiEndpoint = `${SitesApiEndpoint + siteId}/verify/`;
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
+
+	const { state, setConfig } = useAlertMessage();
+
+	// Handle site verification copy to clipboard
+	useEffect(() => {
+		if (showModal && siteVerificationId !== null) {
+			setCopyValue(`<meta name="epic-crawl-id" content="${siteVerificationId}" />`);
+		}
+	}, [showModal, siteVerificationId]);
+
+	// Handle input change
+	const handleInputChange = ({ copyValue }) => {
+		setCopyValue({ copyValue, copied });
+
+		return copyValue;
+	};
+
+	// Handle hidden input change
+	const handleHiddenInputChange = (e) => {
+		setSiteVerifyId({ value: e.currentTarget.site_verify_id.value });
+
+		return siteVerifyId;
+	};
+
+	// Handle input copy
+	const handleInputCopy = () => {
+		setCopied(true);
+
+		return copied;
+	};
+
+	// Handle site verification
+	const handleSiteVerification = async (e) => {
+		e.preventDefault();
+
+		setDisableSiteVerify(!disableSiteVerify);
+
+		const body = {
+			sid: e.currentTarget.site_verify_id.value
 		};
 
-		const handleHiddenInputChange = (e) => {
-			setSiteVerifyId({ value: e.currentTarget.site_verify_id.value });
-		};
+		const siteVerifyResponse = await handlePostMethod(siteVerifyApiEndpoint, body);
+		const siteVerifyResponseData = siteVerifyResponse?.data ?? null;
+		const siteVerifyResponseStatus = siteVerifyResponse?.status ?? null;
+		const siteVerifyResponseMethod = siteVerifyResponse?.config?.method ?? null;
 
-		const handleInputCopy = () => {
-			setCopied(true);
-		};
+		if (siteVerifyResponseData !== null && Math.round(siteVerifyResponseStatus / 200) === 1) {
+			console.log(siteVerifyResponseData);
 
-		const handleSiteVerification = async (e) => {
-			e.preventDefault();
+			if (siteVerifyResponseData?.verified) {
+				// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
+				await mutate(SitesApiEndpoint, false);
 
-			if (errorMsg) setErrorMsg("");
-			if (successMsg) setSuccessMsg("");
-
-			setDisableSiteVerify(!disableSiteVerify);
-
-			const body = {
-				sid: e.currentTarget.site_verify_id.value
-			};
-
-			const response = await axios
-				.post(siteVerifyApiEndpoint, body, {
-					headers: {
-						"Accept": "application/json",
-						"Content-Type": "application/json",
-						"X-CSRFToken": Cookies.get("csrftoken")
-					}
-				})
-				.then((response) => {
-					return response;
-				})
-				.catch((error) => {
-					return error?.response;
+				// Show alert message after successful 200 OK or 201 Created response is issued
+				setConfig({
+					isVerifyUrlStep: true,
+					method: siteVerifyResponseMethod,
+					status: siteVerifyResponseStatus
 				});
 
-			Math.floor(response?.status / 200) === 1
-				? (() => {
-						response?.data.verified
-							? (() => {
-									setTimeout(() => {
-										setEnableNextStep(!enableNextStep);
-										setSuccessMsg(DataTableLabels[13].label);
-										setDisableSiteVerify(false);
-									}, ComponentReadyInterval);
-							  })()
-							: (() => {
-									setErrorMsg(DataTableLabels[14].label);
-									setTimeout(() => {
-										setDisableSiteVerify(false);
-									}, ComponentReadyInterval);
-							  })();
-				  })()
-				: (() => {
-						setErrorMsg(DataTableLabels[15].label);
-						setTimeout(() => {
-							setDisableSiteVerify(false);
-						}, ComponentReadyInterval);
-				  })();
-		};
+				// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+				setTimeout(() => {
+					setEnableNextStep(!enableNextStep);
+					setDisableSiteVerify(false);
+				}, FormSubmissionInterval);
+			} else {
+				// Show alert message after successful 200 OK or 201 Created response is issued
+				setConfig({
+					isVerifyUrlStep: true,
+					method: siteVerifyResponseMethod,
+					status: siteVerifyResponseStatus,
+					isError: true
+				});
 
-		return (
-			<Transition show={showModal} as="span">
-				<div tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
+				// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+				setTimeout(() => {
+					setDisableSiteVerify(false);
+				}, FormSubmissionInterval);
+			}
+		} else {
+			// Show alert message after successful 200 OK or 201 Created response is issued
+			setConfig({
+				isVerifyUrlStep: true,
+				method: siteVerifyResponseMethod,
+				status: siteVerifyResponseStatus
+			});
+
+			// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+			setTimeout(() => {
+				setDisableSiteVerify(false);
+			}, FormSubmissionInterval);
+		}
+	};
+
+	return (
+		<Transition.Root show={showModal} as={Fragment}>
+			<Dialog as="div" className="site-verify-modal-dialog" initialFocus={ref} onClose={setShowModal}>
+				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
-						enter="ease-out duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100"
-						leaveTo="opacity-100"
+						as={Fragment}
+						enter="site-verify-modal-first-child-enter"
+						enterFrom="site-verify-modal-first-child-enter-from"
+						enterTo="site-verify-modal-first-child-enter-to"
+						leave="site-verify-modal-first-child-leave"
+						leaveFrom="site-verify-modal-first-child-leave-from"
+						leaveTo="site-verify-modal-first-child-leave-to"
 					>
-						<div tw="fixed inset-0 transition-opacity">
-							<div tw="absolute inset-0 bg-gray-500 opacity-75"></div>
-						</div>
+						<Dialog.Overlay className="site-verify-modal-dialog-overlay" />
 					</Transition.Child>
+
+					{/* This element is to trick the browser into centering the modal contents. */}
+					<span tw="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+						&#8203;
+					</span>
+
 					<Transition.Child
-						enter="ease-out duration-300"
-						enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-						enterTo="opacity-100 translate-y-0 sm:scale-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						as={Fragment}
+						enter="site-verify-modal-second-child-enter"
+						enterFrom="site-verify-modal-second-child-enter-from"
+						enterTo="site-verify-modal-second-child-enter-to"
+						leave="site-verify-modal-second-child-leave"
+						leaveFrom="site-verify-modal-second-child-leave-from"
+						leaveTo="site-verify-modal-second-child-leave-to"
 					>
-						<div
-							ref={ref}
-							tw="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden transform transition-all sm:max-w-lg sm:w-full sm:p-6 whitespace-normal"
-							role="dialog"
-							aria-modal="true"
-							aria-labelledby="modal-headline"
-						>
+						<div tw="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
 							<div tw="sm:flex sm:items-start">
-								<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+								<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
 									<InformationCircleIcon tw="h-6 w-6 text-yellow-600" />
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<h3 tw="text-lg leading-6 font-medium text-gray-800" id="modal-headline">
-										{DataTableLabels[0].label}
-									</h3>
+									<Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+										{verifySiteTitleText}
+									</Dialog.Title>
 
 									<div tw="mt-2">
 										<span tw="text-sm font-semibold text-gray-500">
@@ -146,11 +199,14 @@ const SiteVerifyModal = forwardRef(
 											</a>
 										</span>
 
-										<p tw="text-base font-medium leading-6 text-gray-700 mt-4 mb-3">{DataTableLabels[5].label}</p>
+										<p tw="text-base font-medium leading-6 text-gray-700 mt-4 mb-3">
+											{ReactHtmlParser(instructionsText)}
+										</p>
+
 										<ol tw="space-y-2 list-decimal ml-4">
-											<li tw="text-sm leading-6 text-gray-500">{DataTableLabels[6].label}</li>
+											<li tw="text-sm leading-6 text-gray-500">{ReactHtmlParser(instruction1Text)}</li>
 											<li tw="text-sm leading-6 text-gray-500">
-												{ReactHtmlParser(DataTableLabels[7].label)}
+												{ReactHtmlParser(instruction2Text)}
 												<div tw="w-full block">
 													<label htmlFor="verify-id-meta-tag" tw="sr-only">
 														{SiteVerifyModalLabels[0].label}
@@ -178,113 +234,98 @@ const SiteVerifyModal = forwardRef(
 																	]}
 																>
 																	<ClipboardIcon tw="h-5 w-5 text-gray-400" />
-																	<span>{copied ? DataTableLabels[17].label : DataTableLabels[18].label}</span>
+																	<span>{copied ? copiedText : copyText}</span>
 																</button>
 															</CopyToClipboard>
 														</div>
 													</div>
 												</div>
 											</li>
-											<li tw="text-sm leading-6 text-gray-500">{ReactHtmlParser(DataTableLabels[8].label)}</li>
+											<li tw="text-sm leading-6 text-gray-500">{ReactHtmlParser(instruction3Text)}</li>
 										</ol>
+
+										{state?.responses !== [] && state?.responses?.length > 0 ? (
+											<div tw="block my-5">
+												<div tw="flex justify-center sm:justify-start">
+													{state?.responses?.map((value, key) => {
+														// Alert Messsages
+														const responseText = value?.responseText ?? null;
+														const isSuccess = value?.isSuccess ?? null;
+
+														return (
+															<h3
+																key={key}
+																css={[
+																	tw`text-sm leading-5 font-medium break-words`,
+																	isSuccess ? tw`text-green-800` : tw`text-red-800`
+																]}
+															>
+																{responseText}
+															</h3>
+														);
+													}) ?? null}
+												</div>
+											</div>
+										) : null}
 									</div>
-									{errorMsg ? (
-										<div tw="block my-5">
-											<div tw="flex justify-center sm:justify-start">
-												<div>
-													<h3 tw="text-sm leading-5 font-medium text-red-800 break-words">{errorMsg}</h3>
-												</div>
-											</div>
-										</div>
-									) : successMsg ? (
-										<div tw="block my-5">
-											<div tw="flex justify-center sm:justify-start">
-												<div>
-													<h3 tw="text-sm leading-5 font-medium text-green-800 break-words">{successMsg}</h3>
-												</div>
-											</div>
-										</div>
-									) : null}
 								</div>
 							</div>
 
-							<div tw="w-full my-3 sm:mt-4 sm:inline-flex sm:flex-row-reverse">
-								<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
-									<button
-										type="button"
-										disabled={disableSiteVerify}
-										css={[
-											tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
-											disableSiteVerify
-												? tw`opacity-50 cursor-not-allowed`
-												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
-										]}
-										onClick={() => setShowModal(!showModal)}
-									>
-										{!enableNextStep ? SiteVerifyModalLabels[6].label : SiteVerifyModalLabels[3].label}
-									</button>
-								</span>
+							<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+								<button
+									type="button"
+									disabled={disableSiteVerify}
+									css={[
+										tw`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm`,
+										tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
+										disableSiteVerify
+											? tw`opacity-50 cursor-not-allowed`
+											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 `
+									]}
+									onClick={() => setShowModal(false)}
+								>
+									{!enableNextStep ? SiteVerifyModalLabels[6].label : SiteVerifyModalLabels[3].label}
+								</button>
 
 								{!enableNextStep ? (
-									<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
-										{/* TODO: Convert this to a separate form component, siteVerifyModalForm */}
-										<form onSubmit={handleSiteVerification} tw="w-full">
-											<input
-												type="hidden"
-												value={siteVerifyId}
-												name="site_verify_id"
-												onChange={handleHiddenInputChange}
-											/>
-											<button
-												type="submit"
-												disabled={disableSiteVerify}
-												css={[
-													tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-green-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`,
-													disableSiteVerify
-														? tw`opacity-50 cursor-not-allowed`
-														: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700`
-												]}
-											>
-												{disableSiteVerify ? DataTableLabels[12].label : DataTableLabels[0].label}
-											</button>
-										</form>
-									</span>
+									<form onSubmit={handleSiteVerification}>
+										<input
+											type="hidden"
+											value={siteVerifyId}
+											name="site_verify_id"
+											onChange={handleHiddenInputChange}
+										/>
+										<button
+											type="submit"
+											disabled={disableSiteVerify}
+											css={[
+												tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-green-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`,
+												disableSiteVerify
+													? tw`opacity-50 cursor-not-allowed`
+													: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700`
+											]}
+										>
+											{disableSiteVerify ? verifyingText : verifySiteTitleText}
+										</button>
+									</form>
 								) : (
-									<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
-										<Link href="/site/[siteId]/overview/" as={`/site/${siteId}/overview/`} passHref>
-											<a tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
-												{SiteVerifyModalLabels[5].label}
-											</a>
-										</Link>
-									</span>
+									<Link href="/sites/[siteId]/overview/" as={`/sites/${siteId}/overview/`} passHref replace>
+										<a tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
+											{SiteVerifyModalLabels[5].label}
+										</a>
+									</Link>
 								)}
 							</div>
 						</div>
 					</Transition.Child>
 				</div>
-			</Transition>
-		);
-	}
-);
-
-SiteVerifyModal.propTypes = {
-	mutateSite: PropTypes.func,
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool,
-	siteId: PropTypes.number,
-	siteName: PropTypes.string,
-	siteUrl: PropTypes.string,
-	siteVerificationId: PropTypes.number
+			</Dialog>
+		</Transition.Root>
+	);
 };
 
-SiteVerifyModal.defaultProps = {
-	mutateSite: null,
-	setShowModal: null,
-	showModal: false,
-	siteId: null,
-	siteName: null,
-	siteUrl: null,
-	siteVerificationId: null
-};
-
-export default SiteVerifyModal;
+/**
+ * Memoized custom `SiteVerifyModal` component
+ */
+const ForwardRefSiteVerifyModal = forwardRef(SiteVerifyModal);
+export const MemoizedSiteVerifyModal = memo(ForwardRefSiteVerifyModal);

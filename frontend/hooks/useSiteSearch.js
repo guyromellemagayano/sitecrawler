@@ -1,4 +1,4 @@
-import { handleRemoveURLParameter } from "@helpers/handleRemoveUrlParameter";
+import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useRouter } from "next/router";
 import { useSWRConfig } from "swr";
 
@@ -7,7 +7,8 @@ import { useSWRConfig } from "swr";
  *
  * @param {object} event
  * @param {string} scanApiEndpoint
- * @param {any} setSearchKey
+ * @param {function} setSearchKey
+ * @param {function} setPagePath
  */
 export const useSiteSearch = async (event, scanApiEndpoint = null, setSearchKey, setPagePath) => {
 	// Router
@@ -17,13 +18,13 @@ export const useSiteSearch = async (event, scanApiEndpoint = null, setSearchKey,
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
-	const searchTargetValue = event?.target?.value || null;
+	const searchTargetValue = event.target.value;
 
 	if (event.keyCode !== 13) return false;
 
 	let newPath = asPath;
-	newPath = handleRemoveURLParameter(newPath, "search");
-	newPath = handleRemoveURLParameter(newPath, "page");
+	newPath = handleRemoveUrlParameter(newPath, "search");
+	newPath = handleRemoveUrlParameter(newPath, "page");
 
 	if (!/\S/.test(searchTargetValue)) {
 		setSearchKey(searchTargetValue);
@@ -37,6 +38,6 @@ export const useSiteSearch = async (event, scanApiEndpoint = null, setSearchKey,
 	if (newPath.includes("?")) setPagePath(`${newPath}&`);
 	else setPagePath(`${newPath}?`);
 
-	mutate(scanApiEndpoint, false);
+	await mutate(scanApiEndpoint, false);
 	router.push(newPath);
 };

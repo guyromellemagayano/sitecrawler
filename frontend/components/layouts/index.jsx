@@ -2,7 +2,7 @@ import { MemoizedAddSite } from "@components/sites/AddSite";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useRouter } from "next/router";
-import Script from "next/script";
+// import Script from "next/script";
 import PropTypes from "prop-types";
 import { memo, useEffect } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -14,7 +14,7 @@ import { MemoizedSidebarLayout } from "./components/Sidebar";
  *
  * @param {any} children
  */
-export function Layout({ children }) {
+const Layout = ({ children }) => {
 	// Router
 	const router = useRouter();
 
@@ -25,7 +25,7 @@ export function Layout({ children }) {
 	}, [router]);
 
 	return <main tw="h-screen">{children}</main>;
-}
+};
 
 Layout.propTypes = {
 	children: PropTypes.any
@@ -41,7 +41,7 @@ export const MemoizedLayout = memo(Layout);
  *
  * @param {any} children
  */
-export function DashboardLayout({ children }) {
+const DashboardLayout = ({ children }) => {
 	// Custom hooks
 	const {
 		ref: dashboardLayoutRef,
@@ -51,8 +51,8 @@ export function DashboardLayout({ children }) {
 
 	return (
 		<>
-			<Script src="/scripts/beacon.js" strategy="lazyOnload" />
-			<Script src="/scripts/usetiful.js" strategy="lazyOnload" />
+			{/* <Script src="/scripts/beacon.js" strategy="lazyOnload" /> */}
+			{/* <Script src="/scripts/usetiful.js" strategy="lazyOnload" /> */}
 
 			<main tw="h-screen">
 				<section tw="h-screen overflow-hidden bg-white flex">
@@ -81,7 +81,7 @@ export function DashboardLayout({ children }) {
 			</main>
 		</>
 	);
-}
+};
 
 DashboardLayout.propTypes = {
 	children: PropTypes.any

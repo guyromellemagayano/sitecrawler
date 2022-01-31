@@ -1,20 +1,23 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedSitesList } from "@components/lists/SitesList";
 import { ComponentReadyInterval } from "@constants/GlobalValues";
-import { AddNewSiteLink, DashboardSiteSlug, SiteOverviewSlug } from "@constants/PageLinks";
+import { AddNewSiteLink, DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/solid";
 import { useCrawl } from "@hooks/useCrawl";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { forwardRef, memo, useMemo, useState } from "react";
+import { forwardRef, memo, useEffect, useMemo, useState } from "react";
 import "twin.macro";
 
 /**
  * Custom function to render the `SiteSelectDropdown` component
+ *
+ * @param {number} selectedSiteId
+ * @param {function} handleSiteSelectOnClick
+ * @param {boolean} openDropdown
  */
-export function SiteSelectDropdown({ selectedSiteId, handleSiteSelectOnLoad, openDropdown }, ref) {
+const SiteSelectDropdown = ({ selectedSiteId = null, handleSiteSelectOnClick, openDropdown = false }, ref) => {
 	const [scanObjId, setScanObjId] = useState(null);
 
 	// Sidebar Menu Labels
@@ -24,44 +27,55 @@ export function SiteSelectDropdown({ selectedSiteId, handleSiteSelectOnLoad, ope
 	const router = useRouter();
 
 	// Custom hooks
-	const { currentScan, previousScan, scanCount } = useCrawl(selectedSiteId ?? null);
+	const { currentScan, previousScan, scanCount } = useCrawl(openDropdown ? selectedSiteId : null);
 
+	// Handle site selection on load
 	useMemo(() => {
-		const handleScanObjId = async (scanCount, currentScan, previousScan) => {
-			scanCount > 1
-				? previousScan !== undefined
-					? setScanObjId(previousScan?.id)
-					: false
-				: currentScan !== undefined
-				? setScanObjId(currentScan?.id)
-				: setScanObjId(previousScan?.id);
+		let isMounted = true;
 
-			return scanObjId;
+		(async () => {
+			if (!isMounted) return;
+
+			if (previousScan !== null && currentScan !== null && scanCount !== null) {
+				scanCount > 1 ? setScanObjId(previousScan?.id) : setScanObjId(currentScan?.id);
+			}
+
+			return { scanObjId };
+		})();
+
+		return () => {
+			isMounted = false;
 		};
+	}, [scanCount, currentScan, previousScan]);
 
-		handleScanObjId(scanCount, currentScan, previousScan);
-	}, [scanCount, currentScan, previousScan, scanObjId]);
+	// Handle site selection on click
+	useEffect(() => {
+		let isMounted = true;
 
-	useMemo(() => {
-		if (
-			typeof scanObjId !== "undefined" &&
-			scanObjId !== null &&
-			scanObjId > 0 &&
-			typeof selectedSiteId !== "undefined" &&
-			selectedSiteId !== null &&
-			selectedSiteId > 0
-		) {
-			setTimeout(() => {
-				router.push({
-					pathname: `${DashboardSiteSlug}[siteId]${SiteOverviewSlug}`,
-					query: {
-						siteId: selectedSiteId,
-						scanObjId: scanObjId
-					}
-				});
-			}, ComponentReadyInterval);
-		}
-	}, [router, scanObjId, selectedSiteId]);
+		(async () => {
+			if (!isMounted) return;
+
+			if (scanObjId !== null && selectedSiteId !== null) {
+				const timeout = setTimeout(() => {
+					router.push({
+						pathname: `${DashboardSitesLink}[siteId]${SiteOverviewSlug}`,
+						query: {
+							siteId: selectedSiteId,
+							scanObjId: scanObjId
+						}
+					});
+				}, ComponentReadyInterval);
+
+				return () => {
+					clearTimeout(timeout);
+				};
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [scanObjId, selectedSiteId]);
 
 	return (
 		<Transition
@@ -74,7 +88,7 @@ export function SiteSelectDropdown({ selectedSiteId, handleSiteSelectOnLoad, ope
 			leaveTo="site-select-dropdown-leave-to"
 		>
 			<div ref={ref} tw="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg overflow-hidden">
-				<MemoizedSitesList handleSiteSelectOnLoad={handleSiteSelectOnLoad} />
+				<MemoizedSitesList isOpen={openDropdown} />
 				<span tw="relative flex m-2 justify-center shadow-sm rounded-md">
 					<Link href={AddNewSiteLink + "?step=1&edit=false&verified=false"} passHref>
 						<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full">
@@ -86,10 +100,10 @@ export function SiteSelectDropdown({ selectedSiteId, handleSiteSelectOnLoad, ope
 			</div>
 		</Transition>
 	);
-}
+};
 
 /**
  * Memoized custom `SiteSelectDropdown` component
  */
-export const ForwardRefSiteSelectDropdown = forwardRef(SiteSelectDropdown);
+const ForwardRefSiteSelectDropdown = forwardRef(SiteSelectDropdown);
 export const MemoizedSiteSelectDropdown = memo(ForwardRefSiteSelectDropdown);

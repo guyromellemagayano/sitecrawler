@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedAlert } from "@components/alerts";
 import { ResetPasswordApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
@@ -12,7 +11,7 @@ import * as Yup from "yup";
 /**
  * Memoized function to render the `ResetPasswordForm` component.
  */
-export function ResetPasswordForm() {
+const ResetPasswordForm = () => {
 	// Translations
 	const { t } = useTranslation();
 	const requiredField = t("common:requiredField");
@@ -132,7 +131,7 @@ export function ResetPasswordForm() {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `ResetPasswordForm` component

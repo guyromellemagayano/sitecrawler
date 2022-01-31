@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedRegistrationForm } from "@components/forms/RegistrationForm";
 import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@constants/PageLinks";
@@ -11,7 +10,7 @@ import "twin.macro";
 /**
  * Custom function to render the `RegistrationPageLayout` component
  */
-export function RegistrationPageLayout() {
+const RegistrationPageLayout = () => {
 	// Translations
 	const { t } = useTranslation();
 	const agreeTermsPrivacyPolicy = t("registration:agreeTermsPrivacyPolicy");
@@ -50,7 +49,7 @@ export function RegistrationPageLayout() {
 			</Scrollbars>
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `RegistrationPageLayout` component

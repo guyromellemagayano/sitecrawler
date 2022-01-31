@@ -5,8 +5,8 @@
 		"jsxImportSource": "react",
 		"paths": {
 			"@components/*": ["./components/*"],
-			"@constants/*": ["constants/*"],
-			"@enums/*": ["enums/*"],
+			"@constants/*": ["./constants/*"],
+			"@enums/*": ["./enums/*"],
 			"@helpers/*": ["./helpers/*"],
 			"@hooks/*": ["./hooks/*"],
 			"@pages/*": ["./pages/*"],

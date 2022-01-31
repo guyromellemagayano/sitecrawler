@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { Basic, Pro } from "@constants/GlobalValues";
 import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
@@ -15,8 +14,10 @@ import tw from "twin.macro";
 
 /**
  * Custom function to render the `ProfileMenuDropdown` component
+ *
+ * @param {boolean} isComponentVisibile
  */
-export function ProfileMenuDropdown({ isComponentVisible }) {
+const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 	// SWR hooks
 	const { user } = useUser();
 
@@ -110,7 +111,7 @@ export function ProfileMenuDropdown({ isComponentVisible }) {
 			</div>
 		</Transition>
 	);
-}
+};
 
 ProfileMenuDropdown.propTypes = {
 	isComponentVisible: PropTypes.bool

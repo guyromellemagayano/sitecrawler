@@ -8,8 +8,11 @@ import "twin.macro";
 
 /**
  * Custom function to render the `MobileSidebarLayout` component
+ *
+ * @param {boolean} openSidebar
+ * @param {function} setOpenSidebar
  */
-export function MobileSidebarLayout({ openSidebar, setOpenSidebar }, ref) {
+const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 	// Translations
 	const { t } = useTranslation("sidebar");
 	const closeSidebar = t("closeSidebar");
@@ -68,10 +71,10 @@ export function MobileSidebarLayout({ openSidebar, setOpenSidebar }, ref) {
 			</div>
 		</Transition>
 	);
-}
+};
 
 /**
  * Memoized custom `MobileSidebarLayout` component
  */
-export const ForwardRefMobileSidebarLayout = forwardRef(MobileSidebarLayout);
+const ForwardRefMobileSidebarLayout = forwardRef(MobileSidebarLayout);
 export const MemoizedMobileSidebarLayout = memo(ForwardRefMobileSidebarLayout);

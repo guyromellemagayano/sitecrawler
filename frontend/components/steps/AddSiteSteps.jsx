@@ -1,5 +1,6 @@
 import { useLoading } from "@hooks/useLoading";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -10,17 +11,19 @@ import { MemoizedVerifyUrlStep } from "./VerifyUrlStep";
 /**
  * Custom function to render the `AddSiteSteps` component
  */
-export function AddSiteSteps(props) {
+const AddSiteSteps = (props) => {
 	// Props
 	const { step } = props;
 
 	// Translations
 	const { t } = useTranslation();
 	const dismiss = t("common:dismiss");
-	const step1 = t("addSite:step1");
-	const step2 = t("addSite:step2");
-	const verifySite = t("addSite:verifySite");
-	const formDetailLabel = t("addSite:form.detail.label");
+	const step1 = t("sites:step1");
+	const step2 = t("sites:step2");
+	const step3 = t("sites:step3");
+	const verifySite = t("sites:verifySite");
+	const verifiedSite = t("sites:verifiedSite");
+	const formDetailLabel = t("sites:form.detail.label");
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
@@ -33,6 +36,10 @@ export function AddSiteSteps(props) {
 		{
 			title: step2,
 			subtitle: verifySite
+		},
+		{
+			title: step3,
+			subtitle: verifiedSite
 		}
 	];
 
@@ -68,11 +75,15 @@ export function AddSiteSteps(props) {
 					</ol>
 				</nav>
 
-				{step == 1 ? <MemoizedUrlInformationStep {...props} /> : <MemoizedVerifyUrlStep {...props} />}
+				{step === 1 ? <MemoizedUrlInformationStep {...props} /> : <MemoizedVerifyUrlStep {...props} />}
 			</div>
 		</div>
 	);
-}
+};
+
+AddSiteSteps.propTypes = {
+	step: PropTypes.number
+};
 
 /**
  * Memoized custom `AddSiteSteps` component

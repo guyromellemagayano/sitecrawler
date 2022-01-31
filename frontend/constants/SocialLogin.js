@@ -5,7 +5,7 @@ export const SocialLoginLinks = () => {
 	const { t } = useTranslation("login");
 	const googleSignIn = t("googleSignIn");
 
-	const linksArray = new Array();
+	const linksArray = [];
 
 	const googleLink = {
 		href: GoogleLoginApiEndpoint,

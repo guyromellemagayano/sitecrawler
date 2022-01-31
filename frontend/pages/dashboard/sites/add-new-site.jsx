@@ -1,23 +1,23 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { DashboardLayout } from "@components/layouts";
+import { MemoizedDashboardLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedAddNewSitePageLayout } from "@components/layouts/pages/AddNewSite";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
-import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
+import AppAxiosInstance from "@utils/axios";
+import { handleConversionStringToBoolean, handleConversionStringToNumber } from "@utils/convertCase";
 import axios from "axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
+import { useRouter } from "next/router";
 import "twin.macro";
 
 // Pre-render `user` data with NextJS SSR. Redirect to a login page if current user is not allowed to access that page (403 Forbidden) or redirect to the sites dashboard page if the user is still currently logged in (200 OK).
 export async function getServerSideProps({ req, query }) {
 	// User response
-	const userResponse = await axios.get(`${SSR_SITE_URL + UserApiEndpoint}`, {
+	const userResponse = await AppAxiosInstance.get(`${SSR_SITE_URL + UserApiEndpoint}`, {
 		headers: {
-			cookie: req?.headers?.cookie ?? null,
-			...customAxiosHeaders
+			cookie: req?.headers?.cookie ?? null
 		}
 	});
 	const userData = userResponse?.data ?? null;
@@ -26,44 +26,43 @@ export async function getServerSideProps({ req, query }) {
 	// Sites response
 	const sitesResponse = await axios.get(`${SSR_SITE_URL + SitesApiEndpoint}`, {
 		headers: {
-			cookie: req?.headers?.cookie ?? null,
-			...customAxiosHeaders
+			cookie: req?.headers?.cookie ?? null
 		}
 	});
-	const sitesData = sitesResponse?.data ?? null;
-	const sitesStatus = sitesResponse?.status ?? null;
+	const sitesResponseData = sitesResponse?.data ?? null;
+	const sitesResponseStatus = sitesResponse?.status ?? null;
 
 	if (
-		typeof userData !== "undefined" &&
 		userData !== null &&
 		!userData?.detail &&
 		Object.keys(userData)?.length > 0 &&
 		Math.round(userStatus / 200) === 1
 	) {
-		console.log(query?.edit, query?.verified);
-
-		const step = parseInt(query?.step ?? 1);
-		const sid = parseInt(query?.sid ?? null);
-		const edit = !!(query?.edit ?? false);
-		const verified = !!(query?.verified ?? false);
+		const sid = query?.sid ? parseInt(query?.sid) : null;
+		const step = query?.step ? parseInt(query?.step) : null;
+		const verified = query?.verified ? (query?.verified === "true" ? true : false) : null;
+		const edit = query?.edit ? (query?.edit === "true" ? true : false) : null;
 
 		if (
-			typeof sitesData !== "undefined" &&
-			sitesData !== null &&
-			!sitesData?.detail &&
-			Object.keys(sitesData)?.length > 0 &&
-			Math.round(sitesStatus / 200) === 1
+			sitesResponseData !== null &&
+			!sitesResponseData?.detail &&
+			Object.keys(sitesResponseData)?.length > 0 &&
+			Math.round(sitesResponseStatus / 200) === 1
 		) {
-			const sidMatch = sitesData?.results?.find((site) => site.id === sid) ?? null;
+			const sidMatch =
+				sitesResponseData?.results?.find((site) => site.id === sid && site.verified === verified) ?? null;
 
-			if (sidMatch == null || sid == null || typeof verified !== "undefined" || typeof edit !== "undefined") {
+			if (
+				edit !== null &&
+				verified !== null &&
+				step !== null &&
+				((edit && !verified && step === 1 && sid !== null && sidMatch !== null) ||
+					(!edit && !verified && step === 2 && sid !== null && sidMatch !== null) ||
+					(!edit && !verified && step === 1 && sid === null && sidMatch === null) ||
+					(!edit && verified && step === 3 && sid !== null && sidMatch !== null))
+			) {
 				return {
-					props: {
-						step: step,
-						sid: sid,
-						edit: edit,
-						verified: verified
-					}
+					props: {}
 				};
 			} else {
 				return {
@@ -91,25 +90,39 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-export default function AddNewSite(props) {
+export default function AddNewSite() {
 	// Translations
-	const { t } = useTranslation("addSite");
+	const { t } = useTranslation("sites");
 	const addNewSite = t("addNewSite");
 
-	const { step, sid, edit, verified } = props;
+	// Router
+	const { query } = useRouter();
 
-	console.log(step, sid, edit, verified);
+	let step = query.step ?? null;
+	let sid = query.sid ?? null;
+	let edit = query.edit ?? null;
+	let verified = query.verified ?? null;
+
+	const sanitizedStep = handleConversionStringToNumber(step);
+	const sanitizedSid = handleConversionStringToNumber(sid);
+	const sanitizedEdit = handleConversionStringToBoolean(edit);
+	const sanitizedVerified = handleConversionStringToBoolean(verified);
 
 	return (
 		<>
 			<NextSeo title={addNewSite} />
 			<MemoizedPageLayout pageTitle={addNewSite}>
-				<MemoizedAddNewSitePageLayout step={step} sid={sid} edit={edit} verified={verified} />
+				<MemoizedAddNewSitePageLayout
+					step={sanitizedStep}
+					sid={sanitizedSid}
+					edit={sanitizedEdit}
+					verified={sanitizedVerified}
+				/>
 			</MemoizedPageLayout>
 		</>
 	);
 }
 
 AddNewSite.getLayout = function getLayout(page) {
-	return <DashboardLayout>{page}</DashboardLayout>;
+	return <MemoizedDashboardLayout>{page}</MemoizedDashboardLayout>;
 };

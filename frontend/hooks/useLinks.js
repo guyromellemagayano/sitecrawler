@@ -6,26 +6,24 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {string} endpoint
  * @param {number} querySid
  * @param {number} scanObjId
+ * @param {object} options
  * @returns {object} links, errorLinks, validatingLinks
  */
-export const useLinks = (endpoint = null, querySid = null, scanObjId = null) => {
+export const useLinks = (endpoint = null, querySid = null, scanObjId = null, options = null) => {
 	const currentEndpoint =
-		typeof endpoint !== "undefined" &&
 		endpoint !== null &&
 		typeof endpoint === "string" &&
 		endpoint !== "" &&
-		typeof querySid !== "undefined" &&
 		querySid !== null &&
 		typeof querySid === "number" &&
 		querySid > 0 &&
-		typeof scanObjId !== "undefined" &&
 		scanObjId !== null &&
 		typeof scanObjId === "number" &&
 		scanObjId > 0
 			? endpoint
 			: null;
 
-	const { data: links, error: errorLinks, isValidating: validatingLinks } = useMainSWRConfig(currentEndpoint);
+	const { data: links, error: errorLinks, isValidating: validatingLinks } = useMainSWRConfig(currentEndpoint, options);
 
 	return { links, errorLinks, validatingLinks };
 };

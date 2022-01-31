@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { ModalDisplayInterval } from "@constants/GlobalValues";
 import { HomeLink, LoginLink } from "@constants/PageLinks";
@@ -17,7 +16,7 @@ import tw from "twin.macro";
  * @param {boolean} showModal
  * @param {function} setShowModal
  */
-export function DeleteUserAccountModal({ showModal, setShowModal }, ref) {
+const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	const [userIdApiEndpoint, setUserIdApiEndpoint] = useState(null);
 	const [errorHeadline, setErrorHeadline] = useState(null);
 	const [errorSubheadline, setErrorSubheadline] = useState(null);
@@ -38,7 +37,7 @@ export function DeleteUserAccountModal({ showModal, setShowModal }, ref) {
 	const deleteUserAccountModalRequestFailedHeadline = t("settings:deleteUserAccountModalRequestFailed.headline");
 	const deleteUserAccountModalRequestFailedSubheadline = t("settings:deleteUserAccountModalRequestFailed.subHeadline");
 	const processing = t("settings:processing");
-	const proceed = t("settings:deleteUserAccountModalRequest.proceed");
+	const proceed = t("common:proceed");
 	const cancel = t("common:cancel");
 
 	// SWR hooks
@@ -207,7 +206,7 @@ export function DeleteUserAccountModal({ showModal, setShowModal }, ref) {
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`cursor-pointer hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
 										]}
-										onClick={() => setShowModal(!showModal)}
+										onClick={() => setShowModal(false)}
 									>
 										{errorHeadline !== null &&
 										errorHeadline.length > 0 &&
@@ -224,10 +223,10 @@ export function DeleteUserAccountModal({ showModal, setShowModal }, ref) {
 			</div>
 		</Transition>
 	);
-}
+};
 
 /**
  * Memoized custom `DeleteUserAccountModal` component
  */
-export const ForwardRefDeleteUserAccountModal = forwardRef(DeleteUserAccountModal);
+const ForwardRefDeleteUserAccountModal = forwardRef(DeleteUserAccountModal);
 export const MemoizedDeleteUserAccountModal = memo(ForwardRefDeleteUserAccountModal);

@@ -1,6 +1,6 @@
+import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { handleRemoveURLParameter } from "../helpers/handleRemoveUrlParameter";
 
 /**
  * Custom hook that handles the site queries
@@ -16,9 +16,9 @@ export const useSiteQueries = (result = null) => {
 	const { asPath } = useRouter();
 
 	useEffect(() => {
-		handleRemoveURLParameter(asPath, "page").includes("?")
-			? setPagePath(`${handleRemoveURLParameter(asPath, "page")}&`)
-			: setPagePath(`${handleRemoveURLParameter(asPath, "page")}?`);
+		handleRemoveUrlParameter(asPath, "page").includes("?")
+			? setPagePath(`${handleRemoveUrlParameter(asPath, "page")}&`)
+			: setPagePath(`${handleRemoveUrlParameter(asPath, "page")}?`);
 
 		result?.search ? setSearchKey(result?.search) : null;
 		result?.per_page ? setLinksPerPage(result?.per_page) : null;

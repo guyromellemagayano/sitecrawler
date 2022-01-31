@@ -9,7 +9,7 @@ import "twin.macro";
 /**
  * Custom function to render the `HelpSupportSettings` component
  */
-export function HelpSupportSettings() {
+const HelpSupportSettings = () => {
 	// Translations
 	const { t } = useTranslation("settings");
 	const helpSupportFormTitle = t("helpSupportForm.title");
@@ -26,7 +26,7 @@ export function HelpSupportSettings() {
 			<MemoizedHelpSupportSettingsForm />
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `HelpSupportSettings` component

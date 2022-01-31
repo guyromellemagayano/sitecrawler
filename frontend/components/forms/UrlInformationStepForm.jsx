@@ -1,7 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable-line no-useless-escape */
 import { MemoizedAlert } from "@components/alerts";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { FormSubmissionInterval } from "@constants/GlobalValues";
 import { AddNewSiteLink } from "@constants/PageLinks";
 import { handleGetMethod, handlePatchMethod, handlePostMethod } from "@helpers/handleHttpMethods";
 import { useAlertMessage } from "@hooks/useAlertMessage";
@@ -11,6 +11,7 @@ import { useUser } from "@hooks/useUser";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -21,16 +22,19 @@ import * as Yup from "yup";
 
 /**
  * Custom function to render the `UrlInformationStepForm` component
+ *
+ * @param {number} step
+ * @param {boolean} edit
+ * @param {number} sid
  */
-export function UrlInformationStepForm(props) {
+const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 	const [siteData, setSiteData] = useState(null);
 	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState(null);
 	const [siteUrlProtocol, setSiteUrlProtocol] = useState("");
 	const [siteUrl, setSiteUrl] = useState("");
 	const [siteName, setSiteName] = useState("");
-
-	// Props
-	const { step, edit, sid } = props;
+	const [disableForm, setDisableForm] = useState(false);
+	const [editMode, setEditMode] = useState(false);
 
 	// Translations
 	const { t } = useTranslation();
@@ -38,15 +42,21 @@ export function UrlInformationStepForm(props) {
 	const tooShort = t("common:tooShort");
 	const submitting = t("common:submitting");
 	const requiredField = t("common:requiredField");
-	const updateSiteDetail = t("addSite:updateSiteDetail");
-	const proceedToStep2 = t("addSite:proceedToStep2");
-	const formSiteNameLabel = t("addSite:form.siteName.label");
-	const formSiteNamePlaceholder = t("addSite:form.siteName.placeholder");
-	const formSiteUrlLabel = t("addSite:form.siteUrl.label");
-	const formSiteUrlPlaceholder = t("addSite:form.siteUrl.placeholder");
-	const formSiteUrlProtocol = t("addSite:form.siteUrl.protocol");
+	const updateSiteDetail = t("sites:updateSiteDetail");
+	const proceedToStep2 = t("sites:proceedToStep2");
+	const formSiteNameLabel = t("sites:form.siteName.label");
+	const formSiteNamePlaceholder = t("sites:form.siteName.placeholder");
+	const formSiteUrlLabel = t("sites:form.siteUrl.label");
+	const formSiteUrlPlaceholder = t("sites:form.siteUrl.placeholder");
+	const formSiteUrlProtocol = t("sites:form.siteUrl.protocol");
 	const siteUrlAlreadyExists = t("alerts:sites.urlInformation.post.misc.siteUrlAlreadyExists");
 	const enterValidSiteUrl = t("alerts:sites.urlInformation.post.misc.enterValidSiteUrl");
+
+	useEffect(() => {
+		if (typeof edit !== "undefined" && edit !== null) {
+			setEditMode(edit);
+		}
+	}, [edit]);
 
 	// Router
 	const router = useRouter();
@@ -129,7 +139,7 @@ export function UrlInformationStepForm(props) {
 			) : null}
 
 			<Formik
-				enableReinitialize={edit ? true : false}
+				enableReinitialize={editMode}
 				initialValues={{
 					siteurlprotocol: siteUrlProtocol,
 					siteurl: siteUrl,
@@ -139,68 +149,111 @@ export function UrlInformationStepForm(props) {
 					siteurl: Yup.string().matches(urlRegex, enterValidSiteUrl).max(2048, tooLong).required(requiredField),
 					sitename: Yup.string().min(1, tooShort).max(255, tooLong).required(requiredField)
 				})}
-				onSubmit={async (values, { setSubmitting, resetForm, setErrors }) => {
+				onSubmit={async (values, { setSubmitting, setErrors }) => {
 					if (edit) {
-						const urlInformationStepFormResponse = await handleGetMethod(SitesApiEndpoint + sid + "/");
-						const urlInformationStepFormData = urlInformationStepFormResponse?.data ?? null;
-						const urlInformationStepFormStatus = urlInformationStepFormResponse?.status ?? null;
-						const urlInformationStepFormMethod = urlInformationStepFormResponse?.config?.method ?? null;
+						// Re-enable form for editing
+						setDisableForm(!disableForm);
 
-						if (urlInformationStepFormData !== null && Math.round(urlInformationStepFormStatus / 200) === 1) {
+						const urlInformationStepFormResponse = await handleGetMethod(SitesApiEndpoint + sid + "/");
+						const urlInformationStepFormResponseData = urlInformationStepFormResponse?.data ?? null;
+						const urlInformationStepFormResponseStatus = urlInformationStepFormResponse?.status ?? null;
+						const urlInformationStepFormResponseMethod = urlInformationStepFormResponse?.config?.method ?? null;
+
+						if (
+							urlInformationStepFormResponseData !== null &&
+							Math.round(urlInformationStepFormResponseStatus / 200) === 1
+						) {
 							// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
 							await mutate(SitesApiEndpoint, false);
-
-							// Show alert message after successful 200 OK or 201 Created response is issued
-							setConfig({
-								isUrlInformationStep: true,
-								method: urlInformationStepFormMethod,
-								status: urlInformationStepFormStatus
-							});
 
 							const body = {
 								name: values.sitename
 							};
 
-							const patchUrlInformationStepFormResponse = await handlePatchMethod(SitesApiEndpoint + sid + "/", body);
-							const patchUrlInformationStepFormData = patchUrlInformationStepFormResponse?.data ?? null;
-							const patchUrlInformationStepFormStatus = patchUrlInformationStepFormResponse?.status ?? null;
-							const patchUrlInformationStepFormMethod = patchUrlInformationStepFormResponse?.config?.method ?? null;
-
-							if (
-								patchUrlInformationStepFormData !== null &&
-								Math.round(patchUrlInformationStepFormStatus / 200) === 1
-							) {
-								// Show alert message after successful 200 OK or 201 Created response is issued
-								setConfig({
-									isUrlInformationStep: true,
-									method: patchUrlInformationStepFormMethod,
-									status: patchUrlInformationStepFormStatus
-								});
-
+							// If no changes has been made, direct user to the next step
+							if (body.name === siteName) {
 								// Update current URL with query for the next step
-								router.push(
-									{
-										pathname: AddNewSiteLink,
-										query: { step: step + 1, sid: patchUrlInformationStepFormData?.id ?? null, edit: false }
-									},
-									undefined,
-									{}
-								);
-							} else {
-								// Disable submission as soon as 200 OK or 201 Created response was not issued
-								setSubmitting(false);
-
-								// Show alert message after successful 200 OK or 201 Created response is issued
-								setConfig({
-									isUrlInformationStep: true,
-									method: patchUrlInformationStepFormMethod,
-									status: patchUrlInformationStepFormStatus
+								router.replace({
+									pathname: AddNewSiteLink,
+									query: {
+										step: step + 1,
+										sid: sid ?? null,
+										edit: false,
+										verified: false
+									}
 								});
+							} else {
+								const patchUrlInformationStepFormResponse = await handlePatchMethod(SitesApiEndpoint + sid + "/", body);
+								const patchUrlInformationStepFormResponseData = patchUrlInformationStepFormResponse?.data ?? null;
+								const patchUrlInformationStepFormResponseStatus = patchUrlInformationStepFormResponse?.status ?? null;
+								const patchUrlInformationStepFormResponseMethod =
+									patchUrlInformationStepFormResponse?.config?.method ?? null;
+
+								if (
+									patchUrlInformationStepFormResponseData !== null &&
+									Math.round(patchUrlInformationStepFormResponseStatus / 200) === 1
+								) {
+									if (patchUrlInformationStepFormResponseData?.verified) {
+										// Disable form after successful 200 OK or 201 Created response is issued
+										setDisableForm(!disableForm);
+
+										// Show alert message after successful 200 OK or 201 Created response is issued
+										setConfig({
+											isUrlInformationStep: true,
+											method: patchUrlInformationStepFormResponseMethod,
+											status: patchUrlInformationStepFormResponseStatus
+										});
+
+										// Update current URL with query for the next step
+										router.replace({
+											pathname: AddNewSiteLink,
+											query: {
+												step: step + 1,
+												sid: patchUrlInformationStepFormResponseData?.id ?? null,
+												edit: false,
+												verified: false
+											}
+										});
+
+										// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+										setTimeout(() => {
+											setDisableForm(false);
+										}, FormSubmissionInterval);
+									} else {
+										// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued
+										setSubmitting(false);
+										setDisableForm(false);
+
+										// Show alert message after successful 200 OK or 201 Created response is issued
+										setConfig({
+											isVerifyUrlStep: true,
+											method: patchUrlInformationStepFormResponseMethod,
+											status: patchUrlInformationStepFormResponseStatus,
+											isError: true
+										});
+									}
+								} else {
+									// Disable submission as soon as 200 OK or 201 Created response was not issued
+									setSubmitting(false);
+
+									// Show alert message after successful 200 OK or 201 Created response is issued
+									setConfig({
+										isUrlInformationStep: true,
+										method: patchUrlInformationStepFormResponseMethod,
+										status: patchUrlInformationStepFormResponseStatus
+									});
+								}
 							}
 						} else {
 							// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
 							setSubmitting(false);
-							resetForm({ values: "" });
+
+							// Show alert message after successful 200 OK or 201 Created response is issued
+							setConfig({
+								isUrlInformationStep: true,
+								method: urlInformationStepFormResponseMethod,
+								status: urlInformationStepFormResponseStatus
+							});
 						}
 					} else {
 						const body = {
@@ -214,24 +267,21 @@ export function UrlInformationStepForm(props) {
 						const siteValidationResponseStatus = siteValidationResponse?.status ?? null;
 						const siteValidationResponseMethod = siteValidationResponse?.config?.method ?? null;
 
-						if (
-							siteValidationResponseData !== null &&
-							Math.round(siteValidationResponseStatus / 200) === 1 &&
-							siteValidationResponseData?.results?.length > 0
-						) {
-							let siteValidationResponseDataResultsArray = new Array();
+						if (siteValidationResponseData !== null && Math.round(siteValidationResponseStatus / 200) === 1) {
+							let siteValidationResponseDataResultsArray = [];
+							let siteValidationResponseDataResult = null;
 
 							siteValidationResponseData?.results?.map((val) => siteValidationResponseDataResultsArray.push(val.url));
 
-							const siteValidationResponseDataResult = stringSimilarity.findBestMatch(
-								body.url,
-								siteValidationResponseDataResultsArray
-							);
+							if (siteValidationResponseDataResultsArray?.length > 0) {
+								siteValidationResponseDataResult = stringSimilarity.findBestMatch(
+									body.url,
+									siteValidationResponseDataResultsArray
+								);
+							}
 
 							if (siteValidationResponseDataResult?.bestMatch?.rating === 1) {
-								// Disable submission and reset form as soon as 200 OK or 201 Created response was issued
-								setSubmitting(false);
-								resetForm({ values: "" });
+								// Report error message that site URL already exists
 								setErrors({ siteurl: siteUrlAlreadyExists });
 							} else {
 								const siteAdditionResponse = await handlePostMethod(SitesApiEndpoint, body);
@@ -240,6 +290,9 @@ export function UrlInformationStepForm(props) {
 								const siteAdditionResponseMethod = siteAdditionResponse?.config?.method ?? null;
 
 								if (siteAdditionResponseData !== null && Math.round(siteAdditionResponseStatus / 200) === 1) {
+									// Disable form after successful 200 OK or 201 Created response is issued
+									setDisableForm(!disableForm);
+
 									// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
 									await mutate(SitesApiEndpoint, false);
 
@@ -251,18 +304,16 @@ export function UrlInformationStepForm(props) {
 									});
 
 									// Update current URL with query for the next step
-									router.push(
-										{
-											pathname: AddNewSiteLink,
-											query: { step: step + 1, sid: siteAdditionResponseData?.id ?? null, edit: false, verified: false }
-										},
-										undefined,
-										{}
-									);
+									router.replace({
+										pathname: AddNewSiteLink,
+										query: { step: step + 1, sid: siteAdditionResponseData?.id ?? null, edit: false, verified: false }
+									});
 								} else {
+									// Disable form after successful 200 OK or 201 Created response is issued
+									setDisableForm(!disableForm);
+
 									// Disable submission and reset form as soon as 200 OK or 201 Created response was issued
 									setSubmitting(false);
-									resetForm({ values: "" });
 
 									// Show alert message after successful 200 OK or 201 Created response is issued
 									setConfig({
@@ -275,7 +326,6 @@ export function UrlInformationStepForm(props) {
 						} else {
 							// Disable submission and reset form as soon as 200 OK or 201 Created response was issued
 							setSubmitting(false);
-							resetForm({ values: "" });
 
 							// Show alert message after successful 200 OK or 201 Created response is issued
 							setConfig({
@@ -304,7 +354,7 @@ export function UrlInformationStepForm(props) {
 											placeholder={formSiteNamePlaceholder}
 											css={[
 												tw`shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm rounded-md`,
-												isSubmitting && tw`opacity-50 bg-gray-300 cursor-not-allowed`,
+												isSubmitting || disableForm ? tw`opacity-50 bg-gray-300 cursor-not-allowed` : null,
 												errors.sitename && touched.sitename ? tw`border-red-300` : tw`border-gray-300`
 											]}
 											aria-describedby="sitename"
@@ -337,9 +387,9 @@ export function UrlInformationStepForm(props) {
 													name="siteurlprotocol"
 													css={[
 														tw`focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-3 pr-7 border-transparent bg-transparent sm:text-sm rounded-md`,
-														edit && tw`opacity-50 bg-gray-300 cursor-not-allowed`
+														editMode ? tw`opacity-50 bg-gray-300 cursor-not-allowed` : null
 													]}
-													disabled={isSubmitting || edit}
+													disabled={isSubmitting || editMode}
 													onChange={handleChange}
 													onBlur={handleBlur}
 													value={values.siteurlprotocol}
@@ -353,19 +403,21 @@ export function UrlInformationStepForm(props) {
 												id="siteurl"
 												type="text"
 												name="siteurl"
-												disabled={isSubmitting || edit ? true : false}
+												disabled={isSubmitting || editMode}
 												css={[
 													tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-24 sm:text-sm border-gray-300 rounded-md`,
-													edit
+													editMode && disableForm
 														? tw`opacity-50 bg-gray-300 cursor-not-allowed`
-														: isSubmitting && tw`text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed`,
-													errors.siteurl || touched.siteurl ? tw`border-red-300` : tw`border-gray-300`
+														: isSubmitting
+														? tw`text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed`
+														: null,
+													!disableForm && (errors.siteurl || touched.siteurl) ? tw`border-red-300` : tw`border-gray-300`
 												]}
 												placeholder={formSiteUrlPlaceholder}
 												aria-describedby="siteurl"
 												onChange={handleChange}
 												onBlur={handleBlur}
-												value={edit ? siteData?.[0]?.url?.replace(/^\/\/|^.*?:(\/\/)?/, "") : values.siteurl}
+												value={values.siteurl}
 											/>
 										</>
 									) : (
@@ -382,10 +434,12 @@ export function UrlInformationStepForm(props) {
 									{isComponentReady ? (
 										<button
 											type="submit"
-											disabled={isSubmitting || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)}
+											disabled={
+												isSubmitting || disableForm || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)
+											}
 											css={[
 												tw`mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600`,
-												isSubmitting || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)
+												isSubmitting || disableForm || Object.keys(errors).length > 0 || !urlRegex.test(values.siteurl)
 													? tw`opacity-50 bg-indigo-300 cursor-not-allowed`
 													: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 											]}
@@ -412,7 +466,13 @@ export function UrlInformationStepForm(props) {
 			</Formik>
 		</>
 	);
-}
+};
+
+UrlInformationStepForm.propTypes = {
+	edit: PropTypes.bool,
+	sid: PropTypes.number,
+	step: PropTypes.number
+};
 
 /**
  * Memoized custom `UrlInformationStepForm` component

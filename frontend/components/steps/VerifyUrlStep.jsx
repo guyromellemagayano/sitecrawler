@@ -1,13 +1,14 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedVerifyUrlStepForm } from "@components/forms/VerifyUrlStepForm";
-// import { MemoizedShowHelpModal } from "@components/modals/ShowHelpModal";
+import { MemoizedShowHelpModal } from "@components/modals/ShowHelpModal";
 import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
 import { useSites } from "@hooks/useSites";
 import useTranslation from "next-translate/useTranslation";
+import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import ReactHtmlParser from "react-html-parser";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -15,25 +16,25 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `VerifyUrl` component
  */
-export function VerifyUrlStep(props) {
+const VerifyUrlStep = (props) => {
 	const [copied, setCopied] = useState(false);
-	const [copyValue, setCopyValue] = useState(null);
+	const [copyValue, setCopyValue] = useState("");
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [siteData, setSiteData] = useState(null);
-	const [enableNextStep, setEnableNextStep] = useState(false);
 
-	const { sid, step } = props;
+	// Props
+	const { sid = null, step = null, verified = false } = props;
 
 	// Translation
 	const { t } = useTranslation();
-	const verifySiteTitle = t("addSite:verifySiteTitle");
-	const verifiedSiteTitle = t("addSite:verifiedSiteTitle");
-	const instructions = t("addSite:instructions");
-	const instruction1 = t("addSite:instruction1");
-	const instruction2 = t("addSite:instruction2");
-	const instruction3 = t("addSite:instruction3");
-	const needHelp = t("addSite:needHelp");
-	const verifyIdMetaTag = t("addSite:verifyIdMetaTag");
+	const verifySiteTitle = t("sites:verifySiteTitle");
+	const verifiedSiteTitle = t("sites:verifiedSiteTitle");
+	const instructions = t("sites:instructions");
+	const instruction1 = t("sites:instruction1");
+	const instruction2 = t("sites:instruction2");
+	const instruction3 = t("sites:instruction3");
+	const needHelp = t("sites:needHelp");
+	const verifyIdMetaTag = t("sites:verifyIdMetaTag");
 	const copiedText = t("common:copiedText");
 	const copyText = t("common:copyText");
 
@@ -58,7 +59,15 @@ export function VerifyUrlStep(props) {
 	}, [sid, sites, errorSites, validatingSites]);
 
 	useEffect(() => {
-		handleSiteDataSelection();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteDataSelection();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteDataSelection]);
 
 	// Handle site data
@@ -66,14 +75,22 @@ export function VerifyUrlStep(props) {
 		if (siteData !== null && Object.keys(siteData)?.length > 0) {
 			const siteVerificationId = siteData?.verification_id ?? null;
 
-			if (copyValue == null) {
+			if (typeof copyValue === "string" && copyValue == "") {
 				setCopyValue('<meta name="epic-crawl-id" content="' + siteVerificationId + '" />');
 			}
 		}
-	}, [copyValue, siteData]);
+	}, [siteData]);
 
 	useEffect(() => {
-		handleSiteData();
+		let isMounted = true;
+
+		if (isMounted) {
+			handleSiteData();
+		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [handleSiteData]);
 
 	// Handle input change
@@ -81,9 +98,9 @@ export function VerifyUrlStep(props) {
 		setCopyValue({ copyValue, copied });
 	};
 
-	return step == 2 ? (
+	return step === 2 || step === 3 ? (
 		<>
-			{/* <MemoizedShowHelpModal ref={showModalRef} showModal={showModal} setShowModal={setShowModal} siteData={siteData} /> */}
+			<MemoizedShowHelpModal ref={showModalRef} showModal={showModal} setShowModal={setShowModal} siteData={siteData} />
 
 			<div tw="block pt-8 pb-12">
 				<div tw="py-4 m-auto">
@@ -91,7 +108,7 @@ export function VerifyUrlStep(props) {
 						<h3 tw="flex-1 text-xl leading-7 font-medium text-gray-900">
 							<span tw="flex-1">
 								{isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 ? (
-									!enableNextStep ? (
+									step === 2 && !verified ? (
 										verifySiteTitle + ": "
 									) : (
 										verifiedSiteTitle + ": "
@@ -124,7 +141,7 @@ export function VerifyUrlStep(props) {
 							)}
 						</h4>
 
-						{!enableNextStep ? (
+						{step === 2 && !verified ? (
 							isComponentReady && siteData !== null && Object.keys(siteData)?.length > 0 ? (
 								<>
 									<p tw="text-base leading-6 text-gray-700 mb-3">
@@ -134,7 +151,7 @@ export function VerifyUrlStep(props) {
 									<ol tw="list-decimal mb-5 space-y-2">
 										<li tw="ml-4 text-sm leading-6 text-gray-600">{instruction1}</li>
 										<li tw="ml-4 text-sm leading-6 text-gray-600">
-											{instruction2}
+											{ReactHtmlParser(instruction2)}
 
 											<div tw="max-w-2xl">
 												<label htmlFor="verify_id_meta_tag" tw="sr-only">
@@ -174,7 +191,7 @@ export function VerifyUrlStep(props) {
 															type="button"
 															tw="inline-flex items-center ml-3 text-gray-400 focus:outline-none"
 															title={needHelp}
-															onClick={() => setShowModal(!showModal)}
+															onClick={() => setShowModal(true)}
 														>
 															<QuestionMarkCircleIcon tw="h-7 w-7" />
 														</button>
@@ -214,7 +231,6 @@ export function VerifyUrlStep(props) {
 					</div>
 
 					<MemoizedVerifyUrlStepForm
-						setEnableNextStep={setEnableNextStep}
 						disableSiteVerify={disableSiteVerify}
 						setDisableSiteVerify={setDisableSiteVerify}
 						{...props}
@@ -223,7 +239,13 @@ export function VerifyUrlStep(props) {
 			</div>
 		</>
 	) : null;
-}
+};
+
+VerifyUrlStep.propTypes = {
+	sid: PropTypes.number,
+	step: PropTypes.number,
+	verified: PropTypes.bool
+};
 
 /**
  * Memoized custom `VerifyUrlStep` component

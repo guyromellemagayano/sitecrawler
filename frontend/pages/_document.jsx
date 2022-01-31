@@ -26,7 +26,7 @@ export default class MyDocument extends Document {
 		}
 	}
 
-	render() {
+	render = () => {
 		return (
 			<Html>
 				<Head />
@@ -36,5 +36,5 @@ export default class MyDocument extends Document {
 				</body>
 			</Html>
 		);
-	}
+	};
 }

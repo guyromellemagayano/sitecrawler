@@ -1,11 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import ProgressBar from "@components/progress-bar";
 import AppSeo from "@constants/AppSeo";
 import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { GlobalCustomStyles } from "@styles/GlobalCustomStyles";
+import GlobalStyles from "@styles/global";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
@@ -16,7 +15,7 @@ import { SWRConfig } from "swr";
 library.add(fab);
 library.add(fas);
 
-export default function App({ Component, pageProps, err }) {
+const MyApp = ({ Component, pageProps, err }) => {
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);
 
@@ -30,10 +29,12 @@ export default function App({ Component, pageProps, err }) {
 
 	return getLayout(
 		<SWRConfig>
-			<GlobalCustomStyles />
+			<GlobalStyles />
 			<DefaultSeo {...AppSeo} />
 			<ProgressBar />
 			<Component {...pageProps} err={err} />
 		</SWRConfig>
 	);
-}
+};
+
+export default MyApp;

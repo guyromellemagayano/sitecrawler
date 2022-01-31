@@ -9,7 +9,7 @@ import "twin.macro";
  * @param {boolean} openSidebar
  * @param {function} setOpenSidebar
  */
-export function MobileSidebarButton({ handleOpenSidebar }) {
+const MobileSidebarButton = ({ handleOpenSidebar }) => {
 	// Translations
 	const { t } = useTranslation("common");
 	const openSidebarText = t("openSidebar");
@@ -25,6 +25,9 @@ export function MobileSidebarButton({ handleOpenSidebar }) {
 			</div>
 		</button>
 	);
-}
+};
 
+/**
+ * Memoized custom `MobileSidebarButton` component
+ */
 export const MemoizedMobileSidebarButton = memo(MobileSidebarButton);

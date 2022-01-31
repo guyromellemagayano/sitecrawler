@@ -1,90 +1,360 @@
 {
-	"badGatewayError": "Bad Gateway",
-	"badRequestError": "Bad Request",
-	"fallbackUnknownError": "An unknown error has occured. Please reload this page",
-	"forbiddenError": "Forbidden",
-	"gatewayTimeoutError": "Gateway Timeout",
-	"internalServerError": "Internal Server Error",
-	"notFoundError": "Not Found",
-	"requestTimeoutError": "Request Timeout",
-	"serviceUnavailableError": "Service Temporarily Unavailable",
-	"tooManyRequestsError": "Too Many Requests",
-	"unauthorizedError": "Unauthorized",
-	"unknownError": "Unknown Error",
-	"pageBadGatewayError": "We encountered a bad gateway error on the server side. Please try to access this page in a few minutes.",
-	"pageBadRequestError": "We encountered a bad request error on the client side. Try checking the current URL if its typed correctly or clear your browser cache and cookies.",
-	"pageForbiddenError": "You are forbidden to access this page. Please provide the correct login credentials to access this page.",
-	"pageGatewayTimeoutError": "We're currently experiencing a gateway timeout error on the server side. Please try to access this page in a few minutes.",
-	"pageInternalServerError": "We encountered an internal server error on the server side. Please try again in few minutes.",
-	"pageNotFoundError": "You are trying to access a page that no longer exists. There's nothing we can do about that.",
-	"pageRequestTimeoutError": "We encountered a request timeout error on the client side. Try checking the current URL if its typed correctly. Otherwise try refreshing this page.",
-	"pageServiceUnavailableError": "It seems that our servers are either currently down for scheduled maintenance or encountered requests overload and trying to do something about them. Try refreshing this page at least on your end.",
-	"pageTooManyRequestsError": "We noticed you send us a lot of requests in a short span of time. Try to be a bit patient with us while we handle your requests accordingly.",
-	"pageUnauthorizedError": "You are unauthorized to access this page. Please login to access this page.",
-	"pageUnknownError": "Now that is weird! Don't worry, let us handle this situation right away.",
-	"siteBadGatewayGetError": "A bad gateway error has occurred while fetching your registered sites. Please try to access this page in a few minutes.",
-	"siteBadRequestGetError": "A bad request error has occurred while fetching your registered sites. Please try to access this page in a few minutes.",
-	"siteForbiddenGetError": "You don't have proper permissions to view your sites anymore.",
-	"siteGatewayTimeoutGetError": "A gateway timeout error has occurred while fetching your registered sites. Please try to access this page in a few minutes.",
-	"siteIdBadGatewayGetError": "A bad gateway error has occurred while fetching {{ site }} website information. Please try to access this page in a few minutes.",
-	"siteIdBadRequestGetError": "A bad request error has occurred while fetching {{ site }} website information. Please try to access this page in a few minutes.",
-	"siteIdCreatedSuccess": "Congratulations! {{ site }} website was registered successfully.",
-	"siteIdForbiddenGetError": "You don't have proper permissions to view {{ site }} website anymore. Please try to access this page in a few minutes.",
-	"siteIdGatewayTimeoutGetError": "A gateway timeout error has occurred while fetching {{ site }} website information.",
-	"siteIdInternalServerGetError": "An internal server error has occurred while fetching {{ site }} website information. Please try to access this page in a few minutes.",
-	"siteIdNotFoundGetError": "We can't seem to find {{ site }} website anymore. Sorry about that.",
-	"siteIdServiceUnavailableGetError": "Current service unavailable while fetching {{ site }} website information. Please try to access this page in a few minutes.",
-	"siteIdTooManyRequestsGetError": "You're sending us way too many requests for {{ site }} website right now. Can you wait a bit for us to finish this request?",
-	"siteIdUnknownError": "An unknown error has occurred while fetching {{ site }} website information. Please try again.",
-	"siteInternalServerGetError": "An internal server error has occurred while fetching your registered sites. Please try to access this page in a few minutes.",
-	"siteNotFoundGetError": "We can't seem to find your sites. Sorry about that.",
-	"siteServiceUnavailableGetError": "Current service unavailable while fetching your registered sites. Please try to access this page in a few minutes.",
-	"siteTooManyRequestsError": "You're sending us way too many site requests right now. Can you wait a bit for us to finish this request?",
-	"siteUnknownError": "An unknown error has occurred while fetching your registered sites. Please try again.",
-	"userBadGatewayGetError": "A bad gateway error has occurred while fetching your user information. Please try to access this page in a few minutes.",
-	"userBadRequestGetError": "A bad request error has occurred while fetching your user information. Please try again to access this page in a few minutes.",
-	"userForbiddenGetError": "You don't have the proper permissions to view this page anymore.",
-	"userGatewayTimeoutGetError": "A gateway timeout error has occurred while fetching your user information. Please try to access this page in a few minutes.",
-	"userInternalServerGetError": "An internal server error has occurred while fetching your user information. Please try to access this page in a few minutes.",
-	"userNotFoundGetError": "This user apparently does not exist in our database. Sorry about that.",
-	"userServiceUnavailableGetError": "We can't fetch your user information as the service is currently unavailable. Please try to access this page in a few minutes.",
-	"userTooManyRequestsError": "You're sending us way too many user requests right now! Can you wait a bit for us to finish this request?",
-	"userUnknownError": "An unknown error has occurred while fetching your user information. Please try again.",
-	"loginOkSuccess": "Login success! Redirecting you to Sites Dashboard...",
-	"loginBadRequestPostError": "We're unable to log you in with the provided credentials. Please recheck your login details.",
-	"loginUnknownError": "An unknown error has occurred while we're logging you in. Please try again.",
-	"registrationOkSuccess": "Thanks for signing up. Please check your email for verification!",
-	"registrationUsernameAlreadyExistsError": "It seems that this username was already taken and still exists. Try another one.",
-	"registrationEmailAlreadyExistsError": "It seems that this email address was already taken and still exists. Try another one.",
-	"registrationBadRequestPostError": "We're unable to register you with the provided credentials. Please recheck your registration details.",
-	"registrationUnknownError": "An unknown error has occurred while we registered your user information. Please try again.",
-	"resetPasswordOkSuccess": "Reset password request sent successfully! Please check your email to continue the process.",
-	"resetPasswordBadRequestPostError": "We're unable to reset your password with the provided credentials. Please recheck your reset password details.",
-	"resetPasswordUnknownError": "An unknown error has occurred while we're resetting your password. Please try again.",
-	"updatePasswordOkSuccess": "Password has been reset successfully.",
-	"updatePasswordBadRequestPostError": "We're unable to update your password with the provided credentials. Please recheck your update password details.",
-	"updatePasswordInvalidTokenError": "Token already expired. We can't process with your request anymore.",
-	"updatePasswordUnknownError": "An unknown error has occurred while we're updating your password. Please try again.",
-	"confirmEmailOkSuccess": "Congratulations! Your profile is now ready to use. Click on the button below to go back to Login page.",
-	"confirmEmailUnknownError": "An unknown error has occurred while we're confirming your email. Please try again.",
-	"signupOkSuccess": "Password details added to current user successfully. Redirecting you to Sites Dashboard...",
-	"signupUnknownError": "An unknown error has occurred while we're adding your password details. Please try again.",
-	"scanBadGatewayGetError": "A bad gateway error has occurred while fetching scans for {{ site }} website.",
-	"scanBadRequestGetError": "A bad request error has occurred while fetching scans for {{ site }} website.",
-	"scanForbiddenGetError": "You don't have proper permissions to view scans for {{ site }} website.",
-	"scanGatewayTimeoutGetError": "A gateway timeout error has occurred while fetching scans for {{ site }} website.",
-	"scanInternalServerGetError": "An internal server error has occurred while fetching scans for {{ site }} website.",
-	"scanNotFoundGetError": "We can't seem to find scans for {{ site }} website . Sorry about that.",
-	"scanServiceUnavailableGetError": "Current service unavailable while fetching scans for {{ site }} website.",
-	"scanTooManyRequestsError": "We're receiving too many scan requests for {{ site }} website. Retrying...",
-	"scanUnknownError": "An unknown error has occurred while fetching scans for {{ site }} website . Please try again.",
-	"statsBadGatewayGetError": "A bad gateway error has occurred while fetching stats for {{ site }} website.",
-	"statsBadRequestGetError": "A bad request error has occurred while fetching stats for {{ site }} website.",
-	"statsForbiddenGetError": "You don't have proper permissions to view stats for {{ site }} website.",
-	"statsGatewayTimeoutGetError": "A gateway timeout error has occurred while fetching stats for {{ site }} website.",
-	"statsInternalServerGetError": "An internal server error has occurred while fetching stats for {{ site }} website.",
-	"statsNotFoundGetError": "We can't seem to find stats for {{ site }} website . Sorry about that.",
-	"statsServiceUnavailableGetError": "Current service unavailable while fetching stats for {{ site }} website.",
-	"statsTooManyRequestsError": "We're receiving too many stats requests for {{ site }} website. Retrying...",
-	"statsUnknownError": "An unknown error has occurred while fetching stats for {{ site }} website . Please try again."
+	"fallback": {
+		"200OkSuccessResponse": "Ok",
+		"201CreatedSuccessResponse": "Created",
+		"400BadRequestErrorResponse": "Bad Request",
+		"401UnauthorizedErrorResponse": "Unauthorized",
+		"403ForbiddenErrorResponse": "Forbidden",
+		"404NotFoundErrorResponse": "Not Found",
+		"429TooManyRequestsErrorResponse": "Too Many Requests",
+		"500InternalServerErrorResponse": "Internal Server Error",
+		"502BadGatewayErrorResponse": "Bad Gateway",
+		"503ServiceUnavailableErrorResponse": "Service Unavailable",
+		"504GatewayTimeoutErrorResponse": "Gateway Timeout",
+		"unknownResponse": "An unknown error has occured. Please try again.",
+		"unknownSuccessResponse": "Success",
+		"unknownClientErrorResponse": "An unknown client error has occured. Please try again.",
+		"unknownServerErrorResponse": "An unknown server error has occured. Please try again."
+	},
+	"auth": {
+		"user": {
+			"delete": {
+				"200OkSuccessResponse": "User delete success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "User delete success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "User delete failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "User delete failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "User delete failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "User delete failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "User delete failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "User delete failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "User delete failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "User delete failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "User delete failed. Got a 504 gateway timeout error response."
+			},
+			"get": {
+				"200OkSuccessResponse": "User get success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "User get success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "User get failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "User get failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "User get failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "User get failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "User get failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "User get failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "User get failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "User get failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "User get failed. Got a 504 gateway timeout error response."
+			},
+			"patch": {
+				"200OkSuccessResponse": "User patch success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "User patch success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "User patch failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "User patch failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "User patch failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "User patch failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "User patch failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "User patch failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "User patch failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "User patch failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "User patch failed. Got a 504 gateway timeout error response.",
+				"misc": {
+					"localTime": {
+						"enable": {
+							"200OkSuccessResponse": "User local time enable success! Got a 200 OK success response.",
+							"201CreatedSuccessResponse": "User local time enable success! Got a 201 created success response.",
+							"400BadRequestErrorResponse": "User local time enable failed. Got a 400 bad request error response. Please try again.",
+							"401UnauthorizedErrorResponse": "User local time enable failed. Got a 401 unauthorized error response. Please try again.",
+							"403ForbiddenErrorResponse": "User local time enable failed. Got a 403 forbidden error response.",
+							"404NotFoundErrorResponse": "User local time enable failed. Got a 404 not found error response.",
+							"429TooManyRequestsErrorResponse": "User local time enable failed. Got a 429 too many requests error response.",
+							"500InternalServerErrorResponse": "User local time enable failed. Got a 500 internal server error response.",
+							"502BadGatewayErrorResponse": "User local time enable failed. Got a 502 bad gateway error response.",
+							"503ServiceUnavailableErrorResponse": "User local time enable failed. Got a 503 service unavailable error response.",
+							"504GatewayTimeoutErrorResponse": "User local time enable failed. Got a 504 gateway timeout error response."
+						},
+						"disable": {
+							"200OkSuccessResponse": "User local time disable success! Got a 200 OK success response.",
+							"201CreatedSuccessResponse": "User local time disable success! Got a 201 created success response.",
+							"400BadRequestErrorResponse": "User local time disable failed. Got a 400 bad request error response. Please try again.",
+							"401UnauthorizedErrorResponse": "User local time disable failed. Got a 401 unauthorized error response. Please try again.",
+							"403ForbiddenErrorResponse": "User local time disable failed. Got a 403 forbidden error response.",
+							"404NotFoundErrorResponse": "User local time disable failed. Got a 404 not found error response.",
+							"429TooManyRequestsErrorResponse": "User local time disable failed. Got a 429 too many requests error response.",
+							"500InternalServerErrorResponse": "User local time disable failed. Got a 500 internal server error response.",
+							"502BadGatewayErrorResponse": "User local time disable failed. Got a 502 bad gateway error response.",
+							"503ServiceUnavailableErrorResponse": "User local time disable failed. Got a 503 service unavailable error response.",
+							"504GatewayTimeoutErrorResponse": "User local time disable failed. Got a 504 gateway timeout error response."
+						}
+					}
+				}
+			},
+			"put": {
+				"200OkSuccessResponse": "User put success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "User put success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "User put failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "User put failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "User put failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "User put failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "User put failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "User put failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "User put failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "User put failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "User put failed. Got a 504 gateway timeout error response."
+			}
+		},
+		"login": {
+			"post": {
+				"200OkSuccessResponse": "Login post success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "Login post success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "Login post failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "Login post failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "Login post failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "Login post failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "Login post failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "Login post failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "Login post failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "Login post failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "Login post failed. Got a 504 gateway timeout error response."
+			}
+		},
+		"registration": {
+			"post": {
+				"200OkSuccessResponse": "Registration post success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "Registration post success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "Registration post failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "Registration post failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "Registration post failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "Registration post failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "Registration post failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "Registration post failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "Registration post failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "Registration post failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "Registration post failed. Got a 504 gateway timeout error response."
+			},
+			"misc": {
+				"usernameAlreadyExists": "The user name you have entered already exists. Please try another one.",
+				"emailAlreadyExists": "The email you have entered already exists. Please try another one."
+			}
+		},
+		"logout": {
+			"get": {
+				"200OkSuccessResponse": "Logout get success! Got a 200 OK success response. Redirecting you to the login page...",
+				"400BadRequestErrorResponse": "Logout get failed. Got a 400 bad request error response. Please try again. Redirecting you to back to your sites dashboard...",
+				"401UnauthorizedErrorResponse": "Logout get failed. Got a 401 unauthorized error response. Please try again. Redirecting you to back to your sites dashboard...",
+				"403ForbiddenErrorResponse": "Logout get failed. Got a 403 forbidden error response. Redirecting you to back to your sites dashboard...",
+				"404NotFoundErrorResponse": "Logout get failed. Got a 404 not found error response. Redirecting you to back to your sites dashboard...",
+				"429TooManyRequestsErrorResponse": "Logout get failed. Got a 429 too many requests error response. Redirecting you to back to your sites dashboard...",
+				"500InternalServerErrorResponse": "Logout get failed. Got a 500 internal server error response. Redirecting you to back to your sites dashboard...",
+				"502BadGatewayErrorResponse": "Logout get failed. Got a 502 bad gateway error response. Redirecting you to back to your sites dashboard...",
+				"503ServiceUnavailableErrorResponse": "Logout get failed. Got a 503 service unavailable error response. Redirecting you to back to your sites dashboard...",
+				"504GatewayTimeoutErrorResponse": "Logout get failed. Got a 504 gateway timeout error response. Redirecting you to back to your sites dashboard..."
+			},
+			"post": {
+				"200OkSuccessResponse": "Logout post success! Got a 200 OK success response. Redirecting you to the login page...",
+				"201CreatedSuccessResponse": "Logout post success! Got a 201 created success response. Redirecting you to the login page...",
+				"400BadRequestErrorResponse": "Logout post failed. Got a 400 bad request error response. Please try again. Redirecting you to back to your sites dashboard...",
+				"401UnauthorizedErrorResponse": "Logout post failed. Got a 401 unauthorized error response. Please try again. Redirecting you to back to your sites dashboard...",
+				"403ForbiddenErrorResponse": "Logout post failed. Got a 403 forbidden error response. Redirecting you to back to your sites dashboard...",
+				"404NotFoundErrorResponse": "Logout post failed. Got a 404 not found error response. Redirecting you to back to your sites dashboard...",
+				"429TooManyRequestsErrorResponse": "Logout post failed. Got a 429 too many requests error response. Redirecting you to back to your sites dashboard...",
+				"500InternalServerErrorResponse": "Logout post failed. Got a 500 internal server error response. Redirecting you to back to your sites dashboard...",
+				"502BadGatewayErrorResponse": "Logout post failed. Got a 502 bad gateway error response. Redirecting you to back to your sites dashboard...",
+				"503ServiceUnavailableErrorResponse": "Logout post failed. Got a 503 service unavailable error response. Redirecting you to back to your sites dashboard...",
+				"504GatewayTimeoutErrorResponse": "Logout post failed. Got a 504 gateway timeout error response. Redirecting you to back to your sites dashboard..."
+			}
+		},
+		"password": {
+			"change": {
+				"post": {
+					"200OkSuccessResponse": "Password change post success! Got a 200 OK success response.",
+					"201CreatedSuccessResponse": "Password change post success! Got a 201 created success response.",
+					"400BadRequestErrorResponse": "Password change post failed. Got a 400 bad request error response. Please try again.",
+					"401UnauthorizedErrorResponse": "Password change post failed. Got a 401 unauthorized error response. Please try again.",
+					"403ForbiddenErrorResponse": "Password change post failed. Got a 403 forbidden error response.",
+					"404NotFoundErrorResponse": "Password change post failed. Got a 404 not found error response.",
+					"429TooManyRequestsErrorResponse": "Password change post failed. Got a 429 too many requests error response.",
+					"500InternalServerErrorResponse": "Password change post failed. Got a 500 internal server error response.",
+					"502BadGatewayErrorResponse": "Password change post failed. Got a 502 bad gateway error response.",
+					"503ServiceUnavailableErrorResponse": "Password change post failed. Got a 503 service unavailable error response.",
+					"504GatewayTimeoutErrorResponse": "Password change post failed. Got a 504 gateway timeout error response."
+				}
+			},
+			"reset": {
+				"post": {
+					"200OkSuccessResponse": "Password reset post success! Got a 200 OK success response.",
+					"201CreatedSuccessResponse": "Password reset post success! Got a 201 created success response.",
+					"400BadRequestErrorResponse": "Password reset post failed. Got a 400 bad request error response. Please try again.",
+					"401UnauthorizedErrorResponse": "Password reset post failed. Got a 401 unauthorized error response. Please try again.",
+					"403ForbiddenErrorResponse": "Password reset post failed. Got a 403 forbidden error response.",
+					"404NotFoundErrorResponse": "Password reset post failed. Got a 404 not found error response.",
+					"429TooManyRequestsErrorResponse": "Password reset post failed. Got a 429 too many requests error response.",
+					"500InternalServerErrorResponse": "Password reset post failed. Got a 500 internal server error response.",
+					"502BadGatewayErrorResponse": "Password reset post failed. Got a 502 bad gateway error response.",
+					"503ServiceUnavailableErrorResponse": "Password reset post failed. Got a 503 service unavailable error response.",
+					"504GatewayTimeoutErrorResponse": "Password reset post failed. Got a 504 gateway timeout error response."
+				},
+				"confirm": {
+					"post": {
+						"200OkSuccessResponse": "Password confirmation success! Got a 200 OK success post response.",
+						"201CreatedSuccessResponse": "Password confirmation success! Got a 201 created success post response.",
+						"400BadRequestErrorResponse": "Password confirmation failed. Got a 400 bad request error post response. Please try again.",
+						"401UnauthorizedErrorResponse": "Password confirmation failed. Got a 401 unauthorized error post response. Please try again.",
+						"403ForbiddenErrorResponse": "Password confirmation failed. Got a 403 forbidden error post response.",
+						"404NotFoundErrorResponse": "Password confirmation failed. Got a 404 not found error post response.",
+						"429TooManyRequestsErrorResponse": "Password confirmation failed. Got a 429 too many requests error post response.",
+						"500InternalServerErrorResponse": "Password confirmation failed. Got a 500 internal server error post response.",
+						"502BadGatewayErrorResponse": "Password confirmation failed. Got a 502 bad gateway error post response.",
+						"503ServiceUnavailableErrorResponse": "Password confirmation failed. Got a 503 service unavailable error post response.",
+						"504GatewayTimeoutErrorResponse": "Password confirmation failed. Got a 504 gateway timeout error post response."
+					}
+				}
+			}
+		},
+		"confirmEmail": {
+			"post": {
+				"201CreatedSuccessResponse": "Confirm email post success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "Confirm email post failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "Confirm email post failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "Confirm email post failed. Got a 403 forbidden error response. Please try again.",
+				"404NotFoundErrorResponse": "Confirm email post failed. Got a 404 not found error response. Please try again.",
+				"429TooManyRequestsErrorResponse": "Confirm email post failed. Got a 429 too many requests error response. Please try again.",
+				"500InternalServerErrorResponse": "Confirm email post failed. Got a 500 internal server error response. Please try again.",
+				"502BadGatewayErrorResponse": "Confirm email post failed. Got a 502 bad gateway error response. Please try again.",
+				"503ServiceUnavailableErrorResponse": "Confirm email post failed. Got a 503 service unavailable error response. Please try again.",
+				"504GatewayTimeoutErrorResponse": "Confirm email post failed. Got a 504 gateway timeout error response. Please try again."
+			}
+		}
+	},
+	"support": {
+		"post": {
+			"200OkSuccessResponse": "Support post success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Support post success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Support post failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Support post failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Support post failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Support post failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Support post failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Support post failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Support post failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Support post failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Support post failed. Got a 504 gateway timeout error response."
+		}
+	},
+	"signup": {
+		"post": {
+			"200OkSuccessResponse": "Signup post success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Signup post success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Signup post failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Signup post failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Signup post failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Signup post failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Signup post failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Signup post failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Signup post failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Signup post failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Signup post failed. Got a 504 gateway timeout error response."
+		}
+	},
+	"sites": {
+		"post": {
+			"200OkSuccessResponse": "Sites post success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Sites post success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Sites post failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Sites post failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Sites post failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Sites post failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Sites post failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Sites post failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Sites post failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Sites post failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Sites post failed. Got a 504 gateway timeout error response."
+		},
+		"urlInformation": {
+			"patch": {
+				"200OkSuccessResponse": "Sites URL information patch success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "Sites URL information patch success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "Sites URL information patch failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "Sites URL information patch failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "Sites URL information patch failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "Sites URL information patch failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "Sites URL information patch failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "Sites URL information patch failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "Sites URL information patch failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "Sites URL information patch failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "Sites URL information patch failed. Got a 504 gateway timeout error response."
+			},
+			"post": {
+				"200OkSuccessResponse": "Sites post success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "Sites post success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "Sites post failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "Sites post failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "Sites post failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "Sites post failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "Sites post failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "Sites post failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "Sites post failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "Sites post failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "Sites post failed. Got a 504 gateway timeout error response.",
+				"misc": {
+					"siteUrlAlreadyExists": "The site url you entered already exists. Please try again with a different site url.",
+					"enterValidSiteUrl": "You entered an invalid site url. Please enter a valid URL to proceed to next step."
+				}
+			}
+		},
+		"verifyUrl": {
+			"post": {
+				"200OkSuccessResponse": "Sites verify URL post success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "Sites verify URL post success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "Sites verify URL post failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "Sites verify URL post failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "Sites verify URL post failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "Sites verify URL post failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "Sites verify URL post failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "Sites verify URL post failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "Sites verify URL post failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "Sites verify URL post failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "Sites verify URL post failed. Got a 504 gateway timeout error response.",
+				"misc": {
+					"siteVerificationFailedErrorResponse": "The site verification failed. Did you add the verification code to the site url? Please try again"
+				}
+			}
+		}
+	},
+	"siteId": {},
+	"scan": {},
+	"stats": {},
+	"team": {},
+	"stripe": {
+		"paymentMethod": {
+			"get": {
+				"200OkSuccessResponse": "Stripe payment method get success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "Stripe payment method get success! Got a 201 Created success response.",
+				"400BadRequestErrorResponse": "Stripe payment method get failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "Stripe payment method get failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "Stripe payment method get failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "Stripe payment method get failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "Stripe payment method get failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "Stripe payment method get failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "Stripe payment method get failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "Stripe payment method get failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "Stripe payment method failed. Got a 504 gateway timeout error response."
+			},
+			"post": {
+				"200OkSuccessResponse": "Stripe payment method post success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "Stripe payment method post success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "Stripe payment method post failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "Stripe payment method post failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "Stripe payment method post failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "Stripe payment method post failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "Stripe payment method post failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "Stripe payment method post failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "Stripe payment method post failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "Stripe payment method post failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "Stripe payment method post failed. Got a 504 gateway timeout error response."
+			},
+			"default": {}
+		},
+		"subscription": {
+			"current": {}
+		}
+	}
 }

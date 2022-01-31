@@ -19,7 +19,7 @@ import * as Yup from "yup";
 /**
  * Custom function to render the `RegistrationForm` component
  */
-export function RegistrationForm() {
+const RegistrationForm = () => {
 	// Translations
 	const { t } = useTranslation();
 	const firstName = t("common:firstName");
@@ -320,7 +320,7 @@ export function RegistrationForm() {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `RegistrationForm` component

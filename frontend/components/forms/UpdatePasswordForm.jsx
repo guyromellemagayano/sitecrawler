@@ -16,7 +16,7 @@ import * as Yup from "yup";
 /**
  * Custom function to render the `UpdatePasswordForm` component
  */
-export function UpdatePasswordForm() {
+const UpdatePasswordForm = () => {
 	const [uid, setUid] = useState(null);
 	const [token, setToken] = useState(null);
 
@@ -102,7 +102,7 @@ export function UpdatePasswordForm() {
 						resetForm({ values: "" });
 
 						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						await mutate(UserApiEndpoint, null, false);
+						await mutate(UserApiEndpoint, false);
 
 						// Show alert message after successful 200 OK or 201 Created response is issued
 						setConfig({
@@ -202,7 +202,7 @@ export function UpdatePasswordForm() {
 			</Formik>
 		</>
 	);
-}
+};
 
 /**
  * Memoized custom `UpdatePasswordForm` component

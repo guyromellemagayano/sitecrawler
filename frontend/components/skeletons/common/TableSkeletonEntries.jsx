@@ -5,7 +5,7 @@ import "twin.macro";
 /**
  * Custom function to render the `TableSkeletonEntries` component
  */
-export function TableSkeletonEntries({ str = null, limit = null }) {
+const TableSkeletonEntries = ({ str = null, limit = null }) => {
 	let strArray = [];
 
 	if (limit > 0) {
@@ -19,7 +19,7 @@ export function TableSkeletonEntries({ str = null, limit = null }) {
 			</tr>
 		));
 	} else return;
-}
+};
 
 TableSkeletonEntries.propTypes = {
 	limit: PropTypes.number,

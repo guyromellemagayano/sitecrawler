@@ -1,86 +1,110 @@
-// React
-import { useState } from "react";
-
-// NextJS
+import { orderingByNameQuery } from "@constants/GlobalValues";
+import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
+import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
+import { handleConversionStringToCamelCase, handleConversionStringToLowercase } from "@utils/convertCase";
 import { useRouter } from "next/router";
-
-// External
-import "twin.macro";
 import PropTypes from "prop-types";
-
-// Components
-import Sorting from "./common/Sorting";
-
-// Utils
-import { removeURLParameter, slugToCamelcase, getSortKeyFromSlug } from "@utils/functions";
+import { memo, useCallback, useEffect, useState } from "react";
+// import { useSWRConfig } from "swr";
+import "twin.macro";
+import { MemoizedSorting } from "./common/Sorting";
 
 const initialOrder = {
 	pageLargePages: "default",
 	pageBrokenSecurity: "default"
 };
 
-const PageSorting = ({ result, slug, mutatePages, labels, setPagePath }) => {
+/**
+ * Custom function to render the `PageSorting` common component
+ *
+ * @param {object} result
+ * @param {string} slug
+ * @param {array} labels
+ * @param {function} setPagePath
+ */
+const PageSorting = ({ result = null, slug = null, labels = null, setPagePath }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
+	// Router
 	const { asPath } = useRouter();
 	const router = useRouter();
 
-	const handleSort = (slug, dir) => {
-		setSortOrder({ ...initialOrder });
+	// SWR hook for global mutations
+	// const { mutate } = useSWRConfig();
 
-		let newPath = removeURLParameter(asPath, "ordering");
+	const handleSort = useCallback(
+		async (slug, dir) => {
+			setSortOrder({ ...initialOrder });
 
-		const sortItem = slugToCamelcase(slug);
-		const sortKey = getSortKeyFromSlug(labels, slug);
+			// Remove `ordering` URL parameter
+			let newPath = handleRemoveUrlParameter(asPath, "ordering");
 
-		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
+			// Handle slug to camelcase
+			const sortItem = handleConversionStringToCamelCase(slug);
 
-		if (dir == "asc") {
-			if (newPath.includes("?")) newPath += `&ordering=${sortKey}`;
-			else newPath += `?ordering=${sortKey}`;
-		} else if (dir == "desc") {
-			if (newPath.includes("?")) newPath += `&ordering=-${sortKey}`;
-			else newPath += `?ordering=-${sortKey}`;
-		} else {
-			newPath = removeURLParameter(newPath, "ordering");
-		}
+			// Handle sorting from given slug
+			const sortKey = handleGetSortKeyFromSlug(labels ?? null, slug);
 
-		if (newPath.includes("?")) setPagePath(`${removeURLParameter(newPath, "page")}&`);
-		else setPagePath(`${removeURLParameter(newPath, "page")}?`);
+			// Update `sortOrder` state
+			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
-		router.push(newPath);
-		mutatePages;
-	};
+			// Sanitize `ordering` values
+			const sanitizedDir = handleConversionStringToLowercase(dir);
 
-	return slug !== undefined ? (
+			if (sanitizedDir === "asc") {
+				if (newPath.includes("?")) newPath += `&${orderingByNameQuery + sortKey}`;
+				else newPath += `?${orderingByNameQuery + sortKey}`;
+			} else if (sanitizedDir === "desc") {
+				if (newPath.includes("?")) newPath += `&${orderingByNameQuery + "-" + sortKey}`;
+				else newPath += `?${orderingByNameQuery + "-" + sortKey}`;
+			} else {
+				newPath = handleRemoveUrlParameter(newPath, "ordering");
+			}
+
+			if (newPath.includes("?")) setPagePath(`${handleRemoveUrlParameter(newPath, "page")}&`);
+			else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
+
+			// Mutate function here
+			// mutate(linksEndpoint, false)
+
+			router.push(newPath);
+		},
+		[asPath, labels]
+	);
+
+	useEffect(() => {
+		handleSort();
+	}, [handleSort]);
+
+	return slug !== null && (slug === "page-url" || slug === "page-size" || slug === "page-ssl") ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				<span>
-					{slug == "page-url" ? (
-						<Sorting
+					{slug === "page-url" ? (
+						<MemoizedSorting
 							setSortOrder={setSortOrder}
 							tableContent={labels}
-							ordering={result.ordering}
-							direction={sortOrder.pageUrl}
-							onSortHandler={handleSort}
+							ordering={result?.ordering ?? null}
+							direction={sortOrder?.pageUrl ?? null}
+							handleSort={handleSort}
 							slug={slug}
 						/>
-					) : slug == "page-size" ? (
-						<Sorting
+					) : slug === "page-size" ? (
+						<MemoizedSorting
 							setSortOrder={setSortOrder}
 							tableContent={labels}
-							ordering={result.ordering}
-							direction={sortOrder.pageSize}
-							onSortHandler={handleSort}
+							ordering={result?.ordering ?? null}
+							direction={sortOrder?.pageSize ?? null}
+							handleSort={handleSort}
 							slug={slug}
 						/>
-					) : slug == "page-ssl" ? (
-						<Sorting
+					) : slug === "page-ssl" ? (
+						<MemoizedSorting
 							setSortOrder={setSortOrder}
 							tableContent={labels}
-							ordering={result.ordering}
-							direction={sortOrder.pageSsl}
-							onSortHandler={handleSort}
+							ordering={result?.ordering ?? null}
+							direction={sortOrder?.pageSsl ?? null}
+							handleSort={handleSort}
 							slug={slug}
 						/>
 					) : null}
@@ -91,19 +115,15 @@ const PageSorting = ({ result, slug, mutatePages, labels, setPagePath }) => {
 };
 
 PageSorting.propTypes = {
-	ordering: PropTypes.string,
 	labels: PropTypes.array,
-	mutatePages: PropTypes.func,
+	result: PropTypes.shape({
+		ordering: PropTypes.string
+	}),
 	setPagePath: PropTypes.func,
 	slug: PropTypes.string
 };
 
-PageSorting.defaultProps = {
-	ordering: null,
-	labels: null,
-	mutatePages: null,
-	setPagePath: null,
-	slug: null
-};
-
-export default PageSorting;
+/**
+ * Memoized custom `PageSorting` component
+ */
+export const MemoizedPageSorting = memo(PageSorting);

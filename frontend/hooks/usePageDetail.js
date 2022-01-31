@@ -8,19 +8,17 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @param {number} querySid
  * @param {number} scanObjId
  * @param {number} linkId
+ * @param {object} options
  * @returns {object} pageDetail, errorPageDetail, validatingPageDetail
  */
-export const usePageDetail = (querySid = null, scanObjId = null, linkId = null) => {
+export const usePageDetail = (querySid = null, scanObjId = null, linkId = null, options = null) => {
 	const currentEndpoint =
-		typeof querySid !== "undefined" &&
 		querySid !== null &&
 		typeof querySid === "number" &&
 		querySid > 0 &&
-		typeof scanObjId !== "undefined" &&
 		scanObjId !== null &&
 		typeof scanObjId === "number" &&
 		scanObjId > 0 &&
-		typeof linkId !== "undefined" &&
 		linkId !== null &&
 		linkId > 0
 			? SitesApiEndpoint + querySid + ScanSlug + scanObjId + SitePageSlug + linkId + "/"
@@ -30,7 +28,7 @@ export const usePageDetail = (querySid = null, scanObjId = null, linkId = null) 
 		data: pageDetail,
 		error: errorPageDetail,
 		isValidating: validatingPageDetail
-	} = useMainSWRConfig(currentEndpoint);
+	} = useMainSWRConfig(currentEndpoint, options);
 
 	return { pageDetail, errorPageDetail, validatingPageDetail };
 };

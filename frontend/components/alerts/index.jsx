@@ -3,7 +3,7 @@ import { Transition } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon, XIcon } from "@heroicons/react/outline";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import tw from "twin.macro";
 
 /**
@@ -12,7 +12,7 @@ import tw from "twin.macro";
  * @param {boolean} isSuccess
  * @param {string} responseText
  */
-export function Alert({ responseText, isSuccess }) {
+const Alert = ({ responseText = null, isSuccess = false }) => {
 	const [isOpen, setIsOpen] = useState(true);
 
 	// Translations
@@ -20,21 +20,15 @@ export function Alert({ responseText, isSuccess }) {
 	const dismiss = t("common:dismiss");
 
 	// Handle the alert close
-	const handleAlertClose = useCallback(async () => {
-		responseText !== null && typeof responseText !== "undefined"
-			? setTimeout(() => {
-					setIsOpen(false);
-			  }, AlertDisplayInterval)
-			: null;
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setIsOpen(false);
+		}, AlertDisplayInterval);
 
 		return () => {
-			setIsOpen(false);
+			clearTimeout(timeout);
 		};
-	}, [responseText]);
-
-	useEffect(() => {
-		handleAlertClose();
-	}, [handleAlertClose]);
+	});
 
 	return (
 		<Transition
@@ -76,7 +70,7 @@ export function Alert({ responseText, isSuccess }) {
 			</div>
 		</Transition>
 	);
-}
+};
 
 Alert.propTypes = {
 	isSuccess: PropTypes.bool,

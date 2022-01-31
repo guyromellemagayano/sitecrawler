@@ -5,9 +5,9 @@ import "twin.macro";
 /**
  * Custom function to render the `SiteOverviewPageLayout` component
  */
-export function SiteOverviewPageLayout() {
+const SiteOverviewPageLayout = () => {
 	return <div tw="w-full flex items-start py-4"></div>;
-}
+};
 
 /**
  * Memoized custom `SiteOverviewPageLayout` component

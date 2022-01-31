@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedUpdatePasswordForm } from "@components/forms/UpdatePasswordForm";
 import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
 import { LoginLink } from "@constants/PageLinks";
@@ -11,7 +10,7 @@ import "twin.macro";
 /**
  * Custom function to render the `ResetPasswordFormPageLayout` component
  */
-export function ResetPasswordFormPageLayout() {
+const ResetPasswordFormPageLayout = () => {
 	// Translations
 	const { t } = useTranslation();
 	const alreadyHaveAccount = t("common:alreadyHaveAccount");
@@ -45,7 +44,7 @@ export function ResetPasswordFormPageLayout() {
 			</Scrollbars>
 		</div>
 	);
-}
+};
 
 /**
  * Memoized custom `ResetPasswordFormPageLayout` component

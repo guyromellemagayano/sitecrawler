@@ -1,27 +1,31 @@
-import { customAxiosHeaders } from "@constants/CustomAxiosHeaders";
+import { MutateInterval } from "@constants/GlobalValues";
 import { SITE_URL } from "@constants/ServerEnv";
 import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
+import Cookies from "js-cookie";
+import { sleep } from "./sleep";
 
+// Custom `axios` instance
 const AppAxiosInstance = axios.create({
 	baseURL: SITE_URL,
 	headers: {
-		...customAxiosHeaders
+		"Accept": "application/json",
+		"Content-Type": "application/json",
+		"X-CSRFToken": Cookies.get("csrftoken") ?? null
 	},
 	validateStatus: function (status) {
-		return status >= 200 && status < 500;
-	},
-	withCredentials: true
+		return status >= 200 && status < 600;
+	}
 });
 
 // Use `axios` interceptors for all HTTP methods (GET, POST, PUT, DELETE, etc.)
-axios.interceptors.request.use(
-	(req) => req,
+AppAxiosInstance.interceptors.request.use(
+	(req) => sleep(MutateInterval, req),
 	(err) => Promise.reject(err)
 );
 
-axios.interceptors.response.use(
-	(res) => res,
+AppAxiosInstance.interceptors.response.use(
+	(res) => sleep(MutateInterval, res),
 	(err) => {
 		if (err.response) {
 			// Capture `response` errors and send to Sentry

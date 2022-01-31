@@ -1,12 +1,12 @@
 import { MemoizedBreadcrumbs } from "@components/breadcrumbs";
-import { LoginLink, LogoutLink } from "@constants/PageLinks";
+import { LoginLink, LogoutLink, SubscriptionPlansSlug } from "@constants/PageLinks";
 import { useLoading } from "@hooks/useLoading";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import "twin.macro";
+import tw from "twin.macro";
 import { MemoizedFooter } from "./Footer";
 
 /**
@@ -15,8 +15,9 @@ import { MemoizedFooter } from "./Footer";
  * @param {any} children
  * @param {string} pageTitle
  */
-export function PageLayout({ children, pageTitle = null }) {
+const PageLayout = ({ children, pageTitle = null }) => {
 	// Router
+	const { asPath } = useRouter();
 	const router = useRouter();
 
 	// Custom hooks
@@ -33,7 +34,12 @@ export function PageLayout({ children, pageTitle = null }) {
 
 			<div tw="flex-grow flex flex-col flex-nowrap w-full">
 				<div tw="w-full pt-12 pb-4">
-					<h2 tw="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+					<h2
+						css={[
+							asPath.includes(SubscriptionPlansSlug) ? tw`text-center` : null,
+							tw`text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate`
+						]}
+					>
 						{isComponentReady ? pageTitle : <Skeleton duration={2} width={215} height={36} />}
 					</h2>
 				</div>
@@ -44,7 +50,7 @@ export function PageLayout({ children, pageTitle = null }) {
 			<MemoizedFooter />
 		</section>
 	);
-}
+};
 
 PageLayout.propTypes = {
 	children: PropTypes.any,

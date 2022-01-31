@@ -57,10 +57,12 @@
 	"billingSettings": "Billing Settings",
 	"helpSupport": "Help & Support",
 	"update": "Update",
+	"delete": "Delete",
 	"cancel": "Cancel",
 	"newPassword": "New Password",
 	"confirmPassword": "Confirm Password",
 	"request": "Request",
 	"copiedText": "Copied",
-	"copyText": "Copy"
+	"copyText": "Copy",
+	"proceed": "Proceed"
 }

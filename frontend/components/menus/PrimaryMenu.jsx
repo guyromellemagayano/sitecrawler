@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { MemoizedAppLogo } from "@components/logos/AppLogo";
 import { MemoizedSiteSelect } from "@components/select/SiteSelect";
 import { AuthAppLogo, SiteLogoWhite } from "@constants/GlobalValues";
@@ -19,7 +18,7 @@ import tw from "twin.macro";
 /**
  * Custom function to render the `PrimaryMenu` component
  */
-export function PrimaryMenu() {
+const PrimaryMenu = () => {
 	// Translations
 	const { t } = useTranslation("common");
 	const appLogo = t("appLogo");
@@ -49,97 +48,106 @@ export function PrimaryMenu() {
 						</a>
 					</Link>
 				</div>
+				{PrimarySidebarMenus?.length > 0 ? (
+					<div tw="flex-1 flex flex-col overflow-y-auto">
+						<nav tw="flex-1 px-4">
+							{PrimarySidebarMenus.filter((e) => {
+								return !asPath?.includes(AddNewSiteSlug) ? e.slug !== "navigation" : true;
+							})?.map((value) => {
+								return (
+									<div key={value.slug} tw="mb-4">
+										<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider inline-block">
+											{isComponentReady ? value.category : <Skeleton duration={2} width={128} height={16} />}
+										</h3>
 
-				<div tw="flex-1 flex flex-col overflow-y-auto">
-					<nav tw="flex-1 px-4">
-						{PrimarySidebarMenus.filter((e) => {
-							return !asPath?.includes(AddNewSiteSlug) ? e.slug !== "navigation" : true;
-						}).map((value, index) => {
-							return (
-								<div key={index} tw="mb-4">
-									<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider inline-block">
-										{isComponentReady ? value.category : <Skeleton duration={2} width={128} height={16} />}
-									</h3>
+										<div tw="my-3" role="group">
+											{value.links ? (
+												value.links.map((value2) => {
+													return value2.slug !== "go-back-to-sites" ? (
+														<Link key={value2.slug} href={value2.url} passHref>
+															<a
+																className="group"
+																css={[
+																	tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md `,
+																	asPath.includes(value2.url) && isComponentReady
+																		? tw`bg-gray-1100 !cursor-default`
+																		: null,
+																	asPath.includes(value2.url) ||
+																	(asPath.includes(SitesSlug) && SitesSlug.includes(value2.url))
+																		? tw`text-gray-100`
+																		: tw`text-gray-400`,
+																	isComponentReady
+																		? tw`cursor-pointer hover:text-gray-100 focus:outline-none transition ease-in-out duration-150 hover:bg-gray-1100 focus:bg-gray-1100`
+																		: tw`cursor-default`
+																]}
+															>
+																{value2.slug === "sites" ? (
+																	isComponentReady ? (
+																		<ExternalLinkIcon tw="mr-3 h-6 w-5" />
+																	) : (
+																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																	)
+																) : value2.slug === "audit-logs" ? (
+																	isComponentReady ? (
+																		<DocumentReportIcon tw="mr-3 h-6 w-5" />
+																	) : (
+																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
+																	)
+																) : null}
 
-									<div tw="my-3" role="group">
-										{value.links ? (
-											value.links.map((value2, index2) => {
-												return value2.slug !== "go-back-to-sites" ? (
-													<Link key={index2} href={value2.url} passHref>
-														<a
-															className="group"
-															css={[
-																tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md `,
-																asPath.includes(value2.url) && isComponentReady
-																	? tw`bg-gray-1100 !cursor-default`
-																	: null,
-																asPath.includes(value2.url) ||
-																(asPath.includes(SitesSlug) && SitesSlug.includes(value2.url))
-																	? tw`text-gray-100`
-																	: tw`text-gray-400`,
-																isComponentReady
-																	? tw`cursor-pointer hover:text-gray-100 focus:outline-none transition ease-in-out duration-150 hover:bg-gray-1100 focus:bg-gray-1100`
-																	: tw`cursor-default`
-															]}
-														>
-															{value2.slug === "sites" ? (
-																isComponentReady ? (
-																	<ExternalLinkIcon tw="mr-3 h-6 w-5" />
+																{value2.title ? (
+																	<span>
+																		{isComponentReady ? (
+																			value2.title
+																		) : (
+																			<Skeleton duration={2} width={128} height={20} />
+																		)}
+																	</span>
+																) : null}
+															</a>
+														</Link>
+													) : (
+														<Link key={value.slug} href={value2.url} passHref>
+															<a
+																className="group"
+																css={[
+																	tw`mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white`,
+																	isComponentReady ? tw`cursor-pointer` : null
+																]}
+															>
+																{isComponentReady ? (
+																	<ArrowLeftIcon tw="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-																)
-															) : value2.slug === "audit-logs" ? (
-																isComponentReady ? (
-																	<DocumentReportIcon tw="mr-3 h-6 w-5" />
-																) : (
-																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-																)
-															) : null}
+																)}
 
-															{value2.title ? (
-																<span>
-																	{isComponentReady ? value2.title : <Skeleton duration={2} width={128} height={20} />}
-																</span>
-															) : null}
-														</a>
-													</Link>
-												) : (
-													<Link key={index} href={value2.url} passHref>
-														<a
-															className="group"
-															css={[
-																tw`mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white`,
-																isComponentReady ? tw`cursor-pointer` : null
-															]}
-														>
-															{isComponentReady ? (
-																<ArrowLeftIcon tw="mr-3 h-6 w-5" />
-															) : (
-																<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
-															)}
-
-															{value2.title ? (
-																<span>
-																	{isComponentReady ? value2.title : <Skeleton duration={2} width={128} height={20} />}
-																</span>
-															) : null}
-														</a>
-													</Link>
-												);
-											})
-										) : (
-											<MemoizedSiteSelect />
-										)}
+																{value2.title ? (
+																	<span>
+																		{isComponentReady ? (
+																			value2.title
+																		) : (
+																			<Skeleton duration={2} width={128} height={20} />
+																		)}
+																	</span>
+																) : null}
+															</a>
+														</Link>
+													);
+												})
+											) : (
+												<MemoizedSiteSelect />
+											)}
+										</div>
 									</div>
-								</div>
-							);
-						})}
-					</nav>
-				</div>
+								);
+							}) ?? null}
+						</nav>
+					</div>
+				) : null}
 			</div>
 		</Scrollbars>
 	);
-}
+};
 
 /**
  * Memoized custom `PrimaryMenu` component

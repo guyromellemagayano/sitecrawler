@@ -18,14 +18,12 @@ export const GlobalSlug = "global/";
 export const LogoutSlug = "logout/";
 export const ProfileSlug = "profile/";
 export const SettingsSlug = "settings/";
-export const SiteSlug = "site/";
 export const SitesSlug = "sites/";
 export const SubscriptionPlansSlug = "subscription-plans/";
 export const SummarySlug = "summary/";
 export const SupportSlug = "support/";
 
 export const DashboardSettingsSlug = DashboardSlug + SettingsSlug;
-export const DashboardSiteSlug = DashboardSlug + SiteSlug;
 export const DashboardSitesLink = DashboardSlug + SitesSlug;
 
 export const AccountExistLink = "/account-exist/";

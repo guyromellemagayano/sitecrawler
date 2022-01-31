@@ -5,7 +5,7 @@
  * @param {*} parameter
  * @returns {string} url
  */
-export const handleRemoveURLParameter = (url, parameter) => {
+export const handleRemoveUrlParameter = (url, parameter) => {
 	const urlparts = url.split("?");
 
 	if (urlparts.length >= 2) {

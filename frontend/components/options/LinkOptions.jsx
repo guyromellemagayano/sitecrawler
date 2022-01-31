@@ -1,19 +1,23 @@
-// React
-import { useRouter } from "next/router";
-
-// External
-import "twin.macro";
-import { SearchIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
-
-// Enums
 import { LinkOptionsLabels } from "@enums/LinkOptionsLabels";
+import { SearchIcon } from "@heroicons/react/solid";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import { memo } from "react";
+import "twin.macro";
 
-const LinkOptions = ({ onSearchEvent, permissions, searchKey }) => {
+/**
+ * Custom function to render the `LinkOptions` component
+ *
+ * @param {function} onSearchEvent
+ * @param {array} permissions
+ * @param {searchKey} string
+ */
+const LinkOptions = ({ onSearchEvent, permissions = null, searchKey = null }) => {
+	// Router
 	const { asPath } = useRouter();
 
 	return (
-		<div tw="flex flex-col w-0 flex-1 overflow-hidden z-10">
+		<div tw="z-10">
 			<div tw="relative z-10 flex-shrink-0 flex bg-white border-b border-gray-200">
 				<div tw="flex-1 p-4 flex justify-end">
 					<div tw="flex-1 flex">
@@ -66,10 +70,7 @@ LinkOptions.propTypes = {
 	searchKey: PropTypes.string
 };
 
-LinkOptions.defaultProps = {
-	onSearchEvent: null,
-	permissions: null,
-	searchKey: null
-};
-
-export default LinkOptions;
+/**
+ * Memoized custom `LinkOptions` component
+ */
+export const MemoizedLinkOptions = memo(LinkOptions);

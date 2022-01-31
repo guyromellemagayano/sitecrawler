@@ -6,7 +6,7 @@ export const SidebarMenuLabels = () => {
 	const noSitesFound = t("noSitesFound");
 	const addNewSite = t("addNewSite");
 
-	const labelsArray = new Array();
+	const labelsArray = [];
 
 	const selectSiteLabel = { label: selectSite, slug: "select-site" };
 	const noSitesFoundLabel = { label: noSitesFound, slug: "no-sites-found" };

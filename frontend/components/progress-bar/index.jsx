@@ -3,6 +3,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import tw, { css } from "twin.macro";
 
+/**
+ * Custom function to render the `ProgressBar` component
+ */
 const ProgressBar = () => {
 	const [state, setState] = useState({
 		isRouteChanging: false
@@ -10,6 +13,7 @@ const ProgressBar = () => {
 
 	let activeRequests = 0;
 
+	// Router
 	const router = useRouter();
 
 	useEffect(() => {
