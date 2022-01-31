@@ -18,56 +18,68 @@ export const useCrawl = (siteId = null) => {
 
 	const selectedSiteRef = useRef(null);
 
-	const { scan } = useScan(siteId ?? null);
+	const { scan } = useScan(siteId);
 
-	const handleMutateCurrentSite = async (endpoint) => {
-		const mutateCurrentSiteResponse = await handlePostMethod(endpoint);
-		const mutateCurrentSiteResponseStatus = mutateCurrentSiteResponse.status ?? null;
+	const handleMutateCurrentSite = async (endpoint) => {};
 
-		return mutateCurrentSiteResponseStatus !== null && Math.floor(mutateCurrentSiteResponseStatus / 200) === 1
-			? true
-			: false;
-	};
-
-	const handleCrawl = (e) => {
-		const startScanSlug = "/start_scan/";
-		let endpoint = `${SitesApiEndpoint + siteId + startScanSlug}`;
-
+	const handleCrawl = async (e) => {
 		e.preventDefault();
+
+		const startScanSlug = "/start_scan/";
+		let endpoint = await `${SitesApiEndpoint + siteId + startScanSlug}`;
 
 		setIsCrawlStarted(true);
 		setIsCrawlFinished(false);
 
-		selectedSiteRef.current && selectedSiteRef.current.contains(e.target) ? handleMutateCurrentSite(endpoint) : null;
+		if (selectedSiteRef?.current && selectedSiteRef?.current?.contains(e.target)) {
+			const mutateCurrentSiteResponse = await handlePostMethod(endpoint);
+			const mutateCurrentSiteResponseStatus = mutateCurrentSiteResponse?.status ?? null;
+
+			return mutateCurrentSiteResponseStatus !== null && Math.floor(mutateCurrentSiteResponseStatus / 100) === 2
+				? true
+				: false;
+		}
 	};
 
 	useEffect(() => {
-		const handleScan = (scan) => {
-			let previousScanResult = scan.results.find((e) => e.finished_at !== null);
-			let currentScanResult = scan.results.find((e) => e.finished_at == null);
+		let isMounted = true;
 
-			setCurrentScan(currentScanResult);
-			setPreviousScan(previousScanResult);
-			setScanCount(scan.count);
+		(async () => {
+			if (!isMounted) return;
+
+			scan?.results
+				? (async () => {
+						let previousScanResult = scan?.results?.find((e) => e.finished_at !== null) ?? null;
+						let currentScanResult = scan?.results?.find((e) => e.finished_at == null) ?? null;
+
+						setCurrentScan(currentScanResult);
+						setPreviousScan(previousScanResult);
+						setScanCount(scan?.count ?? null);
+				  })()
+				: null;
+		})();
+
+		return () => {
+			isMounted = false;
 		};
-
-		scan && scan.results ? handleScan(scan) : null;
 	}, [scan]);
 
 	useEffect(() => {
 		let isMounted = true;
 
-		if (isMounted) {
-			typeof currentScan !== "undefined" && currentScan !== null
-				? (() => {
-						setIsCrawlStarted(true);
-						setIsCrawlFinished(false);
-				  })()
-				: (() => {
-						setIsCrawlStarted(false);
-						setIsCrawlFinished(true);
-				  })();
-		}
+		(async () => {
+			if (!isMounted) return;
+
+			if (currentScan !== null) {
+				setIsCrawlStarted(true);
+				setIsCrawlFinished(false);
+
+				return;
+			}
+
+			setIsCrawlStarted(false);
+			setIsCrawlFinished(true);
+		})();
 
 		return () => {
 			isMounted = false;
