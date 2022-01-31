@@ -4,7 +4,7 @@ import { isProd } from "@constants/ServerEnv";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { GlobalCustomStyles } from "@styles/GlobalCustomStyles";
+import GlobalStyles from "@styles/global";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
@@ -29,7 +29,7 @@ const MyApp = ({ Component, pageProps, err }) => {
 
 	return getLayout(
 		<SWRConfig>
-			<GlobalCustomStyles />
+			<GlobalStyles />
 			<DefaultSeo {...AppSeo} />
 			<ProgressBar />
 			<Component {...pageProps} err={err} />
