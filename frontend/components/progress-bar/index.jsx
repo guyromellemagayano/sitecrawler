@@ -17,67 +17,59 @@ const ProgressBar = () => {
 	const router = useRouter();
 
 	useEffect(() => {
-		let isMounted = true;
+		const handleRouteChangeStart = () => {
+			setState((prevState) => ({
+				...prevState,
+				isRouteChanging: true
+			}));
+		};
 
-		if (isMounted) {
-			const handleRouteChangeStart = () => {
-				setState((prevState) => ({
-					...prevState,
-					isRouteChanging: true
-				}));
-			};
+		const handleRouteChangeEnd = () => {
+			if (activeRequests > 0) {
+				return;
+			}
 
-			const handleRouteChangeEnd = () => {
-				if (activeRequests > 0) {
-					return;
-				}
+			setState((prevState) => ({
+				...prevState,
+				isRouteChanging: false
+			}));
+		};
 
-				setState((prevState) => ({
-					...prevState,
-					isRouteChanging: false
-				}));
-			};
+		router.events.on("routeChangeStart", handleRouteChangeStart);
+		router.events.on("routeChangeComplete", handleRouteChangeEnd);
+		router.events.on("routeChangeError", handleRouteChangeEnd);
 
-			router.events.on("routeChangeStart", handleRouteChangeStart);
-			router.events.on("routeChangeComplete", handleRouteChangeEnd);
-			router.events.on("routeChangeError", handleRouteChangeEnd);
+		const originalFetch = window.fetch;
 
-			const originalFetch = window.fetch;
+		window.fetch = async function (...args) {
+			if (activeRequests === 0) {
+				handleRouteChangeStart();
+			}
 
-			window.fetch = async function (...args) {
+			activeRequests++;
+
+			try {
+				const response = await originalFetch(...args);
+				return response;
+			} catch (error) {
+				return Promise.reject(error);
+			} finally {
+				activeRequests -= 1;
 				if (activeRequests === 0) {
-					handleRouteChangeStart();
+					handleRouteChangeEnd();
 				}
-
-				activeRequests++;
-
-				try {
-					const response = await originalFetch(...args);
-					return response;
-				} catch (error) {
-					return Promise.reject(error);
-				} finally {
-					activeRequests -= 1;
-					if (activeRequests === 0) {
-						handleRouteChangeEnd();
-					}
-				}
-			};
-
-			return () => {
-				router.events.off("routeChangeStart", handleRouteChangeStart);
-				router.events.off("routeChangeComplete", handleRouteChangeEnd);
-				router.events.off("routeChangeError", handleRouteChangeEnd);
-
-				setState((prevState) => ({
-					...prevState,
-					isRouteChanging: false
-				}));
-			};
-		}
+			}
+		};
 
 		return () => {
-			isMounted = false;
+			router.events.off("routeChangeStart", handleRouteChangeStart);
+			router.events.off("routeChangeComplete", handleRouteChangeEnd);
+			router.events.off("routeChangeError", handleRouteChangeEnd);
+
+			setState((prevState) => ({
+				...prevState,
+				isRouteChanging: false
+			}));
 		};
 	}, [router]);
 
