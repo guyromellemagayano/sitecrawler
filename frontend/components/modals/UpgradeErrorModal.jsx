@@ -96,5 +96,5 @@ const UpgradeErrorModal = (ref) => {
 /**
  * Memoized custom `UpgradeErrorModal` component
  */
-export const ForwardRefUpgradeErrorModal = forwardRef(UpgradeErrorModal);
+const ForwardRefUpgradeErrorModal = forwardRef(UpgradeErrorModal);
 export const MemoizedUpgradeErrorModal = memo(ForwardRefUpgradeErrorModal);

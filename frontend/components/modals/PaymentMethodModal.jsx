@@ -130,5 +130,5 @@ PaymentMethodModal.propTypes = {
 /**
  * Memoized custom `PaymentMethodModal` component
  */
-export const ForwardRefPaymentMethodModal = forwardRef(PaymentMethodModal);
+const ForwardRefPaymentMethodModal = forwardRef(PaymentMethodModal);
 export const MemoizedPaymentMethodModal = memo(ForwardRefPaymentMethodModal);

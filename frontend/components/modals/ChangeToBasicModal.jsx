@@ -140,5 +140,5 @@ ChangeToBasicModal.propTypes = {
 /**
  * Memoized custom `ChangeToBasicModal` component
  */
-export const ForwardRefChangeToBasicModal = forwardRef(ChangeToBasicModal);
+const ForwardRefChangeToBasicModal = forwardRef(ChangeToBasicModal);
 export const MemoizedChangeToBasicModal = memo(ForwardRefChangeToBasicModal);

@@ -3,7 +3,6 @@ import { Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import PropTypes from "prop-types";
 import { forwardRef, memo } from "react";
 import "twin.macro";
 
@@ -93,13 +92,8 @@ const SiteLimitReachedModal = ({ showModal = false, setShowModal }, ref) => {
 	);
 };
 
-SiteLimitReachedModal.propTypes = {
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool
-};
-
 /**
  * Memoized custom `SiteLimitReachedModal` component
  */
-export const ForwardRefSiteLimitReachedModal = forwardRef(SiteLimitReachedModal);
+const ForwardRefSiteLimitReachedModal = forwardRef(SiteLimitReachedModal);
 export const MemoizedSiteLimitReachedModal = memo(ForwardRefSiteLimitReachedModal);
