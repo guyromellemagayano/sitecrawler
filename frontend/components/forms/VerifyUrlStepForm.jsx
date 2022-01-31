@@ -131,6 +131,18 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 									setTimeout(() => {
 										setDisableSiteVerify(false);
 									}, FormSubmissionInterval);
+								} else {
+									// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued
+									setSubmitting(false);
+									setDisableSiteVerify(false);
+
+									// Show alert message after successful 200 OK or 201 Created response is issued
+									setConfig({
+										isVerifyUrlStep: true,
+										method: verifyUrlStepMethod,
+										status: verifyUrlStepStatus,
+										isError: true
+									});
 								}
 							} else {
 								// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued

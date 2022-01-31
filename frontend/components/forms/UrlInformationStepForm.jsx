@@ -1,6 +1,7 @@
 /* eslint-disable-line no-useless-escape */
 import { MemoizedAlert } from "@components/alerts";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { FormSubmissionInterval } from "@constants/GlobalValues";
 import { AddNewSiteLink } from "@constants/PageLinks";
 import { handleGetMethod, handlePatchMethod, handlePostMethod } from "@helpers/handleHttpMethods";
 import { useAlertMessage } from "@hooks/useAlertMessage";
@@ -10,6 +11,7 @@ import { useUser } from "@hooks/useUser";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
+import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -20,6 +22,10 @@ import * as Yup from "yup";
 
 /**
  * Custom function to render the `UrlInformationStepForm` component
+ *
+ * @param {number} step
+ * @param {boolean} edit
+ * @param {number} sid
  */
 const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 	const [siteData, setSiteData] = useState(null);
@@ -167,19 +173,15 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 							// If no changes has been made, direct user to the next step
 							if (body.name === siteName) {
 								// Update current URL with query for the next step
-								router.replace(
-									{
-										pathname: AddNewSiteLink,
-										query: {
-											step: step + 1,
-											sid: sid ?? null,
-											edit: false,
-											verified: false
-										}
-									},
-									undefined,
-									{}
-								);
+								router.replace({
+									pathname: AddNewSiteLink,
+									query: {
+										step: step + 1,
+										sid: sid ?? null,
+										edit: false,
+										verified: false
+									}
+								});
 							} else {
 								const patchUrlInformationStepFormResponse = await handlePatchMethod(SitesApiEndpoint + sid + "/", body);
 								const patchUrlInformationStepFormResponseData = patchUrlInformationStepFormResponse?.data ?? null;
@@ -191,19 +193,19 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 									patchUrlInformationStepFormResponseData !== null &&
 									Math.round(patchUrlInformationStepFormResponseStatus / 200) === 1
 								) {
-									// Disable form after successful 200 OK or 201 Created response is issued
-									setDisableForm(!disableForm);
+									if (patchUrlInformationStepFormResponseData?.verified) {
+										// Disable form after successful 200 OK or 201 Created response is issued
+										setDisableForm(!disableForm);
 
-									// Show alert message after successful 200 OK or 201 Created response is issued
-									setConfig({
-										isUrlInformationStep: true,
-										method: patchUrlInformationStepFormResponseMethod,
-										status: patchUrlInformationStepFormResponseStatus
-									});
+										// Show alert message after successful 200 OK or 201 Created response is issued
+										setConfig({
+											isUrlInformationStep: true,
+											method: patchUrlInformationStepFormResponseMethod,
+											status: patchUrlInformationStepFormResponseStatus
+										});
 
-									// Update current URL with query for the next step
-									router.replace(
-										{
+										// Update current URL with query for the next step
+										router.replace({
 											pathname: AddNewSiteLink,
 											query: {
 												step: step + 1,
@@ -211,10 +213,25 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 												edit: false,
 												verified: false
 											}
-										},
-										undefined,
-										{}
-									);
+										});
+
+										// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
+										setTimeout(() => {
+											setDisableForm(false);
+										}, FormSubmissionInterval);
+									} else {
+										// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued
+										setSubmitting(false);
+										setDisableForm(false);
+
+										// Show alert message after successful 200 OK or 201 Created response is issued
+										setConfig({
+											isVerifyUrlStep: true,
+											method: patchUrlInformationStepFormResponseMethod,
+											status: patchUrlInformationStepFormResponseStatus,
+											isError: true
+										});
+									}
 								} else {
 									// Disable submission as soon as 200 OK or 201 Created response was not issued
 									setSubmitting(false);
@@ -251,7 +268,7 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 						const siteValidationResponseMethod = siteValidationResponse?.config?.method ?? null;
 
 						if (siteValidationResponseData !== null && Math.round(siteValidationResponseStatus / 200) === 1) {
-							let siteValidationResponseDataResultsArray = new Array();
+							let siteValidationResponseDataResultsArray = [];
 							let siteValidationResponseDataResult = null;
 
 							siteValidationResponseData?.results?.map((val) => siteValidationResponseDataResultsArray.push(val.url));
@@ -262,8 +279,6 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 									siteValidationResponseDataResultsArray
 								);
 							}
-
-							console.log(siteValidationResponseDataResultsArray, siteValidationResponseDataResult);
 
 							if (siteValidationResponseDataResult?.bestMatch?.rating === 1) {
 								// Report error message that site URL already exists
@@ -289,14 +304,10 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 									});
 
 									// Update current URL with query for the next step
-									router.replace(
-										{
-											pathname: AddNewSiteLink,
-											query: { step: step + 1, sid: siteAdditionResponseData?.id ?? null, edit: false, verified: false }
-										},
-										undefined,
-										{}
-									);
+									router.replace({
+										pathname: AddNewSiteLink,
+										query: { step: step + 1, sid: siteAdditionResponseData?.id ?? null, edit: false, verified: false }
+									});
 								} else {
 									// Disable form after successful 200 OK or 201 Created response is issued
 									setDisableForm(!disableForm);
@@ -455,6 +466,12 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 			</Formik>
 		</>
 	);
+};
+
+UrlInformationStepForm.propTypes = {
+	edit: PropTypes.bool,
+	sid: PropTypes.number,
+	step: PropTypes.number
 };
 
 /**
