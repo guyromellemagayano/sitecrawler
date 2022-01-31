@@ -1,5 +1,4 @@
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
 import { forwardRef, memo, useEffect } from "react";
 import tw from "twin.macro";
 
@@ -26,14 +25,8 @@ const DescSorting = ({ handleClickEvent, isDescClicked, setIsDescClicked }, ref)
 	);
 };
 
-DescSorting.propTypes = {
-	handleClickEvent: PropTypes.func,
-	isDescClicked: PropTypes.bool,
-	setIsDescClicked: PropTypes.func
-};
-
 /**
  * Memoized custom `DescSorting` component
  */
-export const ForwardRefDescSorting = forwardRef(DescSorting);
+const ForwardRefDescSorting = forwardRef(DescSorting);
 export const MemoizedDescSorting = memo(ForwardRefDescSorting);

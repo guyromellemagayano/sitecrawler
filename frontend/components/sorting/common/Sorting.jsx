@@ -1,5 +1,5 @@
 import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
-import { handleSlugToCamelCase } from "@helpers/handleSlugToCamelcase";
+import { handleConversionStringToCamelCase } from "@utils/convertCase";
 import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { MemoizedAscSorting } from "./AscSorting";
@@ -27,7 +27,7 @@ const Sorting = ({ setSortOrder, tableContent = null, ordering = null, handleSor
 	const handleSortOrdering = useCallback(async () => {
 		if (ordering !== null) {
 			setResultSlug(handleGetSortKeyFromSlug(tableContent, ordering?.replace("-", "")));
-			setOrderItem(handleSlugToCamelCase(resultSlug));
+			setOrderItem(handleConversionStringToCamelCase(resultSlug));
 
 			if (ordering?.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
 			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
@@ -35,15 +35,7 @@ const Sorting = ({ setSortOrder, tableContent = null, ordering = null, handleSor
 	}, [orderItem, ordering, resultSlug, setSortOrder, tableContent]);
 
 	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleSortOrdering();
-		}
-
-		return () => {
-			isMounted = false;
-		};
+		handleSortOrdering();
 	}, [handleSortOrdering]);
 
 	// Handle ascending and descending onClick states
@@ -65,15 +57,7 @@ const Sorting = ({ setSortOrder, tableContent = null, ordering = null, handleSor
 	}, [ordering, resultSlug, slug]);
 
 	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleAscDescOnClickStates();
-		}
-
-		return () => {
-			isMounted = false;
-		};
+		handleAscDescOnClickStates();
 	}, [handleAscDescOnClickStates]);
 
 	// Handle click event
@@ -122,7 +106,7 @@ Sorting.propTypes = {
 	ordering: PropTypes.array,
 	setSortOrder: PropTypes.func,
 	slug: PropTypes.string,
-	tableContent: PropTypes.array
+	tableContent: PropTypes.string
 };
 
 /**

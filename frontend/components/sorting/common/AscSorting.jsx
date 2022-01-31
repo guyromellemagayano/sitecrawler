@@ -1,5 +1,4 @@
 import { ChevronUpIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
 import { forwardRef, memo, useEffect } from "react";
 import tw from "twin.macro";
 
@@ -26,14 +25,8 @@ const AscSorting = ({ handleClickEvent, isAscClicked, setIsAscClicked }, ref) =>
 	);
 };
 
-AscSorting.propTypes = {
-	handleClickEvent: PropTypes.func,
-	isAscClicked: PropTypes.bool,
-	setIsAscClicked: PropTypes.func
-};
-
 /**
  * Memoized custom `AscSorting` component
  */
-export const ForwardRefAscSorting = forwardRef(AscSorting);
+const ForwardRefAscSorting = forwardRef(AscSorting);
 export const MemoizedAscSorting = memo(ForwardRefAscSorting);

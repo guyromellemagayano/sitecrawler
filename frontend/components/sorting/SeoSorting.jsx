@@ -1,8 +1,7 @@
 import { orderingByNameQuery } from "@constants/GlobalValues";
 import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
-import { handleSlugToCamelCase } from "@helpers/handleSlugToCamelcase";
-import { handleStringToLowerCase } from "@helpers/handleStringToCase";
+import { handleConversionStringToCamelCase, handleConversionStringToLowercase } from "@utils/convertCase";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
@@ -45,7 +44,7 @@ const SeoSorting = ({ result = null, slug = null, labels = null, setPagePath }) 
 			let newPath = handleRemoveUrlParameter(asPath, "ordering");
 
 			// Handle slug to camelcase
-			const sortItem = handleSlugToCamelCase(slug);
+			const sortItem = handleConversionStringToCamelCase(slug);
 
 			// Handle sorting from given slug
 			const sortKey = handleGetSortKeyFromSlug(labels ?? null, slug);
@@ -54,7 +53,7 @@ const SeoSorting = ({ result = null, slug = null, labels = null, setPagePath }) 
 			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
 			// Sanitize `ordering` values
-			const sanitizedDir = handleStringToLowerCase(dir);
+			const sanitizedDir = handleConversionStringToLowercase(dir);
 
 			if (sanitizedDir === "asc") {
 				if (newPath.includes("?")) newPath += `&${orderingByNameQuery + sortKey}`;
@@ -78,15 +77,7 @@ const SeoSorting = ({ result = null, slug = null, labels = null, setPagePath }) 
 	);
 
 	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleSort();
-		}
-
-		return () => {
-			isMounted = false;
-		};
+		handleSort();
 	}, [handleSort]);
 
 	return slug !== null &&

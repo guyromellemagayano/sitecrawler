@@ -1,13 +1,13 @@
 import { MemoizedSorting } from "@components/sorting/common/Sorting";
+import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery } from "@constants/GlobalValues";
 import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
-import { handleSlugToCamelCase } from "@helpers/handleSlugToCamelcase";
-import { handleStringToLowerCase } from "@helpers/handleStringToCase";
+import { handleConversionStringToCamelCase, handleConversionStringToLowercase } from "@utils/convertCase";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useState } from "react";
-// import { useSWRConfig } from "swr";
+import { useCallback, useEffect, useState } from "react";
+import { useSWRConfig } from "swr";
 import "twin.macro";
 
 const initialOrder = {
@@ -25,7 +25,7 @@ const initialOrder = {
  * @param {array} labels
  * @param {function} setPagePath
  */
-const SitesSorting = ({ result = null, slug = null, labels = null, setPagePath }) => {
+export const SitesSorting = ({ result = null, slug = null, labels = null, setPagePath }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Router
@@ -33,7 +33,7 @@ const SitesSorting = ({ result = null, slug = null, labels = null, setPagePath }
 	const router = useRouter();
 
 	// SWR hook for global mutations
-	// const  { mutate } = useSWRConfig();
+	const { mutate } = useSWRConfig();
 
 	// Handle sort
 	const handleSort = useCallback(
@@ -44,7 +44,7 @@ const SitesSorting = ({ result = null, slug = null, labels = null, setPagePath }
 			let newPath = handleRemoveUrlParameter(asPath, "ordering");
 
 			// Handle slug to camelcase
-			const sortItem = handleSlugToCamelCase(slug);
+			const sortItem = handleConversionStringToCamelCase(slug);
 
 			// Handle sorting from given slug
 			const sortKey = handleGetSortKeyFromSlug(labels ?? null, slug);
@@ -53,7 +53,7 @@ const SitesSorting = ({ result = null, slug = null, labels = null, setPagePath }
 			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
 			// Sanitize `ordering` values
-			const sanitizedDir = handleStringToLowerCase(dir);
+			const sanitizedDir = handleConversionStringToLowercase(dir);
 
 			if (sanitizedDir === "asc") {
 				if (newPath.includes("?")) newPath += `&${orderingByNameQuery + sortKey}`;
@@ -69,23 +69,16 @@ const SitesSorting = ({ result = null, slug = null, labels = null, setPagePath }
 			else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
 
 			// Mutate function here
-			// mutate(sitesEndpoint, false)
+			mutate(SitesApiEndpoint, false);
 
+			// Push new path
 			router.push(newPath);
 		},
 		[asPath, labels]
 	);
 
 	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleSort();
-		}
-
-		return () => {
-			isMounted = false;
-		};
+		handleSort();
 	}, [handleSort]);
 
 	return slug !== null && (slug === "site-name" || slug === "crawl-status" || slug === "last-crawled") ? (
@@ -125,15 +118,10 @@ const SitesSorting = ({ result = null, slug = null, labels = null, setPagePath }
 };
 
 SitesSorting.propTypes = {
-	labels: PropTypes.array,
+	labels: PropTypes.string,
 	result: PropTypes.shape({
 		ordering: PropTypes.string
 	}),
 	setPagePath: PropTypes.func,
 	slug: PropTypes.string
 };
-
-/**
- * Memoized custom `SitesSorting` component
- */
-export const MemoizedSitesSorting = memo(SitesSorting);
