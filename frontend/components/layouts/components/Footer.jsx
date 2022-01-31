@@ -17,9 +17,9 @@ const Footer = () => {
 
 	return (
 		<footer tw="flex-none w-full pt-8 pb-4 border-t border-gray-200">
-			<div tw="flex flex-col xl:flex-row xl:items-center xl:justify-between px-4">
+			<div tw="flex flex-col xl:flex-row xl:items-center xl:justify-between">
 				<div tw="flex justify-center md:order-1">
-					<nav tw="-mx-8 mt-2 mb-4 lg:-my-2 flex flex-wrap justify-center">
+					<nav tw="-mx-4 mt-2 mb-4 lg:-my-2 flex flex-wrap justify-center">
 						{labelsArray.map((value, index) => (
 							<div key={index} tw="px-2 py-1 xl:px-3 xl:py-2">
 								<a
