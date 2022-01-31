@@ -9,7 +9,7 @@ export const SitesTableLabels = () => {
 	const totalPages = t("totalPages");
 	const totalImages = t("totalImages");
 
-	const labelsArray = new Array();
+	const labelsArray = [];
 
 	const siteNameTableLabel = { label: siteName, slug: "site-name", key: "name" };
 	const lastCrawledTableLabel = { label: lastCrawled };

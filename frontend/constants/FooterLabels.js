@@ -7,7 +7,7 @@ export const FooterLabels = () => {
 	const terms = t("terms");
 	const support = t("support");
 
-	const labelsArray = new Array();
+	const labelsArray = [];
 
 	const aboutLink = { label: about, link: "/about/" };
 	const privacyPolicyLink = { label: privacyPolicy, link: "/privacy-policy/" };

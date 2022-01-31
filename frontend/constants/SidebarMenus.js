@@ -43,10 +43,10 @@ export const SidebarMenus = () => {
 	const siteSettings = t("siteSettings");
 	const subscriptionPlans = t("subscriptionPlans");
 
-	const PrimarySidebarMenus = new Array();
-	const SiteSidebarMenus = new Array();
-	const SettingsSidebarMenus = new Array();
-	const ProfileSidebarMenus = new Array();
+	const PrimarySidebarMenus = [];
+	const SiteSidebarMenus = [];
+	const SettingsSidebarMenus = [];
+	const ProfileSidebarMenus = [];
 
 	const NavigationMenu = {
 		category: navigation,
