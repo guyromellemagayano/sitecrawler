@@ -27,20 +27,12 @@ const AppLogo = ({ alt = null, height = null, src = null, width = null, classNam
 	const { isComponentReady } = useLoading();
 
 	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			if (asPath.includes(DashboardSlug)) {
-				setIsDashboard(true);
-			}
-
-			return () => {
-				setIsDashboard(false);
-			};
+		if (asPath.includes(DashboardSlug)) {
+			setIsDashboard(true);
 		}
 
 		return () => {
-			isMounted = false;
+			setIsDashboard(false);
 		};
 	}, [asPath]);
 
