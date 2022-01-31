@@ -1,6 +1,7 @@
-import { AlertDisplayInterval } from "@constants/GlobalValues";
+import { handleAlertMessages } from "@helpers/handleAlertMessages";
+import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import "twin.macro";
 
 const messagesReducer = (state, action) => {
@@ -33,6 +34,7 @@ export const useAlertMessage = () => {
 		isSubscriptions: false,
 		isSupport: false,
 		isUser: false,
+		isError: null,
 		method: null,
 		status: null,
 		responses: []
@@ -44,6 +46,17 @@ export const useAlertMessage = () => {
 	const { t } = useTranslation();
 
 	// User translations
+	const userDelete200OkSuccessResponse = t("alerts:auth.user.delete.200OkSuccessResponse");
+	const userDelete201CreatedSuccessResponse = t("alerts:auth.user.delete.201CreatedSuccessResponse");
+	const userDelete400BadRequestErrorResponse = t("alerts:auth.user.delete.400BadRequestErrorResponse");
+	const userDelete401UnauthorizedErrorResponse = t("alerts:auth.user.delete.401UnauthorizedErrorResponse");
+	const userDelete403ForbiddenErrorResponse = t("alerts:auth.user.delete.403ForbiddenErrorResponse");
+	const userDelete404NotFoundErrorResponse = t("alerts:auth.user.delete.404NotFoundErrorResponse");
+	const userDelete429TooManyRequestsErrorResponse = t("alerts:auth.user.delete.429TooManyRequestsErrorResponse");
+	const userDelete500InternalServerErrorResponse = t("alerts:auth.user.delete.500InternalServerErrorResponse");
+	const userDelete502BadGatewayErrorResponse = t("alerts:auth.user.delete.502BadGatewayErrorResponse");
+	const userDelete503ServiceUnavailableErrorResponse = t("alerts:auth.user.delete.503ServiceUnavailableErrorResponse");
+	const userDelete504GatewayTimeoutErrorResponse = t("alerts:auth.user.delete.504GatewayTimeoutErrorResponse");
 	const userGet200OkSuccessResponse = t("alerts:auth.user.get.200OkSuccessResponse");
 	const userGet201CreatedSuccessResponse = t("alerts:auth.user.get.201CreatedSuccessResponse");
 	const userGet400BadRequestErrorResponse = t("alerts:auth.user.get.400BadRequestErrorResponse");
@@ -79,66 +92,66 @@ export const useAlertMessage = () => {
 	const userPut504GatewayTimeoutErrorResponse = t("alerts:auth.user.put.504GatewayTimeoutErrorResponse");
 
 	// Local time translations
-	const localTimeEnable200OkSuccessResponse = t("alerts:auth.user.patch.misc.localTime.enable.200OkSuccessResponse");
-	const localTimeEnable201CreatedSuccessResponse = t(
+	const localTimeEnabled200OkSuccessResponse = t("alerts:auth.user.patch.misc.localTime.enable.200OkSuccessResponse");
+	const localTimeEnabled201CreatedSuccessResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.201CreatedSuccessResponse"
 	);
-	const localTimeEnable400BadRequestErrorResponse = t(
+	const localTimeEnabled400BadRequestErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.400BadRequestErrorResponse"
 	);
-	const localTimeEnable401UnauthorizedErrorResponse = t(
+	const localTimeEnabled401UnauthorizedErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.401UnauthorizedErrorResponse"
 	);
-	const localTimeEnable403ForbiddenErrorResponse = t(
+	const localTimeEnabled403ForbiddenErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.403ForbiddenErrorResponse"
 	);
-	const localTimeEnable404NotFoundErrorResponse = t(
+	const localTimeEnabled404NotFoundErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.404NotFoundErrorResponse"
 	);
-	const localTimeEnable429TooManyRequestsErrorResponse = t(
+	const localTimeEnabled429TooManyRequestsErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.429TooManyRequestsErrorResponse"
 	);
-	const localTimeEnable500InternalServerErrorResponse = t(
+	const localTimeEnabled500InternalServerErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.500InternalServerErrorResponse"
 	);
-	const localTimeEnable502BadGatewayErrorResponse = t(
+	const localTimeEnabled502BadGatewayErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.502BadGatewayErrorResponse"
 	);
-	const localTimeEnable503ServiceUnavailableErrorResponse = t(
+	const localTimeEnabled503ServiceUnavailableErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.503ServiceUnavailableErrorResponse"
 	);
-	const localTimeEnable504GatewayTimeoutErrorResponse = t(
+	const localTimeEnabled504GatewayTimeoutErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.enable.504GatewayTimeoutErrorResponse"
 	);
-	const localTimeDisable200OkSuccessResponse = t("alerts:auth.user.patch.misc.localTime.disable.200OkSuccessResponse");
-	const localTimeDisable201CreatedSuccessResponse = t(
+	const localTimeDisabled200OkSuccessResponse = t("alerts:auth.user.patch.misc.localTime.disable.200OkSuccessResponse");
+	const localTimeDisabled201CreatedSuccessResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.201CreatedSuccessResponse"
 	);
-	const localTimeDisable400BadRequestErrorResponse = t(
+	const localTimeDisabled400BadRequestErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.400BadRequestErrorResponse"
 	);
-	const localTimeDisable401UnauthorizedErrorResponse = t(
+	const localTimeDisabled401UnauthorizedErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.401UnauthorizedErrorResponse"
 	);
-	const localTimeDisable403ForbiddenErrorResponse = t(
+	const localTimeDisabled403ForbiddenErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.403ForbiddenErrorResponse"
 	);
-	const localTimeDisable404NotFoundErrorResponse = t(
+	const localTimeDisabled404NotFoundErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.404NotFoundErrorResponse"
 	);
-	const localTimeDisable429TooManyRequestsErrorResponse = t(
+	const localTimeDisabled429TooManyRequestsErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.429TooManyRequestsErrorResponse"
 	);
-	const localTimeDisable500InternalServerErrorResponse = t(
+	const localTimeDisabled500InternalServerErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.500InternalServerErrorResponse"
 	);
-	const localTimeDisable502BadGatewayErrorResponse = t(
+	const localTimeDisabled502BadGatewayErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.502BadGatewayErrorResponse"
 	);
-	const localTimeDisable503ServiceUnavailableErrorResponse = t(
+	const localTimeDisabled503ServiceUnavailableErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.503ServiceUnavailableErrorResponse"
 	);
-	const localTimeDisable504GatewayTimeoutErrorResponse = t(
+	const localTimeDisabled504GatewayTimeoutErrorResponse = t(
 		"alerts:auth.user.patch.misc.localTime.disable.504GatewayTimeoutErrorResponse"
 	);
 
@@ -348,6 +361,9 @@ export const useAlertMessage = () => {
 	const verifyUrlStepPost504GatewayTimeoutErrorResponse = t(
 		"alerts:sites.verifyUrl.post.504GatewayTimeoutErrorResponse"
 	);
+	const verifyUrlStepPostMiscSiteVerificationFailedErrorResponse = t(
+		"alerts:sites.verifyUrl.post.misc.siteVerificationFailedErrorResponse"
+	);
 
 	// Payment method translations
 	const paymentMethodGet200OkSuccessResponse = t("alerts:stripe.paymentMethod.get.200OkSuccessResponse");
@@ -420,7 +436,7 @@ export const useAlertMessage = () => {
 	const fallbackUnknownClientErrorResponse = t("alerts:fallback.unknownClientErrorResponse");
 	const fallbackUnknownServerErrorResponse = t("alerts:fallback.unknownServerErrorResponse");
 
-	const handleMessages = useCallback(async () => {
+	useEffect(() => {
 		if (config) {
 			const isLocalTimeEnabled = config?.isLocalTimeEnabled ?? false;
 			const isLocalTimeDisabled = config?.isLocalTimeDisabled ?? false;
@@ -440,8 +456,24 @@ export const useAlertMessage = () => {
 			const isSubscriptions = config?.isSubscriptions ?? false;
 			const isSupport = config?.isSupport ?? false;
 			const isUser = config?.isUser ?? false;
+			const isError = config?.isError ?? null;
 			const method = config?.method ?? null;
 			const status = config?.status ?? null;
+
+			const fallback = {
+				unknownResponse: {
+					message: fallbackUnknownResponse,
+					isSuccess: false
+				},
+				unknownClientErrorResponse: {
+					message: fallbackUnknownClientErrorResponse,
+					isSuccess: false
+				},
+				unknownServerErrorResponse: {
+					message: fallbackUnknownServerErrorResponse,
+					isSuccess: false
+				}
+			};
 
 			if (
 				status !== null &&
@@ -466,9328 +498,1348 @@ export const useAlertMessage = () => {
 					isUser)
 			) {
 				if (isUser) {
-					switch (method) {
-						case "get":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userGet504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userGet504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isUser: isUser,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isUser: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isUser: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const deleteResponse = {
+						method: "DELETE",
+						responses: [
+							{
+								status: 200,
+								message: userDelete200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: userDelete201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: userDelete400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: userDelete401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: userDelete403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: userDelete404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: userDelete429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: userDelete500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: userDelete502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: userDelete503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: userDelete504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						case "patch":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPatch504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPatch504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isUser: isUser,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isUser: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isUser: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+						]
+					};
+					const getResponse = {
+						method: "GET",
+						responses: [
+							{
+								status: 200,
+								message: userGet200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: userGet201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: userGet400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: userGet401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: userGet403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: userGet404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: userGet429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: userGet500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: userGet502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: userGet503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: userGet504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						case "put":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: userPut504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== userPut504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUser: isUser,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUser: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUser: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isUser: isUser,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isUser: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isUser: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+						]
+					};
+					const patchResponse = {
+						method: "PATCH",
+						responses: [
+							{
+								status: 200,
+								message: userPatch200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: userPatch201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: userPatch400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: userPatch401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: userPatch403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: userPatch404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: userPatch429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: userPatch500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: userPatch502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: userPatch503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: userPatch504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+					const putResponse = {
+						method: "PUT",
+						response: [
+							{
+								status: 200,
+								message: userPut200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: userPut201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: userPut400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: userPut401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: userPut403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: userPut404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: userPut429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: userPut500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: userPut502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: userPut503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: userPut504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+
+					responsesArray.push(deleteResponse);
+					responsesArray.push(getResponse);
+					responsesArray.push(deleteResponse);
+					responsesArray.push(patchResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isUser, data, fallback });
 				} else if (isLocalTimeEnabled) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeEnable504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeEnable504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLocalTimeEnabled: isLocalTimeEnabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeEnabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isLocalTimeEnabled: isLocalTimeEnabled,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isLocalTimeEnabled: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isLocalTimeEnabled: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: localTimeEnabled200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: localTimeEnabled201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: localTimeEnabled400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: localTimeEnabled401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: localTimeEnabled403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: localTimeEnabled404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: localTimeEnabled429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: localTimeEnabled500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: localTimeEnabled502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: localTimeEnabled503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: localTimeEnabled504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+
+					handleAlertMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isLocalTimeEnabled,
+						data: responsesArray,
+						fallback
+					});
 				} else if (isLocalTimeDisabled) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: localTimeDisable504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== localTimeDisable504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLocalTimeDisabled: isLocalTimeDisabled,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLocalTimeDisabled: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isLocalTimeDisabled: isLocalTimeDisabled,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isLocalTimeDisabled: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isLocalTimeDisabled: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: localTimeDisabled200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: localTimeDisabled201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: localTimeDisabled400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: localTimeDisabled401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: localTimeDisabled403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: localTimeDisabled404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: localTimeDisabled429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: localTimeDisabled500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: localTimeDisabled502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: localTimeDisabled503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: localTimeDisabled504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+
+					handleAlertMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isLocalTimeDisabled,
+						data: responsesArray,
+						fallback
+					});
 				} else if (isLogin) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: loginPost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== loginPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLogin: isLogin,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogin: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogin: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isLogin: isLogin,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isLogin: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isLogin: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: loginPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: loginPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: loginPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: loginPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: loginPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: loginPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: loginPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: loginPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: loginPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: loginPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: loginPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isLogin, data, fallback });
 				} else if (isLogout) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 201:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutPost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 201,
+								message: logoutPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: logoutPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: logoutPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: logoutPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: logoutPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: logoutPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: logoutPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: logoutPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: logoutPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: logoutPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						case "get":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: logoutGet504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== logoutGet504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isLogout: isLogout,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isLogout: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isLogout: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isLogout: isLogout,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isLogout: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isLogout: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+						]
+					};
+					const getResponse = {
+						method: "GET",
+						responses: [
+							{
+								status: 200,
+								message: logoutGet200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: logoutGet400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: logoutGet401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: logoutGet403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: logoutGet404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: logoutGet429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: logoutGet500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: logoutGet502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: logoutGet503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: logoutGet504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+					responsesArray.push(getResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isLogout, data, fallback });
 				} else if (isRegistration) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: registrationPost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== registrationPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isRegistration: isRegistration,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isRegistration: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isRegistration: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isLogin: isLogin,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isLogin: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: registrationPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: registrationPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: registrationPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: registrationPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: registrationPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: registrationPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: registrationPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: registrationPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: registrationPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: registrationPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: registrationPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isRegistration, data, fallback });
 				} else if (isPasswordChange) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== passwordChangePost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordChangePost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordChangePost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPasswordChange: isPasswordChange,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordChange: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordChange: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isPasswordChange: isPasswordChange,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isPasswordChange: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isPasswordChange: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: passwordChangePost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: passwordChangePost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: passwordChangePost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: passwordChangePost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: passwordChangePost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: passwordChangePost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: passwordChangePost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: passwordChangePost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: passwordChangePost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: passwordChangePost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: passwordChangePost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isPasswordChange, data, fallback });
 				} else if (isPasswordReset) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetPost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPasswordReset: isPasswordReset,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordReset: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordReset: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isPasswordReset: isPasswordReset,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isPasswordReset: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isPasswordReset: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: passwordResetPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: passwordResetPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: passwordResetPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: passwordResetPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: passwordResetPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: passwordResetPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: passwordResetPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: passwordResetPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: passwordResetPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: passwordResetPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: passwordResetPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isPasswordReset, data, fallback });
 				} else if (isPasswordResetConfirm) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetConfirmPost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetConfirmPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetConfirmPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== passwordResetConfirmPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetConfirmPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetConfirmPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== passwordResetConfirmPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== passwordResetConfirmPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetConfirmPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== passwordResetConfirmPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: passwordResetConfirmPost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== passwordResetConfirmPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPasswordResetConfirm: isPasswordResetConfirm,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPasswordResetConfirm: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isPasswordResetConfirm: isPasswordResetConfirm,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isPasswordResetConfirm: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isPasswordResetConfirm: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: passwordResetConfirmPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: passwordResetConfirmPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: passwordResetConfirmPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: passwordResetConfirmPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: passwordResetConfirmPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: passwordResetConfirmPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: passwordResetConfirmPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: passwordResetConfirmPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: passwordResetConfirmPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: passwordResetConfirmPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: passwordResetConfirmPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+
+					handleAlertMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isPasswordResetConfirm,
+						data: responsesArray,
+						fallback
+					});
 				} else if (isUrlInformationStep) {
-					switch (method) {
-						case "patch":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPatch504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== passwordResetPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isUrlInformationStep: isUrlInformationStep,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isUrlInformationStep: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isUrlInformationStep: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const patchResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: urlInformationStepPatch200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: urlInformationStepPatch201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: urlInformationStepPatch400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: urlInformationStepPatch401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: urlInformationStepPatch403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: urlInformationStepPatch404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: urlInformationStepPatch429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: urlInformationStepPatch500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: urlInformationStepPatch502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: urlInformationStepPatch503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: urlInformationStepPatch504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== urlInformationStepPost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== urlInformationStepPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== urlInformationStepPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== urlInformationStepPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== urlInformationStepPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== urlInformationStepPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== urlInformationStepPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== urlInformationStepPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== urlInformationStepPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== urlInformationStepPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: urlInformationStepPost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) =>
-																responseText !== urlInformationStepPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isUrlInformationStep: isUrlInformationStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isUrlInformationStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isUrlInformationStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isUrlInformationStep: isUrlInformationStep,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isUrlInformationStep: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isUrlInformationStep: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+						]
+					};
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: urlInformationStepPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: urlInformationStepPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: urlInformationStepPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: urlInformationStepPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: urlInformationStepPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: urlInformationStepPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: urlInformationStepPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: urlInformationStepPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: urlInformationStepPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: urlInformationStepPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: urlInformationStepPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(patchResponse);
+					responsesArray.push(postResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isPasswordReset, data, fallback });
 				} else if (isVerifyUrlStep) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: verifyUrlStepPost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== verifyUrlStepPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isVerifyUrlStep: isVerifyUrlStep,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isVerifyUrlStep: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isVerifyUrlStep: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isVerifyUrlStep: isVerifyUrlStep,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isVerifyUrlStep: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isVerifyUrlStep: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: isError
+									? verifyUrlStepPostMiscSiteVerificationFailedErrorResponse
+									: verifyUrlStepPost200OkSuccessResponse,
+								isSuccess: isError ? false : true
+							},
+							{
+								status: 201,
+								message: verifyUrlStepPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: verifyUrlStepPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: verifyUrlStepPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: verifyUrlStepPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: verifyUrlStepPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: verifyUrlStepPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: verifyUrlStepPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: verifyUrlStepPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: verifyUrlStepPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: verifyUrlStepPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isVerifyUrlStep, data, fallback });
 				} else if (isSupport) {
-					switch (method) {
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: supportPost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== supportPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isSupport: isSupport,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isSupport: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isSupport: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isSupport: isSupport,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isSupport: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isSupport: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: supportPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: supportPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: supportPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: supportPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: supportPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: supportPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: supportPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: supportPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: supportPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: supportPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: supportPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isSupport, data, fallback });
 				} else if (isPaymentMethod) {
-					switch (method) {
-						case "get":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
+					let responsesArray = [];
 
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodGet504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodGet504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isPaymentMethod: isPaymentMethod,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isPaymentMethod: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isPaymentMethod: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 201,
+								message: paymentMethodPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: paymentMethodPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: paymentMethodPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: paymentMethodPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: paymentMethodPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: paymentMethodPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: paymentMethodPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: paymentMethodPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: paymentMethodPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: paymentMethodPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						case "post":
-							switch (Math.round(status / 100)) {
-								case 2:
-									switch (status) {
-										case 200:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost200OkSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost200OkSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 201:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost201CreatedSuccessResponse,
-														isSuccess: true
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost201CreatedSuccessResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											break;
-									}
-									break;
-								case 4:
-									switch (status) {
-										case 400:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost400BadRequestErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost400BadRequestErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 401:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost401UnauthorizedErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost401UnauthorizedErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 403:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost403ForbiddenErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost403ForbiddenErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 404:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost404NotFoundErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost404NotFoundErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 429:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost429TooManyRequestsErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost429TooManyRequestsErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownClientErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownClientErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								case 5:
-									switch (status) {
-										case 500:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost500InternalServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost500InternalServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 502:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost502BadGatewayErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost502BadGatewayErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 503:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost503ServiceUnavailableErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost503ServiceUnavailableErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										case 504:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: paymentMethodPost504GatewayTimeoutErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== paymentMethodPost504GatewayTimeoutErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-										default:
-											dispatch({
-												...state,
-												isPaymentMethod: isPaymentMethod,
-												method: method,
-												status: status,
-												responses: [
-													...state.responses,
-													{
-														responseText: fallbackUnknownServerErrorResponse,
-														isSuccess: false
-													}
-												]
-											});
-
-											setTimeout(() => {
-												dispatch({
-													...state,
-													isPaymentMethod: false,
-													method: null,
-													status: null,
-													responses: [
-														...state.responses,
-														...state.responses.filter(
-															({ responseText }) => responseText !== fallbackUnknownServerErrorResponse
-														)
-													]
-												});
-
-												setConfig({
-													isPaymentMethod: false,
-													method: null,
-													status: null
-												});
-											}, AlertDisplayInterval);
-											break;
-									}
-									break;
-								default:
-									dispatch({
-										...state,
-										isPaymentMethod: isPaymentMethod,
-										method: method,
-										status: status,
-										responses: [
-											...state.responses,
-											{
-												responseText: fallbackUnknownResponse,
-												isSuccess: false
-											}
-										]
-									});
-
-									setTimeout(() => {
-										dispatch({
-											...state,
-											isPaymentMethod: false,
-											method: null,
-											status: null,
-											responses: [
-												...state.responses,
-												...state.responses.filter(({ responseText }) => responseText !== fallbackUnknownResponse)
-											]
-										});
-
-										setConfig({
-											isPaymentMethod: false,
-											method: null,
-											status: null
-										});
-									}, AlertDisplayInterval);
-									break;
+						]
+					};
+					const getResponse = {
+						method: "GET",
+						responses: [
+							{
+								status: 200,
+								message: paymentMethodGet200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: paymentMethodGet400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: paymentMethodGet401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: paymentMethodGet403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: paymentMethodGet404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: paymentMethodGet429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: paymentMethodGet500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: paymentMethodGet502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: paymentMethodGet503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: paymentMethodGet504GatewayTimeoutErrorResponse,
+								isSuccess: false
 							}
-							break;
-						default:
-							break;
-					}
+						]
+					};
+
+					responsesArray.push(postResponse);
+					responsesArray.push(getResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isPaymentMethod, data, fallback });
 				} else {
 					return null;
 				}
@@ -9803,18 +1855,6 @@ export const useAlertMessage = () => {
 
 		return { state, config };
 	}, [config]);
-
-	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleMessages();
-		}
-
-		return () => {
-			isMounted = false;
-		};
-	}, [handleMessages]);
 
 	return { state, setConfig };
 };
