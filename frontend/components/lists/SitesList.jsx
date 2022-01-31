@@ -1,68 +1,46 @@
 import { MemoizedAlert } from "@components/alerts";
-import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useSites } from "@hooks/useSites";
+import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect } from "react";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { memo, useMemo } from "react";
+import Scrollbars from "react-custom-scrollbars-2";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useSWRConfig } from "swr";
+import "twin.macro";
 import { MemoizedSiteList } from "./SiteList";
 
 /**
  * Custom function to render the `SitesList` component
  *
- * @param {function} handleSiteSelectOnLoad
+ * @param {function} handleSiteSelectOnClick
+ * @param {boolean} isOpen
  */
-const SitesList = ({ handleSiteSelectOnLoad }) => {
-	// SWR hooks
-	const { sites, errorSites, validatingSites } = useSites();
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
+const SitesList = ({ isOpen = false }) => {
+	// Translations
+	const { t } = useTranslation();
+	const noAvailableSites = t("sites:noAvailableSites");
+	const loaderMessage = t("common:loaderMessage");
 
 	// Custom hooks
 	const { state, setConfig } = useAlertMessage();
 
-	// Handle site selection errors
-	const handleSiteSelectResponse = useCallback(async () => {
-		if (!validatingSites) {
-			if (!errorSites) {
-				const sitesSelectResponse = await sites;
-				const sitesSelectResponseData = await sitesSelectResponse?.data;
-				const sitesSelectResponseStatus = await sitesSelectResponse?.status;
-				const sitesSelectResponseMethod = await sitesSelectResponse?.config?.method;
+	// `sites` SWR hook
+	const { sites, errorSites, validatingSites } = useSites();
 
-				if (sitesSelectResponseData !== null && Math.round(sitesSelectResponseStatus / 200) === 1) {
-					if (Object.keys(sitesSelectResponseData)?.length > 0) {
-						// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-						await mutate(SitesApiEndpoint, false);
-					}
-				} else {
-					// Show alert message after failed response is issued
-					setConfig({
-						isSites: true,
-						method: sitesSelectResponseMethod,
-						status: sitesSelectResponseStatus
-					});
-				}
-			}
-		}
-	}, [sites, errorSites, validatingSites]);
-
-	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleSiteSelectResponse();
-		}
-
-		return () => {
-			isMounted = false;
-		};
-	}, [handleSiteSelectResponse]);
+	// TODO: Error handling for `sites` SWR hook
+	useMemo(() => {
+		// Show alert message after failed `sites` SWR hook fetch
+		errorSites?.length > 0
+			? setConfig({
+					isSites: true,
+					method: errorSites?.config?.method ?? null,
+					status: errorSites?.status ?? null
+			  })
+			: null;
+	}, [errorSites]);
 
 	return (
+		// Load HTML is `sites` hook are not revalidating
 		<>
 			{state?.responses !== [] && state?.responses?.length > 0 ? (
 				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
@@ -76,30 +54,38 @@ const SitesList = ({ handleSiteSelectOnLoad }) => {
 				</div>
 			) : null}
 
-			{!validatingSites ? (
-				!errorSites && typeof sites !== "undefined" && sites !== null && !sites?.data?.detail ? (
-					sites?.data?.results && sites?.data?.results?.length > 0 ? (
-						<ul
-							tabIndex="-1"
-							role="listbox"
-							aria-labelledby="listbox-label"
-							tw="pt-2 h-48 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
-						>
-							<Scrollbars universal>
-								{sites?.data?.results?.map((value, index) => (
-									<MemoizedSiteList key={index} data={value} handleSiteSelectOnLoad={handleSiteSelectOnLoad} />
-								)) ?? null}
-							</Scrollbars>
-						</ul>
-					) : null
-				) : null
-			) : null}
+			{!errorSites && !validatingSites ? (
+				sites?.data?.count > 0 && sites?.data?.results?.length > 0 ? (
+					<ul
+						tabIndex="-1"
+						role="listbox"
+						aria-labelledby="listbox-label"
+						tw="pt-2 h-48 text-base leading-6 overflow-auto focus:outline-none sm:text-sm sm:leading-5"
+					>
+						<Scrollbars universal>
+							{sites.data.results.map((value) => (
+								<MemoizedSiteList key={value.id} data={value} />
+							))}
+						</Scrollbars>
+					</ul>
+				) : (
+					// Show message if no sites are available
+					<span tw="w-full h-48 flex items-center justify-center">
+						<p tw="text-sm pt-6 pb-2 leading-6 font-medium text-gray-500">{noAvailableSites}</p>
+					</span>
+				)
+			) : (
+				// Show loading message if `sites` SWR hook is revalidating
+				<span tw="w-full h-48 flex items-center justify-center">
+					<p tw="text-sm pt-6 pb-2 leading-6 font-medium text-gray-500">{loaderMessage}</p>
+				</span>
+			)}
 		</>
 	);
 };
 
 SitesList.propTypes = {
-	handleSiteSelectOnLoad: PropTypes.func
+	isOpen: PropTypes.bool
 };
 
 /**
