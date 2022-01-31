@@ -5,8 +5,8 @@ import "twin.macro";
 /**
  * Custom function to render the `Loader` component
  */
-const Loader = () => {
-	return <MemoizedLoadingMessage />;
+const Loader = ({ message = null }) => {
+	return <MemoizedLoadingMessage message={message} />;
 };
 
 /**
