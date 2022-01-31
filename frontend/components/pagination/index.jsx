@@ -1,4 +1,4 @@
-import PaginationSkeleton from "@components/skeletons/PaginationSkeleton";
+import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useLoading } from "@hooks/useLoading";
 import { usePage } from "@hooks/usePage";
@@ -63,15 +63,7 @@ const DataPagination = ({
 	};
 
 	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			page ? setPageData(page) : null;
-		}
-
-		return () => {
-			isMounted = false;
-		};
+		page ? setPageData(page) : null;
 	}, [page]);
 
 	const totalPages = Math.ceil(pageData.count / linksPerPage);
@@ -89,10 +81,10 @@ const DataPagination = ({
 	const paginatedItems = linkNumbers.slice(offset).slice(0, linksPerPage);
 
 	return isComponentReady ? (
-		<div tw="bg-white px-4 mb-4 py-2 lg:flex items-center justify-between sm:px-6 align-middle">
+		<div tw="bg-white mb-4 py-2 lg:flex items-center justify-between align-middle">
 			<div tw="flex items-center mb-8 lg:m-0">
 				<div tw="mt-2 lg:my-0">
-					<p tw="text-center lg:text-left text-sm leading-5 text-gray-700">
+					<p tw="text-center lg:text-left text-sm leading-5 text-gray-500">
 						Showing
 						<span tw="px-1 font-medium">{paginatedItems[0] || 0}</span>
 						to
@@ -106,7 +98,6 @@ const DataPagination = ({
 
 			{/* TODO: Fix UI of previous and next buttons when they reach their first or last pages */}
 			<Pagination
-				className="flex"
 				current={currentPage}
 				defaultCurrent={currentPage}
 				defaultPageSize={values[0]}
@@ -141,7 +132,7 @@ const DataPagination = ({
 			</div>
 		</div>
 	) : (
-		<PaginationSkeleton />
+		<MemoizedPaginationSkeleton />
 	);
 };
 
