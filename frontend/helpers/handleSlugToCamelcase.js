@@ -4,8 +4,10 @@
  * @param {*} slug
  * @returns {string} slug
  */
-export const handleSlugToCamelCase = (slug) => {
-	return slug.replace(/(-\w)/g, function (m) {
-		return m[1].toUpperCase();
-	});
+export const handleSlugToCamelCase = (slug = null) => {
+	return (
+		slug?.replace(/(-\w)/g, function (m) {
+			return m[1].toUpperCase();
+		}) ?? null
+	);
 };
