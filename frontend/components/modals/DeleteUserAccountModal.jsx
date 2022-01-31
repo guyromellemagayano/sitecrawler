@@ -7,7 +7,6 @@ import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
 import { useUser } from "@hooks/useUser";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import PropTypes from "prop-types";
 import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import tw from "twin.macro";
 
@@ -226,13 +225,8 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	);
 };
 
-DeleteUserAccountModal.propTypes = {
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool
-};
-
 /**
  * Memoized custom `DeleteUserAccountModal` component
  */
-export const ForwardRefDeleteUserAccountModal = forwardRef(DeleteUserAccountModal);
+const ForwardRefDeleteUserAccountModal = forwardRef(DeleteUserAccountModal);
 export const MemoizedDeleteUserAccountModal = memo(ForwardRefDeleteUserAccountModal);

@@ -1,7 +1,6 @@
 import { Transition } from "@headlessui/react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
-import PropTypes from "prop-types";
 import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ReactHtmlParser from "react-html-parser";
@@ -131,17 +130,8 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 	);
 };
 
-ShowHelpModal.propTypes = {
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool,
-	siteData: PropTypes.shape({
-		url: PropTypes.string,
-		verification_id: PropTypes.number
-	})
-};
-
 /**
  * Memoized custom `ShowHelpModal` component
  */
-export const ForwardRefShowHelpModal = forwardRef(ShowHelpModal);
+const ForwardRefShowHelpModal = forwardRef(ShowHelpModal);
 export const MemoizedShowHelpModal = memo(ForwardRefShowHelpModal);

@@ -4,7 +4,6 @@ import { Transition } from "@headlessui/react";
 import { CheckIcon, XIcon } from "@heroicons/react/solid";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import useTranslation from "next-translate/useTranslation";
-import PropTypes from "prop-types";
 import { forwardRef, memo } from "react";
 import { styled } from "twin.macro";
 
@@ -149,15 +148,8 @@ const NewActivePlanModal = ({ planId = null, planName = null, showModal = false,
 	);
 };
 
-NewActivePlanModal.propTypes = {
-	planId: PropTypes.number,
-	planName: PropTypes.string,
-	setShowModal: PropTypes.func,
-	showModal: PropTypes.bool
-};
-
 /**
  * Memoized custom `NewActivePlanModal` component
  */
-export const ForwardRefNewActivePlanModal = forwardRef(NewActivePlanModal);
+const ForwardRefNewActivePlanModal = forwardRef(NewActivePlanModal);
 export const MemoizedNewActivePlanModal = memo(ForwardRefNewActivePlanModal);
