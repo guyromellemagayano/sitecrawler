@@ -1,6 +1,6 @@
 import { ComponentReadyInterval } from "@constants/GlobalValues";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Custom hook that will handle component loading
@@ -14,29 +14,17 @@ export const useLoading = () => {
 	const { isReady } = useRouter();
 
 	// Handle component loading
-	const handleComponentLoading = useCallback(async () => {
-		if (isReady) {
-			setTimeout(() => {
-				setIsComponentReady(true);
-			}, ComponentReadyInterval);
-		}
-
-		return () => {
-			setIsComponentReady(false);
-		};
-	}, [isReady]);
-
 	useEffect(() => {
-		let isMounted = true;
+		(async () => {
+			if (isReady) {
+				setIsComponentReady(true);
+			}
 
-		if (isMounted) {
-			handleComponentLoading();
-		}
-
-		return () => {
-			isMounted = false;
-		};
-	}, [handleComponentLoading]);
+			return await new Promise((resolve) => {
+				setTimeout(() => resolve(isComponentReady), ComponentReadyInterval);
+			}).then((result) => result);
+		})();
+	}, [isReady]);
 
 	return { isComponentReady };
 };
