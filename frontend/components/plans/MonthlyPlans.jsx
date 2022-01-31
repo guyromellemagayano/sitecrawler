@@ -1,7 +1,7 @@
-import { handleStringToLowerCase } from "@helpers/handleStringToCase";
 import { handleUnitAmountToRealPrice } from "@helpers/handleUnitAmountToRealPrice";
 import { CheckIcon } from "@heroicons/react/solid";
 import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
+import { handleConversionStringToLowercase } from "@utils/convertCase";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
@@ -62,7 +62,7 @@ const MonthlyPlans = ({
 
 	// Custom variables
 	const planId = data?.id ?? null;
-	const planName = handleStringToLowerCase(data?.plan?.name ?? null);
+	const planName = handleConversionStringToLowercase(data?.plan?.name ?? null);
 	const planNameTitle = data?.plan?.name ?? null;
 	const planPrice = handleUnitAmountToRealPrice(data?.price?.unit_amount ?? null);
 	const planFeatures = data?.features ?? null;
@@ -79,15 +79,7 @@ const MonthlyPlans = ({
 	}, [currentSubscription, errorCurrentSubscription, validatingCurrentSubscription]);
 
 	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleCurrentSubscription();
-		}
-
-		return () => {
-			isMounted = false;
-		};
+		handleCurrentSubscription();
 	}, [handleCurrentSubscription]);
 
 	return planName === "pro" ? (
