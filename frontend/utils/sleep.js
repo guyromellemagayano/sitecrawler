@@ -1,7 +1,6 @@
-export const sleep = (ms) => {
-	return new Promise((resolve) => {
+export const sleep = (ms, config) =>
+	new Promise((resolve) => {
 		setTimeout(() => {
-			resolve;
+			resolve(config);
 		}, ms);
 	});
-};
