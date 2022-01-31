@@ -11,7 +11,7 @@ import tw from "twin.macro";
  * Custom function to render the `SiteSelectMenu` component
  *
  * @param {string} selectedSite
- * @param {array} selectedSiteDetails
+ * @param {object} selectedSiteDetails
  * @param {function} handleOpenDropdown
  */
 const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handleOpenDropdown }) => {
@@ -36,29 +36,32 @@ const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handl
 			aria-haspopup="listbox"
 			aria-expanded="true"
 			aria-labelledby="listbox-label"
-			className="focus:ring-gray-1100"
-			tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 sm:text-sm sm:leading-5"
+			tw="cursor-default relative w-full rounded-md border border-gray-700 pl-3 pr-10 py-2 text-left bg-white focus:outline-none focus:ring-1 sm:text-sm sm:leading-5 focus:ring-gray-1100"
 			onClick={handleOpenDropdown}
 		>
 			<div tw="flex items-center space-x-3">
 				<span tw="block truncate text-gray-600">
-					{selectedSite !== null && Object.keys(selectedSite).length > 0 ? (
-						selectedSiteDetails ? (
+					{selectedSite !== null ? (
+						Object.keys(selectedSiteDetails)?.length > 0 ? (
 							<div tw="flex items-center space-x-3">
 								<span
 									aria-label={
-										selectedSiteDetails.verified ? (currentScan ? recrawlingInProcess : verified) : notVerified
+										selectedSiteDetails?.verified ? (currentScan ? recrawlingInProcess : verified) : notVerified
 									}
 									css={[
 										tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-										selectedSiteDetails.verified ? (currentScan ? tw`bg-yellow-400` : tw`bg-green-400`) : tw`bg-red-400`
+										selectedSiteDetails?.verified
+											? currentScan
+												? tw`bg-yellow-400`
+												: tw`bg-green-400`
+											: tw`bg-red-400`
 									]}
 								></span>
 								<span tw="font-medium block truncate text-gray-500">{selectedSite}</span>
 							</div>
 						) : null
 					) : (
-						labelsArray[0]?.label ?? null
+						labelsArray[0].label
 					)}
 				</span>
 			</div>
@@ -72,7 +75,7 @@ const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handl
 SiteSelectMenu.propTypes = {
 	handleOpenDropdown: PropTypes.func,
 	selectedSite: PropTypes.string,
-	selectedSiteDetails: PropTypes.arrayOf(PropTypes.object)
+	selectedSiteDetails: PropTypes.object
 };
 
 /**

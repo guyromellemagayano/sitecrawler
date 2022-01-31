@@ -29,22 +29,10 @@ const MainMenu = () => {
 		} else {
 			setSelectedMenu(<MemoizedPrimaryMenu />);
 		}
-
-		return () => {
-			setSelectedMenu(null);
-		};
 	}, [asPath]);
 
 	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleMenuSelection();
-		}
-
-		return () => {
-			isMounted = false;
-		};
+		handleMenuSelection();
 	}, [handleMenuSelection]);
 
 	return selectedMenu;
