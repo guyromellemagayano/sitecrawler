@@ -71,5 +71,8 @@
 		"tabSrOnly": "Platform select tabs"
 	},
 	"siteOverview": "Site Overview | {{ site }}",
-	"filter": "Filter"
+	"filter": "Filter",
+	"verifyIdMetaTagText": "Verify ID Meta Tag",
+	"siteRecrawlFeatureNotAvailableHeading": "Site Recrawl Feature Not Available",
+	"siteRecrawlFeatureNotAvailableSubheading": "You cannot recrawl this site right now apparently because this site is currently unverified. Go back to <strong>Sites</strong> page and reverify this site. This button will be re-enabled once the site becomes verified again."
 }
