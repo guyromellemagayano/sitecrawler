@@ -1,6 +1,5 @@
 import { MemoizedMainMenu } from "@components/menus/MainMenu";
 import { MemoizedProfileMenu } from "@components/menus/ProfileMenu";
-import PropTypes from "prop-types";
 import { forwardRef, memo } from "react";
 import "twin.macro";
 import { MemoizedMobileSidebarLayout } from "./MobileSidebar";
@@ -29,13 +28,8 @@ const SidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 	);
 };
 
-SidebarLayout.propTypes = {
-	openSidebar: PropTypes.bool,
-	setOpenSidebar: PropTypes.func
-};
-
 /**
  * Memoized custom `SidebarLayout` component
  */
-export const ForwardRefSidebarLayout = forwardRef(SidebarLayout);
+const ForwardRefSidebarLayout = forwardRef(SidebarLayout);
 export const MemoizedSidebarLayout = memo(ForwardRefSidebarLayout);
