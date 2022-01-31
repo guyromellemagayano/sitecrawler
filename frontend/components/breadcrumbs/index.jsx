@@ -1,7 +1,7 @@
 import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
-import { handleStringToNumberSanitation } from "@helpers/handleStringSanitation";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
 import { useLoading } from "@hooks/useLoading";
+import { handleConversionStringToBoolean } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -36,7 +36,7 @@ const Breadcrumbs = ({
 	// Router
 	const { asPath } = useRouter();
 
-	const sanitizedSid = siteId !== null ? handleStringToNumberSanitation(siteId) : null;
+	const sanitizedSid = siteId !== null ? handleConversionStringToBoolean(siteId) : null;
 	const sitesIdOverviewPageLink =
 		sanitizedSid !== null && !asPath.includes(DashboardSitesLink)
 			? `${DashboardSitesLink + sanitizedSid + SiteOverviewSlug}`
