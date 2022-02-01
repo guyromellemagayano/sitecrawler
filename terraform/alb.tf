@@ -110,6 +110,10 @@ resource "aws_lb_target_group" "frontend" {
 	protocol = "HTTP"
 	vpc_id = aws_default_vpc.default.id
 	deregistration_delay = 30
+
+	health_check {
+		path = "/api/healthcheck/"
+	}
 }
 
 resource "aws_lb_target_group" "backend" {
