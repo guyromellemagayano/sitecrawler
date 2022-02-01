@@ -36,7 +36,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	);
 	const deleteUserAccountModalRequestFailedHeadline = t("settings:deleteUserAccountModalRequestFailed.headline");
 	const deleteUserAccountModalRequestFailedSubheadline = t("settings:deleteUserAccountModalRequestFailed.subHeadline");
-	const processing = t("settings:processing");
+	const processing = t("common:processing");
 	const proceed = t("common:proceed");
 	const cancel = t("common:cancel");
 
