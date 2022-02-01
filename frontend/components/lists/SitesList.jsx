@@ -30,7 +30,7 @@ const SitesList = ({ isOpen = false }) => {
 	// TODO: Error handling for `sites` SWR hook
 	useMemo(() => {
 		// Show alert message after failed `sites` SWR hook fetch
-		errorSites?.length > 0
+		errorSites
 			? setConfig({
 					isSites: true,
 					method: errorSites?.config?.method ?? null,
