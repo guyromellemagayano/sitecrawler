@@ -1,14 +1,14 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { RevalidationInterval } from "@constants/GlobalValues";
-import { DashboardSitesLink } from "@constants/PageLinks";
-import { DeleteSiteModalLabels } from "@enums/DeleteSiteModalLabels";
-import { Transition } from "@headlessui/react";
+import { FormSubmissionInterval, RevalidationInterval } from "@constants/GlobalValues";
+import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
+import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
+import { XCircleIcon } from "@heroicons/react/outline";
+import { useAlertMessage } from "@hooks/useAlertMessage";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { forwardRef, memo, useEffect, useState } from "react";
-import ReactHtmlParser from "react-html-parser";
+import { forwardRef, Fragment, memo, useState } from "react";
+import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 
 /**
@@ -26,8 +26,21 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 
 	// Translations
 	const { t } = useTranslation();
+	const deleteSiteHeadlineText = t("sites:deleteSite.headline");
+	const deleteSiteSubheadingText = t("sites:deleteSite.subHeading");
+	const requestText = t("common:request");
+	const cancelText = t("common:cancel");
+	const processingText = t("common:processing");
+	const closeText = t("common:close");
+	const proceedText = t("common:proceed");
 
 	const SiteIdApiEndpoint = `${SitesApiEndpoint + siteId}/`;
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
+
+	// Custom hooks
+	const { state, setConfig } = useAlertMessage();
 
 	// Router
 	const { asPath } = useRouter();
@@ -39,184 +52,162 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 
 		setDisableDeleteSite(true);
 
-		const response = await handleDeleteMethod(SiteIdApiEndpoint);
+		const siteDeleteResponse = await handleDeleteMethod(SiteIdApiEndpoint);
+		const siteDeleteResponseData = siteDeleteResponse?.data ?? null;
+		const siteDeleteResponseStatus = siteDeleteResponse?.status ?? null;
+		const siteDeleteResponseMethod = siteDeleteResponse?.config?.method ?? null;
 
-		return Math.floor(response?.status / 204) === 1
-			? (() => {
-					setDisableDeleteSite(false);
-					setSuccessMsg((successMsg) => [...successMsg, DeleteSiteModalLabels[7]]);
+		if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
+			// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
+			await mutate(SitesApiEndpoint, false);
 
-					asPath.includes("settings")
-						? (() => {
-								setTimeout(() => {
-									setShowModal(!showModal);
-									router.push(DashboardSitesLink);
-								}, RevalidationInterval);
-						  })()
-						: (() => {
-								setTimeout(() => {
-									setShowModal(!showModal);
+			// Show alert message after successful 200 OK or 201 Created response is issued
+			setConfig({
+				isSites: true,
+				method: siteDeleteResponseMethod,
+				status: siteDeleteResponseStatus
+			});
 
-									// Mutate site here
-								}, RevalidationInterval);
-						  })();
-			  })()
-			: (() => {
-					setDisableDeleteSite(false);
-					setErrorMsg((errorMsg) => [...errorMsg, DeleteSiteModalLabels[3]]);
-			  })();
+			// Renable the button after a successful form submission
+			setTimeout(() => {
+				setDisableDeleteSite(false);
+			}, FormSubmissionInterval);
+
+			if (asPath.includes(SettingsSlug)) {
+				setTimeout(() => {
+					setShowModal(false);
+					router.push(DashboardSitesLink);
+				}, RevalidationInterval);
+			} else {
+				setTimeout(() => {
+					setShowModal(false);
+				}, RevalidationInterval);
+			}
+		} else {
+			// Show alert message after successful 200 OK or 201 Created response is issued
+			setConfig({
+				isSites: true,
+				method: siteDeleteResponseMethod,
+				status: siteDeleteResponseStatus
+			});
+
+			// Renable the button after a successful form submission
+			setTimeout(() => {
+				setDisableDeleteSite(false);
+			}, FormSubmissionInterval);
+		}
 	};
 
-	useEffect(() => {
-		Object.keys(successMsg).length > 0 ? setHideButtons(true) : null;
-	}, [successMsg]);
-
-	useEffect(() => {
-		showModal
-			? Object.keys(successMsg).length > 0
-				? (() => {
-						setSuccessMsg([]);
-						setHideButtons(false);
-				  })()
-				: (() => {
-						setErrorMsg([]);
-				  })()
-			: null;
-	}, [showModal, successMsg]);
-
 	return (
-		<Transition show={showModal} as="span">
-			<div tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
-				<Transition.Child
-					enter="ease-out duration-300"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
-				>
-					<div tw="fixed inset-0 transition-opacity" aria-hidden="true">
-						<div tw="absolute inset-0 bg-gray-500 opacity-75"></div>
-					</div>
-				</Transition.Child>
-
-				<span tw="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-
-				<Transition.Child
-					enter="ease-out duration-300"
-					enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-					enterTo="opacity-100 translate-y-0 sm:scale-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-					leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-				>
-					<div
-						aria-labelledby="modal-headline"
-						aria-modal="true"
-						ref={ref}
-						role="dialog"
-						tw="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden transform transition-all sm:max-w-lg sm:w-full sm:p-6 whitespace-normal"
+		<Transition.Root show={showModal} as={Fragment}>
+			<Dialog
+				as="div"
+				className="site-verify-modal-dialog"
+				initialFocus={ref}
+				onClose={!disableDeleteSite ? setShowModal : () => {}}
+			>
+				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+					<Transition.Child
+						as={Fragment}
+						enter="site-delete-modal-first-child-enter"
+						enterFrom="site-delete-modal-first-child-enter-from"
+						enterTo="site-delete-modal-first-child-enter-to"
+						leave="site-delete-modal-first-child-leave"
+						leaveFrom="site-delete-modal-first-child-leave-from"
+						leaveTo="site-delete-modal-first-child-leave-to"
 					>
-						<div tw="sm:flex sm:items-start">
-							<div
-								css={[
-									tw`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10`,
-									Object.keys(successMsg).length > 0 ? tw`bg-green-100` : tw`bg-red-100`
-								]}
-							>
-								{Object.keys(successMsg).length > 0 ? (
-									<CheckCircleIcon tw="h-6 w-6 text-green-600" />
-								) : (
-									<XCircleIcon tw="h-6 w-6 text-red-600" />
-								)}
-							</div>
-							<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-								{Object.keys(errorMsg).length > 0 ? (
-									errorMsg?.map((value, index) => {
-										return (
-											<h3 key={index} tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-												{value.label}
-											</h3>
-										);
-									})
-								) : Object.keys(successMsg).length > 0 ? (
-									successMsg?.map((value, index) => {
-										return (
-											<h3 key={index} tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-												{value.label}
-											</h3>
-										);
-									})
-								) : (
-									<h3 tw="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-										{DeleteSiteModalLabels[0].label}
-									</h3>
-								)}
+						<Dialog.Overlay className="site-delete-modal-dialog-overlay" />
+					</Transition.Child>
 
-								{Object.keys(errorMsg).length > 0 ? (
-									errorMsg?.map((value, index) => {
-										return (
-											<div key={index} tw="my-2">
-												<p tw="text-sm leading-5 text-gray-500">{value.description}</p>
+					{/* This element is to trick the browser into centering the modal contents. */}
+					<span tw="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+						&#8203;
+					</span>
+
+					<Transition.Child
+						as={Fragment}
+						enter="site-delete-modal-second-child-enter"
+						enterFrom="site-delete-modal-second-child-enter-from"
+						enterTo="site-delete-modal-second-child-enter-to"
+						leave="site-delete-modal-second-child-leave"
+						leaveFrom="site-delete-modal-second-child-leave-from"
+						leaveTo="site-delete-modal-second-child-leave-to"
+					>
+						<div tw="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+							<div tw="sm:flex sm:items-start">
+								<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+									<XCircleIcon tw="h-6 w-6 text-red-600" />
+								</div>
+								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+									<Dialog.Title as="h3" className="text-lg leading-6 font-bold text-gray-900">
+										{deleteSiteHeadlineText}
+									</Dialog.Title>
+
+									<div tw="mt-2">
+										<p tw="text-sm leading-5 text-gray-500">{deleteSiteSubheadingText}</p>
+
+										{state?.responses !== [] && state?.responses?.length > 0 ? (
+											<div tw="block my-5">
+												<div tw="flex justify-center sm:justify-start">
+													{state?.responses?.map((value, key) => {
+														// Alert Messsages
+														const responseText = value?.responseText ?? null;
+														const isSuccess = value?.isSuccess ?? null;
+
+														return (
+															<h3
+																key={key}
+																css={[
+																	tw`text-sm leading-5 font-medium break-words`,
+																	isSuccess ? tw`text-green-800` : tw`text-red-800`
+																]}
+															>
+																{responseText}
+															</h3>
+														);
+													}) ?? null}
+												</div>
 											</div>
-										);
-									})
-								) : Object.keys(successMsg).length > 0 ? (
-									successMsg?.map((value, index) => {
-										return (
-											<div key={index} tw="my-2">
-												<p tw="text-sm leading-5 text-gray-500">{ReactHtmlParser(value.description)}</p>
-											</div>
-										);
-									})
-								) : (
-									<div tw="my-2">
-										<p tw="text-sm leading-5 text-gray-500">{DeleteSiteModalLabels[0].description}</p>
+										) : null}
 									</div>
-								)}
+								</div>
+							</div>
+
+							<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+								<button
+									type="button"
+									disabled={disableDeleteSite}
+									css={[
+										tw`cursor-pointer inline-flex justify-center rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
+										disableDeleteSite
+											? tw`opacity-50 cursor-not-allowed`
+											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 `
+									]}
+									onClick={() => setShowModal(false)}
+								>
+									{closeText}
+								</button>
+
+								<button
+									type="button"
+									disabled={disableDeleteSite}
+									css={[
+										tw`cursor-pointer inline-flex justify-center rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150`,
+										disableDeleteSite
+											? tw`opacity-50 cursor-not-allowed`
+											: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
+									]}
+									aria-label="Delete Site"
+									onClick={handleSiteDeletion}
+								>
+									{disableDeleteSite ? processingText : proceedText}
+								</button>
 							</div>
 						</div>
-
-						{!hideButtons ? (
-							<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<span tw="flex w-full sm:w-auto">
-									{Object.keys(errorMsg).length > 0 ? null : (
-										<button
-											type="button"
-											disabled={disableDeleteSite}
-											css={[
-												tw`sm:ml-3 cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150`,
-												disableDeleteSite
-													? tw`opacity-50 cursor-not-allowed`
-													: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
-											]}
-											aria-label="Delete Site"
-											onClick={handleSiteDeletion}
-										>
-											{disableDeleteSite ? DeleteSiteModalLabels[4].label : DeleteSiteModalLabels[6].label}
-										</button>
-									)}
-
-									<button
-										type="button"
-										disabled={disableDeleteSite}
-										css={[
-											tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
-											disableDeleteSite
-												? tw`opacity-50 cursor-not-allowed`
-												: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
-										]}
-										onClick={disableDeleteSite ? null : () => setShowModal(!showModal)}
-									>
-										{Object.keys(errorMsg).length > 0 ? DeleteSiteModalLabels[5].label : DeleteSiteModalLabels[2].label}
-									</button>
-								</span>
-							</div>
-						) : null}
-					</div>
-				</Transition.Child>
-			</div>
-		</Transition>
+					</Transition.Child>
+				</div>
+			</Dialog>
+		</Transition.Root>
 	);
 };
 

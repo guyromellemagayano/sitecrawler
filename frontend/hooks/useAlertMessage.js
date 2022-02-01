@@ -27,7 +27,6 @@ export const useAlertMessage = () => {
 		isVerifyUrlStep: false,
 		isRegistration: false,
 		isSignup: false,
-		isSite: false,
 		isSites: false,
 		isStats: false,
 		isPaymentMethod: false,
@@ -281,6 +280,63 @@ export const useAlertMessage = () => {
 		"alerts:auth.password.reset.confirm.post.504GatewayTimeoutErrorResponse"
 	);
 
+	// Sites translations
+	const sitesGet200OkSuccessResponse = t("alerts:sites.get.200OkSuccessResponse");
+	const sitesGet201CreatedSuccessResponse = t("alerts:sites.get.201CreatedSuccessResponse");
+	const sitesGet400BadRequestErrorResponse = t("alerts:sites.get.400BadRequestErrorResponse");
+	const sitesGet401UnauthorizedErrorResponse = t("alerts:sites.get.401UnauthorizedErrorResponse");
+	const sitesGet403ForbiddenErrorResponse = t("alerts:sites.get.403ForbiddenErrorResponse");
+	const sitesGet404NotFoundErrorResponse = t("alerts:sites.get.404NotFoundErrorResponse");
+	const sitesGet429TooManyRequestsErrorResponse = t("alerts:sites.get.429TooManyRequestsErrorResponse");
+	const sitesGet500InternalServerErrorResponse = t("alerts:sites.get.500InternalServerErrorResponse");
+	const sitesGet502BadGatewayErrorResponse = t("alerts:sites.get.502BadGatewayErrorResponse");
+	const sitesGet503ServiceUnavailableErrorResponse = t("alerts:sites.get.503ServiceUnavailableErrorResponse");
+	const sitesGet504GatewayTimeoutErrorResponse = t("alerts:sites.get.504GatewayTimeoutErrorResponse");
+	const sitesPost200OkSuccessResponse = t("alerts:sites.post.200OkSuccessResponse");
+	const sitesPost201CreatedSuccessResponse = t("alerts:sites.post.201CreatedSuccessResponse");
+	const sitesPost400BadRequestErrorResponse = t("alerts:sites.post.400BadRequestErrorResponse");
+	const sitesPost401UnauthorizedErrorResponse = t("alerts:sites.post.401UnauthorizedErrorResponse");
+	const sitesPost403ForbiddenErrorResponse = t("alerts:sites.post.403ForbiddenErrorResponse");
+	const sitesPost404NotFoundErrorResponse = t("alerts:sites.post.404NotFoundErrorResponse");
+	const sitesPost429TooManyRequestsErrorResponse = t("alerts:sites.post.429TooManyRequestsErrorResponse");
+	const sitesPost500InternalServerErrorResponse = t("alerts:sites.post.500InternalServerErrorResponse");
+	const sitesPost502BadGatewayErrorResponse = t("alerts:sites.post.502BadGatewayErrorResponse");
+	const sitesPost503ServiceUnavailableErrorResponse = t("alerts:sites.post.503ServiceUnavailableErrorResponse");
+	const sitesPost504GatewayTimeoutErrorResponse = t("alerts:sites.post.504GatewayTimeoutErrorResponse");
+	const sitesPut200OkSuccessResponse = t("alerts:sites.put.200OkSuccessResponse");
+	const sitesPut201CreatedSuccessResponse = t("alerts:sites.put.201CreatedSuccessResponse");
+	const sitesPut400BadRequestErrorResponse = t("alerts:sites.put.400BadRequestErrorResponse");
+	const sitesPut401UnauthorizedErrorResponse = t("alerts:sites.put.401UnauthorizedErrorResponse");
+	const sitesPut403ForbiddenErrorResponse = t("alerts:sites.put.403ForbiddenErrorResponse");
+	const sitesPut404NotFoundErrorResponse = t("alerts:sites.put.404NotFoundErrorResponse");
+	const sitesPut429TooManyRequestsErrorResponse = t("alerts:sites.put.429TooManyRequestsErrorResponse");
+	const sitesPut500InternalServerErrorResponse = t("alerts:sites.put.500InternalServerErrorResponse");
+	const sitesPut502BadGatewayErrorResponse = t("alerts:sites.put.502BadGatewayErrorResponse");
+	const sitesPut503ServiceUnavailableErrorResponse = t("alerts:sites.put.503ServiceUnavailableErrorResponse");
+	const sitesPut504GatewayTimeoutErrorResponse = t("alerts:sites.put.504GatewayTimeoutErrorResponse");
+	const sitesDelete200OkSuccessResponse = t("alerts:sites.delete.200OkSuccessResponse");
+	const sitesDelete201CreatedSuccessResponse = t("alerts:sites.delete.201CreatedSuccessResponse");
+	const sitesDelete400BadRequestErrorResponse = t("alerts:sites.delete.400BadRequestErrorResponse");
+	const sitesDelete401UnauthorizedErrorResponse = t("alerts:sites.delete.401UnauthorizedErrorResponse");
+	const sitesDelete403ForbiddenErrorResponse = t("alerts:sites.delete.403ForbiddenErrorResponse");
+	const sitesDelete404NotFoundErrorResponse = t("alerts:sites.delete.404NotFoundErrorResponse");
+	const sitesDelete429TooManyRequestsErrorResponse = t("alerts:sites.delete.429TooManyRequestsErrorResponse");
+	const sitesDelete500InternalServerErrorResponse = t("alerts:sites.delete.500InternalServerErrorResponse");
+	const sitesDelete502BadGatewayErrorResponse = t("alerts:sites.delete.502BadGatewayErrorResponse");
+	const sitesDelete503ServiceUnavailableErrorResponse = t("alerts:sites.delete.503ServiceUnavailableErrorResponse");
+	const sitesDelete504GatewayTimeoutErrorResponse = t("alerts:sites.delete.504GatewayTimeoutErrorResponse");
+	const sitesPatch200OkSuccessResponse = t("alerts:sites.patch.200OkSuccessResponse");
+	const sitesPatch201CreatedSuccessResponse = t("alerts:sites.patch.201CreatedSuccessResponse");
+	const sitesPatch400BadRequestErrorResponse = t("alerts:sites.patch.400BadRequestErrorResponse");
+	const sitesPatch401UnauthorizedErrorResponse = t("alerts:sites.patch.401UnauthorizedErrorResponse");
+	const sitesPatch403ForbiddenErrorResponse = t("alerts:sites.patch.403ForbiddenErrorResponse");
+	const sitesPatch404NotFoundErrorResponse = t("alerts:sites.patch.404NotFoundErrorResponse");
+	const sitesPatch429TooManyRequestsErrorResponse = t("alerts:sites.patch.429TooManyRequestsErrorResponse");
+	const sitesPatch500InternalServerErrorResponse = t("alerts:sites.patch.500InternalServerErrorResponse");
+	const sitesPatch502BadGatewayErrorResponse = t("alerts:sites.patch.502BadGatewayErrorResponse");
+	const sitesPatch503ServiceUnavailableErrorResponse = t("alerts:sites.patch.503ServiceUnavailableErrorResponse");
+	const sitesPatch504GatewayTimeoutErrorResponse = t("alerts:sites.patch.504GatewayTimeoutErrorResponse");
+
 	// URL information step process translations
 	const urlInformationStepPatch200OkSuccessResponse = t("alerts:sites.urlInformation.patch.200OkSuccessResponse");
 	const urlInformationStepPatch201CreatedSuccessResponse = t(
@@ -449,7 +505,6 @@ export const useAlertMessage = () => {
 			const isVerifyUrlStep = config?.isVerifyUrlStep ?? false;
 			const isRegistration = config?.isRegistration ?? false;
 			const isSignup = config?.isSignup ?? false;
-			const isSite = config?.isSite ?? false;
 			const isSites = config?.isSites ?? false;
 			const isStats = config?.isStats ?? false;
 			const isPaymentMethod = config?.isPaymentMethod ?? false;
@@ -489,7 +544,6 @@ export const useAlertMessage = () => {
 					isVerifyUrlStep ||
 					isRegistration ||
 					isSignup ||
-					isSite ||
 					isSites ||
 					isStats ||
 					isPaymentMethod ||
@@ -1719,6 +1773,11 @@ export const useAlertMessage = () => {
 						method: "POST",
 						responses: [
 							{
+								status: 200,
+								message: paymentMethodPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
 								status: 201,
 								message: paymentMethodPost201CreatedSuccessResponse,
 								isSuccess: true
@@ -1776,6 +1835,11 @@ export const useAlertMessage = () => {
 							{
 								status: 200,
 								message: paymentMethodGet200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: paymentMethodGet201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
@@ -1840,14 +1904,333 @@ export const useAlertMessage = () => {
 						);
 
 					handleAlertMessages({ dispatch, config, setConfig, state, isPaymentMethod, data, fallback });
+				} else if (isSites) {
+					let responsesArray = [];
+
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								message: sitesPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: sitesPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: sitesPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: sitesPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: sitesPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: sitesPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: sitesPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: sitesPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: sitesPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: sitesPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: sitesPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+					const getResponse = {
+						method: "GET",
+						responses: [
+							{
+								status: 200,
+								message: sitesGet200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: sitesGet201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: sitesGet400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: sitesGet401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: sitesGet403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: sitesGet404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: sitesGet429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: sitesGet500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: sitesGet502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: sitesGet503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: sitesGet504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+					const putResponse = {
+						method: "PUT",
+						responses: [
+							{
+								status: 200,
+								message: sitesPut200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: sitesPut201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: sitesPut400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: sitesPut401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: sitesPut403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: sitesPut404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: sitesPut429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: sitesPut500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: sitesPut502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: sitesPut503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: sitesPut504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+					const patchResponse = {
+						method: "PATCH",
+						responses: [
+							{
+								status: 200,
+								message: sitesPatch200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: sitesPatch201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: sitesPatch400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: sitesPatch401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: sitesPatch403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: sitesPatch404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: sitesPatch429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: sitesPatch500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: sitesPatch502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: sitesPatch503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: sitesPatch504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+					const deleteResponse = {
+						method: "DELETE",
+						responses: [
+							{
+								status: 200,
+								message: sitesDelete200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								message: sitesDelete201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								message: sitesDelete400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								message: sitesDelete401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								message: sitesDelete403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								message: sitesDelete404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								message: sitesDelete429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								message: sitesDelete500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								message: sitesDelete502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								message: sitesDelete503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								message: sitesDelete504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+
+					responsesArray.push(postResponse);
+					responsesArray.push(getResponse);
+					responsesArray.push(putResponse);
+					responsesArray.push(patchResponse);
+					responsesArray.push(deleteResponse);
+
+					const data = responsesArray
+						?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						)
+						?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						);
+
+					handleAlertMessages({ dispatch, config, setConfig, state, isSites, data, fallback });
 				} else {
 					return null;
 				}
 
 				// else if (isRegistrationVerifyEmail) {
 				// } else if (isSignup) {
-				// } else if (isSite) {
-				// } else if (isSites){
 				// } else if (isStats) {
 				// }
 			}

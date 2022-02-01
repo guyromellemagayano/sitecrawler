@@ -39,7 +39,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	// Translations
 	const { t } = useTranslation();
 	const verifySiteText = t("sites:verifySiteTitle");
-	const deleteSiteText = t("sites:deleteSite");
+	const deleteSiteText = t("sites:deleteSite.headline");
 	const notYetCrawledText = t("sites:notYetCrawled");
 	const visitExternalSiteText = t("sites:visitExternalSite");
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
@@ -80,7 +80,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	// TODO: Error handling for `scan` SWR hook
 	useMemo(() => {
 		// Show alert message after failed `scan` SWR hook fetch
-		errorScan?.length > 0
+		errorScan
 			? setConfig({
 					isSiteScan: true,
 					method: errorScan?.config?.method ?? null,
@@ -93,23 +93,34 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	useMemo(() => {
 		let isMounted = true;
 
+		// Update `scanCount`, `scanFinishedAt`, `scanForceHttps` and `scanObjId` states
 		(() => {
 			if (!isMounted) return;
 
-			if (!validatingScan && scan?.data) {
+			if (!validatingScan) {
 				const currentScanCount = scan?.data?.count ?? null;
 				const currentScanFinishedAt =
-					scan?.data?.results?.find((result) => result.finished_at !== null)?.finished_at ?? null;
+					scan?.data?.results?.length > 0
+						? scan.data.results?.find((result) =>
+								currentScanCount > 1 ? result.finished_at !== null : result.finished_at == null
+						  )?.finished_at ?? null
+						: null;
+
 				const currentScanForceHttps =
-					scan?.data?.results?.find((result) => result.force_https !== null)?.force_https ?? null;
+					scan?.data?.results?.length > 0
+						? scan.data.results?.find((result) =>
+								currentScanCount > 1 ? result.force_https !== null : result.force_https == null
+						  )?.force_https ?? null
+						: null;
 
 				const currentScanObjId =
-					currentScanFinishedAt !== null && currentScanForceHttps !== null
-						? scan?.data?.results?.find(
-								(result) => result.finished_at === currentScanFinishedAt && result.force_https === currentScanForceHttps
+					scan?.data?.results?.length > 0
+						? scan.data.results?.find((result) =>
+								currentScanFinishedAt !== null && currentScanForceHttps !== null
+									? result.finished_at === currentScanFinishedAt && result.force_https === currentScanForceHttps
+									: result.finished_at == currentScanFinishedAt && result.force_https == currentScanForceHttps
 						  )?.id ?? null
-						: scan?.data?.results?.find((result) => result.finished_at == null && result.force_https == null)?.id ??
-						  null;
+						: null;
 
 				setScanCount(currentScanCount);
 				setScanFinishedAt(currentScanFinishedAt);
@@ -131,7 +142,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	// TODO: Error handling for `stats` SWR hook
 	useMemo(() => {
 		// Show alert message after failed `stats` SWR hook fetch
-		errorStats?.length > 0
+		errorStats
 			? setConfig({
 					isSiteStats: true,
 					method: errorStats?.config?.method ?? null,
@@ -221,12 +232,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
 										></span>
 										<div tw="inline-flex flex-col justify-start items-start">
-											<span
-												css={[
-													tw`flex items-center justify-start text-sm leading-6 font-semibold`,
-													scanCount > 0 ? tw`text-gray-500` : tw`text-gray-400`
-												]}
-											>
+											<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-500">
 												<p className="truncate-link">{siteName}</p>
 											</span>
 											<span tw="flex justify-start text-sm leading-5 text-gray-500">
@@ -337,15 +343,24 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 								<span tw="text-sm leading-5 text-gray-500">
 									{!disableLocalTime
 										? dayjs(
-												scanFinishedAt == null && scanForceHttps == null
-													? scan?.data?.results[1]?.finished_at
-													: scan?.data?.results[0]?.finished_at
+												scanCount > 0 && scanFinishedAt == null && scanForceHttps == null
+													? scan.data.results.find(
+															(result) => result.finished_at !== scanFinishedAt && result.force_https !== scanForceHttps
+													  )?.finished_at
+													: scan.data.results.find(
+															(result) => result.finished_at === scanFinishedAt && result.force_https === scanForceHttps
+													  )?.finished_at
 										  ).calendar(null, calendarStrings)
 										: dayjs
 												.utc(
 													scanFinishedAt == null && scanForceHttps == null
-														? scan?.data?.results[1]?.finished_at
-														: scan?.data?.results[0]?.finished_at
+														? scan.data.results.find(
+																(result) => result.finished_at == scanFinishedAt && result.force_https == scanForceHttps
+														  )?.finished_at
+														: scan.data.results.find(
+																(result) =>
+																	result.finished_at === scanFinishedAt && result.force_https === scanForceHttps
+														  )?.finished_at
 												)
 												.calendar(null, calendarStrings)}
 								</span>
@@ -363,17 +378,25 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{isComponentReady && totalErrors ? (
+					{isComponentReady ? (
 						<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{isComponentReady && stats?.data?.num_links ? (
+					{isComponentReady ? (
 						<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_links ?? 0}
+								{!validatingStats ? (
+									stats?.data?.num_links > 0 ? (
+										stats.data.num_links
+									) : (
+										0
+									)
+								) : (
+									<Skeleton duration={2} width={45} />
+								)}
 							</a>
 						</Link>
 					) : (
@@ -381,10 +404,18 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{isComponentReady && stats?.data?.num_pages ? (
+					{isComponentReady ? (
 						<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_pages ?? 0}
+								{!validatingStats ? (
+									stats?.data?.num_pages > 0 ? (
+										stats.data.num_pages
+									) : (
+										0
+									)
+								) : (
+									<Skeleton duration={2} width={45} />
+								)}
 							</a>
 						</Link>
 					) : (
@@ -392,10 +423,18 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{isComponentReady && stats?.data?.num_images ? (
+					{isComponentReady ? (
 						<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_images ?? 0}
+								{!validatingStats ? (
+									stats?.data?.num_images > 0 ? (
+										stats.data.num_images
+									) : (
+										0
+									)
+								) : (
+									<Skeleton duration={2} width={45} />
+								)}
 							</a>
 						</Link>
 					) : (
