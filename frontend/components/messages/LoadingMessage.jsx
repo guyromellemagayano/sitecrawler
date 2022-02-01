@@ -14,7 +14,7 @@ const LoadingMessage = ({ message = null }) => {
 	const loaderMessage = t("loaderMessage");
 
 	return (
-		<h3 tw="text-lg leading-6 font-medium text-gray-500">
+		<h3 tw="text-sm leading-6 font-medium text-gray-500">
 			{message !== null && message?.length > 0 && typeof message === "string" ? message : loaderMessage}
 		</h3>
 	);
