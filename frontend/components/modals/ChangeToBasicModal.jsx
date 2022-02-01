@@ -32,7 +32,7 @@ const ChangeToBasicModal = (
 	const { t } = useTranslation();
 	const subscriptionPlansDowngradeToBasicLabel = t("settings:subscriptionPlans.downgradeToBasicPlan.label");
 	const subscriptionPlansDowngradeToBasicDescription = t("settings:subscriptionPlans.downgradeToBasicPlan.description");
-	const processing = t("settings:processing");
+	const processing = t("common:processing");
 	const close = t("common:close");
 	const proceed = t("common:proceed");
 

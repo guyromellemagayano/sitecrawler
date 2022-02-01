@@ -29,6 +29,7 @@ export const AlertDisplayInterval = 7500;
 export const ModalDisplayInterval = 3500;
 export const OnErrorRetryCount = 5;
 export const NoInterval = 0;
+export const ResetStateTimeout = 2500;
 export const UnitAmountToRealPriceDivisor = 100;
 
 // File Locations

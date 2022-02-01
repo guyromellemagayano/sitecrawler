@@ -31,7 +31,7 @@ const SiteList = ({ data = null }) => {
 	// TODO: Error handling for failed response
 	useEffect(() => {
 		// Show alert message after failed response is issued
-		errorScan?.length > 0
+		errorScan
 			? setConfig({
 					isScan: true,
 					method: errorScan?.config?.method ?? null,
@@ -90,15 +90,13 @@ const SiteList = ({ data = null }) => {
 		};
 	}, [handleScanResponse]);
 
-	// console.log(data?.id, scanObjId);
-
 	// SWR hooks
 	const { stats, errorStats, validatingStats } = useStats(data?.id, scanObjId);
 
 	// TODO: Error handling for failed response
 	useEffect(() => {
 		// Show alert message after failed response is issued
-		errorStats?.length > 0
+		errorStats
 			? setConfig({
 					isStats: true,
 					method: errorStats?.config?.method ?? null,
@@ -170,14 +168,7 @@ const SiteList = ({ data = null }) => {
 									]}
 								/>
 
-								<span
-									css={[
-										tw`font-medium block truncate`,
-										data.verified && scanFinishedAt !== null && scanForceHttps !== null
-											? tw`text-gray-500`
-											: tw`text-gray-400`
-									]}
-								>
+								<span css={[tw`font-medium block truncate`, data.verified ? tw`text-gray-500` : tw`text-gray-400`]}>
 									{data.name}
 								</span>
 							</div>

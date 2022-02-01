@@ -79,7 +79,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	// TODO: Error handling for `user` SWR hook
 	useMemo(() => {
 		// Show alert message after failed `user` SWR hook
-		errorSites?.length > 0
+		errorSites
 			? setConfig({
 					isSites: true,
 					method: errorSites?.config?.method ?? null,

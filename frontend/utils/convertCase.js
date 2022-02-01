@@ -2,7 +2,10 @@
  * Strings conversion
  */
 
-// Handle conversion of string to lowercase
+/**
+ * Handle conversion of string to lowercase
+ * @param {string} e
+ **/
 export const handleConversionStringToLowercase = (e = null) => {
 	let sanitizedVal = "";
 
@@ -11,7 +14,10 @@ export const handleConversionStringToLowercase = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to uppercase
+/**
+ * Handle conversion of string to uppercase
+ * @param {string} e
+ **/
 export const handleConversionStringToUppercase = (e = null) => {
 	let sanitizedVal = "";
 
@@ -20,7 +26,10 @@ export const handleConversionStringToUppercase = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to title case
+/**
+ * Handle conversion of string to title case
+ * @param {string} e
+ **/
 export const handleConversionStringToTitleCase = (e = null) => {
 	let sanitizedVal = "";
 
@@ -32,7 +41,10 @@ export const handleConversionStringToTitleCase = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to camel case
+/**
+ * Handle conversion of string to camel case
+ * @param {string} e
+ **/
 export const handleConversionStringToCamelCase = (e = null) => {
 	let sanitizedVal = "";
 
@@ -44,7 +56,10 @@ export const handleConversionStringToCamelCase = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to snake case
+/**
+ * Handle conversion of string to snake case
+ * @param {string} e
+ **/
 export const handleConversionStringToSnakeCase = (e = null) => {
 	let sanitizedVal = "";
 
@@ -53,7 +68,10 @@ export const handleConversionStringToSnakeCase = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to kebab case
+/**
+ * Handle conversion of string to kebab case
+ * @param {string} e
+ **/
 export const handleConversionStringToKebabCase = (e = null) => {
 	let sanitizedVal = "";
 
@@ -62,7 +80,10 @@ export const handleConversionStringToKebabCase = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to constant case
+/**
+ * Handle conversion of string to constant case
+ * @param {string} e
+ **/
 export const handleConversionStringToConstantCase = (e = null) => {
 	let sanitizedVal = "";
 
@@ -71,7 +92,10 @@ export const handleConversionStringToConstantCase = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to sentence case
+/**
+ * Handle conversion of string to sentence case
+ * @param {string} e
+ **/
 export const handleConversionStringToSentenceCase = (e = null) => {
 	let sanitizedVal = "";
 
@@ -83,7 +107,10 @@ export const handleConversionStringToSentenceCase = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to number
+/**
+ * Handle conversion of string to number
+ * @param {string} e
+ **/
 export const handleConversionStringToNumber = (e = null) => {
 	let sanitizedVal = "";
 
@@ -92,7 +119,10 @@ export const handleConversionStringToNumber = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to boolean
+/**
+ * Handle conversion of string to boolean
+ * @param {string} e
+ **/
 export const handleConversionStringToBoolean = (e = null) => {
 	let sanitizedVal = "";
 
@@ -101,7 +131,10 @@ export const handleConversionStringToBoolean = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to array
+/**
+ * Handle conversion of string to array
+ * @param {string} e
+ **/
 export const handleConversionStringToArray = (e = null) => {
 	let sanitizedVal = "";
 
@@ -110,7 +143,10 @@ export const handleConversionStringToArray = (e = null) => {
 	return sanitizedVal;
 };
 
-// Handle conversion of string to object
+/**
+ * Handle conversion of string to object
+ * @param {string} e
+ **/
 export const handleConversionStringToObject = (e = null) => {
 	let sanitizedVal = "";
 
@@ -123,7 +159,10 @@ export const handleConversionStringToObject = (e = null) => {
  * Objects conversion
  */
 
-// Handle conversion of object to string
+/**
+ * Handle conversion of object to string
+ * @param {string} e
+ **/
 export const handleConversionObjectToString = (e = null) => {
 	let sanitizedVal = "";
 

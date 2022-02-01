@@ -1,9 +1,9 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { FormSubmissionInterval } from "@constants/GlobalValues";
-import { SiteVerifyModalLabels } from "@enums/SiteVerifyModalLabels";
 import { Dialog, Transition } from "@headlessui/react";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import { ClipboardIcon, InformationCircleIcon } from "@heroicons/react/solid";
+import { InformationCircleIcon } from "@heroicons/react/outline";
+import { ClipboardIcon } from "@heroicons/react/solid";
 import { useAlertMessage } from "@hooks/useAlertMessage";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -46,12 +46,14 @@ const SiteVerifyModal = (
 	const instruction3Text = t("sites:instruction3");
 	const instructionHtmlText = t("sites:instructionHtmlText");
 	const verifyIdMetaTagText = t("sites:verifyIdMetaTagText");
+	const goToSiteOverviewText = t("sites:goToSiteOverview");
 
 	const siteVerifyApiEndpoint = `${SitesApiEndpoint + siteId}/verify/`;
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
+	// Custom hooks
 	const { state, setConfig } = useAlertMessage();
 
 	// Handle site verification copy to clipboard
@@ -64,29 +66,30 @@ const SiteVerifyModal = (
 	// Handle input change
 	const handleInputChange = ({ copyValue }) => {
 		setCopyValue({ copyValue, copied });
-
-		return copyValue;
 	};
 
 	// Handle hidden input change
 	const handleHiddenInputChange = (e) => {
 		setSiteVerifyId({ value: e.currentTarget.site_verify_id.value });
-
-		return siteVerifyId;
 	};
 
 	// Handle input copy
 	const handleInputCopy = () => {
 		setCopied(true);
-
-		return copied;
 	};
+
+	// Reset copied state as soon as the modal is closed
+	useEffect(() => {
+		if (!showModal) {
+			setCopied(false);
+		}
+	}, [copied, showModal]);
 
 	// Handle site verification
 	const handleSiteVerification = async (e) => {
 		e.preventDefault();
 
-		setDisableSiteVerify(!disableSiteVerify);
+		setDisableSiteVerify(true);
 
 		const body = {
 			sid: e.currentTarget.site_verify_id.value
@@ -98,8 +101,6 @@ const SiteVerifyModal = (
 		const siteVerifyResponseMethod = siteVerifyResponse?.config?.method ?? null;
 
 		if (siteVerifyResponseData !== null && Math.round(siteVerifyResponseStatus / 200) === 1) {
-			console.log(siteVerifyResponseData);
-
 			if (siteVerifyResponseData?.verified) {
 				// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
 				await mutate(SitesApiEndpoint, false);
@@ -147,7 +148,12 @@ const SiteVerifyModal = (
 
 	return (
 		<Transition.Root show={showModal} as={Fragment}>
-			<Dialog as="div" className="site-verify-modal-dialog" initialFocus={ref} onClose={setShowModal}>
+			<Dialog
+				as="div"
+				className="site-verify-modal-dialog"
+				initialFocus={ref}
+				onClose={!disableSiteVerify ? setShowModal : () => {}}
+			>
 				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
@@ -181,7 +187,7 @@ const SiteVerifyModal = (
 									<InformationCircleIcon tw="h-6 w-6 text-yellow-600" />
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+									<Dialog.Title as="h3" className="text-lg leading-6 font-bold text-gray-900">
 										{verifySiteTitleText}
 									</Dialog.Title>
 
@@ -209,7 +215,7 @@ const SiteVerifyModal = (
 												{ReactHtmlParser(instruction2Text)}
 												<div tw="w-full block">
 													<label htmlFor="verify-id-meta-tag" tw="sr-only">
-														{SiteVerifyModalLabels[0].label}
+														{verifyIdMetaTagText}
 													</label>
 													<div tw="mt-1 flex">
 														<div tw="relative flex items-stretch flex-grow focus-within:z-10">
@@ -276,15 +282,14 @@ const SiteVerifyModal = (
 									type="button"
 									disabled={disableSiteVerify}
 									css={[
-										tw`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm`,
-										tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
+										tw`cursor-pointer inline-flex justify-center rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
 										disableSiteVerify
 											? tw`opacity-50 cursor-not-allowed`
 											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 `
 									]}
 									onClick={() => setShowModal(false)}
 								>
-									{!enableNextStep ? SiteVerifyModalLabels[6].label : SiteVerifyModalLabels[3].label}
+									{closeText}
 								</button>
 
 								{!enableNextStep ? (
@@ -299,7 +304,7 @@ const SiteVerifyModal = (
 											type="submit"
 											disabled={disableSiteVerify}
 											css={[
-												tw`cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-green-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`,
+												tw`cursor-pointer inline-flex justify-center rounded-md border border-gray-300 px-4 py-2 bg-green-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition ease-in-out duration-150`,
 												disableSiteVerify
 													? tw`opacity-50 cursor-not-allowed`
 													: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700`
@@ -310,8 +315,8 @@ const SiteVerifyModal = (
 									</form>
 								) : (
 									<Link href="/sites/[siteId]/overview/" as={`/sites/${siteId}/overview/`} passHref replace>
-										<a tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
-											{SiteVerifyModalLabels[5].label}
+										<a tw="cursor-pointer inline-flex justify-center rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
+											{goToSiteOverviewText}
 										</a>
 									</Link>
 								)}

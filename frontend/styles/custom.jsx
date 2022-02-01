@@ -326,7 +326,8 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.change-to-basic-modal,
 	.new-active-plan-modal,
 	.payment-method-modal,
-	.site-verify-modal {
+	.site-verify-modal,
+	.site-delete-modal {
 		&-first-child {
 			&-enter {
 				${tw`ease-out duration-300`}
@@ -386,7 +387,8 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	.change-to-basic-modal,
 	.new-active-plan-modal,
 	.payment-method-modal,
-	.site-verify-modal {
+	.site-verify-modal,
+	.site-delete-modal {
 		&-dialog {
 			${tw`fixed z-50 inset-0 overflow-y-auto`}
 			&-overlay {
@@ -419,5 +421,9 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 				${tw`opacity-0`}
 			}
 		}
+	}
+
+	.pagination {
+		${tw`flex`}
 	}
 `;

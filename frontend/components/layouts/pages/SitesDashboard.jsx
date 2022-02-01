@@ -47,7 +47,7 @@ const SitesDashboardPageLayout = () => {
 	// TODO: Error handling for `user` SWR hook
 	useMemo(() => {
 		// Show alert message after failed `user` SWR hook fetch
-		errorUser?.length > 0
+		errorUser
 			? setConfig({
 					isUser: true,
 					method: errorUser?.config?.method ?? null,
@@ -61,13 +61,13 @@ const SitesDashboardPageLayout = () => {
 		let isMounted = true;
 
 		// Disable local time after `user` SWR hook fetch
-		(async () => {
+		(() => {
 			if (!isMounted) return;
 
-			if (!validatingUser && user?.length > 0) {
+			if (!validatingUser) {
 				if (Object.keys(user.data?.settings)?.length > 0) {
 					if (
-						Object.prototype.hasOwnProperty.call(user.data?.settings, "disableLocalTime") &&
+						Object.prototype.hasOwnProperty.call(user.data.settings, "disableLocalTime") &&
 						Boolean(user.data.settings.disableLocalTime)
 					) {
 						setDisableLocalTime(Boolean(user.data.settings.disableLocalTime));
@@ -75,7 +75,7 @@ const SitesDashboardPageLayout = () => {
 				}
 			}
 
-			return { disableLocalTime };
+			return disableLocalTime;
 		})();
 
 		return () => {
@@ -86,7 +86,7 @@ const SitesDashboardPageLayout = () => {
 	// TODO: Error handling for `sites` SWR hook
 	useMemo(() => {
 		// Show alert message after failed `sites` SWR hook fetch
-		errorSites?.length > 0
+		errorSites
 			? setConfig({
 					isUser: true,
 					method: errorSites?.config?.method ?? null,
@@ -165,12 +165,12 @@ const SitesDashboardPageLayout = () => {
 
 			<div tw="flex-none">
 				<MemoizedDataPagination
-					activePage={query?.page ? parseInt(query.page) : 0}
+					activePage={parseInt(query?.page ?? 0)}
 					apiEndpoint={scanApiEndpoint}
 					handleItemsPerPageChange={useHandleItemsPerPageChange}
 					linksPerPage={parseInt(linksPerPage)}
 					pathName={pagePath}
-					isComponentReady={validatingSites}
+					isComponentReady={isComponentReady && sites?.data?.count > 0 && sites?.data?.results?.length > 0}
 				/>
 			</div>
 		</>

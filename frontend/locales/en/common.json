@@ -64,5 +64,13 @@
 	"request": "Request",
 	"copiedText": "Copied",
 	"copyText": "Copy",
-	"proceed": "Proceed"
+	"proceed": "Proceed",
+	"processing": "Processing...",
+	"showing": "Showing",
+	"to": "to",
+	"of": "of",
+	"next": "Next",
+	"previous": "Previous",
+	"results": "results",
+	"rowsPerPage": "Rows per page"
 }
