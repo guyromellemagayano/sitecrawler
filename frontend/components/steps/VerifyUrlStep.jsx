@@ -1,5 +1,6 @@
 import { MemoizedVerifyUrlStepForm } from "@components/forms/VerifyUrlStepForm";
 import { MemoizedShowHelpModal } from "@components/modals/ShowHelpModal";
+import { ResetStateTimeout } from "@constants/GlobalValues";
 import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
@@ -97,6 +98,15 @@ const VerifyUrlStep = (props) => {
 	const handleInputChange = ({ copyValue }) => {
 		setCopyValue({ copyValue, copied });
 	};
+
+	// Reset copied state after a timeout
+	useEffect(() => {
+		if (copied) {
+			setTimeout(() => {
+				setCopied(false);
+			}, ResetStateTimeout);
+		}
+	}, [copied]);
 
 	return step === 2 || step === 3 ? (
 		<>
