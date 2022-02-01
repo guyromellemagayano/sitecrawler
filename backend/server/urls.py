@@ -92,6 +92,8 @@ router.register(r"auth/user", UserExtViewSet, basename="user")
 
 urlpatterns = [
     # needed but not used
+    path("login/", TemplateView.as_view(), name="account_login"),
+    path("registration/", TemplateView.as_view(), name="account_signup"),
     path("confirm-sent/", TemplateView.as_view(), name="account_email_verification_sent"),
     re_path(r"confirm-email/(?P<key>[-:\w]+)/$", TemplateView.as_view(), name="account_confirm_email"),
     path("account-exist", TemplateView.as_view(), name="socialaccount_signup"),
