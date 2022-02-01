@@ -12,7 +12,7 @@ import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import stringSimilarity from "string-similarity";
@@ -52,6 +52,7 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 	const siteUrlAlreadyExists = t("alerts:sites.urlInformation.post.misc.siteUrlAlreadyExists");
 	const enterValidSiteUrl = t("alerts:sites.urlInformation.post.misc.enterValidSiteUrl");
 
+	// Update `editMode` state when `edit` prop changes
 	useEffect(() => {
 		if (typeof edit !== "undefined" && edit !== null) {
 			setEditMode(edit);
@@ -72,35 +73,74 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
-	// Handle large page size threshold value from `user` API endpoint
-	const handleLargePageSizeThreshold = useCallback(async () => {
-		if (!validatingUser) {
-			if (!errorUser && typeof user !== "undefined" && user !== null && !user?.data?.detail) {
-				setLargePageSizeThreshold(user?.data?.large_page_size_threshold ?? null);
+	// TODO: Error handling for `user` SWR hook
+	useMemo(() => {
+		errorUser
+			? setConfig({
+					isUser: true,
+					method: errorUser?.config?.method ?? null,
+					status: errorUser?.response?.status ?? null
+			  })
+			: null;
+	}, [errorUser]);
+
+	// Handle `user` large page threshold value
+	useMemo(() => {
+		let isMounted = true;
+
+		(() => {
+			if (isMounted) return;
+
+			if (!validatingUser && user?.data) {
+				setLargePageSizeThreshold(user.data?.large_page_size_threshold ?? null);
 			}
+
+			return largePageSizeThreshold;
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [user, validatingUser]);
+
+	// TODO: Error handling for `sites` SWR hook
+	useMemo(() => {
+		errorSites
+			? setConfig({
+					isSites: true,
+					method: errorSites?.config?.method ?? null,
+					status: errorSites?.response?.status ?? null
+			  })
+			: null;
+	}, [errorSites]);
+
+	// Handle `site` data
+	useMemo(() => {
+		let isMounted = true;
+
+		if (isMounted) return;
+
+		if (!validatingSites && sites?.data) {
+			setSiteData(sites.data?.results?.length > 0 ? sites.data?.results?.filter((site) => site.id === sid) : null);
+
+			console.log(siteData);
+
+			return siteData;
 		}
-	}, [user, errorUser, validatingUser]);
 
-	useEffect(() => {
-		handleLargePageSizeThreshold();
-	}, [handleLargePageSizeThreshold]);
+		return () => {
+			isMounted = false;
+		};
+	}, [sid, sites, validatingSites]);
 
-	// Handle site data from `sites` API endpoint
-	const handleSiteData = useCallback(async () => {
-		if (!validatingSites) {
-			if (!errorSites && typeof sites !== "undefined" && sites !== null) {
-				setSiteData(sites?.data?.results?.length > 0 ? sites?.data?.results?.filter((site) => site?.id === sid) : null);
-			}
-		}
-	}, [sid, sites, errorSites, validatingSites]);
+	// Handle `site` details form data
+	useMemo(() => {
+		let isMounted = true;
 
-	useEffect(() => {
-		handleSiteData();
-	}, [handleSiteData]);
+		(() => {
+			if (isMounted) return;
 
-	const handleFormData = useCallback(async () => {
-		if (!validatingSites) {
-			if (!errorSites && typeof sites !== "undefined" && sites !== null && !sites?.data?.detail) {
+			if (!validatingSites && sites?.data) {
 				if (edit) {
 					setSiteUrlProtocol(
 						(siteData?.[0]?.url?.indexOf("http://") == 0 || siteData?.[0]?.url?.indexOf("https://") == 0) ?? ""
@@ -113,12 +153,14 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 					setSiteName("");
 				}
 			}
-		}
-	}, [edit, siteData, sites, errorSites, validatingSites]);
 
-	useEffect(() => {
-		handleFormData();
-	}, [handleFormData]);
+			return { siteUrl, siteName, siteUrlProtocol };
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [sites, validatingSites, edit, siteData, siteUrl, siteName, siteUrlProtocol]);
 
 	const urlRegex = new RegExp(
 		/^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|\/|\?)*)?$/i
