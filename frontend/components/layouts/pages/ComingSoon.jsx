@@ -19,7 +19,7 @@ const ComingSoonPageLayout = () => {
 	return (
 		<div tw="flex-grow flex justify-center items-center p-4 m-auto">
 			{isComponentReady ? (
-				<h4 tw="text-lg leading-6 font-medium text-gray-500">{comingSoon}</h4>
+				<h3 tw="text-sm leading-6 font-medium text-gray-500">{comingSoon}</h3>
 			) : (
 				<Skeleton duration={2} width={196} height={16} />
 			)}
