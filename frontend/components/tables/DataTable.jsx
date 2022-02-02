@@ -3,7 +3,6 @@ import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
 import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLoading } from "@hooks/useLoading";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
 import dayjs from "dayjs";
@@ -44,7 +43,6 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 
 	// Custom hooks
-	const { isComponentReady } = useLoading();
 	const { state, setConfig } = useAlertMessage();
 	const {
 		ref: siteVerifyModalRef,
@@ -244,9 +242,9 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 						siteId={siteId}
 					/>
 
-					<span tw="flex flex-col items-start">
-						<span>
-							{isComponentReady ? (
+					<div tw="flex flex-col items-start">
+						<div>
+							{!validatingScan ? (
 								!siteVerified ? (
 									<>
 										<span
@@ -330,14 +328,14 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 									</>
 								)
 							) : (
-								<>
-									<span tw="flex items-start py-2 space-x-3">
+								<div>
+									<span tw="relative -left-3 flex items-start py-2 space-x-3">
 										<Skeleton
-											circle={true}
 											duration={2}
-											width={8}
-											height={8}
-											className="relative -left-3 flex-shrink-0 inline-block"
+											width={9}
+											height={9}
+											circle={true}
+											className="relative -left-3 top-4 flex-shrink-0 block"
 										/>
 										<div tw="inline-flex flex-col justify-start items-start">
 											<Skeleton
@@ -345,7 +343,6 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 												width={150}
 												className="relative -left-3 inline-flex flex-col justify-start items-start"
 											/>
-
 											<span tw="flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
 												<Skeleton duration={2} width={132.39} />
 												<Skeleton duration={2} width={70} />
@@ -353,13 +350,13 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 											</span>
 										</div>
 									</span>
-								</>
+								</div>
 							)}
-						</span>
-					</span>
+						</div>
+					</div>
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-					{isComponentReady && scan?.data?.results ? (
+					{!validatingScan && scan?.data?.results ? (
 						scan?.data?.results?.length > 0 ? (
 							<span tw="space-x-2">
 								<span tw="text-sm leading-5 text-gray-500">
@@ -401,19 +398,17 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{isComponentReady ? (
-						<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>
-							{totalErrors || <Skeleton duration={2} width={45} />}
-						</span>
+					{!validatingScan && !validatingStats && totalErrors ? (
+						<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{isComponentReady ? (
+					{!validatingScan && !validatingStats && stats?.data?.num_links ? (
 						<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_links ?? <Skeleton duration={2} width={45} />}
+								{stats?.data?.num_links}
 							</a>
 						</Link>
 					) : (
@@ -421,10 +416,10 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{isComponentReady ? (
+					{!validatingScan && !validatingStats && stats?.data?.num_pages ? (
 						<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_pages ?? <Skeleton duration={2} width={45} />}
+								{stats?.data?.num_pages}
 							</a>
 						</Link>
 					) : (
@@ -432,10 +427,10 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 					)}
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{isComponentReady ? (
+					{!validatingScan && !validatingStats && stats?.data?.num_images ? (
 						<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_images ?? <Skeleton duration={2} width={45} />}
+								{stats?.data?.num_images}
 							</a>
 						</Link>
 					) : (
