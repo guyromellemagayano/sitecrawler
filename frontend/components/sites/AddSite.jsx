@@ -135,7 +135,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 											<Skeleton duration={2} width={20} height={20} />
 										)}
 									</div>
-									{siteLimitCounter !== null && siteLimitCounter > 0 ? (
+									{siteLimitCounter > 0 ? (
 										isComponentReady ? (
 											<input
 												type="search"
@@ -168,15 +168,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 								onClick={() => setIsComponentVisible(!isComponentVisible)}
 							>
 								<span tw="flex items-center space-x-2">
-									{user?.data?.permissions &&
-									typeof user?.data?.permissions !== "undefined" &&
-									user?.data?.permissions?.includes("can_see_images") &&
-									user?.data?.permissions?.includes("can_see_pages") &&
-									user?.data?.permissions?.includes("can_see_scripts") &&
-									user?.data?.permissions?.includes("can_see_stylesheets") &&
-									user?.data?.permissions?.includes("can_start_scan") ? null : (
-										<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
-									)}
+									<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
 									<span>{addNewSite}</span>
 								</span>
 							</button>
