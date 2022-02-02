@@ -26,7 +26,7 @@ const SitesTable = ({ validatingSites = false, errorSites = null, sites = null, 
 	const { query } = useRouter();
 
 	// Custom hooks
-	const { setLinksPerPage, setPagePath } = useSiteQueries(query);
+	const { setLinksPerPage, setPagePath } = useSiteQueries();
 
 	// Sites table labels with translations
 	const labelsArray = SitesTableLabels();
@@ -82,6 +82,8 @@ const SitesTable = ({ validatingSites = false, errorSites = null, sites = null, 
 };
 
 SitesTable.propTypes = {
+	disableLocalTime: PropTypes.bool,
+	errorSites: PropTypes.object,
 	sites: PropTypes.shape({
 		data: PropTypes.shape({
 			count: PropTypes.number,
