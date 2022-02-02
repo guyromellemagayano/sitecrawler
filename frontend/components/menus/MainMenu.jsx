@@ -1,6 +1,6 @@
 import { DashboardSettingsSlug } from "@constants/PageLinks";
 import { useRouter } from "next/router";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { MemoizedPrimaryMenu } from "./PrimaryMenu";
 import { MemoizedSettingsMenu } from "./SettingsMenu";
 // import { MemoizedSiteMenu } from "./SiteMenu";
@@ -15,7 +15,7 @@ const MainMenu = () => {
 	const { asPath } = useRouter();
 
 	// Handle menu selection
-	const handleMenuSelection = useCallback(async () => {
+	useEffect(() => {
 		// if (asPath.includes(DashboardSiteSlug)) {
 		// 	setSelectedMenu(<MemoizedSiteMenu />);
 		// } else if (asPath.includes(DashboardSettingsSlug)) {
@@ -30,10 +30,6 @@ const MainMenu = () => {
 			setSelectedMenu(<MemoizedPrimaryMenu />);
 		}
 	}, [asPath]);
-
-	useEffect(() => {
-		handleMenuSelection();
-	}, [handleMenuSelection]);
 
 	return selectedMenu;
 };
