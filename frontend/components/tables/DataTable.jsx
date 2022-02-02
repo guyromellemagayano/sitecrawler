@@ -6,7 +6,6 @@ import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
-import { handleConversionStringToNumber } from "@utils/convertCase";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -94,38 +93,54 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 		let isMounted = true;
 
 		// Update `scanCount`, `scanFinishedAt`, `scanForceHttps` and `scanObjId` states
-		(() => {
+		(async () => {
 			if (!isMounted) return;
 
 			if (!validatingScan) {
-				const currentScanCount = scan?.data?.count ?? null;
-				const currentScanFinishedAt =
-					scan?.data?.results?.length > 0
-						? scan.data.results?.find((result) =>
-								currentScanCount > 1 ? result.finished_at !== null : result.finished_at == null
-						  )?.finished_at ?? null
-						: null;
+				const scanData = await scan?.data;
 
-				const currentScanForceHttps =
-					scan?.data?.results?.length > 0
-						? scan.data.results?.find((result) =>
-								currentScanCount > 1 ? result.force_https !== null : result.force_https == null
-						  )?.force_https ?? null
-						: null;
+				if (typeof scanData !== "undefined" && scanData !== null) {
+					const currentScanCount = scanData?.count ?? null;
+					const currentScanFinishedAt =
+						scanData?.results?.length > 0
+							? scan.data.results.find((result) => {
+									if (currentScanCount > 0) {
+										if (result.finished_at == null) {
+											return result;
+										}
 
-				const currentScanObjId =
-					scan?.data?.results?.length > 0
-						? scan.data.results?.find((result) =>
-								currentScanFinishedAt !== null && currentScanForceHttps !== null
-									? result.finished_at === currentScanFinishedAt && result.force_https === currentScanForceHttps
-									: result.finished_at == currentScanFinishedAt && result.force_https == currentScanForceHttps
-						  )?.id ?? null
-						: null;
+										return result;
+									}
+							  })?.finished_at
+							: null;
 
-				setScanCount(currentScanCount);
-				setScanFinishedAt(currentScanFinishedAt);
-				setScanForceHttps(currentScanForceHttps);
-				setScanObjId(currentScanObjId);
+					const currentScanForceHttps =
+						scanData?.results?.length > 0
+							? scan.data.results.find((result) => {
+									if (currentScanCount > 0) {
+										if (result.force_https == null) {
+											return result;
+										}
+
+										return result;
+									}
+							  })?.force_https
+							: null;
+
+					const currentScanObjId =
+						scanData?.results?.length > 0
+							? scan.data.results.find((result) =>
+									result.finished_at !== null && result.force_https !== null
+										? result.finished_at === currentScanFinishedAt && result.force_https === currentScanForceHttps
+										: result.finished_at == currentScanFinishedAt && result.force_https == currentScanForceHttps
+							  )?.id
+							: null;
+
+					setScanCount(currentScanCount);
+					setScanFinishedAt(currentScanFinishedAt);
+					setScanForceHttps(currentScanForceHttps);
+					setScanObjId(currentScanObjId);
+				}
 			}
 
 			return { scanCount, scanFinishedAt, scanForceHttps, scanObjId };
@@ -155,30 +170,37 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	useMemo(() => {
 		let isMounted = true;
 
-		(() => {
+		(async () => {
 			if (!isMounted) return;
 
-			if (!validatingStats && stats?.data) {
-				const currentLinkErrors = handleConversionStringToNumber(stats?.data?.num_non_ok_links ?? 0);
-				const currentPageErrors = handleConversionStringToNumber(stats?.data?.num_pages_tls_non_ok ?? 0);
-				const currentImageErrors =
-					handleConversionStringToNumber(stats?.data?.num_non_ok_images ?? 0) +
-					handleConversionStringToNumber(stats?.data?.num_images_with_missing_alts ?? 0) +
-					handleConversionStringToNumber(stats?.data?.num_images_tls_non_ok ?? 0);
-				const currentSeoErrors =
-					handleConversionStringToNumber(stats?.data?.num_pages_without_title ?? 0) +
-					handleConversionStringToNumber(stats?.data?.num_pages_without_description ?? 0) +
-					handleConversionStringToNumber(stats?.data?.num_pages_without_h1_first ?? 0) +
-					handleConversionStringToNumber(stats?.data?.num_pages_without_h2_first ?? 0);
-				const currentTotalErrors = handleConversionStringToNumber(
-					currentLinkErrors + currentPageErrors + currentImageErrors + currentSeoErrors
-				);
+			if (!validatingStats) {
+				const statsData = await stats?.data;
 
-				setLinkErrors(currentLinkErrors);
-				setPageErrors(currentPageErrors);
-				setImageErrors(currentImageErrors);
-				setSeoErrors(currentSeoErrors);
-				setTotalErrors(currentTotalErrors);
+				if (typeof statsData !== "undefined" && statsData !== null) {
+					const currentLinkErrors = statsData?.num_non_ok_links ?? 0;
+					const currentPageErrors = statsData?.num_pages_tls_non_ok ?? 0;
+					const currentImageErrors =
+						statsData?.num_non_ok_images ??
+						0 + statsData?.num_images_with_missing_alts ??
+						0 + statsData?.num_images_tls_non_ok ??
+						0;
+					const currentSeoErrors =
+						statsData?.num_pages_without_title ??
+						0 + statsData?.num_pages_without_description ??
+						0 + statsData?.num_pages_without_h1_first ??
+						0 + statsData?.num_pages_without_h2_first ??
+						0;
+					const currentTotalErrors = await (currentLinkErrors +
+						currentPageErrors +
+						currentImageErrors +
+						currentSeoErrors);
+
+					setLinkErrors(currentLinkErrors);
+					setPageErrors(currentPageErrors);
+					setImageErrors(currentImageErrors);
+					setSeoErrors(currentSeoErrors);
+					setTotalErrors(currentTotalErrors);
+				}
 			}
 
 			return { linkErrors, pageErrors, imageErrors, seoErrors, totalErrors };
@@ -343,7 +365,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 								<span tw="text-sm leading-5 text-gray-500">
 									{!disableLocalTime
 										? dayjs(
-												scanCount > 0 && scanFinishedAt == null && scanForceHttps == null
+												scanFinishedAt == null && scanForceHttps == null
 													? scan.data.results.find(
 															(result) => result.finished_at !== scanFinishedAt && result.force_https !== scanForceHttps
 													  )?.finished_at
@@ -355,7 +377,8 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 												.utc(
 													scanFinishedAt == null && scanForceHttps == null
 														? scan.data.results.find(
-																(result) => result.finished_at == scanFinishedAt && result.force_https == scanForceHttps
+																(result) =>
+																	result.finished_at !== scanFinishedAt && result.force_https !== scanForceHttps
 														  )?.finished_at
 														: scan.data.results.find(
 																(result) =>
@@ -379,7 +402,9 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 				</td>
 				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 					{isComponentReady ? (
-						<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
+						<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>
+							{totalErrors || <Skeleton duration={2} width={45} />}
+						</span>
 					) : (
 						<Skeleton duration={2} width={45} />
 					)}
@@ -388,15 +413,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 					{isComponentReady ? (
 						<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{!validatingStats ? (
-									stats?.data?.num_links > 0 ? (
-										stats.data.num_links
-									) : (
-										0
-									)
-								) : (
-									<Skeleton duration={2} width={45} />
-								)}
+								{stats?.data?.num_links ?? <Skeleton duration={2} width={45} />}
 							</a>
 						</Link>
 					) : (
@@ -407,15 +424,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 					{isComponentReady ? (
 						<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{!validatingStats ? (
-									stats?.data?.num_pages > 0 ? (
-										stats.data.num_pages
-									) : (
-										0
-									)
-								) : (
-									<Skeleton duration={2} width={45} />
-								)}
+								{stats?.data?.num_pages ?? <Skeleton duration={2} width={45} />}
 							</a>
 						</Link>
 					) : (
@@ -426,15 +435,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 					{isComponentReady ? (
 						<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{!validatingStats ? (
-									stats?.data?.num_images > 0 ? (
-										stats.data.num_images
-									) : (
-										0
-									)
-								) : (
-									<Skeleton duration={2} width={45} />
-								)}
+								{stats?.data?.num_images ?? <Skeleton duration={2} width={45} />}
 							</a>
 						</Link>
 					) : (

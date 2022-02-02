@@ -31,6 +31,8 @@ export const OnErrorRetryCount = 5;
 export const NoInterval = 0;
 export const ResetStateTimeout = 2500;
 export const UnitAmountToRealPriceDivisor = 100;
+export const MaxSitesSize = 100;
+export const MaxSitesPerPage = 20;
 
 // File Locations
 export const SiteLogoDark = "/images/logos/site-logo-dark.svg";

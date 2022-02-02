@@ -1,3 +1,4 @@
+import { MaxSitesPerPage } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -5,24 +6,24 @@ import { useEffect, useState } from "react";
 /**
  * Custom hook that handles the site queries
  *
- * @param {object} result
  * @returns {object} linksPerPage, setLinksPerPage, pagePath, setPagePath, searchKey, setSearchKey
  */
-export const useSiteQueries = (result = null) => {
-	const [linksPerPage, setLinksPerPage] = useState(20);
-	const [pagePath, setPagePath] = useState("");
-	const [searchKey, setSearchKey] = useState("");
+export const useSiteQueries = () => {
+	const [pagePath, setPagePath] = useState(null);
+	const [searchKey, setSearchKey] = useState(null);
+	const [linksPerPage, setLinksPerPage] = useState(MaxSitesPerPage);
 
-	const { asPath } = useRouter();
+	// Router
+	const { asPath, query } = useRouter();
 
 	useEffect(() => {
 		handleRemoveUrlParameter(asPath, "page").includes("?")
 			? setPagePath(`${handleRemoveUrlParameter(asPath, "page")}&`)
 			: setPagePath(`${handleRemoveUrlParameter(asPath, "page")}?`);
 
-		result?.search ? setSearchKey(result?.search) : null;
-		result?.per_page ? setLinksPerPage(result?.per_page) : null;
-	}, [result, asPath]);
+		query?.search ? setSearchKey(query?.search) : null;
+		query?.per_page ? setLinksPerPage(query?.per_page) : null;
+	}, [query, asPath]);
 
 	return { linksPerPage, setLinksPerPage, pagePath, setPagePath, searchKey, setSearchKey };
 };

@@ -1,9 +1,7 @@
-import { MutateInterval } from "@constants/GlobalValues";
 import { SITE_URL } from "@constants/ServerEnv";
 import * as Sentry from "@sentry/nextjs";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { sleep } from "./sleep";
 
 // Custom `axios` instance
 const AppAxiosInstance = axios.create({
@@ -20,12 +18,12 @@ const AppAxiosInstance = axios.create({
 
 // Use `axios` interceptors for all HTTP methods (GET, POST, PUT, DELETE, etc.)
 AppAxiosInstance.interceptors.request.use(
-	(req) => sleep(MutateInterval, req),
+	(req) => req,
 	(err) => Promise.reject(err)
 );
 
 AppAxiosInstance.interceptors.response.use(
-	(res) => sleep(MutateInterval, res),
+	(res) => res,
 	(err) => {
 		if (err.response) {
 			// Capture `response` errors and send to Sentry

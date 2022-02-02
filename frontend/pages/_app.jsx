@@ -21,7 +21,7 @@ const MyApp = ({ Component, pageProps, err }) => {
 
 	useEffect(() => {
 		// LogRocket setup
-		if (isProd) {
+		if (isProd && typeof window !== "undefined") {
 			LogRocket.init(process.env.LOGROCKET_APP_ID);
 			setupLogRocketReact(LogRocket);
 		}
