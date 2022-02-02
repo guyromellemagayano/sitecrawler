@@ -49,14 +49,13 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { state, setConfig } = useAlertMessage();
 
 	// Helper functions
-	const { searchKey, setSearchKey, linksPerPage } = useSiteQueries(query);
-	const { scanApiEndpoint } = useScanApiEndpoint(query, linksPerPage);
-	const { setPagePath } = useSiteQueries(query);
+	const { searchKey, setSearchKey, linksPerPage, setPagePath } = useSiteQueries();
+	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// Custom hook that handles site search
-	const useHandleSiteSearch = async ({ event }) => {
+	const useHandleSiteSearch = async ({ e }) => {
 		return await useSiteSearch({
-			event: event,
+			event: e,
 			scanApiEndpoint: scanApiEndpoint,
 			setSearchKey: setSearchKey,
 			setPagePath: setPagePath

@@ -1,12 +1,17 @@
 import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
+import { MaxSitesSize } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useAlertMessage } from "@hooks/useAlertMessage";
+import { useLoading } from "@hooks/useLoading";
 import { usePage } from "@hooks/usePage";
+import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
+import { useSiteQueries } from "@hooks/useSiteQueries";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import Pagination from "rc-pagination";
 import { memo, useMemo, useState } from "react";
+import { useSWRConfig } from "swr";
 import "twin.macro";
 
 // Pagination strings
@@ -25,30 +30,39 @@ const PaginationLocale = {
 
 /**
  * Custom function to render the `Pagination` component
- *
- * @param {number} activePage
- * @param {sting} apiEndpoint
- * @param {function} handleItemsPerPageChange
- * @param {number} linksPerPage
- * @param {string} pathName
- * @param {boolean} isComponentReady
  */
-const DataPagination = ({
-	activePage = null,
-	apiEndpoint = null,
-	handleItemsPerPageChange,
-	linksPerPage = null,
-	pathName = null,
-	isComponentReady = false
-}) => {
+const DataPagination = () => {
+	const [activePage, setActivePage] = useState(null);
 	const [pageData, setPageData] = useState(null);
 
+	// Router
+	const { asPath, query } = useRouter();
+	const router = useRouter();
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
+
+	// Custom hooks
+
+	const { linksPerPage, setLinksPerPage, pagePath, setPagePath } = useSiteQueries();
+	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
+	const { isComponentReady } = useLoading();
+	const { state, setConfig } = useAlertMessage();
+
+	// SWR hooks
+	const { page, errorPage, validatingPage } = usePage(scanApiEndpoint);
+
 	// Custom variables
-	const currentPage = activePage || 1;
-	const linkNumbers = [];
+	const currentPage = activePage ?? 1;
 	const offset = (currentPage - 1) * linksPerPage;
+	const linkNumbers = [];
 	const pageNumbers = [];
-	const values = [20, 25, 50, 100];
+	const maxSites = MaxSitesSize;
+
+	// Set updated `pageNumbers` for `linksPerPage` prop
+	for (let i = 0; i <= maxSites; i += linksPerPage) {
+		pageNumbers.push(i);
+	}
 
 	// Translations
 	const { t } = useTranslation();
@@ -60,16 +74,9 @@ const DataPagination = ({
 	const resultsText = t("common:results");
 	const rowsPerPageText = t("common:rowsPerPage");
 
-	// Router
-	const router = useRouter();
-
-	// Custom hooks
-	const { page, errorPage, validatingPage } = usePage(apiEndpoint);
-	const { state, setConfig } = useAlertMessage();
-
 	// TODO: Error handling for `page` SWR hook
 	useMemo(() => {
-		errorPage
+		typeof errorPage !== "undefined" && errorPage !== null
 			? setConfig({
 					isPage: true,
 					method: errorPage?.config?.method ?? null,
@@ -83,11 +90,13 @@ const DataPagination = ({
 		let isMounted = true;
 
 		// Update `pageData` state after `page` SWR hook fetch
-		(() => {
+		(async () => {
 			if (!isMounted) return;
 
 			if (!validatingPage) {
-				if (page?.data) {
+				const pageData = await page?.data;
+
+				if (typeof pageData !== "undefined" && pageData !== null) {
 					setPageData(page.data);
 				}
 			}
@@ -100,31 +109,61 @@ const DataPagination = ({
 		};
 	}, [page, validatingPage]);
 
-	const totalPages = pageData?.count && linksPerPage !== null ? Math.ceil(pageData.count / linksPerPage) : null;
+	// Set `pageCount` value
+	const pageCount = pageData?.count ?? null;
 
-	for (let i = 1; i <= totalPages; i++) {
-		pageNumbers.push(i);
-	}
-
-	if (totalPages < 1) return null;
-
-	if (pageData?.count) {
-		for (let i = 1; i <= pageData.count; i++) {
+	// Populate `linkNumbers` array based on `pageCount`
+	if (pageCount !== null) {
+		for (let i = 1; i <= pageCount; i++) {
 			linkNumbers.push(i);
 		}
 	}
 
+	// Set `totalPages` value
+	const totalPages = pageCount !== null && linksPerPage !== null ? Math.ceil(pageCount / linksPerPage) : null;
+
+	if (totalPages !== null && totalPages < 1) return null;
+
 	const paginatedItems = linksPerPage !== null ? linkNumbers.slice(offset).slice(0, linksPerPage) : null;
 
-	// Custom functions
+	// Handle page change
 	const handlePageChange = (pageNum) => {
-		const newPath = handleRemoveUrlParameter(pathName, "page");
+		const newPath = handleRemoveUrlParameter(pagePath, "page");
 
 		router.push(`${newPath}page=${pageNum}`);
 	};
 
+	// Handle table rows per page change
+	const handleRowsPerPageChange = async ({ count }) => {
+		const countValue = await parseInt(count.target.value);
+
+		let newPath = asPath;
+		newPath = handleRemoveUrlParameter(newPath, "page");
+
+		// Update pagination links per page
+		if (countValue) {
+			if (newPath.includes("per_page")) {
+				newPath = handleRemoveUrlParameter(newPath, "per_page");
+			}
+
+			if (newPath.includes("?")) {
+				newPath += `&per_page=${countValue}`;
+				setPagePath(`${newPath}&`);
+			} else {
+				newPath += `?per_page=${countValue}`;
+				setPagePath(`${newPath}?`);
+			}
+
+			setLinksPerPage(countValue);
+
+			await mutate(scanApiEndpoint, false);
+
+			router.push(newPath);
+		}
+	};
+
 	return isComponentReady ? (
-		<div tw="bg-white mb-4 py-2 lg:flex items-center justify-between align-middle">
+		<div tw="bg-white mt-8 mb-4 py-2 lg:flex items-center justify-between align-middle">
 			<div tw="flex items-center mb-8 lg:m-0">
 				<div tw="mt-2 lg:my-0">
 					<p tw="text-center lg:text-left text-sm leading-5 text-gray-500">
@@ -144,7 +183,7 @@ const DataPagination = ({
 				className="pagination"
 				current={currentPage}
 				defaultCurrent={currentPage}
-				defaultPageSize={values[0]}
+				defaultPageSize={pageNumbers[0]}
 				disabled={!isComponentReady}
 				locale={PaginationLocale}
 				nextIcon={nextText}
@@ -161,11 +200,11 @@ const DataPagination = ({
 				<h1 tw="-mt-px pr-4 inline-flex items-center text-sm leading-5 font-normal text-gray-500">{rowsPerPageText}</h1>
 				<div>
 					<select
-						onChange={handleItemsPerPageChange}
+						onChange={handleRowsPerPageChange}
 						value={linksPerPage}
 						tw="block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md sm:leading-5"
 					>
-						{values.map((val, key) => {
+						{pageNumbers.map((val, key) => {
 							return (
 								<option key={key} value={val}>
 									{val === 20 ? "--" : val}
@@ -182,11 +221,7 @@ const DataPagination = ({
 };
 
 DataPagination.propTypes = {
-	activePage: PropTypes.number,
-	apiEndpoint: PropTypes.string,
-	handleItemsPerPageChange: PropTypes.func,
-	linksPerPage: PropTypes.number,
-	pathName: PropTypes.string
+	apiEndpoint: PropTypes.string
 };
 
 export const MemoizedDataPagination = memo(DataPagination);
