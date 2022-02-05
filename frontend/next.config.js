@@ -21,7 +21,46 @@ const NextConfig = {
 		defaultLocale: "en"
 	},
 	experimental: {
-		removeConsole: process.env.NODE_ENV === "production" ? true : false
+		removeConsole:
+			process.env.NODE_ENV === "production"
+				? true
+				: {
+						exclude: ["error"]
+				  }
+	},
+	async redirects() {
+		return [
+			{
+				source: "/login",
+				destination: "/",
+				permanent: false
+			},
+			{
+				source: "/dashboard",
+				destination: "/dashboard/sites",
+				permanent: false
+			},
+			{
+				source: "/dashboard/settings",
+				destination: "/dashboard/settings/profile",
+				permanent: false
+			},
+			{
+				source: "/dashboard/site",
+				destination: "/dashboard/sites",
+				permanent: false
+			},
+			{
+				source: "/dashboard/site/:siteId",
+				destination: "/dashboard/sites/:siteId/overview",
+				permanent: false
+			},
+			{
+				source: "/dashboard/sites/:siteId",
+				destination: "/dashboard/sites/:siteId/overview",
+				permanent: false
+			}
+		];
 	}
 };
 
