@@ -83,13 +83,8 @@ const SitesTable = ({ validatingSites = false, errorSites = null, sites = null, 
 
 SitesTable.propTypes = {
 	disableLocalTime: PropTypes.bool,
-	errorSites: PropTypes.object,
-	sites: PropTypes.shape({
-		data: PropTypes.shape({
-			count: PropTypes.number,
-			results: PropTypes.array
-		})
-	}),
+	errorSites: PropTypes.any,
+	sites: PropTypes.any,
 	validatingSites: PropTypes.bool
 };
 

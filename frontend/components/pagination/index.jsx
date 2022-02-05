@@ -1,5 +1,5 @@
 import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
-import { MaxSitesSize } from "@constants/GlobalValues";
+import { MaxSiteLimit } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useLoading } from "@hooks/useLoading";
@@ -14,25 +14,10 @@ import { memo, useMemo, useState } from "react";
 import { useSWRConfig } from "swr";
 import "twin.macro";
 
-// Pagination strings
-const PaginationLocale = {
-	items_per_page: "Rows per Page",
-	jump_to: "Goto",
-	jump_to_confirm: "Goto",
-	page: "Page",
-	prev_page: "Previous",
-	next_page: "Next",
-	prev_5: "Prev 5",
-	next_5: "Next 5",
-	prev_3: "Prev 3",
-	next_3: "Next 3"
-};
-
 /**
  * Custom function to render the `Pagination` component
  */
 const DataPagination = () => {
-	const [activePage, setActivePage] = useState(null);
 	const [pageData, setPageData] = useState(null);
 
 	// Router
@@ -53,16 +38,11 @@ const DataPagination = () => {
 	const { page, errorPage, validatingPage } = usePage(scanApiEndpoint);
 
 	// Custom variables
-	const currentPage = activePage ?? 1;
+	const currentPage = parseInt(query.page) || 1;
 	const offset = (currentPage - 1) * linksPerPage;
 	const linkNumbers = [];
 	const pageNumbers = [];
-	const maxSites = MaxSitesSize;
-
-	// Set updated `pageNumbers` for `linksPerPage` prop
-	for (let i = 0; i <= maxSites; i += linksPerPage) {
-		pageNumbers.push(i);
-	}
+	const linksPerPageOptions = [];
 
 	// Translations
 	const { t } = useTranslation();
@@ -110,21 +90,30 @@ const DataPagination = () => {
 	}, [page, validatingPage]);
 
 	// Set `pageCount` value
-	const pageCount = pageData?.count ?? null;
-
-	// Populate `linkNumbers` array based on `pageCount`
-	if (pageCount !== null) {
-		for (let i = 1; i <= pageCount; i++) {
-			linkNumbers.push(i);
-		}
-	}
+	const pageCount = pageData?.count || 0;
 
 	// Set `totalPages` value
-	const totalPages = pageCount !== null && linksPerPage !== null ? Math.ceil(pageCount / linksPerPage) : null;
+	const totalPages = Math.ceil(pageCount / linksPerPage) || 0;
 
-	if (totalPages !== null && totalPages < 1) return null;
+	// Set updated `pageNumbers` for `linksPerPage` prop
+	for (let i = 1; i <= totalPages; i++) {
+		pageNumbers.push(i);
+	}
 
-	const paginatedItems = linksPerPage !== null ? linkNumbers.slice(offset).slice(0, linksPerPage) : null;
+	// Set updated `linksPerPageOptions` for `linksPerPage` prop
+	for (let i = linksPerPage; i <= MaxSiteLimit; i + linksPerPage) {
+		linksPerPageOptions.push(i);
+	}
+
+	if (totalPages < 1) return null;
+
+	// Populate `linkNumbers` array based on `pageCount`
+	for (let i = 1; i <= pageCount; i++) {
+		linkNumbers.push(i);
+	}
+
+	// Set paginated items
+	const paginatedItems = linkNumbers.slice(offset).slice(0, linksPerPage);
 
 	// Handle page change
 	const handlePageChange = (pageNum) => {
@@ -134,8 +123,10 @@ const DataPagination = () => {
 	};
 
 	// Handle table rows per page change
-	const handleRowsPerPageChange = async ({ count }) => {
-		const countValue = await parseInt(count.target.value);
+	const handleRowsPerPageChange = async (e) => {
+		e.preventDefault();
+
+		const countValue = await parseInt(e.target.value);
 
 		let newPath = asPath;
 		newPath = handleRemoveUrlParameter(newPath, "page");
@@ -162,7 +153,7 @@ const DataPagination = () => {
 		}
 	};
 
-	return isComponentReady ? (
+	return !validatingPage ? (
 		<div tw="bg-white mt-8 mb-4 py-2 lg:flex items-center justify-between align-middle">
 			<div tw="flex items-center mb-8 lg:m-0">
 				<div tw="mt-2 lg:my-0">
@@ -183,17 +174,15 @@ const DataPagination = () => {
 				className="pagination"
 				current={currentPage}
 				defaultCurrent={currentPage}
-				defaultPageSize={pageNumbers[0]}
+				defaultPageSize={linksPerPageOptions[0]}
 				disabled={!isComponentReady}
-				locale={PaginationLocale}
-				nextIcon={nextText}
 				onChange={handlePageChange}
 				pageSize={linksPerPage}
-				prevIcon={previousText}
-				showPrevNextJumpers={true}
-				showLessItems={true}
-				showTitle={false}
+				showLessItems
+				showPrevNextJumpers
 				total={totalPages * linksPerPage}
+				prevIcon={previousText}
+				nextIcon={nextText}
 			/>
 
 			<div tw="flex items-center mt-4 lg:m-0">
@@ -204,7 +193,7 @@ const DataPagination = () => {
 						value={linksPerPage}
 						tw="block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md sm:leading-5"
 					>
-						{pageNumbers.map((val, key) => {
+						{linksPerPageOptions.map((val, key) => {
 							return (
 								<option key={key} value={val}>
 									{val === 20 ? "--" : val}
