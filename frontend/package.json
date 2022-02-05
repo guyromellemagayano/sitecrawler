@@ -56,7 +56,8 @@
 		"@tailwindcss/forms": "^0.4.0",
 		"@tailwindcss/line-clamp": "^0.3.1",
 		"@tailwindcss/typography": "^0.5.1",
-		"@tanem/react-nprogress": "^4.0.5",
+		"@tanem/react-nprogress": "^4.0.6",
+		"@types/react": "^17.0.39",
 		"apexcharts": "3.33.0",
 		"axios": "^0.25.0",
 		"bytes": "^3.1.2",
@@ -85,7 +86,7 @@
 		"react-resize-detector": "^7.0.0",
 		"string-similarity": "^4.0.4",
 		"styled-components": "5.3.3",
-		"swr": "^1.2.0",
+		"swr": "^1.2.1",
 		"yup": "^0.32.11"
 	},
 	"devDependencies": {
