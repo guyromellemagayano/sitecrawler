@@ -11,10 +11,18 @@
 		"502BadGatewayErrorResponse": "Bad Gateway",
 		"503ServiceUnavailableErrorResponse": "Service Unavailable",
 		"504GatewayTimeoutErrorResponse": "Gateway Timeout",
-		"unknownResponse": "An unknown error has occured. Please try again.",
-		"unknownSuccessResponse": "Success",
-		"unknownClientErrorResponse": "An unknown client error has occured. Please try again.",
-		"unknownServerErrorResponse": "An unknown server error has occured. Please try again."
+		"unknownResponse": {
+			"title": "Unknown Response",
+			"message": "An unknown error has occured. Please try again."
+		},
+		"unknownClientErrorResponse": {
+			"title": "Unknown Client Error",
+			"message": "An unknown client error has occured. Please try again."
+		},
+		"unknownServerErrorResponse": {
+			"title": "Unknown Server Error",
+			"message": "An unknown server error has occured. Please try again."
+		}
 	},
 	"auth": {
 		"user": {

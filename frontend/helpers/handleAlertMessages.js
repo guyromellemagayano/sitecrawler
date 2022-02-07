@@ -21,7 +21,7 @@ export const handleAlertMessages = ({
 	data,
 	fallback
 }) => {
-	if (data !== null) {
+	if (typeof data === "object" && Object.keys(data)?.length > 0) {
 		dispatch({
 			...state,
 			...(isUser && { isUser: isUser }),
@@ -41,6 +41,14 @@ export const handleAlertMessages = ({
 			responses: [
 				...state.responses,
 				{
+					responseTitle:
+						data.title?.length > 0 && data.status
+							? data.title
+							: Math.round(data.status / 100) === 4
+							? fallback.unknownClientErrordata.title
+							: Math.round(data.status / 100) === 5
+							? fallback.unknownServerErrordata.title
+							: fallback.unknowndata.title,
 					responseText:
 						data.message?.length > 0 && data.status
 							? data.message
