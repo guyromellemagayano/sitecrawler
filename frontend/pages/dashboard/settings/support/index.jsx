@@ -3,7 +3,6 @@ import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedHelpSupportSettingsPageLayout } from "@components/layouts/pages/HelpSupportSettings";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
-import "twin.macro";
 
 export default function HelpSupport() {
 	// Translations
