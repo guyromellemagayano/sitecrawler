@@ -6,7 +6,6 @@
 		"paths": {
 			"@components/*": ["./components/*"],
 			"@constants/*": ["./constants/*"],
-			"@contexts/*": ["./contexts/*"],
 			"@enums/*": ["./enums/*"],
 			"@helpers/*": ["./helpers/*"],
 			"@hooks/*": ["./hooks/*"],
