@@ -423,6 +423,32 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 		}
 	}
 
+	.alerts {
+		&-enter {
+			${tw`transition-opacity duration-75`}
+
+			&-from {
+				${tw`opacity-0`}
+			}
+
+			&-to {
+				${tw`opacity-100`}
+			}
+		}
+
+		&-leave {
+			${tw`transition-opacity duration-150`}
+
+			&-from {
+				${tw`opacity-100`}
+			}
+
+			&-to {
+				${tw`opacity-0`}
+			}
+		}
+	}
+
 	.pagination {
 		${tw`flex`}
 	}
