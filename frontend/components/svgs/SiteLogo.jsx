@@ -4,7 +4,7 @@
  * @param {any} props
  */
 export const SiteLogoWhite = (props) => (
-	<svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 805 136.9" width="1em" height="1em">
+	<svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 805 136.9">
 		<defs>
 			<clipPath id="clip-path">
 				<path
@@ -47,7 +47,7 @@ export const SiteLogoWhite = (props) => (
  * @param {any} props
  */
 export const SiteLogoDark = (props) => (
-	<svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 805 136.9" width="1em" height="1em">
+	<svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 805 136.9">
 		<defs>
 			<clipPath id="clip-path">
 				<path
