@@ -1,7 +1,7 @@
-import { handleAlertMessages } from "@helpers/handleNotificationMessages";
+import { handleNotificationMessages } from "@helpers/handleNotificationMessages";
 import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
-import { useEffect, useReducer, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 import "twin.macro";
 
 const messagesReducer = (state, action) => {
@@ -33,7 +33,9 @@ export const useNotificationMessage = () => {
 		isSubscriptions: false,
 		isSupport: false,
 		isUser: false,
-		isError: null,
+		isError: false,
+		isAlert: false,
+		isNotification: false,
 		method: null,
 		status: null,
 		responses: []
@@ -466,16 +468,6 @@ export const useNotificationMessage = () => {
 	);
 
 	// Logout translations
-	const logoutGet200OkSuccessResponse = t("alerts:auth.logout.get.200OkSuccessResponse");
-	const logoutGet400BadRequestErrorResponse = t("alerts:auth.logout.get.400BadRequestErrorResponse");
-	const logoutGet401UnauthorizedErrorResponse = t("alerts:auth.logout.get.401UnauthorizedErrorResponse");
-	const logoutGet403ForbiddenErrorResponse = t("alerts:auth.logout.get.403ForbiddenErrorResponse");
-	const logoutGet404NotFoundErrorResponse = t("alerts:auth.logout.get.404NotFoundErrorResponse");
-	const logoutGet429TooManyRequestsErrorResponse = t("alerts:auth.logout.get.429TooManyRequestsErrorResponse");
-	const logoutGet500InternalServerErrorResponse = t("alerts:auth.logout.get.500InternalServerErrorResponse");
-	const logoutGet502BadGatewayErrorResponse = t("alerts:auth.logout.get.502BadGatewayErrorResponse");
-	const logoutGet503ServiceUnavailableErrorResponse = t("alerts:auth.logout.get.503ServiceUnavailableErrorResponse");
-	const logoutGet504GatewayTimeoutErrorResponse = t("alerts:auth.logout.get.504GatewayTimeoutErrorResponse");
 	const logoutPost201CreatedSuccessResponse = t("alerts:auth.logout.post.201CreatedSuccessResponse");
 	const logoutPost400BadRequestErrorResponse = t("alerts:auth.logout.post.400BadRequestErrorResponse");
 	const logoutPost401UnauthorizedErrorResponse = t("alerts:auth.logout.post.401UnauthorizedErrorResponse");
@@ -506,7 +498,7 @@ export const useNotificationMessage = () => {
 	const fallbackUnknownServerErrorResponseTitle = t("alerts:fallback.unknownServerErrorResponse.title");
 	const fallbackUnknownServerErrorResponseMessage = t("alerts:fallback.unknownServerErrorResponse.message");
 
-	useEffect(() => {
+	useMemo(() => {
 		if (config) {
 			const isLocalTimeEnabled = config?.isLocalTimeEnabled ?? false;
 			const isLocalTimeDisabled = config?.isLocalTimeDisabled ?? false;
@@ -525,7 +517,7 @@ export const useNotificationMessage = () => {
 			const isSubscriptions = config?.isSubscriptions ?? false;
 			const isSupport = config?.isSupport ?? false;
 			const isUser = config?.isUser ?? false;
-			const isError = config?.isError ?? null;
+			const isError = config?.isError ?? false;
 			const method = config?.method ?? null;
 			const status = config?.status ?? null;
 
@@ -858,20 +850,36 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(deleteResponse);
 					responsesArray.push(getResponse);
-					responsesArray.push(deleteResponse);
 					responsesArray.push(patchResponse);
+					responsesArray.push(putResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isUser, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isUser,
+						data,
+						fallback
+					});
 				} else if (isLocalTimeEnabled) {
 					let responsesArray = [];
 
@@ -949,13 +957,31 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					handleAlertMessages({
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
 						dispatch,
 						config,
 						setConfig,
 						state,
 						isLocalTimeEnabled,
-						data: responsesArray,
+						data,
 						fallback
 					});
 				} else if (isLocalTimeDisabled) {
@@ -1035,13 +1061,31 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					handleAlertMessages({
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
 						dispatch,
 						config,
 						setConfig,
 						state,
 						isLocalTimeDisabled,
-						data: responsesArray,
+						data,
 						fallback
 					});
 				} else if (isLogin) {
@@ -1121,17 +1165,33 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isLogin, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isLogin,
+						data,
+						fallback
+					});
 				} else if (isLogout) {
 					let responsesArray = [];
 
@@ -1200,86 +1260,36 @@ export const useNotificationMessage = () => {
 							}
 						]
 					};
-					const getResponse = {
-						method: "GET",
-						responses: [
-							{
-								status: 200,
-								title: fallback200OkSuccessResponse,
-								message: logoutGet200OkSuccessResponse,
-								isSuccess: true
-							},
-							{
-								status: 400,
-								title: fallback400BadRequestErrorResponse,
-								message: logoutGet400BadRequestErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 401,
-								title: fallback401UnauthorizedErrorResponse,
-								message: logoutGet401UnauthorizedErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 403,
-								title: fallback403ForbiddenErrorResponse,
-								message: logoutGet403ForbiddenErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 404,
-								title: fallback404NotFoundErrorResponse,
-								message: logoutGet404NotFoundErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 429,
-								title: fallback429TooManyRequestsErrorResponse,
-								message: logoutGet429TooManyRequestsErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 500,
-								title: fallback500InternalServerErrorResponse,
-								message: logoutGet500InternalServerErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 502,
-								title: fallback502BadGatewayErrorResponse,
-								message: logoutGet502BadGatewayErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 503,
-								title: fallback503ServiceUnavailableErrorResponse,
-								message: logoutGet503ServiceUnavailableErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 504,
-								title: fallback504GatewayTimeoutErrorResponse,
-								message: logoutGet504GatewayTimeoutErrorResponse,
-								isSuccess: false
-							}
-						]
-					};
 
 					responsesArray.push(postResponse);
-					responsesArray.push(getResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isLogout, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isLogout,
+						data,
+						fallback
+					});
 				} else if (isRegistration) {
 					let responsesArray = [];
 
@@ -1357,17 +1367,33 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isRegistration, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isRegistration,
+						data,
+						fallback
+					});
 				} else if (isPasswordChange) {
 					let responsesArray = [];
 
@@ -1445,17 +1471,33 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isPasswordChange, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isPasswordChange,
+						data,
+						fallback
+					});
 				} else if (isPasswordReset) {
 					let responsesArray = [];
 
@@ -1533,17 +1575,33 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isPasswordReset, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isPasswordReset,
+						data,
+						fallback
+					});
 				} else if (isPasswordResetConfirm) {
 					let responsesArray = [];
 
@@ -1621,13 +1679,31 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					handleAlertMessages({
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
 						dispatch,
 						config,
 						setConfig,
 						state,
 						isPasswordResetConfirm,
-						data: responsesArray,
+						data,
 						fallback
 					});
 				} else if (isUrlInformationStep) {
@@ -1779,17 +1855,33 @@ export const useNotificationMessage = () => {
 					responsesArray.push(patchResponse);
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isPasswordReset, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isUrlInformationStep,
+						data,
+						fallback
+					});
 				} else if (isVerifyUrlStep) {
 					let responsesArray = [];
 
@@ -1869,17 +1961,33 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isVerifyUrlStep, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isVerifyUrlStep,
+						data,
+						fallback
+					});
 				} else if (isSupport) {
 					let responsesArray = [];
 
@@ -1957,17 +2065,33 @@ export const useNotificationMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isSupport, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isSupport,
+						data,
+						fallback
+					});
 				} else if (isPaymentMethod) {
 					let responsesArray = [];
 
@@ -2117,17 +2241,33 @@ export const useNotificationMessage = () => {
 					responsesArray.push(postResponse);
 					responsesArray.push(getResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isPaymentMethod, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isPaymentMethod,
+						data,
+						fallback
+					});
 				} else if (isSites) {
 					let responsesArray = [];
 
@@ -2493,17 +2633,33 @@ export const useNotificationMessage = () => {
 					responsesArray.push(patchResponse);
 					responsesArray.push(deleteResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isSites, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isSites,
+						data,
+						fallback
+					});
 				} else {
 					return null;
 				}

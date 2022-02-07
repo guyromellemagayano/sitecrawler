@@ -1,4 +1,4 @@
-import { AlertDisplayInterval } from "@constants/GlobalValues";
+import { NotificationDisplayInterval } from "@constants/GlobalValues";
 import { handleConversionStringToUppercase } from "@utils/convertCase";
 
 export const handleNotificationMessages = ({
@@ -45,26 +45,19 @@ export const handleNotificationMessages = ({
 						data.title?.length > 0 && data.status
 							? data.title
 							: Math.round(data.status / 100) === 4
-							? fallback.unknownClientErrordata.title
+							? fallback.unknownClientErrorResponse.title
 							: Math.round(data.status / 100) === 5
-							? fallback.unknownServerErrordata.title
-							: fallback.unknowndata.title,
+							? fallback.unknownServerErrorResponse.title
+							: fallback.unknownResponse.title,
 					responseText:
 						data.message?.length > 0 && data.status
 							? data.message
 							: Math.round(data.status / 100) === 4
-							? fallback.unknownClientErrordata.message
+							? fallback.unknownClientErrorResponse.message
 							: Math.round(data.status / 100) === 5
-							? fallback.unknownServerErrordata.message
-							: fallback.unknowndata.message,
-					isSuccess:
-						data.message?.length > 0 && data.status
-							? data.isSuccess
-							: Math.round(data.status / 100) === 4
-							? fallback.unknownClientErrordata.isSuccess
-							: Math.round(data.status / 100) === 5
-							? fallback.unknownServerErrordata.isSuccess
-							: fallback.unknowndata.isSuccess
+							? fallback.unknownServerErrorResponse.message
+							: fallback.unknownResponse.message,
+					isSuccess: data.isSuccess
 				}
 			]
 		});
@@ -72,58 +65,68 @@ export const handleNotificationMessages = ({
 		const timeout = setTimeout(() => {
 			dispatch({
 				...state,
-				...(isUser && { isUser: isUser }),
-				...(isLocalTimeEnabled && { isLocalTimeEnabled: isLocalTimeEnabled }),
-				...(isLocalTimeDisabled && { isLocalTimeDisabled: isLocalTimeDisabled }),
-				...(isLogin && { isLogin: isLogin }),
-				...(isLogout && { isLogout: isLogout }),
-				...(isRegistration && { isRegistration: isRegistration }),
-				...(isPasswordChange && { isPasswordChange: isPasswordChange }),
-				...(isPasswordReset && { isPasswordReset: isPasswordReset }),
-				...(isPasswordResetConfirm && { isPasswordResetConfirm: isPasswordResetConfirm }),
-				...(isVerifyUrlStep && { isVerifyUrlStep: isVerifyUrlStep }),
-				...(isSupport && { isSupport: isSupport }),
-				...(isPaymentMethod && { isPaymentMethod: isPaymentMethod }),
+				...(isUser && { isUser: !isUser }),
+				...(isLocalTimeEnabled && { isLocalTimeEnabled: !isLocalTimeEnabled }),
+				...(isLocalTimeDisabled && { isLocalTimeDisabled: !isLocalTimeDisabled }),
+				...(isLogin && { isLogin: !isLogin }),
+				...(isLogout && { isLogout: !isLogout }),
+				...(isRegistration && { isRegistration: !isRegistration }),
+				...(isPasswordChange && { isPasswordChange: !isPasswordChange }),
+				...(isPasswordReset && { isPasswordReset: !isPasswordReset }),
+				...(isPasswordResetConfirm && { isPasswordResetConfirm: !isPasswordResetConfirm }),
+				...(isVerifyUrlStep && { isVerifyUrlStep: !isVerifyUrlStep }),
+				...(isSupport && { isSupport: !isSupport }),
+				...(isPaymentMethod && { isPaymentMethod: !isPaymentMethod }),
 				method: null,
 				status: null,
 				responses: [
 					...state.responses,
 					...state.responses.filter(
-						({ responseText }) =>
+						({ responseTitle, responseText }) =>
+							responseTitle !==
+								(data.title?.length && data.status
+									? data.title
+									: Math.round(data.status / 100) === 4
+									? fallback.unknownClientErrorResponse.title
+									: Math.round(data.status / 100) === 5
+									? fallback.unknownServerErrorResponse.title
+									: fallback.unknownResponse.title) &&
 							responseText !==
-							(data.message?.length && data.status
-								? data.message
-								: Math.round(data.status / 100) === 4
-								? fallback.unknownClientErrordata.message
-								: Math.round(data.status / 100) === 5
-								? fallback.unknownServerErrordata.message
-								: fallback.unknowndata.message)
+								(data.message?.length && data.status
+									? data.message
+									: Math.round(data.status / 100) === 4
+									? fallback.unknownClientErrorResponse.message
+									: Math.round(data.status / 100) === 5
+									? fallback.unknownServerErrorResponse.message
+									: fallback.unknownResponse.message)
 					)
 				]
 			});
 
 			setConfig({
-				...(isUser && { isUser: false }),
-				...(isLocalTimeEnabled && { isLocalTimeEnabled: false }),
-				...(isLocalTimeDisabled && { isLocalTimeDisabled: false }),
-				...(isLogin && { isLogin: false }),
-				...(isLogout && { isLogout: false }),
-				...(isRegistration && { isRegistration: false }),
-				...(isPasswordChange && { isPasswordChange: false }),
-				...(isPasswordReset && { isPasswordReset: false }),
-				...(isPasswordResetConfirm && { isPasswordResetConfirm: false }),
-				...(isVerifyUrlStep && { isVerifyUrlStep: false }),
-				...(isSupport && { isSupport: false }),
-				...(isPaymentMethod && { isPaymentMethod: false }),
+				...(isUser && { isUser: !isUser }),
+				...(isLocalTimeEnabled && { isLocalTimeEnabled: !isLocalTimeEnabled }),
+				...(isLocalTimeDisabled && { isLocalTimeDisabled: !isLocalTimeDisabled }),
+				...(isLogin && { isLogin: !isLogin }),
+				...(isLogout && { isLogout: !isLogout }),
+				...(isRegistration && { isRegistration: !isRegistration }),
+				...(isPasswordChange && { isPasswordChange: !isPasswordChange }),
+				...(isPasswordReset && { isPasswordReset: !isPasswordReset }),
+				...(isPasswordResetConfirm && { isPasswordResetConfirm: !isPasswordResetConfirm }),
+				...(isVerifyUrlStep && { isVerifyUrlStep: !isVerifyUrlStep }),
+				...(isSupport && { isSupport: !isSupport }),
+				...(isPaymentMethod && { isPaymentMethod: !isPaymentMethod }),
 				method: null,
 				status: null
 			});
-		}, AlertDisplayInterval);
+		}, NotificationDisplayInterval);
 
 		return () => {
 			clearTimeout(timeout);
 		};
 	}
+
+	console.log({ state, config });
 
 	return { state, config };
 };
