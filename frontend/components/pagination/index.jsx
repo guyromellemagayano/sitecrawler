@@ -119,7 +119,7 @@ const DataPagination = () => {
 	return (
 		<>
 			{state?.responses !== [] && state?.responses?.length > 0 ? (
-				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
+				<div tw="fixed z-50 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
 					{state?.responses?.map((value, key) => {
 						// Alert Messsages
 						const responseTitle = value?.responseTitle ?? null;
