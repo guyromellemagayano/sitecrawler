@@ -1,4 +1,4 @@
-import { MemoizedLayout } from "@components/layouts";
+import { Layout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedAddNewSitePageLayout } from "@components/layouts/pages/AddNewSite";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
@@ -124,5 +124,5 @@ export default function AddNewSite() {
 }
 
 AddNewSite.getLayout = function getLayout(page) {
-	return <MemoizedLayout>{page}</MemoizedLayout>;
+	return <Layout>{page}</Layout>;
 };

@@ -1,4 +1,4 @@
-import { MemoizedLayout } from "@components/layouts";
+import { Layout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
 import { MemoizedLoginPageLayout } from "@components/layouts/pages/Login";
@@ -36,5 +36,5 @@ export default function Sites() {
 }
 
 Sites.getLayout = function getLayout(page) {
-	return <MemoizedLayout>{page}</MemoizedLayout>;
+	return <Layout>{page}</Layout>;
 };

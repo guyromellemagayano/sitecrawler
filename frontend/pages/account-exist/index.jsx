@@ -1,4 +1,4 @@
-import { MemoizedLayout } from "@components/layouts";
+import { Layout } from "@components/layouts";
 import { MemoizedAccountExistPageLayout } from "@components/layouts/pages/AccountExist";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
@@ -17,5 +17,5 @@ export default function AccountExist() {
 }
 
 AccountExist.getLayout = function getLayout(page) {
-	return <MemoizedLayout>{page}</MemoizedLayout>;
+	return <Layout>{page}</Layout>;
 };

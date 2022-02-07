@@ -1,4 +1,4 @@
-import { MemoizedLayout } from "@components/layouts";
+import { Layout } from "@components/layouts";
 import { MemoizedLoginPageLayout } from "@components/layouts/pages/Login";
 import { MemoizedLoader } from "@components/loaders";
 import { useUser } from "@hooks/useUser";
@@ -19,5 +19,5 @@ export default function Home() {
 }
 
 Home.getLayout = function getLayout(page) {
-	return <MemoizedLayout>{page}</MemoizedLayout>;
+	return <Layout>{page}</Layout>;
 };

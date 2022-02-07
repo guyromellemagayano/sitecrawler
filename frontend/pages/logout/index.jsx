@@ -1,5 +1,6 @@
-import { MemoizedLayout } from "@components/layouts";
+import { Layout } from "@components/layouts";
 import { MemoizedLoader } from "@components/loaders";
+import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { LogoutApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { RedirectInterval } from "@constants/GlobalValues";
 import { LoginLink } from "@constants/PageLinks";
@@ -64,28 +65,18 @@ export default function Logout() {
 		<>
 			<NextSeo title={logout} />
 
-			{state?.responses !== [] && state?.responses?.length > 0 ? (
-				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
-					{state?.responses?.map((value, key) => {
-						// Alert Messsages
-						const responseTitle = value?.responseTitle ?? null;
-						const responseText = value?.responseText ?? null;
-						const isSuccess = value?.isSuccess ?? null;
+			{state?.responses?.map((value, key) => {
+				// Alert Messsages
+				const responseTitle = value?.responseTitle ?? null;
+				const responseText = value?.responseText ?? null;
+				const isSuccess = value?.isSuccess ?? null;
 
-						return (
-							<h3 key={key} tw="text-sm leading-6 font-medium text-gray-500">
-								{responseText}
-							</h3>
-						);
-					}) ?? null}
-				</div>
-			) : (
-				<MemoizedLoader />
-			)}
+				return <MemoizedLoadingMessage key={key} message={responseText} />;
+			}) ?? <MemoizedLoader />}
 		</>
 	);
 }
 
 Logout.getLayout = function getLayout(page) {
-	return <MemoizedLayout>{page}</MemoizedLayout>;
+	return <Layout>{page}</Layout>;
 };
