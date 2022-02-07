@@ -14,7 +14,7 @@ const messagesReducer = (state, action) => {
 /**
  * Custom hook that will handle success and error messages
  */
-export const useNotificationMessages = () => {
+export const useNotificationMessage = () => {
 	const [config, setConfig] = useState({
 		isLocalTimeEnabled: false,
 		isLocalTimeDisabled: false,
