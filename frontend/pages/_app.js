@@ -2,6 +2,9 @@ import { MemoizedNotification } from "@components/notifications";
 import ProgressBar from "@components/progress-bar";
 import AppSeo from "@constants/AppSeo";
 import { isProd } from "@constants/ServerEnv";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fab } from "@fortawesome/free-brands-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import GlobalStyles from "@styles/global";
 import LogRocket from "logrocket";
@@ -11,6 +14,10 @@ import { useRouter } from "next/router";
 import { createContext, useMemo } from "react";
 import { useSWRConfig } from "swr";
 import "twin.macro";
+
+// Font Awesome
+library.add(fab);
+library.add(fas);
 
 /**
  * Create new App context
