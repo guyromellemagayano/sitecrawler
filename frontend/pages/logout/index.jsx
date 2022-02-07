@@ -1,6 +1,5 @@
 import { Layout } from "@components/layouts";
 import { MemoizedLoader } from "@components/loaders";
-import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { LogoutApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { RedirectInterval } from "@constants/GlobalValues";
 import { LoginLink } from "@constants/PageLinks";
@@ -71,7 +70,7 @@ export default function Logout() {
 				const responseText = value?.responseText ?? null;
 				const isSuccess = value?.isSuccess ?? null;
 
-				return <MemoizedLoadingMessage key={key} message={responseText} />;
+				return <MemoizedLoader key={key} message={responseText} />;
 			}) ?? <MemoizedLoader />}
 		</>
 	);
