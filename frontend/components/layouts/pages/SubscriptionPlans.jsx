@@ -1,4 +1,3 @@
-import { MemoizedAlert } from "@components/alerts";
 // import { MemoizedChangeToBasicModal } from "@components/modals/ChangeToBasicModal";
 // import { MemoizedNewActivePlanModal } from "@components/modals/NewActivePlanModal";
 import { MemoizedPaymentMethodModal } from "@components/modals/PaymentMethodModal";
@@ -6,9 +5,9 @@ import { MemoizedSubscriptionPlansPricing } from "@components/pricing/Subscripti
 import { CurrentSubscriptionApiEndpoint, PaymentMethodApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { Basic } from "@constants/GlobalValues";
 import { handleDeleteMethod, handlePostMethod } from "@helpers/handleHttpMethods";
-import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
+import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
 import { memo, useCallback, useEffect, useState } from "react";
@@ -39,7 +38,7 @@ const SubscriptionPlansPageLayout = () => {
 	const { mutate } = useSWRConfig();
 
 	// Custom hooks
-	const { state, setConfig } = useAlertMessage();
+	const { state, setConfig } = useNotificationMessage();
 	const {
 		ref: newActivePlanModalRef,
 		isComponentVisible: isNewActivePlanModalVisible,
@@ -348,18 +347,6 @@ const SubscriptionPlansPageLayout = () => {
 
 	return (
 		<>
-			{state?.responses !== [] && state?.responses?.length > 0 ? (
-				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
-					{state?.responses?.map((value, key) => {
-						// Alert Messsages
-						const responseText = value?.responseText ?? null;
-						const isSuccess = value?.isSuccess ?? null;
-
-						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
-					}) ?? null}
-				</div>
-			) : null}
-
 			<MemoizedPaymentMethodModal
 				ref={paymentMethodModalRef}
 				handlePlanSelect={handlePlanSelect}

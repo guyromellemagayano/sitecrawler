@@ -1,8 +1,7 @@
-import { MemoizedAlert } from "@components/alerts";
 import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
-import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useComponentVisible } from "@hooks/useComponentVisible";
+import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
 import dayjs from "dayjs";
@@ -43,7 +42,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 
 	// Custom hooks
-	const { state, setConfig } = useAlertMessage();
+	const { state, setConfig } = useNotificationMessage();
 	const {
 		ref: siteVerifyModalRef,
 		isComponentVisible: isSiteVerifyModalVisible,
@@ -73,18 +72,6 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 
 	// Site `scan` SWR hook
 	const { scan, errorScan, validatingScan } = useScan(siteId);
-
-	// TODO: Error handling for `scan` SWR hook
-	useMemo(() => {
-		// Show alert message after failed `scan` SWR hook fetch
-		errorScan
-			? setConfig({
-					isSiteScan: true,
-					method: errorScan?.config?.method ?? null,
-					status: errorScan?.status ?? null
-			  })
-			: null;
-	}, [errorScan]);
 
 	// Handle `scan` object id data
 	useMemo(() => {
@@ -152,18 +139,6 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	// Site `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(siteId, scanObjId);
 
-	// TODO: Error handling for `stats` SWR hook
-	useMemo(() => {
-		// Show alert message after failed `stats` SWR hook fetch
-		errorStats
-			? setConfig({
-					isSiteStats: true,
-					method: errorStats?.config?.method ?? null,
-					status: errorStats?.status ?? null
-			  })
-			: null;
-	}, [errorStats]);
-
 	// Handle `stats` object data
 	useMemo(() => {
 		let isMounted = true;
@@ -210,158 +185,155 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	}, [stats, validatingStats]);
 
 	return (
-		<>
-			{state?.responses !== [] && state?.responses?.length > 0 ? (
-				<div tw="fixed right-6 bottom-6 grid grid-flow-row gap-4">
-					{state?.responses?.map((value, key) => {
-						// Alert Messsages
-						const responseText = value?.responseText ?? null;
-						const isSuccess = value?.isSuccess ?? null;
+		<tr>
+			<td tw="flex-none px-6 py-4 whitespace-nowrap">
+				<MemoizedSiteVerifyModal
+					setShowModal={setIsSiteVerifyModalVisible}
+					showModal={isSiteVerifyModalVisible}
+					siteId={siteId}
+					siteName={siteName}
+					siteUrl={siteUrl}
+					siteVerificationId={siteVerificationId}
+					ref={siteVerifyModalRef}
+				/>
 
-						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
-					}) ?? null}
-				</div>
-			) : null}
+				<MemoizedDeleteSiteModal
+					setShowModal={setIsSiteDeleteModalVisible}
+					showModal={isSiteDeleteModalVisible}
+					ref={siteDeleteModalRef}
+					siteId={siteId}
+				/>
 
-			<tr>
-				<td tw="flex-none px-6 py-4 whitespace-nowrap">
-					<MemoizedSiteVerifyModal
-						setShowModal={setIsSiteVerifyModalVisible}
-						showModal={isSiteVerifyModalVisible}
-						siteId={siteId}
-						siteName={siteName}
-						siteUrl={siteUrl}
-						siteVerificationId={siteVerificationId}
-						ref={siteVerifyModalRef}
-					/>
+				<div tw="flex flex-col items-start">
+					<div>
+						{!validatingScan ? (
+							!siteVerified ? (
+								<>
+									<span
+										aria-label="Not Verified"
+										tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
+									></span>
+									<div tw="inline-flex flex-col justify-start items-start">
+										<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-500">
+											<p className="truncate-link">{siteName}</p>
+										</span>
+										<span tw="flex justify-start text-sm leading-5 text-gray-500">
+											{scanCount > 0 ? (
+												<Link href="/sites/[siteId]/overview" as={`/sites/${siteId}/overview`} passHref replace>
+													<a
+														type="button"
+														tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+													>
+														{goToSiteOverviewText}
+													</a>
+												</Link>
+											) : null}
 
-					<MemoizedDeleteSiteModal
-						setShowModal={setIsSiteDeleteModalVisible}
-						showModal={isSiteDeleteModalVisible}
-						ref={siteDeleteModalRef}
-						siteId={siteId}
-					/>
-
-					<div tw="flex flex-col items-start">
-						<div>
-							{!validatingScan ? (
-								!siteVerified ? (
-									<>
-										<span
-											aria-label="Not Verified"
-											tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-red-400"
-										></span>
-										<div tw="inline-flex flex-col justify-start items-start">
+											<button
+												type="button"
+												css={[
+													tw`cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150`,
+													scanCount > 0 && tw`ml-3`
+												]}
+												onClick={() => setIsSiteVerifyModalVisible(!isSiteVerifyModalVisible)}
+											>
+												{verifySiteText}
+											</button>
+											<button
+												type="button"
+												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+												onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
+											>
+												{deleteSiteText}
+											</button>
+										</span>
+									</div>
+								</>
+							) : (
+								<>
+									<span
+										aria-label="Verified"
+										css={[
+											tw`relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full`,
+											scanFinishedAt == null && scanForceHttps == null ? tw`bg-yellow-400` : tw`bg-green-400`
+										]}
+									></span>
+									<div tw="inline-flex flex-col justify-start items-start">
+										{stats?.data?.num_links > 0 || stats?.data?.num_pages > 0 || stats?.data?.num_images > 0 ? (
+											<Link href="/sites/[siteId]/overview" as={`/sites/${siteId}/overview`} passHref>
+												<a
+													className="truncate-link"
+													tw="text-sm leading-6 font-semibold text-gray-600 hover:text-gray-500"
+													title={siteName}
+												>
+													{siteName}
+												</a>
+											</Link>
+										) : (
 											<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-500">
 												<p className="truncate-link">{siteName}</p>
 											</span>
-											<span tw="flex justify-start text-sm leading-5 text-gray-500">
-												{scanCount > 0 ? (
-													<Link href="/sites/[siteId]/overview" as={`/sites/${siteId}/overview`} passHref replace>
-														<a
-															type="button"
-															tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
-														>
-															{goToSiteOverviewText}
-														</a>
-													</Link>
-												) : null}
+										)}
 
-												<button
-													type="button"
-													css={[
-														tw`cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150`,
-														scanCount > 0 && tw`ml-3`
-													]}
-													onClick={() => setIsSiteVerifyModalVisible(!isSiteVerifyModalVisible)}
-												>
-													{verifySiteText}
-												</button>
-												<button
-													type="button"
-													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
-													onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
-												>
-													{deleteSiteText}
-												</button>
-											</span>
-										</div>
-									</>
-								) : (
-									<>
-										<span
-											aria-label="Verified"
-											css={[
-												tw`relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full`,
-												scanFinishedAt == null && scanForceHttps == null ? tw`bg-yellow-400` : tw`bg-green-400`
-											]}
-										></span>
-										<div tw="inline-flex flex-col justify-start items-start">
-											{stats?.data?.num_links > 0 || stats?.data?.num_pages > 0 || stats?.data?.num_images > 0 ? (
-												<Link href="/sites/[siteId]/overview" as={`/sites/${siteId}/overview`} passHref>
-													<a
-														className="truncate-link"
-														tw="text-sm leading-6 font-semibold text-gray-600 hover:text-gray-500"
-														title={siteName}
-													>
-														{siteName}
-													</a>
-												</Link>
-											) : (
-												<span tw="flex items-center justify-start text-sm leading-6 font-semibold text-gray-500">
-													<p className="truncate-link">{siteName}</p>
-												</span>
-											)}
-
-											<span tw="flex justify-start text-sm leading-5">
-												<a
-													href={siteUrl}
-													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
-													title={visitExternalSiteText}
-													target="_blank"
-													rel="noreferrer"
-												>
-													{visitExternalSiteText}
-												</a>
-											</span>
-										</div>
-									</>
-								)
-							) : (
-								<div>
-									<span tw="relative -left-3 flex items-start py-2 space-x-3">
+										<span tw="flex justify-start text-sm leading-5">
+											<a
+												href={siteUrl}
+												tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+												title={visitExternalSiteText}
+												target="_blank"
+												rel="noreferrer"
+											>
+												{visitExternalSiteText}
+											</a>
+										</span>
+									</div>
+								</>
+							)
+						) : (
+							<div>
+								<span tw="relative -left-3 flex items-start py-2 space-x-3">
+									<Skeleton
+										duration={2}
+										width={9}
+										height={9}
+										circle={true}
+										className="relative -left-3 top-4 flex-shrink-0 block"
+									/>
+									<div tw="inline-flex flex-col justify-start items-start">
 										<Skeleton
 											duration={2}
-											width={9}
-											height={9}
-											circle={true}
-											className="relative -left-3 top-4 flex-shrink-0 block"
+											width={150}
+											className="relative -left-3 inline-flex flex-col justify-start items-start"
 										/>
-										<div tw="inline-flex flex-col justify-start items-start">
-											<Skeleton
-												duration={2}
-												width={150}
-												className="relative -left-3 inline-flex flex-col justify-start items-start"
-											/>
-											<span tw="flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
-												<Skeleton duration={2} width={132.39} />
-												<Skeleton duration={2} width={70} />
-												<Skeleton duration={2} width={73} />
-											</span>
-										</div>
-									</span>
-								</div>
-							)}
-						</div>
+										<span tw="flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
+											<Skeleton duration={2} width={132.39} />
+											<Skeleton duration={2} width={70} />
+											<Skeleton duration={2} width={73} />
+										</span>
+									</div>
+								</span>
+							</div>
+						)}
 					</div>
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-					{!validatingScan && scan?.data?.results ? (
-						scan?.data?.results?.length > 0 ? (
-							<span tw="space-x-2">
-								<span tw="text-sm leading-5 text-gray-500">
-									{!disableLocalTime
-										? dayjs(
+				</div>
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
+				{!validatingScan && scan?.data?.results ? (
+					scan?.data?.results?.length > 0 ? (
+						<span tw="space-x-2">
+							<span tw="text-sm leading-5 text-gray-500">
+								{!disableLocalTime
+									? dayjs(
+											scanFinishedAt == null && scanForceHttps == null
+												? scan.data.results.find(
+														(result) => result.finished_at !== scanFinishedAt && result.force_https !== scanForceHttps
+												  )?.finished_at
+												: scan.data.results.find(
+														(result) => result.finished_at === scanFinishedAt && result.force_https === scanForceHttps
+												  )?.finished_at
+									  ).calendar(null, calendarStrings)
+									: dayjs
+											.utc(
 												scanFinishedAt == null && scanForceHttps == null
 													? scan.data.results.find(
 															(result) => result.finished_at !== scanFinishedAt && result.force_https !== scanForceHttps
@@ -369,75 +341,62 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 													: scan.data.results.find(
 															(result) => result.finished_at === scanFinishedAt && result.force_https === scanForceHttps
 													  )?.finished_at
-										  ).calendar(null, calendarStrings)
-										: dayjs
-												.utc(
-													scanFinishedAt == null && scanForceHttps == null
-														? scan.data.results.find(
-																(result) =>
-																	result.finished_at !== scanFinishedAt && result.force_https !== scanForceHttps
-														  )?.finished_at
-														: scan.data.results.find(
-																(result) =>
-																	result.finished_at === scanFinishedAt && result.force_https === scanForceHttps
-														  )?.finished_at
-												)
-												.calendar(null, calendarStrings)}
-								</span>
-								<span tw="text-sm leading-5 font-medium text-gray-500">
-									({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
-								</span>
+											)
+											.calendar(null, calendarStrings)}
 							</span>
-						) : (
-							<span tw="space-x-2">
-								<span tw="text-sm leading-5 text-gray-500">{notYetCrawledText}</span>
+							<span tw="text-sm leading-5 font-medium text-gray-500">
+								({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
 							</span>
-						)
+						</span>
 					) : (
-						<Skeleton duration={2} width={176.7} />
-					)}
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{!validatingScan && !validatingStats && totalErrors ? (
-						<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
-					) : (
-						<Skeleton duration={2} width={45} />
-					)}
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{!validatingScan && !validatingStats && stats?.data?.num_links ? (
-						<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_links}
-							</a>
-						</Link>
-					) : (
-						<Skeleton duration={2} width={45} />
-					)}
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{!validatingScan && !validatingStats && stats?.data?.num_pages ? (
-						<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_pages}
-							</a>
-						</Link>
-					) : (
-						<Skeleton duration={2} width={45} />
-					)}
-				</td>
-				<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-					{!validatingScan && !validatingStats && stats?.data?.num_images ? (
-						<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_images}
-							</a>
-						</Link>
-					) : (
-						<Skeleton duration={2} width={45} />
-					)}
-				</td>
-			</tr>
-		</>
+						<span tw="space-x-2">
+							<span tw="text-sm leading-5 text-gray-500">{notYetCrawledText}</span>
+						</span>
+					)
+				) : (
+					<Skeleton duration={2} width={176.7} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{!validatingScan && !validatingStats && totalErrors ? (
+					<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{!validatingScan && !validatingStats && stats?.data?.num_links ? (
+					<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
+						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							{stats?.data?.num_links}
+						</a>
+					</Link>
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{!validatingScan && !validatingStats && stats?.data?.num_pages ? (
+					<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
+						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							{stats?.data?.num_pages}
+						</a>
+					</Link>
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
+				{!validatingScan && !validatingStats && stats?.data?.num_images ? (
+					<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
+						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							{stats?.data?.num_images}
+						</a>
+					</Link>
+				) : (
+					<Skeleton duration={2} width={45} />
+				)}
+			</td>
+		</tr>
 	);
 };

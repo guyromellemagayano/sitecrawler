@@ -2,7 +2,6 @@ import { handleConversionStringToBoolean, handleConversionStringToNumber } from 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useAlertMessage } from "./useAlertMessage";
 import { useComponentVisible } from "./useComponentVisible";
 
 /**
@@ -19,7 +18,6 @@ export const useSiteSelection = () => {
 	const { query } = useRouter();
 
 	// Custom hooks
-	const { state, setConfig } = useAlertMessage();
 	const {
 		ref: siteSelectRef,
 		isComponentVisible: isSiteSelectComponentVisible,
@@ -91,8 +89,6 @@ export const useSiteSelection = () => {
 		siteSelectRef,
 		isSiteSelectComponentVisible,
 		setIsSiteSelectComponentVisible,
-		state,
-		setConfig,
 		selectedSiteId,
 		setSelectedSiteId,
 		selectedSite,
