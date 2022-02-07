@@ -12,11 +12,14 @@ const Footer = () => {
 	const { t } = useTranslation("common");
 	const allRightsReserved = t("allRightsReserved");
 
-	// Footer Labels
+	// Footer labels
 	const labelsArray = FooterLabels();
 
+	// Custom variables
+	const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
+
 	return (
-		<footer tw="flex-none w-full pt-8 pb-4 border-t border-gray-200">
+		<footer tw="flex-none w-full pt-8 pb-4 px-4 border-t border-gray-200">
 			<div tw="flex flex-col xl:flex-row xl:items-center xl:justify-between">
 				<div tw="flex justify-center md:order-1">
 					<nav tw="-mx-4 mt-2 mb-4 lg:-my-2 flex flex-wrap justify-center">
@@ -34,7 +37,7 @@ const Footer = () => {
 				</div>
 				<div tw="md:order-2">
 					<p tw="text-center text-sm leading-6 text-gray-500">
-						&copy; {new Date().getFullYear()} SiteCrawler, Inc. {allRightsReserved}.
+						&copy; {new Date().getFullYear() + " " + siteName + " " + allRightsReserved}
 					</p>
 				</div>
 			</div>
