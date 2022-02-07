@@ -35,8 +35,6 @@ export const MaxSitesPerPage = 1;
 export const MaxSiteLimit = 100;
 
 // File Locations
-export const SiteLogoDark = "/images/logos/site-logo-dark.svg";
-export const SiteLogoWhite = "/images/logos/site-logo-white.svg";
 export const SubscriptionSuccessBadge = "/images/backgrounds/subscription-success-badge.png";
 
 // Query Strings

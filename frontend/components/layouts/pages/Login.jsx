@@ -1,7 +1,7 @@
 import { MemoizedLoginForm } from "@components/forms/LoginForm";
 import { MemoizedLogoLabel } from "@components/labels/LogoLabel";
-import { MemoizedAppLogo } from "@components/logos/AppLogo";
-import { NoAuthAppLogo, SiteLogoDark } from "@constants/GlobalValues";
+import { SiteLogoDark } from "@components/svgs/SiteLogo";
+import { NoAuthAppLogo } from "@constants/GlobalValues";
 import { RegistrationLink } from "@constants/PageLinks";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
@@ -33,13 +33,7 @@ const LoginPageLayout = () => {
 							<div tw="lg:grid lg:grid-cols-12 lg:gap-8">
 								<div tw="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-7 lg:text-left lg:flex lg:items-center">
 									<div>
-										<MemoizedAppLogo
-											className="flex"
-											src={SiteLogoDark}
-											alt={NoAuthAppLogo.label}
-											width={NoAuthAppLogo.width}
-											height={NoAuthAppLogo.height}
-										/>
+										<SiteLogoDark className="flex" width={NoAuthAppLogo.width} height={NoAuthAppLogo.height} />
 										<h4 tw="mt-4 text-4xl tracking-tight text-center lg:text-left leading-10 font-bold text-gray-900 sm:mt-5 sm:leading-none">
 											{headline}&nbsp;
 											<span tw="text-red-600">{highlight}</span>
