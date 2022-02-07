@@ -1,7 +1,6 @@
 import { MemoizedAddSite } from "@components/sites/AddSite";
 import { DashboardSitesLink, DashboardSlug, LoginLink } from "@constants/PageLinks";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useUser } from "@hooks/useUser";
 import { useRouter } from "next/router";
 import Script from "next/script";
 import PropTypes from "prop-types";
@@ -16,12 +15,20 @@ import { MemoizedSidebarLayout } from "./components/Sidebar";
  * @param {any} children
  */
 export const DashboardLayout = ({ children }) => {
+	// Router
+	const router = useRouter();
+
 	// Custom hooks
 	const {
 		ref: dashboardLayoutRef,
 		isComponentVisible: isDashboardLayoutComponentVisible,
 		setIsComponentVisible: setIsDashboardLayoutComponentVisible
 	} = useComponentVisible(false);
+
+	useEffect(() => {
+		// Prefetch sites page for faster loading
+		router.prefetch(LoginLink);
+	}, [router]);
 
 	return (
 		<>
@@ -124,13 +131,9 @@ export const StaticLayout = ({ children }) => {
 	// Router
 	const router = useRouter();
 
-	// SWR hooks
-	const { user, validatingUser, errorUser } = useUser();
-
 	useEffect(() => {
 		// Prefetch sites page for faster loading
 		router.prefetch(DashboardSitesLink);
-		router.prefetch(LoginLink);
 	}, [router]);
 
 	return <main tw="h-screen">{children}</main>;
@@ -154,12 +157,6 @@ export const Layout = ({ children }) => {
 	// Router
 	const router = useRouter();
 
-	useEffect(() => {
-		// Prefetch sites page for faster loading
-		router.prefetch(DashboardSitesLink);
-		router.prefetch(LoginLink);
-	}, [router]);
-
 	return router.asPath.includes(DashboardSlug) ? (
 		<MemoizedDashboardLayout>{children}</MemoizedDashboardLayout>
 	) : (
@@ -170,8 +167,3 @@ export const Layout = ({ children }) => {
 Layout.propTypes = {
 	children: PropTypes.any
 };
-
-/**
- * Memoized custom `Layout` component
- */
-export const MemoizedLayout = memo(Layout);
