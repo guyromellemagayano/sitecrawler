@@ -1,7 +1,7 @@
 import { AlertDisplayInterval } from "@constants/GlobalValues";
 import { handleConversionStringToUppercase } from "@utils/convertCase";
 
-export const handleAlertMessages = ({
+export const handleNotificationMessages = ({
 	dispatch,
 	config,
 	setConfig,
