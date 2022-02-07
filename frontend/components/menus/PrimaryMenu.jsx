@@ -38,7 +38,7 @@ const PrimaryMenu = () => {
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
 					<Link href={DashboardSitesLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
-							<SiteLogoWhite className="flex" alt={appLogo} width={AuthAppLogo.width} height={AuthAppLogo.height} />
+							<SiteLogoWhite className="flex" width={AuthAppLogo.width} height={AuthAppLogo.height} />
 						</a>
 					</Link>
 				</div>
