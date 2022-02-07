@@ -36,11 +36,6 @@ const NextConfig = {
 				permanent: false
 			},
 			{
-				source: "/dashboard",
-				destination: "/dashboard/sites",
-				permanent: false
-			},
-			{
 				source: "/dashboard/settings",
 				destination: "/dashboard/settings/profile",
 				permanent: false
