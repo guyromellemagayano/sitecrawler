@@ -62,8 +62,8 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 	}, [edit]);
 
 	// SWR hooks
-	const { user, errorUser } = useUser();
-	const { sites, errorSites } = useSites();
+	const { user, errorUser, validatingUser } = useUser();
+	const { sites, errorSites, validatingSites } = useSites();
 
 	// Custom hooks
 	const { setConfig } = useNotificationMessage();
@@ -79,7 +79,7 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 		(() => {
 			if (isMounted) return;
 
-			if (!errorUser && user && user?.data?.large_page_size_threshold) {
+			if (!validatingUser && !errorUser && user && !user?.data?.detail && user?.data?.large_page_size_threshold) {
 				setLargePageSizeThreshold(user.data?.large_page_size_threshold ?? null);
 			}
 
@@ -89,46 +89,44 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [user, errorUser]);
+	}, [user, errorUser, validatingUser]);
 
-	// Handle `site` data
 	useMemo(() => {
 		let isMounted = true;
 
 		(() => {
 			if (isMounted) return;
 
-			if (!errorSites && sites && sites?.data) {
-				setSiteData(sites.data?.results?.length > 0 ? sites.data?.results?.filter((site) => site.id === sid) : null);
-
-				return siteData;
+			// Handle `site` data
+			if (!validatingSites && !errorSites && sites && !sites?.data?.detail && sites?.data?.results?.length > 0) {
+				setSiteData(sites.data.results.filter((site) => site.id === sid));
 			}
+
+			return siteData;
 		})();
 
 		return () => {
 			isMounted = false;
 		};
-	}, [sid, sites]);
+	}, [sid, sites, errorSites, validatingSites]);
 
-	// Handle `site` details form data
 	useMemo(() => {
 		let isMounted = true;
 
 		(() => {
 			if (isMounted) return;
 
-			if (!errorSites && sites && sites?.data) {
-				if (edit) {
-					setSiteUrlProtocol(
-						(siteData?.[0]?.url?.indexOf("http://") == 0 || siteData?.[0]?.url?.indexOf("https://") == 0) ?? ""
-					);
-					setSiteUrl(siteData?.[0]?.url?.replace(/^\/\/|^.*?:(\/\/)?/, "") ?? "");
-					setSiteName(siteData?.[0]?.name ?? "");
-				} else {
-					setSiteUrlProtocol("https://");
-					setSiteUrl("");
-					setSiteName("");
-				}
+			// Handle `site` details form data
+			if (siteData && edit) {
+				setSiteUrlProtocol(
+					(siteData?.[0]?.url?.indexOf("http://") == 0 || siteData?.[0]?.url?.indexOf("https://") == 0) ?? ""
+				);
+				setSiteUrl(siteData?.[0]?.url?.replace(/^\/\/|^.*?:(\/\/)?/, "") ?? "");
+				setSiteName(siteData?.[0]?.name ?? "");
+			} else {
+				setSiteUrlProtocol("https://");
+				setSiteUrl("");
+				setSiteName("");
 			}
 
 			return { siteUrl, siteName, siteUrlProtocol };
@@ -137,7 +135,7 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [sites, errorSites, edit]);
+	}, [edit, siteData, siteUrl, siteName, siteUrlProtocol]);
 
 	const urlRegex = new RegExp(
 		/^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|\/|\?)*)?$/i

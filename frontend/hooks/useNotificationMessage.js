@@ -468,6 +468,7 @@ export const useNotificationMessage = () => {
 	);
 
 	// Logout translations
+	const logoutPost200OkSuccessResponse = t("alerts:auth.logout.post.200OkSuccessResponse");
 	const logoutPost201CreatedSuccessResponse = t("alerts:auth.logout.post.201CreatedSuccessResponse");
 	const logoutPost400BadRequestErrorResponse = t("alerts:auth.logout.post.400BadRequestErrorResponse");
 	const logoutPost401UnauthorizedErrorResponse = t("alerts:auth.logout.post.401UnauthorizedErrorResponse");
@@ -1198,6 +1199,12 @@ export const useNotificationMessage = () => {
 					const postResponse = {
 						method: "POST",
 						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: logoutPost200OkSuccessResponse,
+								isSuccess: true
+							},
 							{
 								status: 201,
 								title: fallback201CreatedSuccessResponse,

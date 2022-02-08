@@ -1,9 +1,9 @@
 import { MemoizedProfileMenuDropdown } from "@components/dropdowns/ProfileMenuDropdown";
 import { ChevronUpIcon } from "@heroicons/react/solid";
-import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useUser } from "@hooks/useUser";
-import { memo, useMemo } from "react";
+import { SiteCrawlerAppContext } from "@pages/_app";
+import { memo, useContext, useMemo } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -12,28 +12,39 @@ import tw from "twin.macro";
  * Custom function to render the `ProfileMenu` component
  */
 const ProfileMenu = () => {
+	// Custom context
+	const { setConfig } = useContext(SiteCrawlerAppContext);
+
 	// Custom hooks
 	const {
 		ref: profileMenuRef,
 		isComponentVisible: isProfileMenuComponentVisible,
 		setIsComponentVisible: setIsProfileMenuComponentVisible
 	} = useComponentVisible(false);
-	const { state, setConfig } = useAlertMessage();
 
 	// `user` SWR hook
 	const { user, errorUser, validatingUser } = useUser();
 
-	// TODO: Error handling for `user` SWR hook
 	useMemo(() => {
-		// Show alert message after failed `user` SWR hook fetch
-		typeof errorUser !== "undefined" && errorUser !== null
-			? setConfig({
-					isUser: true,
-					method: errorUser?.config?.method ?? null,
-					status: errorUser?.status ?? null
-			  })
-			: null;
-	}, [errorUser]);
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			// Show alert message after failed `user` SWR hook fetch
+			errorUser
+				? setConfig({
+						isSites: true,
+						method: errorUser?.config?.method ?? null,
+						status: errorUser?.status ?? null
+				  })
+				: null;
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [user, errorUser]);
 
 	return (
 		<div ref={profileMenuRef} tw="flex-shrink-0 flex flex-col relative">

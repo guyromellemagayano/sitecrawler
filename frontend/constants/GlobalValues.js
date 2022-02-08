@@ -43,6 +43,7 @@ export const perPageQuery = "per_page=";
 
 // Sort Query String Values
 export const sortByFinishedAtDescending = "-finished_at";
+export const sortByNameAscending = "name";
 
 // Reusable String Values
 export const Basic = "Basic";

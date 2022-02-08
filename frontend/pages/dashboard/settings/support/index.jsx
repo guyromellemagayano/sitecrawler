@@ -1,4 +1,4 @@
-import { Layout } from "@components/layouts";
+import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedHelpSupportSettingsPageLayout } from "@components/layouts/pages/HelpSupportSettings";
 import { NextSeo } from "next-seo";
@@ -10,15 +10,13 @@ export default function HelpSupport() {
 	const helpSupport = t("helpSupport");
 
 	return (
-		<>
+		<MemoizedLayout>
 			<NextSeo title={helpSupport} />
 			<MemoizedPageLayout pageTitle={helpSupport}>
 				<MemoizedHelpSupportSettingsPageLayout />
 			</MemoizedPageLayout>
-		</>
+		</MemoizedLayout>
 	);
 }
 
-HelpSupport.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
-};
+HelpSupport.getLayout = (page) => page;

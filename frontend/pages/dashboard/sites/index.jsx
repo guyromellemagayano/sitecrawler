@@ -1,6 +1,6 @@
-import { Layout } from "@components/layouts";
+import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedSitesDashboardPageLayout } from "@components/layouts/pages/SitesDashboard";
+import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 
@@ -10,15 +10,14 @@ export default function Sites() {
 	const sitesDashboard = t("sitesDashboard");
 
 	return (
-		<>
+		<MemoizedLayout>
 			<NextSeo title={sitesDashboard} />
 			<MemoizedPageLayout pageTitle={sitesDashboard}>
-				<MemoizedSitesDashboardPageLayout />
+				<MemoizedComingSoonPageLayout />
+				{/* <MemoizedSitesDashboardPageLayout /> */}
 			</MemoizedPageLayout>
-		</>
+		</MemoizedLayout>
 	);
 }
 
-Sites.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
-};
+Sites.getLayout = (page) => page;

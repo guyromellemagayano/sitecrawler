@@ -7,17 +7,15 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { memo } from "react";
 import tw from "twin.macro";
-import { DataTable } from "./DataTable";
+import { MemoizedDataTable } from "./DataTable";
 
 /**
  * Custom function to render the `SitesTable` component
  *
- * @param {boolean} validatingSites
- * @param {object} errorSites
  * @param {object} sites
  * @param {boolean} disableLocalTime
  */
-const SitesTable = ({ validatingSites = false, errorSites = null, sites = null, disableLocalTime = false }) => {
+const SitesTable = ({ sites = null, disableLocalTime = false }) => {
 	// Translations
 	const { t } = useTranslation("sites");
 	const noAvailableSites = t("noAvailableSites");
@@ -61,14 +59,7 @@ const SitesTable = ({ validatingSites = false, errorSites = null, sites = null, 
 
 					<tbody tw="relative divide-y divide-gray-200">
 						{sites.data.results.map((result) => {
-							return (
-								<DataTable
-									key={result.id}
-									site={result}
-									validatingSites={validatingSites}
-									disableLocalTime={disableLocalTime}
-								/>
-							);
+							return <MemoizedDataTable key={result.id} site={result} disableLocalTime={disableLocalTime} />;
 						})}
 					</tbody>
 				</table>
@@ -83,9 +74,7 @@ const SitesTable = ({ validatingSites = false, errorSites = null, sites = null, 
 
 SitesTable.propTypes = {
 	disableLocalTime: PropTypes.bool,
-	errorSites: PropTypes.any,
-	sites: PropTypes.any,
-	validatingSites: PropTypes.bool
+	sites: PropTypes.any
 };
 
 /**

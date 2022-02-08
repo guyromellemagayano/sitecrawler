@@ -10,7 +10,7 @@ import { useCurrentSubscription } from "@hooks/useCurrentSubscription";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
 import "twin.macro";
@@ -31,8 +31,8 @@ const SubscriptionPlansPageLayout = () => {
 	const [togglePaymentPeriod, setTogglePaymentPeriod] = useState(false);
 
 	// SWR hooks
-	const { subscriptions, errorSubscriptions, validatingSubscriptions } = useSubscriptions();
-	const { currentSubscription, errorCurrentSubscription, validatingCurrentSubscription } = useCurrentSubscription();
+	const { subscriptions, errorSubscriptions } = useSubscriptions();
+	const { currentSubscription, errorCurrentSubscription } = useCurrentSubscription();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -70,24 +70,22 @@ const SubscriptionPlansPageLayout = () => {
 			// Mutate `currentSubscription` endpoint after successful 200 OK or 201 Created response is issued
 			mutate(CurrentSubscriptionApiEndpoint, false);
 
-			if (!validatingSubscriptions) {
-				if (
-					!errorSubscriptions &&
-					typeof subscriptions !== "undefined" &&
-					subscriptions !== null &&
-					!subscriptions?.data?.detail
-				) {
-					// Update plan name and id to reflect the updated subscription plan
-					subscriptions
-						?.filter((sub) => sub.id === subId)
-						?.map((val) => {
-							setPlanName(val.plan.name);
-							setPlanId(val.id);
-						}) ?? null;
+			if (
+				!errorSubscriptions &&
+				typeof subscriptions !== "undefined" &&
+				subscriptions !== null &&
+				!subscriptions?.data?.detail
+			) {
+				// Update plan name and id to reflect the updated subscription plan
+				subscriptions
+					?.filter((sub) => sub.id === subId)
+					?.map((val) => {
+						setPlanName(val.plan.name);
+						setPlanId(val.id);
+					}) ?? null;
 
-					// Update `isProcessingPayment` state to false
-					setIsProcessingPayment(false);
-				}
+				// Update `isProcessingPayment` state to false
+				setIsProcessingPayment(false);
 			}
 		} else {
 			// Update `isPaymentMethodModalVisible` state to false
@@ -295,55 +293,29 @@ const SubscriptionPlansPageLayout = () => {
 		} else return;
 	};
 
-	// Handle current payment period
-	const handleCurrentPaymentPeriod = useCallback(async () => {
-		if (!validatingCurrentSubscription && !validatingSubscriptions) {
-			if (
-				!errorCurrentSubscription &&
-				typeof currentSubscription !== "undefined" &&
-				currentSubscription !== null &&
-				!currentSubscription?.data?.detail &&
-				!errorSubscriptions &&
-				typeof subscriptions !== "undefined" &&
-				subscriptions !== null &&
-				!subscriptions?.data?.detail
-			) {
-				const subscriptionResults = subscriptions?.results ?? null;
+	// Handle `subscription` results
+	useEffect(() => {
+		if (!errorCurrentSubscription && currentSubscription && !errorSubscriptions && subscriptions) {
+			const subscriptionResults = subscriptions?.data?.results ?? null;
 
-				if (subscriptionResults !== null) {
-					subscriptionResults
-						?.filter((sub) => sub.id === currentSubscription?.id)
-						?.map((val) => {
-							setIntervalCount(val.price.recurring.interval_count);
-						}) ?? null;
-				}
+			if (subscriptionResults !== null) {
+				subscriptionResults
+					.filter((sub) => sub.id === currentSubscription?.data?.id)
+					.map((val) => {
+						setIntervalCount(val.price.recurring.interval_count);
+					}) || null;
 			}
 		}
-	}, [
-		currentSubscription,
-		errorCurrentSubscription,
-		validatingCurrentSubscription,
-		subscriptions,
-		errorSubscriptions,
-		validatingSubscriptions
-	]);
-
-	useEffect(() => {
-		handleCurrentPaymentPeriod();
-	}, [handleCurrentPaymentPeriod]);
+	}, [currentSubscription, errorCurrentSubscription, subscriptions, errorSubscriptions]);
 
 	// Handle `togglePaymentPeriod` state
-	const handleTogglePaymentPeriod = useCallback(() => {
+	useEffect(() => {
 		if (intervalCount > 1) {
 			setTogglePaymentPeriod(true);
 		} else {
 			setTogglePaymentPeriod(false);
 		}
 	}, [intervalCount]);
-
-	useEffect(() => {
-		handleTogglePaymentPeriod();
-	}, [handleTogglePaymentPeriod]);
 
 	return (
 		<>

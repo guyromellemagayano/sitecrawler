@@ -6,9 +6,10 @@ import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useMemo, useState } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -24,6 +25,9 @@ const SitesDashboardPageLayout = () => {
 	const siteText = t("sites:site");
 	const sitesText = t("sites:sites");
 
+	// Custom context
+	const { setConfig } = useContext(SiteCrawlerAppContext);
+
 	// Custom hooks
 	const { isComponentReady } = useLoading();
 
@@ -34,25 +38,28 @@ const SitesDashboardPageLayout = () => {
 	// `user` SWR hook
 	const { user, errorUser, validatingUser } = useUser();
 
-	// `sites` SWR hook
-	const { sites, errorSites, validatingSites } = useSites(scanApiEndpoint);
-
-	// Update `disableLocalTime` user setting
 	useMemo(() => {
 		let isMounted = true;
 
-		// Disable local time after `user` SWR hook fetch
 		(async () => {
 			if (!isMounted) return;
 
-			if (!validatingUser) {
-				if (user.data?.settings) {
-					if (
-						Object.prototype.hasOwnProperty.call(user.data.settings, "disableLocalTime") &&
-						Boolean(user.data.settings?.disableLocalTime)
-					) {
-						setDisableLocalTime(Boolean(user.data.settings.disableLocalTime));
-					}
+			// Show alert message after failed `user` SWR hook fetch
+			errorUser
+				? setConfig({
+						isSites: true,
+						method: errorUser?.config?.method ?? null,
+						status: errorUser?.status ?? null
+				  })
+				: null;
+
+			// Update `disableLocalTime` user setting
+			if (!validatingUser && !errorUser && user && !user?.data?.detail && user?.data?.settings) {
+				if (
+					Object.prototype.hasOwnProperty.call(user.data.settings, "disableLocalTime") &&
+					Boolean(user.data.settings?.disableLocalTime)
+				) {
+					setDisableLocalTime(Boolean(user.data.settings.disableLocalTime));
 				}
 			}
 
@@ -62,7 +69,31 @@ const SitesDashboardPageLayout = () => {
 		return () => {
 			isMounted = false;
 		};
-	}, [user, validatingUser]);
+	}, [user, errorUser, validatingUser]);
+
+	// `sites` SWR hook
+	const { sites, errorSites } = useSites(scanApiEndpoint);
+
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			// Show alert message after failed `sites` SWR hook fetch
+			errorSites
+				? setConfig({
+						isSites: true,
+						method: errorSites?.config?.method ?? null,
+						status: errorSites?.status ?? null
+				  })
+				: null;
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [sites, errorSites]);
 
 	return (
 		<>
@@ -74,7 +105,7 @@ const SitesDashboardPageLayout = () => {
 								<>
 									<ExternalLinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
 									<span tw="text-sm leading-6 font-semibold text-gray-500">
-										{sites?.data?.count + " "}
+										{sites?.data?.count ?? 0 + " "}
 										{sites?.data?.count > 1 ? handleConversionStringToLowercase(sitesText) : siteText}
 									</span>
 								</>
@@ -104,12 +135,7 @@ const SitesDashboardPageLayout = () => {
 							]}
 						>
 							<div tw="min-w-full h-full rounded-lg border-gray-300 -mx-4">
-								<MemoizedSitesTable
-									validatingSites={validatingSites}
-									errorSites={errorSites}
-									sites={sites}
-									disableLocalTime={disableLocalTime}
-								/>
+								<MemoizedSitesTable sites={sites} disableLocalTime={disableLocalTime} />
 							</div>
 						</div>
 					</div>

@@ -1,4 +1,4 @@
-import { Layout } from "@components/layouts";
+import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
 import { NextSeo } from "next-seo";
@@ -10,15 +10,13 @@ export default function Reports() {
 	const auditLogs = t("auditLogs");
 
 	return (
-		<>
+		<MemoizedLayout>
 			<NextSeo title={auditLogs} />
 			<MemoizedPageLayout pageTitle={auditLogs}>
 				<MemoizedComingSoonPageLayout />
 			</MemoizedPageLayout>
-		</>
+		</MemoizedLayout>
 	);
 }
 
-Reports.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
-};
+Reports.getLayout = (page) => page;

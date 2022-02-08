@@ -1,13 +1,14 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { MemoizedBasicPlan } from "@components/plans/BasicPlan";
 import { MemoizedMonthlyPlans } from "@components/plans/MonthlyPlans";
 import { MemoizedSemiAnnualPlans } from "@components/plans/SemiAnnualPlans";
 import { useLoading } from "@hooks/useLoading";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -53,26 +54,26 @@ const SubscriptionPlansPricing = ({
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
-	const { state, setConfig } = useNotificationMessage();
+
+	// Custom context
+	const { setConfig } = useContext(SiteCrawlerAppContext);
 
 	// Handle `user` local time
 	const handleUserLocalTime = useCallback(async () => {
-		if (!validatingUser) {
-			if (!errorUser && typeof user !== "undefined" && user !== null && !user?.data?.detail) {
-				const disableLocalTimeUserSetting = user?.data?.settings?.disableLocalTime ?? null;
+		if (!errorUser && user && !user?.data?.detail && user?.data?.settings?.disableLocalTime) {
+			const disableLocalTimeUserSetting = user?.data?.settings?.disableLocalTime ?? null;
 
-				if (disableLocalTimeUserSetting !== null) {
-					if (disableLocalTimeUserSetting) {
-						setDisableLocalTime(true);
-					} else {
-						setDisableLocalTime(false);
-					}
+			if (disableLocalTimeUserSetting !== null) {
+				if (disableLocalTimeUserSetting) {
+					setDisableLocalTime(true);
 				} else {
 					setDisableLocalTime(false);
 				}
+			} else {
+				setDisableLocalTime(false);
 			}
 		}
-	}, [user, errorUser, validatingUser]);
+	}, [user, errorUser]);
 
 	useEffect(() => {
 		let isMounted = true;

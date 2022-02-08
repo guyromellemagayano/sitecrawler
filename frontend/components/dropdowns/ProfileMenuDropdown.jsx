@@ -63,7 +63,7 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 							)}
 						</span>
 						{isComponentReady && user?.data?.group?.name ? (
-							user?.data?.group?.name === Basic || user?.data?.group?.name === Pro ? (
+							user.data.group.name === Basic || user.data.group.name === Pro ? (
 								<Link href={SubscriptionPlansSettingsLink} passHref>
 									<a
 										css={[

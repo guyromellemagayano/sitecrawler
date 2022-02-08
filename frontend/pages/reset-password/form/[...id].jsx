@@ -1,4 +1,4 @@
-import { Layout } from "@components/layouts";
+import { MemoizedLayout } from "@components/layouts";
 import { MemoizedResetPasswordFormPageLayout } from "@components/layouts/pages/ResetPasswordForm";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
@@ -9,13 +9,11 @@ export default function ResetPasswordForm() {
 	const isResetPasswordForm = t("isResetPasswordForm");
 
 	return (
-		<>
+		<MemoizedLayout>
 			<NextSeo title={isResetPasswordForm} />
 			<MemoizedResetPasswordFormPageLayout />
-		</>
+		</MemoizedLayout>
 	);
 }
 
-ResetPasswordForm.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
-};
+ResetPasswordForm.getLayout = (page) => page;

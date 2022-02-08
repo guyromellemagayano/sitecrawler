@@ -10,11 +10,12 @@ import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
 import { useSiteSearch } from "@hooks/useSiteSearch";
 import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -28,6 +29,7 @@ import tw from "twin.macro";
 const AddSite = ({ handleOpenSidebar }) => {
 	const [maxSiteLimit, setMaxSiteLimit] = useState(null);
 	const [siteLimitCounter, setSiteLimitCounter] = useState(null);
+	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
 
 	// Translations
 	const { t } = useTranslation("sites");
@@ -38,9 +40,89 @@ const AddSite = ({ handleOpenSidebar }) => {
 	// Router
 	const { query, asPath } = useRouter();
 
-	// SWR hooks
+	// Custom context
+	const { setConfig } = useContext(SiteCrawlerAppContext);
+
+	// `user` SWR hook
 	const { user, errorUser, validatingUser } = useUser();
+
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			// Show alert message after failed `user` SWR hook fetch
+			errorUser
+				? setConfig({
+						isSites: true,
+						method: errorUser?.config?.method ?? null,
+						status: errorUser?.status ?? null
+				  })
+				: null;
+
+			// Handle `maxSiteLimit` value
+			if (!validatingUser && !errorUser && user && !user?.data?.detail && user?.data?.group?.max_sites) {
+				setMaxSiteLimit(user?.data?.group?.max_sites ?? 3);
+			}
+
+			return maxSiteLimit;
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [user, errorUser, validatingUser]);
+
+	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites();
+
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			// Show alert message after failed `sites` SWR hook fetch
+			errorSites
+				? setConfig({
+						isSites: true,
+						method: errorSites?.config?.method ?? null,
+						status: errorSites?.status ?? null
+				  })
+				: null;
+
+			// Handle `siteLimitCounter` value
+			if (!validatingSites && !errorSites && sites && !sites?.data?.detail && sites?.data?.count) {
+				setSiteLimitCounter(sites?.data?.count ?? 0);
+			}
+
+			return siteLimitCounter;
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [sites, errorSites, validatingSites]);
+
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			// Handle `hasSiteLimitReached` value
+			if (maxSiteLimit && siteLimitCounter) {
+				setHasSiteLimitReached(siteLimitCounter >= maxSiteLimit);
+			}
+
+			return hasSiteLimitReached;
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [siteLimitCounter, maxSiteLimit]);
 
 	// Custom hooks
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
@@ -59,45 +141,6 @@ const AddSite = ({ handleOpenSidebar }) => {
 			setPagePath: setPagePath
 		});
 	};
-
-	// Handle `maxSiteLimit` value
-	const handleMaxSiteLimit = useCallback(async () => {
-		if (!validatingUser) {
-			if (!errorUser && typeof user !== "undefined" && user !== null && !user?.data?.detail) {
-				setMaxSiteLimit(user?.data?.group?.max_sites ?? 3);
-			}
-		}
-	}, [user, errorUser, validatingUser]);
-
-	useEffect(() => {
-		handleMaxSiteLimit();
-	}, [handleMaxSiteLimit]);
-
-	// Handle `siteLimitCounter` value
-	const handleSiteLimitCounter = useCallback(async () => {
-		if (!validatingSites && !validatingUser) {
-			if (!errorSites && !errorUser)
-				if (
-					typeof sites !== "undefined" &&
-					sites !== null &&
-					typeof user !== "undefined" &&
-					user !== null &&
-					!user?.data?.detail
-				) {
-					setSiteLimitCounter(sites?.data?.count ?? null);
-					setMaxSiteLimit(user?.data?.group?.max_sites ?? null);
-				}
-		}
-
-		return () => {
-			setSiteLimitCounter(null);
-			setMaxSiteLimit(null);
-		};
-	}, [sites, errorSites, validatingSites, user, errorUser, validatingUser]);
-
-	useEffect(() => {
-		handleSiteLimitCounter();
-	}, [handleSiteLimitCounter]);
 
 	return (
 		<>
@@ -146,9 +189,8 @@ const AddSite = ({ handleOpenSidebar }) => {
 					</div>
 				</div>
 				<div tw="ml-4 p-4 xl:p-0 flex items-center lg:ml-6 space-x-2">
-					{console.log(siteLimitCounter, maxSiteLimit)}
 					{isComponentReady ? (
-						siteLimitCounter === maxSiteLimit || siteLimitCounter > maxSiteLimit ? (
+						hasSiteLimitReached ? (
 							<button
 								type="button"
 								tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"

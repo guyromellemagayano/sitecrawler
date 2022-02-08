@@ -1,4 +1,4 @@
-import { Layout } from "@components/layouts";
+import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedProfileSettingsPageLayout } from "@components/layouts/pages/ProfileSettings";
 import { NextSeo } from "next-seo";
@@ -10,15 +10,13 @@ export default function ProfileSettings() {
 	const profileSettings = t("profileSettings");
 
 	return (
-		<>
+		<MemoizedLayout>
 			<NextSeo title={profileSettings} />
 			<MemoizedPageLayout pageTitle={profileSettings}>
 				<MemoizedProfileSettingsPageLayout />
 			</MemoizedPageLayout>
-		</>
+		</MemoizedLayout>
 	);
 }
 
-ProfileSettings.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
-};
+ProfileSettings.getLayout = (page) => page;
