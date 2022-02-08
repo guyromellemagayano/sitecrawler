@@ -8,7 +8,7 @@ import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { useSWRConfig } from "swr";
 import "twin.macro";
 
@@ -23,8 +23,12 @@ export default function Logout() {
 	// Custom hooks
 	const { state, setConfig } = useNotificationMessage();
 
-	useEffect(() => {
+	useMemo(() => {
+		let isMounted = true;
+
 		(async () => {
+			if (!isMounted) return;
+
 			const logoutResponse = await handlePostMethod(LogoutApiEndpoint);
 			const logoutResponseData = logoutResponse?.data ?? null;
 			const logoutResponseStatus = logoutResponse?.status ?? null;
@@ -34,7 +38,7 @@ export default function Logout() {
 				// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
 				await mutate(UserApiEndpoint, false);
 
-				// Show alert message after failed response is issued
+				// Show alert message after success response is issued
 				setConfig({
 					isLogout: true,
 					method: logoutResponseMethod,
@@ -54,7 +58,11 @@ export default function Logout() {
 				});
 			}
 		})();
-	}, [asPath]);
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
 
 	// Translations
 	const { t } = useTranslation("logout");
@@ -64,14 +72,18 @@ export default function Logout() {
 		<>
 			<NextSeo title={logout} />
 
-			{state?.responses?.map((value, key) => {
-				// Alert Messsages
-				const responseTitle = value?.responseTitle ?? null;
-				const responseText = value?.responseText ?? null;
-				const isSuccess = value?.isSuccess ?? null;
+			{!state?.responses?.length ? (
+				<MemoizedLoader />
+			) : (
+				state?.responses?.map((value, key) => {
+					// Alert Messsages
+					const responseTitle = value?.responseTitle ?? null;
+					const responseText = value?.responseText ?? null;
+					const isSuccess = value?.isSuccess ?? null;
 
-				return <MemoizedLoader key={key} message={responseText} />;
-			}) ?? <MemoizedLoader />}
+					return <MemoizedLoader key={key} message={responseTitle + ": " + responseText} />;
+				})
+			)}
 		</>
 	);
 }
