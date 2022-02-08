@@ -30,7 +30,7 @@ const ConfirmEmailPageLayout = () => {
 	const { t } = useTranslation();
 	const confirmEmailFailed = t("confirmEmail:confirmEmailFailed");
 	const confirmEmailSuccess = t("confirmEmail:confirmEmailSuccess");
-	const fallbackUnknownResponse = t("alerts:fallback.unknownResponse");
+	const fallbackUnknownResponse = t("alerts:fallback.unknownResponse.message");
 	const confirmEmailPost201CreatedSuccessResponse = t("alerts:auth.confirmEmail.post.201CreatedSuccessResponse");
 	const confirmEmailPost400BadRequestErrorResponse = t("alerts:auth.confirmEmail.post.400BadRequestErrorResponse");
 	const confirmEmailPost401UnauthorizedErrorResponse = t("alerts:auth.confirmEmail.post.401UnauthorizedErrorResponse");
