@@ -4,7 +4,7 @@ import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { XCircleIcon } from "@heroicons/react/outline";
-import { useAlertMessage } from "@hooks/useAlertMessage";
+import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { forwardRef, Fragment, memo, useState } from "react";
@@ -40,7 +40,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 	const { mutate } = useSWRConfig();
 
 	// Custom hooks
-	const { state, setConfig } = useAlertMessage();
+	const { state, setConfig } = useNotificationMessage();
 
 	// Router
 	const { asPath } = useRouter();
@@ -146,10 +146,10 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 									<div tw="mt-2">
 										<p tw="text-sm leading-5 text-gray-500">{deleteSiteSubheadingText}</p>
 
-										{state?.responses !== [] && state?.responses?.length > 0 ? (
+										{state?.responses?.length > 0 ? (
 											<div tw="block my-5">
 												<div tw="flex justify-center sm:justify-start">
-													{state?.responses?.map((value, key) => {
+													{state.responses.map((value, key) => {
 														// Alert Messsages
 														const responseText = value?.responseText ?? null;
 														const isSuccess = value?.isSuccess ?? null;
