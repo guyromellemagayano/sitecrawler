@@ -71,7 +71,7 @@ const SitesDashboardPageLayout = () => {
 	}, [user, errorUser, validatingUser]);
 
 	// `sites` SWR hook
-	const { sites, errorSites } = useSites(scanApiEndpoint);
+	const { sites, errorSites, validatingSites } = useSites(scanApiEndpoint);
 
 	useMemo(() => {
 		let isMounted = true;
@@ -135,7 +135,11 @@ const SitesDashboardPageLayout = () => {
 							]}
 						>
 							<div tw="min-w-full h-full rounded-lg border-gray-300 -mx-4">
-								<MemoizedSitesTable sites={sites} disableLocalTime={disableLocalTime} />
+								<MemoizedSitesTable
+									sites={sites}
+									validatingSites={validatingSites}
+									disableLocalTime={disableLocalTime}
+								/>
 							</div>
 						</div>
 					</div>
