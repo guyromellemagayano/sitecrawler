@@ -32,7 +32,12 @@ const SitesTable = ({ sites = null, validatingSites = false, disableLocalTime = 
 	const labelsArray = SitesTableLabels();
 
 	return (
-		<section css={[tw`flex flex-col h-full`, validatingSites ? tw`justify-center` : tw`justify-start`]}>
+		<section
+			css={[
+				tw`flex flex-col w-full min-h-full h-full`,
+				!validatingSites && sites?.data?.count > 0 ? tw`justify-start` : tw`justify-center`
+			]}
+		>
 			{!validatingSites ? (
 				sites?.data?.count > 0 && sites?.data?.results?.length > 0 ? (
 					<table tw="relative w-full">
@@ -77,7 +82,7 @@ const SitesTable = ({ sites = null, validatingSites = false, disableLocalTime = 
 
 SitesTable.propTypes = {
 	disableLocalTime: PropTypes.bool,
-	sites: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+	sites: PropTypes.any,
 	validatingSites: PropTypes.bool
 };
 
