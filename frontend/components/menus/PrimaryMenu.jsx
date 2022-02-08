@@ -34,7 +34,7 @@ const PrimaryMenu = () => {
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
-			<div tw="flex flex-col min-h-screen py-4 lg:py-8">
+			<div tw="flex flex-col h-full py-4 lg:py-8">
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
 					<Link href={DashboardSitesLink} passHref>
 						<a tw="p-1 block w-full cursor-pointer">
