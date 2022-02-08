@@ -16,8 +16,8 @@ import tw from "twin.macro";
  * @param {object} data
  */
 const SiteList = ({ data = null }) => {
-	const [scanFinishedAt, setScanFinishedAt] = useState(null);
-	const [scanForceHttps, setScanForceHttps] = useState(null);
+	const [scanFinishedAt, setScanFinishedAt] = useState(undefined);
+	const [scanForceHttps, setScanForceHttps] = useState(undefined);
 	const [scanCount, setScanCount] = useState(null);
 	const [scanObjId, setScanObjId] = useState(null);
 
@@ -56,7 +56,7 @@ const SiteList = ({ data = null }) => {
 	// SWR hooks
 	const { stats, errorStats } = useStats(data?.id, scanObjId);
 
-	return !stats && !scan ? (
+	return !stats && !scan && !data ? (
 		<li>
 			<div tw="cursor-default w-full select-none block relative py-2 pl-3 pr-9">
 				<div tw="flex items-center space-x-3">
@@ -79,12 +79,16 @@ const SiteList = ({ data = null }) => {
 			}
 		>
 			<Link
-				href={{
-					pathname: `${DashboardSitesLink}[siteId]${SiteOverviewSlug}`,
-					query: {
-						siteId: data.id
-					}
-				}}
+				href={
+					scanCount > 0
+						? {
+								pathname: `${DashboardSitesLink}[siteId]${SiteOverviewSlug}`,
+								query: {
+									siteId: data.id
+								}
+						  }
+						: {}
+				}
 				passHref
 				replace
 			>
@@ -102,22 +106,27 @@ const SiteList = ({ data = null }) => {
 						<span
 							aria-label={
 								data.verified
-									? scanFinishedAt !== null && scanForceHttps !== null
-										? "Verified"
-										: "Recrawling in Process"
+									? "Verified"
+									: scanFinishedAt == null && scanForceHttps == null
+									? "Recrawling in Process"
 									: "Not Verified"
 							}
 							css={[
 								tw`flex-shrink-0 inline-block h-2 w-2 rounded-full`,
 								data.verified
-									? scanFinishedAt !== null && scanForceHttps !== null
-										? tw`bg-green-400`
-										: tw`bg-yellow-400`
+									? tw`bg-green-400`
+									: scanFinishedAt == null && scanForceHttps == null
+									? tw`bg-yellow-400`
 									: tw`bg-red-400`
 							]}
 						/>
 
-						<span css={[tw`font-medium block truncate`, data.verified ? tw`text-gray-500` : tw`text-gray-400`]}>
+						<span
+							css={[
+								tw`font-medium block truncate`,
+								data.verified && scanCount > 0 ? tw`text-gray-500` : tw`text-gray-400`
+							]}
+						>
 							{data.name}
 						</span>
 					</div>
