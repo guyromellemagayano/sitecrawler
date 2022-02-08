@@ -2,13 +2,13 @@ import { MemoizedMobileSidebarButton } from "@components/buttons/MobileSidebarBu
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
 import { AddNewSiteLink, AddNewSiteSlug } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
-import { useSiteSearch } from "@hooks/useSiteSearch";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
@@ -19,6 +19,7 @@ import { memo, useContext, useMemo, useState } from "react";
 import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 
 /**
@@ -38,7 +39,10 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const searchNotAvailable = t("searchNotAvailable");
 
 	// Router
-	const { query, asPath } = useRouter();
+	const router = useRouter();
+
+	// SWR hook for global mutations
+	const { mutate } = useSWRConfig();
 
 	// Custom context
 	const { setConfig } = useContext(SiteCrawlerAppContext);
@@ -63,7 +67,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 
 			// Handle `maxSiteLimit` value
 			if (!validatingUser && !errorUser && user && !user?.data?.detail && user?.data?.group?.max_sites) {
-				setMaxSiteLimit(user?.data?.group?.max_sites ?? 3);
+				setMaxSiteLimit(user.data.group.max_sites);
 			}
 
 			return maxSiteLimit;
@@ -133,13 +137,30 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// Custom hook that handles site search
-	const useHandleSiteSearch = async ({ e }) => {
-		return await useSiteSearch({
-			event: e,
-			scanApiEndpoint: scanApiEndpoint,
-			setSearchKey: setSearchKey,
-			setPagePath: setPagePath
-		});
+	const useHandleSiteSearch = async (e) => {
+		const searchTargetValue = e.target.value;
+
+		if (e.keyCode !== 13) return false;
+
+		let newPath = router.asPath;
+		newPath = handleRemoveUrlParameter(newPath, "search");
+		newPath = handleRemoveUrlParameter(newPath, "page");
+
+		if (!/\S/.test(searchTargetValue)) {
+			setSearchKey(searchTargetValue);
+		} else {
+			if (newPath.includes("?")) newPath += `&search=${searchTargetValue}`;
+			else newPath += `?search=${searchTargetValue}`;
+
+			setSearchKey(searchTargetValue);
+		}
+
+		if (newPath.includes("?")) setPagePath(`${newPath}&`);
+		else setPagePath(`${newPath}?`);
+
+		router.push(newPath);
+
+		return await mutate(scanApiEndpoint, false);
 	};
 
 	return (
@@ -170,7 +191,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 												type="search"
 												name="search-sites"
 												id="searchSites"
-												tw="block w-full max-w-xs h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+												tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
 												placeholder={searchSites}
 												onKeyUp={useHandleSiteSearch}
 												defaultValue={searchKey}
@@ -204,10 +225,10 @@ const AddSite = ({ handleOpenSidebar }) => {
 						) : (
 							<Link href={AddNewSiteLink + "?step=1&edit=false&verified=false"} passHref>
 								<a
-									disabled={asPath.includes(AddNewSiteSlug) ? true : false}
+									disabled={router.asPath.includes(AddNewSiteSlug) ? true : false}
 									css={[
 										tw`border border-transparent inline-flex items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full`,
-										asPath.includes(AddNewSiteSlug)
+										router.asPath.includes(AddNewSiteSlug)
 											? tw`opacity-50 bg-gray-300 cursor-not-allowed`
 											: tw`cursor-pointer bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 active:bg-green-700 focus:outline-none`
 									]}
