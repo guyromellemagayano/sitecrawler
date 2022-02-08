@@ -104,7 +104,7 @@ const SitesDashboardPageLayout = () => {
 								<>
 									<ExternalLinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
 									<span tw="text-sm leading-6 font-semibold text-gray-500">
-										{sites.data.count > 0
+										{sites.data.count > 1
 											? sites.data.count + " " + handleConversionStringToLowercase(sitesText)
 											: sites.data.count + " " + siteText}
 									</span>
@@ -134,7 +134,7 @@ const SitesDashboardPageLayout = () => {
 								isComponentReady && sites?.data?.count === 0 && tw`flex items-center`
 							]}
 						>
-							<div tw="min-w-full h-full rounded-lg border-gray-300 -mx-4">
+							<div tw="min-w-full h-full rounded-lg border-gray-300">
 								<MemoizedSitesTable
 									sites={sites}
 									validatingSites={validatingSites}
