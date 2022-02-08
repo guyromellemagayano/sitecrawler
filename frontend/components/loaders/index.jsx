@@ -6,7 +6,11 @@ import "twin.macro";
  * Custom function to render the `Loader` component
  */
 const Loader = ({ message = null }) => {
-	return <MemoizedLoadingMessage message={message} />;
+	return (
+		<main tw="flex justify-center items-center h-screen">
+			<MemoizedLoadingMessage message={message} />
+		</main>
+	);
 };
 
 /**

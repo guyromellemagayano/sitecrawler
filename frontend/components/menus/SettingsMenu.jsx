@@ -1,6 +1,6 @@
-import { MemoizedAppLogo } from "@components/logos/AppLogo";
 import { MemoizedSiteSelect } from "@components/select/SiteSelect";
-import { AuthAppLogo, SiteLogoWhite } from "@constants/GlobalValues";
+import { SiteLogoWhite } from "@components/svgs/SiteLogo";
+import { AuthAppLogo } from "@constants/GlobalValues";
 import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { GlobeIcon } from "@heroicons/react/outline";
@@ -38,13 +38,7 @@ const SettingsMenu = () => {
 				<div tw="flex items-center flex-shrink-0 flex-row px-3 mb-0">
 					<Link href={DashboardSitesLink} passHref>
 						<a css={[tw`p-1 block w-full`, isComponentReady ? tw`cursor-pointer` : null]}>
-							<MemoizedAppLogo
-								className="flex"
-								src={SiteLogoWhite}
-								alt={appLogo}
-								width={AuthAppLogo.width}
-								height={AuthAppLogo.height}
-							/>
+							<SiteLogoWhite className="flex" width={AuthAppLogo.width} height={AuthAppLogo.height} />
 						</a>
 					</Link>
 				</div>

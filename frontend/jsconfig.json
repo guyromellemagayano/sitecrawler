@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"experimentalDecorators": true,
-		"jsxImportSource": "react",
+		"jsx": "react",
 		"paths": {
 			"@components/*": ["./components/*"],
 			"@constants/*": ["./constants/*"],

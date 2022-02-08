@@ -3,7 +3,6 @@ import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReach
 import { AddNewSiteLink, AddNewSiteSlug } from "@constants/PageLinks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
-import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
@@ -15,7 +14,7 @@ import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -46,7 +45,6 @@ const AddSite = ({ handleOpenSidebar }) => {
 	// Custom hooks
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
 	const { isComponentReady } = useLoading();
-	const { state, setConfig } = useAlertMessage();
 
 	// Helper functions
 	const { searchKey, setSearchKey, linksPerPage, setPagePath } = useSiteQueries();
@@ -74,18 +72,6 @@ const AddSite = ({ handleOpenSidebar }) => {
 	useEffect(() => {
 		handleMaxSiteLimit();
 	}, [handleMaxSiteLimit]);
-
-	// TODO: Error handling for `user` SWR hook
-	useMemo(() => {
-		// Show alert message after failed `user` SWR hook
-		errorSites
-			? setConfig({
-					isSites: true,
-					method: errorSites?.config?.method ?? null,
-					status: errorSites?.status ?? null
-			  })
-			: null;
-	}, [errorSites]);
 
 	// Handle `siteLimitCounter` value
 	const handleSiteLimitCounter = useCallback(async () => {
@@ -160,6 +146,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 					</div>
 				</div>
 				<div tw="ml-4 p-4 xl:p-0 flex items-center lg:ml-6 space-x-2">
+					{console.log(siteLimitCounter, maxSiteLimit)}
 					{isComponentReady ? (
 						siteLimitCounter === maxSiteLimit || siteLimitCounter > maxSiteLimit ? (
 							<button

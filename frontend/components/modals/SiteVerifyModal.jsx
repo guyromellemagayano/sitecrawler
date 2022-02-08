@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { ClipboardIcon } from "@heroicons/react/solid";
-import { useAlertMessage } from "@hooks/useAlertMessage";
+import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { forwardRef, Fragment, memo, useEffect, useState } from "react";
@@ -54,7 +54,7 @@ const SiteVerifyModal = (
 	const { mutate } = useSWRConfig();
 
 	// Custom hooks
-	const { state, setConfig } = useAlertMessage();
+	const { state, setConfig } = useNotificationMessage();
 
 	// Handle site verification copy to clipboard
 	useEffect(() => {
@@ -250,10 +250,10 @@ const SiteVerifyModal = (
 											<li tw="text-sm leading-6 text-gray-500">{ReactHtmlParser(instruction3Text)}</li>
 										</ol>
 
-										{state?.responses !== [] && state?.responses?.length > 0 ? (
+										{state?.responses?.length > 0 ? (
 											<div tw="block my-5">
 												<div tw="flex justify-center sm:justify-start">
-													{state?.responses?.map((value, key) => {
+													{state.responses.map((value, key) => {
 														// Alert Messsages
 														const responseText = value?.responseText ?? null;
 														const isSuccess = value?.isSuccess ?? null;

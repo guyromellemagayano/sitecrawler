@@ -1,4 +1,4 @@
-import { MemoizedDashboardLayout } from "@components/layouts";
+import { Layout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedAddNewSitePageLayout } from "@components/layouts/pages/AddNewSite";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
@@ -35,7 +35,7 @@ export async function getServerSideProps({ req, query }) {
 	if (
 		userData !== null &&
 		!userData?.detail &&
-		Object.keys(userData)?.length > 0 &&
+		!Object.keys(userData).find((key) => key === "detail") &&
 		Math.round(userStatus / 200) === 1
 	) {
 		const sid = query?.sid ? parseInt(query?.sid) : null;
@@ -124,5 +124,5 @@ export default function AddNewSite() {
 }
 
 AddNewSite.getLayout = function getLayout(page) {
-	return <MemoizedDashboardLayout>{page}</MemoizedDashboardLayout>;
+	return <Layout>{page}</Layout>;
 };

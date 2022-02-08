@@ -1,11 +1,10 @@
 /* eslint-disable-line no-useless-escape */
-import { MemoizedAlert } from "@components/alerts";
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { FormSubmissionInterval } from "@constants/GlobalValues";
 import { AddNewSiteLink } from "@constants/PageLinks";
 import { handleGetMethod, handlePatchMethod, handlePostMethod } from "@helpers/handleHttpMethods";
-import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useLoading } from "@hooks/useLoading";
+import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { Formik } from "formik";
@@ -52,6 +51,9 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 	const siteUrlAlreadyExists = t("alerts:sites.urlInformation.post.misc.siteUrlAlreadyExists");
 	const enterValidSiteUrl = t("alerts:sites.urlInformation.post.misc.enterValidSiteUrl");
 
+	// Router
+	const router = useRouter();
+
 	// Update `editMode` state when `edit` prop changes
 	useEffect(() => {
 		if (typeof edit !== "undefined" && edit !== null) {
@@ -59,30 +61,16 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 		}
 	}, [edit]);
 
-	// Router
-	const router = useRouter();
-
 	// SWR hooks
-	const { user, errorUser, validatingUser } = useUser();
-	const { sites, errorSites, validatingSites } = useSites();
+	const { user, errorUser } = useUser();
+	const { sites, errorSites } = useSites();
 
 	// Custom hooks
-	const { state, setConfig } = useAlertMessage();
+	const { setConfig } = useNotificationMessage();
 	const { isComponentReady } = useLoading();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
-
-	// TODO: Error handling for `user` SWR hook
-	useMemo(() => {
-		errorUser
-			? setConfig({
-					isUser: true,
-					method: errorUser?.config?.method ?? null,
-					status: errorUser?.response?.status ?? null
-			  })
-			: null;
-	}, [errorUser]);
 
 	// Handle `user` large page threshold value
 	useMemo(() => {
@@ -91,7 +79,7 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 		(() => {
 			if (isMounted) return;
 
-			if (!validatingUser && user?.data) {
+			if (!errorUser && user && user?.data?.large_page_size_threshold) {
 				setLargePageSizeThreshold(user.data?.large_page_size_threshold ?? null);
 			}
 
@@ -101,37 +89,26 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [user, validatingUser]);
-
-	// TODO: Error handling for `sites` SWR hook
-	useMemo(() => {
-		errorSites
-			? setConfig({
-					isSites: true,
-					method: errorSites?.config?.method ?? null,
-					status: errorSites?.response?.status ?? null
-			  })
-			: null;
-	}, [errorSites]);
+	}, [user, errorUser]);
 
 	// Handle `site` data
 	useMemo(() => {
 		let isMounted = true;
 
-		if (isMounted) return;
+		(() => {
+			if (isMounted) return;
 
-		if (!validatingSites && sites?.data) {
-			setSiteData(sites.data?.results?.length > 0 ? sites.data?.results?.filter((site) => site.id === sid) : null);
+			if (!errorSites && sites && sites?.data) {
+				setSiteData(sites.data?.results?.length > 0 ? sites.data?.results?.filter((site) => site.id === sid) : null);
 
-			console.log(siteData);
-
-			return siteData;
-		}
+				return siteData;
+			}
+		})();
 
 		return () => {
 			isMounted = false;
 		};
-	}, [sid, sites, validatingSites]);
+	}, [sid, sites]);
 
 	// Handle `site` details form data
 	useMemo(() => {
@@ -140,7 +117,7 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 		(() => {
 			if (isMounted) return;
 
-			if (!validatingSites && sites?.data) {
+			if (!errorSites && sites && sites?.data) {
 				if (edit) {
 					setSiteUrlProtocol(
 						(siteData?.[0]?.url?.indexOf("http://") == 0 || siteData?.[0]?.url?.indexOf("https://") == 0) ?? ""
@@ -160,7 +137,7 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [sites, validatingSites, edit, siteData, siteUrl, siteName, siteUrlProtocol]);
+	}, [sites, errorSites, edit]);
 
 	const urlRegex = new RegExp(
 		/^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|\/|\?)*)?$/i
@@ -168,18 +145,6 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 
 	return (
 		<>
-			{state?.responses !== [] && state?.responses?.length > 0 ? (
-				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
-					{state?.responses?.map((value, key) => {
-						// Alert Messsages
-						const responseText = value?.responseText ?? null;
-						const isSuccess = value?.isSuccess ?? null;
-
-						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
-					}) ?? null}
-				</div>
-			) : null}
-
 			<Formik
 				enableReinitialize={editMode}
 				initialValues={{

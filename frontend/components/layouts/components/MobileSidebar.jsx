@@ -19,7 +19,7 @@ const MobileSidebarLayout = ({ openSidebar = false, setOpenSidebar }, ref) => {
 
 	return (
 		<Transition show={openSidebar} tw="flex lg:hidden flex-shrink-0">
-			<div ref={ref} tw="fixed inset-0 flex z-9999 lg:hidden" role="dialog" aria-modal="true">
+			<div ref={ref} tw="fixed inset-0 flex z-50 lg:hidden" role="dialog" aria-modal="true">
 				<Transition.Child
 					enter="mobile-sidebar-first-child-enter"
 					enterFrom="mobile-sidebar-first-child-enter-from"

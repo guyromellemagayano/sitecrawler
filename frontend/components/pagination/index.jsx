@@ -1,8 +1,9 @@
+import { MemoizedNotification } from "@components/notifications";
 import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
 import { MaxSiteLimit } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
-import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useLoading } from "@hooks/useLoading";
+import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { usePage } from "@hooks/usePage";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
@@ -10,7 +11,7 @@ import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import Pagination from "rc-pagination";
-import { memo, useMemo, useState } from "react";
+import { memo } from "react";
 import { useSWRConfig } from "swr";
 import "twin.macro";
 
@@ -18,8 +19,6 @@ import "twin.macro";
  * Custom function to render the `Pagination` component
  */
 const DataPagination = () => {
-	const [pageData, setPageData] = useState(null);
-
 	// Router
 	const { asPath, query } = useRouter();
 	const router = useRouter();
@@ -28,11 +27,10 @@ const DataPagination = () => {
 	const { mutate } = useSWRConfig();
 
 	// Custom hooks
-
 	const { linksPerPage, setLinksPerPage, pagePath, setPagePath } = useSiteQueries();
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 	const { isComponentReady } = useLoading();
-	const { state, setConfig } = useAlertMessage();
+	const { state, setConfig } = useNotificationMessage();
 
 	// SWR hooks
 	const { page, errorPage, validatingPage } = usePage(scanApiEndpoint);
@@ -54,43 +52,8 @@ const DataPagination = () => {
 	const resultsText = t("common:results");
 	const rowsPerPageText = t("common:rowsPerPage");
 
-	// TODO: Error handling for `page` SWR hook
-	useMemo(() => {
-		typeof errorPage !== "undefined" && errorPage !== null
-			? setConfig({
-					isPage: true,
-					method: errorPage?.config?.method ?? null,
-					status: errorPage?.status ?? null
-			  })
-			: null;
-	}, [errorPage]);
-
-	// Handle `page` object change
-	useMemo(() => {
-		let isMounted = true;
-
-		// Update `pageData` state after `page` SWR hook fetch
-		(async () => {
-			if (!isMounted) return;
-
-			if (!validatingPage) {
-				const pageData = await page?.data;
-
-				if (typeof pageData !== "undefined" && pageData !== null) {
-					setPageData(page.data);
-				}
-			}
-
-			return pageData;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [page, validatingPage]);
-
 	// Set `pageCount` value
-	const pageCount = pageData?.count || 0;
+	const pageCount = page?.data?.count || 0;
 
 	// Set `totalPages` value
 	const totalPages = Math.ceil(pageCount / linksPerPage) || 0;
@@ -153,59 +116,85 @@ const DataPagination = () => {
 		}
 	};
 
-	return !validatingPage ? (
-		<div tw="bg-white mt-8 mb-4 py-2 lg:flex items-center justify-between align-middle">
-			<div tw="flex items-center mb-8 lg:m-0">
-				<div tw="mt-2 lg:my-0">
-					<p tw="text-center lg:text-left text-sm leading-5 text-gray-500">
-						{showingText}
-						<span tw="px-1 font-medium">{paginatedItems[0] || 0}</span>
-						{toText}
-						<span tw="px-1 font-medium">{paginatedItems[paginatedItems.length - 1] || 0}</span>
-						{ofText}
-						<span tw="px-1 font-medium">{pageData?.count || 0}</span>
-						{resultsText}
-					</p>
-				</div>
-			</div>
+	return (
+		<>
+			{state?.responses !== [] && state?.responses?.length > 0 ? (
+				<div tw="fixed z-50 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
+					{state?.responses?.map((value, key) => {
+						// Alert Messsages
+						const responseTitle = value?.responseTitle ?? null;
+						const responseText = value?.responseText ?? null;
+						const isSuccess = value?.isSuccess ?? null;
 
-			{/* TODO: Fix UI of previous and next buttons when they reach their first or last pages */}
-			<Pagination
-				className="pagination"
-				current={currentPage}
-				defaultCurrent={currentPage}
-				defaultPageSize={linksPerPageOptions[0]}
-				disabled={!isComponentReady}
-				onChange={handlePageChange}
-				pageSize={linksPerPage}
-				showLessItems
-				showPrevNextJumpers
-				total={totalPages * linksPerPage}
-				prevIcon={previousText}
-				nextIcon={nextText}
-			/>
-
-			<div tw="flex items-center mt-4 lg:m-0">
-				<h1 tw="-mt-px pr-4 inline-flex items-center text-sm leading-5 font-normal text-gray-500">{rowsPerPageText}</h1>
-				<div>
-					<select
-						onChange={handleRowsPerPageChange}
-						value={linksPerPage}
-						tw="block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md sm:leading-5"
-					>
-						{linksPerPageOptions.map((val, key) => {
-							return (
-								<option key={key} value={val}>
-									{val === 20 ? "--" : val}
-								</option>
-							);
-						})}
-					</select>
+						return (
+							<MemoizedNotification
+								key={key}
+								responseTitle={responseTitle}
+								responseText={responseText}
+								isSuccess={isSuccess}
+							/>
+						);
+					}) ?? null}
 				</div>
-			</div>
-		</div>
-	) : (
-		<MemoizedPaginationSkeleton />
+			) : null}
+
+			{!validatingPage ? (
+				<div tw="bg-white mt-8 mb-4 py-2 lg:flex items-center justify-between align-middle">
+					<div tw="flex items-center mb-8 lg:m-0">
+						<div tw="mt-2 lg:my-0">
+							<p tw="text-center lg:text-left text-sm leading-5 text-gray-500">
+								{showingText}
+								<span tw="px-1 font-medium">{paginatedItems[0] || 0}</span>
+								{toText}
+								<span tw="px-1 font-medium">{paginatedItems[paginatedItems.length - 1] || 0}</span>
+								{ofText}
+								<span tw="px-1 font-medium">{page?.data?.count || 0}</span>
+								{resultsText}
+							</p>
+						</div>
+					</div>
+
+					{/* TODO: Fix UI of previous and next buttons when they reach their first or last pages */}
+					<Pagination
+						className="pagination"
+						current={currentPage}
+						defaultCurrent={currentPage}
+						defaultPageSize={linksPerPageOptions[0]}
+						disabled={!isComponentReady}
+						onChange={handlePageChange}
+						pageSize={linksPerPage}
+						showLessItems
+						showPrevNextJumpers
+						total={totalPages * linksPerPage}
+						prevIcon={previousText}
+						nextIcon={nextText}
+					/>
+
+					<div tw="flex items-center mt-4 lg:m-0">
+						<h1 tw="-mt-px pr-4 inline-flex items-center text-sm leading-5 font-normal text-gray-500">
+							{rowsPerPageText}
+						</h1>
+						<div>
+							<select
+								onChange={handleRowsPerPageChange}
+								value={linksPerPage}
+								tw="block w-full pl-3 pr-10 py-2 text-base leading-6 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md sm:leading-5"
+							>
+								{linksPerPageOptions.map((val, key) => {
+									return (
+										<option key={key} value={val}>
+											{val === 20 ? "--" : val}
+										</option>
+									);
+								})}
+							</select>
+						</div>
+					</div>
+				</div>
+			) : (
+				<MemoizedPaginationSkeleton />
+			)}
+		</>
 	);
 };
 

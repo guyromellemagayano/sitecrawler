@@ -1,5 +1,5 @@
 import { MemoizedBreadcrumbs } from "@components/breadcrumbs";
-import { LoginLink, LogoutLink, SubscriptionPlansSlug } from "@constants/PageLinks";
+import { LoginLink, SubscriptionPlansSlug } from "@constants/PageLinks";
 import { useLoading } from "@hooks/useLoading";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -24,7 +24,6 @@ const PageLayout = ({ children, pageTitle = null }) => {
 	const { isComponentReady } = useLoading();
 
 	useEffect(() => {
-		router.prefetch(LogoutLink);
 		router.prefetch(LoginLink);
 	}, [router]);
 

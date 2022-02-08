@@ -1,11 +1,10 @@
-import { MemoizedAlert } from "@components/alerts";
-import { MemoizedLayout } from "@components/layouts";
+import { Layout } from "@components/layouts";
 import { MemoizedLoader } from "@components/loaders";
 import { LogoutApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { RedirectInterval } from "@constants/GlobalValues";
-import { HomeLink } from "@constants/PageLinks";
+import { LoginLink } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import { useAlertMessage } from "@hooks/useAlertMessage";
+import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -22,7 +21,7 @@ export default function Logout() {
 	const { mutate } = useSWRConfig();
 
 	// Custom hooks
-	const { state, setConfig } = useAlertMessage();
+	const { state, setConfig } = useNotificationMessage();
 
 	useEffect(() => {
 		(async () => {
@@ -44,7 +43,7 @@ export default function Logout() {
 
 				// Redirect to sites dashboard page after successful 200 OK response is established
 				setTimeout(() => {
-					router.push(HomeLink);
+					router.push(LoginLink);
 				}, RedirectInterval);
 			} else {
 				// Show alert message after failed response is issued
@@ -63,24 +62,20 @@ export default function Logout() {
 
 	return (
 		<>
-			{state?.responses !== [] && state?.responses?.length > 0 ? (
-				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
-					{state?.responses?.map((value, key) => {
-						// Alert Messsages
-						const responseText = value?.responseText ?? null;
-						const isSuccess = value?.isSuccess ?? null;
-
-						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
-					}) ?? null}
-				</div>
-			) : null}
-
 			<NextSeo title={logout} />
-			<MemoizedLoader />
+
+			{state?.responses?.map((value, key) => {
+				// Alert Messsages
+				const responseTitle = value?.responseTitle ?? null;
+				const responseText = value?.responseText ?? null;
+				const isSuccess = value?.isSuccess ?? null;
+
+				return <MemoizedLoader key={key} message={responseText} />;
+			}) ?? <MemoizedLoader />}
 		</>
 	);
 }
 
 Logout.getLayout = function getLayout(page) {
-	return <MemoizedLayout>{page}</MemoizedLayout>;
+	return <Layout>{page}</Layout>;
 };

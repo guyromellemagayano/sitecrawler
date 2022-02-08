@@ -397,6 +397,32 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 		}
 	}
 
+	.notifications {
+		&-enter {
+			${tw`transform ease-out duration-300 transition`}
+
+			&-from {
+				${tw`translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2`}
+			}
+
+			&-to {
+				${tw`translate-y-0 opacity-100 sm:translate-x-0`}
+			}
+		}
+
+		&-leave {
+			${tw`transition ease-in duration-100`}
+
+			&-from {
+				${tw`opacity-100`}
+			}
+
+			&-to {
+				${tw`opacity-0`}
+			}
+		}
+	}
+
 	.alerts {
 		&-enter {
 			${tw`transition-opacity duration-75`}

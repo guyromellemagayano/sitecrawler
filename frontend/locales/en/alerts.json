@@ -11,10 +11,18 @@
 		"502BadGatewayErrorResponse": "Bad Gateway",
 		"503ServiceUnavailableErrorResponse": "Service Unavailable",
 		"504GatewayTimeoutErrorResponse": "Gateway Timeout",
-		"unknownResponse": "An unknown error has occured. Please try again.",
-		"unknownSuccessResponse": "Success",
-		"unknownClientErrorResponse": "An unknown client error has occured. Please try again.",
-		"unknownServerErrorResponse": "An unknown server error has occured. Please try again."
+		"unknownResponse": {
+			"title": "Unknown Response",
+			"message": "An unknown error has occured. Please try again."
+		},
+		"unknownClientErrorResponse": {
+			"title": "Unknown Client Error",
+			"message": "An unknown client error has occured. Please try again."
+		},
+		"unknownServerErrorResponse": {
+			"title": "Unknown Server Error",
+			"message": "An unknown server error has occured. Please try again."
+		}
 	},
 	"auth": {
 		"user": {
@@ -136,18 +144,6 @@
 			}
 		},
 		"logout": {
-			"get": {
-				"200OkSuccessResponse": "Logout get success! Got a 200 OK success response. Redirecting you to the login page...",
-				"400BadRequestErrorResponse": "Logout get failed. Got a 400 bad request error response. Please try again. Redirecting you to back to your sites dashboard...",
-				"401UnauthorizedErrorResponse": "Logout get failed. Got a 401 unauthorized error response. Please try again. Redirecting you to back to your sites dashboard...",
-				"403ForbiddenErrorResponse": "Logout get failed. Got a 403 forbidden error response. Redirecting you to back to your sites dashboard...",
-				"404NotFoundErrorResponse": "Logout get failed. Got a 404 not found error response. Redirecting you to back to your sites dashboard...",
-				"429TooManyRequestsErrorResponse": "Logout get failed. Got a 429 too many requests error response. Redirecting you to back to your sites dashboard...",
-				"500InternalServerErrorResponse": "Logout get failed. Got a 500 internal server error response. Redirecting you to back to your sites dashboard...",
-				"502BadGatewayErrorResponse": "Logout get failed. Got a 502 bad gateway error response. Redirecting you to back to your sites dashboard...",
-				"503ServiceUnavailableErrorResponse": "Logout get failed. Got a 503 service unavailable error response. Redirecting you to back to your sites dashboard...",
-				"504GatewayTimeoutErrorResponse": "Logout get failed. Got a 504 gateway timeout error response. Redirecting you to back to your sites dashboard..."
-			},
 			"post": {
 				"200OkSuccessResponse": "Logout post success! Got a 200 OK success response. Redirecting you to the login page...",
 				"201CreatedSuccessResponse": "Logout post success! Got a 201 created success response. Redirecting you to the login page...",

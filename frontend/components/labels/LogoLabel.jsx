@@ -1,5 +1,5 @@
-import { MemoizedAppLogo } from "@components/logos/AppLogo";
-import { NoAuthAppLogo, SiteLogoDark } from "@constants/GlobalValues";
+import { SiteLogoDark } from "@components/svgs/SiteLogo";
+import { NoAuthAppLogo } from "@constants/GlobalValues";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { memo } from "react";
@@ -34,10 +34,8 @@ const LogoLabel = ({
 	const isConfirmEmailText = t("isConfirmEmail");
 
 	return (
-		<div tw="sm:mx-auto sm:w-full sm:max-w-md flex justify-center flex-col">
-			{!isLogin ? (
-				<MemoizedAppLogo src={SiteLogoDark} alt={appLogo} width={NoAuthAppLogo.width} height={NoAuthAppLogo.height} />
-			) : null}
+		<div tw="sm:mx-auto sm:w-full sm:max-w-md flex justify-center items-center flex-col">
+			{!isLogin ? <SiteLogoDark width={NoAuthAppLogo.width} height={NoAuthAppLogo.height} /> : null}
 			<h2 tw="mt-12 mb-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
 				{isLogin
 					? isLoginText

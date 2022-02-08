@@ -11,9 +11,7 @@ const AppAxiosInstance = axios.create({
 		"Content-Type": "application/json",
 		"X-CSRFToken": Cookies.get("csrftoken") ?? null
 	},
-	validateStatus: function (status) {
-		return status >= 200 && status < 600;
-	}
+	withCredentials: true
 });
 
 // Use `axios` interceptors for all HTTP methods (GET, POST, PUT, DELETE, etc.)

@@ -25,7 +25,7 @@ export const LgScreenBreakpoint = 1024;
 export const MutateInterval = 1500;
 export const RedirectInterval = 1250;
 export const RevalidationInterval = 5000;
-export const AlertDisplayInterval = 7500;
+export const NotificationDisplayInterval = 7500;
 export const ModalDisplayInterval = 3500;
 export const OnErrorRetryCount = 5;
 export const NoInterval = 0;
@@ -35,8 +35,6 @@ export const MaxSitesPerPage = 1;
 export const MaxSiteLimit = 100;
 
 // File Locations
-export const SiteLogoDark = "/images/logos/site-logo-dark.svg";
-export const SiteLogoWhite = "/images/logos/site-logo-white.svg";
 export const SubscriptionSuccessBadge = "/images/backgrounds/subscription-success-badge.png";
 
 // Query Strings

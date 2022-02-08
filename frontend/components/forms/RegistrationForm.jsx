@@ -1,4 +1,3 @@
-import { MemoizedAlert } from "@components/alerts";
 import { RegistrationApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import {
 	FormPasswordMaxChars,
@@ -7,10 +6,10 @@ import {
 	FormStringMinChars
 } from "@constants/GlobalValues";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import { useAlertMessage } from "@hooks/useAlertMessage";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
@@ -41,23 +40,11 @@ const RegistrationForm = () => {
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
-	// Custom hooks
-	const { state, setConfig } = useAlertMessage();
+	// Custom context
+	const { setConfig } = useContext(SiteCrawlerAppContext);
 
 	return (
 		<>
-			{state?.responses !== [] && state?.responses?.length > 0 ? (
-				<div tw="fixed z-9999 right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto">
-					{state?.responses?.map((value, key) => {
-						// Alert Messsages
-						const responseText = value?.responseText ?? null;
-						const isSuccess = value?.isSuccess ?? null;
-
-						return <MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />;
-					}) ?? null}
-				</div>
-			) : null}
-
 			<Formik
 				initialValues={{
 					firstname: "",

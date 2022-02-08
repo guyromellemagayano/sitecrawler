@@ -1,7 +1,7 @@
-import { handleAlertMessages } from "@helpers/handleAlertMessages";
+import { handleNotificationMessages } from "@helpers/handleNotificationMessages";
 import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
-import { useEffect, useReducer, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 import "twin.macro";
 
 const messagesReducer = (state, action) => {
@@ -14,7 +14,7 @@ const messagesReducer = (state, action) => {
 /**
  * Custom hook that will handle success and error messages
  */
-export const useAlertMessage = () => {
+export const useNotificationMessage = () => {
 	const [config, setConfig] = useState({
 		isLocalTimeEnabled: false,
 		isLocalTimeDisabled: false,
@@ -33,7 +33,9 @@ export const useAlertMessage = () => {
 		isSubscriptions: false,
 		isSupport: false,
 		isUser: false,
-		isError: null,
+		isError: false,
+		isAlert: false,
+		isNotification: false,
 		method: null,
 		status: null,
 		responses: []
@@ -466,16 +468,6 @@ export const useAlertMessage = () => {
 	);
 
 	// Logout translations
-	const logoutGet200OkSuccessResponse = t("alerts:auth.logout.get.200OkSuccessResponse");
-	const logoutGet400BadRequestErrorResponse = t("alerts:auth.logout.get.400BadRequestErrorResponse");
-	const logoutGet401UnauthorizedErrorResponse = t("alerts:auth.logout.get.401UnauthorizedErrorResponse");
-	const logoutGet403ForbiddenErrorResponse = t("alerts:auth.logout.get.403ForbiddenErrorResponse");
-	const logoutGet404NotFoundErrorResponse = t("alerts:auth.logout.get.404NotFoundErrorResponse");
-	const logoutGet429TooManyRequestsErrorResponse = t("alerts:auth.logout.get.429TooManyRequestsErrorResponse");
-	const logoutGet500InternalServerErrorResponse = t("alerts:auth.logout.get.500InternalServerErrorResponse");
-	const logoutGet502BadGatewayErrorResponse = t("alerts:auth.logout.get.502BadGatewayErrorResponse");
-	const logoutGet503ServiceUnavailableErrorResponse = t("alerts:auth.logout.get.503ServiceUnavailableErrorResponse");
-	const logoutGet504GatewayTimeoutErrorResponse = t("alerts:auth.logout.get.504GatewayTimeoutErrorResponse");
 	const logoutPost201CreatedSuccessResponse = t("alerts:auth.logout.post.201CreatedSuccessResponse");
 	const logoutPost400BadRequestErrorResponse = t("alerts:auth.logout.post.400BadRequestErrorResponse");
 	const logoutPost401UnauthorizedErrorResponse = t("alerts:auth.logout.post.401UnauthorizedErrorResponse");
@@ -488,11 +480,25 @@ export const useAlertMessage = () => {
 	const logoutPost504GatewayTimeoutErrorResponse = t("alerts:auth.logout.post.504GatewayTimeoutErrorResponse");
 
 	// Fallback translations
-	const fallbackUnknownResponse = t("alerts:fallback.unknownResponse");
-	const fallbackUnknownClientErrorResponse = t("alerts:fallback.unknownClientErrorResponse");
-	const fallbackUnknownServerErrorResponse = t("alerts:fallback.unknownServerErrorResponse");
+	const fallback200OkSuccessResponse = t("alerts:fallback.200OkSuccessResponse");
+	const fallback201CreatedSuccessResponse = t("alerts:fallback.201CreatedSuccessResponse");
+	const fallback400BadRequestErrorResponse = t("alerts:fallback.400BadRequestErrorResponse");
+	const fallback401UnauthorizedErrorResponse = t("alerts:fallback.401UnauthorizedErrorResponse");
+	const fallback403ForbiddenErrorResponse = t("alerts:fallback.403ForbiddenErrorResponse");
+	const fallback404NotFoundErrorResponse = t("alerts:fallback.404NotFoundErrorResponse");
+	const fallback429TooManyRequestsErrorResponse = t("alerts:fallback.429TooManyRequestsErrorResponse");
+	const fallback500InternalServerErrorResponse = t("alerts:fallback.500InternalServerErrorResponse");
+	const fallback502BadGatewayErrorResponse = t("alerts:fallback.502BadGatewayErrorResponse");
+	const fallback503ServiceUnavailableErrorResponse = t("alerts:fallback.503ServiceUnavailableErrorResponse");
+	const fallback504GatewayTimeoutErrorResponse = t("alerts:fallback.504GatewayTimeoutErrorResponse");
+	const fallbackUnknownResponseTitle = t("alerts:fallback.unknownResponse.title");
+	const fallbackUnknownResponseMessage = t("alerts:fallback.unknownResponse.message");
+	const fallbackUnknownClientErrorResponseTitle = t("alerts:fallback.unknownClientErrorResponse.title");
+	const fallbackUnknownClientErrorResponseMessage = t("alerts:fallback.unknownClientErrorResponse.message");
+	const fallbackUnknownServerErrorResponseTitle = t("alerts:fallback.unknownServerErrorResponse.title");
+	const fallbackUnknownServerErrorResponseMessage = t("alerts:fallback.unknownServerErrorResponse.message");
 
-	useEffect(() => {
+	useMemo(() => {
 		if (config) {
 			const isLocalTimeEnabled = config?.isLocalTimeEnabled ?? false;
 			const isLocalTimeDisabled = config?.isLocalTimeDisabled ?? false;
@@ -511,21 +517,24 @@ export const useAlertMessage = () => {
 			const isSubscriptions = config?.isSubscriptions ?? false;
 			const isSupport = config?.isSupport ?? false;
 			const isUser = config?.isUser ?? false;
-			const isError = config?.isError ?? null;
+			const isError = config?.isError ?? false;
 			const method = config?.method ?? null;
 			const status = config?.status ?? null;
 
 			const fallback = {
 				unknownResponse: {
-					message: fallbackUnknownResponse,
+					title: fallbackUnknownResponseTitle,
+					message: fallbackUnknownResponseMessage,
 					isSuccess: false
 				},
 				unknownClientErrorResponse: {
-					message: fallbackUnknownClientErrorResponse,
+					title: fallbackUnknownClientErrorResponseTitle,
+					message: fallbackUnknownClientErrorResponseMessage,
 					isSuccess: false
 				},
 				unknownServerErrorResponse: {
-					message: fallbackUnknownServerErrorResponse,
+					title: fallbackUnknownServerErrorResponseTitle,
+					message: fallbackUnknownServerErrorResponseMessage,
 					isSuccess: false
 				}
 			};
@@ -559,56 +568,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: userDelete200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: userDelete201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: userDelete400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: userDelete401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: userDelete403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: userDelete404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: userDelete429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: userDelete500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: userDelete502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: userDelete503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: userDelete504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -619,56 +639,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: userGet200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: userGet201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: userGet400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: userGet401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: userGet403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: userGet404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: userGet429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: userGet500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: userGet502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: userGet503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: userGet504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -679,56 +710,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: userPatch200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: userPatch201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: userPatch400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: userPatch401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: userPatch403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: userPatch404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: userPatch429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: userPatch500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: userPatch502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: userPatch503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: userPatch504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -739,56 +781,67 @@ export const useAlertMessage = () => {
 						response: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: userPut200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: userPut201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: userPut400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: userPut401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: userPut403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: userPut404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: userPut429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: userPut500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: userPut502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: userPut503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: userPut504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -797,20 +850,36 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(deleteResponse);
 					responsesArray.push(getResponse);
-					responsesArray.push(deleteResponse);
 					responsesArray.push(patchResponse);
+					responsesArray.push(putResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isUser, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isUser,
+						data,
+						fallback
+					});
 				} else if (isLocalTimeEnabled) {
 					let responsesArray = [];
 
@@ -819,56 +888,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: localTimeEnabled200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: localTimeEnabled201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: localTimeEnabled400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: localTimeEnabled401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: localTimeEnabled403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: localTimeEnabled404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: localTimeEnabled429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: localTimeEnabled500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: localTimeEnabled502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: localTimeEnabled503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: localTimeEnabled504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -877,13 +957,31 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					handleAlertMessages({
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
 						dispatch,
 						config,
 						setConfig,
 						state,
 						isLocalTimeEnabled,
-						data: responsesArray,
+						data,
 						fallback
 					});
 				} else if (isLocalTimeDisabled) {
@@ -894,56 +992,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: localTimeDisabled200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: localTimeDisabled201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: localTimeDisabled400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: localTimeDisabled401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: localTimeDisabled403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: localTimeDisabled404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: localTimeDisabled429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: localTimeDisabled500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: localTimeDisabled502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: localTimeDisabled503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: localTimeDisabled504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -952,13 +1061,31 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					handleAlertMessages({
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
 						dispatch,
 						config,
 						setConfig,
 						state,
 						isLocalTimeDisabled,
-						data: responsesArray,
+						data,
 						fallback
 					});
 				} else if (isLogin) {
@@ -969,56 +1096,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: loginPost200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: loginPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: loginPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: loginPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: loginPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: loginPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: loginPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: loginPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: loginPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: loginPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: loginPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1027,17 +1165,33 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isLogin, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isLogin,
+						data,
+						fallback
+					});
 				} else if (isLogout) {
 					let responsesArray = [];
 
@@ -1046,126 +1200,96 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: logoutPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: logoutPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: logoutPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: logoutPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: logoutPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: logoutPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: logoutPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: logoutPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: logoutPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: logoutPost504GatewayTimeoutErrorResponse,
-								isSuccess: false
-							}
-						]
-					};
-					const getResponse = {
-						method: "GET",
-						responses: [
-							{
-								status: 200,
-								message: logoutGet200OkSuccessResponse,
-								isSuccess: true
-							},
-							{
-								status: 400,
-								message: logoutGet400BadRequestErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 401,
-								message: logoutGet401UnauthorizedErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 403,
-								message: logoutGet403ForbiddenErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 404,
-								message: logoutGet404NotFoundErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 429,
-								message: logoutGet429TooManyRequestsErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 500,
-								message: logoutGet500InternalServerErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 502,
-								message: logoutGet502BadGatewayErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 503,
-								message: logoutGet503ServiceUnavailableErrorResponse,
-								isSuccess: false
-							},
-							{
-								status: 504,
-								message: logoutGet504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
 						]
 					};
 
 					responsesArray.push(postResponse);
-					responsesArray.push(getResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isLogout, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isLogout,
+						data,
+						fallback
+					});
 				} else if (isRegistration) {
 					let responsesArray = [];
 
@@ -1174,56 +1298,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: registrationPost200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: registrationPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: registrationPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: registrationPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: registrationPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: registrationPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: registrationPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: registrationPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: registrationPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: registrationPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: registrationPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1232,17 +1367,33 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isRegistration, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isRegistration,
+						data,
+						fallback
+					});
 				} else if (isPasswordChange) {
 					let responsesArray = [];
 
@@ -1251,56 +1402,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: passwordChangePost200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: passwordChangePost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: passwordChangePost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: passwordChangePost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: passwordChangePost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: passwordChangePost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: passwordChangePost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: passwordChangePost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: passwordChangePost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: passwordChangePost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: passwordChangePost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1309,17 +1471,33 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isPasswordChange, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isPasswordChange,
+						data,
+						fallback
+					});
 				} else if (isPasswordReset) {
 					let responsesArray = [];
 
@@ -1328,56 +1506,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: passwordResetPost200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: passwordResetPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: passwordResetPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: passwordResetPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: passwordResetPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: passwordResetPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: passwordResetPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: passwordResetPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: passwordResetPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: passwordResetPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: passwordResetPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1386,17 +1575,33 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isPasswordReset, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isPasswordReset,
+						data,
+						fallback
+					});
 				} else if (isPasswordResetConfirm) {
 					let responsesArray = [];
 
@@ -1405,56 +1610,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: passwordResetConfirmPost200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: passwordResetConfirmPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: passwordResetConfirmPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: passwordResetConfirmPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: passwordResetConfirmPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: passwordResetConfirmPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: passwordResetConfirmPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: passwordResetConfirmPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: passwordResetConfirmPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: passwordResetConfirmPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: passwordResetConfirmPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1463,13 +1679,31 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					handleAlertMessages({
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
 						dispatch,
 						config,
 						setConfig,
 						state,
 						isPasswordResetConfirm,
-						data: responsesArray,
+						data,
 						fallback
 					});
 				} else if (isUrlInformationStep) {
@@ -1480,56 +1714,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: urlInformationStepPatch200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: urlInformationStepPatch201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: urlInformationStepPatch400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: urlInformationStepPatch401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: urlInformationStepPatch403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: urlInformationStepPatch404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: urlInformationStepPatch429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: urlInformationStepPatch500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: urlInformationStepPatch502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: urlInformationStepPatch503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: urlInformationStepPatch504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1540,56 +1785,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: urlInformationStepPost200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: urlInformationStepPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: urlInformationStepPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: urlInformationStepPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: urlInformationStepPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: urlInformationStepPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: urlInformationStepPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: urlInformationStepPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: urlInformationStepPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: urlInformationStepPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: urlInformationStepPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1599,17 +1855,33 @@ export const useAlertMessage = () => {
 					responsesArray.push(patchResponse);
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isPasswordReset, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isUrlInformationStep,
+						data,
+						fallback
+					});
 				} else if (isVerifyUrlStep) {
 					let responsesArray = [];
 
@@ -1618,6 +1890,7 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: isError
 									? verifyUrlStepPostMiscSiteVerificationFailedErrorResponse
 									: verifyUrlStepPost200OkSuccessResponse,
@@ -1625,51 +1898,61 @@ export const useAlertMessage = () => {
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: verifyUrlStepPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: verifyUrlStepPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: verifyUrlStepPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: verifyUrlStepPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: verifyUrlStepPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: verifyUrlStepPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: verifyUrlStepPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: verifyUrlStepPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: verifyUrlStepPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: verifyUrlStepPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1678,17 +1961,33 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isVerifyUrlStep, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isVerifyUrlStep,
+						data,
+						fallback
+					});
 				} else if (isSupport) {
 					let responsesArray = [];
 
@@ -1697,56 +1996,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: supportPost200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: supportPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: supportPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: supportPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: supportPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: supportPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: supportPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: supportPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: supportPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: supportPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: supportPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1755,17 +2065,33 @@ export const useAlertMessage = () => {
 
 					responsesArray.push(postResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isSupport, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isSupport,
+						data,
+						fallback
+					});
 				} else if (isPaymentMethod) {
 					let responsesArray = [];
 
@@ -1774,56 +2100,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: paymentMethodPost200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: paymentMethodPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: paymentMethodPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: paymentMethodPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: paymentMethodPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: paymentMethodPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: paymentMethodPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: paymentMethodPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: paymentMethodPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: paymentMethodPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: paymentMethodPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1834,56 +2171,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: paymentMethodGet200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: paymentMethodGet201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: paymentMethodGet400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: paymentMethodGet401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: paymentMethodGet403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: paymentMethodGet404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: paymentMethodGet429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: paymentMethodGet500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: paymentMethodGet502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: paymentMethodGet503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: paymentMethodGet504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1893,17 +2241,33 @@ export const useAlertMessage = () => {
 					responsesArray.push(postResponse);
 					responsesArray.push(getResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isPaymentMethod, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isPaymentMethod,
+						data,
+						fallback
+					});
 				} else if (isSites) {
 					let responsesArray = [];
 
@@ -1912,56 +2276,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: sitesPost200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: sitesPost201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: sitesPost400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: sitesPost401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: sitesPost403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: sitesPost404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: sitesPost429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: sitesPost500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: sitesPost502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: sitesPost503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: sitesPost504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -1972,56 +2347,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: sitesGet200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: sitesGet201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: sitesGet400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: sitesGet401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: sitesGet403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: sitesGet404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: sitesGet429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: sitesGet500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: sitesGet502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: sitesGet503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: sitesGet504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -2032,56 +2418,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: sitesPut200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: sitesPut201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: sitesPut400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: sitesPut401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: sitesPut403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: sitesPut404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: sitesPut429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: sitesPut500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: sitesPut502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: sitesPut503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: sitesPut504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -2092,56 +2489,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: sitesPatch200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: sitesPatch201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: sitesPatch400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: sitesPatch401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: sitesPatch403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: sitesPatch404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: sitesPatch429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: sitesPatch500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: sitesPatch502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: sitesPatch503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: sitesPatch504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -2152,56 +2560,67 @@ export const useAlertMessage = () => {
 						responses: [
 							{
 								status: 200,
+								title: fallback200OkSuccessResponse,
 								message: sitesDelete200OkSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 201,
+								title: fallback201CreatedSuccessResponse,
 								message: sitesDelete201CreatedSuccessResponse,
 								isSuccess: true
 							},
 							{
 								status: 400,
+								title: fallback400BadRequestErrorResponse,
 								message: sitesDelete400BadRequestErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
 								message: sitesDelete401UnauthorizedErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 403,
+								title: fallback403ForbiddenErrorResponse,
 								message: sitesDelete403ForbiddenErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 404,
+								title: fallback404NotFoundErrorResponse,
 								message: sitesDelete404NotFoundErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
 								message: sitesDelete429TooManyRequestsErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 500,
+								title: fallback500InternalServerErrorResponse,
 								message: sitesDelete500InternalServerErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 502,
+								title: fallback502BadGatewayErrorResponse,
 								message: sitesDelete502BadGatewayErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
 								message: sitesDelete503ServiceUnavailableErrorResponse,
 								isSuccess: false
 							},
 							{
 								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
 								message: sitesDelete504GatewayTimeoutErrorResponse,
 								isSuccess: false
 							}
@@ -2214,17 +2633,33 @@ export const useAlertMessage = () => {
 					responsesArray.push(patchResponse);
 					responsesArray.push(deleteResponse);
 
-					const data = responsesArray
-						?.find(
+					const dataMethod =
+						responsesArray?.find(
 							(datum) =>
 								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
-						)
-						?.responses?.find(
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
 							(response) =>
 								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
-						);
+						) ?? null;
 
-					handleAlertMessages({ dispatch, config, setConfig, state, isSites, data, fallback });
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isSites,
+						data,
+						fallback
+					});
 				} else {
 					return null;
 				}

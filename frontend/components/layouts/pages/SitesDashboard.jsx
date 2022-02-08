@@ -1,7 +1,6 @@
 import { MemoizedDataPagination } from "@components/pagination";
 import { MemoizedSitesTable } from "@components/tables/SitesTable";
 import { ExternalLinkIcon } from "@heroicons/react/outline";
-import { useAlertMessage } from "@hooks/useAlertMessage";
 import { useLoading } from "@hooks/useLoading";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
@@ -26,7 +25,6 @@ const SitesDashboardPageLayout = () => {
 	const sitesText = t("sites:sites");
 
 	// Custom hooks
-	const { state, setConfig } = useAlertMessage();
 	const { isComponentReady } = useLoading();
 
 	// Helper functions
@@ -38,18 +36,6 @@ const SitesDashboardPageLayout = () => {
 
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites(scanApiEndpoint);
-
-	// TODO: Error handling for `user` SWR hook
-	useMemo(() => {
-		// Show alert message after failed `user` SWR hook fetch
-		errorUser
-			? setConfig({
-					isUser: true,
-					method: errorUser?.config?.method ?? null,
-					status: errorUser?.status ?? null
-			  })
-			: null;
-	}, [errorUser]);
 
 	// Update `disableLocalTime` user setting
 	useMemo(() => {
@@ -77,18 +63,6 @@ const SitesDashboardPageLayout = () => {
 			isMounted = false;
 		};
 	}, [user, validatingUser]);
-
-	// TODO: Error handling for `sites` SWR hook
-	useMemo(() => {
-		// Show alert message after failed `sites` SWR hook fetch
-		errorSites
-			? setConfig({
-					isUser: true,
-					method: errorSites?.config?.method ?? null,
-					status: errorSites?.status ?? null
-			  })
-			: null;
-	}, [errorSites]);
 
 	return (
 		<>

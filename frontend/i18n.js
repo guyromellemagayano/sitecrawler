@@ -3,14 +3,13 @@ module.exports = {
 	defaultLocale: "en",
 	pages: {
 		"*": ["alerts", "common"],
-		"/": ["home"],
+		"/": ["sidebar", "sites", "login"],
 		"/account-exist": ["accountExist"],
 		"/confirm-email/[...id]": ["confirmEmail"],
-		"/login": ["login"],
-		"/logout": ["logout"],
 		"/registration": ["registration"],
 		"/reset-password/*": ["resetPassword"],
 		"/signup/[...id]": ["signup"],
+		"/logout": ["logout"],
 		"rgx:^/dashboard": ["sidebar", "sites"],
 		"rgx:^/dashboard/settings": ["settings"],
 		"/dashboard/audit-logs": ["auditLogs"]
