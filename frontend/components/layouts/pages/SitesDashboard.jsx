@@ -1,4 +1,3 @@
-import { MemoizedDataPagination } from "@components/pagination";
 import { MemoizedSitesTable } from "@components/tables/SitesTable";
 import { ExternalLinkIcon } from "@heroicons/react/outline";
 import { useLoading } from "@hooks/useLoading";
@@ -101,12 +100,13 @@ const SitesDashboardPageLayout = () => {
 				<div tw="flex-1 min-w-0">
 					<div tw="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
 						<div tw="mt-2 flex items-center space-x-3 text-sm text-gray-500">
-							{isComponentReady && sites?.data?.count > 0 && sites?.data?.results?.length > 0 ? (
+							{isComponentReady && sites?.data?.count && sites?.data?.results?.length > 0 ? (
 								<>
 									<ExternalLinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
 									<span tw="text-sm leading-6 font-semibold text-gray-500">
-										{sites?.data?.count ?? 0 + " "}
-										{sites?.data?.count > 1 ? handleConversionStringToLowercase(sitesText) : siteText}
+										{sites.data.count > 0
+											? sites.data.count + " " + handleConversionStringToLowercase(sitesText)
+											: sites.data.count + " " + siteText}
 									</span>
 								</>
 							) : (
@@ -142,9 +142,9 @@ const SitesDashboardPageLayout = () => {
 				</div>
 			</div>
 
-			<div tw="flex-none">
+			{/* <div tw="flex-none">
 				<MemoizedDataPagination />
-			</div>
+			</div> */}
 		</>
 	);
 };

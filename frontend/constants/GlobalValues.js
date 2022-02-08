@@ -31,7 +31,7 @@ export const OnErrorRetryCount = 5;
 export const NoInterval = 0;
 export const ResetStateTimeout = 2500;
 export const UnitAmountToRealPriceDivisor = 100;
-export const MaxSitesPerPage = 1;
+export const MaxSitesPerPage = 20;
 export const MaxSiteLimit = 100;
 
 // File Locations
