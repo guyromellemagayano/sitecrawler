@@ -1,21 +1,25 @@
 import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { memo, useContext, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 
 /**
  * Custom function to render the `DataTable` component
+ *
+ * @param {object} site
+ * @param {boolean} disableLocalTime
  */
-export const DataTable = ({ disableLocalTime = false, site = null, validatingSites = false }) => {
+const DataTable = ({ disableLocalTime = false, site = null }) => {
 	const [scanCount, setScanCount] = useState(null);
 	const [scanFinishedAt, setScanFinishedAt] = useState(null);
 	const [scanForceHttps, setScanForceHttps] = useState(null);
@@ -41,8 +45,10 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 	const visitExternalSiteText = t("sites:visitExternalSite");
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 
+	// Custom context
+	const { setConfig } = useContext(SiteCrawlerAppContext);
+
 	// Custom hooks
-	const { state, setConfig } = useNotificationMessage();
 	const {
 		ref: siteVerifyModalRef,
 		isComponentVisible: isSiteVerifyModalVisible,
@@ -81,51 +87,56 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 		(async () => {
 			if (!isMounted) return;
 
-			if (!validatingScan) {
-				const scanData = await scan?.data;
+			// Show alert message after failed `user` SWR hook fetch
+			errorScan
+				? setConfig({
+						isSites: true,
+						method: errorScan?.config?.method ?? null,
+						status: errorScan?.status ?? null
+				  })
+				: null;
 
-				if (typeof scanData !== "undefined" && scanData !== null) {
-					const currentScanCount = scanData?.count ?? null;
-					const currentScanFinishedAt =
-						scanData?.results?.length > 0
-							? scan.data.results.find((result) => {
-									if (currentScanCount > 0) {
-										if (result.finished_at == null) {
-											return result;
-										}
-
+			if (!validatingScan && scan?.data) {
+				const currentScanCount = scan.data?.count ?? null;
+				const currentScanFinishedAt =
+					scan.data?.results?.length > 0
+						? scan.data.results.find((result) => {
+								if (currentScanCount > 0) {
+									if (result.finished_at == null) {
 										return result;
 									}
-							  })?.finished_at
-							: null;
 
-					const currentScanForceHttps =
-						scanData?.results?.length > 0
-							? scan.data.results.find((result) => {
-									if (currentScanCount > 0) {
-										if (result.force_https == null) {
-											return result;
-										}
+									return result;
+								}
+						  })?.finished_at
+						: null;
 
+				const currentScanForceHttps =
+					scan.data?.results?.length > 0
+						? scan.data.results.find((result) => {
+								if (currentScanCount > 0) {
+									if (result.force_https == null) {
 										return result;
 									}
-							  })?.force_https
-							: null;
 
-					const currentScanObjId =
-						scanData?.results?.length > 0
-							? scan.data.results.find((result) =>
-									result.finished_at !== null && result.force_https !== null
-										? result.finished_at === currentScanFinishedAt && result.force_https === currentScanForceHttps
-										: result.finished_at == currentScanFinishedAt && result.force_https == currentScanForceHttps
-							  )?.id
-							: null;
+									return result;
+								}
+						  })?.force_https
+						: null;
 
-					setScanCount(currentScanCount);
-					setScanFinishedAt(currentScanFinishedAt);
-					setScanForceHttps(currentScanForceHttps);
-					setScanObjId(currentScanObjId);
-				}
+				const currentScanObjId =
+					scan.data?.results?.length > 0
+						? scan.data.results.find((result) =>
+								result.finished_at !== null && result.force_https !== null
+									? result.finished_at === currentScanFinishedAt && result.force_https === currentScanForceHttps
+									: result.finished_at == currentScanFinishedAt && result.force_https == currentScanForceHttps
+						  )?.id
+						: null;
+
+				setScanCount(currentScanCount);
+				setScanFinishedAt(currentScanFinishedAt);
+				setScanForceHttps(currentScanForceHttps);
+				setScanObjId(currentScanObjId);
 			}
 
 			return { scanCount, scanFinishedAt, scanForceHttps, scanObjId };
@@ -134,7 +145,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 		return () => {
 			isMounted = false;
 		};
-	}, [scan, validatingScan]);
+	}, [scan, errorScan, validatingScan]);
 
 	// Site `stats` SWR hook
 	const { stats, errorStats, validatingStats } = useStats(siteId, scanObjId);
@@ -146,34 +157,39 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 		(async () => {
 			if (!isMounted) return;
 
-			if (!validatingStats) {
-				const statsData = await stats?.data;
+			// Show alert message after failed `user` SWR hook fetch
+			errorStats
+				? setConfig({
+						isSites: true,
+						method: errorStats?.config?.method ?? null,
+						status: errorStats?.status ?? null
+				  })
+				: null;
 
-				if (typeof statsData !== "undefined" && statsData !== null) {
-					const currentLinkErrors = statsData?.num_non_ok_links ?? 0;
-					const currentPageErrors = statsData?.num_pages_tls_non_ok ?? 0;
-					const currentImageErrors =
-						statsData?.num_non_ok_images ??
-						0 + statsData?.num_images_with_missing_alts ??
-						0 + statsData?.num_images_tls_non_ok ??
-						0;
-					const currentSeoErrors =
-						statsData?.num_pages_without_title ??
-						0 + statsData?.num_pages_without_description ??
-						0 + statsData?.num_pages_without_h1_first ??
-						0 + statsData?.num_pages_without_h2_first ??
-						0;
-					const currentTotalErrors = await (currentLinkErrors +
-						currentPageErrors +
-						currentImageErrors +
-						currentSeoErrors);
+			if (!validatingStats && stats?.data) {
+				const currentLinkErrors = stats.data?.num_non_ok_links ?? 0;
+				const currentPageErrors = stats.data?.num_pages_tls_non_ok ?? 0;
+				const currentImageErrors =
+					stats.data?.num_non_ok_images ??
+					0 + stats.data?.num_images_with_missing_alts ??
+					0 + stats.data?.num_images_tls_non_ok ??
+					0;
+				const currentSeoErrors =
+					stats.data?.num_pages_without_title ??
+					0 + stats.data?.num_pages_without_description ??
+					0 + stats.data?.num_pages_without_h1_first ??
+					0 + stats.data?.num_pages_without_h2_first ??
+					0;
+				const currentTotalErrors = await (currentLinkErrors +
+					currentPageErrors +
+					currentImageErrors +
+					currentSeoErrors);
 
-					setLinkErrors(currentLinkErrors);
-					setPageErrors(currentPageErrors);
-					setImageErrors(currentImageErrors);
-					setSeoErrors(currentSeoErrors);
-					setTotalErrors(currentTotalErrors);
-				}
+				setLinkErrors(currentLinkErrors);
+				setPageErrors(currentPageErrors);
+				setImageErrors(currentImageErrors);
+				setSeoErrors(currentSeoErrors);
+				setTotalErrors(currentTotalErrors);
 			}
 
 			return { linkErrors, pageErrors, imageErrors, seoErrors, totalErrors };
@@ -182,7 +198,7 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 		return () => {
 			isMounted = false;
 		};
-	}, [stats, validatingStats]);
+	}, [stats, errorStats, validatingStats]);
 
 	return (
 		<tr>
@@ -400,3 +416,19 @@ export const DataTable = ({ disableLocalTime = false, site = null, validatingSit
 		</tr>
 	);
 };
+
+DataTable.propTypes = {
+	disableLocalTime: PropTypes.bool,
+	site: PropTypes.shape({
+		id: PropTypes.number,
+		name: PropTypes.string,
+		url: PropTypes.string,
+		verification_id: PropTypes.string,
+		verified: PropTypes.bool
+	})
+};
+
+/**
+ * Memoized custom `DataTable` component
+ */
+export const MemoizedDataTable = memo(DataTable);
