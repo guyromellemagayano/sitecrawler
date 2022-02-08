@@ -224,7 +224,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 
 				<div tw="flex flex-col items-start">
 					<div>
-						{!validatingScan && !validatingStats && site ? (
+						{!validatingScan && site ? (
 							<>
 								{siteVerified ? (
 									<span
@@ -362,41 +362,53 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{!validatingStats && totalErrors ? (
+				{isComponentReady ? (
 					<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{!validatingStats && stats?.data?.num_links ? (
-					<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
-						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-							{stats?.data?.num_links}
-						</a>
-					</Link>
+				{isComponentReady ? (
+					stats?.data?.num_links > 0 ? (
+						<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats?.data?.num_links}
+							</a>
+						</Link>
+					) : (
+						<span tw="text-sm leading-5 text-gray-500">0</span>
+					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{!validatingStats && stats?.data?.num_pages ? (
-					<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
-						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-							{stats?.data?.num_pages}
-						</a>
-					</Link>
+				{isComponentReady ? (
+					stats?.data?.num_pages > 0 ? (
+						<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats?.data?.num_pages}
+							</a>
+						</Link>
+					) : (
+						<span tw="cursor-default text-sm leading-6 font-semibold text-gray-600">0</span>
+					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{!validatingStats && stats?.data?.num_images ? (
-					<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
-						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-							{stats?.data?.num_images}
-						</a>
-					</Link>
+				{isComponentReady ? (
+					stats?.data?.num_images > 0 ? (
+						<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats?.data?.num_images}
+							</a>
+						</Link>
+					) : (
+						<span tw="cursor-default text-sm leading-6 font-semibold text-gray-600">0</span>
+					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
