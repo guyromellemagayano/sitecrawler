@@ -1,6 +1,6 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedComingSoonPageLayout } from "@components/layouts/pages/ComingSoon";
+import { MemoizedSitesDashboardPageLayout } from "@components/layouts/pages/SitesDashboard";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
 
@@ -13,8 +13,7 @@ export default function Sites() {
 		<MemoizedLayout>
 			<NextSeo title={sitesDashboard} />
 			<MemoizedPageLayout pageTitle={sitesDashboard}>
-				<MemoizedComingSoonPageLayout />
-				{/* <MemoizedSitesDashboardPageLayout /> */}
+				<MemoizedSitesDashboardPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
 	);
