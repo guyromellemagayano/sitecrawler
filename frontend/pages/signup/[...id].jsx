@@ -1,4 +1,4 @@
-import { Layout } from "@components/layouts";
+import { MemoizedLayout } from "@components/layouts";
 import { MemoizedSignupPageLayout } from "@components/layouts/pages/Signup";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { NextSeo } from "next-seo";
@@ -19,13 +19,11 @@ export default function Signup() {
 	}, []);
 
 	return (
-		<>
+		<MemoizedLayout>
 			<NextSeo title={completeSignup} />
 			<MemoizedSignupPageLayout />
-		</>
+		</MemoizedLayout>
 	);
 }
 
-Signup.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
-};
+Signup.getLayout = (page) => page;

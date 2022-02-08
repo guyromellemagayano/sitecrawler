@@ -1,4 +1,4 @@
-import { Layout } from "@components/layouts";
+import { MemoizedLayout } from "@components/layouts";
 import { MemoizedLoader } from "@components/loaders";
 import { LogoutApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { RedirectInterval } from "@constants/GlobalValues";
@@ -69,7 +69,7 @@ export default function Logout() {
 	const logout = t("logout");
 
 	return (
-		<>
+		<MemoizedLayout>
 			<NextSeo title={logout} />
 
 			{!state?.responses?.length ? (
@@ -84,10 +84,8 @@ export default function Logout() {
 					return <MemoizedLoader key={key} message={responseTitle + ": " + responseText} />;
 				})
 			)}
-		</>
+		</MemoizedLayout>
 	);
 }
 
-Logout.getLayout = function getLayout(page) {
-	return <Layout>{page}</Layout>;
-};
+Logout.getLayout = (page) => page;
