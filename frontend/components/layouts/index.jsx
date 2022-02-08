@@ -1,5 +1,6 @@
 import { MemoizedAddSite } from "@components/sites/AddSite";
 import { DashboardSitesLink, DashboardSlug, LoginLink } from "@constants/PageLinks";
+import { isProd } from "@constants/ServerEnv";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useRouter } from "next/router";
 import Script from "next/script";
@@ -32,11 +33,13 @@ export const DashboardLayout = ({ children }) => {
 
 	return (
 		<>
-			<Script
-				id="beacon-script"
-				strategy="lazyOnload"
-				dangerouslySetInnerHTML={{
-					__html: `
+			{typeof window !== "undefined" && isProd ? (
+				<>
+					<Script
+						id="beacon-script"
+						strategy="lazyOnload"
+						dangerouslySetInnerHTML={{
+							__html: `
 						!(function (e, t, n) {
 							function a() {
 								const e = t.getElementsByTagName("script")[0];
@@ -65,13 +68,13 @@ export const DashboardLayout = ({ children }) => {
 
 						window.Beacon("init", "94d0425a-cb40-4582-909a-2175532bbfa9");
 					`
-				}}
-			/>
-			<Script
-				id="usetiful-script"
-				strategy="lazyOnload"
-				dangerouslySetInnerHTML={{
-					__html: `
+						}}
+					/>
+					<Script
+						id="usetiful-script"
+						strategy="lazyOnload"
+						dangerouslySetInnerHTML={{
+							__html: `
 						(function (w, d, s) {
 							const a = d.getElementsByTagName("head")[0];
 							const r = d.createElement("script");
@@ -81,8 +84,10 @@ export const DashboardLayout = ({ children }) => {
 							r.dataset.token = "4b8863eaef435adc652a9d86eb33cbf9";
 							a.appendChild(r);
 						})(window, document, "https://www.usetiful.com/dist/usetiful.js");`
-				}}
-			/>
+						}}
+					/>
+				</>
+			) : null}
 
 			<main tw="h-screen">
 				<section tw="h-screen overflow-hidden bg-white flex">
