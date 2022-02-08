@@ -167,3 +167,8 @@ export const Layout = ({ children }) => {
 Layout.propTypes = {
 	children: PropTypes.any
 };
+
+/**
+ * Memoized custom `Layout` component
+ */
+export const MemoizedLayout = memo(Layout);
