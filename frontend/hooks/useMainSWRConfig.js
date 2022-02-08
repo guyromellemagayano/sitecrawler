@@ -30,7 +30,7 @@ export const useMainSWRConfig = (endpoint = null, options = null) => {
 					}
 				} else {
 					if (Math.round(data.status / 100) === 2 && !data.data.detail) {
-						if (router.asPath.includes(LoginLink)) {
+						if (router.asPath === LoginLink || !router.asPath.includes(DashboardSlug)) {
 							router.replace(DashboardSitesLink);
 						}
 					}
