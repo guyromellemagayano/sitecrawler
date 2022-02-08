@@ -4,9 +4,8 @@ import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { memo, useContext, useMemo } from "react";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import tw from "twin.macro";
+import "twin.macro";
 
 /**
  * Custom function to render the `ProfileMenu` component
@@ -23,7 +22,7 @@ const ProfileMenu = () => {
 	} = useComponentVisible(false);
 
 	// `user` SWR hook
-	const { user, errorUser, validatingUser } = useUser();
+	const { user, errorUser } = useUser();
 
 	useMemo(() => {
 		let isMounted = true;
@@ -50,37 +49,22 @@ const ProfileMenu = () => {
 		<div ref={profileMenuRef} tw="flex-shrink-0 flex flex-col relative">
 			<button
 				type="button"
-				css={[
-					tw`p-4 flex items-center justify-between flex-shrink-0 w-full focus:outline-none transition ease-in-out duration-150 bg-gray-900`,
-					!validatingUser ? tw`cursor-pointer hover:bg-gray-1100` : tw`cursor-default`
-				]}
+				tw="p-4 flex items-center justify-between flex-shrink-0 w-full focus:outline-none transition ease-in-out duration-150 bg-gray-900 cursor-pointer hover:bg-gray-1100"
 				id="options-menu"
 				aria-haspopup="true"
 				aria-expanded={isProfileMenuComponentVisible ? "true" : "false"}
-				onClick={!validatingUser ? () => setIsProfileMenuComponentVisible(!isProfileMenuComponentVisible) : () => {}}
+				onClick={() => setIsProfileMenuComponentVisible(!isProfileMenuComponentVisible)}
 			>
 				<div tw="flex items-center">
 					<div tw="flex flex-col flex-wrap text-left">
 						<p className="truncate-profile-text" tw="text-sm leading-tight mb-1 font-medium text-white">
-							{!validatingUser ? (
-								user?.data?.first_name?.length > 0 ? (
-									user.data.first_name
-								) : null
-							) : (
-								<Skeleton duration={2} width={85} height={15} tw="mb-1" />
-							)}
+							{user?.data?.first_name?.length > 0 ? user.data.first_name : null}
 						</p>
 						<p
 							className="truncate-profile-text"
 							tw="text-xs leading-4 font-medium text-white transition ease-in-out duration-150"
 						>
-							{!validatingUser ? (
-								user?.data?.email?.length > 0 ? (
-									user.data.email
-								) : null
-							) : (
-								<Skeleton duration={2} width={130} height={15} />
-							)}
+							{user?.data?.email?.length > 0 ? user.data.email : null}
 						</p>
 					</div>
 				</div>
