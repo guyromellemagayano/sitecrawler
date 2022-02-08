@@ -5,7 +5,6 @@ import { handleGetMethod } from "@helpers/handleHttpMethods";
 import * as Sentry from "@sentry/nextjs";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { useNotificationMessage } from "./useNotificationMessage";
 const { createContext, useContext } = require("react");
 
 /**
@@ -18,9 +17,6 @@ const { createContext, useContext } = require("react");
 export const useMainSWRConfig = (endpoint = null, options = null) => {
 	// Router
 	const router = useRouter();
-
-	// Custom hooks
-	const { state, setConfig } = useNotificationMessage();
 
 	// Default options
 	const defaultOptions = {
