@@ -1,4 +1,5 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
+import { orderingByNameQuery, sortByNameAscending } from "@constants/GlobalValues";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
@@ -10,7 +11,9 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  */
 export const useSites = (endpoint = null, options = null) => {
 	const currentEndpoint =
-		endpoint !== null && typeof endpoint === "string" && endpoint !== "" ? endpoint : SitesApiEndpoint;
+		endpoint !== null && typeof endpoint === "string" && endpoint !== ""
+			? endpoint
+			: SitesApiEndpoint + `?${orderingByNameQuery + sortByNameAscending}`;
 
 	const { data: sites, error: errorSites, isValidating: validatingSites } = useMainSWRConfig(currentEndpoint, options);
 
