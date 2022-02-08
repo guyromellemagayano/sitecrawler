@@ -1,4 +1,4 @@
-import { MemoizedNotification } from "@components/notifications";
+// import { MemoizedNotification } from "@components/notifications";
 import ProgressBar from "@components/progress-bar";
 import AppSeo from "@constants/AppSeo";
 import { isProd } from "@constants/ServerEnv";
@@ -6,6 +6,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
+import { useUser } from "@hooks/useUser";
 import GlobalStyles from "@styles/global";
 import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
@@ -28,6 +29,39 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// Router
 	const router = useRouter();
 
+	// User authentication, authorization, and redirection
+	const { user, errorUser, validatingUser } = useUser();
+
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			// Show alert message after failed `user` SWR hook fetch
+			errorUser
+				? setConfig({
+						isUser: true,
+						method: errorUser?.config?.method ?? null,
+						status: errorUser?.status ?? null
+				  })
+				: null;
+
+			if (!validatingUser && !errorUser && user && !user?.data?.detail && user?.data?.count) {
+				// Show alert message after success response is issued
+				setConfig({
+					isUser: true,
+					method: user?.config?.method ?? null,
+					status: user?.status ?? null
+				});
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [user, errorUser, validatingUser]);
+
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
@@ -48,6 +82,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	return getLayout(
 		<SiteCrawlerAppContext.Provider
 			value={{
+				user,
 				state,
 				setConfig
 			}}
@@ -55,29 +90,6 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			<GlobalStyles />
 			<DefaultSeo {...AppSeo} />
 			<ProgressBar />
-
-			{state?.responses?.map((value, key) => {
-				// Alert Messsages
-				const responseTitle = value.responseTitle ?? null;
-				const responseText = value.responseText ?? null;
-				const isSuccess = value.isSuccess ?? null;
-
-				return (
-					<div
-						key={key}
-						aria-live="assertive"
-						tw="fixed z-30 w-full max-w-md right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto"
-					>
-						<MemoizedNotification
-							key={key}
-							responseTitle={responseTitle}
-							responseText={responseText}
-							isSuccess={isSuccess}
-						/>
-					</div>
-				);
-			}) ?? null}
-
 			<Component {...pageProps} err={err} />
 		</SiteCrawlerAppContext.Provider>
 	);
