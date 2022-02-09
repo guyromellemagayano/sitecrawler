@@ -37,6 +37,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 	const siteUrl = site?.url ?? null;
 	const siteVerificationId = site?.verification_id ?? null;
 	const siteVerified = site?.verified ?? null;
+	const siteLastFinishedScanId = site?.last_finished_scan_id ?? null;
 
 	// Translations
 	const { t } = useTranslation();
@@ -79,7 +80,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 	};
 
 	// Site `scan` SWR hook
-	const { scan, errorScan, validatingScan } = useScan(siteId);
+	const { scan, errorScan } = useScan(siteId);
 
 	// Handle `scan` object id data
 	useMemo(() => {
@@ -98,47 +99,24 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 				  })
 				: null;
 
-			if (!validatingScan && scan?.data) {
+			if (scan?.data) {
 				const currentScanCount = scan.data?.count ?? null;
-				const currentScanFinishedAt =
-					scan.data?.results?.length > 0
-						? scan.data.results.find((result) => {
-								if (currentScanCount > 0) {
-									if (result.finished_at == null) {
-										return result;
-									}
 
-									return result;
-								}
-						  })?.finished_at
-						: null;
-
-				const currentScanForceHttps =
-					scan.data?.results?.length > 0
-						? scan.data.results.find((result) => {
-								if (currentScanCount > 0) {
-									if (result.force_https == null) {
-										return result;
-									}
-
-									return result;
-								}
-						  })?.force_https
-						: null;
-
-				const currentScanObjId =
-					scan.data?.results?.length > 0
-						? scan.data.results.find((result) =>
-								result.finished_at !== null && result.force_https !== null
-									? result.finished_at === currentScanFinishedAt && result.force_https === currentScanForceHttps
-									: result.finished_at == currentScanFinishedAt && result.force_https == currentScanForceHttps
-						  )?.id
-						: null;
-
-				setScanCount(currentScanCount);
-				setScanFinishedAt(currentScanFinishedAt);
-				setScanForceHttps(currentScanForceHttps);
-				setScanObjId(currentScanObjId);
+				if (currentScanCount > 0) {
+					scan.data?.results?.find((result) => {
+						if (result.id === siteLastFinishedScanId) {
+							setScanCount(currentScanCount);
+							setScanFinishedAt(dayjs(result.finished_at).calendar(null, calendarStrings));
+							setScanForceHttps(result.force_https);
+							setScanObjId(result.id);
+						}
+					});
+				} else {
+					setScanCount(currentScanCount);
+					setScanFinishedAt(notYetCrawledText);
+					setScanForceHttps(null);
+					setScanObjId(null);
+				}
 			}
 
 			return { scanCount, scanFinishedAt, scanForceHttps, scanObjId };
@@ -147,10 +125,10 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [scan, errorScan, validatingScan]);
+	}, [scan, errorScan]);
 
 	// Site `stats` SWR hook
-	const { stats, errorStats, validatingStats } = useStats(siteId, scanObjId);
+	const { stats, errorStats } = useStats(siteId, scanObjId);
 
 	// Handle `stats` object data
 	useMemo(() => {
@@ -168,7 +146,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 				  })
 				: null;
 
-			if (!validatingStats && stats?.data) {
+			if (stats?.data) {
 				const currentLinkErrors = stats.data?.num_non_ok_links ?? 0;
 				const currentPageErrors = stats.data?.num_pages_tls_non_ok ?? 0;
 				const currentImageErrors =
@@ -200,7 +178,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [stats, errorStats, validatingStats]);
+	}, [stats, errorStats]);
 
 	return (
 		<tr>
@@ -224,7 +202,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 
 				<div tw="flex flex-col items-start">
 					<div>
-						{!validatingScan && site ? (
+						{site ? (
 							<>
 								{siteVerified ? (
 									<span
@@ -293,36 +271,34 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 								</div>
 							</>
 						) : (
-							<>
-								<span tw="relative -left-3 flex items-start py-2 space-x-3">
+							<span tw="relative -left-3 flex items-start py-2 space-x-3">
+								<Skeleton
+									duration={2}
+									width={9}
+									height={9}
+									circle={true}
+									className="relative -left-3 top-4 flex-shrink-0 block"
+								/>
+								<div tw="inline-flex flex-col justify-start items-start">
 									<Skeleton
 										duration={2}
-										width={9}
-										height={9}
-										circle={true}
-										className="relative -left-3 top-4 flex-shrink-0 block"
+										width={150}
+										className="relative -left-3 inline-flex flex-col justify-start items-start"
 									/>
-									<div tw="inline-flex flex-col justify-start items-start">
-										<Skeleton
-											duration={2}
-											width={150}
-											className="relative -left-3 inline-flex flex-col justify-start items-start"
-										/>
-										<span tw="flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
-											<Skeleton duration={2} width={63} />
-											<Skeleton duration={2} width={63} />
-											<Skeleton duration={2} width={63} />
-											<Skeleton duration={2} width={63} />
-										</span>
-									</div>
-								</span>
-							</>
+									<span tw="flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
+										<Skeleton duration={2} width={63} />
+										<Skeleton duration={2} width={63} />
+										<Skeleton duration={2} width={63} />
+										<Skeleton duration={2} width={63} />
+									</span>
+								</div>
+							</span>
 						)}
 					</div>
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-				{!validatingScan && scan?.data?.results ? (
+				{isComponentReady ? (
 					scan?.data?.results?.length > 0 ? (
 						<span tw="space-x-2">
 							<span tw="text-sm leading-5 text-gray-500">

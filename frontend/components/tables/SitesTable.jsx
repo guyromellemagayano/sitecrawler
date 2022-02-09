@@ -1,6 +1,7 @@
 import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { SitesSorting } from "@components/sorting/SitesSorting";
 import { SitesTableLabels } from "@constants/SitesTableLabels";
+import { useLoading } from "@hooks/useLoading";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -16,7 +17,7 @@ import { MemoizedDataTable } from "./DataTable";
  * @param {boolean} validatingSites
  * @param {boolean} disableLocalTime
  */
-const SitesTable = ({ sites = null, validatingSites = false, disableLocalTime = false }) => {
+const SitesTable = ({ sites = null, validatingSites = null, disableLocalTime = false }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
@@ -27,6 +28,7 @@ const SitesTable = ({ sites = null, validatingSites = false, disableLocalTime = 
 
 	// Custom hooks
 	const { setLinksPerPage, setPagePath } = useSiteQueries();
+	const { isComponentReady } = useLoading();
 
 	// Sites table labels with translations
 	const labelsArray = SitesTableLabels();
@@ -35,28 +37,28 @@ const SitesTable = ({ sites = null, validatingSites = false, disableLocalTime = 
 		<section
 			css={[
 				tw`flex flex-col w-full min-h-full h-full`,
-				!validatingSites && sites?.data?.count > 0 ? tw`justify-start` : tw`justify-center`
+				sites?.data?.count > 0 && sites?.data?.results?.length > 0 && !validatingSites
+					? tw`justify-start`
+					: tw`justify-center`
 			]}
 		>
-			{!validatingSites ? (
+			{isComponentReady && !validatingSites ? (
 				sites?.data?.count > 0 && sites?.data?.results?.length > 0 ? (
 					<table tw="relative w-full">
 						<thead>
 							<tr>
-								{labelsArray?.map((label) => {
-									return (
-										<th
-											key={label.label}
-											className="min-width-adjust"
-											tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-										>
-											<span tw="flex items-center justify-start">
-												<SitesSorting result={query} slug={label.slug} labels={label.label} setPagePath={setPagePath} />
-												<span tw="flex items-center">{label.label}</span>
-											</span>
-										</th>
-									);
-								}) ?? null}
+								{labelsArray?.map((label) => (
+									<th
+										key={label.label}
+										className="min-width-adjust"
+										tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+									>
+										<span tw="flex items-center justify-start">
+											<SitesSorting slug={label.slug} labels={labelsArray} setPagePath={setPagePath} />
+											<span tw="flex items-center">{label.label}</span>
+										</span>
+									</th>
+								)) ?? null}
 							</tr>
 						</thead>
 

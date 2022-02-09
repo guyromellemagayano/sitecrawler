@@ -71,7 +71,9 @@ const SitesDashboardPageLayout = () => {
 	}, [user, errorUser, validatingUser]);
 
 	// `sites` SWR hook
-	const { sites, errorSites, validatingSites } = useSites(scanApiEndpoint);
+	const { sites, errorSites, validatingSites } = useSites(scanApiEndpoint, {
+		revalidateOnFocus: false
+	});
 
 	useMemo(() => {
 		let isMounted = true;
@@ -100,15 +102,17 @@ const SitesDashboardPageLayout = () => {
 				<div tw="flex-1 min-w-0">
 					<div tw="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
 						<div tw="mt-2 flex items-center space-x-3 text-sm text-gray-500">
-							{isComponentReady && sites?.data?.count && sites?.data?.results?.length > 0 ? (
-								<>
-									<ExternalLinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
-									<span tw="text-sm leading-6 font-semibold text-gray-500">
-										{sites.data.count > 0
-											? sites.data.count + " " + handleConversionStringToLowercase(sitesText)
-											: sites.data.count + " " + siteText}
-									</span>
-								</>
+							{isComponentReady ? (
+								sites?.data?.count ? (
+									<>
+										<ExternalLinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
+										<span tw="text-sm leading-6 font-semibold text-gray-500">
+											{sites.data.count > 1
+												? sites.data.count + " " + handleConversionStringToLowercase(sitesText)
+												: sites.data.count + " " + siteText}
+										</span>
+									</>
+								) : null
 							) : (
 								<>
 									<Skeleton duration={2} width={20} height={20} className="flex-shrink-0" />
@@ -134,7 +138,7 @@ const SitesDashboardPageLayout = () => {
 								isComponentReady && sites?.data?.count === 0 && tw`flex items-center`
 							]}
 						>
-							<div tw="min-w-full h-full rounded-lg border-gray-300 -mx-4">
+							<div tw="min-w-full h-full rounded-lg border-gray-300">
 								<MemoizedSitesTable
 									sites={sites}
 									validatingSites={validatingSites}

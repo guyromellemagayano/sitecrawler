@@ -2,10 +2,11 @@ import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
-import { handleConversionStringToBoolean, handleConversionStringToNumber } from "@utils/convertCase";
+import dayjs from "dayjs";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import { memo, useEffect, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -21,37 +22,84 @@ const SiteList = ({ data = null }) => {
 	const [scanCount, setScanCount] = useState(null);
 	const [scanObjId, setScanObjId] = useState(null);
 
+	// Site data props
+	const siteId = data?.id ?? null;
+	const siteName = data?.name ?? null;
+	const siteUrl = data?.url ?? null;
+	const siteVerificationId = data?.verification_id ?? null;
+	const siteVerified = data?.verified ?? null;
+	const siteLastFinishedScanId = data?.last_finished_scan_id ?? null;
+
+	// Translations
+	const { t } = useTranslation();
+	const notYetCrawledText = t("sites:notYetCrawled");
+
 	// Custom hooks
 	const { state, setConfig } = useNotificationMessage();
 
+	// DayJS options
+	const calendar = require("dayjs/plugin/calendar");
+	const timezone = require("dayjs/plugin/timezone");
+	const utc = require("dayjs/plugin/utc");
+
+	dayjs.extend(calendar);
+	dayjs.extend(utc);
+	dayjs.extend(timezone);
+
+	const calendarStrings = {
+		lastDay: "[Yesterday], dddd [at] hh:mm:ss A",
+		lastWeek: "MMMM DD, YYYY [at] hh:mm:ss A",
+		sameDay: "[Today], dddd [at] hh:mm:ss A",
+		sameElse: "MMMM DD, YYYY [at] hh:mm:ss A"
+	};
+
 	// SWR hooks
-	const { scan, errorScan } = useScan(data?.id ?? null);
+	const { scan, errorScan } = useScan(siteId);
 
-	// Handle `scan` response
-	useEffect(() => {
-		if (scan) {
-			const currentScanCount = scan.data.count ? handleConversionStringToNumber(scan?.data.count) : null;
-			const currentScanFinishedAt = scan.data.results?.[0]?.finished_at ? scan?.data.results[0].finished_at : null;
-			const currentScanForcehttps = scan.data.results?.[0]?.force_https
-				? handleConversionStringToBoolean(scan?.data.results[0].force_https)
+	// Handle `scan` object id data
+	useMemo(() => {
+		let isMounted = true;
+
+		// Update `scanCount`, `scanFinishedAt`, `scanForceHttps` and `scanObjId` states
+		(async () => {
+			if (!isMounted) return;
+
+			// Show alert message after failed `user` SWR hook fetch
+			errorScan
+				? setConfig({
+						isSites: true,
+						method: errorScan?.config?.method ?? null,
+						status: errorScan?.status ?? null
+				  })
 				: null;
-			const currentScanObjId =
-				currentScanFinishedAt !== null && currentScanForcehttps !== null && currentScanCount > 1
-					? scan.data.results?.[1]?.id
-						? handleConversionStringToNumber(scan?.data.results[1].id)
-						: null
-					: scan.data.results?.[0]?.id
-					? handleConversionStringToNumber(scan?.data.results[0].id)
-					: null;
 
-			setScanFinishedAt(currentScanFinishedAt);
-			setScanForceHttps(currentScanForcehttps);
-			setScanCount(currentScanCount);
-			setScanObjId(currentScanObjId);
+			if (scan?.data) {
+				const currentScanCount = scan.data?.count ?? null;
 
-			return { scanFinishedAt, scanForceHttps, scanCount, scanObjId };
-		} else return;
-	}, [scan]);
+				if (currentScanCount > 0) {
+					scan.data?.results?.find((result) => {
+						if (result.id === siteLastFinishedScanId) {
+							setScanCount(currentScanCount);
+							setScanFinishedAt(dayjs(result.finished_at).calendar(null, calendarStrings));
+							setScanForceHttps(result.force_https);
+							setScanObjId(result.id);
+						}
+					});
+				} else {
+					setScanCount(currentScanCount);
+					setScanFinishedAt(notYetCrawledText);
+					setScanForceHttps(null);
+					setScanObjId(null);
+				}
+			}
+
+			return { scanCount, scanFinishedAt, scanForceHttps, scanObjId };
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [scan, errorScan]);
 
 	// SWR hooks
 	const { stats, errorStats } = useStats(data?.id, scanObjId);
@@ -70,7 +118,7 @@ const SiteList = ({ data = null }) => {
 		</li>
 	) : (
 		<li
-			id={`listbox-item-${data.id}`}
+			id={`listbox-item-${siteId}`}
 			role="option"
 			aria-selected={
 				scanCount > 0 && (stats?.data?.num_links > 0 || stats?.data?.num_pages > 0 || stats?.data?.num_images > 0)
@@ -84,7 +132,7 @@ const SiteList = ({ data = null }) => {
 						? {
 								pathname: `${DashboardSitesLink}[siteId]${SiteOverviewSlug}`,
 								query: {
-									siteId: data.id
+									siteId: siteId
 								}
 						  }
 						: {}
