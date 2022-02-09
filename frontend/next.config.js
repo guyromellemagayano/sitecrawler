@@ -19,12 +19,7 @@ const NextConfig = {
 		removeConsole: process.env.NODE_ENV === "production" ? true : false
 	},
 	env: {
-		SITE_NAME: "SiteCrawler",
-		DEVELOPMENT_SITE_URL: "http://localhost:8000",
-		DEVELOPMENT_SITE_SERVER_URL: "http://backend:8000",
-		LOGROCKET_APP_ID: "epic-design-labs/link-app",
-		SENTRY_DSN: "https://3ab17e668d564c0fa8c1e0614c517bd1@o432365.ingest.sentry.io/6037440",
-		SENTRY_ENVIRONMENT: "production"
+		LOGROCKET_APP_ID: "epic-design-labs/link-app"
 	}
 };
 
