@@ -70,10 +70,20 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 
 	// LogRocket setup
 	useMemo(() => {
-		if (isProd && typeof window !== "undefined") {
-			LogRocket.init(process.env.LOGROCKET_APP_ID);
-			setupLogRocketReact(LogRocket);
-		}
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			if (!isProd) {
+				LogRocket.init(process.env.LOGROCKET_APP_ID);
+				setupLogRocketReact(LogRocket);
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	// Use the layout defined at the page level, if available
