@@ -12,7 +12,7 @@ export default function ConfirmEmail() {
 	const emailConfirmation = t("emailConfirmation");
 
 	// Custom context
-	const { user, state, setConfig } = useContext(SiteCrawlerAppContext);
+	const { user, state } = useContext(SiteCrawlerAppContext);
 
 	return user && Math.round(user?.status / 100) === 4 && user?.data?.detail ? (
 		<MemoizedLayout>
