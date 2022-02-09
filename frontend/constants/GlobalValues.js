@@ -32,7 +32,7 @@ export const NoInterval = 0;
 export const ResetStateTimeout = 2500;
 export const UnitAmountToRealPriceDivisor = 100;
 export const MaxSitesPerPage = 10;
-export const MaxSiteLimit = 100;
+export const MaxTotalSitesLimit = 100;
 
 // File Locations
 export const SubscriptionSuccessBadge = "/images/backgrounds/subscription-success-badge.png";
