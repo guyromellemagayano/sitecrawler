@@ -82,7 +82,7 @@ const NewActivePlanModal = ({ planId = null, planName = null, showModal = false,
 						</div>
 						<div>
 							<AppLogo
-								className="w-full inline-flex justify-center mx-auto mt-12 mb-14"
+								className="mx-auto mt-12 mb-14 inline-flex w-full justify-center"
 								src={SubscriptionSuccessBadge}
 								alt={BadgeModalImage.alt}
 								width={BadgeModalImage.width}

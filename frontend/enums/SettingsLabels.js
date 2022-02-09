@@ -7,8 +7,7 @@ export const SettingsLabels = [
 	},
 	{
 		label: "Site Information",
-		description:
-			"User generated content in real-time will have multiple touchpoints for offshoring."
+		description: "User generated content in real-time will have multiple touchpoints for offshoring."
 	},
 	{
 		label: "User generated content in real-time will have multiple touchpoints for offshoring."

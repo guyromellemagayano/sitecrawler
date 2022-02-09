@@ -8,7 +8,5 @@
 	"quoteProps": "consistent",
 	"proseWrap": "preserve",
 	"arrowParens": "always",
-	"bracketSpacing": true,
-	"configPath": "./.prettierrc",
-	"requireConfig": true
+	"bracketSpacing": true
 }
