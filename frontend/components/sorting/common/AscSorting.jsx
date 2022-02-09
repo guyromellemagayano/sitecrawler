@@ -16,7 +16,7 @@ const AscSorting = ({ handleClickEvent, isAscClicked, setIsAscClicked }, ref) =>
 		return () => {
 			document.removeEventListener("click", handleClickEvent, true);
 		};
-	});
+	}, [isAscClicked]);
 
 	return (
 		<button ref={ref} tw="focus:outline-none" onClick={() => setIsAscClicked(!isAscClicked)}>
