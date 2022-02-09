@@ -75,7 +75,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		(async () => {
 			if (!isMounted) return;
 
-			if (!isProd) {
+			if (isProd) {
 				LogRocket.init(process.env.LOGROCKET_APP_ID);
 				setupLogRocketReact(LogRocket);
 			}
