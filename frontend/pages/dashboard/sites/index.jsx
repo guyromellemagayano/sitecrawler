@@ -13,26 +13,17 @@ export default function Sites() {
 	const sitesDashboard = t("sitesDashboard");
 
 	// Custom context
-	const { user, state, setConfig } = useContext(SiteCrawlerAppContext);
+	const { user, validatingUser } = useContext(SiteCrawlerAppContext);
 
-	return user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return !validatingUser && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 		<MemoizedLayout>
 			<NextSeo title={sitesDashboard} />
 			<MemoizedPageLayout pageTitle={sitesDashboard}>
 				<MemoizedSitesDashboardPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : !state?.responses?.length ? (
-		<MemoizedLoader />
 	) : (
-		state?.responses?.map((value, key) => {
-			// Alert Messsages
-			const responseTitle = value?.responseTitle ?? null;
-			const responseText = value?.responseText ?? null;
-			const isSuccess = value?.isSuccess ?? null;
-
-			return <MemoizedLoader key={key} message={responseTitle + ": " + responseText} />;
-		})
+		<MemoizedLoader />
 	);
 }
 

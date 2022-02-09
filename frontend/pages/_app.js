@@ -93,6 +93,7 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 		<SiteCrawlerAppContext.Provider
 			value={{
 				user,
+				validatingUser,
 				state,
 				setConfig
 			}}

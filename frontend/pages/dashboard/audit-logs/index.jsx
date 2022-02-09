@@ -13,26 +13,17 @@ export default function AuditLogs() {
 	const auditLogs = t("auditLogs");
 
 	// Custom context
-	const { user, state, setConfig } = useContext(SiteCrawlerAppContext);
+	const { user, validatingUser } = useContext(SiteCrawlerAppContext);
 
-	return user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return !validatingUser && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 		<MemoizedLayout>
 			<NextSeo title={auditLogs} />
 			<MemoizedPageLayout pageTitle={auditLogs}>
 				<MemoizedComingSoonPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : !state?.responses?.length ? (
-		<MemoizedLoader />
 	) : (
-		state?.responses?.map((value, key) => {
-			// Alert Messsages
-			const responseTitle = value?.responseTitle ?? null;
-			const responseText = value?.responseText ?? null;
-			const isSuccess = value?.isSuccess ?? null;
-
-			return <MemoizedLoader key={key} message={responseTitle + ": " + responseText} />;
-		})
+		<MemoizedLoader />
 	);
 }
 

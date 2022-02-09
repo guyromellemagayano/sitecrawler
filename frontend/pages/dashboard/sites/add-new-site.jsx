@@ -101,7 +101,7 @@ export default function AddNewSite() {
 	const { query } = useRouter();
 
 	// Custom context
-	const { user, state, setConfig } = useContext(SiteCrawlerAppContext);
+	const { user, validatingUser } = useContext(SiteCrawlerAppContext);
 
 	let step = query.step ?? null;
 	let sid = query.sid ?? null;
@@ -113,7 +113,7 @@ export default function AddNewSite() {
 	const sanitizedEdit = handleConversionStringToBoolean(edit);
 	const sanitizedVerified = handleConversionStringToBoolean(verified);
 
-	return user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return !validatingUser && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 		<MemoizedLayout>
 			<NextSeo title={addNewSiteText} />
 			<MemoizedPageLayout pageTitle={addNewSiteText}>
@@ -125,17 +125,8 @@ export default function AddNewSite() {
 				/>
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : !state?.responses?.length ? (
-		<MemoizedLoader />
 	) : (
-		state?.responses?.map((value, key) => {
-			// Alert Messsages
-			const responseTitle = value?.responseTitle ?? null;
-			const responseText = value?.responseText ?? null;
-			const isSuccess = value?.isSuccess ?? null;
-
-			return <MemoizedLoader key={key} message={responseTitle + ": " + responseText} />;
-		})
+		<MemoizedLoader />
 	);
 }
 
