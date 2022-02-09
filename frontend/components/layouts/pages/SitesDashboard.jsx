@@ -1,3 +1,4 @@
+import { MemoizedDataPagination } from "@components/pagination";
 import { MemoizedSitesTable } from "@components/tables/SitesTable";
 import { ExternalLinkIcon } from "@heroicons/react/outline";
 import { useLoading } from "@hooks/useLoading";
@@ -150,9 +151,9 @@ const SitesDashboardPageLayout = () => {
 				</div>
 			</div>
 
-			{/* <div tw="flex-none">
+			<div tw="flex-none">
 				<MemoizedDataPagination />
-			</div> */}
+			</div>
 		</>
 	);
 };

@@ -1,36 +1,36 @@
 {
-    "presets": [
-        [
-            "next/babel",
-            {
-                "preset-react": {
-                    "runtime": "automatic",
-                    "development": false
-                },
-                "preset-env": {
-                    "targets": {
-                        "node": "current"
-                    }
-                },
-                "plugin-transform-react-jsx": {
-                    "runtime": "automatic"
-                },
-                "plugin-transform-runtime": {
-                    "corejs": 3
-                }
-            }
-        ]
-    ],
-    "plugins": [
-        "babel-plugin-macros",
-        [
-            "babel-plugin-styled-components",
-            {
-                "ssr": true,
-                "fileName": false,
-                "displayName": false,
-                "pure": true
-            }
-        ]
-    ]
+	"presets": [
+		[
+			"next/babel",
+			{
+				"preset-react": {
+					"runtime": "automatic",
+					"development": false
+				},
+				"preset-env": {
+					"targets": {
+						"node": "current"
+					}
+				},
+				"plugin-transform-react-jsx": {
+					"runtime": "automatic"
+				},
+				"plugin-transform-runtime": {
+					"corejs": 3
+				}
+			}
+		]
+	],
+	"plugins": [
+		"babel-plugin-macros",
+		[
+			"babel-plugin-styled-components",
+			{
+				"ssr": true,
+				"fileName": false,
+				"displayName": false,
+				"pure": true
+			}
+		]
+	]
 }

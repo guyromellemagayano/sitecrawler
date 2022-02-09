@@ -9,20 +9,28 @@ import { useEffect, useState } from "react";
  * @returns {object} linksPerPage, setLinksPerPage, pagePath, setPagePath, searchKey, setSearchKey
  */
 export const useSiteQueries = () => {
-	const [pagePath, setPagePath] = useState(null);
-	const [searchKey, setSearchKey] = useState(null);
+	const [pagePath, setPagePath] = useState("");
+	const [searchKey, setSearchKey] = useState("");
 	const [linksPerPage, setLinksPerPage] = useState(MaxSitesPerPage);
 
 	// Router
 	const { asPath, query } = useRouter();
 
 	useEffect(() => {
-		handleRemoveUrlParameter(asPath, "page").includes("?")
-			? setPagePath(`${handleRemoveUrlParameter(asPath, "page")}&`)
-			: setPagePath(`${handleRemoveUrlParameter(asPath, "page")}?`);
+		let isMounted = true;
 
-		query?.search ? setSearchKey(query?.search) : null;
-		query?.per_page ? setLinksPerPage(query?.per_page) : null;
+		(async () => {
+			handleRemoveUrlParameter(asPath, "page").includes("?")
+				? setPagePath(`${handleRemoveUrlParameter(asPath, "page")}&`)
+				: setPagePath(`${handleRemoveUrlParameter(asPath, "page")}?`);
+
+			query?.search ? setSearchKey(query.search) : null;
+			query?.per_page ? setLinksPerPage(parseInt(query.per_page)) : null;
+		})();
+
+		return () => {
+			isMounted = false;
+		};
 	}, [query, asPath]);
 
 	return { linksPerPage, setLinksPerPage, pagePath, setPagePath, searchKey, setSearchKey };

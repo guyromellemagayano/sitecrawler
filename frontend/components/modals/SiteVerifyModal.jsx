@@ -187,7 +187,7 @@ const SiteVerifyModal = (
 									<InformationCircleIcon tw="h-6 w-6 text-yellow-600" />
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title as="h3" className="text-lg leading-6 font-bold text-gray-900">
+									<Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-900">
 										{verifySiteTitleText}
 									</Dialog.Title>
 

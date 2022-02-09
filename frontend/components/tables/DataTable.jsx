@@ -277,13 +277,13 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 									width={9}
 									height={9}
 									circle={true}
-									className="relative -left-3 top-4 flex-shrink-0 block"
+									className="relative -left-3 top-4 block flex-shrink-0"
 								/>
 								<div tw="inline-flex flex-col justify-start items-start">
 									<Skeleton
 										duration={2}
 										width={150}
-										className="relative -left-3 inline-flex flex-col justify-start items-start"
+										className="relative -left-3 inline-flex flex-col items-start justify-start"
 									/>
 									<span tw="flex flex-row justify-start text-sm leading-5 text-gray-500 space-x-3">
 										<Skeleton duration={2} width={63} />
