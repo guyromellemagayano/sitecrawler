@@ -50,7 +50,9 @@ export const handleConversionStringToCamelCase = (e = null) => {
 
 	sanitizedVal =
 		e !== null && e !== "" && typeof e === "string"
-			? e.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())
+			? e.replace(/(-\w)/g, (m) => {
+					return m[1].toUpperCase();
+			  })
 			: e;
 
 	return sanitizedVal;

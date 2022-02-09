@@ -12,7 +12,7 @@ import LogRocket from "logrocket";
 import setupLogRocketReact from "logrocket-react";
 import { DefaultSeo } from "next-seo";
 import { useRouter } from "next/router";
-import { createContext, useMemo } from "react";
+import { createContext, useEffect } from "react";
 import { useSWRConfig } from "swr";
 import "twin.macro";
 
@@ -29,47 +29,14 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 	// Router
 	const router = useRouter();
 
-	// User authentication, authorization, and redirection
-	const { user, errorUser, validatingUser } = useUser();
-
-	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			// Show alert message after failed `user` SWR hook fetch
-			errorUser
-				? setConfig({
-						isUser: true,
-						method: errorUser?.config?.method ?? null,
-						status: errorUser?.status ?? null
-				  })
-				: null;
-
-			if (!validatingUser && !errorUser && user && !user?.data?.detail && user?.data?.count) {
-				// Show alert message after success response is issued
-				setConfig({
-					isUser: true,
-					method: user?.config?.method ?? null,
-					status: user?.status ?? null
-				});
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [user, errorUser, validatingUser]);
+	// Custom hooks
+	const { state, setConfig } = useNotificationMessage();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
-	// Custom hooks
-	const { state, setConfig } = useNotificationMessage();
-
 	// LogRocket setup
-	useMemo(() => {
+	useEffect(() => {
 		let isMounted = true;
 
 		(async () => {
@@ -85,6 +52,39 @@ export default function SiteCrawlerApp({ Component, pageProps, err }) {
 			isMounted = false;
 		};
 	}, []);
+
+	// User authentication, authorization, and redirection
+	const { user, errorUser, validatingUser } = useUser();
+
+	useEffect(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			// Show alert message after failed `user` SWR hook fetch
+			errorUser
+				? setConfig({
+						isUser: true,
+						method: errorUser?.config?.method ?? null,
+						status: errorUser?.status ?? null
+				  })
+				: null;
+
+			if (!validatingUser && !errorUser && user && !user?.data?.detail) {
+				// Show alert message after success response is issued
+				setConfig({
+					isUser: true,
+					method: user?.config?.method ?? null,
+					status: user?.status ?? null
+				});
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [user, errorUser, validatingUser]);
 
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout || ((page) => page);
