@@ -21,24 +21,15 @@ export default function Signup() {
 	}, []);
 
 	// Custom context
-	const { user, state } = useContext(SiteCrawlerAppContext);
+	const { user, validatingUser } = useContext(SiteCrawlerAppContext);
 
-	return user && Math.round(user?.status / 100) === 4 && user?.data?.detail ? (
+	return !validatingUser && user && Math.round(user?.status / 100) === 4 && user?.data?.detail ? (
 		<MemoizedLayout>
 			<NextSeo title={completeSignupText} />
 			<MemoizedSignupPageLayout />
 		</MemoizedLayout>
-	) : !state?.responses?.length ? (
-		<MemoizedLoader />
 	) : (
-		state?.responses?.map((value, key) => {
-			// Alert Messsages
-			const responseTitle = value?.responseTitle ?? null;
-			const responseText = value?.responseText ?? null;
-			const isSuccess = value?.isSuccess ?? null;
-
-			return <MemoizedLoader key={key} message={responseTitle + ": " + responseText} />;
-		})
+		<MemoizedLoader />
 	);
 }
 
