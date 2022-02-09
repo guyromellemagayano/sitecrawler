@@ -16,7 +16,7 @@ const Footer = () => {
 	const labelsArray = FooterLabels();
 
 	// Custom variables
-	const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
+	const siteName = process.env.SITE_NAME;
 
 	return (
 		<footer tw="flex-none w-full pt-8 pb-4 px-4 border-t border-gray-200">
