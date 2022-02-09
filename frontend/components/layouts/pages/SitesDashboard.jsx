@@ -71,7 +71,9 @@ const SitesDashboardPageLayout = () => {
 	}, [user, errorUser, validatingUser]);
 
 	// `sites` SWR hook
-	const { sites, errorSites, validatingSites } = useSites(scanApiEndpoint);
+	const { sites, errorSites, validatingSites } = useSites(scanApiEndpoint, {
+		revalidateOnFocus: false
+	});
 
 	useMemo(() => {
 		let isMounted = true;
