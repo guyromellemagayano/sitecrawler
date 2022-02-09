@@ -28,8 +28,7 @@ const SeoFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPagePa
 	const filter = t("sites:filter");
 
 	// Router
-	const { asPath } = useRouter();
-	const router = useRouter();
+	const { asPath, push } = useRouter();
 
 	// Custom filters
 	const SeoFilters = [
@@ -321,7 +320,7 @@ const SeoFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPagePa
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			router.push(newPath);
+			push(newPath);
 
 			await mutate(scanApiEndpoint, false);
 		},

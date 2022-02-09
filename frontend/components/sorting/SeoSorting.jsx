@@ -29,8 +29,7 @@ const SeoSorting = ({ result = null, slug = null, labels = null, setPagePath }) 
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Router
-	const { asPath } = useRouter();
-	const router = useRouter();
+	const { asPath, push } = useRouter();
 
 	// SWR hook for global mutations
 	// const  { mutate } = useSWRConfig();
@@ -71,7 +70,7 @@ const SeoSorting = ({ result = null, slug = null, labels = null, setPagePath }) 
 			// Mutate function here
 			// mutate(seoEndpoint, false)
 
-			router.push(newPath);
+			push(newPath);
 		},
 		[asPath, labels]
 	);

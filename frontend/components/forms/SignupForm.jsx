@@ -20,8 +20,7 @@ const SignupForm = () => {
 	const [uid, setUid] = useState(null);
 
 	// Router
-	const { query } = useRouter();
-	const router = useRouter();
+	const { query, push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -101,7 +100,7 @@ const SignupForm = () => {
 
 					// Redirect to sites dashboard page after successful 200 OK response is established
 					setTimeout(() => {
-						router.push(DashboardSitesLink);
+						push(DashboardSitesLink);
 					}, RedirectInterval);
 				} else {
 					// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued

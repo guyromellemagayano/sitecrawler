@@ -1,68 +1,82 @@
-import { handleGetSortKeyFromSlug } from "@helpers/handleGetSortKeyFromSlug";
+import { handleSlugFromSortKey } from "@helpers/handleSlugFromSortKey";
 import { handleConversionStringToCamelCase } from "@utils/convertCase";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { MemoizedAscSorting } from "./AscSorting";
 import { MemoizedDescSorting } from "./DescSorting";
 
 /**
  * Custom function to render the `Sorting` common component
  *
+ * @param {any} sortOrder
  * @param {function} setSortOrder'
  * @param {array} tableContent
  * @param {array} ordering
  * @param {function} handleSort
  * @param {string} slug
  */
-const Sorting = ({ setSortOrder, tableContent = null, ordering = null, handleSort, slug = null }) => {
+const Sorting = ({ sortOrder = null, setSortOrder, tableContent = null, ordering = null, handleSort, slug = null }) => {
 	const [isAscClicked, setIsAscClicked] = useState(false);
 	const [isDescClicked, setIsDescClicked] = useState(false);
-	const [resultSlug, setResultSlug] = useState(null);
-	const [orderItem, setOrderItem] = useState(null);
 
 	const sortAscRef = useRef(null);
 	const sortDescRef = useRef(null);
 
+	let resultSlug = "";
+	let orderItem = "";
+
 	// Handle sort and ordering
-	const handleSortOrdering = useCallback(async () => {
-		if (ordering !== null) {
-			setResultSlug(handleGetSortKeyFromSlug(tableContent, ordering?.replace("-", "")));
-			setOrderItem(handleConversionStringToCamelCase(resultSlug));
-
-			if (ordering?.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
-			else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
-		}
-	}, [orderItem, ordering, resultSlug, setSortOrder, tableContent]);
-
 	useEffect(() => {
-		handleSortOrdering();
-	}, [handleSortOrdering]);
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			if (ordering !== null) {
+				resultSlug = handleSlugFromSortKey(tableContent, ordering.replace("-", ""));
+				orderItem = handleConversionStringToCamelCase(resultSlug);
+
+				if (ordering.includes("-")) setSortOrder((prevState) => ({ ...prevState, [orderItem]: "desc" }));
+				else setSortOrder((prevState) => ({ ...prevState, [orderItem]: "asc" }));
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [ordering]);
 
 	// Handle ascending and descending onClick states
-	const handleAscDescOnClickStates = useCallback(async () => {
-		if (ordering !== null) {
-			if (resultSlug === slug) {
-				if (ordering?.includes("-")) {
-					setIsDescClicked(true);
-					setIsAscClicked(false);
-				} else {
-					setIsAscClicked(true);
-					setIsDescClicked(false);
-				}
-			} else {
-				setIsDescClicked(false);
-				setIsAscClicked(false);
-			}
-		}
-	}, [ordering, resultSlug, slug]);
-
 	useEffect(() => {
-		handleAscDescOnClickStates();
-	}, [handleAscDescOnClickStates]);
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			if (ordering !== null) {
+				if (resultSlug == slug) {
+					if (ordering.includes("-")) {
+						setIsDescClicked(true);
+						setIsAscClicked(false);
+					} else {
+						setIsAscClicked(true);
+						setIsDescClicked(false);
+					}
+				} else {
+					setIsDescClicked(false);
+					setIsAscClicked(false);
+				}
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [ordering]);
 
 	// Handle click event
-	const handleClickEvent = (event) => {
-		if (sortAscRef?.current && sortAscRef?.current?.contains(event.target)) {
+	const handleClickEvent = async (e) => {
+		if (sortAscRef?.current && sortAscRef?.current?.contains(e.target)) {
 			setIsDescClicked(false);
 
 			if (!isAscClicked) {
@@ -72,7 +86,7 @@ const Sorting = ({ setSortOrder, tableContent = null, ordering = null, handleSor
 			}
 		}
 
-		if (sortDescRef?.current && sortDescRef?.current?.contains(event.target)) {
+		if (sortDescRef?.current && sortDescRef?.current?.contains(e.target)) {
 			setIsAscClicked(false);
 
 			if (!isDescClicked) {
@@ -103,10 +117,11 @@ const Sorting = ({ setSortOrder, tableContent = null, ordering = null, handleSor
 
 Sorting.propTypes = {
 	handleSort: PropTypes.func,
-	ordering: PropTypes.array,
+	ordering: PropTypes.any,
+	sortOrder: PropTypes.any,
 	setSortOrder: PropTypes.func,
 	slug: PropTypes.string,
-	tableContent: PropTypes.string
+	tableContent: PropTypes.any
 };
 
 /**

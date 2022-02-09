@@ -39,7 +39,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const searchNotAvailable = t("searchNotAvailable");
 
 	// Router
-	const router = useRouter();
+	const { asPath, push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -142,7 +142,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 
 		if (e.keyCode !== 13) return false;
 
-		let newPath = router.asPath;
+		let newPath = asPath;
 		newPath = handleRemoveUrlParameter(newPath, "search");
 		newPath = handleRemoveUrlParameter(newPath, "page");
 
@@ -158,7 +158,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 		if (newPath.includes("?")) setPagePath(`${newPath}&`);
 		else setPagePath(`${newPath}?`);
 
-		router.push(newPath);
+		push(newPath);
 
 		return await mutate(scanApiEndpoint, false);
 	};
@@ -225,10 +225,10 @@ const AddSite = ({ handleOpenSidebar }) => {
 						) : (
 							<Link href={AddNewSiteLink + "?step=1&edit=false&verified=false"} passHref>
 								<a
-									disabled={router.asPath.includes(AddNewSiteSlug) ? true : false}
+									disabled={asPath.includes(AddNewSiteSlug) ? true : false}
 									css={[
 										tw`border border-transparent inline-flex items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full`,
-										router.asPath.includes(AddNewSiteSlug)
+										asPath.includes(AddNewSiteSlug)
 											? tw`opacity-50 bg-gray-300 cursor-not-allowed`
 											: tw`cursor-pointer bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 active:bg-green-700 focus:outline-none`
 									]}

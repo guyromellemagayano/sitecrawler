@@ -8,11 +8,9 @@
 export const handleGetSortKeyFromSlug = (content = null, slug = null) => {
 	let sortKey = "";
 
-	if (slug !== null) {
-		content?.forEach((val) => {
-			if (val.slug == slug) sortKey = val.key;
-		}) ?? null;
-	}
+	content.forEach((val) => {
+		if (val?.slug == slug) sortKey = val.key;
+	});
 
 	return sortKey;
 };

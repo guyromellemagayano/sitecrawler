@@ -43,8 +43,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 	const { state, setConfig } = useNotificationMessage();
 
 	// Router
-	const { asPath } = useRouter();
-	const router = useRouter();
+	const { asPath, push } = useRouter();
 
 	// Handle site deletion
 	const handleSiteDeletion = async (e) => {
@@ -76,7 +75,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 			if (asPath.includes(SettingsSlug)) {
 				setTimeout(() => {
 					setShowModal(false);
-					router.push(DashboardSitesLink);
+					push(DashboardSitesLink);
 				}, RevalidationInterval);
 			} else {
 				setTimeout(() => {

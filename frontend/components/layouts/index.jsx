@@ -1,5 +1,3 @@
-import { MemoizedAlert } from "@components/alerts";
-import { MemoizedNotification } from "@components/notifications";
 import { MemoizedAddSite } from "@components/sites/AddSite";
 import { DashboardSitesLink, DashboardSlug, LoginLink } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
@@ -95,28 +93,6 @@ export const DashboardLayout = ({ children }) => {
 				</>
 			) : null}
 
-			{state?.responses?.map((value, key) => {
-				// Alert Messsages
-				const responseTitle = value.responseTitle ?? null;
-				const responseText = value.responseText ?? null;
-				const isSuccess = value.isSuccess ?? null;
-
-				return (
-					<div
-						key={key}
-						aria-live="assertive"
-						tw="fixed z-30 w-full max-w-md right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto"
-					>
-						<MemoizedNotification
-							key={key}
-							responseTitle={responseTitle}
-							responseText={responseText}
-							isSuccess={isSuccess}
-						/>
-					</div>
-				);
-			}) ?? null}
-
 			<main tw="h-screen">
 				<section tw="h-screen overflow-hidden bg-white flex">
 					<MemoizedSidebarLayout
@@ -172,27 +148,7 @@ export const StaticLayout = ({ children }) => {
 		router.prefetch(DashboardSitesLink);
 	}, [router]);
 
-	return (
-		<main tw="h-screen">
-			{state?.responses?.map((value, key) => {
-				// Alert Messsages
-				const responseText = value.responseText ?? null;
-				const isSuccess = value.isSuccess ?? null;
-
-				return (
-					<div
-						key={key}
-						aria-live="assertive"
-						tw="fixed z-30 w-full max-w-md right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto"
-					>
-						<MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />
-					</div>
-				);
-			}) ?? null}
-
-			{children}
-		</main>
-	);
+	return <main tw="h-screen">{children}</main>;
 };
 
 StaticLayout.propTypes = {

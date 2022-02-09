@@ -6,108 +6,78 @@ import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { handleConversionStringToCamelCase, handleConversionStringToLowercase } from "@utils/convertCase";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useSWRConfig } from "swr";
 import "twin.macro";
 
 const initialOrder = {
-	siteName: "asc",
-	crawlStatus: "default",
-	lastCrawled: "default",
-	totalIssues: "default"
+	siteName: "asc"
 };
 
 /**
  * Custom function to render the `SitesSorting` common component
  *
- * @param {object} result
  * @param {string} slug
  * @param {array} labels
  * @param {function} setPagePath
  */
-export const SitesSorting = ({ result = null, slug = null, labels = null, setPagePath }) => {
+export const SitesSorting = ({ slug = null, labels = null, setPagePath }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Router
-	const { asPath } = useRouter();
-	const router = useRouter();
+	const { query, asPath, push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
 	// Handle sort
-	const handleSort = useCallback(
-		async (slug, dir) => {
-			setSortOrder({ ...initialOrder });
+	const handleSort = async (slug, dir) => {
+		setSortOrder({ ...initialOrder });
 
-			// Remove `ordering` URL parameter
-			let newPath = handleRemoveUrlParameter(asPath, "ordering");
+		// Remove `ordering` URL parameter
+		let newPath = handleRemoveUrlParameter(asPath, "ordering");
 
-			// Handle slug to camelcase
-			const sortItem = handleConversionStringToCamelCase(slug);
+		// Handle slug to camelcase
+		const sortItem = handleConversionStringToCamelCase(slug);
 
-			// Handle sorting from given slug
-			const sortKey = handleGetSortKeyFromSlug(labels ?? null, slug);
+		// Handle sorting from given slug
+		const sortKey = handleGetSortKeyFromSlug(labels, slug);
 
-			// Update `sortOrder` state
-			setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
+		// Update `sortOrder` state
+		setSortOrder((prevState) => ({ ...prevState, [sortItem]: dir }));
 
-			// Sanitize `ordering` values
-			const sanitizedDir = handleConversionStringToLowercase(dir);
+		// Sanitize `ordering` values
+		const sanitizedDir = handleConversionStringToLowercase(dir);
 
-			if (sanitizedDir === "asc") {
-				if (newPath.includes("?")) newPath += `&${orderingByNameQuery + sortKey}`;
-				else newPath += `?${orderingByNameQuery + sortKey}`;
-			} else if (sanitizedDir === "desc") {
-				if (newPath.includes("?")) newPath += `&${orderingByNameQuery + "-" + sortKey}`;
-				else newPath += `?${orderingByNameQuery + "-" + sortKey}`;
-			} else {
-				newPath = handleRemoveUrlParameter(newPath, "ordering");
-			}
+		if (sanitizedDir === "asc") {
+			if (newPath.includes("?")) newPath += `&${orderingByNameQuery + sortKey}`;
+			else newPath += `?${orderingByNameQuery + sortKey}`;
+		} else if (sanitizedDir === "desc") {
+			if (newPath.includes("?")) newPath += `&${orderingByNameQuery + "-" + sortKey}`;
+			else newPath += `?${orderingByNameQuery + "-" + sortKey}`;
+		} else {
+			newPath = handleRemoveUrlParameter(newPath, "ordering");
+		}
 
-			if (newPath.includes("?")) setPagePath(`${handleRemoveUrlParameter(newPath, "page")}&`);
-			else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
+		if (newPath.includes("?")) setPagePath(`${handleRemoveUrlParameter(newPath, "page")}&`);
+		else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
 
-			// Mutate function here
-			mutate(SitesApiEndpoint, false);
+		// Mutate function here
+		await mutate(SitesApiEndpoint, false);
 
-			// Push new path
-			router.push(newPath);
-		},
-		[asPath, labels]
-	);
+		// Push new path
+		return push(newPath);
+	};
 
-	useEffect(() => {
-		handleSort();
-	}, [handleSort]);
-
-	return slug !== null && (slug === "site-name" || slug === "crawl-status" || slug === "last-crawled") ? (
+	return slug !== null ? (
 		<div tw="flex flex-row mr-3">
 			<div tw="inline-flex">
 				{slug === "site-name" ? (
 					<MemoizedSorting
+						sortOrder={sortOrder}
 						setSortOrder={setSortOrder}
 						tableContent={labels}
-						ordering={result?.ordering ?? null}
-						direction={sortOrder?.siteName ?? null}
-						handleSort={handleSort}
-						slug={slug}
-					/>
-				) : slug === "crawl-status" ? (
-					<MemoizedSorting
-						setSortOrder={setSortOrder}
-						tableContent={labels}
-						ordering={result?.ordering ?? null}
-						direction={sortOrder?.crawlStatus ?? null}
-						handleSort={handleSort}
-						slug={slug}
-					/>
-				) : slug === "last-crawled" ? (
-					<MemoizedSorting
-						setSortOrder={setSortOrder}
-						tableContent={labels}
-						ordering={result?.ordering ?? null}
-						direction={sortOrder?.lastCrawled ?? null}
+						ordering={query?.ordering ?? null}
 						handleSort={handleSort}
 						slug={slug}
 					/>
@@ -118,10 +88,7 @@ export const SitesSorting = ({ result = null, slug = null, labels = null, setPag
 };
 
 SitesSorting.propTypes = {
-	labels: PropTypes.string,
-	result: PropTypes.shape({
-		ordering: PropTypes.string
-	}),
+	labels: PropTypes.array,
 	setPagePath: PropTypes.func,
 	slug: PropTypes.string
 };
