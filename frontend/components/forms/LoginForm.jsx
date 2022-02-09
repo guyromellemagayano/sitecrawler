@@ -43,7 +43,7 @@ const LoginForm = () => {
 	const { setConfig } = useContext(SiteCrawlerAppContext);
 
 	// Router
-	const router = useRouter();
+	const { push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -97,7 +97,7 @@ const LoginForm = () => {
 
 					// Redirect to sites dashboard page after successful 200 OK response is established
 					setTimeout(() => {
-						router.push(DashboardSitesLink);
+						push(DashboardSitesLink);
 					}, RedirectInterval);
 
 					// Reenable submission as soon as 200 OK or 201 Created response is issued

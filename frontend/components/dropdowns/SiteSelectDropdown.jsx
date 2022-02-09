@@ -24,7 +24,7 @@ const SiteSelectDropdown = ({ selectedSiteId = null, handleSiteSelectOnClick, op
 	const labelsArray = SidebarMenuLabels();
 
 	// Router
-	const router = useRouter();
+	const { push } = useRouter();
 
 	// Custom hooks
 	const { currentScan, previousScan, scanCount } = useCrawl(openDropdown ? selectedSiteId : null);
@@ -57,7 +57,7 @@ const SiteSelectDropdown = ({ selectedSiteId = null, handleSiteSelectOnClick, op
 
 			if (scanObjId !== null && selectedSiteId !== null) {
 				const timeout = setTimeout(() => {
-					router.push({
+					push({
 						pathname: `${DashboardSitesLink}[siteId]${SiteOverviewSlug}`,
 						query: {
 							siteId: selectedSiteId,

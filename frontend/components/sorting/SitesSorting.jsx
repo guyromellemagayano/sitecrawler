@@ -25,7 +25,7 @@ export const SitesSorting = ({ slug = null, labels = null, setPagePath }) => {
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Router
-	const router = useRouter();
+	const { query, asPath, push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -35,7 +35,7 @@ export const SitesSorting = ({ slug = null, labels = null, setPagePath }) => {
 		setSortOrder({ ...initialOrder });
 
 		// Remove `ordering` URL parameter
-		let newPath = handleRemoveUrlParameter(router.asPath, "ordering");
+		let newPath = handleRemoveUrlParameter(asPath, "ordering");
 
 		// Handle slug to camelcase
 		const sortItem = handleConversionStringToCamelCase(slug);
@@ -66,7 +66,7 @@ export const SitesSorting = ({ slug = null, labels = null, setPagePath }) => {
 		await mutate(SitesApiEndpoint, false);
 
 		// Push new path
-		return router.push(newPath);
+		return push(newPath);
 	};
 
 	return slug !== null ? (
@@ -77,7 +77,7 @@ export const SitesSorting = ({ slug = null, labels = null, setPagePath }) => {
 						sortOrder={sortOrder}
 						setSortOrder={setSortOrder}
 						tableContent={labels}
-						ordering={router.query?.ordering ?? null}
+						ordering={query?.ordering ?? null}
 						handleSort={handleSort}
 						slug={slug}
 					/>

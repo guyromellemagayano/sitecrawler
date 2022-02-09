@@ -37,7 +37,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	const { state, setConfig } = useNotificationMessage();
 
 	// Router
-	const router = useRouter();
+	const { push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -112,7 +112,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 				setHideButtons(false);
 				setIsDeleted(false);
 
-				router.push(LoginLink);
+				push(LoginLink);
 			}
 		})();
 

@@ -14,8 +14,7 @@ import "twin.macro";
 
 export default function Logout() {
 	// Router
-	const { asPath } = useRouter();
-	const router = useRouter();
+	const { asPath, push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -37,7 +36,7 @@ export default function Logout() {
 
 				// Redirect to sites dashboard page after successful 200 OK response is established
 				setTimeout(() => {
-					router.push(LoginLink);
+					push(LoginLink);
 				}, RedirectInterval);
 			}
 		})();

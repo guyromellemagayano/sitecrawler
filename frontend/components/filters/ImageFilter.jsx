@@ -25,8 +25,7 @@ const ImageFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPage
 	const filter = t("sites:filter");
 
 	// Router
-	const { asPath } = useRouter();
-	const router = useRouter();
+	const { asPath, push } = useRouter();
 
 	// Custom filters
 	const ImageFilters = [
@@ -190,7 +189,7 @@ const ImageFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPage
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			router.push(newPath);
+			push(newPath);
 
 			await mutate(scanApiEndpoint, false);
 		},

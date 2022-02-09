@@ -26,8 +26,7 @@ const PageSorting = ({ result = null, slug = null, labels = null, setPagePath })
 	const [sortOrder, setSortOrder] = useState(initialOrder);
 
 	// Router
-	const { asPath } = useRouter();
-	const router = useRouter();
+	const { asPath, push } = useRouter();
 
 	// SWR hook for global mutations
 	// const { mutate } = useSWRConfig();
@@ -67,7 +66,7 @@ const PageSorting = ({ result = null, slug = null, labels = null, setPagePath })
 			// Mutate function here
 			// mutate(linksEndpoint, false)
 
-			router.push(newPath);
+			push(newPath);
 		},
 		[asPath, labels]
 	);
