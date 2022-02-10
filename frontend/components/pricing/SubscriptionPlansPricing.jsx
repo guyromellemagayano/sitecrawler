@@ -49,7 +49,7 @@ const SubscriptionPlansPricing = ({
 	const subscriptionCreditDebitCardRequired = t("settings:subscriptionPlans.creditDebitCardRequired");
 
 	// SWR hooks
-	const { user, errorUser, validatingUser } = useUser();
+	const { user, errorUser } = useUser();
 	const { subscriptions, errorSubscriptions, validatingSubscriptions } = useSubscriptions();
 
 	// Custom hooks
@@ -127,6 +127,8 @@ const SubscriptionPlansPricing = ({
 						>
 							<span
 								aria-hidden="true"
+								role="button"
+								tabIndex="0"
 								css={[
 									tw`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`,
 									togglePaymentPeriod ? tw`translate-x-6` : tw`translate-x-0`

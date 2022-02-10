@@ -1,7 +1,6 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
 import { MemoizedAddNewSitePageLayout } from "@components/layouts/pages/AddNewSite";
-import { MemoizedLoader } from "@components/loaders";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
@@ -22,8 +21,8 @@ export async function getServerSideProps({ req, query }) {
 			cookie: req?.headers?.cookie ?? null
 		}
 	});
-	const userData = userResponse?.data ?? null;
-	const userStatus = userResponse?.status ?? null;
+	const userResponseData = userResponse?.data ?? null;
+	const userResponseStatus = userResponse?.status ?? null;
 
 	// Sites response
 	const sitesResponse = await axios.get(`${SSR_SITE_URL + SitesApiEndpoint}`, {
@@ -35,15 +34,15 @@ export async function getServerSideProps({ req, query }) {
 	const sitesResponseStatus = sitesResponse?.status ?? null;
 
 	if (
-		userData !== null &&
-		!userData?.detail &&
-		!Object.keys(userData).find((key) => key === "detail") &&
-		Math.round(userStatus / 200) === 1
+		userResponseData !== null &&
+		!userResponseData?.detail &&
+		!Object.keys(userResponseData).find((key) => key === "detail") &&
+		Math.round(userResponseStatus / 200) == 1
 	) {
 		const sid = query?.sid ? parseInt(query?.sid) : null;
 		const step = query?.step ? parseInt(query?.step) : null;
-		const verified = query?.verified ? (query?.verified === "true" ? true : false) : null;
-		const edit = query?.edit ? (query?.edit === "true" ? true : false) : null;
+		const verified = query?.verified ? (query?.verified == "true" ? true : false) : null;
+		const edit = query?.edit ? (query?.edit == "true" ? true : false) : null;
 
 		if (
 			sitesResponseData !== null &&
@@ -51,8 +50,16 @@ export async function getServerSideProps({ req, query }) {
 			Object.keys(sitesResponseData)?.length > 0 &&
 			Math.round(sitesResponseStatus / 200) === 1
 		) {
-			const sidMatch =
-				sitesResponseData?.results?.find((site) => site.id === sid && site.verified === verified) ?? null;
+			const sidMatch = sitesResponseData?.results?.find((site) => site.id == sid && site.verified == verified) ?? null;
+
+			if (sitesResponseData.count >= userResponseData.group.max_sites) {
+				return {
+					redirect: {
+						destination: DashboardSitesLink,
+						permanent: false
+					}
+				};
+			}
 
 			if (
 				edit !== null &&
@@ -101,7 +108,7 @@ export default function AddNewSite() {
 	const { query } = useRouter();
 
 	// Custom context
-	const { user, validatingUser } = useContext(SiteCrawlerAppContext);
+	const { user } = useContext(SiteCrawlerAppContext);
 
 	let step = query.step ?? null;
 	let sid = query.sid ?? null;
@@ -113,7 +120,7 @@ export default function AddNewSite() {
 	const sanitizedEdit = handleConversionStringToBoolean(edit);
 	const sanitizedVerified = handleConversionStringToBoolean(verified);
 
-	return !validatingUser && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+	return (
 		<MemoizedLayout>
 			<NextSeo title={addNewSiteText} />
 			<MemoizedPageLayout pageTitle={addNewSiteText}>
@@ -125,8 +132,6 @@ export default function AddNewSite() {
 				/>
 			</MemoizedPageLayout>
 		</MemoizedLayout>
-	) : (
-		<MemoizedLoader />
 	);
 }
 

@@ -64,7 +64,7 @@ const ConfirmEmailPageLayout = () => {
 
 		if (confirmEmailResponseData !== null && Math.round(confirmEmailResponseStatus / 200) === 1) {
 			// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-			await mutate(UserApiEndpoint, false);
+			await mutate(UserApiEndpoint);
 
 			// Update `successMessage` and `success` states with an actual success message as soon as 200 OK or 201 Created response is issued
 			setSuccessMessage((prevState) => [

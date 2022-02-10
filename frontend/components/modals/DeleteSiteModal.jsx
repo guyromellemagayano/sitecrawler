@@ -1,6 +1,6 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { FormSubmissionInterval, RevalidationInterval } from "@constants/GlobalValues";
-import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
+import { NotificationDisplayInterval } from "@constants/GlobalValues";
+import { DashboardSitesLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { XCircleIcon } from "@heroicons/react/outline";
@@ -58,7 +58,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 
 		if (siteDeleteResponseData !== null && Math.round(siteDeleteResponseStatus / 200) === 1) {
 			// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-			await mutate(SitesApiEndpoint, false);
+			await mutate(SitesApiEndpoint);
 
 			// Show alert message after successful 200 OK or 201 Created response is issued
 			setConfig({
@@ -70,18 +70,9 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 			// Renable the button after a successful form submission
 			setTimeout(() => {
 				setDisableDeleteSite(false);
-			}, FormSubmissionInterval);
-
-			if (asPath.includes(SettingsSlug)) {
-				setTimeout(() => {
-					setShowModal(false);
-					push(DashboardSitesLink);
-				}, RevalidationInterval);
-			} else {
-				setTimeout(() => {
-					setShowModal(false);
-				}, RevalidationInterval);
-			}
+				setShowModal(false);
+				push(DashboardSitesLink);
+			}, NotificationDisplayInterval);
 		} else {
 			// Show alert message after successful 200 OK or 201 Created response is issued
 			setConfig({
@@ -93,7 +84,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 			// Renable the button after a successful form submission
 			setTimeout(() => {
 				setDisableDeleteSite(false);
-			}, FormSubmissionInterval);
+			}, NotificationDisplayInterval);
 		}
 	};
 
@@ -101,7 +92,7 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 		<Transition.Root show={showModal} as={Fragment}>
 			<Dialog
 				as="div"
-				className="site-verify-modal-dialog"
+				className="site-delete-modal-dialog"
 				initialFocus={ref}
 				onClose={!disableDeleteSite ? setShowModal : () => {}}
 			>
@@ -173,34 +164,39 @@ const DeleteSiteModal = ({ setShowModal, showModal = false, siteId = null }, ref
 							</div>
 
 							<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<button
-									type="button"
-									disabled={disableDeleteSite}
-									css={[
-										tw`cursor-pointer inline-flex justify-center rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
-										disableDeleteSite
-											? tw`opacity-50 cursor-not-allowed`
-											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 `
-									]}
-									onClick={() => setShowModal(false)}
-								>
-									{closeText}
-								</button>
+								<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
+									<button
+										type="button"
+										tabIndex="0"
+										disabled={disableDeleteSite}
+										css={[
+											tw`cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 `,
+											disableDeleteSite
+												? tw`opacity-50 cursor-not-allowed`
+												: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
+										]}
+										aria-label="Delete Site"
+										onClick={handleSiteDeletion}
+									>
+										{disableDeleteSite ? processingText : proceedText}
+									</button>
+								</span>
 
-								<button
-									type="button"
-									disabled={disableDeleteSite}
-									css={[
-										tw`cursor-pointer inline-flex justify-center rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150`,
-										disableDeleteSite
-											? tw`opacity-50 cursor-not-allowed`
-											: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
-									]}
-									aria-label="Delete Site"
-									onClick={handleSiteDeletion}
-								>
-									{disableDeleteSite ? processingText : proceedText}
-								</button>
+								<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
+									<button
+										type="button"
+										disabled={disableDeleteSite}
+										css={[
+											tw`cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white `,
+											disableDeleteSite
+												? tw`opacity-50 cursor-not-allowed`
+												: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+										]}
+										onClick={() => setShowModal(false)}
+									>
+										{closeText}
+									</button>
+								</span>
 							</div>
 						</div>
 					</Transition.Child>

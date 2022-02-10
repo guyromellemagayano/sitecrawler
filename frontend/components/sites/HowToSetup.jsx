@@ -1,7 +1,9 @@
+import { MemoizedHowToSetupSkeleton } from "@components/skeletons/HowToSetupSkeleton";
 import { HowToSetupData } from "@constants/HowToSetup";
 import { useLoading } from "@hooks/useLoading";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useState } from "react";
+import { memo, useContext, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import ReactPlayer from "react-player/lazy";
@@ -19,80 +21,97 @@ const HowToSetup = () => {
 	const howToSetupSubheadline = t("sites:howToSetup.subHeadline");
 	const tabSrOnly = t("sites:howToSetup.tabSrOnly");
 
+	// Custom context
+	const { user } = useContext(SiteCrawlerAppContext);
+
 	// Custom hooks
 	const { isComponentReady } = useLoading();
 
-	return (
-		<div tw="w-full xl:flex-grow-0 xl:flex-none xl:max-w-screen-sm">
-			<div tw="relative py-6 px-4 sm:px-6 lg:px-8 lg:py-0">
-				<div tw="max-w-7xl mx-auto">
-					<div tw="text-center mb-10">
-						<h3 tw="text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10">
-							{isComponentReady ? howToSetupHeadline : <Skeleton duration={2} width={120} height={30} />}
-						</h3>
-						<p tw="mt-3 max-w-2xl mx-auto text-base leading-6 text-gray-500 sm:mt-4">
-							{isComponentReady ? howToSetupSubheadline : <Skeleton duration={2} width={200} height={30} />}
-						</p>
-					</div>
-					<div tw="relative mx-auto w-full rounded-lg lg:max-w-md mb-8">
-						{isComponentReady ? (
-							HowToSetupData.map(({ id, video }, key) => {
-								return tabActive === id ? (
-									<ReactPlayer key={key} url={video.src} width={"auto"} height={320} controls={true} />
-								) : null;
-							})
-						) : (
-							<Skeleton duration={2} height={260} />
-						)}
-					</div>
-					<div>
-						<div tw="sm:hidden">
-							<label htmlFor="tabs" className="sr-only">
-								{tabSrOnly}
-							</label>
-							{isComponentReady ? (
-								<select
-									id="tabs"
-									name="tabs"
-									aria-label="Selected tab"
-									tw="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md space-x-3"
-								>
-									{HowToSetupData.map(({ title, defaultValue }) => {
-										return (
-											<option key={title} selected={defaultValue}>
-												{title}
-											</option>
-										);
-									})}
-								</select>
+	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+		<div tw="flex-auto">
+			<div tw="w-full xl:flex-grow-0 xl:flex-none xl:max-w-screen-sm">
+				<div tw="relative py-6 px-4 sm:px-6 lg:px-8 lg:py-0">
+					<div tw="max-w-7xl w-full mx-auto">
+						<div tw="text-center mb-10">
+							<h3 tw="text-2xl leading-9 tracking-tight font-bold text-gray-900 sm:text-3xl sm:leading-10">
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									howToSetupHeadline
+								) : (
+									<Skeleton duration={2} width={120} height={30} />
+								)}
+							</h3>
+							<p tw="mt-3 max-w-2xl mx-auto text-base leading-6 text-gray-500 sm:mt-4">
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									howToSetupSubheadline
+								) : (
+									<Skeleton duration={2} width={200} height={30} />
+								)}
+							</p>
+						</div>
+						<div tw="relative mx-auto w-full rounded-lg lg:max-w-md mb-8">
+							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+								HowToSetupData.map(({ id, video }, key) => {
+									return tabActive === id ? (
+										<ReactPlayer key={key} url={video.src} width={"auto"} height={320} controls={true} />
+									) : null;
+								})
 							) : (
-								<div tw="block w-full space-x-3">
-									{HowToSetupData.map(({ title }) => {
-										return <Skeleton key={title} duration={2} width={100} height={30} />;
-									})}
-								</div>
+								<Skeleton duration={2} height={260} />
 							)}
 						</div>
-						<div tw="hidden sm:block">
-							<nav tw="flex justify-center space-x-3">
-								{HowToSetupData.map(({ title, id }, key) =>
-									isComponentReady ? (
-										<TabItem
-											key={key}
-											id={id}
-											title={title}
-											onItemClicked={() => setTabActive(id)}
-											isTabActive={tabActive === id}
-										/>
-									) : (
-										<Skeleton key={key} duration={2} width={100} height={30} />
-									)
+						<div>
+							<div tw="sm:hidden">
+								<label htmlFor="tabs" className="sr-only">
+									{tabSrOnly}
+								</label>
+								{isComponentReady ? (
+									<select
+										id="tabs"
+										name="tabs"
+										aria-label="Selected tab"
+										tw="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md space-x-3"
+									>
+										{HowToSetupData.map(({ title, defaultValue }) => {
+											return (
+												<option key={title} selected={defaultValue}>
+													{title}
+												</option>
+											);
+										})}
+									</select>
+								) : (
+									<div tw="block w-full space-x-3">
+										{HowToSetupData.map(({ title }) => {
+											return <Skeleton key={title} duration={2} width={100} height={30} />;
+										})}
+									</div>
 								)}
-							</nav>
+							</div>
+							<div tw="hidden sm:block">
+								<nav tw="flex justify-center space-x-3">
+									{HowToSetupData.map(({ title, id }, key) =>
+										isComponentReady ? (
+											<TabItem
+												key={key}
+												id={id}
+												title={title}
+												onItemClicked={() => setTabActive(id)}
+												isTabActive={tabActive === id}
+											/>
+										) : (
+											<Skeleton key={key} duration={2} width={100} height={30} />
+										)
+									)}
+								</nav>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+		</div>
+	) : (
+		<div tw="flex-auto">
+			<MemoizedHowToSetupSkeleton />
 		</div>
 	);
 };

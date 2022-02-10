@@ -2,14 +2,13 @@ import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { FormSubmissionInterval } from "@constants/GlobalValues";
 import { AddNewSiteLink, DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import { useLoading } from "@hooks/useLoading";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { useSites } from "@hooks/useSites";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useEffect, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
@@ -35,14 +34,13 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 	const updateSiteDetails = t("updateSiteDetails");
 
 	// Router
-	const router = useRouter();
+	const { replace } = useRouter();
+
+	// Custom context
+	const { user, isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
 	const { sites, errorSites } = useSites();
-
-	// Custom hooks
-	const { state, setConfig } = useNotificationMessage();
-	const { isComponentReady } = useLoading();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -51,7 +49,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 		e.preventDefault();
 
 		// Update current URL with query for the next step
-		router.replace(
+		replace(
 			{
 				pathname: AddNewSiteLink,
 				query: { step: step - 1, sid: sid ?? null, edit: true, verified: false }
@@ -88,9 +86,6 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 
 						if (verifyUrlStepData !== null && Math.round(verifyUrlStepStatus / 200) === 1) {
 							if (verifyUrlStepData?.verified) {
-								// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-								await mutate(SitesApiEndpoint, false);
-
 								// Disable submission as soon as 200 OK or 201 Created response was issued
 								setSubmitting(false);
 
@@ -103,7 +98,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 								});
 
 								// Update router query
-								router.replace({
+								replace({
 									pathname: AddNewSiteLink,
 									query: { step: step + 1, sid: sid ?? null, edit: false, verified: true }
 								});
@@ -112,6 +107,9 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 								setTimeout(() => {
 									setDisableSiteVerify(false);
 								}, FormSubmissionInterval);
+
+								// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
+								await mutate(SitesApiEndpoint);
 							} else {
 								// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued
 								setSubmitting(false);
@@ -142,7 +140,13 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 					{({ handleSubmit, isSubmitting, handleChange, values }) => (
 						<form tw="sm:flex sm:items-center w-full" onSubmit={handleSubmit}>
 							<div tw="flex lg:justify-between w-full">
-								{isComponentReady && step === 3 && verified && sid !== null ? (
+								{isComponentReady &&
+								user &&
+								Math.round(user?.status / 100) === 2 &&
+								!user?.data?.detail &&
+								step === 3 &&
+								verified &&
+								sid !== null ? (
 									<span tw="inline-flex">
 										{siteData !== null && Object.keys(siteData)?.length > 0 ? (
 											<Link
@@ -159,7 +163,13 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 											<Skeleton duration={2} width={160} height={38} tw="mr-3" />
 										)}
 									</span>
-								) : isComponentReady && step === 2 && !verified && sid !== null ? (
+								) : isComponentReady &&
+								  user &&
+								  Math.round(user?.status / 100) === 2 &&
+								  !user?.data?.detail &&
+								  step === 2 &&
+								  !verified &&
+								  sid !== null ? (
 									<>
 										<div tw="inline-flex items-center justify-start">
 											<input

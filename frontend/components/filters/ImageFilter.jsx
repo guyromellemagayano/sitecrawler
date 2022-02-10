@@ -191,7 +191,7 @@ const ImageFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPage
 
 			push(newPath);
 
-			await mutate(scanApiEndpoint, false);
+			await mutate(scanApiEndpoint);
 		},
 		[asPath, filterQueryString, scanApiEndpoint]
 	);

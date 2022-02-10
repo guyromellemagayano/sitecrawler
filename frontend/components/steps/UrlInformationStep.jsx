@@ -1,8 +1,9 @@
 import { MemoizedUrlInformationStepForm } from "@components/forms/UrlInformationStepForm";
 import { useLoading } from "@hooks/useLoading";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import "twin.macro";
@@ -19,6 +20,9 @@ const UrlInformationStep = (props) => {
 	const formDetailLabel = t("sites:form.detail.label");
 	const formDetailDescription = t("sites:form.detail.description");
 
+	// Custom context
+	const { user } = useContext(SiteCrawlerAppContext);
+
 	// Custom hooks
 	const { isComponentReady } = useLoading();
 
@@ -28,10 +32,18 @@ const UrlInformationStep = (props) => {
 				<div tw="block mb-12">
 					<span tw="inline-flex flex-col">
 						<h4 tw="text-lg self-start leading-7 font-medium text-gray-900">
-							{isComponentReady ? formDetailLabel : <Skeleton duration={2} width={175} height={24} />}
+							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+								formDetailLabel
+							) : (
+								<Skeleton duration={2} width={175} height={24} />
+							)}
 						</h4>
 						<p tw="text-sm self-start mt-1 leading-5 text-gray-500">
-							{isComponentReady ? formDetailDescription : <Skeleton duration={2} width={175} height={24} />}
+							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+								formDetailDescription
+							) : (
+								<Skeleton duration={2} width={175} height={24} />
+							)}
 						</p>
 					</span>
 				</div>

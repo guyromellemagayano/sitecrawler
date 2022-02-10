@@ -322,7 +322,7 @@ const SeoFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPagePa
 
 			push(newPath);
 
-			await mutate(scanApiEndpoint, false);
+			await mutate(scanApiEndpoint);
 		},
 		[asPath, filterQueryString, scanApiEndpoint]
 	);

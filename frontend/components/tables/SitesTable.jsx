@@ -3,10 +3,11 @@ import { SitesSorting } from "@components/sorting/SitesSorting";
 import { SitesTableLabels } from "@constants/SitesTableLabels";
 import { useLoading } from "@hooks/useLoading";
 import { useSiteQueries } from "@hooks/useSiteQueries";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import tw from "twin.macro";
 import { MemoizedDataTable } from "./DataTable";
 
@@ -14,10 +15,8 @@ import { MemoizedDataTable } from "./DataTable";
  * Custom function to render the `SitesTable` component
  *
  * @param {object} sites
- * @param {boolean} validatingSites
- * @param {boolean} disableLocalTime
  */
-const SitesTable = ({ sites = null, validatingSites = null, disableLocalTime = false }) => {
+const SitesTable = ({ sites = null }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
@@ -25,6 +24,9 @@ const SitesTable = ({ sites = null, validatingSites = null, disableLocalTime = f
 
 	// Router
 	const { query } = useRouter();
+
+	// Custom context
+	const { user, disableLocalTime, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom hooks
 	const { setLinksPerPage, setPagePath } = useSiteQueries();
@@ -37,42 +39,38 @@ const SitesTable = ({ sites = null, validatingSites = null, disableLocalTime = f
 		<section
 			css={[
 				tw`flex flex-col w-full min-h-full h-full`,
-				sites?.data?.count > 0 && sites?.data?.results?.length > 0 && !validatingSites
-					? tw`justify-start`
-					: tw`justify-center`
+				sites?.data?.count > 0 && sites?.data?.results?.length > 0 ? tw`justify-start` : tw`justify-center`
 			]}
 		>
-			{isComponentReady && !validatingSites ? (
-				sites?.data?.count > 0 && sites?.data?.results?.length > 0 ? (
-					<table tw="relative w-full">
-						<thead>
-							<tr>
-								{labelsArray?.map((label) => (
-									<th
-										key={label.label}
-										className="min-width-adjust"
-										tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-									>
-										<span tw="flex items-center justify-start">
-											<SitesSorting slug={label.slug} labels={labelsArray} setPagePath={setPagePath} />
-											<span tw="flex items-center">{label.label}</span>
-										</span>
-									</th>
-								)) ?? null}
-							</tr>
-						</thead>
+			{sites?.data?.count > 0 && sites?.data?.results?.length > 0 ? (
+				<table tw="relative w-full">
+					<thead>
+						<tr>
+							{labelsArray?.map((label) => (
+								<th
+									key={label.label}
+									className="min-width-adjust"
+									tw="px-6 py-3 border-b border-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+								>
+									<span tw="flex items-center justify-start">
+										<SitesSorting slug={label.slug} labels={labelsArray} setPagePath={setPagePath} />
+										<span tw="flex items-center">{label.label}</span>
+									</span>
+								</th>
+							)) ?? null}
+						</tr>
+					</thead>
 
-						<tbody tw="relative divide-y divide-gray-200">
-							{sites.data.results.map((result) => {
-								return <MemoizedDataTable key={result.id} site={result} disableLocalTime={disableLocalTime} />;
-							})}
-						</tbody>
-					</table>
-				) : (
-					<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-						<MemoizedLoadingMessage message={noAvailableSites} />
-					</div>
-				)
+					<tbody tw="relative divide-y divide-gray-200">
+						{sites.data.results.map((result) => {
+							return <MemoizedDataTable key={result.id} site={result} />;
+						})}
+					</tbody>
+				</table>
+			) : sites?.data?.count === 0 && sites?.data?.results?.length === 1 ? (
+				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
+					<MemoizedLoadingMessage message={noAvailableSites} />
+				</div>
 			) : (
 				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
 					<MemoizedLoadingMessage message={loaderMessage} />
@@ -83,9 +81,7 @@ const SitesTable = ({ sites = null, validatingSites = null, disableLocalTime = f
 };
 
 SitesTable.propTypes = {
-	disableLocalTime: PropTypes.bool,
-	sites: PropTypes.any,
-	validatingSites: PropTypes.bool
+	sites: PropTypes.any
 };
 
 /**
