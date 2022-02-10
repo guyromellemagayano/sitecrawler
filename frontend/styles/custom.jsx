@@ -321,6 +321,24 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 	}
 
 	.delete-user-account-modal,
+	.delete-site-modal,
+	.site-limit-reached-modal,
+	.show-help-modal,
+	.change-to-basic-modal,
+	.new-active-plan-modal,
+	.payment-method-modal,
+	.site-verify-modal,
+	.site-delete-modal {
+		&-dialog {
+			${tw`fixed z-50 inset-0 overflow-y-auto`}
+			&-overlay {
+				${tw`fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity`}
+			}
+		}
+	}
+
+	.delete-user-account-modal,
+	.delete-site-modal,
 	.site-limit-reached-modal,
 	.show-help-modal,
 	.change-to-basic-modal,
@@ -377,22 +395,6 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 				&-to {
 					${tw`opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95`}
 				}
-			}
-		}
-	}
-
-	.delete-user-account-modal,
-	.site-limit-reached-modal,
-	.show-help-modal,
-	.change-to-basic-modal,
-	.new-active-plan-modal,
-	.payment-method-modal,
-	.site-verify-modal,
-	.site-delete-modal {
-		&-dialog {
-			${tw`fixed z-50 inset-0 overflow-y-auto`}
-			&-overlay {
-				${tw`fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity`}
 			}
 		}
 	}
