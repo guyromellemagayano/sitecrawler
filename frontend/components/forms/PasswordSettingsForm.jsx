@@ -1,10 +1,9 @@
 import { PasswordChangeApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import { useLoading } from "@hooks/useLoading";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useState } from "react";
+import { memo, useContext, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import PasswordStrengthBar from "react-password-strength-bar";
@@ -33,9 +32,8 @@ const PasswordSettingsForm = () => {
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
-	// Custom hooks
-	const { isComponentReady } = useLoading();
-	const { setConfig } = useNotificationMessage();
+	// Custom context
+	const { user, isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
 
 	return (
 		<Formik
@@ -77,7 +75,7 @@ const PasswordSettingsForm = () => {
 					});
 
 					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-					await mutate(UserApiEndpoint, false);
+					await mutate(UserApiEndpoint);
 				} else {
 					// Disable submission, reset, and disable form as soon as 200 OK or 201 Created response was not issued
 					setSubmitting(false);
@@ -98,10 +96,14 @@ const PasswordSettingsForm = () => {
 					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 						<div tw="sm:col-span-1">
 							<label htmlFor="password1" tw="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady ? newPassword : <Skeleton duration={2} width={150} height={20} />}
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									newPassword
+								) : (
+									<Skeleton duration={2} width={150} height={20} />
+								)}
 							</label>
 							<div tw="mt-1 relative flex rounded-md shadow-sm">
-								{isComponentReady ? (
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										type="password"
 										id="password1"
@@ -133,10 +135,14 @@ const PasswordSettingsForm = () => {
 
 						<div tw="sm:col-span-1">
 							<label htmlFor="password2" tw="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady ? confirmPassword : <Skeleton duration={2} width={150} height={20} />}
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									confirmPassword
+								) : (
+									<Skeleton duration={2} width={150} height={20} />
+								)}
 							</label>
 							<div tw="mt-1 relative flex rounded-md shadow-sm">
-								{isComponentReady ? (
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										type="password"
 										id="password2"
@@ -166,7 +172,7 @@ const PasswordSettingsForm = () => {
 							<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
 								<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
 									<span tw="inline-flex">
-										{isComponentReady ? (
+										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 											!disableForm ? (
 												<button
 													type="submit"

@@ -1,6 +1,5 @@
 import { ContactApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
-import { useLoading } from "@hooks/useLoading";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
@@ -21,11 +20,8 @@ const HelpSupportSettingsForm = () => {
 	const submitting = t("common:submitting");
 	const requiredField = t("common:requiredField");
 
-	// Custom hooks
-	const { isComponentReady } = useLoading();
-
 	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
+	const { user, setConfig, isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	return (
 		<Formik
@@ -74,10 +70,14 @@ const HelpSupportSettingsForm = () => {
 					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 						<div tw="sm:col-span-1">
 							<label htmlFor="about" tw="block text-sm font-medium text-gray-700">
-								{isComponentReady ? message : <Skeleton duration={2} width={150} height={20} />}
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									message
+								) : (
+									<Skeleton duration={2} width={150} height={20} />
+								)}
 							</label>
 							<div tw="mt-1 relative rounded-md shadow-sm">
-								{isComponentReady ? (
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<textarea
 										id="message"
 										name="message"
@@ -110,7 +110,7 @@ const HelpSupportSettingsForm = () => {
 							<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
 								<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
 									<span tw="inline-flex">
-										{isComponentReady ? (
+										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 											<button
 												type="submit"
 												disabled={isSubmitting}

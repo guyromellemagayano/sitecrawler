@@ -63,7 +63,7 @@ export const SitesSorting = ({ slug = null, labels = null, setPagePath }) => {
 		else setPagePath(`${handleRemoveUrlParameter(newPath, "page")}?`);
 
 		// Mutate function here
-		await mutate(SitesApiEndpoint, false);
+		await mutate(SitesApiEndpoint);
 
 		// Push new path
 		return push(newPath);

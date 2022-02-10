@@ -2,6 +2,7 @@
 	"fallback": {
 		"200OkSuccessResponse": "Ok",
 		"201CreatedSuccessResponse": "Created",
+		"204NoContentSuccessResponse": "No Content",
 		"400BadRequestErrorResponse": "Bad Request",
 		"401UnauthorizedErrorResponse": "Unauthorized",
 		"403ForbiddenErrorResponse": "Forbidden",
@@ -306,6 +307,7 @@
 		"delete": {
 			"200OkSuccessResponse": "Sites delete success! Got a 200 OK success response.",
 			"201CreatedSuccessResponse": "Sites delete success! Got a 201 created success response.",
+			"204NoContentSuccessResponse": "Sites delete success! Got a 204 no content success response.",
 			"400BadRequestErrorResponse": "Sites delete failed. Got a 400 bad request error response. Please try again.",
 			"401UnauthorizedErrorResponse": "Sites delete failed. Got a 401 unauthorized error response. Please try again.",
 			"403ForbiddenErrorResponse": "Sites delete failed. Got a 403 forbidden error response.",

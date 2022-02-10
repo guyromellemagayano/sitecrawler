@@ -1,12 +1,10 @@
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { Switch } from "@headlessui/react";
 import { handlePutMethod } from "@helpers/handleHttpMethods";
-import { useLoading } from "@hooks/useLoading";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
-import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
@@ -16,58 +14,31 @@ import tw from "twin.macro";
  * Custom function to render the `TimestampSettingsForm` component
  */
 const TimestampSettingsForm = () => {
-	const [userId, setUserId] = useState(null);
-	const [username, setUsername] = useState(null);
-	const [email, setEmail] = useState(null);
-	const [firstname, setFirstname] = useState(null);
-	const [lastname, setLastname] = useState(null);
-	const [settings, setSettings] = useState({});
-	const [permissions, setPermissions] = useState([]);
-	const [group, setGroup] = useState({});
-	const [largePageSizeThreshold, setLargePageSizeThreshold] = useState(null);
-	const [disableLocalTime, setDisableLocalTime] = useState(true);
-
 	// Translations
 	const { t } = useTranslation();
 	const timestampSettingsHeadline = t("settings:timestampSettings.headline");
 	const timestampSettingsSubheadline = t("settings:timestampSettings.subHeadline");
 
-	// SWR hooks
-	const { user, errorUser } = useUser();
+	// Custom context
+	const {
+		isComponentReady,
+		user,
+		userId,
+		username,
+		email,
+		firstname,
+		lastname,
+		settings,
+		permissions,
+		group,
+		largePageSizeThreshold,
+		disableLocalTime,
+		setDisableLocalTime,
+		setConfig
+	} = useContext(SiteCrawlerAppContext);
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
-
-	// Custom hooks
-	const { isComponentReady } = useLoading();
-	const { setConfig } = useNotificationMessage();
-
-	// Handle the population of form data
-	const handleFormData = useCallback(async () => {
-		if (!errorUser && user && !user?.data?.detail) {
-			setUserId(user?.data?.id ?? userId);
-			setUsername(user?.data?.username ?? username);
-			setEmail(user?.data?.email ?? email);
-			setFirstname(user?.data?.first_name ?? firstname);
-			setLastname(user?.data?.last_name ?? lastname);
-			setSettings(user?.data?.settings ?? settings);
-			setPermissions(user?.data?.permissions ?? permissions);
-			setGroup(user?.data?.group ?? group);
-			setLargePageSizeThreshold(user?.data?.large_page_size_threshold ?? largePageSizeThreshold);
-		}
-	}, [user, errorUser]);
-
-	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleFormData();
-		}
-
-		return () => {
-			isMounted = false;
-		};
-	}, [handleFormData]);
 
 	return (
 		<div tw="space-y-8 divide-y divide-gray-200">
@@ -75,7 +46,7 @@ const TimestampSettingsForm = () => {
 				<div tw="sm:col-span-3">
 					<div tw="relative flex items-center">
 						<div tw="absolute flex items-center h-5">
-							{isComponentReady ? (
+							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								<Formik
 									enableReinitialize={true}
 									initialValues={{
@@ -114,7 +85,7 @@ const TimestampSettingsForm = () => {
 											Math.round(timestampSettingsResponseStatus / 200) === 1
 										) {
 											// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-											await mutate(UserApiEndpoint, false);
+											await mutate(UserApiEndpoint);
 
 											// Show alert message after successful 200 OK or 201 Created response is issued
 											setConfig({
@@ -190,10 +161,18 @@ const TimestampSettingsForm = () => {
 						</div>
 						<div tw="ml-2 pl-12 text-sm leading-5">
 							<label htmlFor="candidates" tw="font-medium text-gray-700">
-								{isComponentReady ? timestampSettingsHeadline : <Skeleton duration={2} width={125} height={15} />}
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									timestampSettingsHeadline
+								) : (
+									<Skeleton duration={2} width={125} height={15} />
+								)}
 							</label>
 							<p tw="text-gray-500">
-								{isComponentReady ? timestampSettingsSubheadline : <Skeleton duration={2} width={250} height={15} />}
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									timestampSettingsSubheadline
+								) : (
+									<Skeleton duration={2} width={250} height={15} />
+								)}
 							</p>
 						</div>
 					</div>

@@ -19,10 +19,10 @@ const Footer = () => {
 	const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
 
 	return (
-		<footer tw="flex-none w-full pt-8 pb-4 px-4 border-t border-gray-200">
+		<footer tw="flex-none w-full py-8 border-t border-gray-200">
 			<div tw="flex flex-col xl:flex-row xl:items-center xl:justify-between">
 				<div tw="flex justify-center md:order-1">
-					<nav tw="-mx-4 mt-2 mb-4 lg:-my-2 flex flex-wrap justify-center">
+					<nav tw="-mx-3 mt-2 mb-4 lg:-my-2 flex flex-wrap justify-center">
 						{labelsArray.map((value, index) => (
 							<div key={index} tw="px-2 py-1 xl:px-3 xl:py-2">
 								<a

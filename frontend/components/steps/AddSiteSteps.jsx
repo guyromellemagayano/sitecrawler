@@ -1,7 +1,8 @@
 import { useLoading } from "@hooks/useLoading";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -21,9 +22,12 @@ const AddSiteSteps = (props) => {
 	const step1 = t("sites:step1");
 	const step2 = t("sites:step2");
 	const step3 = t("sites:step3");
-	const verifySite = t("sites:verifySite");
+	const verifySiteTitle = t("sites:verifySiteTitle");
 	const verifiedSite = t("sites:verifiedSite");
 	const formDetailLabel = t("sites:form.detail.label");
+
+	// Custom context
+	const { user } = useContext(SiteCrawlerAppContext);
 
 	// Custom hooks
 	const { isComponentReady } = useLoading();
@@ -35,7 +39,7 @@ const AddSiteSteps = (props) => {
 		},
 		{
 			title: step2,
-			subtitle: verifySite
+			subtitle: verifySiteTitle
 		},
 		{
 			title: step3,
@@ -44,12 +48,12 @@ const AddSiteSteps = (props) => {
 	];
 
 	return (
-		<div tw="w-full h-full flex items-start flex-col justify-center ">
+		<div tw="w-full h-full flex items-start flex-col justify-center flex-auto xl:max-w-4xl">
 			<div tw="w-full xl:flex-grow xl:pr-8 xl:border-r xl:border-gray-200">
 				<nav aria-label={dismiss} tw="w-full pt-8 pb-4">
 					<ol tw="md:flex md:space-y-0 md:space-x-8 space-y-4">
 						{stepsData.map((value, key) => {
-							return isComponentReady ? (
+							return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								<li key={key} tw="md:flex-1">
 									<span
 										css={[

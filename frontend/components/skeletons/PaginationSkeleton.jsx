@@ -10,7 +10,7 @@ import { MemoizedSkeletonEntries } from "./common/SkeletonEntries";
 const PaginationSkeleton = () => {
 	const skeletonLimit = 1;
 	const skeletonEntry = (
-		<div tw="bg-white mt-8 mb-4 p-4 lg:flex items-center justify-between align-middle">
+		<div tw="bg-white mt-8 mb-4 py-4 lg:flex items-center justify-between align-middle">
 			<div tw="flex-1 flex">
 				<Skeleton duration={2} width={120} />
 			</div>

@@ -1,7 +1,7 @@
 import { Transition } from "@headlessui/react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
-import { forwardRef, memo, useCallback, useEffect, useState } from "react";
+import { forwardRef, memo, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
@@ -20,25 +20,33 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 	const [htmlCopied, setHtmlCopied] = useState(false);
 
 	// Handle the copy to clipboard functionality
-	const handleSiteData = useCallback(async () => {
-		if (siteData !== null && Object.keys(siteData)?.length > 0) {
-			setSiteVerificationId(siteData?.verification_id ?? null);
-			setSiteUrl(siteData?.url ?? null);
+	useEffect(() => {
+		if (showModal && siteData !== null && Object.keys(siteData)?.length > 0) {
+			setSiteVerificationId(siteData.verification_id ?? null);
+			setSiteUrl(siteData.url ?? null);
 
 			if (typeof copyValue === "string" && copyValue == "") {
 				setCopyValue('<meta name="epic-crawl-id" content="' + siteVerificationId + '" />');
 			}
 		}
-	}, [siteData]);
-
-	useEffect(() => {
-		handleSiteData();
-	}, [handleSiteData]);
+	}, [siteData, showModal, copyValue]);
 
 	// Handle textarea change
 	const handleTextareaChange = ({ copyValue }) => {
 		setCopyValue({ copyValue, htmlCopied });
 	};
+
+	// Handle input copy
+	const handleInputCopy = () => {
+		setCopyValue(true);
+	};
+
+	// Reset copied state as soon as the modal is closed
+	useEffect(() => {
+		if (!showModal) {
+			setCopyValue(false);
+		}
+	}, [copyValue, showModal]);
 
 	// Translation
 	const { t } = useTranslation();
@@ -103,7 +111,7 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 												value={instructionHtmlText}
 												onChange={handleTextareaChange}
 											></textarea>
-											<CopyToClipboard onCopy={() => setHtmlCopied(!htmlCopied)} text={instructionHtmlText}>
+											<CopyToClipboard onCopy={handleInputCopy} text={instructionHtmlText}>
 												<button tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 													<span>{htmlCopied ? copiedText : copyText}</span>
 												</button>

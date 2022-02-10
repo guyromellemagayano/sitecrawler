@@ -15,7 +15,6 @@ export const BadgeModalImage = {
 
 // Numerical Values
 export const ComponentReadyInterval = 5000;
-export const EndpointRefreshInterval = 7500;
 export const FormPasswordMinChars = 8;
 export const FormPasswordMaxChars = 128;
 export const FormStringMaxChars = 150;
@@ -25,7 +24,7 @@ export const LgScreenBreakpoint = 1024;
 export const MutateInterval = 1500;
 export const RedirectInterval = 1250;
 export const RevalidationInterval = 5000;
-export const NotificationDisplayInterval = 7500;
+export const NotificationDisplayInterval = 3000;
 export const ModalDisplayInterval = 3500;
 export const OnErrorRetryCount = 5;
 export const NoInterval = 0;

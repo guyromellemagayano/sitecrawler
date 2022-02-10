@@ -1,14 +1,15 @@
+import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
 import { MaxSitesPerPage } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useLoading } from "@hooks/useLoading";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
 import { usePage } from "@hooks/usePage";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import Pagination from "rc-pagination";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import { useSWRConfig } from "swr";
 import "twin.macro";
 
@@ -26,7 +27,9 @@ const DataPagination = () => {
 	const { linksPerPage, setLinksPerPage, pagePath, setPagePath } = useSiteQueries();
 	const { scanApiEndpoint } = useScanApiEndpoint(parseInt(linksPerPage));
 	const { isComponentReady } = useLoading();
-	const { state, setConfig } = useNotificationMessage();
+
+	// Custom context
+	const { user, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
 	const { page, errorPage, validatingPage } = usePage(scanApiEndpoint);
@@ -90,7 +93,7 @@ const DataPagination = () => {
 	};
 
 	// Handle table rows per page change
-	const handleRowsPerPageChange = (e) => {
+	const handleRowsPerPageChange = async (e) => {
 		const countValue = parseInt(e.target.value);
 
 		let newPath = asPath;
@@ -112,12 +115,12 @@ const DataPagination = () => {
 
 			push(newPath);
 
-			mutate(scanApiEndpoint, false);
+			await mutate(scanApiEndpoint);
 		}
 	};
 
-	return (
-		<div tw="bg-white mt-8 mb-4 p-4 lg:flex items-center justify-between align-middle">
+	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+		<div tw="bg-white mt-8 mb-4 py-4 lg:flex items-center justify-between align-middle">
 			<div tw="flex items-center mb-8 lg:m-0">
 				<div tw="mt-2 lg:my-0">
 					<p tw="text-center lg:text-left text-sm leading-5 text-gray-500">
@@ -137,7 +140,7 @@ const DataPagination = () => {
 				current={currentPage}
 				defaultCurrent={currentPage}
 				defaultPageSize={pageNumbers[0]}
-				disabled={!isComponentReady}
+				disabled={!isComponentReady && user && Math.round(user?.status / 100) === 4 && user?.data?.detail}
 				onChange={handlePageChange}
 				pageSize={linksPerPage}
 				showLessItems
@@ -166,6 +169,8 @@ const DataPagination = () => {
 				</div>
 			</div>
 		</div>
+	) : (
+		<MemoizedPaginationSkeleton />
 	);
 };
 

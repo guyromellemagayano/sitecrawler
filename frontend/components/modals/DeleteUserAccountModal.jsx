@@ -4,11 +4,10 @@ import { LoginLink } from "@constants/PageLinks";
 import { Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
-import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { forwardRef, memo, useCallback, useEffect, useMemo, useState } from "react";
+import { forwardRef, Fragment, memo, useContext, useMemo, useState } from "react";
 import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 
@@ -19,7 +18,6 @@ import tw from "twin.macro";
  * @param {function} setShowModal
  */
 const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
-	const [userIdApiEndpoint, setUserIdApiEndpoint] = useState(null);
 	const [hideButtons, setHideButtons] = useState(false);
 	const [isDeleted, setIsDeleted] = useState(false);
 	const [disableDeleteUser, setDisableDeleteUser] = useState(false);
@@ -30,30 +28,14 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	const proceed = t("common:proceed");
 	const cancel = t("common:cancel");
 
-	// SWR hooks
-	const { user, errorUser, validatingUser } = useUser();
-
 	// Custom context
-	const { state, setConfig } = useNotificationMessage();
+	const { state, setConfig, userIdApiEndpoint } = useContext(SiteCrawlerAppContext);
 
 	// Router
 	const { push } = useRouter();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
-
-	// Handle the `userId` API endpoint
-	const handleUserIdApiEndpoint = useCallback(async () => {
-		if (!validatingUser) {
-			if (!errorUser && user && !user?.data?.detail && user?.data?.id) {
-				setUserIdApiEndpoint(`${UserApiEndpoint + user?.data?.id}`);
-			}
-		}
-	}, [user, errorUser, validatingUser]);
-
-	useEffect(() => {
-		handleUserIdApiEndpoint();
-	}, [handleUserIdApiEndpoint]);
 
 	// Handle user deletion
 	const handleUserDeletion = async (e) => {
@@ -69,7 +51,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 
 		if (deleteUserAccountResponseData !== null && Math.round(deleteUserAccountResponseStatus / 200) === 1) {
 			// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-			await mutate(UserApiEndpoint, false);
+			await mutate(UserApiEndpoint);
 
 			// Show alert message after successful 200 OK or 201 Created response is issued
 			setConfig({
@@ -122,7 +104,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	}, [isDeleted, hideButtons]);
 
 	return (
-		<Transition show={showModal}>
+		<Transition.Root show={showModal} as={Fragment}>
 			<div ref={ref} tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
 				<Transition.Child
 					enter="delete-user-account-modal-first-child-enter"
@@ -140,6 +122,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 				<span tw="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
 				<Transition.Child
+					as={Fragment}
 					enter="delete-user-account-modal-second-child-enter"
 					enterFrom="delete-user-account-modal-second-child-enter-from"
 					enterTo="delete-user-account-modal-second-child-enter-to"
@@ -187,13 +170,13 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 
 								{!hideButtons ? (
 									<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-										<span tw="flex w-full sm:w-auto">
+										<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
 											{!isSuccess ? null : (
 												<button
 													type="button"
 													disabled={disableDeleteUser}
 													css={[
-														tw`sm:ml-3 cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-red-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition ease-in-out duration-150`,
+														tw`cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600`,
 														disableDeleteUser
 															? tw`opacity-50 cursor-not-allowed`
 															: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
@@ -209,10 +192,10 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 												type="button"
 												disabled={disableDeleteUser}
 												css={[
-													tw`inline-flex justify-center w-full rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
+													tw`cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white `,
 													disableDeleteUser
 														? tw`opacity-50 cursor-not-allowed`
-														: tw`cursor-pointer hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150`
+														: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 												]}
 												onClick={() => setShowModal(false)}
 											>
@@ -226,7 +209,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 					}) ?? null}
 				</Transition.Child>
 			</div>
-		</Transition>
+		</Transition.Root>
 	);
 };
 

@@ -126,7 +126,5 @@ export const handleNotificationMessages = ({
 		};
 	}
 
-	console.log({ state, config });
-
 	return { state, config };
 };

@@ -318,6 +318,7 @@ export const useNotificationMessage = () => {
 	const sitesPut504GatewayTimeoutErrorResponse = t("alerts:sites.put.504GatewayTimeoutErrorResponse");
 	const sitesDelete200OkSuccessResponse = t("alerts:sites.delete.200OkSuccessResponse");
 	const sitesDelete201CreatedSuccessResponse = t("alerts:sites.delete.201CreatedSuccessResponse");
+	const sitesDelete204NoContentSuccessResponse = t("alerts:sites.delete.204NoContentSuccessResponse");
 	const sitesDelete400BadRequestErrorResponse = t("alerts:sites.delete.400BadRequestErrorResponse");
 	const sitesDelete401UnauthorizedErrorResponse = t("alerts:sites.delete.401UnauthorizedErrorResponse");
 	const sitesDelete403ForbiddenErrorResponse = t("alerts:sites.delete.403ForbiddenErrorResponse");
@@ -483,6 +484,7 @@ export const useNotificationMessage = () => {
 	// Fallback translations
 	const fallback200OkSuccessResponse = t("alerts:fallback.200OkSuccessResponse");
 	const fallback201CreatedSuccessResponse = t("alerts:fallback.201CreatedSuccessResponse");
+	const fallback204NoContentSuccessResponse = t("alerts:fallback.204NoContentSuccessResponse");
 	const fallback400BadRequestErrorResponse = t("alerts:fallback.400BadRequestErrorResponse");
 	const fallback401UnauthorizedErrorResponse = t("alerts:fallback.401UnauthorizedErrorResponse");
 	const fallback403ForbiddenErrorResponse = t("alerts:fallback.403ForbiddenErrorResponse");
@@ -2575,6 +2577,12 @@ export const useNotificationMessage = () => {
 								status: 201,
 								title: fallback201CreatedSuccessResponse,
 								message: sitesDelete201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 204,
+								title: fallback204NoContentSuccessResponse,
+								message: sitesDelete204NoContentSuccessResponse,
 								isSuccess: true
 							},
 							{

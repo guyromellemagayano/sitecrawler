@@ -2,12 +2,11 @@ import { Basic, Pro } from "@constants/GlobalValues";
 import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { Transition } from "@headlessui/react";
-import { useLoading } from "@hooks/useLoading";
-import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -18,12 +17,6 @@ import tw from "twin.macro";
  * @param {boolean} isComponentVisibile
  */
 const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
-	// SWR hooks
-	const { user } = useUser();
-
-	// Custom hooks
-	const { isComponentReady } = useLoading();
-
 	// Translations
 	const { t } = useTranslation();
 	const upgrade = t("common:upgrade");
@@ -31,6 +24,9 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 
 	// Sidebar menus
 	const { ProfileSidebarMenus } = SidebarMenus();
+
+	// Custom context
+	const { user, group, isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	return (
 		<Transition
@@ -49,26 +45,22 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 						<span
 							css={[
 								tw`text-sm leading-5 font-medium`,
-								user?.data?.group?.name === Basic
-									? tw`text-green-800`
-									: user?.data?.group?.name === Pro
-									? tw`text-blue-800`
-									: tw`text-red-800`
+								group.name === Basic ? tw`text-green-800` : group.name === Pro ? tw`text-blue-800` : tw`text-red-800`
 							]}
 						>
-							{isComponentReady && user?.data?.group?.name ? (
-								user?.data?.group?.name + " " + plan
+							{isComponentReady && group.name ? (
+								group.name + " " + plan
 							) : (
 								<Skeleton duration={2} width={67} height={20} />
 							)}
 						</span>
-						{isComponentReady && user?.data?.group?.name ? (
-							user.data.group.name === Basic || user.data.group.name === Pro ? (
+						{isComponentReady && group.name ? (
+							group.name === Basic || group.name === Pro ? (
 								<Link href={SubscriptionPlansSettingsLink} passHref>
 									<a
 										css={[
 											tw`text-xs leading-4 font-medium inline-flex items-center px-2 py-1 rounded hover:text-white cursor-pointer transition ease-in-out duration-150`,
-											user?.data?.group?.name === Basic
+											group.name === Basic
 												? tw`bg-green-200 text-green-800 hover:bg-green-600`
 												: tw`bg-blue-200 text-blue-800 hover:bg-blue-600`
 										]}

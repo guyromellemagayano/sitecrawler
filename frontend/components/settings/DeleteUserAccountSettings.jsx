@@ -1,8 +1,8 @@
 import { MemoizedDeleteUserAccountModal } from "@components/modals/DeleteUserAccountModal";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLoading } from "@hooks/useLoading";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -16,26 +16,32 @@ const DeleteUserAccountSettings = () => {
 	const deleteUserAccountModalRequestTitle = t("settings:deleteUserAccountModalRequest.title");
 	const request = t("common:request");
 
+	// Custom context
+	const { user, isComponentReady } = useContext(SiteCrawlerAppContext);
+
 	// Custom hooks
 	const {
 		ref: showModalRef,
 		isComponentVisible: showModal,
 		setIsComponentVisible: setShowModal
 	} = useComponentVisible(false);
-	const { isComponentReady } = useLoading();
 
 	return (
 		<div tw="pb-12">
 			<MemoizedDeleteUserAccountModal ref={showModalRef} showModal={showModal} setShowModal={setShowModal} />
 
 			<h5 tw="text-xl leading-6 font-bold text-gray-900">
-				{isComponentReady ? deleteUserAccountModalRequestTitle : <Skeleton duration={2} width={175} height={24} />}
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+					deleteUserAccountModalRequestTitle
+				) : (
+					<Skeleton duration={2} width={175} height={24} />
+				)}
 			</h5>
 
 			<div tw="max-w-full lg:max-w-3xl pt-0 pb-2 mt-6">
 				<div tw="flex justify-start">
 					<span tw="inline-flex rounded-md shadow-sm">
-						{isComponentReady ? (
+						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							<button
 								type="button"
 								disabled={showModal}
@@ -46,7 +52,7 @@ const DeleteUserAccountSettings = () => {
 										? tw`opacity-50 cursor-not-allowed`
 										: tw`hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 active:bg-red-700`
 								]}
-								onClick={() => setShowModal(true)}
+								onClick={() => setShowModal(!showModal)}
 							>
 								{request}
 							</button>

@@ -5,17 +5,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { PlusIcon, SearchIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLoading } from "@hooks/useLoading";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
-import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext, useMemo, useState } from "react";
+import { memo, useContext, useEffect, useMemo, useState } from "react";
 import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -28,7 +26,6 @@ import tw from "twin.macro";
  * @param {function} handleOpenSidebar
  */
 const AddSite = ({ handleOpenSidebar }) => {
-	const [maxSiteLimit, setMaxSiteLimit] = useState(null);
 	const [siteLimitCounter, setSiteLimitCounter] = useState(null);
 	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
 
@@ -45,42 +42,13 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
-
-	// `user` SWR hook
-	const { user, errorUser, validatingUser } = useUser();
-
-	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			// Show alert message after failed `user` SWR hook fetch
-			errorUser
-				? setConfig({
-						isSites: true,
-						method: errorUser?.config?.method ?? null,
-						status: errorUser?.status ?? null
-				  })
-				: null;
-
-			// Handle `maxSiteLimit` value
-			if (!validatingUser && !errorUser && user && !user?.data?.detail && user?.data?.group?.max_sites) {
-				setMaxSiteLimit(user.data.group.max_sites);
-			}
-
-			return maxSiteLimit;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [user, errorUser, validatingUser]);
+	const { user, errorUser, validatingUser, setConfig, maxSiteLimit, isComponentReady } =
+		useContext(SiteCrawlerAppContext);
 
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites();
 
+	// update `siteLimitCounter` state value
 	useMemo(() => {
 		let isMounted = true;
 
@@ -98,7 +66,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 
 			// Handle `siteLimitCounter` value
 			if (!validatingSites && !errorSites && sites && !sites?.data?.detail && sites?.data?.count) {
-				setSiteLimitCounter(sites?.data?.count ?? 0);
+				setSiteLimitCounter(sites.data.count);
 			}
 
 			return siteLimitCounter;
@@ -109,7 +77,8 @@ const AddSite = ({ handleOpenSidebar }) => {
 		};
 	}, [sites, errorSites, validatingSites]);
 
-	useMemo(() => {
+	// update `hasSiteLimitReached` state value
+	useEffect(() => {
 		let isMounted = true;
 
 		(async () => {
@@ -130,7 +99,6 @@ const AddSite = ({ handleOpenSidebar }) => {
 
 	// Custom hooks
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
-	const { isComponentReady } = useLoading();
 
 	// Helper functions
 	const { searchKey, setSearchKey, linksPerPage, setPagePath } = useSiteQueries();
@@ -160,92 +128,106 @@ const AddSite = ({ handleOpenSidebar }) => {
 
 		push(newPath);
 
-		return await mutate(scanApiEndpoint, false);
+		return await mutate(scanApiEndpoint);
+	};
+
+	// Handle `onClick` event on <Link> element
+	const handleOnClick = (e) => {
+		e.preventDefault();
+
+		if (!asPath.includes(AddNewSiteSlug)) {
+			push(AddNewSiteLink + "?step=1&edit=false&verified=false");
+		} else return null;
 	};
 
 	return (
-		<>
+		<div tw="flex-1 xl:px-12 xl:py-4 flex justify-between relative z-20 flex-shrink-0 bg-white overflow-hidden w-full max-w-screen-2xl mx-auto">
 			<MemoizedSiteLimitReachedModal ref={ref} showModal={isComponentVisible} setShowModal={setIsComponentVisible} />
 
-			<div tw="flex-1 xl:px-12 xl:py-4 flex justify-between relative z-20 flex-shrink-0 bg-white overflow-hidden w-full max-w-screen-2xl mx-auto">
-				<div tw="flex-1 flex">
-					<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
+			<div tw="flex-1 flex">
+				<MemoizedMobileSidebarButton handleOpenSidebar={handleOpenSidebar} />
 
-					<div tw="w-full flex items-center ml-4 lg:ml-0">
-						{isBrowser ? (
-							<>
-								<label htmlFor="searchSites" tw="sr-only">
-									{searchSites}
-								</label>
-								<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center ">
-									<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-										{isComponentReady ? (
-											<SearchIcon tw="h-5 w-5 text-gray-400" />
-										) : (
-											<Skeleton duration={2} width={20} height={20} />
-										)}
-									</div>
-									{siteLimitCounter > 0 ? (
-										isComponentReady ? (
-											<input
-												type="search"
-												name="search-sites"
-												id="searchSites"
-												tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-												placeholder={searchSites}
-												onKeyUp={useHandleSiteSearch}
-												defaultValue={searchKey}
-											/>
-										) : (
-											<Skeleton duration={2} width={320} height={20} />
-										)
+				<div tw="w-full flex items-center ml-4 lg:ml-0">
+					{isBrowser ? (
+						<>
+							<label htmlFor="searchSites" tw="sr-only">
+								{searchSites}
+							</label>
+							<div tw="relative w-full text-gray-400 focus-within:text-gray-600 flex items-center ">
+								<div tw="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+									{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+										<SearchIcon tw="h-5 w-5 text-gray-400" />
 									) : (
-										<p tw="flex-1 sm:text-sm placeholder-gray-500 pl-8">
-											{isComponentReady ? searchNotAvailable : <Skeleton duration={2} width={320} height={20} />}
-										</p>
+										<Skeleton duration={2} width={20} height={20} />
 									)}
 								</div>
-							</>
-						) : null}
-					</div>
-				</div>
-				<div tw="ml-4 p-4 xl:p-0 flex items-center lg:ml-6 space-x-2">
-					{isComponentReady ? (
-						hasSiteLimitReached ? (
-							<button
-								type="button"
-								tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"
-								onClick={() => setIsComponentVisible(!isComponentVisible)}
-							>
-								<span tw="flex items-center space-x-2">
-									<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
-									<span>{addNewSite}</span>
-								</span>
-							</button>
-						) : (
-							<Link href={AddNewSiteLink + "?step=1&edit=false&verified=false"} passHref>
-								<a
-									disabled={asPath.includes(AddNewSiteSlug) ? true : false}
-									css={[
-										tw`border border-transparent inline-flex items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full`,
-										asPath.includes(AddNewSiteSlug)
-											? tw`opacity-50 bg-gray-300 cursor-not-allowed`
-											: tw`cursor-pointer bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 active:bg-green-700 focus:outline-none`
-									]}
-								>
-									<span tw="flex items-center space-x-2">
-										<PlusIcon tw="mr-2 h-4 w-4 text-white" />
-										{addNewSite}
-									</span>
-								</a>
-							</Link>
-						)
-					) : (
-						<Skeleton duration={2} width={147} height={38} />
-					)}
+								{siteLimitCounter > 0 ? (
+									isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+										<input
+											type="search"
+											name="search-sites"
+											id="searchSites"
+											tw="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900  focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+											placeholder={searchSites}
+											onKeyUp={useHandleSiteSearch}
+											defaultValue={searchKey}
+										/>
+									) : (
+										<Skeleton duration={2} width={320} height={20} />
+									)
+								) : (
+									<p tw="flex-1 sm:text-sm placeholder-gray-500 pl-8">
+										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+											searchNotAvailable
+										) : (
+											<Skeleton duration={2} width={320} height={20} />
+										)}
+									</p>
+								)}
+							</div>
+						</>
+					) : null}
 				</div>
 			</div>
-		</>
+			<div tw="ml-4 p-4 xl:p-0 flex items-center lg:ml-6 space-x-2">
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+					hasSiteLimitReached ? (
+						<button
+							type="button"
+							tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"
+							onClick={() => setIsComponentVisible(!isComponentVisible)}
+						>
+							<span tw="flex items-center space-x-2">
+								<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+								<span>{addNewSite}</span>
+							</span>
+						</button>
+					) : (
+						<Link href="/" passHref>
+							<a
+								role="button"
+								tabIndex="0"
+								onClick={handleOnClick}
+								aria-hidden="true"
+								css={[
+									tw`border border-transparent inline-flex items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full`,
+									asPath.includes(AddNewSiteSlug)
+										? tw`opacity-50 bg-gray-300 cursor-not-allowed`
+										: tw`cursor-pointer bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 active:bg-green-700 focus:outline-none`
+								]}
+							>
+								<span tw="flex items-center space-x-2">
+									<PlusIcon tw="mr-2 h-4 w-4 text-white" />
+									{addNewSite}
+								</span>
+							</a>
+						</Link>
+					)
+				) : (
+					<Skeleton duration={2} width={147} height={38} />
+				)}
+			</div>
+		</div>
 	);
 };
 

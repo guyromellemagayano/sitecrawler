@@ -1,5 +1,5 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { FormSubmissionInterval } from "@constants/GlobalValues";
+import { NotificationDisplayInterval } from "@constants/GlobalValues";
 import { Dialog, Transition } from "@headlessui/react";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { InformationCircleIcon } from "@heroicons/react/outline";
@@ -103,7 +103,7 @@ const SiteVerifyModal = (
 		if (siteVerifyResponseData !== null && Math.round(siteVerifyResponseStatus / 200) === 1) {
 			if (siteVerifyResponseData?.verified) {
 				// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-				await mutate(SitesApiEndpoint, false);
+				await mutate(SitesApiEndpoint);
 
 				// Show alert message after successful 200 OK or 201 Created response is issued
 				setConfig({
@@ -116,7 +116,7 @@ const SiteVerifyModal = (
 				setTimeout(() => {
 					setEnableNextStep(!enableNextStep);
 					setDisableSiteVerify(false);
-				}, FormSubmissionInterval);
+				}, NotificationDisplayInterval);
 			} else {
 				// Show alert message after successful 200 OK or 201 Created response is issued
 				setConfig({
@@ -129,7 +129,7 @@ const SiteVerifyModal = (
 				// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
 				setTimeout(() => {
 					setDisableSiteVerify(false);
-				}, FormSubmissionInterval);
+				}, NotificationDisplayInterval);
 			}
 		} else {
 			// Show alert message after successful 200 OK or 201 Created response is issued
@@ -142,7 +142,7 @@ const SiteVerifyModal = (
 			// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
 			setTimeout(() => {
 				setDisableSiteVerify(false);
-			}, FormSubmissionInterval);
+			}, NotificationDisplayInterval);
 		}
 	};
 
@@ -278,48 +278,53 @@ const SiteVerifyModal = (
 							</div>
 
 							<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-								<button
-									type="button"
-									disabled={disableSiteVerify}
-									css={[
-										tw`cursor-pointer inline-flex justify-center rounded-md border border-gray-300 sm:ml-3 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 shadow-sm sm:text-sm sm:leading-5`,
-										disableSiteVerify
-											? tw`opacity-50 cursor-not-allowed`
-											: tw`hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 `
-									]}
-									onClick={() => setShowModal(false)}
-								>
-									{closeText}
-								</button>
+								<span tw="flex w-full rounded-md shadow-sm sm:w-auto">
+									{!enableNextStep ? (
+										<form onSubmit={handleSiteVerification}>
+											<input
+												type="hidden"
+												value={siteVerifyId}
+												name="site_verify_id"
+												onChange={handleHiddenInputChange}
+											/>
+											<button
+												type="submit"
+												tabIndex="0"
+												disabled={disableSiteVerify}
+												css={[
+													tw`cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600`,
+													disableSiteVerify
+														? tw`opacity-50 cursor-not-allowed`
+														: tw`hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700`
+												]}
+											>
+												{disableSiteVerify ? verifyingText : verifySiteTitleText}
+											</button>
+										</form>
+									) : (
+										<Link href="/sites/[siteId]/overview/" as={`/sites/${siteId}/overview/`} passHref replace>
+											<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
+												{goToSiteOverviewText}
+											</a>
+										</Link>
+									)}
+								</span>
 
-								{!enableNextStep ? (
-									<form onSubmit={handleSiteVerification}>
-										<input
-											type="hidden"
-											value={siteVerifyId}
-											name="site_verify_id"
-											onChange={handleHiddenInputChange}
-										/>
-										<button
-											type="submit"
-											disabled={disableSiteVerify}
-											css={[
-												tw`cursor-pointer inline-flex justify-center rounded-md border border-gray-300 px-4 py-2 bg-green-600 text-sm leading-5 font-medium text-white shadow-sm sm:text-sm sm:leading-5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition ease-in-out duration-150`,
-												disableSiteVerify
-													? tw`opacity-50 cursor-not-allowed`
-													: tw`hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700`
-											]}
-										>
-											{disableSiteVerify ? verifyingText : verifySiteTitleText}
-										</button>
-									</form>
-								) : (
-									<Link href="/sites/[siteId]/overview/" as={`/sites/${siteId}/overview/`} passHref replace>
-										<a tw="cursor-pointer inline-flex justify-center rounded-md border border-gray-300 px-4 py-2 text-sm leading-5 font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
-											{goToSiteOverviewText}
-										</a>
-									</Link>
-								)}
+								<span tw="mt-3 flex w-full sm:mt-0 sm:w-auto">
+									<button
+										type="button"
+										disabled={disableSiteVerify}
+										css={[
+											tw`cursor-pointer inline-flex justify-center w-full mr-3 rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white `,
+											disableSiteVerify
+												? tw`opacity-50 cursor-not-allowed`
+												: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
+										]}
+										onClick={() => setShowModal(false)}
+									>
+										{closeText}
+									</button>
+								</span>
 							</div>
 						</div>
 					</Transition.Child>

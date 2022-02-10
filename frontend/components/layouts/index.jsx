@@ -1,3 +1,5 @@
+import { MemoizedAlert } from "@components/alerts";
+import { MemoizedNotification } from "@components/notifications";
 import { MemoizedAddSite } from "@components/sites/AddSite";
 import { DashboardSitesLink, DashboardSlug, LoginLink } from "@constants/PageLinks";
 import { isProd } from "@constants/ServerEnv";
@@ -18,7 +20,7 @@ import { MemoizedSidebarLayout } from "./components/Sidebar";
  */
 export const DashboardLayout = ({ children }) => {
 	// Router
-	const router = useRouter();
+	const { prefetch } = useRouter();
 
 	// Custom context
 	const { state } = useContext(SiteCrawlerAppContext);
@@ -32,8 +34,8 @@ export const DashboardLayout = ({ children }) => {
 
 	useEffect(() => {
 		// Prefetch sites page for faster loading
-		router.prefetch(LoginLink);
-	}, [router]);
+		prefetch(LoginLink);
+	}, []);
 
 	return (
 		<>
@@ -93,6 +95,28 @@ export const DashboardLayout = ({ children }) => {
 				</>
 			) : null}
 
+			{state?.responses?.map((value, key) => {
+				// Alert Messsages
+				const responseTitle = value.responseTitle ?? null;
+				const responseText = value.responseText ?? null;
+				const isSuccess = value.isSuccess ?? null;
+
+				return (
+					<div
+						key={key}
+						aria-live="assertive"
+						tw="fixed z-30 w-full max-w-md right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto"
+					>
+						<MemoizedNotification
+							key={key}
+							responseTitle={responseTitle}
+							responseText={responseText}
+							isSuccess={isSuccess}
+						/>
+					</div>
+				);
+			}) ?? null}
+
 			<main tw="h-screen">
 				<section tw="h-screen overflow-hidden bg-white flex">
 					<MemoizedSidebarLayout
@@ -138,17 +162,36 @@ export const MemoizedDashboardLayout = memo(DashboardLayout);
  */
 export const StaticLayout = ({ children }) => {
 	// Router
-	const router = useRouter();
+	const { prefetch } = useRouter();
 
 	// Custom context
 	const { state } = useContext(SiteCrawlerAppContext);
 
 	useEffect(() => {
 		// Prefetch sites page for faster loading
-		router.prefetch(DashboardSitesLink);
-	}, [router]);
+		prefetch(DashboardSitesLink);
+	}, []);
 
-	return <main tw="h-screen">{children}</main>;
+	return (
+		<main tw="h-screen">
+			{state?.responses?.map((value, key) => {
+				// Alert Messsages
+				const responseText = value.responseText ?? null;
+				const isSuccess = value.isSuccess ?? null;
+
+				return (
+					<div
+						key={key}
+						aria-live="assertive"
+						tw="fixed z-30 w-full max-w-md right-2 top-4 bottom-4 flex flex-col justify-start items-end gap-4 overflow-y-auto"
+					>
+						<MemoizedAlert key={key} responseText={responseText} isSuccess={isSuccess} />
+					</div>
+				);
+			}) ?? null}
+			{children}
+		</main>
+	);
 };
 
 StaticLayout.propTypes = {
@@ -167,9 +210,9 @@ export const MemoizedStaticLayout = memo(StaticLayout);
  */
 export const Layout = ({ children }) => {
 	// Router
-	const router = useRouter();
+	const { asPath } = useRouter();
 
-	return router.asPath.includes(DashboardSlug) ? (
+	return asPath.includes(DashboardSlug) ? (
 		<MemoizedDashboardLayout>{children}</MemoizedDashboardLayout>
 	) : (
 		<MemoizedStaticLayout>{children}</MemoizedStaticLayout>

@@ -5,11 +5,11 @@ import { AddNewSiteSlug, DashboardSitesLink, SitesSlug } from "@constants/PageLi
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { DocumentReportIcon, ExternalLinkIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
-import { useLoading } from "@hooks/useLoading";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo } from "react";
+import { memo, useContext } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -26,11 +26,11 @@ const PrimaryMenu = () => {
 	// Router
 	const { asPath } = useRouter();
 
+	// Custom context
+	const { user, isComponentReady } = useContext(SiteCrawlerAppContext);
+
 	// Sidebar menus
 	const { PrimarySidebarMenus } = SidebarMenus();
-
-	// Custom hooks
-	const { isComponentReady } = useLoading();
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
@@ -51,7 +51,11 @@ const PrimaryMenu = () => {
 								return (
 									<div key={value.slug} tw="mb-4">
 										<h3 tw="mt-8 text-xs leading-4 font-semibold text-gray-200 uppercase tracking-wider inline-block">
-											{isComponentReady ? value.category : <Skeleton duration={2} width={128} height={16} />}
+											{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+												value.category
+											) : (
+												<Skeleton duration={2} width={128} height={16} />
+											)}
 										</h3>
 
 										<div tw="my-3" role="group">
@@ -63,26 +67,39 @@ const PrimaryMenu = () => {
 																className="group"
 																css={[
 																	tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md `,
-																	asPath.includes(value2.url) && isComponentReady
+																	asPath.includes(value2.url) &&
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail
 																		? tw`bg-gray-1100 !cursor-default`
 																		: null,
 																	asPath.includes(value2.url) ||
 																	(asPath.includes(SitesSlug) && SitesSlug.includes(value2.url))
 																		? tw`text-gray-100`
 																		: tw`text-gray-400`,
-																	isComponentReady
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail
 																		? tw`cursor-pointer hover:text-gray-100 focus:outline-none transition ease-in-out duration-150 hover:bg-gray-1100 focus:bg-gray-1100`
 																		: tw`cursor-default`
 																]}
 															>
 																{value2.slug === "sites" ? (
-																	isComponentReady ? (
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail ? (
 																		<ExternalLinkIcon tw="mr-3 h-6 w-5" />
 																	) : (
 																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
 																	)
 																) : value2.slug === "audit-logs" ? (
-																	isComponentReady ? (
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail ? (
 																		<DocumentReportIcon tw="mr-3 h-6 w-5" />
 																	) : (
 																		<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
@@ -91,7 +108,10 @@ const PrimaryMenu = () => {
 
 																{value2.title ? (
 																	<span>
-																		{isComponentReady ? (
+																		{isComponentReady &&
+																		user &&
+																		Math.round(user?.status / 100) === 2 &&
+																		!user?.data?.detail ? (
 																			value2.title
 																		) : (
 																			<Skeleton duration={2} width={128} height={20} />
@@ -106,10 +126,18 @@ const PrimaryMenu = () => {
 																className="group"
 																css={[
 																	tw`mt-1 flex items-center py-2 text-sm leading-5 font-medium text-gray-400 rounded-md hover:text-gray-100 focus:outline-none focus:text-white`,
-																	isComponentReady ? tw`cursor-pointer` : null
+																	isComponentReady &&
+																	user &&
+																	Math.round(user?.status / 100) === 2 &&
+																	!user?.data?.detail
+																		? tw`cursor-pointer`
+																		: null
 																]}
 															>
-																{isComponentReady ? (
+																{isComponentReady &&
+																user &&
+																Math.round(user?.status / 100) === 2 &&
+																!user?.data?.detail ? (
 																	<ArrowLeftIcon tw="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />

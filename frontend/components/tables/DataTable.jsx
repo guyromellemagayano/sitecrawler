@@ -18,9 +18,8 @@ import tw from "twin.macro";
  * Custom function to render the `DataTable` component
  *
  * @param {object} site
- * @param {boolean} disableLocalTime
  */
-const DataTable = ({ disableLocalTime = false, site = null }) => {
+const DataTable = ({ site = null }) => {
 	const [scanCount, setScanCount] = useState(null);
 	const [scanFinishedAt, setScanFinishedAt] = useState(null);
 	const [scanForceHttps, setScanForceHttps] = useState(null);
@@ -48,7 +47,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 	const deleteText = t("sites:delete");
 
 	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
+	const { user, disableLocalTime, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// Custom hooks
 	const {
@@ -80,7 +79,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 	};
 
 	// Site `scan` SWR hook
-	const { scan, errorScan } = useScan(siteId);
+	const { scan, errorScan, validatingScan } = useScan(siteId);
 
 	// Handle `scan` object id data
 	useMemo(() => {
@@ -125,7 +124,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [scan, errorScan]);
+	}, [scan, errorScan, validatingScan]);
 
 	// Site `stats` SWR hook
 	const { stats, errorStats } = useStats(siteId, scanObjId);
@@ -182,7 +181,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 
 	return (
 		<tr>
-			<td tw="flex-none px-6 py-4 whitespace-nowrap">
+			<td tw="flex-none p-4 whitespace-nowrap">
 				<MemoizedSiteVerifyModal
 					setShowModal={setIsSiteVerifyModalVisible}
 					showModal={isSiteVerifyModalVisible}
@@ -202,7 +201,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 
 				<div tw="flex flex-col items-start">
 					<div>
-						{site ? (
+						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && site ? (
 							<>
 								{siteVerified ? (
 									<span
@@ -247,26 +246,25 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 										</a>
 
 										{!siteVerified ? (
-											<>
-												<button
-													type="button"
-													css={[
-														tw`cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150`,
-														scanCount > 0 && tw`ml-3`
-													]}
-													onClick={() => setIsSiteVerifyModalVisible(!isSiteVerifyModalVisible)}
-												>
-													{verifySiteText}
-												</button>
-												<button
-													type="button"
-													tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
-													onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
-												>
-													{deleteText}
-												</button>
-											</>
+											<button
+												type="button"
+												css={[
+													tw`cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-yellow-600 hover:text-yellow-500 transition ease-in-out duration-150`,
+													scanCount > 0 && tw`ml-3`
+												]}
+												onClick={() => setIsSiteVerifyModalVisible(!isSiteVerifyModalVisible)}
+											>
+												{verifySiteText}
+											</button>
 										) : null}
+
+										<button
+											type="button"
+											tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+											onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
+										>
+											{deleteText}
+										</button>
 									</span>
 								</div>
 							</>
@@ -290,6 +288,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 										<Skeleton duration={2} width={63} />
 										<Skeleton duration={2} width={63} />
 										<Skeleton duration={2} width={63} />
+										<Skeleton duration={2} width={63} />
 									</span>
 								</div>
 							</span>
@@ -298,7 +297,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-				{isComponentReady ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					scan?.data?.results?.length > 0 ? (
 						<span tw="space-x-2">
 							<span tw="text-sm leading-5 text-gray-500">
@@ -338,14 +337,14 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					stats?.data?.num_links > 0 ? (
 						<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -360,7 +359,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					stats?.data?.num_pages > 0 ? (
 						<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -375,7 +374,7 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					stats?.data?.num_images > 0 ? (
 						<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -394,7 +393,6 @@ const DataTable = ({ disableLocalTime = false, site = null }) => {
 };
 
 DataTable.propTypes = {
-	disableLocalTime: PropTypes.bool,
 	site: PropTypes.shape({
 		id: PropTypes.number,
 		name: PropTypes.string,

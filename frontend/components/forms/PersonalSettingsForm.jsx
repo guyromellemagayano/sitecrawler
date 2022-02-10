@@ -1,11 +1,9 @@
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePatchMethod } from "@helpers/handleHttpMethods";
-import { useLoading } from "@hooks/useLoading";
-import { useNotificationMessage } from "@hooks/useNotificationMessage";
-import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useContext, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
@@ -17,10 +15,6 @@ import * as Yup from "yup";
  */
 const PersonalSettingsForm = () => {
 	const [disableForm, setDisableForm] = useState(true);
-	const [email, setEmail] = useState(null);
-	const [firstname, setFirstname] = useState(null);
-	const [lastname, setLastname] = useState(null);
-	const [username, setUsername] = useState(null);
 
 	// Translations
 	const { t } = useTranslation();
@@ -35,43 +29,39 @@ const PersonalSettingsForm = () => {
 	const tooShort = t("common:tooShort");
 	const tooLong = t("common:tooLong");
 
-	// SWR hooks
-	const { user, errorUser } = useUser();
+	// Custom context
+	const {
+		user,
+		isComponentReady,
+		username,
+		setUsername,
+		firstname,
+		setFirstname,
+		lastname,
+		setLastname,
+		email,
+		setEmail,
+		setConfig,
+		settings,
+		largePageSizeThreshold
+	} = useContext(SiteCrawlerAppContext);
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
 
-	// Custom hooks
-	const { isComponentReady } = useLoading();
-	const { state, setConfig } = useNotificationMessage();
-
-	// Handle the population of form data
-	const handleFormData = useCallback(async () => {
-		if (!errorUser && user && !user?.data?.detail) {
-			setUsername(user?.data?.username ?? null);
-			setFirstname(user?.data?.first_name ?? null);
-			setLastname(user?.data?.last_name ?? null);
-			setEmail(user?.data?.email ?? null);
-		}
-	}, [user, errorUser]);
-
-	useEffect(() => {
-		handleFormData();
-	}, [handleFormData]);
-
-	const handleUserNameInputChange = async (e) => {
+	const handleUserNameInputChange = (e) => {
 		setUsername(e.target.value);
 	};
 
-	const handleFirstNameInputChange = async (e) => {
+	const handleFirstNameInputChange = (e) => {
 		setFirstname(e.target.value);
 	};
 
-	const handleLastNameInputChange = async (e) => {
+	const handleLastNameInputChange = (e) => {
 		setLastname(e.target.value);
 	};
 
-	const handleEmailInputChange = async (e) => {
+	const handleEmailInputChange = (e) => {
 		setEmail(e.target.value);
 	};
 
@@ -95,8 +85,8 @@ const PersonalSettingsForm = () => {
 					first_name: values.firstname,
 					last_name: values.lastname,
 					email: values.email,
-					settings: user?.data?.settings ?? null,
-					large_page_size_threshold: user?.data?.large_page_size_threshold ?? null
+					settings: settings,
+					large_page_size_threshold: largePageSizeThreshold
 				};
 
 				const personalSettingsResponse = await handlePatchMethod(UserApiEndpoint, body);
@@ -117,7 +107,7 @@ const PersonalSettingsForm = () => {
 					});
 
 					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-					await mutate(UserApiEndpoint, false);
+					await mutate(UserApiEndpoint);
 				} else {
 					// Disable submission as soon as 200 OK or 201 Created response was not issued
 					setSubmitting(false);
@@ -136,10 +126,14 @@ const PersonalSettingsForm = () => {
 					<div tw="mt-6 grid grid-cols-1 gap-y-6 gap-x-4">
 						<div tw="sm:col-span-1">
 							<label htmlFor="firstname" tw="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady ? firstName : <Skeleton duration={2} width={150} height={20} />}
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									firstName
+								) : (
+									<Skeleton duration={2} width={150} height={20} />
+								)}
 							</label>
 							<div tw="mt-1 relative rounded-md shadow-sm">
-								{isComponentReady ? (
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										type="text"
 										id="firstname"
@@ -167,10 +161,14 @@ const PersonalSettingsForm = () => {
 
 						<div tw="sm:col-span-1">
 							<label htmlFor="lastname" tw="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady ? lastName : <Skeleton duration={2} width={150} height={20} />}
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									lastName
+								) : (
+									<Skeleton duration={2} width={150} height={20} />
+								)}
 							</label>
 							<div tw="mt-1 relative rounded-md shadow-sm">
-								{isComponentReady ? (
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										type="text"
 										id="lastname"
@@ -198,10 +196,14 @@ const PersonalSettingsForm = () => {
 
 						<div tw="sm:col-span-1">
 							<label htmlFor="username" tw="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady ? userName : <Skeleton duration={2} width={150} height={20} />}
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									userName
+								) : (
+									<Skeleton duration={2} width={150} height={20} />
+								)}
 							</label>
 							<div tw="mt-1 relative flex rounded-md shadow-sm">
-								{isComponentReady ? (
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										type="text"
 										id="username"
@@ -229,10 +231,14 @@ const PersonalSettingsForm = () => {
 
 						<div tw="sm:col-span-1">
 							<label htmlFor="email" tw="block text-sm font-medium leading-5 text-gray-700">
-								{isComponentReady ? emailAddress : <Skeleton duration={2} width={150} height={20} />}
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+									emailAddress
+								) : (
+									<Skeleton duration={2} width={150} height={20} />
+								)}
 							</label>
 							<div tw="mt-1 rounded-md shadow-sm">
-								{isComponentReady ? (
+								{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 									<input
 										id="email"
 										type="email"
@@ -252,7 +258,7 @@ const PersonalSettingsForm = () => {
 							<div tw="flex justify-between flex-col sm:flex-row md:flex-col lg:flex-row">
 								<div tw="flex justify-start order-1 sm:flex-row sm:flex-initial sm:w-auto sm:mr-1 lg:order-1 lg:w-full">
 									<span tw="inline-flex">
-										{isComponentReady ? (
+										{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 											!disableForm ? (
 												<button
 													type="submit"

@@ -226,7 +226,7 @@ const PageFilter = ({ filterQueryString = null, scanApiEndpoint = null, setPageP
 
 			push(newPath);
 
-			await mutate(scanApiEndpoint, false);
+			await mutate(scanApiEndpoint);
 		},
 		[asPath, filterQueryString, scanApiEndpoint]
 	);
