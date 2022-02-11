@@ -42,8 +42,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { user, errorUser, validatingUser, setConfig, maxSiteLimit, isComponentReady } =
-		useContext(SiteCrawlerAppContext);
+	const { user, setConfig, maxSiteLimit, isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites();
@@ -54,15 +53,6 @@ const AddSite = ({ handleOpenSidebar }) => {
 
 		(async () => {
 			if (!isMounted) return;
-
-			// Show alert message after failed `sites` SWR hook fetch
-			errorSites
-				? setConfig({
-						isSites: true,
-						method: errorSites?.config?.method ?? null,
-						status: errorSites?.status ?? null
-				  })
-				: null;
 
 			// Handle `siteLimitCounter` value
 			if (!validatingSites && !errorSites && sites && !sites?.data?.detail && sites?.data?.count) {
