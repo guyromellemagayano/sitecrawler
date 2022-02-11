@@ -5,7 +5,6 @@ import { DashboardSitesLink, DashboardSlug, LoginLink } from "@constants/PageLin
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { useRouter } from "next/router";
-import Script from "next/script";
 import PropTypes from "prop-types";
 import { memo, useContext, useEffect } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -38,59 +37,6 @@ export const DashboardLayout = ({ children }) => {
 
 	return (
 		<>
-			<Script
-				id="beacon-script"
-				strategy="lazyOnload"
-				dangerouslySetInnerHTML={{
-					__html: `
-						!(function (e, t, n) {
-							function a() {
-								const e = t.getElementsByTagName("script")[0];
-								const n = t.createElement("script");
-								(n.type = "text/javascript"),
-									(n.async = !0),
-									(n.src = "https://beacon-v2.helpscout.net"),
-									e.parentNode.insertBefore(n, e);
-							}
-
-							if (
-								((e.Beacon = n =
-									function (t, n, a) {
-										e.Beacon.readyQueue.push({
-											method: t,
-											options: n,
-											data: a
-										});
-									}),
-								(n.readyQueue = []),
-								t.readyState === "complete")
-							)
-								return a();
-							e.attachEvent ? e.attachEvent("onload", a) : e.addEventListener("load", a, !1);
-						})(window, document, window.Beacon || (() => {}));
-
-						window.Beacon("init", "94d0425a-cb40-4582-909a-2175532bbfa9");
-					`
-				}}
-			/>
-
-			<Script
-				id="usetiful-script"
-				strategy="lazyOnload"
-				dangerouslySetInnerHTML={{
-					__html: `
-						(function (w, d, s) {
-							const a = d.getElementsByTagName("head")[0];
-							const r = d.createElement("script");
-							r.async = 1;
-							r.src = s;
-							r.setAttribute("id", "usetifulScript");
-							r.dataset.token = "4b8863eaef435adc652a9d86eb33cbf9";
-							a.appendChild(r);
-						})(window, document, "https://www.usetiful.com/dist/usetiful.js");`
-				}}
-			/>
-
 			{state?.responses?.map((value, key) => {
 				// Alert Messsages
 				const responseTitle = value.responseTitle ?? null;
