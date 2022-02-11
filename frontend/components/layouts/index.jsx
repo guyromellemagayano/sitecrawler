@@ -2,7 +2,6 @@ import { MemoizedAlert } from "@components/alerts";
 import { MemoizedNotification } from "@components/notifications";
 import { MemoizedAddSite } from "@components/sites/AddSite";
 import { DashboardSitesLink, DashboardSlug, LoginLink } from "@constants/PageLinks";
-import { isProd } from "@constants/ServerEnv";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { useRouter } from "next/router";
@@ -39,13 +38,11 @@ export const DashboardLayout = ({ children }) => {
 
 	return (
 		<>
-			{typeof window !== "undefined" && isProd ? (
-				<>
-					<Script
-						id="beacon-script"
-						strategy="lazyOnload"
-						dangerouslySetInnerHTML={{
-							__html: `
+			<Script
+				id="beacon-script"
+				strategy="lazyOnload"
+				dangerouslySetInnerHTML={{
+					__html: `
 						!(function (e, t, n) {
 							function a() {
 								const e = t.getElementsByTagName("script")[0];
@@ -74,13 +71,14 @@ export const DashboardLayout = ({ children }) => {
 
 						window.Beacon("init", "94d0425a-cb40-4582-909a-2175532bbfa9");
 					`
-						}}
-					/>
-					<Script
-						id="usetiful-script"
-						strategy="lazyOnload"
-						dangerouslySetInnerHTML={{
-							__html: `
+				}}
+			/>
+
+			<Script
+				id="usetiful-script"
+				strategy="lazyOnload"
+				dangerouslySetInnerHTML={{
+					__html: `
 						(function (w, d, s) {
 							const a = d.getElementsByTagName("head")[0];
 							const r = d.createElement("script");
@@ -90,10 +88,8 @@ export const DashboardLayout = ({ children }) => {
 							r.dataset.token = "4b8863eaef435adc652a9d86eb33cbf9";
 							a.appendChild(r);
 						})(window, document, "https://www.usetiful.com/dist/usetiful.js");`
-						}}
-					/>
-				</>
-			) : null}
+				}}
+			/>
 
 			{state?.responses?.map((value, key) => {
 				// Alert Messsages
