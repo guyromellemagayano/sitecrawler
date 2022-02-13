@@ -42,7 +42,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { user, setConfig, maxSiteLimit, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { user, maxSiteLimit, isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// `sites` SWR hook
 	const { sites, errorSites, validatingSites } = useSites();
@@ -67,7 +67,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 		};
 	}, [sites, errorSites, validatingSites]);
 
-	// update `hasSiteLimitReached` state value
+	// Update `hasSiteLimitReached` state value
 	useEffect(() => {
 		let isMounted = true;
 
