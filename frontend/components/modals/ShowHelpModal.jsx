@@ -1,9 +1,9 @@
-import { Transition } from "@headlessui/react";
-import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
+import { ResetCopyStateTimeout } from "@constants/GlobalValues";
+import { Dialog, Transition } from "@headlessui/react";
+import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import useTranslation from "next-translate/useTranslation";
-import { forwardRef, memo, useEffect, useState } from "react";
+import { forwardRef, Fragment, memo, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import ReactHtmlParser from "react-html-parser";
 import "twin.macro";
 
 /**
@@ -14,127 +14,152 @@ import "twin.macro";
  * @param {function} setShowModal
  */
 const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref) => {
-	const [siteVerificationId, setSiteVerificationId] = useState("");
-	const [siteUrl, setSiteUrl] = useState("");
-	const [copyValue, setCopyValue] = useState("");
-	const [htmlCopied, setHtmlCopied] = useState(false);
+	const [siteVerificationId, setSiteVerificationId] = useState(null);
+	const [siteUrl, setSiteUrl] = useState(null);
+	const [copyValue, setCopyValue] = useState(null);
+	const [copied, setCopied] = useState(false);
 
 	// Handle the copy to clipboard functionality
 	useEffect(() => {
-		if (showModal && siteData !== null && Object.keys(siteData)?.length > 0) {
+		if (siteData !== null) {
 			setSiteVerificationId(siteData.verification_id ?? null);
 			setSiteUrl(siteData.url ?? null);
 
-			if (typeof copyValue === "string" && copyValue == "") {
-				setCopyValue('<meta name="epic-crawl-id" content="' + siteVerificationId + '" />');
+			if (siteVerificationId !== null) {
+				console.log(siteData.verification_id);
+
+				setCopyValue(`<meta name="epic-crawl-id" content="${siteVerificationId}" />`);
 			}
 		}
-	}, [siteData, showModal, copyValue]);
+	}, [siteData]);
 
 	// Handle textarea change
 	const handleTextareaChange = ({ copyValue }) => {
-		setCopyValue({ copyValue, htmlCopied });
+		setCopyValue({ copyValue, copied });
 	};
 
 	// Handle input copy
 	const handleInputCopy = () => {
-		setCopyValue(true);
+		setCopied(true);
 	};
 
 	// Reset copied state as soon as the modal is closed
 	useEffect(() => {
-		if (!showModal) {
-			setCopyValue(false);
+		if (copied) {
+			setTimeout(() => {
+				setCopied(false);
+			}, ResetCopyStateTimeout);
 		}
-	}, [copyValue, showModal]);
+	}, [copied]);
 
 	// Translation
 	const { t } = useTranslation();
-	const instructionHtmlText = t("sites:instructionHtmlText", { url: siteUrl }, { value: copyValue });
 	const pasteContents = t("sites:pasteContents");
 	const clickCopyToClipboard = t("sites:clickCopyToClipboard");
 	const notSure = t("sites:notSure");
 	const doTheFollowing = t("sites:doTheFollowing");
 	const copiedText = t("common:copiedText");
 	const copyText = t("common:copyText");
-	const close = t("common:close");
+	const closeText = t("common:close");
+	const instruction1 = t("sites:instruction1");
+	const instruction2 = t("sites:instruction2");
+	const instruction3 = t("sites:instruction3");
+	const instruction4 = t("sites:instruction4");
+
+	// Custom variables
+	let instructionHtmlText = `1. ${instruction1}: ` + siteUrl + "\n\n";
+	instructionHtmlText += `2. ${instruction2}: ` + "\n" + copyValue + "\n\n";
+	instructionHtmlText += `3. ${instruction3}.` + "\n\n";
+	instructionHtmlText += `4. ${instruction4}` + "\n\n";
 
 	return (
-		<Transition show={showModal}>
-			<div ref={ref} tw="fixed z-50 bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
-				<Transition.Child
-					enter="show-help-modal-first-child-enter"
-					enterFrom="show-help-modal-first-child-enter-from"
-					enterTo="show-help-modal-first-child-enter-to"
-					leave="show-help-modal-first-child-leave"
-					leaveFrom="show-help-modal-first-child-leave-from"
-					leaveTo="show-help-modal-first-child-leave-to"
-				>
-					<div tw="fixed inset-0 transition-opacity" aria-hidden="true">
-						<div tw="absolute inset-0 bg-gray-500 opacity-75"></div>
-					</div>
-				</Transition.Child>
-
-				<span tw="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-
-				<Transition.Child
-					enter="show-help-modal-second-child-enter"
-					enterFrom="show-help-modal-second-child-enter-from"
-					enterTo="show-help-modal-second-child-enter-to"
-					leave="show-help-modal-second-child-leave"
-					leaveFrom="show-help-modal-second-child-leave-from"
-					leaveTo="show-help-modal-second-child-leave-to"
-				>
-					<div
-						aria-labelledby="modal-headline"
-						aria-modal="true"
-						role="dialog"
-						tw="bg-white rounded-lg px-4 pt-5 pb-4 overflow-hidden transform transition-all sm:max-w-lg sm:w-full sm:p-6 whitespace-normal"
+		<Transition.Root show={showModal} as={Fragment}>
+			<Dialog
+				as="div"
+				className="show-help-modal-dialog"
+				initialFocus={ref}
+				onClose={!copied ? setShowModal : () => {}}
+			>
+				<div tw="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+					<Transition.Child
+						enter="show-help-modal-first-child-enter"
+						enterFrom="show-help-modal-first-child-enter-from"
+						enterTo="show-help-modal-first-child-enter-to"
+						leave="show-help-modal-first-child-leave"
+						leaveFrom="show-help-modal-first-child-leave-from"
+						leaveTo="show-help-modal-first-child-leave-to"
 					>
-						<div tw="sm:flex sm:items-start">
-							<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10 bg-yellow-100">
-								<QuestionMarkCircleIcon tw="h-6 w-6 text-yellow-600" />
-							</div>
-							<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-								<h3 tw="text-lg leading-6 font-medium text-gray-900">{notSure}</h3>
-								<div tw="mt-2 max-w-full text-sm leading-5 text-gray-800">
-									<p tw="italic mb-3">{doTheFollowing}</p>
-									<ol tw="mt-8 mb-3 text-left list-decimal space-y-3">
-										<li tw="ml-4 text-sm leading-6 text-gray-800">
-											{ReactHtmlParser(clickCopyToClipboard)}
-											<br tw="mb-2" />
-											<textarea
-												disabled={true}
-												name="verify_site_instructions"
-												id="instructions"
-												tw="h-56 resize-none block w-full p-3 pb-0 mb-3 text-gray-400 focus:ring-indigo-500 focus:border-indigo-500 rounded-md sm:text-sm border-gray-300"
-												value={instructionHtmlText}
-												onChange={handleTextareaChange}
-											></textarea>
-											<CopyToClipboard onCopy={handleInputCopy} text={instructionHtmlText}>
-												<button tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-													<span>{htmlCopied ? copiedText : copyText}</span>
-												</button>
-											</CopyToClipboard>
-										</li>
-										<li tw="ml-4 text-sm leading-6 text-gray-800">{pasteContents}</li>
-									</ol>
+						<Dialog.Overlay className="show-help-modal-dialog-overlay" />
+					</Transition.Child>
+
+					{/* This element is to trick the browser into centering the modal contents. */}
+					<span tw="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+						&#8203;
+					</span>
+
+					<Transition.Child
+						as={Fragment}
+						enter="show-help-modal-second-child-enter"
+						enterFrom="show-help-modal-second-child-enter-from"
+						enterTo="show-help-modal-second-child-enter-to"
+						leave="show-help-modal-second-child-leave"
+						leaveFrom="show-help-modal-second-child-leave-from"
+						leaveTo="show-help-modal-second-child-leave-to"
+					>
+						<div tw="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+							<div tw="sm:flex sm:items-start">
+								<div tw="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10 bg-yellow-100">
+									<QuestionMarkCircleIcon tw="h-6 w-6 text-yellow-600" />
+								</div>
+								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+									<Dialog.Title as="h3" className="show-help-modal-second-child-title">
+										{notSure}
+									</Dialog.Title>
+
+									<div tw="mt-2">
+										<Dialog.Description as="p" className="show-help-modal-second-child-description">
+											{doTheFollowing}
+										</Dialog.Description>
+
+										<ol tw="mt-8 mb-3 text-left list-decimal space-y-3">
+											<li tw="ml-4 text-sm leading-6 text-gray-800">
+												{clickCopyToClipboard}
+												<br tw="mb-2" />
+												<textarea
+													disabled={true}
+													name="verify_site_instructions"
+													id="instructions"
+													tw="h-56 resize-none block w-full p-3 pb-0 mb-3 text-gray-400 focus:ring-indigo-500 focus:border-indigo-500 rounded-md sm:text-sm border-gray-300"
+													value={instructionHtmlText}
+													onChange={handleTextareaChange}
+												></textarea>
+												<CopyToClipboard onCopy={handleInputCopy} text={instructionHtmlText}>
+													<button tw="space-x-2 cursor-pointer justify-center w-full inline-flex items-center shadow-sm px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+														<ClipboardIcon tw="h-5 w-5 text-gray-400" />
+														<span>{copied ? copiedText : copyText}</span>
+													</button>
+												</CopyToClipboard>
+											</li>
+											<li tw="ml-4 text-sm leading-6 text-gray-800">{pasteContents}</li>
+										</ol>
+									</div>
 								</div>
 							</div>
+
+							<div tw="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+								<button
+									type="button"
+									tw="cursor-pointer inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm text-sm font-medium  text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+									onClick={() => setShowModal(!showModal)}
+								>
+									{closeText}
+								</button>
+							</div>
 						</div>
-						<div tw="mt-5 sm:mt-6">
-							<button
-								type="button"
-								tw="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
-								onClick={() => setShowModal(close)}
-							>
-								{close}
-							</button>
-						</div>
-					</div>
-				</Transition.Child>
-			</div>
-		</Transition>
+					</Transition.Child>
+				</div>
+			</Dialog>
+		</Transition.Root>
 	);
 };
 

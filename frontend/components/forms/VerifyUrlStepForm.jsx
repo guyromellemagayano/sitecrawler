@@ -11,7 +11,6 @@ import { useRouter } from "next/router";
 import { memo, useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 
 /**
@@ -41,9 +40,6 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 
 	// SWR hooks
 	const { sites, errorSites } = useSites();
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
 
 	const handleEditMode = async (e) => {
 		e.preventDefault();
@@ -97,19 +93,16 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 									isError: false
 								});
 
-								// Update router query
-								replace({
-									pathname: AddNewSiteLink,
-									query: { step: step + 1, sid: sid ?? null, edit: false, verified: true }
-								});
-
 								// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
 								setTimeout(() => {
 									setDisableSiteVerify(false);
-								}, FormSubmissionInterval);
 
-								// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-								await mutate(SitesApiEndpoint);
+									// Update router query
+									replace({
+										pathname: AddNewSiteLink,
+										query: { step: step + 1, sid: sid ?? null, edit: false, verified: true }
+									});
+								}, FormSubmissionInterval);
 							} else {
 								// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued
 								setSubmitting(false);

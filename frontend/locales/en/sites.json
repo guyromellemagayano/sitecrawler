@@ -34,7 +34,7 @@
 	"instructions": "Instructions:",
 	"fillSiteInformation": "Fill in site information",
 	"instruction1": "Sign in to your website",
-	"instruction2": "Copy the meta tag below and add it within your website's <HEAD> tag.",
+	"instruction2": "Copy the meta tag below and add it within your website's HEAD tag.",
 	"instruction3": "Press \"Verify Site\" button below",
 	"instruction4": "Inform your client that you already made the update to the website.",
 	"areYouSureDelete": "Are you sure you want to delete this site? You will lose all the data associated with this site.",

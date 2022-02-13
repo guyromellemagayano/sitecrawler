@@ -24,14 +24,14 @@ export const LgScreenBreakpoint = 1024;
 export const MutateInterval = 1500;
 export const RedirectInterval = 1250;
 export const RevalidationInterval = 3000;
-export const NotificationDisplayInterval = 3000;
+export const NotificationDisplayInterval = 1000;
 export const ModalDisplayInterval = 3500;
 export const OnErrorRetryCount = 5;
 export const NoInterval = 0;
-export const ResetStateTimeout = 2500;
 export const UnitAmountToRealPriceDivisor = 100;
 export const MaxSitesPerPage = 10;
 export const MaxTotalSitesLimit = 100;
+export const ResetCopyStateTimeout = 500;
 
 // File Locations
 export const SubscriptionSuccessBadge = "/images/backgrounds/subscription-success-badge.png";

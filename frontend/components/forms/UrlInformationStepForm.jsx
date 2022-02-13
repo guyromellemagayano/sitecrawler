@@ -134,6 +134,8 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 				sitename: Yup.string().min(1, tooShort).max(255, tooLong).required(requiredField)
 			})}
 			onSubmit={async (values, { setSubmitting, setErrors }) => {
+				console.log(edit);
+
 				if (edit) {
 					// Re-enable form for editing
 					setDisableForm(!disableForm);
@@ -142,6 +144,8 @@ const UrlInformationStepForm = ({ step = null, edit = false, sid = null }) => {
 					const urlInformationStepFormResponseData = urlInformationStepFormResponse?.data ?? null;
 					const urlInformationStepFormResponseStatus = urlInformationStepFormResponse?.status ?? null;
 					const urlInformationStepFormResponseMethod = urlInformationStepFormResponse?.config?.method ?? null;
+
+					console.log(edit, urlInformationStepFormResponse);
 
 					if (
 						urlInformationStepFormResponseData !== null &&
