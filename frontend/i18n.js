@@ -3,7 +3,7 @@ module.exports = {
 	defaultLocale: "en",
 	pages: {
 		"*": ["alerts", "common"],
-		"/": ["sidebar", "sites", "login"],
+		"/": ["login"],
 		"/account-exist": ["accountExist"],
 		"/confirm-email/[...id]": ["confirmEmail"],
 		"/registration": ["registration"],
