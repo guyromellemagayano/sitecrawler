@@ -1,5 +1,5 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { NotificationDisplayInterval } from "@constants/GlobalValues";
+import { NotificationDisplayInterval, ResetCopyStateTimeout } from "@constants/GlobalValues";
 import { Dialog, Transition } from "@headlessui/react";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { InformationCircleIcon } from "@heroicons/react/outline";
@@ -10,7 +10,6 @@ import Link from "next/link";
 import { forwardRef, Fragment, memo, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ReactHtmlParser from "react-html-parser";
-import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 
 /**
@@ -28,7 +27,7 @@ const SiteVerifyModal = (
 	ref
 ) => {
 	const [copied, setCopied] = useState(false);
-	const [copyValue, setCopyValue] = useState(null);
+	const [copyValue, setCopyValue] = useState("");
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [enableNextStep, setEnableNextStep] = useState(false);
 	const [siteVerifyId, setSiteVerifyId] = useState(siteId);
@@ -49,9 +48,6 @@ const SiteVerifyModal = (
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 
 	const siteVerifyApiEndpoint = `${SitesApiEndpoint + siteId}/verify/`;
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
 
 	// Custom hooks
 	const { state, setConfig } = useNotificationMessage();
@@ -80,10 +76,12 @@ const SiteVerifyModal = (
 
 	// Reset copied state as soon as the modal is closed
 	useEffect(() => {
-		if (!showModal) {
-			setCopied(false);
+		if (copied) {
+			setTimeout(() => {
+				setCopied(false);
+			}, ResetCopyStateTimeout);
 		}
-	}, [copied, showModal]);
+	}, [copied]);
 
 	// Handle site verification
 	const handleSiteVerification = async (e) => {
@@ -102,9 +100,6 @@ const SiteVerifyModal = (
 
 		if (siteVerifyResponseData !== null && Math.round(siteVerifyResponseStatus / 200) === 1) {
 			if (siteVerifyResponseData?.verified) {
-				// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-				await mutate(SitesApiEndpoint);
-
 				// Show alert message after successful 200 OK or 201 Created response is issued
 				setConfig({
 					isVerifyUrlStep: true,
@@ -187,7 +182,7 @@ const SiteVerifyModal = (
 									<InformationCircleIcon tw="h-6 w-6 text-yellow-600" />
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-900">
+									<Dialog.Title as="h3" className="site-verify-modal-second-child-title">
 										{verifySiteTitleText}
 									</Dialog.Title>
 
@@ -320,7 +315,7 @@ const SiteVerifyModal = (
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 										]}
-										onClick={() => setShowModal(false)}
+										onClick={() => setShowModal(!showModal)}
 									>
 										{closeText}
 									</button>
