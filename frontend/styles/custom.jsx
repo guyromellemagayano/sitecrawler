@@ -416,6 +416,10 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 			&-title {
 				${tw`text-lg font-bold leading-6 text-gray-900`}
 			}
+
+			&-description {
+				${tw`text-base font-medium leading-6 text-gray-700 mt-4 mb-3`}
+			}
 		}
 	}
 
