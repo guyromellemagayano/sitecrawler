@@ -26,7 +26,7 @@ import tw from "twin.macro";
  * @param {function} handleOpenSidebar
  */
 const AddSite = ({ handleOpenSidebar }) => {
-	const [siteLimitCounter, setSiteLimitCounter] = useState(null);
+	const [siteLimitCounter, setSiteLimitCounter] = useState(0);
 	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
 
 	// Translations

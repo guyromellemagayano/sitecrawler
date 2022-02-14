@@ -1,6 +1,6 @@
 import { MemoizedHowToSetupSkeleton } from "@components/skeletons/HowToSetupSkeleton";
 import { HowToSetupData } from "@constants/HowToSetup";
-import { useLoading } from "@hooks/useLoading";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext, useState } from "react";
@@ -22,10 +22,10 @@ const HowToSetup = () => {
 	const tabSrOnly = t("sites:howToSetup.tabSrOnly");
 
 	// Custom context
-	const { user } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// Custom hooks
-	const { isComponentReady } = useLoading();
+	// SWR hooks
+	const { user } = useUser();
 
 	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 		<div tw="flex-auto">

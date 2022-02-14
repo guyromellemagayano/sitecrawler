@@ -1,5 +1,6 @@
 import { PasswordChangeApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
@@ -33,7 +34,10 @@ const PasswordSettingsForm = () => {
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { user, isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	return (
 		<Formik

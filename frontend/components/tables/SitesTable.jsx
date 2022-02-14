@@ -1,8 +1,8 @@
 import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { SitesSorting } from "@components/sorting/SitesSorting";
 import { SitesTableLabels } from "@constants/SitesTableLabels";
-import { useLoading } from "@hooks/useLoading";
 import { useSiteQueries } from "@hooks/useSiteQueries";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -26,11 +26,13 @@ const SitesTable = ({ sites = null }) => {
 	const { query } = useRouter();
 
 	// Custom context
-	const { user, disableLocalTime, setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user, disableLocalTime } = useUser();
 
 	// Custom hooks
 	const { setLinksPerPage, setPagePath } = useSiteQueries();
-	const { isComponentReady } = useLoading();
 
 	// Sites table labels with translations
 	const labelsArray = SitesTableLabels();

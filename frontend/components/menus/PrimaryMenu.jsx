@@ -5,6 +5,7 @@ import { AddNewSiteSlug, DashboardSitesLink, SitesSlug } from "@constants/PageLi
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { DocumentReportIcon, ExternalLinkIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -27,7 +28,10 @@ const PrimaryMenu = () => {
 	const { asPath } = useRouter();
 
 	// Custom context
-	const { user, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	// Sidebar menus
 	const { PrimarySidebarMenus } = SidebarMenus();

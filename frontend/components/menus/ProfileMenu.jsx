@@ -1,7 +1,7 @@
 import { MemoizedProfileMenuDropdown } from "@components/dropdowns/ProfileMenuDropdown";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLoading } from "@hooks/useLoading";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -13,7 +13,10 @@ import tw from "twin.macro";
  */
 const ProfileMenu = () => {
 	// Custom context
-	const { user, firstname, email, setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig, isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user, firstname, email } = useUser();
 
 	// Custom hooks
 	const {
@@ -21,7 +24,6 @@ const ProfileMenu = () => {
 		isComponentVisible: isProfileMenuComponentVisible,
 		setIsComponentVisible: setIsProfileMenuComponentVisible
 	} = useComponentVisible(false);
-	const { isComponentReady } = useLoading();
 
 	return (
 		<div ref={profileMenuRef} tw="flex-shrink-0 flex flex-col relative">

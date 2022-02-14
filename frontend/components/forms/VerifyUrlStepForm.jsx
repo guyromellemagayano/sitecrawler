@@ -3,6 +3,7 @@ import { FormSubmissionInterval } from "@constants/GlobalValues";
 import { AddNewSiteLink, DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { useSites } from "@hooks/useSites";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
@@ -36,9 +37,10 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 	const { replace } = useRouter();
 
 	// Custom context
-	const { user, isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
+	const { user } = useUser();
 	const { sites, errorSites } = useSites();
 
 	const handleEditMode = async (e) => {

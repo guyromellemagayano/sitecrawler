@@ -1,5 +1,6 @@
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { handlePatchMethod } from "@helpers/handleHttpMethods";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
@@ -31,8 +32,14 @@ const PersonalSettingsForm = () => {
 
 	// Custom context
 	const {
-		user,
 		isComponentReady,
+
+		setConfig
+	} = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const {
+		user,
 		username,
 		setUsername,
 		firstname,
@@ -41,10 +48,9 @@ const PersonalSettingsForm = () => {
 		setLastname,
 		email,
 		setEmail,
-		setConfig,
 		settings,
 		largePageSizeThreshold
-	} = useContext(SiteCrawlerAppContext);
+	} = useUser();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();

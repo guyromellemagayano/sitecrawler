@@ -4,6 +4,7 @@ import { LoginLink } from "@constants/PageLinks";
 import { Dialog, Transition } from "@headlessui/react";
 import { handleDeleteMethod } from "@helpers/handleHttpMethods";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -28,11 +29,14 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	const proceed = t("common:proceed");
 	const cancel = t("common:cancel");
 
-	// Custom context
-	const { state, setConfig, userIdApiEndpoint } = useContext(SiteCrawlerAppContext);
-
 	// Router
 	const { push } = useRouter();
+
+	// Custom context
+	const { state, setConfig } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { userIdApiEndpoint } = useUser();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
@@ -87,7 +91,7 @@ const DeleteUserAccountModal = ({ showModal = false, setShowModal }, ref) => {
 	useMemo(() => {
 		let isMounted = true;
 
-		(() => {
+		(async () => {
 			if (!isMounted) return;
 
 			if (isDeleted && hideButtons) {

@@ -5,6 +5,7 @@ import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { GlobeIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon, CreditCardIcon, SupportIcon, UserCircleIcon, ViewBoardsIcon } from "@heroicons/react/solid";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -30,7 +31,10 @@ const SettingsMenu = () => {
 	const { SettingsSidebarMenus } = SidebarMenus();
 
 	// Custom context
-	const { user, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
@@ -74,14 +78,18 @@ const SettingsMenu = () => {
 															className="group"
 															css={[
 																tw`mt-1 flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md `,
-																asPath.includes(value2.url) && isComponentReady
+																asPath.includes(value2.url) &&
+																isComponentReady &&
+																user &&
+																Math.round(user?.status / 100) === 2 &&
+																!user?.data?.detail
 																	? tw`bg-gray-1100 !cursor-default`
 																	: null,
 																asPath.includes(value2.url) ||
 																(asPath.includes(SettingsSlug) && SettingsSlug.includes(value2.url))
 																	? tw`text-gray-100`
 																	: tw`text-gray-400`,
-																isComponentReady
+																isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail
 																	? tw`cursor-pointer hover:text-gray-100 focus:outline-none transition ease-in-out duration-150 hover:bg-gray-1100 focus:bg-gray-1100`
 																	: tw`cursor-default`
 															]}

@@ -1,9 +1,9 @@
 import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLoading } from "@hooks/useLoading";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
@@ -47,7 +47,10 @@ const DataTable = ({ site = null }) => {
 	const deleteText = t("sites:delete");
 
 	// Custom context
-	const { user, disableLocalTime, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user, disableLocalTime } = useUser();
 
 	// Custom hooks
 	const {
@@ -60,7 +63,6 @@ const DataTable = ({ site = null }) => {
 		isComponentVisible: isSiteDeleteModalVisible,
 		setIsComponentVisible: setIsSiteDeleteModalVisible
 	} = useComponentVisible(false);
-	const { isComponentReady } = useLoading();
 
 	// DayJS options
 	const calendar = require("dayjs/plugin/calendar");

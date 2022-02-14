@@ -8,6 +8,7 @@ import { Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useCrawl } from "@hooks/useCrawl";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -40,7 +41,10 @@ const SiteSelectDropdown = ({ selectedSiteId = null, handleSiteSelectOnClick, op
 	const addNewSite = t("addNewSite");
 
 	// Custom context
-	const { user, maxSiteLimit, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user, maxSiteLimit } = useUser();
 
 	// Custom hooks
 	const { currentScan, previousScan, scanCount } = useCrawl(openDropdown ? selectedSiteId : null);
