@@ -9,7 +9,6 @@ import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { forwardRef, Fragment, memo, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import ReactHtmlParser from "react-html-parser";
 import tw from "twin.macro";
 
 /**
@@ -40,14 +39,19 @@ const SiteVerifyModal = (
 	const copiedText = t("common:copiedText");
 	const copyText = t("common:copyText");
 	const instructionsText = t("sites:instructions");
-	const instruction1Text = t("sites:instruction1");
-	const instruction2Text = t("sites:instruction2");
-	const instruction3Text = t("sites:instruction3");
-	const instructionHtmlText = t("sites:instructionHtmlText");
+	const instruction1 = t("sites:instruction1");
+	const instruction2 = t("sites:instruction2");
+	const instruction3 = t("sites:instruction3");
+	const instruction4 = t("sites:instruction4");
 	const verifyIdMetaTagText = t("sites:verifyIdMetaTagText");
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 
+	// Custom variables
 	const siteVerifyApiEndpoint = `${SitesApiEndpoint + siteId}/verify/`;
+	let instructionHtmlText = `1. ${instruction1}: ` + siteUrl + "\n\n";
+	instructionHtmlText += `2. ${instruction2}: ` + "\n" + copyValue + "\n\n";
+	instructionHtmlText += `3. ${instruction3}.` + "\n\n";
+	instructionHtmlText += `4. ${instruction4}` + "\n\n";
 
 	// Custom hooks
 	const { state, setConfig } = useNotificationMessage();
@@ -200,14 +204,15 @@ const SiteVerifyModal = (
 											</a>
 										</span>
 
-										<p tw="text-base font-medium leading-6 text-gray-700 mt-4 mb-3">
-											{ReactHtmlParser(instructionsText)}
-										</p>
+										<Dialog.Description as="p" className="site-verify-modal-second-child-description">
+											{instructionsText}
+										</Dialog.Description>
 
 										<ol tw="space-y-2 list-decimal ml-4">
-											<li tw="text-sm leading-6 text-gray-500">{ReactHtmlParser(instruction1Text)}</li>
+											<li tw="text-sm leading-6 text-gray-500">{instruction1}</li>
 											<li tw="text-sm leading-6 text-gray-500">
-												{ReactHtmlParser(instruction2Text)}
+												{instruction2}
+
 												<div tw="w-full block">
 													<label htmlFor="verify-id-meta-tag" tw="sr-only">
 														{verifyIdMetaTagText}
@@ -225,6 +230,7 @@ const SiteVerifyModal = (
 																onChange={handleInputChange}
 																autoComplete="off"
 															/>
+
 															<CopyToClipboard onCopy={handleInputCopy} text={copyValue}>
 																<button
 																	css={[
@@ -242,7 +248,8 @@ const SiteVerifyModal = (
 													</div>
 												</div>
 											</li>
-											<li tw="text-sm leading-6 text-gray-500">{ReactHtmlParser(instruction3Text)}</li>
+											<li tw="text-sm leading-6 text-gray-500">{instruction3}</li>
+											<li tw="text-sm leading-6 text-gray-500">{instruction4}</li>
 										</ol>
 
 										{state?.responses?.length > 0 ? (
