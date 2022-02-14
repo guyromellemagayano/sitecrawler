@@ -26,8 +26,6 @@ const ShowHelpModal = ({ siteData = null, showModal = false, setShowModal }, ref
 			setSiteUrl(siteData.url ?? null);
 
 			if (siteVerificationId !== null) {
-				console.log(siteData.verification_id);
-
 				setCopyValue(`<meta name="epic-crawl-id" content="${siteVerificationId}" />`);
 			}
 		}
