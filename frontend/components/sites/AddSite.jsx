@@ -8,6 +8,7 @@ import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -42,9 +43,10 @@ const AddSite = ({ handleOpenSidebar }) => {
 	const { mutate } = useSWRConfig();
 
 	// Custom context
-	const { user, maxSiteLimit, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// `sites` SWR hook
+	// SWR hooks
+	const { user, maxSiteLimit } = useUser();
 	const { sites, errorSites, validatingSites } = useSites();
 
 	// update `siteLimitCounter` state value

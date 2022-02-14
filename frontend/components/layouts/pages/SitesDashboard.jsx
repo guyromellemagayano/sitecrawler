@@ -1,10 +1,10 @@
 import { MemoizedDataPagination } from "@components/pagination";
 import { MemoizedSitesTable } from "@components/tables/SitesTable";
 import { ExternalLinkIcon } from "@heroicons/react/outline";
-import { useLoading } from "@hooks/useLoading";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
 import { useSites } from "@hooks/useSites";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
@@ -23,10 +23,10 @@ const SitesDashboardPageLayout = () => {
 	const sitesText = t("sites:sites");
 
 	// Custom context
-	const { user, setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig, isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// Custom hooks
-	const { isComponentReady } = useLoading();
+	// SWR hooks
+	const { user } = useUser();
 
 	// Helper functions
 	const { linksPerPage } = useSiteQueries();
