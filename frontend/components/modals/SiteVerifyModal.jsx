@@ -304,7 +304,12 @@ const SiteVerifyModal = (
 											</button>
 										</form>
 									) : (
-										<Link href="/sites/[siteId]/overview/" as={`/sites/${siteId}/overview/`} passHref replace>
+										<Link
+											href="/dashboard/sites/[siteId]/overview/"
+											as={`/dashboard/sites/${siteId}/overview/`}
+											passHref
+											replace
+										>
 											<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
 												{goToSiteOverviewText}
 											</a>
