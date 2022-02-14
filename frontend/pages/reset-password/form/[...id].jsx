@@ -4,6 +4,7 @@ import { MemoizedLoader } from "@components/loaders";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
@@ -45,7 +46,10 @@ export default function ResetPasswordForm() {
 	const isResetPasswordFormText = t("isResetPasswordForm");
 
 	// Custom context
-	const { user, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	return isComponentReady && user && Math.round(user?.status / 100) === 4 && user?.data?.detail ? (
 		<MemoizedLayout>

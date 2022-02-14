@@ -1,10 +1,10 @@
 import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
 import { MaxSitesPerPage } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
-import { useLoading } from "@hooks/useLoading";
 import { usePage } from "@hooks/usePage";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -26,12 +26,12 @@ const DataPagination = () => {
 	// Custom hooks
 	const { linksPerPage, setLinksPerPage, pagePath, setPagePath } = useSiteQueries();
 	const { scanApiEndpoint } = useScanApiEndpoint(parseInt(linksPerPage));
-	const { isComponentReady } = useLoading();
 
 	// Custom context
-	const { user, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
+	const { user } = useUser();
 	const { page, errorPage, validatingPage } = usePage(scanApiEndpoint);
 
 	// Custom variables
