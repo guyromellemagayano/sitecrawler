@@ -228,7 +228,12 @@ const DataTable = ({ site = null }) => {
 									</span>
 									<span tw="flex space-x-2 justify-start text-sm leading-5 text-gray-500">
 										{scanCount > 0 ? (
-											<Link href="/sites/[siteId]/overview" as={`/sites/${siteId}/overview`} passHref replace>
+											<Link
+												href="/dashboard/sites/[siteId]/overview"
+												as={`/dashboard/sites/${siteId}/overview`}
+												passHref
+												replace
+											>
 												<a
 													type="button"
 													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
@@ -348,7 +353,7 @@ const DataTable = ({ site = null }) => {
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					stats?.data?.num_links > 0 ? (
-						<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
+						<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								{stats?.data?.num_links}
 							</a>
@@ -363,7 +368,7 @@ const DataTable = ({ site = null }) => {
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					stats?.data?.num_pages > 0 ? (
-						<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
+						<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								{stats?.data?.num_pages}
 							</a>
@@ -378,7 +383,7 @@ const DataTable = ({ site = null }) => {
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					stats?.data?.num_images > 0 ? (
-						<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
+						<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
 								{stats?.data?.num_images}
 							</a>
