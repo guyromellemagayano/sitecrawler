@@ -98,6 +98,11 @@ const VerifyUrlStep = (props) => {
 		setCopyValue({ copyValue, copied });
 	};
 
+	// Handle input copy
+	const handleInputCopy = () => {
+		setCopied(true);
+	};
+
 	// Reset copied state after a timeout
 	useEffect(() => {
 		if (copied) {
@@ -181,7 +186,7 @@ const VerifyUrlStep = (props) => {
 															autoComplete="off"
 														/>
 
-														<CopyToClipboard onCopy={() => setCopied(true)} text={copyValue}>
+														<CopyToClipboard onCopy={handleInputCopy} text={copyValue}>
 															<button
 																css={[
 																	tw`-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50`,
