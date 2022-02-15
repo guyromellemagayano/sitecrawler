@@ -147,7 +147,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 									<span tw="inline-flex">
 										{siteData !== null && Object.keys(siteData)?.length > 0 ? (
 											<Link
-												href="/dashboard/sites/[id]/overview/"
+												href={`${DashboardSitesLink + "[id]" + SiteOverviewSlug}`}
 												as={`${DashboardSitesLink + sid + SiteOverviewSlug}`}
 												passHref
 												replace
