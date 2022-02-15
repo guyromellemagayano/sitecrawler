@@ -43,7 +43,7 @@ const SiteMenu = () => {
 	// SWR hooks
 	const { user } = useUser();
 	const { scan, scanObjId } = useScan(sanitizedSiteId);
-	const { stats } = useStats(sanitizedSiteId, scanObjId);
+	const { stats, validatingStats } = useStats(sanitizedSiteId, scanObjId);
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
@@ -173,7 +173,7 @@ const SiteMenu = () => {
 																	</span>
 
 																	{value2.slug === "links" ? (
-																		stats?.data?.num_links ? (
+																		!validatingStats && stats?.data?.num_links ? (
 																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																				{stats.data.num_links}
 																			</span>
@@ -181,7 +181,7 @@ const SiteMenu = () => {
 																	) : null}
 
 																	{value2.slug === "pages" ? (
-																		stats?.data?.num_pages ? (
+																		!validatingStats && stats?.data?.num_pages ? (
 																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																				{stats.data.num_pages}
 																			</span>
@@ -189,7 +189,7 @@ const SiteMenu = () => {
 																	) : null}
 
 																	{value2.slug === "images" ? (
-																		stats?.data?.num_images ? (
+																		!validatingStats && stats?.data?.num_images ? (
 																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
 																				{stats.data.num_images}
 																			</span>

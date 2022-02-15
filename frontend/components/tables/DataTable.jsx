@@ -2,6 +2,7 @@ import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useScan } from "@hooks/useScan";
+import { useSites } from "@hooks/useSites";
 import { useStats } from "@hooks/useStats";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
@@ -9,7 +10,7 @@ import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import { memo, useContext } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -20,6 +21,8 @@ import tw from "twin.macro";
  * @param {object} site
  */
 const DataTable = ({ site = null }) => {
+	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
+
 	// Site data props
 	const siteId = site?.id ?? null;
 	const siteName = site?.name ?? null;
@@ -42,7 +45,27 @@ const DataTable = ({ site = null }) => {
 	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
-	const { user, disableLocalTime, permissions } = useUser();
+	const { user, disableLocalTime, permissions, maxSiteLimit } = useUser();
+	const { sitesCount } = useSites();
+
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
+
+			// Handle `hasSiteLimitReached` value
+			if (maxSiteLimit && sitesCount) {
+				setHasSiteLimitReached(sitesCount >= maxSiteLimit);
+			}
+
+			return hasSiteLimitReached;
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [sitesCount, maxSiteLimit]);
 
 	// Custom hooks
 	const {
@@ -114,7 +137,14 @@ const DataTable = ({ site = null }) => {
 
 				<div tw="flex flex-col items-start">
 					<div>
-						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && site ? (
+						{isComponentReady &&
+						user &&
+						Math.round(user?.status / 100) === 2 &&
+						!user?.data?.detail &&
+						!validatingScan &&
+						scan &&
+						Math.round(scan?.status / 100) === 2 &&
+						!scan?.data?.detail ? (
 							<>
 								{siteVerified && currentScan == null ? (
 									<span
@@ -176,7 +206,7 @@ const DataTable = ({ site = null }) => {
 											</button>
 										) : null}
 
-										{siteVerified && permissions?.includes("can_start_scan") ? (
+										{siteVerified && permissions?.includes("can_start_scan") && !hasSiteLimitReached ? (
 											<button
 												type="button"
 												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
