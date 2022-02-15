@@ -23,8 +23,8 @@ export const useUser = (options = null) => {
 	const [group, setGroup] = useState({});
 	const [settings, setSettings] = useState({});
 
-	// Custom hooks
-	const { setConfig } = useContext(SiteCrawlerAppContext);
+	// Custom context
+	const { setConfig: setUserConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hook
 	const { data: user, error: errorUser, isValidating: validatingUser } = useMainSWRConfig(UserApiEndpoint, options);
@@ -37,72 +37,70 @@ export const useUser = (options = null) => {
 
 			// Show alert message after failed `user` SWR hook fetch
 			errorUser
-				? setConfig({
+				? setUserConfig({
 						isUser: true,
 						method: errorUser?.config?.method ?? null,
 						status: errorUser?.status ?? null
 				  })
 				: null;
 
-			if (!validatingUser && !errorUser && !user?.data?.detail) {
-				if (user?.data) {
-					// Update `settings` user setting
-					if (user.data?.settings) {
-						if (
-							Object.prototype.hasOwnProperty.call(user.data.settings, "disableLocalTime") &&
-							Boolean(user.data.settings?.disableLocalTime)
-						) {
-							setDisableLocalTime(Boolean(user.data.settings.disableLocalTime));
-						}
-
-						setSettings(user.data.settings);
+			if (user?.data) {
+				// Update `settings` user setting
+				if (user.data?.settings) {
+					if (
+						Object.prototype.hasOwnProperty.call(user.data.settings, "disableLocalTime") &&
+						Boolean(user.data.settings?.disableLocalTime)
+					) {
+						setDisableLocalTime(Boolean(user.data.settings.disableLocalTime));
 					}
 
-					// Update `maxSiteLimit` user setting
-					if (user.data?.group?.max_sites) {
-						setMaxSiteLimit(user.data.group.max_sites);
-					}
+					setSettings(user.data.settings);
+				}
 
-					// Handle `userIdApiEndpoint` and `userId` user settings
-					if (user.data?.id) {
-						setUserIdApiEndpoint(`${UserApiEndpoint + user.data.id}`);
-						setUserId(user.data.id);
-					}
+				// Update `maxSiteLimit` user setting
+				if (user.data?.group?.max_sites) {
+					setMaxSiteLimit(user.data.group.max_sites);
+				}
 
-					// Handle `username` user setting
-					if (user.data?.username) {
-						setUsername(user.data.username);
-					}
+				// Handle `userIdApiEndpoint` and `userId` user settings
+				if (user.data?.id) {
+					setUserIdApiEndpoint(`${UserApiEndpoint + user.data.id}`);
+					setUserId(user.data.id);
+				}
 
-					// Handle `email` user setting
-					if (user.data?.email) {
-						setEmail(user.data.email);
-					}
+				// Handle `username` user setting
+				if (user.data?.username) {
+					setUsername(user.data.username);
+				}
 
-					// Handle `firstname` user setting
-					if (user.data?.first_name) {
-						setFirstname(user.data.first_name);
-					}
+				// Handle `email` user setting
+				if (user.data?.email) {
+					setEmail(user.data.email);
+				}
 
-					// Handle `lastname` user setting
-					if (user.data?.last_name) {
-						setLastname(user.data.last_name);
-					}
+				// Handle `firstname` user setting
+				if (user.data?.first_name) {
+					setFirstname(user.data.first_name);
+				}
 
-					// Handle `permissions` user setting
-					if (user.data?.permissions) {
-						setPermissions(user.data.permissions);
-					}
+				// Handle `lastname` user setting
+				if (user.data?.last_name) {
+					setLastname(user.data.last_name);
+				}
 
-					// Handle `group` user setting
-					if (user.data?.group) {
-						setGroup(user.data.group);
-					}
+				// Handle `permissions` user setting
+				if (user.data?.permissions) {
+					setPermissions(user.data.permissions);
+				}
 
-					// Update `largePageSizeThreshold` user setting
-					if (user.data?.large_page_size_threshold) {
-						setLargePageSizeThreshold(user.data.large_page_size_threshold);
-					}
+				// Handle `group` user setting
+				if (user.data?.group) {
+					setGroup(user.data.group);
+				}
+
+				// Update `largePageSizeThreshold` user setting
+				if (user.data?.large_page_size_threshold) {
+					setLargePageSizeThreshold(user.data.large_page_size_threshold);
 				}
 			}
 
@@ -130,7 +128,7 @@ export const useUser = (options = null) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [user, errorUser, validatingUser]);
+	}, [user, errorUser]);
 
 	return {
 		disableLocalTime,
@@ -142,7 +140,7 @@ export const useUser = (options = null) => {
 		lastname,
 		maxSiteLimit,
 		permissions,
-		setConfig,
+		setUserConfig,
 		setDisableLocalTime,
 		setEmail,
 		setFirstname,
@@ -154,7 +152,6 @@ export const useUser = (options = null) => {
 		user,
 		userId,
 		userIdApiEndpoint,
-		username,
-		validatingUser
+		username
 	};
 };

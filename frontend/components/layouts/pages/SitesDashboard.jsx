@@ -8,7 +8,7 @@ import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { handleConversionStringToLowercase } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
-import { memo, useContext, useMemo } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -23,38 +23,15 @@ const SitesDashboardPageLayout = () => {
 	const sitesText = t("sites:sites");
 
 	// Custom context
-	const { setConfig, isComponentReady } = useContext(SiteCrawlerAppContext);
-
-	// SWR hooks
-	const { user } = useUser();
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// Helper functions
 	const { linksPerPage } = useSiteQueries();
 	const { scanApiEndpoint } = useScanApiEndpoint(linksPerPage);
 
 	// SWR hooks
-	const { sites, errorSites } = useSites(scanApiEndpoint);
-
-	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			// Show alert message after failed `sites` SWR hook fetch
-			errorSites
-				? setConfig({
-						isSites: true,
-						method: errorSites?.config?.method ?? null,
-						status: errorSites?.status ?? null
-				  })
-				: null;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [sites, errorSites]);
+	const { user } = useUser();
+	const { sitesCount } = useSites(scanApiEndpoint);
 
 	return (
 		<>
@@ -63,13 +40,13 @@ const SitesDashboardPageLayout = () => {
 					<div tw="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
 						<div tw="mt-2 flex items-center space-x-3 text-sm text-gray-500">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-								sites?.data?.count ? (
+								sitesCount ? (
 									<>
 										<ExternalLinkIcon tw="flex-shrink-0 h-5 w-5 text-gray-400" aria-hidden="true" />
 										<span tw="text-sm leading-6 font-semibold text-gray-500">
-											{sites.data.count > 1
-												? sites.data.count + " " + handleConversionStringToLowercase(sitesText)
-												: sites.data.count + " " + siteText}
+											{sitesCount > 1
+												? sitesCount + " " + handleConversionStringToLowercase(sitesText)
+												: sitesCount + " " + siteText}
 										</span>
 									</>
 								) : null
@@ -87,11 +64,7 @@ const SitesDashboardPageLayout = () => {
 			<div
 				css={[
 					tw`flex-grow focus:outline-none px-4 pt-8 sm:px-6 md:px-0`,
-					isComponentReady &&
-					user &&
-					Math.round(user?.status / 100) === 2 &&
-					!user?.data?.detail &&
-					sites?.data?.count === 0
+					isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && sitesCount === 0
 						? tw`flex flex-col flex-auto items-center justify-center`
 						: null
 				]}
@@ -99,11 +72,7 @@ const SitesDashboardPageLayout = () => {
 				<div
 					css={[
 						tw`flex-1 w-full h-full`,
-						isComponentReady &&
-						user &&
-						Math.round(user?.status / 100) === 2 &&
-						!user?.data?.detail &&
-						sites?.data?.count === 0
+						isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && sitesCount === 0
 							? tw`flex flex-auto`
 							: null
 					]}
@@ -115,7 +84,7 @@ const SitesDashboardPageLayout = () => {
 								user &&
 								Math.round(user?.status / 100) === 2 &&
 								!user?.data?.detail &&
-								sites?.data?.count === 0 &&
+								sitesCount === 0 &&
 								tw`flex flex-initial`
 						]}
 					>
@@ -126,12 +95,12 @@ const SitesDashboardPageLayout = () => {
 									user &&
 									Math.round(user?.status / 100) === 2 &&
 									!user?.data?.detail &&
-									sites?.data?.count === 0 &&
+									sitesCount === 0 &&
 									tw`flex items-center`
 							]}
 						>
 							<div tw="min-w-full h-full rounded-lg border-gray-300">
-								<MemoizedSitesTable sites={sites} />
+								<MemoizedSitesTable />
 							</div>
 						</div>
 					</div>

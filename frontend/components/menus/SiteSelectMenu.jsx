@@ -1,6 +1,6 @@
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { SelectorIcon } from "@heroicons/react/solid";
-import { useCrawl } from "@hooks/useCrawl";
+import { useScan } from "@hooks/useScan";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -17,9 +17,10 @@ import tw from "twin.macro";
 const SiteSelectMenu = ({ selectedSite = null, selectedSiteDetails = null, handleOpenDropdown }) => {
 	// Router
 	const { query } = useRouter();
+	const { siteId } = query;
 
 	// Custom hooks
-	const { currentScan } = useCrawl(query?.siteId ?? null);
+	const { currentScan } = useScan(siteId);
 
 	// Translations
 	const { t } = useTranslation("sidebar");

@@ -50,7 +50,7 @@ const PrimaryMenu = () => {
 					<div tw="flex-1 flex flex-col overflow-y-auto">
 						<nav tw="flex-1 px-4">
 							{PrimarySidebarMenus.filter((e) => {
-								return !asPath?.includes(AddNewSiteSlug) ? e.slug !== "navigation" : true;
+								return !asPath?.includes(DashboardSitesLink + AddNewSiteSlug) ? e.slug !== "navigation" : true;
 							})?.map((value) => {
 								return (
 									<div key={value.slug} tw="mb-4">
@@ -149,7 +149,10 @@ const PrimaryMenu = () => {
 
 																{value2.title ? (
 																	<span>
-																		{isComponentReady ? (
+																		{isComponentReady &&
+																		user &&
+																		Math.round(user?.status / 100) === 2 &&
+																		!user?.data?.detail ? (
 																			value2.title
 																		) : (
 																			<Skeleton duration={2} width={128} height={20} />

@@ -14,7 +14,7 @@ import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext, useEffect, useMemo, useState } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import { isBrowser } from "react-device-detect";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -27,7 +27,6 @@ import tw from "twin.macro";
  * @param {function} handleOpenSidebar
  */
 const AddSite = ({ handleOpenSidebar }) => {
-	const [siteLimitCounter, setSiteLimitCounter] = useState(0);
 	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
 
 	// Translations
@@ -47,38 +46,18 @@ const AddSite = ({ handleOpenSidebar }) => {
 
 	// SWR hooks
 	const { user, maxSiteLimit } = useUser();
-	const { sites, errorSites, validatingSites } = useSites();
+	const { sitesCount } = useSites();
 
-	// update `siteLimitCounter` state value
+	// Update `hasSiteLimitReached` state value
 	useMemo(() => {
 		let isMounted = true;
 
 		(async () => {
 			if (!isMounted) return;
 
-			// Handle `siteLimitCounter` value
-			if (!validatingSites && !errorSites && sites && !sites?.data?.detail && sites?.data?.count) {
-				setSiteLimitCounter(sites.data.count);
-			}
-
-			return siteLimitCounter;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [sites, errorSites, validatingSites]);
-
-	// Update `hasSiteLimitReached` state value
-	useEffect(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
 			// Handle `hasSiteLimitReached` value
-			if (maxSiteLimit && siteLimitCounter) {
-				setHasSiteLimitReached(siteLimitCounter >= maxSiteLimit);
+			if (maxSiteLimit && sitesCount) {
+				setHasSiteLimitReached(sitesCount >= maxSiteLimit);
 			}
 
 			return hasSiteLimitReached;
@@ -87,7 +66,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [siteLimitCounter, maxSiteLimit]);
+	}, [sitesCount, maxSiteLimit]);
 
 	// Custom hooks
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
@@ -153,7 +132,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 										<Skeleton duration={2} width={20} height={20} />
 									)}
 								</div>
-								{siteLimitCounter > 0 ? (
+								{sitesCount > 0 ? (
 									isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 										<input
 											type="search"
@@ -186,7 +165,7 @@ const AddSite = ({ handleOpenSidebar }) => {
 					hasSiteLimitReached ? (
 						<button
 							type="button"
-							tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"
+							tw="active:bg-yellow-700 bg-yellow-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 font-medium hover:bg-yellow-700 items-center justify-center leading-4 px-4 py-2 rounded-md text-sm text-white w-full"
 							onClick={() => setIsComponentVisible(!isComponentVisible)}
 						>
 							<span tw="flex items-center space-x-2">
@@ -202,10 +181,10 @@ const AddSite = ({ handleOpenSidebar }) => {
 								onClick={handleOnClick}
 								aria-hidden="true"
 								css={[
-									tw`border border-transparent inline-flex items-center justify-center leading-5 px-4 py-2 rounded-md text-sm text-white w-full`,
+									tw`border border-transparent cursor-pointer flex font-medium items-center justify-center leading-4 px-4 py-2 rounded-md text-sm text-white w-full`,
 									asPath.includes(AddNewSiteSlug)
 										? tw`opacity-50 bg-gray-300 cursor-not-allowed`
-										: tw`cursor-pointer bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 active:bg-green-700 focus:outline-none`
+										: tw`active:bg-green-700 bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 hover:bg-green-700`
 								]}
 							>
 								<span tw="flex items-center space-x-2">

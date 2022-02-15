@@ -51,15 +51,6 @@ export async function getServerSideProps({ req, query }) {
 		) {
 			const sidMatch = sitesResponseData?.results?.find((site) => site.id == sid && site.verified == verified) ?? null;
 
-			if (sitesResponseData.count >= userResponseData.group.max_sites) {
-				return {
-					redirect: {
-						destination: DashboardSitesLink,
-						permanent: false
-					}
-				};
-			}
-
 			if (
 				edit !== null &&
 				verified !== null &&

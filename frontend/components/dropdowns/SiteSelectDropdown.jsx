@@ -1,19 +1,18 @@
 import { MemoizedSitesList } from "@components/lists/SitesList";
 import { MemoizedSiteLimitReachedModal } from "@components/modals/SiteLimitReachedModal";
-import { ComponentReadyInterval } from "@constants/GlobalValues";
-import { AddNewSiteLink, DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
+import { AddNewSiteLink } from "@constants/PageLinks";
 import { SidebarMenuLabels } from "@constants/SidebarMenuLabels";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useCrawl } from "@hooks/useCrawl";
+import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { forwardRef, memo, useContext, useEffect, useMemo, useState } from "react";
+import { forwardRef, memo, useContext, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import "twin.macro";
@@ -25,9 +24,7 @@ import "twin.macro";
  * @param {function} handleSiteSelectOnClick
  * @param {boolean} openDropdown
  */
-const SiteSelectDropdown = ({ selectedSiteId = null, handleSiteSelectOnClick, openDropdown = false }, ref) => {
-	const [scanObjId, setScanObjId] = useState(null);
-	const [siteLimitCounter, setSiteLimitCounter] = useState(null);
+const SiteSelectDropdown = ({ handleSiteSelectOnClick, openDropdown = false }, ref) => {
 	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
 
 	// Sidebar Menu Labels
@@ -45,62 +42,34 @@ const SiteSelectDropdown = ({ selectedSiteId = null, handleSiteSelectOnClick, op
 
 	// SWR hooks
 	const { user, maxSiteLimit } = useUser();
+	const { sitesCount } = useSites();
 
 	// Custom hooks
-	const { currentScan, previousScan, scanCount } = useCrawl(openDropdown ? selectedSiteId : null);
 	const {
 		ref: siteLimitRef,
 		isComponentVisible: isSiteLimitComponentVisible,
 		setIsComponentVisible: setIsSiteLimitComponentVisible
 	} = useComponentVisible(false);
 
-	// Handle site selection on load
+	// Update `hasSiteLimitReached` state value
 	useMemo(() => {
 		let isMounted = true;
 
 		(async () => {
 			if (!isMounted) return;
 
-			if (previousScan !== null && currentScan !== null && scanCount !== null) {
-				scanCount > 1 ? setScanObjId(previousScan?.id) : setScanObjId(currentScan?.id);
+			// Handle `hasSiteLimitReached` value
+			if (maxSiteLimit && sitesCount) {
+				setHasSiteLimitReached(sitesCount >= maxSiteLimit);
 			}
 
-			return { scanObjId };
+			return hasSiteLimitReached;
 		})();
 
 		return () => {
 			isMounted = false;
 		};
-	}, [scanCount, currentScan, previousScan]);
-
-	// Handle site selection on click
-	useEffect(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (scanObjId !== null && selectedSiteId !== null) {
-				const timeout = setTimeout(() => {
-					push({
-						pathname: `${DashboardSitesLink}[siteId]${SiteOverviewSlug}`,
-						query: {
-							siteId: selectedSiteId,
-							scanObjId: scanObjId
-						}
-					});
-				}, ComponentReadyInterval);
-
-				return () => {
-					clearTimeout(timeout);
-				};
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [scanObjId, selectedSiteId]);
+	}, [sitesCount, maxSiteLimit]);
 
 	return (
 		<>
@@ -125,19 +94,21 @@ const SiteSelectDropdown = ({ selectedSiteId = null, handleSiteSelectOnClick, op
 							hasSiteLimitReached ? (
 								<button
 									type="button"
-									tw="cursor-pointer relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 active:bg-yellow-700"
+									tw="active:bg-yellow-700 bg-yellow-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 font-medium hover:bg-yellow-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full"
 									onClick={() => setIsSiteLimitComponentVisible(!isSiteLimitComponentVisible)}
 								>
-									<span tw="flex items-center space-x-2">
-										<FontAwesomeIcon icon={["fas", "crown"]} tw="w-4 h-4 text-white" />
+									<div tw="flex items-center space-x-2">
+										<FontAwesomeIcon icon={["fas", "crown"]} tw="h-4 w-4" />
 										<span>{addNewSite}</span>
-									</span>
+									</div>
 								</button>
 							) : (
 								<Link href={AddNewSiteLink + "?step=1&edit=false&verified=false"} passHref>
 									<a tw="active:bg-green-700 bg-green-600 border border-transparent cursor-pointer flex focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-medium hover:bg-green-700 items-center justify-center leading-4 px-3 py-2 rounded-md text-sm text-white w-full">
-										<PlusIcon tw="-ml-3 mr-2 h-4 w-4" />
-										{labelsArray[2]?.label ?? null}
+										<div tw="flex items-center space-x-2">
+											<PlusIcon tw="mr-2 h-4 w-4" />
+											{labelsArray[2]?.label ?? null}
+										</div>
 									</a>
 								</Link>
 							)

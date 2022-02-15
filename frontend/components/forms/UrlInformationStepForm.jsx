@@ -6,11 +6,12 @@ import { handleGetMethod, handlePatchMethod, handlePostMethod } from "@helpers/h
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { handleConversionStringToBoolean, handleConversionStringToNumber } from "@utils/convertCase";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { memo, useContext, useEffect, useState } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import stringSimilarity from "string-similarity";
@@ -36,6 +37,12 @@ const UrlInformationStepForm = (props) => {
 	// Props
 	const { step, edit, sid, verified } = props;
 
+	// Custom variables
+	const sanitizedSid = handleConversionStringToNumber(sid);
+	const sanitizedStep = handleConversionStringToNumber(step);
+	const sanitizedEdit = handleConversionStringToBoolean(edit);
+	const sanitizedVerified = handleConversionStringToBoolean(verified);
+
 	// Translations
 	const { t } = useTranslation();
 	const tooLong = t("common:tooLong");
@@ -60,20 +67,27 @@ const UrlInformationStepForm = (props) => {
 
 	// SWR hooks
 	const { user, largePageSizeThreshold } = useUser();
-	const { sites, errorSites, validatingSites } = useSites();
+	const { sites, sitesResults } = useSites();
 
-	useEffect(() => {
+	useMemo(() => {
 		let isMounted = true;
 
 		(async () => {
 			if (isMounted) return;
 
 			// Update `editMode` state when `edit` prop changes
-			if (edit?.length > 0 && sid?.length > 0 && !verified?.length > 0) {
-				setEditMode(edit);
+			if (sanitizedEdit) {
+				setEditMode(sanitizedEdit);
 			}
 
-			console.log(editMode);
+			console.log(sanitizedEdit, editMode);
+
+			if (editMode) {
+				// Handle `site` data
+				if (sitesResults?.length > 0) {
+					setSiteData(sites.data.results.filter((site) => site.id === sanitizedSid));
+				}
+			}
 
 			return editMode;
 		})();
@@ -81,43 +95,16 @@ const UrlInformationStepForm = (props) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [step, edit, sid, verified]);
+	}, [sanitizedEdit, sanitizedSid]);
 
-	useEffect(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (isMounted) return;
-
-			if (editMode) {
-				// Handle `site` data
-				if (!validatingSites && !errorSites && !sites?.data?.detail) {
-					if (sites?.data) {
-						if (sites.data?.results?.length > 0) {
-							setSiteData(sites.data.results.filter((site) => site.id === sid));
-						}
-					}
-				}
-			}
-
-			console.log(siteData);
-
-			return siteData;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [editMode, sid, sites, errorSites, validatingSites]);
-
-	useEffect(() => {
+	useMemo(() => {
 		let isMounted = true;
 
 		(async () => {
 			if (isMounted) return;
 
 			// Handle `site` details form data
-			if (siteData && edit) {
+			if (siteData && editMode) {
 				setSiteUrlProtocol(
 					(siteData?.[0]?.url?.indexOf("http://") == 0 || siteData?.[0]?.url?.indexOf("https://") == 0) ?? ""
 				);
@@ -135,7 +122,7 @@ const UrlInformationStepForm = (props) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [edit, siteData]);
+	}, [editMode, siteData]);
 
 	const urlRegex = new RegExp(
 		/^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|\/|\?)*)?$/i
@@ -154,11 +141,92 @@ const UrlInformationStepForm = (props) => {
 				sitename: Yup.string().min(1, tooShort).max(255, tooLong).required(requiredField)
 			})}
 			onSubmit={async (values, { setSubmitting, setErrors }) => {
-				if (edit) {
+				if (!editMode) {
+					const body = {
+						url: values.siteurlprotocol !== "" ? values.siteurlprotocol : "https://" + values.siteurl,
+						name: values.sitename,
+						large_page_size_threshold: largePageSizeThreshold
+					};
+
+					const siteValidationResponse = await handleGetMethod(SitesApiEndpoint);
+					const siteValidationResponseData = siteValidationResponse?.data ?? null;
+					const siteValidationResponseStatus = siteValidationResponse?.status ?? null;
+					const siteValidationResponseMethod = siteValidationResponse?.config?.method ?? null;
+
+					if (siteValidationResponseData !== null && Math.round(siteValidationResponseStatus / 200) === 1) {
+						let siteValidationResponseDataResultsArray = [];
+						let siteValidationResponseDataResult = null;
+
+						siteValidationResponseData?.results?.map((val) => siteValidationResponseDataResultsArray.push(val.url));
+
+						if (siteValidationResponseDataResultsArray?.length > 0) {
+							siteValidationResponseDataResult = stringSimilarity.findBestMatch(
+								body.url,
+								siteValidationResponseDataResultsArray
+							);
+						}
+
+						if (siteValidationResponseDataResult?.bestMatch?.rating === 1) {
+							// Report error message that site URL already exists
+							setErrors({ siteurl: siteUrlAlreadyExists });
+						} else {
+							const siteAdditionResponse = await handlePostMethod(SitesApiEndpoint, body);
+							const siteAdditionResponseData = siteAdditionResponse?.data ?? null;
+							const siteAdditionResponseStatus = siteAdditionResponse?.status ?? null;
+							const siteAdditionResponseMethod = siteAdditionResponse?.config?.method ?? null;
+
+							if (siteAdditionResponseData !== null && Math.round(siteAdditionResponseStatus / 100) === 2) {
+								// Disable form after successful 200 OK or 201 Created response is issued
+								setDisableForm(true);
+
+								// Show alert message after successful 200 OK or 201 Created response is issued
+								setConfig({
+									isUrlInformationStep: true,
+									method: siteAdditionResponseMethod,
+									status: siteAdditionResponseStatus
+								});
+
+								// Update current URL with query for the next step
+								replace({
+									pathname: AddNewSiteLink,
+									query: {
+										step: sanitizedStep + 1,
+										sid: siteAdditionResponseData?.id ?? null,
+										edit: false,
+										verified: false
+									}
+								});
+							} else {
+								// Disable form after unsuccessful 200 OK or 201 Created response is issued
+								setDisableForm(false);
+
+								// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
+								setSubmitting(false);
+
+								// Show alert message after successful 200 OK or 201 Created response is not issued
+								setConfig({
+									isUrlInformationStep: true,
+									method: siteAdditionResponseMethod,
+									status: siteAdditionResponseStatus
+								});
+							}
+						}
+					} else {
+						// Disable submission and reset form as soon as 200 OK or 201 Created response was issued
+						setSubmitting(false);
+
+						// Show alert message after successful 200 OK or 201 Created response is issued
+						setConfig({
+							isUrlInformationStep: true,
+							method: siteValidationResponseMethod,
+							status: siteValidationResponseStatus
+						});
+					}
+				} else {
 					// Re-enable form for editing
 					setDisableForm(!disableForm);
 
-					const urlInformationStepFormResponse = await handleGetMethod(SitesApiEndpoint + sid + "/");
+					const urlInformationStepFormResponse = await handleGetMethod(SitesApiEndpoint + sanitizedSid + "/");
 					const urlInformationStepFormResponseData = urlInformationStepFormResponse?.data ?? null;
 					const urlInformationStepFormResponseStatus = urlInformationStepFormResponse?.status ?? null;
 					const urlInformationStepFormResponseMethod = urlInformationStepFormResponse?.config?.method ?? null;
@@ -177,14 +245,17 @@ const UrlInformationStepForm = (props) => {
 							replace({
 								pathname: AddNewSiteLink,
 								query: {
-									step: step + 1,
-									sid: sid ?? null,
+									step: sanitizedStep + 1,
+									sid: sanitizedSid ?? null,
 									edit: false,
 									verified: false
 								}
 							});
 						} else {
-							const patchUrlInformationStepFormResponse = await handlePatchMethod(SitesApiEndpoint + sid + "/", body);
+							const patchUrlInformationStepFormResponse = await handlePatchMethod(
+								SitesApiEndpoint + sanitizedSid + "/",
+								body
+							);
 							const patchUrlInformationStepFormResponseData = patchUrlInformationStepFormResponse?.data ?? null;
 							const patchUrlInformationStepFormResponseStatus = patchUrlInformationStepFormResponse?.status ?? null;
 							const patchUrlInformationStepFormResponseMethod =
@@ -209,7 +280,7 @@ const UrlInformationStepForm = (props) => {
 									replace({
 										pathname: AddNewSiteLink,
 										query: {
-											step: step + 1,
+											step: sanitizedStep + 1,
 											sid: patchUrlInformationStepFormResponseData?.id ?? null,
 											edit: false,
 											verified: false
@@ -254,82 +325,6 @@ const UrlInformationStepForm = (props) => {
 							isUrlInformationStep: true,
 							method: urlInformationStepFormResponseMethod,
 							status: urlInformationStepFormResponseStatus
-						});
-					}
-				} else {
-					const body = {
-						url: values.siteurlprotocol !== "" ? values.siteurlprotocol : "https://" + values.siteurl,
-						name: values.sitename,
-						large_page_size_threshold: isComponentReady
-					};
-
-					const siteValidationResponse = await handleGetMethod(SitesApiEndpoint);
-					const siteValidationResponseData = siteValidationResponse?.data ?? null;
-					const siteValidationResponseStatus = siteValidationResponse?.status ?? null;
-					const siteValidationResponseMethod = siteValidationResponse?.config?.method ?? null;
-
-					if (siteValidationResponseData !== null && Math.round(siteValidationResponseStatus / 200) === 1) {
-						let siteValidationResponseDataResultsArray = [];
-						let siteValidationResponseDataResult = null;
-
-						siteValidationResponseData?.results?.map((val) => siteValidationResponseDataResultsArray.push(val.url));
-
-						if (siteValidationResponseDataResultsArray?.length > 0) {
-							siteValidationResponseDataResult = stringSimilarity.findBestMatch(
-								body.url,
-								siteValidationResponseDataResultsArray
-							);
-						}
-
-						if (siteValidationResponseDataResult?.bestMatch?.rating === 1) {
-							// Report error message that site URL already exists
-							setErrors({ siteurl: siteUrlAlreadyExists });
-						} else {
-							const siteAdditionResponse = await handlePostMethod(SitesApiEndpoint, body);
-							const siteAdditionResponseData = siteAdditionResponse?.data ?? null;
-							const siteAdditionResponseStatus = siteAdditionResponse?.status ?? null;
-							const siteAdditionResponseMethod = siteAdditionResponse?.config?.method ?? null;
-
-							if (siteAdditionResponseData !== null && Math.round(siteAdditionResponseStatus / 100) === 2) {
-								// Disable form after successful 200 OK or 201 Created response is issued
-								setDisableForm(true);
-
-								// Show alert message after successful 200 OK or 201 Created response is issued
-								setConfig({
-									isUrlInformationStep: true,
-									method: siteAdditionResponseMethod,
-									status: siteAdditionResponseStatus
-								});
-
-								// Update current URL with query for the next step
-								replace({
-									pathname: AddNewSiteLink,
-									query: { step: step + 1, sid: siteAdditionResponseData?.id ?? null, edit: false, verified: false }
-								});
-							} else {
-								// Disable form after unsuccessful 200 OK or 201 Created response is issued
-								setDisableForm(false);
-
-								// Disable submission and reset form as soon as 200 OK or 201 Created response was not issued
-								setSubmitting(false);
-
-								// Show alert message after successful 200 OK or 201 Created response is not issued
-								setConfig({
-									isUrlInformationStep: true,
-									method: siteAdditionResponseMethod,
-									status: siteAdditionResponseStatus
-								});
-							}
-						}
-					} else {
-						// Disable submission and reset form as soon as 200 OK or 201 Created response was issued
-						setSubmitting(false);
-
-						// Show alert message after successful 200 OK or 201 Created response is issued
-						setConfig({
-							isUrlInformationStep: true,
-							method: siteValidationResponseMethod,
-							status: siteValidationResponseStatus
 						});
 					}
 				}
