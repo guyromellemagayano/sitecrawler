@@ -283,9 +283,12 @@ const DataTable = ({ site = null }) => {
 									<span tw="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
 								)}
 							</span>
-							<span tw="text-sm leading-5 font-medium text-gray-500">
-								({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
-							</span>
+
+							{scanCount > 1 ? (
+								<span tw="text-sm leading-5 font-medium text-gray-500">
+									({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
+								</span>
+							) : null}
 						</span>
 					) : (
 						<span tw="space-x-2">

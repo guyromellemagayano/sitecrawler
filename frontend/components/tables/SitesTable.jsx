@@ -14,8 +14,10 @@ import { MemoizedDataTable } from "./DataTable";
 
 /**
  * Custom function to render the `SitesTable` component
+ *
+ * @param {object} sites
  */
-const SitesTable = () => {
+const SitesTable = ({ sites = null }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
@@ -29,7 +31,7 @@ const SitesTable = () => {
 
 	// SWR hooks
 	const { user, disableLocalTime } = useUser();
-	const { sites, sitesCount, sitesResults } = useSites();
+	const { sitesCount, sitesResults } = useSites();
 
 	// Custom hooks
 	const { setLinksPerPage, setPagePath } = useSiteQueries();
