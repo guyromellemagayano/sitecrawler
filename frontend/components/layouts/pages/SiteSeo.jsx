@@ -1,5 +1,4 @@
 import { memo } from "react";
-import "react-loading-skeleton/dist/skeleton.css";
 import "twin.macro";
 
 /**

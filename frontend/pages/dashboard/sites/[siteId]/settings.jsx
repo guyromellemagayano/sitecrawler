@@ -1,9 +1,10 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedSiteOverviewPageLayout } from "@components/layouts/pages/SiteOverview";
+import { MemoizedSiteSettingsPageLayout } from "@components/layouts/Images/SiteSettings";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
+import { useSites } from "@hooks/useSites";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
@@ -59,7 +60,10 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-export default function SiteOverview({ siteName }) {
+export default function SiteSettings({ siteName }) {
+	// SWR hooks
+	const { sites } = useSites();
+
 	// Translations
 	const { t } = useTranslation("sites");
 	const sitesOverviewText = t("sitesOverview");
@@ -71,10 +75,10 @@ export default function SiteOverview({ siteName }) {
 		<MemoizedLayout>
 			<NextSeo title={sitesOverviewPageTitle} />
 			<MemoizedPageLayout pageTitle={sitesOverviewPageTitle}>
-				<MemoizedSiteOverviewPageLayout />
+				<MemoizedSiteSettingsPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
 	);
 }
 
-SiteOverview.getLayout = (page) => page;
+SiteSettings.getLayout = (page) => page;

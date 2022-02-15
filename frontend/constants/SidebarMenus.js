@@ -1,12 +1,12 @@
 import {
 	AuditLogsLink,
 	BillingSettingsLink,
-	DashboardSettingsSlug,
 	DashboardSitesLink,
 	GlobalSettingsLink,
 	HelpAndSupportLink,
 	LogoutLink,
 	ProfileSettingsLink,
+	SettingsSlug,
 	SiteImagesSlug,
 	SiteLinksSlug,
 	SiteOverviewSlug,
@@ -108,7 +108,7 @@ export const SidebarMenus = () => {
 	const SiteSettingsSidebarMenus = {
 		category: settings,
 		slug: "settings",
-		links: [{ title: siteSettings, slug: "site-settings", url: DashboardSettingsSlug }]
+		links: [{ title: siteSettings, slug: "site-settings", url: "/" + SettingsSlug }]
 	};
 
 	// Primary menu items
