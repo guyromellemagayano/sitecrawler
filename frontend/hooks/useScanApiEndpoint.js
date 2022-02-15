@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
  * @returns {string} The updated scan API endpoint
  */
 export const useScanApiEndpoint = (linksPerPage = null) => {
+	// Custom variables
 	let scanApiEndpoint = SitesApiEndpoint + "?" + perPageQuery + linksPerPage + "&" + orderingByNameQuery + "name";
 	let queryString = "";
 

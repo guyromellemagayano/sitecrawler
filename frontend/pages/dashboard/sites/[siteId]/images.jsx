@@ -1,6 +1,6 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedSiteOverviewPageLayout } from "@components/layouts/pages/SiteOverview";
+import { MemoizedSiteImagesPageLayout } from "@components/layouts/Images/SiteImages";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
@@ -59,7 +59,7 @@ export async function getServerSideProps({ req, query }) {
 	}
 }
 
-export default function SiteOverview({ siteName }) {
+export default function SiteImages({ siteName }) {
 	// Translations
 	const { t } = useTranslation("sites");
 	const sitesOverviewText = t("sitesOverview");
@@ -71,10 +71,10 @@ export default function SiteOverview({ siteName }) {
 		<MemoizedLayout>
 			<NextSeo title={sitesOverviewPageTitle} />
 			<MemoizedPageLayout pageTitle={sitesOverviewPageTitle}>
-				<MemoizedSiteOverviewPageLayout />
+				<MemoizedSiteImagesPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
 	);
 }
 
-SiteOverview.getLayout = (page) => page;
+SiteImages.getLayout = (page) => page;

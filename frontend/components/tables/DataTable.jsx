@@ -2,7 +2,6 @@ import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useScan } from "@hooks/useScan";
-import { useSites } from "@hooks/useSites";
 import { useStats } from "@hooks/useStats";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
@@ -10,7 +9,7 @@ import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import { memo, useContext, useMemo, useState } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -21,8 +20,6 @@ import tw from "twin.macro";
  * @param {object} site
  */
 const DataTable = ({ site = null }) => {
-	const [hasSiteLimitReached, setHasSiteLimitReached] = useState(false);
-
 	// Site data props
 	const siteId = site?.id ?? null;
 	const siteName = site?.name ?? null;
@@ -45,27 +42,7 @@ const DataTable = ({ site = null }) => {
 	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
-	const { user, disableLocalTime, permissions, maxSiteLimit } = useUser();
-	const { sitesCount } = useSites();
-
-	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			// Handle `hasSiteLimitReached` value
-			if (maxSiteLimit && sitesCount) {
-				setHasSiteLimitReached(sitesCount >= maxSiteLimit);
-			}
-
-			return hasSiteLimitReached;
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [sitesCount, maxSiteLimit]);
+	const { user, disableLocalTime, permissions } = useUser();
 
 	// Custom hooks
 	const {
@@ -206,7 +183,7 @@ const DataTable = ({ site = null }) => {
 											</button>
 										) : null}
 
-										{siteVerified && permissions?.includes("can_start_scan") && !hasSiteLimitReached ? (
+										{siteVerified && permissions?.includes("can_start_scan") ? (
 											<button
 												type="button"
 												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
@@ -304,72 +281,73 @@ const DataTable = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingStats &&
-				stats &&
-				Math.round(stats?.status / 100) === 2 &&
-				!stats?.data?.detail ? (
-					<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+					!validatingStats && stats && Math.round(stats?.status / 100) === 2 && !stats?.data?.detail ? (
+						totalErrors?.length > 0 ? (
+							<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
+						) : (
+							<span tw="text-gray-500">0</span>
+						)
+					) : (
+						<Skeleton duration={2} width={45} />
+					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingStats &&
-				stats &&
-				Math.round(stats?.status / 100) === 2 &&
-				!stats?.data?.detail &&
-				stats?.data?.num_links > 0 ? (
-					<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
-						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-							{stats?.data?.num_links}
-						</a>
-					</Link>
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+					!validatingStats && stats && Math.round(stats?.status / 100) === 2 && !stats?.data?.detail ? (
+						stats?.data?.num_links > 0 ? (
+							<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
+								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									{stats?.data?.num_links}
+								</a>
+							</Link>
+						) : (
+							<span tw="text-gray-500">0</span>
+						)
+					) : (
+						<Skeleton duration={2} width={45} />
+					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingStats &&
-				stats &&
-				Math.round(stats?.status / 100) === 2 &&
-				!stats?.data?.detail &&
-				stats?.data?.num_pages > 0 ? (
-					<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
-						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-							{stats?.data?.num_pages}
-						</a>
-					</Link>
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+					!validatingStats && stats && Math.round(stats?.status / 100) === 2 && !stats?.data?.detail ? (
+						stats?.data?.num_pages > 0 ? (
+							<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
+								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									{stats?.data?.num_pages}
+								</a>
+							</Link>
+						) : (
+							<span tw="text-gray-500">0</span>
+						)
+					) : (
+						<Skeleton duration={2} width={45} />
+					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady &&
-				user &&
-				Math.round(user?.status / 100) === 2 &&
-				!user?.data?.detail &&
-				!validatingStats &&
-				stats &&
-				Math.round(stats?.status / 100) === 2 &&
-				!stats?.data?.detail &&
-				stats?.data?.num_images > 0 ? (
-					<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
-						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-							{stats?.data?.num_images}
-						</a>
-					</Link>
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+					!validatingStats && stats && Math.round(stats?.status / 100) === 2 && !stats?.data?.detail ? (
+						stats?.data?.num_images > 0 ? (
+							<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
+								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+									{stats?.data?.num_images}
+								</a>
+							</Link>
+						) : (
+							<span tw="text-gray-500">0</span>
+						)
+					) : (
+						<Skeleton duration={2} width={45} />
+					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
