@@ -7,7 +7,7 @@ import { useLoading } from "@hooks/useLoading";
 import { useSites } from "@hooks/useSites";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -39,7 +39,7 @@ const VerifyUrlStep = (props) => {
 	const copyText = t("common:copyText");
 
 	// SWR hooks
-	const { sites, errorSites, validatingSites } = useSites();
+	const { sites, sitesResults } = useSites();
 
 	// Custom hooks
 	const {
@@ -50,25 +50,17 @@ const VerifyUrlStep = (props) => {
 	const { isComponentReady } = useLoading();
 
 	// Handle site data selection based on the given `sid` query value
-	const handleSiteDataSelection = useCallback(async () => {
-		if (!validatingSites) {
-			if (!errorSites && typeof sites !== "undefined" && sites !== null) {
-				setSiteData(sites?.data?.results?.find((site) => site?.id === sid) ?? null);
-			}
-		}
-	}, [sid, sites, errorSites, validatingSites]);
-
-	useEffect(() => {
+	useMemo(() => {
 		let isMounted = true;
 
 		if (isMounted) {
-			handleSiteDataSelection();
+			setSiteData(sitesResults?.find((site) => site?.id === sid) ?? null);
 		}
 
 		return () => {
 			isMounted = false;
 		};
-	}, [handleSiteDataSelection]);
+	}, [sid, sitesResults]);
 
 	// Handle site data
 	const handleSiteData = useCallback(async () => {
