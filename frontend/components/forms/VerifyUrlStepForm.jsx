@@ -82,6 +82,8 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 						const verifyUrlStepStatus = verifyUrlStepResponse?.status ?? null;
 						const verifyUrlStepMethod = verifyUrlStepResponse?.config?.method ?? null;
 
+						console.log(verifyUrlStepResponse);
+
 						if (verifyUrlStepData !== null && Math.round(verifyUrlStepStatus / 200) === 1) {
 							if (verifyUrlStepData?.verified) {
 								// Disable submission as soon as 200 OK or 201 Created response was issued
@@ -145,7 +147,7 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 									<span tw="inline-flex">
 										{siteData !== null && Object.keys(siteData)?.length > 0 ? (
 											<Link
-												href="/sites/[id]/overview/"
+												href="/dashboard/sites/[id]/overview/"
 												as={`${DashboardSitesLink + sid + SiteOverviewSlug}`}
 												passHref
 												replace

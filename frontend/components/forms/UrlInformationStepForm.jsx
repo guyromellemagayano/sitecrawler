@@ -2,11 +2,10 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { FormSubmissionInterval } from "@constants/GlobalValues";
 import { AddNewSiteLink } from "@constants/PageLinks";
-import { handleGetMethod, handlePatchMethod, handlePostMethod } from "@helpers/handleHttpMethods";
+import { handleGetMethod, handlePostMethod, handlePutMethod } from "@helpers/handleHttpMethods";
 import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
-import { handleConversionStringToBoolean, handleConversionStringToNumber } from "@utils/convertCase";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -27,7 +26,6 @@ import * as Yup from "yup";
  * @param {boolean} verified
  */
 const UrlInformationStepForm = (props) => {
-	const [siteData, setSiteData] = useState(null);
 	const [siteUrlProtocol, setSiteUrlProtocol] = useState("");
 	const [siteUrl, setSiteUrl] = useState("");
 	const [siteName, setSiteName] = useState("");
@@ -36,12 +34,6 @@ const UrlInformationStepForm = (props) => {
 
 	// Props
 	const { step, edit, sid, verified } = props;
-
-	// Custom variables
-	const sanitizedSid = handleConversionStringToNumber(sid);
-	const sanitizedStep = handleConversionStringToNumber(step);
-	const sanitizedEdit = handleConversionStringToBoolean(edit);
-	const sanitizedVerified = handleConversionStringToBoolean(verified);
 
 	// Translations
 	const { t } = useTranslation();
@@ -72,57 +64,41 @@ const UrlInformationStepForm = (props) => {
 	useMemo(() => {
 		let isMounted = true;
 
-		(async () => {
-			if (isMounted) return;
-
+		if (isMounted) {
 			// Update `editMode` state when `edit` prop changes
-			if (sanitizedEdit) {
-				setEditMode(sanitizedEdit);
+			if (edit && step === 1 && sid && !verified) {
+				setEditMode(edit);
 			}
 
-			console.log(sanitizedEdit, editMode);
-
-			if (editMode) {
-				// Handle `site` data
-				if (sitesResults?.length > 0) {
-					setSiteData(sites.data.results.filter((site) => site.id === sanitizedSid));
-				}
-			}
-
-			return editMode;
-		})();
+			return { editMode };
+		}
 
 		return () => {
 			isMounted = false;
 		};
-	}, [sanitizedEdit, sanitizedSid]);
+	}, [edit, step, sid, verified]);
 
 	useMemo(() => {
 		let isMounted = true;
 
-		(async () => {
-			if (isMounted) return;
+		if (isMounted) {
+			if (editMode) {
+				if (sitesResults?.length > 0) {
+					const siteResult = sitesResults.find((site) => site.id === sid);
 
-			// Handle `site` details form data
-			if (siteData && editMode) {
-				setSiteUrlProtocol(
-					(siteData?.[0]?.url?.indexOf("http://") == 0 || siteData?.[0]?.url?.indexOf("https://") == 0) ?? ""
-				);
-				setSiteUrl(siteData?.[0]?.url?.replace(/^\/\/|^.*?:(\/\/)?/, "") ?? "");
-				setSiteName(siteData?.[0]?.name ?? "");
-			} else {
-				setSiteUrlProtocol("https://");
-				setSiteUrl("");
-				setSiteName("");
+					setSiteUrl(siteResult.url);
+					setSiteName(siteResult.name);
+					setSiteUrlProtocol(siteResult.url.split("://")[0] + "://");
+				}
 			}
 
 			return { siteUrl, siteName, siteUrlProtocol };
-		})();
+		}
 
 		return () => {
 			isMounted = false;
 		};
-	}, [editMode, siteData]);
+	}, [editMode, sitesResults, sid]);
 
 	const urlRegex = new RegExp(
 		/^(www.)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!$&'()*+,;=]|:|@)|\/|\?)*)?$/i
@@ -130,11 +106,11 @@ const UrlInformationStepForm = (props) => {
 
 	return (
 		<Formik
-			enableReinitialize={editMode}
+			enableReinitialize={editMode ? true : false}
 			initialValues={{
-				siteurlprotocol: siteUrlProtocol,
-				siteurl: siteUrl,
-				sitename: siteName
+				siteurlprotocol: editMode ? siteUrlProtocol : "http://",
+				siteurl: editMode ? siteUrl?.replace(/^\/\/|^.*?:(\/\/)?/, "") : "",
+				sitename: editMode ? siteName : ""
 			}}
 			validationSchema={Yup.object({
 				siteurl: Yup.string().matches(urlRegex, enterValidSiteUrl).max(2048, tooLong).required(requiredField),
@@ -143,7 +119,7 @@ const UrlInformationStepForm = (props) => {
 			onSubmit={async (values, { setSubmitting, setErrors }) => {
 				if (!editMode) {
 					const body = {
-						url: values.siteurlprotocol !== "" ? values.siteurlprotocol : "https://" + values.siteurl,
+						url: (values.siteurlprotocol !== "" ? values.siteurlprotocol : "https://") + values.siteurl,
 						name: values.sitename,
 						large_page_size_threshold: largePageSizeThreshold
 					};
@@ -190,7 +166,7 @@ const UrlInformationStepForm = (props) => {
 								replace({
 									pathname: AddNewSiteLink,
 									query: {
-										step: sanitizedStep + 1,
+										step: step + 1,
 										sid: siteAdditionResponseData?.id ?? null,
 										edit: false,
 										verified: false
@@ -226,7 +202,7 @@ const UrlInformationStepForm = (props) => {
 					// Re-enable form for editing
 					setDisableForm(!disableForm);
 
-					const urlInformationStepFormResponse = await handleGetMethod(SitesApiEndpoint + sanitizedSid + "/");
+					const urlInformationStepFormResponse = await handleGetMethod(SitesApiEndpoint + sid + "/");
 					const urlInformationStepFormResponseData = urlInformationStepFormResponse?.data ?? null;
 					const urlInformationStepFormResponseStatus = urlInformationStepFormResponse?.status ?? null;
 					const urlInformationStepFormResponseMethod = urlInformationStepFormResponse?.config?.method ?? null;
@@ -236,7 +212,9 @@ const UrlInformationStepForm = (props) => {
 						Math.round(urlInformationStepFormResponseStatus / 200) === 1
 					) {
 						const body = {
-							name: values.sitename
+							url: (values.siteurlprotocol !== "" ? values.siteurlprotocol : "https://") + values.siteurl,
+							name: values.sitename,
+							large_page_size_threshold: largePageSizeThreshold
 						};
 
 						// If no changes has been made, direct user to the next step
@@ -245,43 +223,39 @@ const UrlInformationStepForm = (props) => {
 							replace({
 								pathname: AddNewSiteLink,
 								query: {
-									step: sanitizedStep + 1,
-									sid: sanitizedSid ?? null,
+									step: step + 1,
+									sid: sid ?? null,
 									edit: false,
 									verified: false
 								}
 							});
 						} else {
-							const patchUrlInformationStepFormResponse = await handlePatchMethod(
-								SitesApiEndpoint + sanitizedSid + "/",
-								body
-							);
-							const patchUrlInformationStepFormResponseData = patchUrlInformationStepFormResponse?.data ?? null;
-							const patchUrlInformationStepFormResponseStatus = patchUrlInformationStepFormResponse?.status ?? null;
-							const patchUrlInformationStepFormResponseMethod =
-								patchUrlInformationStepFormResponse?.config?.method ?? null;
+							const putUrlInformationStepFormResponse = await handlePutMethod(SitesApiEndpoint + sid + "/", body);
+							const putUrlInformationStepFormResponseData = putUrlInformationStepFormResponse?.data ?? null;
+							const putUrlInformationStepFormResponseStatus = putUrlInformationStepFormResponse?.status ?? null;
+							const putUrlInformationStepFormResponseMethod = putUrlInformationStepFormResponse?.config?.method ?? null;
 
 							if (
-								patchUrlInformationStepFormResponseData !== null &&
-								Math.round(patchUrlInformationStepFormResponseStatus / 200) === 1
+								putUrlInformationStepFormResponseData !== null &&
+								Math.round(putUrlInformationStepFormResponseStatus / 200) === 1
 							) {
-								if (patchUrlInformationStepFormResponseData?.verified) {
+								if (putUrlInformationStepFormResponseData?.verified) {
 									// Disable form after successful 200 OK or 201 Created response is issued
 									setDisableForm(!disableForm);
 
 									// Show alert message after successful 200 OK or 201 Created response is issued
 									setConfig({
 										isUrlInformationStep: true,
-										method: patchUrlInformationStepFormResponseMethod,
-										status: patchUrlInformationStepFormResponseStatus
+										method: putUrlInformationStepFormResponseMethod,
+										status: putUrlInformationStepFormResponseStatus
 									});
 
 									// Update current URL with query for the next step
 									replace({
 										pathname: AddNewSiteLink,
 										query: {
-											step: sanitizedStep + 1,
-											sid: patchUrlInformationStepFormResponseData?.id ?? null,
+											step: step + 1,
+											sid: putUrlInformationStepFormResponseData?.id ?? null,
 											edit: false,
 											verified: false
 										}
@@ -299,8 +273,8 @@ const UrlInformationStepForm = (props) => {
 									// Show alert message after successful 200 OK or 201 Created response is issued
 									setConfig({
 										isVerifyUrlStep: true,
-										method: patchUrlInformationStepFormResponseMethod,
-										status: patchUrlInformationStepFormResponseStatus,
+										method: putUrlInformationStepFormResponseMethod,
+										status: putUrlInformationStepFormResponseStatus,
 										isError: true
 									});
 								}
@@ -311,8 +285,8 @@ const UrlInformationStepForm = (props) => {
 								// Show alert message after successful 200 OK or 201 Created response is issued
 								setConfig({
 									isUrlInformationStep: true,
-									method: patchUrlInformationStepFormResponseMethod,
-									status: patchUrlInformationStepFormResponseStatus
+									method: putUrlInformationStepFormResponseMethod,
+									status: putUrlInformationStepFormResponseStatus
 								});
 							}
 						}
@@ -393,7 +367,7 @@ const UrlInformationStepForm = (props) => {
 												disabled={isSubmitting || editMode}
 												onChange={handleChange}
 												onBlur={handleBlur}
-												value={values.siteurlprotocol}
+												value={editMode ? siteUrlProtocol : values.siteurlprotocol}
 											>
 												<option value="https://">https://</option>
 												<option value="http://">http://</option>
@@ -407,10 +381,8 @@ const UrlInformationStepForm = (props) => {
 											disabled={isSubmitting || editMode}
 											css={[
 												tw`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-24 sm:text-sm border-gray-300 rounded-md`,
-												editMode && disableForm
-													? tw`opacity-50 bg-gray-300 cursor-not-allowed`
-													: isSubmitting
-													? tw`text-gray-500 opacity-50 bg-gray-300 cursor-not-allowed`
+												editMode || disableForm || isSubmitting
+													? tw`opacity-50 bg-gray-300 cursor-not-allowed text-gray-500`
 													: null,
 												!disableForm && (errors.siteurl || touched.siteurl) ? tw`border-red-300` : tw`border-gray-300`
 											]}
@@ -445,11 +417,7 @@ const UrlInformationStepForm = (props) => {
 												: tw`hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 										]}
 									>
-										{isSubmitting
-											? submitting
-											: siteData?.id === undefined && !edit
-											? proceedToStep2
-											: updateSiteDetail}
+										{isSubmitting ? submitting : !edit ? proceedToStep2 : updateSiteDetail}
 									</button>
 								) : (
 									<Skeleton
