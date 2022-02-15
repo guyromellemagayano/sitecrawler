@@ -82,7 +82,12 @@ const SiteMenu = () => {
 										{value.links ? (
 											value.links.map((value2, index2) => {
 												return value2.slug !== "go-back-to-sites" && value2.slug !== "logout" ? (
-													<Link key={index2} href={value2.url} passHref>
+													<Link
+														key={index2}
+														href={`${DashboardSitesLink + "[siteId]" + value2.url}`}
+														as={`${DashboardSitesLink + siteId + value2.url}`}
+														passHref
+													>
 														<a
 															className="group"
 															css={[
