@@ -28,11 +28,11 @@ const DataPagination = () => {
 	const { scanApiEndpoint } = useScanApiEndpoint(parseInt(linksPerPage));
 
 	// Custom context
-	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
 	const { user } = useUser();
-	const { page, errorPage, validatingPage } = usePage(scanApiEndpoint);
+	const { page } = usePage(scanApiEndpoint);
 
 	// Custom variables
 	const currentPage = query?.page ? parseInt(query.page) : 0;
