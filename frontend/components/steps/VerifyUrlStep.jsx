@@ -1,6 +1,6 @@
 import { MemoizedVerifyUrlStepForm } from "@components/forms/VerifyUrlStepForm";
 import { MemoizedShowHelpModal } from "@components/modals/ShowHelpModal";
-import { ResetStateTimeout } from "@constants/GlobalValues";
+import { ResetCopyStateTimeout } from "@constants/GlobalValues";
 import { ClipboardIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { useComponentVisible } from "@hooks/useComponentVisible";
 import { useLoading } from "@hooks/useLoading";
@@ -9,7 +9,6 @@ import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import ReactHtmlParser from "react-html-parser";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -99,12 +98,17 @@ const VerifyUrlStep = (props) => {
 		setCopyValue({ copyValue, copied });
 	};
 
+	// Handle input copy
+	const handleInputCopy = () => {
+		setCopied(true);
+	};
+
 	// Reset copied state after a timeout
 	useEffect(() => {
 		if (copied) {
 			setTimeout(() => {
 				setCopied(false);
-			}, ResetStateTimeout);
+			}, ResetCopyStateTimeout);
 		}
 	}, [copied]);
 
@@ -161,7 +165,7 @@ const VerifyUrlStep = (props) => {
 									<ol tw="list-decimal mb-5 space-y-2">
 										<li tw="ml-4 text-sm leading-6 text-gray-600">{instruction1}</li>
 										<li tw="ml-4 text-sm leading-6 text-gray-600">
-											{ReactHtmlParser(instruction2)}
+											{instruction2}
 
 											<div tw="max-w-2xl">
 												<label htmlFor="verify_id_meta_tag" tw="sr-only">
@@ -182,7 +186,7 @@ const VerifyUrlStep = (props) => {
 															autoComplete="off"
 														/>
 
-														<CopyToClipboard onCopy={() => setCopied(true)} text={copyValue}>
+														<CopyToClipboard onCopy={handleInputCopy} text={copyValue}>
 															<button
 																css={[
 																	tw`-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50`,
@@ -201,7 +205,7 @@ const VerifyUrlStep = (props) => {
 															type="button"
 															tw="inline-flex items-center ml-3 text-gray-400 focus:outline-none"
 															title={needHelp}
-															onClick={() => setShowModal(true)}
+															onClick={() => setShowModal(!showModal)}
 														>
 															<QuestionMarkCircleIcon tw="h-7 w-7" />
 														</button>

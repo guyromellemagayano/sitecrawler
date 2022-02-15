@@ -2,13 +2,12 @@
 import { MemoizedBasicPlan } from "@components/plans/BasicPlan";
 import { MemoizedMonthlyPlans } from "@components/plans/MonthlyPlans";
 import { MemoizedSemiAnnualPlans } from "@components/plans/SemiAnnualPlans";
-import { useLoading } from "@hooks/useLoading";
 import { useSubscriptions } from "@hooks/useSubscriptions";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
-import { memo, useCallback, useContext, useEffect, useState } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -38,8 +37,6 @@ const SubscriptionPlansPricing = ({
 	loadingProSemiAnnually,
 	loadingProMonthly
 }) => {
-	const [disableLocalTime, setDisableLocalTime] = useState(false);
-
 	// Translations
 	const { t } = useTranslation();
 	const subscriptionPlanLabelHeadline = t("settings:subscriptionPlans.headline");
@@ -48,44 +45,12 @@ const SubscriptionPlansPricing = ({
 	const subscriptionPlanBillSemiAnnual = t("settings:subscriptionPlans.bill.semiAnnual");
 	const subscriptionCreditDebitCardRequired = t("settings:subscriptionPlans.creditDebitCardRequired");
 
-	// SWR hooks
-	const { user, errorUser } = useUser();
-	const { subscriptions, errorSubscriptions, validatingSubscriptions } = useSubscriptions();
-
-	// Custom hooks
-	const { isComponentReady } = useLoading();
-
 	// Custom context
-	const { setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig, isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// Handle `user` local time
-	const handleUserLocalTime = useCallback(async () => {
-		if (!errorUser && user && !user?.data?.detail && user?.data?.settings?.disableLocalTime) {
-			const disableLocalTimeUserSetting = user?.data?.settings?.disableLocalTime ?? null;
-
-			if (disableLocalTimeUserSetting !== null) {
-				if (disableLocalTimeUserSetting) {
-					setDisableLocalTime(true);
-				} else {
-					setDisableLocalTime(false);
-				}
-			} else {
-				setDisableLocalTime(false);
-			}
-		}
-	}, [user, errorUser]);
-
-	useEffect(() => {
-		let isMounted = true;
-
-		if (isMounted) {
-			handleUserLocalTime();
-		}
-
-		return () => {
-			isMounted = false;
-		};
-	}, [handleUserLocalTime]);
+	// SWR hooks
+	const { user, disableLocalTime } = useUser();
+	const { subscriptions } = useSubscriptions();
 
 	return (
 		<div tw="w-full h-full flex items-center flex-col justify-center">
@@ -102,8 +67,8 @@ const SubscriptionPlansPricing = ({
 				<div tw="flex items-center justify-center">
 					<p tw="text-base leading-7 font-medium text-gray-500 mx-4">
 						{isComponentReady &&
-						typeof subscriptions !== "undefined" &&
-						subscriptions !== null &&
+						subscriptions &&
+						Math.round(subscriptions?.status / 100) === 2 &&
 						!subscriptions?.data?.detail ? (
 							subscriptionPlanBillMonthly
 						) : (
@@ -112,8 +77,8 @@ const SubscriptionPlansPricing = ({
 					</p>
 
 					{isComponentReady &&
-					typeof subscriptions !== "undefined" &&
-					subscriptions !== null &&
+					subscriptions &&
+					Math.round(subscriptions?.status / 100) === 2 &&
 					!subscriptions?.data?.detail ? (
 						<span
 							role="checkbox"
@@ -141,8 +106,8 @@ const SubscriptionPlansPricing = ({
 
 					<p tw="text-base leading-7 font-medium text-gray-500 mx-4">
 						{isComponentReady &&
-						typeof subscriptions !== "undefined" &&
-						subscriptions !== null &&
+						subscriptions &&
+						Math.round(subscriptions?.status / 100) === 2 &&
 						!subscriptions?.data?.detail ? (
 							subscriptionPlanBillSemiAnnual
 						) : (
@@ -153,7 +118,10 @@ const SubscriptionPlansPricing = ({
 
 				<div tw="mt-10 mb-2">
 					<p tw="text-center text-red-400">
-						{isComponentReady ? (
+						{isComponentReady &&
+						subscriptions &&
+						Math.round(subscriptions?.status / 100) === 2 &&
+						!subscriptions?.data?.detail ? (
 							"*" + subscriptionCreditDebitCardRequired
 						) : (
 							<Skeleton duration={2} width={196} height={24} />
@@ -168,8 +136,8 @@ const SubscriptionPlansPricing = ({
 					<div tw="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 						<div tw="relative lg:grid lg:grid-cols-7">
 							{isComponentReady &&
-							typeof subscriptions !== "undefined" &&
-							subscriptions !== null &&
+							subscriptions &&
+							Math.round(subscriptions?.status / 100) === 2 &&
 							!subscriptions?.data?.detail ? (
 								subscriptions?.data?.results
 									?.filter((result) => result.plan.name === "Basic")
@@ -190,8 +158,8 @@ const SubscriptionPlansPricing = ({
 
 							{togglePaymentPeriod ? (
 								isComponentReady &&
-								typeof subscriptions !== "undefined" &&
-								subscriptions !== null &&
+								subscriptions &&
+								Math.round(subscriptions?.status / 100) === 2 &&
 								!subscriptions?.data?.detail ? (
 									subscriptions?.data?.results
 										?.filter((result) => result.price.recurring.interval_count === 6)
@@ -218,8 +186,8 @@ const SubscriptionPlansPricing = ({
 									</>
 								)
 							) : isComponentReady &&
-							  typeof subscriptions !== "undefined" &&
-							  subscriptions !== null &&
+							  subscriptions &&
+							  Math.round(subscriptions?.status / 100) === 2 &&
 							  !subscriptions?.data?.detail ? (
 								subscriptions?.data?.results
 									?.filter((result) => result.price.recurring.interval_count === 1)

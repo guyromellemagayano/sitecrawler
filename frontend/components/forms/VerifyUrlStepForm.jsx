@@ -3,15 +3,15 @@ import { FormSubmissionInterval } from "@constants/GlobalValues";
 import { AddNewSiteLink, DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { useSites } from "@hooks/useSites";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { memo, useContext, useEffect, useState } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 
 /**
@@ -37,13 +37,11 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 	const { replace } = useRouter();
 
 	// Custom context
-	const { user, isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
-	const { sites, errorSites } = useSites();
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
+	const { user } = useUser();
+	const { sites, sitesResults } = useSites();
 
 	const handleEditMode = async (e) => {
 		e.preventDefault();
@@ -60,11 +58,11 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 	};
 
 	// Handle site data selection based on the given `siteData` prop value
-	useEffect(() => {
-		if (!errorSites && sites) {
-			setSiteData(sites?.data?.results?.length > 0 ? sites?.data?.results?.filter((site) => site?.id === sid) : null);
+	useMemo(() => {
+		if (sitesResults) {
+			setSiteData(sitesResults.filter((site) => site.id === sid));
 		}
-	}, [sid, sites, errorSites]);
+	}, [sid, sitesResults]);
 
 	return (
 		<div tw="mb-5 sm:flex sm:justify-between">
@@ -97,19 +95,16 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 									isError: false
 								});
 
-								// Update router query
-								replace({
-									pathname: AddNewSiteLink,
-									query: { step: step + 1, sid: sid ?? null, edit: false, verified: true }
-								});
-
 								// Enable next step in site verification process and disable site verification as soon as 200 OK or 201 Created response was issued
 								setTimeout(() => {
 									setDisableSiteVerify(false);
-								}, FormSubmissionInterval);
 
-								// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-								await mutate(SitesApiEndpoint);
+									// Update router query
+									replace({
+										pathname: AddNewSiteLink,
+										query: { step: step + 1, sid: sid ?? null, edit: false, verified: true }
+									});
+								}, FormSubmissionInterval);
 							} else {
 								// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued
 								setSubmitting(false);

@@ -1,5 +1,5 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
-import { NotificationDisplayInterval } from "@constants/GlobalValues";
+import { NotificationDisplayInterval, ResetCopyStateTimeout } from "@constants/GlobalValues";
 import { Dialog, Transition } from "@headlessui/react";
 import { handlePostMethod } from "@helpers/handleHttpMethods";
 import { InformationCircleIcon } from "@heroicons/react/outline";
@@ -9,8 +9,6 @@ import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { forwardRef, Fragment, memo, useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import ReactHtmlParser from "react-html-parser";
-import { useSWRConfig } from "swr";
 import tw from "twin.macro";
 
 /**
@@ -28,7 +26,7 @@ const SiteVerifyModal = (
 	ref
 ) => {
 	const [copied, setCopied] = useState(false);
-	const [copyValue, setCopyValue] = useState(null);
+	const [copyValue, setCopyValue] = useState("");
 	const [disableSiteVerify, setDisableSiteVerify] = useState(false);
 	const [enableNextStep, setEnableNextStep] = useState(false);
 	const [siteVerifyId, setSiteVerifyId] = useState(siteId);
@@ -41,17 +39,19 @@ const SiteVerifyModal = (
 	const copiedText = t("common:copiedText");
 	const copyText = t("common:copyText");
 	const instructionsText = t("sites:instructions");
-	const instruction1Text = t("sites:instruction1");
-	const instruction2Text = t("sites:instruction2");
-	const instruction3Text = t("sites:instruction3");
-	const instructionHtmlText = t("sites:instructionHtmlText");
+	const instruction1 = t("sites:instruction1");
+	const instruction2 = t("sites:instruction2");
+	const instruction3 = t("sites:instruction3");
+	const instruction4 = t("sites:instruction4");
 	const verifyIdMetaTagText = t("sites:verifyIdMetaTagText");
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 
+	// Custom variables
 	const siteVerifyApiEndpoint = `${SitesApiEndpoint + siteId}/verify/`;
-
-	// SWR hook for global mutations
-	const { mutate } = useSWRConfig();
+	let instructionHtmlText = `1. ${instruction1}: ` + siteUrl + "\n\n";
+	instructionHtmlText += `2. ${instruction2}: ` + "\n" + copyValue + "\n\n";
+	instructionHtmlText += `3. ${instruction3}.` + "\n\n";
+	instructionHtmlText += `4. ${instruction4}` + "\n\n";
 
 	// Custom hooks
 	const { state, setConfig } = useNotificationMessage();
@@ -80,10 +80,12 @@ const SiteVerifyModal = (
 
 	// Reset copied state as soon as the modal is closed
 	useEffect(() => {
-		if (!showModal) {
-			setCopied(false);
+		if (copied) {
+			setTimeout(() => {
+				setCopied(false);
+			}, ResetCopyStateTimeout);
 		}
-	}, [copied, showModal]);
+	}, [copied]);
 
 	// Handle site verification
 	const handleSiteVerification = async (e) => {
@@ -102,9 +104,6 @@ const SiteVerifyModal = (
 
 		if (siteVerifyResponseData !== null && Math.round(siteVerifyResponseStatus / 200) === 1) {
 			if (siteVerifyResponseData?.verified) {
-				// Mutate `sites` endpoint after successful 200 OK or 201 Created response is issued
-				await mutate(SitesApiEndpoint);
-
 				// Show alert message after successful 200 OK or 201 Created response is issued
 				setConfig({
 					isVerifyUrlStep: true,
@@ -187,7 +186,7 @@ const SiteVerifyModal = (
 									<InformationCircleIcon tw="h-6 w-6 text-yellow-600" />
 								</div>
 								<div tw="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-900">
+									<Dialog.Title as="h3" className="site-verify-modal-second-child-title">
 										{verifySiteTitleText}
 									</Dialog.Title>
 
@@ -205,14 +204,15 @@ const SiteVerifyModal = (
 											</a>
 										</span>
 
-										<p tw="text-base font-medium leading-6 text-gray-700 mt-4 mb-3">
-											{ReactHtmlParser(instructionsText)}
-										</p>
+										<Dialog.Description as="p" className="site-verify-modal-second-child-description">
+											{instructionsText}
+										</Dialog.Description>
 
 										<ol tw="space-y-2 list-decimal ml-4">
-											<li tw="text-sm leading-6 text-gray-500">{ReactHtmlParser(instruction1Text)}</li>
+											<li tw="text-sm leading-6 text-gray-500">{instruction1}</li>
 											<li tw="text-sm leading-6 text-gray-500">
-												{ReactHtmlParser(instruction2Text)}
+												{instruction2}
+
 												<div tw="w-full block">
 													<label htmlFor="verify-id-meta-tag" tw="sr-only">
 														{verifyIdMetaTagText}
@@ -230,6 +230,7 @@ const SiteVerifyModal = (
 																onChange={handleInputChange}
 																autoComplete="off"
 															/>
+
 															<CopyToClipboard onCopy={handleInputCopy} text={copyValue}>
 																<button
 																	css={[
@@ -247,7 +248,8 @@ const SiteVerifyModal = (
 													</div>
 												</div>
 											</li>
-											<li tw="text-sm leading-6 text-gray-500">{ReactHtmlParser(instruction3Text)}</li>
+											<li tw="text-sm leading-6 text-gray-500">{instruction3}</li>
+											<li tw="text-sm leading-6 text-gray-500">{instruction4}</li>
 										</ol>
 
 										{state?.responses?.length > 0 ? (
@@ -302,7 +304,12 @@ const SiteVerifyModal = (
 											</button>
 										</form>
 									) : (
-										<Link href="/sites/[siteId]/overview/" as={`/sites/${siteId}/overview/`} passHref replace>
+										<Link
+											href="/dashboard/sites/[siteId]/overview/"
+											as={`/dashboard/sites/${siteId}/overview/`}
+											passHref
+											replace
+										>
 											<a tw="cursor-pointer w-full mt-3 sm:mt-0 relative inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 active:bg-green-700">
 												{goToSiteOverviewText}
 											</a>
@@ -320,7 +327,7 @@ const SiteVerifyModal = (
 												? tw`opacity-50 cursor-not-allowed`
 												: tw`hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 										]}
-										onClick={() => setShowModal(false)}
+										onClick={() => setShowModal(!showModal)}
 									>
 										{closeText}
 									</button>

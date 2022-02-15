@@ -1,4 +1,4 @@
-import { useLoading } from "@hooks/useLoading";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
@@ -15,10 +15,10 @@ const ComingSoonPageLayout = () => {
 	const comingSoon = t("comingSoon");
 
 	// Custom context
-	const { user } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// Custom hook
-	const { isComponentReady } = useLoading();
+	// SWR hooks
+	const { user } = useUser();
 
 	return (
 		<div tw="flex-grow flex justify-center items-center p-4 m-auto">

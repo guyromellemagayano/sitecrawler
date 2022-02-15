@@ -4,6 +4,7 @@ import { MemoizedLoader } from "@components/loaders";
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
+import { useUser } from "@hooks/useUser";
 import AppAxiosInstance from "@utils/axios";
 import { NextSeo } from "next-seo";
 import useTranslation from "next-translate/useTranslation";
@@ -22,7 +23,6 @@ export async function getServerSideProps({ req }) {
 	const userStatus = userResponse?.status ?? null;
 
 	if (
-		typeof userData !== "undefined" &&
 		userData !== null &&
 		!userData?.detail &&
 		Object.keys(userData)?.length > 0 &&
@@ -47,7 +47,10 @@ export default function Home() {
 	const loginText = t("login:login");
 
 	// Custom context
-	const { user, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	return isComponentReady && user && Math.round(user?.status / 100) === 4 && user?.data?.detail ? (
 		<MemoizedLayout>

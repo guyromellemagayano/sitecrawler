@@ -19,7 +19,6 @@ export async function getServerSideProps({ req }) {
 	const userStatus = userResponse?.status ?? null;
 
 	if (
-		typeof userData !== "undefined" &&
 		userData !== null &&
 		!userData?.detail &&
 		Object.keys(userData)?.length > 0 &&

@@ -3,10 +3,13 @@ import { SiteLogoWhite } from "@components/svgs/SiteLogo";
 import { AuthAppLogo } from "@constants/GlobalValues";
 import { DashboardSitesLink, SettingsSlug } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
-import { GlobeIcon } from "@heroicons/react/outline";
-import { ArrowLeftIcon, CreditCardIcon, SupportIcon, UserCircleIcon, ViewBoardsIcon } from "@heroicons/react/solid";
+import { CogIcon, DocumentTextIcon, PhotographIcon } from "@heroicons/react/outline";
+import { ArrowLeftIcon, LinkIcon, SearchIcon, ViewGridIcon } from "@heroicons/react/solid";
+import { useScan } from "@hooks/useScan";
+import { useStats } from "@hooks/useStats";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
+import { handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -17,24 +20,30 @@ import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
 
 /**
- * Custom function to render the `SettingsMenu` component
+ * Custom function to render the `SiteMenu` component
  */
-const SettingsMenu = () => {
+const SiteMenu = () => {
 	// Translations
 	const { t } = useTranslation("common");
 	const appLogo = t("appLogo");
 
 	// Router
-	const { asPath } = useRouter();
+	const { asPath, pathname, query } = useRouter();
+	const { siteId } = query;
 
-	// Sidebar menus
-	const { SettingsSidebarMenus } = SidebarMenus();
+	// Custom variables
+	const sanitizedSiteId = handleConversionStringToNumber(siteId);
 
 	// Custom context
 	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
+	// Sidebar menus
+	const { SiteSidebarMenus } = SidebarMenus();
+
 	// SWR hooks
 	const { user } = useUser();
+	const { scan, scanObjId } = useScan(sanitizedSiteId);
+	const { stats } = useStats(sanitizedSiteId, scanObjId);
 
 	return (
 		<Scrollbars renderThumbVertical={(props) => <div {...props} className="scroll-dark-bg" />} universal>
@@ -56,8 +65,8 @@ const SettingsMenu = () => {
 
 				<div tw="flex-1 flex flex-col overflow-y-auto">
 					<nav tw="flex-1 px-4">
-						{SettingsSidebarMenus.filter((e) => {
-							return !asPath?.includes(SettingsSlug) ? e.slug !== "navigation" : true;
+						{SiteSidebarMenus.filter((e) => {
+							return !asPath?.includes(DashboardSitesLink + siteId) ? e.slug !== "navigation" : true;
 						}).map((value, index) => {
 							return (
 								<div key={index} tw="mb-4">
@@ -94,73 +103,99 @@ const SettingsMenu = () => {
 																	: tw`cursor-default`
 															]}
 														>
-															{value2.slug === "profile-settings" ? (
+															{value2.slug === "overview" ? (
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	<UserCircleIcon tw="mr-3 h-6 w-5" />
+																	<ViewGridIcon tw="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
 																)
-															) : value2.slug === "subscription-plans" ? (
+															) : value2.slug === "links" ? (
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	<ViewBoardsIcon tw="mr-3 h-6 w-5" />
+																	<LinkIcon tw="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
 																)
-															) : value2.slug === "billing-settings" ? (
+															) : value2.slug === "pages" ? (
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	<CreditCardIcon tw="mr-3 h-6 w-5" />
+																	<DocumentTextIcon tw="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
 																)
-															) : value2.slug === "global-settings" ? (
+															) : value2.slug === "images" ? (
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	<GlobeIcon tw="mr-3 h-6 w-5" />
+																	<PhotographIcon tw="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
 																)
-															) : value2.slug === "subscription-plans" ? (
+															) : value2.slug === "seo" ? (
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	<ViewBoardsIcon tw="mr-3 h-6 w-5" />
+																	<SearchIcon tw="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
 																)
-															) : value2.slug === "help-support" ? (
+															) : value2.slug === "site-settings" ? (
 																isComponentReady &&
 																user &&
 																Math.round(user?.status / 100) === 2 &&
 																!user?.data?.detail ? (
-																	<SupportIcon tw="mr-3 h-6 w-5" />
+																	<CogIcon tw="mr-3 h-6 w-5" />
 																) : (
 																	<Skeleton duration={2} width={20} height={20} circle={true} tw="mr-3" />
 																)
 															) : null}
 
 															{value2.title ? (
-																<span>
-																	{isComponentReady &&
-																	user &&
-																	Math.round(user?.status / 100) === 2 &&
-																	!user?.data?.detail ? (
-																		value2.title
-																	) : (
-																		<Skeleton duration={2} width={128} height={20} />
-																	)}
-																</span>
+																<>
+																	<span>
+																		{isComponentReady &&
+																		user &&
+																		Math.round(user?.status / 100) === 2 &&
+																		!user?.data?.detail ? (
+																			value2.title
+																		) : (
+																			<Skeleton duration={2} width={128} height={20} />
+																		)}
+																	</span>
+
+																	{value2.slug === "links" ? (
+																		stats?.data?.num_links ? (
+																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																				{stats.data.num_links}
+																			</span>
+																		) : null
+																	) : null}
+
+																	{value2.slug === "pages" ? (
+																		stats?.data?.num_pages ? (
+																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																				{stats.data.num_pages}
+																			</span>
+																		) : null
+																	) : null}
+
+																	{value2.slug === "images" ? (
+																		stats?.data?.num_images ? (
+																			<span tw="ml-auto inline-block text-xs leading-4 rounded-full py-1 px-3 bg-white text-black">
+																				{stats.data.num_images}
+																			</span>
+																		) : null
+																	) : null}
+																</>
 															) : null}
 														</a>
 													</Link>
@@ -215,6 +250,6 @@ const SettingsMenu = () => {
 };
 
 /**
- * Memoized custom `SettingsMenu` component
+ * Memoized custom `SiteMenu` component
  */
-export const MemoizedSettingsMenu = memo(SettingsMenu);
+export const MemoizedSiteMenu = memo(SiteMenu);

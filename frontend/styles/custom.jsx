@@ -399,6 +399,30 @@ export const CustomTransitionStyles = styled.createGlobalStyle`
 		}
 	}
 
+	.show-help-modal {
+		&-second-child {
+			&-title {
+				${tw`text-lg font-bold leading-6 text-gray-900`}
+			}
+
+			&-description {
+				${tw`mb-3 italic`}
+			}
+		}
+	}
+
+	.site-verify-modal {
+		&-second-child {
+			&-title {
+				${tw`text-lg font-bold leading-6 text-gray-900`}
+			}
+
+			&-description {
+				${tw`text-base font-medium leading-6 text-gray-700 mt-4 mb-3`}
+			}
+		}
+	}
+
 	.notifications {
 		&-enter {
 			${tw`transform ease-out duration-300 transition`}

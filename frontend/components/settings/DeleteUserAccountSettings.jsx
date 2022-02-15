@@ -1,5 +1,6 @@
 import { MemoizedDeleteUserAccountModal } from "@components/modals/DeleteUserAccountModal";
 import { useComponentVisible } from "@hooks/useComponentVisible";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
@@ -17,7 +18,10 @@ const DeleteUserAccountSettings = () => {
 	const request = t("common:request");
 
 	// Custom context
-	const { user, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	// Custom hooks
 	const {

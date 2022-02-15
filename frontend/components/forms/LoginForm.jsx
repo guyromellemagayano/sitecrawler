@@ -1,4 +1,4 @@
-import { LoginApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
+import { LoginApiEndpoint } from "@constants/ApiEndpoints";
 import { RedirectInterval } from "@constants/GlobalValues";
 import { DashboardSitesLink, ResetPasswordLink } from "@constants/PageLinks";
 import { SocialLoginLinks } from "@constants/SocialLogin";
@@ -58,7 +58,7 @@ const LoginForm = () => {
 				username: Yup.string().required(requiredField),
 				password: Yup.string().required(requiredField)
 			})}
-			onSubmit={async (values, { setSubmitting, resetForm }) => {
+			onSubmit={async (values, { isSubmitting, setSubmitting, resetForm }) => {
 				// Form body values
 				const body = {
 					username: values.username,
@@ -76,8 +76,11 @@ const LoginForm = () => {
 				const loginResponseMethod = loginResponse?.config?.method ?? null;
 
 				if (loginResponseData !== null && Math.round(loginResponseStatus / 200) === 1) {
-					// Mutate `user` endpoint after successful 200 OK or 201 Created response is issued
-					await mutate(UserApiEndpoint, loginResponseData.key);
+					// Reenable submission as soon as 200 OK or 201 Created response is issued
+					setSubmitting(false);
+
+					// Mutate `login` endpoint after successful 200 OK or 201 Created response is issued
+					await mutate(LoginApiEndpoint, loginResponseData.key, false);
 
 					// Collect user data and send to Sentry
 					Sentry.configureScope((scope) =>
@@ -96,23 +99,22 @@ const LoginForm = () => {
 					});
 
 					// Redirect to sites dashboard page after successful 200 OK response is established
-					setTimeout(() => {
-						push(DashboardSitesLink);
-					}, RedirectInterval);
-
-					// Reenable submission as soon as 200 OK or 201 Created response is issued
-					setSubmitting(false);
+					if (!isSubmitting) {
+						setTimeout(() => {
+							push(DashboardSitesLink);
+						}, RedirectInterval);
+					}
 				} else {
+					// Reenable submission and reset form as soon as 200 OK or 201 Created response was not issued
+					setSubmitting(false);
+					resetForm({ values: "" });
+
 					// Show alert message after failed response is issued
 					setConfig({
 						isLogin: true,
 						method: loginResponseMethod,
 						status: loginResponseStatus
 					});
-
-					// Reenable submission and reset form as soon as 200 OK or 201 Created response was not issued
-					setSubmitting(false);
-					resetForm({ values: "" });
 				}
 			}}
 		>

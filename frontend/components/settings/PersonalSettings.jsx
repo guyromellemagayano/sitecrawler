@@ -1,4 +1,5 @@
 import { MemoizedPersonalSettingsForm } from "@components/forms/PersonalSettingsForm";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { memo, useContext } from "react";
@@ -15,7 +16,10 @@ const PersonalSettings = () => {
 	const profileInformationUpdateTitle = t("profileInformationUpdate.title");
 
 	// Custom context
-	const { user, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	return (
 		<div tw="pb-12">

@@ -1,15 +1,15 @@
 import { MemoizedDeleteSiteModal } from "@components/modals/DeleteSiteModal";
 import { MemoizedSiteVerifyModal } from "@components/modals/SiteVerifyModal";
 import { useComponentVisible } from "@hooks/useComponentVisible";
-import { useLoading } from "@hooks/useLoading";
 import { useScan } from "@hooks/useScan";
 import { useStats } from "@hooks/useStats";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import dayjs from "dayjs";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import { memo, useContext, useMemo, useState } from "react";
+import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import tw from "twin.macro";
@@ -20,16 +20,6 @@ import tw from "twin.macro";
  * @param {object} site
  */
 const DataTable = ({ site = null }) => {
-	const [scanCount, setScanCount] = useState(null);
-	const [scanFinishedAt, setScanFinishedAt] = useState(null);
-	const [scanForceHttps, setScanForceHttps] = useState(null);
-	const [scanObjId, setScanObjId] = useState(null);
-	const [linkErrors, setLinkErrors] = useState(0);
-	const [pageErrors, setPageErrors] = useState(0);
-	const [imageErrors, setImageErrors] = useState(0);
-	const [seoErrors, setSeoErrors] = useState(0);
-	const [totalErrors, setTotalErrors] = useState(0);
-
 	// Site data props
 	const siteId = site?.id ?? null;
 	const siteName = site?.name ?? null;
@@ -45,9 +35,14 @@ const DataTable = ({ site = null }) => {
 	const visitExternalSiteText = t("sites:visitExternalSite");
 	const goToSiteOverviewText = t("sites:goToSiteOverview");
 	const deleteText = t("sites:delete");
+	const crawlSiteText = t("sites:crawlSite");
+	const siteCrawlingInProcessText = t("sites:siteCrawlingInProcess");
 
 	// Custom context
-	const { user, disableLocalTime, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user, disableLocalTime, permissions } = useUser();
 
 	// Custom hooks
 	const {
@@ -60,7 +55,6 @@ const DataTable = ({ site = null }) => {
 		isComponentVisible: isSiteDeleteModalVisible,
 		setIsComponentVisible: setIsSiteDeleteModalVisible
 	} = useComponentVisible(false);
-	const { isComponentReady } = useLoading();
 
 	// DayJS options
 	const calendar = require("dayjs/plugin/calendar");
@@ -79,108 +73,27 @@ const DataTable = ({ site = null }) => {
 	};
 
 	// Site `scan` SWR hook
-	const { scan, errorScan, validatingScan } = useScan(siteId);
-
-	// Handle `scan` object id data
-	useMemo(() => {
-		let isMounted = true;
-
-		// Update `scanCount`, `scanFinishedAt`, `scanForceHttps` and `scanObjId` states
-		(async () => {
-			if (!isMounted) return;
-
-			// Show alert message after failed `user` SWR hook fetch
-			errorScan
-				? setConfig({
-						isSites: true,
-						method: errorScan?.config?.method ?? null,
-						status: errorScan?.status ?? null
-				  })
-				: null;
-
-			if (scan?.data) {
-				const currentScanCount = scan.data?.count ?? null;
-
-				if (currentScanCount > 0) {
-					scan.data?.results?.find((result) => {
-						if (result.id === siteLastFinishedScanId) {
-							setScanCount(currentScanCount);
-							setScanFinishedAt(dayjs(result.finished_at).calendar(null, calendarStrings));
-							setScanForceHttps(result.force_https);
-							setScanObjId(result.id);
-						}
-					});
-				} else {
-					setScanCount(currentScanCount);
-					setScanFinishedAt(notYetCrawledText);
-					setScanForceHttps(null);
-					setScanObjId(null);
-				}
-			}
-
-			return { scanCount, scanFinishedAt, scanForceHttps, scanObjId };
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [scan, errorScan, validatingScan]);
+	const {
+		scan,
+		setScanConfig,
+		scanObjId,
+		scanCount,
+		currentScan,
+		previousScan,
+		handleCrawl,
+		selectedSiteRef,
+		scanResults,
+		validatingScan
+	} = useScan(siteId);
 
 	// Site `stats` SWR hook
-	const { stats, errorStats } = useStats(siteId, scanObjId);
-
-	// Handle `stats` object data
-	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			// Show alert message after failed `user` SWR hook fetch
-			errorStats
-				? setConfig({
-						isSites: true,
-						method: errorStats?.config?.method ?? null,
-						status: errorStats?.status ?? null
-				  })
-				: null;
-
-			if (stats?.data) {
-				const currentLinkErrors = stats.data?.num_non_ok_links ?? 0;
-				const currentPageErrors = stats.data?.num_pages_tls_non_ok ?? 0;
-				const currentImageErrors =
-					stats.data?.num_non_ok_images ??
-					0 + stats.data?.num_images_with_missing_alts ??
-					0 + stats.data?.num_images_tls_non_ok ??
-					0;
-				const currentSeoErrors =
-					stats.data?.num_pages_without_title ??
-					0 + stats.data?.num_pages_without_description ??
-					0 + stats.data?.num_pages_without_h1_first ??
-					0 + stats.data?.num_pages_without_h2_first ??
-					0;
-				const currentTotalErrors = await (currentLinkErrors +
-					currentPageErrors +
-					currentImageErrors +
-					currentSeoErrors);
-
-				setLinkErrors(currentLinkErrors);
-				setPageErrors(currentPageErrors);
-				setImageErrors(currentImageErrors);
-				setSeoErrors(currentSeoErrors);
-				setTotalErrors(currentTotalErrors);
-			}
-
-			return { linkErrors, pageErrors, imageErrors, seoErrors, totalErrors };
-		})();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [stats, errorStats]);
+	const { stats, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors, validatingStats } = useStats(
+		siteId,
+		scanObjId
+	);
 
 	return (
-		<tr>
+		<tr ref={selectedSiteRef}>
 			<td tw="flex-none p-4 whitespace-nowrap">
 				<MemoizedSiteVerifyModal
 					setShowModal={setIsSiteVerifyModalVisible}
@@ -203,12 +116,12 @@ const DataTable = ({ site = null }) => {
 					<div>
 						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && site ? (
 							<>
-								{siteVerified ? (
+								{siteVerified && currentScan == null ? (
 									<span
 										aria-label="Verified"
 										tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-green-400"
 									></span>
-								) : scanFinishedAt == null && scanForceHttps == null ? (
+								) : siteVerified && currentScan !== null ? (
 									<span
 										aria-label="Recrawling in Process"
 										tw="relative -left-3 flex-shrink-0 inline-block h-2 w-2 rounded-full leading-5 bg-yellow-400"
@@ -226,7 +139,12 @@ const DataTable = ({ site = null }) => {
 									</span>
 									<span tw="flex space-x-2 justify-start text-sm leading-5 text-gray-500">
 										{scanCount > 0 ? (
-											<Link href="/sites/[siteId]/overview" as={`/sites/${siteId}/overview`} passHref replace>
+											<Link
+												href="/dashboard/sites/[siteId]/overview"
+												as={`/dashboard/sites/${siteId}/overview`}
+												passHref
+												replace
+											>
 												<a
 													type="button"
 													tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
@@ -237,7 +155,7 @@ const DataTable = ({ site = null }) => {
 										) : null}
 										<a
 											href={siteUrl}
-											tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
+											tw="cursor-pointer flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-gray-600 hover:text-gray-500 transition ease-in-out duration-150"
 											title={visitExternalSiteText}
 											target="_blank"
 											rel="noreferrer"
@@ -258,13 +176,25 @@ const DataTable = ({ site = null }) => {
 											</button>
 										) : null}
 
-										<button
-											type="button"
-											tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
-											onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
-										>
-											{deleteText}
-										</button>
+										{siteVerified && permissions?.includes("can_start_scan") ? (
+											<button
+												type="button"
+												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-green-600 hover:text-green-500 transition ease-in-out duration-150"
+												onClick={handleCrawl}
+											>
+												{crawlSiteText}
+											</button>
+										) : null}
+
+										{permissions?.includes("delete_site") ? (
+											<button
+												type="button"
+												tw="cursor-pointer ml-3 flex items-center justify-start text-sm focus:outline-none leading-6 font-semibold text-red-600 hover:text-red-500 transition ease-in-out duration-150"
+												onClick={() => setIsSiteDeleteModalVisible(!isSiteDeleteModalVisible)}
+											>
+												{deleteText}
+											</button>
+										) : null}
 									</span>
 								</div>
 							</>
@@ -297,31 +227,31 @@ const DataTable = ({ site = null }) => {
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					scan?.data?.results?.length > 0 ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingScan &&
+				scan &&
+				Math.round(scan?.status / 100) === 2 &&
+				!scan?.data?.detail ? (
+					scanResults?.length > 0 ? (
 						<span tw="space-x-2">
 							<span tw="text-sm leading-5 text-gray-500">
-								{!disableLocalTime
-									? dayjs(
-											scanFinishedAt == null && scanForceHttps == null
-												? scan.data.results.find(
-														(result) => result.finished_at !== scanFinishedAt && result.force_https !== scanForceHttps
-												  )?.finished_at
-												: scan.data.results.find(
-														(result) => result.finished_at === scanFinishedAt && result.force_https === scanForceHttps
-												  )?.finished_at
-									  ).calendar(null, calendarStrings)
-									: dayjs
-											.utc(
-												scanFinishedAt == null && scanForceHttps == null
-													? scan.data.results.find(
-															(result) => result.finished_at !== scanFinishedAt && result.force_https !== scanForceHttps
-													  )?.finished_at
-													: scan.data.results.find(
-															(result) => result.finished_at === scanFinishedAt && result.force_https === scanForceHttps
-													  )?.finished_at
-											)
-											.calendar(null, calendarStrings)}
+								{scanCount > 1 ? (
+									!disableLocalTime ? (
+										dayjs(currentScan !== null ? previousScan?.finished_at : previousScan?.finished_at).calendar(
+											null,
+											calendarStrings
+										)
+									) : (
+										dayjs
+											.utc(currentScan !== null ? previousScan?.finished_at : previousScan?.finished_at)
+											.calendar(null, calendarStrings)
+									)
+								) : (
+									<span tw="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
+								)}
 							</span>
 							<span tw="text-sm leading-5 font-medium text-gray-500">
 								({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
@@ -337,53 +267,72 @@ const DataTable = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingStats &&
+				stats &&
+				Math.round(stats?.status / 100) === 2 &&
+				!stats?.data?.detail ? (
 					<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					stats?.data?.num_links > 0 ? (
-						<Link href="/sites/[siteId]/links" as={`/sites/${siteId}/links`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_links}
-							</a>
-						</Link>
-					) : (
-						<span tw="text-sm leading-5 text-gray-500">0</span>
-					)
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingStats &&
+				stats &&
+				Math.round(stats?.status / 100) === 2 &&
+				!stats?.data?.detail &&
+				stats?.data?.num_links > 0 ? (
+					<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
+						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							{stats?.data?.num_links}
+						</a>
+					</Link>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					stats?.data?.num_pages > 0 ? (
-						<Link href="/sites/[siteId]/pages" as={`/sites/${siteId}/pages`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_pages}
-							</a>
-						</Link>
-					) : (
-						<span tw="cursor-default text-sm leading-6 font-semibold text-gray-600">0</span>
-					)
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingStats &&
+				stats &&
+				Math.round(stats?.status / 100) === 2 &&
+				!stats?.data?.detail &&
+				stats?.data?.num_pages > 0 ? (
+					<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
+						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							{stats?.data?.num_pages}
+						</a>
+					</Link>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					stats?.data?.num_images > 0 ? (
-						<Link href="/sites/[siteId]/images" as={`/sites/${siteId}/images`} passHref>
-							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-								{stats?.data?.num_images}
-							</a>
-						</Link>
-					) : (
-						<span tw="cursor-default text-sm leading-6 font-semibold text-gray-600">0</span>
-					)
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingStats &&
+				stats &&
+				Math.round(stats?.status / 100) === 2 &&
+				!stats?.data?.detail &&
+				stats?.data?.num_images > 0 ? (
+					<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
+						<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+							{stats?.data?.num_images}
+						</a>
+					</Link>
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}

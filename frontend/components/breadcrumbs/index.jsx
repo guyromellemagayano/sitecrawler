@@ -1,5 +1,6 @@
 import { DashboardSitesLink, SiteOverviewSlug } from "@constants/PageLinks";
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/solid";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { handleConversionStringToBoolean } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
@@ -41,7 +42,10 @@ const Breadcrumbs = ({
 	const home = t("home");
 
 	// Custom context
-	const { user, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	// Custom variables
 	const sanitizedSid = siteId !== null ? handleConversionStringToBoolean(siteId) : null;

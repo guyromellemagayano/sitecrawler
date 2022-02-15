@@ -1,6 +1,7 @@
 import { UserApiEndpoint } from "@constants/ApiEndpoints";
 import { Switch } from "@headlessui/react";
 import { handlePutMethod } from "@helpers/handleHttpMethods";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { Formik } from "formik";
 import useTranslation from "next-translate/useTranslation";
@@ -20,8 +21,10 @@ const TimestampSettingsForm = () => {
 	const timestampSettingsSubheadline = t("settings:timestampSettings.subHeadline");
 
 	// Custom context
+	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
 	const {
-		isComponentReady,
 		user,
 		userId,
 		username,
@@ -33,9 +36,8 @@ const TimestampSettingsForm = () => {
 		group,
 		largePageSizeThreshold,
 		disableLocalTime,
-		setDisableLocalTime,
-		setConfig
-	} = useContext(SiteCrawlerAppContext);
+		setDisableLocalTime
+	} = useUser();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();

@@ -26,7 +26,7 @@ export const useSiteSelection = () => {
 
 	// Handle site selection on click
 	const handleSiteSelectOnClick = async (siteId, isSiteVerified, scanCount) => {
-		console.log(await siteId, await isSiteVerified, await scanCount);
+		console.log(siteId, isSiteVerified, scanCount);
 	};
 
 	// Handle site selection on load

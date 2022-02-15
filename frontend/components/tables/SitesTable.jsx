@@ -1,8 +1,9 @@
 import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { SitesSorting } from "@components/sorting/SitesSorting";
 import { SitesTableLabels } from "@constants/SitesTableLabels";
-import { useLoading } from "@hooks/useLoading";
 import { useSiteQueries } from "@hooks/useSiteQueries";
+import { useSites } from "@hooks/useSites";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
@@ -13,10 +14,8 @@ import { MemoizedDataTable } from "./DataTable";
 
 /**
  * Custom function to render the `SitesTable` component
- *
- * @param {object} sites
  */
-const SitesTable = ({ sites = null }) => {
+const SitesTable = () => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
@@ -26,11 +25,14 @@ const SitesTable = ({ sites = null }) => {
 	const { query } = useRouter();
 
 	// Custom context
-	const { user, disableLocalTime, setConfig } = useContext(SiteCrawlerAppContext);
+	const { setConfig } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user, disableLocalTime } = useUser();
+	const { sites, sitesCount, sitesResults } = useSites();
 
 	// Custom hooks
 	const { setLinksPerPage, setPagePath } = useSiteQueries();
-	const { isComponentReady } = useLoading();
 
 	// Sites table labels with translations
 	const labelsArray = SitesTableLabels();
@@ -39,10 +41,10 @@ const SitesTable = ({ sites = null }) => {
 		<section
 			css={[
 				tw`flex flex-col w-full min-h-full h-full`,
-				sites?.data?.count > 0 && sites?.data?.results?.length > 0 ? tw`justify-start` : tw`justify-center`
+				sitesCount > 0 && sitesResults?.length > 0 ? tw`justify-start` : tw`justify-center`
 			]}
 		>
-			{sites?.data?.count > 0 && sites?.data?.results?.length > 0 ? (
+			{sitesCount > 0 && sitesResults?.length > 0 ? (
 				<table tw="relative w-full">
 					<thead>
 						<tr>
@@ -62,12 +64,12 @@ const SitesTable = ({ sites = null }) => {
 					</thead>
 
 					<tbody tw="relative divide-y divide-gray-200">
-						{sites.data.results.map((result) => {
+						{sitesResults.map((result) => {
 							return <MemoizedDataTable key={result.id} site={result} />;
 						})}
 					</tbody>
 				</table>
-			) : sites?.data?.count === 0 && sites?.data?.results?.length === 1 ? (
+			) : sitesCount === 0 && sitesResults?.length === 1 ? (
 				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
 					<MemoizedLoadingMessage message={noAvailableSites} />
 				</div>

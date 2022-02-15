@@ -1,4 +1,4 @@
-import { useLoading } from "@hooks/useLoading";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import PropTypes from "prop-types";
@@ -27,10 +27,10 @@ const AddSiteSteps = (props) => {
 	const formDetailLabel = t("sites:form.detail.label");
 
 	// Custom context
-	const { user } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
-	// Custom hooks
-	const { isComponentReady } = useLoading();
+	// SWR hooks
+	const { user } = useUser();
 
 	const stepsData = [
 		{

@@ -1,7 +1,7 @@
 import { MemoizedSiteSelectDropdown } from "@components/dropdowns/SiteSelectDropdown";
 import { MemoizedSiteSelectMenu } from "@components/menus/SiteSelectMenu";
-import { useLoading } from "@hooks/useLoading";
 import { useSiteSelection } from "@hooks/useSiteSelection";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import { memo, useContext } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -13,10 +13,12 @@ import "twin.macro";
  */
 const SiteSelect = () => {
 	// Custom context
-	const { user } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	// Custom hooks
-	const { isComponentReady } = useLoading();
 	const {
 		siteSelectRef,
 		isSiteSelectComponentVisible,

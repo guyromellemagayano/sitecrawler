@@ -2,6 +2,7 @@ import { Basic, Pro } from "@constants/GlobalValues";
 import { SubscriptionPlansSettingsLink } from "@constants/PageLinks";
 import { SidebarMenus } from "@constants/SidebarMenus";
 import { Transition } from "@headlessui/react";
+import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -26,7 +27,10 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 	const { ProfileSidebarMenus } = SidebarMenus();
 
 	// Custom context
-	const { user, group, isComponentReady } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user, group } = useUser();
 
 	return (
 		<Transition
@@ -48,13 +52,14 @@ const ProfileMenuDropdown = ({ isComponentVisible = false }) => {
 								group.name === Basic ? tw`text-green-800` : group.name === Pro ? tw`text-blue-800` : tw`text-red-800`
 							]}
 						>
-							{isComponentReady && group.name ? (
+							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && group.name ? (
 								group.name + " " + plan
 							) : (
 								<Skeleton duration={2} width={67} height={20} />
 							)}
 						</span>
-						{isComponentReady && group.name ? (
+
+						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && group.name ? (
 							group.name === Basic || group.name === Pro ? (
 								<Link href={SubscriptionPlansSettingsLink} passHref>
 									<a

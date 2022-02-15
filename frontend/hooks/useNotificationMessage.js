@@ -1719,7 +1719,7 @@ export const useNotificationMessage = () => {
 					let responsesArray = [];
 
 					const patchResponse = {
-						method: "POST",
+						method: "PATCH",
 						responses: [
 							{
 								status: 200,
@@ -1899,7 +1899,7 @@ export const useNotificationMessage = () => {
 						responses: [
 							{
 								status: 200,
-								title: fallback200OkSuccessResponse,
+								title: isError ? fallback400BadRequestErrorResponse : fallback200OkSuccessResponse,
 								message: isError
 									? verifyUrlStepPostMiscSiteVerificationFailedErrorResponse
 									: verifyUrlStepPost200OkSuccessResponse,
