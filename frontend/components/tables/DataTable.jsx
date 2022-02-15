@@ -283,7 +283,7 @@ const DataTable = ({ site = null }) => {
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
 				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					!validatingStats && stats && Math.round(stats?.status / 100) === 2 && !stats?.data?.detail ? (
-						totalErrors?.length > 0 ? (
+						totalErrors ? (
 							<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
 						) : (
 							<span tw="text-gray-500">0</span>

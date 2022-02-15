@@ -1,6 +1,6 @@
 import { MemoizedLayout } from "@components/layouts";
 import { MemoizedPageLayout } from "@components/layouts/components/Page";
-import { MemoizedSiteSeoPageLayout } from "@components/layouts/Images/SiteSeo";
+import { MemoizedSiteSeoPageLayout } from "@components/layouts/pages/SiteSeo";
 import { SitesApiEndpoint, UserApiEndpoint } from "@constants/ApiEndpoints";
 import { DashboardSitesLink, LoginLink } from "@constants/PageLinks";
 import { SSR_SITE_URL } from "@constants/ServerEnv";
