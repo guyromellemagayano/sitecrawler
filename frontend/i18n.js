@@ -5,14 +5,12 @@ module.exports = {
 		"*": ["alerts", "common"],
 		"/": ["login"],
 		"/account-exist": ["accountExist"],
-		"/confirm-email/[...id]": ["confirmEmail"],
 		"/registration": ["registration"],
-		"/reset-password/*": ["resetPassword"],
-		"/signup/[...id]": ["signup"],
 		"/logout": ["logout"],
-		"rgx:^/dashboard": ["sidebar", "sites"],
-		"rgx:^/dashboard/settings": ["settings"],
-		"/dashboard/audit-logs": ["auditLogs"]
+		"rgx:^/confirm-email": ["confirmEmail"],
+		"rgx:^/signup/": ["signup"],
+		"rgx:^/reset-password/": ["resetPassword"],
+		"rgx:^/dashboard": ["sidebar", "sites", "filters", "settings", "auditLogs"]
 	},
 	interpolation: {
 		prefix: "${",
