@@ -2,7 +2,6 @@ import { MemoizedLoadingMessage } from "@components/messages/LoadingMessage";
 import { SitesSorting } from "@components/sorting/SitesSorting";
 import { SitesTableLabels } from "@constants/SitesTableLabels";
 import { useSiteQueries } from "@hooks/useSiteQueries";
-import { useSites } from "@hooks/useSites";
 import { useUser } from "@hooks/useUser";
 import { SiteCrawlerAppContext } from "@pages/_app";
 import useTranslation from "next-translate/useTranslation";
@@ -17,7 +16,7 @@ import { MemoizedDataTable } from "./DataTable";
  *
  * @param {object} sites
  */
-const SitesTable = ({ sites = null }) => {
+const SitesTable = ({ count = 0, results = [] }) => {
 	// Translations
 	const { t } = useTranslation();
 	const noAvailableSites = t("sites:noAvailableSites");
@@ -31,7 +30,6 @@ const SitesTable = ({ sites = null }) => {
 
 	// SWR hooks
 	const { user, disableLocalTime } = useUser();
-	const { sitesCount, sitesResults } = useSites();
 
 	// Custom hooks
 	const { setLinksPerPage, setPagePath } = useSiteQueries();
@@ -43,10 +41,10 @@ const SitesTable = ({ sites = null }) => {
 		<section
 			css={[
 				tw`flex flex-col w-full min-h-full h-full`,
-				sitesCount > 0 && sitesResults?.length > 0 ? tw`justify-start` : tw`justify-center`
+				count > 0 && results?.length > 0 ? tw`justify-start` : tw`justify-center`
 			]}
 		>
-			{sitesCount > 0 && sitesResults?.length > 0 ? (
+			{count > 0 && results?.length > 0 ? (
 				<table tw="relative w-full">
 					<thead>
 						<tr>
@@ -66,20 +64,16 @@ const SitesTable = ({ sites = null }) => {
 					</thead>
 
 					<tbody tw="relative divide-y divide-gray-200">
-						{sitesResults.map((result) => {
+						{results.map((result) => {
 							return <MemoizedDataTable key={result.id} site={result} />;
 						})}
 					</tbody>
 				</table>
-			) : sitesCount === 0 && sitesResults?.length === 1 ? (
+			) : count === 0 && results?.length === 0 ? (
 				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
 					<MemoizedLoadingMessage message={noAvailableSites} />
 				</div>
-			) : (
-				<div tw="px-4 py-5 sm:p-6 flex items-center justify-center">
-					<MemoizedLoadingMessage message={loaderMessage} />
-				</div>
-			)}
+			) : null}
 		</section>
 	);
 };

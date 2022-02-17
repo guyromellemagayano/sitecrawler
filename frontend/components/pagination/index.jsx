@@ -35,7 +35,7 @@ const DataPagination = () => {
 	const { page } = usePage(scanApiEndpoint);
 
 	// Custom variables
-	const currentPage = query?.page ? parseInt(query.page) : 0;
+	const currentPage = query?.page ? parseInt(query.page) : 1;
 	const offset = (currentPage - 1) * linksPerPage;
 	const linkNumbers = [];
 	const pageNumbers = [];
