@@ -113,9 +113,8 @@ const DataPagination = () => {
 			if (newPath.includes("?")) setPagePath(`${newPath}&`);
 			else setPagePath(`${newPath}?`);
 
-			push(newPath);
-
 			await mutate(scanApiEndpoint);
+			push(newPath);
 		}
 	};
 
