@@ -66,10 +66,10 @@ export default function SiteSettings({ siteName }) {
 
 	// Translations
 	const { t } = useTranslation("sites");
-	const sitesOverviewText = t("sitesOverview");
+	const sitesSettingsText = t("sitesSettings");
 
 	// Custom variables
-	const sitesOverviewPageTitle = siteName + " | " + sitesOverviewText;
+	const sitesOverviewPageTitle = siteName + " | " + sitesSettingsText;
 
 	return (
 		<MemoizedLayout>

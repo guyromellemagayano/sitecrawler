@@ -69,12 +69,6 @@ const TimestampSettingsForm = () => {
 											const timestampSettingsResponseStatus = timestampSettingsResponse?.status ?? null;
 											const timestampSettingsResponseMethod = timestampSettingsResponse?.config?.method ?? null;
 
-											console.log(
-												timestampSettingsResponseData,
-												timestampSettingsResponseStatus,
-												timestampSettingsResponseMethod
-											);
-
 											if (
 												timestampSettingsResponseData !== null &&
 												Math.round(timestampSettingsResponseStatus / 200) === 1
@@ -94,10 +88,14 @@ const TimestampSettingsForm = () => {
 													});
 												}
 
-												await mutate({
-													...user,
-													data: timestampSettingsResponseData
-												});
+												await mutate(
+													UserApiEndpoint,
+													{
+														...user,
+														data: timestampSettingsResponseData
+													},
+													false
+												);
 											} else {
 												// Show alert message after unsuccessful 200 OK or 201 Created response is issued
 												setConfig({
@@ -106,7 +104,7 @@ const TimestampSettingsForm = () => {
 													status: timestampSettingsResponseStatus
 												});
 
-												await mutate(UserApiEndpoint);
+												await mutate(UserApiEndpoint, false);
 											}
 										})();
 									}}
