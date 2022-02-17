@@ -1,3 +1,4 @@
+import { MemoizedFilter } from "@components/filters";
 import { MemoizedDataPagination } from "@components/pagination";
 import { MemoizedSitesTable } from "@components/tables/SitesTable";
 import { ExternalLinkIcon } from "@heroicons/react/outline";
@@ -31,13 +32,13 @@ const SitesDashboardPageLayout = () => {
 
 	// SWR hooks
 	const { user } = useUser();
-	const { sitesCount } = useSites(scanApiEndpoint);
+	const { sitesCount, sitesResults } = useSites(scanApiEndpoint);
 
 	return (
 		<>
 			<div tw="flex-none px-4 sm:px-6 md:px-0">
 				<div tw="flex-1 min-w-0">
-					<div tw="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
+					<div tw="mt-4 mb-8 flex flex-col sm:flex-row sm:flex-wrap sm:mt-2 sm:space-x-6">
 						<div tw="mt-2 flex items-center space-x-3 text-sm text-gray-500">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								sitesCount ? (
@@ -58,6 +59,8 @@ const SitesDashboardPageLayout = () => {
 							)}
 						</div>
 					</div>
+
+					<MemoizedFilter isSitesFilter />
 				</div>
 			</div>
 
@@ -100,7 +103,7 @@ const SitesDashboardPageLayout = () => {
 							]}
 						>
 							<div tw="min-w-full h-full rounded-lg border-gray-300">
-								<MemoizedSitesTable />
+								<MemoizedSitesTable count={sitesCount} results={sitesResults} />
 							</div>
 						</div>
 					</div>

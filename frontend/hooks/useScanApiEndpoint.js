@@ -1,6 +1,7 @@
 import { SitesApiEndpoint } from "@constants/ApiEndpoints";
 import { orderingByNameQuery, perPageQuery } from "@constants/GlobalValues";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 /**
  * Custom hook that handle the scan API endpoint changes
@@ -8,13 +9,31 @@ import { useRouter } from "next/router";
  * @param {number} linksPerPage The number of links per page
  * @returns {string} The updated scan API endpoint
  */
-export const useScanApiEndpoint = (linksPerPage = null) => {
+export const useScanApiEndpoint = (linksPerPage = null, filterType = null) => {
 	// Custom variables
 	let scanApiEndpoint = SitesApiEndpoint + "?" + perPageQuery + linksPerPage + "&" + orderingByNameQuery + "name";
 	let queryString = "";
 
 	// Router
 	const { query } = useRouter();
+
+	useEffect(() => {
+		if (filterType !== null) {
+			// Sites filter
+			if (filterType === "sites") {
+				scanApiEndpoint = SitesApiEndpoint + "?" + perPageQuery + linksPerPage + "&" + orderingByNameQuery + "name";
+
+				console.log(scanApiEndpoint);
+
+				queryString +=
+					typeof query?.verified !== "undefined" && query?.verified !== null
+						? scanApiEndpoint.includes("?")
+							? `&verified=${query.verified}`
+							: `?verified=${query.verified}`
+						: "";
+			}
+		}
+	}, [filterType, linksPerPage]);
 
 	const pageQuery =
 		typeof query?.page !== "undefined" && query?.page !== null
