@@ -38,10 +38,10 @@ export async function getServerSideProps({ req, query }) {
 		!Object.keys(userResponseData).find((key) => key === "detail") &&
 		Math.round(userResponseStatus / 200) == 1
 	) {
-		const sid = query?.sid ? parseInt(query?.sid) : null;
-		const step = query?.step ? parseInt(query?.step) : null;
-		const verified = query?.verified ? (query?.verified == "true" ? true : false) : null;
-		const edit = query?.edit ? (query?.edit == "true" ? true : false) : null;
+		const sid = query?.sid ? handleConversionStringToNumber(query.sid) : null;
+		const step = query?.step ? handleConversionStringToNumber(query.step) : null;
+		const verified = query?.verified ? handleConversionStringToBoolean(query.verified) : null;
+		const edit = query?.edit ? handleConversionStringToBoolean(query.edit) : null;
 
 		if (
 			sitesResponseData !== null &&
@@ -49,7 +49,8 @@ export async function getServerSideProps({ req, query }) {
 			Object.keys(sitesResponseData)?.length > 0 &&
 			Math.round(sitesResponseStatus / 200) === 1
 		) {
-			const sidMatch = sitesResponseData?.results?.find((site) => site.id == sid && site.verified == verified) ?? null;
+			const sidMatch =
+				sitesResponseData?.results?.find((site) => site.id === sid && site.verified === verified) ?? null;
 
 			if (
 				edit !== null &&
