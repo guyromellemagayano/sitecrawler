@@ -35,14 +35,28 @@ export const useUser = (options = null) => {
 		(async () => {
 			if (!isMounted) return;
 
-			// Show alert message after failed `user` SWR hook fetch
-			errorUser
-				? setUserConfig({
-						isUser: true,
-						method: errorUser?.config?.method ?? null,
-						status: errorUser?.status ?? null
-				  })
-				: null;
+			if (errorUser) {
+				// Show alert message after failed `user` SWR hook fetch
+				errorUser
+					? setUserConfig({
+							isUser: true,
+							method: errorUser?.config?.method ?? null,
+							status: errorUser?.status ?? null
+					  })
+					: null;
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [errorUser]);
+
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
 
 			if (user?.data) {
 				// Update `settings` user setting
@@ -128,7 +142,7 @@ export const useUser = (options = null) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [user, errorUser]);
+	}, [user]);
 
 	return {
 		disableLocalTime,

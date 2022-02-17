@@ -911,8 +911,8 @@ export const useNotificationMessage = () => {
 				} else if (isLocalTimeEnabled) {
 					let responsesArray = [];
 
-					const postResponse = {
-						method: "POST",
+					const putResponse = {
+						method: "PUT",
 						responses: [
 							{
 								status: 200,
@@ -983,7 +983,7 @@ export const useNotificationMessage = () => {
 						]
 					};
 
-					responsesArray.push(postResponse);
+					responsesArray.push(putResponse);
 
 					const dataMethod =
 						responsesArray?.find(
@@ -1015,8 +1015,8 @@ export const useNotificationMessage = () => {
 				} else if (isLocalTimeDisabled) {
 					let responsesArray = [];
 
-					const postResponse = {
-						method: "POST",
+					const putResponse = {
+						method: "PUT",
 						responses: [
 							{
 								status: 200,
@@ -1087,7 +1087,7 @@ export const useNotificationMessage = () => {
 						]
 					};
 
-					responsesArray.push(postResponse);
+					responsesArray.push(putResponse);
 
 					const dataMethod =
 						responsesArray?.find(
