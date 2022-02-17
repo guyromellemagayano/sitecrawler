@@ -246,7 +246,7 @@ const DataTable = ({ site = null }) => {
 						<span tw="space-x-2">
 							<span tw="text-sm leading-5 text-gray-500">
 								{scanCount > 1 ? (
-									!disableLocalTime ? (
+									disableLocalTime ? (
 										dayjs(currentScan !== null ? previousScan?.finished_at : previousScan?.finished_at).calendar(
 											null,
 											calendarStrings
@@ -258,7 +258,7 @@ const DataTable = ({ site = null }) => {
 									)
 								) : scanCount === 1 && currentScan !== null ? (
 									<span tw="text-sm leading-5 text-gray-500">{siteCrawlingInProcessText}</span>
-								) : !disableLocalTime ? (
+								) : disableLocalTime ? (
 									dayjs(previousScan?.finished_at).calendar(null, calendarStrings)
 								) : (
 									dayjs.utc(previousScan?.finished_at).calendar(null, calendarStrings)
@@ -267,7 +267,7 @@ const DataTable = ({ site = null }) => {
 
 							{scanCount > 1 ? (
 								<span tw="text-sm leading-5 font-medium text-gray-500">
-									({!disableLocalTime ? dayjs.tz.guess() : "UTC"})
+									({disableLocalTime ? dayjs.tz.guess() : "UTC"})
 								</span>
 							) : null}
 						</span>
@@ -281,72 +281,84 @@ const DataTable = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					!validatingStats && stats && Math.round(stats?.status / 100) === 2 && !stats?.data?.detail ? (
-						totalErrors ? (
-							<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
-						) : (
-							<span tw="text-gray-500">0</span>
-						)
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingStats &&
+				stats &&
+				Math.round(stats?.status / 100) === 2 &&
+				!stats?.data?.detail ? (
+					totalErrors ? (
+						<span css={[totalErrors > 0 ? tw`text-red-500` : tw`text-green-500`]}>{totalErrors}</span>
 					) : (
-						<Skeleton duration={2} width={45} />
+						<span tw="text-gray-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					!validatingStats && stats && Math.round(stats?.status / 100) === 2 && !stats?.data?.detail ? (
-						stats?.data?.num_links > 0 ? (
-							<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
-								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-									{stats?.data?.num_links}
-								</a>
-							</Link>
-						) : (
-							<span tw="text-gray-500">0</span>
-						)
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingStats &&
+				stats &&
+				Math.round(stats?.status / 100) === 2 &&
+				!stats?.data?.detail ? (
+					stats?.data?.num_links > 0 ? (
+						<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats?.data?.num_links}
+							</a>
+						</Link>
 					) : (
-						<Skeleton duration={2} width={45} />
+						<span tw="text-gray-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					!validatingStats && stats && Math.round(stats?.status / 100) === 2 && !stats?.data?.detail ? (
-						stats?.data?.num_pages > 0 ? (
-							<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
-								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-									{stats?.data?.num_pages}
-								</a>
-							</Link>
-						) : (
-							<span tw="text-gray-500">0</span>
-						)
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingStats &&
+				stats &&
+				Math.round(stats?.status / 100) === 2 &&
+				!stats?.data?.detail ? (
+					stats?.data?.num_pages > 0 ? (
+						<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats?.data?.num_pages}
+							</a>
+						</Link>
 					) : (
-						<Skeleton duration={2} width={45} />
+						<span tw="text-gray-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
-					!validatingStats && stats && Math.round(stats?.status / 100) === 2 && !stats?.data?.detail ? (
-						stats?.data?.num_images > 0 ? (
-							<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
-								<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
-									{stats?.data?.num_images}
-								</a>
-							</Link>
-						) : (
-							<span tw="text-gray-500">0</span>
-						)
+				{isComponentReady &&
+				user &&
+				Math.round(user?.status / 100) === 2 &&
+				!user?.data?.detail &&
+				!validatingStats &&
+				stats &&
+				Math.round(stats?.status / 100) === 2 &&
+				!stats?.data?.detail ? (
+					stats?.data?.num_images > 0 ? (
+						<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
+							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
+								{stats?.data?.num_images}
+							</a>
+						</Link>
 					) : (
-						<Skeleton duration={2} width={45} />
+						<span tw="text-gray-500">0</span>
 					)
 				) : (
 					<Skeleton duration={2} width={45} />

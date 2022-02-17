@@ -21,7 +21,8 @@
 	"timestampSettings": {
 		"title": "Timestamp Settings",
 		"headline": "Enable Local Time",
-		"subHeadline": "Set all sites to use local timezones instead of UTC"
+		"subHeadline": "Set all sites to use local timezones instead of UTC",
+		"disableLocalTime": "Disable Local Time"
 	},
 	"largePageSizeSettings": {
 		"title": "Large Page Size Settiings"
