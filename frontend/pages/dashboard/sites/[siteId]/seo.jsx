@@ -62,15 +62,15 @@ export async function getServerSideProps({ req, query }) {
 export default function SiteSeo({ siteName }) {
 	// Translations
 	const { t } = useTranslation("sites");
-	const sitesOverviewText = t("sitesOverview");
+	const sitesSeoText = t("sitesSeo");
 
 	// Custom variables
-	const sitesOverviewPageTitle = siteName + " | " + sitesOverviewText;
+	const sitesSeoPageTitle = siteName + " | " + sitesSeoText;
 
 	return (
 		<MemoizedLayout>
-			<NextSeo title={sitesOverviewPageTitle} />
-			<MemoizedPageLayout pageTitle={sitesOverviewPageTitle}>
+			<NextSeo title={sitesSeoPageTitle} />
+			<MemoizedPageLayout pageTitle={sitesSeoPageTitle}>
 				<MemoizedSiteSeoPageLayout />
 			</MemoizedPageLayout>
 		</MemoizedLayout>
