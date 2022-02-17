@@ -205,6 +205,8 @@ const VerifyUrlStepForm = ({ sid = null, step = null, verified = false, setDisab
 																? tw`opacity-50 cursor-not-allowed`
 																: tw`hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500`
 														]}
+														passHref
+														replace
 													>
 														{verifySiteLater}
 													</a>
