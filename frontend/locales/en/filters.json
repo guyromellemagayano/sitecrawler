@@ -1,0 +1,17 @@
+{
+	"filters": "Filters",
+	"allSites": "All Sites",
+	"unverified": "Unverified",
+	"verified": "Verified",
+	"allLinks": "All Links",
+	"linksWithIssues": "Links with Issues",
+	"internalLinks": "Internal Links",
+	"externalLinks": "External Links",
+	"noLinkIssues": "No Link Issues",
+	"allPages": "All Pages",
+	"brokenSecurity": "Broken Security",
+	"duplicateTitles": "Duplicate Titles",
+	"duplicateDescriptions": "Duplicate Descriptions",
+	"largePageSizes": "Large Page Sizes",
+	"noPageIssues": "No Page Issues"
+}
