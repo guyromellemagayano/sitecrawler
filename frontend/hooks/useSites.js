@@ -33,14 +33,28 @@ export const useSites = (endpoint = null, options = null) => {
 		(async () => {
 			if (!isMounted) return;
 
-			// Show alert message after failed `user` SWR hook fetch
-			errorSites
-				? setSitesConfig({
-						isStats: true,
-						method: errorSites?.config?.method ?? null,
-						status: errorSites?.status ?? null
-				  })
-				: null;
+			if (errorSites) {
+				// Show alert message after failed `user` SWR hook fetch
+				errorSites
+					? setSitesConfig({
+							isStats: true,
+							method: errorSites?.config?.method ?? null,
+							status: errorSites?.status ?? null
+					  })
+					: null;
+			}
+		})();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [errorSites]);
+
+	useMemo(() => {
+		let isMounted = true;
+
+		(async () => {
+			if (!isMounted) return;
 
 			if (sites?.data) {
 				if (sites.data?.count) {
@@ -58,7 +72,7 @@ export const useSites = (endpoint = null, options = null) => {
 		return () => {
 			isMounted = false;
 		};
-	}, [sites, errorSites]);
+	}, [sites]);
 
-	return { sites, errorSites, validatingSites, sitesResults, sitesCount };
+	return { sites, validatingSites, sitesResults, sitesCount };
 };

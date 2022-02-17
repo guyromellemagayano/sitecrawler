@@ -385,6 +385,34 @@
 	"siteId": {},
 	"scan": {},
 	"stats": {},
+	"pages": {
+		"get": {
+			"200OkSuccessResponse": "Pages get success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Pages get success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Pages get failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Pages get failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Pages get failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Pages get failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Pages get failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Pages get failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Pages get failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Pages get failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Pages get failed. Got a 504 gateway timeout error response."
+		},
+		"post": {
+			"200OkSuccessResponse": "Pages post success! Got a 200 OK success response.",
+			"201CreatedSuccessResponse": "Pages post success! Got a 201 created success response.",
+			"400BadRequestErrorResponse": "Pages post failed. Got a 400 bad request error response. Please try again.",
+			"401UnauthorizedErrorResponse": "Pages post failed. Got a 401 unauthorized error response. Please try again.",
+			"403ForbiddenErrorResponse": "Pages post failed. Got a 403 forbidden error response.",
+			"404NotFoundErrorResponse": "Pages post failed. Got a 404 not found error response.",
+			"429TooManyRequestsErrorResponse": "Pages post failed. Got a 429 too many requests error response.",
+			"500InternalServerErrorResponse": "Pages post failed. Got a 500 internal server error response.",
+			"502BadGatewayErrorResponse": "Pages post failed. Got a 502 bad gateway error response.",
+			"503ServiceUnavailableErrorResponse": "Pages post failed. Got a 503 service unavailable error response.",
+			"504GatewayTimeoutErrorResponse": "Pages post failed. Got a 504 gateway timeout error response."
+		}
+	},
 	"team": {},
 	"stripe": {
 		"paymentMethod": {

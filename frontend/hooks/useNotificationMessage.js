@@ -29,6 +29,7 @@ export const useNotificationMessage = () => {
 		isSignup: false,
 		isSites: false,
 		isStats: false,
+		isPages: false,
 		isPaymentMethod: false,
 		isSubscriptions: false,
 		isSupport: false,
@@ -506,6 +507,30 @@ export const useNotificationMessage = () => {
 	const logoutPost503ServiceUnavailableErrorResponse = t("alerts:auth.logout.post.503ServiceUnavailableErrorResponse");
 	const logoutPost504GatewayTimeoutErrorResponse = t("alerts:auth.logout.post.504GatewayTimeoutErrorResponse");
 
+	// Pages translations
+	const pagesGet200OkSuccessResponse = t("alerts:pages.get.200OkSuccessResponse");
+	const pagesGet201CreatedSuccessResponse = t("alerts:pages.get.201CreatedSuccessResponse");
+	const pagesGet400BadRequestErrorResponse = t("alerts:pages.get.400BadRequestErrorResponse");
+	const pagesGet401UnauthorizedErrorResponse = t("alerts:pages.get.401UnauthorizedErrorResponse");
+	const pagesGet403ForbiddenErrorResponse = t("alerts:pages.get.403ForbiddenErrorResponse");
+	const pagesGet404NotFoundErrorResponse = t("alerts:pages.get.404NotFoundErrorResponse");
+	const pagesGet429TooManyRequestsErrorResponse = t("alerts:pages.get.429TooManyRequestsErrorResponse");
+	const pagesGet500InternalServerErrorResponse = t("alerts:pages.get.500InternalServerErrorResponse");
+	const pagesGet502BadGatewayErrorResponse = t("alerts:pages.get.502BadGatewayErrorResponse");
+	const pagesGet503ServiceUnavailableErrorResponse = t("alerts:pages.get.503ServiceUnavailableErrorResponse");
+	const pagesGet504GatewayTimeoutErrorResponse = t("alerts:pages.get.504GatewayTimeoutErrorResponse");
+	const pagesPost200OkSuccessResponse = t("alerts:pages.post.200OkSuccessResponse");
+	const pagesPost201CreatedSuccessResponse = t("alerts:pages.post.201CreatedSuccessResponse");
+	const pagesPost400BadRequestErrorResponse = t("alerts:pages.post.400BadRequestErrorResponse");
+	const pagesPost401UnauthorizedErrorResponse = t("alerts:pages.post.401UnauthorizedErrorResponse");
+	const pagesPost403ForbiddenErrorResponse = t("alerts:pages.post.403ForbiddenErrorResponse");
+	const pagesPost404NotFoundErrorResponse = t("alerts:pages.post.404NotFoundErrorResponse");
+	const pagesPost429TooManyRequestsErrorResponse = t("alerts:pages.post.429TooManyRequestsErrorResponse");
+	const pagesPost500InternalServerErrorResponse = t("alerts:pages.post.500InternalServerErrorResponse");
+	const pagesPost502BadGatewayErrorResponse = t("alerts:pages.post.502BadGatewayErrorResponse");
+	const pagesPost503ServiceUnavailableErrorResponse = t("alerts:pages.post.503ServiceUnavailableErrorResponse");
+	const pagesPost504GatewayTimeoutErrorResponse = t("alerts:pages.post.504GatewayTimeoutErrorResponse");
+
 	// Fallback translations
 	const fallback200OkSuccessResponse = t("alerts:fallback.200OkSuccessResponse");
 	const fallback201CreatedSuccessResponse = t("alerts:fallback.201CreatedSuccessResponse");
@@ -537,6 +562,7 @@ export const useNotificationMessage = () => {
 			const isPasswordResetConfirm = config?.isPasswordResetConfirm ?? false;
 			const isUrlInformationStep = config?.isUrlInformationStep ?? false;
 			const isVerifyUrlStep = config?.isVerifyUrlStep ?? false;
+			const isPages = config?.isPages ?? false;
 			const isRegistration = config?.isRegistration ?? false;
 			const isSignup = config?.isSignup ?? false;
 			const isSites = config?.isSites ?? false;
@@ -579,6 +605,7 @@ export const useNotificationMessage = () => {
 					isPasswordResetConfirm ||
 					isUrlInformationStep ||
 					isVerifyUrlStep ||
+					isPages ||
 					isRegistration ||
 					isSignup ||
 					isSites ||
@@ -2772,14 +2799,185 @@ export const useNotificationMessage = () => {
 						data,
 						fallback
 					});
+				} else if (isPages) {
+					let responsesArray = [];
+
+					const postResponse = {
+						method: "POST",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: pagesPost200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: pagesPost201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: pagesPost400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: pagesPost401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: pagesPost403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: pagesPost404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: pagesPost429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: pagesPost500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: pagesPost502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: pagesPost503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: pagesPost504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+					const getResponse = {
+						method: "GET",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: pagesGet200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: pagesGet201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: pagesGet400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: pagesGet401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: pagesGet403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: pagesGet404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: pagesGet429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: pagesGet500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: pagesGet502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: pagesGet503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: pagesGet504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
+
+					responsesArray.push(postResponse);
+					responsesArray.push(getResponse);
+
+					const dataMethod =
+						responsesArray?.find(
+							(datum) =>
+								handleConversionStringToLowercase(datum.method) === handleConversionStringToLowercase(config.method)
+						) ?? null;
+					const dataResponse =
+						dataMethod?.responses?.find(
+							(response) =>
+								handleConversionStringToNumber(response.status) === handleConversionStringToNumber(config.status)
+						) ?? null;
+
+					let data = {};
+
+					data = {
+						method: dataMethod.method,
+						...dataResponse
+					};
+
+					handleNotificationMessages({
+						dispatch,
+						config,
+						setConfig,
+						state,
+						isSites,
+						data,
+						fallback
+					});
 				} else {
 					return null;
 				}
-
-				// else if (isRegistrationVerifyEmail) {
-				// } else if (isSignup) {
-				// } else if (isStats) {
-				// }
 			}
 		}
 
