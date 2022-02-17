@@ -65,7 +65,7 @@ export default function SiteLinks({ siteName }) {
 	const sitesLinksText = t("sitesLinks");
 
 	// Custom variables
-	const sitesLinksPageTitle = siteName + " | " + sitesLinksText;
+	const sitesLinksPageTitle = sitesLinksText + " - " + siteName;
 
 	return (
 		<MemoizedLayout>

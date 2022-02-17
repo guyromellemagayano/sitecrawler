@@ -65,7 +65,7 @@ export default function SiteOverview({ siteName }) {
 	const sitesOverviewText = t("sitesOverview");
 
 	// Custom variables
-	const sitesOverviewPageTitle = siteName + " | " + sitesOverviewText;
+	const sitesOverviewPageTitle = sitesOverviewText + " - " + siteName;
 
 	return (
 		<MemoizedLayout>

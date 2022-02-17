@@ -65,7 +65,7 @@ export default function SiteImages({ siteName }) {
 	const sitesImagesText = t("sitesImages");
 
 	// Custom variables
-	const sitesImagesPageTitle = siteName + " | " + sitesImagesText;
+	const sitesImagesPageTitle = sitesImagesText + " - " + siteName;
 
 	return (
 		<MemoizedLayout>

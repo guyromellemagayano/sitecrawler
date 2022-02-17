@@ -65,7 +65,7 @@ export default function SitePages({ siteName }) {
 	const sitesPagesText = t("sitesPages");
 
 	// Custom variables
-	const sitesPagesPageTitle = siteName + " | " + sitesPagesText;
+	const sitesPagesPageTitle = sitesPagesText + " - " + siteName;
 
 	return (
 		<MemoizedLayout>
