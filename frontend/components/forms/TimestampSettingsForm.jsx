@@ -24,13 +24,20 @@ const TimestampSettingsForm = () => {
 	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
-	const { user, userId, username, email, permissions, largePageSizeThreshold, disableLocalTime, setDisableLocalTime } =
-		useUser();
+	const {
+		user,
+		userId,
+		username,
+		email,
+		permissions,
+		largePageSizeThreshold,
+		disableLocalTime,
+		setDisableLocalTime,
+		settings
+	} = useUser();
 
 	// SWR hook for global mutations
 	const { mutate } = useSWRConfig();
-
-	console.log(user?.data?.settings?.disableLocalTime);
 
 	return (
 		<div tw="space-y-8 divide-y divide-gray-200">
@@ -40,7 +47,7 @@ const TimestampSettingsForm = () => {
 						<div tw="absolute flex items-center h-5">
 							{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 								<Switch
-									checked={disableLocalTime}
+									checked={!disableLocalTime}
 									onChange={() => {
 										setDisableLocalTime(!disableLocalTime);
 
@@ -53,7 +60,7 @@ const TimestampSettingsForm = () => {
 												permissions: permissions,
 												large_page_size_threshold: largePageSizeThreshold,
 												settings: {
-													disableLocalTime: disableLocalTime
+													disableLocalTime: !disableLocalTime
 												}
 											};
 
@@ -62,12 +69,18 @@ const TimestampSettingsForm = () => {
 											const timestampSettingsResponseStatus = timestampSettingsResponse?.status ?? null;
 											const timestampSettingsResponseMethod = timestampSettingsResponse?.config?.method ?? null;
 
+											console.log(
+												timestampSettingsResponseData,
+												timestampSettingsResponseStatus,
+												timestampSettingsResponseMethod
+											);
+
 											if (
 												timestampSettingsResponseData !== null &&
 												Math.round(timestampSettingsResponseStatus / 200) === 1
 											) {
 												// Show alert message after successful 200 OK or 201 Created response is issued
-												if (disableLocalTime) {
+												if (!disableLocalTime) {
 													setConfig({
 														isLocalTimeDisabled: true,
 														method: timestampSettingsResponseMethod,
@@ -98,20 +111,20 @@ const TimestampSettingsForm = () => {
 										})();
 									}}
 									css={[
-										disableLocalTime ? tw`bg-indigo-600` : tw`bg-gray-200`,
+										!disableLocalTime ? tw`bg-indigo-600` : tw`bg-gray-200`,
 										tw`relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`
 									]}
 								>
 									<span tw="sr-only">{timestampSettingsDisableLocalTime}</span>
 									<span
 										css={[
-											disableLocalTime ? tw`translate-x-5` : tw`translate-x-0`,
+											!disableLocalTime ? tw`translate-x-5` : tw`translate-x-0`,
 											tw`pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`
 										]}
 									>
 										<span
 											css={[
-												disableLocalTime ? tw`opacity-0 ease-out duration-100` : tw`opacity-100 ease-in duration-200`,
+												!disableLocalTime ? tw`opacity-0 ease-out duration-100` : tw`opacity-100 ease-in duration-200`,
 												tw`absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`
 											]}
 											aria-hidden="true"
@@ -128,7 +141,7 @@ const TimestampSettingsForm = () => {
 										</span>
 										<span
 											css={[
-												disableLocalTime ? tw`opacity-100 ease-in duration-200` : tw`opacity-0 ease-out duration-100`,
+												!disableLocalTime ? tw`opacity-100 ease-in duration-200` : tw`opacity-0 ease-out duration-100`,
 												tw`absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`
 											]}
 											aria-hidden="true"
