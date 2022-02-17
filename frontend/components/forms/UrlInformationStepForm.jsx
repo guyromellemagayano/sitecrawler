@@ -239,7 +239,7 @@ const UrlInformationStepForm = (props) => {
 								putUrlInformationStepFormResponseData !== null &&
 								Math.round(putUrlInformationStepFormResponseStatus / 200) === 1
 							) {
-								if (putUrlInformationStepFormResponseData?.verified) {
+								if (!putUrlInformationStepFormResponseData?.verified) {
 									// Disable form after successful 200 OK or 201 Created response is issued
 									setDisableForm(!disableForm);
 
@@ -265,18 +265,6 @@ const UrlInformationStepForm = (props) => {
 									setTimeout(() => {
 										setDisableForm(false);
 									}, FormSubmissionInterval);
-								} else {
-									// Disable submission and disable site verification as soon as 200 OK or 201 Created response was not issued
-									setSubmitting(false);
-									setDisableForm(false);
-
-									// Show alert message after successful 200 OK or 201 Created response is issued
-									setConfig({
-										isVerifyUrlStep: true,
-										method: putUrlInformationStepFormResponseMethod,
-										status: putUrlInformationStepFormResponseStatus,
-										isError: true
-									});
 								}
 							} else {
 								// Disable submission as soon as 200 OK or 201 Created response was not issued
@@ -287,6 +275,17 @@ const UrlInformationStepForm = (props) => {
 									isUrlInformationStep: true,
 									method: putUrlInformationStepFormResponseMethod,
 									status: putUrlInformationStepFormResponseStatus
+								});
+
+								// Update current URL with query for the previous step
+								replace({
+									pathname: AddNewSiteLink,
+									query: {
+										step: step + 1,
+										sid: sid,
+										edit: false,
+										verified: false
+									}
 								});
 							}
 						}

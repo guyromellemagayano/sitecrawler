@@ -332,6 +332,19 @@
 				"503ServiceUnavailableErrorResponse": "Sites URL information patch failed. Got a 503 service unavailable error response.",
 				"504GatewayTimeoutErrorResponse": "Sites URL information patch failed. Got a 504 gateway timeout error response."
 			},
+			"put": {
+				"200OkSuccessResponse": "Sites URL information put success! Got a 200 OK success response.",
+				"201CreatedSuccessResponse": "Sites URL information put success! Got a 201 created success response.",
+				"400BadRequestErrorResponse": "Sites URL information put failed. Got a 400 bad request error response. Please try again.",
+				"401UnauthorizedErrorResponse": "Sites URL information put failed. Got a 401 unauthorized error response. Please try again.",
+				"403ForbiddenErrorResponse": "Sites URL information put failed. Got a 403 forbidden error response.",
+				"404NotFoundErrorResponse": "Sites URL information put failed. Got a 404 not found error response.",
+				"429TooManyRequestsErrorResponse": "Sites URL information put failed. Got a 429 too many requests error response.",
+				"500InternalServerErrorResponse": "Sites URL information put failed. Got a 500 internal server error response.",
+				"502BadGatewayErrorResponse": "Sites URL information put failed. Got a 502 bad gateway error response.",
+				"503ServiceUnavailableErrorResponse": "Sites URL information put failed. Got a 503 service unavailable error response.",
+				"504GatewayTimeoutErrorResponse": "Sites URL information put failed. Got a 504 gateway timeout error response."
+			},
 			"post": {
 				"200OkSuccessResponse": "Sites post success! Got a 200 OK success response.",
 				"201CreatedSuccessResponse": "Sites post success! Got a 201 created success response.",

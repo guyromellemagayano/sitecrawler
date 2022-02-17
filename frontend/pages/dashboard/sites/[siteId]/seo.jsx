@@ -65,7 +65,7 @@ export default function SiteSeo({ siteName }) {
 	const sitesSeoText = t("sitesSeo");
 
 	// Custom variables
-	const sitesSeoPageTitle = siteName + " | " + sitesSeoText;
+	const sitesSeoPageTitle = sitesSeoText + " - " + siteName;
 
 	return (
 		<MemoizedLayout>

@@ -1,7 +1,7 @@
 import { handleNotificationMessages } from "@helpers/handleNotificationMessages";
 import { handleConversionStringToLowercase, handleConversionStringToNumber } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
-import { useMemo, useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import "twin.macro";
 
 const messagesReducer = (state, action) => {
@@ -401,6 +401,31 @@ export const useNotificationMessage = () => {
 	const urlInformationStepPost504GatewayTimeoutErrorResponse = t(
 		"alerts:sites.urlInformation.post.504GatewayTimeoutErrorResponse"
 	);
+	const urlInformationStepPut200OkSuccessResponse = t("alerts:sites.urlInformation.put.200OkSuccessResponse");
+	const urlInformationStepPut201CreatedSuccessResponse = t("alerts:sites.urlInformation.put.201CreatedSuccessResponse");
+	const urlInformationStepPut400BadRequestErrorResponse = t(
+		"alerts:sites.urlInformation.put.400BadRequestErrorResponse"
+	);
+	const urlInformationStepPut401UnauthorizedErrorResponse = t(
+		"alerts:sites.urlInformation.put.401UnauthorizedErrorResponse"
+	);
+	const urlInformationStepPut403ForbiddenErrorResponse = t("alerts:sites.urlInformation.put.403ForbiddenErrorResponse");
+	const urlInformationStepPut404NotFoundErrorResponse = t("alerts:sites.urlInformation.put.404NotFoundErrorResponse");
+	const urlInformationStepPut429TooManyRequestsErrorResponse = t(
+		"alerts:sites.urlInformation.put.201CreatedSuccessResponse"
+	);
+	const urlInformationStepPut500InternalServerErrorResponse = t(
+		"alerts:sites.urlInformation.put.500InternalServerErrorResponse"
+	);
+	const urlInformationStepPut502BadGatewayErrorResponse = t(
+		"alerts:sites.urlInformation.put.502BadGatewayErrorResponse"
+	);
+	const urlInformationStepPut503ServiceUnavailableErrorResponse = t(
+		"alerts:sites.urlInformation.put.503ServiceUnavailableErrorResponse"
+	);
+	const urlInformationStepPut504GatewayTimeoutErrorResponse = t(
+		"alerts:sites.urlInformation.put.504GatewayTimeoutErrorResponse"
+	);
 
 	// Verify URL step process translations
 	const verifyUrlStepPost200OkSuccessResponse = t("alerts:sites.verifyUrl.post.200OkSuccessResponse");
@@ -501,7 +526,7 @@ export const useNotificationMessage = () => {
 	const fallbackUnknownServerErrorResponseTitle = t("alerts:fallback.unknownServerErrorResponse.title");
 	const fallbackUnknownServerErrorResponseMessage = t("alerts:fallback.unknownServerErrorResponse.message");
 
-	useMemo(() => {
+	useEffect(() => {
 		if (config) {
 			const isLocalTimeEnabled = config?.isLocalTimeEnabled ?? false;
 			const isLocalTimeDisabled = config?.isLocalTimeDisabled ?? false;
@@ -1789,6 +1814,77 @@ export const useNotificationMessage = () => {
 							}
 						]
 					};
+					const putResponse = {
+						method: "PUT",
+						responses: [
+							{
+								status: 200,
+								title: fallback200OkSuccessResponse,
+								message: urlInformationStepPut200OkSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 201,
+								title: fallback201CreatedSuccessResponse,
+								message: urlInformationStepPut201CreatedSuccessResponse,
+								isSuccess: true
+							},
+							{
+								status: 400,
+								title: fallback400BadRequestErrorResponse,
+								message: urlInformationStepPut400BadRequestErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 401,
+								title: fallback401UnauthorizedErrorResponse,
+								message: urlInformationStepPut401UnauthorizedErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 403,
+								title: fallback403ForbiddenErrorResponse,
+								message: urlInformationStepPut403ForbiddenErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 404,
+								title: fallback404NotFoundErrorResponse,
+								message: urlInformationStepPut404NotFoundErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 429,
+								title: fallback429TooManyRequestsErrorResponse,
+								message: urlInformationStepPut429TooManyRequestsErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 500,
+								title: fallback500InternalServerErrorResponse,
+								message: urlInformationStepPut500InternalServerErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 502,
+								title: fallback502BadGatewayErrorResponse,
+								message: urlInformationStepPut502BadGatewayErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 503,
+								title: fallback503ServiceUnavailableErrorResponse,
+								message: urlInformationStepPut503ServiceUnavailableErrorResponse,
+								isSuccess: false
+							},
+							{
+								status: 504,
+								title: fallback504GatewayTimeoutErrorResponse,
+								message: urlInformationStepPut504GatewayTimeoutErrorResponse,
+								isSuccess: false
+							}
+						]
+					};
 					const postResponse = {
 						method: "POST",
 						responses: [
@@ -1862,6 +1958,7 @@ export const useNotificationMessage = () => {
 					};
 
 					responsesArray.push(patchResponse);
+					responsesArray.push(putResponse);
 					responsesArray.push(postResponse);
 
 					const dataMethod =
