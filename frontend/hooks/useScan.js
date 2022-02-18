@@ -111,65 +111,45 @@ export const useScan = (querySid = null, options = null) => {
 		}
 	};
 
-	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (errorScan) {
-				// Show alert message after failed `user` SWR hook fetch
-				errorScan
-					? setScanConfig({
-							isUser: true,
-							method: errorScan?.config?.method ?? null,
-							status: errorScan?.status ?? null
-					  })
-					: null;
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+	useMemo(async () => {
+		if (errorScan) {
+			// Show alert message after failed `user` SWR hook fetch
+			errorScan
+				? setScanConfig({
+						isUser: true,
+						method: errorScan?.config?.method ?? null,
+						status: errorScan?.status ?? null
+				  })
+				: null;
+		}
 	}, [errorScan]);
 
-	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (scan?.data) {
-				if (scan.data?.count) {
-					setScanCount(scan.data.count);
-				}
-
-				if (scan.data?.results) {
-					setScanResults(scan.data.results);
-				}
-
-				let previousScanResult = scanResults?.find((result) => result.finished_at !== null) ?? null;
-				let currentScanResult = scanResults?.find((result) => result.finished_at == null) ?? null;
-
-				setCurrentScan(currentScanResult);
-				setPreviousScan(previousScanResult);
-
-				if (currentScan !== null) {
-					setScanObjId(currentScan.id);
-				} else if (previousScan !== null) {
-					setScanObjId(previousScan.id);
-				} else {
-					setScanObjId(0);
-				}
+	useMemo(async () => {
+		if (scan?.data) {
+			if (scan.data?.count) {
+				setScanCount(scan.data.count);
 			}
 
-			return { scanResults, scanCount, currentScan, previousScan, scanObjId };
-		})();
+			if (scan.data?.results) {
+				setScanResults(scan.data.results);
+			}
 
-		return () => {
-			isMounted = false;
-		};
+			let previousScanResult = scanResults?.find((result) => result.finished_at !== null) ?? null;
+			let currentScanResult = scanResults?.find((result) => result.finished_at == null) ?? null;
+
+			setCurrentScan(currentScanResult);
+			setPreviousScan(previousScanResult);
+
+			if (currentScan !== null) {
+				setScanObjId(currentScan.id);
+			} else if (previousScan !== null) {
+				setScanObjId(previousScan.id);
+			} else {
+				setScanObjId(0);
+			}
+		}
+
+		return { scanResults, scanCount, currentScan, previousScan, scanObjId };
 	}, [scan]);
 
 	return {

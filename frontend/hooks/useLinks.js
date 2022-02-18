@@ -1,3 +1,5 @@
+import { SiteCrawlerAppContext } from "@pages/_app";
+import { useContext, useMemo, useState } from "react";
 import { useMainSWRConfig } from "./useMainSWRConfig";
 
 /**
@@ -10,6 +12,13 @@ import { useMainSWRConfig } from "./useMainSWRConfig";
  * @returns {object} links, errorLinks, validatingLinks
  */
 export const useLinks = (endpoint = null, querySid = null, scanObjId = null, options = null) => {
+	const [linksCount, setLinksCount] = useState(0);
+	const [linksResults, setLinksResults] = useState([]);
+
+	// Custom context
+	const { setConfig: setSitesConfig } = useContext(SiteCrawlerAppContext);
+
+	// Custom variables
 	const currentEndpoint =
 		endpoint !== null &&
 		typeof endpoint === "string" &&
@@ -23,7 +32,35 @@ export const useLinks = (endpoint = null, querySid = null, scanObjId = null, opt
 			? endpoint
 			: null;
 
+	// SWR hook
 	const { data: links, error: errorLinks, isValidating: validatingLinks } = useMainSWRConfig(currentEndpoint, options);
 
-	return { links, errorLinks, validatingLinks };
+	useMemo(() => {
+		if (errorLinks) {
+			// Show alert message after failed `user` SWR hook fetch
+			errorLinks
+				? setSitesConfig({
+						isStats: true,
+						method: errorLinks?.config?.method ?? null,
+						status: errorLinks?.status ?? null
+				  })
+				: null;
+		}
+	}, [errorLinks]);
+
+	useMemo(() => {
+		if (links?.data) {
+			if (links.data?.count) {
+				setLinksCount(links.data.count);
+			}
+
+			if (links.data?.results) {
+				setLinksResults(links.data.results);
+			}
+		}
+
+		return { linksResults, linksCount };
+	}, [links]);
+
+	return { links, errorLinks, validatingLinks, linksResults, linksCount };
 };

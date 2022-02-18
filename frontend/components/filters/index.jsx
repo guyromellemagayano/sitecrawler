@@ -2,10 +2,14 @@ import { FilterData } from "@constants/FilterData";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
 import { useSiteQueries } from "@hooks/useSiteQueries";
+import { useUser } from "@hooks/useUser";
+import { SiteCrawlerAppContext } from "@pages/_app";
 import { handleConversionStringToBoolean } from "@utils/convertCase";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { memo, useEffect } from "react";
+import { memo, useContext, useEffect } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { useSWRConfig } from "swr";
 import "twin.macro";
 
@@ -19,6 +23,10 @@ const Filter = ({
 	isSitesImagesFilter = false,
 	isSitesSeoFilter = false
 }) => {
+	// Translations
+	const { t } = useTranslation("filters");
+	const filterText = t("filters");
+
 	// Custom constants
 	const {
 		filtersArray,
@@ -52,9 +60,11 @@ const Filter = ({
 		setNoPageIssuesFilter
 	} = FilterData();
 
-	// Translations
-	const { t } = useTranslation("filters");
-	const filterText = t("filters");
+	// Custom context
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
+
+	// SWR hooks
+	const { user } = useUser();
 
 	// Router
 	const { query, asPath, push } = useRouter();
@@ -178,7 +188,7 @@ const Filter = ({
 		}
 	}, [query]);
 
-	return (
+	return isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 		<form tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
 			<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
 				<h4 tw="ml-4 mb-4 lg:mb-0 mt-2 mr-1 leading-4 font-semibold text-gray-600">{filterText}</h4>
@@ -236,6 +246,52 @@ const Filter = ({
 					))}
 			</div>
 		</form>
+	) : (
+		<div tw="px-4 py-5 border border-gray-300 sm:px-6 bg-white rounded-lg lg:flex lg:justify-between">
+			<div tw="-ml-4 lg:-mt-2 lg:flex items-center flex-wrap sm:flex-nowrap">
+				<Skeleton duration={2} width={50} height={16} className="my-4 ml-4 mr-1 lg:mb-0" />
+
+				{filtersArray
+					.filter(
+						(e) =>
+							e.type === filterType &&
+							e.value !== "allSites" &&
+							e.value !== "allLinks" &&
+							e.value !== "allPages" &&
+							e.value !== "allImages" &&
+							e.value !== "allSeo"
+					)
+					.map((value, key) => (
+						<div key={key} tw="ml-4 mt-2">
+							<div tw="flex items-center space-x-2">
+								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />
+								<Skeleton duration={2} width={100} height={16} className="ml-2" />
+							</div>
+						</div>
+					))}
+			</div>
+
+			<div tw="lg:-mt-2 lg:flex items-center justify-end flex-wrap sm:flex-nowrap space-x-4">
+				{filtersArray
+					.filter(
+						(e) =>
+							e.type === filterType &&
+							(e.value === "allSites" ||
+								e.value === "allLinks" ||
+								e.value === "allPages" ||
+								e.value === "allImages" ||
+								e.value === "allSeo")
+					)
+					.map((value, key) => (
+						<div key={key} tw="ml-4 mt-2">
+							<div tw="flex items-center space-x-2">
+								<Skeleton duration={2} width={16} height={16} className="h-4 w-4 rounded" />
+								<Skeleton duration={2} width={100} height={16} className="ml-2" />
+							</div>
+						</div>
+					))}
+			</div>
+		</div>
 	);
 };
 

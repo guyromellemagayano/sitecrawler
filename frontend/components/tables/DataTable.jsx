@@ -39,7 +39,7 @@ const DataTable = ({ site = null }) => {
 	const siteCrawlingInProcessText = t("sites:siteCrawlingInProcess");
 
 	// Custom context
-	const { isComponentReady, setConfig } = useContext(SiteCrawlerAppContext);
+	const { isComponentReady } = useContext(SiteCrawlerAppContext);
 
 	// SWR hooks
 	const { user, disableLocalTime, permissions } = useUser();
@@ -114,13 +114,7 @@ const DataTable = ({ site = null }) => {
 
 				<div tw="flex flex-col items-start">
 					<div>
-						{isComponentReady &&
-						user &&
-						Math.round(user?.status / 100) === 2 &&
-						!user?.data?.detail &&
-						scan &&
-						Math.round(scan?.status / 100) === 2 &&
-						!scan?.data?.detail ? (
+						{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 							<>
 								{siteVerified && currentScan == null ? (
 									<span
@@ -233,7 +227,7 @@ const DataTable = ({ site = null }) => {
 				</div>
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && scanResults ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					scanResults?.length > 0 ? (
 						<span tw="space-x-2">
 							<span tw="text-sm leading-5 text-gray-500">
@@ -284,7 +278,7 @@ const DataTable = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && totalLinks ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalLinks > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/links" as={`/dashboard/sites/${siteId}/links`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -299,7 +293,7 @@ const DataTable = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && totalPages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalPages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/pages" as={`/dashboard/sites/${siteId}/pages`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">
@@ -314,7 +308,7 @@ const DataTable = ({ site = null }) => {
 				)}
 			</td>
 			<td tw="px-6 py-4 whitespace-nowrap text-sm text-gray-500 leading-5 font-semibold">
-				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail && totalImages ? (
+				{isComponentReady && user && Math.round(user?.status / 100) === 2 && !user?.data?.detail ? (
 					totalImages > 0 ? (
 						<Link href="/dashboard/sites/[siteId]/images" as={`/dashboard/sites/${siteId}/images`} passHref>
 							<a tw="cursor-pointer text-sm leading-6 font-semibold text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150">

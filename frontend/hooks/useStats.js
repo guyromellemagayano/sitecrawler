@@ -40,72 +40,49 @@ export const useStats = (querySid = null, scanObjId = null, options = null) => {
 	const { data: stats, error: errorStats, isValidating: validatingStats } = useMainSWRConfig(currentEndpoint, options);
 
 	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (errorStats) {
-				// Show alert message after failed `user` SWR hook fetch
-				errorStats
-					? setStatsConfig({
-							isUser: true,
-							method: errorStats?.config?.method ?? null,
-							status: errorStats?.status ?? null
-					  })
-					: null;
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		if (errorStats) {
+			// Show alert message after failed `user` SWR hook fetch
+			errorStats
+				? setStatsConfig({
+						isUser: true,
+						method: errorStats?.config?.method ?? null,
+						status: errorStats?.status ?? null
+				  })
+				: null;
+		}
 	}, [errorStats]);
 
 	useMemo(() => {
-		let isMounted = true;
+		if (stats?.data) {
+			const currentTotalImages = stats.data?.num_images ?? 0;
+			const currentTotalLinks = stats.data?.num_links ?? 0;
+			const currentTotalPages = stats.data?.num_pages ?? 0;
+			const currentLinkErrors = stats.data?.num_non_ok_links ?? 0;
+			const currentPageErrors = stats.data?.num_pages_tls_non_ok ?? 0;
+			const currentImageErrors =
+				stats.data?.num_non_ok_images ??
+				0 + stats.data?.num_images_with_missing_alts ??
+				0 + stats.data?.num_images_tls_non_ok ??
+				0;
+			const currentSeoErrors =
+				stats.data?.num_pages_without_title ??
+				0 + stats.data?.num_pages_without_description ??
+				0 + stats.data?.num_pages_without_h1_first ??
+				0 + stats.data?.num_pages_without_h2_first ??
+				0;
+			const currentTotalErrors = currentLinkErrors + currentPageErrors + currentImageErrors + currentSeoErrors;
 
-		(async () => {
-			if (!isMounted) return;
+			setTotalImages(currentTotalImages);
+			setTotalLinks(currentTotalLinks);
+			setTotalPages(currentTotalPages);
+			setLinkErrors(currentLinkErrors);
+			setPageErrors(currentPageErrors);
+			setImageErrors(currentImageErrors);
+			setSeoErrors(currentSeoErrors);
+			setTotalErrors(currentTotalErrors);
+		}
 
-			if (stats?.data) {
-				const currentTotalImages = stats.data?.num_images ?? 0;
-				const currentTotalLinks = stats.data?.num_links ?? 0;
-				const currentTotalPages = stats.data?.num_pages ?? 0;
-				const currentLinkErrors = stats.data?.num_non_ok_links ?? 0;
-				const currentPageErrors = stats.data?.num_pages_tls_non_ok ?? 0;
-				const currentImageErrors =
-					stats.data?.num_non_ok_images ??
-					0 + stats.data?.num_images_with_missing_alts ??
-					0 + stats.data?.num_images_tls_non_ok ??
-					0;
-				const currentSeoErrors =
-					stats.data?.num_pages_without_title ??
-					0 + stats.data?.num_pages_without_description ??
-					0 + stats.data?.num_pages_without_h1_first ??
-					0 + stats.data?.num_pages_without_h2_first ??
-					0;
-				const currentTotalErrors = await (currentLinkErrors +
-					currentPageErrors +
-					currentImageErrors +
-					currentSeoErrors);
-
-				setTotalImages(currentTotalImages);
-				setTotalLinks(currentTotalLinks);
-				setTotalPages(currentTotalPages);
-				setLinkErrors(currentLinkErrors);
-				setPageErrors(currentPageErrors);
-				setImageErrors(currentImageErrors);
-				setSeoErrors(currentSeoErrors);
-				setTotalErrors(currentTotalErrors);
-			}
-
-			return { totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors };
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		return { totalImages, totalLinks, totalPages, linkErrors, pageErrors, imageErrors, seoErrors, totalErrors };
 	}, [stats]);
 
 	return {

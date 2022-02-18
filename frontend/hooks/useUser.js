@@ -31,26 +31,16 @@ export const useUser = (options = null) => {
 	const { data: user, error: errorUser, isValidating: validatingUser } = useMainSWRConfig(UserApiEndpoint, options);
 
 	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (errorUser) {
-				// Show alert message after failed `user` SWR hook fetch
-				errorUser
-					? setUserConfig({
-							isUser: true,
-							method: errorUser?.config?.method ?? null,
-							status: errorUser?.status ?? null
-					  })
-					: null;
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		if (errorUser) {
+			// Show alert message after failed `user` SWR hook fetch
+			errorUser
+				? setUserConfig({
+						isUser: true,
+						method: errorUser?.config?.method ?? null,
+						status: errorUser?.status ?? null
+				  })
+				: null;
+		}
 	}, [errorUser]);
 
 	useMemo(() => {
