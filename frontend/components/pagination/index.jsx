@@ -1,5 +1,5 @@
 import { MemoizedPaginationSkeleton } from "@components/skeletons/PaginationSkeleton";
-import { MaxSitesPerPage } from "@constants/GlobalValues";
+import { MaxSitesPerPage, MaxTotalSitesLimit } from "@constants/GlobalValues";
 import { handleRemoveUrlParameter } from "@helpers/handleRemoveUrlParameter";
 import { usePage } from "@hooks/usePage";
 import { useScanApiEndpoint } from "@hooks/useScanApiEndpoint";
@@ -71,7 +71,12 @@ const DataPagination = () => {
 			i += MaxSitesPerPage;
 		}
 	} else {
-		linksPerPageOptions.push(pageCount);
+		let i = MaxTotalSitesLimit;
+
+		while (i >= pageCount) {
+			linksPerPageOptions.push(pageCount);
+			i += MaxTotalSitesLimit;
+		}
 	}
 
 	// Set `linkNumbers` array based on the `pageCount`
