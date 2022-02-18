@@ -28,50 +28,30 @@ export const useSites = (endpoint = null, options = null) => {
 	const { data: sites, error: errorSites, isValidating: validatingSites } = useMainSWRConfig(currentEndpoint, options);
 
 	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (errorSites) {
-				// Show alert message after failed `user` SWR hook fetch
-				errorSites
-					? setSitesConfig({
-							isStats: true,
-							method: errorSites?.config?.method ?? null,
-							status: errorSites?.status ?? null
-					  })
-					: null;
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+		if (errorSites) {
+			// Show alert message after failed `user` SWR hook fetch
+			errorSites
+				? setSitesConfig({
+						isStats: true,
+						method: errorSites?.config?.method ?? null,
+						status: errorSites?.status ?? null
+				  })
+				: null;
+		}
 	}, [errorSites]);
 
 	useMemo(() => {
-		let isMounted = true;
-
-		(async () => {
-			if (!isMounted) return;
-
-			if (sites?.data) {
-				if (sites.data?.count) {
-					setSitesCount(sites.data.count);
-				}
-
-				if (sites.data?.results) {
-					setSitesResults(sites.data.results);
-				}
+		if (sites?.data) {
+			if (sites.data?.count) {
+				setSitesCount(sites.data.count);
 			}
 
-			return { sitesResults, sitesCount };
-		})();
+			if (sites.data?.results) {
+				setSitesResults(sites.data.results);
+			}
+		}
 
-		return () => {
-			isMounted = false;
-		};
+		return { sitesResults, sitesCount };
 	}, [sites]);
 
 	return { sites, validatingSites, sitesResults, sitesCount };
